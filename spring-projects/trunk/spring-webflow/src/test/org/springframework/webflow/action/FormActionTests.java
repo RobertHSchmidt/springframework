@@ -72,16 +72,20 @@ public class FormActionTests extends TestCase {
 	}
 
 	public static class TestBeanValidator implements Validator {
+		private boolean invoked;
+		
 		public boolean supports(Class clazz) {
 			return TestBean.class.equals(clazz);
 		}
 
 		public void validate(Object formObject, Errors errors) {
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "prop", "Prop cannot be empty");
+			invoked = true;
 		}
 
 		public void validateTestBean(TestBean formObject, Errors errors) {
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "prop", "Prop cannot be empty");
+			invoked = true;
 		}
 	}
 
@@ -456,6 +460,21 @@ public class FormActionTests extends TestCase {
 		assertFalse(getErrors(context).hasErrors());
 	}
 
+	public void testSetupFormThenBindAndValidate() throws Exception {
+		FormAction action = createFormAction("testBean");
+		MockRequestContext context = new MockRequestContext();
+		Event result = action.setupForm(context);
+		assertEquals("success", result.getId());
+		Object formObject = action.getFormObject(context);
+		assertSame(formObject, action.getFormObject(context));
+		assertTrue(formObject instanceof TestBean);
+		context.putRequestParameter("prop", "foo");
+		context.getAttributeMap().put("validatorMethod", "validateTestBean");
+		result = action.bindAndValidate(context);
+		assertEquals("success", result.getId());
+		assertSame(formObject, action.getFormObject(context));
+		assertEquals(true, ((TestBeanValidator)action.getValidator()).invoked);
+	}
 	// helpers
 
 	private FormAction createFormAction(String formObjectName) {

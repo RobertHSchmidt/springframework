@@ -506,6 +506,9 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	}
 
 	public Event setupForm(RequestContext context) throws Exception {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Executing setupForm");
+		}
 		Object formObject = getFormObject(context);
 		if (setupBindingEnabled(context)) {
 			DataBinder binder = createBinder(context, formObject);
@@ -523,11 +526,17 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	}
 
 	public Event bindAndValidate(RequestContext context) throws Exception {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Executing bind");
+		}
 		Object formObject = getFormObject(context);
 		DataBinder binder = createBinder(context, formObject);
 		doBind(context, binder);
 		setFormErrors(context, binder.getErrors());
 		if (getValidator() != null && getValidateOnBinding() && validationEnabled(context)) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Executing validate");
+			}
 			doValidate(context, binder);
 		}
 		else {
@@ -544,6 +553,9 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	}
 
 	public Event bind(RequestContext context) throws Exception {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Executing bind");
+		}
 		Object formObject = getFormObject(context);
 		DataBinder binder = createBinder(context, formObject);
 		doBind(context, binder);
@@ -553,6 +565,9 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 
 	public Event validate(RequestContext context) throws Exception {
 		if (getValidator() != null && validationEnabled(context)) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Executing validate");
+			}
 			Object formObject = getFormObject(context);
 			DataBinder binder = createBinder(context, formObject);
 			doValidate(context, binder);
