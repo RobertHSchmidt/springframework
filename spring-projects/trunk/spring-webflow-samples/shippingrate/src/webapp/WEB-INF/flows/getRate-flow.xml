@@ -15,7 +15,7 @@
 	
 	<view-state id="selectSender" view="selectSender">
 		<entry-actions>
-            <action bean="rateService" method="getCountries" resultName="countries"/>
+            <action bean="rateService" method="getCountries" result-name="countries"/>
 		</entry-actions>
         <transition on="submit" to="selectReceiver">
 			<action bean="formAction" method="bindAndValidate">
@@ -26,7 +26,7 @@
 	
 	<view-state id="selectReceiver" view="selectReceiver">
 		<entry-actions>
-            <action bean="rateService" method="getCountries" resultName="countries"/>
+            <action bean="rateService" method="getCountries" result-name="countries"/>
 		</entry-actions>
         <transition on="submit" to="selectPackageDetails">
 			<action bean="formAction" method="bindAndValidate">
@@ -37,7 +37,7 @@
 	
 	<view-state id="selectPackageDetails" view="selectPackageDetails">
 		<entry-actions>
-            <action bean="rateService" method="getPackageTypes" resultName="packageTypes"/>
+            <action bean="rateService" method="getPackageTypes" result-name="packageTypes"/>
 		</entry-actions>
         <transition on="submit" to="findRate">
 			<action bean="formAction" method="bindAndValidate">
@@ -47,7 +47,7 @@
 	</view-state>
 	
 	<action-state id="findRate">
-		<action bean="rateService" method="getRate(${flowScope.rateCriteria})" resultName="rate"/>
+		<action bean="rateService" method="getRate(${flowScope.rateCriteria})" result-name="rate"/>
 		<transition on="success" to="showRate"/>
 	</action-state>
 	

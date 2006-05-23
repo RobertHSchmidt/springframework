@@ -39,7 +39,7 @@
 	</action-state>
 
 	<action-state id="actionState3">
-		<action bean="pojoAction" method="enumMethod" resultName="result"/>
+		<action bean="pojoAction" method="enumMethod" result-name="result"/>
 		<transition on="Created" to="viewState2"/>
 	</action-state>
 	

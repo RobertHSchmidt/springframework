@@ -257,32 +257,32 @@
 
 <!--
 	The name of the attribute that will expose the return value of the target action method.
-	Used in conjunction with the 'method' and 'resultScope' attributes.
+	Used in conjunction with the 'method' and 'result-scope' attributes.
 	Only directly applicable when this action invokes a method on a bean (POJO)
 	that returns a value.
 
 	For example:
-        <action bean="orderClerk" method="placeOrder(${flowScope.order})" resultName="orderConfirmation"/>
+        <action bean="orderClerk" method="placeOrder(${flowScope.order})" result-name="orderConfirmation"/>
         
     ... exposes the 'placeOrder(Order)' method return value in request scope 
     under the attribute name 'orderConfirmation'.
 -->
-<!ATTLIST action resultName CDATA #IMPLIED>
+<!ATTLIST action result-name CDATA #IMPLIED>
 
 <!--
 	The scope of the attribute that will expose the return value of the target action method.
-	Used in conjunction with the 'resultName' attribute, and only directly applicable
+	Used in conjunction with the 'result-name' attribute, and only directly applicable
 	when this action invokes a method on a bean (POJO) that returns a value.
 
 	For example:
-        <action bean="bookingAgent" method="suggestItineraries(${flowScope.trip})" resultName="itineraries" resultScope="flow"/>
+        <action bean="bookingAgent" method="suggestItineraries(${flowScope.trip})" result-name="itineraries" result-scope="flow"/>
 
     ... exposes the 'suggestItineraries(Trip)' method return value in flow scope 
     under the attribute name 'itineraries'.
     
     The default value if not specified is request scope.     
 -->
-<!ATTLIST action resultScope (request | flow | conversation | default) "default">
+<!ATTLIST action result-scope (request | flow | conversation | default) "default">
 
 <!--
 	Defines a transition from one state to another.

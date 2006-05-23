@@ -147,9 +147,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private static final String METHOD_ATTRIBUTE = "method";
 
-	private static final String RESULT_NAME_ATTRIBUTE = "resultName";
+	private static final String RESULT_NAME_ATTRIBUTE = "result-name";
 
-	private static final String RESULT_SCOPE_ATTRIBUTE = "resultScope";
+	private static final String RESULT_SCOPE_ATTRIBUTE = "result-scope";
 
 	private static final String DEFAULT_VALUE = "default";
 
