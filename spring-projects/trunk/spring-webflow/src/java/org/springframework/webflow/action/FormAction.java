@@ -694,6 +694,9 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 		FormObjectAccessor accessor = getFormObjectAccessor(context);
 		Object formObject = accessor.getFormObject(getFormObjectName(), getFormObjectClass(), getFormObjectScope());
 		if (formObject == null) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Loading new form object");
+			}
 			formObject = loadFormObject(context);
 			setFormObject(context, formObject);
 		}
@@ -859,6 +862,9 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 */
 	protected void initBinder(RequestContext context, DataBinder binder) {
 		if (propertyEditorRegistrar != null) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Installing custom property editors");
+			}
 			propertyEditorRegistrar.registerCustomEditors(binder);
 		}
 		else {
