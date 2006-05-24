@@ -11,6 +11,7 @@ Package org.springframework.webflow
 
 Package org.springframework.webflow.action
 * Made FormAction.formObjectScope default ScopeType.FLOW instead of ScopeType.REQUEST.
+* Improved FormAction debug logging.
 
 Package org.springframework.webflow.builder
 * Fixed bug related to inline-flow parsing where inline flow artifacts were not assembled properly.
