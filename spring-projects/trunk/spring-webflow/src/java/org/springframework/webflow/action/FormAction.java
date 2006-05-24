@@ -94,19 +94,19 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Here is an example implementation of such a compact form flow:
  * 
  * <pre>
- *      &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *          &lt;entry-actions&gt;
- *              &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *          &lt;/entry-actions&gt;
- *          &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
- *              &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
- *          &lt;/transition&gt;
- *      &lt;/view-state&gt;
- *                                
- *      &lt;action-state id=&quot;executeSearch&quot;&gt;
- *          &lt;action bean=&quot;searchFormAction&quot;/&gt;
- *          &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
- *      &lt;/action-state&gt;
+ *        &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *            &lt;entry-actions&gt;
+ *                &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *            &lt;/entry-actions&gt;
+ *            &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
+ *                &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *            &lt;/transition&gt;
+ *        &lt;/view-state&gt;
+ *                                  
+ *        &lt;action-state id=&quot;executeSearch&quot;&gt;
+ *            &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *            &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
+ *        &lt;/action-state&gt;
  * </pre>
  * 
  * </p>
@@ -255,7 +255,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	private Class formObjectClass;
 
 	/**
-	 * The scope in which the form object should be exposed.  Default is 
+	 * The scope in which the form object should be exposed. Default is
 	 * {@link ScopeType#FLOW}
 	 */
 	private ScopeType formObjectScope = ScopeType.FLOW;
@@ -305,8 +305,8 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 
 	/**
 	 * Bean-style default constructor; creates a initially unconfigured
-	 * FormAction instance relying on default property values.  Clients invoking this 
-	 * constructor directly must set the {@link #formObjectClass} property.
+	 * FormAction instance relying on default property values. Clients invoking
+	 * this constructor directly must set the {@link #formObjectClass} property.
 	 * @see #setFormObjectClass(Class)
 	 */
 	public FormAction() {
@@ -716,6 +716,10 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 			setFormObject(context, formObject);
 		}
 		else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Found existing form object with name '" + getFormObjectName() + "' of type ["
+						+ formObject.getClass() + "] in scope " + getFormObjectScope());
+			}
 			accessor.setCurrentFormObject(formObject, getFormObjectScope());
 		}
 		return formObject;
@@ -726,8 +730,8 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 */
 	private void setFormObject(RequestContext context, Object formObject) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Setting form object instance with name '" + getFormObjectName() + "' in scope "
-					+ getFormObjectScope());
+			logger.debug("Setting form object of type [" + formObject.getClass() + "] in scope " + getFormObjectScope()
+					+ " with name '" + getFormObjectName() + "'");
 		}
 		getFormObjectAccessor(context).setFormObject(formObject, getFormObjectName(), getFormObjectScope());
 	}
@@ -841,15 +845,12 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * @throws Exception the form object could not be created
 	 */
 	protected Object createFormObject(RequestContext context) throws Exception {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Creating new form object with name '" + getFormObjectName() + "'");
-		}
 		if (formObjectClass == null) {
 			throw new IllegalStateException("Cannot create form object without formObjectClass being set -- "
 					+ "either set formObjectClass or override this method");
 		}
 		if (logger.isDebugEnabled()) {
-			logger.debug("Creating new form object of class [" + this.formObjectClass.getName() + "]");
+			logger.debug("Creating new instance of form object class [" + formObjectClass + "]");
 		}
 		return formObjectClass.newInstance();
 	}
