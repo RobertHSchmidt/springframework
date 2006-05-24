@@ -20,6 +20,8 @@ Package org.springframework.webflow.builder
 * Relaxed 'isMultiAction' assert in XmlFlowBuilder to simply 'isAction', allowing provision of the 'method'
   annotated action attribute with any target Action implementation, not just MultiActions.
 * Removed 'isMultiAction' tester on FlowServiceLocator as it is no longer needed by the builders.
+* Renamed 'resultName' and 'resultScope' <action/> element attributes to 'result-name' and 
+  'result-scope', respectively, for consistency with other attribute and element names.
 
 Package org.springframework.webflow.action
 * Moved MultiAction.METHOD_ATTRIBUTE constant to AnnotatedAction.METHOD_ATTRIBUTE.
