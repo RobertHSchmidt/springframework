@@ -58,7 +58,7 @@ public class StaxStreamXmlReader extends StaxXmlReader {
 
     protected void parseInternal() throws SAXException, XMLStreamException {
         boolean documentEnded = false;
-        while (reader.hasNext()) {
+        while (true) {
             switch (reader.getEventType()) {
                 case XMLStreamConstants.START_ELEMENT:
                     handleStartElement();
@@ -82,7 +82,12 @@ public class StaxStreamXmlReader extends StaxXmlReader {
                     documentEnded = true;
                     break;
             }
-            reader.next();
+            if (reader.hasNext()) {
+                reader.next();
+            }
+            else {
+                break;
+            }
         }
         if (!documentEnded) {
             handleEndDocument();
