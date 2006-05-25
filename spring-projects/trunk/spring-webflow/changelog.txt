@@ -39,6 +39,8 @@ Package org.springframework.webflow.executor
   property allows for overriding this default.
 * Fixed bug in RequestPathFlowExecutorArgumentExtractor.createFlowUrl where flow redirect input 
   was not being appended to the redirect URL correctly.
+* Fixed bug where JSFPhaseListener was resetting the UIViewRoot even if the view did not change as 
+  part of a resubmission.
   
 Package org.springframework.webflow.registry
 * Improved ExternalizedFlowRegistrar, extracting a factory method for creating an ExternalizedFlowDefinition

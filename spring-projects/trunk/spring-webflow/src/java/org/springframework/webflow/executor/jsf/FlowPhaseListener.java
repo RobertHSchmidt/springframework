@@ -253,10 +253,11 @@ public class FlowPhaseListener implements PhaseListener {
 		ApplicationView forward = (ApplicationView)holder.getViewSelection();
 		putInto(facesContext.getExternalContext().getRequestMap(), forward.getModel());
 		UIViewRoot vr = facesContext.getViewRoot();
-		if (forward.getViewName() != null && (vr == null || !vr.getViewId().equals(forward.getViewName()))) {
+		String viewId = viewIdResolver.resolveViewId(forward.getViewName());
+		if (vr == null || !vr.getViewId().equals(viewId)) {
 			// create the specified view so that it can be rendered
 			ViewHandler handler = facesContext.getApplication().getViewHandler();
-			UIViewRoot view = handler.createView(facesContext, viewIdResolver.resolveViewId(forward.getViewName()));
+			UIViewRoot view = handler.createView(facesContext, viewId);
 			facesContext.setViewRoot(view);
 		}
 		Map requestMap = facesContext.getExternalContext().getRequestMap();
