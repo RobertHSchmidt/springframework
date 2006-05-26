@@ -57,11 +57,6 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	private Map exceptionTargetStateResolverMappings = new HashMap();
 
 	/**
-	 * Resolver that resolves the root cause of a handled StateException.
-	 */
-	private RootCauseResolver rootCauseResolver = createRootCauseResolver();
-
-	/**
 	 * Adds an exception->state mapping to this handler.
 	 * @param exceptionClass the type of exception to map
 	 * @param targetStateId the id of the state to transition to if the
@@ -99,7 +94,7 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 					+ "' to transition from must be transitionable!");
 		}
 		context.getRequestScope().put(STATE_EXCEPTION_ATTRIBUTE, e);
-		context.getRequestScope().put(ROOT_CAUSE_EXCEPTION_ATTRIBUTE, rootCauseResolver.findRootCause(e));
+		context.getRequestScope().put(ROOT_CAUSE_EXCEPTION_ATTRIBUTE, findRootCause(e));
 		return new Transition(getTargetStateResolver(e)).execute((TransitionableState)sourceState, context);
 	}
 
@@ -182,11 +177,11 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 		return null;
 	}
 
-	protected RootCauseResolver createRootCauseResolver() {
-		return new RootCauseResolver();
+	protected Throwable findRootCause(Throwable e) {
+		return new RootCauseResolver().findRootCause(e);
 	}
 	
-	static class RootCauseResolver {
+	private static class RootCauseResolver {
 		public Throwable findRootCause(Throwable e) {
 			if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_13) {
 				return findRootCause13(e);
