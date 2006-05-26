@@ -38,12 +38,6 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <p>
  * Several action execution methods are provided:
  * <ul>
- * <li> {@link #exposeFormObject(RequestContext)} - Loads the backing form
- * object and exposes it and an empty errors instance in the model of the
- * executing flow in the correct scope. Any custom property editors for
- * formatting form object values will also be installed. This action method will
- * return success() if the form object was loaded successfully, error()
- * otherwise.
  * <li> {@link #setupForm(RequestContext)} - Prepares the backing form object
  * for display on a form. This method behaves exactly like exposeFormObject but
  * goes further by adding a capability to perform optional data binding on
@@ -94,19 +88,19 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Here is an example implementation of such a compact form flow:
  * 
  * <pre>
- *        &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *            &lt;entry-actions&gt;
- *                &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *            &lt;/entry-actions&gt;
- *            &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
- *                &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
- *            &lt;/transition&gt;
- *        &lt;/view-state&gt;
- *                                  
- *        &lt;action-state id=&quot;executeSearch&quot;&gt;
- *            &lt;action bean=&quot;searchFormAction&quot;/&gt;
- *            &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
- *        &lt;/action-state&gt;
+ *     &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *         &lt;entry-actions&gt;
+ *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *         &lt;/entry-actions&gt;
+ *         &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
+ *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *         &lt;/transition&gt;
+ *     &lt;/view-state&gt;
+ *                                   
+ *     &lt;action-state id=&quot;executeSearch&quot;&gt;
+ *         &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *         &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
+ *     &lt;/action-state&gt;
  * </pre>
  * 
  * </p>
@@ -145,9 +139,9 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * 
  * <pre>
  * public Event setupReferenceData(RequestContext context) throws Exception {
- * 	Scope requestScope = context.getRequestScope();
- * 	requestScope.setAttribute(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
- * 	return success();
+ *     Scope requestScope = context.getRequestScope();
+ * 	   requestScope.setAttribute(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
+ *     return success();
  * }
  * </pre>
  * 
@@ -199,18 +193,6 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <td>The validator for this action. The validator must support the specified
  * form object class. </td>
  * </tr>
- * <tr>
- * <td>bindOnSetupForm</td>
- * <td>false</td>
- * <td>Set if request parameters should be bound to the form object during the
- * {@link #setupForm(RequestContext) setupForm} action. </td>
- * </tr>
- * <tr>
- * <td>validateOnBinding</td>
- * <td>true</td>
- * <td>Indicates if the validator should be invoked after binding. </td>
- * </tr>
- * <tr>
  * <td>validateUsingValidatorMethod</td>
  * <td>false</td>
  * <td>Indicates if the validator should be invoked ONLY if the
