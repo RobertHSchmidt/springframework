@@ -91,7 +91,7 @@ public interface SoapFault extends SoapElement {
      * fault code.
      *
      * @return <code>true</code> if this a <code>Sender</code> or <code>Client</code> fault
-     * @see SoapBody#addSenderFault()
+     * @see SoapBody#addSenderFault(String)
      */
     boolean isSenderFault();
 
@@ -101,7 +101,7 @@ public interface SoapFault extends SoapElement {
      * code.
      *
      * @return <code>true</code> if this is a <code>Receiver</code> or <code>Server</code> fault
-     * @see SoapBody#addReceiverFault()
+     * @see SoapBody#addReceiverFault(String)
      */
     boolean isReceiverFault();
 }
