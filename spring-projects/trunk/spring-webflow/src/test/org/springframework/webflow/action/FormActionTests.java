@@ -122,20 +122,6 @@ public class FormActionTests extends TestCase {
 		return map;
 	}
 
-	public void testSetupFormWithBinding() throws Exception {
-		MockRequestContext context = new MockRequestContext(parameters());
-		action.setBindOnSetupForm(true);
-
-		// setupForm() should initialize the form object and the Errors
-		// instance and do a bind & validate (bindOnSetupForm == true)
-
-		assertEquals(action.getEventFactorySupport().getSuccessEventId(), action.setupForm(context).getId());
-
-		assertEquals(2, context.getRequestScope().size());
-		assertEquals(2, context.getFlowScope().size());
-		assertFalse(getErrors(context).hasErrors());
-		assertEquals("value", getFormObject(context).getProp());
-	}
 
 	public void testSetupFormWithExistingFormObject() throws Exception {
 		MockRequestContext context = new MockRequestContext(parameters());
@@ -159,32 +145,6 @@ public class FormActionTests extends TestCase {
 		assertSame(formObject, getFormObject(context));
 		assertTrue(getErrors(context).hasErrors());
 		assertEquals("bla", getFormObject(context).getProp());
-	}
-
-	public void testSetupFormWithExistingFormObjectAndWithBinding() throws Exception {
-		MockRequestContext context = new MockRequestContext(parameters());
-		assertEquals(action.getEventFactorySupport().getSuccessEventId(), action.setupForm(context).getId());
-
-		Errors errors = getErrors(context);
-		errors.reject("dummy");
-		TestBean formObject = getFormObject(context);
-		formObject.setProp("bla");
-
-		action.setBindOnSetupForm(true);
-
-		// setupForm() should leave the existing form object untouched but
-		// should
-		// generate a new errors instance since we did binding (bindOnSetupForm
-		// == true)
-
-		assertEquals(action.getEventFactorySupport().getSuccessEventId(), action.setupForm(context).getId());
-
-		assertEquals(2, context.getRequestScope().size());
-		assertEquals(2, context.getFlowScope().size());
-		assertNotSame(errors, getErrors(context));
-		assertSame(formObject, getFormObject(context));
-		assertFalse(getErrors(context).hasErrors());
-		assertEquals("value", getFormObject(context).getProp());
 	}
 
 	public void testBindAndValidate() throws Exception {
@@ -484,7 +444,6 @@ public class FormActionTests extends TestCase {
 		res.setValidator(new TestBeanValidator());
 		res.setFormObjectScope(ScopeType.FLOW);
 		res.setFormErrorsScope(ScopeType.REQUEST);
-		res.setValidateOnBinding(true);
 		res.initAction();
 		return res;
 	}

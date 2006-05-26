@@ -277,16 +277,6 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	private Validator validator;
 
 	/**
-	 * Should pre-render data binding happen after form setup?
-	 */
-	private boolean bindOnSetupForm = false;
-
-	/**
-	 * Should validation happen after postback data binding by default?
-	 */
-	private boolean validateOnBinding = true;
-
-	/**
 	 * Strategy for resolving error message codes.
 	 */
 	private MessageCodesResolver messageCodesResolver;
@@ -420,39 +410,6 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	}
 
 	/**
-	 * Returns if parameters should be bound to the form object during the
-	 * execution of the {@link #setupForm(RequestContext)} action method.
-	 * @return bind on setup form
-	 */
-	public boolean getBindOnSetupForm() {
-		return bindOnSetupForm;
-	}
-
-	/**
-	 * Set if parameters should be bound to the form object during the execution
-	 * of the {@link #setupForm(RequestContext)} action method.
-	 */
-	public void setBindOnSetupForm(boolean bindOnSetupForm) {
-		this.bindOnSetupForm = bindOnSetupForm;
-	}
-
-	/**
-	 * Return if the validator should also be invoked on execution of the
-	 * {@link #bindAndValidate(RequestContext)} method. Defaults to true.
-	 */
-	public boolean getValidateOnBinding() {
-		return validateOnBinding;
-	}
-
-	/**
-	 * Set if the validator should also be invoked on execution of the
-	 * {@link #bindAndValidate(RequestContext)} method.
-	 */
-	public void setValidateOnBinding(boolean validateOnBinding) {
-		this.validateOnBinding = validateOnBinding;
-	}
-
-	/**
 	 * Returns if the validator should only be invoked if the
 	 * {@link #VALIDATOR_METHOD_PROPERTY} request context property is set.
 	 */
@@ -500,29 +457,12 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 
 	// action execute methods (as defined by the FormOperations interface)
 
-	public Event exposeFormObject(RequestContext context) throws Exception {
-		ensureFormErrorsExposed(context, getFormObject(context));
-		return success();
-	}
-
 	public Event setupForm(RequestContext context) throws Exception {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing setupForm");
 		}
-		Object formObject = getFormObject(context);
-		if (setupBindingEnabled(context)) {
-			DataBinder binder = createBinder(context, formObject);
-			doBind(context, binder);
-			setFormErrors(context, binder.getErrors());
-			return binder.getErrors().hasErrors() ? error() : success();
-		}
-		else {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Setup form object binding was disabled for this request");
-			}
-			ensureFormErrorsExposed(context, formObject);
-			return success();
-		}
+		ensureFormErrorsExposed(context, getFormObject(context));
+		return success();
 	}
 
 	public Event bindAndValidate(RequestContext context) throws Exception {
@@ -533,7 +473,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 		DataBinder binder = createBinder(context, formObject);
 		doBind(context, binder);
 		setFormErrors(context, binder.getErrors());
-		if (getValidator() != null && getValidateOnBinding() && validationEnabled(context)) {
+		if (getValidator() != null && validationEnabled(context)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing validate");
 			}
@@ -888,15 +828,6 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 				logger.debug("No property editor registrar set, no custom editors to register");
 			}
 		}
-	}
-
-	/**
-	 * Returns true if event parameters should be bound to the form object
-	 * during the {@link #setupForm(RequestContext)} action. The default
-	 * implementation just calls {@link #getBindOnSetupForm()}.
-	 */
-	protected boolean setupBindingEnabled(RequestContext context) {
-		return getBindOnSetupForm();
 	}
 
 	/**
