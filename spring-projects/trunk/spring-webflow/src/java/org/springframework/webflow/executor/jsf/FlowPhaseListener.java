@@ -217,10 +217,6 @@ public class FlowPhaseListener implements PhaseListener {
 	protected void prepareResponse(JsfExternalContext context, FlowExecutionHolder holder) {
 		generateKey(context, holder);
 		ViewSelection selectedView = holder.getViewSelection();
-		if (selectedView == null) {
-			selectedView = holder.getFlowExecution().refresh(context);
-			holder.setViewSelection(selectedView);
-		}
 		if (selectedView instanceof ApplicationView) {
 			prepareApplicationView(context.getFacesContext(), holder);
 		}
@@ -252,8 +248,14 @@ public class FlowPhaseListener implements PhaseListener {
 	protected void prepareApplicationView(FacesContext facesContext, FlowExecutionHolder holder) {
 		ApplicationView forward = (ApplicationView)holder.getViewSelection();
 		putInto(facesContext.getExternalContext().getRequestMap(), forward.getModel());
+		updateViewRoot(facesContext, viewIdResolver.resolveViewId(forward.getViewName()));
+		Map requestMap = facesContext.getExternalContext().getRequestMap();
+		argumentExtractor.put(holder.getFlowExecutionKey(), requestMap);
+		argumentExtractor.put(holder.getFlowExecution(), requestMap);
+	}
+
+	private void updateViewRoot(FacesContext facesContext, String viewId) {
 		UIViewRoot viewRoot = facesContext.getViewRoot();
-		String viewId = viewIdResolver.resolveViewId(forward.getViewName());
 		if (viewRoot == null || isDifferentView(viewId, viewRoot)) {
 			// create the specified view so that it can be rendered
 			if (logger.isDebugEnabled()) {
@@ -263,9 +265,6 @@ public class FlowPhaseListener implements PhaseListener {
 			UIViewRoot view = handler.createView(facesContext, viewId);
 			facesContext.setViewRoot(view);
 		}
-		Map requestMap = facesContext.getExternalContext().getRequestMap();
-		argumentExtractor.put(holder.getFlowExecutionKey(), requestMap);
-		argumentExtractor.put(holder.getFlowExecution(), requestMap);
 	}
 
 	private boolean isDifferentView(String viewId, UIViewRoot viewRoot) {
