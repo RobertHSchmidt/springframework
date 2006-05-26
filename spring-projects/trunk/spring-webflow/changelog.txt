@@ -2,7 +2,7 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 RC2 (03.21.2006)
+Changes in version 1.0 RC2 (29.5.2006)
 ------------------------------------
 Package org.springframework.webflow
 * Removed 'requiredType' not null check on AttributeMap accessor methods;
@@ -12,7 +12,12 @@ Package org.springframework.webflow
 Package org.springframework.webflow.action
 * Made FormAction.formObjectScope default ScopeType.FLOW instead of ScopeType.REQUEST.
 * Improved FormAction debug logging.
-
+* Removed FormAction.bindOnSetupForm flag for simplicity--if you need to perform a bind operation before
+  entering a view state simply invoke the 'bind' action method from your flow definition.
+* Removed FormAction.validateOnBinding flag for simplicity--if you need to dynamically calculate if 
+  validation should occur after binding on 'bindAndValidate' override validationEnabled(RequestContext).
+* Removed 'exposeFormObject' action method from FormAction; use 'setupForm' instead.
+ 
 Package org.springframework.webflow.builder
 * Fixed bug related to inline-flow parsing where inline flow artifacts were not assembled properly.
 * Added not null asserts to setters allowing overriding of required flow builder services.
