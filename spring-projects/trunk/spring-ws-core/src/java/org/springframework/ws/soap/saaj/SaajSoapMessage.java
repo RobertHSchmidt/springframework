@@ -28,6 +28,8 @@ import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.Detail;
+import javax.xml.soap.DetailEntry;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
@@ -55,6 +57,8 @@ import org.springframework.ws.soap.AttachmentException;
 import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.SoapEnvelope;
 import org.springframework.ws.soap.SoapFault;
+import org.springframework.ws.soap.SoapFaultDetail;
+import org.springframework.ws.soap.SoapFaultDetailElement;
 import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapVersion;
@@ -509,6 +513,21 @@ public class SaajSoapMessage extends AbstractSoapMessage {
             }
         }
 
+        public SoapFaultDetail getFaultDetail() {
+            Detail saajDetail = saajFault.getDetail();
+            return (saajDetail != null) ? new SaajSoapFaultDetail(saajDetail) : null;
+        }
+
+        public SoapFaultDetail addFaultDetail() {
+            try {
+                Detail saajDetail = saajFault.addDetail();
+                return (saajDetail != null) ? new SaajSoapFaultDetail(saajDetail) : null;
+            }
+            catch (SOAPException ex) {
+                throw new SaajSoapFaultException(ex);
+            }
+        }
+
         public boolean isMustUnderstandFault() {
             return (MUST_UNDERSTAND.equals(saajFault.getFaultCodeAsName().getLocalName()) &&
                     SOAPConstants.URI_NS_SOAP_ENVELOPE.equals(saajFault.getFaultCodeAsName().getURI()));
@@ -523,6 +542,90 @@ public class SaajSoapMessage extends AbstractSoapMessage {
             return (SERVER.equals(saajFault.getFaultCodeAsName().getLocalName()) &&
                     SOAPConstants.URI_NS_SOAP_ENVELOPE.equals(saajFault.getFaultCodeAsName().getURI()));
         }
+    }
+
+    /**
+     * SAAJ-specific implementation of <code>org.springframework.ws.soap.SoapFaultDetail</code>
+     */
+    private static class SaajSoapFaultDetail implements SoapFaultDetail {
+
+        private Detail saajDetail;
+
+        private SaajSoapFaultDetail(Detail saajDetail) {
+            this.saajDetail = saajDetail;
+        }
+
+        public QName getName() {
+            return SaajUtils.toQName(saajDetail.getElementName());
+        }
+
+        public Source getSource() {
+            return new DOMSource(saajDetail);
+        }
+
+        public SoapFaultDetailElement addFaultDetailElement(QName name) {
+            try {
+                Name detailEntryName = SaajUtils.toName(name, getEnvelope());
+                DetailEntry saajDetailEntry = saajDetail.addDetailEntry(detailEntryName);
+                return new SaajSoapFaultDetailElement(saajDetailEntry);
+            }
+            catch (SOAPException ex) {
+                throw new SaajSoapFaultException(ex);
+            }
+        }
+
+        public Iterator getDetailEntries() {
+            return new SaajSoapFaultDetailIterator(saajDetail.getDetailEntries());
+        }
+
+        private SOAPEnvelope getEnvelope() {
+            return (SOAPEnvelope) saajDetail.getParentElement().getParentElement().getParentElement();
+        }
+
+    }
+
+    private static class SaajSoapFaultDetailElement implements SoapFaultDetailElement {
+
+        private DetailEntry saajDetailEntry;
+
+        private SaajSoapFaultDetailElement(DetailEntry saajDetailEntry) {
+            this.saajDetailEntry = saajDetailEntry;
+        }
+
+        public Result getResult() {
+            return new DOMResult(saajDetailEntry);
+        }
+
+        public QName getName() {
+            return SaajUtils.toQName(saajDetailEntry.getElementName());
+        }
+
+        public Source getSource() {
+            return new DOMSource(saajDetailEntry);
+        }
+    }
+
+    private static class SaajSoapFaultDetailIterator implements Iterator {
+
+        private final Iterator saajIterator;
+
+        public SaajSoapFaultDetailIterator(Iterator saajIterator) {
+            this.saajIterator = saajIterator;
+        }
+
+        public boolean hasNext() {
+            return saajIterator.hasNext();
+        }
+
+        public Object next() {
+            DetailEntry saajDetailEntry = (DetailEntry) saajIterator.next();
+            return new SaajSoapFaultDetailElement(saajDetailEntry);
+        }
+
+        public void remove() {
+            saajIterator.remove();
+        }
+
     }
 
     /**
@@ -587,4 +690,6 @@ public class SaajSoapMessage extends AbstractSoapMessage {
             saajIterator.remove();
         }
     }
+
+
 }

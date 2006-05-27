@@ -16,6 +16,7 @@
 
 package org.springframework.ws.soap.saaj;
 
+import java.util.Iterator;
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.Name;
@@ -30,7 +31,11 @@ import javax.xml.transform.TransformerFactory;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.SoapFault;
+import org.springframework.ws.soap.SoapFaultDetail;
+import org.springframework.ws.soap.SoapFaultDetailElement;
+import org.springframework.ws.soap.SoapFaultException;
 import org.springframework.xml.transform.StringResult;
+import org.springframework.xml.transform.StringSource;
 
 public class SaajSoapBodyTest extends XMLTestCase {
 
@@ -146,5 +151,45 @@ public class SaajSoapBodyTest extends XMLTestCase {
 
     }
 
+    public void testAddFaultWithDetail() throws Exception {
+        QName faultCode = new QName("namespace", "localPart", "prefix");
+        SoapFault fault = body.addFault(faultCode, "Fault");
+        SoapFaultDetail detail = fault.addFaultDetail();
+        assertNotNull("Null returned", detail);
+        QName detailQName = new QName("namespace", "localPart", "prefix");
+        SoapFaultDetailElement detailElement = detail.addFaultDetailElement(detailQName);
+        assertNotNull("Null returned", detailElement);
+        assertEquals("Invalid QName on detail element", detailQName, detailElement.getName());
+        Iterator iterator = detail.getDetailEntries();
+        assertNotNull("Null returned", detail);
+        assertTrue("Iterator contains no elements", iterator.hasNext());
+        detailElement = (SoapFaultDetailElement) iterator.next();
+        assertNotNull("Null returned", detailElement);
+        assertEquals("Invalid QName on detail element", detailQName, detailElement.getName());
+        StringSource detailContents = new StringSource("<detailContents xmlns='namespace'/>");
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.transform(detailContents, detailElement.getResult());
+        StringResult result = new StringResult();
+        transformer.transform(body.getSource(), result);
+        assertXMLEqual("Invalid source for body",
+                "<SOAP-ENV:Body xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/'>" +
+                        "<SOAP-ENV:Fault><faultcode xmlns:prefix='namespace'>prefix:localPart</faultcode>" +
+                        "<faultstring>Fault</faultstring>" +
+                        "<detail><prefix:localPart xmlns:prefix='namespace'><detailContents xmlns='namespace'/>" +
+                        "</prefix:localPart></detail></SOAP-ENV:Fault></SOAP-ENV:Body>", result.toString());
+    }
+
+    public void testAddFaultWithDuplicateDetail() {
+        QName faultCode = new QName("namespace", "localPart", "prefix");
+        SoapFault fault = body.addFault(faultCode, "Fault");
+        fault.addFaultDetail();
+        try {
+            fault.addFaultDetail();
+            fail("SoapFaultException expected");
+        }
+        catch (SoapFaultException e) {
+            // expected
+        }
+    }
 
 }

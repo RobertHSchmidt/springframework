@@ -76,6 +76,20 @@ public interface SoapFault extends SoapElement {
     void setFaultRole(String role);
 
     /**
+     * Creates an optional <code>SoapFaultDetail</code> object and assigns it to this fault.
+     *
+     * @return the created detail
+     */
+    SoapFaultDetail getFaultDetail();
+
+    /**
+     * Returns the optional detail element for this <code>SoapFault</code>.
+     *
+     * @return a fault detail
+     */
+    SoapFaultDetail addFaultDetail();
+
+    /**
      * Indicates whether this is a <code>MustUnderstand</code> fault. A <code>MustUnderstand</code> is returned when a
      * SOAP header with a <code>MustUnderstand</code> attribute is not understood.
      *
