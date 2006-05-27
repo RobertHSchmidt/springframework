@@ -40,6 +40,7 @@
         <dependency org="xalan" name="xalan" rev="2.7.0" conf="buildtime->default"/>
         <dependency org="jaxen" name="jaxen" rev="1.1-beta-8" conf="buildtime->default"/>
         <dependency org="xom" name="xom" rev="1.1" conf="buildtime->default"/>
+        <dependency org="dom4j" name="dom4j" rev="1.6.1" conf="buildtime->default"/>
 
         <!-- test time only dependencies -->
         <dependency org="apache" name="log4j" rev="1.2.12" conf="test->default"/>

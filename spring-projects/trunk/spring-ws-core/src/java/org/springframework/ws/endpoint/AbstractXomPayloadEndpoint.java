@@ -110,10 +110,10 @@ public abstract class AbstractXomPayloadEndpoint implements PayloadEndpoint {
     }
 
     /**
-     * Template method. Subclasses must implement this. Offers the request payload as a JDOM <code>Element</code>, and
+     * Template method. Subclasses must implement this. Offers the request payload as a XOM <code>Element</code>, and
      * allows subclasses to return a response <code>Element</code>.
      *
-     * @param requestElement the contents of the SOAP message as DOM elements
+     * @param requestElement the contents of the SOAP message as XOM element
      * @return the response element. Can be <code>null</code> to specify no response.
      */
     protected abstract Element invokeInternal(Element requestElement) throws Exception;

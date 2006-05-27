@@ -27,7 +27,7 @@ import org.jdom.transform.JDOMSource;
  * Abstract base class for endpoints that handle the message payload as JDOM elements. Offers the message payload as a
  * JDOM <code>Element</code>, and allows subclasses to create a response by returning an <code>Element</code>.
  * <p/>
- * An <code>AbstractDomPayloadEndpoint</code> only accept one payload element. Multiple payload elements are not in
+ * An <code>AbstractJDomPayloadEndpoint</code> only accept one payload element. Multiple payload elements are not in
  * accordance with WS-I.
  *
  * @author Arjen Poutsma
@@ -48,7 +48,7 @@ public abstract class AbstractJDomPayloadEndpoint extends AbstractTransformingEn
      * Template method. Subclasses must implement this. Offers the request payload as a JDOM <code>Element</code>, and
      * allows subclasses to return a response <code>Element</code>.
      *
-     * @param requestElement the contents of the SOAP message as DOM elements
+     * @param requestElement the contents of the SOAP message as JDOM element
      * @return the response element. Can be <code>null</code> to specify no response.
      */
     protected abstract Element invokeInternal(Element requestElement) throws Exception;
