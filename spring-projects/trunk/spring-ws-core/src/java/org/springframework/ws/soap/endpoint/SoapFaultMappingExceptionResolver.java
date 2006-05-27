@@ -18,12 +18,9 @@ package org.springframework.ws.soap.endpoint;
 
 import java.util.Enumeration;
 import java.util.Properties;
-import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.ws.EndpointExceptionResolver;
 import org.springframework.ws.context.MessageContext;
+import org.springframework.ws.endpoint.AbstractEndpointExceptionResolver;
 import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.context.SoapMessageContext;
 
@@ -32,11 +29,7 @@ import org.springframework.ws.soap.context.SoapMessageContext;
  *
  * @author Arjen Poutsma
  */
-public class SoapFaultMappingExceptionResolver implements EndpointExceptionResolver {
-
-    protected final Log logger = LogFactory.getLog(getClass());
-
-    private Set mappedEndpoints;
+public class SoapFaultMappingExceptionResolver extends AbstractEndpointExceptionResolver {
 
     private Properties exceptionMappings;
 
@@ -44,13 +37,16 @@ public class SoapFaultMappingExceptionResolver implements EndpointExceptionResol
 
     /**
      * Set the mappings between exception class names and SOAP Faults. The exception class name can be a substring, with
-     * no wildcard support at present. <p/> The values of the given properties object should use the format described in
-     * <code>SoapFaultDefinitionEditor</code>. <p/> Follows the same matching algorithm as RuleBasedTransactionAttribute
-     * and RollbackRuleAttribute.
+     * no wildcard support at present.
+     * <p/>
+     * The values of the given properties object should use the format described in
+     * <code>SoapFaultDefinitionEditor</code>.
+     * <p/>
+     * Follows the same matching algorithm as RuleBasedTransactionAttribute and RollbackRuleAttribute.
      *
      * @param mappings exception patterns (can also be fully qualified class names) as keys, fault definition texts as
      *                 values
-     * @see org.springframework.ws.soap.endpoint.SoapFaultDefinitionEditor
+     * @see SoapFaultDefinitionEditor
      * @see org.springframework.transaction.interceptor.RuleBasedTransactionAttribute
      * @see org.springframework.transaction.interceptor.RollbackRuleAttribute
      * @see org.springframework.web.servlet.handler.SimpleMappingExceptionResolver
@@ -66,22 +62,9 @@ public class SoapFaultMappingExceptionResolver implements EndpointExceptionResol
         this.defaultFault = defaultFault;
     }
 
-    /**
-     * Specify the set of endpoints that this exception resolver should map. The exception mappings and the default
-     * fault will only apply to the specified endpoints. <p/> If no endpoints set, both the exception mappings and the
-     * default fault will apply to all handlers. This means that a specified default fault will be used as fallback for
-     * all exceptions; any further HandlerExceptionResolvers in the chain will be ignored in this case.
-     */
-    public void setMappedEndpoints(Set mappedEndpoints) {
-        this.mappedEndpoints = mappedEndpoints;
-    }
-
-    public boolean resolveException(MessageContext messageContext, Object endpoint, Exception ex) {
+    protected boolean resolveExceptionInternal(MessageContext messageContext, Object endpoint, Exception ex) {
         if (!(messageContext instanceof SoapMessageContext)) {
             throw new IllegalArgumentException("SoapFaultMappingExceptionResolver requires a SoapMessageContext");
-        }
-        if (this.mappedEndpoints != null && !this.mappedEndpoints.contains(endpoint)) {
-            return false;
         }
         SoapFaultDefinition definition = getFaultDefinition(ex);
         if (definition == null) {
