@@ -37,7 +37,7 @@ import org.springframework.util.StringUtils;
  * use JAXB. This base class is responsible for creating JAXB marshallers from a <code>JAXBContext</code>.
  * <p/>
  * JAXB 2.0 added  breaking API changes, so specific subclasses must be used for JAXB 1.0 and 2.0
- * (<code>Jaxb1Marshaller</code> and <code>Jaxb2Marshaller</code> respectivaly). (Jaxb
+ * (<code>Jaxb1Marshaller</code> and <code>Jaxb2Marshaller</code> respectivaly).
  *
  * @author Arjen Poutsma
  * @see Jaxb1Marshaller
