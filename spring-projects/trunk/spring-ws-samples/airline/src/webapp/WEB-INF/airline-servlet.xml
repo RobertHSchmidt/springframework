@@ -9,10 +9,10 @@
             supports MessageHandler instances as handlers.
             It uses a SAAJ to construct SoapMessageContexts (and SoapMessages).
         </description>
-        <property name="messageContextFactory">
-            <bean class="org.springframework.ws.soap.saaj.SaajSoapMessageContextFactory"/>
-        </property>
+        <property name="messageContextFactory" ref="messageContextFactory"/>
     </bean>
+
+    <bean id="messageContextFactory" class="org.springframework.ws.soap.axiom.AxiomSoapMessageContextFactory"/>
 
     <bean id="handlerMapping"
           class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">

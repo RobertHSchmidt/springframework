@@ -16,6 +16,7 @@
 
 package org.springframework.ws.soap;
 
+import javax.xml.namespace.QName;
 import javax.xml.transform.Result;
 
 /**
@@ -33,7 +34,7 @@ public interface SoapHeaderElement extends SoapElement {
      *
      * @return the role of the header
      */
-    String getRole();
+    String getRole() throws SoapHeaderException;
 
     /**
      * Sets the role or actor for this header element. In a SOAP 1.1 compliant message, this will result in an
@@ -41,14 +42,14 @@ public interface SoapHeaderElement extends SoapElement {
      *
      * @param role the role value
      */
-    void setRole(String role);
+    void setRole(String role) throws SoapHeaderException;
 
     /**
      * Indicates whether the <code>mustUnderstand</code> attribute for this header element is set.
      *
      * @return <code>true</code> if the <code>mustUnderstand</code> attribute is set; <code>false</code> otherwise
      */
-    boolean getMustUnderstand();
+    boolean getMustUnderstand() throws SoapHeaderException;
 
     /**
      * Sets the <code>mustUnderstand</code> attribute for this header element. If the attribute is on, the role who
@@ -57,10 +58,18 @@ public interface SoapHeaderElement extends SoapElement {
      * @param mustUnderstand <code>true</code> to set the <code>mustUnderstand</code> attribute on; <code>false</code>
      *                       to turn it off
      */
-    void setMustUnderstand(boolean mustUnderstand);
+    void setMustUnderstand(boolean mustUnderstand) throws SoapHeaderException;
 
     /**
      * Returns a <code>Result</code> that allows for writing to the <strong>contents</strong> of the header element.
      */
-    Result getResult();
+    Result getResult() throws SoapHeaderException;
+
+    /**
+     * Adds an attribute with the specified qualified name and value to this header element.
+     *
+     * @param name  the name of the attribute
+     * @param value the value of the attribute
+     */
+    void addAttribute(QName name, String value) throws SoapHeaderException;
 }

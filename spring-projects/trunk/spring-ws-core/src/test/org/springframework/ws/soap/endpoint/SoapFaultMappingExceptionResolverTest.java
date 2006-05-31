@@ -25,6 +25,7 @@ import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.SoapMessageException;
+import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.context.SoapMessageContext;
 
 public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
@@ -75,7 +76,9 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
         resolver.setExceptionMappings(mappings);
         contextControl.expectAndReturn(contextMock.createSoapResponse(), messageMock);
         messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
-        bodyControl.expectAndReturn(bodyMock.addSenderFault("Sender error"), faultMock);
+        messageControl.expectAndReturn(messageMock.getVersion(), SoapVersion.SOAP_11);
+        bodyControl.expectAndReturn(bodyMock.addFault(SoapVersion.SOAP_11.getSenderFaultName(), "Sender error"),
+                faultMock);
 
         replayMockControls();
 
@@ -92,7 +95,9 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
         resolver.setExceptionMappings(mappings);
         contextControl.expectAndReturn(contextMock.createSoapResponse(), messageMock);
         messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
-        bodyControl.expectAndReturn(bodyMock.addReceiverFault("Receiver error"), faultMock);
+        messageControl.expectAndReturn(messageMock.getVersion(), SoapVersion.SOAP_11);
+        bodyControl.expectAndReturn(bodyMock.addFault(SoapVersion.SOAP_11.getReceiverFaultName(), "Receiver error"),
+                faultMock);
 
         replayMockControls();
 

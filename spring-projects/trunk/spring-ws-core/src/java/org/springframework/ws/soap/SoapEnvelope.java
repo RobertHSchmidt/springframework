@@ -28,14 +28,16 @@ public interface SoapEnvelope extends SoapElement {
      * Returns the <code>SoapHeader</code>. Returns <code>null</code> if no header is present.
      *
      * @return the <code>SoapHeader</code>, or <code>null</code>
+     * @throws SoapHeaderException if the header cannot be returned
      */
-    SoapHeader getHeader();
+    SoapHeader getHeader() throws SoapHeaderException;
 
     /**
      * Returns the <code>SoapBody</code>.
      *
      * @return the <code>SoapBody</code>
+     * @throws SoapBodyException if the header cannot be returned
      */
-    SoapBody getBody();
+    SoapBody getBody() throws SoapBodyException;
 
 }

@@ -50,47 +50,8 @@ public interface SoapBody extends SoapElement {
     Result getPayloadResult();
 
     /**
-     * Adds a <code>MustUnderstand</code> fault to the body. A <code>MustUnderstand</code> is returned when a SOAP
-     * header with a <code>MustUnderstand</code> attribute is not understood.
-     * <p/>
-     * Adding a fault removes the current content of the body.
-     * <p/>
-     * The specified headers can be used to generate an fault string.
-     *
-     * @param headers the qualified names of the headers that are not understood.
-     * @return the created <code>SoapFault</code>
-     * @see SoapFault#isMustUnderstandFault()
-     */
-    SoapFault addMustUnderstandFault(QName[] headers);
-
-    /**
-     * Adds a <code>Sender</code>/<code>Client</code> fault to the body.  If the underlying message is SOAP 1.1 based,
-     * this methods creates a <code>Client</code> fault code; in SOAP 1.2, it creates a <code>Sender</code> fault code.
-     * <p/>
-     * Adding a fault removes the current content of the body.
-     *
-     * @param faultString the fault string
-     * @return the created <code>SoapFault</code>
-     * @see SoapFault#isMustUnderstandFault()
-     */
-    SoapFault addSenderFault(String faultString);
-
-    /**
-     * Adds a <code>Receiver</code>/<code>Server</code> fault to the body.  If the underlying message is SOAP 1.1 based,
-     * this methods creates a <code>Receiver</code> fault code; in SOAP 1.2, it creates a <code>Receiver</code> fault
-     * code.
-     * <p/>
-     * Adding a fault removes the current content of the body.
-     *
-     * @param faultString the fault string
-     * @return the created <code>SoapFault</code>
-     * @see SoapFault#isMustUnderstandFault()
-     */
-    SoapFault addReceiverFault(String faultString);
-
-    /**
-     * Adds a custom soap fault to the body. The given fault code must be fully qualified (i.e. namespace, prefix, and
-     * local part must be present).
+     * Adds a SOAP <code>Fault</code> to the body. The given fault code must be fully qualified (i.e. namespace, prefix,
+     * and local part must be present).
      * <p/>
      * Adding a fault removes the current content of the body.
      *

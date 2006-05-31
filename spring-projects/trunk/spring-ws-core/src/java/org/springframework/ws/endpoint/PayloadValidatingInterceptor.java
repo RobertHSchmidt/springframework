@@ -29,6 +29,7 @@ import org.springframework.ws.soap.SoapEndpointInterceptor;
 import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.context.SoapMessageContext;
+import org.springframework.ws.soap.support.SoapMessageUtils;
 import org.springframework.xml.validation.XmlValidator;
 import org.springframework.xml.validation.XmlValidatorFactory;
 import org.xml.sax.SAXException;
@@ -116,7 +117,7 @@ public class PayloadValidatingInterceptor implements SoapEndpointInterceptor, In
                 }
                 if (messageContext instanceof SoapMessageContext) {
                     SoapMessage response = ((SoapMessageContext) messageContext).createSoapResponse();
-                    response.getSoapBody().addSenderFault("Validation error");
+                    SoapMessageUtils.addSenderFault(response, "Validation error");
                 }
                 return false;
             }

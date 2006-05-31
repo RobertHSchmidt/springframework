@@ -26,9 +26,6 @@ import javax.xml.namespace.QName;
  * Though this interface uses SOAP 1.2 terminology, the underlying implementations can be both SOAP 1.1 and 1.2 based.
  *
  * @author Arjen Poutsma
- * @see #isMustUnderstandFault()
- * @see #isSenderFault()
- * @see #isReceiverFault()
  */
 public interface SoapFault extends SoapElement {
 
@@ -88,34 +85,4 @@ public interface SoapFault extends SoapElement {
      * @return a fault detail
      */
     SoapFaultDetail addFaultDetail();
-
-    /**
-     * Indicates whether this is a <code>MustUnderstand</code> fault. A <code>MustUnderstand</code> is returned when a
-     * SOAP header with a <code>MustUnderstand</code> attribute is not understood.
-     *
-     * @return <code>true</code> if this a <code>MustUnderstand</code> fault; <code>false</code> otherwise
-     * @see SoapHeaderElement#getMustUnderstand()
-     * @see SoapBody#addMustUnderstandFault(javax.xml.namespace.QName[])
-     */
-    boolean isMustUnderstandFault();
-
-    /**
-     * Indicates whether this is a <code>Sender</code>/<code>Client</code> fault. If the underlying message is SOAP 1.1
-     * based, this methods checks for a <code>Client</code> fault code; in SOAP 1.2, it checks for a <code>Sender</code>
-     * fault code.
-     *
-     * @return <code>true</code> if this a <code>Sender</code> or <code>Client</code> fault
-     * @see SoapBody#addSenderFault(String)
-     */
-    boolean isSenderFault();
-
-    /**
-     * Indicates whether this is a <code>Receiver</code> fault. If the underlying message is SOAP 1.1 based, this
-     * methods checks for a <code>Server</code> fault code; in SOAP 1.2, it checks for a <code>Receiver</code> fault
-     * code.
-     *
-     * @return <code>true</code> if this is a <code>Receiver</code> or <code>Server</code> fault
-     * @see SoapBody#addReceiverFault(String)
-     */
-    boolean isReceiverFault();
 }

@@ -42,19 +42,6 @@ public class SaajSoapMessageContextFactory implements MessageContextFactory, Ini
 
     private MessageFactory messageFactory;
 
-    public SaajSoapMessageContextFactory() {
-        try {
-            this.messageFactory = MessageFactory.newInstance();
-        }
-        catch (SOAPException ex) {
-            throw new SoapMessageCreationException("Could not create MessageFactory: " + ex.getMessage(), ex);
-        }
-    }
-
-    public SaajSoapMessageContextFactory(MessageFactory messageFactory) {
-        this.messageFactory = messageFactory;
-    }
-
     public MessageContext createContext(HttpServletRequest httpRequest) throws IOException {
         Assert.isTrue("POST".equals(httpRequest.getMethod()), "HttpServletRequest does not have POST method");
         MimeHeaders mimeHeaders = new MimeHeaders();
@@ -83,6 +70,13 @@ public class SaajSoapMessageContextFactory implements MessageContextFactory, Ini
     }
 
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(messageFactory, "messageFactory is required");
+        if (this.messageFactory == null) {
+            try {
+                this.messageFactory = MessageFactory.newInstance();
+            }
+            catch (SOAPException ex) {
+                throw new SoapMessageCreationException("Could not create MessageFactory: " + ex.getMessage(), ex);
+            }
+        }
     }
 }

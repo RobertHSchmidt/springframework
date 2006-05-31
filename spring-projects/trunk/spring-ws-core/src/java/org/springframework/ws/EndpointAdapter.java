@@ -23,7 +23,7 @@ import org.springframework.ws.context.MessageContext;
  * allow the <code>MessageDispatcher</code> to be indefintely extensible. It accesses all installed endpoints through
  * this interface, meaning that is does not contain code specific to any endpoint type.
  * <p/>
- * <p>This interface is not intended for application developers. It is available for those who want to develop their own
+ * This interface is not intended for application developers. It is available for those who want to develop their own
  * message flow.
  *
  * @author Arjen Poutsma

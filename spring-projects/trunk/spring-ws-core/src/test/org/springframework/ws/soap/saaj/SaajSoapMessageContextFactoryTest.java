@@ -30,6 +30,7 @@ public class SaajSoapMessageContextFactoryTest extends TestCase {
 
     protected void setUp() throws Exception {
         messageContextFactory = new SaajSoapMessageContextFactory();
+        messageContextFactory.afterPropertiesSet();
     }
 
     public void testCreateMessageFromHttpServletRequest() throws Exception {

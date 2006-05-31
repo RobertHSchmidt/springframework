@@ -31,6 +31,10 @@
             <artifact name="saaj" type="jar"/>
             <artifact name="saaj-impl" type="jar"/>
         </dependency>
+        <dependency org="axis2" name="axiom" rev="1.0" conf="buildtime->default">
+            <artifact name="axiom-api" type="jar"/>
+            <artifact name="axiom-impl" type="jar"/>
+        </dependency>
         <dependency org="jdom" name="jdom" rev="1.0" conf="buildtime->default"/>
         <dependency org="stax" name="stax-api" rev="1.0" conf="buildtime->default"/>
         <dependency org="java" name="servlet" rev="2.4" conf="buildtime->default">

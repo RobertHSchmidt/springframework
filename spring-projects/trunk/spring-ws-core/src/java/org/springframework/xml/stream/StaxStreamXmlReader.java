@@ -16,6 +16,7 @@
 
 package org.springframework.xml.stream;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -144,8 +145,9 @@ public class StaxStreamXmlReader extends StaxXmlReader {
                 getContentHandler().startPrefixMapping(reader.getNamespacePrefix(i), reader.getNamespaceURI(i));
             }
 
-            getContentHandler().startElement(reader.getName().getNamespaceURI(), reader.getName().getLocalPart(),
-                    QNameUtils.toQualifiedName(reader.getName()), getAttributes());
+            QName qName = reader.getName();
+            getContentHandler().startElement(qName.getNamespaceURI(), qName.getLocalPart(),
+                    QNameUtils.toQualifiedName(qName), getAttributes());
         }
     }
 

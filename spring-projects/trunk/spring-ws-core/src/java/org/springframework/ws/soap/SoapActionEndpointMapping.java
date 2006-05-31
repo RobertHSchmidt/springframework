@@ -34,7 +34,8 @@ public class SoapActionEndpointMapping extends AbstractMapBasedSoapEndpointMappi
 
     protected String getLookupKeyForMessage(WebServiceMessage message) throws Exception {
         String soapAction = ((SoapMessage) message).getSoapAction();
-        if (soapAction.charAt(0) == '"' && soapAction.charAt(soapAction.length() - 1) == '"') {
+        if (StringUtils.hasLength(soapAction) && soapAction.charAt(0) == '"' &&
+                soapAction.charAt(soapAction.length() - 1) == '"') {
             return soapAction.substring(1, soapAction.length() - 1);
         }
         else {

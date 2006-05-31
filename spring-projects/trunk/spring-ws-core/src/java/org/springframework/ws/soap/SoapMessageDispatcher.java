@@ -28,6 +28,7 @@ import org.springframework.ws.EndpointInvocationChain;
 import org.springframework.ws.MessageDispatcher;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.context.SoapMessageContext;
+import org.springframework.ws.soap.support.SoapMessageUtils;
 
 /**
  * SOAP-specific subclass of the <code>MessageDispatcher</code>. Adds functionality for adding actor roles to a endpoint
@@ -49,7 +50,7 @@ public class SoapMessageDispatcher extends MessageDispatcher {
      * @return <code>true</code> if all necessary headers are understood; <code>false</code> otherwise
      * @see SoapEndpointInvocationChain#getRoles()
      * @see SoapHeader#examineMustUnderstandHeaderElements(String)
-     * @see SoapBody#addMustUnderstandFault(javax.xml.namespace.QName[])
+     * @see SoapMessageUtils#addMustUnderstandFault(SoapMessage, javax.xml.namespace.QName[])
      */
     protected boolean handleRequest(EndpointInvocationChain mappedEndpoint, MessageContext messageContext) {
         if (mappedEndpoint instanceof SoapEndpointInvocationChain && messageContext instanceof SoapMessageContext) {
@@ -88,7 +89,7 @@ public class SoapMessageDispatcher extends MessageDispatcher {
      * If they are, returns <code>true</code>. If they are not, a SOAP fault is created.
      *
      * @see SoapEndpointInterceptor#understands(SoapHeaderElement)
-     * @see SoapBody#addMustUnderstandFault(javax.xml.namespace.QName[])
+     * @see SoapMessageUtils#addMustUnderstandFault(SoapMessage, javax.xml.namespace.QName[])
      */
     private boolean handleRequestForRole(SoapEndpointInvocationChain mappedEndpoint,
                                          SoapMessageContext messageContext,
@@ -111,7 +112,7 @@ public class SoapMessageDispatcher extends MessageDispatcher {
         }
         else {
             SoapMessage response = (SoapMessage) messageContext.createSoapResponse();
-            SoapFault fault = response.getSoapBody().addMustUnderstandFault(
+            SoapFault fault = SoapMessageUtils.addMustUnderstandFault(response,
                     (QName[]) notUnderstoodHeaderNames.toArray(new QName[notUnderstoodHeaderNames.size()]));
             fault.setFaultRole(role);
             return false;

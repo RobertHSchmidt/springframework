@@ -34,17 +34,28 @@ public interface SoapHeader extends SoapElement {
      *
      * @param name the qualified name of the new header element
      * @return the created <code>SoapHeaderElement</code>
+     * @throws SoapHeaderException if the header cannot be created
      */
-    SoapHeaderElement addHeaderElement(QName name);
+    SoapHeaderElement addHeaderElement(QName name) throws SoapHeaderException;
 
     /**
      * Returns an <code>Iterator</code> over all the <code>SoapHeaderElement</code>s that have the specified role and
      * that have a <code>MustUnderstand</code> attribute whose value is equivalent to <code>true</code>.
      *
      * @param role the role for which to search
-     * @return an <code>Iterator</code> over all the <code>SoapHeaderElement</code>s that contain the specified role and
-     *         are marked as <code>MustUnderstand</code>
+     * @return an iterator over all the header elements that contain the specified role and are marked as
+     *         <code>MustUnderstand</code>
+     * @throws SoapHeaderException if the headers cannot be returned
+     * @see SoapHeaderElement
      */
-    Iterator examineMustUnderstandHeaderElements(String role);
+    Iterator examineMustUnderstandHeaderElements(String role) throws SoapHeaderException;
 
+    /**
+     * Returns an <code>Iterator</code> over all the <code>SoapHeaderElement</code>s in this header.
+     *
+     * @return an iterator over all the header elements
+     * @throws SoapHeaderException if the header cannot be returned
+     * @see SoapHeaderElement
+     */
+    Iterator examineAllHeaderElements() throws SoapHeaderException;
 }

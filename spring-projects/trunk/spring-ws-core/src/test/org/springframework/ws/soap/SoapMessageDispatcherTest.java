@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springframework.ws.soap.context.SoapMessageContext;
+import org.springframework.ws.soap.support.SoapMessageUtils;
 
 public class SoapMessageDispatcherTest extends TestCase {
 
@@ -120,7 +121,10 @@ public class SoapMessageDispatcherTest extends TestCase {
         headerElementControl.expectAndReturn(headerElementMock.getName(), headerElementName);
         contextControl.expectAndReturn(contextMock.createSoapResponse(), responseMock);
         messageControl.expectAndReturn(responseMock.getSoapBody(), bodyMock);
-        bodyMock.addMustUnderstandFault(new QName[]{headerElementName});
+        messageControl.expectAndReturn(responseMock.getVersion(), SoapVersion.SOAP_11);
+        messageControl.expectAndReturn(responseMock.getVersion(), SoapVersion.SOAP_11);
+        bodyMock.addFault(SoapVersion.SOAP_11.getMustUnderstandAttributeName(),
+                SoapMessageUtils.DEFAULT_MUST_UNDERSTAND_FAULT_STRING);
         bodyControl.setMatcher(MockControl.ARRAY_MATCHER);
         bodyControl.setReturnValue(faultMock);
         faultMock.setFaultRole(role);

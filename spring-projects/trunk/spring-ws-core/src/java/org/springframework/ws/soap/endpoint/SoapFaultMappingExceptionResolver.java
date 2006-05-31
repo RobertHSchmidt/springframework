@@ -21,8 +21,9 @@ import java.util.Properties;
 
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.endpoint.AbstractEndpointExceptionResolver;
-import org.springframework.ws.soap.SoapBody;
+import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.context.SoapMessageContext;
+import org.springframework.ws.soap.support.SoapMessageUtils;
 
 /**
  * Exception resolver that generates a <code>&lt;soap:fault&gt;</code> based on the given exception.
@@ -71,15 +72,15 @@ public class SoapFaultMappingExceptionResolver extends AbstractEndpointException
             return false;
         }
         SoapMessageContext soapContext = (SoapMessageContext) messageContext;
-        SoapBody body = soapContext.createSoapResponse().getSoapBody();
+        SoapMessage response = soapContext.createSoapResponse();
         if (SoapFaultDefinition.RECEIVER.equals(definition.getFaultCode())) {
-            body.addReceiverFault(definition.getFaultString());
+            SoapMessageUtils.addReceiverFault(response, definition.getFaultString());
         }
         else if (SoapFaultDefinition.SENDER.equals(definition.getFaultCode())) {
-            body.addSenderFault(definition.getFaultString());
+            SoapMessageUtils.addSenderFault(response, definition.getFaultString());
         }
         else {
-            body.addFault(definition.getFaultCode(), definition.getFaultString());
+            response.getSoapBody().addFault(definition.getFaultCode(), definition.getFaultString());
         }
         return true;
     }

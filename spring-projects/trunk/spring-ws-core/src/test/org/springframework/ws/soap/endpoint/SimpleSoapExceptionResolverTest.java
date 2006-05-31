@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.context.SoapMessageContext;
 
 public class SimpleSoapExceptionResolverTest extends TestCase {
@@ -52,7 +53,9 @@ public class SimpleSoapExceptionResolverTest extends TestCase {
         Exception exception = new Exception("message");
         contextControl.expectAndReturn(contextMock.createSoapResponse(), messageMock);
         messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
-        bodyControl.expectAndReturn(bodyMock.addReceiverFault(exception.getMessage()), null);
+        messageControl.expectAndReturn(messageMock.getVersion(), SoapVersion.SOAP_11);
+        bodyControl.expectAndReturn(
+                bodyMock.addFault(SoapVersion.SOAP_11.getReceiverFaultName(), exception.getMessage()), null);
         contextControl.replay();
         messageControl.replay();
         bodyControl.replay();

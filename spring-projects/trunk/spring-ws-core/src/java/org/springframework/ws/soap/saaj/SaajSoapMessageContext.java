@@ -37,7 +37,7 @@ public class SaajSoapMessageContext extends AbstractSoapMessageContext {
 
     private SaajSoapMessage response;
 
-    private MessageFactory messageFactory;
+    private final MessageFactory messageFactory;
 
     /**
      * Creates a new instance based on the given SAAJ request message, and a message factory.
@@ -54,10 +54,7 @@ public class SaajSoapMessageContext extends AbstractSoapMessageContext {
         return request;
     }
 
-    public SoapMessage createSoapResponse() {
-        if (response != null) {
-            throw new IllegalStateException("Response already created");
-        }
+    public SoapMessage createSoapResponseInternal() {
         try {
             SOAPMessage saajMessage = messageFactory.createMessage();
             response = new SaajSoapMessage(saajMessage);

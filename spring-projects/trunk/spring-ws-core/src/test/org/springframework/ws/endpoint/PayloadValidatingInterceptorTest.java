@@ -24,6 +24,7 @@ import org.springframework.ws.mock.MockWebServiceMessage;
 import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.context.AbstractSoapMessageContext;
 import org.springframework.ws.soap.context.SoapMessageContext;
 import org.springframework.xml.transform.StringSource;
@@ -64,16 +65,19 @@ public class PayloadValidatingInterceptorTest extends TestCase {
         final SoapMessage requestMock = (SoapMessage) soapMessageControl.getMock();
         final SoapMessage responseMock = (SoapMessage) soapMessageControl.getMock();
         SoapMessageContext soapMessageContext = new AbstractSoapMessageContext() {
+            SoapMessage response = null;
+
             public SoapMessage getSoapRequest() {
                 return requestMock;
             }
 
-            public SoapMessage createSoapResponse() {
-                return responseMock;
+            public SoapMessage createSoapResponseInternal() {
+                response = responseMock;
+                return response;
             }
 
             public SoapMessage getSoapResponse() {
-                return responseMock;
+                return response;
             }
         };
         MockControl soapBodyControl = MockControl.createControl(SoapBody.class);
@@ -82,7 +86,9 @@ public class PayloadValidatingInterceptorTest extends TestCase {
         soapMessageControl.expectAndReturn(responseMock.getSoapBody(), soapBodyMock);
         MockControl soapFaultControl = MockControl.createControl(SoapFault.class);
         SoapFault soapFaultMock = (SoapFault) soapFaultControl.getMock();
-        soapBodyControl.expectAndReturn(soapBodyMock.addSenderFault("Validation error"), soapFaultMock);
+        soapMessageControl.expectAndReturn(responseMock.getVersion(), SoapVersion.SOAP_11);
+        soapBodyControl.expectAndReturn(
+                soapBodyMock.addFault(SoapVersion.SOAP_11.getSenderFaultName(), "Validation error"), soapFaultMock);
 
         soapMessageControl.replay();
         soapBodyControl.replay();

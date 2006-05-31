@@ -18,6 +18,7 @@ package org.springframework.ws.soap.context;
 
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.context.AbstractMessageContext;
+import org.springframework.ws.soap.SoapMessage;
 
 /**
  * Abstract implementation of the <code>SoapMessageContext</code> interface. Implements base <code>MessageContext</code>
@@ -44,6 +45,18 @@ public abstract class AbstractSoapMessageContext extends AbstractMessageContext 
     public WebServiceMessage createResponse() {
         return createSoapResponse();
     }
+
+    public final SoapMessage createSoapResponse() {
+        if (getSoapResponse() != null) {
+            throw new IllegalStateException("Response already created");
+        }
+        return createSoapResponseInternal();
+    }
+
+    /**
+     * Protected template method that should create a <code>SoapMessage</code> response.
+     */
+    protected abstract SoapMessage createSoapResponseInternal();
 
     /**
      * Delegates to <code>getSoapResponse</code>.

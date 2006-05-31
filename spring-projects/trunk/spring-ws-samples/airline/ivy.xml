@@ -36,8 +36,16 @@
             <artifact name="saaj" type="jar"/>
             <artifact name="saaj-impl" type="jar"/>
         </dependency>
+        <dependency org="axis2" name="axiom" rev="1.0">
+            <artifact name="axiom-api" type="jar"/>
+            <artifact name="axiom-impl" type="jar"/>
+        </dependency>
 
         <dependency org="xml-apis" name="xml-apis" rev="1.3.02"/>
+        <dependency org="stax" name="stax-api" rev="1.0"/>
+        <dependency org="woodstox" name="woodstox" rev="2.9.1">
+            <artifact name="wstx-asl" type="jar"/>
+        </dependency>
 
         <dependency org="apache" name="xerces" rev="2.7.1">
             <artifact name="xercesImpl" type="jar"/>

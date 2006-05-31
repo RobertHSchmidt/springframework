@@ -61,6 +61,7 @@ import org.springframework.ws.soap.SoapFaultDetail;
 import org.springframework.ws.soap.SoapFaultDetailElement;
 import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapHeaderElement;
+import org.springframework.ws.soap.SoapHeaderException;
 import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.saaj.support.SaajUtils;
 
@@ -70,6 +71,7 @@ import org.springframework.ws.soap.saaj.support.SaajUtils;
  *
  * @author Arjen Poutsma
  * @see javax.xml.soap.SOAPMessage
+ * @see SaajSoapMessageContext
  */
 public class SaajSoapMessage extends AbstractSoapMessage {
 
@@ -271,6 +273,10 @@ public class SaajSoapMessage extends AbstractSoapMessage {
             return new SaajSoapHeaderElementIterator(saajHeader.examineMustUnderstandHeaderElements(role));
         }
 
+        public Iterator examineAllHeaderElements() {
+            return new SaajSoapHeaderElementIterator(saajHeader.examineAllHeaderElements());
+        }
+
         private SOAPEnvelope getEnvelope() {
             return (SOAPEnvelope) saajHeader.getParentElement();
         }
@@ -336,6 +342,21 @@ public class SaajSoapMessage extends AbstractSoapMessage {
         public Result getResult() {
             return new DOMResult(saajHeaderElement);
         }
+
+        public void addAttribute(QName name, String value) throws SoapHeaderException {
+            try {
+                Name saajName = SaajUtils.toName(name, getEnvelope());
+                saajHeaderElement.addAttribute(saajName, value);
+            }
+            catch (SOAPException ex) {
+                throw new SaajSoapHeaderException(ex);
+            }
+        }
+
+        private SOAPEnvelope getEnvelope() {
+            return (SOAPEnvelope) saajHeaderElement.getParentElement().getParentElement();
+        }
+
     }
 
     /**
@@ -358,39 +379,6 @@ public class SaajSoapMessage extends AbstractSoapMessage {
             return new DOMResult(saajBody);
         }
 
-        public SoapFault addMustUnderstandFault(QName[] headers) {
-            try {
-                Name name = getEnvelope()
-                        .createName(SaajSoapFault.MUST_UNDERSTAND, null, SOAPConstants.URI_NS_SOAP_ENVELOPE);
-                return addFault(name, "Mandatory Header error.");
-            }
-            catch (SOAPException ex) {
-                throw new SaajSoapFaultException(ex);
-            }
-        }
-
-        public SoapFault addSenderFault(String faultString) {
-            Assert.hasLength("faultString cannot be empty", faultString);
-            try {
-                Name name = getEnvelope().createName(SaajSoapFault.CLIENT, null, SOAPConstants.URI_NS_SOAP_ENVELOPE);
-                return addFault(name, faultString);
-            }
-            catch (SOAPException ex) {
-                throw new SaajSoapFaultException(ex);
-            }
-        }
-
-        public SoapFault addReceiverFault(String faultString) {
-            Assert.hasLength("faultString cannot be empty", faultString);
-            try {
-                Name name = getEnvelope().createName(SaajSoapFault.SERVER, null, SOAPConstants.URI_NS_SOAP_ENVELOPE);
-                return addFault(name, faultString);
-            }
-            catch (SOAPException ex) {
-                throw new SaajSoapFaultException(ex);
-            }
-        }
-
         public SoapFault addFault(QName faultCode, String faultString) {
             Assert.hasLength("faultString cannot be empty", faultString);
             if (!StringUtils.hasLength(faultCode.getNamespaceURI()) || (!StringUtils.hasLength(faultCode.getPrefix())))
@@ -399,8 +387,21 @@ public class SaajSoapMessage extends AbstractSoapMessage {
                         "must be specific for a custom fault code");
             }
             try {
-                Name name = SaajUtils.toName(faultCode, getEnvelope());
-                return addFault(name, faultString);
+                Name name;
+                if (faultCode.getNamespaceURI().equals(SOAPConstants.URI_NS_SOAP_ENVELOPE)) {
+                    name = getEnvelope()
+                            .createName(faultCode.getLocalPart(), null, SOAPConstants.URI_NS_SOAP_ENVELOPE);
+                }
+                else {
+                    name = SaajUtils.toName(faultCode, getEnvelope());
+                }
+                for (Iterator iterator = saajBody.getChildElements(); iterator.hasNext();) {
+                    SOAPBodyElement bodyElement = (SOAPBodyElement) iterator.next();
+                    bodyElement.detachNode();
+                    bodyElement.recycleNode();
+                }
+                SOAPFault saajFault = saajBody.addFault(name, faultString);
+                return new SaajSoapFault(saajFault);
             }
             catch (SOAPException ex) {
                 throw new SaajSoapFaultException(ex);
@@ -421,16 +422,6 @@ public class SaajSoapMessage extends AbstractSoapMessage {
 
         public Source getSource() {
             return new DOMSource(saajBody);
-        }
-
-        private SoapFault addFault(Name name, String faultString) throws SOAPException {
-            for (Iterator iterator = saajBody.getChildElements(); iterator.hasNext();) {
-                SOAPBodyElement bodyElement = (SOAPBodyElement) iterator.next();
-                bodyElement.detachNode();
-                bodyElement.recycleNode();
-            }
-            SOAPFault saajFault = saajBody.addFault(name, faultString);
-            return new SaajSoapFault(saajFault);
         }
 
         private SOAPEnvelope getEnvelope() {
