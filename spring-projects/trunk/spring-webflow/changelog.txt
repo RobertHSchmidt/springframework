@@ -10,6 +10,7 @@ Package org.springframework.webflow
 * Fixed bug in Flow.end where outputMapper source and target arguments were backwards.
 * Removed unused constructors in AttributeMap.
 * Added CollectionUtils.singleEntryMap for easily populating a UnmodifiableAttributeMap with a single attribute.
+* AttributeMap, UnmodifiableAttributeMap, and ParameterMap implement equals and hashCode now.
 
 Package org.springframework.webflow.action
 * Made FormAction.formObjectScope default ScopeType.FLOW instead of ScopeType.REQUEST.
