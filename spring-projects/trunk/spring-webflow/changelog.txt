@@ -5,8 +5,8 @@ http://www.springframework.org
 Changes in version 1.0 RC2 (29.5.2006)
 ------------------------------------
 Package org.springframework.webflow
-* Removed 'requiredType' not null check on AttributeMap accessor methods;
-  if no requiredType is specified the type assert is simply not performed.
+* Removed 'requiredType' not null check on AttributeMap accessor methods; if no requiredType is specified
+  the type assert is simply not performed.
 * Fixed bug in Flow.end where outputMapper source and target arguments were backwards.
 * Removed unused constructors in AttributeMap.
 * Added CollectionUtils.singleEntryMap for easily populating a UnmodifiableAttributeMap with a single attribute.
@@ -49,6 +49,9 @@ Package org.springframework.webflow.executor
   was not being appended to the redirect URL correctly.
 * Fixed bug where JSFPhaseListener was resetting the UIViewRoot even if the view did not change as 
   part of a resubmission.
+* Added support for populating the FlowExecution inputMap from ExternalContext attributes during a launch operation.
+  This allows for a flow to be passed input from clients that start it, and subsequently
+  map the input into its local scope using a input-mapper.
   
 Package org.springframework.webflow.registry
 * Improved ExternalizedFlowRegistrar, extracting a factory method for creating an ExternalizedFlowDefinition
