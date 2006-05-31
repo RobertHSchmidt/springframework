@@ -237,4 +237,8 @@ public class ParameterMapTests extends TestCase {
 		assertEquals(parameterMap, map1);
 	}
 
+	public void testAsAttributeMap() {
+		UnmodifiableAttributeMap map = parameterMap.asAttributeMap();
+		assertEquals(map.getMap(), parameterMap.getMap());
+	}
 }
