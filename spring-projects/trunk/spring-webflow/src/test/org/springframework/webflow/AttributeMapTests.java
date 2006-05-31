@@ -312,4 +312,20 @@ public class AttributeMapTests extends TestCase {
 		assertEquals("coz", three.get("cat"));
 		assertEquals("boo", three.get("bar"));
 	}
+	
+	public void testEquality() {
+		AttributeMap map = new AttributeMap();
+		map.put("foo", "bar");
+		
+		AttributeMap map2 = new AttributeMap();
+		map2.put("foo", "bar");
+		
+		assertEquals(map, map2);
+	}
+	
+	public void testEqualityUnmodifiable() {
+		UnmodifiableAttributeMap map1 = CollectionUtils.singleEntryMap("foo", "bar");
+		UnmodifiableAttributeMap map2 = CollectionUtils.singleEntryMap("foo", "bar");	
+		assertEquals(map1, map2);
+	}
 }

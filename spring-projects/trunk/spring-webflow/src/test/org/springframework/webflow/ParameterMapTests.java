@@ -231,5 +231,10 @@ public class ParameterMapTests extends TestCase {
 		Boolean value = parameterMap.getBoolean("bogus", Boolean.TRUE);
 		assertEquals(Boolean.TRUE, value);
 	}
+	
+	public void testEquality() {
+		ParameterMap map1 = new ParameterMap(new HashMap(parameterMap.getMap()));
+		assertEquals(parameterMap, map1);
+	}
 
 }
