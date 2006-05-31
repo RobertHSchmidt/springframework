@@ -89,6 +89,18 @@ public class ParameterMap implements MapAdaptable, Serializable {
 		this.conversionService = conversionService;
 	}
 
+	public boolean equals(Object o) {
+		if (!(o instanceof ParameterMap)) {
+			return false;
+		}
+		ParameterMap other = (ParameterMap)o;
+		return parameters.equals(other.parameters);
+	}
+	
+	public int hashCode() {
+		return parameters.hashCode();
+	}
+	
 	public Map getMap() {
 		return parameterAccessor.getMap();
 	}

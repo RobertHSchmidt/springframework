@@ -26,7 +26,7 @@ import java.util.Map;
  * 
  * @author Keith Donald
  */
-public final class UnmodifiableAttributeMap extends AbstractAttributeMap {
+public class UnmodifiableAttributeMap extends AbstractAttributeMap {
 
 	/**
 	 * Creates a new attribute map, initially empty.
