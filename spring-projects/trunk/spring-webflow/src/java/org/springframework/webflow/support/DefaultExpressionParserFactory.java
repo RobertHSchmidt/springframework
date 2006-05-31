@@ -29,11 +29,23 @@ import org.springframework.binding.expression.support.OgnlExpressionParser;
  */
 public class DefaultExpressionParserFactory {
 
-	private static final WebFlowOgnlExpressionParser INSTANCE = new WebFlowOgnlExpressionParser();
+	private static ExpressionParser INSTANCE;
 	
-	static {
+	/**
+	 * Returns the default expression parser.
+	 * @return the expression parser
+	 */
+	public synchronized ExpressionParser getExpressionParser() {
+		if (INSTANCE == null) {
+			INSTANCE = createDefaultExpressionParser();
+		}
+		return INSTANCE;
+	}
+	
+	protected ExpressionParser createDefaultExpressionParser() {
 		try {
 			Class.forName("ognl.Ognl");
+			return new WebFlowOgnlExpressionParser();
 		}
 		catch (ClassNotFoundException e) {
 			throw new IllegalStateException(
@@ -47,13 +59,5 @@ public class DefaultExpressionParserFactory {
 							+ "Please add OGNL 2.x to your classpath or set the default ExpressionParser instance to something that is in the classpath.  "
 							+ "Details: " + e);
 		}
-	}
-
-	/**
-	 * Returns the default expression parser.
-	 * @return the expression parser
-	 */
-	public ExpressionParser getExpressionParser() {
-		return INSTANCE;
 	}
 }
