@@ -31,7 +31,7 @@
             <artifact name="saaj" type="jar"/>
             <artifact name="saaj-impl" type="jar"/>
         </dependency>
-        <dependency org="axis2" name="axiom" rev="1.0" conf="buildtime->default">
+        <dependency org="ws-commons" name="ws-commons" rev="1.0" conf="buildtime->default">
             <artifact name="axiom-api" type="jar"/>
             <artifact name="axiom-impl" type="jar"/>
         </dependency>
