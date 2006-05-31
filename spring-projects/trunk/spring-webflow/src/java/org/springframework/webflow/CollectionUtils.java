@@ -18,10 +18,12 @@ package org.springframework.webflow;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
- * A utility class for working with collections used by Spring Web FLow.
+ * A utility class for working with attribute and parameter collections used by Spring Web FLow.
  * @author Keith Donald
  */
 public class CollectionUtils {
@@ -41,10 +43,6 @@ public class CollectionUtils {
 	 * The shared, singleton empty iterator instance.
 	 */
 	public static final EmptyIterator EMPTY_ITERATOR = new EmptyIterator();
-
-	public static Iterator iterator(Enumeration enumeration) {
-		return new EnumerationIterator(enumeration);
-	}
 
 	private CollectionUtils() {
 
@@ -88,5 +86,26 @@ public class CollectionUtils {
 			throw new UnsupportedOperationException("Not supported");
 		}
 
+	}
+
+	/**
+	 * Factory method that adapts an enumeration to an iterator.
+	 * @param enumeration the enumeration
+	 * @return the iterator.
+	 */
+	public static Iterator iterator(Enumeration enumeration) {
+		return new EnumerationIterator(enumeration);
+	}
+
+	/**
+	 * Factory method that returns a unmodifiable attribute map with a single entry.
+	 * @param attributeName the attribute name
+	 * @param attributeValue the attribute value
+	 * @return
+	 */
+	public static UnmodifiableAttributeMap singleEntryMap(String attributeName, Object attributeValue) {
+		Map map = new HashMap(1, 1);
+		map.put(attributeName, attributeValue);
+		return new UnmodifiableAttributeMap(map);
 	}
 }

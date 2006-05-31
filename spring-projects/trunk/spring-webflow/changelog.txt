@@ -8,6 +8,8 @@ Package org.springframework.webflow
 * Removed 'requiredType' not null check on AttributeMap accessor methods;
   if no requiredType is specified the type assert is simply not performed.
 * Fixed bug in Flow.end where outputMapper source and target arguments were backwards.
+* Removed unused constructors in AttributeMap.
+* Added CollectionUtils.singleEntryMap for easily populating a UnmodifiableAttributeMap with a single attribute.
 
 Package org.springframework.webflow.action
 * Made FormAction.formObjectScope default ScopeType.FLOW instead of ScopeType.REQUEST.
@@ -58,6 +60,7 @@ Package org.springframework.webflow.support
 * Improved TransitionExecutingStateExceptionHandler to consider exception superclasses in handler match.
 * Improved TransitionExecutingStateExceptionHandler to expose exception "rootCause" as request scoped attribute
 * Changed "handledStateException" attribute to simply "stateException".
+* Fixed bug in DefaultExpressionParserFactory where Ognl would be loaded before explict classpath check.
 
 Package org.springframework.webflow.test
 * Added flowExecution not null asserts to signalEvent and refresh AbstractFlowExecutionTests operations.

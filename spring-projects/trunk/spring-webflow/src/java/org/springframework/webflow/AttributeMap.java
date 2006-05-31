@@ -31,29 +31,7 @@ public class AttributeMap extends AbstractAttributeMap {
 	 * Creates a new attribute map, initially empty.
 	 */
 	public AttributeMap() {
-		initAttributes(new HashMap());
-	}
-
-	/**
-	 * Creates a new attribute map of the specified size.
-	 */
-	public AttributeMap(int size) {
-		initAttributes(new HashMap(size));
-	}
-
-	/**
-	 * Creates a new attribute map of the specified size and loadFactor.
-	 */
-	public AttributeMap(int size, int loadFactor) {
-		initAttributes(new HashMap(size, loadFactor));
-	}
-
-	/**
-	 * Creates a new attribute map from the provided attribute map.
-	 */
-	public AttributeMap(AttributeCollection attributes) {
-		Assert.notNull(attributes, "The target attribute collection is required");
-		initAttributes(new HashMap(attributes.getMap()));
+		initAttributes(createTargetMap());
 	}
 
 	/**
@@ -62,6 +40,15 @@ public class AttributeMap extends AbstractAttributeMap {
 	public AttributeMap(Map map) {
 		Assert.notNull(map, "The target map is required");
 		initAttributes(map);
+	}
+
+	/**
+	 * Factory method that returns the target map storing the data in this
+	 * attribute map.
+	 * @return the target map
+	 */
+	protected Map createTargetMap() {
+		return new HashMap();
 	}
 
 	public UnmodifiableAttributeMap unmodifiable() {
@@ -73,7 +60,7 @@ public class AttributeMap extends AbstractAttributeMap {
 			return new AttributeMap(getMapInternal());
 		}
 		else {
-			Map map = new HashMap();
+			Map map = createTargetMap();
 			map.putAll(getMapInternal());
 			map.putAll(attributes.getMap());
 			return new AttributeMap(map);
@@ -84,8 +71,8 @@ public class AttributeMap extends AbstractAttributeMap {
 	 * Put the attribute into this map.
 	 * @param attributeName the attribute name.
 	 * @param attributeValue the attribute value.
-	 * @return the previous value of the attribute, or null of 
-	 * there was no previous value.
+	 * @return the previous value of the attribute, or null of there was no
+	 * previous value.
 	 */
 	public Object put(String attributeName, Object attributeValue) {
 		return getMapInternal().put(attributeName, attributeValue);

@@ -22,7 +22,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.ClassUtils;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.AttributeCollection;
-import org.springframework.webflow.AttributeMap;
+import org.springframework.webflow.CollectionUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.support.EventFactorySupport;
@@ -203,9 +203,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * @return the action result event
 	 */
 	protected Event result(String eventId, String resultAttributeName, Object resultAttributeValue) {
-		AttributeMap attributes = new AttributeMap(1, 1);
-		attributes.put(resultAttributeName, resultAttributeValue);
-		return result(eventId, attributes);
+		return result(eventId, CollectionUtils.singleEntryMap(resultAttributeName, resultAttributeValue));
 	}
 
 	public final Event execute(RequestContext context) throws Exception {

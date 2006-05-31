@@ -76,12 +76,7 @@ public final class Event extends EventObject {
 		super(source);
 		Assert.hasText(id, "The event id is required: please set this event's id to a non-blank string identifier");
 		this.id = id;
-		if (attributes == null) {
-			this.attributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
-		}
-		else {
-			this.attributes = attributes.unmodifiable();
-		}
+		this.attributes = (attributes != null ? attributes.unmodifiable() : CollectionUtils.EMPTY_ATTRIBUTE_MAP);
 	}
 
 	/**

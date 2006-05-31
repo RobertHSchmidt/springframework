@@ -16,7 +16,7 @@
 package org.springframework.webflow.support;
 
 import org.springframework.webflow.AttributeCollection;
-import org.springframework.webflow.AttributeMap;
+import org.springframework.webflow.CollectionUtils;
 import org.springframework.webflow.Event;
 
 /**
@@ -162,7 +162,7 @@ public class EventFactorySupport {
 
 	/**
 	 * Returns a "success" event with the provided result object as an
-	 * attribute. The result object is identified by the parameter name
+	 * attribute. The result object is identified by the attribute name
 	 * {@link #getResultAttributeName()}.
 	 * @param source the source of the event
 	 * @param result the action success result
@@ -244,16 +244,14 @@ public class EventFactorySupport {
 
 	/**
 	 * Returns a result event for this action with the specified identifier and
-	 * a single parameter.
+	 * a single attribute.
 	 * @param source the source of the event
 	 * @param eventId the result id
-	 * @param attributeName the parameter name
-	 * @param attributeValue the parameter value
+	 * @param attributeName the attribute name
+	 * @param attributeValue the attribute value
 	 * @return the action result event
 	 */
 	public Event event(Object source, String eventId, String attributeName, Object attributeValue) {
-		AttributeMap attributes = new AttributeMap(1, 1);
-		attributes.put(attributeName, attributeValue);
-		return new Event(source, eventId, attributes);
+		return new Event(source, eventId, CollectionUtils.singleEntryMap(attributeName, attributeValue));
 	}
 }
