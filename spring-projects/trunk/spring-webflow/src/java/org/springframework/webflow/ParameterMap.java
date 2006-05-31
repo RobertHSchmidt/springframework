@@ -449,6 +449,14 @@ public class ParameterMap implements MapAdaptable, Serializable {
 	}
 
 	/**
+	 * Adapts this parameter map to an {@link UnmodifiableAttributeMap}.
+	 * @return the underlying map as a unmodifiable attribute map.
+	 */
+	public UnmodifiableAttributeMap asAttributeMap() {
+		return new UnmodifiableAttributeMap(getMapInternal());
+	}
+	
+	/**
 	 * Initializes this parameter map.
 	 * @param parameters the parameters
 	 */
