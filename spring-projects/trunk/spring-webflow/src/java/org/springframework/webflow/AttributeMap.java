@@ -51,6 +51,18 @@ public class AttributeMap extends AbstractAttributeMap {
 		return new HashMap();
 	}
 
+	public boolean equals(Object o) {
+		if (!(o instanceof AttributeMap)) {
+			return false;
+		}
+		AttributeMap other = (AttributeMap)o;
+		return getMapInternal().equals(other.getMapInternal());
+	}
+	
+	public int hashCode() {
+		return getMapInternal().hashCode();
+	}
+
 	public UnmodifiableAttributeMap unmodifiable() {
 		return new UnmodifiableAttributeMap(getMap());
 	}

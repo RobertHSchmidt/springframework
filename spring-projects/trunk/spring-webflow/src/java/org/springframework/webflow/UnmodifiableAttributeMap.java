@@ -26,7 +26,7 @@ import java.util.Map;
  * 
  * @author Keith Donald
  */
-public class UnmodifiableAttributeMap extends AbstractAttributeMap {
+public final class UnmodifiableAttributeMap extends AbstractAttributeMap {
 
 	/**
 	 * Creates a new attribute map, initially empty.
@@ -36,6 +36,18 @@ public class UnmodifiableAttributeMap extends AbstractAttributeMap {
 			attributes = Collections.EMPTY_MAP;
 		}
 		initAttributes(attributes);
+	}
+
+	public boolean equals(Object o) {
+		if (!(o instanceof UnmodifiableAttributeMap)) {
+			return false;
+		}
+		UnmodifiableAttributeMap other = (UnmodifiableAttributeMap)o;
+		return getMapInternal().equals(other.getMapInternal());
+	}
+	
+	public int hashCode() {
+		return getMapInternal().hashCode();
 	}
 
 	public UnmodifiableAttributeMap unmodifiable() {
