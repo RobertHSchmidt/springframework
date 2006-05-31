@@ -19,6 +19,7 @@ import java.io.Serializable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.util.Assert;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.ExternalContext;
@@ -45,7 +46,7 @@ import org.springframework.webflow.support.RedirectType;
  * event).
  * <p>
  * This object is a facade or entry point into the Spring Web Flow execution
- * system, and makes the overall system easier to use. The name <i>executor</i>
+ * system and makes the overall system easier to use. The name <i>executor</i>
  * was chosen as <i>executors drive executions</i>.
  * <p>
  * <b>Commonly used configurable properties</b><br>
@@ -68,6 +69,16 @@ import org.springframework.webflow.support.RedirectType;
  * {@link ApplicationView} after pausing an active flow execution. Several
  * different types of redirect are supported.</td>
  * <td>NONE, indicating no special redirect action should be taken</td>
+ * </tr>
+ * <tr>
+ * <td>inputMapper</td>
+ * <td>The service responsible for mapping attributes of
+ * {@link ExternalContext external contexts} that request to launch new
+ * {@link FlowExecution flow executions}. After mapping, the target map is then
+ * passed to the FlowExecution, exposing context attributes as input to the flow
+ * during startup.</td>
+ * <td>A RequestParameterInputMapper, which exposes all request params in to
+ * the flow execution for input mapping. </td>
  * </tr>
  * </table>
  * </p>
@@ -105,6 +116,21 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * execution using a bookmarkable URL.
 	 */
 	private RedirectType redirectOnPause;
+
+	/**
+	 * The service responsible for mapping attributes of an
+	 * {@link ExternalContext} to a new {@link FlowExecution} during the
+	 * {@link #launch(String, ExternalContext) launch flow} operation.
+	 * <p>
+	 * This allows developers to control what attributes are made available in
+	 * the <code>inputMap</code> to new top-level flow executions. The
+	 * starting execution may then choose to map that available input into its
+	 * own local scope.
+	 * <p>
+	 * The default implementation simply exposes all request parameters as flow
+	 * execution input attributes. May be null.
+	 */
+	private AttributeMapper inputMapper = new RequestParameterInputMapper();
 
 	/**
 	 * Create a new flow executor that configures use of the default repository
@@ -185,16 +211,14 @@ public class FlowExecutorImpl implements FlowExecutor {
 		}
 	}
 
-	public ResponseInstruction refresh(Serializable conversationId, ExternalContext context)
-			throws FlowException {
+	public ResponseInstruction refresh(Serializable conversationId, ExternalContext context) throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionKey flowExecutionKey = repository.getCurrentFlowExecutionKey(conversationId);
 		FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
 		return new ResponseInstruction(flowExecutionKey, flowExecution, flowExecution.refresh(context));
 	}
 
-	public ResponseInstruction refresh(FlowExecutionKey flowExecutionKey, ExternalContext context)
-			throws FlowException {
+	public ResponseInstruction refresh(FlowExecutionKey flowExecutionKey, ExternalContext context) throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
 		return new ResponseInstruction(flowExecutionKey, flowExecution, flowExecution.refresh(context));
@@ -202,13 +226,19 @@ public class FlowExecutorImpl implements FlowExecutor {
 
 	/**
 	 * Factory method that creates the input attribute map for a newly created
-	 * {@link FlowExecution}. TODO - add support for input mappings here
-	 * @param flowExecution the new flow execution (yet to be started)
+	 * {@link FlowExecution}.
 	 * @param context the external context
 	 * @return the input map
 	 */
 	protected AttributeMap createInput(FlowExecution flowExecution, ExternalContext context) {
-		return null;
+		if (inputMapper != null) {
+			AttributeMap inputMap = new AttributeMap();
+			inputMapper.map(context, inputMap, null);
+			return inputMap;
+		}
+		else {
+			return null;
+		}
 	}
 
 	/**
