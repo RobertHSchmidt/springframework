@@ -221,11 +221,7 @@ public class FlowPhaseListener implements PhaseListener {
 			generateKey(context, holder);
 		}
 		ViewSelection selectedView = holder.getViewSelection();
-		if (selectedView == null) {
-			selectedView = holder.getFlowExecution().refresh(context);
-			holder.setViewSelection(selectedView);
-		}
-		if (selectedView instanceof ApplicationView) {
+		if (selectedView == null || selectedView instanceof ApplicationView) {
 			prepareApplicationView(context.getFacesContext(), holder);
 		}
 		else if (selectedView instanceof FlowExecutionRedirect) {
@@ -263,8 +259,10 @@ public class FlowPhaseListener implements PhaseListener {
 
 	protected void prepareApplicationView(FacesContext facesContext, FlowExecutionHolder holder) {
 		ApplicationView forward = (ApplicationView)holder.getViewSelection();
-		putInto(facesContext.getExternalContext().getRequestMap(), forward.getModel());
-		updateViewRoot(facesContext, viewIdResolver.resolveViewId(forward.getViewName()));
+		if (forward != null) {
+			putInto(facesContext.getExternalContext().getRequestMap(), forward.getModel());
+			updateViewRoot(facesContext, viewIdResolver.resolveViewId(forward.getViewName()));
+		}
 		Map requestMap = facesContext.getExternalContext().getRequestMap();
 		argumentExtractor.put(holder.getFlowExecutionKey(), requestMap);
 		argumentExtractor.put(holder.getFlowExecution(), requestMap);
