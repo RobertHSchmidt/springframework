@@ -221,7 +221,11 @@ public class FlowPhaseListener implements PhaseListener {
 			generateKey(context, holder);
 		}
 		ViewSelection selectedView = holder.getViewSelection();
-		if (selectedView == null || selectedView instanceof ApplicationView) {
+		if (selectedView == null) {
+			selectedView = holder.getFlowExecution().refresh(context);
+			holder.setViewSelection(selectedView);
+		}
+		if (selectedView instanceof ApplicationView) {
 			prepareApplicationView(context.getFacesContext(), holder);
 		}
 		else if (selectedView instanceof FlowExecutionRedirect) {
