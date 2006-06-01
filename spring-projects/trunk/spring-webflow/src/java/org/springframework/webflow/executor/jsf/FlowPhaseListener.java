@@ -152,7 +152,7 @@ public class FlowPhaseListener implements PhaseListener {
 
 	public void afterPhase(PhaseEvent event) {
 		if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
-			if (FlowExecutionHolderUtils.isFlowExecutionRestored(event.getFacesContext())) {
+			if (FlowExecutionHolderUtils.isFlowExecutionChanged(event.getFacesContext())) {
 				JsfExternalContext context = new JsfExternalContext(event.getFacesContext());
 				saveFlowExecution(context, FlowExecutionHolderUtils.getFlowExecutionHolder(event.getFacesContext()));
 			}
@@ -201,6 +201,7 @@ public class FlowPhaseListener implements PhaseListener {
 				logger.debug("Started new flow execution");
 			}
 			holder.setViewSelection(selectedView);
+			holder.changed();
 		}
 	}
 
@@ -216,31 +217,45 @@ public class FlowPhaseListener implements PhaseListener {
 	}
 
 	protected void prepareResponse(JsfExternalContext context, FlowExecutionHolder holder) {
-		generateKey(context, holder);
+		if (holder.isChanged()) {
+			generateKey(context, holder);
+		}
 		ViewSelection selectedView = holder.getViewSelection();
+		if (selectedView == null) {
+			selectedView = holder.getFlowExecution().refresh(context);
+			holder.setViewSelection(selectedView);
+		}
 		if (selectedView instanceof ApplicationView) {
 			prepareApplicationView(context.getFacesContext(), holder);
 		}
 		else if (selectedView instanceof FlowExecutionRedirect) {
-			saveFlowExecution(context, holder);
+			if (holder.isChanged()) {
+				saveFlowExecution(context, holder);
+			}
 			String url = argumentExtractor.createFlowExecutionUrl(holder.getFlowExecutionKey(), holder
 					.getFlowExecution(), context);
 			sendRedirect(url, context);
 		}
 		else if (selectedView instanceof ConversationRedirect) {
-			saveFlowExecution(context, holder);
+			if (holder.isChanged()) {
+				saveFlowExecution(context, holder);
+			}
 			String url = argumentExtractor.createConversationUrl(holder.getFlowExecutionKey(), holder
 					.getFlowExecution(), context);
 			sendRedirect(url, context);
 		}
 		else if (selectedView instanceof ExternalRedirect) {
-			saveFlowExecution(context, holder);
+			if (holder.isChanged()) {
+				saveFlowExecution(context, holder);
+			}
 			String url = argumentExtractor.createExternalUrl((ExternalRedirect)holder.getViewSelection(), holder
 					.getFlowExecutionKey(), context);
 			sendRedirect(url, context);
 		}
 		else if (selectedView instanceof FlowRedirect) {
-			saveFlowExecution(context, holder);
+			if (holder.isChanged()) {
+				saveFlowExecution(context, holder);
+			}
 			String url = argumentExtractor.createFlowUrl((FlowRedirect)holder.getViewSelection(), context);
 			sendRedirect(url, context);
 		}

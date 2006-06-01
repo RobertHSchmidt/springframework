@@ -45,6 +45,8 @@ public class FlowExecutionHolder implements Serializable {
 
 	private ViewSelection viewSelection;
 	
+	private boolean changed;
+	
 	/**
 	 * Creates a new flow execution holder for a flow execution that has not yet
 	 * been placed in a repository.
@@ -52,17 +54,6 @@ public class FlowExecutionHolder implements Serializable {
 	 */
 	public FlowExecutionHolder(FlowExecution flowExecution) {
 		this.flowExecution = flowExecution;
-	}
-
-	/**
-	 * Creates a new flow execution holder for a flow execution that has not yet
-	 * been placed in a repository.
-	 * @param flowExecution the flow execution to hold
-	 * @param selectedView the starting view selection
-	 */
-	public FlowExecutionHolder(FlowExecution flowExecution, ViewSelection selectedView) {
-		this.flowExecution = flowExecution;
-		this.viewSelection = selectedView;
 	}
 
 	/**
@@ -104,6 +95,14 @@ public class FlowExecutionHolder implements Serializable {
 		this.viewSelection = viewSelection;
 	}
 
+	public boolean isChanged() {
+		return changed;
+	}
+	
+	public void changed() {
+		this.changed = true;
+	}
+	
 	public String toString() {
 		return new ToStringCreator(this).append("flowExecutionKey", flowExecutionKey).append("flowExecution",
 				flowExecution).toString();
