@@ -51,8 +51,9 @@ public interface FlowExecutionRepository {
 	 * conversation
 	 * @return the flow execution, representing the state of a new conversation
 	 * that has not yet been started
+	 * @throws FlowExecutionRepositoryException a problem occured creating the flow execution
 	 */
-	public FlowExecution createFlowExecution(String flowId);
+	public FlowExecution createFlowExecution(String flowId) throws FlowExecutionRepositoryException;
 
 	/**
 	 * Generate a unique flow execution key to be used as an index into an
@@ -60,7 +61,7 @@ public interface FlowExecutionRepository {
 	 * in this repository. Both the <code>conversationId</code> and
 	 * <code>continuationId</code> key parts are guaranteed to be unique.
 	 * @param flowExecution the flow execution
-	 * @throws FlowExecutionStorageException a problem occured generating the
+	 * @throws FlowExecutionRepositoryException a problem occured generating the
 	 * key
 	 */
 	public FlowExecutionKey generateKey(FlowExecution flowExecution) throws FlowExecutionRepositoryException;
@@ -113,7 +114,7 @@ public interface FlowExecutionRepository {
 	 * @param key the flow execution key
 	 * @return the flow execution, representing the state of a conversation at a
 	 * point in time, fully hydrated and ready to signal an event against.
-	 * @throws FlowExecutionStorageException if no flow execution was indexed
+	 * @throws FlowExecutionRepositoryException if no flow execution was indexed
 	 * with the key provided
 	 */
 	public FlowExecution getFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
@@ -156,7 +157,7 @@ public interface FlowExecutionRepository {
 	 * conversation in a flow execution continuation key will be thrown a
 	 * FlowExecutionRepositoryException on any access attempt.
 	 * @param conversationId the conversationId
-	 * @throws FlowExecutionStorageException the conversation could not be
+	 * @throws FlowExecutionRepositoryException the conversation could not be
 	 * invalidated
 	 */
 	public void invalidateConversation(Serializable conversationId) throws FlowExecutionRepositoryException;
