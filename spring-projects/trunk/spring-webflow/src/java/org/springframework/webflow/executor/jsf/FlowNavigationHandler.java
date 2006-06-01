@@ -151,9 +151,10 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 				// a flow execution launch has been requested, start it
 				String flowId = argumentExtractor.extractFlowId(context);
 				FlowExecution flowExecution = getRepository(context).createFlowExecution(flowId);
-				ViewSelection selectedView = flowExecution.start(createInput(flowExecution, context), context);
-				FlowExecutionHolder holder = new FlowExecutionHolder(flowExecution, selectedView);
+				FlowExecutionHolder holder = new FlowExecutionHolder(flowExecution);
 				FlowExecutionHolderUtils.setFlowExecutionHolder(holder, facesContext);
+				ViewSelection selectedView = flowExecution.start(createInput(flowExecution, context), context);
+				holder.setViewSelection(selectedView);
 			}
 			else {
 				// no flow id submitted, proceed with std navigation

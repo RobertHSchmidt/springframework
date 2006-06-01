@@ -194,12 +194,13 @@ public class FlowPhaseListener implements PhaseListener {
 			String flowId = argumentExtractor.extractFlowId(context);
 			FlowExecutionRepository repository = getRepository(context);
 			FlowExecution flowExecution = repository.createFlowExecution(flowId);
+			FlowExecutionHolder holder = new FlowExecutionHolder(flowExecution);
+			FlowExecutionHolderUtils.setFlowExecutionHolder(holder, facesContext);
 			ViewSelection selectedView = flowExecution.start(createInput(flowExecution, context), context);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Started new flow execution");
 			}
-			FlowExecutionHolder holder = new FlowExecutionHolder(flowExecution, selectedView);
-			FlowExecutionHolderUtils.setFlowExecutionHolder(holder, facesContext);
+			holder.setViewSelection(selectedView);
 		}
 	}
 
