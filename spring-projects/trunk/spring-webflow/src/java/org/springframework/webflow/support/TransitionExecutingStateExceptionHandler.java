@@ -18,6 +18,8 @@ package org.springframework.webflow.support;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.core.JdkVersion;
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.core.style.ToStringCreator;
@@ -38,6 +40,8 @@ import org.springframework.webflow.ViewSelection;
  * @author Keith Donald
  */
 public class TransitionExecutingStateExceptionHandler implements StateExceptionHandler {
+
+	private static final Log logger = LogFactory.getLog(TransitionExecutingStateExceptionHandler.class);
 
 	/**
 	 * The name of the attribute to expose an handled state exception under in
@@ -88,13 +92,21 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	}
 
 	public ViewSelection handle(StateException e, FlowExecutionControlContext context) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Handling state exception " + e);
+		}
 		State sourceState = context.getCurrentState();
 		if (!(sourceState instanceof TransitionableState)) {
 			throw new IllegalStateException("The source state '" + sourceState.getId()
 					+ "' to transition from must be transitionable!");
 		}
 		context.getRequestScope().put(STATE_EXCEPTION_ATTRIBUTE, e);
-		context.getRequestScope().put(ROOT_CAUSE_EXCEPTION_ATTRIBUTE, findRootCause(e));
+		Throwable rootCause = findRootCause(e);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Exposing state exception root cause " + rootCause + " under attribute '"
+					+ ROOT_CAUSE_EXCEPTION_ATTRIBUTE + "'");
+		}
+		context.getRequestScope().put(ROOT_CAUSE_EXCEPTION_ATTRIBUTE, rootCause);
 		return new Transition(getTargetStateResolver(e)).execute((TransitionableState)sourceState, context);
 	}
 
@@ -180,7 +192,7 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	protected Throwable findRootCause(Throwable e) {
 		return new RootCauseResolver().findRootCause(e);
 	}
-	
+
 	private static class RootCauseResolver {
 		public Throwable findRootCause(Throwable e) {
 			if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_13) {

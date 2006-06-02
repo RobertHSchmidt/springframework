@@ -40,7 +40,9 @@ Package org.springframework.webflow.execution
 * Added various not null asserts to setters allowing overriding of required flow execution repository services.
 * Changed ContinuationFlowExecutionRepositoryCreator's default 'maxContinuations' property to 0, setting 
   no upper bound on the number of continuations that can exist per conversation by default.
-
+* Renamed EmptyFlowExecutionListenerLoader to StaticFlowExecutionListenerLoader and improved to accept
+  a static listener array for convenient listener loading without conditionals.
+  
 Package org.springframework.webflow.executor
 * Refined support for context-relative external redirects; now by default external URLs that begin with 
   a leading '/' are treated as context-relative.  The FlowExecutorArgumentExtractor.redirectContextRelative
@@ -66,6 +68,7 @@ Package org.springframework.webflow.registry
 Package org.springframework.webflow.support
 * Improved TransitionExecutingStateExceptionHandler to consider exception superclasses in handler match.
 * Improved TransitionExecutingStateExceptionHandler to expose exception "rootCause" as request scoped attribute
+* Added TransitionExecutingStateExceptionHandler debug level logging.
 * Changed "handledStateException" attribute to simply "stateException".
 * Fixed bug in DefaultExpressionParserFactory where Ognl would be loaded before explict classpath check.
 
