@@ -28,7 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-public abstract class AbstractMarshallerTest extends XMLTestCase {
+public abstract class AbstractMarshallerTestCase extends XMLTestCase {
 
     protected Marshaller marshaller;
 

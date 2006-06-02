@@ -16,16 +16,15 @@
 package org.springframework.oxm.xmlbeans;
 
 import java.io.ByteArrayOutputStream;
-
 import javax.xml.transform.stream.StreamResult;
 
-import org.springframework.oxm.AbstractMarshallerTest;
+import org.springframework.oxm.AbstractMarshallerTestCase;
 import org.springframework.oxm.Marshaller;
 import org.springframework.samples.flight.FlightType;
 import org.springframework.samples.flight.FlightsDocument;
 import org.springframework.samples.flight.FlightsDocument.Flights;
 
-public class XmlBeansMarshallerTest extends AbstractMarshallerTest {
+public class XmlBeansMarshallerTest extends AbstractMarshallerTestCase {
 
     protected Marshaller createMarshaller() throws Exception {
         return new XmlBeansMarshaller();

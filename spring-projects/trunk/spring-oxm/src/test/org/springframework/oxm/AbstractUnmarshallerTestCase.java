@@ -31,7 +31,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-public abstract class AbstractUnmarshallerTest extends TestCase {
+public abstract class AbstractUnmarshallerTestCase extends TestCase {
 
     private Unmarshaller unmarshaller;
 

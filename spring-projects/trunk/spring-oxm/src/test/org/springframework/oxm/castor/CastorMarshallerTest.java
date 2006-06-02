@@ -19,11 +19,11 @@ import javax.xml.transform.sax.SAXResult;
 
 import org.easymock.MockControl;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.oxm.AbstractMarshallerTest;
+import org.springframework.oxm.AbstractMarshallerTestCase;
 import org.springframework.oxm.Marshaller;
 import org.xml.sax.ContentHandler;
 
-public class CastorMarshallerTest extends AbstractMarshallerTest {
+public class CastorMarshallerTest extends AbstractMarshallerTestCase {
 
     protected Marshaller createMarshaller() throws Exception {
         CastorMarshaller marshaller = new CastorMarshaller();

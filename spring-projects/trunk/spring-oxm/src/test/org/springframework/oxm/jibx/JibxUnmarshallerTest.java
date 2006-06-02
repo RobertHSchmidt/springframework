@@ -15,10 +15,10 @@
  */
 package org.springframework.oxm.jibx;
 
-import org.springframework.oxm.AbstractUnmarshallerTest;
+import org.springframework.oxm.AbstractUnmarshallerTestCase;
 import org.springframework.oxm.Unmarshaller;
 
-public class JibxUnmarshallerTest extends AbstractUnmarshallerTest {
+public class JibxUnmarshallerTest extends AbstractUnmarshallerTestCase {
 
     protected Unmarshaller createUnmarshaller() throws Exception {
         JibxMarshaller unmarshaller = new JibxMarshaller();

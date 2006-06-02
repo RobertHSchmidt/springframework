@@ -15,12 +15,12 @@
  */
 package org.springframework.oxm.jaxb;
 
-import org.springframework.oxm.AbstractUnmarshallerTest;
+import org.springframework.oxm.AbstractUnmarshallerTestCase;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb1.FlightType;
 import org.springframework.oxm.jaxb1.Flights;
 
-public class Jaxb1UnmarshallerTest extends AbstractUnmarshallerTest {
+public class Jaxb1UnmarshallerTest extends AbstractUnmarshallerTestCase {
 
     protected Unmarshaller createUnmarshaller() throws Exception {
         Jaxb1Marshaller marshaller = new Jaxb1Marshaller();

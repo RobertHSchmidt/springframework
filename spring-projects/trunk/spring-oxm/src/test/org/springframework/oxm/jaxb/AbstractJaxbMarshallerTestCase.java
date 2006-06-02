@@ -19,14 +19,11 @@ package org.springframework.oxm.jaxb;
 import javax.xml.transform.sax.SAXResult;
 
 import org.easymock.MockControl;
-import org.springframework.oxm.AbstractMarshallerTest;
+import org.springframework.oxm.AbstractMarshallerTestCase;
 import org.springframework.oxm.XmlMappingException;
 import org.xml.sax.ContentHandler;
 
-/**
- * @author Arjen Poutsma
- */
-public abstract class AbstractJaxbMarshallerTest extends AbstractMarshallerTest {
+public abstract class AbstractJaxbMarshallerTestCase extends AbstractMarshallerTestCase {
 
     public void testMarshalSaxResult() throws Exception {
         MockControl handlerControl = MockControl.createStrictControl(ContentHandler.class);

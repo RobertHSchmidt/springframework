@@ -16,10 +16,10 @@
 package org.springframework.oxm.castor;
 
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.oxm.AbstractUnmarshallerTest;
+import org.springframework.oxm.AbstractUnmarshallerTestCase;
 import org.springframework.oxm.Unmarshaller;
 
-public class CastorUnmarshallerTest extends AbstractUnmarshallerTest {
+public class CastorUnmarshallerTest extends AbstractUnmarshallerTestCase {
 
     protected void testFlights(Object o) {
         Flights flights = (Flights) o;

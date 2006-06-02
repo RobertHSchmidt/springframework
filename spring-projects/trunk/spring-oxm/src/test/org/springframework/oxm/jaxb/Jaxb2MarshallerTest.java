@@ -25,7 +25,7 @@ import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.jaxb2.FlightType;
 import org.springframework.oxm.jaxb2.Flights;
 
-public class Jaxb2MarshallerTest extends AbstractJaxbMarshallerTest {
+public class Jaxb2MarshallerTest extends AbstractJaxbMarshallerTestCase {
 
     private static final String CONTEXT_PATH = "org.springframework.oxm.jaxb2";
 

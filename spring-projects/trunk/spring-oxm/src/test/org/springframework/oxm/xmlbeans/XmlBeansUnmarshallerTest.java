@@ -15,13 +15,13 @@
  */
 package org.springframework.oxm.xmlbeans;
 
-import org.springframework.oxm.AbstractUnmarshallerTest;
+import org.springframework.oxm.AbstractUnmarshallerTestCase;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.samples.flight.FlightType;
 import org.springframework.samples.flight.FlightsDocument;
 import org.springframework.samples.flight.FlightsDocument.Flights;
 
-public class XmlBeansUnmarshallerTest extends AbstractUnmarshallerTest {
+public class XmlBeansUnmarshallerTest extends AbstractUnmarshallerTestCase {
 
     protected Unmarshaller createUnmarshaller() throws Exception {
         return new XmlBeansMarshaller();

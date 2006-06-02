@@ -16,10 +16,10 @@
 
 package org.springframework.oxm.jibx;
 
-import org.springframework.oxm.AbstractMarshallerTest;
+import org.springframework.oxm.AbstractMarshallerTestCase;
 import org.springframework.oxm.Marshaller;
 
-public class JibxMarshallerTest extends AbstractMarshallerTest {
+public class JibxMarshallerTest extends AbstractMarshallerTestCase {
 
     protected Marshaller createMarshaller() throws Exception {
         JibxMarshaller marshaller = new JibxMarshaller();

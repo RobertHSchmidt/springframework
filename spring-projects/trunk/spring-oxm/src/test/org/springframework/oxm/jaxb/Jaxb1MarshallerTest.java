@@ -23,7 +23,7 @@ import org.springframework.oxm.jaxb1.Flights;
 import org.springframework.oxm.jaxb1.impl.FlightTypeImpl;
 import org.springframework.oxm.jaxb1.impl.FlightsImpl;
 
-public class Jaxb1MarshallerTest extends AbstractJaxbMarshallerTest {
+public class Jaxb1MarshallerTest extends AbstractJaxbMarshallerTestCase {
 
     private static final String CONTEXT_PATH = "org.springframework.oxm.jaxb1";
 
