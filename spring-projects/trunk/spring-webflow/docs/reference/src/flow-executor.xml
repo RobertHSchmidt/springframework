@@ -185,7 +185,7 @@
     		<title>A single flow controller executing all flows in a Servlet MVC environment</title>
 	    	<programlisting>
     &lt;bean name="/flowController.htm" class="org.springframework.webflow.executor.mvc.FlowController"&gt;
-        &lt;constructor-arg ref="flowExecutor"/&gt;
+        &lt;property name="flowExecutor" ref="flowExecutor"/&gt;
     &lt;/bean&gt;
 	    	</programlisting>
     	</sect2>
@@ -206,7 +206,7 @@
     &lt;/bean&gt;
 
     &lt;bean id="flowController" class="org.springframework.webflow.executor.mvc.PortletFlowController"&gt;
-        &lt;constructor-arg ref="flowExecutor"/&gt;
+        &lt;property name="flowExecutor" ref="flowExecutor"/&gt;
         &lt;property name="defaultFlowId" ref="search-flow"/&gt;
     &lt;/bean&gt;
 	    	</programlisting>
