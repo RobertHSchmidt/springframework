@@ -25,10 +25,7 @@ import org.custommonkey.xmlunit.XMLTestCase;
 import org.springframework.xml.transform.StringResult;
 import org.springframework.xml.transform.StringSource;
 
-/**
- * @author Arjen Poutsma
- */
-public abstract class AbstractSoapHeaderTest extends XMLTestCase {
+public abstract class AbstractSoapHeaderTestCase extends XMLTestCase {
 
     protected SoapHeader soapHeader;
 

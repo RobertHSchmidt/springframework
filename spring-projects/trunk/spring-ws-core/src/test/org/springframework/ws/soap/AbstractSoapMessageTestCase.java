@@ -28,10 +28,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.xml.transform.StringResult;
 import org.springframework.xml.transform.StringSource;
 
-/**
- * @author Arjen Poutsma
- */
-public abstract class AbstractSoapMessageTest extends XMLTestCase {
+public abstract class AbstractSoapMessageTestCase extends XMLTestCase {
 
     protected SoapMessage soapMessage;
 

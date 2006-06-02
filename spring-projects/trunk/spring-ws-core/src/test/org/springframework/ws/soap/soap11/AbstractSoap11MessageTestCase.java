@@ -19,13 +19,13 @@ package org.springframework.ws.soap.soap11;
 import java.io.ByteArrayOutputStream;
 
 import junit.framework.Assert;
-import org.springframework.ws.soap.AbstractSoapMessageTest;
+import org.springframework.ws.soap.AbstractSoapMessageTestCase;
 import org.springframework.ws.soap.SoapVersion;
 
 /**
  * @author Arjen Poutsma
  */
-public abstract class AbstractSoap11MessageTest extends AbstractSoapMessageTest {
+public abstract class AbstractSoap11MessageTestCase extends AbstractSoapMessageTestCase {
 
     public void testGetVersion() throws Exception {
         Assert.assertEquals("Invalid SOAP version", SoapVersion.SOAP_11, soapMessage.getVersion());

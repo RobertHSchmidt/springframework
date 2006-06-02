@@ -18,7 +18,7 @@ package org.springframework.ws.soap.soap12;
 
 import javax.xml.namespace.QName;
 
-import org.springframework.ws.soap.AbstractSoapBodyTest;
+import org.springframework.ws.soap.AbstractSoapBodyTestCase;
 import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapFaultDetail;
 import org.springframework.ws.soap.SoapFaultDetailElement;
@@ -30,10 +30,11 @@ import org.springframework.xml.transform.StringSource;
 /**
  * @author Arjen Poutsma
  */
-public abstract class AbstractSoap12BodyTest extends AbstractSoapBodyTest {
+public abstract class AbstractSoap12BodyTestCase extends AbstractSoapBodyTestCase {
 
     public void testGetName() throws Exception {
-        assertEquals(new QName(SoapVersion.SOAP_12.getEnvelopeNamespaceUri(), "Body"), soapBody.getName());
+        assertEquals("Invalid qualified name", new QName(SoapVersion.SOAP_12.getEnvelopeNamespaceUri(), "Body"),
+                soapBody.getName());
     }
 
     public void testGetSource() throws Exception {

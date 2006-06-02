@@ -20,9 +20,9 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
 
 import org.springframework.ws.soap.SoapEnvelope;
-import org.springframework.ws.soap.soap11.AbstractSoap11EnvelopeTest;
+import org.springframework.ws.soap.soap11.AbstractSoap11EnvelopeTestCase;
 
-public class SaajSoapEnvelopeTest extends AbstractSoap11EnvelopeTest {
+public class SaajSoapEnvelopeTest extends AbstractSoap11EnvelopeTestCase {
 
     protected SoapEnvelope createSoapEnvelope() throws Exception {
         MessageFactory messageFactory = MessageFactory.newInstance();

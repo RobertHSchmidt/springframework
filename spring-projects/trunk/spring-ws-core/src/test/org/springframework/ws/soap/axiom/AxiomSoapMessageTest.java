@@ -19,9 +19,9 @@ package org.springframework.ws.soap.axiom;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.soap.SOAPFactory;
 import org.springframework.ws.soap.SoapMessage;
-import org.springframework.ws.soap.soap12.AbstractSoap12MessageTest;
+import org.springframework.ws.soap.soap12.AbstractSoap12MessageTestCase;
 
-public class AxiomSoapMessageTest extends AbstractSoap12MessageTest {
+public class AxiomSoapMessageTest extends AbstractSoap12MessageTestCase {
 
     protected SoapMessage createSoapMessage() throws Exception {
         SOAPFactory axiomFactory = OMAbstractFactory.getSOAP12Factory();

@@ -19,9 +19,9 @@ package org.springframework.ws.soap.axiom;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.soap.SOAPFactory;
 import org.springframework.ws.soap.SoapEnvelope;
-import org.springframework.ws.soap.soap12.AbstractSoap12EnvelopeTest;
+import org.springframework.ws.soap.soap12.AbstractSoap12EnvelopeTestCase;
 
-public class AxiomSoapEnvelopeTest extends AbstractSoap12EnvelopeTest {
+public class AxiomSoapEnvelopeTest extends AbstractSoap12EnvelopeTestCase {
 
     protected SoapEnvelope createSoapEnvelope() throws Exception {
         SOAPFactory axiomFactory = OMAbstractFactory.getSOAP12Factory();

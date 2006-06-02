@@ -21,7 +21,7 @@ import javax.xml.transform.TransformerFactory;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 
-public abstract class AbstractSoapEnvelopeTest extends XMLTestCase {
+public abstract class AbstractSoapEnvelopeTestCase extends XMLTestCase {
 
     protected SoapEnvelope soapEnvelope;
 

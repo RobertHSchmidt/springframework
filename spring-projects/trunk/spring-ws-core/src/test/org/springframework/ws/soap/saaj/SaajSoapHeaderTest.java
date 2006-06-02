@@ -20,9 +20,9 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
 
 import org.springframework.ws.soap.SoapHeader;
-import org.springframework.ws.soap.soap11.AbstractSoap11HeaderTest;
+import org.springframework.ws.soap.soap11.AbstractSoap11HeaderTestCase;
 
-public class SaajSoapHeaderTest extends AbstractSoap11HeaderTest {
+public class SaajSoapHeaderTest extends AbstractSoap11HeaderTestCase {
 
     protected SoapHeader createSoapHeader() throws Exception {
         MessageFactory messageFactory = MessageFactory.newInstance();

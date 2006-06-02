@@ -18,20 +18,21 @@ package org.springframework.ws.soap.soap12;
 
 import javax.xml.namespace.QName;
 
-import org.springframework.ws.soap.AbstractSoapHeaderTest;
+import org.springframework.ws.soap.AbstractSoapEnvelopeTestCase;
 import org.springframework.ws.soap.SoapVersion;
 import org.springframework.xml.transform.StringResult;
 
-public abstract class AbstractSoap12HeaderTest extends AbstractSoapHeaderTest {
+public abstract class AbstractSoap12EnvelopeTestCase extends AbstractSoapEnvelopeTestCase {
 
     public void testGetName() throws Exception {
-        assertEquals(new QName(SoapVersion.SOAP_12.getEnvelopeNamespaceUri(), "Header"), soapHeader.getName());
+        assertEquals("Invalid qualified name", new QName(SoapVersion.SOAP_12.getEnvelopeNamespaceUri(), "Envelope"),
+                soapEnvelope.getName());
     }
 
     public void testGetSource() throws Exception {
         StringResult result = new StringResult();
-        transformer.transform(soapHeader.getSource(), result);
-        assertXMLEqual("Invalid contents of header", "<Header xmlns='http://www.w3.org/2003/05/soap-envelope' />",
+        transformer.transform(soapEnvelope.getSource(), result);
+        assertXMLEqual("<Envelope xmlns='http://www.w3.org/2003/05/soap-envelope'><Header/>" + "<Body/></Envelope>",
                 result.toString());
     }
 

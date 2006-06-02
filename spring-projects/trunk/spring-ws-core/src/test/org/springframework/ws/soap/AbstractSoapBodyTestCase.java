@@ -26,7 +26,7 @@ import org.custommonkey.xmlunit.XMLTestCase;
 import org.springframework.xml.transform.StringResult;
 import org.springframework.xml.transform.StringSource;
 
-public abstract class AbstractSoapBodyTest extends XMLTestCase {
+public abstract class AbstractSoapBodyTestCase extends XMLTestCase {
 
     protected SoapBody soapBody;
 
