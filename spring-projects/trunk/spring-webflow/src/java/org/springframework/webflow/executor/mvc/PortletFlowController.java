@@ -41,6 +41,7 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 import org.springframework.webflow.support.ApplicationView;
+import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.support.FlowRedirect;
 
 /**
@@ -61,18 +62,18 @@ import org.springframework.webflow.support.FlowRedirect;
  * Usage example:
  * 
  * <pre>
- *     &lt;!--
- *         Exposes flows for execution.
- *     --&gt;
- *     &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
- *         &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
- *         &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
- *     &lt;/bean&gt;
- *                                                                                 
- *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *         &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *         &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
- *     &lt;/bean&gt;
+ *       &lt;!--
+ *           Exposes flows for execution.
+ *       --&gt;
+ *       &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
+ *           &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
+ *           &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
+ *       &lt;/bean&gt;
+ *                                                                                   
+ *       &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *           &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *           &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
+ *       &lt;/bean&gt;
  * </pre>
  * 
  * It is also possible to customize the {@link FlowExecutorArgumentExtractor}
@@ -170,6 +171,7 @@ public class PortletFlowController extends AbstractController implements Initial
 
 	public void afterPropertiesSet() {
 		Assert.notNull(flowExecutor, "The flow executor property is required");
+		Assert.notNull(argumentExtractor, "The argument extractor property is required");
 	}
 
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
@@ -178,6 +180,9 @@ public class PortletFlowController extends AbstractController implements Initial
 			Serializable conversationId = argumentExtractor.extractConversationId(context);
 			ResponseInstruction responseInstruction = getCachedResponseInstruction(request,
 					getConversationAttributeName(conversationId));
+			if (responseInstruction == null) {
+				responseInstruction = flowExecutor.refresh(conversationId, context);
+			}
 			return toModelAndView(responseInstruction);
 		}
 		else {
@@ -206,6 +211,11 @@ public class PortletFlowController extends AbstractController implements Initial
 			// request that a new flow be launched within this portlet
 			String flowId = ((FlowRedirect)responseInstruction.getViewSelection()).getFlowId();
 			response.setRenderParameter(argumentExtractor.getFlowIdParameterName(), flowId);
+		}
+		else if (responseInstruction.isExternalRedirect()) {
+			ExternalRedirect redirect = (ExternalRedirect)responseInstruction.getViewSelection();
+			String url = argumentExtractor.createExternalUrl(redirect, flowExecutionKey, context);
+			response.sendRedirect(url);
 		}
 		else {
 			throw new IllegalArgumentException("Don't know how to handle response instruction " + responseInstruction);

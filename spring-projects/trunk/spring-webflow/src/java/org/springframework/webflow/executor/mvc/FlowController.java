@@ -187,9 +187,7 @@ public class FlowController extends AbstractController implements InitializingBe
 
 	public void afterPropertiesSet() {
 		Assert.notNull(flowExecutor, "The flow executor property is required");
-		if (argumentExtractor == null) {
-			argumentExtractor = new FlowExecutorArgumentExtractor();
-		}
+		Assert.notNull(argumentExtractor, "The argument extractor property is required");
 	}
 
 	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
