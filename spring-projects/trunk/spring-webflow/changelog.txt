@@ -2,7 +2,7 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 RC2 (29.5.2006)
+Changes in version 1.0 RC2 (05.6.2006)
 ------------------------------------
 Package org.springframework.webflow
 * Removed 'requiredType' not null check on AttributeMap accessor methods; if no requiredType is specified
