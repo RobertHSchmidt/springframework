@@ -26,9 +26,12 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
 
 /**
- * Default implementation of a listener loader that stores listeners in a
- * list-backed data structure and allows for configuration of which listeners
- * should apply to which flow definitions.
+ * A flow execution listener loader that stores listeners in a list-backed data
+ * structure and allows for configuration of which listeners should apply to
+ * which flow definitions. For trivial listener loading, see
+ * {@link StaticFlowExecutionListenerLoader}.
+ * 
+ * @see StaticFlowExecutionListenerLoader
  * 
  * @author Keith Donald
  */
@@ -65,7 +68,7 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 			addListener(listeners[i], criteria);
 		}
 	}
-	
+
 	/**
 	 * Add a listener that will listen to executions to flows matching the
 	 * specified criteria.

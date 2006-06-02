@@ -16,7 +16,7 @@
 package org.springframework.webflow.execution.repository.support;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.execution.EmptyFlowExecutionListenerLoader;
+import org.springframework.webflow.execution.StaticFlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
@@ -69,7 +69,7 @@ public class FlowExecutionRepositoryServices {
 	 * criteria objects. The criteria list determines the conditions in which a
 	 * single flow execution listener applies.
 	 */
-	private FlowExecutionListenerLoader listenerLoader = new EmptyFlowExecutionListenerLoader();
+	private FlowExecutionListenerLoader listenerLoader = new StaticFlowExecutionListenerLoader();
 
 	/**
 	 * The uid generation strategy to use.
