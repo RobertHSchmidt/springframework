@@ -29,6 +29,8 @@ import org.springframework.webflow.context.StringKeyedMapAdapter;
  * Map backed by the Portlet session, for accessing session scoped attributes in
  * a Portlet environment.
  * 
+ * Supports setting 
+ * 
  * @author Keith Donald
  */
 public class PortletSessionMap extends StringKeyedMapAdapter implements SharedMap {
@@ -39,10 +41,16 @@ public class PortletSessionMap extends StringKeyedMapAdapter implements SharedMa
 	private PortletRequest request;
 
 	/**
+	 * The scope to access in the session, either APPLICATION (global) or PORTLET. 
+	 */
+	private int scope;
+	
+	/**
 	 * Create a new map wrapping the session associated with given request.
 	 */
-	public PortletSessionMap(PortletRequest request) {
+	public PortletSessionMap(PortletRequest request, int scope) {
 		this.request = request;
+		this.scope = scope;
 	}
 
 	/**
@@ -55,23 +63,23 @@ public class PortletSessionMap extends StringKeyedMapAdapter implements SharedMa
 
 	protected Object getAttribute(String key) {
 		PortletSession session = getSession();
-		return (session == null) ? null : session.getAttribute(key);
+		return (session == null) ? null : session.getAttribute(key, scope);
 	}
 
 	protected void setAttribute(String key, Object value) {
-		request.getPortletSession(true).setAttribute(key, value);
+		request.getPortletSession(true).setAttribute(key, value, scope);
 	}
 
 	protected void removeAttribute(String key) {
 		PortletSession session = getSession();
 		if (session != null) {
-			session.removeAttribute(key);
+			session.removeAttribute(key, scope);
 		}
 	}
 
 	protected Iterator getAttributeNames() {
 		PortletSession session = getSession();
-		return session == null ? CollectionUtils.EMPTY_ITERATOR : CollectionUtils.iterator(session.getAttributeNames()); 
+		return session == null ? CollectionUtils.EMPTY_ITERATOR : CollectionUtils.iterator(session.getAttributeNames(scope)); 
 	}
 
 	public Object getMutex() {

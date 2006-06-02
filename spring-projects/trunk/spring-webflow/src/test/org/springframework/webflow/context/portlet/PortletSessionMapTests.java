@@ -17,6 +17,8 @@ package org.springframework.webflow.context.portlet;
 
 import java.util.Iterator;
 
+import javax.portlet.PortletSession;
+
 import junit.framework.TestCase;
 
 import org.springframework.mock.web.portlet.MockPortletRequest;
@@ -36,7 +38,7 @@ public class PortletSessionMapTests extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		request = new MockPortletRequest();
-		tested = new PortletSessionMap(request);
+		tested = new PortletSessionMap(request, PortletSession.PORTLET_SCOPE);
 	}
 
 	protected void tearDown() throws Exception {

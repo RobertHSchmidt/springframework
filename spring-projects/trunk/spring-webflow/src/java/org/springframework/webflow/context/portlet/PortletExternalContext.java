@@ -18,6 +18,7 @@ package org.springframework.webflow.context.portlet;
 import javax.portlet.PortletContext;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
+import javax.portlet.PortletSession;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.AttributeMap;
@@ -80,7 +81,11 @@ public class PortletExternalContext implements ExternalContext {
 	}
 
 	public SharedAttributeMap getSessionMap() {
-		return new SharedAttributeMap(new PortletSessionMap(request));
+		return new SharedAttributeMap(new PortletSessionMap(request, PortletSession.PORTLET_SCOPE));
+	}
+
+	public SharedAttributeMap getGlobalSessionMap() {
+		return new SharedAttributeMap(new PortletSessionMap(request, PortletSession.APPLICATION_SCOPE));
 	}
 
 	public SharedAttributeMap getApplicationMap() {

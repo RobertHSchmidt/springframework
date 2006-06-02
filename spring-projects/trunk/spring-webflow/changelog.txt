@@ -13,6 +13,7 @@ Package org.springframework.webflow
 * AttributeMap, UnmodifiableAttributeMap, and ParameterMap implement equals and hashCode now.
 
 Package org.springframework.webflow.action
+* Moved MultiAction.METHOD_ATTRIBUTE constant to AnnotatedAction.METHOD_ATTRIBUTE.
 * Made FormAction.formObjectScope default ScopeType.FLOW instead of ScopeType.REQUEST.
 * Improved FormAction debug logging.
 * Removed FormAction.bindOnSetupForm flag for simplicity--if you need to perform a bind operation before
@@ -31,8 +32,9 @@ Package org.springframework.webflow.builder
 * Renamed 'resultName' and 'resultScope' <action/> element attributes to 'result-name' and 
   'result-scope', respectively, for consistency with other attribute and element names.
 
-Package org.springframework.webflow.action
-* Moved MultiAction.METHOD_ATTRIBUTE constant to AnnotatedAction.METHOD_ATTRIBUTE.
+Package org.springframework.webflow.context
+* Enhanced PortletExternalContext to provide access to the "globalSessionMap" for accessing attributes in 
+  the session's APPLICATION_SCOPE.
   
 Package org.springframework.webflow.execution
 * Fixed bug in FlowExecutionImpl toString, where a NPE could be thrown if toString was called during 
