@@ -9,16 +9,16 @@
 			</filesystem>
 
 			<url name="spring-repo">
-				<ivy pattern="http://svn.sourceforge.net/viewcvs.cgi/springframework/repos/repo/[organisation]/[module]/ivy-[revision].xml" />
-				<artifact pattern="http://svn.sourceforge.net/viewcvs.cgi/springframework/repos/repo/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+				<ivy pattern="https://svn.sourceforge.net/svnroot/springframework/spring-projects/repos/repo/[organisation]/[module]/ivy-[revision].xml" />
+				<artifact pattern="https://svn.sourceforge.net/svnroot/springframework/spring-projects/repos/repo/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
 			</url>
 			<url name="spring-repo-snapshots">
-				<ivy pattern="http://svn.sourceforge.net/viewcvs.cgi/springframework/repos/repo-snapshots/[organisation]/[module]/ivy-[revision].xml" />
-				<artifact pattern="http://svn.sourceforge.net/viewcvs.cgi/springframework/repos/repo-snapshots/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+				<ivy pattern="https://svn.sourceforge.net/svnroot/springframework/spring-projects/repos/repo-snapshots/[organisation]/[module]/ivy-[revision].xml" />
+				<artifact pattern="https://svn.sourceforge.net/svnroot/springframework/spring-projects/repos/repo-snapshots/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
 			</url>
 			<url name="spring-repo-ext">
-				<ivy pattern="http://svn.sourceforge.net/viewcvs.cgi/springframework/repos/repo-ext/[organisation]/[module]/ivy-[revision].xml" />
-				<artifact pattern="http://svn.sourceforge.net/viewcvs.cgi/springframework/repos/repo-ext/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+				<ivy pattern="https://svn.sourceforge.net/svnroot/springframework/spring-projects/repos/repo-ext/[organisation]/[module]/ivy-[revision].xml" />
+				<artifact pattern="https://svn.sourceforge.net/svnroot/springframework/spring-projects/repos/repo-ext/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
 			</url>
 			<ivyrep name="ivyrep" />
 		</chain>

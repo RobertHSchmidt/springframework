@@ -18,7 +18,7 @@
     <dependency org="springframework" name="spring-webflow" rev="latest.integration" conf="global->struts"/>
 
     <!--  build-time only dependencies -->
-    <dependency org="java" name="servlet" rev="2.4" conf="buildtime->default">
+    <dependency org="java" name="javax.servlet" rev="2.4" conf="buildtime->default">
 		<artifact name="servlet-api" type="jar"/>
 	</dependency>
   </dependencies>
