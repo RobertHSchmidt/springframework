@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry output="target/classes" kind="src" path="src/java"/>
-	<classpathentry output="target/test-classes" kind="src" path="src/test"/>
+	<classpathentry output="target/classes" kind="src" path="src/main/java"/>
+	<classpathentry output="target/test-classes" kind="src" path="src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/test/commons-beanutils.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-codec.jar"/>
