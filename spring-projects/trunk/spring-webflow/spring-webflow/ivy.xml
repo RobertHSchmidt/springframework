@@ -58,7 +58,7 @@
 	<!-- build time	only dependencies -->	 
 	<dependency org="concurrent" name="concurrent" rev="1.3.4" conf="buildtime->default"/>
 	<dependency	org="java" name="javax.servlet" rev="2.4" conf="buildtime->default">
-	  <artifact	name="servlet-a	pi" type="jar" />
+	  <artifact	name="servlet-api" type="jar" />
 	</dependency>
 	<dependency	org="java" name="javax.portlet" rev="1.0" conf="buildtime->default">
 	  <artifact	name="portlet-api" type="jar" />
