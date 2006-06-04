@@ -1,0 +1,35 @@
+<ivy-module version="1.2">
+
+  <info organisation="springframework" module="various" revision="1.2.8"/>
+
+  <configurations>
+	<conf name="default"/>
+	<conf name="ioc"/>
+	<conf name="aop" extends="ioc"/>
+	<conf name="dao" extends="aop"/>
+	<conf name="jee" extends="dao"/>
+	<conf name="web" extends="jee"/>
+	<conf name="test"/>
+  </configurations>
+
+  <publications>
+  
+  </publications>
+  
+  <dependencies defaultconf="default->default">
+	<dependency org="springframework" name="spring-core" rev="1.2.8" conf="default, ioc->default"/>
+	<dependency org="springframework" name="spring-beans" rev="1.2.8" conf="default, ioc->default"/>
+	<dependency org="springframework" name="spring-context" rev="1.2.8" conf="default, ioc->default"/>
+	<dependency org="springframework" name="spring-aop" rev="1.2.8" conf="default, aop->default"/>
+	<dependency org="springframework" name="spring-dao" rev="1.2.8" conf="default, dao->default"/>
+	<dependency org="springframework" name="spring-jdbc" rev="1.2.8" conf="default, dao->default"/>
+	<dependency org="springframework" name="spring-orm" rev="1.2.8" conf="default, jee->default"/>
+	<dependency org="springframework" name="spring-hibernate" rev="1.2.8" conf="default, jee->default"/>
+	<dependency org="springframework" name="spring-support" rev="1.2.8" conf="default, jee->default"/>
+	<dependency org="springframework" name="spring-remoting" rev="1.2.8" conf="default, web->default"/>
+	<dependency org="springframework" name="spring-web" rev="1.2.8" conf="default, web->default"/>
+	<dependency org="springframework" name="spring-webmvc" rev="1.2.8" conf="default, web->default"/>
+	<dependency org="springframework" name="spring-mock" rev="1.2.8" conf="default, test->default"/>
+  </dependencies>
+  
+</ivy-module>
