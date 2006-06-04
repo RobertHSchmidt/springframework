@@ -9,16 +9,16 @@
 			</filesystem>
 
 			<url name="spring-repo">
-				<ivy pattern="https://svn.sourceforge.net/svnroot/springframework/spring-projects/repos/repo/[organisation]/[module]/ivy-[revision].xml" />
-				<artifact pattern="https://svn.sourceforge.net/svnroot/springframework/spring-projects/repos/repo/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+				<ivy pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo/[organisation]/[module]/ivy-[revision].xml" />
+				<artifact pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
 			</url>
 			<url name="spring-repo-snapshots">
-				<ivy pattern="https://svn.sourceforge.net/svnroot/springframework/spring-projects/repos/repo-snapshots/[organisation]/[module]/ivy-[revision].xml" />
-				<artifact pattern="https://svn.sourceforge.net/svnroot/springframework/spring-projects/repos/repo-snapshots/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+				<ivy pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo-snapshots/[organisation]/[module]/ivy-[revision].xml" />
+				<artifact pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo-snapshots/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
 			</url>
 			<url name="spring-repo-ext">
-				<ivy pattern="https://svn.sourceforge.net/svnroot/springframework/spring-projects/repos/repo-ext/[organisation]/[module]/ivy-[revision].xml" />
-				<artifact pattern="https://svn.sourceforge.net/svnroot/springframework/spring-projects/repos/repo-ext/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+				<ivy pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo-ext/[organisation]/[module]/ivy-[revision].xml" />
+				<artifact pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo-ext/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
 			</url>
 			<ivyrep name="ivyrep" />
 		</chain>
