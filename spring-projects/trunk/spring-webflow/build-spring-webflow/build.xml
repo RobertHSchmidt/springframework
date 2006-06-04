@@ -137,6 +137,15 @@
 		</subant>
 	</target>
 
+	<target name="retrieve" depends="init" description="Does a retrieve in all projects">
+        <delete dir="${target.dir}" />
+		<echo>projects=${projects}</echo>
+		<echo>projects.names=${projects.names}</echo>
+		<subant target="retrieve" inheritall="false">
+			<buildpath refid="${projects}" />
+		</subant>
+	</target>
+
 	<target name="publish" depends="init" description="Calls publish targets on each project">
 		<echo>projects=${projects}</echo>
 		<subant target="publish" inheritall="false">
