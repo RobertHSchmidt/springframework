@@ -27,24 +27,24 @@
 			<filename name="common-build/**" />
 			<and>
 				<or>
-					<filename name="build-spring-webflow/**" />
-					<filename name="spring-binding/**" />
-					<filename name="spring-webflow/**" />
-					<filename name="spring-webflow-samples/**" />
+					<filename name="spring-webflow/build-spring-webflow/**" />
+					<filename name="spring-webflow/spring-binding/**" />
+					<filename name="spring-webflow/spring-webflow/**" />
+					<filename name="spring-webflow/spring-webflow-samples/**" />
 				</or>
 				<and>
 					<!-- exclude core project derived artifacts -->
-					<filename name="*/docs/**" negate="true"/>
-					<filename name="*/target/**" negate="true" />
-					<filename name="*/build.properties" negate="true" />
-					<filename name="*/lib/**" negate="true" />
-				</and>
-				<and>
-					<!-- exclude sample project derived artifacts -->
 					<filename name="*/*/docs/**" negate="true"/>
 					<filename name="*/*/target/**" negate="true" />
 					<filename name="*/*/build.properties" negate="true" />
 					<filename name="*/*/lib/**" negate="true" />
+				</and>
+				<and>
+					<!-- exclude sample project derived artifacts -->
+					<filename name="*/*/*/docs/**" negate="true"/>
+					<filename name="*/*/*/target/**" negate="true" />
+					<filename name="*/*/*/build.properties" negate="true" />
+					<filename name="*/*/*/lib/**" negate="true" />
 				</and>
 			</and>
 		</or>
@@ -223,7 +223,7 @@
 			<zipfileset dir="${target.dir}/repo" 
 			            prefix="${zip.toplevel.dir}/projects/repository" />
 			<!-- project sources -->
-			<zipfileset dir=".." prefix="${zip.toplevel.dir}/projects">
+			<zipfileset dir="../.." prefix="${zip.toplevel.dir}/projects">
 				<selector refid="project.source.zip.includes" />
 			</zipfileset>
 		</zip>

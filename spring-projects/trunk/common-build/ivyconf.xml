@@ -5,7 +5,12 @@
 		<chain name="resolverChain" returnFirst="true">
 			<filesystem name="integration-repo">
 				<ivy pattern="${integration.repo.dir}/artifacts/[organisation]/[module]/ivy-[revision].xml"/>
-				<artifact pattern="${integration.repo.dir}/artifacts/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]" />
+				<artifact pattern="${integration.repo.dir}/artifacts/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+			</filesystem>
+
+			<filesystem name="filesystem-repo">
+				<ivy pattern="${repository.dir}/[organisation]/[module]/ivy-[revision].xml" />
+				<artifact pattern="${repository.dir}/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
 			</filesystem>
 
 			<url name="spring-repo">
