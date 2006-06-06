@@ -16,7 +16,7 @@
 package org.springframework.webflow.execution.repository.conversation;
 
 public interface ConversationService {
-	public Conversation begin(ConversationParameters newConversation) throws ConversationServiceException;
+	public Conversation begin(ConversationParameters conversationParameters) throws ConversationServiceException;
 
 	public Conversation getConversation(ConversationId id) throws NoSuchConversationException;
 	
