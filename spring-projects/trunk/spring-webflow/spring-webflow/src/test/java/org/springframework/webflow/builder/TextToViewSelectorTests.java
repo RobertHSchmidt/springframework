@@ -24,7 +24,6 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.support.ApplicationView;
-import org.springframework.webflow.support.ConversationRedirect;
 import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.support.FlowExecutionRedirect;
 import org.springframework.webflow.support.FlowRedirect;
@@ -58,17 +57,6 @@ public class TextToViewSelectorTests extends TestCase {
 		RequestContext context = getRequestContext();
 		FlowExecutionRedirect redirect = (FlowExecutionRedirect)selector.makeSelection(context);
 		assertSame(redirect, FlowExecutionRedirect.INSTANCE);
-		context.getRequestScope().clear();
-		ApplicationView view = (ApplicationView)selector.makeRefreshSelection(context);
-		assertEquals("myView", view.getViewName());
-		assertEquals(3, view.getModel().size());
-	}
-
-	public void testConversationRedirect() {
-		ViewSelector selector = (ViewSelector)viewSelector(TextToViewSelector.VIEW_STATE_TYPE, "conversationRedirect:myView");
-		RequestContext context = getRequestContext();
-		ConversationRedirect redirect = (ConversationRedirect)selector.makeSelection(context);
-		assertSame(redirect, ConversationRedirect.INSTANCE);
 		context.getRequestScope().clear();
 		ApplicationView view = (ApplicationView)selector.makeRefreshSelection(context);
 		assertEquals("myView", view.getViewName());

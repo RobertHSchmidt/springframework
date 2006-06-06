@@ -197,7 +197,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 			if (flowExecution.isActive()) {
 				repositoryKey = repository.getNextKey(flowExecution, repositoryKey);
 				repository.putFlowExecution(repositoryKey, flowExecution);
-				return new ResponseInstruction(flowExecutionKey.toString(), flowExecution, pausedView(selectedView));
+				return new ResponseInstruction(repositoryKey.toString(), flowExecution, pausedView(selectedView));
 			}
 			else {
 				repository.removeFlowExecution(repositoryKey);
@@ -214,7 +214,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 		FlowExecutionKey repositoryKey = repository.parseFlowExecutionKey(flowExecutionKey);
 		FlowExecution flowExecution = repository.getFlowExecution(repositoryKey);
 		ViewSelection selectedView = flowExecution.refresh(context);
-		return new ResponseInstruction(flowExecutionKey.toString(), flowExecution, selectedView);
+		return new ResponseInstruction(repositoryKey.toString(), flowExecution, selectedView);
 	}
 
 	/**

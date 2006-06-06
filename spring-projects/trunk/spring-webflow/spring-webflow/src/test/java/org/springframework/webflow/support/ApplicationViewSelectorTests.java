@@ -43,25 +43,4 @@ public class ApplicationViewSelectorTests extends TestCase {
 		ViewSelection selection = selector.makeSelection(context);
 		assertTrue(selection == ViewSelection.NULL_VIEW);
 	}
-	
-	public void testMakeConversationRedirect() {
-		Expression exp = parser.parseExpression("${requestScope.viewVar}");
-		ApplicationViewSelector selector = new ApplicationViewSelector(exp, RedirectType.CONVERSATION);
-		MockRequestContext context = new MockRequestContext();
-		context.getRequestScope().put("viewVar", "view");
-		context.getRequestScope().put("foo", "bar");
-		context.getFlowScope().put("foo", "bar2");
-		context.getFlowScope().put("foo2", "bar");
-		context.getConversationScope().put("foo", "bar3");
-		context.getConversationScope().put("foo3", "bar");
-		ViewSelection selection = selector.makeSelection(context);
-		assertSame(selection, ConversationRedirect.INSTANCE);
-		context.getRequestScope().clear();
-		context.getRequestScope().put("viewVar", "view");
-		ApplicationView view = (ApplicationView)selector.makeRefreshSelection(context);
-		assertEquals("view", view.getViewName());
-		assertEquals("bar2", view.getModel().get("foo"));
-		assertEquals("bar", view.getModel().get("foo2"));
-		assertEquals("bar", view.getModel().get("foo3"));
-	}
 }
