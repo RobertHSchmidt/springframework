@@ -17,7 +17,6 @@ package org.springframework.webflow.execution.repository.support;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
-import org.springframework.webflow.execution.repository.FlowExecutionRepositoryCreator;
 
 /**
  * A convenient base for flow execution repository creational strategies. Simply

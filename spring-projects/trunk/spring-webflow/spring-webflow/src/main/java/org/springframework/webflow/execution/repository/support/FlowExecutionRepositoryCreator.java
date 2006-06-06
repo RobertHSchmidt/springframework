@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.repository;
+package org.springframework.webflow.execution.repository.support;
+
+import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 
 /**
  * A creational strategy that encapsulates the construction, configuration, and
