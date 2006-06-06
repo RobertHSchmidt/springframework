@@ -44,7 +44,11 @@ public class RandomGuidUidGenerator implements UidGenerator, Serializable {
 		this.secure = secure;
 	}
 
-	public Serializable generateId() {
+	public Serializable generateUid() {
 		return new RandomGuid(secure).toString();
+	}
+
+	public Serializable parseUid(String encodedUid) {
+		return encodedUid;
 	}
 }

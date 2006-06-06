@@ -29,5 +29,7 @@ public interface UidGenerator {
 	 * Generate a new unique id.
 	 * @return a serializable id, guaranteed to be unique in some context
 	 */
-	public Serializable generateId();
+	public Serializable generateUid();
+
+	public Serializable parseUid(String encodedUid);
 }
