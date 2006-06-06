@@ -2,7 +2,7 @@ SPRING WEB FLOW CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 RC2 (05.6.2006)
+Changes in version 1.0 RC2 (07.6.2006)
 ------------------------------------
 Package org.springframework.webflow
 * Removed 'requiredType' not null check on AttributeMap accessor methods; if no requiredType is specified
@@ -31,6 +31,7 @@ Package org.springframework.webflow.builder
 * Removed 'isMultiAction' tester on FlowServiceLocator as it is no longer needed by the builders.
 * Renamed 'resultName' and 'resultScope' <action/> element attributes to 'result-name' and 
   'result-scope', respectively, for consistency with other attribute and element names.
+* Removed support for special "conversationRedirect:" 'view' prefix.
 
 Package org.springframework.webflow.context
 * Enhanced PortletExternalContext to provide access to the "globalSessionMap" for accessing attributes in 
@@ -44,8 +45,18 @@ Package org.springframework.webflow.execution
   no upper bound on the number of continuations that can exist per conversation by default.
 * Renamed EmptyFlowExecutionListenerLoader to StaticFlowExecutionListenerLoader and improved to accept
   a static listener array for convenient listener loading without conditionals.
-  
+* Reworked FlowExecutionRepository interface to encapsulate the flow execution key generation strategy
+  as well as the additional (and optional) concept of a conversation.
+* Factored out conversation code into a portable conversation management subsystem, see repository.conversation.
+  This generic abstraction is usable outside of SWF and may be promoted to a top-level project in the future.
+   
 Package org.springframework.webflow.executor
+* Simplified FlowExecutor interface, exposing simple types to clients and encapsulating dependencies 
+  on internal types (as a good facade should).
+* Removed all support for conversation "refresh" and redirect, decoupling the optional concept of 
+  a conversation from that of a flow execution.  To achieve the 1.0 EA and 1.0 RC1 equivalent semantics 
+  of a "conversation redirect" use a flow execution redirects with FlowExecutionRepository that uses
+  the same FlowExecutionKey for the duration of the FlowExecution.
 * Refined support for context-relative external redirects; now by default external URLs that begin with 
   a leading '/' are treated as context-relative.  The FlowExecutorArgumentExtractor.redirectContextRelative
   property allows for overriding this default.
@@ -69,10 +80,11 @@ Package org.springframework.webflow.registry
 
 Package org.springframework.webflow.support
 * Improved TransitionExecutingStateExceptionHandler to consider exception superclasses in handler match.
-* Improved TransitionExecutingStateExceptionHandler to expose exception "rootCause" as request scoped attribute
+* Improved TransitionExecutingStateExceptionHandler to expose "rootCauseException" as request scoped attribute
 * Added TransitionExecutingStateExceptionHandler debug level logging.
 * Changed "handledStateException" attribute to simply "stateException".
 * Fixed bug in DefaultExpressionParserFactory where Ognl would be loaded before explict classpath check.
+* Removed ConversationRedirect.
 
 Package org.springframework.webflow.test
 * Added flowExecution not null asserts to signalEvent and refresh AbstractFlowExecutionTests operations.
