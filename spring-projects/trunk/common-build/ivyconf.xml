@@ -24,13 +24,14 @@
 			</url>
 		</chain>
 
-		<url name="spring-repo-ext">
-			<ivy pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo-ext/[organisation]/[module]/ivy-[revision].xml" />
-			<artifact pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo-ext/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
-		</url>
-
 		<chain name="third-party" returnFirst="true">
-                	<ibiblio name="dotsrc-maven2-resolver" checkconsistency="false" m2compatible="true" root="http://mirrors.dotsrc.org/maven2/"/>
+
+			<url name="spring-repo-ext" m2compatible="true">
+				<ivy pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo-ext/[organisation]/[module]/ivy-[revision].xml" />
+				<artifact pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo-ext/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+			</url>
+
+           	<ibiblio name="dotsrc-maven2-resolver" checkconsistency="false" m2compatible="true" root="http://mirrors.dotsrc.org/maven2/"/>
 			<ivyrep name="ivyrep" />
 		</chain>
 	</resolvers>
@@ -65,6 +66,5 @@
         	<module organisation="springframework" name="spring-ws" resolver="spring-projects"/>
         	<module organisation="springframework" name="various" resolver="spring-projects"/>
                
-                <module organisation="java" name="javax.jmx" resolver="spring-repo-ext"/>
 	</modules>
 </ivyconf>

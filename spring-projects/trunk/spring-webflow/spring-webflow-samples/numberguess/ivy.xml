@@ -18,9 +18,7 @@
     <dependency org="springframework" name="spring-webflow" rev="latest.integration" conf="global->default"/>
 
     <!--  build-time only dependencies -->
-    <dependency org="java" name="javax.servlet" rev="2.4" conf="buildtime->default">
-		<artifact name="servlet-api" type="jar"/>
-	</dependency>
+	<dependency	org="javax.servlet" name="servlet-api" rev="2.4" conf="buildtime->default"/>
   </dependencies>
   
 </ivy-module>

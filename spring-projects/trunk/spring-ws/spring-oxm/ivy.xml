@@ -19,17 +19,16 @@
     <dependencies defaultconf="global->default">
         <!-- global (compile, test, runtime) dependencies -->
         <dependency org="apache" name="commons-logging" rev="1.0.4"/>
-        <dependency org="springframework" name="spring-core" rev="1.2.7"/>
-        <dependency org="springframework" name="spring-beans" rev="1.2.7"/>
+        <dependency org="springframework" name="spring-core" rev="1.2.8"/>
+        <dependency org="springframework" name="spring-beans" rev="1.2.8"/>
 
         <!--  build time dependencies -->
-        <dependency org="java" name="jaxb" rev="2.0-rc1" conf="buildtime,test->default">
-            <artifact name="jaxb-api" type="jar" conf="buildtime"/>
-            <artifact name="jaxb-xjc" type="jar" conf="test"/>
-            <artifact name="jaxb-impl" type="jar" conf="test"/>
-            <artifact name="jaxb1-impl" type="jar" conf="test"/>
-        </dependency>
-        <dependency org="castor" name="castor-xml" rev="1.0-M2" conf="buildtime->default"/>
+        <dependency org="java.xml" name="jaxb-api" rev="2.0-rc1" conf="buildtime,test->default"/>
+        <dependency org="java.xml" name="jaxb-xjc" rev="2.0-rc1" conf="buildtime,test->default"/>
+        <dependency org="java.xml" name="jaxb-impl" rev="2.0-rc1" conf="buildtime,test->default"/>
+        <dependency org="java.xml" name="jaxb1-impl" rev="2.0-rc1" conf="buildtime,test->default"/>
+		
+		<dependency org="castor" name="castor-xml" rev="1.0-M2" conf="buildtime->default"/>
         <dependency org="xmlbeans" name="xmlbeans" rev="2.0.0" conf="buildtime->default">
             <artifact name="xbean" type="jar"/>
         </dependency>
