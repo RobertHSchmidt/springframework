@@ -36,7 +36,6 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.support.ApplicationView;
-import org.springframework.webflow.support.ConversationRedirect;
 import org.springframework.webflow.support.DefaultExpressionParserFactory;
 import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.support.FlowExecutionRedirect;
@@ -445,16 +444,6 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	protected FlowExecutionRedirect flowExecutionRedirect(ViewSelection viewSelection) {
 		Assert.isInstanceOf(FlowExecutionRedirect.class, viewSelection, "Unexpected class of view selection: ");
 		return (FlowExecutionRedirect)viewSelection;
-	}
-
-	/**
-	 * Assert that the returned view selection is an instance of
-	 * {@link ConversationRedirect}.
-	 * @param viewSelection the view selection
-	 */
-	protected ConversationRedirect conversationRedirect(ViewSelection viewSelection) {
-		Assert.isInstanceOf(ConversationRedirect.class, viewSelection, "Unexpected class of view selection: ");
-		return (ConversationRedirect)viewSelection;
 	}
 
 	/**

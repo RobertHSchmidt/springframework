@@ -8,7 +8,7 @@ import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
-import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.continuation.DefaultFlowExecutionRepositoryFactory;
 
 public class FlowFacesUtils {
 
@@ -39,7 +39,7 @@ public class FlowFacesUtils {
 		else {
 			try {
 				FlowLocator flowLocator = (FlowLocator)ac.getBean(FLOW_LOCATOR_BEAN_NAME, FlowLocator.class);
-				return new SimpleFlowExecutionRepositoryFactory(flowLocator);
+				return new DefaultFlowExecutionRepositoryFactory(flowLocator);
 			}
 			catch (NoSuchBeanDefinitionException e) {
 				String message = "No '" + FLOW_LOCATOR_BEAN_NAME + "' or '" + REPOSITORY_FACTORY_BEAN_NAME

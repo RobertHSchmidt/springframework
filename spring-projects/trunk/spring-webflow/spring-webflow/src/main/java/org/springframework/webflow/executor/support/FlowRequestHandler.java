@@ -15,15 +15,11 @@
  */
 package org.springframework.webflow.executor.support;
 
-import java.io.Serializable;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
-import org.springframework.webflow.execution.EventId;
-import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.ResponseInstruction;
 
@@ -97,9 +93,9 @@ public class FlowRequestHandler {
 			logger.debug("Request initiated by " + context);
 		}
 		if (argumentExtractor.isFlowExecutionKeyPresent(context)) {
-			FlowExecutionKey flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
+			String flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
 			if (argumentExtractor.isEventIdPresent(context)) {
-				EventId eventId = argumentExtractor.extractEventId(context);
+				String eventId = argumentExtractor.extractEventId(context);
 				ResponseInstruction response = flowExecutor.signalEvent(eventId, flowExecutionKey, context);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Returning [resume] " + response);
@@ -109,28 +105,18 @@ public class FlowRequestHandler {
 			else {
 				ResponseInstruction response = flowExecutor.refresh(flowExecutionKey, context);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Refreshing [current flow execution] " + response);
+					logger.debug("Returning [refresh] " + response);
 				}
 				return response;
 			}
 		}
 		else {
-			if (argumentExtractor.isConversationIdPresent(context)) {
-				Serializable conversationId = argumentExtractor.extractConversationId(context);
-				ResponseInstruction response = flowExecutor.refresh(conversationId, context);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Returning [current conversation] " + response);
-				}
-				return response;
+			String flowId = argumentExtractor.extractFlowId(context);
+			ResponseInstruction response = flowExecutor.launch(flowId, context);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Returning [launch] " + response);
 			}
-			else {
-				String flowId = argumentExtractor.extractFlowId(context);
-				ResponseInstruction response = flowExecutor.launch(flowId, context);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Returning [launch] " + response);
-				}
-				return response;
-			}
+			return response;
 		}
 	}
 }

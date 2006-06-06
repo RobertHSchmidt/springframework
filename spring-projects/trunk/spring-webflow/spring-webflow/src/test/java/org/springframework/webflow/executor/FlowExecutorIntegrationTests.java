@@ -9,9 +9,9 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.NoMatchingTransitionException;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.EventId;
-import org.springframework.webflow.execution.repository.CannotContinueConversationException;
+import org.springframework.webflow.execution.repository.CannotContinueFlowExecutionException;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
-import org.springframework.webflow.execution.repository.NoSuchConversationException;
+import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 import org.springframework.webflow.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.test.MockExternalContext;
@@ -84,7 +84,7 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 			flowExecutor.signalEvent(new EventId("event1"), key, context);
 			fail("Should've been removed");
 		}
-		catch (NoSuchConversationException e) {
+		catch (NoSuchFlowExecutionException e) {
 
 		}
 	}
@@ -104,7 +104,7 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 					new MockExternalContext());
 			fail("Should've failed");
 		}
-		catch (NoSuchConversationException e) {
+		catch (NoSuchFlowExecutionException e) {
 			assertEquals("bogus", e.getConversationId());
 		}
 	}
@@ -120,7 +120,7 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 					context);
 			fail("How did you continue mon?");
 		}
-		catch (CannotContinueConversationException e) {
+		catch (CannotContinueFlowExecutionException e) {
 			assertEquals(key.getConversationId(), e.getFlowExecutionKey().getConversationId());
 			assertEquals("bogus", e.getFlowExecutionKey().getContinuationId());
 		}
@@ -150,7 +150,7 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 			flowExecutor.refresh("bogus", context);
 			fail("Should've failed");
 		}
-		catch (NoSuchConversationException e) {
+		catch (NoSuchFlowExecutionException e) {
 			assertEquals("bogus", e.getConversationId());
 		}
 	}

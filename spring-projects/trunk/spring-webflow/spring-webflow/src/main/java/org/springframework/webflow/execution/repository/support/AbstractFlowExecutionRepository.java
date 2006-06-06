@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow.execution.repository.support;
 
-import java.io.Serializable;
-
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.execution.FlowExecution;
@@ -40,13 +38,16 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	 */
 	private transient FlowExecutionRepositoryServices repositoryServices;
 
+	private boolean alwaysGenerateNewNextKey = true;
+
 	/**
-	 * No-arg constructor to satisfy use with subclass implementations are that serializable.
+	 * No-arg constructor to satisfy use with subclass implementations are that
+	 * serializable.
 	 */
 	protected AbstractFlowExecutionRepository() {
-		
+
 	}
-	
+
 	/**
 	 * Creates a new flow execution repository
 	 * @param repositoryServices the common services needed by this repository
@@ -60,7 +61,7 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	 * Returns the holder for accessing common services needed by this
 	 * repository.
 	 */
-	public FlowExecutionRepositoryServices getRepositoryServices() {
+	protected FlowExecutionRepositoryServices getRepositoryServices() {
 		return repositoryServices;
 	}
 
@@ -71,32 +72,27 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 		Assert.notNull(repositoryServices, "The repository services instance is required");
 		this.repositoryServices = repositoryServices;
 	}
+	
+	protected boolean isAlwaysGenerateNewNextKey() {
+		return alwaysGenerateNewNextKey;
+	}
+
+	public void setAlwaysGenerateNewNextKey(boolean alwaysGenerateNewNextKey) {
+		this.alwaysGenerateNewNextKey = alwaysGenerateNewNextKey;
+	}
 
 	public FlowExecution createFlowExecution(String flowId) {
 		Flow flow = repositoryServices.getFlowLocator().getFlow(flowId);
 		return new FlowExecutionImpl(flow, repositoryServices.getListenerLoader().getListeners(flow));
 	}
 
-	public FlowExecutionKey generateKey(FlowExecution flowExecution) {
-		return new FlowExecutionKey(generateId(), generateId());
-	}
-
-	public FlowExecutionKey generateKey(FlowExecution flowExecution, Serializable conversationId) {
-		return new FlowExecutionKey(conversationId, generateId());
-	}
-
-	protected FlowExecution rehydrate(FlowExecution flowExecution) {
-		((FlowExecutionImpl)flowExecution).rehydrate(repositoryServices.getFlowLocator(), repositoryServices
-				.getListenerLoader());
+	protected FlowExecution rehydrate(FlowExecution flowExecution, FlowExecutionKey key) {
+		FlowExecutionImpl impl = asImpl(flowExecution);
+		impl.rehydrate(repositoryServices.getFlowLocator(), repositoryServices.getListenerLoader());
 		return flowExecution;
 	}
-
-	/**
-	 * Helper to generate a new unique object identifier using the configured
-	 * {@link FlowExecutionRepositoryServices}.
-	 * @return the generated uid
-	 */
-	protected Serializable generateId() {
-		return repositoryServices.getUidGenerator().generateId();
+	
+	protected FlowExecutionImpl asImpl(FlowExecution flowExecution) {
+		return (FlowExecutionImpl)flowExecution;
 	}
 }

@@ -1,11 +1,9 @@
 package org.springframework.webflow.execution.repository.support;
 
-import java.io.Serializable;
-
 import org.springframework.webflow.SharedMap;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.repository.ConversationLock;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 
@@ -38,26 +36,21 @@ class RebindingFlowExecutionRepository implements FlowExecutionRepository {
 		return target.generateKey(flowExecution);
 	}
 
-	public FlowExecutionKey generateKey(FlowExecution flowExecution, Serializable conversationId)
+	public FlowExecutionKey getNextKey(FlowExecution flowExecution, FlowExecutionKey key)
 			throws FlowExecutionRepositoryException {
-		return target.generateKey(flowExecution, conversationId);
-	}
-
-	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId)
-			throws FlowExecutionRepositoryException {
-		return target.getCurrentFlowExecutionKey(conversationId);
+		return target.getNextKey(flowExecution, key);
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException {
 		return target.getFlowExecution(key);
 	}
 
-	public ConversationLock getLock(Serializable conversationId) throws FlowExecutionRepositoryException {
-		return target.getLock(conversationId);
+	public FlowExecutionLock getLock(FlowExecutionKey key) throws FlowExecutionRepositoryException {
+		return target.getLock(key);
 	}
 
-	public void invalidateConversation(Serializable conversationId) throws FlowExecutionRepositoryException {
-		target.invalidateConversation(conversationId);
+	public void removeFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException {
+		target.removeFlowExecution(key);
 		rebind();
 	}
 
@@ -65,6 +58,10 @@ class RebindingFlowExecutionRepository implements FlowExecutionRepository {
 			throws FlowExecutionRepositoryException {
 		target.putFlowExecution(key, flowExecution);
 		rebind();
+	}
+
+	public FlowExecutionKey parseFlowExecutionKey(String encodedKey) {
+		return target.parseFlowExecutionKey(encodedKey);
 	}
 
 	private void rebind() {

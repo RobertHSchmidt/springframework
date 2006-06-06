@@ -23,7 +23,7 @@ package org.springframework.webflow.execution.repository;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class CannotContinueConversationException extends FlowExecutionRepositoryException {
+public class CannotContinueFlowExecutionException extends FlowExecutionRepositoryException {
 
 	/**
 	 * The conversation continuation key that was invalid.
@@ -34,10 +34,9 @@ public class CannotContinueConversationException extends FlowExecutionRepository
 	 * Creates a new invalid conversation continuation exception.
 	 * @param key the flow execution key
 	 */
-	public CannotContinueConversationException(FlowExecutionKey key) {
-		this(key, "Cannot continue conversation '" + key.getConversationId() + "'; the submitted continuation id '"
-				+ key.getContinuationId()
-				+ "' is invalid.  This could happen if your users are relying on local browser history "
+	public CannotContinueFlowExecutionException(FlowExecutionKey key) {
+		this(key, "Cannot continue flow execution with key " + key
+				+ ".  This could happen if your users are relying on local browser history "
 				+ "(typically via the back button) that reference obsoleted or expired continuations.");
 	}
 
@@ -46,7 +45,7 @@ public class CannotContinueConversationException extends FlowExecutionRepository
 	 * @param flowExecutionKey the flow execution key
 	 * @param message a custom message
 	 */
-	public CannotContinueConversationException(FlowExecutionKey flowExecutionKey, String message) {
+	public CannotContinueFlowExecutionException(FlowExecutionKey flowExecutionKey, String message) {
 		super(message);
 		this.flowExecutionKey = flowExecutionKey;
 	}

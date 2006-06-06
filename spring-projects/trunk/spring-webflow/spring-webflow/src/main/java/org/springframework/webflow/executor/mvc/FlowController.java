@@ -32,7 +32,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
-import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.continuation.DefaultFlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
@@ -129,7 +129,7 @@ public class FlowController extends AbstractController implements InitializingBe
 	 * requested for execution by clients.
 	 * <p>
 	 * This is a convenience setter that configures a {@link FlowExecutorImpl}
-	 * with a default {@link SimpleFlowExecutionRepositoryFactory} for managing
+	 * with a default {@link DefaultFlowExecutionRepositoryFactory} for managing
 	 * the storage of executing flows.
 	 * @param flowLocator the locator responsible for loading flow definitions
 	 * when this controller is invoked.
@@ -228,12 +228,6 @@ public class FlowController extends AbstractController implements InitializingBe
 			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(response.getFlowExecutionKey(), response
 					.getFlowExecutionContext(), context);
 			return new ModelAndView(new RedirectView(flowExecutionUrl));
-		}
-		else if (response.isConversationRedirect()) {
-			// redirect to active conversation URL
-			String conversationUrl = argumentExtractor.createConversationUrl(response.getFlowExecutionKey(), response
-					.getFlowExecutionContext(), context);
-			return new ModelAndView(new RedirectView(conversationUrl));
 		}
 		else if (response.isExternalRedirect()) {
 			// redirect to external URL

@@ -263,12 +263,6 @@ public class FlowAction extends ActionSupport {
 					.getFlowExecutionContext(), context);
 			return createRedirectForward(flowExecutionUrl, httpResponse);
 		}
-		else if (response.isConversationRedirect()) {
-			// redirect to active conversation URL
-			String conversationUrl = argumentExtractor.createConversationUrl(response.getFlowExecutionKey(), response
-					.getFlowExecutionContext(), context);
-			return createRedirectForward(conversationUrl, httpResponse);
-		}
 		else if (response.isExternalRedirect()) {
 			// redirect to external URL
 			String externalUrl = argumentExtractor.createExternalUrl((ExternalRedirect)response.getViewSelection(),

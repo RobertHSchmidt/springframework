@@ -135,20 +135,21 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 			NavigationHandler originalNavigationHandler) {
 		JsfExternalContext context = new JsfExternalContext(facesContext, fromAction, outcome);
 		if (FlowExecutionHolderUtils.isFlowExecutionRestored(facesContext)) {
-			// the flow execution has been restored, now see if we need to signal an event against it
+			// the flow execution has been restored, now see if we need to
+			// signal an event against it
 			if (argumentExtractor.isEventIdPresent(context)) {
-				// a flow execution has already been restored, signal an event
-				// in it
-				EventId eventId = argumentExtractor.extractEventId(context);
+				// a flow execution has been restored, signal an event in it
+				String eventId = argumentExtractor.extractEventId(context);
 				FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
-				ViewSelection selectedView = holder.getFlowExecution().signalEvent(eventId, context);
+				ViewSelection selectedView = holder.getFlowExecution().signalEvent(new EventId(eventId), context);
 				holder.setViewSelection(selectedView);
 				holder.changed();
 			}
 		}
 		else {
-			// no flow execution exists, see if we need to launch one if the flow id is present
-			if (argumentExtractor.isFlowIdPresent(context)) {		
+			// no flow execution exists, see if we need to launch one if the
+			// flow id is present
+			if (argumentExtractor.isFlowIdPresent(context)) {
 				// a flow execution launch has been requested, start it
 				String flowId = argumentExtractor.extractFlowId(context);
 				FlowExecution flowExecution = getRepository(context).createFlowExecution(flowId);

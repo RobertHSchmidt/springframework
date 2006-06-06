@@ -16,7 +16,6 @@
 package org.springframework.webflow.executor.jsf;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -38,7 +37,6 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 import org.springframework.webflow.support.ApplicationView;
-import org.springframework.webflow.support.ConversationRedirect;
 import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.support.FlowExecutionRedirect;
 import org.springframework.webflow.support.FlowRedirect;
@@ -166,24 +164,12 @@ public class FlowPhaseListener implements PhaseListener {
 			// available to variable/property resolvers and the flow
 			// navigation handler (this could happen as part of a submission or
 			// flow execution redirect)
-			FlowExecutionKey flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
 			FlowExecutionRepository repository = getRepository(context);
+			FlowExecutionKey flowExecutionKey = repository.parseFlowExecutionKey(argumentExtractor
+					.extractFlowExecutionKey(context));
 			FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Loaded existing flow execution from repository with id '" + flowExecutionKey + "'");
-			}
-			FlowExecutionHolderUtils.setFlowExecutionHolder(new FlowExecutionHolder(flowExecutionKey, flowExecution),
-					facesContext);
-		}
-		else if (argumentExtractor.isConversationIdPresent(context)) {
-			// restore the flow execution (this could happen as part of a
-			// conversation redirect)
-			Serializable conversationId = argumentExtractor.extractConversationId(context);
-			FlowExecutionRepository repository = getRepository(context);
-			FlowExecutionKey flowExecutionKey = repository.getCurrentFlowExecutionKey(conversationId);
-			FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Loaded current flow execution from repository with id '" + flowExecutionKey + "'");
 			}
 			FlowExecutionHolderUtils.setFlowExecutionHolder(new FlowExecutionHolder(flowExecutionKey, flowExecution),
 					facesContext);
@@ -232,15 +218,7 @@ public class FlowPhaseListener implements PhaseListener {
 			if (holder.isChanged()) {
 				saveFlowExecution(context, holder);
 			}
-			String url = argumentExtractor.createFlowExecutionUrl(holder.getFlowExecutionKey(), holder
-					.getFlowExecution(), context);
-			sendRedirect(url, context);
-		}
-		else if (selectedView instanceof ConversationRedirect) {
-			if (holder.isChanged()) {
-				saveFlowExecution(context, holder);
-			}
-			String url = argumentExtractor.createConversationUrl(holder.getFlowExecutionKey(), holder
+			String url = argumentExtractor.createFlowExecutionUrl(holder.getFlowExecutionKey().toString(), holder
 					.getFlowExecution(), context);
 			sendRedirect(url, context);
 		}
@@ -249,7 +227,7 @@ public class FlowPhaseListener implements PhaseListener {
 				saveFlowExecution(context, holder);
 			}
 			String url = argumentExtractor.createExternalUrl((ExternalRedirect)holder.getViewSelection(), holder
-					.getFlowExecutionKey(), context);
+					.getFlowExecutionKey().toString(), context);
 			sendRedirect(url, context);
 		}
 		else if (selectedView instanceof FlowRedirect) {
@@ -268,7 +246,7 @@ public class FlowPhaseListener implements PhaseListener {
 			updateViewRoot(facesContext, viewIdResolver.resolveViewId(forward.getViewName()));
 		}
 		Map requestMap = facesContext.getExternalContext().getRequestMap();
-		argumentExtractor.put(holder.getFlowExecutionKey(), requestMap);
+		argumentExtractor.put(holder.getFlowExecutionKey().toString(), requestMap);
 		argumentExtractor.put(holder.getFlowExecution(), requestMap);
 	}
 
@@ -289,7 +267,8 @@ public class FlowPhaseListener implements PhaseListener {
 		int suffixIndex = viewRoot.getViewId().indexOf('.');
 		if (suffixIndex != -1) {
 			return !viewRoot.getViewId().substring(0, suffixIndex).equals(viewId);
-		} else {
+		}
+		else {
 			return !viewRoot.getViewId().equals(viewId);
 		}
 	}
@@ -308,7 +287,7 @@ public class FlowPhaseListener implements PhaseListener {
 			else {
 				// it is an existing conversaiton, use same conversation id,
 				// generate a new continuation id
-				flowExecutionKey = repository.generateKey(flowExecution, flowExecutionKey.getConversationId());
+				flowExecutionKey = repository.getNextKey(flowExecution, flowExecutionKey);
 			}
 			holder.setFlowExecutionKey(flowExecutionKey);
 		}
@@ -326,12 +305,11 @@ public class FlowPhaseListener implements PhaseListener {
 		}
 		else {
 			if (holder.getFlowExecutionKey() != null) {
-				// remove the conversation from the repository
-				Serializable conversationId = holder.getFlowExecutionKey().getConversationId();
+				// remove the flow execution from the repository
 				if (logger.isDebugEnabled()) {
-					logger.debug("Removing conversation in repository with id '" + conversationId + "'");
+					logger.debug("Removing execution in repository with key '" + holder.getFlowExecutionKey() + "'");
 				}
-				repository.invalidateConversation(conversationId);
+				repository.removeFlowExecution(holder.getFlowExecutionKey());
 			}
 		}
 	}

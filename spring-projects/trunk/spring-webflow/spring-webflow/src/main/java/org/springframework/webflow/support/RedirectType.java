@@ -68,16 +68,6 @@ public abstract class RedirectType extends StaticLabeledEnum {
 		}
 	};
 
-	/**
-	 * The conversation redirect type. Requests a redirect to a bookmarkable
-	 * conversation URL that refreshes the most recent state of a conversation.
-	 */
-	public static final RedirectType CONVERSATION = new RedirectType(1, "Conversation") {
-		public ViewSelection select() {
-			return ConversationRedirect.INSTANCE;
-		}
-	};
-
 	private RedirectType(int code, String label) {
 		super(code, label);
 	}

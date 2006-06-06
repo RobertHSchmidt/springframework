@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.executor.mvc;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,10 +31,8 @@ import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.mvc.AbstractController;
 import org.springframework.web.portlet.mvc.Controller;
 import org.springframework.webflow.context.portlet.PortletExternalContext;
-import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.repository.FlowExecutionKey;
-import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.continuation.DefaultFlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
@@ -62,18 +59,18 @@ import org.springframework.webflow.support.FlowRedirect;
  * Usage example:
  * 
  * <pre>
- *       &lt;!--
- *           Exposes flows for execution.
- *       --&gt;
- *       &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
- *           &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
- *           &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
- *       &lt;/bean&gt;
- *                                                                                   
- *       &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *           &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *           &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
- *       &lt;/bean&gt;
+ *              &lt;!--
+ *                  Exposes flows for execution.
+ *              --&gt;
+ *              &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
+ *                  &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
+ *                  &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
+ *              &lt;/bean&gt;
+ *                                                                                          
+ *              &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *                  &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *                  &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
+ *              &lt;/bean&gt;
  * </pre>
  * 
  * It is also possible to customize the {@link FlowExecutorArgumentExtractor}
@@ -119,13 +116,13 @@ public class PortletFlowController extends AbstractController implements Initial
 	 * requested for execution by clients.
 	 * <p>
 	 * This is a convenience setter that configures a {@link FlowExecutorImpl}
-	 * with a default {@link SimpleFlowExecutionRepositoryFactory} for managing
+	 * with a default {@link DefaultFlowExecutionRepositoryFactory} for managing
 	 * the storage of executing flows.
 	 * @param flowLocator the locator responsible for loading flow definitions
 	 * when this controller is invoked.
 	 */
 	public void setFlowLocator(FlowLocator flowLocator) {
-		flowExecutor = new FlowExecutorImpl(new SimpleFlowExecutionRepositoryFactory(flowLocator));
+		flowExecutor = new FlowExecutorImpl(new DefaultFlowExecutionRepositoryFactory(flowLocator));
 	}
 
 	/**
@@ -176,12 +173,11 @@ public class PortletFlowController extends AbstractController implements Initial
 
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
 		PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
-		if (argumentExtractor.isConversationIdPresent(context)) {
-			Serializable conversationId = argumentExtractor.extractConversationId(context);
-			ResponseInstruction responseInstruction = getCachedResponseInstruction(request,
-					getConversationAttributeName(conversationId));
+		if (argumentExtractor.isFlowExecutionKeyPresent(context)) {
+			String flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
+			ResponseInstruction responseInstruction = getActionResponseInstruction(request, flowExecutionKey);
 			if (responseInstruction == null) {
-				responseInstruction = flowExecutor.refresh(conversationId, context);
+				responseInstruction = flowExecutor.refresh(flowExecutionKey, context);
 			}
 			return toModelAndView(responseInstruction);
 		}
@@ -195,17 +191,13 @@ public class PortletFlowController extends AbstractController implements Initial
 
 	protected void handleActionRequestInternal(ActionRequest request, ActionResponse response) throws Exception {
 		PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
-		FlowExecutionKey flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
-		EventId eventId = argumentExtractor.extractEventId(context);
+		String flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
+		String eventId = argumentExtractor.extractEventId(context);
 		ResponseInstruction responseInstruction = flowExecutor.signalEvent(eventId, flowExecutionKey, context);
-		if (responseInstruction.isApplicationView() || responseInstruction.isConversationRedirect()
-				|| responseInstruction.isFlowExecutionRedirect()) {
-			Serializable conversationId = flowExecutionKey.getConversationId();
-			response.setRenderParameter(argumentExtractor.getConversationIdParameterName(), String
-					.valueOf(conversationId));
-			// cache ending response temporarily for final forward on the
-			// next render request
-			cacheResponseInstruction(request, responseInstruction, conversationId);
+		if (responseInstruction.isApplicationView() || responseInstruction.isFlowExecutionRedirect()) {
+			response.setRenderParameter(argumentExtractor.getFlowExecutionKeyParameterName(), responseInstruction
+					.getFlowExecutionKey());
+			exposeToRenderPhase(responseInstruction, request);
 		}
 		else if (responseInstruction.isFlowRedirect()) {
 			// request that a new flow be launched within this portlet
@@ -224,11 +216,11 @@ public class PortletFlowController extends AbstractController implements Initial
 
 	// helpers
 
-	private ResponseInstruction getCachedResponseInstruction(PortletRequest request, String attributeName) {
+	private ResponseInstruction getActionResponseInstruction(PortletRequest request, String flowExecutionKey) {
 		PortletSession session = request.getPortletSession(false);
-		// try and grab last conversation response selection from session
 		ResponseInstruction response = null;
 		if (session != null) {
+			String attributeName = getAttributeName(flowExecutionKey);
 			response = (ResponseInstruction)session.getAttribute(attributeName);
 			if (response != null) {
 				// remove it
@@ -255,15 +247,14 @@ public class PortletFlowController extends AbstractController implements Initial
 		}
 	}
 
-	private void cacheResponseInstruction(PortletRequest request, ResponseInstruction response,
-			Serializable conversationId) {
+	private void exposeToRenderPhase(ResponseInstruction responseInstruction, ActionRequest request) {
 		PortletSession session = request.getPortletSession(false);
 		if (session != null) {
-			session.setAttribute(getConversationAttributeName(conversationId), response);
+			session.setAttribute(getAttributeName(responseInstruction.getFlowExecutionKey()), responseInstruction);
 		}
 	}
 
-	private String getConversationAttributeName(Serializable conversationId) {
-		return "responseInstruction." + conversationId;
+	private String getAttributeName(String flowExecutionKey) {
+		return "actionRequest.responseInstruction." + flowExecutionKey;
 	}
 }

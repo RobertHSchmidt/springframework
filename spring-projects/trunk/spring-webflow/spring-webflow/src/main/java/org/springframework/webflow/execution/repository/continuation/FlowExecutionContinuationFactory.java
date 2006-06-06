@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow.execution.repository.continuation;
 
-import java.io.Serializable;
-
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
@@ -33,5 +31,5 @@ public interface FlowExecutionContinuationFactory {
 	 * @param flowExecution the flow execution
 	 * @return the continuation
 	 */
-	public FlowExecutionContinuation createContinuation(Serializable continuationId, FlowExecution flowExecution);
+	public FlowExecutionContinuation createContinuation(FlowExecution flowExecution);
 }

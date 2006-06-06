@@ -15,9 +15,11 @@
  */
 package org.springframework.webflow.execution.repository.continuation;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.NotSerializableException;
-import java.io.Serializable;
+import java.io.ObjectOutputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.springframework.webflow.execution.FlowExecution;
 
@@ -48,19 +50,47 @@ public class SerializedFlowExecutionContinuationFactory implements FlowExecution
 		this.compress = compress;
 	}
 
-	public FlowExecutionContinuation createContinuation(Serializable continuationId, FlowExecution flowExecution) {
+	public FlowExecutionContinuation createContinuation(FlowExecution flowExecution) {
 		try {
-			return new SerializedFlowExecutionContinuation(continuationId, new FlowExecutionByteArray(flowExecution,
-					getCompress()));
+			ByteArrayOutputStream baos = new ByteArrayOutputStream(384);
+			ObjectOutputStream oos = new ObjectOutputStream(baos);
+			try {
+				oos.writeObject(flowExecution);
+				oos.flush();
+				byte[] data = baos.toByteArray();
+				if (compress) {
+					data = compress(data);
+				}
+				return new SerializedFlowExecutionContinuation(data, compress);
+			}
+			finally {
+				oos.close();
+			}
 		}
 		catch (NotSerializableException e) {
-			throw new FlowExecutionSerializationException(continuationId, flowExecution,
+			throw new FlowExecutionSerializationException(flowExecution,
 					"Could not serialize flow execution; make sure all objects stored in flow scope are serializable",
 					e);
 		}
 		catch (IOException e) {
-			throw new FlowExecutionSerializationException(continuationId, flowExecution,
+			throw new FlowExecutionSerializationException(flowExecution,
 					"IOException thrown serializing flow execution -- this should not happen!", e);
 		}
+	}
+	
+	/**
+	 * Internal helper method to compress given data using GZIP compression.
+	 */
+	private byte[] compress(byte[] dataToCompress) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		GZIPOutputStream gzipos = new GZIPOutputStream(baos);
+		try {
+			gzipos.write(dataToCompress);
+			gzipos.flush();
+		}
+		finally {
+			gzipos.close();
+		}
+		return baos.toByteArray();
 	}
 }

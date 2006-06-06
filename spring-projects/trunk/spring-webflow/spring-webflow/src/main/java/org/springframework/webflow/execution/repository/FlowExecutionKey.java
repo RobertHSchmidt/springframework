@@ -17,9 +17,6 @@ package org.springframework.webflow.execution.repository;
 
 import java.io.Serializable;
 
-import org.springframework.core.style.ToStringCreator;
-import org.springframework.util.Assert;
-
 /**
  * A key that uniquely identifies a flow execution in a managed
  * {@link FlowExecutionRepository}.
@@ -38,63 +35,5 @@ import org.springframework.util.Assert;
  * 
  * @author Keith Donald
  */
-public class FlowExecutionKey implements Serializable {
-
-	/**
-	 * The serialization version id.
-	 */
-	private static final long serialVersionUID = 780746376513564069L;
-
-	/**
-	 * The conversation key part.
-	 */
-	private final Serializable conversationId;
-
-	/**
-	 * The continuation key part.
-	 */
-	private final Serializable continuationId;
-
-	/**
-	 * Creates a new, immutable flow execution key.
-	 * @param conversationId the conversation key part
-	 * @param continuationId the continuation key part
-	 */
-	public FlowExecutionKey(Serializable conversationId, Serializable continuationId) {
-		Assert.notNull(conversationId, "The conversationId is required");
-		Assert.notNull(continuationId, "The continuationId is required");
-		this.conversationId = conversationId;
-		this.continuationId = continuationId;
-	}
-
-	/**
-	 * Returns the conversation id key part.
-	 */
-	public Serializable getConversationId() {
-		return conversationId;
-	}
-
-	/**
-	 * Returns the continuation id key part.
-	 */
-	public Serializable getContinuationId() {
-		return continuationId;
-	}
-
-	public boolean equals(Object o) {
-		if (!(o instanceof FlowExecutionKey)) {
-			return false;
-		}
-		FlowExecutionKey other = (FlowExecutionKey)o;
-		return conversationId.equals(other.conversationId) && continuationId.equals(other.continuationId);
-	}
-
-	public int hashCode() {
-		return conversationId.hashCode() + continuationId.hashCode();
-	}
-
-	public String toString() {
-		return new ToStringCreator(this).append("conversationId", conversationId).append("continuationId",
-				continuationId).toString();
-	}
+public abstract class FlowExecutionKey implements Serializable {
 }

@@ -53,7 +53,7 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	 * The name of the attribute to expose an handled state exception under in
 	 * request scope.
 	 */
-	public static final String ROOT_CAUSE_EXCEPTION_ATTRIBUTE = "rootCause";
+	public static final String ROOT_CAUSE_EXCEPTION_ATTRIBUTE = "rootCauseException";
 
 	/**
 	 * The exceptionType->targetStateId map.

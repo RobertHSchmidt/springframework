@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.execution.repository;
 
-import java.io.Serializable;
+import org.springframework.webflow.execution.repository.conversation.NoSuchConversationException;
 
 /**
  * Thrown when no logical conversation exists with the specified
@@ -25,29 +25,33 @@ import java.io.Serializable;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class NoSuchConversationException extends FlowExecutionRepositoryException {
+public class NoSuchFlowExecutionException extends FlowExecutionRepositoryException {
 
 	/**
 	 * The unique conversation identifier that was invalid.
 	 */
-	private Serializable conversationId;
+	private FlowExecutionKey flowExecutionKey;
 
 	/**
 	 * Create a new flow execution lookup exception.
 	 * @param conversationId the conversation id
 	 */
-	public NoSuchConversationException(Serializable conversationId) {
-		super("No conversation could be found with id '" + conversationId
+	public NoSuchFlowExecutionException(FlowExecutionKey flowExecutionKey) {
+		this(flowExecutionKey, null);
+	}
+
+	public NoSuchFlowExecutionException(FlowExecutionKey flowExecutionKey, NoSuchConversationException e) {
+		super("No flow execution could be found with key '" + flowExecutionKey
 				+ "' -- perhaps this executing flow has ended or expired? "
 				+ "This could happen if your users are relying on browser history "
-				+ "(typically via the back button) that reference ended flows.");
-		this.conversationId = conversationId;
+				+ "(typically via the back button) that reference ended flows.", e);
+		this.flowExecutionKey = flowExecutionKey;
 	}
 
 	/**
 	 * Returns the conversation id that was invalid.
 	 */
-	public Serializable getConversationId() {
-		return conversationId;
+	public FlowExecutionKey getFlowExecutionKey() {
+		return flowExecutionKey;
 	}
 }

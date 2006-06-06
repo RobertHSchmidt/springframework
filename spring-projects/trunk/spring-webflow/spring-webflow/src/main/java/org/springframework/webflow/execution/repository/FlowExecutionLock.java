@@ -13,32 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.repository.support;
 
-import java.io.Serializable;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+package org.springframework.webflow.execution.repository;
 
-import org.springframework.webflow.execution.repository.ConversationLock;
 
 /**
- * A conversation lock that relies on a {@link ReentrantLock} within Java 5's
- * <code>util.concurrent.locks</code> package.
+ * A interface allowing for a thread to obtain exclusive rights to a
+ * conversation. Allows for preventing concurrency conflicts; for example, when
+ * multiple requests from the same client session come in back-to-back.
  * 
  * @author Keith Donald
  */
-public class JdkConcurrentConversationLock implements ConversationLock, Serializable {
+public interface FlowExecutionLock {
 
 	/**
-	 * The lock.
+	 * Acquire the lock on this conversation.
+	 * @throws FlowExecutionRepositoryException an exception occured acquiring
+	 * the lock
 	 */
-	private Lock lock = new ReentrantLock();
+	public void lock();
 
-	public void lock() {
-		lock.lock();
-	}
-
-	public void unlock() {
-		lock.unlock();
-	}
+	/**
+	 * Release the lock on this conversation.
+	 * @throws FlowExecutionRepositoryException an exception occured releasing
+	 * the lock
+	 */
+	public void unlock();
 }

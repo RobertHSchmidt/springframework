@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow.execution.repository;
 
-import java.io.Serializable;
-
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
@@ -51,7 +49,8 @@ public interface FlowExecutionRepository {
 	 * conversation
 	 * @return the flow execution, representing the state of a new conversation
 	 * that has not yet been started
-	 * @throws FlowExecutionRepositoryException a problem occured creating the flow execution
+	 * @throws FlowExecutionRepositoryException a problem occured creating the
+	 * flow execution
 	 */
 	public FlowExecution createFlowExecution(String flowId) throws FlowExecutionRepositoryException;
 
@@ -76,7 +75,7 @@ public interface FlowExecutionRepository {
 	 * @throws FlowExecutionRepositoryException a problem occured generating the
 	 * key
 	 */
-	public FlowExecutionKey generateKey(FlowExecution flowExecution, Serializable conversationId)
+	public FlowExecutionKey getNextKey(FlowExecution flowExecution, FlowExecutionKey previousKey)
 			throws FlowExecutionRepositoryException;
 
 	/**
@@ -90,10 +89,10 @@ public interface FlowExecutionRepository {
 	 * follows:
 	 * 
 	 * <pre>
-	 * ConversationLock lock = repository.getLock(conversationId);
+	 * Lock lock = repository.getLock(conversationId);
 	 * lock.lock();
 	 * try {
-	 * 	// do conversation work
+	 *     // do work
 	 * }
 	 * finally {
 	 * 	lock.unlock();
@@ -105,7 +104,7 @@ public interface FlowExecutionRepository {
 	 * @throws FlowExecutionRepositoryException a problem occured accessing the
 	 * lock object
 	 */
-	public ConversationLock getLock(Serializable conversationId) throws FlowExecutionRepositoryException;
+	public FlowExecutionLock getLock(FlowExecutionKey key) throws FlowExecutionRepositoryException;
 
 	/**
 	 * Return the <code>FlowExecution</code> indexed by the provided key. The
@@ -140,17 +139,6 @@ public interface FlowExecutionRepository {
 			throws FlowExecutionRepositoryException;
 
 	/**
-	 * Returns the current (or last) flow execution key generated for the
-	 * specified conversation.
-	 * @param conversationId the conversation id
-	 * @return the current continuation key
-	 * @throws FlowExecutionRepositoryException if an exception occured getting
-	 * the continuation key
-	 */
-	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId)
-			throws FlowExecutionRepositoryException;
-
-	/**
 	 * Invalidate the executing conversation with the specified id. This method
 	 * will remove all data associated with the conversation, including any
 	 * managed continuations. Any future clients that reference this
@@ -160,6 +148,8 @@ public interface FlowExecutionRepository {
 	 * @throws FlowExecutionRepositoryException the conversation could not be
 	 * invalidated
 	 */
-	public void invalidateConversation(Serializable conversationId) throws FlowExecutionRepositoryException;
+	public void removeFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
 
+	public FlowExecutionKey parseFlowExecutionKey(String encodedKey);
+	
 }

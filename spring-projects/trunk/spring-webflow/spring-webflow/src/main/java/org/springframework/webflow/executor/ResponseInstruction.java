@@ -21,9 +21,7 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.support.ApplicationView;
-import org.springframework.webflow.support.ConversationRedirect;
 import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.support.FlowExecutionRedirect;
 import org.springframework.webflow.support.FlowRedirect;
@@ -45,7 +43,7 @@ public class ResponseInstruction implements Serializable {
 	/**
 	 * The persistent identifier of the flow execution.
 	 */
-	private FlowExecutionKey flowExecutionKey;
+	private String flowExecutionKey;
 
 	/**
 	 * The view selection that was made.
@@ -63,7 +61,7 @@ public class ResponseInstruction implements Serializable {
 	 * @param flowExecutionContext the current flow execution context
 	 * @param viewSelection the selected view
 	 */
-	public ResponseInstruction(FlowExecutionKey flowExecutionKey, FlowExecutionContext flowExecutionContext,
+	public ResponseInstruction(String flowExecutionKey, FlowExecutionContext flowExecutionContext,
 			ViewSelection viewSelection) {
 		Assert.notNull(flowExecutionKey, "The flow execution key is required");
 		this.flowExecutionKey = flowExecutionKey;
@@ -89,7 +87,7 @@ public class ResponseInstruction implements Serializable {
 	/**
 	 * Returns the persistent identifier of the flow execution.
 	 */
-	public FlowExecutionKey getFlowExecutionKey() {
+	public String getFlowExecutionKey() {
 		return flowExecutionKey;
 	}
 
@@ -145,14 +143,6 @@ public class ResponseInstruction implements Serializable {
 	 */
 	public boolean isFlowExecutionRedirect() {
 		return viewSelection instanceof FlowExecutionRedirect;
-	}
-
-	/**
-	 * Returns true if this is an instruction to perform a redirect to the
-	 * current state of the conversation.
-	 */
-	public boolean isConversationRedirect() {
-		return viewSelection instanceof ConversationRedirect;
 	}
 
 	/**

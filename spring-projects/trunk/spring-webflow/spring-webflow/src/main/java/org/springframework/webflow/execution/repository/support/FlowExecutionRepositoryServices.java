@@ -16,13 +16,11 @@
 package org.springframework.webflow.execution.repository.support;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.execution.StaticFlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.execution.StaticFlowExecutionListenerLoader;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
-import org.springframework.webflow.util.UidGenerator;
 
 /**
  * A holder for services common to all {@link FlowExecutionRepository}
@@ -72,11 +70,6 @@ public class FlowExecutionRepositoryServices {
 	private FlowExecutionListenerLoader listenerLoader = new StaticFlowExecutionListenerLoader();
 
 	/**
-	 * The uid generation strategy to use.
-	 */
-	private UidGenerator uidGenerator = new RandomGuidUidGenerator();
-
-	/**
 	 * Creates a new flow execution repository service holder.
 	 * @param flowLocator the flow locator (required)
 	 */
@@ -106,22 +99,5 @@ public class FlowExecutionRepositoryServices {
 	public void setListenerLoader(FlowExecutionListenerLoader listenerLoader) {
 		Assert.notNull(listenerLoader, "The flow execution listener loader is required");
 		this.listenerLoader = listenerLoader;
-	}
-
-	/**
-	 * Returns the uid generation strategy used to generate unique conversation
-	 * and continuation identifiers.
-	 */
-	public UidGenerator getUidGenerator() {
-		return uidGenerator;
-	}
-
-	/**
-	 * Sets the uid generation strategy used to generate unique conversation and
-	 * continuation identifiers for {@link FlowExecutionKey flow execution keys}.
-	 */
-	public void setUidGenerator(UidGenerator uidGenerator) {
-		Assert.notNull(uidGenerator, "The flow execution key UID generator is required");
-		this.uidGenerator = uidGenerator;
 	}
 }

@@ -84,12 +84,6 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	 * Prefix used when the encoded view name wants to specify that a redirect
 	 * to an external URL is required.
 	 */
-	public static final String CONVERSATION_REDIRECT_PREFIX = "conversationRedirect:";
-
-	/**
-	 * Prefix used when the encoded view name wants to specify that a redirect
-	 * to an external URL is required.
-	 */
 	public static final String EXTERNAL_REDIRECT_PREFIX = "externalRedirect:";
 
 	/**
@@ -147,11 +141,6 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 			String viewName = encodedView.substring(REDIRECT_PREFIX.length());
 			Expression viewNameExpr = (Expression)fromStringTo(Expression.class).execute(viewName);
 			return new ApplicationViewSelector(viewNameExpr, RedirectType.FLOW_EXECUTION);
-		}
-		if (encodedView.startsWith(CONVERSATION_REDIRECT_PREFIX)) {
-			String viewName = encodedView.substring(CONVERSATION_REDIRECT_PREFIX.length());
-			Expression viewNameExpr = (Expression)fromStringTo(Expression.class).execute(viewName);
-			return new ApplicationViewSelector(viewNameExpr, RedirectType.CONVERSATION);
 		}
 		else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
 			String externalUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());

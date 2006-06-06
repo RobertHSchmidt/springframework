@@ -2,7 +2,6 @@ package org.springframework.webflow.executor.jsf;
 
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractionException;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 
@@ -44,10 +43,10 @@ public class FlowNavigationHandlerArgumentExtractor extends FlowExecutorArgument
 	 * Overidden to return the eventId from the action outcome string.
 	 * @see org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor#extractEventId(org.springframework.webflow.ExternalContext)
 	 */
-	public EventId extractEventId(ExternalContext context) throws FlowExecutorArgumentExtractionException {
+	public String extractEventId(ExternalContext context) throws FlowExecutorArgumentExtractionException {
 		String outcome = getOutcome(context);
 		if (StringUtils.hasText(outcome)) {
-			return new EventId(outcome);
+			return outcome;
 		}
 		else {
 			return super.extractEventId(context);

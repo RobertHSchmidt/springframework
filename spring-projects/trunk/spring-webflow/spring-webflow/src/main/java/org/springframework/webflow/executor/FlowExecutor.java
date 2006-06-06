@@ -15,12 +15,8 @@
  */
 package org.springframework.webflow.executor;
 
-import java.io.Serializable;
-
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
-import org.springframework.webflow.execution.EventId;
-import org.springframework.webflow.execution.repository.FlowExecutionKey;
 
 /**
  * The central facade or entry-point into the Spring Web Flow system. This
@@ -60,22 +56,8 @@ public interface FlowExecutor {
 	 * @throws FlowException if an exception occured resuming the existing flow
 	 * execution.
 	 */
-	public ResponseInstruction signalEvent(EventId eventId, FlowExecutionKey flowExecutionKey, ExternalContext context)
+	public ResponseInstruction signalEvent(String eventId, String flowExecutionKey, ExternalContext context)
 			throws FlowException;
-
-	/**
-	 * Returns the current response instruction for the "last" tracked state of
-	 * a paused conversation. This is a logical refresh operation that allows
-	 * the "current response" to be reissued. This operation does not affect the
-	 * state of the conversation.
-	 * @param conversationId the id of an existing conversation
-	 * @param context the external context representing the state of a request
-	 * into Spring Web Flow from an external system.
-	 * @return the current response instruction
-	 * @throws FlowException if an exception occured retrieving the current
-	 * response instruction
-	 */
-	public ResponseInstruction refresh(Serializable conversationId, ExternalContext context) throws FlowException;
 
 	/**
 	 * Returns the current response instruction for the flow execution. This is
@@ -89,5 +71,5 @@ public interface FlowExecutor {
 	 * @throws FlowException if an exception occured retrieving the current
 	 * response instruction
 	 */
-	public ResponseInstruction refresh(FlowExecutionKey flowExecutionKey, ExternalContext context) throws FlowException;
+	public ResponseInstruction refresh(String flowExecutionKey, ExternalContext context) throws FlowException;
 }

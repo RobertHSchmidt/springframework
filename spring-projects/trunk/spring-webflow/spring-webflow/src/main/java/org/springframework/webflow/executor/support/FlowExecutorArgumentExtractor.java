@@ -1,19 +1,16 @@
 package org.springframework.webflow.executor.support;
 
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.springframework.binding.format.InvalidFormatException;
 import org.springframework.core.JdkVersion;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ParameterMap;
-import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.support.ExternalRedirect;
@@ -54,12 +51,6 @@ public class FlowExecutorArgumentExtractor {
 	private static final String EVENT_ID_PARAMETER = "_eventId";
 
 	/**
-	 * By default clients can send the conversation id using a parameter with
-	 * this name ("_conversationId").
-	 */
-	private static final String CONVERSATION_ID_PARAMETER = "_conversationId";
-
-	/**
 	 * The default delimiter used when a parameter value is encoed as part of
 	 * the name of an event parameter (e.g. "_eventId_submit").
 	 * <p>
@@ -89,22 +80,10 @@ public class FlowExecutorArgumentExtractor {
 	private String flowExecutionKeyParameterName = FLOW_EXECUTION_KEY_PARAMETER;
 
 	/**
-	 * The formatter that will parse encoded string keys into
-	 * {@link FlowExecutionKey} objects.
-	 */
-	private FlowExecutionKeyFormatter flowExecutionKeyFormatter = new FlowExecutionKeyFormatter();
-
-	/**
 	 * Identifies an event that occured in an existing flow execution, defaults
 	 * to ("_eventId_submit").
 	 */
 	private String eventIdParameterName = EVENT_ID_PARAMETER;
-
-	/**
-	 * Identifies an existing conversation to redirect to, defaults to
-	 * ("_conversationId").
-	 */
-	private String conversationIdParameterName = CONVERSATION_ID_PARAMETER;
 
 	/**
 	 * The embedded parameter name/value delimiter value, used to parse a
@@ -163,23 +142,6 @@ public class FlowExecutorArgumentExtractor {
 	}
 
 	/**
-	 * Returns the configured strategy for converting an encoded string to a
-	 * {@link FlowExecutionKey} and back.
-	 */
-	public FlowExecutionKeyFormatter getFlowExecutionKeyFormatter() {
-		return flowExecutionKeyFormatter;
-	}
-
-	/**
-	 * Sets the strategy for converting an encoded string to a
-	 * {@link FlowExecutionKey} and back.
-	 * @param flowExecutionKeyFormatter the formatter
-	 */
-	public void setFlowExecutionKeyFormatter(FlowExecutionKeyFormatter flowExecutionKeyFormatter) {
-		this.flowExecutionKeyFormatter = flowExecutionKeyFormatter;
-	}
-
-	/**
 	 * Returns the event id parameter name, used to signal what user action
 	 * happened within a paused flow execution.
 	 */
@@ -193,24 +155,6 @@ public class FlowExecutorArgumentExtractor {
 	 */
 	public void setEventIdParameterName(String eventIdParameterName) {
 		this.eventIdParameterName = eventIdParameterName;
-	}
-
-	/**
-	 * Returns the conversation id parameter name, used to identify an active
-	 * active conversation that is ongoing between a browser and Spring Web
-	 * Flow.
-	 */
-	public String getConversationIdParameterName() {
-		return conversationIdParameterName;
-	}
-
-	/**
-	 * Sets the conversation id parameter name, used to identify an active
-	 * active conversation that is ongoing between a browser and Spring Web
-	 * Flow.
-	 */
-	public void setConversationIdParameterName(String conversationIdParameterName) {
-		this.conversationIdParameterName = conversationIdParameterName;
 	}
 
 	/**
@@ -262,8 +206,7 @@ public class FlowExecutorArgumentExtractor {
 	 * @throws FlowExecutorArgumentExtractionException if the flow execution key
 	 * could not be extracted
 	 */
-	public FlowExecutionKey extractFlowExecutionKey(ExternalContext context)
-			throws FlowExecutorArgumentExtractionException {
+	public String extractFlowExecutionKey(ExternalContext context) throws FlowExecutorArgumentExtractionException {
 		String encodedKey = context.getRequestParameterMap().get(flowExecutionKeyParameterName);
 		if (!StringUtils.hasText(encodedKey)) {
 			throw new FlowExecutorArgumentExtractionException(
@@ -272,7 +215,7 @@ public class FlowExecutorArgumentExtractor {
 							+ "' parameter as input; the parameters provided in this request are: "
 							+ StylerUtils.style(context.getRequestParameterMap()));
 		}
-		return parse(encodedKey);
+		return encodedKey;
 	}
 
 	/**
@@ -296,7 +239,7 @@ public class FlowExecutorArgumentExtractor {
 	 * @throws FlowExecutorArgumentExtractionException if the event id could not
 	 * be extracted
 	 */
-	public EventId extractEventId(ExternalContext context) throws FlowExecutorArgumentExtractionException {
+	public String extractEventId(ExternalContext context) throws FlowExecutorArgumentExtractionException {
 		String eventId = findParameter(eventIdParameterName, context.getRequestParameterMap());
 		if (!StringUtils.hasText(eventId)) {
 			throw new FlowExecutorArgumentExtractionException(
@@ -306,33 +249,7 @@ public class FlowExecutorArgumentExtractor {
 							+ "' parameter; the parameters provided in this request are: "
 							+ StylerUtils.style(context.getRequestParameterMap()));
 		}
-		return new EventId(eventId);
-	}
-
-	/**
-	 * Returns true if the conversationId is extractable from the context.
-	 * @param context the context in which a external user event occured
-	 * @return true if extractable, false if not
-	 */
-	public boolean isConversationIdPresent(ExternalContext context) {
-		return context.getRequestParameterMap().contains(conversationIdParameterName);
-	}
-
-	/**
-	 * Extract the conversation id from the external context.
-	 * @param context the context in which a external user event occured
-	 * @return the conversation id, or <code>null</code> if not found.
-	 */
-	public Serializable extractConversationId(ExternalContext context) throws FlowExecutorArgumentExtractionException {
-		String conversationId = context.getRequestParameterMap().get(conversationIdParameterName);
-		if (!StringUtils.hasText(conversationId)) {
-			throw new FlowExecutorArgumentExtractionException(
-					"Unable to extract the conversationId argument: make sure the client provides the '"
-							+ conversationIdParameterName
-							+ "' parameter as input; the parameters provided in this request are: "
-							+ StylerUtils.style(context.getRequestParameterMap()));
-		}
-		return conversationId;
+		return eventId;
 	}
 
 	/**
@@ -513,34 +430,13 @@ public class FlowExecutorArgumentExtractor {
 	 * @param context the external context
 	 * @return the relative conversation URL path
 	 */
-	public String createFlowExecutionUrl(FlowExecutionKey key, FlowExecutionContext flowExecution,
-			ExternalContext context) {
+	public String createFlowExecutionUrl(String key, FlowExecutionContext flowExecution, ExternalContext context) {
 		StringBuffer flowExecutionUrl = new StringBuffer();
 		flowExecutionUrl.append(context.getContextPath());
 		flowExecutionUrl.append(context.getDispatcherPath());
 		flowExecutionUrl.append('?');
-		appendQueryParameter(flowExecutionKeyParameterName, format(key), flowExecutionUrl);
+		appendQueryParameter(flowExecutionKeyParameterName, key, flowExecutionUrl);
 		return flowExecutionUrl.toString();
-	}
-
-	/**
-	 * Create a URL path that when redirected to renders the <i>current</i> (or
-	 * last) view selection</i> made by the conversation identified by the
-	 * provided conversationId. Used to support the <i>conversation redirect</i>
-	 * use case.
-	 * @param key the flow execution key
-	 * @param flowExecution the flow execution
-	 * @param context the external context
-	 * @return the relative conversation URL path
-	 */
-	public String createConversationUrl(FlowExecutionKey key, FlowExecutionContext flowExecution,
-			ExternalContext context) {
-		StringBuffer conversationUrl = new StringBuffer();
-		conversationUrl.append(context.getContextPath());
-		conversationUrl.append(context.getDispatcherPath());
-		conversationUrl.append('?');
-		appendQueryParameter(conversationIdParameterName, key.getConversationId(), conversationUrl);
-		return conversationUrl.toString();
 	}
 
 	/**
@@ -551,8 +447,7 @@ public class FlowExecutorArgumentExtractor {
 	 * redirect (may be null if the conversation has ended)
 	 * @param context the external context
 	 */
-	public String createExternalUrl(ExternalRedirect redirect, FlowExecutionKey flowExecutionKey,
-			ExternalContext context) {
+	public String createExternalUrl(ExternalRedirect redirect, String flowExecutionKey, ExternalContext context) {
 		StringBuffer externalUrl = new StringBuffer();
 		if (redirect.getUrl().startsWith("/") && isRedirectContextRelative()) {
 			externalUrl.append(context.getContextPath());
@@ -566,7 +461,7 @@ public class FlowExecutorArgumentExtractor {
 			else {
 				externalUrl.append('&');
 			}
-			appendQueryParameter(flowExecutionKeyParameterName, format(flowExecutionKey), externalUrl);
+			appendQueryParameter(flowExecutionKeyParameterName, flowExecutionKey, externalUrl);
 		}
 		return externalUrl.toString();
 	}
@@ -578,9 +473,9 @@ public class FlowExecutorArgumentExtractor {
 	 * conversation has ended).
 	 * @param model the model
 	 */
-	public void put(FlowExecutionKey flowExecutionKey, Map model) {
+	public void put(String flowExecutionKey, Map model) {
 		if (flowExecutionKey != null) {
-			model.put(flowExecutionKeyAttributeName, format(flowExecutionKey));
+			model.put(flowExecutionKeyAttributeName, flowExecutionKey);
 		}
 	}
 
@@ -653,21 +548,6 @@ public class FlowExecutorArgumentExtractor {
 		}
 		catch (UnsupportedEncodingException e) {
 			throw new IllegalArgumentException("Cannot encode URL " + input);
-		}
-	}
-
-	protected String format(FlowExecutionKey flowExecutionKey) {
-		return flowExecutionKeyFormatter.formatValue(flowExecutionKey);
-	}
-
-	protected FlowExecutionKey parse(String encodedKey) throws FlowExecutorArgumentExtractionException {
-		try {
-			return (FlowExecutionKey)flowExecutionKeyFormatter.parseValue(encodedKey, FlowExecutionKey.class);
-		}
-		catch (InvalidFormatException e) {
-			throw new FlowExecutorArgumentExtractionException(
-					"Unable to extract the flowExecutionKey argument: the provided key '" + encodedKey + "' is invalid",
-					e);
 		}
 	}
 }

@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow.executor;
 
-import java.io.Serializable;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.mapping.AttributeMapper;
@@ -28,11 +26,11 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.repository.ConversationLock;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
-import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.continuation.DefaultFlowExecutionRepositoryFactory;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.RedirectType;
 
@@ -60,7 +58,7 @@ import org.springframework.webflow.support.RedirectType;
  * <td>repositoryFactory</td>
  * <td>The strategy for accessing a flow execution repositories that are used
  * to create, save, and store managed flow executions driven by this executor.</td>
- * <td>A {@link SimpleFlowExecutionRepositoryFactory simple}, stateful
+ * <td>A {@link DefaultFlowExecutionRepositoryFactory simple}, stateful
  * server-side session-based repository factory</td>
  * </tr>
  * <tr>
@@ -103,7 +101,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * The flow execution repository factory, for obtaining repository instances
 	 * to create, save, and restore flow executions.
 	 * <p>
-	 * The default value is the {@link SimpleFlowExecutionRepositoryFactory}
+	 * The default value is the {@link DefaultFlowExecutionRepositoryFactory}
 	 * repository factory that creates repositories within the user session map.
 	 */
 	private FlowExecutionRepositoryFactory repositoryFactory;
@@ -134,12 +132,12 @@ public class FlowExecutorImpl implements FlowExecutor {
 
 	/**
 	 * Create a new flow executor that configures use of the default repository
-	 * strategy ({@link SimpleFlowExecutionRepositoryFactory}) to drive the
+	 * strategy ({@link DefaultFlowExecutionRepositoryFactory}) to drive the
 	 * the execution of flows loaded by the provided flow locator.
 	 * @param flowLocator the flow locator
 	 */
 	public FlowExecutorImpl(FlowLocator flowLocator) {
-		this(new SimpleFlowExecutionRepositoryFactory(flowLocator));
+		this(new DefaultFlowExecutionRepositoryFactory(flowLocator));
 	}
 
 	/**
@@ -180,29 +178,29 @@ public class FlowExecutorImpl implements FlowExecutor {
 		if (flowExecution.isActive()) {
 			FlowExecutionKey flowExecutionKey = repository.generateKey(flowExecution);
 			repository.putFlowExecution(flowExecutionKey, flowExecution);
-			return new ResponseInstruction(flowExecutionKey, flowExecution, pausedView(selectedView));
+			return new ResponseInstruction(flowExecutionKey.toString(), flowExecution, pausedView(selectedView));
 		}
 		else {
 			return new ResponseInstruction(flowExecution, selectedView);
 		}
 	}
 
-	public ResponseInstruction signalEvent(EventId eventId, FlowExecutionKey flowExecutionKey, ExternalContext context)
+	public ResponseInstruction signalEvent(String eventId, String flowExecutionKey, ExternalContext context)
 			throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
-		Assert.notNull(flowExecutionKey, "The flow execution key is required");
-		ConversationLock lock = repository.getLock(flowExecutionKey.getConversationId());
+		FlowExecutionKey repositoryKey = repository.parseFlowExecutionKey(flowExecutionKey);
+		FlowExecutionLock lock = repository.getLock(repositoryKey);
 		lock.lock();
 		try {
-			FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
-			ViewSelection selectedView = flowExecution.signalEvent(eventId, context);
+			FlowExecution flowExecution = repository.getFlowExecution(repositoryKey);
+			ViewSelection selectedView = flowExecution.signalEvent(new EventId(eventId), context);
 			if (flowExecution.isActive()) {
-				flowExecutionKey = repository.generateKey(flowExecution, flowExecutionKey.getConversationId());
-				repository.putFlowExecution(flowExecutionKey, flowExecution);
-				return new ResponseInstruction(flowExecutionKey, flowExecution, pausedView(selectedView));
+				repositoryKey = repository.getNextKey(flowExecution, repositoryKey);
+				repository.putFlowExecution(repositoryKey, flowExecution);
+				return new ResponseInstruction(flowExecutionKey.toString(), flowExecution, pausedView(selectedView));
 			}
 			else {
-				repository.invalidateConversation(flowExecutionKey.getConversationId());
+				repository.removeFlowExecution(repositoryKey);
 				return new ResponseInstruction(flowExecution, selectedView);
 			}
 		}
@@ -211,17 +209,12 @@ public class FlowExecutorImpl implements FlowExecutor {
 		}
 	}
 
-	public ResponseInstruction refresh(Serializable conversationId, ExternalContext context) throws FlowException {
+	public ResponseInstruction refresh(String flowExecutionKey, ExternalContext context) throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
-		FlowExecutionKey flowExecutionKey = repository.getCurrentFlowExecutionKey(conversationId);
-		FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
-		return new ResponseInstruction(flowExecutionKey, flowExecution, flowExecution.refresh(context));
-	}
-
-	public ResponseInstruction refresh(FlowExecutionKey flowExecutionKey, ExternalContext context) throws FlowException {
-		FlowExecutionRepository repository = getRepository(context);
-		FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
-		return new ResponseInstruction(flowExecutionKey, flowExecution, flowExecution.refresh(context));
+		FlowExecutionKey repositoryKey = repository.parseFlowExecutionKey(flowExecutionKey);
+		FlowExecution flowExecution = repository.getFlowExecution(repositoryKey);
+		ViewSelection selectedView = flowExecution.refresh(context);
+		return new ResponseInstruction(flowExecutionKey.toString(), flowExecution, selectedView);
 	}
 
 	/**

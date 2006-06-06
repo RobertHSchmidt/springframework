@@ -16,9 +16,12 @@
 package org.springframework.webflow.execution.repository.continuation;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.AbstractFlowExecutionRepositoryCreator;
 import org.springframework.webflow.execution.repository.support.FlowExecutionRepositoryServices;
+import org.springframework.webflow.util.RandomGuidUidGenerator;
+import org.springframework.webflow.util.UidGenerator;
 
 /**
  * Creates continuation-based flow execution repositories.
@@ -36,9 +39,14 @@ public class ContinuationFlowExecutionRepositoryCreator extends AbstractFlowExec
 	private FlowExecutionContinuationFactory continuationFactory = new SerializedFlowExecutionContinuationFactory();
 
 	/**
+	 * The uid generation strategy to use.
+	 */
+	private transient UidGenerator continuationIdGenerator = new RandomGuidUidGenerator();
+	
+	/**
 	 * The maximum number of continuations allowed per conversation.
 	 */
-	private int maxContinuations = 25;
+	private int maxContinuations;
 
 	/**
 	 * Creates a new continuation repository creator.
@@ -58,6 +66,23 @@ public class ContinuationFlowExecutionRepositoryCreator extends AbstractFlowExec
 	}
 
 	/**
+	 * Returns the uid generation strategy used to generate unique conversation
+	 * and continuation identifiers.
+	 */
+	public UidGenerator getContinuationIdGenerator() {
+		return continuationIdGenerator;
+	}
+
+	/**
+	 * Sets the uid generation strategy used to generate unique conversation and
+	 * continuation identifiers for {@link FlowExecutionKey flow execution keys}.
+	 */
+	public void setContinuationIdGenerator(UidGenerator continuationIdGenerator) {
+		Assert.notNull(continuationIdGenerator, "The continuation id generator is required");
+		this.continuationIdGenerator = continuationIdGenerator;
+	}
+	
+	/**
 	 * Sets the maximum number of continuations allowed per conversation in
 	 * repositories created by this creator.
 	 */
@@ -70,6 +95,7 @@ public class ContinuationFlowExecutionRepositoryCreator extends AbstractFlowExec
 				getRepositoryServices());
 		repository.setContinuationFactory(continuationFactory);
 		repository.setMaxContinuations(maxContinuations);
+		repository.setContinuationIdGenerator(continuationIdGenerator);
 		return repository;
 	}
 
@@ -77,6 +103,7 @@ public class ContinuationFlowExecutionRepositoryCreator extends AbstractFlowExec
 		ContinuationFlowExecutionRepository impl = (ContinuationFlowExecutionRepository)repository;
 		impl.setRepositoryServices(getRepositoryServices());
 		impl.setContinuationFactory(continuationFactory);
+		impl.setContinuationIdGenerator(continuationIdGenerator);
 		return impl;
 	}
 }

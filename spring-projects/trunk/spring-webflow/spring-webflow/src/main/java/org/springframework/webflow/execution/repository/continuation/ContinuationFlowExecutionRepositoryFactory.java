@@ -17,9 +17,11 @@ package org.springframework.webflow.execution.repository.continuation;
 
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.support.DelegatingFlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.support.FlowExecutionRepositoryServices;
 import org.springframework.webflow.execution.repository.support.SharedMapFlowExecutionRepositoryFactory;
+import org.springframework.webflow.util.UidGenerator;
 
 /**
  * A convenient implementation that encapsulates the assembly of a server-side
@@ -76,6 +78,14 @@ public class ContinuationFlowExecutionRepositoryFactory extends DelegatingFlowEx
 		getRepositoryCreator().setContinuationFactory(continuationFactory);
 	}
 
+	/**
+	 * Sets the uid generation strategy used to generate unique conversation and
+	 * continuation identifiers for {@link FlowExecutionKey flow execution keys}.
+	 */
+	public void setContinuationIdGenerator(UidGenerator continuationIdGenerator) {
+		getRepositoryCreator().setContinuationIdGenerator(continuationIdGenerator);
+	}
+	
 	/**
 	 * Sets the maximum number of continuations allowed per conversation in this
 	 * repository.

@@ -15,13 +15,14 @@
  */
 package org.springframework.webflow.execution.repository.continuation;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.util.zip.GZIPInputStream;
 
-import org.springframework.core.NestedRuntimeException;
-import org.springframework.util.Assert;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
@@ -29,14 +30,17 @@ import org.springframework.webflow.execution.FlowExecution;
  * 
  * @author Keith Donald
  */
-public class SerializedFlowExecutionContinuation extends FlowExecutionContinuation {
-
-	private static final long serialVersionUID = 1026250005686020025L;
+class SerializedFlowExecutionContinuation extends FlowExecutionContinuation {
 
 	/**
-	 * The serialized flow execution byte array.
+	 * The serialized flow execution.
 	 */
-	private FlowExecutionByteArray byteArray;
+	private byte[] data;
+
+	/**
+	 * Whether or not this flow execution array is compressed.
+	 */
+	private boolean compressed;
 
 	/**
 	 * Creates a new serialized flow execution continuation.
@@ -44,24 +48,35 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 	 * @param byteArray the serialized byte array representing a snapshot of a
 	 * {@link org.springframework.webflow.execution.FlowExecution}.
 	 */
-	public SerializedFlowExecutionContinuation(Serializable id, FlowExecutionByteArray byteArray) {
-		super(id);
-		Assert.notNull(byteArray, "The flow execution byte array is required");
-		this.byteArray = byteArray;
+	public SerializedFlowExecutionContinuation(byte[] data, boolean compressed) {
+		this.data = data;
+		this.compressed = compressed;
 	}
 
+	/**
+	 * Returns whether or not this byte array is compressed.
+	 */
+	public boolean isCompressed() {
+		return compressed;
+	}
+	
 	public FlowExecution getFlowExecution() {
 		try {
-			return byteArray.deserializeFlowExecution();
+			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(getData(true)));
+			try {
+				return (FlowExecution)ois.readObject();
+			}
+			finally {
+				ois.close();
+			}
 		}
 		catch (IOException e) {
 			throw new FlowExecutionDeserializationException(
-					getId(),
 					"IOException thrown deserializing the flow execution stored in this continuation -- this should not happen!",
 					e);
 		}
 		catch (ClassNotFoundException e) {
-			throw new FlowExecutionDeserializationException(getId(),
+			throw new FlowExecutionDeserializationException(
 					"ClassNotFoundException thrown deserializing the flow execution stored in this continuation -- "
 							+ "This should not happen! Make sure there are no classloader issues."
 							+ "For example, perhaps the Web Flow system is being loaded by a classloader "
@@ -71,7 +86,7 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 
 	public byte[] toByteArray() {
 		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream(byteArray.getData().length + 128);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream(data.length + 128);
 			ObjectOutputStream oos = new ObjectOutputStream(baos);
 			try {
 				oos.writeObject(this);
@@ -87,16 +102,35 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 		}
 	}
 
-	protected static class FlowExecutionDeserializationException extends NestedRuntimeException {
-		private Serializable continuationId;
-
-		public FlowExecutionDeserializationException(Serializable continuationId, String message, Throwable cause) {
-			super(message, cause);
-			this.continuationId = continuationId;
+	/**
+	 * Return the flow execution in its raw byte[] form. Will decompress if
+	 * requested.
+	 * @param decompress whether or not to decompress the byte[] array before
+	 * returning
+	 * @return the byte array
+	 * @throws IOException a problem occured with decompression
+	 */
+	public byte[] getData(boolean decompress) throws IOException {
+		if (isCompressed() && decompress) {
+			return decompress(data);
 		}
-
-		public Serializable getContinuationId() {
-			return continuationId;
+		else {
+			return data;
 		}
+	}
+
+	/**
+	 * Internal helper method to decompress given data using GZIP decompression.
+	 */
+	private byte[] decompress(byte[] dataToDecompress) throws IOException {
+		GZIPInputStream gzipin = new GZIPInputStream(new ByteArrayInputStream(dataToDecompress));
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			FileCopyUtils.copy(gzipin, baos);
+		}
+		finally {
+			gzipin.close();
+		}
+		return baos.toByteArray();
 	}
 }

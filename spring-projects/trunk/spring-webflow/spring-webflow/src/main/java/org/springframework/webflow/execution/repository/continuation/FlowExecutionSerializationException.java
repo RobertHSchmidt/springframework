@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow.execution.repository.continuation;
 
-import java.io.Serializable;
-
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 
@@ -27,11 +25,6 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryE
  * @author Keith Donald
  */
 public class FlowExecutionSerializationException extends FlowExecutionRepositoryException {
-
-	/**
-	 * The id of the continuation whose flow execution could not be serialized.
-	 */
-	private Serializable continuationId;
 
 	/**
 	 * The flow execution that could not be serialized.
@@ -45,16 +38,8 @@ public class FlowExecutionSerializationException extends FlowExecutionRepository
 	 * @param message a descriptive message
 	 * @param cause
 	 */
-	public FlowExecutionSerializationException(Serializable continuationId, FlowExecution flowExecution,
-			String message, Throwable cause) {
+	public FlowExecutionSerializationException(FlowExecution flowExecution, String message, Throwable cause) {
 		super(message, cause);
-	}
-
-	/**
-	 * Returns the flow execution continuation id.
-	 */
-	public Serializable getContinuationId() {
-		return continuationId;
 	}
 
 	/**

@@ -21,6 +21,7 @@ import org.springframework.webflow.SharedAttributeMap;
 import org.springframework.webflow.SharedMap;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryCreator;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 
 /**
  * Retrieves flow execution repositories from a shared, externally managed map.
@@ -42,7 +43,13 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryC
  * 
  * @author Keith Donald
  */
-public class SharedMapFlowExecutionRepositoryFactory extends AbstractFlowExecutionRepositoryFactory {
+public class SharedMapFlowExecutionRepositoryFactory implements FlowExecutionRepositoryFactory {
+
+	/**
+	 * The creational strategy that will create FlowExecutionRepository
+	 * instances as needed for management by this factory.
+	 */
+	private FlowExecutionRepositoryCreator repositoryCreator;
 
 	/**
 	 * The map locator that returns a <code>java.util.Map</code> that allows
@@ -59,9 +66,18 @@ public class SharedMapFlowExecutionRepositoryFactory extends AbstractFlowExecuti
 	 * @param repositoryCreator the repository creational strategy
 	 */
 	public SharedMapFlowExecutionRepositoryFactory(FlowExecutionRepositoryCreator repositoryCreator) {
-		super(repositoryCreator);
+		Assert.notNull(repositoryCreator, "The repository creator is required");
+		this.repositoryCreator = repositoryCreator;
 	}
 
+	/**
+	 * Returns the creational strategy in use that will create
+	 * {@link FlowExecutionRepository} instances as needed for this factory.
+	 */
+	public FlowExecutionRepositoryCreator getRepositoryCreator() {
+		return repositoryCreator;
+	}
+	
 	/**
 	 * Returns the shared, external map locator.
 	 */

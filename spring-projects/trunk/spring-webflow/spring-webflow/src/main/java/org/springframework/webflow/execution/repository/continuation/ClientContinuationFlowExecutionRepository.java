@@ -21,14 +21,12 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 import org.apache.commons.codec.binary.Base64;
-import org.springframework.util.Assert;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.repository.ConversationLock;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
-import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
-import org.springframework.webflow.execution.repository.support.AbstractFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.conversation.ConversationService;
+import org.springframework.webflow.execution.repository.conversation.impl.StatelessConversationService;
+import org.springframework.webflow.execution.repository.support.AbstractConversationFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.FlowExecutionRepositoryServices;
-import org.springframework.webflow.execution.repository.support.NoOpConversationLock;
 
 /**
  * Stores flow execution continuations clientside, requiring no use of
@@ -65,7 +63,7 @@ import org.springframework.webflow.execution.repository.support.NoOpConversation
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecutionRepository {
+public class ClientContinuationFlowExecutionRepository extends AbstractConversationFlowExecutionRepository {
 
 	/**
 	 * The continuation factory that will be used to create new continuations to
@@ -79,7 +77,17 @@ public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecu
 	 * to function.
 	 */
 	public ClientContinuationFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices) {
-		super(repositoryServices);
+		super(repositoryServices, new StatelessConversationService());
+	}
+
+	/**
+	 * Creates a new client flow execution repository.
+	 * @param repositoryServices the common services needed by this repository
+	 * to function.
+	 */
+	public ClientContinuationFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices,
+			ConversationService conversationService) {
+		super(repositoryServices, conversationService);
 	}
 
 	/**
@@ -96,33 +104,22 @@ public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecu
 		this.continuationFactory = continuationFactory;
 	}
 
-	public ConversationLock getLock(Serializable conversationId) {
-		return NoOpConversationLock.INSTANCE;
-	}
-
-	public FlowExecutionKey generateKey(FlowExecution flowExecution) {
-		return new FlowExecutionKey(generateId(), encode(generateId(), flowExecution));
-	}
-
-	public FlowExecutionKey generateKey(FlowExecution flowExecution, Serializable conversationId) {
-		return new FlowExecutionKey(conversationId, encode(generateId(), flowExecution));
-	}
-
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
-		return rehydrate(decode(key.getContinuationId()).getFlowExecution());
+		FlowExecutionContinuation continuation = (FlowExecutionContinuation)getContinuationId(key);
+		FlowExecution flowExecution = continuation.getFlowExecution();
+		return rehydrate(flowExecution, key);
 	}
 
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
-		// nothing to do by default, subclasses may override
+		// nothing to do
 	}
 
-	public FlowExecutionKey getCurrentFlowExecutionKey(Serializable conversationId)
-			throws FlowExecutionRepositoryException {
-		throw new UnsupportedOperationException("Operation not supported by this implementation");
+	protected Serializable newContinuationId(FlowExecution flowExecution) {
+		return encode(flowExecution);
 	}
 
-	public void invalidateConversation(Serializable conversationId) {
-		// nothing to do by dfault, subclasses may override
+	protected Serializable parseContinuationId(String encodedId) {
+		return decode(encodedId);
 	}
 
 	/**
@@ -134,8 +131,8 @@ public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecu
 	 * @param flowExecution the flow execution instance
 	 * @return the encoded representation
 	 */
-	protected Serializable encode(Serializable continuationId, FlowExecution flowExecution) {
-		FlowExecutionContinuation continuation = continuationFactory.createContinuation(continuationId, flowExecution);
+	protected Serializable encode(FlowExecution flowExecution) {
+		FlowExecutionContinuation continuation = continuationFactory.createContinuation(flowExecution);
 		return new String(Base64.encodeBase64(continuation.toByteArray()));
 	}
 
@@ -148,9 +145,8 @@ public class ClientContinuationFlowExecutionRepository extends AbstractFlowExecu
 	 * @param data the encode flow execution data
 	 * @return the decoded flow execution instance
 	 */
-	protected FlowExecutionContinuation decode(Serializable data) {
-		Assert.notNull(data, "The flow execution data to decode cannot be null");
-		byte[] bytes = Base64.decodeBase64(String.valueOf(data).getBytes());
+	protected FlowExecutionContinuation decode(String encodedContinuation) {
+		byte[] bytes = Base64.decodeBase64(encodedContinuation.getBytes());
 		try {
 			return deserializeContinuation(bytes);
 		}
