@@ -49,6 +49,8 @@ public abstract class AbstractStaxXmlReaderTest extends TestCase {
 
     protected void setUp() throws Exception {
         reader = XMLReaderFactory.createXMLReader();
+        reader.setFeature("http://xml.org/sax/features/namespaces", true);
+        reader.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
     }
 
     public void testContentHandler() throws SAXException, IOException, XMLStreamException {
@@ -168,11 +170,9 @@ public abstract class AbstractStaxXmlReaderTest extends TestCase {
                 Attributes attributes = (Attributes) argument;
                 StringBuffer buffer = new StringBuffer("[");
                 for (int i = 0; i < attributes.getLength(); i++) {
-                    if (StringUtils.hasLength(attributes.getURI(i))) {
-                        buffer.append('{');
-                        buffer.append(attributes.getURI(i));
-                        buffer.append('}');
-                    }
+                    buffer.append('{');
+                    buffer.append(attributes.getURI(i));
+                    buffer.append('}');
                     buffer.append(attributes.getQName(i));
                     buffer.append('=');
                     buffer.append(attributes.getValue(i));

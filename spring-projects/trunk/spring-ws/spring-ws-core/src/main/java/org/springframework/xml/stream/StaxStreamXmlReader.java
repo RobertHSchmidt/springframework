@@ -117,11 +117,15 @@ public class StaxStreamXmlReader extends StaxXmlReader {
 
     private void handleEndElement() throws SAXException {
         if (getContentHandler() != null) {
-            getContentHandler().endElement(reader.getName().getNamespaceURI(), reader.getName().getLocalPart(),
-                    QNameUtils.toQualifiedName(reader.getName()));
-
+			QName qName = reader.getName();
+            getContentHandler().endElement(qName.getNamespaceURI(), qName.getLocalPart(),
+                    QNameUtils.toQualifiedName(qName));
             for (int i = 0; i < reader.getNamespaceCount(); i++) {
-                getContentHandler().endPrefixMapping(reader.getNamespacePrefix(i));
+				String prefix = reader.getNamespacePrefix(i);
+				if (prefix == null) {
+					prefix = "";
+				}
+                getContentHandler().endPrefixMapping(prefix);
             }
         }
     }
@@ -142,7 +146,11 @@ public class StaxStreamXmlReader extends StaxXmlReader {
     private void handleStartElement() throws SAXException {
         if (getContentHandler() != null) {
             for (int i = 0; i < reader.getNamespaceCount(); i++) {
-                getContentHandler().startPrefixMapping(reader.getNamespacePrefix(i), reader.getNamespaceURI(i));
+				String prefix = reader.getNamespacePrefix(i);
+				if (prefix == null) {
+					prefix = "";
+				}
+                getContentHandler().startPrefixMapping(prefix, reader.getNamespaceURI(i));
             }
 
             QName qName = reader.getName();
@@ -155,7 +163,11 @@ public class StaxStreamXmlReader extends StaxXmlReader {
         AttributesImpl attributes = new AttributesImpl();
 
         for (int i = 0; i < reader.getAttributeCount(); i++) {
-            attributes.addAttribute(reader.getAttributeNamespace(i), reader.getAttributeLocalName(i),
+			String namespace = reader.getAttributeNamespace(i);
+			if (namespace == null) {
+				namespace = "";
+			}
+            attributes.addAttribute(namespace, reader.getAttributeLocalName(i),
                     QNameUtils.toQualifiedName(reader.getAttributeName(i)), reader.getAttributeType(i),
                     reader.getAttributeValue(i));
         }
