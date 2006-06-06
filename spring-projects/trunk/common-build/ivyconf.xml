@@ -55,6 +55,7 @@
         	<module organisation="springframework" name="spring-mock" resolver="spring-projects"/>
         	<module organisation="springframework" name="spring-obj" resolver="spring-projects"/>
         	<module organisation="springframework" name="spring-orm" resolver="spring-projects"/>
+        	<module organisation="springframework" name="spring-oxm" resolver="spring-projects"/>
         	<module organisation="springframework" name="spring-portlet" resolver="spring-projects"/>
         	<module organisation="springframework" name="spring-remoting" resolver="spring-projects"/>
         	<module organisation="springframework" name="spring-struts" resolver="spring-projects"/>
@@ -63,7 +64,7 @@
         	<module organisation="springframework" name="spring-web" resolver="spring-projects"/>
 	       	<module organisation="springframework" name="spring-webflow" resolver="spring-projects"/>
         	<module organisation="springframework" name="spring-webmvc" resolver="spring-projects"/>
-        	<module organisation="springframework" name="spring-ws" resolver="spring-projects"/>
+        	<module organisation="springframework" name="spring-ws-core" resolver="spring-projects"/>
         	<module organisation="springframework" name="various" resolver="spring-projects"/>
                
 	</modules>
