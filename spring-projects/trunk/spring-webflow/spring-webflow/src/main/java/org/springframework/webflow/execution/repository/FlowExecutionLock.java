@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.springframework.webflow.execution.repository;
-
 
 /**
  * A interface allowing for a thread to obtain exclusive rights to a
