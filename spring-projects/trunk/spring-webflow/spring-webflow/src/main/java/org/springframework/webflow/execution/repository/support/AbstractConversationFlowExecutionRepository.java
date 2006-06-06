@@ -39,7 +39,8 @@ import org.springframework.webflow.execution.repository.conversation.NoSuchConve
  * 
  * @author Keith Donald
  */
-public abstract class AbstractConversationFlowExecutionRepository extends AbstractFlowExecutionRepository {
+public abstract class AbstractConversationFlowExecutionRepository extends AbstractFlowExecutionRepository implements
+		Serializable {
 
 	/**
 	 * The conversation service to delegate to for managing conversations
