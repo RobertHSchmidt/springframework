@@ -29,7 +29,7 @@
 		
         <!-- castor only dependencies -->
 		<dependency org="org.castor" name="castor" rev="1.0" conf="buildtime,castor->default" />
-        <dependency org="apache" name="xerces" rev="2.7.1" conf="test,castor->default">
+        <dependency org="apache" name="xerces" rev="2.8.0" conf="test,castor->default">
             <artifact name="xercesImpl" type="jar"/>
         </dependency>
 
