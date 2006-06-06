@@ -28,33 +28,28 @@
         <dependency org="javax.xml" name="jaxb-impl" rev="2.0-rc1" conf="buildtime,test->default"/>
         <dependency org="javax.xml" name="jaxb1-impl" rev="2.0-rc1" conf="buildtime,test->default"/>
 		
-		<dependency org="castor" name="castor-xml" rev="1.0-M2" conf="buildtime->default"/>
+		<dependency org="org.castor" name="castor" rev="1.0" conf="buildtime->default" />
         <dependency org="xmlbeans" name="xmlbeans" rev="2.0.0" conf="buildtime->default">
             <artifact name="xbean" type="jar"/>
         </dependency>
         <dependency org="stax" name="stax-api" rev="1.0" conf="buildtime->default"/>
-        <dependency org="jibx" name="jibx-run" rev="1.0.1" conf="buildtime->default"/>
+        <dependency org="org.jibx" name="jibx-run" rev="1.0.1" conf="buildtime->default"/>
 
         <!-- test time only dependencies -->
         <dependency org="apache" name="xerces" rev="2.7.1" conf="test->default">
             <artifact name="xercesImpl" type="jar"/>
         </dependency>
+        <!--
         <dependency org="java" name="activation" rev="1.0.2" conf="test->default"/>
+        -->
         <dependency org="junit" name="junit" rev="3.8.1" conf="test->default"/>
         <dependency org="xmlunit" name="xmlunit" rev="1.0" conf="test->default"/>
-        <dependency org="jibx" name="jibx-bind" rev="1.0.1" conf="test->default"/>
+        <dependency org="org.jibx" name="jibx-bind" rev="1.0.1" conf="test->default"/>
         <dependency org="apache" name="bcel" rev="5.1" conf="test->default"/>
         <dependency org="xpp3" name="xpp3" rev="1.1.3.3" conf="test->default"/>
         <dependency org="xstream" name="xstream" rev="1.1.3" conf="buildtime->default"/>
 
-        <dependency org="easymock" name="easymock" rev="1.2" conf="test->default">
-            <artifact name="easymock" type="jar" ext="Java1.3.jar"/>
-            <artifact name="easymockclassextension" type="jar"/>
-        </dependency>
-        <dependency org="cglib" name="cglib" rev="2.0.2" conf="test->full"/>
-        <dependency org="cenqua" name="clover" rev="1.3.8" conf="test->default">
-            <artifact name="clover" type="jar"/>
-            <artifact name="cenquatasks" type="jar"/>
-        </dependency>
+        <dependency org="easymock" name="easymock" rev="1.1" conf="test->default" />
+	    <dependency	org="clover" name="clover" rev="1.3.11" conf="test->default" />
     </dependencies>
 </ivy-module>
