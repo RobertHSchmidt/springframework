@@ -22,6 +22,7 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 import org.springframework.webflow.execution.repository.conversation.Conversation;
 import org.springframework.webflow.execution.repository.conversation.ConversationService;
 import org.springframework.webflow.execution.repository.conversation.impl.LocalConversationService;
@@ -197,7 +198,11 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	}
 
 	protected FlowExecutionContinuation getContinuation(FlowExecutionKey key) {
-		return getContinuationGroup(key).get(getContinuationId(key));
+		FlowExecutionContinuation continuation = getContinuationGroup(key).get(getContinuationId(key));
+		if (continuation == null) {
+			throw new NoSuchFlowExecutionException(key);
+		}
+		return continuation;
 	}
 
 	protected AttributeMap getConversationScope(FlowExecutionKey key) {
