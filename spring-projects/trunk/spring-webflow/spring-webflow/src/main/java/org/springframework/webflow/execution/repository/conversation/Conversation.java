@@ -15,18 +15,63 @@
  */
 package org.springframework.webflow.execution.repository.conversation;
 
+/**
+ * A service interface for working with state associated with a single logical
+ * user interaction called a "conversation".
+ * <p>
+ * A conversation provides a "task" context that is begun and eventually ends.
+ * Between the beginning and the end attributes can be placed in and read from a
+ * conversation's context.
+ * <p>
+ * Once begun, tOhe conversation can be locked to obtain exclusive access to
+ * manipulating it. Once the conversation is "done", it can be ended.
+ * 
+ * @author Keith Donald
+ */
 public interface Conversation {
-	public ConversationId getId();
-	
-	public void end();
 
+	/**
+	 * Returns the unique id assigned to this conversation. This id remains the
+	 * same throughout the life of the conversation.
+	 * @return the conversation id.
+	 */
+	public ConversationId getId();
+
+	/**
+	 * Lock this conversation. May block until the lock is available, if someone
+	 * else has acquired the lock.
+	 */
 	public void lock();
 
-	public void unlock();
-
+	/**
+	 * Returns the conversation attribute with the specified name.
+	 * @param name the attribute name
+	 * @return the attribute value
+	 */
 	public Object getAttribute(Object name);
 
+	/**
+	 * Puts a conversation attribute into this context.
+	 * @param name the attribute name
+	 * @param value the attribute value
+	 */
 	public void putAttribute(Object name, Object value);
 
+	/**
+	 * Removes a conversation attribute.
+	 * @param name the attribute name
+	 */
 	public void removeAttribute(Object name);
+
+	/**
+	 * Ends this conversation. This method should only be called once to
+	 * terminate the conversation and cleanup any allocated resources.
+	 */
+	public void end();
+
+	/**
+	 * Unlock this conversation, making it available for others for
+	 * manipulation.
+	 */
+	public void unlock();
 }

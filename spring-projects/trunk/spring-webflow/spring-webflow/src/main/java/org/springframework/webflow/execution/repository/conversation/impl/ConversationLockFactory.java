@@ -20,8 +20,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.core.JdkVersion;
 
 /**
- * Simple utility class for creating instances of {@link org.springframework.webflow.execution.repository.FlowExecutionLock} based
- * on the current execution environment.
+ * Simple utility class for creating conversation lock instances based on the
+ * current execution environment.
  * 
  * @author Keith Donald
  * @author Rob Harrop
@@ -43,10 +43,11 @@ public class ConversationLockFactory {
 	}
 
 	/**
-	 * When running on Java 1.5+, returns an instance of {@link org.springframework.webflow.execution.repository.conversation.impl.JdkConcurrentConversationLock}. When
-	 * running on older JDKs with the 'util.concurrent' package available, an instance of
-	 * {@link org.springframework.webflow.execution.repository.conversation.impl.UtilConcurrentConversationLock} is returned. In all other cases an instance of
-	 * {@link org.springframework.webflow.execution.repository.conversation.impl.NoOpConversationLock} is returned.
+	 * When running on Java 1.5+, returns an instance of
+	 * {@link JdkConcurrentConversationLock}. When running on older JDKs with
+	 * the 'util.concurrent' package available, an instance of
+	 * {@link UtilConcurrentConversationLock} is returned. In all other cases an
+	 * instance of {@link NoOpConversationLock} is returned.
 	 */
 	public static ConversationLock createLock() {
 		if (JdkVersion.getMajorJavaVersion() >= JdkVersion.JAVA_15) {
@@ -56,9 +57,9 @@ public class ConversationLockFactory {
 			return new UtilConcurrentConversationLock();
 		}
 		else {
-			logger.warn("Unable to enable conversation locking. Switch to Java 5 or above, " +
-							"or put the 'util.concurrent' package on the classpath " +
-							"to enable locking in your environment.");
+			logger.warn("Unable to enable conversation locking. Switch to Java 5 or above, "
+					+ "or put the 'util.concurrent' package on the classpath "
+					+ "to enable locking in your environment.");
 			return NoOpConversationLock.INSTANCE;
 		}
 	}

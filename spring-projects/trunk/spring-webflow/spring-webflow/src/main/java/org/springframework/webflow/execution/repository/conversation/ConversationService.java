@@ -15,10 +15,35 @@
  */
 package org.springframework.webflow.execution.repository.conversation;
 
+/**
+ * A service for managing conversations. This interface is the entry point into
+ * the conversation subsystem.
+ * 
+ * @author Keith Donald
+ */
 public interface ConversationService {
+
+	/**
+	 * Begin a new conversation.
+	 * @param conversationParameters the input needed
+	 * @return a service interface allowing access to the conversatio context
+	 * @throws ConversationServiceException an exception occured
+	 */
 	public Conversation begin(ConversationParameters conversationParameters) throws ConversationServiceException;
 
+	/**
+	 * Get the conversation with the provided id.
+	 * @param id the conversation id
+	 * @return the conversation
+	 * @throws NoSuchConversationException the id provided was invalid.
+	 */
 	public Conversation getConversation(ConversationId id) throws NoSuchConversationException;
-	
+
+	/**
+	 * Parse the string-encoded conversationId into its object form.
+	 * @param encodedId the encoded id
+	 * @return the parsed conversation id
+	 * @throws ConversationServiceException an exception occured.
+	 */
 	public ConversationId parseConversationId(String encodedId) throws ConversationServiceException;
 }

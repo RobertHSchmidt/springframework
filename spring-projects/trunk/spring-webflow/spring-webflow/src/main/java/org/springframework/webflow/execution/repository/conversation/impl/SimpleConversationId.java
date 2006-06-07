@@ -35,8 +35,15 @@ public class SimpleConversationId extends ConversationId {
 	 */
 	private static final long serialVersionUID = -8560408935182880763L;
 
+	/**
+	 * The scalar id value.
+	 */
 	private Serializable id;
 
+	/**
+	 * Creates a new simple conversation id.
+	 * @param id the scalar id value.
+	 */
 	public SimpleConversationId(Serializable id) {
 		this.id = id;
 	}

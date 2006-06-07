@@ -20,10 +20,9 @@ import java.io.Serializable;
 /**
  * An id that uniquely identifies a conversation managed by
  * {@link ConversationService}.
- * <p>
- * This key consists of a unique string that is typically a GUID.
  * 
  * @author Ben Hale
+ * @author Keith Donald
  */
 public abstract class ConversationId implements Serializable {
 
