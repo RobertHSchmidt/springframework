@@ -11,10 +11,10 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
 import org.springframework.webflow.builder.BaseFlowServiceLocator;
-import org.springframework.webflow.builder.FlowServiceLocator;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.FlowBuilder;
 import org.springframework.webflow.builder.FlowBuilderException;
+import org.springframework.webflow.builder.FlowServiceLocator;
 import org.springframework.webflow.builder.SimpleFlowBuilder;
 
 public class FlowRegistryPopulationTests extends TestCase {

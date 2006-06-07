@@ -1,8 +1,8 @@
 package org.springframework.webflow;
 
-import org.springframework.webflow.test.MockRequestContext;
-
 import junit.framework.TestCase;
+
+import org.springframework.webflow.test.MockRequestContext;
 
 public class NullViewSelectionTests extends TestCase {
 

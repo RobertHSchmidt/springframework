@@ -71,7 +71,7 @@ public class FlowVariableResolverTests extends TestCase {
 	public void testResolveVariableFlowScopeWithThreadLocal() {
 		MockControl flowExecutionControl = MockControl.createControl(FlowExecution.class);
 		FlowExecution flowExecutionMock = (FlowExecution)flowExecutionControl.getMock();
-		FlowExecutionKey key = new FlowExecutionKey("some conversation id", "some continuation id");
+		FlowExecutionKey key = null;
 		FlowExecutionHolder holder = new FlowExecutionHolder(key, flowExecutionMock);
 		FlowExecutionHolderUtils.setFlowExecutionHolder(holder, mockFacesContext);
 		flowExecutionControl.replay();

@@ -9,7 +9,6 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.NoMatchingTransitionException;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.EventId;
-import org.springframework.webflow.execution.repository.CannotContinueFlowExecutionException;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 import org.springframework.webflow.registry.NoSuchFlowDefinitionException;
