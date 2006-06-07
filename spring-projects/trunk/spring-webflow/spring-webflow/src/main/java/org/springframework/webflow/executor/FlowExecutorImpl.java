@@ -191,9 +191,9 @@ public class FlowExecutorImpl implements FlowExecutor {
 		FlowExecutionKey repositoryKey = repository.parseFlowExecutionKey(flowExecutionKey);
 		FlowExecutionLock lock = repository.getLock(repositoryKey);
 		lock.lock();
-		FlowExecution flowExecution = null;
+		boolean flowExecutionLocked = true;
 		try {
-			flowExecution = repository.getFlowExecution(repositoryKey);
+			FlowExecution flowExecution = repository.getFlowExecution(repositoryKey);
 			ViewSelection selectedView = flowExecution.signalEvent(new EventId(eventId), context);
 			if (flowExecution.isActive()) {
 				repositoryKey = repository.getNextKey(flowExecution, repositoryKey);
@@ -202,11 +202,12 @@ public class FlowExecutorImpl implements FlowExecutor {
 			}
 			else {
 				repository.removeFlowExecution(repositoryKey);
+				flowExecutionLocked = false;
 				return new ResponseInstruction(flowExecution, selectedView);
 			}
 		}
 		finally {
-			if (flowExecution != null && flowExecution.isActive()) {
+			if (flowExecutionLocked) {
 				lock.unlock();
 			}
 		}
