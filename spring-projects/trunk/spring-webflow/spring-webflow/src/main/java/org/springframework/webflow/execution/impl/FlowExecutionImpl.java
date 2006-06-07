@@ -381,14 +381,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	/**
-	 * Sets the attributes shared by all sessions.
-	 * @param scope the data shared by all sessions.
-	 */
-	public void setConversationScope(AttributeMap scope) {
-		this.conversationScope = scope;
-	}
-
-	/**
 	 * Set the state that is currently active in this flow execution.
 	 * @param newState the new current state
 	 */
@@ -468,7 +460,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		out.writeObject(flowSessions);
 	}
 
-	public synchronized void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader) {
+	public void rehydrate(FlowLocator flowLocator, FlowExecutionListenerLoader listenerLoader) {
 		// implementation note: we cannot integrate this code into the
 		// {@link readExternal(ObjectInput)} method since we need the flow
 		// locator and listener list
@@ -506,6 +498,14 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 	}
 
+	/**
+	 * Sets the attributes shared by all sessions.
+	 * @param scope the data shared by all sessions.
+	 */
+	public void setConversationScope(AttributeMap scope) {
+		this.conversationScope = scope;
+	}
+	
 	private static class FlowSessionFlowLocator implements FlowLocator {
 		private FlowLocator flowLocator;
 
