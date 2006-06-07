@@ -1,6 +1,6 @@
 <ivy-module version="1.1">
 
-  <info organisation="springframework" module="swf-sellitem-jsf"/>
+  <info organisation="org.springframework" module="swf-sellitem-jsf"/>
 	
   <configurations>
     <conf name="default" extends="global"/>
@@ -17,9 +17,9 @@
     </dependency>
     <dependency org="java" name="jstl" rev="1.1.2"/>
 	<dependency	org="javax.jmx" name="jmx-ri" rev="1.2.1"/>
-    <dependency org="springframework" name="spring-webflow"
+    <dependency org="org.springframework" name="spring-webflow"
 	            rev="latest.integration" conf="global->default,jsf"/>
-    <dependency org="springframework" name="various" rev="2.0-m5"/>
+    <dependency org="org.springframework" name="various" rev="2.0-m5"/>
 	<dependency org="hsqldb" name="hsqldb" rev="1.8.0.1"/>
     
     <!--  build-time only dependencies -->

@@ -1,6 +1,6 @@
 <ivy-module version="1.1">
 
-  <info organisation="springframework" module="swf-phonebook"/>
+  <info organisation="org.springframework" module="swf-phonebook"/>
 	
   <configurations>
     <conf name="default" extends="global"/>
@@ -16,7 +16,7 @@
        <artifact name="standard" type="jar"/>
     </dependency>
     <dependency org="java" name="jstl" rev="1.1.2"/>
-    <dependency org="springframework" name="spring-webflow" rev="latest.integration"/>
+    <dependency org="org.springframework" name="spring-webflow" rev="latest.integration"/>
 
     <!--  build-time only dependencies -->
 	<dependency	org="javax.servlet" name="servlet-api" rev="2.4" conf="buildtime->default"/>

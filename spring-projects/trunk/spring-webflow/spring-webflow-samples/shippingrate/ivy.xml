@@ -1,6 +1,6 @@
 <ivy-module version="1.1">
 
-  <info organisation="springframework" module="swf-shippingrate"/>
+  <info organisation="org.springframework" module="swf-shippingrate"/>
 	
   <configurations>
     <conf name="default" extends="global"/>
@@ -17,7 +17,7 @@
     </dependency>
     <dependency org="java" name="jstl" rev="1.1.2"/>
 	<dependency	org="javax.jmx" name="jmx-ri" rev="1.2.1"/>
-    <dependency org="springframework" name="spring-webflow" rev="latest.integration" conf="global->default"/>
+    <dependency org="org.springframework" name="spring-webflow" rev="latest.integration" conf="global->default"/>
     
     <!--  build-time only dependencies -->
 	<dependency	org="javax.servlet" name="servlet-api" rev="2.4" conf="buildtime->default"/>

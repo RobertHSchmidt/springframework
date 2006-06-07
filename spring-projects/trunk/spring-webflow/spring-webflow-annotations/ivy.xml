@@ -1,6 +1,6 @@
 <ivy-module version="1.1">
 
-    <info organisation="springframework" module="spring-webflow-annotations"/>
+    <info organisation="org.springframework" module="spring-webflow-annotations"/>
 
     <configurations>
 		<!-- default configuration that 'by default' pulls in the global configuration -->
@@ -18,7 +18,7 @@
 
     <dependencies defaultconf="global->default">
     	<!-- global (compile, test, runtime) dependencies -->
-	    <dependency org="springframework" name="spring-webflow" rev="latest.integration"/>
+	    <dependency org="org.springframework" name="spring-webflow" rev="latest.integration"/>
 
         <!-- test time only dependencies -->
         <dependency org="easymock" name="easymock" rev="1.1" conf="test->default"/>
