@@ -88,6 +88,7 @@ Package org.springframework.webflow.support
 
 Package org.springframework.webflow.test
 * Added flowExecution not null asserts to signalEvent and refresh AbstractFlowExecutionTests operations.
+* Removed AbstractFlowExecutionTests.conversationRedirect method.
   
 Changes in version 1.0 RC1 (03.5.2006)
 ------------------------------------
