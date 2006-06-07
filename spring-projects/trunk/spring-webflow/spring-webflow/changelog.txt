@@ -4,6 +4,12 @@ http://www.springframework.org
 
 Changes in version 1.0 RC2 (07.6.2006)
 ------------------------------------
+
+Overall
+* Moved project source control (with history preserved) to sourceforge subversion (SVN) repository at:
+      https://svn.sourceforge.net/svnroot/springframework/spring-projects/trunk
+* Updated projects structure to maven2 standard (e.g. src/main/java, src/test/java).
+
 Package org.springframework.webflow
 * Removed 'requiredType' not null check on AttributeMap accessor methods; if no requiredType is specified
   the type assert is simply not performed.
