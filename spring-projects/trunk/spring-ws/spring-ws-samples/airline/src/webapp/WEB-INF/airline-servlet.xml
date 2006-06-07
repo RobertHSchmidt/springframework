@@ -12,7 +12,7 @@
         <property name="messageContextFactory" ref="messageContextFactory"/>
     </bean>
 
-    <bean id="messageContextFactory" class="org.springframework.ws.soap.axiom.AxiomSoapMessageContextFactory"/>
+    <bean id="messageContextFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageContextFactory"/>
 
     <bean id="handlerMapping"
           class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
