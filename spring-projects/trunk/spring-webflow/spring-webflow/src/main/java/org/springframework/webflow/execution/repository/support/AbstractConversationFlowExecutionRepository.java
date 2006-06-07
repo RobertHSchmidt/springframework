@@ -16,8 +16,10 @@
 package org.springframework.webflow.execution.repository.support;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
@@ -31,16 +33,19 @@ import org.springframework.webflow.execution.repository.conversation.Conversatio
 import org.springframework.webflow.execution.repository.conversation.NoSuchConversationException;
 
 /**
- * A convenient base for flow execution repository implementations.
- * <p>
- * Exposes a configuration interface for setting the set of services common to
- * most repository implementations. Also provides some basic implementation
- * assistance.
+ * A convenient base for flow execution repository implementations that delegate
+ * to a conversation service for managing conversations that govern the
+ * persistent state of paused flow executions.
  * 
  * @author Keith Donald
  */
 public abstract class AbstractConversationFlowExecutionRepository extends AbstractFlowExecutionRepository implements
 		Serializable {
+
+	/**
+	 * The conversation "scope" attribute.
+	 */
+	private static final String SCOPE_ATTRIBUTE = "scope";
 
 	/**
 	 * The conversation service to delegate to for managing conversations
@@ -67,10 +72,17 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 		setConversationService(conversationService);
 	}
 
+	/**
+	 * Returns the configured conversation service.
+	 */
 	protected ConversationService getConversationService() {
 		return conversationService;
 	}
 
+	/**
+	 * Sets the conversationService reference.
+	 * @param conversationService the conversation service, may not be null.
+	 */
 	protected void setConversationService(ConversationService conversationService) {
 		Assert.notNull(conversationService, "The conversation service is required");
 		this.conversationService = conversationService;
@@ -79,7 +91,7 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	public FlowExecutionKey generateKey(FlowExecution flowExecution) {
 		Conversation conversation = conversationService.begin(createNewConversation(flowExecution));
 		onBegin(conversation);
-		return new CompositeFlowExecutionKey(conversation.getId(), newContinuationId(flowExecution));
+		return new CompositeFlowExecutionKey(conversation.getId(), generateContinuationId(flowExecution));
 	}
 
 	public FlowExecutionLock getLock(FlowExecutionKey key) throws FlowExecutionRepositoryException {
@@ -89,7 +101,7 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	public FlowExecutionKey getNextKey(FlowExecution flowExecution, FlowExecutionKey previousKey) {
 		if (isAlwaysGenerateNewNextKey()) {
 			CompositeFlowExecutionKey key = (CompositeFlowExecutionKey)previousKey;
-			return new CompositeFlowExecutionKey(key.getConversationId(), newContinuationId(flowExecution));
+			return new CompositeFlowExecutionKey(key.getConversationId(), generateContinuationId(flowExecution));
 		}
 		else {
 			return previousKey;
@@ -117,17 +129,38 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 		return new ConversationParameters(flow.getId(), flow.getCaption(), flow.getDescription());
 	}
 
+	/**
+	 * A "on begin conversation" callback, allowing for insertion of custom
+	 * logic after a new conversation has begun.
+	 * @param conversation the conversation that has begun
+	 */
 	protected void onBegin(Conversation conversation) {
 	}
 
+	/**
+	 * Returns the conversation id part of the composite flow execution key.
+	 * @param key the composite key
+	 * @return the conversationId key part
+	 */
 	protected ConversationId getConversationId(FlowExecutionKey key) {
 		return ((CompositeFlowExecutionKey)key).getConversationId();
 	}
 
+	/**
+	 * Returns the continuation id part of the composite flow execution key.
+	 * @param key the composite key
+	 * @return the continuation id key part
+	 */
 	protected Serializable getContinuationId(FlowExecutionKey key) {
 		return ((CompositeFlowExecutionKey)key).getContinuationId();
 	}
 
+	/**
+	 * Returns the conversation governing the execution of the
+	 * {@link FlowExecution} with the provided key.
+	 * @param key the flow execution key
+	 * @return the governing conversation
+	 */
 	protected Conversation getConversation(FlowExecutionKey key) {
 		try {
 			return getConversationService().getConversation(getConversationId(key));
@@ -137,7 +170,33 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 		}
 	}
 
-	protected abstract Serializable newContinuationId(FlowExecution flowExecution);
+	protected FlowExecution rehydrate(FlowExecution flowExecution, FlowExecutionKey key) {
+		flowExecution = super.rehydrate(flowExecution, key);
+		asImpl(flowExecution).setConversationScope(getConversationScope(key));
+		return flowExecution;
+	}
 
+	protected AttributeMap getConversationScope(FlowExecutionKey key) {
+		Map scope = (Map)getConversation(key).getAttribute(SCOPE_ATTRIBUTE);
+		return new AttributeMap(scope);
+	}
+
+	protected void putConversationScope(FlowExecutionKey key, AttributeMap scope) {
+		getConversation(key).putAttribute(SCOPE_ATTRIBUTE, scope.getMap());
+	}
+	
+	/**
+	 * Template method used to generate a new continuation id for this flow
+	 * execution. Subclasses must override.
+	 * @param flowExecution the flow execution
+	 * @return the continuation id
+	 */
+	protected abstract Serializable generateContinuationId(FlowExecution flowExecution);
+
+	/**
+	 * Template method to parse the continuation id from the encoded string.
+	 * @param encodedId the string identifier
+	 * @return the parsed continuation id
+	 */
 	protected abstract Serializable parseContinuationId(String encodedId);
 }

@@ -88,7 +88,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	/**
 	 * A data structure for attributes shared by all flow sessions.
 	 */
-	private AttributeMap scope = new AttributeMap();
+	private transient AttributeMap conversationScope = new AttributeMap();
 
 	/**
 	 * The stack of active, currently executing flow sessions. As subflows are
@@ -160,9 +160,9 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		return getActiveSessionInternal();
 	}
 
-	public AttributeMap getScope() {
+	public AttributeMap getConversationScope() {
 		assertActive();
-		return scope;
+		return conversationScope;
 	}
 
 	// methods implementing FlowExecution
@@ -384,8 +384,8 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * Sets the attributes shared by all sessions.
 	 * @param scope the data shared by all sessions.
 	 */
-	public void setScope(AttributeMap scope) {
-		this.scope = scope;
+	public void setConversationScope(AttributeMap scope) {
+		this.conversationScope = scope;
 	}
 
 	/**
@@ -455,7 +455,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		flowId = (String)in.readObject();
-		scope = (AttributeMap)in.readObject();
 		flowSessions = (LinkedList)in.readObject();
 	}
 
@@ -466,7 +465,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		else {
 			out.writeObject(flowId);
 		}
-		out.writeObject(scope);
 		out.writeObject(flowSessions);
 	}
 

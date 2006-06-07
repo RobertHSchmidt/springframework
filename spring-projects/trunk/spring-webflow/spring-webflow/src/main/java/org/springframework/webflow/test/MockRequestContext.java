@@ -117,7 +117,7 @@ public class MockRequestContext implements RequestContext {
 	}
 
 	public AttributeMap getConversationScope() {
-		return getFlowExecutionContext().getScope();
+		return getMockFlowExecutionContext().getConversationScope();
 	}
 
 	public ParameterMap getRequestParameters() {

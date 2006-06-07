@@ -32,7 +32,7 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 
 	private FlowSession activeSession;
 
-	private AttributeMap scope = new AttributeMap();
+	private AttributeMap conversationScope = new AttributeMap();
 
 	private ViewSelection currentViewSelection;
 	
@@ -77,8 +77,8 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 		return activeSession;
 	}
 
-	public AttributeMap getScope() {
-		return scope;
+	public AttributeMap getConversationScope() {
+		return conversationScope;
 	}
 
 	/**
@@ -98,8 +98,8 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 	/**
 	 * Sets flow execution (conversational) scope.
 	 */
-	public void setScope(AttributeMap scope) {
-		this.scope = scope;
+	public void setConversationScope(AttributeMap scope) {
+		this.conversationScope = scope;
 	}
 
 	/**
@@ -119,5 +119,4 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 	public void setCurrentViewSelection(ViewSelection currentViewSelection) {
 		this.currentViewSelection = currentViewSelection;
 	}
-	
 }

@@ -113,7 +113,7 @@ class FlowExecutionControlContextImpl implements FlowExecutionControlContext {
 	}
 
 	public AttributeMap getConversationScope() {
-		return flowExecution.getScope();
+		return flowExecution.getConversationScope();
 	}
 
 	public FlowExecutionContext getFlowExecutionContext() {

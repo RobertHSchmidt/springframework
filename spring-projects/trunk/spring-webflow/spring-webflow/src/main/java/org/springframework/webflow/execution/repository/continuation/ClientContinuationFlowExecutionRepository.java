@@ -23,29 +23,32 @@ import java.io.Serializable;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.execution.repository.conversation.Conversation;
+import org.springframework.webflow.execution.repository.conversation.ConversationId;
+import org.springframework.webflow.execution.repository.conversation.ConversationParameters;
 import org.springframework.webflow.execution.repository.conversation.ConversationService;
-import org.springframework.webflow.execution.repository.conversation.impl.StatelessConversationService;
+import org.springframework.webflow.execution.repository.conversation.ConversationServiceException;
+import org.springframework.webflow.execution.repository.conversation.NoSuchConversationException;
+import org.springframework.webflow.execution.repository.conversation.impl.SimpleConversationId;
 import org.springframework.webflow.execution.repository.support.AbstractConversationFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.FlowExecutionRepositoryServices;
 
 /**
- * Stores flow execution continuations clientside, requiring no use of
- * server-side state.
+ * Stores flow execution state client side, requiring no use of server-side
+ * state.
  * <p>
  * More specifically, instead of putting {@link FlowExecution} objects in a
- * server-side store, this repository <i>encodes</i> them directly into the
- * <code>continuationId</code> of a generated {@link FlowExecutionKey}. When
- * asked to load a flow execution by its key, this repository decodes the
- * serialized <code>continuationId</code>, restoring the
- * {@link FlowExecution} object at the state it was when encoded.
+ * server-side store this repository <i>encodes</i> them directly into the
+ * <code>continuationId</code> of a generated
+ * {@link CompositeFlowExecutionKey}. When asked to load a flow execution by
+ * its key, this repository decodes the serialized <code>continuationId</code>,
+ * restoring the {@link FlowExecution} object at the state it was when encoded.
  * <p>
- * Note: currently this repository implementation does not support
+ * Note: currently this repository implementation does not by default support
  * <i>conversation invalidation after completion</i>, which enables automatic
- * prevention of duplicate submission after a conversation is completed (note
- * the {@link #invalidateConversation(Serializable)} method is a NoOp). Support
- * for this requires tracking active <code>conversationIds</code> using some
- * centralized storage medium like a database table. This implementation will be
- * likely enhanced in future releases to provide this capability.
+ * prevention of duplicate submission after a conversation is completed. Support
+ * for this requires tracking active conversations using a conversation service
+ * backed by some centralized storage medium like a database table.
  * <p>
  * Warning: storing state (a flow execution continuation) on the client entails
  * a certain security risk. This implementation does not provide a secure way of
@@ -53,12 +56,13 @@ import org.springframework.webflow.execution.repository.support.FlowExecutionRep
  * continuation and get access to possible sensitive data stored in the flow
  * execution. If you need more security and still want to store continuations on
  * the client, subclass this class and override the methods
- * {@link #encode(Serializable continuationId, FlowExecution flowExecution)} and
- * {@link #decode(Serializable)}, implementing them with a secure
- * encoding/decoding algorithm, e.g. based on public/private key encryption.
+ * {@link #encode(FlowExecution))} and {@link #decode(String)}, implementing
+ * them with a secure encoding/decoding algorithm, e.g. based on public/private
+ * key encryption.
  * <p>
  * This class depends on the Jakarta Commons Codec library to do BASE64
- * encoding.
+ * encoding. Commons code must be available in the classpath when using this
+ * implementation.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -77,7 +81,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	 * to function.
 	 */
 	public ClientContinuationFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices) {
-		super(repositoryServices, new StatelessConversationService());
+		super(repositoryServices, new NoOpConversationService());
 	}
 
 	/**
@@ -111,14 +115,14 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	}
 
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
-		// nothing to do
+		putConversationScope(key, asImpl(flowExecution).getConversationScope());
 	}
 
-	protected Serializable newContinuationId(FlowExecution flowExecution) {
+	protected final Serializable generateContinuationId(FlowExecution flowExecution) {
 		return encode(flowExecution);
 	}
 
-	protected Serializable parseContinuationId(String encodedId) {
+	protected final Serializable parseContinuationId(String encodedId) {
 		return decode(encodedId);
 	}
 
@@ -165,6 +169,51 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 		}
 		finally {
 			ois.close();
+		}
+	}
+	
+	private static class NoOpConversationService implements ConversationService {
+
+		private static final ConversationId conversationId = new SimpleConversationId("1");
+		
+		private static final NoOpConversation INSTANCE = new NoOpConversation();
+		
+		public Conversation begin(ConversationParameters conversationParameters) throws ConversationServiceException {
+			return INSTANCE;
+		}
+
+		public Conversation getConversation(ConversationId id) throws NoSuchConversationException {
+			return null;
+		}
+
+		public ConversationId parseConversationId(String encodedId) throws ConversationServiceException {
+			return null;
+		}
+
+		private static class NoOpConversation implements Conversation {
+
+			public void end() {
+			}
+
+			public Object getAttribute(Object name) {
+				return null;
+			}
+
+			public ConversationId getId() {
+				return conversationId;
+			}
+
+			public void lock() {
+			}
+
+			public void putAttribute(Object name, Object value) {
+			}
+
+			public void removeAttribute(Object name) {
+			}
+
+			public void unlock() {
+			}	
 		}
 	}
 }

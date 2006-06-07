@@ -36,43 +36,37 @@ import org.springframework.webflow.util.UidGenerator;
  * where each continuation represents a restorable state of an active
  * conversation captured at a point in time.
  * <p>
- * The set of all active conversations are stored in a map structured in the
- * following manner:
+ * The set of all active conversations are managed by a
+ * {@link ConversationService} implementation, which this repository delegates
+ * to.
  * <p>
  * <ul>
- * <li>Each map entry key is an assigned conversationId, uniquely identifying
- * an ongoing conversation between a client and the Spring Web Flow system.
- * <li>Each map entry value is a {@link ConversationImpl} object, providing the
- * details about an ongoing logical conversation or <i>application transaction</i>
- * between a client and the Spring Web Flow system. Each
- * <code>Conversation</code> maintains a stack of
- * {@link FlowExecutionContinuation} objects, where each continuation represents
- * the state of the conversation at a point in time relevant to the user <i>that
- * can be restored and continued</i>. These continuations can be restored to
+ * <li>Each conversation is assigned a conversationId, uniquely identifying an
+ * ongoing conversation with a client.
+ * <li>Each conversation is configured with a
+ * {@link FlowExecutionContinuationGroup}. Each continuation represents the
+ * state of the conversation at a point in time relevant to the user <i>that can
+ * be restored and continued</i>. These continuations can be restored to
  * support users going back in their browser to continue a conversation from a
  * previous point.
  * </ul>
  * <p>
- * It is important to note use of this repository <b>does</b> allow for
- * duplicate submission in conjunction with browser navigational buttons (such
- * as the back button). Specifically, if you attempt to "go back" and resubmit,
- * the continuation id stored on the page in your browser history will match the
+ * It is important to note use of this repository allows for duplicate
+ * submission in conjunction with browser navigational buttons (such as the back
+ * button). Specifically, if you attempt to "go back" and resubmit, the
+ * continuation id stored on the page in your browser history will match the
  * continuation id of the {@link FlowExecutionContinuation} object and access to
  * the conversation will allowed.
  * <p>
  * This repository implementation also provides support for <i>conversation
- * invalidation after completion</i>, where once a logical
- * {@link ConversationImpl} completes (by one of its FlowExecution's reaching an
- * end state), the entire conversation (including all continuations) is
- * invalidated. This prevents the possibility of duplicate submission after
- * completion.
+ * invalidation after completion</i>, where once a logical conversation
+ * completes (by one of its FlowExecution's reaching an end state), the entire
+ * conversation (including all continuations) is invalidated. This prevents the
+ * possibility of duplicate submission after completion.
  * <p>
- * This repository is more elaborate than the
- * {@link SimpleFlowExecutionRepository}, offering more power (by enabling
- * multiple continuations to exist per conversatino), but incurring more
- * overhead. This repository implementation should be considered when you do
- * have to support browser navigational button use, e.g. you cannot lock down
- * the browser and require that all navigational events to be routed explicitly
+ * This repository implementation should be considered when you do have to
+ * support browser navigational button use, e.g. you cannot lock down the
+ * browser and require that all navigational events to be routed explicitly
  * through Spring Web Flow.
  * 
  * @author Keith Donald
@@ -82,8 +76,9 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 
 	private static final long serialVersionUID = -5113833049008094259L;
 
-	private static final String SCOPE_ATTRIBUTE = "scope";
-
+	/**
+	 * The conversation "continuation group" attribute.
+	 */
 	private static final String CONTINUATION_GROUP_ATTRIBUTE = "continuationGroup";
 
 	/**
@@ -137,16 +132,16 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	}
 
 	/**
-	 * Returns the uid generation strategy used to generate unique conversation
-	 * and continuation identifiers.
+	 * Returns the uid generation strategy used to generate continuation
+	 * identifiers.
 	 */
 	public UidGenerator getContinuationIdGenerator() {
 		return continuationIdGenerator;
 	}
 
 	/**
-	 * Sets the uid generation strategy used to generate unique conversation and
-	 * continuation identifiers for {@link FlowExecutionKey flow execution keys}.
+	 * Sets the uid generation strategy used to generate unique continuation
+	 * identifiers for {@link FlowExecutionKey flow execution keys}.
 	 */
 	public void setContinuationIdGenerator(UidGenerator continuationIdGenerator) {
 		Assert.notNull(continuationIdGenerator, "The continuation id generator is required");
@@ -183,12 +178,9 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
 		FlowExecutionContinuationGroup continuationGroup = getContinuationGroup(key);
-		AttributeMap scope = flowExecution.getScope();
-		asImpl(flowExecution).setScope(null);
 		FlowExecutionContinuation continuation = continuationFactory.createContinuation(flowExecution);
 		continuationGroup.add(getContinuationId(key), continuation);
-		putConversationScope(key, scope);
-		asImpl(flowExecution).setScope(scope);
+		putConversationScope(key, asImpl(flowExecution).getConversationScope());
 	}
 
 	protected FlowExecutionContinuationGroup getContinuationGroup(FlowExecutionKey key) {
@@ -205,26 +197,12 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 		return continuation;
 	}
 
-	protected AttributeMap getConversationScope(FlowExecutionKey key) {
-		Map scope = (Map)getConversation(key).getAttribute(SCOPE_ATTRIBUTE);
-		return new AttributeMap(scope);
-	}
-
-	protected void putConversationScope(FlowExecutionKey key, AttributeMap scope) {
-		getConversation(key).putAttribute(SCOPE_ATTRIBUTE, scope.getMap());
-	}
-
-	protected FlowExecution rehydrate(FlowExecution flowExecution, FlowExecutionKey key) {
-		flowExecution = super.rehydrate(flowExecution, key);
-		asImpl(flowExecution).setScope(getConversationScope(key));
-		return flowExecution;
-	}
-
-	protected Serializable newContinuationId(FlowExecution flowExecution) {
+	protected Serializable generateContinuationId(FlowExecution flowExecution) {
 		return continuationIdGenerator.generateUid();
 	}
 
 	protected Serializable parseContinuationId(String encodedId) {
 		return continuationIdGenerator.parseUid(encodedId);
 	}
+
 }

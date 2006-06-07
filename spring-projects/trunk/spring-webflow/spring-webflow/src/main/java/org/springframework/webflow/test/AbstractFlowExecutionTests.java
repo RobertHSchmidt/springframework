@@ -269,9 +269,8 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * resumed flow execution during event processing
 	 */
 	protected ViewSelection signalEvent(String eventId, ExternalContext context) throws StateException {
-		Assert
-				.state(flowExecution != null,
-						"The flow execution to test is [null]; you must start the flow execution before you can signal an event against it");
+		Assert.state(flowExecution != null, "The flow execution to test is [null]; "
+				+ "you must start the flow execution before you can signal an event against it");
 		return flowExecution.signalEvent(new EventId(eventId), context);
 	}
 
@@ -325,7 +324,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @return the attribute value
 	 */
 	protected Object getConversationAttribute(String attributeName) {
-		return getFlowExecutionContext().getScope().get(attributeName);
+		return getFlowExecutionImpl().getConversationScope().get(attributeName);
 	}
 
 	/**
@@ -337,7 +336,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @throws IllegalStateException if the attribute was not present.
 	 */
 	protected Object getRequiredConversationAttribute(String attributeName) throws IllegalStateException {
-		return getFlowExecutionContext().getScope().getRequired(attributeName);
+		return getFlowExecutionImpl().getConversationScope().getRequired(attributeName);
 	}
 
 	/**
@@ -351,7 +350,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 */
 	protected Object getRequiredConversationAttribute(String attributeName, Class requiredType)
 			throws IllegalStateException {
-		return getFlowExecutionContext().getScope().getRequired(attributeName, requiredType);
+		return getFlowExecutionImpl().getConversationScope().getRequired(attributeName, requiredType);
 	}
 
 	/**
@@ -546,5 +545,11 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 */
 	protected Object evaluateModelAttributeExpression(String attributeName, Map model) {
 		return expressionParser.parseExpression(attributeName).evaluateAgainst(model, null);
+	}
+
+	private FlowExecutionImpl getFlowExecutionImpl() {
+		FlowExecutionContext context = getFlowExecutionContext();
+		Assert.isInstanceOf(FlowExecutionImpl.class, context);
+		return (FlowExecutionImpl)context;
 	}
 }
