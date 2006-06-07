@@ -155,7 +155,19 @@
 <!ATTLIST var name CDATA #REQUIRED>
 
 <!--
-	This scope of this variable.
+	This scope of this variable.  The available scope types are:
+	
+	1. request
+	    - the variable goes out of scope when a call to start the flow completes.
+	2. flow
+	    - the variable goes out of scope when the flow session ends.  For example, if a
+	      flow spawns another flow as a subflow and that subflow allocates flow-scoped
+	      variables, those variables will be cleaned up when the subflow ends.
+	3. conversation
+	    - the variable goes out of scope when the overall conversation governing the 
+	      flow execution ends.
+	
+	The 'default' value is flow scope.
 -->
 <!ATTLIST var scope (request | flow | conversation | default) "default">
 
@@ -279,7 +291,20 @@
 
     ... exposes the 'suggestItineraries(Trip)' method return value in flow scope 
     under the attribute name 'itineraries'.
+
+    The available scope types are:
     
+	1. request
+	    - the result goes out of scope when the call into the flow that invoked this method completes.
+	2. flow
+	    - the result goes out of scope when the flow session ends.  For example, if a
+	      flow spawns another flow as a subflow and that subflow invokes a method that 
+	      exposes a result in "flow scope", that result will be cleaned up when
+	      the subflow ends.
+	3. conversation
+	    - the result goes out of scope when the overall conversation governing this flow 
+	      execution ends.
+	      
     The default value if not specified is request scope.     
 -->
 <!ATTLIST action result-scope (request | flow | conversation | default) "default">
@@ -415,7 +440,6 @@
     <decision-state id="requiresShipping">
 	    <if test="${flowScope.sale.shipping}" then="enterShippingDetails" else="processSale"/>
     </decision-state>
-
 -->
 <!ELEMENT decision-state ( attribute*, entry-actions?, if*, exit-actions?, exception-handler* )>
 
