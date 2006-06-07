@@ -25,7 +25,7 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
-import org.springframework.webflow.execution.repository.CannotRestoreFlowExecutionException;
+import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 import org.springframework.webflow.execution.repository.conversation.Conversation;
 import org.springframework.webflow.execution.repository.conversation.ConversationId;
 import org.springframework.webflow.execution.repository.conversation.ConversationParameters;
@@ -161,7 +161,7 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 			return getConversationService().getConversation(getConversationId(key));
 		}
 		catch (NoSuchConversationException e) {
-			throw new CannotRestoreFlowExecutionException(key, e);
+			throw new NoSuchFlowExecutionException(key, e);
 		}
 	}
 
