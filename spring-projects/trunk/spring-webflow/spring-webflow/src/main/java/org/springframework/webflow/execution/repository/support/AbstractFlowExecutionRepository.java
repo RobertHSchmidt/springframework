@@ -20,7 +20,9 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 
 /**
  * A convenient base for flow execution repository implementations.
@@ -38,6 +40,10 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	 */
 	private transient FlowExecutionRepositoryServices repositoryServices;
 
+	/**
+	 * Flag to indicate whether or not a new flow execution key should always be
+	 * generated before each put call.  Default is true.
+	 */
 	private boolean alwaysGenerateNewNextKey = true;
 
 	/**
@@ -72,11 +78,20 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 		Assert.notNull(repositoryServices, "The repository services instance is required");
 		this.repositoryServices = repositoryServices;
 	}
-	
+
+	/**
+	 * Returns the configured generate new next key flag.
+	 */
 	protected boolean isAlwaysGenerateNewNextKey() {
 		return alwaysGenerateNewNextKey;
 	}
 
+	/**
+	 * Sets a flag indicating if a new {@link FlowExecutionKey} should always be
+	 * generated before each put call. By setting this to false a FlowExecution
+	 * can remain identified by the same key throughout its life.
+	 * @param alwaysGenerateNewNextKey the generate flag
+	 */
 	public void setAlwaysGenerateNewNextKey(boolean alwaysGenerateNewNextKey) {
 		this.alwaysGenerateNewNextKey = alwaysGenerateNewNextKey;
 	}
@@ -86,12 +101,26 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 		return new FlowExecutionImpl(flow, repositoryServices.getListenerLoader().getListeners(flow));
 	}
 
+	public abstract FlowExecutionKey generateKey(FlowExecution flowExecution) throws FlowExecutionRepositoryException;
+
+	public abstract FlowExecutionKey parseFlowExecutionKey(String encodedKey);
+
+	public abstract FlowExecution getFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
+
+	public abstract FlowExecutionLock getLock(FlowExecutionKey key) throws FlowExecutionRepositoryException;
+
+	public abstract FlowExecutionKey getNextKey(FlowExecution flowExecution, FlowExecutionKey previousKey) throws FlowExecutionRepositoryException;
+
+	public abstract void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) throws FlowExecutionRepositoryException;
+
+	public abstract void removeFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
+
 	protected FlowExecution rehydrate(FlowExecution flowExecution, FlowExecutionKey key) {
 		FlowExecutionImpl impl = asImpl(flowExecution);
 		impl.rehydrate(repositoryServices.getFlowLocator(), repositoryServices.getListenerLoader());
 		return flowExecution;
 	}
-	
+
 	protected FlowExecutionImpl asImpl(FlowExecution flowExecution) {
 		return (FlowExecutionImpl)flowExecution;
 	}
