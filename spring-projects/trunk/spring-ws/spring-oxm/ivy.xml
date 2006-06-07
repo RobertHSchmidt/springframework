@@ -8,7 +8,8 @@
         <conf name="buildtime" visibility="private"/>
         <conf name="test" visibility="private"/>
         <!-- public configurations other projects may use -->
-        <conf name="jaxb" visibility="public" extends="global"/>
+        <conf name="jaxb1" visibility="public" extends="global"/>
+        <conf name="jaxb2" visibility="public" extends="global"/>
         <conf name="castor" visibility="public" extends="global"/>
         <conf name="xmlbeans" visibility="public" extends="global"/>
         <conf name="jibx" visibility="public" extends="global"/>
@@ -22,10 +23,9 @@
         <dependency org="springframework" name="spring-beans" rev="1.2.8"/>
 
         <!-- jaxb only dependencies -->
-        <dependency org="javax.xml" name="jaxb-api" rev="2.0-rc1" conf="buildtime,jaxb->default"/>
-        <dependency org="javax.xml" name="jaxb-xjc" rev="2.0-rc1" conf="buildtime,jaxb->default"/>
-        <dependency org="javax.xml" name="jaxb-impl" rev="2.0-rc1" conf="buildtime,jaxb->default"/>
-        <dependency org="javax.xml" name="jaxb1-impl" rev="2.0-rc1" conf="buildtime,jaxb->default"/>
+        <dependency org="javax.xml" name="jaxb-api" rev="2.0-rc1" conf="buildtime,jaxb1,jaxb2->default"/>
+        <dependency org="javax.xml" name="jaxb-impl" rev="2.0-rc1" conf="buildtime,jaxb1,jaxb2->default"/>
+        <dependency org="javax.xml" name="jaxb1-impl" rev="2.0-rc1" conf="buildtime,jaxb1->default"/>
 		
         <!-- castor only dependencies -->
 		<dependency org="org.castor" name="castor" rev="1.0" conf="buildtime,castor->default" />
@@ -49,5 +49,6 @@
         <dependency org="xmlunit" name="xmlunit" rev="1.0" conf="test->default"/>
         <dependency org="easymock" name="easymock" rev="1.1" conf="test->default" />
 	    <dependency	org="clover" name="clover" rev="1.3.11" conf="test->default" />
+        <dependency org="javax.xml" name="jaxb-xjc" rev="2.0-rc1" conf="test->default"/>
     </dependencies>
 </ivy-module>
