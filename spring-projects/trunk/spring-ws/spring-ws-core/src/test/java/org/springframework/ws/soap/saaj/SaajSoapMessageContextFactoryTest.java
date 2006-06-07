@@ -16,35 +16,21 @@
 
 package org.springframework.ws.soap.saaj;
 
-import junit.framework.TestCase;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.ws.context.MessageContext;
-import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.context.MessageContextFactory;
+import org.springframework.ws.soap.context.AbstractSoapMessageContextFactoryTestCase;
 
-public class SaajSoapMessageContextFactoryTest extends TestCase {
+public class SaajSoapMessageContextFactoryTest extends AbstractSoapMessageContextFactoryTestCase {
 
-    private SaajSoapMessageContextFactory messageContextFactory;
-
-    private static final String REQUEST =
-            "<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' SOAP-ENV:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'><SOAP-ENV:Body><m:GetLastTradePrice xmlns:m='Some-URI'><symbol>DIS</symbol></m:GetLastTradePrice></SOAP-ENV:Body></SOAP-ENV:Envelope>";
-
-    protected void setUp() throws Exception {
-        messageContextFactory = new SaajSoapMessageContextFactory();
-        messageContextFactory.afterPropertiesSet();
+    protected MessageContextFactory createSoapMessageContextFactory() {
+        return new SaajSoapMessageContextFactory();
     }
 
-    public void testCreateMessageFromHttpServletRequest() throws Exception {
-        MockHttpServletRequest servletRequest = new MockHttpServletRequest();
-        servletRequest.setMethod("POST");
-        servletRequest.setContent(REQUEST.getBytes("UTF-8"));
-        servletRequest.setContentType("text/xml; charset=\"utf-8\"");
-        servletRequest.setCharacterEncoding("UTF-8");
-        servletRequest.addHeader("SOAPAction", "\"Some-URI\"");
+    public void testCreateMessageFromHttpServletRequest12() throws Exception {
+        // SAAJ 1.2 does not support SOAP 1.2
+    }
 
-        MessageContext messageContext = messageContextFactory.createContext(servletRequest);
-        SoapMessage requestMessage = (SoapMessage) messageContext.getRequest();
-        assertNotNull("Request null", requestMessage);
-        assertEquals("Invalid soap action", "\"Some-URI\"", requestMessage.getSoapAction());
+    public void testCreateMessageFromHttpServletRequest12WithAttachment() throws Exception {
+        // SAAJ 1.2 does not support SOAP 1.2
     }
 
 }

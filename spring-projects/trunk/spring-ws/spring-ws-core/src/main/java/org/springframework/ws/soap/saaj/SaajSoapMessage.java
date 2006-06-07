@@ -136,9 +136,9 @@ public class SaajSoapMessage extends AbstractSoapMessage {
         }
     }
 
-    public Attachment getAttachment(String id) {
+    public Attachment getAttachment(String contentId) {
         MimeHeaders mimeHeaders = new MimeHeaders();
-        mimeHeaders.addHeader("Content-Id", id);
+        mimeHeaders.addHeader("Content-Id", contentId);
         Iterator iterator = saajMessage.getAttachments(mimeHeaders);
         if (!iterator.hasNext()) {
             return null;

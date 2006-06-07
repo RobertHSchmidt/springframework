@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2006, Your Corporation. All Rights Reserved.
  * Copyright 2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,16 +17,22 @@
 
 package org.springframework.ws.soap.axiom;
 
-import org.springframework.ws.context.MessageContextFactory;
-import org.springframework.ws.soap.context.AbstractSoapMessageContextFactoryTestCase;
+import org.springframework.ws.soap.AttachmentException;
 
-public class AxiomSoapMessageContextFactoryTest extends AbstractSoapMessageContextFactoryTestCase {
+/**
+ * @author Arjen Poutsma
+ */
+public class AxiomAttachmentException extends AttachmentException {
 
-    protected MessageContextFactory createSoapMessageContextFactory() {
-        return new AxiomSoapMessageContextFactory();
+    public AxiomAttachmentException(String msg) {
+        super(msg);
     }
 
-    public void testCreateMessageFromHttpServletRequest12WithAttachment() throws Exception {
-        // Axiom does not support SwA with SOAP 1.2
+    public AxiomAttachmentException(String msg, Throwable ex) {
+        super(msg, ex);
+    }
+
+    public AxiomAttachmentException(Throwable ex) {
+        super(ex);
     }
 }

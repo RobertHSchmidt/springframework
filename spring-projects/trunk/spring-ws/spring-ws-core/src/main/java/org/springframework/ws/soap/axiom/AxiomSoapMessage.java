@@ -18,15 +18,20 @@ package org.springframework.ws.soap.axiom;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Locale;
+import javax.mail.MessagingException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXResult;
 
+import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.attachments.Part;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
@@ -45,7 +50,6 @@ import org.apache.axiom.soap.SOAPFaultValue;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axiom.soap.SOAPMessage;
-import org.apache.axiom.soap.SOAPProcessingException;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -67,8 +71,6 @@ import org.xml.sax.SAXException;
 /**
  * AXIOM-specific implementation of the <code>SoapMessage</code> interface. Accessed via the
  * <code>AxiomSoapMessageContext</code>.
- * <p/>
- * Note that as of Axiom 1.0, the SOAP 1.1 support contains some bugs, especially with regard to SOAP faults.
  *
  * @author Arjen Poutsma
  * @see SOAPMessage
@@ -78,9 +80,11 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
 
     private final SOAPMessage axiomMessage;
 
-    private SOAPFactory axiomFactory;
+    private final SOAPFactory axiomFactory;
 
-    private String soapAction;
+    private final String soapAction;
+
+    private final Attachments attachments;
 
     /**
      * Create a new, empty <code>AxiomSoapMessage</code>.
@@ -91,6 +95,8 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
         SOAPEnvelope soapEnvelope = soapFactory.getDefaultEnvelope();
         this.axiomFactory = soapFactory;
         this.axiomMessage = axiomFactory.createSOAPMessage(soapEnvelope, soapEnvelope.getBuilder());
+        this.soapAction = null;
+        this.attachments = null;
     }
 
     /**
@@ -98,11 +104,23 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
      *
      * @param soapMessage the AXIOM SOAPMessage
      * @param soapFactory the AXIOM SOAPFactory
+     * @param soapAction  the value of SOAP Action header
      */
     public AxiomSoapMessage(SOAPMessage soapMessage, SOAPFactory soapFactory, String soapAction) {
         this.axiomMessage = soapMessage;
         this.axiomFactory = soapFactory;
         this.soapAction = soapAction;
+        this.attachments = null;
+    }
+
+    public AxiomSoapMessage(SOAPMessage axiomMessage,
+                            SOAPFactory axiomFactory,
+                            String soapAction,
+                            Attachments attachments) {
+        this.axiomMessage = axiomMessage;
+        this.axiomFactory = axiomFactory;
+        this.soapAction = soapAction;
+        this.attachments = attachments;
     }
 
     /**
@@ -116,7 +134,7 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
         try {
             return new AxiomSoapEnvelope(axiomMessage.getSOAPEnvelope());
         }
-        catch (SOAPProcessingException ex) {
+        catch (OMException ex) {
             throw new AxiomSoapEnvelopeException(ex);
         }
     }
@@ -126,23 +144,26 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
     }
 
     public SoapVersion getVersion() {
-        if (axiomFactory instanceof org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory ||
-                axiomFactory instanceof org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory) {
+        String envelopeNamespace = axiomMessage.getSOAPEnvelope().getNamespace().getName();
+        if (SoapVersion.SOAP_11.getEnvelopeNamespaceUri().equals(envelopeNamespace)) {
             return SoapVersion.SOAP_11;
         }
-        else if (axiomFactory instanceof org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory ||
-                axiomFactory instanceof org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory) {
+        else if (SoapVersion.SOAP_12.getEnvelopeNamespaceUri().equals(envelopeNamespace)) {
             return SoapVersion.SOAP_12;
         }
         else {
-            throw new IllegalStateException("Unknown Axiom SOAPFactory [" + axiomFactory.getClass().getName() + "]. " +
-                    "Cannot deduce SoapVersion.");
+            throw new IllegalStateException(
+                    "Unknown Envelope namespace uri '" + envelopeNamespace + "'. " + "Cannot deduce SoapVersion.");
         }
     }
 
+    public Attachment getAttachment(String contentId) {
+        Part part = attachments.getPart(contentId);
+        return part != null ? new AxiomAttachment(part) : null;
+    }
+
     public Iterator getAttachments() {
-        //TODO implement
-        throw new UnsupportedOperationException("Not implemented");
+        return new AxiomAttachmentIterator();
     }
 
     public Attachment addAttachment(File file) throws AttachmentException {
@@ -289,6 +310,9 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
         }
     }
 
+    /**
+     * Axiom-specific version of <code>org.springframework.ws.soap.SoapHeaderHeaderElement</code>.
+     */
     private class AxiomSoapHeaderElement implements SoapHeaderElement {
 
         private final SOAPHeaderBlock axiomHeaderBlock;
@@ -349,6 +373,9 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
         }
     }
 
+    /**
+     * Axiom-specific version of <code>org.springframework.ws.soap.SoapBody</code>.
+     */
     private class AxiomSoapBody implements SoapBody {
 
         private final SOAPBody axiomBody;
@@ -442,6 +469,9 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
         }
     }
 
+    /**
+     * Axiom-specific version of <code>org.springframework.ws.soap.SoapFault</code>.
+     */
     private class AxiomSoapFault implements SoapFault {
 
         private final SOAPFault axiomFault;
@@ -571,6 +601,9 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
         }
     }
 
+    /**
+     * Axiom-specific version of <code>org.springframework.ws.soap.SoapFaultDetail</code>.
+     */
     private class AxiomSoapFaultDetail implements SoapFaultDetail {
 
         private final SOAPFaultDetail axiomFaultDetail;
@@ -638,6 +671,9 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
 
     }
 
+    /**
+     * Axiom-specific version of <code>org.springframework.ws.soap.SoapFaultDetailElement</code>.
+     */
     private static class AxiomSoapFaultDetailElement implements SoapFaultDetailElement {
 
         private final OMElement axiomElement;
@@ -668,6 +704,77 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
                 throw new AxiomSoapFaultException(ex);
             }
 
+        }
+    }
+
+    /**
+     * Axiom-specific implementation of <code>org.springframework.ws.soap.Attachment</code>
+     */
+    private static class AxiomAttachment implements Attachment {
+
+        private final Part part;
+
+        private AxiomAttachment(Part part) {
+            this.part = part;
+        }
+
+        public String getId() {
+            try {
+                return part.getContentID();
+            }
+            catch (MessagingException ex) {
+                throw new AxiomAttachmentException(ex);
+            }
+        }
+
+        public String getContentType() {
+            try {
+                return part.getContentType();
+            }
+            catch (MessagingException ex) {
+                throw new AxiomAttachmentException(ex);
+            }
+        }
+
+        public InputStream getInputStream() throws IOException {
+            try {
+                return part.getInputStream();
+            }
+            catch (MessagingException ex) {
+                throw new AxiomAttachmentException(ex);
+            }
+        }
+
+        public long getSize() {
+            try {
+                return part.getSize();
+            }
+            catch (MessagingException ex) {
+                throw new AxiomAttachmentException(ex);
+            }
+        }
+    }
+
+    private class AxiomAttachmentIterator implements Iterator {
+
+        private final Iterator iterator;
+
+        private AxiomAttachmentIterator() {
+            this.iterator = Arrays.asList(attachments.getAllContentIDs()).iterator();
+        }
+
+        public boolean hasNext() {
+            return iterator.hasNext();
+        }
+
+        public Object next() {
+            String contentId = (String) iterator.next();
+            Part part = attachments.getPart(contentId);
+            return part != null ? new AxiomAttachment(part) : null;
+        }
+
+        public void remove() {
+            iterator.remove();
         }
     }
 

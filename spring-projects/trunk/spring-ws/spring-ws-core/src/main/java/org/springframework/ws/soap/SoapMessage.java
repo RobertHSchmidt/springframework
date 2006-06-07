@@ -37,7 +37,7 @@ public interface SoapMessage extends WebServiceMessage {
     /**
      * Returns the <code>SoapEnvelope</code> associated with this <code>SoapMessage</code>.
      */
-    SoapEnvelope getEnvelope();
+    SoapEnvelope getEnvelope() throws SoapEnvelopeException;
 
     /**
      * Get the SOAP Action for this messaage, or <code>null</code> if not present.
@@ -52,7 +52,7 @@ public interface SoapMessage extends WebServiceMessage {
      *
      * @see SoapEnvelope#getBody()
      */
-    SoapBody getSoapBody();
+    SoapBody getSoapBody() throws SoapBodyException;
 
     /**
      * Returns the <code>SoapHeader</code> associated with this <code>SoapMessage</code>. This is a convenience method
@@ -60,7 +60,7 @@ public interface SoapMessage extends WebServiceMessage {
      *
      * @see SoapEnvelope#getHeader()
      */
-    SoapHeader getSoapHeader();
+    SoapHeader getSoapHeader() throws SoapHeaderException;
 
     /**
      * Returns the SOAP version of this message. This can be either SOAP 1.1 or SOAP 1.2.
@@ -72,13 +72,22 @@ public interface SoapMessage extends WebServiceMessage {
     SoapVersion getVersion();
 
     /**
+     * Returns the <code>Attachment</code> with the specified content Id.
+     *
+     * @return the attachment with the specified content id; or <code>null</code> if it cannot be found
+     * @throws AttachmentException in case of errors
+     */
+    Attachment getAttachment(String contentId) throws AttachmentException;
+
+    /**
      * Returns an <code>Iterator</code> over all <code>Attachment</code>s that are part of this
      * <code>SoapMessage</code>.
      *
-     * @return an <code>Iterator</code> over all <code>Attachment</code>s
+     * @return an iterator over all attachments
+     * @throws AttachmentException in case of errors
      * @see Attachment
      */
-    Iterator getAttachments();
+    Iterator getAttachments() throws AttachmentException;
 
     /**
      * Add an attachment to the <code>SoapMessage</code>, taking the content from a <code>java.io.File</code>.
@@ -109,4 +118,5 @@ public interface SoapMessage extends WebServiceMessage {
      * @see org.springframework.core.io.Resource
      */
     Attachment addAttachment(InputStreamSource inputStreamSource, String contentType);
+
 }
