@@ -16,13 +16,11 @@
 package org.springframework.webflow.execution.repository.continuation;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
-import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
+import org.springframework.webflow.execution.repository.CannotRestoreFlowExecutionException;
 import org.springframework.webflow.execution.repository.conversation.Conversation;
 import org.springframework.webflow.execution.repository.conversation.ConversationService;
 import org.springframework.webflow.execution.repository.conversation.impl.LocalConversationService;
@@ -32,23 +30,30 @@ import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 
 /**
- * Stores <i>one to many</i> flow execution continuations per conversation,
- * where each continuation represents a restorable state of an active
- * conversation captured at a point in time.
+ * Stores <i>one to many</i> flow execution continuations (snapshots) per
+ * conversation, where each continuation represents a paused, restorable
+ * view-state of a flow execution snapshotted at a point in time.
  * <p>
- * The set of all active conversations are managed by a
+ * The set of active user conversations are managed by a
  * {@link ConversationService} implementation, which this repository delegates
  * to.
  * <p>
+ * This repository is responsible for:
+ * <p>
  * <ul>
- * <li>Each conversation is assigned a conversationId, uniquely identifying an
- * ongoing conversation with a client.
- * <li>Each conversation is configured with a
- * {@link FlowExecutionContinuationGroup}. Each continuation represents the
- * state of the conversation at a point in time relevant to the user <i>that can
- * be restored and continued</i>. These continuations can be restored to
- * support users going back in their browser to continue a conversation from a
- * previous point.
+ * <li>Beginning a new conversation when a new flow execution is made
+ * persistent. Each conversation is assigned a unique conversartion id which
+ * forms one part of the flow execution key.
+ * <li>Associating a flow execution with that conversation by adding a
+ * {@link FlowExecutionContinuation} to the
+ * {@link FlowExecutionContinuationGroup}. When a flow execution is placed in
+ * this repository a new continuation snapshot is created, assigned an id, and
+ * added to the group. Each continuation logically represents a state of the
+ * conversation at a point in time <i>that can be restored and continued</i>.
+ * These continuations can be restored to support users going back in their
+ * browser to continue a conversation from a previous point.
+ * <li>Ending existing conversations when persistent flow executions end, as
+ * part of a repository removal operation.
  * </ul>
  * <p>
  * It is important to note use of this repository allows for duplicate
@@ -183,18 +188,29 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 		putConversationScope(key, asImpl(flowExecution).getConversationScope());
 	}
 
+	/**
+	 * Returns the continuation group associated with the governing
+	 * conversation.
+	 * @param key the flow execution key
+	 * @return the continuation group
+	 */
 	protected FlowExecutionContinuationGroup getContinuationGroup(FlowExecutionKey key) {
 		FlowExecutionContinuationGroup group = (FlowExecutionContinuationGroup)getConversation(key).getAttribute(
 				CONTINUATION_GROUP_ATTRIBUTE);
 		return group;
 	}
 
+	/**
+	 * Returns the continuation in the group with the specified key.
+	 * @param key the flow execution key
+	 * @return the continuation.
+	 */
 	protected FlowExecutionContinuation getContinuation(FlowExecutionKey key) {
-		FlowExecutionContinuation continuation = getContinuationGroup(key).get(getContinuationId(key));
-		if (continuation == null) {
-			throw new NoSuchFlowExecutionException(key);
+		try {
+			return getContinuationGroup(key).get(getContinuationId(key));
+		} catch (ContinuationNotFoundException e) {
+			throw new CannotRestoreFlowExecutionException(key, e);
 		}
-		return continuation;
 	}
 
 	protected Serializable generateContinuationId(FlowExecution flowExecution) {
@@ -204,5 +220,4 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	protected Serializable parseContinuationId(String encodedId) {
 		return continuationIdGenerator.parseUid(encodedId);
 	}
-
 }

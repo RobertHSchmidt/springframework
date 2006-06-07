@@ -17,7 +17,18 @@ package org.springframework.webflow.execution.repository.continuation;
 
 import org.springframework.core.NestedRuntimeException;
 
-class FlowExecutionDeserializationException extends NestedRuntimeException {
+/**
+ * Thrown when a FlowExecutionContinuation could not be deserialized into a
+ * FlowExecution.
+ * @author Keith Donald
+ */
+public class FlowExecutionDeserializationException extends NestedRuntimeException {
+
+	/**
+	 * Creates a new flow execution deserialization exception.
+	 * @param message the exception message
+	 * @param cause the cause
+	 */
 	public FlowExecutionDeserializationException(String message, Throwable cause) {
 		super(message, cause);
 	}

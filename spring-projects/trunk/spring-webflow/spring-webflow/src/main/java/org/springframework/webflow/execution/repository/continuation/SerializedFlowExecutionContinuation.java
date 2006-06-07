@@ -71,12 +71,12 @@ class SerializedFlowExecutionContinuation extends FlowExecutionContinuation {
 			}
 		}
 		catch (IOException e) {
-			throw new FlowExecutionDeserializationException(
+			throw new FlowExecutionContinuationDeserializationException(
 					"IOException thrown deserializing the flow execution stored in this continuation -- this should not happen!",
 					e);
 		}
 		catch (ClassNotFoundException e) {
-			throw new FlowExecutionDeserializationException(
+			throw new FlowExecutionContinuationDeserializationException(
 					"ClassNotFoundException thrown deserializing the flow execution stored in this continuation -- "
 							+ "This should not happen! Make sure there are no classloader issues."
 							+ "For example, perhaps the Web Flow system is being loaded by a classloader "

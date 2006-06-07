@@ -8,7 +8,7 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.NoMatchingTransitionException;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
+import org.springframework.webflow.execution.repository.CannotRestoreFlowExecutionException;
 import org.springframework.webflow.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.test.MockExternalContext;
@@ -79,7 +79,7 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 			flowExecutor.signalEvent("event1", key, context);
 			fail("Should've been removed");
 		}
-		catch (NoSuchFlowExecutionException e) {
+		catch (CannotRestoreFlowExecutionException e) {
 
 		}
 	}
@@ -97,7 +97,7 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 			flowExecutor.signalEvent("bogus", "_cbogus_kbogus", new MockExternalContext());
 			fail("Should've failed");
 		}
-		catch (NoSuchFlowExecutionException e) {
+		catch (CannotRestoreFlowExecutionException e) {
 			assertEquals("_cbogus_kbogus", e.getFlowExecutionKey().toString());
 		}
 	}

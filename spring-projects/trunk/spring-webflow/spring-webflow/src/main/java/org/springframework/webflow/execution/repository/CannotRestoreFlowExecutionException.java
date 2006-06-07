@@ -15,41 +15,37 @@
  */
 package org.springframework.webflow.execution.repository;
 
-import org.springframework.webflow.execution.repository.conversation.NoSuchConversationException;
-
 /**
- * Thrown when no logical conversation exists with the specified
- * <code>conversationId</code>. This might occur if the conversation ended,
- * expired, or was otherwise invalidated, but a client view still references it.
+ * Thrown when the flow execution with the persistent identifier provided could
+ * not be restored. This could occur if the execution has been removed from the
+ * repository and a client still has a handle to the key.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class NoSuchFlowExecutionException extends FlowExecutionRepositoryException {
+public class CannotRestoreFlowExecutionException extends FlowExecutionRepositoryException {
 
 	/**
-	 * The unique conversation identifier that was invalid.
+	 * The key of the execution that could not be restored.
 	 */
 	private FlowExecutionKey flowExecutionKey;
 
 	/**
-	 * Create a new flow execution lookup exception.
-	 * @param conversationId the conversation id
+	 * Creates a new flow execution restoration exception.
+	 * @param flowExecutionKey the key of the execution that could not be
+	 * restored.
+	 * @param cause the root cause of the restoration failure.
 	 */
-	public NoSuchFlowExecutionException(FlowExecutionKey flowExecutionKey) {
-		this(flowExecutionKey, null);
-	}
-
-	public NoSuchFlowExecutionException(FlowExecutionKey flowExecutionKey, NoSuchConversationException e) {
+	public CannotRestoreFlowExecutionException(FlowExecutionKey flowExecutionKey, Exception cause) {
 		super("No flow execution could be found with key '" + flowExecutionKey
 				+ "' -- perhaps this executing flow has ended or expired? "
 				+ "This could happen if your users are relying on browser history "
-				+ "(typically via the back button) that reference ended flows.", e);
+				+ "(typically via the back button) that reference ended flows.", cause);
 		this.flowExecutionKey = flowExecutionKey;
 	}
 
 	/**
-	 * Returns the conversation id that was invalid.
+	 * Returns key of the flow execution that could not be restored.
 	 */
 	public FlowExecutionKey getFlowExecutionKey() {
 		return flowExecutionKey;

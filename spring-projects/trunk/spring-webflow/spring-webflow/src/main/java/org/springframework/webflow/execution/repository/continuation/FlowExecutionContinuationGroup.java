@@ -20,6 +20,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+/**
+ * A group of flow execution continuations. Simple typed data structure backed
+ * by a map and linked list. Supports expelling the oldest continuation once a
+ * maximum group size is met.
+ * 
+ * @author Keith Donald
+ */
 class FlowExecutionContinuationGroup implements Serializable {
 
 	private static final long serialVersionUID = 664189712064790043L;
@@ -42,6 +49,11 @@ class FlowExecutionContinuationGroup implements Serializable {
 	 */
 	private int maxContinuations;
 
+	/**
+	 * Creates a new flow execution continuation group.
+	 * @param maxContinuations the maximum number of continuations that can be
+	 * stored in this group.
+	 */
 	public FlowExecutionContinuationGroup(int maxContinuations) {
 		this.maxContinuations = maxContinuations;
 	}
@@ -51,9 +63,15 @@ class FlowExecutionContinuationGroup implements Serializable {
 	 * <code>null</code> if no such continuation exists with that id.
 	 * @param id the continuation id
 	 * @return the continuation
+	 * @throws ContinuationNotFoundException if the id does not match a
+	 * continuation in this group.
 	 */
-	public FlowExecutionContinuation get(Serializable id) {
-		return (FlowExecutionContinuation)continuations.get(id);
+	public FlowExecutionContinuation get(Serializable id) throws ContinuationNotFoundException {
+		FlowExecutionContinuation continuation = (FlowExecutionContinuation)continuations.get(id);
+		if (continuation == null) {
+			throw new ContinuationNotFoundException(id);
+		}
+		return continuation;
 	}
 
 	public void add(Serializable continuationId, FlowExecutionContinuation continuation) {

@@ -172,6 +172,10 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 		}
 	}
 	
+	/**
+	 * Conversation service that doesn't do anything - the default.
+	 * @author Keith Donald
+	 */
 	private static class NoOpConversationService implements ConversationService {
 
 		private static final ConversationId conversationId = new SimpleConversationId("1");
