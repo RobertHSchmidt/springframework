@@ -56,6 +56,7 @@ Package org.springframework.webflow.execution
   as well as the additional (and optional) concept of a conversation.
 * Factored out conversation code into a portable conversation management subsystem, see repository.conversation.
   This generic abstraction is usable outside of SWF and may be promoted to a top-level project in the future.
+* Renamed SimpleFlowExecutionRepository to DefaultFlowExecutionRepository.
    
 Package org.springframework.webflow.executor
 * Simplified FlowExecutor interface, exposing simple types to clients and encapsulating dependencies 
