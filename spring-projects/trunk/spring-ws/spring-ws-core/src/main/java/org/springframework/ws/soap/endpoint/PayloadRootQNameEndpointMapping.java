@@ -18,11 +18,11 @@ package org.springframework.ws.soap.endpoint;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.xml.namespace.QNameUtils;
 import org.w3c.dom.Element;
@@ -32,9 +32,9 @@ import org.w3c.dom.Element;
  *
  * @author Arjen Poutsma
  */
-public class PayloadRootQNameEndpointMapping extends AbstractQNameEndpointMapping implements InitializingBean {
+public class PayloadRootQNameEndpointMapping extends AbstractQNameEndpointMapping {
 
-    private TransformerFactory transformerFactory;
+    private static TransformerFactory transformerFactory;
 
     protected QName resolveQName(WebServiceMessage message) throws TransformerException {
         Element payloadElement = getMessagePayloadElement(message);
@@ -42,13 +42,17 @@ public class PayloadRootQNameEndpointMapping extends AbstractQNameEndpointMappin
     }
 
     private Element getMessagePayloadElement(WebServiceMessage message) throws TransformerException {
-        Transformer transformer = transformerFactory.newTransformer();
+        Transformer transformer = createTransformer();
         DOMResult domResult = new DOMResult();
         transformer.transform(message.getPayloadSource(), domResult);
         return (Element) domResult.getNode().getFirstChild();
     }
 
-    public void afterPropertiesSet() throws Exception {
-        transformerFactory = TransformerFactory.newInstance();
+    private Transformer createTransformer() throws TransformerConfigurationException {
+        if (transformerFactory == null) {
+            transformerFactory = TransformerFactory.newInstance();
+        }
+        return transformerFactory.newTransformer();
     }
+
 }
