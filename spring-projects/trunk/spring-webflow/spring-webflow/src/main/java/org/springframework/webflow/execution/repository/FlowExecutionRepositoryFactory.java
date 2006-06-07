@@ -19,7 +19,7 @@ import org.springframework.webflow.ExternalContext;
 
 /**
  * An abstract factory for obtaining a reference to a flow execution repository
- * that may be managed in an external data structure.
+ * that may be (or have its contents) managed in an external data structure.
  * 
  * @author Keith Donald
  */
