@@ -39,10 +39,10 @@ public class ContinuationFlowExecutionRepositoryCreator extends AbstractFlowExec
 	private FlowExecutionContinuationFactory continuationFactory = new SerializedFlowExecutionContinuationFactory();
 
 	/**
-	 * The uid generation strategy to use.
+	 * The continuation uid generation strategy to use.
 	 */
 	private transient UidGenerator continuationIdGenerator = new RandomGuidUidGenerator();
-	
+
 	/**
 	 * The maximum number of continuations allowed per conversation.
 	 */
@@ -66,22 +66,21 @@ public class ContinuationFlowExecutionRepositoryCreator extends AbstractFlowExec
 	}
 
 	/**
-	 * Returns the uid generation strategy used to generate unique conversation
-	 * and continuation identifiers.
+	 * Returns the configured continuation uid generation strategy.
 	 */
 	public UidGenerator getContinuationIdGenerator() {
 		return continuationIdGenerator;
 	}
 
 	/**
-	 * Sets the uid generation strategy used to generate unique conversation and
-	 * continuation identifiers for {@link FlowExecutionKey flow execution keys}.
+	 * Sets the continuation uid strategto use generate unique continuation
+	 * identifiers for {@link FlowExecutionKey flow execution keys}.
 	 */
 	public void setContinuationIdGenerator(UidGenerator continuationIdGenerator) {
 		Assert.notNull(continuationIdGenerator, "The continuation id generator is required");
 		this.continuationIdGenerator = continuationIdGenerator;
 	}
-	
+
 	/**
 	 * Sets the maximum number of continuations allowed per conversation in
 	 * repositories created by this creator.

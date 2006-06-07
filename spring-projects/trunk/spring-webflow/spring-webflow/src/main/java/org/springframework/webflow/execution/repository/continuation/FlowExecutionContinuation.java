@@ -20,16 +20,22 @@ import java.io.Serializable;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
- * Convenient base for flow execution continuation implementations. Simply
- * stores a serializable identifier property uniquely identifying this
- * continuation in the context of exactly one conversation.
+ * A snapshot of a flow execution that can be restored and serialized to a byte
+ * array.
  * 
  * @author Keith Donald
  */
 public abstract class FlowExecutionContinuation implements Serializable {
 
-	public abstract FlowExecution getFlowExecution();
+	/**
+	 * Restores the flow execution.
+	 */
+	public abstract FlowExecution restore();
 
+	/**
+	 * Converts this continuation to a byte array for convenient serialization.
+	 * @return this as a byte array
+	 */
 	public abstract byte[] toByteArray();
 
 }

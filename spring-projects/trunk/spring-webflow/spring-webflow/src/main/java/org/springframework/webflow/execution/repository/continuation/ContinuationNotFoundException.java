@@ -21,8 +21,9 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryE
 
 /**
  * Thrown when no flow execution continuation exists within a continuation
- * group. This might occur if the continuation was expired or was explictly
- * invalidated but a client's browser page cache still references it.
+ * group. with the provided id This might occur if the continuation was expired
+ * or was explictly invalidated but a client's browser page cache still
+ * references it.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -34,11 +35,18 @@ public class ContinuationNotFoundException extends FlowExecutionRepositoryExcept
 	 */
 	private Serializable continuationId;
 
+	/**
+	 * Creates a continuation not found exception.
+	 * @param continuationId the invalid continuation id
+	 */
 	public ContinuationNotFoundException(Serializable continuationId) {
 		super("No flow execution continuation could be found in group with is '" + continuationId
 				+ "' -- perhaps the continuation has expired or been invalidated? ");
 	}
 
+	/**
+	 * Returns the continuation id.
+	 */
 	public Serializable getContinuationId() {
 		return continuationId;
 	}

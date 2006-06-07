@@ -26,7 +26,10 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
- * A continuation implementation that is based on standard java serialization.
+ * A continuation implementation that is based on standard java serialization, 
+ * created by a {@link SerializedFlowExecutionContinuationFactory}.
+ * 
+ * @see SerializedFlowExecutionContinuationFactory.
  * 
  * @author Keith Donald
  */
@@ -44,9 +47,8 @@ class SerializedFlowExecutionContinuation extends FlowExecutionContinuation {
 
 	/**
 	 * Creates a new serialized flow execution continuation.
-	 * @param id the continuation id
-	 * @param byteArray the serialized byte array representing a snapshot of a
-	 * {@link org.springframework.webflow.execution.FlowExecution}.
+	 * @param the flow execution in byte form
+	 * @param whether or not the execution compressed.
 	 */
 	public SerializedFlowExecutionContinuation(byte[] data, boolean compressed) {
 		this.data = data;
@@ -60,7 +62,7 @@ class SerializedFlowExecutionContinuation extends FlowExecutionContinuation {
 		return compressed;
 	}
 	
-	public FlowExecution getFlowExecution() {
+	public FlowExecution restore() {
 		try {
 			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(getData(true)));
 			try {

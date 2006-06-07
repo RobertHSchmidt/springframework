@@ -110,7 +110,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
 		FlowExecutionContinuation continuation = (FlowExecutionContinuation)getContinuationId(key);
-		FlowExecution flowExecution = continuation.getFlowExecution();
+		FlowExecution flowExecution = continuation.restore();
 		return rehydrate(flowExecution, key);
 	}
 

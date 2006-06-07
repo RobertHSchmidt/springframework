@@ -177,7 +177,7 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
 		FlowExecutionContinuation continuation = getContinuation(key);
-		FlowExecution flowExecution = continuation.getFlowExecution();
+		FlowExecution flowExecution = continuation.restore();
 		return rehydrate(flowExecution, key);
 	}
 
