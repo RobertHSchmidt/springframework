@@ -7,7 +7,6 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.execution.EventId;
-import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.support.FlowRedirect;
 import org.springframework.webflow.test.MockExternalContext;
@@ -18,12 +17,12 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 
 	private FlowExecutorArgumentExtractor argumentExtractor;
 
-	private FlowExecutionKey flowExecutionKey;
+	private String flowExecutionKey;
 
 	public void setUp() {
 		context = new MockExternalContext();
 		argumentExtractor = new FlowExecutorArgumentExtractor();
-		flowExecutionKey = new FlowExecutionKey("12345", "12345");
+		flowExecutionKey = "_c12345_k12345";
 	}
 
 	public void testExtractFlowId() {
@@ -104,38 +103,26 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 	public void testCreateFlowExecutionUrl() {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows.htm");
-		FlowExecutionKey key = new FlowExecutionKey("123", "456");
 		FlowExecutionContext flowExecution = new MockFlowExecutionContext();
-		String url = argumentExtractor.createFlowExecutionUrl(key, flowExecution, context);
-		assertEquals("/app/flows.htm?_flowExecutionKey=_c123_k456", url);
-	}
-
-	public void testCreateConversationUrl() {
-		context.setContextPath("/app");
-		context.setDispatcherPath("/flows.htm");
-		FlowExecutionKey key = new FlowExecutionKey("123", "456");
-		FlowExecutionContext flowExecution = new MockFlowExecutionContext();
-		String url = argumentExtractor.createConversationUrl(key, flowExecution, context);
-		assertEquals("/app/flows.htm?_conversationId=123", url);
+		String url = argumentExtractor.createFlowExecutionUrl(flowExecutionKey, flowExecution, context);
+		assertEquals("/app/flows.htm?_flowExecutionKey=_c12345_k12345", url);
 	}
 
 	public void testCreateExternalUrlAbsolute() {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows.htm");
-		FlowExecutionKey key = new FlowExecutionKey("123", "456");
 		ExternalRedirect redirect = new ExternalRedirect("/a/url");
 		argumentExtractor.setRedirectContextRelative(false);
-		String url = argumentExtractor.createExternalUrl(redirect, key, context);
-		assertEquals("/a/url?_flowExecutionKey=_c123_k456", url);
+		String url = argumentExtractor.createExternalUrl(redirect, flowExecutionKey, context);
+		assertEquals("/a/url?_flowExecutionKey=_c12345_k12345", url);
 	}
 
 	public void testCreateExternalUrlContextRelative() {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows.htm");
-		FlowExecutionKey key = new FlowExecutionKey("123", "456");
 		ExternalRedirect redirect = new ExternalRedirect("/a/url");
-		String url = argumentExtractor.createExternalUrl(redirect, key, context);
-		assertEquals("/app/a/url?_flowExecutionKey=_c123_k456", url);
+		String url = argumentExtractor.createExternalUrl(redirect, flowExecutionKey, context);
+		assertEquals("/app/a/url?_flowExecutionKey=_c12345_k12345", url);
 	}
 
 	public void testCreateExternalUrlNoKey() {

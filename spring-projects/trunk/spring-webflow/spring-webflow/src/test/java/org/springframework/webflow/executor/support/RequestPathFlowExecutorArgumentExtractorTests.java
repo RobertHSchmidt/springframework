@@ -6,7 +6,6 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.FlowExecutionContext;
-import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.support.FlowRedirect;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
@@ -16,8 +15,11 @@ public class RequestPathFlowExecutorArgumentExtractorTests extends TestCase {
 
 	private RequestPathFlowExecutorArgumentExtractor argumentExtractor;
 
+	private String flowExecutionKey;
+
 	public void setUp() {
 		argumentExtractor = new RequestPathFlowExecutorArgumentExtractor();
+		flowExecutionKey = "_c12345_k12345";
 	}
 
 	public void testExtractFlowId() {
@@ -75,18 +77,8 @@ public class RequestPathFlowExecutorArgumentExtractorTests extends TestCase {
 	public void testCreateFlowExecutionUrl() {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows");
-		FlowExecutionKey key = new FlowExecutionKey("123", "456");
 		FlowExecutionContext flowExecution = new MockFlowExecutionContext();
-		String url = argumentExtractor.createFlowExecutionUrl(key, flowExecution, context);
-		assertEquals("/app/flows/mockFlow?_flowExecutionKey=_c123_k456", url);
-	}
-
-	public void testCreateConversationUrl() {
-		context.setContextPath("/app");
-		context.setDispatcherPath("/flows");
-		FlowExecutionKey key = new FlowExecutionKey("123", "456");
-		FlowExecutionContext flowExecution = new MockFlowExecutionContext();
-		String url = argumentExtractor.createConversationUrl(key, flowExecution, context);
-		assertEquals("/app/flows/mockFlow?_conversationId=123", url);
+		String url = argumentExtractor.createFlowExecutionUrl(flowExecutionKey, flowExecution, context);
+		assertEquals("/app/flows/mockFlow?_flowExecutionKey=_c12345_k12345", url);
 	}
 }

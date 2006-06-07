@@ -6,7 +6,6 @@ import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.ViewState;
-import org.springframework.webflow.execution.repository.support.FlowExecutionKeyFormatter;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.registry.FlowRegistryImpl;
@@ -18,7 +17,7 @@ public class FlowRequestHandlerTests extends TestCase {
 
 	private FlowRequestHandler handler;
 
-	private MockExternalContext context = new MockExternalContext(); 
+	private MockExternalContext context = new MockExternalContext();
 
 	protected void setUp() throws Exception {
 		FlowRegistryImpl registry = new FlowRegistryImpl();
@@ -44,11 +43,11 @@ public class FlowRequestHandlerTests extends TestCase {
 		context.putRequestParameter("_flowId", "flow");
 		ResponseInstruction response = handler.handleFlowRequest(context);
 
-		String flowExecutionKey = new FlowExecutionKeyFormatter().formatValue(response.getFlowExecutionKey());
+		String flowExecutionKey = response.getFlowExecutionKey();
 		context.putRequestParameter("_flowExecutionKey", flowExecutionKey);
 		context.putRequestParameter("_eventId", "submit");
 		response = handler.handleFlowRequest(context);
-		
+
 		assertTrue(response.isNull());
 		assertTrue(!response.getFlowExecutionContext().isActive());
 		assertEquals("flow", response.getFlowExecutionContext().getFlow().getId());
@@ -59,23 +58,10 @@ public class FlowRequestHandlerTests extends TestCase {
 		context.putRequestParameter("_flowId", "flow");
 		ResponseInstruction response = handler.handleFlowRequest(context);
 
-		String flowExecutionKey = new FlowExecutionKeyFormatter().formatValue(response.getFlowExecutionKey());
+		String flowExecutionKey = response.getFlowExecutionKey();
 		context.putRequestParameter("_flowExecutionKey", flowExecutionKey);
 		response = handler.handleFlowRequest(context);
-		
-		assertTrue(response.isNull());
-		assertTrue(response.getFlowExecutionContext().isActive());
-		assertEquals("flow", response.getFlowExecutionContext().getFlow().getId());
-		assertEquals("view", response.getFlowExecutionContext().getActiveSession().getState().getId());
-	}
 
-	public void testRefreshConversation() {
-		context.putRequestParameter("_flowId", "flow");
-		ResponseInstruction response = handler.handleFlowRequest(context);
-
-		context.putRequestParameter("_conversationId", (String)response.getFlowExecutionKey().getConversationId());
-		response = handler.handleFlowRequest(context);
-		
 		assertTrue(response.isNull());
 		assertTrue(response.getFlowExecutionContext().isActive());
 		assertEquals("flow", response.getFlowExecutionContext().getFlow().getId());
