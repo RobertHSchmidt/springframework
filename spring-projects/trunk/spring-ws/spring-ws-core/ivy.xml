@@ -46,7 +46,7 @@
         <!-- mixed dependencies -->
         <dependency org="woodstox" name="wstx-asl" rev="2.9.3" conf="test,axiom->default"/>
 
-        <!--  Build time dependencies -->
+        <!--  build time dependencies -->
         <dependency	org="javax.servlet" name="servlet-api" rev="2.4" conf="buildtime->default"/>
 
         <!-- test time only dependencies -->
