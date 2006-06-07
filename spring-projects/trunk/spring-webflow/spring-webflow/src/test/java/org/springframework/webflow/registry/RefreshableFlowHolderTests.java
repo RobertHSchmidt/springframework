@@ -31,7 +31,7 @@ public class RefreshableFlowHolderTests extends TestCase {
 	}
 
 	public void testNoRefreshOnChange() {
-		File parent = new File("src/test/org/springframework/webflow/registry");
+		File parent = new File("src/test/java/org/springframework/webflow/registry");
 		Resource location = new FileSystemResource(new File(parent, "flow.xml"));
 		XmlFlowBuilder flowBuilder = new XmlFlowBuilder(location);
 		FlowAssembler assembler = new FlowAssembler("flow", flowBuilder);
