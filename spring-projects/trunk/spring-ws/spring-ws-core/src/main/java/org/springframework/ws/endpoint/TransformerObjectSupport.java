@@ -25,22 +25,22 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Abstract base class for all endpoints that use a <code>Transformer</code>. Subclasses can call
+ * Convenient base class for objects that use a <code>Transformer</code>. Subclasses can call
  * <code>createTransformer</code> to obtain a transformer. This should be done per incoming request, because
- * <code>Transformer</code> instances are not thread-safe
+ * <code>Transformer</code> instances are not thread-safe.
  *
  * @author Arjen Poutsma
  * @see Transformer
  * @see #createTransformer()
  */
-public abstract class AbstractTransformingEndpoint {
+public abstract class TransformerObjectSupport {
 
     /**
      * Logger available to subclasses.
      */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    private TransformerFactory transformerFactory;
+    private static TransformerFactory transformerFactory;
 
     /**
      * Creates a new <code>Transformer</code>. Must be called per request, as transformer is not thread-safe.

@@ -38,7 +38,7 @@ import org.w3c.dom.Element;
  * @author Alef Arendsen
  * @see #invokeInternal(org.w3c.dom.Element, org.w3c.dom.Document)
  */
-public abstract class AbstractDomPayloadEndpoint extends AbstractTransformingEndpoint implements PayloadEndpoint {
+public abstract class AbstractDomPayloadEndpoint extends TransformerObjectSupport implements PayloadEndpoint {
 
     private DocumentBuilderFactory documentBuilderFactory;
 

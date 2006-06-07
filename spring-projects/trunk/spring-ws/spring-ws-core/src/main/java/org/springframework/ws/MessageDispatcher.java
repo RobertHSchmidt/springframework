@@ -27,9 +27,9 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.BeanNameAware;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.core.io.ClassPathResource;
@@ -42,21 +42,15 @@ import org.springframework.ws.endpoint.MessageEndpoint;
  * Central dispatcher for use withing Spring-WS. Dispatches SOAP messages to registered endoints.
  * <p/>
  * This dispatcher is quite similar to Spring MVCs <code>DispatcherServlet</code>. Just like it's counterpart, this
- * dispatcher is very flexible.
- * <p/>
- * <ul><li>It can use any <code>EndpointMapping</code> implementation - whether standard, or provided as part of an
- * application - to control the routing of request messages to endpoint objects. Endpoint mappings can be registerd
- * using the <code>endpointMappings</code> property.</li>
- * <p/>
- * <li>It can use any <code>EndpointAdapter</code>; this allows to use any endpoint interface or form. Default are
+ * dispatcher is very flexible. <ul> <li>It can use any <code>EndpointMapping</code> implementation - whether standard,
+ * or provided as part of an application - to control the routing of request messages to endpoint objects. Endpoint
+ * mappings can be registerd using the <code>endpointMappings</code> property.</li> <li>It can use any
+ * <code>EndpointAdapter</code>; this allows to use any endpoint interface or form. Default are
  * <code>MessageEndpointAdapter</code> and <code>PayloadEndpointAdapter</code>, for <code>MessageEndpoint</code> and
  * <code>PayloadEndpoint</code>, respectively. Additional endpoint adapters can be added through the
- * <code>endpointAdapters</code> property.</li>
- * <p/>
- * <li>Its exception resolution strategy can be specified via a <code>EndpointExceptionResolver</code>, for example
- * mapping certain exceptions to SOAP Faults. Default is none. Additional exception resolvers can be added through the
- * <code>endpointExceptionResolvers</code> property.</li> </ul>
- * <p/>
+ * <code>endpointAdapters</code> property.</li> <li>Its exception resolution strategy can be specified via a
+ * <code>EndpointExceptionResolver</code>, for example mapping certain exceptions to SOAP Faults. Default is none.
+ * Additional exception resolvers can be added through the <code>endpointExceptionResolvers</code> property.</li> </ul>
  * A web application can use any number of <code>MessageDispatcher</code>s.</b> Since a <code>MessageDispatcher</code>
  * also implements <code>MessageEndpoint</code>, it is also possible to chain them: one dispatcher can be registered as
  * the endpoint of another.
@@ -67,8 +61,7 @@ import org.springframework.ws.endpoint.MessageEndpoint;
  * @see EndpointExceptionResolver
  * @see org.springframework.web.servlet.DispatcherServlet
  */
-public class MessageDispatcher extends ApplicationObjectSupport
-        implements MessageEndpoint, InitializingBean, BeanNameAware {
+public class MessageDispatcher extends ApplicationObjectSupport implements MessageEndpoint, BeanNameAware {
 
     /**
      * Name of the class path resource (relative to the MessageDispatcher class) that defines MessageDispatcher's
@@ -130,7 +123,7 @@ public class MessageDispatcher extends ApplicationObjectSupport
     /**
      * Initializes the dispatcher.
      */
-    public void afterPropertiesSet() throws Exception {
+    public void initApplicationContext() throws BeansException {
         initEndpointMappings();
         initEndpointAdapters();
         initEndpointExceptionResolvers();
@@ -139,7 +132,7 @@ public class MessageDispatcher extends ApplicationObjectSupport
     /**
      * Initialize the <code>EndpointMappings</code> used in this class.
      */
-    private void initEndpointMappings() throws Exception {
+    private void initEndpointMappings() {
         // Ensure we have at least one EndpointMapping, by registering a default if not others are found
         if (this.endpointMappings == null) {
             this.endpointMappings = getDefaultStrategies(EndpointMapping.class);
@@ -150,7 +143,7 @@ public class MessageDispatcher extends ApplicationObjectSupport
     /**
      * Initialize the <code>EndpointAdapters</code> used by this class.
      */
-    private void initEndpointAdapters() throws Exception {
+    private void initEndpointAdapters() {
         if (this.endpointAdapters == null) {
             // Ensure we have at least some EndpointAdapters, by registereing a default if no others are found
             this.endpointAdapters = getDefaultStrategies(EndpointAdapter.class);
@@ -161,7 +154,7 @@ public class MessageDispatcher extends ApplicationObjectSupport
     /**
      * Initialize the <code>EndpointExceptionResolvers</code> used in this class.
      */
-    private void initEndpointExceptionResolvers() throws Exception {
+    private void initEndpointExceptionResolvers() {
         if (this.endpointExceptionResolvers == null) {
             // Ensure we have at least some EndpointExceptionResolvers, by registereing a default if no others are found
             this.endpointAdapters = getDefaultStrategies(EndpointExceptionResolver.class);
@@ -177,9 +170,9 @@ public class MessageDispatcher extends ApplicationObjectSupport
      *
      * @param strategyInterface the strategy interface
      * @return the List of corresponding strategy objects
-     * @throws Exception if initialization failed
+     * @throws BeansException if initialization failed
      */
-    protected List getDefaultStrategies(Class strategyInterface) throws Exception {
+    protected List getDefaultStrategies(Class strategyInterface) throws BeansException {
         String key = strategyInterface.getName();
         try {
             List strategies = null;
@@ -192,9 +185,6 @@ public class MessageDispatcher extends ApplicationObjectSupport
                     Object strategy = BeanUtils.instantiateClass(clazz);
                     if (strategy instanceof ApplicationContextAware) {
                         ((ApplicationContextAware) strategy).setApplicationContext(getApplicationContext());
-                    }
-                    if (strategy instanceof InitializingBean) {
-                        ((InitializingBean) strategy).afterPropertiesSet();
                     }
                     strategies.add(strategy);
                 }

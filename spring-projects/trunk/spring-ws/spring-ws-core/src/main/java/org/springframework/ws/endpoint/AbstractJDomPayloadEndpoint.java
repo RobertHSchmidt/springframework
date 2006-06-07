@@ -33,7 +33,7 @@ import org.jdom.transform.JDOMSource;
  * @author Arjen Poutsma
  * @see Element
  */
-public abstract class AbstractJDomPayloadEndpoint extends AbstractTransformingEndpoint implements PayloadEndpoint {
+public abstract class AbstractJDomPayloadEndpoint extends TransformerObjectSupport implements PayloadEndpoint {
 
     public final Source invoke(Source request) throws Exception {
         Transformer transformer = createTransformer();

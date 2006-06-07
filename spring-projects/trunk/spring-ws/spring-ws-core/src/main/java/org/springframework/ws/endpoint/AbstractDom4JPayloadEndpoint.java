@@ -35,7 +35,7 @@ import org.dom4j.io.DocumentSource;
  * @author Arjen Poutsma
  * @see org.dom4j.Element
  */
-public abstract class AbstractDom4JPayloadEndpoint extends AbstractTransformingEndpoint implements PayloadEndpoint {
+public abstract class AbstractDom4JPayloadEndpoint extends TransformerObjectSupport implements PayloadEndpoint {
 
     public final Source invoke(Source request) throws Exception {
         Transformer transformer = createTransformer();

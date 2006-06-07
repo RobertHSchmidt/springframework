@@ -22,12 +22,8 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ws.EndpointInterceptor;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.context.MessageContext;
@@ -41,15 +37,11 @@ import org.springframework.ws.context.MessageContext;
  * @see #setLogRequest(boolean)
  * @see #setLogResponse(boolean)
  */
-public class PayloadLoggingInterceptor implements EndpointInterceptor, InitializingBean {
-
-    private static final Log logger = LogFactory.getLog(PayloadLoggingInterceptor.class);
+public class PayloadLoggingInterceptor extends TransformerObjectSupport implements EndpointInterceptor {
 
     private boolean logRequest = true;
 
     private boolean logResponse = true;
-
-    private TransformerFactory transformerFactory;
 
     /**
      * Indicates whether the request should be logged. Default is <code>true</code>.
@@ -70,7 +62,6 @@ public class PayloadLoggingInterceptor implements EndpointInterceptor, Initializ
      * which is the default.
      *
      * @param messageContext the message context
-     * @param endpoint
      * @return <code>true</code>
      * @throws TransformerException when the payload cannot be transformed to a string
      */
@@ -86,7 +77,6 @@ public class PayloadLoggingInterceptor implements EndpointInterceptor, Initializ
      * which is the default.
      *
      * @param messageContext the message context
-     * @param endpoint
      * @return <code>true</code>
      * @throws TransformerException when the payload cannot be transformed to a string
      */
@@ -97,22 +87,18 @@ public class PayloadLoggingInterceptor implements EndpointInterceptor, Initializ
         return true;
     }
 
-    public void afterPropertiesSet() throws Exception {
-        transformerFactory = TransformerFactory.newInstance();
-    }
-
     private void logMessagePayload(String logMessage, WebServiceMessage message) throws TransformerException {
         Source source = message.getPayloadSource();
         if (source != null) {
-            Transformer transformer = createTransformer();
+            Transformer transformer = createNonIndentingTransformer();
             StringWriter writer = new StringWriter();
             transformer.transform(source, new StreamResult(writer));
             logger.debug(logMessage + writer.toString());
         }
     }
 
-    private Transformer createTransformer() throws TransformerConfigurationException {
-        Transformer transformer = transformerFactory.newTransformer();
+    private Transformer createNonIndentingTransformer() throws TransformerConfigurationException {
+        Transformer transformer = createTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.setOutputProperty(OutputKeys.INDENT, "no");
         return transformer;

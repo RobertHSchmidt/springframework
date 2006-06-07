@@ -42,7 +42,6 @@ public class PayloadEndpointAdapterTest extends XMLTestCase {
         adapter = new PayloadEndpointAdapter();
         endpointControl = MockControl.createControl(PayloadEndpoint.class);
         endpointMock = (PayloadEndpoint) endpointControl.getMock();
-        adapter.afterPropertiesSet();
     }
 
     public void testSupports() throws Exception {

@@ -36,7 +36,7 @@ public class MessageDispatcherTest extends TestCase {
     protected void setUp() throws Exception {
         dispatcher = new MessageDispatcher();
         dispatcher.setApplicationContext(new StaticApplicationContext());
-        dispatcher.afterPropertiesSet();
+        dispatcher.initApplicationContext();
         request = new MockWebServiceMessage();
         messageContext = new MockMessageContext(request);
     }

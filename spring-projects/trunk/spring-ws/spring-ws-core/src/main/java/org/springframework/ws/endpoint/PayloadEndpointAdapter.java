@@ -18,9 +18,7 @@ package org.springframework.ws.endpoint;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ws.EndpointAdapter;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.context.MessageContext;
@@ -32,9 +30,7 @@ import org.springframework.ws.context.MessageContext;
  * @see PayloadEndpoint
  * @see org.springframework.ws.EndpointInvocationChain
  */
-public class PayloadEndpointAdapter implements EndpointAdapter, InitializingBean {
-
-    private TransformerFactory transformerFactory;
+public class PayloadEndpointAdapter extends TransformerObjectSupport implements EndpointAdapter {
 
     public boolean supports(Object endpoint) {
         return (endpoint instanceof PayloadEndpoint);
@@ -46,12 +42,8 @@ public class PayloadEndpointAdapter implements EndpointAdapter, InitializingBean
         Source responseSource = payloadEndpoint.invoke(requestSource);
         if (responseSource != null) {
             WebServiceMessage response = messageContext.createResponse();
-            Transformer transformer = transformerFactory.newTransformer();
+            Transformer transformer = createTransformer();
             transformer.transform(responseSource, response.getPayloadResult());
         }
-    }
-
-    public final void afterPropertiesSet() throws Exception {
-        transformerFactory = TransformerFactory.newInstance();
     }
 }

@@ -34,7 +34,7 @@ import org.xml.sax.ContentHandler;
  * @see #createContentHandler()
  * @see #getResponse(org.xml.sax.ContentHandler)
  */
-public abstract class AbstractSaxPayloadEndpoint extends AbstractTransformingEndpoint implements PayloadEndpoint {
+public abstract class AbstractSaxPayloadEndpoint extends TransformerObjectSupport implements PayloadEndpoint {
 
     /**
      * Invokes the provided <code>ContentHandler</code> and <code>LexicalHandler</code> on the given request. After

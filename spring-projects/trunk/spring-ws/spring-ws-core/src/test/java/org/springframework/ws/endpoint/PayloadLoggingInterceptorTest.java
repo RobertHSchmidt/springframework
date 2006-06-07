@@ -35,7 +35,6 @@ public class PayloadLoggingInterceptorTest extends TestCase {
 
     protected void setUp() throws Exception {
         interceptor = new PayloadLoggingInterceptor();
-        interceptor.afterPropertiesSet();
         appender = new CountingAppender();
         BasicConfigurator.configure(appender);
         Logger.getRootLogger().setLevel(Level.DEBUG);
