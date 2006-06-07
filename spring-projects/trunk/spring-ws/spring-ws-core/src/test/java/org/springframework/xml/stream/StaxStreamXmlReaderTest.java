@@ -20,7 +20,7 @@ import java.io.Reader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 
-public class StaxStreamXmlReaderTest extends AbstractStaxXmlReaderTest {
+public class StaxStreamXmlReaderTest extends AbstractStaxXmlReaderTestCase {
 
     protected StaxXmlReader createStaxXmlReader(Reader reader) throws XMLStreamException {
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();

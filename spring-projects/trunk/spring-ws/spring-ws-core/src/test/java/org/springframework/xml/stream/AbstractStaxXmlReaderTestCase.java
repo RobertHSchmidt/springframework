@@ -25,7 +25,6 @@ import javax.xml.stream.XMLStreamException;
 import junit.framework.TestCase;
 import org.easymock.AbstractMatcher;
 import org.easymock.MockControl;
-import org.springframework.util.StringUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
@@ -35,7 +34,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-public abstract class AbstractStaxXmlReaderTest extends TestCase {
+public abstract class AbstractStaxXmlReaderTestCase extends TestCase {
 
     private static final String XML_DTD_HANDLER =
             "<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'><beans />";

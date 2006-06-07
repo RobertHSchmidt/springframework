@@ -29,7 +29,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-public abstract class AbstractXPathExpressionFactoryTest extends TestCase {
+public abstract class AbstractXPathExpressionFactoryTestCase extends TestCase {
 
     private Document noNamespacesDocument;
 

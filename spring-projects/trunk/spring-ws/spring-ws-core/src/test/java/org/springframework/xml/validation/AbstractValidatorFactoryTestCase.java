@@ -29,10 +29,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
 
-/**
- * @author Arjen Poutsma
- */
-public abstract class AbstractValidatorFactoryTest extends TestCase {
+public abstract class AbstractValidatorFactoryTestCase extends TestCase {
 
     private static final String VALID_MESSAGE =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?><product xmlns=\"http://www.springframework.org/spring-ws/test/validation\" effDate=\"2006-01-01\"><number>42</number><size>10</size></product>";

@@ -18,7 +18,7 @@ package org.springframework.xml.xpath;
 
 import java.util.Map;
 
-public class Jaxp13XPathExpressionFactoryTest extends AbstractXPathExpressionFactoryTest {
+public class Jaxp13XPathExpressionFactoryTest extends AbstractXPathExpressionFactoryTestCase {
 
     protected XPathExpression createXPathExpression(String expression) {
         return Jaxp13XPathExpressionFactory.createXPathExpression(expression);

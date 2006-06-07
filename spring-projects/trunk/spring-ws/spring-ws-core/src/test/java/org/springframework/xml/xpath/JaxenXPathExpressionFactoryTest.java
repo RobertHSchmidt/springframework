@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.xml.sax.SAXException;
 
-public class JaxenXPathExpressionFactoryTest extends AbstractXPathExpressionFactoryTest {
+public class JaxenXPathExpressionFactoryTest extends AbstractXPathExpressionFactoryTestCase {
 
     protected XPathExpression createXPathExpression(String expression) {
         return JaxenXPathExpressionFactory.createXPathExpression(expression);

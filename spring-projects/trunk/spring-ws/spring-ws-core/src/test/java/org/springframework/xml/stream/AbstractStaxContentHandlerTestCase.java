@@ -26,7 +26,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-public abstract class AbstractStaxContentHandlerTest extends XMLTestCase {
+public abstract class AbstractStaxContentHandlerTestCase extends XMLTestCase {
 
     private static final String XML_CONTENT_HANDLER =
             "<?xml version='1.0' encoding='UTF-8'?><?pi content?><root xmlns='namespace'><prefix:child xmlns:prefix='namespace2' prefix:attr='value'>content</prefix:child></root>";

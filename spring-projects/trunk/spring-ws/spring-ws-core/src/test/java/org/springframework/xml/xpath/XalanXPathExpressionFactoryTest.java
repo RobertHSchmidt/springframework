@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * @author Arjen Poutsma
  */
-public class XalanXPathExpressionFactoryTest extends AbstractXPathExpressionFactoryTest {
+public class XalanXPathExpressionFactoryTest extends AbstractXPathExpressionFactoryTestCase {
 
     protected XPathExpression createXPathExpression(String expression) {
         return XalanXPathExpressionFactory.createXPathExpression(expression);
