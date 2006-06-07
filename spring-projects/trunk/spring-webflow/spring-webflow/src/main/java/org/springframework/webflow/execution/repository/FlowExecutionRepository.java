@@ -19,20 +19,15 @@ import org.springframework.webflow.execution.FlowExecution;
 
 /**
  * Central interface responsible for the saving and restoring of flow
- * executions, where each flow execution represents a state of an active user
- * conversation.
+ * executions, where each flow execution represents a state of an active flow.
  * <p>
  * Flow execution repositories are responsible for managing the creation,
- * storage, restoration, and invalidation of conversations between clients and
+ * storage, restoration, and removal of flow executions launched by clients of
  * the Spring Web Flow system.
  * <p>
- * When placed in a repository, a {@link FlowExecution} object representing the
- * state of a conversation at a point in time is indexed under a unique
- * {@link FlowExecutionKey}. This key provides enough information to track a
- * single active user conversation with the server, as well as provide an index
- * into one or more restorable conversational snapshots taken at points in time
- * during conversation execution. These restorable conversational snapshots are
- * also called <i>continuations</i>.
+ * When placed in a repository a {@link FlowExecution} object representing the
+ * state of a flow at a point in time is indexed under a unique
+ * {@link FlowExecutionKey}.
  * 
  * @author Keith Donald
  */
@@ -41,36 +36,34 @@ public interface FlowExecutionRepository {
 	/**
 	 * Create a new flow execution persistable by this repository.
 	 * <p>
-	 * The returned flow execution logically represents the state of a new
-	 * conversation before it has been started. The execution is eligible for
-	 * persistence by this repository if it still active after startup request
-	 * processing.
+	 * The returned flow execution captures the state of a new flow instance
+	 * before it has been started. The execution is eligible for persistence by
+	 * this repository if it still active after startup request processing.
 	 * @param flowId the flow definition identifier defining the blueprint for a
 	 * conversation
-	 * @return the flow execution, representing the state of a new conversation
-	 * that has not yet been started
+	 * @return the flow execution representing the state of a launched flow that
+	 * has not yet been started
 	 * @throws FlowExecutionRepositoryException a problem occured creating the
 	 * flow execution
 	 */
 	public FlowExecution createFlowExecution(String flowId) throws FlowExecutionRepositoryException;
 
 	/**
-	 * Generate a unique flow execution key to be used as an index into an
-	 * active flow execution representing the start of a new user conversation
-	 * in this repository. Both the <code>conversationId</code> and
-	 * <code>continuationId</code> key parts are guaranteed to be unique.
+	 * Generate a unique flow execution key to be used as the persistent
+	 * identifier of the flow execution. This method should be called after a
+	 * new flow execution is started and remains active; thus needing to be
+	 * persisted. The FlowExecutionKey is the execution's persistent identity.
 	 * @param flowExecution the flow execution
+	 * @return the flow execution key
 	 * @throws FlowExecutionRepositoryException a problem occured generating the
 	 * key
 	 */
 	public FlowExecutionKey generateKey(FlowExecution flowExecution) throws FlowExecutionRepositoryException;
 
 	/**
-	 * Generate a unique flow execution key to be used as an index into a new
-	 * flow execution continuation associated with an <i>existing</i> user
-	 * conversation managed in this repository. The returned key consists of the
-	 * provided <code>conversationId</code> and a new, unique
-	 * <code>continuationId</code>.
+	 * Obtain the "next" flow execution key to be used as as the flow
+	 * execution's persistent identity. The repository may choose to simply
+	 * return the previous key or generate a new key.
 	 * @param flowExecution the flow execution
 	 * @throws FlowExecutionRepositoryException a problem occured generating the
 	 * key
@@ -79,7 +72,7 @@ public interface FlowExecutionRepository {
 			throws FlowExecutionRepositoryException;
 
 	/**
-	 * Return the lock for the conversation, allowing for the lock to be
+	 * Return the lock for the flow execution, allowing for the lock to be
 	 * acquired or released.
 	 * <p>
 	 * CAUTION: care should be made not to allow for a deadlock situation. If
@@ -89,18 +82,19 @@ public interface FlowExecutionRepository {
 	 * follows:
 	 * 
 	 * <pre>
-	 * Lock lock = repository.getLock(conversationId);
+	 * FlowExecutionLock lock = repository.getLock(key);
 	 * lock.lock();
 	 * try {
-	 *     // do work
+	 * 	FlowExecution execution = repository.getFlowExecution(key);
+	 * 	// do work
 	 * }
 	 * finally {
 	 * 	lock.unlock();
 	 * }
 	 * </pre>
 	 * 
-	 * @param conversationId the conversation id
-	 * @return the conversation lock
+	 * @param key the identifier of the flow execution to lock
+	 * @return the lock
 	 * @throws FlowExecutionRepositoryException a problem occured accessing the
 	 * lock object
 	 */
@@ -108,27 +102,20 @@ public interface FlowExecutionRepository {
 
 	/**
 	 * Return the <code>FlowExecution</code> indexed by the provided key. The
-	 * returned flow execution represents the restored state of a user
-	 * conversation captured by the indexed continuation at a point in time.
+	 * returned flow execution represents the restored state of an executing
+	 * flow from a point in time.
 	 * @param key the flow execution key
-	 * @return the flow execution, representing the state of a conversation at a
-	 * point in time, fully hydrated and ready to signal an event against.
+	 * @return the flow execution, fully hydrated and ready to signal an event
+	 * against.
 	 * @throws FlowExecutionRepositoryException if no flow execution was indexed
 	 * with the key provided
 	 */
 	public FlowExecution getFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
 
 	/**
-	 * Place the <code>FlowExecution</code> in this repository, indexed under
-	 * the provided key.
-	 * <p>
-	 * If this flow execution represents the start of a new conversation, that
-	 * conversation will begin to be tracked and a continuation capturing the
-	 * current state of the conversation will be created.
-	 * <p>
-	 * If this flow execution represents a change in the state of an existing,
-	 * ongoing conversation, a new continuation capturing this most recent state
-	 * of the conversation will be created.
+	 * Place the <code>FlowExecution</code> in this repository under the
+	 * provided key. This should be called to insert or update the persistent
+	 * state of an active (but paused) flow execution.
 	 * 
 	 * @param key the flow execution key
 	 * @param flowExecution the flow execution
@@ -139,17 +126,18 @@ public interface FlowExecutionRepository {
 			throws FlowExecutionRepositoryException;
 
 	/**
-	 * Invalidate the executing conversation with the specified id. This method
-	 * will remove all data associated with the conversation, including any
-	 * managed continuations. Any future clients that reference this
-	 * conversation in a flow execution continuation key will be thrown a
-	 * FlowExecutionRepositoryException on any access attempt.
-	 * @param conversationId the conversationId
-	 * @throws FlowExecutionRepositoryException the conversation could not be
-	 * invalidated
+	 * Remove the flow execution from the repository. This should be called when
+	 * the flow execution ends (is no longer active).
+	 * @param key the flow execution key
+	 * @throws FlowExecutionRepositoryException the flow execution could not be
+	 * removed.
 	 */
 	public void removeFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
 
+	/**
+	 * @param encodedKey
+	 * @return
+	 */
 	public FlowExecutionKey parseFlowExecutionKey(String encodedKey);
-	
+
 }

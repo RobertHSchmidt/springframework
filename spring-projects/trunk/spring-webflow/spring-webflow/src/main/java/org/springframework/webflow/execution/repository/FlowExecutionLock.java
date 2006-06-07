@@ -16,25 +16,21 @@
 package org.springframework.webflow.execution.repository;
 
 /**
- * A interface allowing for a thread to obtain exclusive rights to a
- * conversation. Allows for preventing concurrency conflicts; for example, when
- * multiple requests from the same client session come in back-to-back.
+ * Allows for a thread to obtain exclusive rights to a flow execution. Should be
+ * used to prevent concurrency conflicts; for example, when multiple requests
+ * from the same client session come in back-to-back.
  * 
  * @author Keith Donald
  */
 public interface FlowExecutionLock {
 
 	/**
-	 * Acquire the lock on this conversation.
-	 * @throws FlowExecutionRepositoryException an exception occured acquiring
-	 * the lock
+	 * Acquire the flow execution lock.
 	 */
 	public void lock();
 
 	/**
-	 * Release the lock on this conversation.
-	 * @throws FlowExecutionRepositoryException an exception occured releasing
-	 * the lock
+	 * Release the flow execution lock.
 	 */
 	public void unlock();
 }
