@@ -86,7 +86,7 @@ public class LocalConversationService implements ConversationService, Serializab
 		if (!conversations.containsKey(conversationId)) {
 			throw new NoSuchConversationException(conversationId);
 		}
-		return ((ConversationEntry)conversations.get(conversationId)).getLock();
+		return getConversationEntry(conversationId).getLock();
 	}
 
 	private Object getAttribute(ConversationId conversationId, Object name) {
@@ -95,7 +95,7 @@ public class LocalConversationService implements ConversationService, Serializab
 		if (!conversations.containsKey(conversationId)) {
 			throw new NoSuchConversationException(conversationId);
 		}
-		return ((ConversationEntry)conversations.get(conversationId)).getAttributes().get(name);
+		return getConversationEntry(conversationId).getAttributes().get(name);
 	}
 
 	private Object putAttribute(ConversationId conversationId, Object name, Object value) {
@@ -104,7 +104,7 @@ public class LocalConversationService implements ConversationService, Serializab
 		if (!conversations.containsKey(conversationId)) {
 			throw new NoSuchConversationException(conversationId);
 		}
-		return ((ConversationEntry)conversations.get(conversationId)).getAttributes().put(name, value);
+		return getConversationEntry(conversationId).getAttributes().put(name, value);
 	}
 
 	private Object removeAttribute(ConversationId conversationId, Object name) {
@@ -113,7 +113,7 @@ public class LocalConversationService implements ConversationService, Serializab
 		if (!conversations.containsKey(conversationId)) {
 			throw new NoSuchConversationException(conversationId);
 		}
-		return ((ConversationEntry)conversations.get(conversationId)).getAttributes().remove(name);
+		return getConversationEntry(conversationId).getAttributes().remove(name);
 	}
 
 	private void end(ConversationId conversationId) {
@@ -121,7 +121,12 @@ public class LocalConversationService implements ConversationService, Serializab
 		if (!conversations.containsKey(conversationId)) {
 			throw new NoSuchConversationException(conversationId);
 		}
-		conversations.remove(conversationId);
+		ConversationEntry entry = (ConversationEntry)conversations.remove(conversationId);
+		entry.getLock().unlock();
+	}
+
+	private ConversationEntry getConversationEntry(ConversationId conversationId) {
+		return ((ConversationEntry)conversations.get(conversationId));
 	}
 
 	private class ConversationProxy implements Conversation {
