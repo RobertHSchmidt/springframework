@@ -43,6 +43,9 @@ public class LocalConversationService implements ConversationService, Serializab
 	 */
 	private static final long serialVersionUID = -5820143384320183867L;
 
+	/**
+	 * The local conversation data store.
+	 */
 	private Map conversations = new HashMap();
 
 	/**
@@ -50,10 +53,16 @@ public class LocalConversationService implements ConversationService, Serializab
 	 */
 	private UidGenerator conversationIdGenerator = new RandomGuidUidGenerator();
 
-	public UidGenerator getConversationIdGenerator() {
+	/**
+	 * Returns the configured generator for simple conversation ids.
+	 */
+	protected UidGenerator getConversationIdGenerator() {
 		return conversationIdGenerator;
 	}
 
+	/**
+	 * Sets the configured generator simple conversation ids.
+	 */
 	public void setConversationIdGenerator(UidGenerator uidGenerator) {
 		this.conversationIdGenerator = uidGenerator;
 	}
@@ -64,7 +73,7 @@ public class LocalConversationService implements ConversationService, Serializab
 		conversations.put(conversationId, createConversation(conversationParameters, conversationId));
 		return getConversation(conversationId);
 	}
-	
+
 	public Conversation getConversation(ConversationId id) throws NoSuchConversationException {
 		if (!conversations.containsKey(id)) {
 			throw new NoSuchConversationException(id);
@@ -129,6 +138,11 @@ public class LocalConversationService implements ConversationService, Serializab
 		return ((ConversationEntry)conversations.get(conversationId));
 	}
 
+	/**
+	 * A proxy to a keyed entry in the conversation map.
+	 * 
+	 * @author Keith Donald
+	 */
 	private class ConversationProxy implements Conversation {
 
 		private ConversationId conversationId;
