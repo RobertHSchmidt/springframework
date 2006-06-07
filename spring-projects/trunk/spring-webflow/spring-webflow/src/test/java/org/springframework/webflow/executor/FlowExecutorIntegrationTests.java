@@ -8,8 +8,6 @@ import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.NoMatchingTransitionException;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.EventId;
-import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 import org.springframework.webflow.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.support.ApplicationView;
@@ -60,19 +58,17 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 		ExternalContext context = new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(),
 				new MockHttpServletResponse());
 		ResponseInstruction response = flowExecutor.launch("flow", context);
-		FlowExecutionKey key = response.getFlowExecutionKey();
+		String key = response.getFlowExecutionKey();
 		assertEquals("viewState1", response.getFlowExecutionContext().getActiveSession().getState().getId());
-		response = flowExecutor.signalEvent(new EventId("event1"), key, context);
+		response = flowExecutor.signalEvent("event1", key, context);
 		assertTrue(response.getFlowExecutionContext().isActive());
 		assertEquals("viewState2", response.getFlowExecutionContext().getActiveSession().getState().getId());
 		assertTrue(response.isApplicationView());
 		assertNotNull(response.getFlowExecutionKey());
-		assertEquals(key.getConversationId(), response.getFlowExecutionKey().getConversationId());
-		assertFalse(key.getContinuationId() == response.getFlowExecutionKey().getContinuationId());
 		ApplicationView view = (ApplicationView)response.getViewSelection();
 		assertEquals("view2", view.getViewName());
 		assertEquals(0, view.getModel().size());
-		response = flowExecutor.signalEvent(new EventId("event1"), response.getFlowExecutionKey(), context);
+		response = flowExecutor.signalEvent("event1", response.getFlowExecutionKey(), context);
 		view = (ApplicationView)response.getViewSelection();
 		assertFalse(response.getFlowExecutionContext().isActive());
 		assertTrue(response.isApplicationView());
@@ -80,7 +76,7 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 		assertEquals("endView1", view.getViewName());
 		assertEquals(0, view.getModel().size());
 		try {
-			flowExecutor.signalEvent(new EventId("event1"), key, context);
+			flowExecutor.signalEvent("event1", key, context);
 			fail("Should've been removed");
 		}
 		catch (NoSuchFlowExecutionException e) {
@@ -88,40 +84,21 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 		}
 	}
 
-	public void testGetCurrentResponseInstruction() {
+	public void testRefresh() {
 		ExternalContext context = new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(),
 				new MockHttpServletResponse());
 		ResponseInstruction response = flowExecutor.launch("flow", context);
-		ResponseInstruction response2 = flowExecutor.refresh(response.getFlowExecutionKey()
-				.getConversationId(), context);
+		ResponseInstruction response2 = flowExecutor.refresh(response.getFlowExecutionKey(), context);
 		assertEquals(response, response2);
 	}
 
-	public void testNoSuchConversation() {
+	public void testNoSuchFlowExecution() {
 		try {
-			flowExecutor.signalEvent(new EventId("bogus"), new FlowExecutionKey("bogus", "bogus"),
-					new MockExternalContext());
+			flowExecutor.signalEvent("bogus", "_cbogus_kbogus", new MockExternalContext());
 			fail("Should've failed");
 		}
 		catch (NoSuchFlowExecutionException e) {
-			assertEquals("bogus", e.getConversationId());
-		}
-	}
-
-	public void testCannotContinuationConversation() {
-		FlowExecutionKey key = null;
-		try {
-			ExternalContext context = new ServletExternalContext(new MockServletContext(),
-					new MockHttpServletRequest(), new MockHttpServletResponse());
-			ResponseInstruction response = flowExecutor.launch("flow", context);
-			key = response.getFlowExecutionKey();
-			flowExecutor.signalEvent(new EventId("event1"), new FlowExecutionKey(key.getConversationId(), "bogus"),
-					context);
-			fail("How did you continue mon?");
-		}
-		catch (CannotContinueFlowExecutionException e) {
-			assertEquals(key.getConversationId(), e.getFlowExecutionKey().getConversationId());
-			assertEquals("bogus", e.getFlowExecutionKey().getContinuationId());
+			assertEquals("bogus", e.getFlowExecutionKey());
 		}
 	}
 
@@ -129,28 +106,15 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 		ExternalContext context = new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(),
 				new MockHttpServletResponse());
 		ResponseInstruction response = flowExecutor.launch("flow", context);
-		FlowExecutionKey key = response.getFlowExecutionKey();
+		String key = response.getFlowExecutionKey();
 		try {
-			flowExecutor.signalEvent(new EventId("bogus"), key, context);
+			flowExecutor.signalEvent("bogus", key, context);
 			fail("Should've been removed");
 		}
 		catch (NoMatchingTransitionException e) {
 			assertEquals("flow", e.getFlow().getId());
 			assertEquals("viewState1", e.getState().getId());
 			assertEquals("bogus", e.getEvent().getId());
-		}
-	}
-
-	public void testNoSuchConversationCurrentResponse() {
-		ExternalContext context = new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(),
-				new MockHttpServletResponse());
-		flowExecutor.launch("flow", context);
-		try {
-			flowExecutor.refresh("bogus", context);
-			fail("Should've failed");
-		}
-		catch (NoSuchFlowExecutionException e) {
-			assertEquals("bogus", e.getConversationId());
 		}
 	}
 }
