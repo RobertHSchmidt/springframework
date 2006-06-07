@@ -67,8 +67,7 @@ Package org.springframework.webflow.executor
 * Added support for populating the FlowExecution inputMap from ExternalContext attributes during a launch operation.
   This allows for a flow to be passed input from clients that start it, and subsequently
   map the input into its local scope using a input-mapper.
-* Portlet flow controller now refreshes a conversation's current flow execution on render 
-  request if necessary, to support browser refresh.
+* Portlet flow controller now refreshes a flow execution on render request if necessary to support browser refresh.
 * Portlet flow controller can now perform external redirects using ActionResponse.sendRedirect(url).
 
 Package org.springframework.webflow.registry
