@@ -1,4 +1,4 @@
-SPRING WEB FLOW CHANGELOG
+SPRING WEB FLOW (SWF) CHANGELOG
 =========================
 http://www.springframework.org
 
@@ -9,6 +9,7 @@ Overall
 * Moved project source control (with history preserved) to sourceforge subversion (SVN) repository at:
       https://svn.sourceforge.net/svnroot/springframework/spring-projects/trunk
 * Updated projects structure to maven2 standard (e.g. src/main/java, src/test/java).
+* Spring-projects JAR repository structure now follows maven2 standard.
 
 Package org.springframework.webflow
 * Removed 'requiredType' not null check on AttributeMap accessor methods; if no requiredType is specified
