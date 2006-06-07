@@ -62,8 +62,8 @@ public interface FlowExecutionRepository {
 
 	/**
 	 * Obtain the "next" flow execution key to be used as as the flow
-	 * execution's persistent identity. The repository may choose to simply
-	 * return the previous key or generate a new key.
+	 * execution's persistent identity. The repository may choose to return the
+	 * previous key or generate a new key.
 	 * @param flowExecution the flow execution
 	 * @throws FlowExecutionRepositoryException a problem occured generating the
 	 * key
@@ -75,7 +75,7 @@ public interface FlowExecutionRepository {
 	 * Return the lock for the flow execution, allowing for the lock to be
 	 * acquired or released.
 	 * <p>
-	 * CAUTION: care should be made not to allow for a deadlock situation. If
+	 * Caution: care should be made not to allow for a deadlock situation. If
 	 * you acquire a lock make sure you release it when you are done.
 	 * <p>
 	 * The general pattern for safely doing work against a locked conversation
@@ -85,8 +85,8 @@ public interface FlowExecutionRepository {
 	 * FlowExecutionLock lock = repository.getLock(key);
 	 * lock.lock();
 	 * try {
-	 * 	FlowExecution execution = repository.getFlowExecution(key);
-	 * 	// do work
+	 *     FlowExecution execution = repository.getFlowExecution(key);
+	 *     // do work
 	 * }
 	 * finally {
 	 * 	lock.unlock();
@@ -103,7 +103,8 @@ public interface FlowExecutionRepository {
 	/**
 	 * Return the <code>FlowExecution</code> indexed by the provided key. The
 	 * returned flow execution represents the restored state of an executing
-	 * flow from a point in time.
+	 * flow from a point in time. This should be called to resume a persistent
+	 * flow execution.
 	 * @param key the flow execution key
 	 * @return the flow execution, fully hydrated and ready to signal an event
 	 * against.
@@ -135,8 +136,10 @@ public interface FlowExecutionRepository {
 	public void removeFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
 
 	/**
-	 * @param encodedKey
-	 * @return
+	 * Parse the string-encoded flow execution key into its object form.
+	 * @param encodedKey the string encoded key
+	 * @return the parsed flow execution key, the persistent identifier for
+	 * exactly one flow execution.
 	 */
 	public FlowExecutionKey parseFlowExecutionKey(String encodedKey);
 
