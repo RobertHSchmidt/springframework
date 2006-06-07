@@ -367,12 +367,6 @@
 	refresh a specific state of the conversation while the conversation remains active.
 		"redirect:priceForm"
 
-	Use of the "conversationRedirect:" prefix indicates this view state should trigger a redirect to a 
-	constant "conversation URL".  This causes the most recent application view to be rendered on
-	the subsequent request into the server at that URL.  This allows browsers to easily
-	refresh the current state of the conversation while the conversation remains active.
-		"conversationRedirect:priceForm"
-
 	Use of the "externalRedirect:" prefix indicates this view state should trigger a 
 	redirect to an absolute external URL, typically to interface with an external system.
 	External redirect query parameters may be specified using ${expressions} that evaluate
