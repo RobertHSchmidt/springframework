@@ -16,16 +16,17 @@
 package org.springframework.webflow.execution.repository;
 
 /**
- * Allows for a thread to obtain exclusive rights to a flow execution. Should be
- * used to prevent concurrency conflicts; for example, when multiple requests
- * from the same client session come in back-to-back.
+ * A pessmistic lock to obtain exclusive rights to a flow execution. Used to
+ * prevent conflicts when multiple requests to manipulate a flow execution
+ * arrive from different threads concurrently.
  * 
  * @author Keith Donald
  */
 public interface FlowExecutionLock {
 
 	/**
-	 * Acquire the flow execution lock.
+	 * Acquire the flow execution lock. This method will block until the lock
+	 * becomes available for acquisition.
 	 */
 	public void lock();
 

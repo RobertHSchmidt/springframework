@@ -89,7 +89,7 @@ public interface FlowExecutionRepository {
 	 *     // do work
 	 * }
 	 * finally {
-	 * 	lock.unlock();
+	 *     lock.unlock();
 	 * }
 	 * </pre>
 	 * 
