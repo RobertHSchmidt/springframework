@@ -15,7 +15,7 @@
 
 	<bean id="flowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl">
 		<constructor-arg ref="flowRegistry"/>
-		<property name="redirectOnPause" value="CONVERSATION"/>
+		<property name="redirectOnPause" value="FLOW_EXECUTION"/>
 	</bean>
 
 	<!-- Creates the registry of flow definitions for this application -->
