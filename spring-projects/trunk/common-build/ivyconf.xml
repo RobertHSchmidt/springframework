@@ -13,12 +13,12 @@
 				<artifact pattern="${repository.dir}/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" /> 
 			</filesystem>
 
-			<url name="spring-repo">
+			<url name="spring-repo" m2compatible="true">
 				<ivy pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo/[organisation]/[module]/ivy-[revision].xml" />
 				<artifact pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
 			</url>
 
-			<url name="spring-repo-snapshots">
+			<url name="spring-repo-snapshots" m2compatible="true">
 				<ivy pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo-snapshots/[organisation]/[module]/ivy-[revision].xml" />
 				<artifact pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo-snapshots/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
 			</url>
