@@ -46,7 +46,7 @@ public class FlowRegistryPopulationTests extends TestCase {
 		FlowRegistryImpl registry = new FlowRegistryImpl();
 		FlowServiceLocator flowArtifactFactory = new DefaultFlowServiceLocator(registry,
 				new DefaultListableBeanFactory());
-		File parent = new File("src/test/org/springframework/webflow/registry");
+		File parent = new File("src/test/java/org/springframework/webflow/registry");
 		XmlFlowRegistrar registrar = new XmlFlowRegistrar();
 		registrar.addFlowLocation(new FileSystemResource(new File(parent, "flow1.xml")));
 		registrar.addFlowLocation(new FileSystemResource(new File(parent, "flow2.xml")));

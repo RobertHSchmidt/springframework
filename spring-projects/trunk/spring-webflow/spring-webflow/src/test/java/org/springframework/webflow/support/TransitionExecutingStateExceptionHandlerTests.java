@@ -63,8 +63,8 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		FlowExecutionListener listener = new FlowExecutionListenerAdapter() {
 			public void requestProcessed(RequestContext context) {
 				assertTrue(context.getRequestScope().contains("stateException"));
-				assertTrue(context.getRequestScope().contains("rootCause"));
-				assertTrue(context.getRequestScope().get("rootCause") instanceof MyCustomException);
+				assertTrue(context.getRequestScope().contains("rootCauseException"));
+				assertTrue(context.getRequestScope().get("rootCauseException") instanceof MyCustomException);
 			}
 		};
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow, new FlowExecutionListener[] { listener });

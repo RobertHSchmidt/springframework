@@ -98,7 +98,7 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 			fail("Should've failed");
 		}
 		catch (NoSuchFlowExecutionException e) {
-			assertEquals("bogus", e.getFlowExecutionKey());
+			assertEquals("_cbogus_kbogus", e.getFlowExecutionKey().toString());
 		}
 	}
 

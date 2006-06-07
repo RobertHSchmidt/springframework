@@ -62,13 +62,13 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 
 	public void testExtractEventId() {
 		context.putRequestParameter("_eventId", "submit");
-		assertEquals(new EventId("submit"), argumentExtractor.extractEventId(context));
+		assertEquals("submit", argumentExtractor.extractEventId(context));
 	}
 
 	public void testExtractEventIdButtonNameFormat() {
 		context.putRequestParameter("_eventId_submit", "not important");
 		context.putRequestParameter("_somethingElse", "not important");
-		assertEquals(new EventId("submit"), argumentExtractor.extractEventId(context));
+		assertEquals("submit", argumentExtractor.extractEventId(context));
 	}
 
 	public void testExtractEventIdNoIdProvided() {

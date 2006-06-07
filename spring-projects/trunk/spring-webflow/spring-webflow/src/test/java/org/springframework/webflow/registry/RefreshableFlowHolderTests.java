@@ -12,7 +12,7 @@ import org.springframework.webflow.builder.XmlFlowBuilder;
 public class RefreshableFlowHolderTests extends TestCase {
 
 	public void testNoRefreshOnNoChange() {
-		File parent = new File("src/test/org/springframework/webflow/registry");
+		File parent = new File("src/test/java/org/springframework/webflow/registry");
 		Resource location = new FileSystemResource(new File(parent, "flow.xml"));
 		XmlFlowBuilder flowBuilder = new XmlFlowBuilder(location);
 		FlowAssembler assembler = new FlowAssembler("flow", flowBuilder);
