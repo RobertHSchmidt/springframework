@@ -102,6 +102,7 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
 		FlowExecutionEntry entry = new FlowExecutionEntry(getContinuationId(key), flowExecution);
 		putEntry(key, entry);
+		putConversationScope(key, asImpl(flowExecution).getConversationScope());
 	}
 
 	protected Serializable generateContinuationId(FlowExecution flowExecution) {
