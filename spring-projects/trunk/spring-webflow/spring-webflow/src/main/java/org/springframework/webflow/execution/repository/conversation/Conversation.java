@@ -23,7 +23,7 @@ package org.springframework.webflow.execution.repository.conversation;
  * Between the beginning and the end attributes can be placed in and read from a
  * conversation's context.
  * <p>
- * Once begun, tOhe conversation can be locked to obtain exclusive access to
+ * Once begun, the conversation can be locked to obtain exclusive access to
  * manipulating it. Once the conversation is "done", it can be ended.
  * 
  * @author Keith Donald
