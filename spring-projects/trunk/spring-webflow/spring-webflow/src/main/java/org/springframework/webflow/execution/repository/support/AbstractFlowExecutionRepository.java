@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.execution.repository.support;
 
+import java.io.Serializable;
+
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.execution.FlowExecution;
@@ -33,7 +35,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryE
  * 
  * @author Keith Donald
  */
-public abstract class AbstractFlowExecutionRepository implements FlowExecutionRepository {
+public abstract class AbstractFlowExecutionRepository implements FlowExecutionRepository, Serializable {
 
 	/**
 	 * A holder for the services needed by this repository.

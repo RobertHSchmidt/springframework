@@ -30,7 +30,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
-import org.springframework.webflow.execution.repository.continuation.DefaultFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepositoryFactory;
 import org.springframework.webflow.support.ApplicationView;
 import org.springframework.webflow.support.RedirectType;
 

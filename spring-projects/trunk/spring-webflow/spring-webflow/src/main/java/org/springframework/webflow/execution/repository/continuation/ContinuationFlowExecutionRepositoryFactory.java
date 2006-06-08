@@ -15,12 +15,16 @@
  */
 package org.springframework.webflow.execution.repository.continuation;
 
+import org.springframework.util.Assert;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.execution.repository.FlowExecutionRepository;
+import org.springframework.webflow.execution.repository.support.AbstractFlowExecutionRepositoryCreator;
 import org.springframework.webflow.execution.repository.support.DelegatingFlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.support.FlowExecutionRepositoryServices;
 import org.springframework.webflow.execution.repository.support.SharedMapFlowExecutionRepositoryFactory;
+import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 
 /**
@@ -92,5 +96,74 @@ public class ContinuationFlowExecutionRepositoryFactory extends DelegatingFlowEx
 	 */
 	public void setMaxContinuations(int maxContinuations) {
 		getRepositoryCreator().setMaxContinuations(maxContinuations);
+	}
+	
+	private static class ContinuationFlowExecutionRepositoryCreator extends AbstractFlowExecutionRepositoryCreator {
+
+		/**
+		 * The flow execution continuation factory to use.
+		 */
+		private FlowExecutionContinuationFactory continuationFactory = new SerializedFlowExecutionContinuationFactory();
+
+		/**
+		 * The continuation uid generation strategy to use.
+		 */
+		private transient UidGenerator continuationIdGenerator = new RandomGuidUidGenerator();
+
+		/**
+		 * The maximum number of continuations allowed per conversation.
+		 */
+		private int maxContinuations;
+
+		/**
+		 * Creates a new continuation repository creator.
+		 * @param repositoryServices the repository services holder
+		 */
+		public ContinuationFlowExecutionRepositoryCreator(FlowExecutionRepositoryServices repositoryServices) {
+			super(repositoryServices);
+		}
+
+		/**
+		 * Sets the continuation factory that encapsulates the construction of
+		 * continuations stored in repositories created by this creator.
+		 */
+		public void setContinuationFactory(FlowExecutionContinuationFactory continuationFactory) {
+			Assert.notNull(continuationFactory, "The continuation factory is required");
+			this.continuationFactory = continuationFactory;
+		}
+
+		/**
+		 * Sets the continuation uid strategto use generate unique continuation
+		 * identifiers for {@link FlowExecutionKey flow execution keys}.
+		 */
+		public void setContinuationIdGenerator(UidGenerator continuationIdGenerator) {
+			Assert.notNull(continuationIdGenerator, "The continuation id generator is required");
+			this.continuationIdGenerator = continuationIdGenerator;
+		}
+
+		/**
+		 * Sets the maximum number of continuations allowed per conversation in
+		 * repositories created by this creator.
+		 */
+		public void setMaxContinuations(int maxContinuations) {
+			this.maxContinuations = maxContinuations;
+		}
+
+		public FlowExecutionRepository createRepository() {
+			ContinuationFlowExecutionRepository repository = new ContinuationFlowExecutionRepository(
+					getRepositoryServices());
+			repository.setContinuationFactory(continuationFactory);
+			repository.setMaxContinuations(maxContinuations);
+			repository.setContinuationIdGenerator(continuationIdGenerator);
+			return repository;
+		}
+
+		public FlowExecutionRepository rehydrateRepository(FlowExecutionRepository repository) {
+			ContinuationFlowExecutionRepository impl = (ContinuationFlowExecutionRepository)repository;
+			impl.setRepositoryServices(getRepositoryServices());
+			impl.setContinuationFactory(continuationFactory);
+			impl.setContinuationIdGenerator(continuationIdGenerator);
+			return impl;
+		}
 	}
 }
