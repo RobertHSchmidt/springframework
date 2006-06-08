@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.xmlbeans.XmlOptions;
+
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -63,7 +64,6 @@ public class XmlOptionsFactoryBean implements FactoryBean, InitializingBean {
      * Sets options on the underlying <code>XmlOptions</code> object. The keys of the supplied map should be one of the
      * string constants defined in <code>XmlOptions</code>, the values vary per option.
      *
-     * @param options
      * @see XmlOptions#put(Object, Object)
      * @see XmlOptions#SAVE_PRETTY_PRINT
      * @see XmlOptions#LOAD_STRIP_COMMENTS

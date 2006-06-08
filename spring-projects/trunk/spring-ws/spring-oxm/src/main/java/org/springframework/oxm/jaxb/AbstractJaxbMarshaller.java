@@ -18,6 +18,7 @@ package org.springframework.oxm.jaxb;
 
 import java.util.Iterator;
 import java.util.Map;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -28,6 +29,7 @@ import javax.xml.transform.Source;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.oxm.XmlMappingException;
 import org.springframework.util.StringUtils;

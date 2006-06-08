@@ -29,16 +29,17 @@ import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IMarshallingContext;
 import org.jibx.runtime.IUnmarshallingContext;
 import org.jibx.runtime.JiBXException;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.oxm.AbstractMarshaller;
-import org.springframework.oxm.XmlMappingException;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
+
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.oxm.AbstractMarshaller;
+import org.springframework.oxm.XmlMappingException;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * Implementation of the <code>Marshaller</code> and <code>Unmarshaller</code> interfaces for JiBX.
@@ -137,8 +138,6 @@ public class JibxMarshaller extends AbstractMarshaller implements InitializingBe
 
     /**
      * Throws <code>UnsupportedOperationException</code>.
-     *
-     * @throws UnsupportedOperationException
      */
     protected void marshalSaxHandlers(Object graph, ContentHandler contentHandler, LexicalHandler lexicalHandler)
             throws XmlMappingException {
@@ -156,8 +155,6 @@ public class JibxMarshaller extends AbstractMarshaller implements InitializingBe
 
     /**
      * Throws <code>UnsupportedOperationException</code>.
-     *
-     * @throws UnsupportedOperationException
      */
     protected Object unmarshalDomNode(Node node) throws XmlMappingException {
         throw new UnsupportedOperationException("JibxMarshaller does not support unmarshalling of DOM Nodes");
@@ -165,8 +162,6 @@ public class JibxMarshaller extends AbstractMarshaller implements InitializingBe
 
     /**
      * Throws <code>UnsupportedOperationException</code>.
-     *
-     * @throws UnsupportedOperationException
      */
     protected Object unmarshalSaxReader(XMLReader xmlReader, InputSource inputSource)
             throws XmlMappingException, IOException {

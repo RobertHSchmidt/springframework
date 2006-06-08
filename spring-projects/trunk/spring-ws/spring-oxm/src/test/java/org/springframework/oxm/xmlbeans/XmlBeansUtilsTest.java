@@ -16,7 +16,6 @@
 package org.springframework.oxm.xmlbeans;
 
 import junit.framework.TestCase;
-
 import org.apache.xmlbeans.XMLStreamValidationException;
 import org.apache.xmlbeans.XmlError;
 import org.apache.xmlbeans.XmlException;
@@ -25,35 +24,30 @@ import org.xml.sax.SAXException;
 public class XmlBeansUtilsTest extends TestCase {
 
     public void testConvertXMLStreamValidationException() {
-        assertTrue(
-                "Invalid exception conversion",
-                XmlBeansUtils.convertXmlBeansException(new XMLStreamValidationException(XmlError.forMessage("")), true) instanceof XmlBeansValidationFailureException);
+        assertTrue("Invalid exception conversion", XmlBeansUtils.convertXmlBeansException(
+                new XMLStreamValidationException(XmlError.forMessage("")),
+                true) instanceof XmlBeansValidationFailureException);
 
     }
 
     public void testConvertXmlException() {
-        assertTrue(
-                "Invalid exception conversion",
-                XmlBeansUtils.convertXmlBeansException(new XmlException(""), true) instanceof XmlBeansMarshallingFailureException);
-        assertTrue(
-                "Invalid exception conversion",
-                XmlBeansUtils.convertXmlBeansException(new XmlException(""), false) instanceof XmlBeansUnmarshallingFailureException);
+        assertTrue("Invalid exception conversion", XmlBeansUtils
+                .convertXmlBeansException(new XmlException(""), true) instanceof XmlBeansMarshallingFailureException);
+        assertTrue("Invalid exception conversion", XmlBeansUtils.convertXmlBeansException(new XmlException(""),
+                false) instanceof XmlBeansUnmarshallingFailureException);
     }
 
     public void testConvertSAXException() {
-        assertTrue(
-                "Invalid exception conversion",
-                XmlBeansUtils.convertXmlBeansException(new SAXException(""), true) instanceof XmlBeansMarshallingFailureException);
-        assertTrue(
-                "Invalid exception conversion",
-                XmlBeansUtils.convertXmlBeansException(new SAXException(""), false) instanceof XmlBeansUnmarshallingFailureException);
+        assertTrue("Invalid exception conversion", XmlBeansUtils
+                .convertXmlBeansException(new SAXException(""), true) instanceof XmlBeansMarshallingFailureException);
+        assertTrue("Invalid exception conversion", XmlBeansUtils.convertXmlBeansException(new SAXException(""),
+                false) instanceof XmlBeansUnmarshallingFailureException);
     }
-    
+
     public void testFallbackException() {
-        assertTrue(
-                "Invalid exception conversion",
+        assertTrue("Invalid exception conversion",
                 XmlBeansUtils.convertXmlBeansException(new Exception(""), false) instanceof XmlBeansSystemException);
-        
+
     }
 
 }
