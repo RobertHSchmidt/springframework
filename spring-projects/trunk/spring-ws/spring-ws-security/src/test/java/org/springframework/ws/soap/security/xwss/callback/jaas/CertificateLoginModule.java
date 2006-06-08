@@ -16,13 +16,14 @@
 
 package org.springframework.ws.soap.security.xwss.callback.jaas;
 
-import java.util.Iterator;
 import java.security.Principal;
-import javax.security.auth.spi.LoginModule;
+import java.util.Iterator;
+
 import javax.security.auth.Subject;
-import javax.security.auth.x500.X500Principal;
-import javax.security.auth.login.LoginException;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.login.LoginException;
+import javax.security.auth.spi.LoginModule;
+import javax.security.auth.x500.X500Principal;
 
 public class CertificateLoginModule implements LoginModule {
 
@@ -57,7 +58,7 @@ public class CertificateLoginModule implements LoginModule {
 
         String name = getName(subject);
 
-        loginSuccessful =  "CN=Arjen Poutsma,OU=Spring-WS,O=Interface21,L=Amsterdam,ST=Unknown,C=NL".equals(name);
+        loginSuccessful = "CN=Arjen Poutsma,OU=Spring-WS,O=Interface21,L=Amsterdam,ST=Unknown,C=NL".equals(name);
         return loginSuccessful;
     }
 

@@ -17,11 +17,12 @@
 package org.springframework.ws.soap.security.xwss.callback.jaas;
 
 import java.security.cert.X509Certificate;
+
+import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import javax.security.auth.Subject;
 
 import com.sun.xml.wss.impl.callback.CertificateValidationCallback;
 

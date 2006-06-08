@@ -16,12 +16,13 @@
 
 package org.springframework.ws.soap.security.xwss.callback.jaas;
 
+import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
-import java.io.InputStream;
 
-import junit.framework.TestCase;
 import com.sun.xml.wss.impl.callback.CertificateValidationCallback;
+import junit.framework.TestCase;
+
 import org.springframework.core.io.ClassPathResource;
 
 public class JaasCertificateValidationCallbackHandlerTest extends TestCase {
@@ -31,8 +32,7 @@ public class JaasCertificateValidationCallbackHandlerTest extends TestCase {
     private CertificateValidationCallback callback;
 
     protected void setUp() throws Exception {
-        System.setProperty("java.security.auth.login.config",
-                getClass().getResource("jaas.config").toString());
+        System.setProperty("java.security.auth.login.config", getClass().getResource("jaas.config").toString());
         callbackHandler = new JaasCertificateValidationCallbackHandler();
         callbackHandler.setLoginContextName("Certificate");
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());

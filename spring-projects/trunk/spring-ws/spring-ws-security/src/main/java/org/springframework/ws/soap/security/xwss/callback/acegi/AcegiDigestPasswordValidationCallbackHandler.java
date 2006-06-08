@@ -17,6 +17,7 @@
 package org.springframework.ws.soap.security.xwss.callback.acegi;
 
 import java.io.IOException;
+
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
@@ -26,6 +27,7 @@ import org.acegisecurity.providers.dao.cache.NullUserCache;
 import org.acegisecurity.userdetails.UserDetails;
 import org.acegisecurity.userdetails.UserDetailsService;
 import org.acegisecurity.userdetails.UsernameNotFoundException;
+
 import org.springframework.util.Assert;
 import org.springframework.ws.soap.security.xwss.callback.AbstractCallbackHandler;
 
@@ -70,8 +72,8 @@ public class AcegiDigestPasswordValidationCallbackHandler extends AbstractCallba
     }
 
     /**
-     * Handles <code>PasswordValidationCallback</code>s that contain a <code>DigestPasswordRequest</code>, and throws
-     * an <code>UnsupportedCallbackException</code> for others
+     * Handles <code>PasswordValidationCallback</code>s that contain a <code>DigestPasswordRequest</code>, and throws an
+     * <code>UnsupportedCallbackException</code> for others
      *
      * @throws UnsupportedCallbackException when the callback is not supported
      */

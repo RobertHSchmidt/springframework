@@ -17,15 +17,17 @@
 package org.springframework.ws.soap.security.xwss.callback;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Iterator;
+
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 import com.sun.xml.wss.impl.callback.PasswordValidationCallback;
-import org.springframework.util.Assert;
+
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 /**
  * Simple callback handler that validates passwords agains a in-memory <code>Properties</code> object. Password
@@ -39,7 +41,7 @@ import org.springframework.beans.factory.InitializingBean;
  */
 public class SimplePasswordValidationCallbackHandler extends AbstractCallbackHandler implements InitializingBean {
 
-    private Properties users;
+    private Properties users = new Properties();
 
     /**
      * Sets the users to validate against. Property names are usernames, property values are passwords.

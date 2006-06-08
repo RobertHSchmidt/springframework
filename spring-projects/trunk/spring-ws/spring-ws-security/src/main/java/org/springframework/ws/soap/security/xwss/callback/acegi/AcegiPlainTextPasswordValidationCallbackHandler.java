@@ -17,17 +17,19 @@
 package org.springframework.ws.soap.security.xwss.callback.acegi;
 
 import java.io.IOException;
+
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import org.acegisecurity.AuthenticationManager;
+import com.sun.xml.wss.impl.callback.PasswordValidationCallback;
 import org.acegisecurity.Authentication;
 import org.acegisecurity.AuthenticationException;
+import org.acegisecurity.AuthenticationManager;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
+
 import org.springframework.util.Assert;
 import org.springframework.ws.soap.security.xwss.callback.AbstractCallbackHandler;
-import com.sun.xml.wss.impl.callback.PasswordValidationCallback;
 
 /**
  * Callback handler that validates a certificate uses an Acegi <code>AuthenticationManager</code>. Logic based on

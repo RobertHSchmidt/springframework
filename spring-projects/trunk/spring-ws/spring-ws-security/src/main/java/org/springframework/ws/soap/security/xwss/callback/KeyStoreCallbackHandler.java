@@ -16,8 +16,8 @@
 
 package org.springframework.ws.soap.security.xwss.callback;
 
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
@@ -34,6 +34,7 @@ import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Enumeration;
+
 import javax.crypto.SecretKey;
 
 import com.sun.org.apache.xml.internal.security.utils.RFC2253Parser;
@@ -42,69 +43,40 @@ import com.sun.xml.wss.impl.callback.DecryptionKeyCallback;
 import com.sun.xml.wss.impl.callback.EncryptionKeyCallback;
 import com.sun.xml.wss.impl.callback.SignatureKeyCallback;
 import com.sun.xml.wss.impl.callback.SignatureVerificationKeyCallback;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.ws.soap.security.KeyStoreFactoryBean;
+import org.springframework.ws.soap.security.support.KeyStoreFactoryBean;
 
 /**
  * Callback handler that uses Java Security <code>KeyStore</code>s to handle cryptographic callbacks. Allows for
  * specific key stores to be set for various cryptographic operations.
  * <p/>
- * This handler requires one or more key stores to be set. You can configure them in your application context by using
- * a <code>KeyStoreFactoryBean</code>. The exact stores to be set depends on the cryptographic operations that are to be
- * performed by this handler. The table underneath show the key store to be used for each operation:
- * <table border="1">
- *   <tr>
- *     <td><strong>Cryptographic operation</strong></td>
- *     <td><strong>Key store used</strong></td>
- *   </tr>
- *   <tr>
- *     <td>Certificate validation</td>
- *     <td>first <code>keyStore</code>, then <code>trustStore</code></td>
- *   </tr>
- *   <tr>
- *     <td>Decryption based on private key</td>
- *     <td><code>keyStore</code></td>
- *   </tr>
- *   <tr>
- *     <td>Decryption based on symmetric key</td>
- *     <td><code>symmetricStore</code></td>
- *   </tr>
- *   <tr>
- *     <td>Encryption based on certificate</td>
- *     <td><code>trustStore</code></td>
- *   </tr>
- *   <tr>
- *     <td>Encryption based on symmetric key</td>
- *     <td><code>symmetricStore</code></td>
- *   </tr>
- *   <tr>
- *     <td>Signing</td>
- *     <td><code>keyStore</code></td>
- *   </tr>
- *   <tr>
- *     <td>Signature verification</td>
- *     <td><code>trustStore</code></td>
- *   </tr>
- * </table>
+ * This handler requires one or more key stores to be set. You can configure them in your application context by using a
+ * <code>KeyStoreFactoryBean</code>. The exact stores to be set depends on the cryptographic operations that are to be
+ * performed by this handler. The table underneath show the key store to be used for each operation: <table border="1">
+ * <tr> <td><strong>Cryptographic operation</strong></td> <td><strong>Key store used</strong></td> </tr> <tr>
+ * <td>Certificate validation</td> <td>first <code>keyStore</code>, then <code>trustStore</code></td> </tr> <tr>
+ * <td>Decryption based on private key</td> <td><code>keyStore</code></td> </tr> <tr> <td>Decryption based on symmetric
+ * key</td> <td><code>symmetricStore</code></td> </tr> <tr> <td>Encryption based on certificate</td>
+ * <td><code>trustStore</code></td> </tr> <tr> <td>Encryption based on symmetric key</td>
+ * <td><code>symmetricStore</code></td> </tr> <tr> <td>Signing</td> <td><code>keyStore</code></td> </tr> <tr>
+ * <td>Signature verification</td> <td><code>trustStore</code></td> </tr> </table>
  * <p/>
- * <h3>Default key stores</h3>
- * If the <code>symmetricStore</code> is not set, it will default to the <code>keyStore</code>. If the key or trust
- * store is not set, this handler will use the standard Java mechanism to load or create it. See
- * {@link #loadDefaultKeyStore()} and {@link #loadDefaultTrustStore()}.
+ * <h3>Default key stores</h3> If the <code>symmetricStore</code> is not set, it will default to the
+ * <code>keyStore</code>. If the key or trust store is not set, this handler will use the standard Java mechanism to
+ * load or create it. See {@link #loadDefaultKeyStore()} and {@link #loadDefaultTrustStore()}.
  * <p/>
- * <h3>Examples</h3>
- * For instance, if you want to use the <code>KeyStoreCallbackHandler</code> to validate incoming certificates or
- * signatures, you would use a trust store, like so:
+ * <h3>Examples</h3> For instance, if you want to use the <code>KeyStoreCallbackHandler</code> to validate incoming
+ * certificates or signatures, you would use a trust store, like so:
  * <pre>
  * &lt;bean id="keyStoreHandler" class="org.springframework.ws.soap.security.xwss.callback.KeyStoreCallbackHandler"&gt;
  *     &lt;property name="trustStore" ref="trustStore"/&gt;
  * &lt;/bean&gt;
- *
- * &lt;bean id="trustStore" class="org.springframework.ws.soap.security.KeyStoreFactoryBean"&gt;
+ * <p/>
+ * &lt;bean id="trustStore" class="org.springframework.ws.soap.security.support.KeyStoreFactoryBean"&gt;
  *     &lt;property name="location" value="classpath:truststore.jks"/&gt;
  *     &lt;property name="password" value="changeit"/&gt;
  * &lt;/bean&gt;
@@ -116,22 +88,20 @@ import org.springframework.ws.soap.security.KeyStoreFactoryBean;
  *     &lt;property name="keyStore" ref="keyStore"/&gt;
  *     &lt;property name="privateKeyPassword" value="changeit"/&gt;
  * &lt;/bean&gt;
- *
- * &lt;bean id="keyStore" class="org.springframework.ws.soap.security.KeyStoreFactoryBean"&gt;
+ * <p/>
+ * &lt;bean id="keyStore" class="org.springframework.ws.soap.security.support.KeyStoreFactoryBean"&gt;
  *     &lt;property name="location" value="classpath:keystore.jks"/&gt;
  *     &lt;property name="password" value="changeit"/&gt;
  * &lt;/bean&gt;
  * </pre>
  * <p/>
- * <h3>Handled callbacks</h3>
- * This class handles <code>CertificateValidationCallback</code>s, <code>DecryptionKeyCallback</code>s,
- * <code>EncryptionKeyCallback</code>s, <code>SignatureKeyCallback</code>s, and
- * <code>SignatureVerificationKeyCallback</code>s.
- * It throws an <code>UnsupportedCallbackException</code> for others.
+ * <h3>Handled callbacks</h3> This class handles <code>CertificateValidationCallback</code>s,
+ * <code>DecryptionKeyCallback</code>s, <code>EncryptionKeyCallback</code>s, <code>SignatureKeyCallback</code>s, and
+ * <code>SignatureVerificationKeyCallback</code>s. It throws an <code>UnsupportedCallbackException</code> for others.
  *
  * @author Arjen Poutsma
  * @see KeyStore
- * @see org.springframework.ws.soap.security.KeyStoreFactoryBean
+ * @see org.springframework.ws.soap.security.support.KeyStoreFactoryBean
  * @see CertificateValidationCallback
  * @see DecryptionKeyCallback
  * @see EncryptionKeyCallback
@@ -199,7 +169,7 @@ public class KeyStoreCallbackHandler extends CryptographyCallbackHandler impleme
      * Sets the default key store. This property is required for decription based on private keys, and signing. If this
      * property is not set, a default key store is loaded.
      *
-     * @see org.springframework.ws.soap.security.KeyStoreFactoryBean
+     * @see org.springframework.ws.soap.security.support.KeyStoreFactoryBean
      * @see #loadDefaultTrustStore()
      */
     public void setKeyStore(KeyStore keyStore) {
@@ -209,7 +179,6 @@ public class KeyStoreCallbackHandler extends CryptographyCallbackHandler impleme
     /**
      * Sets the password used to retrieve private keys from the keystore. This property is required for decription based
      * on private keys, and signing.
-     *
      */
     public void setPrivateKeyPassword(char[] privateKeyPassword) {
         this.privateKeyPassword = privateKeyPassword;
@@ -229,7 +198,7 @@ public class KeyStoreCallbackHandler extends CryptographyCallbackHandler impleme
      * Sets the key store used for encryption and decryption using symmetric keys. If this property is not set, it
      * defaults to the <code>keyStore</code> property.
      *
-     * @see org.springframework.ws.soap.security.KeyStoreFactoryBean
+     * @see org.springframework.ws.soap.security.support.KeyStoreFactoryBean
      * @see #setKeyStore(java.security.KeyStore)
      */
     public void setSymmetricStore(KeyStore symmetricStore) {
@@ -237,10 +206,10 @@ public class KeyStoreCallbackHandler extends CryptographyCallbackHandler impleme
     }
 
     /**
-     * Sets the key store used for signature verifications and encryptions. If this property is not set, a default
-     * key store will be loaded.
+     * Sets the key store used for signature verifications and encryptions. If this property is not set, a default key
+     * store will be loaded.
      *
-     * @see org.springframework.ws.soap.security.KeyStoreFactoryBean
+     * @see org.springframework.ws.soap.security.support.KeyStoreFactoryBean
      * @see #loadDefaultTrustStore()
      */
     public void setTrustStore(KeyStore trustStore) {
@@ -480,13 +449,9 @@ public class KeyStoreCallbackHandler extends CryptographyCallbackHandler impleme
             Enumeration aliases = keyStore.aliases();
             while (aliases.hasMoreElements()) {
                 String alias = (String) aliases.nextElement();
-                if (!keyStore.isKeyEntry(alias)) {
-                    continue;
-                }
-                else {
+                if (keyStore.isKeyEntry(alias)) {
                     // Just returning the first one here
-                    PrivateKey key = (PrivateKey) keyStore.getKey(alias, privateKeyPassword);
-                    return key;
+                    return (PrivateKey) keyStore.getKey(alias, privateKeyPassword);
                 }
             }
         }
@@ -598,11 +563,11 @@ public class KeyStoreCallbackHandler extends CryptographyCallbackHandler impleme
 
     /**
      * Loads the key store indicated by system properties. This method tries to load a key store by consulting the
-     * following system properties:<code>javax.net.ssl.keyStore</code>, <code>javax.net.ssl.keyStorePassword</code>,
-     * and <code>javax.net.ssl.keyStoreType</code>.
-     *
-     * If these properties specify a file with an appropriate password, the factory uses this file for the key store.
-     * If that file does not exist, then a default, empty keystore is created.
+     * following system properties:<code>javax.net.ssl.keyStore</code>, <code>javax.net.ssl.keyStorePassword</code>, and
+     * <code>javax.net.ssl.keyStoreType</code>.
+     * <p/>
+     * If these properties specify a file with an appropriate password, the factory uses this file for the key store. If
+     * that file does not exist, then a default, empty keystore is created.
      * <p/>
      * This behavior corresponds to the standard J2SDK behavior for SSL key stores.
      *
@@ -643,24 +608,16 @@ public class KeyStoreCallbackHandler extends CryptographyCallbackHandler impleme
     }
 
     /**
-     * Loads a default trust store. This method uses the following algorithm:
-     * <ol>
-     * <li>
-     * If the system property <code>javax.net.ssl.trustStore</code> is defined, its value is loaded.
-     * If the <code>javax.net.ssl.trustStorePassword</code> system property is also defined, its value is used as a
-     * password. If the <code>javax.net.ssl.trustStoreType</code> system property is defined, its value is used as a
-     * key store type.
-     * <p>
-     * If <code>javax.net.ssl.trustStore</code> is defined but the specified file does not exist, then a default,
-     * empty trust store is created.
-     * </li>
-     * <li>
-     * If the <code>javax.net.ssl.trustStore</code> system property was not specified, but if the file
-     * <code>$JAVA_HOME/lib/security/jssecacerts</code> exists, that file is used.
-     * </li>
-     * Otherwise,
-     * <li>If the file <code>$JAVA_HOME/lib/security/cacerts</code> exists, that file is used.
-     * </ol>
+     * Loads a default trust store. This method uses the following algorithm: <ol> <li> If the system property
+     * <code>javax.net.ssl.trustStore</code> is defined, its value is loaded. If the
+     * <code>javax.net.ssl.trustStorePassword</code> system property is also defined, its value is used as a password.
+     * If the <code>javax.net.ssl.trustStoreType</code> system property is defined, its value is used as a key store
+     * type.
+     * <p/>
+     * If <code>javax.net.ssl.trustStore</code> is defined but the specified file does not exist, then a default, empty
+     * trust store is created. </li> <li> If the <code>javax.net.ssl.trustStore</code> system property was not
+     * specified, but if the file <code>$JAVA_HOME/lib/security/jssecacerts</code> exists, that file is used. </li>
+     * Otherwise, <li>If the file <code>$JAVA_HOME/lib/security/cacerts</code> exists, that file is used. </ol>
      * <p/>
      * This behavior corresponds to the standard J2SDK behavior for SSL trust stores.
      *
@@ -682,7 +639,8 @@ public class KeyStoreCallbackHandler extends CryptographyCallbackHandler impleme
                 password = passwordProperty.toCharArray();
             }
             type = System.getProperty("javax.net.ssl.trustStoreType");
-        } else {
+        }
+        else {
             String javaHome = System.getProperty("java.home");
             location = new FileSystemResource(javaHome + "/lib/security/jssecacerts");
             if (!location.exists()) {
@@ -720,7 +678,8 @@ public class KeyStoreCallbackHandler extends CryptographyCallbackHandler impleme
                             "] is in private keystore");
                 }
                 return true;
-            } else if (trustStore == null) {
+            }
+            else if (trustStore == null) {
                 return false;
             }
 

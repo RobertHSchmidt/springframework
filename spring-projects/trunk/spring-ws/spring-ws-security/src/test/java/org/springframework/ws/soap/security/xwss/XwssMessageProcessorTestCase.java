@@ -20,30 +20,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.security.KeyStoreException;
 
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 
 import junit.framework.TestCase;
-import org.springframework.ws.soap.SoapMessage;
-import org.springframework.ws.soap.saaj.SaajSoapMessage;
-import org.springframework.xml.xpath.XPathExpression;
-import org.springframework.xml.xpath.XPathExpressionFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.easymock.MockControl;
-import com.sun.xml.wss.SecurityEnvironment;
+
+import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.saaj.SaajSoapMessage;
+import org.springframework.ws.soap.saaj.SaajSoapMessageContext;
+import org.springframework.xml.xpath.XPathExpression;
+import org.springframework.xml.xpath.XPathExpressionFactory;
 
 public abstract class XwssMessageProcessorTestCase extends TestCase {
 
-    protected XwssMessageProcessor processor;
-
-    protected MockControl control;
-
-    protected SecurityEnvironment mock;
+    protected XwsSecurityInterceptor interceptor;
 
     private MessageFactory messageFactory;
 
@@ -73,27 +68,36 @@ public abstract class XwssMessageProcessorTestCase extends TestCase {
         assertNull(message, node);
     }
 
-    protected SoapMessage loadSoapMessage(String fileName) throws IOException, SOAPException {
+    protected SaajSoapMessageContext loadSoapMessageResponseContext(String fileName) throws IOException, SOAPException {
+        SOAPMessage request = messageFactory.createMessage();
+        SaajSoapMessageContext messageContext = new SaajSoapMessageContext(request, messageFactory);
+        messageContext.setSaajResponse(loadSaajMessage(fileName));
+        return messageContext;
+    }
+
+    private SOAPMessage loadSaajMessage(String fileName) throws SOAPException, IOException {
         MimeHeaders mimeHeaders = new MimeHeaders();
         mimeHeaders.addHeader("Content-Type", "text/xml");
         InputStream is = null;
         try {
             is = getClass().getResourceAsStream(fileName);
-            SOAPMessage saajMessage = messageFactory.createMessage(mimeHeaders, is);
-            return new SaajSoapMessage(saajMessage);
+            return messageFactory.createMessage(mimeHeaders, is);
         }
         finally {
             if (is != null) {
                 is.close();
             }
         }
+
     }
 
-    protected void setUp() throws Exception {
-        processor = new XwssMessageProcessor();
-        control = MockControl.createStrictControl(SecurityEnvironment.class);
-        mock = (SecurityEnvironment) control.getMock();
-        processor.setSecurityEnvironment(mock);
+    protected SaajSoapMessageContext loadSoapMessageRequestContext(String fileName) throws IOException, SOAPException {
+        SOAPMessage request = loadSaajMessage(fileName);
+        return new SaajSoapMessageContext(request, messageFactory);
+    }
+
+    protected final void setUp() throws Exception {
+        interceptor = new XwsSecurityInterceptor();
         messageFactory = MessageFactory.newInstance();
         namespaces = new HashMap();
         namespaces.put("SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/");

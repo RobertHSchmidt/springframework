@@ -16,6 +16,7 @@
 
 package org.springframework.ws.soap.security.xwss.callback.acegi;
 
+import com.sun.xml.wss.impl.callback.PasswordValidationCallback;
 import junit.framework.TestCase;
 import org.acegisecurity.Authentication;
 import org.acegisecurity.AuthenticationManager;
@@ -24,8 +25,6 @@ import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.providers.TestingAuthenticationToken;
 import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.easymock.MockControl;
-import org.springframework.ws.soap.security.xwss.callback.acegi.AcegiPlainTextPasswordValidationCallbackHandler;
-import com.sun.xml.wss.impl.callback.PasswordValidationCallback;
 
 public class AcegiPlainTextPasswordValidationCallbackHandlerTest extends TestCase {
 

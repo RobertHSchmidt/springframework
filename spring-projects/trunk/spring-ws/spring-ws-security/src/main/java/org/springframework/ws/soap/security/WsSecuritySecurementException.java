@@ -16,9 +16,6 @@
 
 package org.springframework.ws.soap.security;
 
-import org.springframework.ws.WebServiceException;
-import org.springframework.core.NestedCheckedException;
-
 /**
  * Exception indicating that something went wrong during the securement of a message.
  * <p/>

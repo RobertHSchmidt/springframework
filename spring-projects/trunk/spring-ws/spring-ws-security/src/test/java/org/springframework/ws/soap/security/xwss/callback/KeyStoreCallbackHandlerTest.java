@@ -16,8 +16,7 @@
 
 package org.springframework.ws.soap.security.xwss.callback;
 
-import junit.framework.*;
-import org.springframework.ws.soap.security.xwss.callback.KeyStoreCallbackHandler;
+import junit.framework.TestCase;
 
 public class KeyStoreCallbackHandlerTest extends TestCase {
 

@@ -16,15 +16,15 @@
 
 package org.springframework.ws.soap.security.xwss;
 
-import org.springframework.ws.soap.security.WsSecuritySecurementException;
+import org.springframework.ws.soap.security.WsSecurityValidationException;
 
-public class XwssSecuritySecurementException extends WsSecuritySecurementException {
+public class XwsSecurityValidationException extends WsSecurityValidationException {
 
-    public XwssSecuritySecurementException(String msg) {
+    public XwsSecurityValidationException(String msg) {
         super(msg);
     }
 
-    public XwssSecuritySecurementException(String msg, Throwable ex) {
+    public XwsSecurityValidationException(String msg, Throwable ex) {
         super(msg, ex);
     }
 }

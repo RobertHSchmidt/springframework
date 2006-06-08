@@ -16,75 +16,152 @@
 
 package org.springframework.ws.soap.security.xwss;
 
-import java.util.Collections;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
 
-import javax.security.auth.Subject;
+import com.sun.xml.wss.impl.callback.PasswordCallback;
+import com.sun.xml.wss.impl.callback.PasswordValidationCallback;
+import com.sun.xml.wss.impl.callback.TimestampValidationCallback;
+import com.sun.xml.wss.impl.callback.UsernameCallback;
 
-import org.springframework.ws.soap.SoapMessage;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.context.SoapMessageContext;
+import org.springframework.ws.soap.security.xwss.callback.AbstractCallbackHandler;
 
 public class XwssMessageProcessorUsernameTokenTest extends XwssMessageProcessorTestCase {
 
     public void testAddUsernameTokenDigest() throws Exception {
-        processor.setPolicyConfiguration(new ClassPathResource("usernameToken-digest-config.xml", getClass()));
-        processor.afterPropertiesSet();
-        control.expectAndReturn(mock.getUsername(Collections.EMPTY_MAP), "Bert");
-        control.expectAndReturn(mock.getPassword(Collections.EMPTY_MAP), "Ernie");
-        control.replay();
-        SoapMessage empty = loadSoapMessage("empty-soap.xml");
-        SoapMessage result = processor.secureMessage(empty);
+        interceptor.setPolicyConfiguration(new ClassPathResource("usernameToken-digest-config.xml", getClass()));
+        CallbackHandler handler = new AbstractCallbackHandler() {
+
+            protected void handleInternal(Callback callback) {
+                if (callback instanceof UsernameCallback) {
+                    ((UsernameCallback) callback).setUsername("Bert");
+                }
+                else if (callback instanceof PasswordCallback) {
+                    PasswordCallback passwordCallback = (PasswordCallback) callback;
+                    passwordCallback.setPassword("Ernie");
+                }
+                else {
+                    fail("Unexpected callback");
+                }
+            }
+        };
+        interceptor.setCallbackHandler(handler);
+        interceptor.afterPropertiesSet();
+        SoapMessageContext context = loadSoapMessageResponseContext("empty-soap.xml");
+        interceptor.secureResponse(context);
+        SoapMessage result = context.getSoapResponse();
         assertXpathEvaluatesTo("Invalid Username", "Bert",
                 "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/wsse:UsernameToken/wsse:Username/text()", result);
         assertXpathExists("Password does not exist",
                 "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/wsse:UsernameToken/wsse:Password[@Type='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordDigest']",
                 result);
-        control.verify();
     }
 
     public void testAddUsernameTokenPlainText() throws Exception {
-        processor.setPolicyConfiguration(new ClassPathResource("usernameToken-plainText-config.xml", getClass()));
-        processor.afterPropertiesSet();
-        control.expectAndReturn(mock.getUsername(Collections.EMPTY_MAP), "Bert");
-        control.expectAndReturn(mock.getPassword(Collections.EMPTY_MAP), "Ernie");
-        control.replay();
-        SoapMessage empty = loadSoapMessage("empty-soap.xml");
-        SoapMessage result = processor.secureMessage(empty);
+        interceptor.setPolicyConfiguration(new ClassPathResource("usernameToken-plainText-config.xml", getClass()));
+        CallbackHandler handler = new AbstractCallbackHandler() {
+
+            protected void handleInternal(Callback callback) {
+                if (callback instanceof UsernameCallback) {
+                    ((UsernameCallback) callback).setUsername("Bert");
+                }
+                else if (callback instanceof PasswordCallback) {
+                    PasswordCallback passwordCallback = (PasswordCallback) callback;
+                    passwordCallback.setPassword("Ernie");
+                }
+                else {
+                    fail("Unexpected callback");
+                }
+            }
+        };
+        interceptor.setCallbackHandler(handler);
+        interceptor.afterPropertiesSet();
+        SoapMessageContext context = loadSoapMessageResponseContext("empty-soap.xml");
+        interceptor.secureResponse(context);
+        SoapMessage result = context.getSoapResponse();
         assertXpathEvaluatesTo("Invalid Username", "Bert",
                 "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/wsse:UsernameToken/wsse:Username/text()", result);
         assertXpathEvaluatesTo("Invalid Password", "Ernie",
                 "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/wsse:UsernameToken/wsse:Password[@Type='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText']/text()",
                 result);
-        control.verify();
     }
 
     public void testValidateUsernameTokenPlainText() throws Exception {
-        processor.setPolicyConfiguration(new ClassPathResource("requireUsernameToken-plainText-config.xml", getClass()));
-        processor.afterPropertiesSet();
-        control.expectAndReturn(mock.authenticateUser(Collections.EMPTY_MAP, "Bert", "Ernie"), true);
-        mock.updateOtherPartySubject(new Subject(), "Bert", "Ernie");
-        control.replay();
-        SoapMessage message = loadSoapMessage("userNameTokenPlainText-soap.xml");
-        SoapMessage result = processor.validateMessage(message);
+        interceptor
+                .setPolicyConfiguration(new ClassPathResource("requireUsernameToken-plainText-config.xml", getClass()));
+        CallbackHandler handler = new AbstractCallbackHandler() {
+
+            protected void handleInternal(Callback callback) {
+                if (callback instanceof PasswordValidationCallback) {
+                    PasswordValidationCallback validationCallback = (PasswordValidationCallback) callback;
+                    validationCallback.setValidator(new PasswordValidationCallback.PasswordValidator() {
+                        public boolean validate(PasswordValidationCallback.Request request) {
+                            if (request instanceof PasswordValidationCallback.PlainTextPasswordRequest) {
+                                PasswordValidationCallback.PlainTextPasswordRequest passwordRequest =
+                                        (PasswordValidationCallback.PlainTextPasswordRequest) request;
+                                assertEquals("Invalid username", "Bert", passwordRequest.getUsername());
+                                assertEquals("Invalid password", "Ernie", passwordRequest.getPassword());
+                                return true;
+                            }
+                            else {
+                                fail("Unexpected request");
+                                return false;
+                            }
+                        }
+                    });
+                }
+                else {
+                    fail("Unexpected callback");
+                }
+            }
+        };
+        interceptor.setCallbackHandler(handler);
+        interceptor.afterPropertiesSet();
+        SoapMessageContext context = loadSoapMessageRequestContext("userNameTokenPlainText-soap.xml");
+        interceptor.validateRequest(context);
+        SoapMessage result = context.getSoapRequest();
         assertXpathNotExists("Security Header not removed", "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security", result);
-        control.verify();
     }
 
     public void testValidateUsernameTokenDigest() throws Exception {
-        processor.setPolicyConfiguration(new ClassPathResource("requireUsernameToken-digest-config.xml", getClass()));
-        processor.afterPropertiesSet();
-        String creationTime = "2006-06-01T23:48:42Z";
-        String nonce = "9mdsYDCrjjYRur0rxzYt2oD7";
-        String passwordDigest = "kwNstEaiFOrI7B31j7GuETYvdgk=";
-        control.expectAndReturn(mock.authenticateUser(Collections.EMPTY_MAP, "Bert", passwordDigest,
-                nonce, creationTime), true);
-        mock.validateCreationTime(Collections.EMPTY_MAP, creationTime, 60000,300000);
-        control.expectAndReturn(mock.validateAndCacheNonce(nonce, creationTime, 900000), true);
-        mock.updateOtherPartySubject(new Subject(), "Bert", null);
-        control.replay();
-        SoapMessage message = loadSoapMessage("userNameTokenDigest-soap.xml");
-        SoapMessage result = processor.validateMessage(message);
+        interceptor.setPolicyConfiguration(new ClassPathResource("requireUsernameToken-digest-config.xml", getClass()));
+        CallbackHandler handler = new AbstractCallbackHandler() {
+
+            protected void handleInternal(Callback callback) {
+                if (callback instanceof PasswordValidationCallback) {
+                    PasswordValidationCallback validationCallback = (PasswordValidationCallback) callback;
+                    if (validationCallback.getRequest() instanceof PasswordValidationCallback.DigestPasswordRequest) {
+                        PasswordValidationCallback.DigestPasswordRequest passwordRequest =
+                                (PasswordValidationCallback.DigestPasswordRequest) validationCallback.getRequest();
+                        assertEquals("Invalid username", "Bert", passwordRequest.getUsername());
+                        passwordRequest.setPassword("Ernie");
+                        validationCallback.setValidator(new PasswordValidationCallback.DigestPasswordValidator());
+                    }
+                    else {
+                        fail("Unexpected request");
+                    }
+                }
+                else if (callback instanceof TimestampValidationCallback) {
+                    TimestampValidationCallback validationCallback = (TimestampValidationCallback) callback;
+                    validationCallback.setValidator(new TimestampValidationCallback.TimestampValidator() {
+                        public void validate(TimestampValidationCallback.Request request) {
+                        }
+                    });
+                }
+                else {
+                    fail("Unexpected callback");
+                }
+            }
+        };
+        interceptor.setCallbackHandler(handler);
+        interceptor.afterPropertiesSet();
+        SoapMessageContext context = loadSoapMessageRequestContext("userNameTokenDigest-soap.xml");
+        interceptor.validateRequest(context);
+        SoapMessage result = context.getSoapRequest();
         assertXpathNotExists("Security Header not removed", "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security", result);
-        control.verify();
     }
 
 }

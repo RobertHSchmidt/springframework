@@ -16,8 +16,6 @@
 
 package org.springframework.ws.soap.security.xwss.callback.jaas;
 
-import javax.security.auth.Subject;
-
 import com.sun.xml.wss.impl.callback.PasswordValidationCallback;
 import junit.framework.TestCase;
 
@@ -26,8 +24,7 @@ public class JaasPlainTextPasswordValidationCallbackHandlerTest extends TestCase
     private JaasPlainTextPasswordValidationCallbackHandler callbackHandler;
 
     protected void setUp() throws Exception {
-        System.setProperty("java.security.auth.login.config",
-                getClass().getResource("jaas.config").toString());
+        System.setProperty("java.security.auth.login.config", getClass().getResource("jaas.config").toString());
         callbackHandler = new JaasPlainTextPasswordValidationCallbackHandler();
         callbackHandler.setLoginContextName("PlainText");
     }

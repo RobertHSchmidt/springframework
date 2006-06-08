@@ -16,50 +16,113 @@
 
 package org.springframework.ws.soap.security.xwss;
 
-import java.util.Collections;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+
+import com.sun.xml.wss.impl.callback.DecryptionKeyCallback;
+import com.sun.xml.wss.impl.callback.EncryptionKeyCallback;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.context.SoapMessageContext;
+import org.springframework.ws.soap.security.xwss.callback.AbstractCallbackHandler;
 
 public class XwssMessageProcessorEncryptTest extends XwssMessageProcessorKeyStoreTestCase {
 
     public void testEncryptDefaultCertificate() throws Exception {
-        processor.setPolicyConfiguration(new ClassPathResource("encrypt-config.xml", getClass()));
-        processor.afterPropertiesSet();
-        control.expectAndReturn(mock.getCertificate(Collections.EMPTY_MAP, "", false), certificate);
-        control.replay();
-        SoapMessage empty = loadSoapMessage("empty-soap.xml");
-        SoapMessage result = processor.secureMessage(empty);
+        interceptor.setPolicyConfiguration(new ClassPathResource("encrypt-config.xml", getClass()));
+        CallbackHandler handler = new AbstractCallbackHandler() {
+
+            protected void handleInternal(Callback callback) {
+                if (callback instanceof EncryptionKeyCallback) {
+                    EncryptionKeyCallback keyCallback = (EncryptionKeyCallback) callback;
+                    if (keyCallback.getRequest() instanceof EncryptionKeyCallback.AliasX509CertificateRequest) {
+                        EncryptionKeyCallback.AliasX509CertificateRequest request =
+                                (EncryptionKeyCallback.AliasX509CertificateRequest) keyCallback.getRequest();
+                        assertEquals("Invalid alias", "", request.getAlias());
+                        request.setX509Certificate(certificate);
+                    }
+                    else {
+                        fail("Unexpected request");
+                    }
+                }
+                else {
+                    fail("Unexpected callback");
+                }
+            }
+        };
+        interceptor.setCallbackHandler(handler);
+        interceptor.afterPropertiesSet();
+        SoapMessageContext context = loadSoapMessageResponseContext("empty-soap.xml");
+        interceptor.secureResponse(context);
+        SoapMessage result = context.getSoapResponse();
         assertXpathExists("BinarySecurityToken does not exist",
                 "SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/wsse:BinarySecurityToken", result);
-        assertXpathExists("Signature does not exist", "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/xenc:EncryptedKey",
-                result);
-        control.verify();
+        assertXpathExists("Signature does not exist",
+                "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/xenc:EncryptedKey", result);
     }
 
     public void testEncryptAlias() throws Exception {
-        processor.setPolicyConfiguration(new ClassPathResource("encrypt-alias-config.xml", getClass()));
-        processor.afterPropertiesSet();
-        control.expectAndReturn(mock.getCertificate(Collections.EMPTY_MAP, "alias", false), certificate);
-        control.replay();
-        SoapMessage empty = loadSoapMessage("empty-soap.xml");
-        SoapMessage result = processor.secureMessage(empty);
+        interceptor.setPolicyConfiguration(new ClassPathResource("encrypt-alias-config.xml", getClass()));
+        CallbackHandler handler = new AbstractCallbackHandler() {
+
+            protected void handleInternal(Callback callback) {
+                if (callback instanceof EncryptionKeyCallback) {
+                    EncryptionKeyCallback keyCallback = (EncryptionKeyCallback) callback;
+                    if (keyCallback.getRequest() instanceof EncryptionKeyCallback.AliasX509CertificateRequest) {
+                        EncryptionKeyCallback.AliasX509CertificateRequest request =
+                                (EncryptionKeyCallback.AliasX509CertificateRequest) keyCallback.getRequest();
+                        assertEquals("Invalid alias", "alias", request.getAlias());
+                        request.setX509Certificate(certificate);
+                    }
+                    else {
+                        fail("Unexpected request");
+                    }
+                }
+                else {
+                    fail("Unexpected callback");
+                }
+            }
+        };
+        interceptor.setCallbackHandler(handler);
+        interceptor.afterPropertiesSet();
+        SoapMessageContext context = loadSoapMessageResponseContext("empty-soap.xml");
+        interceptor.secureResponse(context);
+        SoapMessage result = context.getSoapResponse();
         assertXpathExists("BinarySecurityToken does not exist",
                 "SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/wsse:BinarySecurityToken", result);
-        assertXpathExists("Signature does not exist", "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/xenc:EncryptedKey",
-                result);
-        control.verify();
+        assertXpathExists("Signature does not exist",
+                "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/xenc:EncryptedKey", result);
     }
 
     public void testDecrypt() throws Exception {
-        processor.setPolicyConfiguration(new ClassPathResource("decrypt-config.xml", getClass()));
-        processor.afterPropertiesSet();
-        control.expectAndReturn(mock.getPrivateKey(Collections.EMPTY_MAP, certificate), privateKey);
-        control.replay();
-        SoapMessage empty = loadSoapMessage("encrypted-soap.xml");
-        SoapMessage result = processor.validateMessage(empty);
+        interceptor.setPolicyConfiguration(new ClassPathResource("decrypt-config.xml", getClass()));
+        CallbackHandler handler = new AbstractCallbackHandler() {
+
+            protected void handleInternal(Callback callback) {
+                if (callback instanceof DecryptionKeyCallback) {
+                    DecryptionKeyCallback keyCallback = (DecryptionKeyCallback) callback;
+                    if (keyCallback.getRequest() instanceof DecryptionKeyCallback.X509CertificateBasedRequest) {
+                        DecryptionKeyCallback.X509CertificateBasedRequest request =
+                                (DecryptionKeyCallback.X509CertificateBasedRequest) keyCallback.getRequest();
+                        assertEquals("Invalid certificate", certificate, request.getX509Certificate());
+                        request.setPrivateKey(privateKey);
+                    }
+                    else {
+                        fail("Unexpected request");
+                    }
+                }
+                else {
+                    fail("Unexpected callback");
+                }
+            }
+        };
+        interceptor.setCallbackHandler(handler);
+        interceptor.afterPropertiesSet();
+        SoapMessageContext context = loadSoapMessageRequestContext("encrypted-soap.xml");
+        interceptor.validateRequest(context);
+        SoapMessage result = context.getSoapRequest();
         assertXpathNotExists("Security Header not removed", "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security", result);
-        control.verify();
     }
 
 }

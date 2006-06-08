@@ -16,56 +16,113 @@
 
 package org.springframework.ws.soap.security.xwss;
 
-import java.util.Collections;
+import java.security.cert.X509Certificate;
 
-import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
 
-import org.springframework.ws.soap.SoapMessage;
+import com.sun.xml.wss.impl.callback.CertificateValidationCallback;
+import com.sun.xml.wss.impl.callback.SignatureKeyCallback;
+
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.context.SoapMessageContext;
+import org.springframework.ws.soap.security.xwss.callback.AbstractCallbackHandler;
 
 public class XwssMessageProcessorSignTest extends XwssMessageProcessorKeyStoreTestCase {
 
-
     public void testSignDefaultCertificate() throws Exception {
-        processor.setPolicyConfiguration(new ClassPathResource("sign-config.xml", getClass()));
-        processor.afterPropertiesSet();
-        control.expectAndReturn(mock.getDefaultCertificate(Collections.EMPTY_MAP), certificate);
-        control.expectAndReturn(mock.getPrivateKey(Collections.EMPTY_MAP, certificate), privateKey);
-        control.replay();
-        SoapMessage empty = loadSoapMessage("empty-soap.xml");
-        SoapMessage result = processor.secureMessage(empty);
+        interceptor.setPolicyConfiguration(new ClassPathResource("sign-config.xml", getClass()));
+        CallbackHandler handler = new AbstractCallbackHandler() {
+
+            protected void handleInternal(Callback callback) {
+                if (callback instanceof SignatureKeyCallback) {
+                    SignatureKeyCallback keyCallback = (SignatureKeyCallback) callback;
+                    if (keyCallback.getRequest() instanceof SignatureKeyCallback.DefaultPrivKeyCertRequest) {
+                        SignatureKeyCallback.DefaultPrivKeyCertRequest request =
+                                (SignatureKeyCallback.DefaultPrivKeyCertRequest) keyCallback.getRequest();
+                        request.setX509Certificate(certificate);
+                        request.setPrivateKey(privateKey);
+                    }
+                    else {
+                        fail("Unexpected request");
+                    }
+                }
+                else {
+                    fail("Unexpected callback");
+                }
+            }
+        };
+        interceptor.setCallbackHandler(handler);
+        interceptor.afterPropertiesSet();
+        SoapMessageContext context = loadSoapMessageResponseContext("empty-soap.xml");
+        interceptor.secureResponse(context);
+        SoapMessage result = context.getSoapResponse();
         assertXpathExists("BinarySecurityToken does not exist",
                 "SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/wsse:BinarySecurityToken", result);
         assertXpathExists("Signature does not exist", "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/ds:Signature",
                 result);
-        control.verify();
     }
 
     public void testSignAlias() throws Exception {
-        processor.setPolicyConfiguration(new ClassPathResource("sign-alias-config.xml", getClass()));
-        processor.afterPropertiesSet();
-        control.expectAndReturn(mock.getCertificate(Collections.EMPTY_MAP, "alias", true), certificate);
-        control.expectAndReturn(mock.getPrivateKey(Collections.EMPTY_MAP, "alias"), privateKey);
-        control.replay();
-        SoapMessage empty = loadSoapMessage("empty-soap.xml");
-        SoapMessage result = processor.secureMessage(empty);
+        interceptor.setPolicyConfiguration(new ClassPathResource("sign-alias-config.xml", getClass()));
+        CallbackHandler handler = new AbstractCallbackHandler() {
+
+            protected void handleInternal(Callback callback) {
+                if (callback instanceof SignatureKeyCallback) {
+                    SignatureKeyCallback keyCallback = (SignatureKeyCallback) callback;
+                    if (keyCallback.getRequest() instanceof SignatureKeyCallback.AliasPrivKeyCertRequest) {
+                        SignatureKeyCallback.AliasPrivKeyCertRequest request =
+                                (SignatureKeyCallback.AliasPrivKeyCertRequest) keyCallback.getRequest();
+                        assertEquals("Invalid alias", "alias", request.getAlias());
+                        request.setX509Certificate(certificate);
+                        request.setPrivateKey(privateKey);
+                    }
+                    else {
+                        fail("Unexpected request");
+                    }
+                }
+                else {
+                    fail("Unexpected callback");
+                }
+            }
+        };
+        interceptor.setCallbackHandler(handler);
+        interceptor.afterPropertiesSet();
+        SoapMessageContext context = loadSoapMessageResponseContext("empty-soap.xml");
+        interceptor.secureResponse(context);
+        SoapMessage result = context.getSoapResponse();
         assertXpathExists("BinarySecurityToken does not exist",
                 "SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/wsse:BinarySecurityToken", result);
         assertXpathExists("Signature does not exist", "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/ds:Signature",
                 result);
-        control.verify();
     }
 
     public void testVerifyCertificate() throws Exception {
-        processor.setPolicyConfiguration(new ClassPathResource("requireSignature-config.xml", getClass()));
-        processor.afterPropertiesSet();
-        control.expectAndReturn(mock.validateCertificate(certificate), true);
-        mock.updateOtherPartySubject(new Subject(), certificate);
-        control.replay();
-        SoapMessage empty = loadSoapMessage("signed-soap.xml");
-        SoapMessage result = processor.validateMessage(empty);
+        interceptor.setPolicyConfiguration(new ClassPathResource("requireSignature-config.xml", getClass()));
+        CallbackHandler handler = new AbstractCallbackHandler() {
+
+            protected void handleInternal(Callback callback) {
+                if (callback instanceof CertificateValidationCallback) {
+                    CertificateValidationCallback validationCallback = (CertificateValidationCallback) callback;
+                    validationCallback.setValidator(new CertificateValidationCallback.CertificateValidator() {
+                        public boolean validate(X509Certificate passedCertificate) {
+                            assertEquals("Invalid certificate", certificate, passedCertificate);
+                            return true;
+                        }
+                    });
+                }
+                else {
+                    fail("Unexpected callback");
+                }
+            }
+        };
+        interceptor.setCallbackHandler(handler);
+        interceptor.afterPropertiesSet();
+        SoapMessageContext context = loadSoapMessageRequestContext("signed-soap.xml");
+        interceptor.validateRequest(context);
+        SoapMessage result = context.getSoapRequest();
         assertXpathNotExists("Security Header not removed", "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security", result);
-        control.verify();
     }
 
 }

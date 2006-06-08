@@ -18,9 +18,8 @@ package org.springframework.ws.soap.security.xwss.callback;
 
 import java.util.Properties;
 
-import junit.framework.*;
-import org.springframework.ws.soap.security.xwss.callback.SimplePasswordValidationCallbackHandler;
 import com.sun.xml.wss.impl.callback.PasswordValidationCallback;
+import junit.framework.TestCase;
 
 public class SimplePasswordValidationCallbackHandlerTest extends TestCase {
 
@@ -60,7 +59,7 @@ public class SimplePasswordValidationCallbackHandlerTest extends TestCase {
         assertFalse("Authenticated", authenticated);
     }
 
-    public void testDigestPasswordValid() throws Exception{
+    public void testDigestPasswordValid() throws Exception {
         String username = "Bert";
         String nonce = "9mdsYDCrjjYRur0rxzYt2oD7";
         String passwordDigest = "kwNstEaiFOrI7B31j7GuETYvdgk=";
@@ -74,7 +73,7 @@ public class SimplePasswordValidationCallbackHandlerTest extends TestCase {
 
     }
 
-    public void testDigestPasswordInvalid() throws Exception{
+    public void testDigestPasswordInvalid() throws Exception {
         String username = "Bert";
         String nonce = "9mdsYDCrjjYRur0rxzYt2oD7";
         String passwordDigest = "kwNstEaiFOrI7B31j7GuETYvdgk";
