@@ -59,18 +59,18 @@ import org.springframework.webflow.support.FlowRedirect;
  * Usage example:
  * 
  * <pre>
- *              &lt;!--
- *                  Exposes flows for execution.
- *              --&gt;
- *              &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
- *                  &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
- *                  &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
- *              &lt;/bean&gt;
+ * &lt;!--
+ *     Exposes flows for execution.
+ * --&gt;
+ * &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
+ *     &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
+ *     &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
+ * &lt;/bean&gt;
  *                                                                                          
- *              &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *                  &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *                  &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
- *              &lt;/bean&gt;
+ * &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *     &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *     &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
+ * &lt;/bean&gt;
  * </pre>
  * 
  * It is also possible to customize the {@link FlowExecutorArgumentExtractor}
