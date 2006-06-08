@@ -22,7 +22,6 @@
         <dependency org="org.springframework" name="spring-context" rev="1.2.8"/>
         <dependency org="org.springframework" name="spring-web" rev="1.2.8"/>
         <dependency org="org.springframework" name="spring-webmvc" rev="1.2.8"/>
-        <dependency org="org.springframework" name="spring-oxm" rev="latest.integration"/>
         <dependency org="jdom" name="jdom" rev="1.0"/>
         <dependency org="stax" name="stax-api" rev="1.0"/>
         <dependency org="xom" name="xom" rev="1.1">
@@ -36,6 +35,9 @@
         <dependency org="apache" name="xerces" rev="2.8.0">
             <artifact name="xercesImpl" type="jar"/>
         </dependency>
+
+        <!-- spring-ws dependencies -->
+        <dependency org="org.springframework" name="spring-oxm" rev="latest.integration"/>
 
         <!-- saaj only dependencies -->
         <dependency org="javax.xml" name="saaj-api" rev="1.2" conf="buildtime,saaj->default"/>
