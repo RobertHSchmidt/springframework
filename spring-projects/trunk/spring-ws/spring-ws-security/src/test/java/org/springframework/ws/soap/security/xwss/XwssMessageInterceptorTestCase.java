@@ -30,13 +30,10 @@ import junit.framework.TestCase;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import org.springframework.ws.soap.SoapMessage;
-import org.springframework.ws.soap.saaj.SaajSoapMessage;
-import org.springframework.ws.soap.saaj.SaajSoapMessageContext;
 import org.springframework.xml.xpath.XPathExpression;
 import org.springframework.xml.xpath.XPathExpressionFactory;
 
-public abstract class XwssMessageProcessorTestCase extends TestCase {
+public abstract class XwssMessageInterceptorTestCase extends TestCase {
 
     protected XwsSecurityInterceptor interceptor;
 
@@ -44,38 +41,42 @@ public abstract class XwssMessageProcessorTestCase extends TestCase {
 
     private Map namespaces;
 
+    protected final void setUp() throws Exception {
+        interceptor = new XwsSecurityInterceptor();
+        messageFactory = MessageFactory.newInstance();
+        namespaces = new HashMap();
+        namespaces.put("SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/");
+        namespaces.put("wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");
+        namespaces.put("ds", "http://www.w3.org/2000/09/xmldsig#");
+        namespaces.put("xenc", "http://www.w3.org/2001/04/xmlenc#");
+        onSetup();
+    }
+
     protected void assertXpathEvaluatesTo(String message,
                                           String expectedValue,
                                           String xpathExpression,
-                                          SoapMessage soapMessage) {
+                                          SOAPMessage soapMessage) {
         XPathExpression expression = XPathExpressionFactory.createXPathExpression(xpathExpression, namespaces);
-        Document document = ((SaajSoapMessage) soapMessage).getSaajMessage().getSOAPPart();
+        Document document = soapMessage.getSOAPPart();
         String actualValue = expression.evaluateAsString(document);
         assertEquals(message, expectedValue, actualValue);
     }
 
-    protected void assertXpathExists(String message, String xpathExpression, SoapMessage soapMessage) {
+    protected void assertXpathExists(String message, String xpathExpression, SOAPMessage soapMessage) {
         XPathExpression expression = XPathExpressionFactory.createXPathExpression(xpathExpression, namespaces);
-        Document document = ((SaajSoapMessage) soapMessage).getSaajMessage().getSOAPPart();
+        Document document = soapMessage.getSOAPPart();
         Node node = expression.evaluateAsNode(document);
         assertNotNull(message, node);
     }
 
-    protected void assertXpathNotExists(String message, String xpathExpression, SoapMessage soapMessage) {
+    protected void assertXpathNotExists(String message, String xpathExpression, SOAPMessage soapMessage) {
         XPathExpression expression = XPathExpressionFactory.createXPathExpression(xpathExpression, namespaces);
-        Document document = ((SaajSoapMessage) soapMessage).getSaajMessage().getSOAPPart();
+        Document document = soapMessage.getSOAPPart();
         Node node = expression.evaluateAsNode(document);
         assertNull(message, node);
     }
 
-    protected SaajSoapMessageContext loadSoapMessageResponseContext(String fileName) throws IOException, SOAPException {
-        SOAPMessage request = messageFactory.createMessage();
-        SaajSoapMessageContext messageContext = new SaajSoapMessageContext(request, messageFactory);
-        messageContext.setSaajResponse(loadSaajMessage(fileName));
-        return messageContext;
-    }
-
-    private SOAPMessage loadSaajMessage(String fileName) throws SOAPException, IOException {
+    protected SOAPMessage loadSaajMessage(String fileName) throws SOAPException, IOException {
         MimeHeaders mimeHeaders = new MimeHeaders();
         mimeHeaders.addHeader("Content-Type", "text/xml");
         InputStream is = null;
@@ -88,23 +89,6 @@ public abstract class XwssMessageProcessorTestCase extends TestCase {
                 is.close();
             }
         }
-
-    }
-
-    protected SaajSoapMessageContext loadSoapMessageRequestContext(String fileName) throws IOException, SOAPException {
-        SOAPMessage request = loadSaajMessage(fileName);
-        return new SaajSoapMessageContext(request, messageFactory);
-    }
-
-    protected final void setUp() throws Exception {
-        interceptor = new XwsSecurityInterceptor();
-        messageFactory = MessageFactory.newInstance();
-        namespaces = new HashMap();
-        namespaces.put("SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/");
-        namespaces.put("wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");
-        namespaces.put("ds", "http://www.w3.org/2000/09/xmldsig#");
-        namespaces.put("xenc", "http://www.w3.org/2001/04/xmlenc#");
-        onSetup();
     }
 
     protected void onSetup() throws Exception {
