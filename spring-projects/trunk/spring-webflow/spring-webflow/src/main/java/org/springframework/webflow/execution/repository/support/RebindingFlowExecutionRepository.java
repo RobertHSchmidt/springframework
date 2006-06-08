@@ -56,22 +56,22 @@ class RebindingFlowExecutionRepository implements FlowExecutionRepository {
 		return target.getNextKey(flowExecution, key);
 	}
 
-	public FlowExecution getFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException {
-		return target.getFlowExecution(key);
-	}
-
 	public FlowExecutionLock getLock(FlowExecutionKey key) throws FlowExecutionRepositoryException {
 		return target.getLock(key);
 	}
 
-	public void removeFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException {
-		target.removeFlowExecution(key);
-		rebind();
+	public FlowExecution getFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException {
+		return target.getFlowExecution(key);
 	}
 
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution)
 			throws FlowExecutionRepositoryException {
 		target.putFlowExecution(key, flowExecution);
+		rebind();
+	}
+
+	public void removeFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException {
+		target.removeFlowExecution(key);
 		rebind();
 	}
 
