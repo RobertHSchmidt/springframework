@@ -22,6 +22,7 @@ import javax.xml.soap.Name;
 import javax.xml.soap.SOAPMessage;
 
 import junit.framework.TestCase;
+
 import org.springframework.util.StringUtils;
 
 public class SaajUtilsTest extends TestCase {

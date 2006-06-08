@@ -18,6 +18,7 @@ package org.springframework.ws.soap.endpoint;
 
 import junit.framework.TestCase;
 import org.easymock.MockControl;
+
 import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.SoapVersion;

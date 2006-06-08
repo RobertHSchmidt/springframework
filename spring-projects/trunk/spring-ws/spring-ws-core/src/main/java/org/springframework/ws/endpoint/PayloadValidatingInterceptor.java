@@ -20,6 +20,9 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
@@ -32,8 +35,6 @@ import org.springframework.ws.soap.context.SoapMessageContext;
 import org.springframework.ws.soap.support.SoapMessageUtils;
 import org.springframework.xml.validation.XmlValidator;
 import org.springframework.xml.validation.XmlValidatorFactory;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 /**
  * Interceptor that validates the contents of <code>WebServiceMessage</code>s using a schema. Allows for both W3C XML
@@ -104,7 +105,6 @@ public class PayloadValidatingInterceptor implements SoapEndpointInterceptor, In
      * <code>messageContext</code> is a <code>SoapMessageContext</code>, a SOAP Fault is added as response.
      *
      * @param messageContext the message context
-     * @param endpoint
      * @return <code>true</code> if the message is valid; <code>false</code> otherwise
      * @see #setValidateRequest(boolean)
      */
@@ -135,7 +135,6 @@ public class PayloadValidatingInterceptor implements SoapEndpointInterceptor, In
      * Returns <code>true</code> if the request is valid, or <code>false</code> if it isn't.
      *
      * @param messageContext the message context.
-     * @param endpoint
      * @return <code>true</code> if the response is valid; <code>false</code> otherwise
      * @see #setValidateResponse(boolean)
      */

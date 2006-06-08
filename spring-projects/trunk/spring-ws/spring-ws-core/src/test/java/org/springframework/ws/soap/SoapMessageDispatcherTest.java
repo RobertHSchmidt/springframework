@@ -17,10 +17,12 @@
 package org.springframework.ws.soap;
 
 import java.util.Collections;
+
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 import org.easymock.MockControl;
+
 import org.springframework.ws.soap.context.SoapMessageContext;
 import org.springframework.ws.soap.support.SoapMessageUtils;
 

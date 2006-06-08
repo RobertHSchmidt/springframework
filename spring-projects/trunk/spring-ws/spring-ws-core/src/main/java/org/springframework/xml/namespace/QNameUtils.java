@@ -18,9 +18,10 @@ package org.springframework.xml.namespace;
 
 import javax.xml.namespace.QName;
 
+import org.w3c.dom.Node;
+
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.w3c.dom.Node;
 
 /**
  * Helper class for using <code>javax.xml.namespace.QName</code>.
@@ -112,7 +113,6 @@ public abstract class QNameUtils {
      * <code>toString()</code> representation of <code>QName</code> itself, but allows for prefixes to be specified as
      * well.
      *
-     * @param qNameString
      * @return a corresponding QName instance
      * @throws IllegalArgumentException when the given string is <code>null</code> or empty.
      */

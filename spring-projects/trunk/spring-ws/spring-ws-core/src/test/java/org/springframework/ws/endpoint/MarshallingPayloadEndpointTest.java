@@ -18,6 +18,7 @@ package org.springframework.ws.endpoint;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -27,6 +28,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.XmlMappingException;

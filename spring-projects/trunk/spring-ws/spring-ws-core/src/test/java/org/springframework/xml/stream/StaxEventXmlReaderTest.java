@@ -17,6 +17,7 @@
 package org.springframework.xml.stream;
 
 import java.io.Reader;
+
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 

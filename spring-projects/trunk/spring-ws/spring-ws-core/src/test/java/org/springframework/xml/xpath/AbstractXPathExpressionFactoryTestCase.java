@@ -20,14 +20,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import junit.framework.TestCase;
-import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+
+import org.springframework.util.StringUtils;
 
 public abstract class AbstractXPathExpressionFactoryTestCase extends TestCase {
 

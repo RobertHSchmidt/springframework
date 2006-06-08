@@ -17,16 +17,18 @@
 package org.springframework.xml.stream;
 
 import java.util.Iterator;
+
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.springframework.util.StringUtils;
 import org.springframework.xml.namespace.QNameUtils;
 import org.springframework.xml.namespace.SimpleNamespaceContext;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 /**
  * SAX <code>ContentHandler</code> that writes to a <code>XMLStreamWriter</code>.

@@ -18,10 +18,12 @@ package org.springframework.ws.soap;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
+
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.util.FileCopyUtils;

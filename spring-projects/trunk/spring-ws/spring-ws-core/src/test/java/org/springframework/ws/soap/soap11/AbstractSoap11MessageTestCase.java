@@ -19,6 +19,7 @@ package org.springframework.ws.soap.soap11;
 import java.io.ByteArrayOutputStream;
 
 import junit.framework.Assert;
+
 import org.springframework.ws.soap.AbstractSoapMessageTestCase;
 import org.springframework.ws.soap.SoapVersion;
 

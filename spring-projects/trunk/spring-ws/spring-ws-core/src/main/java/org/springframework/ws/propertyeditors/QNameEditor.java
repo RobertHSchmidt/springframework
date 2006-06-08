@@ -17,6 +17,7 @@
 package org.springframework.ws.propertyeditors;
 
 import java.beans.PropertyEditorSupport;
+
 import javax.xml.namespace.QName;
 
 import org.springframework.util.StringUtils;

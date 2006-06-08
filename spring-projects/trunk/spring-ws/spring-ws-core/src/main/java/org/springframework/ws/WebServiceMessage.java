@@ -18,6 +18,7 @@ package org.springframework.ws;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 

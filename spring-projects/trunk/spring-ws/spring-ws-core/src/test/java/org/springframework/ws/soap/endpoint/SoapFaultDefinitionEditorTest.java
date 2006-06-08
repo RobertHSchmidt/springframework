@@ -17,6 +17,7 @@
 package org.springframework.ws.soap.endpoint;
 
 import java.util.Locale;
+
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;

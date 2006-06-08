@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import junit.framework.TestCase;
+
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.ws.WebServiceMessage;
 

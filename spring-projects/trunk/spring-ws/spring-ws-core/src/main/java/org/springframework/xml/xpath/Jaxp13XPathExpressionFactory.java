@@ -17,15 +17,17 @@
 package org.springframework.xml.xpath;
 
 import java.util.Map;
+
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.springframework.xml.namespace.SimpleNamespaceContext;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import org.springframework.xml.namespace.SimpleNamespaceContext;
 
 /**
  * JAXP 1.3-specific factory creating <code>XPathExpression</code>s.

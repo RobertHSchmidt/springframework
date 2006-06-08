@@ -20,6 +20,7 @@ import java.util.Collections;
 
 import junit.framework.TestCase;
 import org.easymock.MockControl;
+
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.mock.MockMessageContext;

@@ -20,10 +20,11 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.sax.SAXSource;
 
-import org.springframework.xml.stream.StaxEventXmlReader;
-import org.springframework.xml.stream.StaxStreamXmlReader;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
+
+import org.springframework.xml.stream.StaxEventXmlReader;
+import org.springframework.xml.stream.StaxStreamXmlReader;
 
 /**
  * Implementation of the <code>Source</code> tagging interface for StAX readers. Can be constructed with a

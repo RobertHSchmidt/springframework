@@ -19,6 +19,7 @@ package org.springframework.xml.stream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+
 import javax.xml.stream.XMLStreamException;
 
 import org.custommonkey.xmlunit.XMLTestCase;

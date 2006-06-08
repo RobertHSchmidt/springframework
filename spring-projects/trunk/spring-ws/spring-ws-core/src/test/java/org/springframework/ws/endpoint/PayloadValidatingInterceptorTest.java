@@ -18,6 +18,7 @@ package org.springframework.ws.endpoint;
 
 import junit.framework.TestCase;
 import org.easymock.MockControl;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.ws.mock.MockMessageContext;
 import org.springframework.ws.mock.MockWebServiceMessage;

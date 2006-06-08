@@ -18,6 +18,7 @@ package org.springframework.ws.soap.axiom;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -33,6 +34,7 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.ws.context.MessageContext;

@@ -19,6 +19,7 @@ package org.springframework.xml.stream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
@@ -27,11 +28,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.stream.util.XMLEventConsumer;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.springframework.util.StringUtils;
 import org.springframework.xml.namespace.QNameUtils;
 import org.springframework.xml.namespace.SimpleNamespaceContext;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 /**
  * SAX <code>ContentHandler</code> that transforms callback calls to <code>XMLEvent</code>s and writes them to a

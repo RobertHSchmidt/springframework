@@ -17,6 +17,7 @@
 package org.springframework.ws.endpoint;
 
 import junit.framework.TestCase;
+
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.ws.EndpointInterceptor;
 import org.springframework.ws.EndpointInvocationChain;
@@ -81,7 +82,7 @@ public class EndpointMappingTest extends TestCase {
         AbstractEndpointMapping mapping = new AbstractEndpointMapping() {
 
             protected Object getEndpointInternal(WebServiceMessage message) throws Exception {
-                assertEquals(request, message);
+                assertEquals("Invalid request", request, message);
                 return "endpoint";
             }
         };
@@ -100,7 +101,7 @@ public class EndpointMappingTest extends TestCase {
         AbstractEndpointMapping mapping = new AbstractEndpointMapping() {
 
             protected Object getEndpointInternal(WebServiceMessage message) throws Exception {
-                assertEquals(request, message);
+                assertEquals("Invalid request", request, message);
                 return "noSuchBean";
             }
         };
