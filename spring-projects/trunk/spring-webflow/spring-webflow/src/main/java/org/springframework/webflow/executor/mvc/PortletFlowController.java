@@ -32,7 +32,7 @@ import org.springframework.web.portlet.mvc.AbstractController;
 import org.springframework.web.portlet.mvc.Controller;
 import org.springframework.webflow.context.portlet.PortletExternalContext;
 import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.repository.continuation.DefaultFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
