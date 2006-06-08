@@ -16,6 +16,7 @@
 package org.springframework.webflow.execution.repository.continuation;
 
 import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.execution.repository.conversation.ConversationService;
 import org.springframework.webflow.execution.repository.support.DelegatingFlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.support.FlowExecutionRepositoryServices;
 import org.springframework.webflow.execution.repository.support.SingletonFlowExecutionRepositoryFactory;
@@ -50,5 +51,26 @@ public class ClientContinuationFlowExecutionRepositoryFactory extends Delegating
 		super(flowLocator);
 		setRepositoryFactory(new SingletonFlowExecutionRepositoryFactory(new ClientContinuationFlowExecutionRepository(
 				this)));
+	}
+
+	/**
+	 * Sets the conversation service reference.
+	 * @param conversationService the conversation service, may not be null.
+	 */
+	public void setConversationService(ConversationService conversationService) {
+		getRepository().setConversationService(conversationService);
+	}
+
+	/**
+	 * Sets the continuation factory that encapsulates the construction of
+	 * continuations stored in this repository.
+	 */
+	public void setContinuationFactory(FlowExecutionContinuationFactory continuationFactory) {
+		getRepository().setContinuationFactory(continuationFactory);
+	}
+
+	private ClientContinuationFlowExecutionRepository getRepository() {
+		return (ClientContinuationFlowExecutionRepository)((SingletonFlowExecutionRepositoryFactory)getRepositoryFactory())
+				.getRepository();
 	}
 }

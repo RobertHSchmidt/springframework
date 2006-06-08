@@ -21,6 +21,7 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.util.Assert;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
@@ -106,6 +107,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	 * Sets the continuation factory used by this repository.
 	 */
 	public void setContinuationFactory(FlowExecutionContinuationFactory continuationFactory) {
+		Assert.notNull(continuationFactory, "The continuation factory is required");
 		this.continuationFactory = continuationFactory;
 	}
 
