@@ -6,9 +6,9 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryE
 
 /**
  * Thrown when no flow execution continuation exists within a continuation
- * group. with the provided id This might occur if the continuation was
- * expired or was explictly invalidated but a client's browser page cache
- * still references it.
+ * group. with the provided id This might occur if the continuation was expired
+ * or was explictly invalidated but a client's browser page cache still
+ * references it.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -26,7 +26,10 @@ public class InvalidContinuationIdException extends FlowExecutionRepositoryExcep
 	 */
 	public InvalidContinuationIdException(Serializable continuationId) {
 		super("The continuation id '" + continuationId
-				+ "' is invalid -- perhaps the user attempted to go back and resubmit? ");
+				+ "' is invalid.  This will happen when accessing browser history "
+				+ "(typically via the back button) that references a previously used continuation id, "
+				+ "as this repository implementation does not support multiple continuations.  "
+				+ "Consider using another repository implementation or restrict use of the browser back button.");
 	}
 
 	/**
