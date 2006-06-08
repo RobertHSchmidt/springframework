@@ -22,6 +22,7 @@ import javax.xml.transform.TransformerFactory;
 
 import nu.xom.Element;
 import org.custommonkey.xmlunit.XMLTestCase;
+
 import org.springframework.xml.transform.StringResult;
 import org.springframework.xml.transform.StringSource;
 

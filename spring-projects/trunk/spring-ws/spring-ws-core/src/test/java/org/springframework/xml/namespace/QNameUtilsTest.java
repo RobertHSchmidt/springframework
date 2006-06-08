@@ -21,9 +21,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import junit.framework.TestCase;
-import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import org.springframework.util.StringUtils;
 
 public class QNameUtilsTest extends TestCase {
 
@@ -90,15 +91,15 @@ public class QNameUtilsTest extends TestCase {
 
     public void testToQNamePrefix() throws Exception {
         QName result = QNameUtils.toQName("namespace", "prefix:localName");
-        assertEquals("namespace", result.getNamespaceURI());
-        assertEquals("prefix", result.getPrefix());
-        assertEquals("localName", result.getLocalPart());
+        assertEquals("invalid namespace", "namespace", result.getNamespaceURI());
+        assertEquals("invalid prefix", "prefix", result.getPrefix());
+        assertEquals("invalid localname", "localName", result.getLocalPart());
     }
 
     public void testToQNameNoPrefix() throws Exception {
         QName result = QNameUtils.toQName("namespace", "localName");
-        assertEquals("namespace", result.getNamespaceURI());
-        assertEquals("", result.getPrefix());
-        assertEquals("localName", result.getLocalPart());
+        assertEquals("invalid namespace", "namespace", result.getNamespaceURI());
+        assertEquals("invalid prefix", "", result.getPrefix());
+        assertEquals("invalid localname", "localName", result.getLocalPart());
     }
 }

@@ -17,6 +17,7 @@
 package org.springframework.ws.endpoint;
 
 import java.io.StringWriter;
+
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;

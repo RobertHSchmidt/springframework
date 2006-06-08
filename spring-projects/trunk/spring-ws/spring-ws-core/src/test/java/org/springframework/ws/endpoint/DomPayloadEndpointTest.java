@@ -21,10 +21,11 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
 import org.custommonkey.xmlunit.XMLTestCase;
-import org.springframework.xml.transform.StringResult;
-import org.springframework.xml.transform.StringSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import org.springframework.xml.transform.StringResult;
+import org.springframework.xml.transform.StringSource;
 
 public class DomPayloadEndpointTest extends XMLTestCase {
 

@@ -17,6 +17,7 @@
 package org.springframework.xml.stream;
 
 import java.io.Writer;
+
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 

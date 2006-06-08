@@ -17,6 +17,7 @@
 package org.springframework.ws.soap;
 
 import java.util.Iterator;
+
 import javax.xml.namespace.QName;
 
 /**

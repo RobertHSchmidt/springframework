@@ -19,6 +19,7 @@ package org.springframework.ws.soap.saaj;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;

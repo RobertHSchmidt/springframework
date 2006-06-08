@@ -18,6 +18,7 @@
 package org.springframework.ws.soap.context;
 
 import junit.framework.TestCase;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.util.FileCopyUtils;

@@ -18,6 +18,7 @@ package org.springframework.ws.endpoint;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -26,6 +27,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.easymock.MockControl;
+
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.mock.MockMessageContext;
 import org.springframework.ws.mock.MockWebServiceMessage;

@@ -19,6 +19,7 @@ package org.springframework.ws.soap.endpoint;
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
+
 import org.springframework.ws.mock.MockWebServiceMessage;
 
 public class PayloadRootQNameEndpointMappingTest extends TestCase {

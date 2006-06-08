@@ -17,6 +17,7 @@
 package org.springframework.ws.soap.endpoint;
 
 import java.util.Locale;
+
 import javax.xml.namespace.QName;
 
 /**
@@ -30,7 +31,8 @@ public class SoapFaultDefinition {
      * Constant <code>QName</code> used to indicate that a <code>Client</code> or <code>Sender</code> fault must be
      * created.
      *
-     * @see org.springframework.ws.soap.SoapBody#addSenderFault()
+     * @see org.springframework.ws.soap.support.SoapMessageUtils#addSenderFault(org.springframework.ws.soap.SoapMessage,
+     *      String)
      */
     public static final QName SENDER = new QName("SENDER");
 
@@ -38,7 +40,8 @@ public class SoapFaultDefinition {
      * Constant <code>QName</code> used to indicate that a <code>Server</code> or <code>Receiver</code> fault must be
      * created.
      *
-     * @see org.springframework.ws.soap.SoapBody#addSenderFault()
+     * @see org.springframework.ws.soap.support.SoapMessageUtils#addReceiverFault(org.springframework.ws.soap.SoapMessage,
+     *      String)
      */
     public static final QName RECEIVER = new QName("RECEIVER");
 

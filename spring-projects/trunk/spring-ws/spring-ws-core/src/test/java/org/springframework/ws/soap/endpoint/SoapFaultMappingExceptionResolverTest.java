@@ -17,10 +17,12 @@
 package org.springframework.ws.soap.endpoint;
 
 import java.util.Properties;
+
 import javax.xml.namespace.QName;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.easymock.MockControl;
+
 import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapMessage;

@@ -17,6 +17,7 @@
 package org.springframework.xml.transform;
 
 import java.io.StringReader;
+
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;

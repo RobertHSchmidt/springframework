@@ -24,6 +24,7 @@ import javax.xml.stream.events.XMLEvent;
 import javax.xml.stream.util.XMLEventConsumer;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+
 import org.springframework.ws.mock.MockMessageContext;
 import org.springframework.ws.mock.MockWebServiceMessage;
 

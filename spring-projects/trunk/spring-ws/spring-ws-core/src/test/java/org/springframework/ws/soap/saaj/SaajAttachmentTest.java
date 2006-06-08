@@ -18,12 +18,14 @@ package org.springframework.ws.soap.saaj;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import junit.framework.TestCase;
+
 import org.springframework.util.FileCopyUtils;
 import org.springframework.ws.soap.Attachment;
 

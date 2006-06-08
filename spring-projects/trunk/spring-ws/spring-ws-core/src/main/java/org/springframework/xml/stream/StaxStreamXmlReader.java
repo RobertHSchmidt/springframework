@@ -21,10 +21,11 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.springframework.xml.namespace.QNameUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
+
+import org.springframework.xml.namespace.QNameUtils;
 
 /**
  * SAX <code>XMLReader</code> that reads from a StAX <code>XMLStreamReader</code>.  Reads from an
@@ -117,14 +118,14 @@ public class StaxStreamXmlReader extends StaxXmlReader {
 
     private void handleEndElement() throws SAXException {
         if (getContentHandler() != null) {
-			QName qName = reader.getName();
-            getContentHandler().endElement(qName.getNamespaceURI(), qName.getLocalPart(),
-                    QNameUtils.toQualifiedName(qName));
+            QName qName = reader.getName();
+            getContentHandler()
+                    .endElement(qName.getNamespaceURI(), qName.getLocalPart(), QNameUtils.toQualifiedName(qName));
             for (int i = 0; i < reader.getNamespaceCount(); i++) {
-				String prefix = reader.getNamespacePrefix(i);
-				if (prefix == null) {
-					prefix = "";
-				}
+                String prefix = reader.getNamespacePrefix(i);
+                if (prefix == null) {
+                    prefix = "";
+                }
                 getContentHandler().endPrefixMapping(prefix);
             }
         }
@@ -146,10 +147,10 @@ public class StaxStreamXmlReader extends StaxXmlReader {
     private void handleStartElement() throws SAXException {
         if (getContentHandler() != null) {
             for (int i = 0; i < reader.getNamespaceCount(); i++) {
-				String prefix = reader.getNamespacePrefix(i);
-				if (prefix == null) {
-					prefix = "";
-				}
+                String prefix = reader.getNamespacePrefix(i);
+                if (prefix == null) {
+                    prefix = "";
+                }
                 getContentHandler().startPrefixMapping(prefix, reader.getNamespaceURI(i));
             }
 
@@ -163,10 +164,10 @@ public class StaxStreamXmlReader extends StaxXmlReader {
         AttributesImpl attributes = new AttributesImpl();
 
         for (int i = 0; i < reader.getAttributeCount(); i++) {
-			String namespace = reader.getAttributeNamespace(i);
-			if (namespace == null) {
-				namespace = "";
-			}
+            String namespace = reader.getAttributeNamespace(i);
+            if (namespace == null) {
+                namespace = "";
+            }
             attributes.addAttribute(namespace, reader.getAttributeLocalName(i),
                     QNameUtils.toQualifiedName(reader.getAttributeName(i)), reader.getAttributeType(i),
                     reader.getAttributeValue(i));

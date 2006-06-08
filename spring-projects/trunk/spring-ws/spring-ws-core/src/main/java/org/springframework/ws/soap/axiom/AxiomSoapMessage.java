@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Locale;
+
 import javax.mail.MessagingException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -50,6 +51,8 @@ import org.apache.axiom.soap.SOAPFaultValue;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axiom.soap.SOAPMessage;
+import org.xml.sax.SAXException;
+
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -66,7 +69,6 @@ import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapHeaderException;
 import org.springframework.ws.soap.SoapVersion;
 import org.springframework.xml.transform.StaxSource;
-import org.xml.sax.SAXException;
 
 /**
  * AXIOM-specific implementation of the <code>SoapMessage</code> interface. Accessed via the

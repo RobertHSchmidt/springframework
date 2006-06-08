@@ -23,9 +23,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 
+import org.w3c.dom.Element;
+
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.xml.namespace.QNameUtils;
-import org.w3c.dom.Element;
 
 /**
  * Endpoint mapping that returns resolves the qualified name of the first element of the message payload.

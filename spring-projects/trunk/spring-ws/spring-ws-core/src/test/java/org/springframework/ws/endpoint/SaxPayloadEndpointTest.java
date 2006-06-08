@@ -17,6 +17,7 @@
 package org.springframework.ws.endpoint;
 
 import java.io.StringReader;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 

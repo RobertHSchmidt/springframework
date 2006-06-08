@@ -17,6 +17,7 @@
 package org.springframework.xml.transform;
 
 import java.io.StringReader;
+
 import javax.xml.transform.stream.StreamSource;
 
 /**

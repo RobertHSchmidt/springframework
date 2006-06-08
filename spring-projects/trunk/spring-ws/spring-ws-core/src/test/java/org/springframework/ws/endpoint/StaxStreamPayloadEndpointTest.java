@@ -22,6 +22,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+
 import org.springframework.ws.mock.MockMessageContext;
 import org.springframework.ws.mock.MockWebServiceMessage;
 

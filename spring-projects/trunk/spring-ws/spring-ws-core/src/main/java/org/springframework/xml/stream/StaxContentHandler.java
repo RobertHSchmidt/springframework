@@ -19,11 +19,12 @@ package org.springframework.xml.stream;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
-import org.springframework.xml.namespace.QNameUtils;
-import org.springframework.xml.namespace.SimpleNamespaceContext;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+
+import org.springframework.xml.namespace.QNameUtils;
+import org.springframework.xml.namespace.SimpleNamespaceContext;
 
 /**
  * Abstract base class for SAX <code>ContentHandler</code> implementations that use StAX as a basis. All methods

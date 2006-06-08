@@ -18,6 +18,7 @@ package org.springframework.ws.soap.endpoint;
 
 import java.beans.PropertyEditorSupport;
 import java.util.Locale;
+
 import javax.xml.namespace.QName;
 
 import org.springframework.beans.propertyeditors.LocaleEditor;

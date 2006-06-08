@@ -18,11 +18,13 @@ package org.springframework.ws.soap;
 
 import java.util.Iterator;
 import java.util.Locale;
+
 import javax.xml.namespace.QName;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+
 import org.springframework.xml.transform.StringResult;
 import org.springframework.xml.transform.StringSource;
 

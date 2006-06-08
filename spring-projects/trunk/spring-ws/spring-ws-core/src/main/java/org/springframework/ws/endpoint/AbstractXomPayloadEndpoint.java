@@ -17,6 +17,7 @@
 package org.springframework.ws.endpoint;
 
 import java.io.IOException;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
@@ -27,9 +28,10 @@ import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.ParsingException;
 import nu.xom.converters.DOMConverter;
-import org.springframework.xml.transform.StringSource;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
+
+import org.springframework.xml.transform.StringSource;
 
 /**
  * /** Abstract base class for endpoints that handle the message payload as XOM elements. Offers the message payload as

@@ -17,6 +17,7 @@ package org.springframework.xml.namespace;
 
 import java.util.Collections;
 import java.util.Iterator;
+
 import javax.xml.XMLConstants;
 
 import junit.framework.TestCase;
