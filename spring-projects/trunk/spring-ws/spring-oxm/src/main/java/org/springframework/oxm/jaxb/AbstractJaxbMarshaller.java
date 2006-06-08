@@ -22,7 +22,6 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -53,29 +52,13 @@ public abstract class AbstractJaxbMarshaller
      */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    private Marshaller marshaller;
-
-    private Unmarshaller unmarshaller;
-
     private String contextPath;
 
     private Map marshallerProperties;
 
     private Map unmarshallerProperties;
 
-    /**
-     * Returns the JAXB marshaller.
-     */
-    protected Marshaller getMarshaller() {
-        return marshaller;
-    }
-
-    /**
-     * Returns the JAXB unmarshaller.
-     */
-    protected Unmarshaller getUnmarshaller() {
-        return unmarshaller;
-    }
+    private JAXBContext jaxbContext;
 
     /**
      * Sets the JAXB Context path.
@@ -118,15 +101,39 @@ public abstract class AbstractJaxbMarshaller
             logger.info("Using context path [" + contextPath + "]");
         }
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(contextPath);
-            marshaller = jaxbContext.createMarshaller();
-            unmarshaller = jaxbContext.createUnmarshaller();
-            setJaxbProperties();
-            initJaxbMarshaller();
+            jaxbContext = JAXBContext.newInstance(contextPath);
+            afterJaxbContextCreated();
         }
         catch (JAXBException ex) {
             throw convertJaxbException(ex);
         }
+    }
+
+    public void marshal(Object graph, Result result) {
+        try {
+            createMarshaller().marshal(graph, result);
+        }
+        catch (JAXBException ex) {
+            throw convertJaxbException(ex);
+        }
+    }
+
+    public Object unmarshal(Source source) {
+        try {
+            return createUnmarshaller().unmarshal(source);
+        }
+        catch (JAXBException ex) {
+            throw convertJaxbException(ex);
+        }
+    }
+
+    /**
+     * Template method that can be overridden by concrete JAXB marshallers for custom initialization behavior. Gets
+     * called after creation of <code>JAXBContext</code>.
+     * <p/>
+     * Default implementation does nothing.
+     */
+    protected void afterJaxbContextCreated() throws Exception {
     }
 
     /**
@@ -144,42 +151,60 @@ public abstract class AbstractJaxbMarshaller
     }
 
     /**
-     * Overridden by concrete JAXB marshallers for custom initialization behavior. Gets called after creation of JAXB
-     * <code>Marshaller</code> and <code>Unmarshaller</code>, and after the respective properties have been set.
+     * Returns a newly created JAXB marshaller. JAXB marshallers are not necessarily thread safe.
      */
-    protected abstract void initJaxbMarshaller() throws Exception;
-
-    public void marshal(Object graph, Result result) {
+    protected Marshaller createMarshaller() {
         try {
-            marshaller.marshal(graph, result);
+            Marshaller marshaller = jaxbContext.createMarshaller();
+            if (marshallerProperties != null) {
+                for (Iterator iterator = marshallerProperties.keySet().iterator(); iterator.hasNext();) {
+                    String name = (String) iterator.next();
+                    marshaller.setProperty(name, marshallerProperties.get(name));
+                }
+            }
+            initJaxbMarshaller(marshaller);
+            return marshaller;
         }
         catch (JAXBException ex) {
             throw convertJaxbException(ex);
         }
     }
 
-    private void setJaxbProperties() throws PropertyException {
-        if (marshallerProperties != null) {
-            for (Iterator iterator = marshallerProperties.keySet().iterator(); iterator.hasNext();) {
-                String name = (String) iterator.next();
-                marshaller.setProperty(name, marshallerProperties.get(name));
-            }
-        }
-        if (unmarshallerProperties != null) {
-            for (Iterator iterator = unmarshallerProperties.keySet().iterator(); iterator.hasNext();) {
-                String name = (String) iterator.next();
-                unmarshaller.setProperty(name, unmarshallerProperties.get(name));
-            }
-        }
-    }
-
-    public Object unmarshal(Source source) {
+    /**
+     * Returns a newly created JAXB unmarshaller. JAXB unmarshallers are not necessarily thread safe.
+     */
+    protected Unmarshaller createUnmarshaller() {
         try {
-            return this.unmarshaller.unmarshal(source);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            if (unmarshallerProperties != null) {
+                for (Iterator iterator = unmarshallerProperties.keySet().iterator(); iterator.hasNext();) {
+                    String name = (String) iterator.next();
+                    unmarshaller.setProperty(name, unmarshallerProperties.get(name));
+                }
+            }
+            initJaxbUnmarshaller(unmarshaller);
+            return unmarshaller;
         }
         catch (JAXBException ex) {
             throw convertJaxbException(ex);
         }
     }
 
+    /**
+     * Template method that can be overridden by concrete JAXB marshallers for custom initialization behavior. Gets
+     * called after creation of JAXB <code>Marshaller</code>, and after the respective properties have been set.
+     * <p/>
+     * Default implementation does nothing.
+     */
+    protected void initJaxbMarshaller(Marshaller marshaller) throws JAXBException {
+    }
+
+    /**
+     * Template method that can overridden by concrete JAXB marshallers for custom initialization behavior. Gets called
+     * after creation of JAXB <code>Unmarshaller</code>, and after the respective properties have been set.
+     * <p/>
+     * Default implementation does nothing.
+     */
+    protected void initJaxbUnmarshaller(Unmarshaller unmarshaller) throws JAXBException {
+    }
 }

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
@@ -60,6 +61,8 @@ public class Jaxb2Marshaller extends AbstractJaxbMarshaller {
 
     private XmlAdapter[] adapters;
 
+    private Schema schema;
+
     /**
      * Sets the <code>XmlAdapter</code>s to be registered with the JAXB <code>Marshaller</code> and
      * <code>Unmarshaller</code>
@@ -83,13 +86,6 @@ public class Jaxb2Marshaller extends AbstractJaxbMarshaller {
     }
 
     /**
-     * Sets the schema resources to use for validation.
-     */
-    public void setSchemas(Resource[] schemaResources) {
-        this.schemaResources = schemaResources;
-    }
-
-    /**
      * Sets the schema language. Default is the W3C XML Schema: <code>http://www.w3.org/2001/XMLSchema"</code>.
      *
      * @see XMLConstants#W3C_XML_SCHEMA_NS_URI
@@ -100,41 +96,24 @@ public class Jaxb2Marshaller extends AbstractJaxbMarshaller {
     }
 
     /**
+     * Sets the schema resources to use for validation.
+     */
+    public void setSchemas(Resource[] schemaResources) {
+        this.schemaResources = schemaResources;
+    }
+
+    /**
      * Sets the <code>Unmarshaller.Listener</code> to be registered with the JAXB <code>Unmarshaller</code>.
      */
     public void setUnmarshallerListener(Unmarshaller.Listener unmarshallerListener) {
         this.unmarshallerListener = unmarshallerListener;
     }
 
-    private void initAdapters() {
-        if (!ObjectUtils.isEmpty(adapters)) {
-            for (int i = 0; i < adapters.length; i++) {
-                getMarshaller().setAdapter(adapters[i]);
-                getUnmarshaller().setAdapter(adapters[i]);
-            }
-        }
-    }
-
-    protected void initJaxbMarshaller() throws Exception {
+    protected void afterJaxbContextCreated() throws IOException, SAXException {
         if (JaxbUtils.getJaxbVersion() < JaxbUtils.JAXB_2) {
             throw new IllegalStateException(
                     "Cannot use Jaxb2Marshaller in combination with JAXB 1.0. Use Jaxb1Marshaller instead.");
         }
-        initSchema();
-        initListeners();
-        initAdapters();
-    }
-
-    private void initListeners() {
-        if (marshallerListener != null) {
-            getMarshaller().setListener(marshallerListener);
-        }
-        if (unmarshallerListener != null) {
-            getUnmarshaller().setListener(unmarshallerListener);
-        }
-    }
-
-    private void initSchema() throws IOException, SAXException {
         if (!ObjectUtils.isEmpty(schemaResources)) {
             SchemaFactory schemaFactory = SchemaFactory.newInstance(schemaLanguage);
             StreamSource[] schemaSources = new StreamSource[schemaResources.length];
@@ -142,13 +121,11 @@ public class Jaxb2Marshaller extends AbstractJaxbMarshaller {
                 for (int i = 0; i < schemaResources.length; i++) {
                     Resource schemaResource = schemaResources[i];
                     if (logger.isDebugEnabled()) {
-                        logger.debug("Setting validation schema to " + schemaResources);
+                        logger.debug("Setting validation schema to " + schemaResource);
                     }
                     schemaSources[i] = new StreamSource(schemaResource.getInputStream());
                 }
-                Schema schema = schemaFactory.newSchema(schemaSources);
-                getMarshaller().setSchema(schema);
-                getUnmarshaller().setSchema(schema);
+                schema = schemaFactory.newSchema(schemaSources);
             }
             finally {
                 for (int i = 0; i < schemaSources.length; i++) {
@@ -162,4 +139,33 @@ public class Jaxb2Marshaller extends AbstractJaxbMarshaller {
             }
         }
     }
+
+    protected void initJaxbMarshaller(Marshaller marshaller) throws JAXBException {
+        if (schema != null) {
+            marshaller.setSchema(schema);
+        }
+        if (marshallerListener != null) {
+            marshaller.setListener(marshallerListener);
+        }
+        if (adapters != null) {
+            for (int i = 0; i < adapters.length; i++) {
+                marshaller.setAdapter(adapters[i]);
+            }
+        }
+    }
+
+    protected void initJaxbUnmarshaller(Unmarshaller unmarshaller) throws JAXBException {
+        if (schema != null) {
+            unmarshaller.setSchema(schema);
+        }
+        if (unmarshallerListener != null) {
+            unmarshaller.setListener(unmarshallerListener);
+        }
+        if (adapters != null) {
+            for (int i = 0; i < adapters.length; i++) {
+                unmarshaller.setAdapter(adapters[i]);
+            }
+        }
+    }
+
 }

@@ -21,6 +21,7 @@ Package org.springframework.ws.soap.endpoint
 
 Package org.springframework.oxm.jaxb
 * added support for JAXB 2: refactored JaxbMarshaller into AbstractJaxbMarshaller, Jaxb1Marshaller and Jaxb2Marshaller
+* made JaxbMarshallers thread safe
 
 Package org.springframework.xml.transform
 * added StaxSource and StaxResult, which allow for StAX readers/writers to be used as javax.xml.transform.Source and
