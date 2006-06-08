@@ -31,11 +31,6 @@ import org.springframework.webflow.execution.repository.conversation.Conversatio
 public class SimpleConversationId extends ConversationId {
 
 	/**
-	 * Serial version identifier.
-	 */
-	private static final long serialVersionUID = -8560408935182880763L;
-
-	/**
 	 * The scalar id value.
 	 */
 	private Serializable id;

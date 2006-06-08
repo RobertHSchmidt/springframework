@@ -36,11 +36,6 @@ import org.springframework.webflow.support.FlowRedirect;
 public class ResponseInstruction implements Serializable {
 
 	/**
-	 * Generated serialization id.
-	 */
-	private static final long serialVersionUID = -3787181142379347131L;
-
-	/**
 	 * The persistent identifier of the flow execution.
 	 */
 	private String flowExecutionKey;

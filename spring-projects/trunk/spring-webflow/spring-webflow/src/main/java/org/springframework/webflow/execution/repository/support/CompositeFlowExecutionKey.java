@@ -40,8 +40,6 @@ import org.springframework.webflow.execution.repository.conversation.Conversatio
  */
 class CompositeFlowExecutionKey extends FlowExecutionKey {
 
-	private static final long serialVersionUID = -2585330050360438048L;
-
 	/**
 	 * The default conversation id prefix delimiter ("_c");
 	 */

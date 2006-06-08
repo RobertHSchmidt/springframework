@@ -29,8 +29,6 @@ import java.util.Map;
  */
 class FlowExecutionContinuationGroup implements Serializable {
 
-	private static final long serialVersionUID = 664189712064790043L;
-
 	/**
 	 * A map of continuations; the key is the continuation id, and the value is
 	 * the {@link FlowExecutionContinuation} object.
