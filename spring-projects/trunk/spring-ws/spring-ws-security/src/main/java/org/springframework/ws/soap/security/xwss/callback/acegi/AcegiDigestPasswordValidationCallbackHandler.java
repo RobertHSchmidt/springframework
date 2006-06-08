@@ -22,6 +22,7 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 import com.sun.xml.wss.impl.callback.PasswordValidationCallback;
+import com.sun.xml.wss.impl.callback.TimestampValidationCallback;
 import org.acegisecurity.providers.dao.UserCache;
 import org.acegisecurity.providers.dao.cache.NullUserCache;
 import org.acegisecurity.userdetails.UserDetails;
@@ -30,6 +31,7 @@ import org.acegisecurity.userdetails.UsernameNotFoundException;
 
 import org.springframework.util.Assert;
 import org.springframework.ws.soap.security.xwss.callback.AbstractCallbackHandler;
+import org.springframework.ws.soap.security.xwss.callback.DefaultTimestampValidator;
 
 /**
  * Callback handler that validates a password digest using an Acegi <code>UserDetailsService</code>. Logic based on
@@ -79,16 +81,21 @@ public class AcegiDigestPasswordValidationCallbackHandler extends AbstractCallba
      */
     protected void handleInternal(Callback callback) throws IOException, UnsupportedCallbackException {
         if (callback instanceof PasswordValidationCallback) {
-            PasswordValidationCallback validationCallback = ((PasswordValidationCallback) callback);
-            if (validationCallback.getRequest() instanceof PasswordValidationCallback.DigestPasswordRequest) {
+            PasswordValidationCallback passwordCallback = ((PasswordValidationCallback) callback);
+            if (passwordCallback.getRequest() instanceof PasswordValidationCallback.DigestPasswordRequest) {
                 PasswordValidationCallback.DigestPasswordRequest request =
-                        (PasswordValidationCallback.DigestPasswordRequest) validationCallback.getRequest();
+                        (PasswordValidationCallback.DigestPasswordRequest) passwordCallback.getRequest();
                 String username = request.getUsername();
                 String password = loadPassword(username);
                 request.setPassword(password);
-                validationCallback.setValidator(new PasswordValidationCallback.DigestPasswordValidator());
+                passwordCallback.setValidator(new PasswordValidationCallback.DigestPasswordValidator());
                 return;
             }
+        }
+        else if (callback instanceof TimestampValidationCallback) {
+            TimestampValidationCallback timestampCallback = (TimestampValidationCallback) callback;
+            timestampCallback.setValidator(new DefaultTimestampValidator());
+
         }
         throw new UnsupportedCallbackException(callback);
     }
