@@ -40,7 +40,7 @@ public class ContinuationNotFoundException extends FlowExecutionRepositoryExcept
 	 * @param continuationId the invalid continuation id
 	 */
 	public ContinuationNotFoundException(Serializable continuationId) {
-		super("No flow execution continuation could be found in group with is '" + continuationId
+		super("No flow execution continuation could be found in this group with id '" + continuationId
 				+ "' -- perhaps the continuation has expired or been invalidated? ");
 	}
 
