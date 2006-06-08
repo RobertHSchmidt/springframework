@@ -36,9 +36,7 @@ public class NoSuchConversationException extends ConversationServiceException {
 	 */
 	public NoSuchConversationException(ConversationId conversationId) {
 		super("No conversation could be found with id '" + conversationId
-				+ "' -- perhaps this executing flow has ended or expired? "
-				+ "This could happen if your users are relying on browser history "
-				+ "(typically via the back button) that reference ended flows.");
+				+ "' -- perhaps this conversation has ended? ");
 		this.conversationId = conversationId;
 	}
 
