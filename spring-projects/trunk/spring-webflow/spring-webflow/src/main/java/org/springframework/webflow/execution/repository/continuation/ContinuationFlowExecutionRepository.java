@@ -79,8 +79,6 @@ import org.springframework.webflow.util.UidGenerator;
 public class ContinuationFlowExecutionRepository extends AbstractConversationFlowExecutionRepository implements
 		Serializable {
 
-	private static final long serialVersionUID = -5113833049008094259L;
-
 	/**
 	 * The conversation "continuation group" attribute.
 	 */
@@ -208,7 +206,8 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	protected FlowExecutionContinuation getContinuation(FlowExecutionKey key) {
 		try {
 			return getContinuationGroup(key).get(getContinuationId(key));
-		} catch (ContinuationNotFoundException e) {
+		}
+		catch (ContinuationNotFoundException e) {
 			throw new NoSuchFlowExecutionException(key, e);
 		}
 	}

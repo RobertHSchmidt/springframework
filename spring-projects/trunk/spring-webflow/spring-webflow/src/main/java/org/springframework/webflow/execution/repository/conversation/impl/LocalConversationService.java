@@ -39,11 +39,6 @@ import org.springframework.webflow.util.UidGenerator;
 public class LocalConversationService implements ConversationService, Serializable {
 
 	/**
-	 * Serial version id
-	 */
-	private static final long serialVersionUID = -5820143384320183867L;
-
-	/**
 	 * The local conversation data store.
 	 */
 	private Map conversations = new HashMap();

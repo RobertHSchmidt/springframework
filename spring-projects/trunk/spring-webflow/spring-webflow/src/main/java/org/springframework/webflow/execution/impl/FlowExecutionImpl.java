@@ -72,11 +72,6 @@ import org.springframework.webflow.execution.FlowLocator;
  */
 public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
-	/**
-	 * The serialization version id.
-	 */
-	private static final long serialVersionUID = -898397026261844347L;
-
 	private static final Log logger = LogFactory.getLog(FlowExecutionImpl.class);
 
 	/**
@@ -505,7 +500,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	public void setConversationScope(AttributeMap scope) {
 		this.conversationScope = scope;
 	}
-	
+
 	private static class FlowSessionFlowLocator implements FlowLocator {
 		private FlowLocator flowLocator;
 

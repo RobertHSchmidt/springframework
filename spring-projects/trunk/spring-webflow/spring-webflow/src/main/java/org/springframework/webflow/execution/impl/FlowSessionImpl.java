@@ -47,11 +47,6 @@ import org.springframework.webflow.execution.FlowLocator;
  */
 class FlowSessionImpl implements FlowSession, Externalizable {
 
-	/**
-	 * The serialization version id.
-	 */
-	private static final long serialVersionUID = 7389855930603173417L;
-
 	private static final Log logger = LogFactory.getLog(FlowSessionImpl.class);
 
 	/**
@@ -75,7 +70,8 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	private String stateId;
 
 	/**
-	 * The session status; may be CREATED, STARTING, ACTIVE, PAUSED, SUSPENDED, or ENDED.
+	 * The session status; may be CREATED, STARTING, ACTIVE, PAUSED, SUSPENDED,
+	 * or ENDED.
 	 */
 	private FlowSessionStatus status = FlowSessionStatus.CREATED;
 
