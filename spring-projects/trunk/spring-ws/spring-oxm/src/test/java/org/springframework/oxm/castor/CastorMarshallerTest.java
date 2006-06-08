@@ -18,10 +18,11 @@ package org.springframework.oxm.castor;
 import javax.xml.transform.sax.SAXResult;
 
 import org.easymock.MockControl;
+import org.xml.sax.ContentHandler;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.oxm.AbstractMarshallerTestCase;
 import org.springframework.oxm.Marshaller;
-import org.xml.sax.ContentHandler;
 
 public class CastorMarshallerTest extends AbstractMarshallerTestCase {
 

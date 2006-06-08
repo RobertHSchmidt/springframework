@@ -18,6 +18,7 @@ package org.springframework.oxm.castor;
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.ValidationException;
 import org.exolab.castor.xml.XMLException;
+
 import org.springframework.oxm.XmlMappingException;
 
 /**

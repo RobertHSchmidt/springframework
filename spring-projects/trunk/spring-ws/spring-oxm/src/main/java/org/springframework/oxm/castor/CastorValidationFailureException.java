@@ -16,6 +16,7 @@
 package org.springframework.oxm.castor;
 
 import org.exolab.castor.xml.ValidationException;
+
 import org.springframework.oxm.ValidationFailureException;
 
 /**

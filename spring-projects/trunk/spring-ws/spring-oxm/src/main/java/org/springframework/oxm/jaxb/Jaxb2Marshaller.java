@@ -18,6 +18,7 @@ package org.springframework.oxm.jaxb;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.xml.XMLConstants;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -26,9 +27,10 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import org.xml.sax.SAXException;
+
 import org.springframework.core.io.Resource;
 import org.springframework.util.ObjectUtils;
-import org.xml.sax.SAXException;
 
 /**
  * Implementation of the <code>Marshaller</code> interface for JAXB 2.0.

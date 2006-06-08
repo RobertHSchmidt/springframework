@@ -28,16 +28,17 @@ import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.UnmarshalHandler;
 import org.exolab.castor.xml.Unmarshaller;
 import org.exolab.castor.xml.XMLException;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.io.Resource;
-import org.springframework.oxm.AbstractMarshaller;
-import org.springframework.oxm.XmlMappingException;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
+
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.io.Resource;
+import org.springframework.oxm.AbstractMarshaller;
+import org.springframework.oxm.XmlMappingException;
 
 /**
  * Implementation of the <code>Marshaller</code> interface for Castor. By default, Castor does not require any further

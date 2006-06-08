@@ -19,6 +19,7 @@ package org.springframework.oxm.xstream;
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.util.Properties;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMResult;

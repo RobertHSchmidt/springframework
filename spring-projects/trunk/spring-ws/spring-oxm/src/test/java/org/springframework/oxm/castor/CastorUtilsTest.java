@@ -16,7 +16,6 @@
 package org.springframework.oxm.castor;
 
 import junit.framework.TestCase;
-
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.ValidationException;
 import org.exolab.castor.xml.XMLException;
@@ -24,18 +23,15 @@ import org.exolab.castor.xml.XMLException;
 public class CastorUtilsTest extends TestCase {
 
     public void testConvertMarshalException() {
-        assertTrue(
-                "Invalid exception conversion",
-                CastorUtils.convertXmlException(new MarshalException(""), true) instanceof CastorMarshallingFailureException);
-        assertTrue(
-                "Invalid exception conversion",
-                CastorUtils.convertXmlException(new MarshalException(""), false) instanceof CastorUnmarshallingFailureException);
+        assertTrue("Invalid exception conversion", CastorUtils
+                .convertXmlException(new MarshalException(""), true) instanceof CastorMarshallingFailureException);
+        assertTrue("Invalid exception conversion", CastorUtils
+                .convertXmlException(new MarshalException(""), false) instanceof CastorUnmarshallingFailureException);
     }
 
     public void testConvertValidationException() {
-        assertTrue(
-                "Invalid exception conversion",
-                CastorUtils.convertXmlException(new ValidationException(""), false) instanceof CastorValidationFailureException);
+        assertTrue("Invalid exception conversion", CastorUtils
+                .convertXmlException(new ValidationException(""), false) instanceof CastorValidationFailureException);
     }
 
     public void testConvertXMLException() {

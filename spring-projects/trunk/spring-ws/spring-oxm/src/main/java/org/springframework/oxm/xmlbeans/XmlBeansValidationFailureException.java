@@ -16,11 +16,12 @@
 package org.springframework.oxm.xmlbeans;
 
 import org.apache.xmlbeans.XMLStreamValidationException;
+
 import org.springframework.oxm.ValidationFailureException;
 
 /**
  * XMLBeans-specific subclass of <code>ValidationFailureException</code>.
- * 
+ *
  * @author Arjen Poutsma
  * @see org.springframework.oxm.xmlbeans.XmlBeansUtils#convertXmlBeansException
  */

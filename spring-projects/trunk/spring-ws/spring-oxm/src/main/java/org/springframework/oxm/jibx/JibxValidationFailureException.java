@@ -17,6 +17,7 @@
 package org.springframework.oxm.jibx;
 
 import org.jibx.runtime.ValidationException;
+
 import org.springframework.oxm.ValidationFailureException;
 
 /**

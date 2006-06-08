@@ -10,9 +10,6 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlSaxHandler;
-import org.springframework.oxm.AbstractMarshaller;
-import org.springframework.oxm.Marshaller;
-import org.springframework.oxm.XmlMappingException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -21,6 +18,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
+
+import org.springframework.oxm.AbstractMarshaller;
+import org.springframework.oxm.Marshaller;
+import org.springframework.oxm.XmlMappingException;
 
 /**
  * Implementation of the <code>Marshaller</code> interface for XMLBeans.

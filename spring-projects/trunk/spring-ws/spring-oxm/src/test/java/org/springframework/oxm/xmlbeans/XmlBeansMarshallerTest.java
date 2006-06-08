@@ -16,6 +16,7 @@
 package org.springframework.oxm.xmlbeans;
 
 import java.io.ByteArrayOutputStream;
+
 import javax.xml.transform.stream.StreamResult;
 
 import org.springframework.oxm.AbstractMarshallerTestCase;

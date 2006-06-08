@@ -16,14 +16,15 @@
 package org.springframework.oxm.xmlbeans;
 
 import org.apache.xmlbeans.XmlException;
-import org.springframework.oxm.MarshallingFailureException;
 import org.xml.sax.SAXException;
+
+import org.springframework.oxm.MarshallingFailureException;
 
 /**
  * XMLBeans-specific subclass of <code>MarshallingFailureException</code>.
- * 
+ *
  * @author Arjen Poutsma
- * @see XmlBeansUtils#convertXmlBeansException(Exception, boolean) 
+ * @see XmlBeansUtils#convertXmlBeansException(Exception, boolean)
  */
 public class XmlBeansMarshallingFailureException extends MarshallingFailureException {
 

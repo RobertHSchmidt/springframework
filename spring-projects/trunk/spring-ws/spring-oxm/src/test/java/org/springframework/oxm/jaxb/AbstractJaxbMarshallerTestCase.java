@@ -19,9 +19,10 @@ package org.springframework.oxm.jaxb;
 import javax.xml.transform.sax.SAXResult;
 
 import org.easymock.MockControl;
+import org.xml.sax.ContentHandler;
+
 import org.springframework.oxm.AbstractMarshallerTestCase;
 import org.springframework.oxm.XmlMappingException;
-import org.xml.sax.ContentHandler;
 
 public abstract class AbstractJaxbMarshallerTestCase extends AbstractMarshallerTestCase {
 

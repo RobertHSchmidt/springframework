@@ -34,9 +34,6 @@ import com.thoughtworks.xstream.io.xml.DomReader;
 import com.thoughtworks.xstream.io.xml.DomWriter;
 import com.thoughtworks.xstream.io.xml.SaxWriter;
 import com.thoughtworks.xstream.io.xml.XppReader;
-import org.springframework.beans.propertyeditors.ClassEditor;
-import org.springframework.oxm.AbstractMarshaller;
-import org.springframework.oxm.XmlMappingException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -44,6 +41,10 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
+
+import org.springframework.beans.propertyeditors.ClassEditor;
+import org.springframework.oxm.AbstractMarshaller;
+import org.springframework.oxm.XmlMappingException;
 
 /**
  * Implementation of the <code>Marshaller</code> interface for XStream. By default, XStream does not require any further
