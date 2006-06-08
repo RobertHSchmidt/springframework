@@ -16,6 +16,7 @@
 package org.springframework.oxm.jaxb;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 /**
  * Implementation of the <code>Marshaller</code> interface for JAXB 1.0.
@@ -40,7 +41,7 @@ public class Jaxb1Marshaller extends AbstractJaxbMarshaller {
         this.validating = validating;
     }
 
-    protected void initJaxbMarshaller() throws JAXBException {
-        getUnmarshaller().setValidating(this.validating);
+    protected void initJaxbUnmarshaller(Unmarshaller unmarshaller) throws JAXBException {
+        unmarshaller.setValidating(validating);
     }
 }
