@@ -31,5 +31,10 @@ public interface UidGenerator {
 	 */
 	public Serializable generateUid();
 
+	/**
+	 * Convert the string-encoded uid into its original object form.
+	 * @param encodedUid the string encoded uid
+	 * @return the converted uid
+	 */
 	public Serializable parseUid(String encodedUid);
 }
