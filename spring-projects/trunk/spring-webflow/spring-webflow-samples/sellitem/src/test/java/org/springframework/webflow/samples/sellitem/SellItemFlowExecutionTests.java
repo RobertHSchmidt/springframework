@@ -20,7 +20,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	@Override
 	protected ExternalizedFlowDefinition getFlowDefinition() {
-		File flowDir = new File("src/webapp/WEB-INF");
+		File flowDir = new File("src/main/webapp/WEB-INF");
 		Resource resource = new FileSystemResource(new File(flowDir, "sellitem.xml"));
 		return new ExternalizedFlowDefinition("search", resource);
 	}
