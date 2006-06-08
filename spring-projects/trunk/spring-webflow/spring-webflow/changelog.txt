@@ -57,7 +57,13 @@ Package org.springframework.webflow.execution
 * Factored out conversation code into a portable conversation management subsystem, see repository.conversation.
   This generic abstraction is usable outside of SWF and may be promoted to a top-level project in the future.
 * Renamed SimpleFlowExecutionRepository to DefaultFlowExecutionRepository.
-   
+* Removed 'CannotContinueConversationException' from root repository package.  Now the
+  'NoSuchFlowExecutionException' is thrown consistently by the repository implementations 
+  for both invalid conversation and continuation identifiers with the 'cause' property
+  noting exactly what happened.
+* Moved FlowExecutionRepositoryCreator to the support package and made implementations private
+  inner classes of their containing factories, reflecting the role as a helper.
+  
 Package org.springframework.webflow.executor
 * Simplified FlowExecutor interface, exposing simple types to clients and encapsulating dependencies 
   on internal types (as a good facade should).
