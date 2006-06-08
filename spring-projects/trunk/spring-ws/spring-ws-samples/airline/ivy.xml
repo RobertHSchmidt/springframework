@@ -30,7 +30,7 @@
         <dependency org="org.springframework" name="spring-ws-core" rev="latest.integration" conf="global->default,saaj"/>
 
         <!--  build time dependencies -->
-        <dependency org="javax.xml" name="jaxb-xjc" rev="2.0-rc1" conf="buildtime->default"/>
+        <dependency org="javax.xml" name="jaxb-xjc" rev="2.0.1" conf="buildtime->default"/>
 
         <!-- test time only dependencies -->
         <dependency org="junit" name="junit" rev="3.8.1" conf="test->default"/>
