@@ -172,12 +172,11 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	}
 
 	protected AttributeMap getConversationScope(FlowExecutionKey key) {
-		Map scope = (Map)getConversation(key).getAttribute(SCOPE_ATTRIBUTE);
-		return new AttributeMap(scope);
+		return (AttributeMap)getConversation(key).getAttribute(SCOPE_ATTRIBUTE);
 	}
 
 	protected void putConversationScope(FlowExecutionKey key, AttributeMap scope) {
-		getConversation(key).putAttribute(SCOPE_ATTRIBUTE, scope.getMap());
+		getConversation(key).putAttribute(SCOPE_ATTRIBUTE, scope);
 	}
 	
 	/**
