@@ -24,6 +24,7 @@ import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.support.ApplicationViewSelector;
 import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.support.ExternalRedirectSelector;
+import org.springframework.webflow.support.FlowExecutionRedirect;
 import org.springframework.webflow.support.FlowRedirect;
 import org.springframework.webflow.support.FlowRedirectSelector;
 import org.springframework.webflow.support.RedirectType;
@@ -37,8 +38,8 @@ import org.springframework.webflow.support.RedirectType;
  * <li>"viewName" - will result in a {@link ApplicationViewSelector} that
  * returns a ViewSelection with the provided view name expression.</li>
  * <li>"redirect:&lt;viewName&gt;" - will result in a
- * {@link ApplicationViewSelector} that returns a ViewSelection with the
- * provided view name and redirect flag set to true.</li>
+ * {@link ApplicationViewSelector} that returns a {@link FlowExecutionRedirect}
+ * to a flow execution URL.</li>
  * <li>"externalRedirect:&lt;url&gt;" - will result in a
  * {@link ExternalRedirectSelector} that returns a {@link ExternalRedirect} to a
  * URL.</li>
@@ -186,5 +187,5 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 			Expression viewNameExpr = (Expression)fromStringTo(Expression.class).execute(encodedView);
 			return new ApplicationViewSelector(viewNameExpr);
 		}
-	}	
+	}
 }
