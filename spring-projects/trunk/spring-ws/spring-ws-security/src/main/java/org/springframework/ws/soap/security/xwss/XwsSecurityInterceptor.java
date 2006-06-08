@@ -129,30 +129,52 @@ public class XwsSecurityInterceptor extends AbstractWsSecurityInterceptor implem
         Assert.isTrue(soapMessageContext instanceof SaajSoapMessageContext,
                 "XwsSecurityInterceptor requires a SaajSoapMessageContext. " +
                         "Use a SaajSoapMessageContextFactory to create the SOAP messages.");
-        try {
-            SaajSoapMessageContext saajMessageContext = (SaajSoapMessageContext) soapMessageContext;
-            ProcessingContext context = processor.createProcessingContext(saajMessageContext.getSaajResponse());
-            SOAPMessage secured = processor.secureOutboundMessage(context);
-            saajMessageContext.setSaajResponse(secured);
-        }
-        catch (XWSSecurityException ex) {
-            throw new XwsSecuritySecurementException("Could not secure message: " + ex.getMessage(), ex);
-        }
+        SaajSoapMessageContext saajMessageContext = (SaajSoapMessageContext) soapMessageContext;
+        SOAPMessage securedMessage = secureMessage(saajMessageContext.getSaajResponse());
+        saajMessageContext.setSaajResponse(securedMessage);
     }
 
     protected void validateRequest(SoapMessageContext soapMessageContext) throws XwsSecurityValidationException {
         Assert.isTrue(soapMessageContext instanceof SaajSoapMessageContext,
                 "XwsSecurityInterceptor requires a SaajSoapMessageContext" +
                         "Use a SaajSoapMessageContextFactory to create the SOAP messages.");
+        SaajSoapMessageContext saajMessageContext = (SaajSoapMessageContext) soapMessageContext;
+        SOAPMessage validatedMessage = validateMessage(saajMessageContext.getSaajRequest());
+        saajMessageContext.setSaajRequest(validatedMessage);
+    }
+
+    /**
+     * Secures the given SAAJ message in accordance with the defined security policy and returns the secured result.
+     *
+     * @param message the message to be secured
+     * @return the secured message
+     * @throws XwsSecuritySecurementException in case of errors
+     */
+    protected SOAPMessage secureMessage(SOAPMessage message) throws XwsSecuritySecurementException {
         try {
-            SaajSoapMessageContext saajMessageContext = (SaajSoapMessageContext) soapMessageContext;
-            ProcessingContext processingContext =
-                    processor.createProcessingContext(saajMessageContext.getSaajRequest());
-            SOAPMessage validated = processor.verifyInboundMessage(processingContext);
-            saajMessageContext.setSaajRequest(validated);
+            ProcessingContext context = processor.createProcessingContext(message);
+            return processor.secureOutboundMessage(context);
         }
         catch (XWSSecurityException ex) {
-            throw new XwsSecurityValidationException("Could not secure message: " + ex.getMessage(), ex);
+            throw new XwsSecuritySecurementException("Could not secure message: " + ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Validates the given SAAJ message in accordance with the defined security policy and returns the validated
+     * result.
+     *
+     * @param message the message to be validated
+     * @return the validated message
+     * @throws XwsSecurityValidationException in case of errors
+     */
+    protected SOAPMessage validateMessage(SOAPMessage message) throws XwsSecurityValidationException {
+        try {
+            ProcessingContext context = processor.createProcessingContext(message);
+            return processor.verifyInboundMessage(context);
+        }
+        catch (XWSSecurityException ex) {
+            throw new XwsSecurityValidationException("Could not validate message: " + ex.getMessage(), ex);
         }
     }
 }

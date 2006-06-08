@@ -18,16 +18,15 @@ package org.springframework.ws.soap.security.xwss;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
+import javax.xml.soap.SOAPMessage;
 
 import com.sun.xml.wss.impl.callback.DecryptionKeyCallback;
 import com.sun.xml.wss.impl.callback.EncryptionKeyCallback;
 
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.ws.soap.SoapMessage;
-import org.springframework.ws.soap.context.SoapMessageContext;
 import org.springframework.ws.soap.security.xwss.callback.AbstractCallbackHandler;
 
-public class XwssMessageProcessorEncryptTest extends XwssMessageProcessorKeyStoreTestCase {
+public class XwssMessageInterceptorEncryptTest extends XwssMessageInterceptorKeyStoreTestCase {
 
     public void testEncryptDefaultCertificate() throws Exception {
         interceptor.setPolicyConfiguration(new ClassPathResource("encrypt-config.xml", getClass()));
@@ -53,9 +52,9 @@ public class XwssMessageProcessorEncryptTest extends XwssMessageProcessorKeyStor
         };
         interceptor.setCallbackHandler(handler);
         interceptor.afterPropertiesSet();
-        SoapMessageContext context = loadSoapMessageResponseContext("empty-soap.xml");
-        interceptor.secureResponse(context);
-        SoapMessage result = context.getSoapResponse();
+        SOAPMessage message = loadSaajMessage("empty-soap.xml");
+        SOAPMessage result = interceptor.secureMessage(message);
+        assertNotNull("No result returned", result);
         assertXpathExists("BinarySecurityToken does not exist",
                 "SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/wsse:BinarySecurityToken", result);
         assertXpathExists("Signature does not exist",
@@ -86,9 +85,9 @@ public class XwssMessageProcessorEncryptTest extends XwssMessageProcessorKeyStor
         };
         interceptor.setCallbackHandler(handler);
         interceptor.afterPropertiesSet();
-        SoapMessageContext context = loadSoapMessageResponseContext("empty-soap.xml");
-        interceptor.secureResponse(context);
-        SoapMessage result = context.getSoapResponse();
+        SOAPMessage message = loadSaajMessage("empty-soap.xml");
+        SOAPMessage result = interceptor.secureMessage(message);
+        assertNotNull("No result returned", result);
         assertXpathExists("BinarySecurityToken does not exist",
                 "SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/wsse:BinarySecurityToken", result);
         assertXpathExists("Signature does not exist",
@@ -119,9 +118,9 @@ public class XwssMessageProcessorEncryptTest extends XwssMessageProcessorKeyStor
         };
         interceptor.setCallbackHandler(handler);
         interceptor.afterPropertiesSet();
-        SoapMessageContext context = loadSoapMessageRequestContext("encrypted-soap.xml");
-        interceptor.validateRequest(context);
-        SoapMessage result = context.getSoapRequest();
+        SOAPMessage message = loadSaajMessage("encrypted-soap.xml");
+        SOAPMessage result = interceptor.validateMessage(message);
+        assertNotNull("No result returned", result);
         assertXpathNotExists("Security Header not removed", "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security", result);
     }
 

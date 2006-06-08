@@ -18,6 +18,7 @@ package org.springframework.ws.soap.security.xwss;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
+import javax.xml.soap.SOAPMessage;
 
 import com.sun.xml.wss.impl.callback.PasswordCallback;
 import com.sun.xml.wss.impl.callback.PasswordValidationCallback;
@@ -25,11 +26,9 @@ import com.sun.xml.wss.impl.callback.TimestampValidationCallback;
 import com.sun.xml.wss.impl.callback.UsernameCallback;
 
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.ws.soap.SoapMessage;
-import org.springframework.ws.soap.context.SoapMessageContext;
 import org.springframework.ws.soap.security.xwss.callback.AbstractCallbackHandler;
 
-public class XwssMessageProcessorUsernameTokenTest extends XwssMessageProcessorTestCase {
+public class XwssMessageInterceptorUsernameTokenTest extends XwssMessageInterceptorTestCase {
 
     public void testAddUsernameTokenDigest() throws Exception {
         interceptor.setPolicyConfiguration(new ClassPathResource("usernameToken-digest-config.xml", getClass()));
@@ -50,9 +49,9 @@ public class XwssMessageProcessorUsernameTokenTest extends XwssMessageProcessorT
         };
         interceptor.setCallbackHandler(handler);
         interceptor.afterPropertiesSet();
-        SoapMessageContext context = loadSoapMessageResponseContext("empty-soap.xml");
-        interceptor.secureResponse(context);
-        SoapMessage result = context.getSoapResponse();
+        SOAPMessage message = loadSaajMessage("empty-soap.xml");
+        SOAPMessage result = interceptor.secureMessage(message);
+        assertNotNull("No result returned", result);
         assertXpathEvaluatesTo("Invalid Username", "Bert",
                 "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/wsse:UsernameToken/wsse:Username/text()", result);
         assertXpathExists("Password does not exist",
@@ -79,9 +78,9 @@ public class XwssMessageProcessorUsernameTokenTest extends XwssMessageProcessorT
         };
         interceptor.setCallbackHandler(handler);
         interceptor.afterPropertiesSet();
-        SoapMessageContext context = loadSoapMessageResponseContext("empty-soap.xml");
-        interceptor.secureResponse(context);
-        SoapMessage result = context.getSoapResponse();
+        SOAPMessage message = loadSaajMessage("empty-soap.xml");
+        SOAPMessage result = interceptor.secureMessage(message);
+        assertNotNull("No result returned", result);
         assertXpathEvaluatesTo("Invalid Username", "Bert",
                 "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/wsse:UsernameToken/wsse:Username/text()", result);
         assertXpathEvaluatesTo("Invalid Password", "Ernie",
@@ -120,9 +119,9 @@ public class XwssMessageProcessorUsernameTokenTest extends XwssMessageProcessorT
         };
         interceptor.setCallbackHandler(handler);
         interceptor.afterPropertiesSet();
-        SoapMessageContext context = loadSoapMessageRequestContext("userNameTokenPlainText-soap.xml");
-        interceptor.validateRequest(context);
-        SoapMessage result = context.getSoapRequest();
+        SOAPMessage message = loadSaajMessage("userNameTokenPlainText-soap.xml");
+        SOAPMessage result = interceptor.validateMessage(message);
+        assertNotNull("No result returned", result);
         assertXpathNotExists("Security Header not removed", "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security", result);
     }
 
@@ -158,9 +157,9 @@ public class XwssMessageProcessorUsernameTokenTest extends XwssMessageProcessorT
         };
         interceptor.setCallbackHandler(handler);
         interceptor.afterPropertiesSet();
-        SoapMessageContext context = loadSoapMessageRequestContext("userNameTokenDigest-soap.xml");
-        interceptor.validateRequest(context);
-        SoapMessage result = context.getSoapRequest();
+        SOAPMessage message = loadSaajMessage("userNameTokenDigest-soap.xml");
+        SOAPMessage result = interceptor.validateMessage(message);
+        assertNotNull("No result returned", result);
         assertXpathNotExists("Security Header not removed", "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security", result);
     }
 
