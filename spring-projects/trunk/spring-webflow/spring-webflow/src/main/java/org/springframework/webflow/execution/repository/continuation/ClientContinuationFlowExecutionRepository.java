@@ -21,6 +21,7 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.conversation.Conversation;
@@ -187,11 +188,11 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 		}
 
 		public Conversation getConversation(ConversationId id) throws NoSuchConversationException {
-			return null;
+			return INSTANCE;
 		}
 
 		public ConversationId parseConversationId(String encodedId) throws ConversationServiceException {
-			return null;
+			return conversationId;
 		}
 
 		private static class NoOpConversation implements Conversation {
@@ -200,7 +201,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 			}
 
 			public Object getAttribute(Object name) {
-				return null;
+				return new AttributeMap();
 			}
 
 			public ConversationId getId() {
