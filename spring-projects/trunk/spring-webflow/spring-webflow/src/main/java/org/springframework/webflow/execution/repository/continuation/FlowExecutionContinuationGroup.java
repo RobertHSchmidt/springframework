@@ -57,6 +57,13 @@ class FlowExecutionContinuationGroup implements Serializable {
 	}
 
 	/**
+	 * Returns the count of continuations in this repository.
+	 */
+	public int getContinuationCount() {
+		return continuationIds.size();
+	}
+
+	/**
 	 * Returns the continuation with the provided <code>id</code>, or
 	 * <code>null</code> if no such continuation exists with that id.
 	 * @param id the continuation id
@@ -82,18 +89,11 @@ class FlowExecutionContinuationGroup implements Serializable {
 		}
 	}
 
-	private void removeOldestContinuation() {
-		continuations.remove(continuationIds.removeFirst());
-	}
-
 	private boolean maxExceeded() {
 		return maxContinuations > 0 && continuationIds.size() > maxContinuations;
 	}
 
-	/**
-	 * Returns the count of continuations in this repository.
-	 */
-	public int getContinuationCount() {
-		return continuationIds.size();
+	private void removeOldestContinuation() {
+		continuations.remove(continuationIds.removeFirst());
 	}
 }
