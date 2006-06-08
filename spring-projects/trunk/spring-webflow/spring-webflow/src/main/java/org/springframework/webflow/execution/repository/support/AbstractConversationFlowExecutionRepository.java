@@ -83,7 +83,7 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	 * Sets the conversationService reference.
 	 * @param conversationService the conversation service, may not be null.
 	 */
-	protected void setConversationService(ConversationService conversationService) {
+	public void setConversationService(ConversationService conversationService) {
 		Assert.notNull(conversationService, "The conversation service is required");
 		this.conversationService = conversationService;
 	}
