@@ -16,8 +16,6 @@
 
 package org.springframework.ws.soap.security;
 
-import org.springframework.ws.WebServiceException;
-
 /**
  * Exception indicating that something went wrong during the validation of a message.
  * <p/>

@@ -16,14 +16,13 @@
 
 package org.springframework.ws.soap.security.xwss.callback.acegi;
 
-import junit.framework.*;
-import org.springframework.ws.soap.security.xwss.callback.acegi.AcegiDigestPasswordValidationCallbackHandler;
-import org.easymock.MockControl;
-import org.acegisecurity.userdetails.UserDetailsService;
-import org.acegisecurity.userdetails.User;
-import org.acegisecurity.userdetails.UsernameNotFoundException;
-import org.acegisecurity.GrantedAuthority;
 import com.sun.xml.wss.impl.callback.PasswordValidationCallback;
+import junit.framework.TestCase;
+import org.acegisecurity.GrantedAuthority;
+import org.acegisecurity.userdetails.User;
+import org.acegisecurity.userdetails.UserDetailsService;
+import org.acegisecurity.userdetails.UsernameNotFoundException;
+import org.easymock.MockControl;
 
 public class AcegiDigestPasswordValidationCallbackHandlerTest extends TestCase {
 

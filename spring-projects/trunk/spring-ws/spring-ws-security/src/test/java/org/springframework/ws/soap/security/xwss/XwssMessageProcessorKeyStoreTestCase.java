@@ -16,12 +16,13 @@
 
 package org.springframework.ws.soap.security.xwss;
 
-import java.security.cert.X509Certificate;
-import java.security.PrivateKey;
-import java.security.KeyStore;
 import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 
 public abstract class XwssMessageProcessorKeyStoreTestCase extends XwssMessageProcessorTestCase {
+
     protected X509Certificate certificate;
 
     protected PrivateKey privateKey;

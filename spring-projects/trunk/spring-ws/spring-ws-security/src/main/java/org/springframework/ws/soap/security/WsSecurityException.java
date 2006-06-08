@@ -17,17 +17,14 @@
 package org.springframework.ws.soap.security;
 
 import org.springframework.ws.WebServiceException;
-import org.springframework.core.NestedCheckedException;
 
 /**
- * Exception indicating that something went wrong during WS-Security executions.
- * <p/>
- * This is a checked exception since we want it to be caught, logged and handled rather than cause the application to
- * fail. Failure to read secure or validate a message is usually not a fatal problem.
+ * Exception indicating that something went wrong during WS-Security executions. Has specific subclasses for securement
+ * and validation.
  *
  * @author Arjen Poutsma
  */
-public abstract class WsSecurityException extends NestedCheckedException {
+public abstract class WsSecurityException extends WebServiceException {
 
     public WsSecurityException(String msg) {
         super(msg);

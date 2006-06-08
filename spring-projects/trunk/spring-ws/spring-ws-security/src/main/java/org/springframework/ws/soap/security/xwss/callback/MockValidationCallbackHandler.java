@@ -18,11 +18,12 @@ package org.springframework.ws.soap.security.xwss.callback;
 
 import java.io.IOException;
 import java.security.cert.X509Certificate;
+
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import com.sun.xml.wss.impl.callback.PasswordValidationCallback;
 import com.sun.xml.wss.impl.callback.CertificateValidationCallback;
+import com.sun.xml.wss.impl.callback.PasswordValidationCallback;
 
 /**
  * Mock implementation of of callback handler that accepts all password and certificate validation callbacks.
@@ -30,8 +31,8 @@ import com.sun.xml.wss.impl.callback.CertificateValidationCallback;
  * If the <code>valid</code> property is set to <code>true</code> (the default), this handler simply accepts and
  * validates every password or certificate validation callback that is passed to it.
  * <p/>
- * This class handles <code>CertificateValidationCallback</code>s and
- * <code>PasswordValidationCallback</code>s, and throws an <code>UnsupportedCallbackException</code> for others
+ * This class handles <code>CertificateValidationCallback</code>s and <code>PasswordValidationCallback</code>s, and
+ * throws an <code>UnsupportedCallbackException</code> for others
  *
  * @author Arjen Poutsma
  */

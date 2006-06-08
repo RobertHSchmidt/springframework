@@ -16,16 +16,16 @@
 
 package org.springframework.ws.soap.security.xwss.callback.jaas;
 
-import java.io.IOException;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
 import com.sun.xml.wss.impl.callback.PasswordValidationCallback;
+
 import org.springframework.ws.soap.security.xwss.callback.AbstractCallbackHandler;
 
 /**

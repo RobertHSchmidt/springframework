@@ -16,10 +16,9 @@
 
 package org.springframework.ws.soap.security.xwss.callback;
 
-import junit.framework.*;
-import org.springframework.ws.soap.security.xwss.callback.SimpleUsernamePasswordCallbackHandler;
-import com.sun.xml.wss.impl.callback.UsernameCallback;
 import com.sun.xml.wss.impl.callback.PasswordCallback;
+import com.sun.xml.wss.impl.callback.UsernameCallback;
+import junit.framework.TestCase;
 
 public class SimpleUsernamePasswordCallbackHandlerTest extends TestCase {
 

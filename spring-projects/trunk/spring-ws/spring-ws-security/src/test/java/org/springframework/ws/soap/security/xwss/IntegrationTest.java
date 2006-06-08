@@ -18,23 +18,24 @@ package org.springframework.ws.soap.security.xwss;
 
 import java.io.IOException;
 import java.io.InputStream;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.MimeHeaders;
 
-import org.springframework.ws.soap.security.WsSecurityInterceptor;
-import org.springframework.ws.soap.saaj.SaajSoapMessage;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
+
 import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.context.SoapMessageContext;
+import org.springframework.ws.soap.saaj.SaajSoapMessageContext;
 
 public class IntegrationTest extends org.springframework.test.AbstractDependencyInjectionSpringContextTests {
 
-    private XwssMessageProcessor processor;
+    private XwsSecurityInterceptor interceptor;
 
     private MessageFactory messageFactory;
 
-    public void setProcessor(XwssMessageProcessor processor) {
-        this.processor = processor;
+    public void setInterceptor(XwsSecurityInterceptor interceptor) {
+        this.interceptor = interceptor;
     }
 
     protected void onSetUp() throws Exception {
@@ -45,14 +46,14 @@ public class IntegrationTest extends org.springframework.test.AbstractDependency
         return new String[]{"classpath:org/springframework/ws/soap/security/xwss/applicationContext.xml"};
     }
 
-    protected SoapMessage loadSoapMessage(String fileName) throws IOException, SOAPException {
+    protected SoapMessageContext loadSoapMessageContext(String fileName) throws IOException, SOAPException {
         MimeHeaders mimeHeaders = new MimeHeaders();
         mimeHeaders.addHeader("Content-Type", "text/xml");
         InputStream is = null;
         try {
             is = getClass().getResourceAsStream(fileName);
             SOAPMessage saajMessage = messageFactory.createMessage(mimeHeaders, is);
-            return new SaajSoapMessage(saajMessage);
+            return new SaajSoapMessageContext(saajMessage, messageFactory);
         }
         finally {
             if (is != null) {
@@ -60,9 +61,11 @@ public class IntegrationTest extends org.springframework.test.AbstractDependency
             }
         }
     }
+
     public void testSecure() throws Exception {
-        SoapMessage message = loadSoapMessage("signed-soap.xml");
-        SoapMessage result = processor.validateMessage(message);
+        SoapMessageContext context = loadSoapMessageContext("userNameTokenPlainText-soap.xml");
+        interceptor.handleRequest(context, null);
+        SoapMessage result = context.getSoapRequest();
         assertNotNull(result);
         result.writeTo(System.out);
 

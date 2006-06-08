@@ -1,12 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-    <bean id="interceptor" class="org.springframework.ws.soap.security.WsSecurityInterceptor">
-        <property name="messageProcessor" ref="messageProcessor"/>
-    </bean>
-
-    <bean id="messageProcessor" class="org.springframework.ws.soap.security.xwss.XwssMessageProcessor">
+    <bean id="interceptor" class="org.springframework.ws.soap.security.xwss.XwsSecurityInterceptor">
         <property name="policyConfiguration"
                   value="classpath:org/springframework/ws/soap/security/xwss/requireSignature-config.xml"/>
         <property name="callbackHandlers">
@@ -31,16 +26,16 @@
     </bean>
 
 
-    <bean id="keyStore" class="org.springframework.ws.soap.security.KeyStoreFactoryBean">
+    <bean id="keyStore" class="org.springframework.ws.soap.security.support.KeyStoreFactoryBean">
         <property name="password" value="password"/>
         <property name="location" value="classpath:org/springframework/ws/soap/security/xwss/test-keystore.jks"/>
     </bean>
-<!--
+    <!--
 
-    <bean id="trustStore" class="org.springframework.ws.soap.security.KeyStoreFactoryBean">
-        <property name="location" value="classpath:org/springframework/ws/soap/security/xwss/test-truststore.jks"/>
-        <property name="password" value="changeit"/>
-    </bean>
--->
+        <bean id="trustStore" class="org.springframework.ws.soap.security.support.KeyStoreFactoryBean">
+            <property name="location" value="classpath:org/springframework/ws/soap/security/xwss/test-truststore.jks"/>
+            <property name="password" value="changeit"/>
+        </bean>
+    -->
 
 </beans>

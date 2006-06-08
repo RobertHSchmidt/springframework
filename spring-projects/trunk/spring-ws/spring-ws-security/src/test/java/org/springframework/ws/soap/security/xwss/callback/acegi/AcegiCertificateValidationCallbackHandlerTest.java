@@ -16,20 +16,20 @@
 
 package org.springframework.ws.soap.security.xwss.callback.acegi;
 
+import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
-import java.io.InputStream;
 
-import junit.framework.*;
-import org.springframework.ws.soap.security.xwss.callback.acegi.AcegiCertificateValidationCallbackHandler;
-import org.springframework.core.io.ClassPathResource;
-import org.easymock.MockControl;
-import org.acegisecurity.AuthenticationManager;
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.BadCredentialsException;
-import org.acegisecurity.providers.x509.X509AuthenticationToken;
-import org.acegisecurity.providers.TestingAuthenticationToken;
 import com.sun.xml.wss.impl.callback.CertificateValidationCallback;
+import junit.framework.TestCase;
+import org.acegisecurity.AuthenticationManager;
+import org.acegisecurity.BadCredentialsException;
+import org.acegisecurity.GrantedAuthority;
+import org.acegisecurity.providers.TestingAuthenticationToken;
+import org.acegisecurity.providers.x509.X509AuthenticationToken;
+import org.easymock.MockControl;
+
+import org.springframework.core.io.ClassPathResource;
 
 public class AcegiCertificateValidationCallbackHandlerTest extends TestCase {
 

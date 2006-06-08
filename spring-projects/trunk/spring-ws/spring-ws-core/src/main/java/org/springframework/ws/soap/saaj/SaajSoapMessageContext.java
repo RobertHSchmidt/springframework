@@ -20,6 +20,7 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
+import org.springframework.util.Assert;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.SoapMessageCreationException;
 import org.springframework.ws.soap.context.AbstractSoapMessageContext;
@@ -33,7 +34,7 @@ import org.springframework.ws.soap.context.AbstractSoapMessageContext;
  */
 public class SaajSoapMessageContext extends AbstractSoapMessageContext {
 
-    private final SaajSoapMessage request;
+    private SaajSoapMessage request;
 
     private SaajSoapMessage response;
 
@@ -46,8 +47,44 @@ public class SaajSoapMessageContext extends AbstractSoapMessageContext {
      * @param messageFactory the message factory used for creating a response
      */
     public SaajSoapMessageContext(SOAPMessage request, MessageFactory messageFactory) {
+        Assert.notNull(request);
+        Assert.notNull(messageFactory);
         this.request = new SaajSoapMessage(request);
         this.messageFactory = messageFactory;
+    }
+
+    /**
+     * Returns the request as a SAAJ SOAP message.
+     */
+    public SOAPMessage getSaajRequest() {
+        return request.getSaajMessage();
+    }
+
+    /**
+     * Sets the request to the given SAAJ SOAP message.
+     */
+    public void setSaajRequest(SOAPMessage request) {
+        Assert.notNull(request);
+        this.request = new SaajSoapMessage(request);
+    }
+
+    /**
+     * Returns the response as a SAAJ SOAP message.
+     */
+    public SOAPMessage getSaajResponse() {
+        return response != null ? response.getSaajMessage() : null;
+    }
+
+    /**
+     * Sets the response to the given SAAJ SOAP message.
+     */
+    public void setSaajResponse(SOAPMessage response) {
+        Assert.notNull(response);
+        this.response = new SaajSoapMessage(response);
+    }
+
+    public SoapMessage getSoapResponse() {
+        return response;
     }
 
     public SoapMessage getSoapRequest() {
@@ -63,21 +100,5 @@ public class SaajSoapMessageContext extends AbstractSoapMessageContext {
         catch (SOAPException ex) {
             throw new SoapMessageCreationException("Could not create message: " + ex.toString(), ex);
         }
-    }
-
-    public SoapMessage getSoapResponse() {
-        return response;
-    }
-
-    /**
-     * Sets the response to the given SAAJ SOAP message.
-     *
-     * @param response the response
-     */
-    public void setSaajResponse(SOAPMessage response) {
-        if (this.response != null) {
-            throw new IllegalStateException("Response already created");
-        }
-        this.response = new SaajSoapMessage(response);
     }
 }

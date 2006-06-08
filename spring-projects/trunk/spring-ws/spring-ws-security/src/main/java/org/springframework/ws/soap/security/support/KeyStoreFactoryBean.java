@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.soap.security;
+package org.springframework.ws.soap.security.support;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,9 +23,9 @@ import java.security.KeyStore;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 
@@ -115,8 +115,8 @@ public class KeyStoreFactoryBean implements FactoryBean, InitializingBean {
                     logger.info("Loading key store from " + location);
                 }
             }
-            else if (logger.isInfoEnabled()) {
-                logger.info("Creating empty key store");
+            else if (logger.isWarnEnabled()) {
+                logger.warn("Creating empty key store");
             }
             keyStore.load(is, password);
         }
