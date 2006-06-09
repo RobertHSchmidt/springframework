@@ -95,14 +95,8 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
-		FlowExecutionEntry entry = getEntry(key);
-		try {
-			FlowExecution flowExecution = entry.getFlowExecution(getContinuationId(key));
-			return rehydrate(flowExecution, key);
-		}
-		catch (InvalidContinuationIdException e) {
-			throw new NoSuchFlowExecutionException(key, e);
-		}
+		FlowExecution flowExecution = accessFlowExecution(key);
+		return rehydrate(flowExecution, key);
 	}
 
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
@@ -120,7 +114,23 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 	}
 
 	private FlowExecutionEntry getEntry(FlowExecutionKey key) {
-		return (FlowExecutionEntry)getConversation(key).getAttribute(FLOW_EXECUTION_ENTRY_ATTRIBUTE);
+		FlowExecutionEntry entry = (FlowExecutionEntry)getConversation(key)
+				.getAttribute(FLOW_EXECUTION_ENTRY_ATTRIBUTE);
+		if (entry == null) {
+			throw new NoSuchFlowExecutionException(key, new IllegalStateException("No '"
+					+ FLOW_EXECUTION_ENTRY_ATTRIBUTE + "' attribute present in conversation scope: "
+					+ "possible programmer error--do not call get before calling put"));
+		}
+		return entry;
+	}
+
+	private FlowExecution accessFlowExecution(FlowExecutionKey key) {
+		try {
+			return getEntry(key).access(getContinuationId(key));
+		}
+		catch (InvalidContinuationIdException e) {
+			throw new NoSuchFlowExecutionException(key, e);
+		}
 	}
 
 	private void putEntry(FlowExecutionKey key, FlowExecutionEntry entry) {
@@ -134,8 +144,15 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 	 * @author Keith Donald
 	 */
 	private static class FlowExecutionEntry implements Serializable {
+		
+		/**
+		 * The id required to access the execution.
+		 */
 		private Serializable continuationId;
 
+		/**
+		 * The flow execution.
+		 */
 		private FlowExecution flowExecution;
 
 		/**
@@ -148,7 +165,7 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 			this.flowExecution = flowExecution;
 		}
 
-		public FlowExecution getFlowExecution(Serializable continuationId) {
+		public FlowExecution access(Serializable continuationId) throws InvalidContinuationIdException {
 			if (!this.continuationId.equals(continuationId)) {
 				throw new InvalidContinuationIdException(continuationId);
 			}
