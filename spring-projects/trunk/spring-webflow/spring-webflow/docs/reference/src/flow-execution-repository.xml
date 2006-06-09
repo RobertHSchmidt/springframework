@@ -135,8 +135,8 @@
 			signaling the end of the conversation.
     	</para>
 	</sect1>
-    <sect1 id="conversation-invalidation-after-completion">
-    	<title>Conversation invalidation after completion</title>
+    <sect1 id="conversation-ending">
+    	<title>Conversation ending</title>
     	<para>
     		When a flow execution reaches an end state it terminates.  If the flow execution was associated 
     		with a logical conversation that spanned more than on request, it is removed from the 
@@ -155,7 +155,7 @@
 			with Spring Web Flow out-of-the-box.
 		</para>
 		<sect2 id="repository-simple">
-			<title>Simple flow execution repository</title>
+			<title>Default flow execution repository</title>
 			<para>
 				The simplest possible repository and the default implementation.  This repository is stateful,
 				managed in the user session, and stores <emphasis>exactly one</emphasis> flow

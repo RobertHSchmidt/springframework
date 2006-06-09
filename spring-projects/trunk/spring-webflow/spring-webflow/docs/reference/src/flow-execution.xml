@@ -8,7 +8,7 @@
 			at runtime.  Execution of a flow is carried out by a dedicated system that 
 			is based internally on a state machine that runs atop the Java VM.  As the life of an
 			flow execution can span more than one request into the server, this system 
-			is also responsible for persisting conversational state across requests.
+			is also responsible for persisting execution state across requests.
 		</para>
 		<para>
 			This chapter documents Spring Web Flow's flow execution system.  You'll
