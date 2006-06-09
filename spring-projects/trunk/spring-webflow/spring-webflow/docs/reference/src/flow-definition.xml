@@ -5,7 +5,7 @@
 		<title>Introduction</title>
 		<para>
 			Spring Web Flow allows developers to build reusable, self-contained controller modules
-			called flows.  A flow is a blueprint for a user conversation (or dialog)
+			called flows.  A flow is a blueprint for a user task (or dialog)
 			that drives the execution of application code to complete a business goal.
 		</para>
 		<para>
@@ -23,7 +23,7 @@
     	<title>Flow</title>
     	<para>
     		A flow is defined by a single instance of <literal>org.springframework.webflow.Flow</literal>.
-    		This is the central domain artifact representing the definition of a conversation.
+    		This is the central domain artifact representing the definition of a task.
 		</para>
 		<para>
     		A flow consists of a set of one or more states, where each state defines a step in
@@ -376,7 +376,7 @@
     	<para>
     	    Recall that all TransitionableStates have a set of one or more transitions, each defining a 
     	    path to another state in the flow (or a recursive path back to the same state).
-    	    When a transitionable state is entered, it executes a behavior.
+    	    When a transitionable state is entered it executes a behavior.
     	    For example, a transitionable state called "Display Form" may display a form to the user.
     	    The outcome of the state's execution, called an event, is used to drive execution of 
     	    one of the state's transitions.  For example, the user may press the form submit button which
@@ -622,6 +622,9 @@
 				<para>State class diagram</para>
 			</caption>
 		</mediaobject>
+    	<para>
+    		As you will see, with these five basic state types you can develop rich controller modules.
+    	</para>		
     	<sect2 id="viewState">
     		<title>ViewState</title>
     		<para>
@@ -633,7 +636,7 @@
 	    					The entered view state makes a <literal>org.springframework.webflow.ViewSelection</literal> 
 		   	 				that selects a <emphasis>logical</emphasis> response to issue with the data necessary 
    			 				to issue it.
-   		 			</para>
+   		 				</para>
     				</listitem>
     				<listitem>
     					<para>
@@ -718,19 +721,19 @@
               				<entry>FlowExecutionRedirect</entry>
               				<entry>
               					Requests a redirect back to a ViewState at a unique <emphasis>flow execution URL</emphasis>.  
-              					When this URL is accessed on subsequent requests, an ApplicationView will be reconstituted and rendered.
-              					The URL is refreshable while the conversation remains active.
+              					When this URL is accessed on subsequent requests an ApplicationView will be reconstituted and rendered.
+              					The URL is refreshable while the flow execution remains active.
 								<para>        				
               						Multiple flow execution URLs may be generated for a single logical conversation.  
-              						Each flow execution URL provides access to a paused flow execution continuation waiting in a restorable ViewState.
-              						Accessing the URL refreshes the conversation at that state.
+              						In that case each flow execution URL provides access to a paused flow execution continuation waiting in a restorable ViewState.
+              						Accessing the URL refreshes the execution from that state.
               					</para>
               				</entry>
  						</row>
             			<row>
               				<entry>FlowRedirect</entry>
               				<entry>
-              					Requests a redirect that launches an entirely new flow--a new conversation.  Used to support 
+              					Requests a redirect that launches an entirely new flow execution.  Used to support 
               					<emphasis>redirect to flow</emphasis> (flow chaining) and <emphasis>restart flow</emphasis> use cases.
               				</entry>
  						</row>
@@ -787,7 +790,7 @@
               					<entry>FlowRedirectViewSelector</entry>
 								<entry>
 									Returns a FlowRedirect with a <literal>flowId</literal> and <literal>inputMap</literal> requesting 
-									the start of an entirely new conversation (an instance of the Flow identified by the flowId).
+									the start of an entirely new flow execution (an instance of the Flow identified by the flowId).
 									Useful for <emphasis>redirect after flow completion</emphasis>, where one flow ending should trigger
 									the start of another flow, independently.
 								</entry>
@@ -798,7 +801,7 @@
 									Returns an ExternalRedirect that triggers a browser redirect to an abitrary external URL.
 									Mainly used by end states to redirect to external systems after flow completion,
 									but can also be used by view states to interface with an external system that may
-									call back into the conversation at a later point.
+									call back into the flow execution at a later point.
 								</entry>
 	        	   	        </row>
 	            		</tbody>
@@ -1245,7 +1248,7 @@
     &lt;/flow&gt;
     			</programlisting>
     			    This state definition reads "<emphasis>when the <literal>executeSearch</literal>
-    			    state is entered, execute the <literal>executeSearch</literal> method on the
+    			    state is entered, call the <literal>executeSearch</literal> method on the
     			    <literal>searchFlowAction</literal>.  On successful execution,
     			    transition to the <literal>displayResults</literal> state</emphasis>."
     			</para>
@@ -1337,7 +1340,7 @@
     &lt;/flow&gt;
     			</programlisting>
     			    This state definition reads "<emphasis>when the <literal>executeSearch</literal>
-    			    state is entered, execute the <literal>executeSearch</literal> method on the
+    			    state is entered, call the <literal>executeSearch</literal> method on the
     			    <literal>searchService</literal> passing it the object indexed by name <literal>criteria</literal>
     			    in <literal>flowScope</literal>.  On successful execution, expose the method 
     			    return value in request scope under the name <literal>results</literal> 
@@ -1394,7 +1397,7 @@
     	    ...
             addActionState("executeSearch",
                 action("searchService", method("search(${flowScope.searchCriteria})"), result("results"))
-                transition(on("success"), to("displayResults")));
+                    transition(on("success"), to("displayResults")));
             ...    	          
         }
     }	

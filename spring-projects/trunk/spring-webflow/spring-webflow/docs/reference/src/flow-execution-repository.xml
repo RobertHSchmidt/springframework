@@ -4,22 +4,22 @@
 	<sect1 id="repository-intro">
 		<title>Introduction</title>
 		<para>
-			A flow execution represents the state of a conversation <emphasis>at a point in time</emphasis>.
-			At runtime there can be any number of conversations active in parallel.  There can also
-			be multiple conversations initiated by the same user ongoing at the same time (for example,
-			for when a user is operating multiple windows or tabs within their browser).
+			A flow execution represents an executing flow <emphasis>at a point in time</emphasis>.
+			At runtime there can be any number of flow executions active in parallel.  A single user
+			can even have multiple executions active at the same time (for example, when a user is
+			operating multiple windows or tabs within their browser).
 		</para>
 		<para>
-			Many of these conversations span multiple requests into the server and therefore 
+			Many of these flow executions span multiple requests into the server and therefore 
 			must be saved so they can be resumed on subsequent requests.  This presents technical
-			challenges, as there must exist a stable mechanism for a request to be associated
-			with a restored conversation in a state that matches what the user expects.  This problem 
+			challenges, as there must exist a stable mechanism for a new request to be associated
+			with an existing execution in a state that matches what the user expects.  This problem 
 			is more difficult when you consider that many applications require use of browser
-			navigational buttons, and their use involves updating local history without 
+			navigational buttons and their use involves updating local history without 
 			notifying the server.
 		</para>
 		<para>
-			The problem of conversation persistence is addressed by Spring Web Flow's <emphasis>flow
+			The problem of flow execution persistence is addressed by Spring Web Flow's <emphasis>flow
 			execution repository subsystem</emphasis>.  In this chapter you will learn how to use the system
 			to manage the storage of active web conversations in a stable manner.
 		</para>
@@ -42,7 +42,7 @@
 				<listitem>
 					<para>			
 						User input is provided by <emphasis>signaling an event</emphasis> that
-						<emphasis>resumes</emphasis> the flow execution in the paused ViewState.
+						<emphasis>resumes</emphasis> the flow execution in the paused view state.
 						The input event communicates what user action was taken.
 					</para>					
     			</listitem>
@@ -76,7 +76,7 @@
 				<imagedata fileref="images/flowexecution-restoration.png" format="PNG" align="center"/>
 			</imageobject>
 			<caption>
-				<para>Request two (2) - Paused flow execution restoration, Ended conversation invalidation</para>
+				<para>Request two (2) - Paused flow execution restoration, Removal on end</para>
 			</caption>
 		</mediaobject>    	
     </sect1>
@@ -87,9 +87,9 @@
    			and the server.  As outlined, a new flow execution that is still active after startup
    			processing indicates the start of a conversation that will span more than one request
    			and needs to be persisted.  When this is the case, that flow execution is assigned
-   			an <emphasis>persistent identity</emphasis> by the repository
-   			that consists of a two-part composite key.  This key is used by clients to
-   			restore the flow execution on subsequent requests.
+   			an <emphasis>persistent identifer</emphasis> by the repository.  By default the
+   			structure of this identifier consists of a two-part composite key.  This key is used
+   			by clients to restore the flow execution on subsequent requests.
     	</para>
     	<sect2 id="conversationId">
     		<title>Conversation identifier</title>
@@ -104,7 +104,7 @@
 	    	<title>Continuation identifier</title>
 			<para>
     			The second part of a flow execution's persistent identity is a <emphasis>continuation identifier</emphasis>.
-    			This identifier serves as an index into the state of the conversation 
+    			This identifier serves as an index into a flow execution representing the state of the conversation 
     			<emphasis>at this point in time</emphasis>.
 			</para>
 		</sect2>
@@ -120,9 +120,9 @@
 	    </sect2>
     	<para>
     		So on a subsequent request the conversation is resumed by restoring a flow execution
-    		from the repository using the two-part key.  After event processing, if the 
+    		from the repository using the two-part key.  After event processing if the 
     		flow execution is still active it is saved back out to the repository.
-    		At this time a new flow execution key is generated.  That key
+    		At this time a new flow execution key is generated.  By default that key
     		retains the	same <emphasis>conversation identifier</emphasis>, as the same logical 
     		conversation is in progress; however the <emphasis>continuation identifier</emphasis>
     		changes to provide an index into the state of the flow execution
@@ -140,12 +140,11 @@
     	<para>
     		When a flow execution reaches an end state it terminates.  If the flow execution was associated 
     		with a logical conversation that spanned more than on request, it is removed from the 
-    		repository.  More specifically, the entire conversation is <emphasis>invalidated</emphasis>, 
+    		repository.  More specifically, the entire conversation is <emphasis>ended</emphasis>, 
     		resulting in any flow executions associated with the conversation being purged.
-    		This process is dubbed <emphasis>conversation invalidation after completion</emphasis>.
     	</para>
     	<para>
-    		Once a conversation has been invalidated the conversation identifier is no longer valid
+    		Once a conversation has been ended the conversation identifier is no longer valid
     		and cannot ever be used again.
     	</para>
     </sect1>
@@ -223,11 +222,10 @@
 				the state it was in when it was serialized.
 			</para>
 			<para>
- 		 		Note this repository implementation does not currently support
+ 		 		Note this repository implementation by default does not currently support
 				<emphasis>conversation invalidation after completion</emphasis>, as 
 				this capability requires tracking active conversations using some
-				form of centralized storage, like a database table. This implementation will be
-				likely enhanced in a future release to provide this capability.
+				form of centralized storage, like a database table.
 			</para>
 			<para>
 				Also note that storing state (a flow execution continuation) on the client
