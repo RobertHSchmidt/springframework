@@ -28,7 +28,7 @@
 	</tr>
 	<tr>
 		<td colspan="2" class="buttonBar">
-			<html:image src="images/submit.jpg" property="_eventId_submit" value="Calculate Age"/>
+			<html:image src="images/submit.gif" property="_eventId_submit" value="Calculate Age"/>
 			<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">
 		</td>
 	</tr>
