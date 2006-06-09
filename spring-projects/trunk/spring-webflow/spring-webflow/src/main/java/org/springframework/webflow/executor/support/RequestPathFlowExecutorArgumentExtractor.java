@@ -59,13 +59,13 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 	 * <li>With request path appending turned on:
 	 * 
 	 * <pre>
-	 *       /booking/12345
+	 *        /booking/12345
 	 * </pre>
 	 * 
 	 * <li>With request path appending turned off:
 	 * 
 	 * <pre>
-	 *       /booking?bookingId=12345
+	 *        /booking?bookingId=12345
 	 * </pre>
 	 * 
 	 * </ul>
@@ -119,14 +119,15 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 		}
 	}
 
-	public String createFlowExecutionUrl(String key, FlowExecutionContext flowExecution, ExternalContext context) {
+	public String createFlowExecutionUrl(String flowExecutionKey, FlowExecutionContext flowExecution,
+			ExternalContext context) {
 		StringBuffer flowExecutionUrl = new StringBuffer();
 		flowExecutionUrl.append(context.getContextPath());
 		flowExecutionUrl.append(context.getDispatcherPath());
 		flowExecutionUrl.append(PATH_SEPARATOR_CHARACTER);
 		flowExecutionUrl.append(flowExecution.getActiveSession().getFlow().getId());
 		flowExecutionUrl.append('?');
-		appendQueryParameter(getFlowExecutionKeyParameterName(), key, flowExecutionUrl);
+		appendQueryParameter(getFlowExecutionKeyParameterName(), flowExecutionKey, flowExecutionUrl);
 		return flowExecutionUrl.toString();
 	}
 
