@@ -4,6 +4,13 @@ http://www.springframework.org
 
 Changes in version 1.0-M1
 -------------------------
+Package org.springframework.oxm.jaxb
+* added support for JAXB 2: refactored JaxbMarshaller into AbstractJaxbMarshaller, Jaxb1Marshaller and Jaxb2Marshaller
+* made JaxbMarshallers thread safe
+
+Package org.springframework.ws.axiom
+* added AXIOM (AXis Object Model) implementation of SoapMessage hierarchy
+
 Package org.springframework.ws.endpoint
 * added AbstractDom4JPayloadEndpoint
 * added AbstractXomPayloadEndpoint
@@ -12,16 +19,10 @@ Package org.springframework.ws.endpoint
 Package org.springframework.ws.soap
 * added SoapFaultDetail and SoapFaultDetailElement
 * improved SoapMessage test suite
-
-Package org.springframework.ws.axiom
-* added AXIOM (AXis Object Model) implementation of SoapMessage hierarchy
+* fixed serious bug which resulted in not-understood mustUnderstand headers being silently ignored
 
 Package org.springframework.ws.soap.endpoint
 * added SimpleSoapExceptionResolver
-
-Package org.springframework.oxm.jaxb
-* added support for JAXB 2: refactored JaxbMarshaller into AbstractJaxbMarshaller, Jaxb1Marshaller and Jaxb2Marshaller
-* made JaxbMarshallers thread safe
 
 Package org.springframework.xml.transform
 * added StaxSource and StaxResult, which allow for StAX readers/writers to be used as javax.xml.transform.Source and

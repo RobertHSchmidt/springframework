@@ -87,7 +87,7 @@ public class SoapMessageDispatcher extends MessageDispatcher {
     /**
      * Handles the request for a single SOAP role. Iterates over all <code>MustUnderstand</code> headers for a specific
      * role, and determines whether these are understood by any of the registered <code>SoapEndpointInterceptor</code>.
-     * If they are, returns <code>true</code>. If they are not, a SOAP fault is created.
+     * If they are, returns <code>true</code>. If they are not, a SOAP fault is created, and false is returned.
      *
      * @see SoapEndpointInterceptor#understands(SoapHeaderElement)
      * @see SoapMessageUtils#addMustUnderstandFault(SoapMessage, javax.xml.namespace.QName[])
@@ -100,18 +100,31 @@ public class SoapMessageDispatcher extends MessageDispatcher {
         Iterator iterator = requestHeader.examineMustUnderstandHeaderElements(role);
         while (iterator.hasNext()) {
             SoapHeaderElement headerElement = (SoapHeaderElement) iterator.next();
+            QName headerName = headerElement.getName();
+            if (logger.isDebugEnabled()) {
+                logger.debug("Received mustUnderstand header with name: " + headerName);
+            }
+            boolean understood = false;
             for (int i = 0; i < mappedEndpoint.getInterceptors().length; i++) {
                 EndpointInterceptor interceptor = mappedEndpoint.getInterceptors()[i];
                 if (interceptor instanceof SoapEndpointInterceptor &&
-                        (!((SoapEndpointInterceptor) interceptor).understands(headerElement))) {
-                    notUnderstoodHeaderNames.add(headerElement.getName());
+                        (((SoapEndpointInterceptor) interceptor).understands(headerElement))) {
+                    understood = true;
+                    break;
                 }
+            }
+            if (!understood) {
+                notUnderstoodHeaderNames.add(headerName);
             }
         }
         if (notUnderstoodHeaderNames.isEmpty()) {
             return true;
         }
         else {
+            if (logger.isWarnEnabled()) {
+                logger.warn(
+                        "Could not handle mustUnderstand headers: " + notUnderstoodHeaderNames + ". Returning fault");
+            }
             SoapMessage response = (SoapMessage) messageContext.createSoapResponse();
             SoapFault fault = SoapMessageUtils.addMustUnderstandFault(response,
                     (QName[]) notUnderstoodHeaderNames.toArray(new QName[notUnderstoodHeaderNames.size()]));
