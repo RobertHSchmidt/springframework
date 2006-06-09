@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-// Uncomment this for running JAXB2 unit tests
+/*
+Uncomment this for running JAXB2 unit tests. Make sure to that the project.properties contains
+
+javac.source=1.5
+javac.target=1.5
+*/
+
 /*
 package org.springframework.oxm.jaxb;
 

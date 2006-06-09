@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-// Uncomment this for running JAXB2 unit tests
 /*
+Uncomment this for running JAXB2 unit tests. Make sure to that the project.properties contains
 
+javac.source=1.5
+javac.target=1.5
+*/
+
+/*
 package org.springframework.oxm.jaxb;
 
+import java.io.StringWriter;
 import java.util.Collections;
 
+import javax.xml.transform.Result;
+import javax.xml.transform.stream.StreamResult;
+
 import org.springframework.oxm.Marshaller;
+import org.springframework.oxm.XmlMappingException;
 import org.springframework.oxm.jaxb2.FlightType;
 import org.springframework.oxm.jaxb2.Flights;
 
@@ -50,6 +60,43 @@ public class Jaxb2MarshallerTest extends AbstractJaxbMarshallerTestCase {
         marshaller.setMarshallerProperties(
                 Collections.singletonMap(javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE));
         marshaller.afterPropertiesSet();
+    }
+
+    public void testNoContextPathOrClassesToBeBound() throws Exception {
+        try {
+            Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+            marshaller.afterPropertiesSet();
+            fail("Should have thrown an IllegalArgumentException");
+        }
+        catch (IllegalArgumentException e) {
+        }
+    }
+
+    public void testInvalidContextPath() throws Exception {
+        try {
+            Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+            marshaller.setContextPath("ab");
+            marshaller.afterPropertiesSet();
+            fail("Should have thrown an XmlMappingException");
+        }
+        catch (XmlMappingException ex) {
+        }
+    }
+
+    public void testMarshalInvalidClass() throws Exception {
+        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+        marshaller.setClassesToBeBound(new Class[]{FlightType.class});
+        marshaller.afterPropertiesSet();
+        Result result = new StreamResult(new StringWriter());
+        Flights flights = new Flights();
+        try {
+            marshaller.marshal(flights, result);
+            fail("Should have thrown an MarshallingFailureException");
+        }
+        catch (XmlMappingException ex) {
+            // expected
+        }
+
     }
 }
 */

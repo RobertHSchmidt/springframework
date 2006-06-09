@@ -7,6 +7,7 @@ Changes in version 1.0-M1
 Package org.springframework.oxm.jaxb
 * added support for JAXB 2: refactored JaxbMarshaller into AbstractJaxbMarshaller, Jaxb1Marshaller and Jaxb2Marshaller
 * made JaxbMarshallers thread safe
+* added property for a ValidationEventHandler
 
 Package org.springframework.ws.axiom
 * added AXIOM (AXis Object Model) implementation of SoapMessage hierarchy
