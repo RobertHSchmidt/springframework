@@ -25,11 +25,7 @@ public class InvalidContinuationIdException extends FlowExecutionRepositoryExcep
 	 * @param continuationId the invalid continuation id
 	 */
 	public InvalidContinuationIdException(Serializable continuationId) {
-		super("The continuation id '" + continuationId
-				+ "' is invalid.  This will happen when accessing browser history "
-				+ "(typically via the back button) that references a previously used continuation id, "
-				+ "as this repository implementation does not support multiple continuations.  "
-				+ "Consider using another repository implementation or restrict use of the browser back button.");
+		super("The continuation id '" + continuationId + "' is invalid.  Access to flow execution denied.");
 	}
 
 	/**
