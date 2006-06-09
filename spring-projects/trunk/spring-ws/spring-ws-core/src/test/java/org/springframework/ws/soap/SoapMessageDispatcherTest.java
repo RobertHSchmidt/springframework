@@ -96,6 +96,7 @@ public class SoapMessageDispatcherTest extends TestCase {
         messageControl.expectAndReturn(requestMock.getSoapHeader(), headerMock);
         headerControl.expectAndReturn(headerMock.examineMustUnderstandHeaderElements(role),
                 Collections.singleton(headerElementMock).iterator());
+        headerElementControl.expectAndReturn(headerElementMock.getName(), new QName("header"));
         interceptorControl.expectAndReturn(interceptorMock.understands(headerElementMock), true);
         replayMockControls();
 
@@ -155,6 +156,8 @@ public class SoapMessageDispatcherTest extends TestCase {
                 Collections.singleton(headerElementMock).iterator());
         headerControl.expectAndReturn(headerMock.examineMustUnderstandHeaderElements(versionRole),
                 Collections.singleton(headerElementMock).iterator());
+        headerElementControl.expectAndReturn(headerElementMock.getName(), new QName("header"));
+        headerElementControl.expectAndReturn(headerElementMock.getName(), new QName("header"));
         interceptorControl.expectAndReturn(interceptorMock.understands(headerElementMock), true);
         interceptorControl.expectAndReturn(interceptorMock.understands(headerElementMock), true);
         contextControl.expectAndReturn(contextMock.getSoapRequest(), requestMock);
@@ -215,4 +218,5 @@ public class SoapMessageDispatcherTest extends TestCase {
         assertEquals("Invalid role", "role", roles[0]);
         assertEquals("Invalid role", SoapVersion.SOAP_11.getNextRoleUri(), roles[1]);
     }
+
 }
