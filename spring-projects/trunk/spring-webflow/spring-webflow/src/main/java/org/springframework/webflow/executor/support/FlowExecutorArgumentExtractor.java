@@ -425,17 +425,18 @@ public class FlowExecutorArgumentExtractor {
 	 * last) view selection</i> made by the flow execution identified by the
 	 * flow execution key. Used to support the <i>flow execution redirect</i>
 	 * use case.
-	 * @param key the flow execution key
+	 * @param flowExecutionKey the flow execution key
 	 * @param flowExecution the flow execution
 	 * @param context the external context
 	 * @return the relative conversation URL path
 	 */
-	public String createFlowExecutionUrl(String key, FlowExecutionContext flowExecution, ExternalContext context) {
+	public String createFlowExecutionUrl(String flowExecutionKey, FlowExecutionContext flowExecution,
+			ExternalContext context) {
 		StringBuffer flowExecutionUrl = new StringBuffer();
 		flowExecutionUrl.append(context.getContextPath());
 		flowExecutionUrl.append(context.getDispatcherPath());
 		flowExecutionUrl.append('?');
-		appendQueryParameter(flowExecutionKeyParameterName, key, flowExecutionUrl);
+		appendQueryParameter(flowExecutionKeyParameterName, flowExecutionKey, flowExecutionUrl);
 		return flowExecutionUrl.toString();
 	}
 
