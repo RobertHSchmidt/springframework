@@ -8,7 +8,7 @@
 				<artifact pattern="${integration.repo.dir}/artifacts/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
 			</filesystem>
 
-- 			<filesystem name="filesystem-repo">
+ 			<filesystem name="filesystem-repo">
   				<ivy pattern="${repository.dir}/[organisation]/[module]/ivy-[revision].xml" /> 
 				<artifact pattern="${repository.dir}/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" /> 
 			</filesystem>
@@ -25,6 +25,11 @@
 		</chain>
 
 		<chain name="third-party" returnFirst="true">
+
+ 			<filesystem name="filesystem-repo">
+  				<ivy pattern="${repository.dir}/[organisation]/[module]/ivy-[revision].xml" /> 
+				<artifact pattern="${repository.dir}/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" /> 
+			</filesystem>
 
 			<url name="spring-repo-ext" m2compatible="true">
 				<ivy pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo-ext/[organisation]/[module]/ivy-[revision].xml" />
