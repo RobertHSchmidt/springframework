@@ -27,8 +27,8 @@
     	<programlisting>
     public interface FlowExecutor {
         ResponseInstruction launch(String flowId, ExternalContext context);
-        ResponseInstruction signalEvent(String eventId, FlowExecutionKey flowExecutionKey, ExternalContext context);
-        ResponseInstruction refresh(FlowExecutionKey flowExecutionKey, ExternalContext context);
+        ResponseInstruction signalEvent(String eventId, String flowExecutionKey, ExternalContext context);
+        ResponseInstruction refresh(String flowExecutionKey, ExternalContext context);
     }    	
     	</programlisting>
     	<para>
@@ -46,8 +46,7 @@
     			</listitem>
     			<listitem>
     				<para>
-    					Request that the last response issued by an active conversation or 
-    					specific flow execution continuation be re-issued. 
+    					Request that the last response issued by a flow execution be re-issued. 
     					Unlike start and signalEvent, the refresh operations are idempotent operations
     					that does not affect the state of a flow execution.
     				</para>
@@ -79,9 +78,9 @@
 			</caption>
 		</mediaobject>
 		<para>
-			As you can see, an <literal>ExternalContext</literal> implementation exists for each of the environments
-			Spring Web Flow supports.  If a flow artifact such as an action needs to access
-			native constructs of the calling environment it can downcast the context to the
+			As you can see, an <literal>ExternalContext</literal> implementation exists for each of
+			the environments Spring Web Flow supports.  If a flow artifact such as an Action needs
+			to access native constructs of the calling environment it can downcast a context to its
 			specific implementation.  The need for such downcasting is considered a special case.
 		</para>
     	<sect2 id="flowexecutor-impl">
@@ -124,7 +123,7 @@
 							<entry> 
 								<emphasis>1</emphasis>
 							</entry>
-							<entry>SimpleFlowExecutionRepositoryFactory</entry>
+							<entry>DefaultFlowExecutionRepositoryFactory</entry>
 						</row>
 					</tbody>
 				</tgroup>
@@ -163,7 +162,7 @@
 	    	</programlisting>
     	</sect2>		
     	<para>
-    		This executor is configured with a continuation-based repository factory, which accesses 
+    		This executor is configured with a continuation-based repository factory which creates 
     		stateful continuation repositories managed in the user session.
     	</para>	
     </sect1>
@@ -220,7 +219,7 @@
 		<title>Flow executor parameterization</title>
 		<para>
 			Spring Web Flow allows for full control over how flow executor method parameters such as the
-			<literal>flowId</literal>, <literal>flowExecutionKey</literal>, <literal>eventId</literal>, and <literal>conversationId</literal> 
+			<literal>flowId</literal>, <literal>flowExecutionKey</literal>, and <literal>eventId</literal> 
 			are extracted from an incoming controller request with the <literal>org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor</literal>
 			strategy.  The default strategy is request-parameter based.  Support for request path-based 
 			parameter extraction (REST-style URLs) is also provided.
@@ -255,10 +254,6 @@
 	    	<programlisting>
     &lt;a href="flowController.htm?_flowExecutionKey=${flowExecutionKey}&amp;eventId=submit"/&gt;
 	    	</programlisting>
-	    	<para>
-	    		The string-encoded _flowExecutionKey parameter is parsed into a <literal>FlowExecutionKey</literal> 
-	    		identity object automatically, using a <literal>FlowExecutionKeyFormatter</literal> by default.
-	    	</para>
     	</sect2>
     	<sect2 id="executor-mvc-resume-form">
     		<title>Resuming a flow execution - form</title>
@@ -270,10 +265,6 @@
         &lt;input type="submit" class="button" value="Submit"&gt;
     &lt;/form&gt;
 	    	</programlisting>
-	    	<para>
-	    		The string-encoded _flowExecutionKey parameter is parsed into a <literal>FlowExecutionKey</literal> 
-	    		identity object automatically, using a <literal>FlowExecutionKeyFormatter</literal> by default.
-	    	</para>
     	</sect2>
     	<sect2 id="executor-mvc-resume-form-buttons">
     		<title>Resuming a flow execution - multiple form buttons</title>
@@ -286,9 +277,7 @@
     &lt;/form&gt;
 	    	</programlisting>
 	    	<para>
-	    		The string-encoded _flowExecutionKey parameter is parsed into a <literal>FlowExecutionKey</literal> 
-	    		identity object automatically, using a <literal>FlowExecutionKeyFormatter</literal> by default.
-	    		The <literal>eventId</literal> is determined by parsing the parameter name of the 
+	    		Note in this case the <literal>eventId</literal> is determined by parsing the parameter name of the 
 	    		button that was pressed.
 	    	</para>
     	</sect2>
@@ -297,8 +286,8 @@
 		<title>Struts integration</title>
 		<para>
 			Spring Web Flow integrates with Struts 1.x or >.  The integration is very similiar to 
-			Spring MVC, where a single front controller (FlowAction) drives the execution of all flows
-			for the application, delegating to a configured flow executor.
+			Spring MVC where a single front controller (FlowAction) drives the execution of all flows
+			for the application by delegating to a configured flow executor.
 		</para>
     	<sect2 id="executor-struts-simple">
     		<title>A single flow action executing all flows</title>
