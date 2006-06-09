@@ -1740,12 +1740,6 @@
     			    When the <literal>shipping</literal> flow ends, respond to the <literal>finish</literal> 
     			    result event by transitioning to the <literal>placeOrder</literal> state</emphasis>."
     			</para>
-    			<para>
-    				Note how the inner structure and behavior of the shipping flow is fully encapsulated within 
-    				its own flow definition.  A flow calling another flow as a subflow can pass that flow input 
-    				and capture its output, but it cannot see inside it.  Flows are <emphasis>black boxes</emphasis>.
-    				Because any flow can be used as a subflow, it can be reused in other contexts without change.
-    			</para>
 			</sect3>
     	    <sect3 id="subflowStateJava">
     	    	<title>SubflowState API - input attributes</title>
@@ -1769,6 +1763,41 @@
     }	
     			</programlisting>
     		</sect3>
+   			<para>
+   				Note how the inner structure and behavior of the <literal>shipping</literal> flow is fully encapsulated within 
+   				its own flow definition.  A flow calling another flow as a subflow can pass that flow input 
+   				and capture its output, but it cannot see inside it.  Flows are <emphasis>black boxes</emphasis>.
+   				Because any flow can be used as a subflow, it can be reused in other contexts without change.
+   			</para>
+   			<para>
+   				Internally within the definition of the <literal>shipping</literal> flow referenced above, the flow 
+   				may choose to map the <literal>shipping</literal> input attribute into its own scope using
+   				its input mapper when it starts.  Any input attributes must be explictly mapped, defining the input
+   				contract for the flow:
+   			</para>
+    	    <sect3 id="flowInputMapping">
+    	    	<title>Flow input mapping - input contract</title>
+    	    	<programlisting>
+    &lt;flow start-state="displayShippingForm"&gt;
+    
+        &lt;input-mapper&gt;
+            &lt;mapping source="shipping" target="flowScope.shipping"/&gt;
+        &lt;/input-mapper&gt;
+		        
+        ...
+        
+    &lt;/flow&gt;
+    			</programlisting>
+    			<para>
+    			    This input mapper declaration reads "<emphasis>when a new execution of this flow starts
+    			    map the <literal>shipping</literal> input attribute into <literal>flowScope</literal> under
+    			    the name <literal>shipping</literal></emphasis>." 
+    			</para>
+    			<para>
+    				Had this input mapping not been defined the shipping attribute made available as input 
+    				to this flow by a calling parent flow or external client would have been ignored.
+    			</para>
+			</sect3>
     	</sect2>
     	<sect2 id="endState">
     		<title>EndState</title>
@@ -1926,13 +1955,7 @@
     			    and expose the <literal>shipping</literal> property in flow scope as an output attribute
     			    with name <literal>shipping</literal></emphasis>."
     			</para>
-    			<para>
-    			    Since this end-state does not make a view selection it is expected this flow will be always used 
-    			    as a subflow.  When this flow ends, the calling parent flow is expected to respond to the 
-    			    <literal>finish</literal> result, and may map the <literal>shipping</literal> output 
-    			    attribute into its own scope.
-    			</para>
-			</sect3>
+    		</sect3>
     	    <sect3 id="endStateJava-outputattribute">
     	    	<title>EndState API - flow output attribute</title>
     	    	<para>
@@ -1950,6 +1973,44 @@
     }	
     			</programlisting>
     		</sect3>
+   			<para>
+   			    Since this end-state does not make a view selection it is expected this flow will be always used 
+   			    as a subflow.  When this flow ends, the calling parent flow is expected to respond to the 
+   			    <literal>finish</literal> result, and may choose to map the <literal>shipping</literal> output 
+   			    attribute into its own scope.
+   			</para>
+    	    <sect3 id="subflowStateXml-output">
+    	    	<title>SubflowState XML - mapping an output attribute</title>
+    	    	<programlisting>
+    &lt;flow start-state="enterOrderInformation"&gt;
+    
+        ...
+		        
+        &lt;subflow-state id="enterShippingDetails" flow="shipping"&gt;
+            &lt;attribute-mapper&gt;
+                &lt;output-mapper&gt;
+                    &lt;mapping source="shipping" target="flowScope.shipping"/&gt;
+                &lt;/output-mapper&gt;
+            &lt;/attribute-mapper&gt;
+            &lt;transition on="finish" to="placeOrder"/>
+        &lt;/subflow-state&gt;
+        
+        ...
+        
+    &lt;/flow&gt;
+    			</programlisting>
+    			<para>
+    			    This subflow state definition reads "<emphasis>spawn the <literal>shipping</literal> flow. 
+    			    When the <literal>shipping</literal> flow ends map the <literal>shipping</literal> output 
+    			    attribute into flow scope under the name <literal>shipping</literal>, then respond to
+    			    the <literal>finish</literal> result event by transitioning to
+    			    the <literal>placeOrder</literal> state</emphasis>."
+    			</para>
+    			<para>
+    				Had this output mapping not been defined the shipping attribute made available as output 
+    				to this flow by ending subflow would have been ignored.
+    			</para>
+			</sect3>   			
     	</sect2>
     </sect1>
 </chapter>
