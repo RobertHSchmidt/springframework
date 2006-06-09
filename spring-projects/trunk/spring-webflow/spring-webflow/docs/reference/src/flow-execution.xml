@@ -21,8 +21,8 @@
     	<para>
 		    A <emphasis>flow execution</emphasis> is a single instance of a flow at a given point in 
             time, realized by an instance of <literal>org.springframework.webflow.execution.FlowExecution</literal>.
-		    A flow execution represents the state of a conversation at a point in time.
-		    Given an instance  of <literal>org.springframework.webflow.Flow</literal>, any
+		    A flow execution represents the state of a flow at a point in time.
+		    Given an instance of <literal>org.springframework.webflow.Flow</literal>, any
 		    number of flow executions can be created.  A flow definition serves as the
 		    instructional blueprint for a flow execution.  
 		</para>
@@ -140,10 +140,10 @@
 	<sect1 id="execution-context">
 		<title>Flow execution context</title>
 		<para>
-			Once created, a flow execution, representing the state of a conversation at a point in time, 
+			Once created, a flow execution, representing the state of a flow at a point in time, 
 			maintains contextual state about itself that can be reasoned upon by clients.  In addition,
 			a flow execution exposes two data structures, called scopes, that allow clients to set 
-			arbitrary attributes that are managed by the conversation.
+			arbitrary attributes that are managed by the execution.
 		</para>
 		<para>
 			The contextual properties associated with a flow execution are summarized below:
@@ -193,17 +193,6 @@
 							and what state it is in.  The active session can change over the life of the 
 							flow execution because a flow can spawn another flow as a subflow.
 							This property can only be queried while the flow execution is active.
-						</entry>
-						<entry>
-							<emphasis>1</emphasis>
-						</entry>
-					</row>
-					<row>
-   						<entry>scope</entry>
-						<entry>
-							A data map that forms the basis for <emphasis>conversational scope</emphasis>.
-							Arbitrary attributes placed in this map will be retained for the scope 
-							of the conversation.  This map is <emphasis>shared</emphasis> by all flow sessions.
 						</entry>
 						<entry>
 							<emphasis>1</emphasis>
