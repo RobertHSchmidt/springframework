@@ -20,6 +20,7 @@ import java.io.Serializable;
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 import org.springframework.webflow.execution.repository.conversation.ConversationService;
 import org.springframework.webflow.execution.repository.conversation.impl.LocalConversationService;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
@@ -95,8 +96,13 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
 		FlowExecutionEntry entry = getEntry(key);
-		FlowExecution flowExecution = entry.getFlowExecution(getContinuationId(key));
-		return rehydrate(flowExecution, key);
+		try {
+			FlowExecution flowExecution = entry.getFlowExecution(getContinuationId(key));
+			return rehydrate(flowExecution, key);
+		}
+		catch (InvalidContinuationIdException e) {
+			throw new NoSuchFlowExecutionException(key, e);
+		}
 	}
 
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
