@@ -715,25 +715,13 @@
               				<entry>Requests the rendering of a local, internal application view resource such as a JSP, Velocity, or Freemarker template.</entry>
  						</row>
             			<row>
-              				<entry>ConversationRedirect</entry>
-              				<entry>
-              					Requests a redirect back to the current ViewState at a unique <emphasis>conversation URL</emphasis>.  
-              					When this URL is accessed on subsequent requests, an ApplicationView will be reconstituted and rendered.
-              					The URL is refreshable while the conversation remains active.
-              					<para>
-	              					The conversation URL does not change for the duration of the conversation, even as the conversation progresses 
-	              					from step to step.  Accessing the URL always refreshes the current state of the conversation.
-    	          				</para>
-              				</entry>
- 						</row>
-            			<row>
               				<entry>FlowExecutionRedirect</entry>
               				<entry>
               					Requests a redirect back to a ViewState at a unique <emphasis>flow execution URL</emphasis>.  
               					When this URL is accessed on subsequent requests, an ApplicationView will be reconstituted and rendered.
               					The URL is refreshable while the conversation remains active.
 								<para>        				
-              						Unlike the ConversationRedirect URL, multiple flow execution URLs may be generated for a single logical conversation.  
+              						Multiple flow execution URLs may be generated for a single logical conversation.  
               						Each flow execution URL provides access to a paused flow execution continuation waiting in a restorable ViewState.
               						Accessing the URL refreshes the conversation at that state.
               					</para>
@@ -915,29 +903,6 @@
         }
     }	
     			</programlisting>
-			</sect3>
-    	    <sect3 id="viewStateXml-conversationRedirect">
-    	    	<title>ViewState XML - conversation redirect</title>
-    	    	<para>
-    	    	    The following example illustrates a <literal>view-state</literal> definition in XML that makes a
-    	    	    conversation redirect selection when entered, redirecting to the
-    	    	    <literal>yourList</literal> view for display.
-    	    	</para>
-    	    	<programlisting>
-    &lt;flow start-state="displayList"&gt;
-        &lt;view-state id="displayList" view="conversationRedirect:yourList"&gt;
-            &lt;transition on="add" to="addListItem"/&gt;
-        &lt;/view-state&gt;
-        
-        ...
-    &lt;/flow&gt;
-    			</programlisting>
-				<para>
-				    This is example is called a <emphasis>conversation redirect</emphasis> because the application view selected 
-				    is constructed after a redirect to a conversation URL.  The redirect <emphasis>refreshes</emphasis> the current 
-				    view state of the conversation by triggering the rendering of the <literal>yourList</literal> application view
-				    on the next request into the server.
-				</para>
 			</sect3>
     	    <sect3 id="viewStateXml-nullView">
     	    	<title>ViewState XML - null view</title>
