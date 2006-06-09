@@ -28,7 +28,6 @@
     public interface FlowExecutor {
         ResponseInstruction launch(String flowId, ExternalContext context);
         ResponseInstruction signalEvent(String eventId, FlowExecutionKey flowExecutionKey, ExternalContext context);
-        ResponseInstruction refresh(Serializable conversationId, ExternalContext context);
         ResponseInstruction refresh(FlowExecutionKey flowExecutionKey, ExternalContext context);
     }    	
     	</programlisting>
