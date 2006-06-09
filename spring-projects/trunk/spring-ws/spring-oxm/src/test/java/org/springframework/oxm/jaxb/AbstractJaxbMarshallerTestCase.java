@@ -22,7 +22,6 @@ import org.easymock.MockControl;
 import org.xml.sax.ContentHandler;
 
 import org.springframework.oxm.AbstractMarshallerTestCase;
-import org.springframework.oxm.XmlMappingException;
 
 public abstract class AbstractJaxbMarshallerTestCase extends AbstractMarshallerTestCase {
 
@@ -53,25 +52,5 @@ public abstract class AbstractJaxbMarshallerTestCase extends AbstractMarshallerT
         handlerControl.verify();
     }
 
-    public void testAfterPropertiesSetNoContextPath() throws Exception {
-        try {
-            Jaxb1Marshaller marshaller = new Jaxb1Marshaller();
-            marshaller.afterPropertiesSet();
-            fail("Should have thrown an IllegalArgumentException");
-        }
-        catch (IllegalArgumentException e) {
-        }
-    }
-
-    public void testAfterPropertiesSet() throws Exception {
-        try {
-            Jaxb1Marshaller marshaller = new Jaxb1Marshaller();
-            marshaller.setContextPath("ab");
-            marshaller.afterPropertiesSet();
-            fail("Should have thrown an XmlMappingException");
-        }
-        catch (XmlMappingException ex) {
-        }
-    }
 
 }

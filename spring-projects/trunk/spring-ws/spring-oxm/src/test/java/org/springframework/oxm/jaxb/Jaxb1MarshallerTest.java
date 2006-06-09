@@ -18,6 +18,7 @@ package org.springframework.oxm.jaxb;
 import java.util.Collections;
 
 import org.springframework.oxm.Marshaller;
+import org.springframework.oxm.XmlMappingException;
 import org.springframework.oxm.jaxb1.FlightType;
 import org.springframework.oxm.jaxb1.Flights;
 import org.springframework.oxm.jaxb1.impl.FlightTypeImpl;
@@ -49,4 +50,26 @@ public class Jaxb1MarshallerTest extends AbstractJaxbMarshallerTestCase {
                 Collections.singletonMap(javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE));
         marshaller.afterPropertiesSet();
     }
+
+    public void testNoContextPath() throws Exception {
+        try {
+            Jaxb1Marshaller marshaller = new Jaxb1Marshaller();
+            marshaller.afterPropertiesSet();
+            fail("Should have thrown an IllegalArgumentException");
+        }
+        catch (IllegalArgumentException e) {
+        }
+    }
+
+    public void testInvalidContextPath() throws Exception {
+        try {
+            Jaxb1Marshaller marshaller = new Jaxb1Marshaller();
+            marshaller.setContextPath("ab");
+            marshaller.afterPropertiesSet();
+            fail("Should have thrown an XmlMappingException");
+        }
+        catch (XmlMappingException ex) {
+        }
+    }
+
 }

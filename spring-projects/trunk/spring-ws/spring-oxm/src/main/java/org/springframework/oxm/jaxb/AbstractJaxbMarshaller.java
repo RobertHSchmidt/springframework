@@ -23,6 +23,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEventHandler;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 
@@ -31,7 +32,6 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.oxm.XmlMappingException;
-import org.springframework.util.StringUtils;
 
 /**
  * Abstract base class for implementations of the <code>Marshaller</code> and <code>Unmarshaller</code> interfaces that
@@ -59,6 +59,15 @@ public abstract class AbstractJaxbMarshaller
     private Map unmarshallerProperties;
 
     private JAXBContext jaxbContext;
+
+    private ValidationEventHandler validationEventHandler;
+
+    /**
+     * Returns the JAXB Context path.
+     */
+    protected String getContextPath() {
+        return contextPath;
+    }
 
     /**
      * Sets the JAXB Context path.
@@ -93,16 +102,19 @@ public abstract class AbstractJaxbMarshaller
         this.unmarshallerProperties = properties;
     }
 
+    /**
+     * Sets the JAXB validation event handler. This event handler will be called by JAXB if any validation errors are
+     * encountered during calls to any of the marshal API's.
+     *
+     * @param validationEventHandler the event handler
+     */
+    public void setValidationEventHandler(ValidationEventHandler validationEventHandler) {
+        this.validationEventHandler = validationEventHandler;
+    }
+
     public final void afterPropertiesSet() throws Exception {
-        if (!StringUtils.hasLength(contextPath)) {
-            throw new IllegalArgumentException("contextPath is required");
-        }
-        if (logger.isInfoEnabled()) {
-            logger.info("Using context path [" + contextPath + "]");
-        }
         try {
-            jaxbContext = JAXBContext.newInstance(contextPath);
-            afterJaxbContextCreated();
+            jaxbContext = createJaxbContext();
         }
         catch (JAXBException ex) {
             throw convertJaxbException(ex);
@@ -125,15 +137,6 @@ public abstract class AbstractJaxbMarshaller
         catch (JAXBException ex) {
             throw convertJaxbException(ex);
         }
-    }
-
-    /**
-     * Template method that can be overridden by concrete JAXB marshallers for custom initialization behavior. Gets
-     * called after creation of <code>JAXBContext</code>.
-     * <p/>
-     * Default implementation does nothing.
-     */
-    protected void afterJaxbContextCreated() throws Exception {
     }
 
     /**
@@ -162,6 +165,9 @@ public abstract class AbstractJaxbMarshaller
                     marshaller.setProperty(name, marshallerProperties.get(name));
                 }
             }
+            if (validationEventHandler != null) {
+                marshaller.setEventHandler(validationEventHandler);
+            }
             initJaxbMarshaller(marshaller);
             return marshaller;
         }
@@ -181,6 +187,9 @@ public abstract class AbstractJaxbMarshaller
                     String name = (String) iterator.next();
                     unmarshaller.setProperty(name, unmarshallerProperties.get(name));
                 }
+            }
+            if (validationEventHandler != null) {
+                unmarshaller.setEventHandler(validationEventHandler);
             }
             initJaxbUnmarshaller(unmarshaller);
             return unmarshaller;
@@ -207,4 +216,9 @@ public abstract class AbstractJaxbMarshaller
      */
     protected void initJaxbUnmarshaller(Unmarshaller unmarshaller) throws JAXBException {
     }
+
+    /**
+     * Template method that returns a newly created JAXB context. Called from <code>afterPropertiesSet()</code>.
+     */
+    protected abstract JAXBContext createJaxbContext() throws Exception;
 }

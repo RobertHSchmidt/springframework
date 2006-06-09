@@ -15,8 +15,12 @@
  */
 package org.springframework.oxm.jaxb;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.StringUtils;
 
 /**
  * Implementation of the <code>Marshaller</code> interface for JAXB 1.0.
@@ -30,7 +34,7 @@ import javax.xml.bind.Unmarshaller;
  * @see #setUnmarshallerProperties(java.util.Map)
  * @see #setValidating(boolean)
  */
-public class Jaxb1Marshaller extends AbstractJaxbMarshaller {
+public class Jaxb1Marshaller extends AbstractJaxbMarshaller implements InitializingBean {
 
     private boolean validating = false;
 
@@ -41,7 +45,18 @@ public class Jaxb1Marshaller extends AbstractJaxbMarshaller {
         this.validating = validating;
     }
 
+    protected final JAXBContext createJaxbContext() throws JAXBException {
+        if (!StringUtils.hasLength(getContextPath())) {
+            throw new IllegalArgumentException("contextPath is required");
+        }
+        if (logger.isInfoEnabled()) {
+            logger.info("Creating JAXBContext with context path [" + getContextPath() + "]");
+        }
+        return JAXBContext.newInstance(getContextPath());
+    }
+
     protected void initJaxbUnmarshaller(Unmarshaller unmarshaller) throws JAXBException {
         unmarshaller.setValidating(validating);
     }
+
 }
