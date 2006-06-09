@@ -1,8 +1,7 @@
-SPRING WEB FLOW 1.0 RELEASE CANDIDATE 2 (May 2006)
+SPRING WEB FLOW 1.0 RELEASE CANDIDATE 2 (June 2006)
 -------------------------------
-http://opensource.atlassian.com/confluence/spring/display/WEBFLOW/Home
+http://www.springframework.org/webflow
 http://forum.springframework.org
-http://www.springframework.org
 
 1. INTRODUCTION
 
@@ -28,12 +27,12 @@ SWF release contents:
 "." contains Spring Web Flow distribution units (jars and source zip archives), readme, and copyright
 "docs" contains the Spring Web Flow reference manual and API Javadocs
 "projects" contains all buildable projects, including sample applications (each importable into Eclipse)
-"projects/build-spring-webflow" contains the master build file used to build all projects
 "projects/common-build" contains the Ant 1.6 "common build system" used by all projects to compile/build/test
 "projects/repository" contains Spring Web Flow dependencies (dependent jars)
-"projects/spring-binding" contains buildable Spring Data Binding project sources, an internal library used by SWF
-"projects/spring-webflow" contains buildable Spring Web Flow project sources
-"projects/spring-webflow-samples" contains buildable Spring Web Flow sample application sources
+"projects/spring-webflow/build-spring-webflow" contains the master build file used to build all Spring Web Flow projects
+"projects/spring-webflow/spring-binding" contains buildable Spring Data Binding project sources, an internal library used by SWF
+"projects/spring-webflow/spring-webflow" contains buildable Spring Web Flow project sources
+"projects/spring-webflow/spring-webflow-samples" contains buildable Spring Web Flow sample application sources
 
 See the readme.txt within the above directories for additional information.
 
@@ -67,13 +66,13 @@ reference manual material as needed.  To build deployable .war files for all sam
 access the "build-spring-webflow" directory and execute the "dist" target. ***
 
 More information on deploying SWF sample applications can be found at:
-	projects/spring-webflow-samples/readme.txt
+	projects/spring-webflow/spring-webflow-samples/readme.txt
 	
 5. ADDITIONAL RESOURCES
 
 The Spring Web Flow homepage is located at:
 
-	http://opensource.atlassian.com/confluence/spring/display/WEBFLOW/Home
+	http://www.springframework.org/webflow
 
 There you will find resources such as a 'Quick Start' guide and a 'Frequently Asked Questions'
 section.
