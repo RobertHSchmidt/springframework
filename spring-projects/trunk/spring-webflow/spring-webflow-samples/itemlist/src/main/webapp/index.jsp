@@ -22,13 +22,6 @@
 						Launching flow's using bookmark-friendly, REST-style URLS
 					</LI>
 					<LI>
-						Support for conversation redirection, allowing refresh and
-						bookmark friendly, REST-style conversation URLs.
-					</LI>
-					<LI>
-						Double submit prevention: going back button will not allow you to resubmit data.
-					</LI>
-					<LI>
 						Use of an inline-flow, including the ability to map subflow output attributes
 						directly into collection attributes in parent flow scope.
 					</LI>
