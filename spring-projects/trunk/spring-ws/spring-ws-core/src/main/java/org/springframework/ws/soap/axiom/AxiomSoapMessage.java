@@ -694,6 +694,15 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
 
         }
 
+        public void addText(String text) {
+            try {
+                axiomElement.setText(text);
+            }
+            catch (OMException ex) {
+                throw new AxiomSoapFaultException(ex);
+            }
+        }
+
         public QName getName() {
             return axiomElement.getQName();
         }

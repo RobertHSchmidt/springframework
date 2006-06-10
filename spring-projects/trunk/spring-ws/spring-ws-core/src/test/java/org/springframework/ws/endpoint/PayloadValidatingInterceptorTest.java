@@ -24,6 +24,8 @@ import org.springframework.ws.mock.MockMessageContext;
 import org.springframework.ws.mock.MockWebServiceMessage;
 import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.SoapFault;
+import org.springframework.ws.soap.SoapFaultDetail;
+import org.springframework.ws.soap.SoapFaultDetailElement;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.context.AbstractSoapMessageContext;
@@ -62,9 +64,18 @@ public class PayloadValidatingInterceptorTest extends TestCase {
     }
 
     public void testHandleInvalidRequest() throws Exception {
-        MockControl soapMessageControl = MockControl.createControl(SoapMessage.class);
-        final SoapMessage requestMock = (SoapMessage) soapMessageControl.getMock();
-        final SoapMessage responseMock = (SoapMessage) soapMessageControl.getMock();
+        MockControl messageControl = MockControl.createControl(SoapMessage.class);
+        MockControl bodyControl = MockControl.createControl(SoapBody.class);
+        SoapBody bodyMock = (SoapBody) bodyControl.getMock();
+        MockControl faultControl = MockControl.createControl(SoapFault.class);
+        SoapFault faultMock = (SoapFault) faultControl.getMock();
+        MockControl faultDetailControl = MockControl.createControl(SoapFaultDetail.class);
+        SoapFaultDetail faultDetailMock = (SoapFaultDetail) faultDetailControl.getMock();
+        MockControl faultDetailElementControl = MockControl.createControl(SoapFaultDetailElement.class);
+        SoapFaultDetailElement faultDetailElementMock = (SoapFaultDetailElement) faultDetailElementControl.getMock();
+
+        final SoapMessage requestMock = (SoapMessage) messageControl.getMock();
+        final SoapMessage responseMock = (SoapMessage) messageControl.getMock();
         SoapMessageContext soapMessageContext = new AbstractSoapMessageContext() {
             SoapMessage response = null;
 
@@ -81,25 +92,32 @@ public class PayloadValidatingInterceptorTest extends TestCase {
                 return response;
             }
         };
-        MockControl soapBodyControl = MockControl.createControl(SoapBody.class);
-        SoapBody soapBodyMock = (SoapBody) soapBodyControl.getMock();
-        soapMessageControl.expectAndReturn(requestMock.getPayloadSource(), new StringSource(INVALID_MESSAGE));
-        soapMessageControl.expectAndReturn(responseMock.getSoapBody(), soapBodyMock);
-        MockControl soapFaultControl = MockControl.createControl(SoapFault.class);
-        SoapFault soapFaultMock = (SoapFault) soapFaultControl.getMock();
-        soapMessageControl.expectAndReturn(responseMock.getVersion(), SoapVersion.SOAP_11);
-        soapBodyControl.expectAndReturn(
-                soapBodyMock.addFault(SoapVersion.SOAP_11.getSenderFaultName(), "Validation error"), soapFaultMock);
+        messageControl.expectAndReturn(requestMock.getPayloadSource(), new StringSource(INVALID_MESSAGE));
+        messageControl.expectAndReturn(responseMock.getSoapBody(), bodyMock);
+        messageControl.expectAndReturn(responseMock.getVersion(), SoapVersion.SOAP_11);
+        bodyControl.expectAndReturn(bodyMock.addFault(SoapVersion.SOAP_11.getSenderFaultName(), "Validation error"),
+                faultMock);
+        faultControl.expectAndReturn(faultMock.addFaultDetail(), faultDetailMock);
+        faultDetailControl.expectAndReturn(faultDetailMock.addFaultDetailElement(
+                PayloadValidatingInterceptor.VALIDATION_ERROR_DETAIL_ELEMENT_NAME), faultDetailElementMock, 3);
+        faultDetailElementMock.addText(null);
+        faultDetailElementControl.setMatcher(MockControl.ALWAYS_MATCHER);
+        faultDetailElementControl.setVoidCallable(3);
 
-        soapMessageControl.replay();
-        soapBodyControl.replay();
-        soapFaultControl.replay();
+        messageControl.replay();
+        bodyControl.replay();
+        faultControl.replay();
+        faultDetailControl.replay();
+        faultDetailElementControl.replay();
 
         boolean result = interceptor.handleRequest(soapMessageContext, null);
         assertFalse("Invalid response from interceptor", result);
-        soapMessageControl.verify();
-        soapBodyControl.verify();
-        soapFaultControl.verify();
+
+        messageControl.verify();
+        bodyControl.verify();
+        faultControl.verify();
+        faultDetailControl.verify();
+        faultDetailElementControl.verify();
     }
 
     public void testHandleValidResponse() throws Exception {
@@ -115,4 +133,5 @@ public class PayloadValidatingInterceptorTest extends TestCase {
         boolean result = interceptor.handleResponse(messageContext, null);
         assertFalse("Invalid response from interceptor", result);
     }
+
 }

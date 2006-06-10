@@ -588,6 +588,15 @@ public class SaajSoapMessage extends AbstractSoapMessage {
             return new DOMResult(saajDetailEntry);
         }
 
+        public void addText(String text) {
+            try {
+                this.saajDetailEntry.addTextNode(text);
+            }
+            catch (SOAPException ex) {
+                throw new SaajSoapFaultException(ex);
+            }
+        }
+
         public QName getName() {
             return SaajUtils.toQName(saajDetailEntry.getElementName());
         }

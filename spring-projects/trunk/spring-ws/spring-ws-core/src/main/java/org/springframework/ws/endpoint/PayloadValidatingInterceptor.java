@@ -18,6 +18,9 @@ package org.springframework.ws.endpoint;
 
 import java.io.IOException;
 
+import javax.xml.namespace.QName;
+import javax.xml.transform.TransformerException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
@@ -29,6 +32,9 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapEndpointInterceptor;
+import org.springframework.ws.soap.SoapFault;
+import org.springframework.ws.soap.SoapFaultDetail;
+import org.springframework.ws.soap.SoapFaultDetailElement;
 import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.context.SoapMessageContext;
@@ -52,7 +58,13 @@ import org.springframework.xml.validation.XmlValidatorFactory;
  * @see #setValidateRequest(boolean)
  * @see #setValidateResponse(boolean)
  */
-public class PayloadValidatingInterceptor implements SoapEndpointInterceptor, InitializingBean {
+public class PayloadValidatingInterceptor extends TransformerObjectSupport
+        implements SoapEndpointInterceptor, InitializingBean {
+
+    /**
+     * Fault string used when a validation errors occurs on the request.
+     */
+    public static final String VALIDATION_ERROR_FAULT_STRING = "Validation error";
 
     private static final Log logger = LogFactory.getLog(PayloadValidatingInterceptor.class);
 
@@ -65,6 +77,9 @@ public class PayloadValidatingInterceptor implements SoapEndpointInterceptor, In
     private boolean validateResponse = false;
 
     private XmlValidator validator;
+
+    public static final QName VALIDATION_ERROR_DETAIL_ELEMENT_NAME =
+            new QName("http://springframework.org/spring-ws", "ValidationError", "spring-ws");
 
     /**
      * Sets the schema resource to use for validation.
@@ -108,7 +123,8 @@ public class PayloadValidatingInterceptor implements SoapEndpointInterceptor, In
      * @return <code>true</code> if the message is valid; <code>false</code> otherwise
      * @see #setValidateRequest(boolean)
      */
-    public boolean handleRequest(MessageContext messageContext, Object endpoint) throws IOException, SAXException {
+    public boolean handleRequest(MessageContext messageContext, Object endpoint)
+            throws IOException, SAXException, TransformerException {
         if (validateRequest) {
             SAXParseException[] errors = validator.validate(messageContext.getRequest().getPayloadSource());
             if (!ObjectUtils.isEmpty(errors)) {
@@ -116,8 +132,7 @@ public class PayloadValidatingInterceptor implements SoapEndpointInterceptor, In
                     logger.warn("XML validation error on request: " + errors[i].getMessage());
                 }
                 if (messageContext instanceof SoapMessageContext) {
-                    SoapMessage response = ((SoapMessageContext) messageContext).createSoapResponse();
-                    SoapMessageUtils.addSenderFault(response, "Validation error");
+                    createRequestValidationFault((SoapMessageContext) messageContext, errors);
                 }
                 return false;
             }
@@ -171,5 +186,19 @@ public class PayloadValidatingInterceptor implements SoapEndpointInterceptor, In
      */
     public boolean understands(SoapHeaderElement header) {
         return false;
+    }
+
+    /**
+     * Creates a response soap message that contains a <code>SoapFault</code> that descibes the validation errors.
+     */
+    protected void createRequestValidationFault(SoapMessageContext context, SAXParseException[] errors)
+            throws TransformerException {
+        SoapMessage response = context.createSoapResponse();
+        SoapFault fault = SoapMessageUtils.addSenderFault(response, VALIDATION_ERROR_FAULT_STRING);
+        SoapFaultDetail detail = fault.addFaultDetail();
+        for (int i = 0; i < errors.length; i++) {
+            SoapFaultDetailElement detailElement = detail.addFaultDetailElement(VALIDATION_ERROR_DETAIL_ELEMENT_NAME);
+            detailElement.addText(errors[0].getMessage());
+        }
     }
 }
