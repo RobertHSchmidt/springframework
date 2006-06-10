@@ -32,4 +32,8 @@ public interface SoapFaultDetailElement extends SoapElement {
      */
     Result getResult();
 
+    /**
+     * Adds a new text node to this element.
+     */
+    void addText(String text);
 }
