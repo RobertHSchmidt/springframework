@@ -18,6 +18,7 @@
         <dependency org="apache" name="commons-logging" rev="1.0.4"/>
         <dependency org="apache" name="log4j" rev="1.2.12"/>        
         <dependency org="org.hibernate" name="hibernate" rev="3.1.3"/>
+        <dependency org="jdom" name="jdom" rev="1.0"/>
         <dependency org="mysql" name="mysql-connector-java" rev="3.1.11"/>
 
         <dependency org="org.springframework" name="spring-aop" rev="1.2.8"/>
