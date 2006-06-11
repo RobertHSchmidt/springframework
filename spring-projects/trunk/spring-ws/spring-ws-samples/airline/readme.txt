@@ -23,13 +23,13 @@ The Airline sample is a normal web application that connects to a database of yo
 Note that both MySQL and PostgreSQL drivers are linked in using Ivy so you don't have
 include these in your server if you're using either one of those databases.
 
-3. RUNNING THE CLIENT
+3. RUNNING THE CLIENTS
 
-The c# client is available in the client directory. Just run the airline.exe file and (if you've deployed te war file
-without changing the default--causing the URL of the airline service to be http://localhost:8080/airline/Airline) the
-web service will be called, causing two flight reservations to be created.
+The client directory contains two sample clients: one in C# and one using SAAJ. Both clients are executable: just run
+the executable file and (if the war file is deployed at the default http://localhost:8080/airline) the
+web service will be called, causing a flight reservations to be created.
 
-If the web service is NOT running at the default URL, you can append the URL to the airline.exe file (e.g. 'airline.exe
-http://localhost:8080/airline-webservice/Airline').
+If the web service is NOT running at the default URL, you can append the URL argument to the exectuable file
+(e.g. 'airline.exe http://localhost:8080/airline-webservice/Airline').
 
 
