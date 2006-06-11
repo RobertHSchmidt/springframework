@@ -7,9 +7,6 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
-    <bean id="customerDao" class="org.springframework.ws.samples.airline.dao.hibernate.HibernateCustomerDao"
-          parent="abstractDao"/>
-
     <bean id="flightDao" class="org.springframework.ws.samples.airline.dao.hibernate.HibernateFlightDao"
           parent="abstractDao"/>
 

@@ -27,21 +27,5 @@
             </schema>
             <produces dir="${target.gen.java.dir}" includes="**/schema/**/*.java"/>
         </xjc>
-<!--
-    <target name="generate-jaxb">
-        <path id="generate.classpath">
-            <path refid="compile.classpath"/>
-            <path location="${target.classes.dir}"/>
-        </path>
-        <taskdef name="xjc"
-                 classname="com.sun.tools.xjc.XJCTask"
-                 classpathref="compile.classpath"/>
-
-        <xjc target="${target.gen.java.dir}" package="${jaxme.package}">
-            <schema dir="${src.web.dir}">
-                <include name="**/*.xsd"/>
-            </schema>
-        </xjc>
-    -->
     </target>
 </project>

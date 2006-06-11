@@ -26,6 +26,15 @@ public class Airport implements Serializable {
 
     private String city;
 
+    public Airport() {
+    }
+
+    public Airport(String code, String name, String city) {
+        this.code = code;
+        this.name = name;
+        this.city = city;
+    }
+
     public String getCity() {
         return city;
     }
@@ -48,5 +57,20 @@ public class Airport implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof Airport)) {
+            return false;
+        }
+        final Airport that = (Airport) other;
+        return this.code.equals(that.code);
+    }
+
+    public int hashCode() {
+        return code.hashCode();
     }
 }

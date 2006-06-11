@@ -21,8 +21,6 @@ import org.springframework.ws.samples.airline.domain.Ticket;
 
 public interface TicketDao {
 
-    Ticket getTicket(long id) throws DataAccessException;
-
-    void insertTicket(Ticket ticket) throws DataAccessException;
+    void save(Ticket ticket) throws DataAccessException;
 
 }

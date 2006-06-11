@@ -23,11 +23,7 @@ import org.springframework.ws.samples.airline.domain.Ticket;
 
 public class HibernateTicketDao extends HibernateDaoSupport implements TicketDao {
 
-    public Ticket getTicket(long id) throws DataAccessException {
-        return (Ticket) getHibernateTemplate().get(Ticket.class, new Long(id));
-    }
-
-    public void insertTicket(Ticket ticket) throws DataAccessException {
+    public void save(Ticket ticket) throws DataAccessException {
         getHibernateTemplate().save(ticket);
     }
 }

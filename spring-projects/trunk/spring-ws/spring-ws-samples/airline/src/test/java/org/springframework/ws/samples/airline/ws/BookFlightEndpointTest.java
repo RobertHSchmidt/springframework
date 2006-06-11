@@ -16,9 +16,8 @@
 
 package org.springframework.ws.samples.airline.ws;
 
-import java.io.StringReader;
-import java.util.Calendar;
-import java.util.TimeZone;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -27,9 +26,12 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+import org.joda.time.DateTime;
+import org.joda.time.YearMonthDay;
+
 import org.springframework.ws.samples.airline.domain.Airport;
-import org.springframework.ws.samples.airline.domain.Customer;
 import org.springframework.ws.samples.airline.domain.Flight;
+import org.springframework.ws.samples.airline.domain.Passenger;
 import org.springframework.ws.samples.airline.domain.ServiceClass;
 import org.springframework.ws.samples.airline.domain.Ticket;
 import org.springframework.ws.samples.airline.service.AirlineService;
@@ -44,28 +46,13 @@ public class BookFlightEndpointTest extends XMLTestCase {
 
     private AirlineService serviceMock;
 
-    private static final String REQUEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-            "<tns:BookFlightRequest xmlns:tns=\"http://www.springframework.org/spring-ws/samples/airline\">" +
-            "<tns:flightNumber>EF1234</tns:flightNumber>\n" + "    <tns:customerId>42</tns:customerId>" +
-            "</tns:BookFlightRequest>";
+    private DateTime departure;
 
-    public static final String EXPECTED_RESPONSE =
-            "<BookFlightResponse xmlns=\"http://www.springframework.org/spring-ws/samples/airline\">" +
-                    "<issueDate>2006-01-01</issueDate>" +
-                    "<customer><id>42</id><name><first>firstName</first><last>lastName</last></name></customer>" +
-                    "<flight><number>EF1234</number><departureTime>2006-01-01T01:00:00+01:00</departureTime>" +
-                    "<departureAirport><code>ABC</code><name>Airport</name><city>City</city></departureAirport>" +
-                    "<arrivalTime>2006-01-01T01:00:00+01:00</arrivalTime><arrivalAirport><code>ABC</code>" +
-                    "<name>Airport</name><city>City</city></arrivalAirport><serviceClass>economy</serviceClass>" +
-                    "</flight></BookFlightResponse>";
+    private List passengers;
 
-    private Calendar calendar;
+    private Ticket ticket;
 
-    private Customer customer;
-
-    private Airport airport;
-
-    private Flight flight;
+    private Document responseDocument;
 
     protected void setUp() throws Exception {
         XMLUnit.setIgnoreWhitespace(true);
@@ -75,118 +62,40 @@ public class BookFlightEndpointTest extends XMLTestCase {
         endpoint.setAirlineService(serviceMock);
         endpoint.afterPropertiesSet();
         SAXBuilder saxBuilder = new SAXBuilder();
-        Document requestDocument = saxBuilder.build(new StringReader(REQUEST));
+        Document requestDocument = saxBuilder.build(getClass().getResourceAsStream("bookFlightRequest.xml"));
+        responseDocument = saxBuilder.build(getClass().getResourceAsStream("bookFlightResponse.xml"));
         requestElement = requestDocument.getRootElement();
-        calendar = Calendar.getInstance();
-        calendar.set(2006, Calendar.JANUARY, 1, 0, 0, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-        customer = new Customer();
-        customer.setId(new Long(42L));
-        customer.setFirstName("firstName");
-        customer.setLastName("lastName");
-
-        airport = new Airport();
-        airport.setCode("ABC");
-        airport.setName("Airport");
-        airport.setCity("City");
-
-        flight = new Flight();
+        departure = new DateTime(2006, 1, 1, 0, 0, 0, 0);
+        DateTime arrival = new DateTime(2006, 2, 2, 0, 0, 0, 0);
+        Passenger passenger = new Passenger("John", "Doe");
+        passengers = new ArrayList();
+        passengers.add(passenger);
+        Flight flight = new Flight();
         flight.setNumber("EF1234");
-        flight.setArrivalTime(calendar);
-        flight.setArrivalAirport(airport);
-        flight.setDepartureTime(calendar);
-        flight.setDepartureAirport(airport);
+        flight.setDepartureTime(departure);
+        flight.setArrivalTime(arrival);
+        Airport from = new Airport("ABC", "Airport", "City");
+        Airport to = new Airport("DEF", "Airport", "City");
+        flight.setFrom(from);
+        flight.setTo(to);
         flight.setServiceClass(ServiceClass.ECONOMY);
+        ticket = new Ticket();
+        ticket.setFlight(flight);
+        ticket.setIssueDate(new YearMonthDay(2006, 1, 1));
+        ticket.addPassenger(passenger);
     }
 
     public void testInvoke() throws Exception {
-        Ticket ticket = new Ticket();
-        ticket.setIssueDate(calendar);
-        ticket.setCustomer(customer);
-        ticket.setFlight(flight);
-        serviceControl.expectAndReturn(serviceMock.bookFlight("EF1234", 42L), ticket);
+        serviceControl.expectAndReturn(serviceMock.bookFlight("EF1234", departure, passengers), ticket);
         serviceControl.replay();
         Element result = endpoint.invokeInternal(requestElement);
         assertNotNull("Invalid result", result);
+        Document resultDocument = new Document();
+        resultDocument.setRootElement(result);
         XMLOutputter outputter = new XMLOutputter();
-        String resultXml = outputter.outputString(result);
-        assertXMLEqual("Invalid response", EXPECTED_RESPONSE, resultXml);
+        assertXMLEqual(outputter.outputString(responseDocument), outputter.outputString(resultDocument));
         serviceControl.verify();
     }
 
-    public void testCreateIssueDateElement() throws Exception {
-        Element result = endpoint.createIssueDateElement(calendar);
-        assertNotNull("No element returned", result);
-        XMLOutputter outputter = new XMLOutputter();
-        String resultXml = outputter.outputString(result);
-        assertXMLEqual("Invalid result",
-                "<issueDate xmlns='http://www.springframework.org/spring-ws/samples/airline'>2006-01-01</issueDate>",
-                resultXml);
-    }
-
-    public void testCreateCustomerElement() throws Exception {
-        Element result = endpoint.createCustomerElement(customer);
-        assertNotNull("No element returned", result);
-        XMLOutputter outputter = new XMLOutputter();
-        String resultXml = outputter.outputString(result);
-        assertXMLEqual("Invalid result",
-                "<customer xmlns='http://www.springframework.org/spring-ws/samples/airline'><id>42</id><name><first>firstName</first><last>lastName</last></name></customer>",
-                resultXml);
-    }
-
-    public void testCreateAirportElement() throws Exception {
-        Element result = endpoint.createAirportElement("airport", airport);
-        assertNotNull("No element returned", result);
-        XMLOutputter outputter = new XMLOutputter();
-        String resultXml = outputter.outputString(result);
-        assertXMLEqual("Invalid result",
-                "<airport  xmlns='http://www.springframework.org/spring-ws/samples/airline'><code>ABC</code><name>Airport</name><city>City</city></airport>",
-                resultXml);
-    }
-
-    public void testCreateServiceClassElementBusiness() throws Exception {
-        Element result = endpoint.createServiceClassElement(ServiceClass.BUSINESS);
-        assertNotNull("No element returned", result);
-        XMLOutputter outputter = new XMLOutputter();
-        String resultXml = outputter.outputString(result);
-        assertXMLEqual("Invalid result",
-                "<serviceClass xmlns='http://www.springframework.org/spring-ws/samples/airline'>business</serviceClass>",
-                resultXml);
-    }
-
-    public void testCreateServiceClassElementEconomy() throws Exception {
-        Element result = endpoint.createServiceClassElement(ServiceClass.ECONOMY);
-        assertNotNull("No element returned", result);
-        XMLOutputter outputter = new XMLOutputter();
-        String resultXml = outputter.outputString(result);
-        assertXMLEqual("Invalid result",
-                "<serviceClass xmlns='http://www.springframework.org/spring-ws/samples/airline'>economy</serviceClass>",
-                resultXml);
-    }
-
-    public void testCreateServiceClassElementFirst() throws Exception {
-        Element result = endpoint.createServiceClassElement(ServiceClass.FIRST);
-        assertNotNull("No element returned", result);
-        XMLOutputter outputter = new XMLOutputter();
-        String resultXml = outputter.outputString(result);
-        assertXMLEqual("Invalid result",
-                "<serviceClass xmlns='http://www.springframework.org/spring-ws/samples/airline'>first</serviceClass>",
-                resultXml);
-    }
-
-    public void testCreateFlightElement() throws Exception {
-        Element result = endpoint.createFlightElement(flight);
-        assertNotNull("No element returned", result);
-        XMLOutputter outputter = new XMLOutputter();
-        String resultXml = outputter.outputString(result);
-        assertXMLEqual("Invalid result", "<flight xmlns='http://www.springframework.org/spring-ws/samples/airline'>" +
-                "<number>EF1234</number>" + "<departureTime>2006-01-01T01:00:00+01:00</departureTime>" +
-                "<departureAirport><code>ABC</code><name>Airport</name><city>City</city></departureAirport>" +
-                "<arrivalTime>2006-01-01T01:00:00+01:00</arrivalTime>" +
-                "<arrivalAirport><code>ABC</code><name>Airport</name><city>City</city></arrivalAirport>" +
-                "<serviceClass>economy</serviceClass>" + "</flight>", resultXml);
-    }
 
 }

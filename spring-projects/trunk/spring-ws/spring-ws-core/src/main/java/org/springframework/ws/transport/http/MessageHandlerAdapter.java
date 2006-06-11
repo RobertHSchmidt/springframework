@@ -65,7 +65,7 @@ public class MessageHandlerAdapter implements HandlerAdapter, InitializingBean {
                     }
                     else {
                         response.setStatus(HttpServletResponse.SC_OK);
-                        response.setContentType("text/xml; charset=\"utf-8\"");
+                        response.setContentType("text/xml");
                     }
                     response.setCharacterEncoding("UTF-8");
                     responseMessage.writeTo(response.getOutputStream());

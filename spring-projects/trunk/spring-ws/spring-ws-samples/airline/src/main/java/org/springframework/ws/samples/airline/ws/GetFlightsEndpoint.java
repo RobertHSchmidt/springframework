@@ -15,9 +15,11 @@
  */
 package org.springframework.ws.samples.airline.ws;
 
-import java.text.DateFormat;
 import java.util.Iterator;
 import java.util.List;
+
+import org.joda.time.YearMonthDay;
+import org.joda.time.chrono.ISOChronology;
 
 import org.springframework.ws.endpoint.AbstractMarshallingPayloadEndpoint;
 import org.springframework.ws.samples.airline.schema.Airport;
@@ -47,17 +49,13 @@ public class GetFlightsEndpoint extends AbstractMarshallingPayloadEndpoint {
 
     protected Object invokeInternal(Object requestObject) throws Exception {
         GetFlightsRequest request = (GetFlightsRequest) requestObject;
+        YearMonthDay departureDate = new YearMonthDay(request.getDepartureDate(), ISOChronology.getInstance());
         if (logger.isDebugEnabled()) {
-            DateFormat format = DateFormat.getDateInstance();
-            String startDate =
-                    (request.getStartOfPeriod() != null) ? format.format(request.getStartOfPeriod().getTime()) : null;
-            String endDate =
-                    (request.getEndOfPeriod() != null) ? format.format(request.getEndOfPeriod().getTime()) : null;
-            logger.debug(
-                    "GetFlightsRequest number=[" + request.getFlightNumber() + "," + startDate + "," + endDate + "]");
+            logger.debug("Request for flights from '" + request.getFrom() + "' to '" + request.getTo() + "' on " +
+                    departureDate);
         }
-        List flights = airlineService
-                .getFlightsInPeriod(request.getFlightNumber(), request.getStartOfPeriod(), request.getEndOfPeriod());
+        List flights = airlineService.getFlights(request.getFrom(), request.getTo(), departureDate,
+                convertToDomainType(request.getServiceClass()));
         if (logger.isDebugEnabled()) {
             logger.debug("Marshalling " + flights.size() + " flight results");
         }
@@ -74,10 +72,10 @@ public class GetFlightsEndpoint extends AbstractMarshallingPayloadEndpoint {
     private Flight convertToSchemaType(org.springframework.ws.samples.airline.domain.Flight domainFlight) {
         Flight schemaFlight = new FlightImpl();
         schemaFlight.setNumber(domainFlight.getNumber());
-        schemaFlight.setDepartureTime(domainFlight.getDepartureTime());
-        schemaFlight.setDepartureAirport(convertToSchemaType(domainFlight.getDepartureAirport()));
-        schemaFlight.setArrivalTime(domainFlight.getArrivalTime());
-        schemaFlight.setArrivalAirport(convertToSchemaType(domainFlight.getArrivalAirport()));
+        schemaFlight.setDepartureTime(domainFlight.getDepartureTime().toGregorianCalendar());
+        schemaFlight.setFrom(convertToSchemaType(domainFlight.getFrom()));
+        schemaFlight.setArrivalTime(domainFlight.getArrivalTime().toGregorianCalendar());
+        schemaFlight.setTo(convertToSchemaType(domainFlight.getTo()));
         schemaFlight.setServiceClass(convertToSchemaType(domainFlight.getServiceClass()));
         return schemaFlight;
     }
@@ -109,6 +107,25 @@ public class GetFlightsEndpoint extends AbstractMarshallingPayloadEndpoint {
         else {
             throw new IllegalArgumentException("Invalid domain service class: [" + domainServiceClass + "]");
         }
+    }
+
+    private org.springframework.ws.samples.airline.domain.ServiceClass convertToDomainType(ServiceClass schemaServiceClass) {
+        if (schemaServiceClass == null) {
+            return null;
+        }
+        else if (schemaServiceClass.equals(ServiceClass.BUSINESS)) {
+            return org.springframework.ws.samples.airline.domain.ServiceClass.BUSINESS;
+        }
+        else if (schemaServiceClass.equals(ServiceClass.ECONOMY)) {
+            return org.springframework.ws.samples.airline.domain.ServiceClass.ECONOMY;
+        }
+        else if (schemaServiceClass.equals(ServiceClass.FIRST)) {
+            return org.springframework.ws.samples.airline.domain.ServiceClass.FIRST;
+        }
+        else {
+            throw new IllegalArgumentException("Invalid schema service class: [" + schemaServiceClass + "]");
+        }
+
     }
 
 }

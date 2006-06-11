@@ -1,57 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-                  xmlns="http://www.springframework.org/spring-ws/samples/airline"
-                  xmlns:tns="http://www.springframework.org/spring-ws/samples/airline"
-                  targetNamespace="http://www.springframework.org/spring-ws/samples/airline"
-                  name="airline">
-    <wsdl:import namespace="http://www.springframework.org/spring-ws/samples/airline" location="airline.xsd"/>
-    <wsdl:message name="GetFlightsInput">
-        <wsdl:part element="tns:GetFlightsRequest" name="body"/>
-    </wsdl:message>
-    <wsdl:message name="GetFlightsOutput">
-        <wsdl:part element="tns:GetFlightsResponse" name="body"/>
-    </wsdl:message>
-    <wsdl:message name="BookFlightInput">
-        <wsdl:part element="tns:BookFlightRequest" name="body"/>
-    </wsdl:message>
-    <wsdl:message name="BookFlightOutput">
-        <wsdl:part element="tns:BookFlightResponse" name="body"/>
-    </wsdl:message>
-    <wsdl:portType name="AirlinePortType">
-        <wsdl:operation name="GetFlights">
-            <wsdl:input message="tns:GetFlightsInput"/>
-            <wsdl:output message="tns:GetFlightsOutput"/>
-        </wsdl:operation>
-        <wsdl:operation name="BookFlight">
-            <wsdl:input message="tns:BookFlightInput"/>
-            <wsdl:output message="tns:BookFlightOutput"/>
-        </wsdl:operation>
-    </wsdl:portType>
-    <wsdl:binding name="AirlineSoapBinding" type="tns:AirlinePortType">
+<definitions name="airline"
+             targetNamespace="http://www.springframework.org/spring-ws/samples/airline/definitions"
+             xmlns:tns="http://www.springframework.org/spring-ws/samples/airline/definitions"
+             xmlns:types="http://www.springframework.org/spring-ws/samples/airline/schemas"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.springframework.org/spring-ws/samples/airline/schemas"
+                        schemaLocation="airline.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="GetFlightsInput">
+        <part element="types:GetFlightsRequest" name="body"/>
+    </message>
+    <message name="GetFlightsOutput">
+        <part element="types:GetFlightsResponse" name="body"/>
+    </message>
+    <message name="BookFlightInput">
+        <part element="types:BookFlightRequest" name="body"/>
+    </message>
+    <message name="BookFlightOutput">
+        <part element="types:BookFlightResponse" name="body"/>
+    </message>
+    <portType name="AirlinePortType">
+        <operation name="GetFlights">
+            <input message="tns:GetFlightsInput"/>
+            <output message="tns:GetFlightsOutput"/>
+        </operation>
+        <operation name="BookFlight">
+            <input message="tns:BookFlightInput"/>
+            <output message="tns:BookFlightOutput"/>
+        </operation>
+    </portType>
+    <binding name="AirlineSoapBinding" type="tns:AirlinePortType">
         <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
-        <wsdl:operation name="GetFlights">
+        <operation name="GetFlights">
             <soap:operation soapAction="http://www.springframework.org/spring-ws/samples/airline/GetFlights"/>
-            <wsdl:input>
+            <input>
                 <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
+            </input>
+            <output>
                 <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="BookFlight">
+            </output>
+        </operation>
+        <operation name="BookFlight">
             <soap:operation soapAction="http://www.springframework.org/spring-ws/samples/airline/BookFlight"/>
-            <wsdl:input>
+            <input>
                 <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
+            </input>
+            <output>
                 <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-    </wsdl:binding>
-    <wsdl:service name="AirlineService">
-        <wsdl:port binding="tns:AirlineSoapBinding" name="AirlinePort">
+            </output>
+        </operation>
+    </binding>
+    <service name="AirlineService">
+        <port binding="tns:AirlineSoapBinding" name="AirlinePort">
             <soap:address location="http://localhost:8080/airline/Airline"/>
-        </wsdl:port>
-    </wsdl:service>
-</wsdl:definitions>
+        </port>
+    </service>
+</definitions>

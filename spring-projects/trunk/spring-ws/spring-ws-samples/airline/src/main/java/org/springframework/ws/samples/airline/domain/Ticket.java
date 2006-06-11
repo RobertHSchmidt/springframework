@@ -16,31 +16,18 @@
 
 package org.springframework.ws.samples.airline.domain;
 
-import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.joda.time.YearMonthDay;
 
 public class Ticket extends Entity {
 
-    private Calendar issueDate;
+    private YearMonthDay issueDate;
 
-    private Customer customer;
+    private Set passengers = new HashSet();
 
     private Flight flight;
-
-    public Calendar getIssueDate() {
-        return issueDate;
-    }
-
-    public void setIssueDate(Calendar issueDate) {
-        this.issueDate = issueDate;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
 
     public Flight getFlight() {
         return flight;
@@ -48,5 +35,26 @@ public class Ticket extends Entity {
 
     public void setFlight(Flight flight) {
         this.flight = flight;
+    }
+
+    public YearMonthDay getIssueDate() {
+        return issueDate;
+    }
+
+    public void setIssueDate(YearMonthDay issueDate) {
+        this.issueDate = issueDate;
+    }
+
+    public Set getPassengers() {
+        return passengers;
+    }
+
+    public void setPassengers(Set passengers) {
+        this.passengers = passengers;
+    }
+
+    public void addPassenger(Passenger passenger) {
+        passenger.setTicket(this);
+        passengers.add(passenger);
     }
 }

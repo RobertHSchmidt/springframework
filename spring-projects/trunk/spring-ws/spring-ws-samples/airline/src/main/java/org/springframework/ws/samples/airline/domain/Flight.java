@@ -15,52 +15,46 @@
  */
 package org.springframework.ws.samples.airline.domain;
 
-import java.util.Calendar;
+import org.joda.time.DateTime;
 
 public class Flight extends Entity {
 
     private String number;
 
-    private Calendar departureTime;
+    private DateTime departureTime;
 
-    private Calendar arrivalTime;
+    private DateTime arrivalTime;
 
-    private Airport arrivalAirport;
+    private Airport to;
 
-    private Airport departureAirport;
+    private Airport from;
 
     private ServiceClass serviceClass;
 
-    public Airport getArrivalAirport() {
-        return arrivalAirport;
-    }
+    private int seatsAvailable;
 
-    public void setArrivalAirport(Airport arrivalAirport) {
-        this.arrivalAirport = arrivalAirport;
-    }
-
-    public Calendar getArrivalTime() {
+    public DateTime getArrivalTime() {
         return arrivalTime;
     }
 
-    public void setArrivalTime(Calendar arrivalTime) {
+    public void setArrivalTime(DateTime arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 
-    public Airport getDepartureAirport() {
-        return departureAirport;
-    }
-
-    public void setDepartureAirport(Airport departureAirport) {
-        this.departureAirport = departureAirport;
-    }
-
-    public Calendar getDepartureTime() {
+    public DateTime getDepartureTime() {
         return departureTime;
     }
 
-    public void setDepartureTime(Calendar departureTime) {
+    public void setDepartureTime(DateTime departureTime) {
         this.departureTime = departureTime;
+    }
+
+    public Airport getFrom() {
+        return from;
+    }
+
+    public void setFrom(Airport from) {
+        this.from = from;
     }
 
     public String getNumber() {
@@ -71,11 +65,35 @@ public class Flight extends Entity {
         this.number = number;
     }
 
+    public int getSeatsAvailable() {
+        return seatsAvailable;
+    }
+
+    public void setSeatsAvailable(int seatsAvailable) {
+        this.seatsAvailable = seatsAvailable;
+    }
+
     public ServiceClass getServiceClass() {
         return serviceClass;
     }
 
     public void setServiceClass(ServiceClass serviceClass) {
         this.serviceClass = serviceClass;
+    }
+
+    public Airport getTo() {
+        return to;
+    }
+
+    public void setTo(Airport to) {
+        this.to = to;
+    }
+
+    public String toString() {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(getNumber());
+        buffer.append(' ');
+        buffer.append(getDepartureTime());
+        return buffer.toString();
     }
 }

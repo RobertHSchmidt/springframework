@@ -15,9 +15,9 @@
  */
 package org.springframework.ws.samples.airline.dao.hibernate;
 
-import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
+
+import org.joda.time.DateTime;
 
 import org.springframework.test.AbstractTransactionalDataSourceSpringContextTests;
 import org.springframework.ws.samples.airline.domain.Airport;
@@ -28,86 +28,79 @@ public class HibernateFlightDaoTest extends AbstractTransactionalDataSourceSprin
 
     private HibernateFlightDao flightDao;
 
-    private Airport departureAirport;
+    private Airport fromAirport;
 
-    private Airport arrivalAirport;
+    private Airport toAirport;
 
-    private Calendar departureTime;
+    private DateTime departureTime;
 
-    private Calendar arrivalTime;
-
-    public void setFlightDao(HibernateFlightDao dao) {
-        this.flightDao = dao;
-    }
-
-    protected void onSetUpBeforeTransaction() throws Exception {
-        departureTime = Calendar.getInstance();
-        departureTime.set(Calendar.YEAR, 2006);
-        departureTime.set(Calendar.MONTH, Calendar.JANUARY);
-        departureTime.set(Calendar.DATE, 31);
-        departureTime.set(Calendar.HOUR_OF_DAY, 10);
-        departureTime.set(Calendar.MINUTE, 5);
-        departureTime.setTimeZone(TimeZone.getTimeZone("GMT+1"));
-        arrivalTime = Calendar.getInstance();
-        arrivalTime.set(Calendar.YEAR, 2006);
-        arrivalTime.set(Calendar.MONTH, Calendar.JANUARY);
-        arrivalTime.set(Calendar.DATE, 31);
-        arrivalTime.set(Calendar.HOUR_OF_DAY, 12);
-        arrivalTime.set(Calendar.MINUTE, 25);
-        arrivalTime.setTimeZone(TimeZone.getTimeZone("GMT"));
-    }
-
-    protected void onSetUpInTransaction() throws Exception {
-        jdbcTemplate.update("INSERT INTO AIRPORT(CODE, NAME, CITY) VALUES('AMS', 'Schiphol Airport', 'Amsterdam')");
-        departureAirport = new Airport();
-        departureAirport.setCode("AMS");
-        departureAirport.setName("Schiphol Airport");
-        departureAirport.setCity("Amsterdam");
-        jdbcTemplate.update("INSERT INTO AIRPORT(CODE, NAME, CITY) VALUES('VCE', 'Marco Polo Airport', 'Venice')");
-        arrivalAirport = new Airport();
-        arrivalAirport.setCode("VCE");
-        arrivalAirport.setName("Marco Polo Airport");
-        arrivalAirport.setCity("Venice");
-    }
-
-    public void testInsert() {
-        Flight flight = new Flight();
-        flight.setNumber("1234");
-        flight.setDepartureTime(departureTime);
-        flight.setDepartureAirport(departureAirport);
-        flight.setArrivalTime(arrivalTime);
-        flight.setArrivalAirport(arrivalAirport);
-        flight.setServiceClass(ServiceClass.ECONOMY);
-        int startCount = jdbcTemplate.queryForInt("SELECT COUNT(0) FROM FLIGHT");
-        flightDao.insertFlight(flight);
-        int endCount = jdbcTemplate.queryForInt("SELECT COUNT(0) FROM FLIGHT");
-        assertEquals("Flight not inserted", 1, endCount - startCount);
-    }
-
-    public void testGetById() {
-        jdbcTemplate
-                .update("INSERT INTO FLIGHT(ID, NUMBER, DEPARTURE_TIME, DEPARTURE_AIRPORT, ARRIVAL_TIME, ARRIVAL_AIRPORT, SERVICE_CLASS) " +
-                        "VALUES (1,'KL1653','2006-01-31 10:05:00', 'AMS', '2006-01-31 12:25:00', 'VCE', 'business')");
-        Flight flight = flightDao.getFlight(1);
-        assertNotNull("Invalid flight", flight);
-        assertEquals("Invalid flight id", new Long(1), flight.getId());
-        assertEquals("Invalid flight number", "KL1653", flight.getNumber());
-        assertEquals("Invalid flight service class", ServiceClass.BUSINESS, flight.getServiceClass());
-    }
-
-    public void testGetFlightsInPeriod() {
-        jdbcTemplate
-                .update("INSERT INTO FLIGHT(ID, NUMBER, DEPARTURE_TIME, DEPARTURE_AIRPORT, ARRIVAL_TIME, ARRIVAL_AIRPORT, SERVICE_CLASS) " +
-                        "VALUES (1,'KL1653','2006-02-1 10:05:00', " + "'AMS', '2006-2-1 12:25:00', 'VCE', 'business')");
-        List flights = flightDao.getFlights("KL1653", departureTime, null);
-        assertNotNull("Invalid result", flights);
-        assertEquals("Invalid amount of flights", 1, flights.size());
-
-    }
+    private DateTime arrivalTime;
 
     protected String[] getConfigLocations() {
         return new String[]{
                 "classpath:org/springframework/ws/samples/airline/dao/hibernate/applicationContext-hibernate.xml"};
     }
 
+    public void setFlightDao(HibernateFlightDao dao) {
+        this.flightDao = dao;
+    }
+
+    protected void onSetUpBeforeTransaction() throws Exception {
+        departureTime = new DateTime(2006, 1, 31, 10, 5, 0, 0);
+        arrivalTime = new DateTime(2006, 1, 31, 12, 25, 0, 0);
+    }
+
+    protected void onSetUpInTransaction() throws Exception {
+        jdbcTemplate.update("INSERT INTO AIRPORT(CODE, NAME, CITY) VALUES('RTM', 'Rotterdam Airport', 'Rotterdam')");
+        fromAirport = new Airport("RTM", "Rotterdam Airport", "Rotterdam");
+        jdbcTemplate.update("INSERT INTO AIRPORT(CODE, NAME, CITY) VALUES('OSL', 'Gardermoen', 'Oslo')");
+        toAirport = new Airport("OSL", "Gardermoen", "Oslo");
+    }
+
+    public void testGetFlightsInPeriod() throws Exception {
+        jdbcTemplate
+                .update("INSERT INTO FLIGHT(NUMBER, DEPARTURE_TIME, FROM_AIRPORT_CODE, ARRIVAL_TIME, TO_AIRPORT_CODE, SERVICE_CLASS, SEATS_AVAILABLE) " +
+                        "VALUES ('KL020','2006-01-31 10:05:00', 'RTM', '2006-01-31 12:25:00', 'OSL', 'business', 90)");
+        List flights = flightDao.findFlights("RTM", "OSL", departureTime, arrivalTime, ServiceClass.BUSINESS);
+        assertNotNull("Invalid result", flights);
+        assertEquals("Invalid amount of flights", 1, flights.size());
+    }
+
+    public void testGetFlightsOutOfPeriod() throws Exception {
+        jdbcTemplate
+                .update("INSERT INTO FLIGHT(NUMBER, DEPARTURE_TIME, FROM_AIRPORT_CODE, ARRIVAL_TIME, TO_AIRPORT_CODE, SERVICE_CLASS, SEATS_AVAILABLE) " +
+                        "VALUES ('KL020','2006-01-31 10:05:00', 'RTM', '2006-01-31 12:25:00', 'OSL', 'business', 90)");
+        DateTime dateTime = new DateTime(2006, 6, 1, 0, 0, 0, 0);
+        List flights = flightDao.findFlights("RTM", "OSL", dateTime, dateTime, ServiceClass.BUSINESS);
+        assertNotNull("Invalid result", flights);
+        assertEquals("Invalid amount of flights", 0, flights.size());
+    }
+
+    public void testGetFlightByNumberDepartureTime() throws Exception {
+        jdbcTemplate
+                .update("INSERT INTO FLIGHT(NUMBER, DEPARTURE_TIME, FROM_AIRPORT_CODE, ARRIVAL_TIME, TO_AIRPORT_CODE, SERVICE_CLASS, SEATS_AVAILABLE) " +
+                        "VALUES ('KL020','2006-01-31 10:05:00', 'RTM', '2006-01-31 12:25:00', 'OSL', 'business', 90)");
+        Flight flight = flightDao.getFlight("KL020", departureTime);
+        assertNotNull("No flight returned", flight);
+        assertNotNull("Invalid flight id", flight.getId());
+        assertEquals("Invalid flight number", "KL020", flight.getNumber());
+        assertEquals("Invalid flight departure time", departureTime, flight.getDepartureTime());
+        assertEquals("Invalid flight arrival time", arrivalTime, flight.getArrivalTime());
+        assertEquals("Invalid flight from airport", fromAirport, flight.getFrom());
+        assertEquals("Invalid flight to airport", toAirport, flight.getTo());
+        assertEquals("Invalid flight service class", ServiceClass.BUSINESS, flight.getServiceClass());
+    }
+
+    public void testUpdate() throws Exception {
+        jdbcTemplate
+                .update("INSERT INTO FLIGHT(NUMBER, DEPARTURE_TIME, FROM_AIRPORT_CODE, ARRIVAL_TIME, TO_AIRPORT_CODE, SERVICE_CLASS, SEATS_AVAILABLE) " +
+                        "VALUES ('KL020','2006-01-31 10:05:00', 'RTM', '2006-01-31 12:25:00', 'OSL', 'business', 90)");
+        Flight flight = flightDao.getFlight("KL020", departureTime);
+        flight.setSeatsAvailable(0);
+        flightDao.update(flight);
+        flightDao.getHibernateTemplate().flush();
+        int count = jdbcTemplate
+                .queryForInt("SELECT SEATS_AVAILABLE FROM FLIGHT WHERE ID = ?", new Object[]{flight.getId()});
+        assertEquals("Flight not updated", 0, count);
+    }
 }
