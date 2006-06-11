@@ -15,18 +15,24 @@
  */
 package org.springframework.ws.samples.airline.ws;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.xpath.XPath;
+import org.joda.time.DateTime;
+import org.joda.time.YearMonthDay;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ws.endpoint.AbstractJDomPayloadEndpoint;
 import org.springframework.ws.samples.airline.domain.Airport;
-import org.springframework.ws.samples.airline.domain.Customer;
 import org.springframework.ws.samples.airline.domain.Flight;
+import org.springframework.ws.samples.airline.domain.Passenger;
 import org.springframework.ws.samples.airline.domain.ServiceClass;
 import org.springframework.ws.samples.airline.domain.Ticket;
 import org.springframework.ws.samples.airline.service.AirlineService;
@@ -37,19 +43,21 @@ public class BookFlightEndpoint extends AbstractJDomPayloadEndpoint implements I
 
     private XPath flightNumberXPath;
 
-    private XPath customerIdXPath;
+    private XPath departureTimeXPath;
 
     private static final String PREFIX = "tns";
 
-    private static final String NAMESPACE = "http://www.springframework.org/spring-ws/samples/airline";
-
-    private static final String FLIGHT_NUMBER_EXPRESSION =
-            "/" + PREFIX + ":BookFlightRequest/" + PREFIX + ":flightNumber/text()";
-
-    private static final String CUSTOMER_ID_EXPRESSION =
-            "/" + PREFIX + ":BookFlightRequest/" + PREFIX + ":customerId/text()";
+    private static final String NAMESPACE = "http://www.springframework.org/spring-ws/samples/airline/schemas";
 
     private Namespace namespace;
+
+    private DateTimeFormatter dateFormatter;
+
+    private DateTimeFormatter dateTimeFormatter;
+
+    private DateTimeFormatter parser;
+
+    private XPath passengersXPath;
 
     public void setAirlineService(AirlineService airlineService) {
         this.airlineService = airlineService;
@@ -57,60 +65,61 @@ public class BookFlightEndpoint extends AbstractJDomPayloadEndpoint implements I
 
     protected Element invokeInternal(Element requestElement) throws Exception {
         String flightNumber = flightNumberXPath.valueOf(requestElement);
-        long customerId = Long.parseLong(customerIdXPath.valueOf(requestElement));
+        String departureTimeString = departureTimeXPath.valueOf(requestElement);
+        DateTime departureTime = parser.parseDateTime(departureTimeString);
         if (logger.isDebugEnabled()) {
-            logger.debug(
-                    "BookFlight request for flight number [" + flightNumber + "] customer id [" + customerId + "]");
+            logger.debug("BookFlight request for flight number [" + flightNumber + "] at [" + departureTime + "]");
         }
-        Ticket ticket = airlineService.bookFlight(flightNumber, customerId);
+        List passengerElements = passengersXPath.selectNodes(requestElement);
+        List passengers = new ArrayList();
+        for (Iterator iterator = passengerElements.iterator(); iterator.hasNext();) {
+            Element passengerElement = (Element) iterator.next();
+            Passenger passenger = new Passenger(passengerElement.getChildTextNormalize("first", namespace),
+                    passengerElement.getChildTextNormalize("last", namespace));
+            passengers.add(passenger);
+        }
+        Ticket ticket = airlineService.bookFlight(flightNumber, departureTime, passengers);
         return createResponse(ticket);
     }
 
     private Element createResponse(Ticket ticket) {
         Element responseElement = new Element("BookFlightResponse", namespace);
         responseElement.addContent(createIssueDateElement(ticket.getIssueDate()));
-        responseElement.addContent(createCustomerElement(ticket.getCustomer()));
+        responseElement.addContent(createPassengersElement(ticket.getPassengers()));
         responseElement.addContent(createFlightElement(ticket.getFlight()));
         return responseElement;
     }
 
-    protected Element createIssueDateElement(Calendar issueDate) {
+    protected Element createIssueDateElement(YearMonthDay issueDate) {
         Element issueDateElement = new Element("issueDate", namespace);
-        issueDateElement.setText(formatIsoDate(issueDate.getTime()));
+        issueDateElement.setText(dateFormatter.print(issueDate));
         return issueDateElement;
     }
 
-    protected Element createCustomerElement(Customer customer) {
-        Element customerElement = new Element("customer", namespace);
-        customerElement.addContent(new Element("id", namespace).setText(String.valueOf(customer.getId())));
-        Element customerNameElement = new Element("name", namespace);
-        customerElement.addContent(customerNameElement);
-        customerNameElement.addContent(new Element("first", namespace).setText(customer.getFirstName()));
-        customerNameElement.addContent(new Element("last", namespace).setText(customer.getLastName()));
-        return customerElement;
+    protected Element createPassengersElement(Set passengers) {
+        Element passengersElement = new Element("passengers", namespace);
+        for (Iterator iterator = passengers.iterator(); iterator.hasNext();) {
+            Passenger passenger = (Passenger) iterator.next();
+            Element passengerElement = new Element("passenger", namespace);
+            passengersElement.addContent(passengerElement);
+            passengerElement.addContent(new Element("first", namespace).setText(passenger.getFirstName()));
+            passengerElement.addContent(new Element("last", namespace).setText(passenger.getLastName()));
+        }
+        return passengersElement;
     }
 
     protected Element createFlightElement(Flight flight) {
         Element flightElement = new Element("flight", namespace);
         flightElement.addContent(new Element("number", namespace).setText(flight.getNumber()));
-        String departureTime = formatIsoDateTime(flight.getDepartureTime().getTime());
-        flightElement.addContent(new Element("departureTime", namespace).setText(departureTime));
-        flightElement.addContent(createAirportElement("departureAirport", flight.getDepartureAirport()));
-        String arrivalTime = formatIsoDateTime(flight.getArrivalTime().getTime());
-        flightElement.addContent(new Element("arrivalTime", namespace).setText(arrivalTime));
-        flightElement.addContent(createAirportElement("arrivalAirport", flight.getArrivalAirport()));
+        flightElement.addContent(
+                new Element("departureTime", namespace).setText(dateTimeFormatter.print(flight.getDepartureTime())));
+        flightElement.addContent(createAirportElement("from", flight.getFrom()));
+        flightElement
+                .addContent(new Element("arrivalTime", namespace).setText(
+                        dateTimeFormatter.print(flight.getArrivalTime())));
+        flightElement.addContent(createAirportElement("to", flight.getTo()));
         flightElement.addContent(createServiceClassElement(flight.getServiceClass()));
         return flightElement;
-    }
-
-    private String formatIsoDate(Date date) {
-        return new SimpleDateFormat("yyyy-MM-dd").format(date);
-    }
-
-    private String formatIsoDateTime(Date date) {
-        String result = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(date);
-        //convert YYYYMMDDTHH:mm:ss+HH00 into YYYYMMDDTHH:mm:ss+HH:00
-        return result.substring(0, result.length() - 2) + ":" + result.substring(result.length() - 2);
     }
 
     protected Element createAirportElement(String localName, Airport airport) {
@@ -137,10 +146,15 @@ public class BookFlightEndpoint extends AbstractJDomPayloadEndpoint implements I
 
     public void afterPropertiesSet() throws Exception {
         namespace = Namespace.getNamespace(PREFIX, NAMESPACE);
-        flightNumberXPath = XPath.newInstance(FLIGHT_NUMBER_EXPRESSION);
+        flightNumberXPath = XPath.newInstance("/tns:BookFlightRequest/tns:flightNumber/text()");
         flightNumberXPath.addNamespace(namespace);
-        customerIdXPath = XPath.newInstance(CUSTOMER_ID_EXPRESSION);
-        customerIdXPath.addNamespace(namespace);
+        departureTimeXPath = XPath.newInstance("/tns:BookFlightRequest/tns:departureTime/text()");
+        departureTimeXPath.addNamespace(namespace);
+        passengersXPath = XPath.newInstance("/tns:BookFlightRequest/tns:passengers/tns:passenger");
+        passengersXPath.addNamespace(namespace);
+        parser = ISODateTimeFormat.dateTimeParser();
+        dateTimeFormatter = ISODateTimeFormat.dateTimeNoMillis();
+        dateFormatter = ISODateTimeFormat.date();
     }
 
 

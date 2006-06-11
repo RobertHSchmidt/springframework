@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
-        targetNamespace="http://www.springframework.org/spring-ws/samples/airline"
-        xmlns:tns="http://www.springframework.org/spring-ws/samples/airline" elementFormDefault="qualified">
+        targetNamespace="http://www.springframework.org/spring-ws/samples/airline/schemas"
+        xmlns:tns="http://www.springframework.org/spring-ws/samples/airline/schemas"
+        elementFormDefault="qualified">
 
     <element name="GetFlightsRequest">
         <complexType>
             <all>
-                <element name="flightNumber" type="tns:FlightNumber" minOccurs="0"/>
-                <element name="startOfPeriod" type="date" minOccurs="0"/>
-                <element name="endOfPeriod" type="date" minOccurs="0"/>
+                <element name="from" type="tns:AirportCode"/>
+                <element name="to" type="tns:AirportCode"/>
+                <element name="departureDate" type="date"/>
+                <element name="serviceClass" type="tns:ServiceClass" minOccurs="0"/>
             </all>
         </complexType>
     </element>
@@ -25,7 +27,14 @@
         <complexType>
             <all>
                 <element name="flightNumber" type="tns:FlightNumber"/>
-                <element name="customerId" type="tns:CustomerIdType"/>
+                <element name="departureTime" type="dateTime"/>
+                <element name="passengers">
+                    <complexType>
+                        <sequence>
+                            <element name="passenger" type="tns:Name" maxOccurs="9"/>
+                        </sequence>
+                    </complexType>
+                </element>
             </all>
         </complexType>
     </element>
@@ -36,9 +45,9 @@
         <sequence>
             <element name="number" type="tns:FlightNumber"/>
             <element name="departureTime" type="dateTime"/>
-            <element name="departureAirport" type="tns:Airport"/>
+            <element name="from" type="tns:Airport"/>
             <element name="arrivalTime" type="dateTime"/>
-            <element name="arrivalAirport" type="tns:Airport"/>
+            <element name="to" type="tns:Airport"/>
             <element name="serviceClass" type="tns:ServiceClass"/>
         </sequence>
     </complexType>
@@ -86,7 +95,13 @@
     <complexType name="Ticket">
         <all>
             <element name="issueDate" type="date"/>
-            <element name="customer" type="tns:Customer"/>
+            <element name="passengers">
+                <complexType>
+                    <sequence>
+                        <element name="passenger" type="tns:Name" maxOccurs="9"/>
+                    </sequence>
+                </complexType>
+            </element>
             <element name="flight" type="tns:Flight"/>
         </all>
     </complexType>

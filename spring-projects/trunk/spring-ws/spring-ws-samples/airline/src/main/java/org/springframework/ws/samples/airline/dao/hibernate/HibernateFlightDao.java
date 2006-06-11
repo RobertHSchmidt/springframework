@@ -15,46 +15,38 @@
  */
 package org.springframework.ws.samples.airline.dao.hibernate;
 
-import java.util.Calendar;
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Expression;
+import org.joda.time.DateTime;
+
 import org.springframework.dao.DataAccessException;
-import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.ws.samples.airline.dao.FlightDao;
 import org.springframework.ws.samples.airline.domain.Flight;
+import org.springframework.ws.samples.airline.domain.ServiceClass;
 
 public class HibernateFlightDao extends HibernateDaoSupport implements FlightDao {
 
-    public Flight getFlight(long flightId) throws DataAccessException {
-        return (Flight) getHibernateTemplate().get(Flight.class, new Long(flightId));
+    public Flight getFlight(String flightNumber, DateTime departureTime) {
+        List flights = getHibernateTemplate().findByNamedParam(
+                "from Flight f where f.number = :number and " + "f.departureTime = :departureTime",
+                new String[]{"number", "departureTime"}, new Object[]{flightNumber, departureTime});
+        return !flights.isEmpty() ? (Flight) flights.get(0) : null;
     }
 
-    public List getFlights(final String flightNumber, final Calendar startOfPeriod, final Calendar endOfPeriod) {
-        return getHibernateTemplate().executeFind(new HibernateCallback() {
-
-            public Object doInHibernate(Session session) throws HibernateException {
-                Criteria criteria = session.createCriteria(Flight.class);
-                if (flightNumber != null) {
-                    criteria.add(Expression.eq("number", flightNumber));
-                }
-                if (startOfPeriod != null) {
-                    criteria.add(Expression.ge("departureTime", startOfPeriod));
-                }
-                if (endOfPeriod != null) {
-                    criteria.add(Expression.le("departureTime", endOfPeriod));
-                }
-                return criteria.list();
-            }
-        });
+    public void update(Flight flight) {
+        getHibernateTemplate().update(flight);
     }
 
-    public void insertFlight(Flight flight) throws DataAccessException {
-        getHibernateTemplate().save(flight);
+    public List findFlights(String fromAirportCode,
+                            String toAirportCode,
+                            DateTime startOfPeriod,
+                            DateTime endOfPeriod,
+                            ServiceClass serviceClass) throws DataAccessException {
+        return getHibernateTemplate().findByNamedParam("from Flight f where f.from.code = :from " +
+                "and f.to.code = :to and " + "f.departureTime >= :start and f.departureTime <= :end and " +
+                "f.serviceClass = :class", new String[]{"from", "to", "start", "end", "class"},
+                new Object[]{fromAirportCode, toAirportCode, startOfPeriod, endOfPeriod, serviceClass});
     }
 
 }

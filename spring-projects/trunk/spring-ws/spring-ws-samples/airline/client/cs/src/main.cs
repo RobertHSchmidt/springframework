@@ -6,40 +6,49 @@ namespace Spring.Ws.Samples.Airline {
 
 	public class Client {
 		public static void Main(string[] args) {
-			AirlineService service = new AirlineService();		
-			service.Url = "http://localhost:8080/airline/Airline";
-			if (args.Length > 0) {
-				service.Url = args[0];
-			} else {
-				service.Url = "http://localhost:8080/airline/Airline";
-			}
-			MessageGetFlightsRequest getFlightsRequest = new MessageGetFlightsRequest();
-			getFlightsRequest.startOfPeriod = new DateTime(2006,1,31);
-			getFlightsRequest.startOfPeriodSpecified = true;
-			Console.WriteLine("Requesting flights after {0:d}", getFlightsRequest.startOfPeriod);
-			Flight[] flights = service.GetFlights(getFlightsRequest);
-			Console.WriteLine("Got {0} results", flights.Length);
-			foreach (Flight flight in flights) {
-				Console.WriteLine("Booking ticket for flight with number {0}", flight.number);
-				MessageBookFlightRequest bookFlightRequest = new MessageBookFlightRequest();
-				bookFlightRequest.flightNumber = flight.number;
-				bookFlightRequest.customerId = 1L;
-				Ticket ticket = service.BookFlight(bookFlightRequest);
-				WriteTicket(ticket);
+			try {
+				AirlineService service = new AirlineService();		
+				if (args.Length > 0) {
+					service.Url = args[0];
+				} else {
+					service.Url = "http://localhost:8080/airline/Airline";
+				}
+				MessageGetFlightsRequest getFlightsRequest = new MessageGetFlightsRequest();
+				getFlightsRequest.from = "AMS";
+				getFlightsRequest.to = "VCE";
+				getFlightsRequest.departureDate = new DateTime(2006,1,31);
+				Console.WriteLine("Requesting flights on {0:d}", getFlightsRequest.departureDate);
+				Flight[] flights = service.GetFlights(getFlightsRequest);
+				Console.WriteLine("Got {0} results", flights.Length);
+				if (flights.Length > 0) {
+					MessageBookFlightRequest bookFlightRequest = new MessageBookFlightRequest();
+					bookFlightRequest.flightNumber = flights[0].number;
+					bookFlightRequest.departureTime = flights[0].departureTime;
+					Name passenger = new Name();
+					passenger.first = "John";
+					passenger.last = "Doe";
+					bookFlightRequest.passengers = new Name[] { passenger };
+					Ticket ticket = service.BookFlight(bookFlightRequest);
+					WriteTicket(ticket);
+				}
+			} catch (SoapException ex) {
+				Console.Error.WriteLine("SOAP Fault Code    {0}", ex.Code);
+				Console.Error.WriteLine("SOAP Fault String: {0}", ex.Message);
 			}
 		}
 		
 		private static void WriteTicket(Ticket ticket) {
 			Console.WriteLine("Ticket");
 			Console.WriteLine("Ticket issue date:\t{0:d}", ticket.issueDate);
-			WriteCustomer(ticket.customer);
+			foreach (Name passenger in ticket.passengers) {
+				WriteName(passenger);
+			}
 			WriteFlight(ticket.flight);
 		}
 		
-		private static void WriteCustomer(Customer customer) {
+		private static void WriteName(Name name) {
 			Console.WriteLine("Passenger Name:");
-			Console.WriteLine("{0} {1}", customer.name.first, customer.name.last);
-			Console.WriteLine("{0}", customer.id);
+			Console.WriteLine("{0} {1}", name.first, name.last);
 			Console.WriteLine("------------");			
 		}
 		
@@ -47,12 +56,12 @@ namespace Spring.Ws.Samples.Airline {
 			Console.WriteLine("{0:d}", flight.departureTime);
 			Console.WriteLine("{0}\t{1}", flight.number, flight.serviceClass);
 			Console.WriteLine("------------");
-			Console.WriteLine("Depart:\t{0}-{1}\t{2:t}", flight.departureAirport.code, flight.departureAirport.name,
+			Console.WriteLine("Depart:\t{0}-{1}\t{2:t}", flight.from.code, flight.from.name,
 				flight.departureTime);
-			Console.WriteLine("\t{0}", flight.departureAirport.city);
-			Console.WriteLine("Arrive:\t{0}-{1}\t{2:t}", flight.arrivalAirport.code, flight.arrivalAirport.name,
+			Console.WriteLine("\t{0}", flight.from.city);
+			Console.WriteLine("Arrive:\t{0}-{1}\t{2:t}", flight.to.code, flight.to.name,
 				flight.arrivalTime);
-			Console.WriteLine("\t{0}", flight.arrivalAirport.city);
+			Console.WriteLine("\t{0}", flight.to.city);
 		}
 	}
 }

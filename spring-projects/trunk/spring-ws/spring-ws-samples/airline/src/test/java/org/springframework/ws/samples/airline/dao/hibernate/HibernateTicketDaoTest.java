@@ -16,13 +16,14 @@
 
 package org.springframework.ws.samples.airline.dao.hibernate;
 
-import java.util.Calendar;
-import java.util.TimeZone;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.YearMonthDay;
 
 import org.springframework.test.AbstractTransactionalDataSourceSpringContextTests;
 import org.springframework.ws.samples.airline.domain.Airport;
-import org.springframework.ws.samples.airline.domain.Customer;
 import org.springframework.ws.samples.airline.domain.Flight;
+import org.springframework.ws.samples.airline.domain.Passenger;
 import org.springframework.ws.samples.airline.domain.ServiceClass;
 import org.springframework.ws.samples.airline.domain.Ticket;
 
@@ -32,13 +33,11 @@ public class HibernateTicketDaoTest extends AbstractTransactionalDataSourceSprin
 
     private Flight flight;
 
-    private Calendar departureTime;
+    private DateTime departureTime;
 
-    private Calendar arrivalTime;
+    private DateTime arrivalTime;
 
-    private Calendar issueDate;
-
-    private Customer customer;
+    private Passenger passenger;
 
     protected String[] getConfigLocations() {
         return new String[]{
@@ -50,71 +49,44 @@ public class HibernateTicketDaoTest extends AbstractTransactionalDataSourceSprin
     }
 
     protected void onSetUpBeforeTransaction() throws Exception {
-        departureTime = Calendar.getInstance();
-        departureTime.set(Calendar.YEAR, 2006);
-        departureTime.set(Calendar.MONTH, Calendar.JANUARY);
-        departureTime.set(Calendar.DATE, 31);
-        departureTime.set(Calendar.HOUR_OF_DAY, 10);
-        departureTime.set(Calendar.MINUTE, 5);
-        departureTime.setTimeZone(TimeZone.getTimeZone("GMT+1"));
-        arrivalTime = Calendar.getInstance();
-        arrivalTime.set(Calendar.YEAR, 2006);
-        arrivalTime.set(Calendar.MONTH, Calendar.JANUARY);
-        arrivalTime.set(Calendar.DATE, 31);
-        arrivalTime.set(Calendar.HOUR_OF_DAY, 12);
-        arrivalTime.set(Calendar.MINUTE, 25);
-        arrivalTime.setTimeZone(TimeZone.getTimeZone("GMT"));
-        issueDate = Calendar.getInstance();
-        issueDate.set(Calendar.YEAR, 2005);
-        issueDate.set(Calendar.MONTH, Calendar.DECEMBER);
-        issueDate.set(Calendar.DATE, 15);
+        departureTime = new DateTime(2006, 1, 31, 10, 5, 0, 0, DateTimeZone.UTC);
+        arrivalTime = new DateTime(2006, 1, 31, 12, 25, 0, 0, DateTimeZone.UTC);
     }
 
     protected void onSetUpInTransaction() throws Exception {
-        jdbcTemplate.update("INSERT INTO AIRPORT(CODE, NAME, CITY) VALUES('AMS', 'Schiphol Airport', 'Amsterdam')");
-        Airport departureAirport = new Airport();
-        departureAirport.setCode("AMS");
-        departureAirport.setName("Schiphol Airport");
-        departureAirport.setCity("Amsterdam");
-        jdbcTemplate.update("INSERT INTO AIRPORT(CODE, NAME, CITY) VALUES('VCE', 'Marco Polo Airport', 'Venice')");
-        Airport arrivalAirport = new Airport();
-        arrivalAirport.setCode("VCE");
-        arrivalAirport.setName("Marco Polo Airport");
-        arrivalAirport.setCity("Venice");
+        jdbcTemplate.update("INSERT INTO AIRPORT(CODE, NAME, CITY) VALUES('RTM', 'Rotterdam Airport', 'Rotterdam')");
+        Airport fromAirport = new Airport("RTM", "Rotterdam Airport", "Rotterdam");
+        jdbcTemplate.update("INSERT INTO AIRPORT(CODE, NAME, CITY) VALUES('OSL', 'Gardermoen', 'Oslo')");
+        Airport toAirport = new Airport("OSL", "Gardermoen", "Oslo");
         jdbcTemplate
-                .update("INSERT INTO FLIGHT(ID, NUMBER, DEPARTURE_TIME, DEPARTURE_AIRPORT, ARRIVAL_TIME, ARRIVAL_AIRPORT, SERVICE_CLASS) " +
-                        "VALUES (1, 'KL1653', '2006-01-31 10:05:00', 'AMS', '2006-01-31 12:25:00', 'VCE', 'business')");
+                .update("INSERT INTO FLIGHT(ID, NUMBER, DEPARTURE_TIME, FROM_AIRPORT_CODE, ARRIVAL_TIME, TO_AIRPORT_CODE, SERVICE_CLASS, SEATS_AVAILABLE) " +
+                        "VALUES (42, 'KL020','2006-01-31 10:05:00', 'RTM', '2006-01-31 12:25:00', 'OSL', 'business', 90)");
         flight = new Flight();
-        flight.setId(new Long(1));
+        flight.setId(new Long(42));
         flight.setNumber("KL1653");
         flight.setDepartureTime(departureTime);
-        flight.setDepartureAirport(departureAirport);
+        flight.setFrom(fromAirport);
         flight.setArrivalTime(arrivalTime);
-        flight.setArrivalAirport(arrivalAirport);
+        flight.setTo(toAirport);
         flight.setServiceClass(ServiceClass.BUSINESS);
-        jdbcTemplate.update("INSERT INTO CUSTOMER(ID, FIRST_NAME, LAST_NAME) " + "VALUES (1, 'John', 'Doe')");
-        customer = new Customer();
-        customer.setId(new Long(1));
-        customer.setFirstName("John");
-        customer.setLastName("Doe");
+        flight.setSeatsAvailable(90);
+        passenger = new Passenger();
+        passenger.setFirstName("John");
+        passenger.setLastName("Doe");
     }
 
     public void testInsert() throws Exception {
         Ticket ticket = new Ticket();
-        ticket.setCustomer(customer);
+        ticket.addPassenger(passenger);
         ticket.setFlight(flight);
-        ticket.setIssueDate(issueDate);
-        int startCount = jdbcTemplate.queryForInt("SELECT COUNT(0) FROM TICKET");
-        dao.insertTicket(ticket);
-        int endCount = jdbcTemplate.queryForInt("SELECT COUNT(0) FROM TICKET");
-        assertEquals("Flight not inserted", 1, endCount - startCount);
+        ticket.setIssueDate(new YearMonthDay());
+        int startTicketCount = jdbcTemplate.queryForInt("SELECT COUNT(0) FROM TICKET");
+        int startPassengerCount = jdbcTemplate.queryForInt("SELECT COUNT(0) FROM PASSENGER");
+        dao.save(ticket);
+        int endTicketCount = jdbcTemplate.queryForInt("SELECT COUNT(0) FROM TICKET");
+        int endPassengerCount = jdbcTemplate.queryForInt("SELECT COUNT(0) FROM PASSENGER");
+        assertEquals("Flight not inserted", 1, endTicketCount - startTicketCount);
+        assertEquals("Passenger not inserted", 1, endPassengerCount - startPassengerCount);
     }
 
-    public void testGet() throws Exception {
-        jdbcTemplate.update(
-                "INSERT INTO TICKET(ID, ISSUE_DATE, CUSTOMER_ID, FLIGHT_ID) " + "VALUES(1, '2005-12-15', 1, 1)");
-        Ticket ticket = dao.getTicket(1);
-        assertNotNull("Invalid ticket", ticket);
-        assertEquals("Invalid ticket id", new Long(1), ticket.getId());
-    }
 }

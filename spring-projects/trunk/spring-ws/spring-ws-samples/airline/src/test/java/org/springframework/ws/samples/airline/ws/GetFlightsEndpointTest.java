@@ -16,14 +16,17 @@
 package org.springframework.ws.samples.airline.ws;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import junit.framework.TestCase;
 import org.easymock.MockControl;
+import org.joda.time.DateTime;
+import org.joda.time.YearMonthDay;
+
 import org.springframework.ws.samples.airline.domain.Flight;
 import org.springframework.ws.samples.airline.schema.GetFlightsRequest;
 import org.springframework.ws.samples.airline.schema.GetFlightsResponse;
+import org.springframework.ws.samples.airline.schema.ServiceClass;
 import org.springframework.ws.samples.airline.schema.impl.GetFlightsRequestImpl;
 import org.springframework.ws.samples.airline.service.AirlineService;
 
@@ -43,18 +46,22 @@ public class GetFlightsEndpointTest extends TestCase {
     }
 
     public void testInvoke() throws Exception {
-        Calendar startOfPeriod = Calendar.getInstance();
-        Calendar endOfPeriod = Calendar.getInstance();
+        String fromAirportCode = "ABC";
+        String toAirportCode = "DEF";
+        YearMonthDay departureDate = new YearMonthDay();
         GetFlightsRequest request = new GetFlightsRequestImpl();
-        String number = "number";
-        request.setFlightNumber(number);
-        request.setStartOfPeriod(startOfPeriod);
-        request.setEndOfPeriod(endOfPeriod);
+        request.setFrom(fromAirportCode);
+        request.setTo(toAirportCode);
+        request.setDepartureDate(departureDate.toDateTimeAtMidnight().toGregorianCalendar());
+        request.setServiceClass(ServiceClass.FIRST);
         List flights = new ArrayList();
         Flight flight = new Flight();
-        flight.setNumber(number);
+        flight.setNumber("1");
+        flight.setDepartureTime(new DateTime());
+        flight.setArrivalTime(new DateTime());
         flights.add(flight);
-        serviceControl.expectAndReturn(serviceMock.getFlightsInPeriod(number, startOfPeriod, endOfPeriod), flights);
+        serviceControl.expectAndReturn(serviceMock.getFlights(fromAirportCode, toAirportCode, departureDate,
+                org.springframework.ws.samples.airline.domain.ServiceClass.FIRST), flights);
         serviceControl.replay();
         GetFlightsResponse response = (GetFlightsResponse) endpoint.invokeInternal(request);
         serviceControl.verify();
@@ -62,7 +69,7 @@ public class GetFlightsEndpointTest extends TestCase {
         assertEquals("Invalid amount of flights in response", 1, response.getFlight().size());
         org.springframework.ws.samples.airline.schema.Flight responseFlight =
                 (org.springframework.ws.samples.airline.schema.Flight) response.getFlight().get(0);
-        assertEquals("Invalid flight number on flight", number, responseFlight.getNumber());
+        assertEquals("Invalid flight number on flight", "1", responseFlight.getNumber());
     }
 
 }

@@ -4,25 +4,25 @@
 <hibernate-mapping
         package="org.springframework.ws.samples.airline.domain"
         auto-import="true" default-lazy="false">
-    <class name="Customer" table="CUSTOMER">
+    <class name="Passenger" table="PASSENGER">
         <id name="id" column="ID">
             <generator class="identity"/>
         </id>
         <property name="firstName" column="FIRST_NAME" length="128"/>
         <property name="lastName" column="LAST_NAME" length="128"/>
+        <many-to-one name="ticket" column="TICKET_ID" class="Ticket"/>
     </class>
     <class name="Flight" table="FLIGHT">
         <id name="id" column="ID">
             <generator class="identity"/>
         </id>
-        <property name="departureTime" column="DEPARTURE_TIME"/>
-        <many-to-one name="departureAirport" column="DEPARTURE_AIRPORT"
-                     class="Airport"/>
-        <property name="arrivalTime" column="ARRIVAL_TIME"/>
-        <many-to-one name="arrivalAirport" column="ARRIVAL_AIRPORT"
-                     class="Airport"/>
-        <property name="number" column="NUMBER" length="20"
-                  unique="true"/>
+        <property name="number" column="NUMBER" length="20" unique="true" unique-key="number-departureTime"/>
+        <property name="departureTime" column="DEPARTURE_TIME" unique="true" unique-key="number-departureTime"
+                  type="org.joda.time.contrib.hibernate.PersistentDateTime"/>
+        <property name="arrivalTime" column="ARRIVAL_TIME" type="org.joda.time.contrib.hibernate.PersistentDateTime"/>
+        <property name="seatsAvailable" column="SEATS_AVAILABLE"/>
+        <many-to-one name="from" column="FROM_AIRPORT_CODE" class="Airport"/>
+        <many-to-one name="to" column="TO_AIRPORT_CODE" class="Airport"/>
         <property name="serviceClass" column="SERVICE_CLASS"
                   type="org.springframework.ws.samples.airline.domain.hibernate.ServiceClassUserType"/>
     </class>
@@ -37,8 +37,11 @@
         <id name="id" column="ID">
             <generator class="identity"/>
         </id>
-        <property name="issueDate" column="ISSUE_DATE"/>
-        <many-to-one name="customer" column="CUSTOMER_ID" class="Customer"/>
-        <many-to-one name="flight" column="FLIGHT_ID" class="Flight"/>
+        <property name="issueDate" column="ISSUE_DATE" type="org.joda.time.contrib.hibernate.PersistentYearMonthDay"/>
+        <set name="passengers" inverse="true" cascade="all-delete-orphan">
+            <key column="ID"/>
+            <one-to-many class="Passenger"/>
+        </set>
+        <many-to-one name="flight" column="FLIGHT_ID" class="Flight" cascade="none"/>
     </class>
 </hibernate-mapping>

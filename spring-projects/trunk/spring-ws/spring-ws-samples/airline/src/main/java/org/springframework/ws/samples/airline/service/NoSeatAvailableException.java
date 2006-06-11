@@ -1,5 +1,6 @@
 /*
- * Copyright 2005 the original author or authors.
+ * Copyright (c) 2006, Your Corporation. All Rights Reserved.
+ * Copyright 2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.ws.samples.airline.dao;
 
-import java.util.List;
+package org.springframework.ws.samples.airline.service;
 
-import org.springframework.dao.DataAccessException;
-import org.springframework.ws.samples.airline.domain.Customer;
+import org.springframework.ws.samples.airline.domain.Flight;
 
+public class NoSeatAvailableException extends Exception {
 
-public interface CustomerDao {
-    
-    Customer getCustomer(long customerId) throws DataAccessException;
-    
-    List getCustomers(String name) throws DataAccessException;
-    
-    void insertCustomer(Customer customer) throws DataAccessException;
+    private Flight flight;
 
+    public NoSeatAvailableException(Flight flight) {
+        super("Flight [" + flight + "] has not more seats available");
+        this.flight = flight;
+    }
+
+    public Flight getFlight() {
+        return flight;
+    }
 }

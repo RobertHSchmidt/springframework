@@ -15,11 +15,21 @@
  */
 package org.springframework.ws.samples.airline.domain;
 
-public class Customer extends Entity {
+public class Passenger extends Entity {
 
     private String firstName;
 
     private String lastName;
+
+    private Ticket ticket;
+
+    public Passenger() {
+    }
+
+    public Passenger(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -37,4 +47,38 @@ public class Customer extends Entity {
         this.lastName = lastName;
     }
 
+    public Ticket getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(Ticket ticket) {
+        this.ticket = ticket;
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final Passenger passenger = (Passenger) o;
+
+        if (!firstName.equals(passenger.firstName)) {
+            return false;
+        }
+        if (!lastName.equals(passenger.lastName)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public int hashCode() {
+        int result;
+        result = firstName.hashCode();
+        result = 29 * result + lastName.hashCode();
+        return result;
+    }
 }

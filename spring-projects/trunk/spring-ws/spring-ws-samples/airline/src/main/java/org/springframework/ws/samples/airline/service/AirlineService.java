@@ -15,21 +15,21 @@
  */
 package org.springframework.ws.samples.airline.service;
 
-import java.util.Calendar;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.joda.time.YearMonthDay;
+
+import org.springframework.ws.samples.airline.domain.ServiceClass;
 import org.springframework.ws.samples.airline.domain.Ticket;
 
 public interface AirlineService {
 
-    Ticket bookFlight(String flightNumber, long customerId);
+    List getFlights(String fromAirportCode,
+                    String toAirportCode,
+                    YearMonthDay departureDate,
+                    ServiceClass serviceClass);
 
-    /**
-     * Returns a list of <code>Flight</code>s that fall within the given optional restrictions.
-     */
-    List getFlightsInPeriod(String flightNumber, Calendar startOfPeriod, Calendar endOfPeriod);
-
-    List getCustomers(String name);
-
-
+    Ticket bookFlight(String flightNumber, DateTime departureTime, List passengers)
+            throws NoSuchFlightException, NoSeatAvailableException;
 }
