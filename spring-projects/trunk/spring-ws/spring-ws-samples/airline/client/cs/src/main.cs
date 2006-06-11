@@ -2,12 +2,12 @@ using System;
 using System.Web;
 using System.Web.Services.Protocols;
 
-namespace Spring.Ws.Samples.Airline {
+namespace Spring.Ws.Samples.Airline.Client.CSharp {
 
 	public class Client {
 		public static void Main(string[] args) {
 			try {
-				AirlineService service = new AirlineService();		
+				AirlineService service = new AirlineService();
 				if (args.Length > 0) {
 					service.Url = args[0];
 				} else {
@@ -36,7 +36,7 @@ namespace Spring.Ws.Samples.Airline {
 				Console.Error.WriteLine("SOAP Fault String: {0}", ex.Message);
 			}
 		}
-		
+
 		private static void WriteTicket(Ticket ticket) {
 			Console.WriteLine("Ticket");
 			Console.WriteLine("Ticket issue date:\t{0:d}", ticket.issueDate);
@@ -45,13 +45,13 @@ namespace Spring.Ws.Samples.Airline {
 			}
 			WriteFlight(ticket.flight);
 		}
-		
+
 		private static void WriteName(Name name) {
 			Console.WriteLine("Passenger Name:");
 			Console.WriteLine("{0} {1}", name.first, name.last);
-			Console.WriteLine("------------");			
+			Console.WriteLine("------------");
 		}
-		
+
 		private static void WriteFlight(Flight flight) {
 			Console.WriteLine("{0:d}", flight.departureTime);
 			Console.WriteLine("{0}\t{1}", flight.number, flight.serviceClass);
