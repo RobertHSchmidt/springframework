@@ -118,7 +118,7 @@
                     {http://www.springframework.org/spring-ws/samples/airline}airline:NoSuchFlight,
                     No such flight exists
                 </prop>
-                <prop key="org.springframework.oxm.UnmarshallingException">SENDER,Invalid request</prop>
+                <prop key="org.springframework.oxm.UnmarshallingFailureException">SENDER,Invalid request</prop>
                 <prop key="org.springframework.oxm.ValidationFailureException">SENDER,Invalid request</prop>
             </props>
         </property>
