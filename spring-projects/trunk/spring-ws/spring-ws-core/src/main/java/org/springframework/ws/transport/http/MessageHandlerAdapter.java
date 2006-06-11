@@ -57,12 +57,17 @@ public class MessageHandlerAdapter implements HandlerAdapter, InitializingBean {
                 ((MessageEndpoint) handler).invoke(messageContext);
                 WebServiceMessage responseMessage = messageContext.getResponse();
                 if (responseMessage != null) {
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    response.setContentType("text/xml; charset=\"utf-8\"");
-                    response.setCharacterEncoding("UTF-8");
-                    if (response instanceof SoapMessage && ((SoapMessage) responseMessage).getSoapBody().hasFault()) {
-                        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    if (responseMessage instanceof SoapMessage) {
+                        SoapMessage soapMessage = (SoapMessage) responseMessage;
+                        response.setStatus(soapMessage.getSoapBody().hasFault() ?
+                                HttpServletResponse.SC_INTERNAL_SERVER_ERROR : HttpServletResponse.SC_OK);
+                        response.setContentType(soapMessage.getVersion().getContentType());
                     }
+                    else {
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        response.setContentType("text/xml; charset=\"utf-8\"");
+                    }
+                    response.setCharacterEncoding("UTF-8");
                     responseMessage.writeTo(response.getOutputStream());
                 }
             }
