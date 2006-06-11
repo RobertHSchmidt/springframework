@@ -144,6 +144,9 @@ public abstract class AbstractMapBasedSoapEndpointMapping extends AbstractSoapEn
             String endpointName = (String) endpoint;
             endpoint = resolveStringEndpoint(endpointName);
         }
+        if (endpoint == null) {
+            throw new ApplicationContextException("Could not find endpoint for key [" + key + "]");
+        }
         this.endpointMap.put(key, endpoint);
         if (logger.isDebugEnabled()) {
             logger.debug("Mapped key [" + key + "] onto endpoint [" + endpoint + "]");
