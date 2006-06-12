@@ -23,6 +23,8 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import com.sun.xml.wss.impl.callback.PasswordValidationCallback;
 import com.sun.xml.wss.impl.callback.TimestampValidationCallback;
+import org.acegisecurity.context.SecurityContextHolder;
+import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.acegisecurity.providers.dao.UserCache;
 import org.acegisecurity.providers.dao.cache.NullUserCache;
 import org.acegisecurity.userdetails.UserDetails;
@@ -86,9 +88,12 @@ public class AcegiDigestPasswordValidationCallbackHandler extends AbstractCallba
                 PasswordValidationCallback.DigestPasswordRequest request =
                         (PasswordValidationCallback.DigestPasswordRequest) passwordCallback.getRequest();
                 String username = request.getUsername();
-                String password = loadPassword(username);
-                request.setPassword(password);
-                passwordCallback.setValidator(new PasswordValidationCallback.DigestPasswordValidator());
+                UserDetails user = loadUserDetails(username);
+                if (user != null) {
+                    request.setPassword(user.getPassword());
+                }
+                AcegiDigestPasswordValidator validator = new AcegiDigestPasswordValidator(user);
+                passwordCallback.setValidator(validator);
                 return;
             }
         }
@@ -100,7 +105,7 @@ public class AcegiDigestPasswordValidationCallbackHandler extends AbstractCallba
         throw new UnsupportedCallbackException(callback);
     }
 
-    private String loadPassword(String username) {
+    private UserDetails loadUserDetails(String username) {
         UserDetails user = userCache.getUserFromCache(username);
 
         if (user == null) {
@@ -115,6 +120,33 @@ public class AcegiDigestPasswordValidationCallbackHandler extends AbstractCallba
             }
             userCache.putUserInCache(user);
         }
-        return user.getPassword();
+        return user;
     }
+
+    private class AcegiDigestPasswordValidator extends PasswordValidationCallback.DigestPasswordValidator {
+
+        private UserDetails user;
+
+        private AcegiDigestPasswordValidator(UserDetails user) {
+            this.user = user;
+        }
+
+        public boolean validate(PasswordValidationCallback.Request request)
+                throws PasswordValidationCallback.PasswordValidationException {
+            if (super.validate(request)) {
+                UsernamePasswordAuthenticationToken authRequest =
+                        new UsernamePasswordAuthenticationToken(user, user.getPassword());
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Authentication success: " + authRequest.toString());
+                }
+
+                SecurityContextHolder.getContext().setAuthentication(authRequest);
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    }
+
 }

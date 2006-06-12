@@ -22,7 +22,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapEndpointInterceptor;
+import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.context.SoapMessageContext;
+import org.springframework.ws.soap.support.SoapMessageUtils;
 
 /**
  * Endpoint base class for interceptors that handles WS-Security.
@@ -35,24 +37,9 @@ import org.springframework.ws.soap.context.SoapMessageContext;
 public abstract class AbstractWsSecurityInterceptor implements SoapEndpointInterceptor {
 
     /**
-     * Log category to which all <code>WsSecurityValidationException</code>s are logged.
+     * Logger available to subclasses.
      */
-    public static final String VALIDATION_LOG_CATEGORY = "org.springframework.ws.soap.security.Validation";
-
-    /**
-     * Log category to which all <code>WsSecuritySecurementException</code>s are logged.
-     */
-    public static final String SECUREMENT_LOG_CATEGORY = "org.springframework.ws.soap.security.Securement";
-
-    /**
-     * Logger to use when no mapped handler is found for a request.
-     */
-    protected static final Log validationLogger = LogFactory.getLog(VALIDATION_LOG_CATEGORY);
-
-    /**
-     * Logger to use when no mapped handler is found for a request.
-     */
-    protected static final Log securementLogger = LogFactory.getLog(SECUREMENT_LOG_CATEGORY);
+    private final Log logger = LogFactory.getLog(getClass());
 
     private boolean validateRequest = true;
 
@@ -82,9 +69,11 @@ public abstract class AbstractWsSecurityInterceptor implements SoapEndpointInter
                 return true;
             }
             catch (WsSecurityValidationException ex) {
-                if (validationLogger.isWarnEnabled()) {
-                    validationLogger.warn("Could not validate request: " + ex.getMessage());
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Could not validate request: " + ex.getMessage());
                 }
+                SoapMessage response = soapMessageContext.createSoapResponse();
+                SoapMessageUtils.addSenderFault(response, ex.getMessage());
                 return false;
             }
         }
@@ -103,8 +92,8 @@ public abstract class AbstractWsSecurityInterceptor implements SoapEndpointInter
                 return true;
             }
             catch (WsSecuritySecurementException ex) {
-                if (securementLogger.isErrorEnabled()) {
-                    securementLogger.error("Could not secure response: " + ex.getMessage(), ex);
+                if (logger.isErrorEnabled()) {
+                    logger.error("Could not secure response: " + ex.getMessage(), ex);
                 }
                 return false;
             }
