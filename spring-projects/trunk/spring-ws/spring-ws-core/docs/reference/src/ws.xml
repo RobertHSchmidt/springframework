@@ -5,25 +5,70 @@
     <section id="ws-introduction">
         <title>Introduction</title>
         <para>
-            Spring's Web service framework is
+            Spring's Web service framework is designed around
         </para>
     </section>
     <section>
         <title>MessageDispatcher</title>
+        <para>
+            Spring-WS is designed around a central dispatching mechanism, which forwards
+        </para>
     </section>
     <section>
         <title>Endpoints</title>
     </section>
     <section>
-        <title>EndpointMappings</title>
+        <title>Endpoint mappings</title>
+        <para>
+            The endpoint mapping is responsible for mapping incoming messages to appropriate endpoints. It does this by
+            delivering a <classname>EndpointInterceptorChain</classname>, which consists of the endpoint that matches
+            the incoming request, and an optional list of endpoint interceptors. When a message is received by the
+            <classname>MessageDispatcher</classname>, it will ask the registered endpoint mappings to come up with a
+            appropriate <classname>HandlerExecutionChain</classname>. After that, the
+            <classname>MessageDispatcher</classname> will invoke the endpoint and interceptors in the chain.
+        </para>
+        <para>
+            Most endpoint mappings inherit from the <classname>AbstractEndpointMapping</classname>, which offers the
+            following properties:
+            <informaltable>
+                <tgroup cols="2">
+                    <tbody>
+                        <row>
+                            <entry>
+                                <methodname>interceptors</methodname>
+                            </entry>
+                            <entry>
+                                the list of interceptors use. <interfacename>EndpointInterceptor</interfacename>s are
+                                discussed in <xref linkend="ws-endpoint-interceptor"/>.
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <methodname>defaultHandler</methodname>
+                            </entry>
+                            <entry>
+                                the default handler to use. This endpoint will be returned if no specific mapping was
+                                found.
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                
+                            </entry>
+                        </row>
+
+                    </tbody>
+        </tgroup>
+        </informaltable>
+        </para>
         <section>
             <title>SoapActionEndpointMapping</title>
         </section>
         <section>
             <title>PayloadRootQNameEndpointMapping</title>
         </section>
-        <section>
-            <title>Adding EndpointInterceptors</title>
+        <section id="ws-endpoint-interceptor">
+            <title>Adding <interfacename>EndpointInterceptors</interfacename></title>
         </section>
         <section>
             <title>Handling Exceptions</title>
@@ -80,7 +125,7 @@
                 notation of the faults.
             </para>
         </section>
-    </section>
+        </section>
 
     <section>
         <title>Similarities between Spring-MVC and Spring-WS</title>
@@ -145,6 +190,4 @@
             </informaltable>
         </para>
     </section>
-
-
 </chapter>

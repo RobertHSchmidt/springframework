@@ -115,7 +115,7 @@
         <xsl:variable name="Version">
             <xsl:choose>
                 <xsl:when test="//releaseinfo">
-                        <xsl:text>Spring Web Services </xsl:text><xsl:value-of select="//releaseinfo"/>
+                        <xsl:text>Spring-WS </xsl:text><xsl:value-of select="//releaseinfo"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <!-- nop -->
