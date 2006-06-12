@@ -4,6 +4,7 @@ http://www.springframework.org
 
 Changes in version 1.0-M1
 -------------------------
+
 Package org.springframework.oxm.jaxb
 * added support for JAXB 2: refactored JaxbMarshaller into AbstractJaxbMarshaller, Jaxb1Marshaller and Jaxb2Marshaller
 * made JaxbMarshallers thread safe
@@ -25,6 +26,9 @@ Package org.springframework.ws.soap
 Package org.springframework.ws.soap.endpoint
 * added SimpleSoapExceptionResolver
 
+Package org.springframework.ws.soap.security.xwss
+* added WS-Security implementation based on XWS-Security with integration for Acegi and JAAS
+
 Package org.springframework.xml.transform
 * added StaxSource and StaxResult, which allow for StAX readers/writers to be used as javax.xml.transform.Source and
   javax.xml.transform.Result
@@ -34,6 +38,8 @@ Package org.springframework.xml.xpath
 
 Samples
 * Added Ingo Siebert's Echo sample
+* Added WS-Security support to Airline sample
+* Added SAAJ clients to Airline sample
 
 
 Changes in version 0.9.1 (06.04.2006)

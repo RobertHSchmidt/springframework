@@ -34,8 +34,8 @@ import org.xml.sax.InputSource;
 import org.springframework.xml.transform.StringSource;
 
 /**
- * /** Abstract base class for endpoints that handle the message payload as XOM elements. Offers the message payload as
- * a XOM <code>Element</code>, and allows subclasses to create a response by returning an <code>Element</code>.
+ * Abstract base class for endpoints that handle the message payload as XOM elements. Offers the message payload as a
+ * XOM <code>Element</code>, and allows subclasses to create a response by returning an <code>Element</code>.
  * <p/>
  * An <code>AbstractXomPayloadEndpoint</code> only accept one payload element. Multiple payload elements are not in
  * accordance with WS-I.

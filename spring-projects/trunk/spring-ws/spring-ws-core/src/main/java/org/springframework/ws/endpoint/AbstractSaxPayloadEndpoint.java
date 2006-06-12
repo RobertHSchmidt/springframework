@@ -26,7 +26,7 @@ import org.xml.sax.ContentHandler;
  * Abstract base class for endpoints that handle the message payload with a SAX <code>ContentHandler</code>. Allows
  * subclasses to create a response by returning a <code>Source</code>.
  * <p/>
- * Implementations of this class should create a new handler for each call of <code>createContentHandler</code, because
+ * Implementations of this class should create a new handler for each call of <code>createContentHandler</code>, because
  * of thread safety. The handlers is later passed on to <code>createResponse</code>, so it can be used for holding
  * request-specific state.
  *
