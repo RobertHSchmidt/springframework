@@ -8,26 +8,26 @@
 	</HEAD>
 	<BODY>
 		<FORM name="submitForm" action="admin.htm">
-			<INPUT type="hidden" name="_flowExecutionKey" value="<%=request.getAttribute("flowExecutionKey") %>">
+			<INPUT type="hidden" name="_flowExecutionKey" value="<%= request.getAttribute("flowExecutionKey") %>">
 			<INPUT type="hidden" name="_eventId" value="back">
 		</FORM>
 		<DIV align="left">File Contents</DIV>
 		<HR>
 		<DIV align="left">
 			<%
-				FileUploadBean file=(FileUploadBean)request.getAttribute("file"); 
-				if (file.getFile()!=null && file.getFile().length>0) {
+				byte[] file = (byte[])request.getAttribute("file"); 
+				if (file != null && file.length > 0) {
 			%>
 			<TABLE border="1">
 				<TR>
-					<TD><PRE><%=new String(file.getFile()) %></PRE></TD>
+					<TD><PRE><%= new String(file) %></PRE></TD>
 				</TR>
 			</TABLE>
 			<%
 				}
 				else {
 			%>
-				No file was uploaded!
+				    No file was uploaded!
 			<%
 				}
 			%>
