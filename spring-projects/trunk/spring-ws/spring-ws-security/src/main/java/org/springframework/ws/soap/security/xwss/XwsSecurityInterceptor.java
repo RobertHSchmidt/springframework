@@ -156,7 +156,7 @@ public class XwsSecurityInterceptor extends AbstractWsSecurityInterceptor implem
             return processor.secureOutboundMessage(context);
         }
         catch (XWSSecurityException ex) {
-            throw new XwsSecuritySecurementException("Could not secure message: " + ex.getMessage(), ex);
+            throw new XwsSecuritySecurementException(ex.getMessage(), ex);
         }
     }
 
@@ -174,7 +174,7 @@ public class XwsSecurityInterceptor extends AbstractWsSecurityInterceptor implem
             return processor.verifyInboundMessage(context);
         }
         catch (XWSSecurityException ex) {
-            throw new XwsSecurityValidationException("Could not validate message: " + ex.getMessage(), ex);
+            throw new XwsSecurityValidationException(ex.getMessage(), ex);
         }
     }
 }
