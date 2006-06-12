@@ -400,56 +400,61 @@ public class Application {
         <para>
             The JAXB binding compiler translates a W3C XML Schema into one or more Java classes, a
             <filename>jaxb.properties</filename>
-            file, and possibly other files, depending on the specific
-            implementation of JAXB. For instance, Sun's reference implementation compiler generates a
-            <filename>bgm.ser</filename>
-            file which contains mapping information.
+            file, and possibly other files, depending on the specific implementation of JAXB. Alternatively, JAXB2
+            offers a way to generate a schema from annotated Java classes.
         </para>
         <para>
-            Spring-WS supports the standard JAXB 1.0 API as XML marshalling strategy, following the
-            <classname>Marshaller</classname>
-            and
-            <classname>Unmarshaller</classname>
-            interfaces described in
-            <xref
-                    linkend="oxm-marshaller-unmarshaller"/>
-            . The corresponding integration classes reside in the
+            Spring supports both the JAXB 1.0 as the JAXB 2.0 API as XML marshalling strategy, following the
+            <classname>Marshaller</classname> and <classname>Unmarshaller</classname> interfaces described in
+            <xref linkend="oxm-marshaller-unmarshaller"/>. The corresponding integration classes reside in the
             <classname>org.springframework.oxm.jaxb</classname>
             package.
         </para>
         <section>
-            <title>JaxbMarshaller</title>
+            <title>Jaxb1Marshaller</title>
             <para>
-                The
-                <classname>JaxbMarshaller</classname>
-                class implements both the Spring-WS
-                <classname>Marshaller</classname>
-                and
-                <classname>Unmarshaller</classname>
-                interface. It requires a
-                context path to operate, which you can set using the
-                <varname>contextPath</varname>
-                property. The
+                The <classname>Jaxb1Marshaller</classname> class implements both the Spring
+                <classname>Marshaller</classname> and <classname>Unmarshaller</classname> interface. It requires a
+                context path to operate, which you can set using the <varname>contextPath</varname> property. The
                 context path is a list of colon (:) separated Java package names that contain schema derived classes.
-                The next sample bean configuration shows how to configure a
-                <classname>JaxbMarshaller</classname>
-                using
-                the classes generated to
-                <varname>org.springframework.ws.samples.airline.schema</varname>
-                .
+                The marshaller has an additional <varname>validating</varname> property which defines whether to
+                validate invoming XML.
             </para>
-            <programlisting><![CDATA[
-<beans>
+            <para>
+                The next sample bean configuration shows how to configure a
+                <classname>JaxbMarshaller</classname> using the classes generated to
+                <varname>org.springframework.ws.samples.airline.schema</varname>.
+            </para>
+            <programlisting><![CDATA[<beans>
 
-    <bean id="jaxbMarshaller" class="org.springframework.oxm.jaxb.Jaxb1Marshaller">
+    <bean id="jaxb1Marshaller" class="org.springframework.oxm.jaxb.Jaxb1Marshaller">
         <property name="contextPath" value="org.springframework.ws.samples.airline.schema"/>
     </bean>
     ...
 
 </beans>]]></programlisting>
         </section>
-    </section>
+        <section>
+            <title>Jaxb2Marshaller</title>
+            <para>
+                The <classname>Jaxb2Marshaller</classname> can be configured using the same <varname>contextPath</varname> property as the <classname>Jaxb1Marshaller</classname>. However, it also offers a <varname>classesToBeBound</varname> property, which allows you to set an array of classes to be supported by the marshaller. Schema validation is performed by specifying one or more schema resource to the bean, like so:
+            </para>
+                <programlisting><![CDATA[<beans>
 
+    <bean id="jaxb2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound">
+            <list>
+                <value>org.springframework.oxm.jaxb.Flight</value>
+                <value>org.springframework.oxm.jaxb.Flights</value>                
+            </list>
+        </property>
+        <property name="schema" value="classpath:org/springframework/oxm/schema.xsd"/>
+    </bean>
+    ...
+
+</beans>]]></programlisting>                
+    </section>
+    </section>
     <section id="oxm-castor">
         <title>Castor</title>
         <para>
@@ -458,24 +463,15 @@ public class Application {
             though a mapping file can be used to have more control over the behavior of Castor.
         </para>
         <para>
-            For more information on Castor, refer to the
-            <ulink url="http://castor.org/xml-framework.html">
-                <citetitle>Castor web site</citetitle>
-            </ulink>
-            . The Spring-WS integration classes reside in the
-            <classname>org.springframework.oxm.castor</classname>
-            package.
+            For more information on Castor, refer to the <ulink url="http://castor.org/xml-framework.html">
+            <citetitle>Castor web site</citetitle></ulink>. The Spring integration classes reside in the
+            <classname>org.springframework.oxm.castor</classname> package.
         </para>
         <section>
             <title>CastorMarshaller</title>
             <para>
-                As with JAXB, the
-                <classname>CastorMarshaller</classname>
-                implements both the
-                <classname>Marshaller</classname>
-                and
-                <classname>Unmarshaller</classname>
-                interface. It can be wired up
+                As with JAXB, the <classname>CastorMarshaller</classname> implements both the
+                <classname>Marshaller</classname> and <classname>Unmarshaller</classname> interface. It can be wired up
                 as follows:
             </para>
             <programlisting><![CDATA[
@@ -491,14 +487,10 @@ public class Application {
             <para>
                 Although it is possible to rely on Castor's default marshalling behavior, it might be necessary to have
                 more control over it. This can be accomplished using a Castor mapping file. For more information, refer
-                to
-                <ulink url="http://castor.org/xml-mapping.html">Castor XML Mapping</ulink>
-                .
+                to <ulink url="http://castor.org/xml-mapping.html">Castor XML Mapping</ulink>.
             </para>
             <para>
-                The mapping can be set using the
-                <methodname>mappingLocation</methodname>
-                resource property, indicated
+                The mapping can be set using the <methodname>mappingLocation</methodname> resource property, indicated
                 below with a classpath resource.
             </para>
             <programlisting><![CDATA[
@@ -516,31 +508,19 @@ public class Application {
         <para>
             XMLBeans is an XML binding tool that has full XML Schema support, and offers full XML Infoset fidelity. It
             takes a different approach that most other O/X mapping frameworks, in that all classes that are
-            generated from an XML Schema are all derived from
-            <classname>XmlObject</classname>
-            , and contain XML binding
+            generated from an XML Schema are all derived from <classname>XmlObject</classname>, and contain XML binding
             information in them.
         </para>
         <para>
-            For more information on XMLBeans, refer to the
-            <ulink url="http://xmlbeans.apache.org/">
-                <citetitle>XMLBeans
-                    web site</citetitle>
-            </ulink>
-            . The Spring-WS integration classes reside in the
-            <classname>org.springframework.oxm.xmlbeans</classname>
-            package.
+            For more information on XMLBeans, refer to the <ulink url="http://xmlbeans.apache.org/"> <citetitle>XMLBeans
+            web site</citetitle></ulink> . The Spring-WS integration classes reside in the
+            <classname>org.springframework.oxm.xmlbeans</classname> package.
         </para>
         <section>
             <title>XmlBeansMarshaller</title>
             <para>
-                The
-                <classname>XmlBeansMarshaller</classname>
-                implements both the
-                <classname>Marshaller</classname>
-                and
-                <classname>Unmarshaller</classname>
-                interface. It can be wired up as follows:
+                The <classname>XmlBeansMarshaller</classname> implements both the <classname>Marshaller</classname> and
+                <classname>Unmarshaller</classname> interface. It can be wired up as follows:
             </para>
             <programlisting><![CDATA[
 <beans>
@@ -551,13 +531,8 @@ public class Application {
 </beans>]]></programlisting>
             <note>
                 <para>
-                    Note that the
-                    <classname>XmlBeansMarshaller</classname>
-                    can only marshal objects of type
-                    <classname>XmlObject</classname>
-                    , and not every
-                    <classname>java.lang.Object</classname>
-                    .
+                    Note that the <classname>XmlBeansMarshaller</classname> can only marshal objects of type
+                    <classname>XmlObject</classname>, and not every <classname>java.lang.Object</classname>.
                 </para>
             </note>
         </section>
@@ -574,34 +549,18 @@ public class Application {
             the classes from or to XML.
         </para>
         <para>
-            For more information on JiBX, refer to the
-            <ulink url="http://jibx.sourceforge.net/">
-                <citetitle>JiBX
-                    web site</citetitle>
-            </ulink>
-            . The Spring integration classes reside in the
-            <varname>org.springframework.oxm.jibx</varname>
-            package.
+            For more information on JiBX, refer to the <ulink url="http://jibx.sourceforge.net/"><citetitle>JiBX web
+            site</citetitle></ulink>. The Spring integration classes reside in the
+            <varname>org.springframework.oxm.jibx</varname> package.
         </para>
         <section>
             <title>JibxMarshaller</title>
             <para>
-                The
-                <classname>JibxMarshaller</classname>
-                class implements both the
-                <classname>Marshaller</classname>
-                and
-                <classname>Unmarshaller</classname>
-                interface. To operate, it requires the name of the class to
-                marshall in, which you can set using the
-                <varname>targetClass</varname>
-                property. Optionally, you can
-                set the binding name using the
-                <varname>bindingName</varname>
-                property. In the next sample, we refer to
-                the
-                <classname>flightsBindingFactory</classname>
-                defined in the previous bean definition.
+                The <classname>JibxMarshaller</classname> class implements both the <classname>Marshaller</classname>
+                and <classname>Unmarshaller</classname> interface. To operate, it requires the name of the class to
+                marshall in, which you can set using the <varname>targetClass</varname> property. Optionally, you can
+                set the binding name using the <varname>bindingName</varname> property. In the next sample, we refer to
+                the <classname>flightsBindingFactory</classname> defined in the previous bean definition.
             </para>
             <programlisting><![CDATA[
 <beans>
@@ -614,29 +573,57 @@ public class Application {
 ]]></programlisting>
             <note>
                 <para>
-                    A JibxBindingFactoryBean is configured for a single class. If you want to marshal multiple classes,
-                    you have to configure multiple
-                    <classname>JibxMarshaller</classname>
-                    s with different
-                    <varname>targetClass</varname>
-                    es.
+                    A <classname>JibxMarshaller</classname> is configured for a single class. If you want to marshal
+                    multiple classes, you have to configure multiple <classname>JibxMarshaller</classname>s with
+                    different <varname>targetClass</varname>es.
                 </para>
             </note>
             <caution>
                 <para>
-                    Note that the
-                    <classname>JibxMarshaller</classname>
-                    only operates on streams, and not on DOM nodes,
-                    nor SAX handlers. More specifically, it only unmarshals from
-                    <classname>StreamSource</classname>
-                    s
-                    and
-                    <classname>SAXSource</classname>
-                    s, and only marshals to
-                    <classname>StreamResult</classname>
-                    s.
+                    Note that the <classname>JibxMarshaller</classname> only operates on streams, and not on DOM nodes,
+                    nor SAX handlers. More specifically, it only unmarshals from <classname>StreamSource</classname>s
+                    and <classname>SAXSource</classname> s, and only marshals to <classname>StreamResult</classname>s.
                 </para>
             </caution>
         </section>
+    </section>
+    <section id="oxm-xstream">
+        <title>XStream</title>
+        <para>
+            XStream is a simple library to serialize objects to XML and back again. It does not require any mapping, and
+            generates clean XML.
+        </para>
+        <para>
+            For more information on XStream, refer to the <ulink url="http://xstream.codehaus.org/"><citetitle>XStream
+            web site</citetitle></ulink>. The Spring integration classes reside in the
+            <varname>org.springframework.oxm.xstream</varname> package.
+        </para>
+        <section>
+            <title>XStreamMarshaller</title>
+            <para>
+                The <classname>XStreamMarshaller</classname> does not require any configuration, and can be configured
+                in an application context directly. To further customize the XML, you can set an
+                <emphasis>alias map</emphasis>, which consists of string aliases mapped to classes:
+            </para>
+            <programlisting><![CDATA[
+<beans>
+
+    <bean id="xstreamMarshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
+        <property name="aliases">
+            <props>
+                <prop key="Flight">org.springframework.oxm.xstream.Flight</prop>
+            </props>
+        </property>
+    </bean>
+    ...
+
+</beans>]]></programlisting>
+        </section>
+        <note>
+            <para>
+                Note that XStream is an XML serialization library, not a data binding library. Therefore, it has
+                limited namespace support. As such, it is rather unsuitable for usage within Web services.
+            </para>
+        </note>
     </section>
 </chapter>

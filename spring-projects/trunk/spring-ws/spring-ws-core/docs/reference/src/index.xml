@@ -3,6 +3,7 @@
         "../lib/docbook-dtd/docbookx.dtd"
         [
                 <!ENTITY overview           SYSTEM "overview.xml">
+                <!ENTITY contract-first     SYSTEM "contract-first.xml">
                 <!ENTITY oxm                SYSTEM "oxm.xml">
                 <!ENTITY ws                 SYSTEM "ws.xml">
                 ]>
@@ -15,7 +16,7 @@
         <subtitle>
             Reference Documentation
         </subtitle>
-        <releaseinfo>Version 0.9.1</releaseinfo>
+        <releaseinfo>Version 1.0-M1</releaseinfo>
         <pubdate>(Work in progress)</pubdate>
 
         <authorgroup>
@@ -34,8 +35,8 @@
 
     &overview;
 
-    &ws;
-
-    &oxm;
+    &contract-first;
     
+    &oxm;
+
 </book>
