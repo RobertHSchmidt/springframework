@@ -29,7 +29,7 @@ public interface ConversationService {
 	 * @return a service interface allowing access to the conversatio context
 	 * @throws ConversationServiceException an exception occured
 	 */
-	public Conversation begin(ConversationParameters conversationParameters) throws ConversationServiceException;
+	public Conversation beginConversation(ConversationParameters conversationParameters) throws ConversationServiceException;
 
 	/**
 	 * Get the conversation with the provided id.
@@ -41,6 +41,7 @@ public interface ConversationService {
 
 	/**
 	 * Parse the string-encoded conversationId into its object form.
+	 * Essentially, the reverse of {@link ConversationId#toString()}.
 	 * @param encodedId the encoded id
 	 * @return the parsed conversation id
 	 * @throws ConversationServiceException an exception occured.

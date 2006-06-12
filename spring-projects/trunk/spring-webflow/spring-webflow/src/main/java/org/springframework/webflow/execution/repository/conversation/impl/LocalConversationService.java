@@ -62,7 +62,7 @@ public class LocalConversationService implements ConversationService, Serializab
 		this.conversationIdGenerator = uidGenerator;
 	}
 
-	public Conversation begin(ConversationParameters conversationParameters) {
+	public Conversation beginConversation(ConversationParameters conversationParameters) {
 		Assert.notNull(conversationParameters, "newConversation must not be null");
 		ConversationId conversationId = new SimpleConversationId(conversationIdGenerator.generateUid());
 		conversations.put(conversationId, createConversation(conversationParameters, conversationId));

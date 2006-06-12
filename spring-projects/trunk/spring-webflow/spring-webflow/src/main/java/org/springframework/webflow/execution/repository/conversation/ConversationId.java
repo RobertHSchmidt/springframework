@@ -25,5 +25,5 @@ import java.io.Serializable;
  * @author Keith Donald
  */
 public abstract class ConversationId implements Serializable {
-
+	public abstract String toString();
 }

@@ -137,6 +137,7 @@ public interface FlowExecutionRepository {
 
 	/**
 	 * Parse the string-encoded flow execution key into its object form.
+	 * Essentially, the reverse of {@link FlowExecutionKey#toString()}.
 	 * @param encodedKey the string encoded key
 	 * @return the parsed flow execution key, the persistent identifier for
 	 * exactly one flow execution.
