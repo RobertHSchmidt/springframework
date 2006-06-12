@@ -42,11 +42,8 @@
     <!-- note that at this time we depend on MyFaces, not JSF-RI -->
     <dependency	org="apache" name="commons-el" rev="1.0" conf="jsf->default"/>
     <dependency	org="apache" name="commons-fileupload" rev="1.0" conf="jsf->default"/>
-    <dependency	org="apache" name="myfaces" rev="1.1.1" conf="buildtime, jsf->default">
-		<artifact name="myfaces-api" type="jar"/>
-		<artifact name="myfaces-impl" type="jar"/>
-		<artifact name="tomahawk" type="jar"/>
-	</dependency>
+    <dependency	org="org.apache.myfaces.core" name="myfaces-api" rev="1.1.2" conf="buildtime, jsf->default"/>
+    <dependency	org="org.apache.myfaces.core" name="myfaces-impl" rev="1.1.2" conf="buildtime, jsf->default"/>
 
     <!-- mixed dependencies -->
     <dependency	org="apache" name="commons-beanutils" rev="1.7.0" conf="test, jsf->default; struts->default"/>
