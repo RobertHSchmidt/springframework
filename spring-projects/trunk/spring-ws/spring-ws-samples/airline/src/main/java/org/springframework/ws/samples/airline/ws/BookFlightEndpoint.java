@@ -88,6 +88,7 @@ public class BookFlightEndpoint extends AbstractJDomPayloadEndpoint implements I
 
     private Element createResponse(Ticket ticket) {
         Element responseElement = new Element("BookFlightResponse", namespace);
+        responseElement.addContent(new Element("id", namespace).setText(ticket.getId().toString()));
         responseElement.addContent(createIssueDateElement(ticket.getIssueDate()));
         responseElement.addContent(createPassengersElement(ticket.getPassengers()));
         responseElement.addContent(createFlightElement(ticket.getFlight()));

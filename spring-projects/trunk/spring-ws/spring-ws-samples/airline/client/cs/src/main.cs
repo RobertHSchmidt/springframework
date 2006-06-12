@@ -35,7 +35,7 @@ namespace Spring.Ws.Samples.Airline.Client.CSharp {
 		}
 
 		private static void WriteTicket(Ticket ticket) {
-			Console.WriteLine("Ticket");
+			Console.WriteLine("Ticket {0}", ticket.id);
 			Console.WriteLine("Ticket issue date:\t{0:d}", ticket.issueDate);
 			foreach (Name passenger in ticket.passengers) {
 				WriteName(passenger);

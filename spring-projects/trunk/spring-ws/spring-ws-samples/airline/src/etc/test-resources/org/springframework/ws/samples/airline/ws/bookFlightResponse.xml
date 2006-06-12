@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <BookFlightResponse xmlns="http://www.springframework.org/spring-ws/samples/airline/schemas">
+    <id>42</id>
     <issueDate>2006-01-01</issueDate>
     <passengers>
         <passenger>
