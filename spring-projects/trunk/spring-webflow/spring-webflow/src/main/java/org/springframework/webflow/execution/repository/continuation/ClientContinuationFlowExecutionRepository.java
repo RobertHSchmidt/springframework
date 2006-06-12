@@ -185,7 +185,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 		
 		private static final NoOpConversation INSTANCE = new NoOpConversation();
 		
-		public Conversation begin(ConversationParameters conversationParameters) throws ConversationServiceException {
+		public Conversation beginConversation(ConversationParameters conversationParameters) throws ConversationServiceException {
 			return INSTANCE;
 		}
 

@@ -89,7 +89,7 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	}
 
 	public FlowExecutionKey generateKey(FlowExecution flowExecution) {
-		Conversation conversation = conversationService.begin(createNewConversation(flowExecution));
+		Conversation conversation = conversationService.beginConversation(createNewConversation(flowExecution));
 		onBegin(conversation);
 		return new CompositeFlowExecutionKey(conversation.getId(), generateContinuationId(flowExecution));
 	}

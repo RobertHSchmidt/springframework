@@ -602,7 +602,7 @@
 	  
 	For example:
 	
-	<ouput-mapper>
+	<output-mapper>
 	    <mapping source="flowScope.myFlowAttribute" target="clientOutputAttribute"/>
 	</output-mapper>
 	
