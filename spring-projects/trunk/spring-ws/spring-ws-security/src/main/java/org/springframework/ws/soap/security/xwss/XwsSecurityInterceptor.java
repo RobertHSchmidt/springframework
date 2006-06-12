@@ -19,7 +19,6 @@ package org.springframework.ws.soap.security.xwss;
 import java.io.InputStream;
 
 import javax.security.auth.callback.CallbackHandler;
-import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 
 import com.sun.xml.wss.ProcessingContext;
@@ -32,7 +31,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
-import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.context.SoapMessageContext;
 import org.springframework.ws.soap.saaj.SaajSoapMessageContext;
 import org.springframework.ws.soap.security.AbstractWsSecurityInterceptor;
@@ -63,9 +61,6 @@ import org.springframework.ws.soap.security.xwss.callback.CallbackHandlerChain;
 public class XwsSecurityInterceptor extends AbstractWsSecurityInterceptor implements InitializingBean {
 
     private static final Log logger = LogFactory.getLog(XwsSecurityInterceptor.class);
-
-    private static final QName WS_SECURITY_NAME =
-            new QName("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "Security");
 
     private XWSSProcessor processor;
 
@@ -119,10 +114,6 @@ public class XwsSecurityInterceptor extends AbstractWsSecurityInterceptor implem
                 is.close();
             }
         }
-    }
-
-    public boolean understands(SoapHeaderElement headerElement) {
-        return WS_SECURITY_NAME.equals(headerElement.getName());
     }
 
     protected void secureResponse(SoapMessageContext soapMessageContext) throws XwsSecuritySecurementException {

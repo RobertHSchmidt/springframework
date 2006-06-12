@@ -16,12 +16,15 @@
 
 package org.springframework.ws.soap.security;
 
+import javax.xml.namespace.QName;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.util.Assert;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapEndpointInterceptor;
+import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.context.SoapMessageContext;
 import org.springframework.ws.soap.support.SoapMessageUtils;
@@ -44,6 +47,9 @@ public abstract class AbstractWsSecurityInterceptor implements SoapEndpointInter
     private boolean validateRequest = true;
 
     private boolean secureResponse = true;
+
+    private static final QName WS_SECURITY_NAME =
+            new QName("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "Security");
 
     /**
      * Indicates whether outgoing responsed are to be secured. Defaults to <code>true</code>.
@@ -124,4 +130,8 @@ public abstract class AbstractWsSecurityInterceptor implements SoapEndpointInter
      * @throws WsSecuritySecurementException in case of securement errors
      */
     protected abstract void secureResponse(SoapMessageContext messageContext) throws WsSecuritySecurementException;
+
+    public boolean understands(SoapHeaderElement headerElement) {
+        return WS_SECURITY_NAME.equals(headerElement.getName());
+    }
 }

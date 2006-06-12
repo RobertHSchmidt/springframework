@@ -44,7 +44,7 @@ import org.springframework.ws.soap.security.xwss.callback.AbstractCallbackHandle
  * @author Arjen Poutsma
  * @see UsernamePasswordAuthenticationToken
  * @see PasswordValidationCallback
- * @see PasswordValidationCallback.PlainTextPasswordRequest
+ * @see com.sun.xml.wss.impl.callback.PasswordValidationCallback.PlainTextPasswordRequest
  * @see org.acegisecurity.ui.basicauth.BasicProcessingFilter
  */
 public class AcegiPlainTextPasswordValidationCallbackHandler extends AbstractCallbackHandler {
