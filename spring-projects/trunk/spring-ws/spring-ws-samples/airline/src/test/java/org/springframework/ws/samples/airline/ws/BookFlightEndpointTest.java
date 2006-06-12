@@ -74,6 +74,7 @@ public class BookFlightEndpointTest extends XMLTestCase {
         flight.setTo(to);
         flight.setServiceClass(ServiceClass.ECONOMY);
         ticket = new Ticket();
+        ticket.setId(new Long(42));
         ticket.setFlight(flight);
         ticket.setIssueDate(new YearMonthDay(2006, 1, 1));
     }
