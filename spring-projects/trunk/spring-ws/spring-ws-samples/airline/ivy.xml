@@ -24,6 +24,13 @@
         <dependency org="mysql" name="mysql-connector-java" rev="3.1.11"/>
         <dependency org="postgresql" name="postgresql" rev="8.1-404.jdbc3"/>
 
+        <!-- acegi depencies -->
+        <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.0">
+            <!-- Acegi's pom uses 2.0-m2, we are a bit more conservative -->
+            <exclude org="org.springframework"/>
+            <exclude org="commons-.*" matcher="regexp"/>
+            <exclude org="oro"/>
+        </dependency>
 
         <dependency org="org.springframework" name="spring-aop" rev="1.2.8"/>
         <dependency org="org.springframework" name="spring-dao" rev="1.2.8"/>
@@ -34,6 +41,8 @@
         <dependency org="org.springframework" name="spring-oxm" rev="latest.integration" conf="global->default,jaxb1"/>
         <dependency org="org.springframework" name="spring-ws-core" rev="latest.integration"
                     conf="global->default,saaj"/>
+        <dependency org="org.springframework" name="spring-ws-security" rev="latest.integration"
+                    conf="global->default,xwss"/>
 
         <!--  build time dependencies -->
         <dependency org="javax.xml" name="jaxb-xjc" rev="2.0.1" conf="buildtime->default"/>

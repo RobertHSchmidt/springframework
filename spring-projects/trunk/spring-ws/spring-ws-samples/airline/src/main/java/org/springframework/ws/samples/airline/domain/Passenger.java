@@ -15,20 +15,49 @@
  */
 package org.springframework.ws.samples.airline.domain;
 
+import org.springframework.util.Assert;
+
 public class Passenger extends Entity {
 
     private String firstName;
 
     private String lastName;
 
-    private Ticket ticket;
-
     public Passenger() {
     }
 
     public Passenger(String firstName, String lastName) {
+        Assert.hasLength(firstName);
+        Assert.hasLength(lastName);
         this.firstName = firstName;
         this.lastName = lastName;
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final Passenger passenger = (Passenger) o;
+
+        if (!getFirstName().equals(passenger.getFirstName())) {
+            return false;
+        }
+        if (!getLastName().equals(passenger.getLastName())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public int hashCode() {
+        int result;
+        result = getFirstName().hashCode();
+        result = 29 * result + getLastName().hashCode();
+        return result;
     }
 
     public String getFirstName() {
@@ -45,40 +74,5 @@ public class Passenger extends Entity {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public Ticket getTicket() {
-        return ticket;
-    }
-
-    public void setTicket(Ticket ticket) {
-        this.ticket = ticket;
-    }
-
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        final Passenger passenger = (Passenger) o;
-
-        if (!firstName.equals(passenger.firstName)) {
-            return false;
-        }
-        if (!lastName.equals(passenger.lastName)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public int hashCode() {
-        int result;
-        result = firstName.hashCode();
-        result = 29 * result + lastName.hashCode();
-        return result;
     }
 }

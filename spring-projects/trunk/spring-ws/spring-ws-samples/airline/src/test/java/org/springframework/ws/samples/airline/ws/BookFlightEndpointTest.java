@@ -16,7 +16,7 @@
 
 package org.springframework.ws.samples.airline.ws;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.custommonkey.xmlunit.XMLTestCase;
@@ -31,6 +31,7 @@ import org.joda.time.YearMonthDay;
 
 import org.springframework.ws.samples.airline.domain.Airport;
 import org.springframework.ws.samples.airline.domain.Flight;
+import org.springframework.ws.samples.airline.domain.FrequentFlyer;
 import org.springframework.ws.samples.airline.domain.Passenger;
 import org.springframework.ws.samples.airline.domain.ServiceClass;
 import org.springframework.ws.samples.airline.domain.Ticket;
@@ -40,19 +41,17 @@ public class BookFlightEndpointTest extends XMLTestCase {
 
     private BookFlightEndpoint endpoint;
 
-    private Element requestElement;
-
     private MockControl serviceControl;
 
     private AirlineService serviceMock;
 
     private DateTime departure;
 
-    private List passengers;
-
     private Ticket ticket;
 
     private Document responseDocument;
+
+    private SAXBuilder saxBuilder;
 
     protected void setUp() throws Exception {
         XMLUnit.setIgnoreWhitespace(true);
@@ -61,15 +60,10 @@ public class BookFlightEndpointTest extends XMLTestCase {
         serviceMock = (AirlineService) serviceControl.getMock();
         endpoint.setAirlineService(serviceMock);
         endpoint.afterPropertiesSet();
-        SAXBuilder saxBuilder = new SAXBuilder();
-        Document requestDocument = saxBuilder.build(getClass().getResourceAsStream("bookFlightRequest.xml"));
+        saxBuilder = new SAXBuilder();
         responseDocument = saxBuilder.build(getClass().getResourceAsStream("bookFlightResponse.xml"));
-        requestElement = requestDocument.getRootElement();
         departure = new DateTime(2006, 1, 1, 0, 0, 0, 0);
         DateTime arrival = new DateTime(2006, 2, 2, 0, 0, 0, 0);
-        Passenger passenger = new Passenger("John", "Doe");
-        passengers = new ArrayList();
-        passengers.add(passenger);
         Flight flight = new Flight();
         flight.setNumber("EF1234");
         flight.setDepartureTime(departure);
@@ -82,13 +76,33 @@ public class BookFlightEndpointTest extends XMLTestCase {
         ticket = new Ticket();
         ticket.setFlight(flight);
         ticket.setIssueDate(new YearMonthDay(2006, 1, 1));
-        ticket.addPassenger(passenger);
     }
 
     public void testInvoke() throws Exception {
+        Passenger passenger = new Passenger("John", "Doe");
+        List passengers = Collections.singletonList(passenger);
+        ticket.addPassenger(passenger);
         serviceControl.expectAndReturn(serviceMock.bookFlight("EF1234", departure, passengers), ticket);
         serviceControl.replay();
-        Element result = endpoint.invokeInternal(requestElement);
+        Document requestDocument = saxBuilder.build(getClass().getResourceAsStream("bookFlightRequest.xml"));
+        Element result = endpoint.invokeInternal(requestDocument.getRootElement());
+        assertNotNull("Invalid result", result);
+        Document resultDocument = new Document();
+        resultDocument.setRootElement(result);
+        XMLOutputter outputter = new XMLOutputter();
+        assertXMLEqual(outputter.outputString(responseDocument), outputter.outputString(resultDocument));
+        serviceControl.verify();
+    }
+
+    public void testInvokeFrequentFlyer() throws Exception {
+        FrequentFlyer frequentFlyer = new FrequentFlyer("john", "changeme", "John", "Doe");
+        List passengers = Collections.singletonList(frequentFlyer);
+        ticket.addPassenger(frequentFlyer);
+        serviceControl.expectAndReturn(serviceMock.bookFlight("EF1234", departure, passengers), ticket);
+        serviceControl.replay();
+        Document requestDocument =
+                saxBuilder.build(getClass().getResourceAsStream("bookFlightRequestFrequentFlyer.xml"));
+        Element result = endpoint.invokeInternal(requestDocument.getRootElement());
         assertNotNull("Invalid result", result);
         Document resultDocument = new Document();
         resultDocument.setRootElement(result);

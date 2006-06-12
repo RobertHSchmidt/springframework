@@ -54,7 +54,6 @@ public class Ticket extends Entity {
     }
 
     public void addPassenger(Passenger passenger) {
-        passenger.setTicket(this);
         passengers.add(passenger);
     }
 }

@@ -1,7 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
-        "http://www.springframework.org/dtd/spring-beans.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
+    <description>
+        This application context contains the Spring-WS beans.
+    </description>
+
     <bean id="messageDispatcher" class="org.springframework.ws.soap.SoapMessageDispatcher">
         <description>
             The MessageDispatcher is responsible for routing messages to endpoints.
@@ -10,6 +14,7 @@
             <list>
                 <ref local="payloadMapping"/>
                 <ref local="soapActionMapping"/>
+                <ref bean="secureMapping"/>
             </list>
         </property>
         <property name="endpointExceptionResolvers">

@@ -6,6 +6,8 @@
     <bean id="airlineServiceTarget" class="org.springframework.ws.samples.airline.service.impl.AirlineServiceImpl">
         <property name="flightDao" ref="flightDao"/>
         <property name="ticketDao" ref="ticketDao"/>
+        <!-- Remove the following line if you want to disable WS-Security and Acegi -->
+        <property name="frequentFlyerSecurityService" ref="securityService"/>
     </bean>
 
     <bean id="airlineService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -17,5 +19,7 @@
                 <prop key="book*">PROPAGATION_REQUIRED</prop>
             </props>
         </property>
+        <!-- Remove the following line if you want to disable WS-Security and Acegi -->
+        <property name="postInterceptors" ref="methodSecurityInterceptor"/>
     </bean>
 </beans>

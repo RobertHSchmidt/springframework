@@ -30,6 +30,7 @@ import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -39,10 +40,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 /**
+ * Simple client that calls the <code>GetFlights</code> operation using SAAJ.
+ *
  * @author Arjen Poutsma
- * @noinspection UseOfSystemOutOrSystemErr
  */
-public class Main {
+public class GetFlights {
 
     public static final String NAMESPACE_URI = "http://www.springframework.org/spring-ws/samples/airline/schemas";
 
@@ -56,7 +58,7 @@ public class Main {
 
     private TransformerFactory transfomerFactory;
 
-    public Main(String url) throws SOAPException, MalformedURLException {
+    public GetFlights(String url) throws SOAPException, MalformedURLException {
         connectionFactory = SOAPConnectionFactory.newInstance();
         messageFactory = MessageFactory.newInstance();
         transfomerFactory = TransformerFactory.newInstance();
@@ -87,6 +89,12 @@ public class Main {
         if (!response.getSOAPBody().hasFault()) {
             writeGetFlightsResponse(response);
         }
+        else {
+            SOAPFault fault = response.getSOAPBody().getFault();
+            System.err.println("Received SOAP Fault");
+            System.err.println("SOAP Fault Code :" + fault.getFaultCode());
+            System.err.println("SOAP Fault String :" + fault.getFaultString());
+        }
     }
 
     private void writeGetFlightsResponse(SOAPMessage message) throws SOAPException, TransformerException {
@@ -114,7 +122,7 @@ public class Main {
         if (args.length > 0) {
             url = args[0];
         }
-        Main main = new Main(url);
-        main.getFlights();
+        GetFlights getFlights = new GetFlights(url);
+        getFlights.getFlights();
     }
 }

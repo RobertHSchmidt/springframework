@@ -15,25 +15,15 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.samples.airline.service;
+package org.springframework.ws.samples.airline.dao;
 
-import org.springframework.ws.samples.airline.domain.Flight;
+import org.springframework.dao.DataAccessException;
+import org.springframework.ws.samples.airline.domain.FrequentFlyer;
 
-/**
- * Exception thrown when not enough seats are available for a flight.
- *
- * @author Arjen Poutsma
- */
-public class NoSeatAvailableException extends Exception {
+public interface FrequentFlyerDao {
 
-    private Flight flight;
+    FrequentFlyer get(String username) throws DataAccessException;
 
-    public NoSeatAvailableException(Flight flight) {
-        super("Flight [" + flight + "] has not more seats available");
-        this.flight = flight;
-    }
+    void update(FrequentFlyer frequentFlyer) throws DataAccessException;
 
-    public Flight getFlight() {
-        return flight;
-    }
 }

@@ -59,8 +59,8 @@ public class HibernateTicketDaoTest extends AbstractTransactionalDataSourceSprin
         jdbcTemplate.update("INSERT INTO AIRPORT(CODE, NAME, CITY) VALUES('OSL', 'Gardermoen', 'Oslo')");
         Airport toAirport = new Airport("OSL", "Gardermoen", "Oslo");
         jdbcTemplate
-                .update("INSERT INTO FLIGHT(ID, NUMBER, DEPARTURE_TIME, FROM_AIRPORT_CODE, ARRIVAL_TIME, TO_AIRPORT_CODE, SERVICE_CLASS, SEATS_AVAILABLE) " +
-                        "VALUES (42, 'KL020','2006-01-31 10:05:00', 'RTM', '2006-01-31 12:25:00', 'OSL', 'business', 90)");
+                .update("INSERT INTO FLIGHT(ID, NUMBER, DEPARTURE_TIME, FROM_AIRPORT_CODE, ARRIVAL_TIME, TO_AIRPORT_CODE, SERVICE_CLASS, SEATS_AVAILABLE, MILES) " +
+                        "VALUES (42, 'KL020','2006-01-31 10:05:00', 'RTM', '2006-01-31 12:25:00', 'OSL', 'business', 90, 10)");
         flight = new Flight();
         flight.setId(new Long(42));
         flight.setNumber("KL1653");
