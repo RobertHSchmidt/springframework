@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<project name="spring-ws-airline-sample-saaj-client" default="build">
+    <property name="bin.dir" value="bin"/>
+
+    <target name="build">
+        <mkdir dir="${bin.dir}"/>
+        <javac srcdir="src" destdir="${bin.dir}">
+            <classpath>
+                <pathelement location="../../lib/global/saaj-api.jar"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="run" depends="build">
+        <java classname="org.springframework.ws.samples.airline.client.saaj.Main" fork="true">
+            <classpath>
+                <pathelement location="${bin.dir}"/>
+                <pathelement location="../../lib/global/saaj-api.jar"/>
+                <pathelement location="../../lib/global/saaj-impl.jar"/>
+                <pathelement location="../../lib/global/mail.jar"/>
+                <pathelement location="../../lib/global/activation.jar"/>
+                <pathelement location="../../lib/global/xerces.jar"/>
+            </classpath>
+        </java>
+    </target>
+</project>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping
+        package="org.springframework.ws.samples.airline.domain"
+        auto-import="true" default-lazy="false">
+    <class name="Passenger" table="PASSENGER">
+        <id name="id" column="ID">
+            <generator class="identity"/>
+        </id>
+        <property name="firstName" column="FIRST_NAME" length="128"/>
+        <property name="lastName" column="LAST_NAME" length="128"/>
+        <many-to-one name="ticket" column="TICKET_ID" class="Ticket"/>
+    </class>
+    <class name="Flight" table="FLIGHT">
+        <id name="id" column="ID">
+            <generator class="identity"/>
+        </id>
+        <property name="number" column="NUMBER" length="20" unique="true" unique-key="number-departureTime"/>
+        <property name="departureTime" column="DEPARTURE_TIME" unique="true" unique-key="number-departureTime"
+                  type="org.joda.time.contrib.hibernate.PersistentDateTime"/>
+        <property name="arrivalTime" column="ARRIVAL_TIME" type="org.joda.time.contrib.hibernate.PersistentDateTime"/>
+        <property name="seatsAvailable" column="SEATS_AVAILABLE"/>
+        <many-to-one name="from" column="FROM_AIRPORT_CODE" class="Airport"/>
+        <many-to-one name="to" column="TO_AIRPORT_CODE" class="Airport"/>
+        <property name="serviceClass" column="SERVICE_CLASS"
+                  type="org.springframework.ws.samples.airline.domain.hibernate.ServiceClassUserType"/>
+    </class>
+    <class name="Airport" table="AIRPORT">
+        <id name="code" column="CODE">
+            <generator class="assigned"/>
+        </id>
+        <property name="name" column="NAME"/>
+        <property name="city" column="CITY"/>
+    </class>
+    <class name="Ticket" table="TICKET">
+        <id name="id" column="ID">
+            <generator class="identity"/>
+        </id>
+        <property name="issueDate" column="ISSUE_DATE" type="org.joda.time.contrib.hibernate.PersistentYearMonthDay"/>
+        <set name="passengers" inverse="true" cascade="all-delete-orphan">
+            <key column="ID"/>
+            <one-to-many class="Passenger"/>
+        </set>
+        <many-to-one name="flight" column="FLIGHT_ID" class="Flight" cascade="none"/>
+    </class>
+</hibernate-mapping>
