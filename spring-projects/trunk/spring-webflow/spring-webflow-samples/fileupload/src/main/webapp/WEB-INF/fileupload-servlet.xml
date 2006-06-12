@@ -30,12 +30,6 @@
 		<property name="suffix" value=".jsp"/>
 	</bean>
 
-	<bean id="formAction" class="org.springframework.webflow.action.FormAction">
-		<property name="formObjectName" value="file"/>
-		<property name="formObjectClass" value="org.springframework.webflow.samples.fileupload.FileUploadBean"/>
-		<property name="propertyEditorRegistrar">
-			<bean class="org.springframework.webflow.samples.fileupload.PropertyEditorRegistrar"/>
-		</property>
-	</bean>
+	<bean id="uploadAction" class="org.springframework.webflow.samples.fileupload.FileUploadAction"/>
 	
 </beans>
