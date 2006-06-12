@@ -33,6 +33,8 @@ public class Flight extends Entity {
 
     private int seatsAvailable;
 
+    private int miles;
+
     public DateTime getArrivalTime() {
         return arrivalTime;
     }
@@ -55,6 +57,14 @@ public class Flight extends Entity {
 
     public void setFrom(Airport from) {
         this.from = from;
+    }
+
+    public int getMiles() {
+        return miles;
+    }
+
+    public void setMiles(int miles) {
+        this.miles = miles;
     }
 
     public String getNumber() {
@@ -89,11 +99,42 @@ public class Flight extends Entity {
         this.to = to;
     }
 
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final Flight flight = (Flight) o;
+
+        if (!departureTime.equals(flight.departureTime)) {
+            return false;
+        }
+        if (!number.equals(flight.number)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public int hashCode() {
+        int result;
+        result = number.hashCode();
+        result = 29 * result + departureTime.hashCode();
+        return result;
+    }
+
     public String toString() {
         StringBuffer buffer = new StringBuffer();
         buffer.append(getNumber());
         buffer.append(' ');
         buffer.append(getDepartureTime());
         return buffer.toString();
+    }
+
+    public void substractSeats(int count) {
+        this.seatsAvailable -= count;
     }
 }

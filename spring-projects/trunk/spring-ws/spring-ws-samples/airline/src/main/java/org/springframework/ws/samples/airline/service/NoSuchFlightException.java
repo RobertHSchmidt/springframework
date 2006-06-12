@@ -19,6 +19,11 @@ package org.springframework.ws.samples.airline.service;
 
 import org.joda.time.DateTime;
 
+/**
+ * Exception thrown when a specified flight cannot be found.
+ *
+ * @author Arjen Poutsma
+ */
 public class NoSuchFlightException extends Exception {
 
     private String flightNumber;

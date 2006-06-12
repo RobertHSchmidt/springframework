@@ -59,8 +59,8 @@ public class HibernateFlightDaoTest extends AbstractTransactionalDataSourceSprin
 
     public void testGetFlightsInPeriod() throws Exception {
         jdbcTemplate
-                .update("INSERT INTO FLIGHT(NUMBER, DEPARTURE_TIME, FROM_AIRPORT_CODE, ARRIVAL_TIME, TO_AIRPORT_CODE, SERVICE_CLASS, SEATS_AVAILABLE) " +
-                        "VALUES ('KL020','2006-01-31 10:05:00', 'RTM', '2006-01-31 12:25:00', 'OSL', 'business', 90)");
+                .update("INSERT INTO FLIGHT(NUMBER, DEPARTURE_TIME, FROM_AIRPORT_CODE, ARRIVAL_TIME, TO_AIRPORT_CODE, SERVICE_CLASS, SEATS_AVAILABLE, MILES) " +
+                        "VALUES ('KL020','2006-01-31 10:05:00', 'RTM', '2006-01-31 12:25:00', 'OSL', 'business', 90, 10)");
         List flights = flightDao.findFlights("RTM", "OSL", departureTime, arrivalTime, ServiceClass.BUSINESS);
         assertNotNull("Invalid result", flights);
         assertEquals("Invalid amount of flights", 1, flights.size());
@@ -68,8 +68,8 @@ public class HibernateFlightDaoTest extends AbstractTransactionalDataSourceSprin
 
     public void testGetFlightsOutOfPeriod() throws Exception {
         jdbcTemplate
-                .update("INSERT INTO FLIGHT(NUMBER, DEPARTURE_TIME, FROM_AIRPORT_CODE, ARRIVAL_TIME, TO_AIRPORT_CODE, SERVICE_CLASS, SEATS_AVAILABLE) " +
-                        "VALUES ('KL020','2006-01-31 10:05:00', 'RTM', '2006-01-31 12:25:00', 'OSL', 'business', 90)");
+                .update("INSERT INTO FLIGHT(NUMBER, DEPARTURE_TIME, FROM_AIRPORT_CODE, ARRIVAL_TIME, TO_AIRPORT_CODE, SERVICE_CLASS, SEATS_AVAILABLE, MILES) " +
+                        "VALUES ('KL020','2006-01-31 10:05:00', 'RTM', '2006-01-31 12:25:00', 'OSL', 'business', 90, 10)");
         DateTime dateTime = new DateTime(2006, 6, 1, 0, 0, 0, 0);
         List flights = flightDao.findFlights("RTM", "OSL", dateTime, dateTime, ServiceClass.BUSINESS);
         assertNotNull("Invalid result", flights);
@@ -78,8 +78,8 @@ public class HibernateFlightDaoTest extends AbstractTransactionalDataSourceSprin
 
     public void testGetFlightByNumberDepartureTime() throws Exception {
         jdbcTemplate
-                .update("INSERT INTO FLIGHT(NUMBER, DEPARTURE_TIME, FROM_AIRPORT_CODE, ARRIVAL_TIME, TO_AIRPORT_CODE, SERVICE_CLASS, SEATS_AVAILABLE) " +
-                        "VALUES ('KL020','2006-01-31 10:05:00', 'RTM', '2006-01-31 12:25:00', 'OSL', 'business', 90)");
+                .update("INSERT INTO FLIGHT(NUMBER, DEPARTURE_TIME, FROM_AIRPORT_CODE, ARRIVAL_TIME, TO_AIRPORT_CODE, SERVICE_CLASS, SEATS_AVAILABLE, MILES) " +
+                        "VALUES ('KL020','2006-01-31 10:05:00', 'RTM', '2006-01-31 12:25:00', 'OSL', 'business', 90, 10)");
         Flight flight = flightDao.getFlight("KL020", departureTime);
         assertNotNull("No flight returned", flight);
         assertNotNull("Invalid flight id", flight.getId());
@@ -93,8 +93,8 @@ public class HibernateFlightDaoTest extends AbstractTransactionalDataSourceSprin
 
     public void testUpdate() throws Exception {
         jdbcTemplate
-                .update("INSERT INTO FLIGHT(NUMBER, DEPARTURE_TIME, FROM_AIRPORT_CODE, ARRIVAL_TIME, TO_AIRPORT_CODE, SERVICE_CLASS, SEATS_AVAILABLE) " +
-                        "VALUES ('KL020','2006-01-31 10:05:00', 'RTM', '2006-01-31 12:25:00', 'OSL', 'business', 90)");
+                .update("INSERT INTO FLIGHT(NUMBER, DEPARTURE_TIME, FROM_AIRPORT_CODE, ARRIVAL_TIME, TO_AIRPORT_CODE, SERVICE_CLASS, SEATS_AVAILABLE, MILES) " +
+                        "VALUES ('KL020','2006-01-31 10:05:00', 'RTM', '2006-01-31 12:25:00', 'OSL', 'business', 90, 10)");
         Flight flight = flightDao.getFlight("KL020", departureTime);
         flight.setSeatsAvailable(0);
         flightDao.update(flight);

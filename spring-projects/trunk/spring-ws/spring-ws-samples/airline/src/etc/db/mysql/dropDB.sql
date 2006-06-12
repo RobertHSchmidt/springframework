@@ -1,1 +1,1 @@
-DROP DATABASE airline;
+DROP DATABASE IF EXISTS airline;

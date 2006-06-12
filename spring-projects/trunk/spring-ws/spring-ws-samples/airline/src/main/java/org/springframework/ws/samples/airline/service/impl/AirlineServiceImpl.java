@@ -27,13 +27,20 @@ import org.springframework.util.Assert;
 import org.springframework.ws.samples.airline.dao.FlightDao;
 import org.springframework.ws.samples.airline.dao.TicketDao;
 import org.springframework.ws.samples.airline.domain.Flight;
+import org.springframework.ws.samples.airline.domain.FrequentFlyer;
 import org.springframework.ws.samples.airline.domain.Passenger;
 import org.springframework.ws.samples.airline.domain.ServiceClass;
 import org.springframework.ws.samples.airline.domain.Ticket;
+import org.springframework.ws.samples.airline.security.FrequentFlyerSecurityService;
 import org.springframework.ws.samples.airline.service.AirlineService;
 import org.springframework.ws.samples.airline.service.NoSeatAvailableException;
 import org.springframework.ws.samples.airline.service.NoSuchFlightException;
 
+/**
+ * Default implementation of the <code>AirlineService</code> interface.
+ *
+ * @author Arjen Poutsma
+ */
 public class AirlineServiceImpl implements AirlineService {
 
     private final static Log logger = LogFactory.getLog(AirlineServiceImpl.class);
@@ -42,8 +49,14 @@ public class AirlineServiceImpl implements AirlineService {
 
     private TicketDao ticketDao;
 
+    private FrequentFlyerSecurityService frequentFlyerSecurityService;
+
     public void setFlightDao(FlightDao flightDao) {
         this.flightDao = flightDao;
+    }
+
+    public void setFrequentFlyerSecurityService(FrequentFlyerSecurityService frequentFlyerSecurityService) {
+        this.frequentFlyerSecurityService = frequentFlyerSecurityService;
     }
 
     public void setTicketDao(TicketDao ticketDao) {
@@ -69,17 +82,26 @@ public class AirlineServiceImpl implements AirlineService {
         ticket.setFlight(flight);
         for (Iterator iterator = passengers.iterator(); iterator.hasNext();) {
             Passenger passenger = (Passenger) iterator.next();
-            ticket.addPassenger(passenger);
+            if (passenger instanceof FrequentFlyer) {
+                String username = ((FrequentFlyer) passenger).getUsername();
+                Assert.hasLength(username, "No username specified");
+                FrequentFlyer frequentFlyer = frequentFlyerSecurityService.getFrequentFlyer(username);
+                frequentFlyer.addMiles(flight.getMiles());
+                ticket.addPassenger(frequentFlyer);
+            }
+            else {
+                ticket.addPassenger(passenger);
+            }
         }
-        updateSeatCount(flight, passengers);
+        flight.substractSeats(passengers.size());
+        flightDao.update(flight);
         ticketDao.save(ticket);
         return ticket;
     }
 
-    private void updateSeatCount(Flight flight, List passengers) {
-        int newCount = flight.getSeatsAvailable() - passengers.size();
-        flight.setSeatsAvailable(newCount);
-        flightDao.update(flight);
+    public int getFrequentFlyerMileage() {
+        FrequentFlyer frequentFlyer = frequentFlyerSecurityService.getCurrentlyAuthenticatedFrequentFlyer();
+        return frequentFlyer.getMiles();
     }
 
     public List getFlights(String fromAirportCode,
@@ -97,5 +119,4 @@ public class AirlineServiceImpl implements AirlineService {
         DateTime endOfPeriod = startOfPeriod.plusDays(1);
         return flightDao.findFlights(fromAirportCode, toAirportCode, startOfPeriod, endOfPeriod, serviceClass);
     }
-
 }

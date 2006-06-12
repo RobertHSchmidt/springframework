@@ -30,9 +30,10 @@
                 <element name="departureTime" type="dateTime"/>
                 <element name="passengers">
                     <complexType>
-                        <sequence>
-                            <element name="passenger" type="tns:Name" maxOccurs="9"/>
-                        </sequence>
+                        <choice maxOccurs="9">
+                            <element name="passenger" type="tns:Name"/>
+                            <element name="username" type="tns:FrequentFlyerUsername"/>
+                        </choice>
                     </complexType>
                 </element>
             </all>
@@ -40,6 +41,11 @@
     </element>
 
     <element name="BookFlightResponse" type="tns:Ticket"/>
+
+    <element name="GetFrequentFlyerMileageRequest"/>
+
+    <element name="GetFrequentFlyerMileageResponse" type="int"/>
+
 
     <complexType name="Flight">
         <sequence>
@@ -58,23 +64,16 @@
         </restriction>
     </simpleType>
 
-    <complexType name="Customer">
-        <sequence>
-            <element name="id" type="tns:CustomerIdType"/>
-            <element name="name" type="tns:Name"/>
-        </sequence>
-    </complexType>
-
-    <simpleType name="CustomerIdType">
-        <restriction base="long"/>
-    </simpleType>
-
     <complexType name="Name">
         <sequence>
             <element name="first" type="string"/>
             <element name="last" type="string"/>
         </sequence>
     </complexType>
+
+    <simpleType name="FrequentFlyerUsername">
+        <restriction base="string"/>
+    </simpleType>
 
 
     <complexType name="Airport">
@@ -94,6 +93,7 @@
 
     <complexType name="Ticket">
         <all>
+            <element name="id" type="long"/>
             <element name="issueDate" type="date"/>
             <element name="passengers">
                 <complexType>

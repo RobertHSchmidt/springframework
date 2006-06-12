@@ -27,9 +27,11 @@ import org.joda.time.YearMonthDay;
 import org.springframework.ws.samples.airline.dao.FlightDao;
 import org.springframework.ws.samples.airline.dao.TicketDao;
 import org.springframework.ws.samples.airline.domain.Flight;
+import org.springframework.ws.samples.airline.domain.FrequentFlyer;
 import org.springframework.ws.samples.airline.domain.Passenger;
 import org.springframework.ws.samples.airline.domain.ServiceClass;
 import org.springframework.ws.samples.airline.domain.Ticket;
+import org.springframework.ws.samples.airline.security.FrequentFlyerSecurityService;
 import org.springframework.ws.samples.airline.service.NoSeatAvailableException;
 import org.springframework.ws.samples.airline.service.NoSuchFlightException;
 
@@ -45,6 +47,10 @@ public class AirlineServiceImplTest extends TestCase {
 
     private TicketDao ticketDaoMock;
 
+    private MockControl securityServiceControl;
+
+    private FrequentFlyerSecurityService securityServiceMock;
+
     protected void setUp() throws Exception {
         airlineService = new AirlineServiceImpl();
         flightDaoControl = MockControl.createControl(FlightDao.class);
@@ -53,29 +59,96 @@ public class AirlineServiceImplTest extends TestCase {
         ticketDaoControl = MockControl.createControl(TicketDao.class);
         ticketDaoMock = (TicketDao) ticketDaoControl.getMock();
         airlineService.setTicketDao(ticketDaoMock);
+        securityServiceControl = MockControl.createControl(FrequentFlyerSecurityService.class);
+        securityServiceMock = (FrequentFlyerSecurityService) securityServiceControl.getMock();
+        airlineService.setFrequentFlyerSecurityService(securityServiceMock);
     }
 
-/*
-    public void testBookFlight() {
-        Flight flight = new Flight();
-        flightDaoControl
-                .expectAndReturn(flightDaoMock.findFlights("1234", null, null), Collections.singletonList(flight));
-        Passenger customer = new Passenger();
-        customerDaoControl.expectAndReturn(passengerDaoMock.getCustomer(42L), customer);
-        ticketDaoMock.save(null);
-        ticketDaoControl.setMatcher(MockControl.ALWAYS_MATCHER);
-
-        customerDaoControl.replay();
-        flightDaoControl.replay();
-        ticketDaoControl.replay();
-
-        airlineService.bookFlight("1234", 42L);
-
-        customerDaoControl.verify();
+    protected void tearDown() throws Exception {
         flightDaoControl.verify();
         ticketDaoControl.verify();
+        securityServiceControl.verify();
     }
-*/
+
+    public void testBookFlight() throws Exception {
+        String flightNumber = "AB1234";
+        DateTime departureTime = new DateTime();
+        Passenger passenger = new Passenger("John", "Doe");
+        List passengers = new ArrayList();
+        passengers.add(passenger);
+        Flight flight = new Flight();
+        flight.setNumber(flightNumber);
+        flight.setSeatsAvailable(10);
+        flightDaoControl.expectAndReturn(flightDaoMock.getFlight(flightNumber, departureTime), flight);
+        flightDaoMock.update(flight);
+        ticketDaoMock.save(null);
+        ticketDaoControl.setMatcher(MockControl.ALWAYS_MATCHER);
+        flightDaoControl.replay();
+        ticketDaoControl.replay();
+        securityServiceControl.replay();
+        Ticket ticket = airlineService.bookFlight(flightNumber, departureTime, passengers);
+        assertNotNull("Invalid ticket", ticket);
+        assertEquals("Invalid flight", flight, ticket.getFlight());
+        assertEquals("Invalid seats available", 9, flight.getSeatsAvailable());
+        assertEquals("Invalid passengers count", 1, ticket.getPassengers().size());
+    }
+
+    public void testBookFlightFrequentFlyer() throws Exception {
+        String flightNumber = "AB1234";
+        DateTime departureTime = new DateTime();
+        FrequentFlyer frequentFlyer = new FrequentFlyer("john", "changeme", "John", "Doe");
+        List passengers = new ArrayList();
+        passengers.add(frequentFlyer);
+        Flight flight = new Flight();
+        flight.setNumber(flightNumber);
+        flight.setSeatsAvailable(1);
+        flight.setMiles(10);
+        securityServiceControl.expectAndReturn(securityServiceMock.getFrequentFlyer("john"), frequentFlyer);
+        flightDaoControl.expectAndReturn(flightDaoMock.getFlight(flightNumber, departureTime), flight);
+        flightDaoMock.update(flight);
+        ticketDaoMock.save(null);
+        ticketDaoControl.setMatcher(MockControl.ALWAYS_MATCHER);
+        flightDaoControl.replay();
+        ticketDaoControl.replay();
+        securityServiceControl.replay();
+        Ticket ticket = airlineService.bookFlight(flightNumber, departureTime, passengers);
+        assertNotNull("Invalid ticket", ticket);
+        assertEquals("Invalid flight", flight, ticket.getFlight());
+        assertEquals("Invalid amount of miles", 10, frequentFlyer.getMiles());
+    }
+
+    public void testBookFlightNoSeatAvailable() throws Exception {
+        String flightNumber = "AB1234";
+        DateTime departureTime = new DateTime();
+        List passengers = Collections.singletonList(new Passenger());
+        Flight flight = new Flight();
+        flightDaoControl.expectAndReturn(flightDaoMock.getFlight(flightNumber, departureTime), flight);
+        flightDaoControl.replay();
+        ticketDaoControl.replay();
+        securityServiceControl.replay();
+        try {
+            airlineService.bookFlight(flightNumber, departureTime, passengers);
+            fail("Should have thrown an NoSeatAvailableException");
+        }
+        catch (NoSeatAvailableException ex) {
+        }
+    }
+
+    public void testBookFlightNoSuchFlight() throws Exception {
+        String flightNumber = "AB1234";
+        DateTime departureTime = new DateTime();
+        List passengers = Collections.singletonList(new Passenger());
+        flightDaoControl.expectAndReturn(flightDaoMock.getFlight(flightNumber, departureTime), null);
+        flightDaoControl.replay();
+        ticketDaoControl.replay();
+        securityServiceControl.replay();
+        try {
+            airlineService.bookFlight(flightNumber, departureTime, passengers);
+            fail("Should have thrown an NoSuchFlightException");
+        }
+        catch (NoSuchFlightException ex) {
+        }
+    }
 
     public void testGetFlights() throws Exception {
         String toCode = "to";
@@ -90,12 +163,10 @@ public class AirlineServiceImplTest extends TestCase {
                 flightDaoMock.findFlights(fromCode, toCode, startOfPeriod, endOfPeriod, ServiceClass.ECONOMY), flights);
         flightDaoControl.replay();
         ticketDaoControl.replay();
+        securityServiceControl.replay();
 
         List result = airlineService.getFlights(fromCode, toCode, departureDate, ServiceClass.ECONOMY);
         assertEquals("Invalid result", flights, result);
-
-        flightDaoControl.verify();
-        ticketDaoControl.verify();
     }
 
     public void testGetFlightsDefaultServiceClass() throws Exception {
@@ -111,69 +182,9 @@ public class AirlineServiceImplTest extends TestCase {
                 flightDaoMock.findFlights(fromCode, toCode, startOfPeriod, endOfPeriod, ServiceClass.ECONOMY), flights);
         flightDaoControl.replay();
         ticketDaoControl.replay();
+        securityServiceControl.replay();
 
         List result = airlineService.getFlights(fromCode, toCode, departureDate, null);
         assertEquals("Invalid result", flights, result);
-
-        flightDaoControl.verify();
-        ticketDaoControl.verify();
-    }
-
-    public void testBookFlight() throws Exception {
-        String flightNumber = "AB1234";
-        DateTime departureTime = new DateTime();
-        Passenger passenger = new Passenger("John", "Doe");
-        List passengers = Collections.singletonList(passenger);
-        Flight flight = new Flight();
-        flight.setNumber(flightNumber);
-        flight.setSeatsAvailable(10);
-        flightDaoControl.expectAndReturn(flightDaoMock.getFlight(flightNumber, departureTime), flight);
-        flightDaoMock.update(flight);
-        ticketDaoMock.save(null);
-        ticketDaoControl.setMatcher(MockControl.ALWAYS_MATCHER);
-        flightDaoControl.replay();
-        ticketDaoControl.replay();
-        Ticket ticket = airlineService.bookFlight(flightNumber, departureTime, passengers);
-        assertNotNull("Invalid ticket", ticket);
-        assertEquals("Invalid flight", flight, ticket.getFlight());
-        assertEquals("Invalid passengers count", 1, ticket.getPassengers().size());
-        flightDaoControl.verify();
-        ticketDaoControl.verify();
-    }
-
-    public void testBookFlightNoSuchFlight() throws Exception {
-        String flightNumber = "AB1234";
-        DateTime departureTime = new DateTime();
-        List passengers = Collections.singletonList(new Passenger());
-        flightDaoControl.expectAndReturn(flightDaoMock.getFlight(flightNumber, departureTime), null);
-        flightDaoControl.replay();
-        ticketDaoControl.replay();
-        try {
-            airlineService.bookFlight(flightNumber, departureTime, passengers);
-            fail("Should have thrown an NoSuchFlightException");
-        }
-        catch (NoSuchFlightException ex) {
-        }
-        flightDaoControl.verify();
-        ticketDaoControl.verify();
-
-    }
-
-    public void testBookFlightNoSeatAvailable() throws Exception {
-        String flightNumber = "AB1234";
-        DateTime departureTime = new DateTime();
-        List passengers = Collections.singletonList(new Passenger());
-        Flight flight = new Flight();
-        flightDaoControl.expectAndReturn(flightDaoMock.getFlight(flightNumber, departureTime), flight);
-        flightDaoControl.replay();
-        ticketDaoControl.replay();
-        try {
-            airlineService.bookFlight(flightNumber, departureTime, passengers);
-            fail("Should have thrown an NoSeatAvailableException");
-        }
-        catch (NoSeatAvailableException ex) {
-        }
-        flightDaoControl.verify();
-        ticketDaoControl.verify();
     }
 }

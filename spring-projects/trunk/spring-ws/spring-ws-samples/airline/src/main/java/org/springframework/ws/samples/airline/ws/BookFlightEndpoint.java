@@ -32,6 +32,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ws.endpoint.AbstractJDomPayloadEndpoint;
 import org.springframework.ws.samples.airline.domain.Airport;
 import org.springframework.ws.samples.airline.domain.Flight;
+import org.springframework.ws.samples.airline.domain.FrequentFlyer;
 import org.springframework.ws.samples.airline.domain.Passenger;
 import org.springframework.ws.samples.airline.domain.ServiceClass;
 import org.springframework.ws.samples.airline.domain.Ticket;
@@ -44,10 +45,6 @@ public class BookFlightEndpoint extends AbstractJDomPayloadEndpoint implements I
     private XPath flightNumberXPath;
 
     private XPath departureTimeXPath;
-
-    private static final String PREFIX = "tns";
-
-    private static final String NAMESPACE = "http://www.springframework.org/spring-ws/samples/airline/schemas";
 
     private Namespace namespace;
 
@@ -74,9 +71,16 @@ public class BookFlightEndpoint extends AbstractJDomPayloadEndpoint implements I
         List passengers = new ArrayList();
         for (Iterator iterator = passengerElements.iterator(); iterator.hasNext();) {
             Element passengerElement = (Element) iterator.next();
-            Passenger passenger = new Passenger(passengerElement.getChildTextNormalize("first", namespace),
-                    passengerElement.getChildTextNormalize("last", namespace));
-            passengers.add(passenger);
+            if ("passenger".equals(passengerElement.getName()) && namespace.equals(passengerElement.getNamespace())) {
+                Passenger passenger = new Passenger(passengerElement.getChildTextNormalize("first", namespace),
+                        passengerElement.getChildTextNormalize("last", namespace));
+                passengers.add(passenger);
+            }
+            else
+            if ("username".equals(passengerElement.getName()) && namespace.equals(passengerElement.getNamespace())) {
+                FrequentFlyer frequentFlyer = new FrequentFlyer(passengerElement.getTextNormalize());
+                passengers.add(frequentFlyer);
+            }
         }
         Ticket ticket = airlineService.bookFlight(flightNumber, departureTime, passengers);
         return createResponse(ticket);
@@ -145,12 +149,12 @@ public class BookFlightEndpoint extends AbstractJDomPayloadEndpoint implements I
     }
 
     public void afterPropertiesSet() throws Exception {
-        namespace = Namespace.getNamespace(PREFIX, NAMESPACE);
+        namespace = Namespace.getNamespace("tns", "http://www.springframework.org/spring-ws/samples/airline/schemas");
         flightNumberXPath = XPath.newInstance("/tns:BookFlightRequest/tns:flightNumber/text()");
         flightNumberXPath.addNamespace(namespace);
         departureTimeXPath = XPath.newInstance("/tns:BookFlightRequest/tns:departureTime/text()");
         departureTimeXPath.addNamespace(namespace);
-        passengersXPath = XPath.newInstance("/tns:BookFlightRequest/tns:passengers/tns:passenger");
+        passengersXPath = XPath.newInstance("/tns:BookFlightRequest/tns:passengers/*");
         passengersXPath.addNamespace(namespace);
         parser = ISODateTimeFormat.dateTimeParser();
         dateTimeFormatter = ISODateTimeFormat.dateTimeNoMillis();

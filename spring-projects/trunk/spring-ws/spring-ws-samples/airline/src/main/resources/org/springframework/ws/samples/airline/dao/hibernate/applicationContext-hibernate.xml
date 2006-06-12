@@ -13,6 +13,9 @@
     <bean id="ticketDao" class="org.springframework.ws.samples.airline.dao.hibernate.HibernateTicketDao"
           parent="abstractDao"/>
 
+    <bean id="frequentFlyerDao" class="org.springframework.ws.samples.airline.dao.hibernate.HibernateFrequentFlyerDao"
+          parent="abstractDao"/>
+
     <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="mappingLocations">

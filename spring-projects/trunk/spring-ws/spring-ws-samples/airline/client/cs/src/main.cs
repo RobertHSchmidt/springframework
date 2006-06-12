@@ -24,10 +24,7 @@ namespace Spring.Ws.Samples.Airline.Client.CSharp {
 					MessageBookFlightRequest bookFlightRequest = new MessageBookFlightRequest();
 					bookFlightRequest.flightNumber = flights[0].number;
 					bookFlightRequest.departureTime = flights[0].departureTime;
-					Name passenger = new Name();
-					passenger.first = "John";
-					passenger.last = "Doe";
-					bookFlightRequest.passengers = new Name[] { passenger };
+					bookFlightRequest.passengers = new object[] { "john" };
 					Ticket ticket = service.BookFlight(bookFlightRequest);
 					WriteTicket(ticket);
 				}

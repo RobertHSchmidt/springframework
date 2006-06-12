@@ -59,6 +59,24 @@ namespace Spring.Ws.Samples.Airline.Client.CSharp {
             object[] results = this.EndInvoke(asyncResult);
             return ((Ticket)(results[0]));
         }
+        
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.springframework.org/spring-ws/samples/airline/GetFrequentFlyerMileage", ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare, Use=System.Web.Services.Description.SoapBindingUse.Literal)]
+        [return: System.Xml.Serialization.XmlElement("GetFrequentFlyerMileageResponse", Namespace="http://www.springframework.org/spring-ws/samples/airline/schemas")]
+        public int GetFrequentFlyerMileage([System.Xml.Serialization.XmlElement(Namespace="http://www.springframework.org/spring-ws/samples/airline/schemas")] object GetFrequentFlyerMileageRequest) {
+            object[] results = this.Invoke("GetFrequentFlyerMileage", new object[] {
+                GetFrequentFlyerMileageRequest});
+            return ((int)(results[0]));
+        }
+        
+        public System.IAsyncResult BeginGetFrequentFlyerMileage(object GetFrequentFlyerMileageRequest, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetFrequentFlyerMileage", new object[] {
+                GetFrequentFlyerMileageRequest}, callback, asyncState);
+        }
+        
+        public int EndGetFrequentFlyerMileage(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((int)(results[0]));
+        }
     }
     
     /// <remarks/>
@@ -147,8 +165,9 @@ namespace Spring.Ws.Samples.Airline.Client.CSharp {
         public System.DateTime departureTime;
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItem(ElementName="passenger", IsNullable=false)]
-        public Name[] passengers;
+        [System.Xml.Serialization.XmlArrayItem(ElementName="passenger", Type=typeof(Name), IsNullable=false)]
+        [System.Xml.Serialization.XmlArrayItem(ElementName="username", Type=typeof(string), IsNullable=false)]
+        public object[] passengers;
     }
     
     /// <remarks/>
@@ -166,6 +185,9 @@ namespace Spring.Ws.Samples.Airline.Client.CSharp {
     [System.Xml.Serialization.XmlType(Namespace="http://www.springframework.org/spring-ws/samples/airline/schemas")]
     [System.Xml.Serialization.XmlRoot("BookFlightResponse", Namespace="http://www.springframework.org/spring-ws/samples/airline/schemas")]
     public class Ticket {
+        
+        /// <remarks/>
+        public long id;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElement(DataType="date")]
