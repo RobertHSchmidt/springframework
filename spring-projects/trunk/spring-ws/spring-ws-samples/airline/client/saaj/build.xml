@@ -18,6 +18,10 @@
             </fileset>
         </copy>
     </target>
+    
+    <target name="clean">
+        <delete dir="${bin.dir}"/>
+    </target>
 
     <target name="run" depends="getflights,getmileage"/>
 

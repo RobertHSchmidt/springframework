@@ -27,11 +27,7 @@
         <dependency org="xom" name="xom" rev="1.1">
             <exclude org="xerces"/>
         </dependency>
-        <dependency org="jaxen" name="jaxen" rev="1.1-beta-8">
-            <exclude org="xom"/>
-        </dependency>
         <dependency org="dom4j" name="dom4j" rev="1.6.1"/>
-        <dependency org="xalan" name="xalan" rev="2.7.0"/>
         <dependency org="apache" name="xerces" rev="2.8.0">
             <artifact name="xercesImpl" type="jar"/>
         </dependency>
@@ -56,6 +52,10 @@
 
         <!--  build time dependencies -->
         <dependency org="javax.servlet" name="servlet-api" rev="2.4" conf="buildtime->default"/>
+        <dependency org="jaxen" name="jaxen" rev="1.1-beta-8" conf="buildtime->default">
+            <exclude org="xom"/>
+        </dependency>
+        <dependency org="xalan" name="xalan" rev="2.7.0" conf="buildtime->default"/>
 
         <!-- test time only dependencies -->
         <dependency org="junit" name="junit" rev="3.8.1" conf="test->default"/>
