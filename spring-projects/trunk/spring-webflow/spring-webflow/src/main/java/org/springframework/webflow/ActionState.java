@@ -134,6 +134,10 @@ public class ActionState extends TransitionableState {
 	 * NoMatchingActionResultTransitionException if a transition on the
 	 * occurence of an action result event cannot be matched. Used to facilitate
 	 * an action invocation chain.
+	 * <p>
+	 * Note that we cannot catch NoMatchingTransitionException since that could
+	 * lead to unwanted situations where we're catching a exception that's generated
+	 * by another state, e.g. because of a configuration error!
 	 * @see org.springframework.webflow.TransitionableState#getRequiredTransition(org.springframework.webflow.RequestContext)
 	 */
 	public Transition getRequiredTransition(RequestContext context) throws NoMatchingTransitionException {
@@ -185,12 +189,11 @@ public class ActionState extends TransitionableState {
 			}
 			else {
 				if (logger.isDebugEnabled()) {
-					logger
-							.debug("Action execution ["
-									+ (executionCount + 1)
-									+ "] returned a [null] event"
-									+ (it.hasNext() ? ": proceeding to the next action in the list"
-											: ": action list exhausted"));
+					logger.debug("Action execution ["
+							+ (executionCount + 1)
+							+ "] returned a [null] event"
+							+ (it.hasNext() ? ": proceeding to the next action in the list"
+									: ": action list exhausted"));
 				}
 				eventIds[executionCount] = null;
 			}
@@ -223,6 +226,7 @@ public class ActionState extends TransitionableState {
 	 * result could not be mapped to a state transition.
 	 * 
 	 * @author Keith Donald
+	 * @author Erwin Vervaet
 	 */
 	private static class NoMatchingActionResultTransitionException extends NoMatchingTransitionException {
 

@@ -37,8 +37,8 @@ package org.springframework.webflow;
  * prototypes, storing conversational state as instance variables (see
  * {@link org.springframework.webflow.action.StatefulBeanInvokingAction} and
  * {@link org.springframework.webflow.action.AbstractBeanInvokingAction} for
- * more information). Action instances may also be locally scoped to a specific
- * flow definition (see use of the "import" element of the root XML flow
+ * more information). Action instance definitions may also be locally scoped to
+ * a specific flow definition (see use of the "import" element of the root XML flow
  * definition element.)
  * <p>
  * Note: Actions are directly instantiatable for use in a standalone test

@@ -22,7 +22,7 @@ package org.springframework.webflow;
  * <p>
  * Note: this class is a runtime factory. Instances are used at flow execution
  * time by objects like the {@link ViewState} to produce new
- * {@link ViewSelection view selections}
+ * {@link ViewSelection view selections}.
  * <p>
  * This class allows for easy insertion of dynamic view selection logic, for
  * instance, letting you determine the view to render or the available model

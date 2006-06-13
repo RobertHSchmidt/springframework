@@ -209,7 +209,7 @@ public class Flow extends AnnotatedObject {
 			throw new IllegalArgumentException("State " + state + " cannot be added to this flow '" + getId()
 					+ "' -- it already belongs to a different flow");
 		}
-		if (states.contains(state)) {
+		if (states.contains(state)) { //FIXME: is this a bug? should check state.getId()
 			throw new IllegalArgumentException("This flow '" + getId() + "' already contains a state with id '"
 					+ state.getId() + "' -- state ids must be locally unique to the flow definition; "
 					+ "existing state-ids of this flow include: " + StylerUtils.style(getStateIds()));
@@ -451,12 +451,13 @@ public class Flow extends AnnotatedObject {
 
 	/**
 	 * Returns the set of exception handlers, allowing manipulation of how state
-	 * exceptions are handled when thrown during flow execution. <p/> Exception
-	 * handlers are invoked when an exception occurs when this state is entered,
+	 * exceptions are handled when thrown during flow execution.
+	 * <p/>
+	 * Exception handlers are invoked when an exception occurs when this state is entered,
 	 * and can execute custom exception handling logic as well as select an
-	 * error view to display. <p/> State exception handlers attached at the flow
-	 * level have a opportunity to handle exceptions that aren't handled at the
-	 * state level.
+	 * error view to display.
+	 * State exception handlers attached at the flow level have a opportunity to handle
+	 * exceptions that aren't handled at the state level.
 	 * @return the state exception handler set
 	 */
 	public StateExceptionHandlerSet getExceptionHandlerSet() {
@@ -516,8 +517,9 @@ public class Flow extends AnnotatedObject {
 	 * no such inline flow exists.
 	 * @param id the inline flow id
 	 * @return the inline flow
+	 * @throws IllegalArgumentException when an invalid flow id is provided
 	 */
-	public Flow getInlineFlow(String id) {
+	public Flow getInlineFlow(String id) throws IllegalArgumentException {
 		if (!StringUtils.hasText(id)) {
 			throw new IllegalArgumentException(
 					"The specified inline flowId is invalid: flow identifiers must be non-blank");
@@ -552,9 +554,21 @@ public class Flow extends AnnotatedObject {
 	public int hashCode() {
 		return id.hashCode();
 	}
+	
+	// behavioral code
 
 	/**
-	 * Start a new session for this flow in its stat state.
+	 * Start a new session for this flow in its start state. This boils down to the
+	 * following:
+	 * <ol>
+	 * 	<li>Create (setup) all registered flow variables ({@link #addVariable(FlowVariable)})
+	 * 		in flow scope.</li>
+	 * 	<li>Map provided input data into the flow execution control context. Typically
+	 *      data will be mapped into flow scope using the registered input mapper
+	 *      ({@link #setInputMapper(AttributeMapper)}).</li>
+	 * 	<li>Execute all registered start actions ({@link #getStartActionList()}).</li>
+	 * 	<li>Enter the configured start state ({@link #setStartState(State)})</li>
+	 * </ol>
 	 * @param context the flow execution control context
 	 * @param input eligible input into the session
 	 * @throws StateException when an exception occurs entering the start state
@@ -571,6 +585,7 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * Inform this flow definition that an event was signaled in the current
 	 * state of an active flow execution.
+	 * @param event the event that was signaled
 	 * @param context the flow execution control context
 	 * @return the selected view
 	 * @throws StateException when an exception occurs processing the event
@@ -587,16 +602,23 @@ public class Flow extends AnnotatedObject {
 				return transition.execute(currentState, context);
 			}
 			else {
+				// no matching global transition => let the original exception propagate
 				throw e;
 			}
 		}
 	}
 
 	/**
-	 * Inform this flow definition that a execution session of itself has ended.
+	 * Inform this flow definition that an execution session of itself has ended.
+	 * As a result, the flow will do the following:
+	 * <ol>
+	 * 	<li>Execute all registered end actions ({@link #getEndActionList()}).</li>
+	 * 	<li>Map data available in the flow execution control context into provided
+	 *      output map using a registered output mapper ({@link #setOutputMapper(AttributeMapper)}).</li>
+	 * </ol>
 	 * @param context the flow execution control context
 	 * @param output initial output produced by the session that is eligible for
-	 * modification by this method.
+	 * modification by this method
 	 * @throws StateException when an exception occurs ending this flow
 	 */
 	public void end(FlowExecutionControlContext context, AttributeMap output) throws StateException {
@@ -618,7 +640,12 @@ public class Flow extends AnnotatedObject {
 			throws StateException {
 		return getExceptionHandlerSet().handleException(exception, context);
 	}
+	
+	//internal helpers
 
+	/**
+	 * Create (setup) all known flow variables in flow scope.
+	 */
 	private void createVariables(RequestContext context) {
 		Iterator it = variables.iterator();
 		while (it.hasNext()) {
@@ -630,6 +657,9 @@ public class Flow extends AnnotatedObject {
 		}
 	}
 
+	/**
+	 * Returns the current state and makes sure it is transitionable.
+	 */
 	private TransitionableState getCurrentTransitionableState(FlowExecutionControlContext context) {
 		State currentState = context.getCurrentState();
 		if (!(currentState instanceof TransitionableState)) {
@@ -641,9 +671,9 @@ public class Flow extends AnnotatedObject {
 
 	public String toString() {
 		return new ToStringCreator(this).append("id", id).append("states", states).append("startState", startState)
-				.append("variables", variables).append("inputMapper", inputMapper).append("startActionList",
-						startActionList).append("exceptionHandlerSet", exceptionHandlerSet).append(
-						"globalTransitionSet", globalTransitionSet).append("endActionList", endActionList).append(
-						"outputMapper", outputMapper).append("inlineFlows", inlineFlows).toString();
+				.append("variables", variables).append("inputMapper", inputMapper)
+				.append("startActionList", startActionList).append("exceptionHandlerSet", exceptionHandlerSet)
+				.append("globalTransitionSet", globalTransitionSet).append("endActionList", endActionList)
+				.append("outputMapper", outputMapper).append("inlineFlows", inlineFlows).toString();
 	}
 }

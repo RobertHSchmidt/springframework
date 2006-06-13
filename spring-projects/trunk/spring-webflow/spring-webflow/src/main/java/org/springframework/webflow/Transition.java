@@ -205,7 +205,8 @@ public class Transition extends AnnotatedObject {
 					logger.debug("Executing " + this + " out of state '" + sourceState.getId() + "'");
 				}
 				sourceState.exit(context);
-			} else {
+			}
+			else {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Executing " + this);
 				}
@@ -219,7 +220,8 @@ public class Transition extends AnnotatedObject {
 			// 'roll back' and re-enter the source state
 			if (sourceState != null) {
 				selectedView = sourceState.reenter(context);
-			} else {
+			}
+			else {
 				throw new CannotExecuteTransitionException(this);
 			}
 		}

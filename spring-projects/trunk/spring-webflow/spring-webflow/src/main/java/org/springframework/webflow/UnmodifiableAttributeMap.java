@@ -57,7 +57,8 @@ public class UnmodifiableAttributeMap extends AbstractAttributeMap {
 	public AttributeCollection union(AttributeCollection attributes) {
 		if (attributes == null) {
 			return this;
-		} else {
+		}
+		else {
 			Map map = new HashMap();
 			map.putAll(getMapInternal());
 			map.putAll(attributes.getMap());

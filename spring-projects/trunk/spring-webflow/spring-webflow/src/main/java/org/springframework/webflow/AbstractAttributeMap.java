@@ -45,21 +45,21 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	 */
 	private transient MapAccessor attributeAccessor;
 
-	public Object get(String attributeName) {
-		return attributes.get(attributeName);
+	public Map getMap() {
+		return attributeAccessor.getMap();
 	}
 
 	public int size() {
 		return attributes.size();
 	}
 
-	public Map getMap() {
-		return attributeAccessor.getMap();
+	public Object get(String attributeName) {
+		return attributes.get(attributeName);
 	}
 
-	public abstract AttributeCollection union(AttributeCollection attributes);
-
 	public abstract UnmodifiableAttributeMap unmodifiable();
+
+	public abstract AttributeCollection union(AttributeCollection attributes);
 
 	/**
 	 * Is this parameter map empty, with a size of 0?
@@ -411,6 +411,8 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	public Boolean getRequiredBoolean(String attributeName) throws IllegalArgumentException {
 		return attributeAccessor.getRequiredBoolean(attributeName);
 	}
+	
+	//helpers for subclasses
 
 	/**
 	 * Initializes this attribute map.
@@ -427,6 +429,8 @@ public abstract class AbstractAttributeMap implements AttributeCollection, Seria
 	protected Map getMapInternal() {
 		return attributes;
 	}
+	
+	//custom serialization
 
 	private void writeObject(ObjectOutputStream out) throws IOException {
 		out.defaultWriteObject();

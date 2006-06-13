@@ -82,19 +82,19 @@ public class SubflowState extends TransitionableState {
 	}
 
 	/**
-	 * Set the attribute mapper to use to map model data between parent and
-	 * child subflow model. Can be null if no mapping is needed.
-	 */
-	public void setAttributeMapper(FlowAttributeMapper attributeMapper) {
-		this.attributeMapper = attributeMapper;
-	}
-
-	/**
 	 * Returns the attribute mapper used to map data between parent and child
 	 * subflow model, or null if no mapping is needed.
 	 */
 	public FlowAttributeMapper getAttributeMapper() {
 		return attributeMapper;
+	}
+
+	/**
+	 * Set the attribute mapper to use to map model data between parent and
+	 * child subflow model. Can be null if no mapping is needed.
+	 */
+	public void setAttributeMapper(FlowAttributeMapper attributeMapper) {
+		this.attributeMapper = attributeMapper;
 	}
 
 	/**
@@ -116,6 +116,10 @@ public class SubflowState extends TransitionableState {
 		return context.start(getSubflow(), createSubflowInput(context));
 	}
 
+	/**
+	 * Create the input data map for the spawned subflow session. The returned
+	 * map will be passed to {@link Flow#start(FlowExecutionControlContext, AttributeMap)}.
+	 */
 	private AttributeMap createSubflowInput(RequestContext context) {
 		if (getAttributeMapper() != null) {
 			if (logger.isDebugEnabled()) {
@@ -134,26 +138,32 @@ public class SubflowState extends TransitionableState {
 		}
 	}
 
+	/**
+	 * Called on completion of the subflow to handle the subflow result event as
+	 * determined by the end state reached by the subflow.
+	 */
 	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) {
 		mapSubflowOutput(event.getAttributes(), context);
 		return super.onEvent(event, context);
 	}
 
+	/**
+	 * Map the output data produced by the subflow back into the request context
+	 * (typically flow scope).
+	 */
 	private void mapSubflowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {
 		if (getAttributeMapper() != null) {
 			if (logger.isDebugEnabled()) {
-				logger
-						.debug("Messaging the configured attribute mapper to map subflow result attributes to the "
-								+ "resuming parent flow -- It will have access to attributes passed up by the completed subflow");
+				logger.debug("Messaging the configured attribute mapper to map subflow result attributes to the "
+						+ "resuming parent flow -- It will have access to attributes passed up by the completed subflow");
 			}
 			attributeMapper.mapSubflowOutput(subflowOutput, context);
 		}
 		else {
 			if (logger.isDebugEnabled()) {
-				logger
-						.debug("No attribute mapper is configured for the resuming state '"
-								+ getId()
-								+ "' -- as a result, no attributes in the ending subflow scope will be passed to the resuming flow");
+				logger.debug("No attribute mapper is configured for the resuming state '"
+						+ getId()
+						+ "' -- as a result, no attributes in the ending subflow scope will be passed to the resuming flow");
 			}
 		}
 	}

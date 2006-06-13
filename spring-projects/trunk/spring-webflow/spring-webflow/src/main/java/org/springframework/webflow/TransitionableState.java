@@ -62,25 +62,6 @@ public abstract class TransitionableState extends State {
 	}
 
 	/**
-	 * Returns the list of actions executed by this state when it is exited.
-	 * @return the state exit action list
-	 */
-	public ActionList getExitActionList() {
-		return exitActionList;
-	}
-
-	/**
-	 * Inform this state definition that an event was signaled in it.
-	 * @param context the flow execution control context
-	 * @return the selected view
-	 * @throws NoMatchingTransitionException when a matching transition cannot
-	 * be found
-	 */
-	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) throws NoMatchingTransitionException {
-		return getRequiredTransition(context).execute(this, context);
-	}
-
-	/**
 	 * Get a transition in this state for given flow execution request context.
 	 * Throws and exception when there is no corresponding transition.
 	 * @throws NoMatchingTransitionException when a matching transition cannot
@@ -92,6 +73,29 @@ public abstract class TransitionableState extends State {
 			throw new NoMatchingTransitionException(this, context.getLastEvent());
 		}
 		return transition;
+	}
+
+	/**
+	 * Returns the list of actions executed by this state when it is exited.
+	 * @return the state exit action list
+	 */
+	public ActionList getExitActionList() {
+		return exitActionList;
+	}
+
+	// behavioral methods
+	
+	/**
+	 * Inform this state definition that an event was signaled in it.
+	 * @param event the event that occured
+	 * @param context the flow execution control context
+	 * @return the selected view
+	 * @throws NoMatchingTransitionException when a matching transition cannot
+	 * be found
+	 */
+	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) throws NoMatchingTransitionException {
+		//FIXME: event parameter is not used?
+		return getRequiredTransition(context).execute(this, context);
 	}
 
 	/**
@@ -111,8 +115,8 @@ public abstract class TransitionableState extends State {
 
 	/**
 	 * Exit this state. This is typically called when a transition takes the
-	 * flow out of this state into another state. By default just executes the
-	 * exit action, if one is registered.
+	 * flow out of this state into another state. By default just executes
+	 * any registered exit actions.
 	 * @param context the flow control context
 	 */
 	public void exit(FlowExecutionControlContext context) {
