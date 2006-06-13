@@ -136,11 +136,11 @@ public class TransitionSet {
 	}
 
 	/**
-	 * Returns whether or not this state has a transition that will fire for
+	 * Returns whether or not this list has a transition that will fire for
 	 * given flow execution request context.
 	 * @param context a flow execution context
 	 */
-	public boolean transitionMatches(RequestContext context) {
+	public boolean hasMatchingTransition(RequestContext context) {
 		return getTransition(context) != null;
 	}
 
