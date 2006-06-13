@@ -83,7 +83,7 @@ public class ActionExecutionException extends StateException {
 	}
 
 	/**
-	 * Create a new action execution exception that occured in the state of a
+	 * Create a new action execution exception that occured in a state of a
 	 * flow execution.
 	 * @param state the active state
 	 * @param action the action that generated an unrecoverable exception

@@ -31,7 +31,7 @@ public interface StateExceptionHandler {
 	public boolean handles(StateException exception);
 
 	/**
-	 * Handle this exception in the context of the current request and
+	 * Handle given exception in the context of the current request and
 	 * optionally select an error view that should be displayed.
 	 * @param exception the exception that occured
 	 * @param context the flow execution control context

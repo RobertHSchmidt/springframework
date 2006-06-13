@@ -15,6 +15,13 @@
  */
 package org.springframework.webflow;
 
+/**
+ * An attribute map that exposes a mutex that application code can synchronize
+ * on. This class wraps another shared map in an attribute map.
+ * <p>
+ * The mutex can be used to serialize concurrent access to the shared map's
+ * contents by multiple threads. 
+ */
 public class SharedAttributeMap extends AttributeMap {
 
 	/**

@@ -172,11 +172,13 @@ public abstract class State extends AnnotatedObject {
 		return id.hashCode() + flow.hashCode();
 	}
 	
+	// behavioral methods
+	
 	/**
 	 * Enter this state in the provided flow control context. This
 	 * implementation just calls the
 	 * {@link #doEnter(FlowExecutionControlContext)} hook method, which should
-	 * be implemented by subclasses, after executing the entry action.
+	 * be implemented by subclasses, after executing the entry actions.
 	 * @param context the control context for the currently executing flow, used
 	 * by this state to manipulate the flow execution
 	 * @return a view selection containing model and view information needed to

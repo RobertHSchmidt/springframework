@@ -16,6 +16,7 @@
 package org.springframework.webflow;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -24,7 +25,9 @@ import java.util.Map;
 
 /**
  * A utility class for working with attribute and parameter collections used by Spring Web FLow.
+ * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
 public class CollectionUtils {
 
@@ -44,13 +47,18 @@ public class CollectionUtils {
 	 */
 	public static final EmptyIterator EMPTY_ITERATOR = new EmptyIterator();
 
+	/**
+	 * Private constructor to avoid instantiation.
+	 */
 	private CollectionUtils() {
-
 	}
 
+	/**
+	 * Iterator iterating over no elements (hasNext() always returns false).
+	 */
 	private static class EmptyIterator implements Iterator, Serializable {
+		
 		private EmptyIterator() {
-
 		}
 
 		public boolean hasNext() {
@@ -66,6 +74,9 @@ public class CollectionUtils {
 		}
 	}
 
+	/**
+	 * Iterator wrapping an Enumeration.
+	 */
 	private static class EnumerationIterator implements Iterator {
 
 		private Enumeration enumeration;
@@ -91,7 +102,7 @@ public class CollectionUtils {
 	/**
 	 * Factory method that adapts an enumeration to an iterator.
 	 * @param enumeration the enumeration
-	 * @return the iterator.
+	 * @return the iterator
 	 */
 	public static Iterator iterator(Enumeration enumeration) {
 		return new EnumerationIterator(enumeration);
@@ -101,11 +112,34 @@ public class CollectionUtils {
 	 * Factory method that returns a unmodifiable attribute map with a single entry.
 	 * @param attributeName the attribute name
 	 * @param attributeValue the attribute value
-	 * @return
+	 * @return the unmodifiable map with a single element
 	 */
 	public static UnmodifiableAttributeMap singleEntryMap(String attributeName, Object attributeValue) {
 		Map map = new HashMap(1, 1);
 		map.put(attributeName, attributeValue);
 		return new UnmodifiableAttributeMap(map);
+	}
+
+	/**
+	 * Add all given objects to given target collection. No doubles will
+	 * be added.
+	 * @param target the collection to which to objects will be added
+	 * @param objects the objects to add
+	 * @return whether or not the target collection changed
+	 */
+	public static boolean addAllNoDoubles(Collection target, Object[] objects) {
+		if (objects == null || objects.length == 0) {
+			return false;
+		}
+		else {
+			boolean changed = false;
+			for (int i = 0; i < objects.length; i++) {
+				if (!target.contains(objects[i])) {
+					target.add(objects[i]);
+					changed = true;
+				}
+			}
+			return changed;
+		}
 	}
 }

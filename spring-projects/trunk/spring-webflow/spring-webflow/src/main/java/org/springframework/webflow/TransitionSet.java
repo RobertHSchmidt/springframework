@@ -57,16 +57,7 @@ public class TransitionSet {
 	 * operation
 	 */
 	public boolean addAll(Transition[] transitions) {
-		if (transitions == null) {
-			return false;
-		}
-		boolean changed = false;
-		for (int i = 0; i < transitions.length; i++) {
-			if (add(transitions[i]) && !changed) {
-				changed = true;
-			}
-		}
-		return changed;
+		return CollectionUtils.addAllNoDoubles(this.transitions, transitions);
 	}
 
 	/**

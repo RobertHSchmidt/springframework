@@ -23,7 +23,7 @@ import java.util.List;
 import org.springframework.core.style.StylerUtils;
 
 /**
- * An ordered, typed list of actions mainly for use internally by flow artifacts
+ * An ordered, typed list of actions, mainly for use internally by flow artifacts
  * that can execute groups of actions.
  * 
  * @see Flow#getStartActionList()
@@ -112,6 +112,7 @@ public class ActionList {
 			return (AnnotatedAction)action;
 		}
 		else {
+			//wrap the action; no annotations will be available
 			return new AnnotatedAction(action);
 		}
 	}
@@ -140,19 +141,13 @@ public class ActionList {
 	public AnnotatedAction[] toAnnotatedArray() {
 		AnnotatedAction[] annotatedActions = new AnnotatedAction[actions.size()];
 		for (int i = 0; i < size(); i++) {
-			Action action = get(i);
-			if (action instanceof AnnotatedAction) {
-				annotatedActions[i] = (AnnotatedAction)action;
-			}
-			else {
-				annotatedActions[i] = new AnnotatedAction(action);
-			}
+			annotatedActions[i] = getAnnotated(i);
 		}
 		return annotatedActions;
 	}
 
 	/**
-	 * Executes the actions contained within this action list. Simply executes
+	 * Executes the actions contained within this action list. Simply iterates
 	 * over each action and calls execute. Action result events are ignored.
 	 * @param context the action execution request context
 	 */

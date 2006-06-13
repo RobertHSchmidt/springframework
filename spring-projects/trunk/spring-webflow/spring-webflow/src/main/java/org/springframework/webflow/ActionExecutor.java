@@ -30,11 +30,15 @@ public class ActionExecutor {
 
 	private static final Log logger = LogFactory.getLog(ActionExecutor.class);
 
+	/**
+	 * Private constructor to avoid instantiation.
+	 */
 	private ActionExecutor() {
 	}
 
 	/**
-	 * Execute the wrapped action.
+	 * Execute the given action.
+	 * @param action the action to execute
 	 * @param context the flow execution request context
 	 * @return result of action execution
 	 * @throws ActionExecutionException if the action threw an exception while

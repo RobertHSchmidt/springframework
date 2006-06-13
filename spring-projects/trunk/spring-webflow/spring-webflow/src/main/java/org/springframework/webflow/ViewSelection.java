@@ -53,6 +53,7 @@ public abstract class ViewSelection implements Serializable {
 	/**
 	 * The definition of the 'null' view selection type, indicating that no
 	 * response should be issued.
+	 * 
 	 * @author Keith Donald
 	 */
 	private static final class NullViewSelection extends ViewSelection {

@@ -47,7 +47,7 @@ public interface AttributeCollection extends MapAdaptable {
 	public UnmodifiableAttributeMap unmodifiable();
 		
 	/**
-	 * Merge the attributes in the provided collection this collection and
+	 * Merge the attributes in the provided collection with this collection and
 	 * return a copy containing the union.
 	 * @param attributes the attributes to merge in; if null, this should be returned.
 	 * @return a new attribute collection, the union of this collection and the one provided; 

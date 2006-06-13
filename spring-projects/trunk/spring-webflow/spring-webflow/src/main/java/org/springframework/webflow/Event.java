@@ -106,8 +106,6 @@ public final class Event extends EventObject {
 		return attributes;
 	}
 
-	// helpers
-
 	public String toString() {
 		return new ToStringCreator(this).append("source", getSource()).append("id", getId()).append("timestamp",
 				getTimestamp()).append("attributes", getAttributes()).toString();

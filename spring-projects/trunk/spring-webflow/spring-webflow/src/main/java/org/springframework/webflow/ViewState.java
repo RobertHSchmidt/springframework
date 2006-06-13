@@ -91,9 +91,9 @@ public class ViewState extends TransitionableState {
 
 	/**
 	 * Request that the current view selection be reconstituted to support
-	 * reissuing the response. This is idempotent operation that may be safely
-	 * called on a paused execution, used primarily to support a flow execution
-	 * redirect.
+	 * reissuing the response. This is an idempotent operation that may be safely
+	 * called any number of times on a paused execution, used primarily to support
+	 * a flow execution redirect.
 	 * @param context the request context
 	 * @return the view selection
 	 * @throws StateException if an exception occurs in this state
