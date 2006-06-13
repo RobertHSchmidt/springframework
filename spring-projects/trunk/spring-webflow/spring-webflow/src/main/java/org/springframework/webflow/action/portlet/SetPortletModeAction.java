@@ -18,7 +18,6 @@ package org.springframework.webflow.action.portlet;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletMode;
 
-import org.springframework.core.Constants;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.webflow.ActionExecutionException;
@@ -41,8 +40,6 @@ import org.springframework.webflow.context.portlet.PortletExternalContext;
  * @author Erwin Vervaet
  */
 public class SetPortletModeAction extends AbstractAction {
-
-	private static final Constants PORTLET_MODE_CONSTANTS = new Constants(PortletMode.class);
 
 	/**
 	 * The portlet mode to set can be specified in an action state action
