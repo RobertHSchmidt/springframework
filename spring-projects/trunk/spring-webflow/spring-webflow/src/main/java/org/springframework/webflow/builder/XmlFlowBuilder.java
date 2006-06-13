@@ -551,12 +551,14 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private void buildInlineFlow(Element flowElement, Flow inlineFlow) {
-		parseAndAddFlowVariables(flowElement, getFlow());
-		getFlow().setInputMapper(parseInputMapper(getDocumentElement()));
-		parseAndAddStartActions(flowElement, getFlow());
+		parseAndAddFlowVariables(flowElement, inlineFlow);
+		inlineFlow.setInputMapper(parseInputMapper(flowElement));
+		parseAndAddStartActions(flowElement, inlineFlow);
 		parseAndAddInlineFlowDefinitions(flowElement, inlineFlow);
 		parseAndAddStateDefinitions(flowElement, inlineFlow);
 		parseAndAddGlobalTransitions(flowElement, inlineFlow);
+		inlineFlow.setOutputMapper(parseOutputMapper(flowElement));
+		parseAndAddEndActions(flowElement, inlineFlow);
 		inlineFlow.getExceptionHandlerSet().addAll(parseExceptionHandlers(flowElement));
 		destroyLocalServiceRegistry(inlineFlow);
 	}
