@@ -198,18 +198,17 @@ public class Flow extends AnnotatedObject {
 	 * Add given state definition to this flow definition. Marked protected, as
 	 * this method is to be called by the (privileged) state definition classes
 	 * themselves during state construction as part of a FlowBuilder invocation.
-	 * @param state the state, if already added nothing happens, if another
-	 * instance is added with the same id, an exception is thrown
+	 * @param state the state to add
 	 * @throws IllegalArgumentException when the state cannot be added to the
-	 * flow; specifically, if another state shares the same id as the one
-	 * provided
+	 * flow; for instance if another state shares the same id as the one
+	 * provided or if given state already belongs to another flow
 	 */
 	protected void add(State state) throws IllegalArgumentException {
 		if (this != state.getFlow() && state.getFlow() != null) {
 			throw new IllegalArgumentException("State " + state + " cannot be added to this flow '" + getId()
-					+ "' -- it already belongs to a different flow");
+					+ "' -- it already belongs to a different flow: '" + state.getFlow().getId() + "'");
 		}
-		if (states.contains(state)) { //FIXME: is this a bug? should check state.getId()
+		if (states.contains(state)) {
 			throw new IllegalArgumentException("This flow '" + getId() + "' already contains a state with id '"
 					+ state.getId() + "' -- state ids must be locally unique to the flow definition; "
 					+ "existing state-ids of this flow include: " + StylerUtils.style(getStateIds()));
