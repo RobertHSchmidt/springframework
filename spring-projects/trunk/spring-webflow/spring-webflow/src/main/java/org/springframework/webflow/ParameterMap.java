@@ -472,10 +472,19 @@ public class ParameterMap implements MapAdaptable, Serializable {
 		return parameters;
 	}
 
+	// internal helpers
+	
+	/**
+	 * Convert given String parameter to specified target type.
+	 */
 	private Object convert(String parameter, Class targetType) throws ConversionException {
 		return conversionService.getConversionExecutor(String.class, targetType).execute(parameter);
 	}
 
+	/**
+	 * Convert given array of String parameters to specified target type and
+	 * return the resulting array.
+	 */
 	private Object[] convert(String[] parameters, Class targetElementType) throws ConversionException {
 		List list = new ArrayList(parameters.length);
 		ConversionExecutor converter = conversionService.getConversionExecutor(String.class, targetElementType);
@@ -485,10 +494,15 @@ public class ParameterMap implements MapAdaptable, Serializable {
 		return list.toArray((Object[])Array.newInstance(targetElementType, parameters.length));
 	}
 
+	/**
+	 * Make sure clazz is assignable from requiredType.
+	 */
 	private void assertAssignableTo(Class clazz, Class requiredType) {
-		Assert.isTrue(clazz.isAssignableFrom(requiredType), "The provided required type must be assignable to ["
-				+ clazz + "]");
+		Assert.isTrue(clazz.isAssignableFrom(requiredType),
+				"The provided required type must be assignable to [" + clazz + "]");
 	}
+	
+	// custom serialization
 
 	private void writeObject(ObjectOutputStream out) throws IOException {
 		out.defaultWriteObject();
