@@ -51,6 +51,7 @@ public class FormObjectAccessor {
 	/**
 	 * The errors prefix.
 	 */
+	//use deprecated API to remain compatible with Spring 1.2.x
 	private static final String ERRORS_PREFIX = BindException.ERROR_KEY_PREFIX;
 	
 	/**
