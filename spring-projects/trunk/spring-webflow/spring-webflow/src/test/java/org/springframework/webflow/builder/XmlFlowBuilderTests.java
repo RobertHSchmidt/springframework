@@ -166,6 +166,11 @@ public class XmlFlowBuilderTests extends TestCase {
 
 		Flow inlineFlow = flow.getInlineFlow("inline-flow");
 		assertNotNull(inlineFlow);
+		assertNotNull(inlineFlow.getInputMapper());
+		assertNotNull(inlineFlow.getOutputMapper());
+		assertEquals(1, inlineFlow.getVariables().length);
+		assertEquals(1, inlineFlow.getStartActionList().size());
+		assertEquals(1, inlineFlow.getEndActionList().size());
 		EndState endState3 = (EndState)inlineFlow.getState("end");
 		assertNotNull(endState3);
 		assertNotNull(endState3.getOutputMapper());

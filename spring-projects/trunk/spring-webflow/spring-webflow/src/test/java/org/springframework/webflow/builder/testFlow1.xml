@@ -119,11 +119,24 @@
 	
 	<inline-flow id="inline-flow">
 		<flow start-state="end">
+			<var name="fooList" class="java.util.ArrayList"/>
+			<input-mapper>
+				<mapping source="foo" target="flowScope.bar"/>
+			</input-mapper>
+			<start-actions>
+				<action bean="action1"/>
+			</start-actions>
 			<end-state id="end">
 				<output-mapper>
 					<mapping source="flowScope.name" target="name"/>
 				</output-mapper>
 			</end-state>
+			<end-actions>
+				<action bean="action1"/>
+			</end-actions>
+			<output-mapper>
+				<mapping source="flowScope.foo" target="bar"/>
+			</output-mapper>
 		</flow>
 	</inline-flow>
 	
