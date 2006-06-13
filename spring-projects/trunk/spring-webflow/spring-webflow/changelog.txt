@@ -4,6 +4,9 @@ http://www.springframework.org
 
 Changes in version 1.0 (30.6.2006)
 ------------------------------------
+Package org.springframework.webflow
+* Renamed TransitionSet.transitionMatches to "hasMatchingTransition".
+
 Package org.springframework.webflow.execution
 * Renamed ConversationService.begin to "beginConversation".
 
