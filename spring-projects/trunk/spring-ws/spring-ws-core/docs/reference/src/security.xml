@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="security">
+    <title>Securing your Web services with Spring-WS</title>
+
+    <section id="ws-introduction">
+        <title>Introduction</title>
+        <para>
+            In this chapter, we will show you how to add WS-Security aspects to your Web services. Securing a Web service covers much 
+            Spring's Web service framework is designed around
+        </para>
+    </section>
+    
+    <section>
+        <title>Authentication</title>
+        
+        <section>
+            <title>Username Authentication</title>
+            
+            <section>
+                <title>Plain Text Authentication</title>
+            </section>
+
+            <section>
+                <title>Digest Authentication</title>
+            </section>
+            
+        </section>
+        
+        <section>
+            <title>Certificate Authentication</title>
+        </section>
+            
+    </section>
+    
+    <section>
+        <title>Digital Signatures</title>
+        
+        <section>
+            <title>Verifying Signatures</title>
+        </section>
+
+        <section>
+            <title>Signing Messages</title>
+        </section>
+    </section>
+
+    <section>
+        <title>Decryption and Encryption</title>
+        
+        <section>
+            <title>Decryption</title>
+        </section>
+
+        <section>
+            <title>Encryption</title>
+        </section>
+        
+    </section>
+</chapter>
+    

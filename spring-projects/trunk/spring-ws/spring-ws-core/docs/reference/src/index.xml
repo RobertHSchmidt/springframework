@@ -6,6 +6,8 @@
                 <!ENTITY contract-first     SYSTEM "contract-first.xml">
                 <!ENTITY oxm                SYSTEM "oxm.xml">
                 <!ENTITY ws                 SYSTEM "ws.xml">
+                <!ENTITY security           SYSTEM "security.xml">
+                
                 ]>
 
 
@@ -36,6 +38,10 @@
     &overview;
 
     &contract-first;
+    
+    &ws;
+    
+    &security;
     
     &oxm;
 
