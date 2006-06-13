@@ -180,7 +180,7 @@ to see a list of all relevant targets.
 
 	<target name="javadoc" depends="init" description="Calls javadoc targets on each project">
 		<echo>projects=${projects}</echo>
-		<subant target="javadoc" inheritall="false">
+		<subant target="javadoc" inheritall="false" failonerror="no">
 			<buildpath refid="${projects}" />
 		</subant>
 	</target>
