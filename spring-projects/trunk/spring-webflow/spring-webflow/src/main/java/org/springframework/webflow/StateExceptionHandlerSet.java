@@ -57,16 +57,7 @@ public class StateExceptionHandlerSet {
 	 * operation
 	 */
 	public boolean addAll(StateExceptionHandler[] exceptionHandlers) {
-		if (exceptionHandlers == null) {
-			return false;
-		}
-		boolean changed = false;
-		for (int i = 0; i < exceptionHandlers.length; i++) {
-			if (add(exceptionHandlers[i]) && !changed) {
-				changed = true;
-			}
-		}
-		return changed;
+		return CollectionUtils.addAllNoDoubles(this.exceptionHandlers, exceptionHandlers);
 	}
 
 	/**
@@ -122,7 +113,11 @@ public class StateExceptionHandlerSet {
 		while (it.hasNext()) {
 			StateExceptionHandler handler = (StateExceptionHandler)it.next();
 			if (handler.handles(exception)) {
-				return handler.handle(exception, context);
+				ViewSelection result = handler.handle(exception, context);
+				if (result != null) {
+					return result;
+				}
+				//else continue with next handler
 			}
 		}
 		return null;
