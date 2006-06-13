@@ -12,6 +12,7 @@ Package org.springframework.webflow.builder
 
 Package org.springframework.webflow.execution
 * Renamed ConversationService.begin to "beginConversation".
+* Removed implicit unlock call in LocalConversationService.removeFlowExecution
 
 Package org.springframework.webflow.samples
 * Simplified 'flowLauncher' to take advantage of latest attribute mapping features.
