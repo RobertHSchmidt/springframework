@@ -125,8 +125,7 @@ public class LocalConversationService implements ConversationService, Serializab
 		if (!conversations.containsKey(conversationId)) {
 			throw new NoSuchConversationException(conversationId);
 		}
-		ConversationEntry entry = (ConversationEntry)conversations.remove(conversationId);
-		entry.getLock().unlock();
+		conversations.remove(conversationId);
 	}
 
 	private ConversationEntry getConversationEntry(ConversationId conversationId) {
