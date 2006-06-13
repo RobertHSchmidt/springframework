@@ -16,7 +16,6 @@
 package org.springframework.webflow.execution.repository.support;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.AttributeMap;
