@@ -213,6 +213,11 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * @author Keith Donald
  */
 public class FormAction extends MultiAction implements InitializingBean, FormActionMethods {
+	
+	/*
+	 * Implementation note:
+	 * Uses deprecated DataBinder.getErrors() to remain compatible with Spring 1.2.x.
+	 */
 
 	/**
 	 * The default form object name ("formObject").
