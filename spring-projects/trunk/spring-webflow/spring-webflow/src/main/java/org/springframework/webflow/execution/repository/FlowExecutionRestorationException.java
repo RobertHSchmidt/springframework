@@ -17,8 +17,7 @@ package org.springframework.webflow.execution.repository;
 
 /**
  * Thrown when the flow execution with the persistent identifier provided could
- * not be restored. This could occur if the execution has been removed from the
- * repository and a client still has a handle to the key.
+ * not be restored.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
