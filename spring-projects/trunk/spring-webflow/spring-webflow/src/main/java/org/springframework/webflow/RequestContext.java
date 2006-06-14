@@ -47,7 +47,7 @@ package org.springframework.webflow;
  * <p>
  * This interface does not allow direct manipulation of the flow execution. That
  * is only possible via the
- * {@link org.springframework.webflow.FlowExecutionControlContext} sub
+ * {@link org.springframework.webflow.RequestControlContext} sub
  * interface, which is used by privelged state types to manipulate the flow.
  * <p>
  * The web flow system will ensure that a RequestContext object is local to the
@@ -59,7 +59,7 @@ package org.springframework.webflow;
  * single call to manipulate a runtime execution of a flow.
  * 
  * @see org.springframework.webflow.execution.FlowExecution
- * @see org.springframework.webflow.FlowExecutionControlContext
+ * @see org.springframework.webflow.RequestControlContext
  * @see org.springframework.webflow.Action
  * @see org.springframework.webflow.TransitionCriteria
  * 

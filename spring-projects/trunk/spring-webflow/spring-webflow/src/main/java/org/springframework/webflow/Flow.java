@@ -572,7 +572,7 @@ public class Flow extends AnnotatedObject {
 	 * @param input eligible input into the session
 	 * @throws StateException when an exception occurs entering the start state
 	 */
-	public ViewSelection start(FlowExecutionControlContext context, AttributeMap input) throws StateException {
+	public ViewSelection start(RequestControlContext context, AttributeMap input) throws StateException {
 		createVariables(context);
 		if (inputMapper != null) {
 			inputMapper.map(input, context, Collections.EMPTY_MAP);
@@ -589,7 +589,7 @@ public class Flow extends AnnotatedObject {
 	 * @return the selected view
 	 * @throws StateException when an exception occurs processing the event
 	 */
-	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) throws StateException {
+	public ViewSelection onEvent(Event event, RequestControlContext context) throws StateException {
 		TransitionableState currentState = getCurrentTransitionableState(context);
 		try {
 			return currentState.onEvent(event, context);
@@ -620,7 +620,7 @@ public class Flow extends AnnotatedObject {
 	 * modification by this method
 	 * @throws StateException when an exception occurs ending this flow
 	 */
-	public void end(FlowExecutionControlContext context, AttributeMap output) throws StateException {
+	public void end(RequestControlContext context, AttributeMap output) throws StateException {
 		endActionList.execute(context);
 		if (outputMapper != null) {
 			outputMapper.map(context, output, Collections.EMPTY_MAP);
@@ -635,7 +635,7 @@ public class Flow extends AnnotatedObject {
 	 * matched or returned a non-null view selection
 	 * @throws StateException passed in, if it was not handled
 	 */
-	public ViewSelection handleException(StateException exception, FlowExecutionControlContext context)
+	public ViewSelection handleException(StateException exception, RequestControlContext context)
 			throws StateException {
 		return getExceptionHandlerSet().handleException(exception, context);
 	}
@@ -659,7 +659,7 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * Returns the current state and makes sure it is transitionable.
 	 */
-	private TransitionableState getCurrentTransitionableState(FlowExecutionControlContext context) {
+	private TransitionableState getCurrentTransitionableState(RequestControlContext context) {
 		State currentState = context.getCurrentState();
 		if (!(currentState instanceof TransitionableState)) {
 			throw new IllegalStateException("You can only signal events in transitionable states, and state "

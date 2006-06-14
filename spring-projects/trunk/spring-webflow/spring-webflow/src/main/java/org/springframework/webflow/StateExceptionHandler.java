@@ -39,5 +39,5 @@ public interface StateExceptionHandler {
 	 * the handler chooses not to select a view, in which case other exception
 	 * handlers will be given a chance to handle the exception)
 	 */
-	public ViewSelection handle(StateException exception, FlowExecutionControlContext context);
+	public ViewSelection handle(StateException exception, RequestControlContext context);
 }

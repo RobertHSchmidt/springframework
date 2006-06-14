@@ -18,7 +18,7 @@ package org.springframework.webflow.test;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowExecutionControlContext;
+import org.springframework.webflow.RequestControlContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.State;
@@ -41,13 +41,13 @@ import org.springframework.webflow.ViewSelection;
  * 
  * @author Keith Donald
  */
-public class MockFlowExecutionControlContext extends MockRequestContext implements FlowExecutionControlContext {
+public class MockRequestControlContext extends MockRequestContext implements RequestControlContext {
 
 	/**
 	 * Creates a new mock control context for controlling a mock execution of the
 	 * provided flow definition.
 	 */
-	public MockFlowExecutionControlContext(Flow rootFlow) {
+	public MockRequestControlContext(Flow rootFlow) {
 		super(rootFlow);
 	}
 	

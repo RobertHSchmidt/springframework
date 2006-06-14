@@ -17,7 +17,7 @@ package org.springframework.webflow;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.test.MockFlowExecutionControlContext;
+import org.springframework.webflow.test.MockRequestControlContext;
 
 /**
  * Tests that each of the Flow state types execute as expected when entered.
@@ -35,7 +35,7 @@ public class StateTests extends TestCase {
 	public void setUp() {
 		flow = new Flow("flow");
 		state = new State(flow, "myState") {
-			protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
+			protected ViewSelection doEnter(RequestControlContext context) throws StateException {
 				entered = true;
 				return ViewSelection.NULL_VIEW;
 			}
@@ -44,7 +44,7 @@ public class StateTests extends TestCase {
 
 	public void testStateEnter() {
 		assertEquals("myState", state.getId());
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		state.enter(context);
 		assertEquals(state, context.getCurrentState());
 	}
@@ -52,7 +52,7 @@ public class StateTests extends TestCase {
 	public void testStateEnterWithEntryAction() {
 		TestAction action = new TestAction();
 		state.getEntryActionList().add(action);
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		state.enter(context);
 		assertEquals(state, context.getCurrentState());
 		assertTrue(action.isExecuted());

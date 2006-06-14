@@ -40,7 +40,7 @@ import org.springframework.webflow.execution.FlowLocator;
  * implementation.
  * 
  * @see org.springframework.webflow.execution.impl.FlowExecutionImpl
- * @see org.springframework.webflow.execution.impl.FlowExecutionControlContextImpl
+ * @see org.springframework.webflow.execution.impl.RequestControlContextImpl
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

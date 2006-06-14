@@ -24,7 +24,7 @@ import org.springframework.core.JdkVersion;
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
-import org.springframework.webflow.FlowExecutionControlContext;
+import org.springframework.webflow.RequestControlContext;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.StateExceptionHandler;
@@ -91,7 +91,7 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 		return getTargetStateResolver(e) != null;
 	}
 
-	public ViewSelection handle(StateException e, FlowExecutionControlContext context) {
+	public ViewSelection handle(StateException e, RequestControlContext context) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Handling state exception " + e);
 		}

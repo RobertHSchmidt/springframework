@@ -26,7 +26,7 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowExecutionContext;
-import org.springframework.webflow.FlowExecutionControlContext;
+import org.springframework.webflow.RequestControlContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.ParameterMap;
@@ -48,9 +48,9 @@ import org.springframework.webflow.ViewSelection;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-class FlowExecutionControlContextImpl implements FlowExecutionControlContext {
+class RequestControlContextImpl implements RequestControlContext {
 
-	protected static final Log logger = LogFactory.getLog(FlowExecutionControlContextImpl.class);
+	protected static final Log logger = LogFactory.getLog(RequestControlContextImpl.class);
 
 	/**
 	 * The owning flow execution.
@@ -88,7 +88,7 @@ class FlowExecutionControlContextImpl implements FlowExecutionControlContext {
 	 * @param externalContext the external context that originated the flow
 	 * execution request
 	 */
-	public FlowExecutionControlContextImpl(FlowExecutionImpl flowExecution, ExternalContext externalContext) {
+	public RequestControlContextImpl(FlowExecutionImpl flowExecution, ExternalContext externalContext) {
 		Assert.notNull(flowExecution, "The owning flow execution is required");
 		this.externalContext = externalContext;
 		this.flowExecution = flowExecution;

@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.support.DefaultTargetStateResolver;
 import org.springframework.webflow.support.EventIdTransitionCriteria;
-import org.springframework.webflow.test.MockFlowExecutionControlContext;
+import org.springframework.webflow.test.MockRequestControlContext;
 
 public class TransitionTests extends TestCase {
 
@@ -15,7 +15,7 @@ public class TransitionTests extends TestCase {
 		TestAction action = new TestAction();
 		source.getExitActionList().add(action);
 		ViewState target = new ViewState(flow, "target");
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.setCurrentState(source);
 		t.execute(source, context);
 		assertTrue(t.matches(context));
@@ -26,7 +26,7 @@ public class TransitionTests extends TestCase {
 
 	public void testTransitionCriteriaDoesNotMatch() {
 		Transition t = new Transition(new EventIdTransitionCriteria("bogus"), new DefaultTargetStateResolver("target"));
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(new Flow("flow"));
+		MockRequestControlContext context = new MockRequestControlContext(new Flow("flow"));
 		assertFalse(t.matches(context));
 	}
 
@@ -38,7 +38,7 @@ public class TransitionTests extends TestCase {
 		TestAction action = new TestAction();
 		source.getExitActionList().add(action);
 		ViewState target = new ViewState(flow, "target");
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.setCurrentState(source);
 		t.execute(source, context);
 		assertTrue(t.matches(context));

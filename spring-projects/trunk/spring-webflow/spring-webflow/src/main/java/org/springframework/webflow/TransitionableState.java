@@ -93,7 +93,7 @@ public abstract class TransitionableState extends State {
 	 * @throws NoMatchingTransitionException when a matching transition cannot
 	 * be found
 	 */
-	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) throws NoMatchingTransitionException {
+	public ViewSelection onEvent(Event event, RequestControlContext context) throws NoMatchingTransitionException {
 		//FIXME: event parameter is not used?
 		return getRequiredTransition(context).execute(this, context);
 	}
@@ -109,7 +109,7 @@ public abstract class TransitionableState extends State {
 	 * @return a view selection containing model and view information needed to
 	 * render the results of the state processing
 	 */
-	public ViewSelection reenter(FlowExecutionControlContext context) {
+	public ViewSelection reenter(RequestControlContext context) {
 		return enter(context);
 	}
 
@@ -119,7 +119,7 @@ public abstract class TransitionableState extends State {
 	 * any registered exit actions.
 	 * @param context the flow control context
 	 */
-	public void exit(FlowExecutionControlContext context) {
+	public void exit(RequestControlContext context) {
 		exitActionList.execute(context);
 	}
 

@@ -1,6 +1,6 @@
 package org.springframework.webflow.builder;
 
-import org.springframework.webflow.FlowExecutionControlContext;
+import org.springframework.webflow.RequestControlContext;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.ViewSelection;
@@ -11,7 +11,7 @@ public class MyCustomStateExceptionHandler implements StateExceptionHandler {
 		return false;
 	}
 
-	public ViewSelection handle(StateException e, FlowExecutionControlContext context) {
+	public ViewSelection handle(StateException e, RequestControlContext context) {
 		return null;
 	}
 
