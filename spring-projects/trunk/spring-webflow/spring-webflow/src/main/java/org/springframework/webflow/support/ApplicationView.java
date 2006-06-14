@@ -49,7 +49,7 @@ public final class ApplicationView extends ViewSelection {
 	/**
 	 * Creates a new application view.
 	 * @param viewName the name (or resource identifier) of the view that should
-	 * be rendered.
+	 * be rendered
 	 * @param model the map of application model data to make available to the
 	 * view during rendering; entries consist of model names (Strings) to model
 	 * objects (Objects), model entries may not be null, but the model Map may
@@ -72,7 +72,7 @@ public final class ApplicationView extends ViewSelection {
 
 	/**
 	 * Return the view's application model that should be made available during
-	 * the rendering process. Never returns null.
+	 * the rendering process. Never returns null. The returned map is unmodifiable.
 	 */
 	public Map getModel() {
 		return Collections.unmodifiableMap(model);

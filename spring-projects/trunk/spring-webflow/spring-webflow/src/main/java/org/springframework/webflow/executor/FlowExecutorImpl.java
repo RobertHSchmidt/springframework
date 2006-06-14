@@ -32,13 +32,13 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepositoryFactory;
 import org.springframework.webflow.support.ApplicationView;
-import org.springframework.webflow.support.RedirectType;
+import org.springframework.webflow.support.FlowExecutionRedirect;
 
 /**
  * The default implementation of the central facade for <i>driving</i> the
  * execution of flows within an application.
  * <p>
- * This object is responsible creating and starting new flow executions as
+ * This object is responsible for creating and starting new flow executions as
  * requested by clients, as well as signaling events for processing by existing,
  * paused executions (that are waiting to be resumed in response to a user
  * event).
@@ -56,17 +56,16 @@ import org.springframework.webflow.support.RedirectType;
  * </tr>
  * <tr>
  * <td>repositoryFactory</td>
- * <td>The strategy for accessing a flow execution repositories that are used
+ * <td>The strategy for accessing flow execution repositories that are used
  * to create, save, and store managed flow executions driven by this executor.</td>
  * <td>A {@link DefaultFlowExecutionRepositoryFactory simple}, stateful
  * server-side session-based repository factory</td>
  * </tr>
  * <tr>
  * <td>redirectOnPause</td>
- * <td>A enumeration indicating if this executor should force a redirect to an
- * {@link ApplicationView} after pausing an active flow execution. Several
- * different types of redirect are supported.</td>
- * <td>NONE, indicating no special redirect action should be taken</td>
+ * <td>A flag indicating if this executor should force a redirect to an
+ * {@link ApplicationView} after pausing an active flow execution.</td>
+ * <td>false, indicating no special redirect action should be taken</td>
  * </tr>
  * <tr>
  * <td>inputMapper</td>
@@ -75,11 +74,12 @@ import org.springframework.webflow.support.RedirectType;
  * {@link FlowExecution flow executions}. After mapping, the target map is then
  * passed to the FlowExecution, exposing context attributes as input to the flow
  * during startup.</td>
- * <td>A RequestParameterInputMapper, which exposes all request params in to
+ * <td>A {@link RequestParameterInputMapper}, which exposes all request params in to
  * the flow execution for input mapping. </td>
  * </tr>
  * </table>
  * </p>
+ * 
  * @see org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory
  * @see org.springframework.webflow.execution.FlowExecution
  * @see org.springframework.webflow.ViewSelection
@@ -113,7 +113,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * This allows the user to participate in the current state of the flow
 	 * execution using a bookmarkable URL.
 	 */
-	private RedirectType redirectOnPause;
+	private boolean redirectOnPause;
 
 	/**
 	 * The service responsible for mapping attributes of an
@@ -156,7 +156,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * Returns a value indicating if this executor should redirect after pausing
 	 * an active flow execution.
 	 */
-	public RedirectType getRedirectOnPause() {
+	public boolean isRedirectOnPause() {
 		return redirectOnPause;
 	}
 
@@ -164,23 +164,25 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * Sets the value that indicates if this executor should redirect after
 	 * pausing an active flow execution.
 	 * <p>
-	 * Setting a redirect type allows the user to participate in the current
+	 * Setting this to true allows the user to participate in the current
 	 * view-state of a conversation at a refreshable URL.
 	 */
-	public void setRedirectOnPause(RedirectType redirectType) {
-		this.redirectOnPause = redirectType;
+	public void setRedirectOnPause(boolean b) {
+		this.redirectOnPause = b;
 	}
 
 	public ResponseInstruction launch(String flowId, ExternalContext context) throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecution flowExecution = repository.createFlowExecution(flowId);
-		ViewSelection selectedView = flowExecution.start(createInput(flowExecution, context), context);
+		ViewSelection selectedView = flowExecution.start(createInput(context), context);
 		if (flowExecution.isActive()) {
+			// execution still active => store it in the repository
 			FlowExecutionKey flowExecutionKey = repository.generateKey(flowExecution);
 			repository.putFlowExecution(flowExecutionKey, flowExecution);
-			return new ResponseInstruction(flowExecutionKey.toString(), flowExecution, pausedView(selectedView));
+			return new ResponseInstruction(flowExecutionKey.toString(), flowExecution, redirectOnPauseIfNecessary(selectedView));
 		}
 		else {
+			// execution already ended => just render the selected view
 			return new ResponseInstruction(flowExecution, selectedView);
 		}
 	}
@@ -190,16 +192,18 @@ public class FlowExecutorImpl implements FlowExecutor {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionKey repositoryKey = repository.parseFlowExecutionKey(flowExecutionKey);
 		FlowExecutionLock lock = repository.getLock(repositoryKey);
-		lock.lock();
+		lock.lock(); // make sure we're the only one manipulating the flow execution
 		try {
 			FlowExecution flowExecution = repository.getFlowExecution(repositoryKey);
 			ViewSelection selectedView = flowExecution.signalEvent(new EventId(eventId), context);
 			if (flowExecution.isActive()) {
+				// execution still active => store it in the repository
 				repositoryKey = repository.getNextKey(flowExecution, repositoryKey);
 				repository.putFlowExecution(repositoryKey, flowExecution);
-				return new ResponseInstruction(repositoryKey.toString(), flowExecution, pausedView(selectedView));
+				return new ResponseInstruction(repositoryKey.toString(), flowExecution, redirectOnPauseIfNecessary(selectedView));
 			}
 			else {
+				// execution ended => remove it from the repository
 				repository.removeFlowExecution(repositoryKey);
 				return new ResponseInstruction(flowExecution, selectedView);
 			}
@@ -213,23 +217,35 @@ public class FlowExecutorImpl implements FlowExecutor {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionKey repositoryKey = repository.parseFlowExecutionKey(flowExecutionKey);
 		FlowExecutionLock lock = repository.getLock(repositoryKey);
-		lock.lock();
+		lock.lock(); // make sure we're the only one manipulating the flow execution
 		try {
 			FlowExecution flowExecution = repository.getFlowExecution(repositoryKey);
 			ViewSelection selectedView = flowExecution.refresh(context);
+			//note that we're not calling redirectOnPauseIfNecessary since this is already a refresh!
 			return new ResponseInstruction(repositoryKey.toString(), flowExecution, selectedView);
-		} finally {
+		}
+		finally {
 			lock.unlock();
 		}
+	}
+
+	// helper methods
+	
+	/**
+	 * Returns the repository retrieved by the configured
+	 * {@link FlowExecutionRepositoryFactory}.
+	 */
+	protected FlowExecutionRepository getRepository(ExternalContext context) {
+		return repositoryFactory.getRepository(context);
 	}
 
 	/**
 	 * Factory method that creates the input attribute map for a newly created
 	 * {@link FlowExecution}.
 	 * @param context the external context
-	 * @return the input map
+	 * @return the input map, or null if no input
 	 */
-	protected AttributeMap createInput(FlowExecution flowExecution, ExternalContext context) {
+	protected AttributeMap createInput(ExternalContext context) {
 		if (inputMapper != null) {
 			AttributeMap inputMap = new AttributeMap();
 			inputMapper.map(context, inputMap, null);
@@ -241,23 +257,15 @@ public class FlowExecutorImpl implements FlowExecutor {
 	}
 
 	/**
-	 * Returns the repository retrieved by the configured
-	 * {@link FlowExecutionRepositoryFactory}.
-	 */
-	protected FlowExecutionRepository getRepository(ExternalContext context) {
-		return repositoryFactory.getRepository(context);
-	}
-
-	/**
 	 * Factory method that post processes a view selection made as the result of
 	 * pausing an active flow execution. This implementation applies the
-	 * "redirectType" behavior if necessary.
-	 * @param selectedView the view selected by the view state
+	 * "redirectOnPause" behavior if necessary.
+	 * @param selectedView the view selected by the flow execution
 	 * @return the view to return to callers
 	 */
-	protected ViewSelection pausedView(ViewSelection selectedView) {
-		if (selectedView instanceof ApplicationView && redirectOnPause != null) {
-			return redirectOnPause.select();
+	protected ViewSelection redirectOnPauseIfNecessary(ViewSelection selectedView) {
+		if (selectedView instanceof ApplicationView && redirectOnPause) {
+			return FlowExecutionRedirect.INSTANCE;
 		}
 		else {
 			return selectedView;

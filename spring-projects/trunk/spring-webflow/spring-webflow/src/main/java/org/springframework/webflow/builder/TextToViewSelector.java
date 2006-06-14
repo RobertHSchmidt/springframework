@@ -27,7 +27,6 @@ import org.springframework.webflow.support.ExternalRedirectSelector;
 import org.springframework.webflow.support.FlowExecutionRedirect;
 import org.springframework.webflow.support.FlowRedirect;
 import org.springframework.webflow.support.FlowRedirectSelector;
-import org.springframework.webflow.support.RedirectType;
 
 /**
  * Converter that converts an encoded string representation of a view selector
@@ -141,7 +140,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		if (encodedView.startsWith(REDIRECT_PREFIX)) {
 			String viewName = encodedView.substring(REDIRECT_PREFIX.length());
 			Expression viewNameExpr = (Expression)fromStringTo(Expression.class).execute(viewName);
-			return new ApplicationViewSelector(viewNameExpr, RedirectType.FLOW_EXECUTION);
+			return new ApplicationViewSelector(viewNameExpr, true);
 		}
 		else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
 			String externalUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());
