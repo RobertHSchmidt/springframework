@@ -27,7 +27,7 @@ import org.springframework.util.Assert;
  * 
  * @author Keith Donald
  */
-public abstract class FlowVariable implements Serializable {
+public abstract class FlowVariable extends AnnotatedObject implements Serializable {
 
 	/**
 	 * The variable name.
