@@ -28,7 +28,12 @@ Package org.springframework.webflow.execution
 * Renamed ConversationService.begin to "beginConversation".
 * Removed implicit unlock call in LocalConversationService.removeFlowExecution
 * Made ConversationServiceException extend NestedRuntimeException, since it is a distinct subsystem root exception.
-
+* Added FlowExecutionRestorationException.
+* Added BadlyFormattedFlowExecutionKeyException.
+* NoSuchConversationException now triggers a NoSuchFlowExecution exception.
+* InvalidContinuationIdException, ContinuationNotFoundException, and ContinuationUnmarshalException 
+  now trigger a FlowExecutionRestorationException.
+  
 Package org.springframework.webflow.samples
 * Simplified 'flowLauncher' to take advantage of latest attribute mapping features.
 * Simplified 'fileUpload' to take advantage of convenient MultipartFile parameter access support.
