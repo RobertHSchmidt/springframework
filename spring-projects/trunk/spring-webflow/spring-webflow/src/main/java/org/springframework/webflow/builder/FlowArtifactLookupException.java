@@ -18,6 +18,7 @@ package org.springframework.webflow.builder;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.FlowException;
+import org.springframework.webflow.FlowExecutionException;
 
 /**
  * A flow artifact lookup exception is thrown when an artifact (such as a flow, state,
