@@ -26,7 +26,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
- * A continuation implementation that is based on standard java serialization, 
+ * A continuation implementation that is based on standard java serialization,
  * created by a {@link SerializedFlowExecutionContinuationFactory}.
  * 
  * @see SerializedFlowExecutionContinuationFactory.
@@ -61,8 +61,8 @@ class SerializedFlowExecutionContinuation extends FlowExecutionContinuation {
 	public boolean isCompressed() {
 		return compressed;
 	}
-	
-	public FlowExecution restore() {
+
+	public FlowExecution unmarshal() throws ContinuationUnmarshalException {
 		try {
 			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(getData(true)));
 			try {
@@ -73,12 +73,12 @@ class SerializedFlowExecutionContinuation extends FlowExecutionContinuation {
 			}
 		}
 		catch (IOException e) {
-			throw new FlowExecutionContinuationDeserializationException(
+			throw new ContinuationUnmarshalException(
 					"IOException thrown deserializing the flow execution stored in this continuation -- this should not happen!",
 					e);
 		}
 		catch (ClassNotFoundException e) {
-			throw new FlowExecutionContinuationDeserializationException(
+			throw new ContinuationUnmarshalException(
 					"ClassNotFoundException thrown deserializing the flow execution stored in this continuation -- "
 							+ "This should not happen! Make sure there are no classloader issues."
 							+ "For example, perhaps the Web Flow system is being loaded by a classloader "

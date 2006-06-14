@@ -25,6 +25,7 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException;
 import org.springframework.webflow.execution.repository.conversation.Conversation;
 import org.springframework.webflow.execution.repository.conversation.ConversationId;
 import org.springframework.webflow.execution.repository.conversation.ConversationParameters;
@@ -113,8 +114,12 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
 		FlowExecutionContinuation continuation = (FlowExecutionContinuation)getContinuationId(key);
-		FlowExecution flowExecution = continuation.restore();
-		return rehydrate(flowExecution, key);
+		try {
+			FlowExecution flowExecution = continuation.unmarshal();
+			return rehydrate(flowExecution, key);
+		} catch (ContinuationUnmarshalException e) {
+			throw new FlowExecutionRestorationFailureException(key, e);
+		}
 	}
 
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
@@ -158,10 +163,10 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 			return deserializeContinuation(bytes);
 		}
 		catch (IOException e) {
-			throw new FlowExecutionContinuationDeserializationException("This should not happen", e);
+			throw new ContinuationUnmarshalException("This should not happen", e);
 		}
 		catch (ClassNotFoundException e) {
-			throw new FlowExecutionContinuationDeserializationException("This should not happen", e);
+			throw new ContinuationUnmarshalException("This should not happen", e);
 		}
 	}
 

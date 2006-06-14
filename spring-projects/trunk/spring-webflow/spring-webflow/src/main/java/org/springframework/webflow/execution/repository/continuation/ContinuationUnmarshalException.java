@@ -22,14 +22,14 @@ import org.springframework.core.NestedRuntimeException;
  * FlowExecution.
  * @author Keith Donald
  */
-public class FlowExecutionContinuationDeserializationException extends NestedRuntimeException {
+public class ContinuationUnmarshalException extends NestedRuntimeException {
 
 	/**
 	 * Creates a new flow execution deserialization exception.
 	 * @param message the exception message
 	 * @param cause the cause
 	 */
-	public FlowExecutionContinuationDeserializationException(String message, Throwable cause) {
+	public ContinuationUnmarshalException(String message, Throwable cause) {
 		super(message, cause);
 	}
 }
