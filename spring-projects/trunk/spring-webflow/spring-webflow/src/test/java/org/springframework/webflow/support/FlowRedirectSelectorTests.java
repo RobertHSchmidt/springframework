@@ -23,4 +23,12 @@ public class FlowRedirectSelectorTests extends TestCase {
 		assertEquals("b", redirect.getInput().get("a"));
 		assertEquals("baz", redirect.getInput().get("c"));
 	}
+	
+	public void testMakeSelectionInvalidVariable() {
+		Expression exp = parser.parseExpression("${flowScope.flowId}");
+		FlowRedirectSelector selector = new FlowRedirectSelector(exp);
+		MockRequestContext context = new MockRequestContext();
+		ViewSelection selection = selector.makeSelection(context);
+		assertTrue(selection instanceof FlowRedirect);
+	}
 }
