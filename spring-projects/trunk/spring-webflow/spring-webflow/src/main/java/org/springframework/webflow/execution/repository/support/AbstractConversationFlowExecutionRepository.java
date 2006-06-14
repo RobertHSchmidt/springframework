@@ -21,6 +21,7 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
@@ -29,6 +30,7 @@ import org.springframework.webflow.execution.repository.conversation.Conversatio
 import org.springframework.webflow.execution.repository.conversation.ConversationId;
 import org.springframework.webflow.execution.repository.conversation.ConversationParameters;
 import org.springframework.webflow.execution.repository.conversation.ConversationService;
+import org.springframework.webflow.execution.repository.conversation.ConversationServiceException;
 import org.springframework.webflow.execution.repository.conversation.NoSuchConversationException;
 
 /**
@@ -110,16 +112,25 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	public void removeFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException {
 		try {
 			getConversation(key).end();
-		} catch (NoSuchConversationException e) {
+		}
+		catch (NoSuchConversationException e) {
 			throw new NoSuchFlowExecutionException(key, e);
 		}
 	}
 
-	public FlowExecutionKey parseFlowExecutionKey(String encodedKey) {
+	public FlowExecutionKey parseFlowExecutionKey(String encodedKey) throws FlowExecutionRepositoryException {
 		Assert.hasText(encodedKey, "The string encoded flow execution key is required");
 		String[] keyParts = CompositeFlowExecutionKey.keyParts(encodedKey);
-		ConversationId conversationId = conversationService.parseConversationId(keyParts[0]);
-		return new CompositeFlowExecutionKey(conversationId, parseContinuationId(keyParts[1]));
+		try {
+			ConversationId conversationId = conversationService.parseConversationId(keyParts[0]);
+			return new CompositeFlowExecutionKey(conversationId, parseContinuationId(keyParts[1]));
+		}
+		catch (ConversationServiceException e) {
+			throw new BadlyFormattedFlowExecutionKeyException(encodedKey, CompositeFlowExecutionKey.getFormat(), e);
+		}
+		catch (FlowExecutionRepositoryException e) {
+			throw new BadlyFormattedFlowExecutionKeyException(encodedKey, CompositeFlowExecutionKey.getFormat(), e);
+		}
 	}
 
 	protected ConversationParameters createNewConversation(FlowExecution flowExecution) {
@@ -181,7 +192,7 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	protected void putConversationScope(FlowExecutionKey key, AttributeMap scope) {
 		getConversation(key).putAttribute(SCOPE_ATTRIBUTE, scope);
 	}
-	
+
 	/**
 	 * Template method used to generate a new continuation id for this flow
 	 * execution. Subclasses must override.
@@ -195,5 +206,5 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	 * @param encodedId the string identifier
 	 * @return the parsed continuation id
 	 */
-	protected abstract Serializable parseContinuationId(String encodedId);
+	protected abstract Serializable parseContinuationId(String encodedId) throws FlowExecutionRepositoryException;
 }

@@ -111,7 +111,7 @@ class CompositeFlowExecutionKey extends FlowExecutionKey {
 	 * Returns the format of the default string-encoded form.
 	 * @return the format
 	 */
-	private static String getFormat() {
+	static String getFormat() {
 		return CONVERSATION_ID_PREFIX + "<conversationId>" + CONTINUATION_ID_PREFIX + "<continuationId>";
 	}
 
