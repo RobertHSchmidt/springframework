@@ -112,7 +112,7 @@ public class FlowAssembler {
 	 * the configured FlowBuilder. While the assembly process is ongoing the
 	 * "assembling" flag is set to true.
 	 */
-	public void assembleFlow() {
+	public void assembleFlow() throws FlowBuilderException {
 		flowBuilder.init(flowId, flowAttributes);
 		flowBuilder.buildVariables();
 		flowBuilder.buildStartActions();

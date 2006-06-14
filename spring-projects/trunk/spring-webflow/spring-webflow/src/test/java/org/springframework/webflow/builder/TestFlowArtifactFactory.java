@@ -13,7 +13,7 @@ import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.action.MultiAction;
-import org.springframework.webflow.registry.NoSuchFlowDefinitionException;
+import org.springframework.webflow.execution.NoSuchFlowDefinitionException;
 
 /**
  * Flow service locator for the services needed by the testFlow (defined in

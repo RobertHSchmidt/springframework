@@ -21,6 +21,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.FlowBuilder;
+import org.springframework.webflow.builder.FlowBuilderException;
 import org.springframework.webflow.builder.ResourceHolder;
 
 /**
@@ -75,7 +76,7 @@ public class RefreshableFlowHolder implements FlowHolder {
 		return assembler.getFlowBuilder();
 	}
 
-	public synchronized Flow getFlow() {
+	public synchronized Flow getFlow() throws FlowBuilderException {
 		if (assembling) {
 			// must return early assembly result
 			return getFlowBuilder().getFlow();
@@ -90,7 +91,7 @@ public class RefreshableFlowHolder implements FlowHolder {
 		return flow;
 	}
 
-	public synchronized void refresh() {
+	public synchronized void refresh() throws FlowBuilderException {
 		assembleFlow();
 	}
 
@@ -111,7 +112,7 @@ public class RefreshableFlowHolder implements FlowHolder {
 	 * Assemble the held flow definition, delegating to the configured
 	 * FlowAssembler (director).
 	 */
-	protected void assembleFlow() {
+	protected void assembleFlow() throws FlowBuilderException {
 		try {
 			assembling = true;
 			assembler.assembleFlow();

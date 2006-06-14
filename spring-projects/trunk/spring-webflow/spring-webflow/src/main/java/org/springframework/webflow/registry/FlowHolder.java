@@ -16,6 +16,7 @@
 package org.springframework.webflow.registry;
 
 import org.springframework.webflow.Flow;
+import org.springframework.webflow.builder.FlowBuilderException;
 
 /**
  * A holder holding a reference to a Flow definition. Provides a layer of
@@ -36,12 +37,12 @@ public interface FlowHolder {
 	 * Returns the Flow definition held by this holder. Calling this method the
 	 * first time may trigger Flow assembly.
 	 */
-	public Flow getFlow();
+	public Flow getFlow() throws FlowBuilderException;
 
 	/**
 	 * Refresh the Flow definition held by this holder. Calling this method
 	 * typically triggers Flow reassembly, which may include a refresh from an
 	 * externalized resource such as a file.
 	 */
-	public void refresh();
+	public void refresh() throws FlowBuilderException;
 }
