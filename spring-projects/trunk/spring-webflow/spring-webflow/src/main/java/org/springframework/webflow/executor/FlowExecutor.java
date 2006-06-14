@@ -23,8 +23,8 @@ import org.springframework.webflow.FlowException;
  * interface defines a coarse-grained system boundary suitable for invocation by
  * most clients.
  * <p>
- * Implementations of this interface abstract away much of the the internal
- * complexity of the webflow execution subsystem, which consists of launching
+ * Implementations of this interface abstract away much of the internal
+ * complexity of the web flow execution subsystem, which consists of launching
  * and resuming managed flow executions from repositories.
  * 
  * @author Keith Donald
@@ -39,7 +39,7 @@ public interface FlowExecutor {
 	 * into Spring Web Flow from an external system
 	 * @return the starting response instruction
 	 * @throws FlowException if an exception occured launching the new flow
-	 * execution.
+	 * execution
 	 */
 	public ResponseInstruction launch(String flowId, ExternalContext context) throws FlowException;
 
@@ -49,12 +49,12 @@ public interface FlowExecutor {
 	 * event.
 	 * @param eventId the user event that occured
 	 * @param flowExecutionKey the identifying key of a paused flow execution
-	 * continuation that is waiting to resume on the occurrence of an user event
+	 * that is waiting to resume on the occurrence of an user event
 	 * @param context the external context representing the state of a request
 	 * into Spring Web Flow from an external system
 	 * @return the next response instruction
 	 * @throws FlowException if an exception occured resuming the existing flow
-	 * execution.
+	 * execution
 	 */
 	public ResponseInstruction signalEvent(String eventId, String flowExecutionKey, ExternalContext context)
 			throws FlowException;
@@ -62,9 +62,9 @@ public interface FlowExecutor {
 	/**
 	 * Returns the current response instruction for the flow execution. This is
 	 * a logical refresh operation that allows the "current response" to be
-	 * reissued. This operation does not affect the state of the flow execution.
+	 * re-issued. This operation does not affect the state of the flow execution.
 	 * @param flowExecutionKey the identifying key of a paused flow execution
-	 * continuation that is waiting to resume on the ocurrence of an user event.
+	 * that is waiting to resume on the ocurrence of an user event
 	 * @param context the external context representing the state of a request
 	 * into Spring Web Flow from an external system.
 	 * @return the current response instruction

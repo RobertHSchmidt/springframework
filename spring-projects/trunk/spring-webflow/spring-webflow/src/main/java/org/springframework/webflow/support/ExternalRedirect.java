@@ -36,7 +36,6 @@ public final class ExternalRedirect extends ViewSelection {
 	/**
 	 * Creates an external redirect request.
 	 * @param url the url path to redirect to
-	 * @param whether the url should be treated as context relative
 	 */
 	public ExternalRedirect(String url) {
 		Assert.notNull(url, "The external URL to redirect to is required");

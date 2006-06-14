@@ -29,14 +29,15 @@ import org.springframework.webflow.support.FlowRedirect;
 /**
  * Immutable value object that provides clients with information about a
  * response to issue.
- * <p>
+ * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public class ResponseInstruction implements Serializable {
 
 	/**
-	 * The persistent identifier of the flow execution.
+	 * The persistent identifier of the flow execution that
+	 * resulted in this response instruction.
 	 */
 	private String flowExecutionKey;
 
@@ -46,7 +47,7 @@ public class ResponseInstruction implements Serializable {
 	private ViewSelection viewSelection;
 
 	/**
-	 * A state of the flow execution.
+	 * Basic state info on flow execution.
 	 */
 	private transient FlowExecutionContext flowExecutionContext;
 
@@ -72,6 +73,9 @@ public class ResponseInstruction implements Serializable {
 		init(flowExecutionContext, viewSelection);
 	}
 
+	/**
+	 * Helper to initialize the flow execution context and view selection.
+	 */
 	private void init(FlowExecutionContext flowExecutionContext, ViewSelection viewSelection) {
 		Assert.notNull(flowExecutionContext, "The flow execution context is required");
 		Assert.notNull(viewSelection, "The view selection is required");
@@ -95,14 +99,15 @@ public class ResponseInstruction implements Serializable {
 	}
 
 	/**
-	 * Returns the view selection selected by the flow executino.
+	 * Returns the view selection selected by the flow execution.
 	 */
 	public ViewSelection getViewSelection() {
 		return viewSelection;
 	}
 
 	/**
-	 * Returns true if this is a "null" response instruction.
+	 * Returns true if this is a "null" response instruction, e.g.
+	 * no response needs to be rendered.
 	 */
 	public boolean isNull() {
 		return viewSelection == ViewSelection.NULL_VIEW;
@@ -118,17 +123,17 @@ public class ResponseInstruction implements Serializable {
 
 	/**
 	 * Returns true if this is an instruction to render an application view for
-	 * a "active" (in progress) flow execution.
+	 * an "active" (in progress) flow execution.
 	 */
 	public boolean isActiveView() {
 		return isApplicationView() && flowExecutionContext.isActive();
 	}
 
 	/**
-	 * Returns true if this is an instruction to render a confirmation view for
-	 * a "ended" (inactive) flow execution.
+	 * Returns true if this is an instruction to render a view for
+	 * an "ended" (inactive) flow execution from an end state.
 	 */
-	public boolean isConfirmationView() {
+	public boolean isEndingView() {
 		return isApplicationView() && !flowExecutionContext.isActive();
 	}
 
@@ -179,7 +184,7 @@ public class ResponseInstruction implements Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("flowExecutionKey", flowExecutionKey).append("viewSelection",
-				viewSelection).append("flowExecutionContext", flowExecutionContext).toString();
+		return new ToStringCreator(this).append("flowExecutionKey", flowExecutionKey)
+			.append("viewSelection", viewSelection).append("flowExecutionContext", flowExecutionContext).toString();
 	}
 }

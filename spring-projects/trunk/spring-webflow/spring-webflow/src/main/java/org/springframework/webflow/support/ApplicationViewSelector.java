@@ -35,7 +35,7 @@ import org.springframework.webflow.ViewSelector;
  * view during rendering. This is typically the union of attributes in request,
  * flow, and conversation scope.
  * <p>
- * This selector also supports setting a <i>redirectType</i> value that can be
+ * This selector also supports setting a <i>redirect</i> flag that can be
  * used to trigger a redirect to the {@link ApplicationView} at a bookmarkable
  * URL.
  * 
@@ -50,14 +50,13 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	private Expression viewName;
 
 	/**
-	 * A value indicating if a redirect to the selected application view should
+	 * A flag indicating if a redirect to the selected application view should
 	 * be requested.
 	 * <p>
-	 * Setting this to something other than <code>null</code> allows you
-	 * to redirect while the flow is in progress to a stable URL that can be
-	 * safely refreshed.
+	 * Setting this allows you to redirect while the flow is in progress to a
+	 * stable URL that can be safely refreshed.
 	 */
-	private RedirectType redirectType;
+	private boolean redirect;
 
 	/**
 	 * Creates a application view selector that will make application view
@@ -65,20 +64,20 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	 * @param viewName the view name expression
 	 */
 	public ApplicationViewSelector(Expression viewName) {
-		this(viewName, null);
+		this(viewName, false);
 	}
 
 	/**
 	 * Creates a application view selector that will make application view
 	 * selections requesting that the specified view be rendered.
 	 * @param viewName the view name expression
-	 * @param redirectType indicates if a redirect to the view should be
+	 * @param redirect indicates if a redirect to the view should be
 	 * initiated
 	 */
-	public ApplicationViewSelector(Expression viewName, RedirectType redirectType) {
+	public ApplicationViewSelector(Expression viewName, boolean redirect) {
 		Assert.notNull(viewName, "The view name expression is required");
 		this.viewName = viewName;
-		this.redirectType = redirectType;
+		this.redirect = redirect;
 	}
 
 	/**
@@ -89,9 +88,10 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	}
 
 	public ViewSelection makeSelection(RequestContext context) {
-		if (redirectType != null) {
-			return redirectType.select();
-		} else {
+		if (redirect) {
+			return FlowExecutionRedirect.INSTANCE;
+		}
+		else {
 			return makeRefreshSelection(context);
 		}
 	}
@@ -124,6 +124,6 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	}
 	
 	public String toString() {
-		return new ToStringCreator(this).append("viewName", viewName).append("redirectType", redirectType).toString();
+		return new ToStringCreator(this).append("viewName", viewName).append("redirect", redirect).toString();
 	}
 }

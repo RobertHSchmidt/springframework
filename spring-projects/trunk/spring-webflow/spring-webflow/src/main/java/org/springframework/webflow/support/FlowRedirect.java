@@ -23,7 +23,7 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.ViewSelection;
 
 /**
- * Concrete response type that requests that a <i>new</u> flow execution
+ * Concrete response type that requests that a <i>new</i> flow execution
  * (representing the start of a new conversation) be launched.
  * <p>
  * This allows "redirect to new flow" semantics; useful for restarting a flow

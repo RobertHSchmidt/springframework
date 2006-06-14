@@ -21,7 +21,7 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewState;
 
 /**
- * Concrete response type that requests an redirect to an <i>existing</i>,
+ * Concrete response type that requests a redirect to an <i>existing</i>,
  * active Spring Web Flow execution at a unique SWF-specific <i>flow execution
  * URL</i>. This enables the triggering of redirect after post semantics from
  * within an <i>active</i> flow execution.
@@ -37,8 +37,14 @@ import org.springframework.webflow.ViewState;
  */
 public final class FlowExecutionRedirect extends ViewSelection {
 
+	/**
+	 * The single instance of this class.
+	 */
 	public static final FlowExecutionRedirect INSTANCE = new FlowExecutionRedirect();
 
+	/**
+	 * Avoid instantiation.
+	 */
 	private FlowExecutionRedirect() {
 	}
 
