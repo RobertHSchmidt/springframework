@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.support.DefaultTargetStateResolver;
 import org.springframework.webflow.support.EventIdTransitionCriteria;
-import org.springframework.webflow.test.MockFlowExecutionControlContext;
+import org.springframework.webflow.test.MockRequestControlContext;
 
 /**
  * Tests that each of the Flow state types execute as expected when entered.
@@ -34,7 +34,7 @@ public class DecisionStateTests extends TestCase {
 		state.getTransitionSet().add(
 				new Transition(new EventIdTransitionCriteria("foo"), new DefaultTargetStateResolver("target")));
 		new EndState(flow, "target");
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.setLastEvent(new Event(this, "foo"));
 		state.enter(context);
 		assertFalse(context.getFlowExecutionContext().isActive());
@@ -47,7 +47,7 @@ public class DecisionStateTests extends TestCase {
 				new Transition(new EventIdTransitionCriteria("foo"), new DefaultTargetStateResolver("invalid")));
 		state.getTransitionSet().add(new Transition(new DefaultTargetStateResolver("target")));
 		new EndState(flow, "target");
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.setLastEvent(new Event(this, "bogus"));
 		state.enter(context);
 		assertFalse(context.getFlowExecutionContext().isActive());
@@ -60,7 +60,7 @@ public class DecisionStateTests extends TestCase {
 				new Transition(new EventIdTransitionCriteria("foo"), new DefaultTargetStateResolver("invalid")));
 		state.getTransitionSet().add(
 				new Transition(new EventIdTransitionCriteria("bar"), new DefaultTargetStateResolver("invalid")));
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.setLastEvent(new Event(this, "bogus"));
 		try {
 			state.enter(context);

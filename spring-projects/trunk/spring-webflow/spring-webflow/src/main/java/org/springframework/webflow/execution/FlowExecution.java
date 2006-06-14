@@ -38,7 +38,7 @@ import org.springframework.webflow.ViewSelection;
  * is called, which causes the execution to activate a new session for its root
  * flow definition. That session is then pushed onto a stack and its definition
  * becomes the <i>active flow</i>. A local, internal
- * {@link org.springframework.webflow.FlowExecutionControlContext} object (which
+ * {@link org.springframework.webflow.RequestControlContext} object (which
  * extends ({@link org.springframework.webflow.RequestContext}) is then
  * created and the Flow's start {@link org.springframework.webflow.State} is
  * entered.
@@ -68,7 +68,7 @@ import org.springframework.webflow.ViewSelection;
  * @see org.springframework.webflow.Flow
  * @see org.springframework.webflow.State
  * @see org.springframework.webflow.FlowSession
- * @see org.springframework.webflow.FlowExecutionControlContext
+ * @see org.springframework.webflow.RequestControlContext
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

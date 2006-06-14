@@ -196,7 +196,7 @@ public class Transition extends AnnotatedObject {
 	 * render the results of the transition execution
 	 * @throws StateException when transition execution fails
 	 */
-	public ViewSelection execute(TransitionableState sourceState, FlowExecutionControlContext context)
+	public ViewSelection execute(TransitionableState sourceState, RequestControlContext context)
 			throws StateException {
 		ViewSelection selectedView;
 		if (canExecute(context)) {

@@ -39,7 +39,7 @@ package org.springframework.webflow;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public interface FlowExecutionControlContext extends RequestContext {
+public interface RequestControlContext extends RequestContext {
 
 	/**
 	 * Record the last event signaled in the executing flow. This method will be

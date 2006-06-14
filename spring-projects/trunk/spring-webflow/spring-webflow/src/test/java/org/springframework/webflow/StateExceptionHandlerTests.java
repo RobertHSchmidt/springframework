@@ -73,7 +73,7 @@ public class StateExceptionHandlerTests extends TestCase {
 			return typeToHandle.isInstance(exception);
 		}
 		
-		public ViewSelection handle(StateException exception, FlowExecutionControlContext context) {
+		public ViewSelection handle(StateException exception, RequestControlContext context) {
 			return handleResult;
 		}
 	}

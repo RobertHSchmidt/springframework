@@ -54,20 +54,18 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 		activeSession = new MockFlowSession(rootFlow);
 	}
 
-	// implementing flow execution statistics
-
 	public String getCaption() {
 		return "Mock flow execution context";
-	}
-
-	public boolean isActive() {
-		return activeSession != null;
 	}
 
 	// implementing flow execution context
 
 	public Flow getFlow() {
 		return flow;
+	}
+
+	public boolean isActive() {
+		return activeSession != null;
 	}
 
 	public FlowSession getActiveSession() throws IllegalStateException {

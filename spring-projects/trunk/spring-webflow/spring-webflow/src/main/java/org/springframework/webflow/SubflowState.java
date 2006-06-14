@@ -109,7 +109,7 @@ public class SubflowState extends TransitionableState {
 	 * render the results of the state execution
 	 * @throws StateException if an exception occurs in this state
 	 */
-	protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
+	protected ViewSelection doEnter(RequestControlContext context) throws StateException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Spawning subflow '" + getSubflow().getId() + "' within flow '" + getFlow().getId() + "'");
 		}
@@ -118,7 +118,7 @@ public class SubflowState extends TransitionableState {
 
 	/**
 	 * Create the input data map for the spawned subflow session. The returned
-	 * map will be passed to {@link Flow#start(FlowExecutionControlContext, AttributeMap)}.
+	 * map will be passed to {@link Flow#start(RequestControlContext, AttributeMap)}.
 	 */
 	private AttributeMap createSubflowInput(RequestContext context) {
 		if (getAttributeMapper() != null) {
@@ -142,7 +142,7 @@ public class SubflowState extends TransitionableState {
 	 * Called on completion of the subflow to handle the subflow result event as
 	 * determined by the end state reached by the subflow.
 	 */
-	public ViewSelection onEvent(Event event, FlowExecutionControlContext context) {
+	public ViewSelection onEvent(Event event, RequestControlContext context) {
 		mapSubflowOutput(event.getAttributes(), context);
 		return super.onEvent(event, context);
 	}

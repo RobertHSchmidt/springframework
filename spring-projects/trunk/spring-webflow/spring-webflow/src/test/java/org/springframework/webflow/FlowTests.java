@@ -33,7 +33,7 @@ import org.springframework.webflow.support.DefaultTargetStateResolver;
 import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.support.SimpleFlowVariable;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
-import org.springframework.webflow.test.MockFlowExecutionControlContext;
+import org.springframework.webflow.test.MockRequestControlContext;
 
 /**
  * Unit test for the Flow class.
@@ -175,13 +175,13 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testStart() {
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		flow.start(context, new AttributeMap());
 		assertEquals("Wrong start state", "myState1", context.getCurrentState().getId());
 	}
 
 	public void testStartWithAction() {
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		TestAction action = new TestAction();
 		flow.getStartActionList().add(action);
 		flow.start(context, new AttributeMap());
@@ -190,7 +190,7 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testStartWithVariables() {
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		flow.addVariable(new SimpleFlowVariable("var1", ArrayList.class));
 		StaticApplicationContext beanFactory = new StaticApplicationContext();
 		beanFactory.registerPrototype("bean", ArrayList.class);
@@ -206,7 +206,7 @@ public class FlowTests extends TestCase {
 		MappingBuilder mapping = new MappingBuilder(new DefaultExpressionParserFactory().getExpressionParser());
 		attributeMapper.addMapping(mapping.source("attr").target("flowScope.attr").value());
 		flow.setInputMapper(attributeMapper);
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		AttributeMap sessionInput = new AttributeMap();
 		sessionInput.put("attr", "foo");
 		flow.start(context, sessionInput); 
@@ -214,7 +214,7 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testOnEventNullCurrentState() {
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		Event event = new Event(this, "foo");
 		try {
 			flow.onEvent(event, context);
@@ -224,7 +224,7 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testOnEventInvalidCurrentState() {
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.setCurrentState(flow.getState("myState2"));
 		Event event = new Event(this, "submit");
 		context.setLastEvent(event);
@@ -236,7 +236,7 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testOnEvent() {
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.setCurrentState(flow.getState("myState1"));
 		Event event = new Event(this, "submit");
 		context.setLastEvent(event);
@@ -246,7 +246,7 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testOnEventGlobalTransition() {
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.setCurrentState(flow.getState("myState1"));
 		Event event = new Event(this, "globalEvent");
 		context.setLastEvent(event);
@@ -256,7 +256,7 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testOnEventNoTransition() {
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.setCurrentState(flow.getState("myState1"));
 		Event event = new Event(this, "bogus");
 		context.setLastEvent(event);
@@ -270,7 +270,7 @@ public class FlowTests extends TestCase {
 	public void testEnd() {
 		TestAction action = new TestAction();
 		flow.getEndActionList().add(action);
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		AttributeMap sessionOutput = new AttributeMap();
 		flow.end(context, sessionOutput);
 		assertEquals(1, action.getExecutionCount());
@@ -281,7 +281,7 @@ public class FlowTests extends TestCase {
 		MappingBuilder mapping = new MappingBuilder(new DefaultExpressionParserFactory().getExpressionParser());
 		attributeMapper.addMapping(mapping.source("flowScope.attr").target("attr").value());
 		flow.setOutputMapper(attributeMapper);
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.getFlowScope().put("attr", "foo");
 		AttributeMap sessionOutput = new AttributeMap();
 		flow.end(context, sessionOutput); 
@@ -291,7 +291,7 @@ public class FlowTests extends TestCase {
 	public void testHandleStateException() {
 		flow.getExceptionHandlerSet().add(new TransitionExecutingStateExceptionHandler()
 				.add(MyCustomException.class, "myState2"));
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.setCurrentState(flow.getRequiredState("myState1"));
 		StateException e = new StateException(flow.getStartState(), "Oops!", new MyCustomException());
 		ApplicationView selectedView = (ApplicationView)flow.handleException(e, context);
@@ -301,7 +301,7 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testHandleStateExceptionNoMatch() {
-		MockFlowExecutionControlContext context = new MockFlowExecutionControlContext(flow);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
 		StateException e = new StateException(flow.getStartState(), "Oops!", new MyCustomException());
 		try {
 			flow.handleException(e, context);

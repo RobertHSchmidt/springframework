@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowExecutionControlContext;
+import org.springframework.webflow.RequestControlContext;
 import org.springframework.webflow.NoSuchStateException;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.StateException;
@@ -28,7 +28,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 	protected void setUp() {
 		flow = new Flow("myFlow");
 		state = new TransitionableState(flow, "state1") {
-			protected ViewSelection doEnter(FlowExecutionControlContext context) {
+			protected ViewSelection doEnter(RequestControlContext context) {
 				throw new StateException(this, "Oops!", new MyCustomException());
 			}
 		};

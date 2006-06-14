@@ -8,6 +8,9 @@ Package org.springframework.webflow
 * Renamed TransitionSet.transitionMatches to "hasMatchingTransition".
 * A flow variable can now be annotated with arbitrary properties to influence behaviour.
 * Factored out some behaviour of TransitionSet and StateExceptionHandlerSet into CollectionUtils.
+* Renamed FlowExecutionControlContext to RequestControlContext to avoid confusion with the FlowExecutionContext
+  and highlight the relationship with the RequestContext.
+* Removed FlowExecutionStatistics, merging its only useful method (isActive) into the FlowExecutionContext interface
 
 Package org.springframework.webflow.builder
 * Reapplied 1.0 rc2 fix for inline flow parsing, which was lost in SourcForge CVS issues occurring between 7/5/06 and 15/5/06

@@ -120,7 +120,7 @@ public class EndState extends State {
 	 * client and a view rendered
 	 * @throws StateException if an exception occurs in this state
 	 */
-	protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
+	protected ViewSelection doEnter(RequestControlContext context) throws StateException {
 		FlowSession activeSession = context.getFlowExecutionContext().getActiveSession();
 		if (activeSession.isRoot()) {
 			// entire flow execution is ending, return ending view if applicable

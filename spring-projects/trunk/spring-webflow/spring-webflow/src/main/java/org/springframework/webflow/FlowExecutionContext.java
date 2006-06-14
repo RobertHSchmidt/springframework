@@ -30,7 +30,7 @@ package org.springframework.webflow;
  * Note that this interface provides information about a single flow execution
  * and its scope is <b>not</b> local to a specific request (or thread). On the
  * other hand, the
- * {@link org.springframework.webflow.FlowExecutionControlContext} interface
+ * {@link org.springframework.webflow.RequestControlContext} interface
  * defines a <i>request specific</i> control interface for manipulating exactly
  * one flow execution locally from exactly one request.
  * 
@@ -39,13 +39,19 @@ package org.springframework.webflow;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public interface FlowExecutionContext extends FlowExecutionStatistics {
+public interface FlowExecutionContext {
 
 	/**
 	 * Returns the root flow definition associated with this executing flow.
 	 * @return the root flow definition
 	 */
 	public Flow getFlow();
+
+	/**
+	 * Is the flow execution active?
+	 * @return true if active, false if flow execution has terminated
+	 */
+	public boolean isActive();
 
 	/**
 	 * Returns the active flow session of this flow execution.

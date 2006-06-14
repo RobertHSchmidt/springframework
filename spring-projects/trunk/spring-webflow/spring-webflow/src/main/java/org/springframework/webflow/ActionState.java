@@ -163,7 +163,7 @@ public class ActionState extends TransitionableState {
 	 * client and a view rendered
 	 * @throws StateException if an exception occurs in this state
 	 */
-	protected ViewSelection doEnter(FlowExecutionControlContext context) throws StateException {
+	protected ViewSelection doEnter(RequestControlContext context) throws StateException {
 		int executionCount = 0;
 		String[] eventIds = new String[actionList.size()];
 		Iterator it = actionList.iterator();

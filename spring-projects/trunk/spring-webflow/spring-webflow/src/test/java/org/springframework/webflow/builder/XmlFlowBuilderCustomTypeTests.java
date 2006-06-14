@@ -24,7 +24,7 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowArtifactException;
 import org.springframework.webflow.FlowAttributeMapper;
-import org.springframework.webflow.FlowExecutionControlContext;
+import org.springframework.webflow.RequestControlContext;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.StateException;
 import org.springframework.webflow.StateExceptionHandler;
@@ -77,7 +77,7 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 			return false;
 		}
 
-		public ViewSelection handle(StateException exception, FlowExecutionControlContext context) {
+		public ViewSelection handle(StateException exception, RequestControlContext context) {
 			return null;
 		}
 	}

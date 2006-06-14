@@ -108,7 +108,7 @@ public class StateExceptionHandlerSet {
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view selection
 	 */
-	public ViewSelection handleException(StateException exception, FlowExecutionControlContext context) {
+	public ViewSelection handleException(StateException exception, RequestControlContext context) {
 		Iterator it = exceptionHandlers.iterator();
 		while (it.hasNext()) {
 			StateExceptionHandler handler = (StateExceptionHandler)it.next();
