@@ -20,7 +20,7 @@ import java.io.Serializable;
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
-import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
+import org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException;
 import org.springframework.webflow.execution.repository.conversation.Conversation;
 import org.springframework.webflow.execution.repository.conversation.ConversationService;
 import org.springframework.webflow.execution.repository.conversation.impl.LocalConversationService;
@@ -208,7 +208,7 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 			return getContinuationGroup(key).get(getContinuationId(key));
 		}
 		catch (ContinuationNotFoundException e) {
-			throw new NoSuchFlowExecutionException(key, e);
+			throw new FlowExecutionRestorationFailureException(key, e);
 		}
 	}
 

@@ -20,6 +20,7 @@ import java.io.Serializable;
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 import org.springframework.webflow.execution.repository.conversation.ConversationService;
 import org.springframework.webflow.execution.repository.conversation.impl.LocalConversationService;
@@ -117,9 +118,9 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 		FlowExecutionEntry entry = (FlowExecutionEntry)getConversation(key)
 				.getAttribute(FLOW_EXECUTION_ENTRY_ATTRIBUTE);
 		if (entry == null) {
-			throw new NoSuchFlowExecutionException(key, new IllegalStateException("No '"
-					+ FLOW_EXECUTION_ENTRY_ATTRIBUTE + "' attribute present in conversation scope: "
-					+ "possible programmer error--do not call get before calling put"));
+			throw new IllegalStateException("No '" + FLOW_EXECUTION_ENTRY_ATTRIBUTE
+					+ "' attribute present in conversation scope: "
+					+ "possible programmer error--do not call get before calling put");
 		}
 		return entry;
 	}
@@ -129,7 +130,7 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 			return getEntry(key).access(getContinuationId(key));
 		}
 		catch (InvalidContinuationIdException e) {
-			throw new NoSuchFlowExecutionException(key, e);
+			throw new FlowExecutionRestorationFailureException(key, e);
 		}
 	}
 
@@ -144,7 +145,7 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 	 * @author Keith Donald
 	 */
 	private static class FlowExecutionEntry implements Serializable {
-		
+
 		/**
 		 * The id required to access the execution.
 		 */
