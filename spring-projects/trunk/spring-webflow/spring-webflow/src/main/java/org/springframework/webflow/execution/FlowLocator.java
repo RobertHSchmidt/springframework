@@ -16,7 +16,6 @@
 package org.springframework.webflow.execution;
 
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.builder.FlowArtifactLookupException;
 
 /**
  * A runtime service locator interface for retrieving flow definitions by
@@ -34,8 +33,8 @@ public interface FlowLocator {
 	 * Lookup the flow definition with the specified <code>id</code>.
 	 * @param id the flow definition id
 	 * @return the flow definition
-	 * @throws FlowArtifactLookupException when the flow definition with that id
-	 * cannot be found
+	 * @throws FlowLocatorException when a problem occured accessing the flow
+	 * definition with the provided identifier
 	 */
-	public Flow getFlow(String id) throws FlowArtifactLookupException;
+	public Flow getFlow(String id) throws FlowLocatorException;
 }

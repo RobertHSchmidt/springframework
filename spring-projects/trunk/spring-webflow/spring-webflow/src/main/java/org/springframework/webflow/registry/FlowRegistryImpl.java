@@ -23,7 +23,10 @@ import java.util.TreeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.builder.FlowArtifactLookupException;
+import org.springframework.webflow.builder.FlowBuilderException;
+import org.springframework.webflow.execution.FlowConstructionException;
+import org.springframework.webflow.execution.FlowLocatorException;
+import org.springframework.webflow.execution.NoSuchFlowDefinitionException;
 
 /**
  * A generic registry of one or more Flow definitions.
@@ -157,7 +160,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 
 	// implementing FlowLocator
 
-	public Flow getFlow(String id) throws FlowArtifactLookupException {
+	public Flow getFlow(String id) throws FlowLocatorException {
 		Assert.hasText(id,
 				"Unable to load a flow definition: no flow id was provided.  Please provide a valid flow identifier.");
 		try {
@@ -169,6 +172,8 @@ public class FlowRegistryImpl implements FlowRegistry {
 				return parent.getFlow(id);
 			}
 			throw e;
+		} catch (FlowBuilderException e) {
+			throw new FlowConstructionException(id, e);
 		}
 	}
 
