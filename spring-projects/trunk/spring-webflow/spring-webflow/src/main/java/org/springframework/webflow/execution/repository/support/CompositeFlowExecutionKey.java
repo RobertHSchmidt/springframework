@@ -67,10 +67,16 @@ class CompositeFlowExecutionKey extends FlowExecutionKey {
 		this.continuationId = continuationId;
 	}
 
+	/**
+	 * Returns the conversation id.
+	 */
 	public ConversationId getConversationId() {
 		return conversationId;
 	}
 
+	/**
+	 * Returns the continuation id.
+	 */
 	public Serializable getContinuationId() {
 		return continuationId;
 	}
