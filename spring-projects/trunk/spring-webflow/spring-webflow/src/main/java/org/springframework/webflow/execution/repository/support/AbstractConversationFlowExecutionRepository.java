@@ -165,7 +165,7 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 			return getConversationService().getConversation(getConversationId(key));
 		}
 		catch (NoSuchConversationException e) {
-			throw new FlowExecutionRestorationFailureException(key, e);
+			throw new NoSuchFlowExecutionException(key, e);
 		}
 	}
 

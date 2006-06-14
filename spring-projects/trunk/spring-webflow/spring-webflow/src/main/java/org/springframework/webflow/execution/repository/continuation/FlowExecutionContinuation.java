@@ -30,7 +30,7 @@ public abstract class FlowExecutionContinuation implements Serializable {
 	/**
 	 * Restores the flow execution.
 	 */
-	public abstract FlowExecution restore();
+	public abstract FlowExecution unmarshal() throws ContinuationUnmarshalException;
 
 	/**
 	 * Converts this continuation to a byte array for convenient serialization.

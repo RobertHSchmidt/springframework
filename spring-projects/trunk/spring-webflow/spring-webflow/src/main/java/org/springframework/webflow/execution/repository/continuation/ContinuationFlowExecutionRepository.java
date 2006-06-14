@@ -175,8 +175,12 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
 		FlowExecutionContinuation continuation = getContinuation(key);
-		FlowExecution flowExecution = continuation.restore();
-		return rehydrate(flowExecution, key);
+		try {
+			FlowExecution flowExecution = continuation.unmarshal();
+			return rehydrate(flowExecution, key);
+		} catch (ContinuationUnmarshalException e) {
+			throw new FlowExecutionRestorationFailureException(key, e);
+		}
 	}
 
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {

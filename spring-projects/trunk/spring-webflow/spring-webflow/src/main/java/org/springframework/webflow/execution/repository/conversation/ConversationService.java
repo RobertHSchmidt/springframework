@@ -37,7 +37,7 @@ public interface ConversationService {
 	 * @return the conversation
 	 * @throws NoSuchConversationException the id provided was invalid.
 	 */
-	public Conversation getConversation(ConversationId id) throws NoSuchConversationException;
+	public Conversation getConversation(ConversationId id) throws ConversationServiceException;
 
 	/**
 	 * Parse the string-encoded conversationId into its object form.

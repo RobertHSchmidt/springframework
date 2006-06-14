@@ -94,7 +94,7 @@ class CompositeFlowExecutionKey extends FlowExecutionKey {
 	 * @return the composite key parts as a String array (conversationId = 0,
 	 * continuationId = 1)
 	 */
-	public static String[] keyParts(String encodedKey) {
+	public static String[] keyParts(String encodedKey) throws InvalidFormatException {
 		if (!encodedKey.startsWith(CONVERSATION_ID_PREFIX)) {
 			throw new InvalidFormatException(encodedKey, CompositeFlowExecutionKey.getFormat());
 		}
