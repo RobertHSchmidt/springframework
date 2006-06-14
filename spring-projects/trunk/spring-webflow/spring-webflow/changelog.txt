@@ -43,6 +43,7 @@ Package org.springframework.webflow.registry
 
 Package org.springframework.webflow.support
 * Fixed bug in FlowRedirectSelector where a NPE was thrown on null redirect expression.
+* Removed RedirectType. Classes using it now have a simple boolean redirect flag.
 
 Changes in version 1.0 RC2 (09.6.2006)
 ------------------------------------
