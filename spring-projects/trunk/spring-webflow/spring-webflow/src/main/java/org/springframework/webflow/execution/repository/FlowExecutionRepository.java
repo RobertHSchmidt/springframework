@@ -142,6 +142,6 @@ public interface FlowExecutionRepository {
 	 * @return the parsed flow execution key, the persistent identifier for
 	 * exactly one flow execution.
 	 */
-	public FlowExecutionKey parseFlowExecutionKey(String encodedKey);
+	public FlowExecutionKey parseFlowExecutionKey(String encodedKey) throws FlowExecutionRepositoryException;
 
 }
