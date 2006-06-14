@@ -17,8 +17,8 @@ package org.springframework.webflow.execution.repository.support;
 
 import java.io.Serializable;
 
-import org.springframework.binding.format.InvalidFormatException;
 import org.springframework.util.Assert;
+import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.continuation.FlowExecutionContinuation;
 import org.springframework.webflow.execution.repository.conversation.ConversationId;
@@ -94,13 +94,13 @@ class CompositeFlowExecutionKey extends FlowExecutionKey {
 	 * @return the composite key parts as a String array (conversationId = 0,
 	 * continuationId = 1)
 	 */
-	public static String[] keyParts(String encodedKey) throws InvalidFormatException {
+	public static String[] keyParts(String encodedKey) throws BadlyFormattedFlowExecutionKeyException {
 		if (!encodedKey.startsWith(CONVERSATION_ID_PREFIX)) {
-			throw new InvalidFormatException(encodedKey, CompositeFlowExecutionKey.getFormat());
+			throw new BadlyFormattedFlowExecutionKeyException(encodedKey, CompositeFlowExecutionKey.getFormat());
 		}
 		int continuationStart = encodedKey.indexOf(CONTINUATION_ID_PREFIX, CONVERSATION_ID_PREFIX.length());
 		if (continuationStart == -1) {
-			throw new InvalidFormatException(encodedKey, getFormat());
+			throw new BadlyFormattedFlowExecutionKeyException(encodedKey, getFormat());
 		}
 		String conversationId = encodedKey.substring(CONVERSATION_ID_PREFIX.length(), continuationStart);
 		String continuationId = encodedKey.substring(continuationStart + CONTINUATION_ID_PREFIX.length());
