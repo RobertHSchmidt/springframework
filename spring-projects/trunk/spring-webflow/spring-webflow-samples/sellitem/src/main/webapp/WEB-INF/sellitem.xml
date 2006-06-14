@@ -46,9 +46,6 @@
 
 	<!-- could support a nav menu, on header button bar -->
 	<global-transitions>
-		<transition on="price" to="enterPriceAndItemCount"/>
-		<transition on="category" to="enterCategory"/>
-		<transition on="shipping" to="enterShippingDetails"/>
 		<transition on="preview" to="showCostOverview"/>
 	</global-transitions>
 
