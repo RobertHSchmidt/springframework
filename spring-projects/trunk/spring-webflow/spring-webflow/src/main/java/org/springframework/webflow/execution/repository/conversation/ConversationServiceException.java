@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.execution.repository.conversation;
 
-import org.springframework.webflow.FlowException;
+import org.springframework.core.NestedRuntimeException;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 
 /**
@@ -25,7 +25,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
  * 
  * @author Keith Donald
  */
-public abstract class ConversationServiceException extends FlowException {
+public abstract class ConversationServiceException extends NestedRuntimeException {
 
 	/**
 	 * Creates a new flow execution repository exception explicitly noting the
