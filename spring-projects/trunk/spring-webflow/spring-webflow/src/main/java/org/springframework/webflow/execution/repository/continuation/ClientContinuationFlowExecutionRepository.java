@@ -25,7 +25,7 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
-import org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException;
+import org.springframework.webflow.execution.repository.FlowExecutionRestorationException;
 import org.springframework.webflow.execution.repository.conversation.Conversation;
 import org.springframework.webflow.execution.repository.conversation.ConversationId;
 import org.springframework.webflow.execution.repository.conversation.ConversationParameters;
@@ -118,7 +118,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 			FlowExecution flowExecution = continuation.unmarshal();
 			return rehydrate(flowExecution, key);
 		} catch (ContinuationUnmarshalException e) {
-			throw new FlowExecutionRestorationFailureException(key, e);
+			throw new FlowExecutionRestorationException(key, e);
 		}
 	}
 
