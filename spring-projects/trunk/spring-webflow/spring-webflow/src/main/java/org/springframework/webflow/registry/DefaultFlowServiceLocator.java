@@ -18,7 +18,7 @@ package org.springframework.webflow.registry;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.builder.BaseFlowServiceLocator;
 import org.springframework.webflow.builder.FlowServiceLocator;
 
@@ -70,7 +70,7 @@ public class DefaultFlowServiceLocator extends BaseFlowServiceLocator {
 		return subflowRegistry;
 	}
 
-	public Flow getSubflow(String id) throws FlowArtifactException {
+	public Flow getSubflow(String id) throws FlowArtifactLookupException {
 		return subflowRegistry.getFlow(id);
 	}
 

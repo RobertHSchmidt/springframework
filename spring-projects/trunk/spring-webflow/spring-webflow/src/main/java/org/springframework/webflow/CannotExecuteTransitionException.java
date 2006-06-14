@@ -20,7 +20,7 @@ package org.springframework.webflow;
  * 
  * @author Keith Donald
  */
-public class CannotExecuteTransitionException extends FlowException {
+public class CannotExecuteTransitionException extends StateException {
 	
 	/**
 	 * The transition that could not be executed. 
@@ -31,8 +31,8 @@ public class CannotExecuteTransitionException extends FlowException {
 	 * Create a new exception.
 	 * @param transition the transition that failed to execute
 	 */
-	public CannotExecuteTransitionException(Transition transition) {
-		super("Cannot execute transition " + transition);
+	public CannotExecuteTransitionException(Transition transition, State state) {
+		super(state, "Cannot execute transition " + transition);
 		this.transition = transition;
 	}
 

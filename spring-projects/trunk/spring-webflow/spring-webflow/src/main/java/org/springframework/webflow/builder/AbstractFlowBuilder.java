@@ -27,7 +27,7 @@ import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.AttributeCollection;
 import org.springframework.webflow.CollectionUtils;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
@@ -488,9 +488,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * id and returns it.
 	 * @param id the action id
 	 * @return the action
-	 * @throws FlowArtifactException the action could not be resolved
+	 * @throws FlowArtifactLookupException the action could not be resolved
 	 */
-	protected Action action(String id) throws FlowArtifactException {
+	protected Action action(String id) throws FlowArtifactLookupException {
 		return getFlowServiceLocator().getAction(id);
 	}
 
@@ -501,9 +501,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * <code>java.lang.Object</code> to be used as an action
 	 * @param methodSignature the signature of the method to invoke on the POJO
 	 * @return the adapted bean invoking action
-	 * @throws FlowArtifactException the action could not be resolved
+	 * @throws FlowArtifactLookupException the action could not be resolved
 	 */
-	protected Action action(String id, MethodSignature methodSignature) throws FlowArtifactException {
+	protected Action action(String id, MethodSignature methodSignature) throws FlowArtifactLookupException {
 		return getBeanInvokingActionFactory().createBeanInvokingAction(id, getFlowServiceLocator().getBeanFactory(),
 				methodSignature, null, getFlowServiceLocator().getConversionService(), null);
 	}
@@ -515,10 +515,10 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * <code>java.lang.Object</code> to be used as an action
 	 * @param methodSignature the signature of the method to invoke on the POJO
 	 * @return the adapted bean invoking action
-	 * @throws FlowArtifactException the action could not be resolved
+	 * @throws FlowArtifactLookupException the action could not be resolved
 	 */
 	protected Action action(String id, MethodSignature methodSignature, ResultSpecification resultSpecification)
-			throws FlowArtifactException {
+			throws FlowArtifactLookupException {
 		return getBeanInvokingActionFactory().createBeanInvokingAction(id, getFlowServiceLocator().getBeanFactory(),
 				methodSignature, resultSpecification, getFlowServiceLocator().getConversionService(), null);
 	}
@@ -588,7 +588,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the annotated action that when invoked sets up a context property
 	 * used by the multi action to instruct it with what method to invoke
 	 */
-	protected AnnotatedAction invoke(String methodName, MultiAction multiAction) throws FlowArtifactException {
+	protected AnnotatedAction invoke(String methodName, MultiAction multiAction) throws FlowArtifactLookupException {
 		AnnotatedAction action = new AnnotatedAction(multiAction);
 		action.getAttributeMap().put(AnnotatedAction.METHOD_ATTRIBUTE, methodName);
 		return action;
@@ -601,10 +601,10 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param id the id of the attribute mapper that will map attributes between
 	 * the flow built by this builder and the subflow
 	 * @return the attribute mapper
-	 * @throws FlowArtifactException no FlowAttributeMapper implementation was
+	 * @throws FlowArtifactLookupException no FlowAttributeMapper implementation was
 	 * exported with the specified id
 	 */
-	protected FlowAttributeMapper attributeMapper(String id) throws FlowArtifactException {
+	protected FlowAttributeMapper attributeMapper(String id) throws FlowArtifactLookupException {
 		return getFlowServiceLocator().getAttributeMapper(id);
 	}
 
@@ -616,9 +616,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param id the flow definition id
 	 * @return the flow to be used as a subflow, this should be passed to a
 	 * addSubflowState call
-	 * @throws FlowArtifactException when the flow cannot be resolved
+	 * @throws FlowArtifactLookupException when the flow cannot be resolved
 	 */
-	protected Flow flow(String id) throws FlowArtifactException {
+	protected Flow flow(String id) throws FlowArtifactLookupException {
 		return getFlowServiceLocator().getSubflow(id);
 	}
 

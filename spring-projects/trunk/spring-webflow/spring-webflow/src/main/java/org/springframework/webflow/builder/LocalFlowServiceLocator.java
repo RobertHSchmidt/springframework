@@ -24,7 +24,7 @@ import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.StateExceptionHandler;
 import org.springframework.webflow.TargetStateResolver;
@@ -65,7 +65,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		localRegistries.push(registry);
 	}
 
-	public Flow getSubflow(String id) throws FlowArtifactException {
+	public Flow getSubflow(String id) throws FlowArtifactLookupException {
 		Flow currentFlow = getCurrentFlow();
 		// quick check for recursive subflow
 		if (currentFlow.getId().equals(id)) {
@@ -79,7 +79,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		return parent.getSubflow(id);
 	}
 
-	public Action getAction(String id) throws FlowArtifactException {
+	public Action getAction(String id) throws FlowArtifactLookupException {
 		if (containsBean(id)) {
 			return (Action)getBean(id, Action.class);
 		}
@@ -88,7 +88,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		}
 	}
 
-	public boolean isAction(String actionId) throws FlowArtifactException {
+	public boolean isAction(String actionId) throws FlowArtifactLookupException {
 		if (containsBean(actionId)) {
 			return Action.class.isAssignableFrom(getBeanFactory().getType(actionId));
 		}
@@ -97,7 +97,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		}
 	}
 
-	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
+	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
 		if (containsBean(id)) {
 			return (FlowAttributeMapper)getBean(id, FlowAttributeMapper.class);
 		}
@@ -106,7 +106,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		}
 	}
 
-	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
+	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
 		if (containsBean(id)) {
 			return (StateExceptionHandler)getBean(id, StateExceptionHandler.class);
 		}
@@ -115,7 +115,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		}
 	}
 
-	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
+	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactLookupException {
 		if (containsBean(id)) {
 			return (TransitionCriteria)getBean(id, TransitionCriteria.class);
 		}
@@ -124,7 +124,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		}
 	}
 
-	public ViewSelector getViewSelector(String id) throws FlowArtifactException {
+	public ViewSelector getViewSelector(String id) throws FlowArtifactLookupException {
 		if (containsBean(id)) {
 			return (ViewSelector)getBean(id, ViewSelector.class);
 		}
@@ -133,7 +133,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		}
 	}
 
-	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException {
+	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactLookupException {
 		if (containsBean(id)) {
 			return (TargetStateResolver)getBean(id, TargetStateResolver.class);
 		}
@@ -208,7 +208,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 			return getBeanFactory().getBean(id, artifactType);
 		}
 		catch (BeansException e) {
-			throw new FlowArtifactException(id, artifactType, e);
+			throw new FlowArtifactLookupException(id, artifactType, e);
 		}
 	}
 }

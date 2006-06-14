@@ -35,7 +35,7 @@ import org.springframework.util.StringUtils;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowArtifactException extends FlowException {
+public class FlowArtifactLookupException extends FlowException {
 
 	/**
 	 * The id of the artifact that could not be retrieved.
@@ -52,7 +52,7 @@ public class FlowArtifactException extends FlowException {
 	 * @param artifactId the id of the artifact
 	 * @param artifactType the expected artifact type
 	 */
-	public FlowArtifactException(String artifactId, Class artifactType) {
+	public FlowArtifactLookupException(String artifactId, Class artifactType) {
 		this(artifactId, artifactType, null, null);
 	}
 
@@ -62,7 +62,7 @@ public class FlowArtifactException extends FlowException {
 	 * @param artifactType the expected artifact type
 	 * @param cause the underlying cause of this exception
 	 */
-	public FlowArtifactException(String artifactId, Class artifactType, Throwable cause) {
+	public FlowArtifactLookupException(String artifactId, Class artifactType, Throwable cause) {
 		this(artifactId, artifactType, null, cause);
 	}
 
@@ -72,7 +72,7 @@ public class FlowArtifactException extends FlowException {
 	 * @param artifactType the expected artifact type
 	 * @param message descriptive message
 	 */
-	public FlowArtifactException(String artifactId, Class artifactType, String message) {
+	public FlowArtifactLookupException(String artifactId, Class artifactType, String message) {
 		this(artifactId, artifactType, message, null);
 	}
 
@@ -83,7 +83,7 @@ public class FlowArtifactException extends FlowException {
 	 * @param message descriptive message
 	 * @param cause the underlying cause of this exception
 	 */
-	public FlowArtifactException(String artifactId, Class artifactType, String message, Throwable cause) {
+	public FlowArtifactLookupException(String artifactId, Class artifactType, String message, Throwable cause) {
 		super((StringUtils.hasText(message) ? message : "Unable to obtain a " + ClassUtils.getShortName(artifactType)
 				+ " flow artifact with id '" + artifactId + "': make sure there is a valid [" + artifactType
 				+ "] exported with this id"), cause);

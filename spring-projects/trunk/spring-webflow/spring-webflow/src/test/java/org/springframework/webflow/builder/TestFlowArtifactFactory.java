@@ -8,7 +8,7 @@ import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.RequestContext;
@@ -38,7 +38,7 @@ public class TestFlowArtifactFactory extends BaseFlowServiceLocator {
 		registry.addBean("attributeMapper1", new TestAttributeMapper());
 	}
 	
-	public Flow getSubflow(String id) throws FlowArtifactException {
+	public Flow getSubflow(String id) throws FlowArtifactLookupException {
 		if ("subFlow1".equals(id) || "subFlow2".equals(id)) {
 			Flow flow = new Flow(id);
 			new EndState(flow, "finish");

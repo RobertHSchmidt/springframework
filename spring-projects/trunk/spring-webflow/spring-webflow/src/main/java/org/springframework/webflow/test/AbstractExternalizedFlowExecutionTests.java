@@ -17,7 +17,7 @@ package org.springframework.webflow.test;
 
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.FlowBuilder;
 import org.springframework.webflow.builder.FlowServiceLocator;
@@ -57,7 +57,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 		this.cacheFlowDefinition = cacheFlowDefinition;
 	}
 
-	protected Flow getFlow() throws FlowArtifactException {
+	protected Flow getFlow() throws FlowArtifactLookupException {
 		if (isCacheFlowDefinition() && cachedFlowDefinition != null) {
 			return cachedFlowDefinition;
 		}

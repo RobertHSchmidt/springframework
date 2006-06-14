@@ -22,7 +22,7 @@ import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.RequestControlContext;
 import org.springframework.webflow.RequestContext;
@@ -84,15 +84,15 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 
 	public static class CustomFlowArtifactFactory extends BaseFlowServiceLocator {
 
-		public Action getAction(String id) throws FlowArtifactException {
+		public Action getAction(String id) throws FlowArtifactLookupException {
 			return new CustomAction();
 		}
 
-		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
+		public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
 			return new CustomAttributeMapper();
 		}
 
-		public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
+		public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
 			return new CustomExceptionHandler();
 		}
 

@@ -28,7 +28,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateExceptionHandler;
@@ -120,35 +120,35 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 		this.resourceLoader = resourceLoader;
 	}
 
-	public Flow getSubflow(String id) throws FlowArtifactException {
-		throw new FlowArtifactException(id, Flow.class, "Subflow lookup is not supported by this artifact factory");
+	public Flow getSubflow(String id) throws FlowArtifactLookupException {
+		throw new FlowArtifactLookupException(id, Flow.class, "Subflow lookup is not supported by this artifact factory");
 	}
 
-	public Action getAction(String id) throws FlowArtifactException {
+	public Action getAction(String id) throws FlowArtifactLookupException {
 		return (Action)getBean(id, Action.class);
 	}
 
-	public boolean isAction(String actionId) throws FlowArtifactException {
+	public boolean isAction(String actionId) throws FlowArtifactLookupException {
 		return Action.class.isAssignableFrom(getBeanType(actionId, Action.class));
 	}
 
-	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException {
+	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
 		return (FlowAttributeMapper)getBean(id, FlowAttributeMapper.class);
 	}
 
-	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException {
+	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactLookupException {
 		return (TransitionCriteria)getBean(id, TransitionCriteria.class);
 	}
 
-	public ViewSelector getViewSelector(String id) throws FlowArtifactException {
+	public ViewSelector getViewSelector(String id) throws FlowArtifactLookupException {
 		return (ViewSelector)getBean(id, ViewSelector.class);
 	}
 
-	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException {
+	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactLookupException {
 		return (TargetStateResolver)getBean(id, TargetStateResolver.class);
 	}
 
-	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException {
+	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
 		return (StateExceptionHandler)getBean(id, StateExceptionHandler.class);
 	}
 
@@ -195,14 +195,14 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	 * @param id the bean id
 	 * @param artifactType the bean type
 	 * @return the bean
-	 * @throws FlowArtifactException an exception occurred
+	 * @throws FlowArtifactLookupException an exception occurred
 	 */
-	protected Object getBean(String id, Class artifactType) throws FlowArtifactException {
+	protected Object getBean(String id, Class artifactType) throws FlowArtifactLookupException {
 		try {
 			return getBeanFactory().getBean(id, artifactType);
 		}
 		catch (BeansException e) {
-			throw new FlowArtifactException(id, artifactType, e);
+			throw new FlowArtifactLookupException(id, artifactType, e);
 		}
 	}
 
@@ -211,14 +211,14 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	 * @param id the bean id
 	 * @param artifactType the bean type
 	 * @return the bean's type
-	 * @throws FlowArtifactException an exception occurred
+	 * @throws FlowArtifactLookupException an exception occurred
 	 */
-	protected Class getBeanType(String id, Class artifactType) throws FlowArtifactException {
+	protected Class getBeanType(String id, Class artifactType) throws FlowArtifactLookupException {
 		try {
 			return getBeanFactory().getType(id);
 		}
 		catch (BeansException e) {
-			throw new FlowArtifactException(id, artifactType, e);
+			throw new FlowArtifactLookupException(id, artifactType, e);
 		}
 	}
 
