@@ -19,6 +19,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import org.springframework.binding.method.ClassMethodKey;
+import org.springframework.binding.method.InvalidMethodSignatureException;
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.util.Assert;
 import org.springframework.util.CachingMapDecorator;
@@ -30,6 +32,7 @@ import org.springframework.util.ClassUtils;
  * target object, and they only differ in name.
  * 
  * @author Keith Donald
+ * @author Ben Hale
  */
 public class DispatchMethodInvoker {
 
@@ -50,9 +53,9 @@ public class DispatchMethodInvoker {
 		public Object create(Object key) {
 			String methodName = (String)key;
 			try {
-				return target.getClass().getMethod(methodName, parameterTypes);
+				return new ClassMethodKey(target.getClass(), methodName, parameterTypes).getMethod();
 			}
-			catch (NoSuchMethodException e) {
+			catch (InvalidMethodSignatureException e) {
 				throw new MethodLookupException("Unable to resolve dispatch method with name '" + methodName
 						+ "' and signature '" + getSignatureString(methodName)
 						+ "'; make sure the method name is correct " + "and such a method is defined on targetClass "
