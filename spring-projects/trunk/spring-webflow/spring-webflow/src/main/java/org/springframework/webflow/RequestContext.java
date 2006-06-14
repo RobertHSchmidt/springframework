@@ -186,7 +186,7 @@ public interface RequestContext {
 	/**
 	 * Returns the data model for this context, suitable for exposing to clients
 	 * (mostly web views). Typically the model will contain the union of the
-	 * data available in request scope and flow scope.
+	 * data available in all scopes.
 	 * @return the model that can be exposed to a client view for rendering
 	 * purposes
 	 */

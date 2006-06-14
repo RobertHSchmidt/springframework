@@ -16,7 +16,8 @@
 package org.springframework.webflow;
 
 /**
- * A service interface that maps attributes between two flows.
+ * A service interface used by the subflow state to map attributes between two
+ * flows.
  * <p>
  * An attribute mapper may map attributes of a parent flow down to a child flow
  * as <i>input</i> when the child is spawned as a subflow. In addition, a
@@ -74,6 +75,8 @@ package org.springframework.webflow;
  * FlowAttributeMapper methods run in an independently executing thread on each
  * invocation, so make sure you deal only with local data or internal,
  * thread-safe services.
+ * 
+ * @see org.springframework.webflow.SubflowState
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
