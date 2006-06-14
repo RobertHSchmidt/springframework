@@ -21,6 +21,7 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.builder.BaseFlowServiceLocator;
 import org.springframework.webflow.builder.FlowArtifactLookupException;
 import org.springframework.webflow.builder.FlowServiceLocator;
+import org.springframework.webflow.execution.FlowLocatorException;
 
 /**
  * The default flow service locator implementation that obtains subflow
@@ -71,10 +72,16 @@ public class DefaultFlowServiceLocator extends BaseFlowServiceLocator {
 	}
 
 	public Flow getSubflow(String id) throws FlowArtifactLookupException {
-		return subflowRegistry.getFlow(id);
+		try {
+			return subflowRegistry.getFlow(id);
+		}
+		catch (FlowLocatorException e) {
+			throw new FlowArtifactLookupException(id, Flow.class, "Could not locate subflow definition with id '" + id
+					+ "'", e);
+		}
 	}
 
 	public BeanFactory getBeanFactory() {
 		return beanFactory;
-	}	
+	}
 }
