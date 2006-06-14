@@ -23,6 +23,9 @@ Package org.springframework.webflow.samples
 * Simplified 'flowLauncher' to take advantage of latest attribute mapping features.
 * Simplified 'fileUpload' to take advantage of convenient MultipartFile parameter access support.
 
+Package org.springframework.webflow.support
+* Fixed bug in FlowRedirectSelector where a NPE was thrown on null redirect expression.
+
 Changes in version 1.0 RC2 (09.6.2006)
 ------------------------------------
 
