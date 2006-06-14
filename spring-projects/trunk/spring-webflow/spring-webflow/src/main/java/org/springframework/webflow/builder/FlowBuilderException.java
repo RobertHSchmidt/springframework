@@ -25,18 +25,12 @@ import org.springframework.core.NestedRuntimeException;
 public class FlowBuilderException extends NestedRuntimeException {
 	
 	/**
-	 * The builder that had a problem.
-	 */
-	private FlowBuilder builder;
-
-	/**
 	 * Create a new flow builder exception.
 	 * @param builder the flow builder that encountered the problem
 	 * @param message descriptive message
 	 */
-	public FlowBuilderException(FlowBuilder builder, String message) {
+	public FlowBuilderException(String message) {
 		super(message);
-		this.builder = builder;
 	}
 
 	/**
@@ -45,15 +39,7 @@ public class FlowBuilderException extends NestedRuntimeException {
 	 * @param message descriptive message
 	 * @param cause the underlying cause of this exception
 	 */
-	public FlowBuilderException(FlowBuilder builder, String message, Throwable cause) {
+	public FlowBuilderException(String message, Throwable cause) {
 		super(message, cause);
-		this.builder = builder;
-	}
-
-	/**
-	 * Returns the flow builder that encountered a problem.
-	 */
-	public FlowBuilder getFlowBuilder() {
-		return builder;
 	}
 }

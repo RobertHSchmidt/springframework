@@ -347,16 +347,14 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			Assert.notNull(document, "Document should never be null");
 		}
 		catch (IOException e) {
-			throw new FlowBuilderException(this, "Could not load the XML flow definition resource at " + getLocation(),
-					e);
+			throw new FlowBuilderException("Could not load the XML flow definition resource at " + getLocation(), e);
 		}
 		catch (ParserConfigurationException e) {
-			throw new FlowBuilderException(this, "Could not configure the parser to parse the XML flow definition at "
+			throw new FlowBuilderException("Could not configure the parser to parse the XML flow definition at "
 					+ getLocation(), e);
 		}
 		catch (SAXException e) {
-			throw new FlowBuilderException(this,
-					"Could not parse the flow definition XML document at " + getLocation(), e);
+			throw new FlowBuilderException("Could not parse the flow definition XML document at " + getLocation(), e);
 		}
 		setFlow(parseFlow(id, attributes, getDocumentElement()));
 	}
@@ -472,7 +470,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				resources[i] = getLocation().createRelative(importElement.getAttribute(RESOURCE_ATTRIBUTE));
 			}
 			catch (IOException e) {
-				throw new FlowBuilderException(this, "Could not access flow-relative artifact resource '"
+				throw new FlowBuilderException("Could not access flow-relative artifact resource '"
 						+ importElement.getAttribute(RESOURCE_ATTRIBUTE) + "'", e);
 			}
 		}
@@ -914,7 +912,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				exceptionHandlers.add(parseTransitionExecutingExceptionHandler(transitionElement));
 			}
 		}
-		return (FlowExecutionExceptionHandler[])exceptionHandlers.toArray(new FlowExecutionExceptionHandler[exceptionHandlers.size()]);
+		return (FlowExecutionExceptionHandler[])exceptionHandlers
+				.toArray(new FlowExecutionExceptionHandler[exceptionHandlers.size()]);
 	}
 
 	private FlowExecutionExceptionHandler parseTransitionExecutingExceptionHandler(Element element) {
@@ -932,7 +931,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			Element handlerElement = (Element)handlerElements.get(i);
 			exceptionHandlers.add(parseCustomExceptionHandler(handlerElement));
 		}
-		return (FlowExecutionExceptionHandler[])exceptionHandlers.toArray(new FlowExecutionExceptionHandler[exceptionHandlers.size()]);
+		return (FlowExecutionExceptionHandler[])exceptionHandlers
+				.toArray(new FlowExecutionExceptionHandler[exceptionHandlers.size()]);
 	}
 
 	private FlowExecutionExceptionHandler parseCustomExceptionHandler(Element element) {
