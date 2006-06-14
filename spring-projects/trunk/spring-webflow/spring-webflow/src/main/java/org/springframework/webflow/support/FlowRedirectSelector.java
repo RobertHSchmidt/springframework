@@ -26,9 +26,9 @@ import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewSelector;
 
 /**
- * Makes a {@link FlowRedirect} response selection when requested;
- * calculating the flowId and flow input by evaluating an expression against
- * the request context.
+ * Makes a {@link FlowRedirect} response selection when requested; calculating
+ * the flowId and flow input by evaluating an expression against the request
+ * context.
  * 
  * @author Keith Donald
  */
@@ -38,16 +38,15 @@ public class FlowRedirectSelector implements ViewSelector {
 	 * The parsed flow expression, evaluatable to the string format:
 	 * flowId?param1Name=parmValue&param2Name=paramValue
 	 */
-	private Expression flowExpression;
+	private Expression expression;
 
 	/**
 	 * Creates a new flow redirect selector
-	 * @param flowExpression the parsed flow redirect expression,
-	 * evaluatable to the string format:
-	 * flowId?param1Name=parmValue&param2Name=paramValue
+	 * @param expression the parsed flow redirect expression, evaluatable to the
+	 * string format: flowId?param1Name=parmValue&param2Name=paramValue
 	 */
-	public FlowRedirectSelector(Expression flowExpression) {
-		this.flowExpression = flowExpression;
+	public FlowRedirectSelector(Expression expression) {
+		this.expression = expression;
 	}
 
 	public ViewSelection makeRefreshSelection(RequestContext context) {
@@ -55,7 +54,10 @@ public class FlowRedirectSelector implements ViewSelector {
 	}
 
 	public ViewSelection makeSelection(RequestContext context) {
-		String flowRedirect = (String)flowExpression.evaluateAgainst(context, Collections.EMPTY_MAP);
+		String flowRedirect = (String)expression.evaluateAgainst(context, Collections.EMPTY_MAP);
+		if (flowRedirect == null) {
+			throw new IllegalStateException("Flow redirect expression evaluated to [null], the expression was " + expression);
+		}
 		// the encoded flowRedirect should look something like
 		// "flowId?param0=value0&param1=value1"
 		// now parse that and build a corresponding view selection
