@@ -22,12 +22,11 @@ import org.springframework.webflow.Action;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.RequestControlContext;
 import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.StateException;
-import org.springframework.webflow.StateExceptionHandler;
+import org.springframework.webflow.FlowExecutionException;
+import org.springframework.webflow.FlowExecutionExceptionHandler;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.action.AbstractAction;
@@ -72,12 +71,12 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 	public static class CustomAttributeMapper extends DefaultFlowAttributeMapper {
 	}
 
-	public static class CustomExceptionHandler implements StateExceptionHandler {
-		public boolean handles(StateException exception) {
+	public static class CustomExceptionHandler implements FlowExecutionExceptionHandler {
+		public boolean handles(FlowExecutionException exception) {
 			return false;
 		}
 
-		public ViewSelection handle(StateException exception, RequestControlContext context) {
+		public ViewSelection handle(FlowExecutionException exception, RequestControlContext context) {
 			return null;
 		}
 	}
@@ -92,7 +91,7 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 			return new CustomAttributeMapper();
 		}
 
-		public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
+		public FlowExecutionExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
 			return new CustomExceptionHandler();
 		}
 

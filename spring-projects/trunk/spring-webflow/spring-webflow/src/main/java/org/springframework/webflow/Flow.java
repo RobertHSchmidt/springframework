@@ -69,7 +69,7 @@ import org.springframework.util.StringUtils;
  * first state added to the flow will become the start state by default.
  * <p>
  * Flow definitions may have one or more flow exception handlers. A
- * {@link StateExceptionHandler} can execute custom behavior in response to a
+ * {@link FlowExecutionExceptionHandler} can execute custom behavior in response to a
  * specific exception (or set of exceptions) that occur in a state of one of
  * this flow's executions.
  * <p>
@@ -97,8 +97,8 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.webflow.EndState
  * @see org.springframework.webflow.DecisionState
  * @see org.springframework.webflow.Transition
- * @see org.springframework.webflow.StateExceptionHandler
- * @see org.springframework.webflow.StateExceptionHandlerSet
+ * @see org.springframework.webflow.FlowExecutionExceptionHandler
+ * @see org.springframework.webflow.FlowExecutionExceptionHandlerSet
  * @see org.springframework.webflow.executor.mvc.FlowController
  * @see org.springframework.webflow.executor.mvc.PortletFlowController
  * 
@@ -163,7 +163,7 @@ public class Flow extends AnnotatedObject {
 	/**
 	 * The set of exception handlers for this flow.
 	 */
-	private StateExceptionHandlerSet exceptionHandlerSet = new StateExceptionHandlerSet();
+	private FlowExecutionExceptionHandlerSet exceptionHandlerSet = new FlowExecutionExceptionHandlerSet();
 
 	/**
 	 * The set of inline flows contained by this flow.
@@ -254,10 +254,10 @@ public class Flow extends AnnotatedObject {
 	 * <code>stateId</code>; a state must exist by the provided
 	 * <code>stateId</code>.
 	 * @param stateId the id of the new start state
-	 * @throws NoSuchStateException when no state exists with the id you
+	 * @throws IllegalArgumentException when no state exists with the id you
 	 * provided
 	 */
-	public void setStartState(String stateId) throws NoSuchStateException {
+	public void setStartState(String stateId) throws IllegalArgumentException {
 		setStartState(getRequiredState(stateId));
 	}
 
@@ -265,11 +265,11 @@ public class Flow extends AnnotatedObject {
 	 * Set the start state for this flow to the state provided; any state may be
 	 * the start state.
 	 * @param state the new start state
-	 * @throws NoSuchStateException given state has not been added to this flow
+	 * @throws IllegalArgumentException given state has not been added to this flow
 	 */
-	public void setStartState(State state) throws NoSuchStateException {
+	public void setStartState(State state) throws IllegalArgumentException {
 		if (!states.contains(state)) {
-			throw new NoSuchStateException(this, state.getId());
+			throw new IllegalArgumentException("State '" + state + "' is not a state of flow '" + getId() + "'");
 		}
 		startState = state;
 	}
@@ -308,12 +308,14 @@ public class Flow extends AnnotatedObject {
 	 * exists with that id.
 	 * @param stateId the state id
 	 * @return the state with that id
-	 * @throws NoSuchStateException when no state exists with that id
+	 * @throws IllegalArgumentException when no state exists with that id
 	 */
-	public State getRequiredState(String stateId) throws NoSuchStateException {
+	public State getRequiredState(String stateId) throws IllegalArgumentException {
 		State state = getState(stateId);
 		if (state == null) {
-			throw new NoSuchStateException(this, stateId);
+			throw new IllegalArgumentException(
+					"Cannot find state with id '" + stateId + "' in flow '" + getId() + "' -- " +
+					"Known state ids are '" + getStateIds() + "'");
 		}
 		return state;
 	}
@@ -323,33 +325,35 @@ public class Flow extends AnnotatedObject {
 	 * <code>stateId</code>, or <code>null</code> when not found.
 	 * @param stateId id of the state to look up
 	 * @return the transitionable state, or null when not found
-	 * @throws IllegalStateException when the identified state is not
+	 * @throws ClassCastException when the identified state is not
 	 * transitionable
 	 */
-	public TransitionableState getTransitionableState(String stateId) throws IllegalStateException {
+	public TransitionableState getTransitionableState(String stateId) throws ClassCastException {
 		State state = getState(stateId);
 		if (state != null && !(state instanceof TransitionableState)) {
-			throw new IllegalStateException("The state '" + stateId + "' of flow '" + getId()
-					+ "' must be transitionable");
+			throw new ClassCastException(
+					"The state '" + stateId + "' of flow '" + getId() + "' must be transitionable");
 		}
 		return (TransitionableState)state;
 	}
 
 	/**
-	 * Return the <code>TransitionableState</code> with given
-	 * <code>stateId</code>, throwing an exception if not found.
+	 * Return the <code>TransitionableState</code> with given <code>stateId</code>,
+	 * throwing an exception if not found or not of the expected type.
 	 * @param stateId id of the state to look up
 	 * @return the transitionable state
-	 * @throws IllegalStateException when the identified state is not
+	 * @throws ClassCastException when the identified state is not
 	 * transitionable
-	 * @throws NoSuchStateException when no transitionable state exists by this
+	 * @throws IllegalArgumentException when no transitionable state exists by this
 	 * id
 	 */
-	public TransitionableState getRequiredTransitionableState(String stateId) throws IllegalStateException,
-			NoSuchStateException {
+	public TransitionableState getRequiredTransitionableState(String stateId) throws ClassCastException,
+			IllegalArgumentException {
 		TransitionableState state = getTransitionableState(stateId);
 		if (state == null) {
-			throw new NoSuchStateException(this, stateId);
+			throw new IllegalArgumentException(
+					"Cannot find state with id '" + stateId + "' in flow '" + getId() + "' -- " +
+					"Known state ids are '" + getStateIds() + "'");
 		}
 		return state;
 	}
@@ -459,7 +463,7 @@ public class Flow extends AnnotatedObject {
 	 * exceptions that aren't handled at the state level.
 	 * @return the state exception handler set
 	 */
-	public StateExceptionHandlerSet getExceptionHandlerSet() {
+	public FlowExecutionExceptionHandlerSet getExceptionHandlerSet() {
 		return exceptionHandlerSet;
 	}
 
@@ -570,9 +574,9 @@ public class Flow extends AnnotatedObject {
 	 * </ol>
 	 * @param context the flow execution control context
 	 * @param input eligible input into the session
-	 * @throws StateException when an exception occurs entering the start state
+	 * @throws FlowExecutionException when an exception occurs entering the start state
 	 */
-	public ViewSelection start(RequestControlContext context, AttributeMap input) throws StateException {
+	public ViewSelection start(RequestControlContext context, AttributeMap input) throws FlowExecutionException {
 		createVariables(context);
 		if (inputMapper != null) {
 			inputMapper.map(input, context, Collections.EMPTY_MAP);
@@ -583,16 +587,16 @@ public class Flow extends AnnotatedObject {
 
 	/**
 	 * Inform this flow definition that an event was signaled in the current
-	 * state of an active flow execution.
-	 * @param event the event that was signaled
+	 * state of an active flow execution.  The signaled event is the last event
+	 * available in given request context ({@link RequestContext#getLastEvent()}).
 	 * @param context the flow execution control context
 	 * @return the selected view
-	 * @throws StateException when an exception occurs processing the event
+	 * @throws FlowExecutionException when an exception occurs processing the event
 	 */
-	public ViewSelection onEvent(Event event, RequestControlContext context) throws StateException {
+	public ViewSelection onEvent(RequestControlContext context) throws FlowExecutionException {
 		TransitionableState currentState = getCurrentTransitionableState(context);
 		try {
-			return currentState.onEvent(event, context);
+			return currentState.onEvent(context);
 		}
 		catch (NoMatchingTransitionException e) {
 			// try the flow level transition set for a match
@@ -618,9 +622,9 @@ public class Flow extends AnnotatedObject {
 	 * @param context the flow execution control context
 	 * @param output initial output produced by the session that is eligible for
 	 * modification by this method
-	 * @throws StateException when an exception occurs ending this flow
+	 * @throws FlowExecutionException when an exception occurs ending this flow
 	 */
-	public void end(RequestControlContext context, AttributeMap output) throws StateException {
+	public void end(RequestControlContext context, AttributeMap output) throws FlowExecutionException {
 		endActionList.execute(context);
 		if (outputMapper != null) {
 			outputMapper.map(context, output, Collections.EMPTY_MAP);
@@ -633,10 +637,10 @@ public class Flow extends AnnotatedObject {
 	 * @param context the flow execution control context
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view selection
-	 * @throws StateException passed in, if it was not handled
+	 * @throws FlowExecutionException passed in, if it was not handled
 	 */
-	public ViewSelection handleException(StateException exception, RequestControlContext context)
-			throws StateException {
+	public ViewSelection handleException(FlowExecutionException exception, RequestControlContext context)
+			throws FlowExecutionException {
 		return getExceptionHandlerSet().handleException(exception, context);
 	}
 	

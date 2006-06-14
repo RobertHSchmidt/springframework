@@ -5,20 +5,20 @@ import org.springframework.webflow.support.ApplicationView;
 import junit.framework.TestCase;
 
 /**
- * Unit tests for {@link org.springframework.webflow.StateExceptionHandler} related code.
+ * Unit tests for {@link org.springframework.webflow.FlowExecutionExceptionHandler} related code.
  * 
  * @author Erwin Vervaet
  */
 public class StateExceptionHandlerTests extends TestCase {
 	
 	public void testHandleException() {
-		StateExceptionHandlerSet handlerSet = new StateExceptionHandlerSet();
+		FlowExecutionExceptionHandlerSet handlerSet = new FlowExecutionExceptionHandlerSet();
 		
 		handlerSet.add(new TestStateExceptionHandler(NullPointerException.class, new ApplicationView("NOK", null)));
-		handlerSet.add(new TestStateExceptionHandler(StateException.class, new ApplicationView("OK", null)));
-		handlerSet.add(new TestStateExceptionHandler(StateException.class, new ApplicationView("NOK", null)));
+		handlerSet.add(new TestStateExceptionHandler(FlowExecutionException.class, new ApplicationView("OK", null)));
+		handlerSet.add(new TestStateExceptionHandler(FlowExecutionException.class, new ApplicationView("NOK", null)));
 		
-		StateException testException = new StateException(null, "Test");
+		FlowExecutionException testException = new FlowExecutionException("flowId", "stateId", "Test");
 		assertNotNull(
 				"First handler should have been ignored since it does not handle StateException",
 				handlerSet.handleException(testException, null));
@@ -28,13 +28,13 @@ public class StateExceptionHandlerTests extends TestCase {
 	}
 	
 	public void testHandleExceptionWithNulls() {
-		StateExceptionHandlerSet handlerSet = new StateExceptionHandlerSet();
+		FlowExecutionExceptionHandlerSet handlerSet = new FlowExecutionExceptionHandlerSet();
 		
-		handlerSet.add(new TestStateExceptionHandler(StateException.class, null));
-		handlerSet.add(new TestStateExceptionHandler(StateException.class, new ApplicationView("OK", null)));
-		handlerSet.add(new TestStateExceptionHandler(StateException.class, new ApplicationView("NOK", null)));
+		handlerSet.add(new TestStateExceptionHandler(FlowExecutionException.class, null));
+		handlerSet.add(new TestStateExceptionHandler(FlowExecutionException.class, new ApplicationView("OK", null)));
+		handlerSet.add(new TestStateExceptionHandler(FlowExecutionException.class, new ApplicationView("NOK", null)));
 		
-		StateException testException = new StateException(null, "Test");
+		FlowExecutionException testException = new FlowExecutionException("flowId", "stateId", "Test");
 		assertNotNull(
 				"First handler should have been ignored since it return null",
 				handlerSet.handleException(testException, null));
@@ -44,12 +44,12 @@ public class StateExceptionHandlerTests extends TestCase {
 	}
 	
 	public void testHandleExceptionNoMatch() {
-		StateExceptionHandlerSet handlerSet = new StateExceptionHandlerSet();
+		FlowExecutionExceptionHandlerSet handlerSet = new FlowExecutionExceptionHandlerSet();
 		
-		handlerSet.add(new TestStateExceptionHandler(StateException.class, null));
+		handlerSet.add(new TestStateExceptionHandler(FlowExecutionException.class, null));
 		handlerSet.add(new TestStateExceptionHandler(NullPointerException.class, new ApplicationView("NOK", null)));
 		
-		StateException testException = new StateException(null, "Test");
+		FlowExecutionException testException = new FlowExecutionException("flowId", "stateId", "Test");
 		assertNull(
 				"First handler should have been ignored since it return null, " +
 				"second handler should have been ignored since it does not handle the exception",
@@ -59,7 +59,7 @@ public class StateExceptionHandlerTests extends TestCase {
 	/**
 	 * State exception handler used in tests.
 	 */
-	public static class TestStateExceptionHandler implements StateExceptionHandler {
+	public static class TestStateExceptionHandler implements FlowExecutionExceptionHandler {
 		
 		private Class typeToHandle;
 		private ViewSelection handleResult;
@@ -69,11 +69,11 @@ public class StateExceptionHandlerTests extends TestCase {
 			this.handleResult = handleResult;
 		}
 		
-		public boolean handles(StateException exception) {
+		public boolean handles(FlowExecutionException exception) {
 			return typeToHandle.isInstance(exception);
 		}
 		
-		public ViewSelection handle(StateException exception, RequestControlContext context) {
+		public ViewSelection handle(FlowExecutionException exception, RequestControlContext context) {
 			return handleResult;
 		}
 	}

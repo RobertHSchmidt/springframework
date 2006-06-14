@@ -22,10 +22,9 @@ import org.springframework.webflow.AttributeCollection;
 import org.springframework.webflow.DecisionState;
 import org.springframework.webflow.EndState;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.State;
-import org.springframework.webflow.StateExceptionHandler;
+import org.springframework.webflow.FlowExecutionExceptionHandler;
 import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.Transition;
@@ -87,7 +86,7 @@ public class FlowArtifactFactory {
 	 * @throws FlowArtifactLookupException an exception occured creating the state
 	 */
 	public State createViewState(String id, Flow flow, Action[] entryActions, ViewSelector viewSelector,
-			Transition[] transitions, StateExceptionHandler[] exceptionHandlers, Action[] exitActions,
+			Transition[] transitions, FlowExecutionExceptionHandler[] exceptionHandlers, Action[] exitActions,
 			AttributeCollection attributes) throws FlowArtifactLookupException {
 		ViewState viewState = new ViewState(flow, id);
 		if (viewSelector != null) {
@@ -117,7 +116,7 @@ public class FlowArtifactFactory {
 	 * @throws FlowArtifactLookupException an exception occured creating the state
 	 */
 	public State createActionState(String id, Flow flow, Action[] entryActions, Action[] actions,
-			Transition[] transitions, StateExceptionHandler[] exceptionHandlers, Action[] exitActions,
+			Transition[] transitions, FlowExecutionExceptionHandler[] exceptionHandlers, Action[] exitActions,
 			AttributeCollection attributes) throws FlowArtifactLookupException {
 		ActionState actionState = new ActionState(flow, id);
 		actionState.getActionList().addAll(actions);
@@ -143,7 +142,7 @@ public class FlowArtifactFactory {
 	 * @throws FlowArtifactLookupException an exception occured creating the state
 	 */
 	public State createDecisionState(String id, Flow flow, Action[] entryActions, Transition[] transitions,
-			StateExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeCollection attributes)
+			FlowExecutionExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeCollection attributes)
 			throws FlowArtifactLookupException {
 		DecisionState decisionState = new DecisionState(flow, id);
 		configureCommonProperties(decisionState, entryActions, transitions, exceptionHandlers, exitActions, attributes);
@@ -171,7 +170,7 @@ public class FlowArtifactFactory {
 	 * @throws FlowArtifactLookupException an exception occured creating the state
 	 */
 	public State createSubflowState(String id, Flow flow, Action[] entryActions, Flow subflow,
-			FlowAttributeMapper attributeMapper, Transition[] transitions, StateExceptionHandler[] exceptionHandlers,
+			FlowAttributeMapper attributeMapper, Transition[] transitions, FlowExecutionExceptionHandler[] exceptionHandlers,
 			Action[] exitActions, AttributeCollection attributes) throws FlowArtifactLookupException {
 		SubflowState subflowState = new SubflowState(flow, id, subflow);
 		if (attributeMapper != null) {
@@ -200,7 +199,7 @@ public class FlowArtifactFactory {
 	 * @throws FlowArtifactLookupException an exception occured creating the state
 	 */
 	public State createEndState(String id, Flow flow, Action[] entryActions, ViewSelector viewSelector,
-			AttributeMapper outputMapper, StateExceptionHandler[] exceptionHandlers, AttributeCollection attributes)
+			AttributeMapper outputMapper, FlowExecutionExceptionHandler[] exceptionHandlers, AttributeCollection attributes)
 			throws FlowArtifactLookupException {
 		EndState endState = new EndState(flow, id);
 		if (viewSelector != null) {
@@ -244,14 +243,14 @@ public class FlowArtifactFactory {
 	}
 
 	private void configureCommonProperties(TransitionableState state, Action[] entryActions, Transition[] transitions,
-			StateExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeCollection attributes) {
+			FlowExecutionExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeCollection attributes) {
 		configureCommonProperties(state, entryActions, exceptionHandlers, attributes);
 		state.getTransitionSet().addAll(transitions);
 		state.getExitActionList().addAll(exitActions);
 	}
 
 	private void configureCommonProperties(State state, Action[] entryActions,
-			StateExceptionHandler[] exceptionHandlers, AttributeCollection attributes) {
+			FlowExecutionExceptionHandler[] exceptionHandlers, AttributeCollection attributes) {
 		state.getEntryActionList().addAll(entryActions);
 		state.getExceptionHandlerSet().addAll(exceptionHandlers);
 		state.getAttributeMap().putAll(attributes);

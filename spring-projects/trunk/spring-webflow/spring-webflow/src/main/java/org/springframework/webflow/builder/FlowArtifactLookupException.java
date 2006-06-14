@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow;
+package org.springframework.webflow.builder;
 
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.webflow.FlowException;
 
 /**
- * A flow artifact exception is thrown when a artifact (such as a flow, state,
- * action, etc) required by the webflow system cannot be obtained, either at
- * flow configuration time or at runtime. Can be used directly, but you are
- * encouraged to create a specific subclass to describe a specific kind of
- * failure scenario.
+ * A flow artifact lookup exception is thrown when an artifact (such as a flow, state,
+ * action, etc.) required by the webflow system cannot be obtained.
+ * Can be used directly, but you are encouraged to create a specific subclass to
+ * describe a specific kind of failure scenario.
  * <p>
- * Flow artifact exceptions indicate unrecoverable problems with the flow
+ * Flow artifact lookup exceptions indicate unrecoverable problems with the flow
  * definition, e.g. a required state of a flow cannot be found. They're not used
- * to signal problems related to execution of a client request. A StateException
+ * to signal problems related to execution of a client request. A {@link FlowExecutionException}
  * is used for that.
  * 
- * @see org.springframework.webflow.StateException
+ * @see org.springframework.webflow.FlowExecutionException
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

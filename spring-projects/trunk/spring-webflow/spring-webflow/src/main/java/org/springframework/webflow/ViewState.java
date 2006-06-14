@@ -83,9 +83,9 @@ public class ViewState extends TransitionableState {
 	 * by this state to manipulate the flow execution
 	 * @return a view selection containing model and view information needed to
 	 * render the results of the state execution
-	 * @throws StateException if an exception occurs in this state
+	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
-	protected ViewSelection doEnter(RequestControlContext context) throws StateException {
+	protected ViewSelection doEnter(RequestControlContext context) throws FlowExecutionException {
 		return viewSelector.makeSelection(context);
 	}
 
@@ -96,9 +96,9 @@ public class ViewState extends TransitionableState {
 	 * a flow execution redirect.
 	 * @param context the request context
 	 * @return the view selection
-	 * @throws StateException if an exception occurs in this state
+	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
-	public ViewSelection refresh(RequestContext context) throws StateException {
+	public ViewSelection refresh(RequestContext context) throws FlowExecutionException {
 		return viewSelector.makeRefreshSelection(context);
 	}
 

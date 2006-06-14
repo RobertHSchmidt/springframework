@@ -24,9 +24,8 @@ import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
-import org.springframework.webflow.StateExceptionHandler;
+import org.springframework.webflow.FlowExecutionExceptionHandler;
 import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
@@ -106,9 +105,9 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		}
 	}
 
-	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
+	public FlowExecutionExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
 		if (containsBean(id)) {
-			return (StateExceptionHandler)getBean(id, StateExceptionHandler.class);
+			return (FlowExecutionExceptionHandler)getBean(id, FlowExecutionExceptionHandler.class);
 		}
 		else {
 			return parent.getExceptionHandler(id);

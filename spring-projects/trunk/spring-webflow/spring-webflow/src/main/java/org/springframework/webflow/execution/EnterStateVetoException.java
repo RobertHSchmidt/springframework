@@ -15,8 +15,7 @@
  */
 package org.springframework.webflow.execution;
 
-import org.springframework.webflow.State;
-import org.springframework.webflow.StateException;
+import org.springframework.webflow.FlowExecutionException;
 
 /**
  * Exception thrown to veto the entering of a state of a flow. Typically thrown
@@ -26,40 +25,42 @@ import org.springframework.webflow.StateException;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class EnterStateVetoException extends StateException {
+public class EnterStateVetoException extends FlowExecutionException {
 
 	/**
 	 * The state whose entering was vetoed.
 	 */
-	private State vetoedState;
+	private String vetoedStateId;
 
 	/**
 	 * Create a new enter state veto exception.
-	 * @param sourceState the current state when the veto operation occured
-	 * @param vetoedState the state for which entering is vetoed
+	 * @param flowId the active flow
+	 * @param sourceStateId the current state when the veto operation occured
+	 * @param vetoedStateId the state for which entering is vetoed
 	 * @param message a descriptive message
 	 */
-	public EnterStateVetoException(State sourceState, State vetoedState, String message) {
-		super(sourceState, message);
-		this.vetoedState = vetoedState;
+	public EnterStateVetoException(String flowId, String sourceStateId, String vetoedStateId, String message) {
+		super(flowId, sourceStateId, message);
+		this.vetoedStateId = vetoedStateId;
 	}
 
 	/**
 	 * Create a new enter state veto exception.
-	 * @param sourceState the current state when the veto operation occured
-	 * @param vetoedState the state for which entering is vetoed
+	 * @param flowId the active flow
+	 * @param sourceStateId the current state when the veto operation occured
+	 * @param vetoedStateId the state for which entering is vetoed
 	 * @param message a descriptive message
 	 * @param cause the underlying cause
 	 */
-	public EnterStateVetoException(State sourceState, State vetoedState, String message, Throwable cause) {
-		super(sourceState, message, cause);
-		this.vetoedState = vetoedState;
+	public EnterStateVetoException(String flowId, String sourceStateId, String vetoedStateId, String message, Throwable cause) {
+		super(flowId, sourceStateId, message, cause);
+		this.vetoedStateId = vetoedStateId;
 	}
 
 	/**
 	 * Returns the state for which entering was vetoed.
 	 */
-	public State getVetoedState() {
-		return vetoedState;
+	public String getVetoedStateId() {
+		return vetoedStateId;
 	}
 }

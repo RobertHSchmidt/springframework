@@ -31,7 +31,7 @@ import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.ParameterMap;
 import org.springframework.webflow.State;
-import org.springframework.webflow.StateException;
+import org.springframework.webflow.FlowExecutionException;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelection;
@@ -173,7 +173,7 @@ class RequestControlContextImpl implements RequestControlContext {
 		flowExecution.getListeners().fireStateEntered(this, previousState);
 	}
 
-	public ViewSelection start(Flow flow, AttributeMap input) throws StateException {
+	public ViewSelection start(Flow flow, AttributeMap input) throws FlowExecutionException {
 		if (input == null) {
 			// create a mutable map so entries can be added by listeners!
 			input = new AttributeMap();
@@ -189,14 +189,14 @@ class RequestControlContextImpl implements RequestControlContext {
 		return selectedView;
 	}
 
-	public ViewSelection signalEvent(Event event) throws StateException {
+	public ViewSelection signalEvent(Event event) throws FlowExecutionException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Signaling event '" + event.getId() + "' in state '" + getCurrentState().getId()
 					+ "' of flow '" + getActiveFlow().getId() + "'");
 		}
 		setLastEvent(event);
 		flowExecution.getListeners().fireEventSignaled(this, event);
-		ViewSelection selectedView = getActiveFlow().onEvent(event, this);
+		ViewSelection selectedView = getActiveFlow().onEvent(this);
 		return selectedView;
 	}
 

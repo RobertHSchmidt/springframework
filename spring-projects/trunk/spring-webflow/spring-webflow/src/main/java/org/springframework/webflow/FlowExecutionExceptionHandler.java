@@ -21,14 +21,14 @@ package org.springframework.webflow;
  * 
  * @author Keith Donald
  */
-public interface StateExceptionHandler {
+public interface FlowExecutionExceptionHandler {
 
 	/**
 	 * Can this handler handle the given exception?
 	 * @param exception the exception that occured
 	 * @return true if yes, false if no
 	 */
-	public boolean handles(StateException exception);
+	public boolean handles(FlowExecutionException exception);
 
 	/**
 	 * Handle given exception in the context of the current request and
@@ -39,5 +39,5 @@ public interface StateExceptionHandler {
 	 * the handler chooses not to select a view, in which case other exception
 	 * handlers will be given a chance to handle the exception)
 	 */
-	public ViewSelection handle(StateException exception, RequestControlContext context);
+	public ViewSelection handle(FlowExecutionException exception, RequestControlContext context);
 }

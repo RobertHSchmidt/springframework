@@ -35,7 +35,7 @@ public class StateTests extends TestCase {
 	public void setUp() {
 		flow = new Flow("flow");
 		state = new State(flow, "myState") {
-			protected ViewSelection doEnter(RequestControlContext context) throws StateException {
+			protected ViewSelection doEnter(RequestControlContext context) throws FlowExecutionException {
 				entered = true;
 				return ViewSelection.NULL_VIEW;
 			}

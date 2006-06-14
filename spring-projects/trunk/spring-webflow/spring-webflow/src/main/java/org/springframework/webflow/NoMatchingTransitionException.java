@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow;
 
-import org.springframework.core.style.StylerUtils;
 
 /**
  * Thrown when no transition can be matched given the occurence of an event in
@@ -27,7 +26,7 @@ import org.springframework.core.style.StylerUtils;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class NoMatchingTransitionException extends StateException {
+public class NoMatchingTransitionException extends FlowExecutionException {
 
 	/**
 	 * The event that occured that could not be matched to a Transition.
@@ -36,59 +35,29 @@ public class NoMatchingTransitionException extends StateException {
 
 	/**
 	 * Create a new no matching transition exception.
-	 * @param state the state that could not be transitioned out of
+	 * @param flowId the current flow
+	 * @param stateId the state that could not be transitioned out of
 	 * @param event the event that occured that could not be matched to a
 	 * transition
+	 * @param message the message
 	 */
-	public NoMatchingTransitionException(TransitionableState state, Event event) {
-		this(state, event, (Throwable)null);
-	}
-
-	/**
-	 * Create a new no matching transition exception.
-	 * @param state the state that could not be transitioned out of
-	 * @param event the event that occured that could not be matched to a
-	 * transition
-	 * @param cause the underlying cause
-	 */
-	public NoMatchingTransitionException(TransitionableState state, Event event, Throwable cause) {
-		super(state, "No transition found on occurence of event '" + event.getId() + "' in state '" + state.getId()
-				+ "' of flow '" + state.getFlow().getId() + "' -- valid transitional criteria are "
-				+ StylerUtils.style(state.getTransitionSet().getTransitionCriterias())
-				+ " -- likely programmer error, check the set of TransitionCriteria for this state", cause);
+	public NoMatchingTransitionException(String flowId, String stateId, Event event, String message) {
+		super(flowId, stateId, message);
 		this.event = event;
 	}
 
 	/**
 	 * Create a new no matching transition exception.
-	 * @param state the state that could not be transitioned out of
-	 * @param event the event that occured that could not be matched to a
-	 * transition
-	 * @param message the message
-	 */
-	public NoMatchingTransitionException(TransitionableState state, Event event, String message) {
-		this(state, event, message, null);
-	}
-
-	/**
-	 * Create a new no matching transition exception.
-	 * @param state the state that could not be transitioned out of
+	 * @param flowId the current flow
+	 * @param stateId the state that could not be transitioned out of
 	 * @param event the event that occured that could not be matched to a
 	 * transition
 	 * @param message the message
 	 * @param cause the underlying cause
 	 */
-	public NoMatchingTransitionException(TransitionableState state, Event event, String message, Throwable cause) {
-		super(state, message, cause);
+	public NoMatchingTransitionException(String flowId, String stateId, Event event, String message, Throwable cause) {
+		super(flowId, stateId, message, cause);
 		this.event = event;
-	}
-
-	/**
-	 * Returns the state that could not execute a transition on the occurence of
-	 * the event in the context of the current request.
-	 */
-	public TransitionableState getTransitionableState() {
-		return (TransitionableState)getState();
 	}
 
 	/**

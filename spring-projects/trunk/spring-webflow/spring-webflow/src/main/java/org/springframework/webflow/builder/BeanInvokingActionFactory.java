@@ -20,7 +20,6 @@ import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.AttributeCollection;
-import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.action.AbstractBeanInvokingAction;
 import org.springframework.webflow.action.BeanFactoryBeanInvokingAction;
 import org.springframework.webflow.action.LocalBeanInvokingAction;

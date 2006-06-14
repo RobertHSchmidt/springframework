@@ -18,8 +18,8 @@ package org.springframework.webflow.registry;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.builder.BaseFlowServiceLocator;
+import org.springframework.webflow.builder.FlowArtifactLookupException;
 import org.springframework.webflow.builder.FlowServiceLocator;
 
 /**
