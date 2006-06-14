@@ -58,7 +58,7 @@ public class DispatchMethodInvoker {
 			catch (InvalidMethodSignatureException e) {
 				throw new MethodLookupException("Unable to resolve dispatch method with name '" + methodName
 						+ "' and signature '" + getSignatureString(methodName)
-						+ "'; make sure the method name is correct " + "and such a method is defined on targetClass "
+						+ "'; make sure the method name is correct and such a method is defined on targetClass "
 						+ target.getClass().getName(), e);
 			}
 		}
