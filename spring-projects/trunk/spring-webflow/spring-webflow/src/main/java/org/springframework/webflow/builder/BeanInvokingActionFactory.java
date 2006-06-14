@@ -20,7 +20,7 @@ import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.AttributeCollection;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.action.AbstractBeanInvokingAction;
 import org.springframework.webflow.action.BeanFactoryBeanInvokingAction;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
@@ -76,7 +76,7 @@ public class BeanInvokingActionFactory {
 	 * @param attributes attributes that may be used to affect the bean invoking
 	 * action's construction
 	 * @return the fully configured bean invoking action instance
-	 * @throws FlowArtifactException an exception occured creating the action
+	 * @throws FlowArtifactLookupException an exception occured creating the action
 	 */
 	public Action createBeanInvokingAction(String beanId, BeanFactory beanFactory, MethodSignature methodSignature,
 			ResultSpecification resultSpecification, ConversionService conversionService, AttributeCollection attributes) {

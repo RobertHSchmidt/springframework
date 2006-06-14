@@ -222,7 +222,7 @@ public class Transition extends AnnotatedObject {
 				selectedView = sourceState.reenter(context);
 			}
 			else {
-				throw new CannotExecuteTransitionException(this);
+				throw new CannotExecuteTransitionException(this, sourceState);
 			}
 		}
 		if (logger.isDebugEnabled()) {

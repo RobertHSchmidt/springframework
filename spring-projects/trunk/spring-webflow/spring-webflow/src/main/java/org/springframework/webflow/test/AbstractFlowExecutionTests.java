@@ -26,7 +26,7 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.ParameterMap;
 import org.springframework.webflow.StateException;
@@ -196,10 +196,10 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * Retrieve the flow definition whose execution is to be tested by this
 	 * test.
 	 * @return the definition of the flow whose execution will be tested
-	 * @throws FlowArtifactException if the flow identified by flowId() could
+	 * @throws FlowArtifactLookupException if the flow identified by flowId() could
 	 * not be resolved (if <code>this.flow</code> was null)
 	 */
-	protected abstract Flow getFlow() throws FlowArtifactException;
+	protected abstract Flow getFlow() throws FlowArtifactLookupException;
 
 	/**
 	 * Signal an occurence of an event in the current state of the flow

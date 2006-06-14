@@ -6,7 +6,7 @@ import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.State;
 import org.springframework.webflow.StateExceptionHandler;
@@ -42,17 +42,17 @@ public interface FlowServiceLocator {
 	 * Returns the Flow to be used as a subflow with the provided id.
 	 * @param id the flow id
 	 * @return the flow to be used as a subflow
-	 * @throws FlowArtifactException when no such flow is found
+	 * @throws FlowArtifactLookupException when no such flow is found
 	 */
-	public Flow getSubflow(String id) throws FlowArtifactException;
+	public Flow getSubflow(String id) throws FlowArtifactLookupException;
 
 	/**
 	 * Retrieve the action to be executed within a flow with the assigned
 	 * parameters.
 	 * @param id the id of the action
-	 * @throws FlowArtifactException when no such action is found
+	 * @throws FlowArtifactLookupException when no such action is found
 	 */
-	public Action getAction(String id) throws FlowArtifactException;
+	public Action getAction(String id) throws FlowArtifactLookupException;
 
 	/**
 	 * Returns true if the action with the given <code>actionId</code> is an
@@ -62,53 +62,53 @@ public interface FlowServiceLocator {
 	 * {@link AbstractBeanInvokingAction bean invoking action}.
 	 * @param actionId the action id
 	 * @return true if the action is an Action, false otherwise
-	 * @throws FlowArtifactException when no such action is found
+	 * @throws FlowArtifactLookupException when no such action is found
 	 */
-	public boolean isAction(String actionId) throws FlowArtifactException;
+	public boolean isAction(String actionId) throws FlowArtifactLookupException;
 
 	/**
 	 * Returns the flow attribute mapper with the provided id. Flow attribute
 	 * mappers are used from subflow states to map input and output attributes.
 	 * @param id the id
 	 * @return the attribute mapper
-	 * @throws FlowArtifactException when no such mapper is found
+	 * @throws FlowArtifactLookupException when no such mapper is found
 	 */
-	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactException;
+	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException;
 
 	/**
 	 * Returns the transition criteria to drive state transitions with the
 	 * provided id.
 	 * @param id the id
 	 * @return the transition criteria
-	 * @throws FlowArtifactException when no such criteria is found
+	 * @throws FlowArtifactLookupException when no such criteria is found
 	 */
-	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactException;
+	public TransitionCriteria getTransitionCriteria(String id) throws FlowArtifactLookupException;
 
 	/**
 	 * Returns the view selector to make view selections in view states with the
 	 * provided id.
 	 * @param id the id
 	 * @return the view selector
-	 * @throws FlowArtifactException when no such selector is found
+	 * @throws FlowArtifactLookupException when no such selector is found
 	 */
-	public ViewSelector getViewSelector(String id) throws FlowArtifactException;
+	public ViewSelector getViewSelector(String id) throws FlowArtifactLookupException;
 
 	/**
 	 * Returns the exception handler to handle state exceptions with the
 	 * provided id.
 	 * @param id the id
 	 * @return the exception handler
-	 * @throws FlowArtifactException when no such handler is found
+	 * @throws FlowArtifactLookupException when no such handler is found
 	 */
-	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactException;
+	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException;
 
 	/**
 	 * Returns the transition target state resolver with the specified id.
 	 * @param id the id
 	 * @return the target state resolver
-	 * @throws FlowArtifactException when no such resolver is found
+	 * @throws FlowArtifactLookupException when no such resolver is found
 	 */
-	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactException;
+	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactLookupException;
 
 	/**
 	 * Returns the factory for core entity artifacts such as Flow and State.

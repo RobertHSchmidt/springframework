@@ -32,7 +32,7 @@ import org.springframework.web.struts.DelegatingActionProxy;
 import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.action.FormObjectAccessor;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.executor.FlowExecutor;
@@ -212,7 +212,7 @@ public class FlowAction extends ActionSupport {
 							+ "configure this FlowAction with either a FlowLocator "
 							+ "(exposing a registry of flow definitions) or a custom FlowExecutor "
 							+ "(allowing more configuration options)";
-					throw new FlowArtifactException(FLOW_LOCATOR_BEAN_NAME, FlowLocator.class, message, e);
+					throw new FlowArtifactLookupException(FLOW_LOCATOR_BEAN_NAME, FlowLocator.class, message, e);
 				}
 			}
 		}

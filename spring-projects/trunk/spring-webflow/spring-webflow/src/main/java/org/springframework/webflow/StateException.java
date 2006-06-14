@@ -28,7 +28,7 @@ package org.springframework.webflow;
  * problem, a FlowArtifactLookupException is used for that.
  * 
  * @see org.springframework.webflow.State
- * @see org.springframework.webflow.FlowArtifactException
+ * @see org.springframework.webflow.FlowArtifactLookupException
  * 
  * @author Keith Donald
  */
