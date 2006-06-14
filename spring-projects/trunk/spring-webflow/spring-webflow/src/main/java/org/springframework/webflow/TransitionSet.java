@@ -57,7 +57,7 @@ public class TransitionSet {
 	 * operation
 	 */
 	public boolean addAll(Transition[] transitions) {
-		return CollectionUtils.addAllNoDoubles(this.transitions, transitions);
+		return CollectionUtils.addAllNoDuplicates(this.transitions, transitions);
 	}
 
 	/**

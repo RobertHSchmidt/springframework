@@ -16,11 +16,11 @@
 package org.springframework.webflow;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -121,13 +121,14 @@ public class CollectionUtils {
 	}
 
 	/**
-	 * Add all given objects to given target collection. No doubles will
-	 * be added.
+	 * Add all given objects to given target list. No duplicates will
+	 * be added. The contains() method of the given target list will be used
+	 * to determine whether or not an object is already in the list.
 	 * @param target the collection to which to objects will be added
 	 * @param objects the objects to add
 	 * @return whether or not the target collection changed
 	 */
-	public static boolean addAllNoDoubles(Collection target, Object[] objects) {
+	public static boolean addAllNoDuplicates(List target, Object[] objects) {
 		if (objects == null || objects.length == 0) {
 			return false;
 		}

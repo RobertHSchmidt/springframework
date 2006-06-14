@@ -57,7 +57,7 @@ public class StateExceptionHandlerSet {
 	 * operation
 	 */
 	public boolean addAll(StateExceptionHandler[] exceptionHandlers) {
-		return CollectionUtils.addAllNoDoubles(this.exceptionHandlers, exceptionHandlers);
+		return CollectionUtils.addAllNoDuplicates(this.exceptionHandlers, exceptionHandlers);
 	}
 
 	/**
