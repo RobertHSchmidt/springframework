@@ -31,5 +31,5 @@ public interface FlowExecutionContinuationFactory {
 	 * @param flowExecution the flow execution
 	 * @return the continuation
 	 */
-	public FlowExecutionContinuation createContinuation(FlowExecution flowExecution);
+	public FlowExecutionContinuation createContinuation(FlowExecution flowExecution) throws ContinuationCreationException;
 }

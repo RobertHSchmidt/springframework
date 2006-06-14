@@ -50,7 +50,7 @@ public class SerializedFlowExecutionContinuationFactory implements FlowExecution
 		this.compress = compress;
 	}
 
-	public FlowExecutionContinuation createContinuation(FlowExecution flowExecution) {
+	public FlowExecutionContinuation createContinuation(FlowExecution flowExecution) throws ContinuationCreationException {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream(384);
 			ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -68,12 +68,12 @@ public class SerializedFlowExecutionContinuationFactory implements FlowExecution
 			}
 		}
 		catch (NotSerializableException e) {
-			throw new FlowExecutionSerializationException(flowExecution,
+			throw new ContinuationCreationException(flowExecution,
 					"Could not serialize flow execution; make sure all objects stored in flow scope are serializable",
 					e);
 		}
 		catch (IOException e) {
-			throw new FlowExecutionSerializationException(flowExecution,
+			throw new ContinuationCreationException(flowExecution,
 					"IOException thrown serializing flow execution -- this should not happen!", e);
 		}
 	}
