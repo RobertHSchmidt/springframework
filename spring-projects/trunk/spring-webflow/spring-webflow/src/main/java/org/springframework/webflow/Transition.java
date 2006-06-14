@@ -194,10 +194,10 @@ public class Transition extends AnnotatedObject {
 	 * @param context the flow execution control context
 	 * @return a view selection containing model and view information needed to
 	 * render the results of the transition execution
-	 * @throws StateException when transition execution fails
+	 * @throws FlowExecutionException when transition execution fails
 	 */
 	public ViewSelection execute(TransitionableState sourceState, RequestControlContext context)
-			throws StateException {
+			throws FlowExecutionException {
 		ViewSelection selectedView;
 		if (canExecute(context)) {
 			if (sourceState != null) {
@@ -222,7 +222,9 @@ public class Transition extends AnnotatedObject {
 				selectedView = sourceState.reenter(context);
 			}
 			else {
-				throw new CannotExecuteTransitionException(this, sourceState);
+				throw new IllegalStateException(
+						"Execution of transition '" + this + "' was blocked by execution criteria '" + getExecutionCriteria() + "', " +
+						"however it no source state was specified at runtime. -- This is an illegal situation, check your flow definition.");
 			}
 		}
 		if (logger.isDebugEnabled()) {

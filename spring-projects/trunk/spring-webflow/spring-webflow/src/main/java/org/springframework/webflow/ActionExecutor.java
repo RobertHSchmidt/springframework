@@ -62,12 +62,12 @@ public class ActionExecutor {
 		}
 		catch (Exception e) {
 			// wrap the action as an ActionExecutionException
-			if (context.getCurrentState() == null) {
-				throw new ActionExecutionException(context.getActiveFlow(), action, context.getAttributes(), e);
-			}
-			else {
-				throw new ActionExecutionException(context.getCurrentState(), action, context.getAttributes(), e);
-			}
+			throw new ActionExecutionException(
+					context.getActiveFlow().getId(),
+					context.getCurrentState() != null ? context.getCurrentState().getId() : null,
+					action,
+					context.getAttributes(),
+					e);
 		}
 	}
 }

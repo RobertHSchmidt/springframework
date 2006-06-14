@@ -5,7 +5,7 @@ import javax.faces.context.FacesContext;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
-import org.springframework.webflow.FlowArtifactLookupException;
+import org.springframework.webflow.builder.FlowArtifactLookupException;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepositoryFactory;

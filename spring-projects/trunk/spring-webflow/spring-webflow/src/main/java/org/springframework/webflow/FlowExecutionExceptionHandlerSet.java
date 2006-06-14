@@ -30,7 +30,7 @@ import org.springframework.core.style.StylerUtils;
  * 
  * @author Keith Donald
  */
-public class StateExceptionHandlerSet {
+public class FlowExecutionExceptionHandlerSet {
 
 	/**
 	 * The set of exception handlers.
@@ -43,7 +43,7 @@ public class StateExceptionHandlerSet {
 	 * @return true if this set's contents changed as a result of the add
 	 * operation
 	 */
-	public boolean add(StateExceptionHandler exceptionHandler) {
+	public boolean add(FlowExecutionExceptionHandler exceptionHandler) {
 		if (contains(exceptionHandler)) {
 			return false;
 		}
@@ -56,7 +56,7 @@ public class StateExceptionHandlerSet {
 	 * @return true if this set's contents changed as a result of the add
 	 * operation
 	 */
-	public boolean addAll(StateExceptionHandler[] exceptionHandlers) {
+	public boolean addAll(FlowExecutionExceptionHandler[] exceptionHandlers) {
 		return CollectionUtils.addAllNoDuplicates(this.exceptionHandlers, exceptionHandlers);
 	}
 
@@ -66,7 +66,7 @@ public class StateExceptionHandlerSet {
 	 * @return true if the state exception handler is contained in this set,
 	 * false otherwise
 	 */
-	public boolean contains(StateExceptionHandler exceptionHandler) {
+	public boolean contains(FlowExecutionExceptionHandler exceptionHandler) {
 		return exceptionHandlers.contains(exceptionHandler);
 	}
 
@@ -76,7 +76,7 @@ public class StateExceptionHandlerSet {
 	 * @return true if this set's contents changed as a result of the remove
 	 * operation
 	 */
-	public boolean remove(StateExceptionHandler exceptionHandler) {
+	public boolean remove(FlowExecutionExceptionHandler exceptionHandler) {
 		return exceptionHandlers.remove(exceptionHandler);
 	}
 
@@ -92,8 +92,8 @@ public class StateExceptionHandlerSet {
 	 * Convert this list to a typed state exception handler array.
 	 * @return the exception handler list, as a typed array
 	 */
-	public StateExceptionHandler[] toArray() {
-		return (StateExceptionHandler[])exceptionHandlers.toArray(new StateExceptionHandler[exceptionHandlers.size()]);
+	public FlowExecutionExceptionHandler[] toArray() {
+		return (FlowExecutionExceptionHandler[])exceptionHandlers.toArray(new FlowExecutionExceptionHandler[exceptionHandlers.size()]);
 	}
 
 	/**
@@ -108,10 +108,10 @@ public class StateExceptionHandlerSet {
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view selection
 	 */
-	public ViewSelection handleException(StateException exception, RequestControlContext context) {
+	public ViewSelection handleException(FlowExecutionException exception, RequestControlContext context) {
 		Iterator it = exceptionHandlers.iterator();
 		while (it.hasNext()) {
-			StateExceptionHandler handler = (StateExceptionHandler)it.next();
+			FlowExecutionExceptionHandler handler = (FlowExecutionExceptionHandler)it.next();
 			if (handler.handles(exception)) {
 				ViewSelection result = handler.handle(exception, context);
 				if (result != null) {

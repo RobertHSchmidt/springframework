@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow;
 
+import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;
 
 /**
@@ -70,7 +71,11 @@ public abstract class TransitionableState extends State {
 	public Transition getRequiredTransition(RequestContext context) throws NoMatchingTransitionException {
 		Transition transition = getTransitionSet().getTransition(context);
 		if (transition == null) {
-			throw new NoMatchingTransitionException(this, context.getLastEvent());
+			throw new NoMatchingTransitionException(getFlow().getId(), getId(), context.getLastEvent(),
+					"No transition found on occurence of event '" + context.getLastEvent() + "' in state '" + getId()
+					+ "' of flow '" + getFlow().getId() + "' -- valid transitional criteria are "
+					+ StylerUtils.style(getTransitionSet().getTransitionCriterias())
+					+ " -- likely programmer error, check the set of TransitionCriteria for this state");
 		}
 		return transition;
 	}
@@ -86,15 +91,15 @@ public abstract class TransitionableState extends State {
 	// behavioral methods
 	
 	/**
-	 * Inform this state definition that an event was signaled in it.
-	 * @param event the event that occured
+	 * Inform this state definition that an event was signaled in it. The
+	 * signaled event is the last event available in given request context
+	 * ({@link RequestContext#getLastEvent()}).
 	 * @param context the flow execution control context
 	 * @return the selected view
 	 * @throws NoMatchingTransitionException when a matching transition cannot
 	 * be found
 	 */
-	public ViewSelection onEvent(Event event, RequestControlContext context) throws NoMatchingTransitionException {
-		//FIXME: event parameter is not used?
+	public ViewSelection onEvent(RequestControlContext context) throws NoMatchingTransitionException {
 		return getRequiredTransition(context).execute(this, context);
 	}
 

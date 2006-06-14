@@ -27,11 +27,10 @@ import org.springframework.webflow.AnnotatedAction;
 import org.springframework.webflow.AttributeCollection;
 import org.springframework.webflow.CollectionUtils;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.State;
-import org.springframework.webflow.StateExceptionHandler;
+import org.springframework.webflow.FlowExecutionExceptionHandler;
 import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
@@ -240,7 +239,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the fully constructed view state instance
 	 */
 	protected State addViewState(String stateId, Action[] entryActions, ViewSelector viewSelector,
-			Transition[] transitions, StateExceptionHandler[] exceptionHandlers, Action[] exitActions,
+			Transition[] transitions, FlowExecutionExceptionHandler[] exceptionHandlers, Action[] exitActions,
 			AttributeCollection attributes) {
 		return getFlowArtifactFactory().createViewState(stateId, getFlow(), entryActions, viewSelector, transitions,
 				exceptionHandlers, exitActions, attributes);
@@ -280,9 +279,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the fully constructed action state instance
 	 */
 	protected State addActionState(String stateId, Action action, Transition transition,
-			StateExceptionHandler exceptionHandler) {
+			FlowExecutionExceptionHandler exceptionHandler) {
 		return getFlowArtifactFactory().createActionState(stateId, getFlow(), null, new Action[] { action },
-				new Transition[] { transition }, new StateExceptionHandler[] { exceptionHandler }, null, null);
+				new Transition[] { transition }, new FlowExecutionExceptionHandler[] { exceptionHandler }, null, null);
 	}
 
 	/**
@@ -299,7 +298,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the fully constructed action state instance
 	 */
 	protected State addActionState(String stateId, Action[] entryActions, Action[] actions, Transition[] transitions,
-			StateExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeCollection attributes) {
+			FlowExecutionExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeCollection attributes) {
 		return getFlowArtifactFactory().createActionState(stateId, getFlow(), entryActions, actions, transitions,
 				exceptionHandlers, exitActions, attributes);
 	}
@@ -346,7 +345,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the fully constructed decision state instance
 	 */
 	protected State addDecisionState(String stateId, Action[] entryActions, Transition[] transitions,
-			StateExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeCollection attributes) {
+			FlowExecutionExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeCollection attributes) {
 		return getFlowArtifactFactory().createDecisionState(stateId, getFlow(), entryActions, transitions,
 				exceptionHandlers, exitActions, attributes);
 	}
@@ -397,7 +396,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the fully constructed subflow state instance
 	 */
 	protected State addSubflowState(String stateId, Action[] entryActions, Flow subflow,
-			FlowAttributeMapper attributeMapper, Transition[] transitions, StateExceptionHandler[] exceptionHandlers,
+			FlowAttributeMapper attributeMapper, Transition[] transitions, FlowExecutionExceptionHandler[] exceptionHandlers,
 			Action[] exitActions, AttributeCollection attributes) {
 		return getFlowArtifactFactory().createSubflowState(stateId, getFlow(), entryActions, subflow, attributeMapper,
 				transitions, exceptionHandlers, exitActions, attributes);
@@ -450,7 +449,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the fully constructed end state instance
 	 */
 	protected State addEndState(String stateId, Action[] entryActions, ViewSelector viewSelector,
-			AttributeMapper outputMapper, StateExceptionHandler[] exceptionHandlers, AttributeCollection attributes) {
+			AttributeMapper outputMapper, FlowExecutionExceptionHandler[] exceptionHandlers, AttributeCollection attributes) {
 		return getFlowArtifactFactory().createEndState(stateId, getFlow(), entryActions, viewSelector, outputMapper,
 				exceptionHandlers, attributes);
 	}

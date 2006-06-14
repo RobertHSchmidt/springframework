@@ -5,7 +5,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.Flow;
 import org.springframework.webflow.NoMatchingTransitionException;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
@@ -49,8 +48,7 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 			fail("no such flow expected");
 		}
 		catch (NoSuchFlowDefinitionException e) {
-			assertEquals("bogus", e.getArtifactId());
-			assertEquals(Flow.class, e.getArtifactType());
+			assertEquals("bogus", e.getFlowId());
 		}
 	}
 
@@ -112,8 +110,8 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 			fail("Should've been removed");
 		}
 		catch (NoMatchingTransitionException e) {
-			assertEquals("flow", e.getFlow().getId());
-			assertEquals("viewState1", e.getState().getId());
+			assertEquals("flow", e.getFlowId());
+			assertEquals("viewState1", e.getStateId());
 			assertEquals("bogus", e.getEvent().getId());
 		}
 	}

@@ -19,16 +19,6 @@ package org.springframework.webflow;
  * Thrown if an unhandled exception occurs when an action is executed. Typically
  * wraps another exception noting the root cause failure, which may be checked
  * or unchecked.
- * <p>
- * Is a StateException, recording information about what state a FlowExecution
- * was in when this exception was thrown. Also provides a reference to the
- * Action instance itself and the execution properties that may have affected
- * its execution.
- * <p>
- * Note: if the flow execution was in the process of starting the
- * {@link #getState()} accessor will return null. In this case, the flow
- * definition that was starting when this exception was thrown can be obtained
- * by calling {@link #getFlow()}.
  * 
  * @see org.springframework.webflow.Action
  * @see org.springframework.webflow.ActionState
@@ -36,94 +26,34 @@ package org.springframework.webflow;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class ActionExecutionException extends StateException {
-
-	/**
-	 * The flow that was executing when the exception occured.
-	 */
-	private Flow flow;
-
-	/**
-	 * The action that threw an exception while executing.
-	 */
-	private Action action;
-
-	/**
-	 * The action's execution properties, which may have affected its execution
-	 * and possibly contributed to this exception being thrown.
-	 */
-	private UnmodifiableAttributeMap executionProperties;
+public class ActionExecutionException extends FlowExecutionException {
 
 	/**
 	 * Create a new action execution exception that occured while a flow
 	 * execution was starting and before the start state was entered.
-	 * @param flow the flow
+	 * @param flowId the current flow
+	 * @param stateId the current state
 	 * @param action the action that generated an unrecoverable exception
 	 * @param cause the underlying cause
 	 */
-	public ActionExecutionException(Flow flow, Action action, UnmodifiableAttributeMap executionProperties,
+	public ActionExecutionException(String flowId, String stateId, Action action, UnmodifiableAttributeMap executionProperties,
 			Throwable cause) {
-		this(null, action, executionProperties, "Exception thrown executing start " + action + " of flow '"
-				+ flow.getId() + "'", cause);
-		this.flow = flow;
+		super(flowId, stateId, "Exception thrown executing " + action + " in state '" + stateId
+				+ "' of flow '" + flowId + "' -- action execution properties where '" + executionProperties + "'", cause);
 	}
 
 	/**
-	 * Create a new action execution exception that occured in a state of a flow
-	 * execution.
-	 * @param state the active state
+	 * Create a new action execution exception that occured while a flow
+	 * execution was starting and before the start state was entered.
+	 * @param flowId the current flow
+	 * @param stateId the current state
 	 * @param action the action that generated an unrecoverable exception
-	 * @param executionProperties action execution properties
-	 * @param cause the underlying cause
-	 */
-	public ActionExecutionException(State state, Action action, UnmodifiableAttributeMap executionProperties,
-			Throwable cause) {
-		this(state, action, executionProperties, "Exception thrown executing " + action + " in state '" + state.getId()
-				+ "' of flow '" + state.getFlow().getId() + "'", cause);
-	}
-
-	/**
-	 * Create a new action execution exception that occured in a state of a
-	 * flow execution.
-	 * @param state the active state
-	 * @param action the action that generated an unrecoverable exception
-	 * @param executionProperties action execution properties
 	 * @param message a descriptive message
 	 * @param cause the underlying cause
 	 */
-	public ActionExecutionException(State state, Action action, UnmodifiableAttributeMap executionProperties,
+	public ActionExecutionException(String flowId, String stateId, Action action, UnmodifiableAttributeMap executionProperties,
 			String message, Throwable cause) {
-		super(state, message, cause);
-		this.action = action;
-		this.executionProperties = executionProperties;
+		super(flowId, stateId, message, cause);
 	}
 
-	/**
-	 * Returns the flow that was executing when this exception occured.
-	 * @return the flow
-	 */
-	public Flow getFlow() {
-		if (getState() != null) {
-			return getState().getFlow();
-		}
-		else {
-			return flow;
-		}
-	}
-
-	/**
-	 * Returns the action that threw an exception when executed.
-	 * @return the failing action
-	 */
-	public Action getAction() {
-		return action;
-	}
-
-	/**
-	 * Returns the properties (attributes) associated with the action during
-	 * execution.
-	 */
-	public UnmodifiableAttributeMap getExecutionAttributes() {
-		return executionProperties;
-	}
 }

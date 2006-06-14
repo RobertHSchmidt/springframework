@@ -54,7 +54,7 @@ import org.springframework.webflow.Flow;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.FlowVariable;
 import org.springframework.webflow.ScopeType;
-import org.springframework.webflow.StateExceptionHandler;
+import org.springframework.webflow.FlowExecutionExceptionHandler;
 import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
@@ -884,10 +884,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		return null;
 	}
 
-	private StateExceptionHandler[] parseExceptionHandlers(Element element) {
-		StateExceptionHandler[] transitionExecutingHandlers = parseTransitionExecutingExceptionHandlers(element);
-		StateExceptionHandler[] customHandlers = parseCustomExceptionHandlers(element);
-		StateExceptionHandler[] exceptionHandlers = new StateExceptionHandler[transitionExecutingHandlers.length
+	private FlowExecutionExceptionHandler[] parseExceptionHandlers(Element element) {
+		FlowExecutionExceptionHandler[] transitionExecutingHandlers = parseTransitionExecutingExceptionHandlers(element);
+		FlowExecutionExceptionHandler[] customHandlers = parseCustomExceptionHandlers(element);
+		FlowExecutionExceptionHandler[] exceptionHandlers = new FlowExecutionExceptionHandler[transitionExecutingHandlers.length
 				+ customHandlers.length];
 		System.arraycopy(transitionExecutingHandlers, 0, exceptionHandlers, 0, transitionExecutingHandlers.length);
 		System.arraycopy(customHandlers, 0, exceptionHandlers, transitionExecutingHandlers.length,
@@ -895,7 +895,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		return exceptionHandlers;
 	}
 
-	private StateExceptionHandler[] parseTransitionExecutingExceptionHandlers(Element element) {
+	private FlowExecutionExceptionHandler[] parseTransitionExecutingExceptionHandlers(Element element) {
 		List transitionElements = Collections.EMPTY_LIST;
 		if (isFlowElement(element)) {
 			List globalTransitionElements = DomUtils.getChildElementsByTagName(element, GLOBAL_TRANSITIONS_ELEMENT);
@@ -914,10 +914,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				exceptionHandlers.add(parseTransitionExecutingExceptionHandler(transitionElement));
 			}
 		}
-		return (StateExceptionHandler[])exceptionHandlers.toArray(new StateExceptionHandler[exceptionHandlers.size()]);
+		return (FlowExecutionExceptionHandler[])exceptionHandlers.toArray(new FlowExecutionExceptionHandler[exceptionHandlers.size()]);
 	}
 
-	private StateExceptionHandler parseTransitionExecutingExceptionHandler(Element element) {
+	private FlowExecutionExceptionHandler parseTransitionExecutingExceptionHandler(Element element) {
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
 		Class exceptionClass = (Class)fromStringTo(Class.class).execute(element.getAttribute(ON_EXCEPTION_ATTRIBUTE));
 		handler.add(exceptionClass, (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(
@@ -925,17 +925,17 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		return handler;
 	}
 
-	private StateExceptionHandler[] parseCustomExceptionHandlers(Element element) {
+	private FlowExecutionExceptionHandler[] parseCustomExceptionHandlers(Element element) {
 		List exceptionHandlers = new LinkedList();
 		List handlerElements = DomUtils.getChildElementsByTagName(element, EXCEPTION_HANDLER_ELEMENT);
 		for (int i = 0; i < handlerElements.size(); i++) {
 			Element handlerElement = (Element)handlerElements.get(i);
 			exceptionHandlers.add(parseCustomExceptionHandler(handlerElement));
 		}
-		return (StateExceptionHandler[])exceptionHandlers.toArray(new StateExceptionHandler[exceptionHandlers.size()]);
+		return (FlowExecutionExceptionHandler[])exceptionHandlers.toArray(new FlowExecutionExceptionHandler[exceptionHandlers.size()]);
 	}
 
-	private StateExceptionHandler parseCustomExceptionHandler(Element element) {
+	private FlowExecutionExceptionHandler parseCustomExceptionHandler(Element element) {
 		return getLocalFlowServiceLocator().getExceptionHandler(element.getAttribute(BEAN_ATTRIBUTE));
 	}
 

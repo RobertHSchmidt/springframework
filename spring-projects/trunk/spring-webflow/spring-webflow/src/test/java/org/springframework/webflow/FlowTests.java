@@ -124,7 +124,7 @@ public class FlowTests extends TestCase {
 			flow.getRequiredState("myState3");
 			fail("Returned a state that doesn't exist");
 		}
-		catch (NoSuchStateException e) {
+		catch (IllegalArgumentException e) {
 			// expected
 		}
 	}
@@ -139,13 +139,13 @@ public class FlowTests extends TestCase {
 			flow.getRequiredTransitionableState("myState2");
 			fail("End states aren't transtionable");
 		}
-		catch (IllegalStateException e) {
+		catch (ClassCastException e) {
 			// expected
 		}
 		try {
 			flow.getRequiredTransitionableState("doesNotExist");
 		}
-		catch (NoSuchStateException e) {
+		catch (IllegalArgumentException e) {
 			// expected
 		}
 	}
@@ -217,7 +217,8 @@ public class FlowTests extends TestCase {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		Event event = new Event(this, "foo");
 		try {
-			flow.onEvent(event, context);
+			context.setLastEvent(event);
+			flow.onEvent(context);
 		} catch (IllegalStateException e) {
 			
 		}
@@ -229,7 +230,8 @@ public class FlowTests extends TestCase {
 		Event event = new Event(this, "submit");
 		context.setLastEvent(event);
 		try {
-			flow.onEvent(event, context);
+			context.setLastEvent(event);
+			flow.onEvent(context);
 		} catch (IllegalStateException e) {
 			
 		}
@@ -241,7 +243,8 @@ public class FlowTests extends TestCase {
 		Event event = new Event(this, "submit");
 		context.setLastEvent(event);
 		assertTrue(context.getFlowExecutionContext().isActive());
-		flow.onEvent(event, context);
+		context.setLastEvent(event);
+		flow.onEvent(context);
 		assertTrue(!context.getFlowExecutionContext().isActive());
 	}
 
@@ -251,7 +254,8 @@ public class FlowTests extends TestCase {
 		Event event = new Event(this, "globalEvent");
 		context.setLastEvent(event);
 		assertTrue(context.getFlowExecutionContext().isActive());
-		flow.onEvent(event, context);
+		context.setLastEvent(event);
+		flow.onEvent(context);
 		assertTrue(!context.getFlowExecutionContext().isActive());
 	}
 
@@ -261,7 +265,8 @@ public class FlowTests extends TestCase {
 		Event event = new Event(this, "bogus");
 		context.setLastEvent(event);
 		try {
-			flow.onEvent(event, context);
+			context.setLastEvent(event);
+			flow.onEvent(context);
 		} catch (NoMatchingTransitionException e) {
 			
 		}
@@ -293,7 +298,7 @@ public class FlowTests extends TestCase {
 				.add(MyCustomException.class, "myState2"));
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.setCurrentState(flow.getRequiredState("myState1"));
-		StateException e = new StateException(flow.getStartState(), "Oops!", new MyCustomException());
+		FlowExecutionException e = new FlowExecutionException(flow.getId(), flow.getStartState().getId(), "Oops!", new MyCustomException());
 		ApplicationView selectedView = (ApplicationView)flow.handleException(e, context);
 		assertFalse(context.getFlowExecutionContext().isActive());
 		assertNotNull("Should not have been null", selectedView);
@@ -302,11 +307,11 @@ public class FlowTests extends TestCase {
 
 	public void testHandleStateExceptionNoMatch() {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
-		StateException e = new StateException(flow.getStartState(), "Oops!", new MyCustomException());
+		FlowExecutionException e = new FlowExecutionException(flow.getId(), flow.getStartState().getId(), "Oops!", new MyCustomException());
 		try {
 			flow.handleException(e, context);
 		}
-		catch (StateException ex) {
+		catch (FlowExecutionException ex) {
 			// expected
 		}
 	}

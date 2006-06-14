@@ -18,7 +18,7 @@ package org.springframework.webflow.execution;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowExecutionContext;
-import org.springframework.webflow.StateException;
+import org.springframework.webflow.FlowExecutionException;
 import org.springframework.webflow.ViewSelection;
 
 /**
@@ -85,11 +85,11 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * @return the starting view selection, which requests that the calling
 	 * client render a view with configured model data (so the user may
 	 * participate in this flow execution)
-	 * @throws StateException if an exception was thrown within a state of the
+	 * @throws FlowExecutionException if an exception was thrown within a state of the
 	 * flow execution during request processing
 	 * @see FlowExecutionContext#getFlow()
 	 */
-	public ViewSelection start(AttributeMap input, ExternalContext context) throws StateException;
+	public ViewSelection start(AttributeMap input, ExternalContext context) throws FlowExecutionException;
 
 	/**
 	 * Signal an occurence of the specified user event in the current state of
@@ -100,10 +100,10 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * @return the next view selection to display for this flow execution, which
 	 * requests that the calling client render a view with configured model data
 	 * (so the user may participate in this flow execution)
-	 * @throws StateException if an exception was thrown within a state of the
+	 * @throws FlowExecutionException if an exception was thrown within a state of the
 	 * resumed flow execution during event processing
 	 */
-	public ViewSelection signalEvent(EventId eventId, ExternalContext context) throws StateException;
+	public ViewSelection signalEvent(EventId eventId, ExternalContext context) throws FlowExecutionException;
 
 	/**
 	 * Refresh this flow execution, asking the current view selection to be reconstituted to 
@@ -111,8 +111,8 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * on a paused execution.
 	 * @param context the context in which the event occured
 	 * @return the current view selection for this flow execution
-	 * @throws StateException if an exception was thrown within a state of the
+	 * @throws FlowExecutionException if an exception was thrown within a state of the
 	 * resumed flow execution during event processing
 	 */
-	public ViewSelection refresh(ExternalContext context) throws StateException;
+	public ViewSelection refresh(ExternalContext context) throws FlowExecutionException;
 }

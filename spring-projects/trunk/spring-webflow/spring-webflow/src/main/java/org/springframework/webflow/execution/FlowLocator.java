@@ -16,7 +16,7 @@
 package org.springframework.webflow.execution;
 
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
+import org.springframework.webflow.builder.FlowArtifactLookupException;
 
 /**
  * A runtime service locator interface for retrieving flow definitions by

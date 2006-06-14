@@ -6,10 +6,9 @@ import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.State;
-import org.springframework.webflow.StateExceptionHandler;
+import org.springframework.webflow.FlowExecutionExceptionHandler;
 import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
@@ -100,7 +99,7 @@ public interface FlowServiceLocator {
 	 * @return the exception handler
 	 * @throws FlowArtifactLookupException when no such handler is found
 	 */
-	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException;
+	public FlowExecutionExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException;
 
 	/**
 	 * Returns the transition target state resolver with the specified id.

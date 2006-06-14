@@ -75,7 +75,7 @@ public abstract class State extends AnnotatedObject {
 	/**
 	 * The set of exception handlers for this state.
 	 */
-	private StateExceptionHandlerSet exceptionHandlerSet = new StateExceptionHandlerSet();
+	private FlowExecutionExceptionHandlerSet exceptionHandlerSet = new FlowExecutionExceptionHandlerSet();
 
 	/**
 	 * Creates a state for the provided <code>flow</code> identified by the
@@ -147,7 +147,7 @@ public abstract class State extends AnnotatedObject {
 	 * select an error view to display.
 	 * @return the state exception handler set
 	 */
-	public StateExceptionHandlerSet getExceptionHandlerSet() {
+	public FlowExecutionExceptionHandlerSet getExceptionHandlerSet() {
 		return exceptionHandlerSet;
 	}
 
@@ -183,9 +183,9 @@ public abstract class State extends AnnotatedObject {
 	 * by this state to manipulate the flow execution
 	 * @return a view selection containing model and view information needed to
 	 * render the results of the state processing
-	 * @throws StateException if an exception occurs in this state
+	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
-	public final ViewSelection enter(RequestControlContext context) throws StateException {
+	public final ViewSelection enter(RequestControlContext context) throws FlowExecutionException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Entering state '" + getId() + "' of flow '" + getFlow().getId() + "'");
 		}
@@ -202,9 +202,9 @@ public abstract class State extends AnnotatedObject {
 	 * by this state to manipulate the flow execution
 	 * @return a view selection containing model and view information needed to
 	 * render the results of the state processing
-	 * @throws StateException if an exception occurs in this state
+	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
-	protected abstract ViewSelection doEnter(RequestControlContext context) throws StateException;
+	protected abstract ViewSelection doEnter(RequestControlContext context) throws FlowExecutionException;
 
 	/**
 	 * Handle an exception that occured in this state during the context of the
@@ -213,10 +213,10 @@ public abstract class State extends AnnotatedObject {
 	 * @param context the flow execution control context
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view selection
-	 * @throws StateException passed in, if it was not handled
+	 * @throws FlowExecutionException passed in, if it was not handled
 	 */
-	public ViewSelection handleException(StateException exception, RequestControlContext context)
-			throws StateException {
+	public ViewSelection handleException(FlowExecutionException exception, RequestControlContext context)
+			throws FlowExecutionException {
 		return getExceptionHandlerSet().handleException(exception, context);
 	}
 

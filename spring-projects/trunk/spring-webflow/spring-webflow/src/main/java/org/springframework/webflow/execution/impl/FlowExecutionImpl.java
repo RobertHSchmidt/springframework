@@ -30,14 +30,14 @@ import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.RequestControlContext;
 import org.springframework.webflow.FlowSession;
 import org.springframework.webflow.FlowSessionStatus;
 import org.springframework.webflow.State;
-import org.springframework.webflow.StateException;
+import org.springframework.webflow.FlowExecutionException;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewState;
+import org.springframework.webflow.builder.FlowArtifactLookupException;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
@@ -160,7 +160,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	// methods implementing FlowExecution
 
-	public ViewSelection start(AttributeMap input, ExternalContext externalContext) throws StateException {
+	public ViewSelection start(AttributeMap input, ExternalContext externalContext) throws FlowExecutionException {
 		Assert.state(!isActive(),
 				"This flow is already executing -- you cannot call 'start(ExternalContext)' more than once");
 		RequestControlContext context = createControlContext(externalContext);
@@ -170,7 +170,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 				ViewSelection selectedView = context.start(getFlow(), input);
 				return pause(context, selectedView);
 			}
-			catch (StateException e) {
+			catch (FlowExecutionException e) {
 				return pause(context, handleException(e, context));
 			}
 		}
@@ -179,7 +179,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 	}
 
-	public ViewSelection signalEvent(EventId eventId, ExternalContext externalContext) throws StateException {
+	public ViewSelection signalEvent(EventId eventId, ExternalContext externalContext) throws FlowExecutionException {
 		assertActive();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Resuming this execution on user event '" + eventId + "'");
@@ -193,7 +193,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 				ViewSelection selectedView = context.signalEvent(event);
 				return pause(context, selectedView);
 			}
-			catch (StateException e) {
+			catch (FlowExecutionException e) {
 				return pause(context, handleException(e, context));
 			}
 		}
@@ -202,7 +202,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 	}
 
-	public ViewSelection refresh(ExternalContext externalContext) throws StateException {
+	public ViewSelection refresh(ExternalContext externalContext) throws FlowExecutionException {
 		assertActive();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Resuming this execution for refresh");
@@ -219,7 +219,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 				}
 				return ((ViewState)getActiveSession().getState()).refresh(context);
 			}
-			catch (StateException e) {
+			catch (FlowExecutionException e) {
 				return pause(context, handleException(e, context));
 			}
 		}
@@ -267,11 +267,11 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * @param exception the exception that occured
 	 * @param context the state context the exception occured in
 	 * @return the selected error view
-	 * @throws StateException rethrows the exception it was not handled at the
+	 * @throws FlowExecutionException rethrows the exception it was not handled at the
 	 * state or flow level
 	 */
-	protected ViewSelection handleException(StateException exception, RequestControlContext context)
-			throws StateException {
+	protected ViewSelection handleException(FlowExecutionException exception, RequestControlContext context)
+			throws FlowExecutionException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Attempting to handle exception [" + exception + "]");
 		}
@@ -290,24 +290,24 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		throw exception;
 	}
 
-	private ViewSelection tryStateHandlers(StateException exception, RequestControlContext context) {
+	private ViewSelection tryStateHandlers(FlowExecutionException exception, RequestControlContext context) {
 		ViewSelection selectedView = null;
-		if (exception.getState() != null) {
-			selectedView = exception.getState().handleException(exception, context);
+		if (exception.getStateId() != null) {
+			selectedView = context.getActiveFlow().getRequiredState(exception.getStateId()).handleException(exception, context);
 			if (selectedView != null) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("State '" + exception.getState().getId() + "' handled exception");
+					logger.debug("State '" + exception.getStateId() + "' handled exception");
 				}
 			}
 		}
 		return selectedView;
 	}
 
-	private ViewSelection tryFlowHandlers(StateException exception, RequestControlContext context) {
-		ViewSelection selectedView = exception.getFlow().handleException(exception, context);
+	private ViewSelection tryFlowHandlers(FlowExecutionException exception, RequestControlContext context) {
+		ViewSelection selectedView = context.getActiveFlow().handleException(exception, context);
 		if (selectedView != null) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Flow '" + exception.getFlow().getId() + "' handled exception");
+				logger.debug("Flow '" + exception.getFlowId() + "' handled exception");
 			}
 		}
 		return selectedView;

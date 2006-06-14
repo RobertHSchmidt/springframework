@@ -28,10 +28,9 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowArtifactLookupException;
 import org.springframework.webflow.FlowAttributeMapper;
 import org.springframework.webflow.State;
-import org.springframework.webflow.StateExceptionHandler;
+import org.springframework.webflow.FlowExecutionExceptionHandler;
 import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
@@ -148,8 +147,8 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 		return (TargetStateResolver)getBean(id, TargetStateResolver.class);
 	}
 
-	public StateExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
-		return (StateExceptionHandler)getBean(id, StateExceptionHandler.class);
+	public FlowExecutionExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
+		return (FlowExecutionExceptionHandler)getBean(id, FlowExecutionExceptionHandler.class);
 	}
 
 	public FlowArtifactFactory getFlowArtifactFactory() {

@@ -60,7 +60,7 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 
 	public ViewSelection signalEvent(Event event) {
 		setLastEvent(event);
-		ViewSelection selectedView = getActiveFlow().onEvent(event, this);
+		ViewSelection selectedView = getActiveFlow().onEvent(this);
 		return selectedView;
 	}
 

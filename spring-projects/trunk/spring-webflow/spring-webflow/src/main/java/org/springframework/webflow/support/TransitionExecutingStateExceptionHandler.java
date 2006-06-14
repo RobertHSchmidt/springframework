@@ -26,8 +26,8 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.RequestControlContext;
 import org.springframework.webflow.State;
-import org.springframework.webflow.StateException;
-import org.springframework.webflow.StateExceptionHandler;
+import org.springframework.webflow.FlowExecutionException;
+import org.springframework.webflow.FlowExecutionExceptionHandler;
 import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionableState;
@@ -39,7 +39,7 @@ import org.springframework.webflow.ViewSelection;
  * 
  * @author Keith Donald
  */
-public class TransitionExecutingStateExceptionHandler implements StateExceptionHandler {
+public class TransitionExecutingStateExceptionHandler implements FlowExecutionExceptionHandler {
 
 	private static final Log logger = LogFactory.getLog(TransitionExecutingStateExceptionHandler.class);
 
@@ -87,11 +87,11 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 		return this;
 	}
 
-	public boolean handles(StateException e) {
+	public boolean handles(FlowExecutionException e) {
 		return getTargetStateResolver(e) != null;
 	}
 
-	public ViewSelection handle(StateException e, RequestControlContext context) {
+	public ViewSelection handle(FlowExecutionException e, RequestControlContext context) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Handling state exception " + e);
 		}
@@ -117,7 +117,7 @@ public class TransitionExecutingStateExceptionHandler implements StateExceptionH
 	 * <code>null</code> if no mapping can be found for given exception. Will
 	 * try all exceptions in the exception cause chain.
 	 */
-	protected TargetStateResolver getTargetStateResolver(StateException e) {
+	protected TargetStateResolver getTargetStateResolver(FlowExecutionException e) {
 		if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_13) {
 			return getTargetStateResolver13(e);
 		}

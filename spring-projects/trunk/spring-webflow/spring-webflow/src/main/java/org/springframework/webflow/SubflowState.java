@@ -107,9 +107,9 @@ public class SubflowState extends TransitionableState {
 	 * by this state to manipulate the flow execution
 	 * @return a view selection containing model and view information needed to
 	 * render the results of the state execution
-	 * @throws StateException if an exception occurs in this state
+	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
-	protected ViewSelection doEnter(RequestControlContext context) throws StateException {
+	protected ViewSelection doEnter(RequestControlContext context) throws FlowExecutionException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Spawning subflow '" + getSubflow().getId() + "' within flow '" + getFlow().getId() + "'");
 		}
@@ -142,9 +142,9 @@ public class SubflowState extends TransitionableState {
 	 * Called on completion of the subflow to handle the subflow result event as
 	 * determined by the end state reached by the subflow.
 	 */
-	public ViewSelection onEvent(Event event, RequestControlContext context) {
-		mapSubflowOutput(event.getAttributes(), context);
-		return super.onEvent(event, context);
+	public ViewSelection onEvent(RequestControlContext context) {
+		mapSubflowOutput(context.getLastEvent().getAttributes(), context);
+		return super.onEvent(context);
 	}
 
 	/**

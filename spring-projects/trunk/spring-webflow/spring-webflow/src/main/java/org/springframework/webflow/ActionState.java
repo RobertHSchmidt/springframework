@@ -161,9 +161,9 @@ public class ActionState extends TransitionableState {
 	 * by this state to manipulate the flow execution
 	 * @return a view selection signaling that control should be returned to the
 	 * client and a view rendered
-	 * @throws StateException if an exception occurs in this state
+	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
-	protected ViewSelection doEnter(RequestControlContext context) throws StateException {
+	protected ViewSelection doEnter(RequestControlContext context) throws FlowExecutionException {
 		int executionCount = 0;
 		String[] eventIds = new String[actionList.size()];
 		Iterator it = actionList.iterator();
@@ -182,8 +182,7 @@ public class ActionState extends TransitionableState {
 								+ "] resulted in no matching transition on event '"
 								+ event.getId()
 								+ "'"
-								+ (it.hasNext() ? ": proceeding to the next action in the list"
-										: ": action list exhausted"));
+								+ (it.hasNext() ? ": proceeding to the next action in the list" : ": action list exhausted"));
 					}
 				}
 			}
@@ -200,19 +199,19 @@ public class ActionState extends TransitionableState {
 			executionCount++;
 		}
 		if (executionCount > 0) {
-			throw new NoMatchingTransitionException(this, context.getLastEvent(),
+			throw new NoMatchingTransitionException(getFlow().getId(), getId(), context.getLastEvent(),
 					"No transition was matched on the event(s) signaled by the [" + executionCount
-							+ "] action(s) that executed in this action state '" + getId() + "' of flow '"
-							+ getFlow().getId() + "'; transitions must be defined to handle action result outcomes -- "
-							+ "possible flow configuration error? Note: the eventIds signaled were: '"
-							+ StylerUtils.style(eventIds)
-							+ "', while the supported set of transitional criteria for this action state is '"
-							+ StylerUtils.style(getTransitionSet().getTransitionCriterias()) + "'");
+					+ "] action(s) that executed in this action state '" + getId() + "' of flow '"
+					+ getFlow().getId() + "'; transitions must be defined to handle action result outcomes -- "
+					+ "possible flow configuration error? Note: the eventIds signaled were: '"
+					+ StylerUtils.style(eventIds)
+					+ "', while the supported set of transitional criteria for this action state is '"
+					+ StylerUtils.style(getTransitionSet().getTransitionCriterias()) + "'");
 		}
 		else {
 			throw new IllegalStateException(
 					"No actions were executed, thus I cannot execute any state transition "
-							+ "-- programmer configuration error; make sure you add at least one action to this state's action list");
+					+ "-- programmer configuration error; make sure you add at least one action to this state's action list");
 		}
 	}
 
@@ -236,7 +235,8 @@ public class ActionState extends TransitionableState {
 		 * @param resultEvent the action result event
 		 */
 		public NoMatchingActionResultTransitionException(ActionState state, Event resultEvent) {
-			super(state, resultEvent);
+			super(state.getFlow().getId(), state.getId(), resultEvent,
+					"Cannot find a transition matching an action result event; continuing with next action...");
 		}
 	}
 }

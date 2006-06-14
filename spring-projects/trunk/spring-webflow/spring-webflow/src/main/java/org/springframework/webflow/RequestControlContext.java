@@ -46,7 +46,7 @@ public interface RequestControlContext extends RequestContext {
 	 * called as part of signaling an event in a flow to indicate the
 	 * 'lastEvent' that was signaled.
 	 * @param lastEvent the last event signaled
-	 * @see Flow#onEvent(Event, FlowExecutionControlContext)
+	 * @see Flow#onEvent(FlowExecutionControlContext)
 	 */
 	public void setLastEvent(Event lastEvent);
 
@@ -80,11 +80,11 @@ public interface RequestControlContext extends RequestContext {
 	 * <code>null</code>, e.g. empty)
 	 * @return the selected starting view, which returns control to the client
 	 * and requests that a view be rendered with model data
-	 * @throws StateException if an exception was thrown within a state of the
+	 * @throws FlowExecutionException if an exception was thrown within a state of the
 	 * flow during execution of this start operation
 	 * @see Flow#start(FlowExecutionControlContext, AttributeMap)
 	 */
-	public ViewSelection start(Flow flow, AttributeMap input) throws StateException;
+	public ViewSelection start(Flow flow, AttributeMap input) throws FlowExecutionException;
 
 	/**
 	 * Signals the occurence of an event in the current state of this flow
@@ -95,11 +95,11 @@ public interface RequestControlContext extends RequestContext {
 	 * @param event the event that occured
 	 * @return the next selected view, which returns control to the client and
 	 * requests that a view be rendered with model data
-	 * @throws StateException if an exception was thrown within a state of the
+	 * @throws FlowExecutionException if an exception was thrown within a state of the
 	 * flow during execution of this signalEvent operation
-	 * @see Flow#onEvent(Event, FlowExecutionControlContext)
+	 * @see Flow#onEvent(FlowExecutionControlContext)
 	 */
-	public ViewSelection signalEvent(Event event) throws StateException;
+	public ViewSelection signalEvent(Event event) throws FlowExecutionException;
 
 	/**
 	 * End the active flow session of the current flow execution. This method
