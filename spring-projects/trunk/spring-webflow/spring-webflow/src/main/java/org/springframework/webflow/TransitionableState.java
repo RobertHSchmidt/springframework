@@ -19,8 +19,8 @@ import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;
 
 /**
- * Abstract superclass for states that have one or more transitions. State
- * transitions are typically triggered by events.
+ * Abstract superclass for states that can execute a transition in response to
+ * an event.
  * 
  * @see org.springframework.webflow.Transition
  * @see org.springframework.webflow.TransitionCriteria
@@ -73,9 +73,9 @@ public abstract class TransitionableState extends State {
 		if (transition == null) {
 			throw new NoMatchingTransitionException(getFlow().getId(), getId(), context.getLastEvent(),
 					"No transition found on occurence of event '" + context.getLastEvent() + "' in state '" + getId()
-					+ "' of flow '" + getFlow().getId() + "' -- valid transitional criteria are "
-					+ StylerUtils.style(getTransitionSet().getTransitionCriterias())
-					+ " -- likely programmer error, check the set of TransitionCriteria for this state");
+							+ "' of flow '" + getFlow().getId() + "' -- valid transitional criteria are "
+							+ StylerUtils.style(getTransitionSet().getTransitionCriterias())
+							+ " -- likely programmer error, check the set of TransitionCriteria for this state");
 		}
 		return transition;
 	}
@@ -89,11 +89,10 @@ public abstract class TransitionableState extends State {
 	}
 
 	// behavioral methods
-	
+
 	/**
 	 * Inform this state definition that an event was signaled in it. The
-	 * signaled event is the last event available in given request context
-	 * ({@link RequestContext#getLastEvent()}).
+	 * signaled event is the last event available in given request context ({@link RequestContext#getLastEvent()}).
 	 * @param context the flow execution control context
 	 * @return the selected view
 	 * @throws NoMatchingTransitionException when a matching transition cannot
@@ -120,8 +119,8 @@ public abstract class TransitionableState extends State {
 
 	/**
 	 * Exit this state. This is typically called when a transition takes the
-	 * flow out of this state into another state. By default just executes
-	 * any registered exit actions.
+	 * flow out of this state into another state. By default just executes any
+	 * registered exit actions.
 	 * @param context the flow control context
 	 */
 	public void exit(RequestControlContext context) {

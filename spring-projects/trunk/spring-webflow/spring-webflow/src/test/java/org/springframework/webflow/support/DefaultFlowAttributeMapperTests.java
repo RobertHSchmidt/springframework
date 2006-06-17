@@ -60,7 +60,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 
 		context.setActiveSession(parentSession);
 		context.getFlowScope().put("x", "xValue");
-		AttributeMap input = mapper.createSubflowInput(context);
+		AttributeMap input = mapper.createFlowInput(context);
 		assertEquals(1, input.size());
 		assertEquals("xValue", input.get("y"));
 
@@ -68,7 +68,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 
 		AttributeMap subflowOutput = new AttributeMap();
 		subflowOutput.put("y", "xValue");
-		mapper.mapSubflowOutput(subflowOutput.unmodifiable(), context);
+		mapper.mapFlowOutput(subflowOutput.unmodifiable(), context);
 		assertEquals(1, parentSession.getScope().size());
 		assertEquals("xValue", parentSession.getScope().get("y"));
 	}
@@ -87,7 +87,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		context.setActiveSession(parentSession);
 		context.getFlowScope().put("bean", bean);
 		context.getFlowScope().put("otherAttr", "otherValue");
-		AttributeMap input = mapper.createSubflowInput(context);
+		AttributeMap input = mapper.createFlowInput(context);
 		assertEquals(2, input.size());
 		assertEquals("value", input.get("attr"));
 		assertEquals("otherValue", ((TestBean)input.get("otherBean")).getProp());
@@ -98,7 +98,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		AttributeMap subflowOutput = new AttributeMap();
 		subflowOutput.put("bean", bean);
 		subflowOutput.put("otherAttr", "otherValue");
-		mapper.mapSubflowOutput(subflowOutput.unmodifiable(), context);
+		mapper.mapFlowOutput(subflowOutput.unmodifiable(), context);
 		assertEquals(2, parentSession.getScope().size());
 		assertEquals("value", parentSession.getScope().get("attr"));
 		assertEquals("otherValue", ((TestBean)parentSession.getScope().get("otherBean")).getProp());
@@ -113,7 +113,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		context.setActiveSession(parentSession);
 		context.getRequestScope().put("a", "aValue");
 		context.getFlowScope().put("x", "xValue");
-		AttributeMap input = mapper.createSubflowInput(context);
+		AttributeMap input = mapper.createFlowInput(context);
 		assertEquals(2, input.size());
 		assertEquals("aValue", input.get("b"));
 		assertEquals("xValue", input.get("y"));
@@ -123,7 +123,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		AttributeMap subflowOutput = new AttributeMap();
 		subflowOutput.put("b", "aValue");
 		subflowOutput.put("y", "xValue");
-		mapper.mapSubflowOutput(subflowOutput.unmodifiable(), context);
+		mapper.mapFlowOutput(subflowOutput.unmodifiable(), context);
 		assertEquals(2, parentSession.getScope().size());
 		assertEquals("aValue", parentSession.getScope().get("c"));
 		assertEquals("xValue", parentSession.getScope().get("z"));
@@ -138,7 +138,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		parentSession.getScope().put("x", null);
 
 		context.setActiveSession(parentSession);
-		AttributeMap input = mapper.createSubflowInput(context);
+		AttributeMap input = mapper.createFlowInput(context);
 		assertEquals(2, input.size());
 		assertTrue(input.contains("y"));
 		assertNull(input.get("y"));
@@ -147,7 +147,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 
 		parentSession.getScope().clear();
 
-		mapper.mapSubflowOutput(CollectionUtils.EMPTY_ATTRIBUTE_MAP, context);
+		mapper.mapFlowOutput(CollectionUtils.EMPTY_ATTRIBUTE_MAP, context);
 		assertEquals(2, parentSession.getScope().size());
 		assertTrue(parentSession.getScope().contains("c"));
 		assertNull(parentSession.getScope().get("c"));
@@ -173,7 +173,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		assertNotNull(context.getFlowScope().get("command"));
 
 		mapper.addInputMapping(mapping.source("${flowScope.command}").target("command").value());
-		AttributeMap input = mapper.createSubflowInput(context);
+		AttributeMap input = mapper.createFlowInput(context);
 
 		assertEquals(1, input.size());
 		assertSame(parentSession.getScope().get("command"), input.get("command"));

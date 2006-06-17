@@ -21,17 +21,18 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
- * Signals the occurence of something an executing flow should respond to. Each
- * event has a string id that provides a key for what happened: e.g
- * "coinInserted", or "pinDropped". Events may have attributes that provide
- * arbitrary payload data, e.g. "coin.amount=25", or "pinDropSpeed=25ms".
+ * Signals the occurence of something an active flow execution should respond
+ * to. Each event has a string id that provides a key for identifying what
+ * happened: e.g "coinInserted", or "pinDropped". Events may have attributes
+ * that provide arbitrary payload data, e.g. "coin.amount=25", or
+ * "pinDropSpeed=25ms".
  * <p>
- * For example, a "submit" event might signal that a Submit button was pressed
+ * As an example, a "submit" event might signal that a Submit button was pressed
  * in a web browser. A "success" event might signal an action executed
  * successfully. A "finish" event might signal a subflow ended normally.
  * <p>
  * Why is this not an interface? A specific design choice. An event is not a
- * strategy that defines a generic type or role, its essentially an immutable
+ * strategy that defines a generic type or role--it is essentially an immutable
  * value object. It is expected that specializations of this base class be
  * "Events" and not part of some other inheritence hierarchy.
  * 
@@ -66,8 +67,7 @@ public final class Event extends EventObject {
 	}
 
 	/**
-	 * Create a new event with the specified <code>id</code> and the provided
-	 * contextual parameters.
+	 * Create a new event with the specified <code>id</code> and payload attributes.
 	 * @param source the source of the event
 	 * @param id the event identifier
 	 * @param attributes additional event attributes
@@ -107,7 +107,6 @@ public final class Event extends EventObject {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("source", getSource()).append("id", getId()).append("timestamp",
-				getTimestamp()).append("attributes", getAttributes()).toString();
+		return getId();
 	}
 }

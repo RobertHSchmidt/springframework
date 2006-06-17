@@ -22,12 +22,7 @@ package org.springframework.webflow.execution.repository;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowExecutionRestorationException extends FlowExecutionRepositoryException {
-
-	/**
-	 * The key of the execution that could not be restored.
-	 */
-	private FlowExecutionKey flowExecutionKey;
+public class FlowExecutionRestorationFailureException extends FlowExecutionAccessException {
 
 	/**
 	 * Creates a new flow execution restoration exception.
@@ -35,18 +30,8 @@ public class FlowExecutionRestorationException extends FlowExecutionRepositoryEx
 	 * restored.
 	 * @param cause the root cause of the restoration failure.
 	 */
-	public FlowExecutionRestorationException(FlowExecutionKey flowExecutionKey, Exception cause) {
-		super("Unable to restore flow execution with key '" + flowExecutionKey
-				+ "' -- perhaps this executing flow has ended or expired? "
-				+ "This could happen if your users are relying on browser history "
-				+ "(typically via the back button) that reference ended flows.", cause);
-		this.flowExecutionKey = flowExecutionKey;
-	}
-
-	/**
-	 * Returns key of the flow execution that could not be restored.
-	 */
-	public FlowExecutionKey getFlowExecutionKey() {
-		return flowExecutionKey;
+	public FlowExecutionRestorationFailureException(FlowExecutionKey flowExecutionKey, Exception cause) {
+		super(flowExecutionKey, "A problem occurred restoring the flow execution with key '" + flowExecutionKey + "'",
+				cause);
 	}
 }

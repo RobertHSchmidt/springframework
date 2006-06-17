@@ -25,7 +25,7 @@ package org.springframework.webflow;
  * away details about the runtime <i>execution</i> subsystem defined in the
  * {@link org.springframework.webflow.execution} package.
  * <p>
- * Note this type is not the same as the {@link FlowExecutionContext}! Objects
+ * Note this type is not the same as the {@link FlowExecutionContext}. Objects
  * of this type are <i>request specific</i>: they provide a control interface
  * for manipulating exactly one flow execution locally from exactly one request.
  * A <code>FlowExecutionContext</code> provides information about a single

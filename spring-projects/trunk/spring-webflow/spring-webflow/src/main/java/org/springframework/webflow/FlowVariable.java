@@ -22,8 +22,8 @@ import org.springframework.util.Assert;
 
 /**
  * A value object that defines a specification for a flow variable. Encapsulates
- * information about the variable (name and type), and the behavior necessary
- * to create a new variable instance in a flow execution scope.
+ * information about the variable and the behavior necessary to create a new
+ * variable instance in a flow execution scope.
  * 
  * @author Keith Donald
  */
@@ -64,14 +64,14 @@ public abstract class FlowVariable extends AnnotatedObject implements Serializab
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
 	 * Returns the scope of this variable.
 	 */
 	public ScopeType getScope() {
 		return scope;
 	}
-	
+
 	public boolean equals(Object o) {
 		if (!(o instanceof FlowVariable)) {
 			return false;
@@ -93,14 +93,14 @@ public abstract class FlowVariable extends AnnotatedObject implements Serializab
 	}
 
 	/**
-	 * Hook method that needs to be implemented by subclasses to 
-	 * calculate the value of this flow variable based on the information
-	 * available in the request context.
+	 * Hook method that needs to be implemented by subclasses to calculate the
+	 * value of this flow variable based on the information available in the
+	 * request context.
 	 * @param context the flow execution request context
 	 * @return the flow variable value
 	 */
 	protected abstract Object createVariableValue(RequestContext context);
-	
+
 	public String toString() {
 		return new ToStringCreator(this).append("name", name).append("scope", scope).toString();
 	}

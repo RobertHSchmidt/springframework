@@ -25,10 +25,6 @@ import org.springframework.webflow.RequestContext;
  * bean factory. The bean does not have to implement any special interface to be
  * invoked.
  * <p>
- * To use this class, you configure the name of the bean you wish to invoke and
- * what method on that bean should be invoked with what arguments, typically
- * using flow request context attributes.
- * <p>
  * Example configuration and usage:
  * 
  * <pre>

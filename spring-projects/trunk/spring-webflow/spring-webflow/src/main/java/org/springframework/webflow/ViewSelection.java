@@ -19,9 +19,9 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 
 /**
- * Abstract base class for value objects that provide SWF callers with
- * information about a logical response to issue and the data necessary to issue
- * it.
+ * Abstract base class for value objects that provide callers into a flow
+ * execution information about a logical response to issue and the data
+ * necessary to issue it.
  * <p>
  * This class is a generic marker returned from a request into an executing flow
  * has completed processing, indicating a client response needs to be issued. An
@@ -62,5 +62,5 @@ public abstract class ViewSelection implements Serializable {
 			return NULL_VIEW;
 		}
 	}
-	
+
 }

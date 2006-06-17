@@ -49,7 +49,7 @@ public abstract class AbstractFlowAttributeMapper implements FlowAttributeMapper
 	 */
 	protected abstract AttributeMapper getOutputMapper();
 
-	public AttributeMap createSubflowInput(RequestContext context) {
+	public AttributeMap createFlowInput(RequestContext context) {
 		if (getInputMapper() != null) {
 			AttributeMap input = new AttributeMap();
 			// map from request context to input map
@@ -62,7 +62,7 @@ public abstract class AbstractFlowAttributeMapper implements FlowAttributeMapper
 		}
 	}
 
-	public void mapSubflowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {
+	public void mapFlowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {
 		if (getOutputMapper() != null && subflowOutput != null) {
 			// map from request context to parent flow scope
 			getOutputMapper().map(subflowOutput, context, getMappingContext(context));

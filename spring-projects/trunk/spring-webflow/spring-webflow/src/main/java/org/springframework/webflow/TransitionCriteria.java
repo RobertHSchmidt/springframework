@@ -16,7 +16,7 @@
 package org.springframework.webflow;
 
 /**
- * Interface for strategy objects encapsulating criteria that determine whether
+ * Strategy interface encapsulating criteria that determine whether
  * or not a transition should execute given a flow execution request context.
  * 
  * @see org.springframework.webflow.Transition

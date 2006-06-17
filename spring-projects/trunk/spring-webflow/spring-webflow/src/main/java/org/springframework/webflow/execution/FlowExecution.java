@@ -22,8 +22,8 @@ import org.springframework.webflow.FlowExecutionException;
 import org.springframework.webflow.ViewSelection;
 
 /**
- * A <i>client instance</i> of an executing top-level flow, representing a
- * single instance of a web conversation <i>at a specific point in time</i>.
+ * A <i>client instance</i> of an executing top-level flow. Represents a single
+ * instance of a web conversation <i>at a specific point in time</i>.
  * <p>
  * This is the central facade interface for managing one runtime execution of a
  * Flow. Implementations of this interface are the finite state machine that is
@@ -34,10 +34,11 @@ import org.springframework.webflow.ViewSelection;
  * {@link org.springframework.webflow.executor.FlowExecutor}. This manager then
  * creates an instance of an object implementing this interface, initializing it
  * with the requested Flow definition which becomes the execution's "root", or
- * top-level flow. After creation, the {@link #start(AttributeMap, ExternalContext)} operation
- * is called, which causes the execution to activate a new session for its root
- * flow definition. That session is then pushed onto a stack and its definition
- * becomes the <i>active flow</i>. A local, internal
+ * top-level flow. After creation, the
+ * {@link #start(AttributeMap, ExternalContext)} operation is called, which
+ * causes the execution to activate a new session for its root flow definition.
+ * That session is then pushed onto a stack and its definition becomes the
+ * <i>active flow</i>. A local, internal
  * {@link org.springframework.webflow.RequestControlContext} object (which
  * extends ({@link org.springframework.webflow.RequestContext}) is then
  * created and the Flow's start {@link org.springframework.webflow.State} is
@@ -85,8 +86,8 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * @return the starting view selection, which requests that the calling
 	 * client render a view with configured model data (so the user may
 	 * participate in this flow execution)
-	 * @throws FlowExecutionException if an exception was thrown within a state of the
-	 * flow execution during request processing
+	 * @throws FlowExecutionException if an exception was thrown within a state
+	 * of the flow execution during request processing
 	 * @see FlowExecutionContext#getFlow()
 	 */
 	public ViewSelection start(AttributeMap input, ExternalContext context) throws FlowExecutionException;
@@ -100,19 +101,19 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * @return the next view selection to display for this flow execution, which
 	 * requests that the calling client render a view with configured model data
 	 * (so the user may participate in this flow execution)
-	 * @throws FlowExecutionException if an exception was thrown within a state of the
-	 * resumed flow execution during event processing
+	 * @throws FlowExecutionException if an exception was thrown within a state
+	 * of the resumed flow execution during event processing
 	 */
 	public ViewSelection signalEvent(EventId eventId, ExternalContext context) throws FlowExecutionException;
 
 	/**
-	 * Refresh this flow execution, asking the current view selection to be reconstituted to 
-	 * support a reissuing the response.  This is idempotent operation that may be safely called 
-	 * on a paused execution.
+	 * Refresh this flow execution, asking the current view selection to be
+	 * reconstituted to support a reissuing the response. This is idempotent
+	 * operation that may be safely called on a paused execution.
 	 * @param context the context in which the event occured
 	 * @return the current view selection for this flow execution
-	 * @throws FlowExecutionException if an exception was thrown within a state of the
-	 * resumed flow execution during event processing
+	 * @throws FlowExecutionException if an exception was thrown within a state
+	 * of the resumed flow execution during event processing
 	 */
 	public ViewSelection refresh(ExternalContext context) throws FlowExecutionException;
 }

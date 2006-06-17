@@ -16,7 +16,7 @@
 package org.springframework.webflow;
 
 /**
- * Superclass of all objects in the web flow system that support annotation
+ * A basee class for all objects in the web flow system that support annotation
  * using arbitrary properties. Mainly used to ensure consistent configuration of
  * properties for all annotated objects.
  * 

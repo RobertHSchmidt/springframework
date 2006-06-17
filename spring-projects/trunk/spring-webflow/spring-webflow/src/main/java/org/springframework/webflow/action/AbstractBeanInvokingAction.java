@@ -19,20 +19,14 @@ import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.MethodInvoker;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.util.Assert;
-import org.springframework.webflow.ActionState;
-import org.springframework.webflow.AnnotatedAction;
+import org.springframework.webflow.Action;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
 /**
  * Base class for actions that delegate to methods on beans (plain old
  * java.lang.Objects). Acts as an adapter that adapts an {@link Object} method
- * to the SWF Action contract.
- * <p>
- * The method to invoke is determined by the value of the
- * {@link AnnotatedAction#METHOD_ATTRIBUTE} action execution property, typically set
- * when provisioning this Action's use as part of an {@link AnnotatedAction} or
- * an {@link ActionState}.
+ * to the Spring Web Flow {@link Action} contract.
  * 
  * @author Keith Donald
  */
