@@ -126,7 +126,7 @@ public class SubflowState extends TransitionableState {
 				logger.debug("Messaging the configured attribute mapper to map attributes "
 						+ "down to the spawned subflow for access within the subflow");
 			}
-			return getAttributeMapper().createSubflowInput(context);
+			return getAttributeMapper().createFlowInput(context);
 		}
 		else {
 			if (logger.isDebugEnabled()) {
@@ -157,7 +157,7 @@ public class SubflowState extends TransitionableState {
 				logger.debug("Messaging the configured attribute mapper to map subflow result attributes to the "
 						+ "resuming parent flow -- It will have access to attributes passed up by the completed subflow");
 			}
-			attributeMapper.mapSubflowOutput(subflowOutput, context);
+			attributeMapper.mapFlowOutput(subflowOutput, context);
 		}
 		else {
 			if (logger.isDebugEnabled()) {

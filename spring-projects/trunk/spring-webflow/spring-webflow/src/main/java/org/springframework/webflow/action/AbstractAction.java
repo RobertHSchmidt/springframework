@@ -31,11 +31,11 @@ import org.springframework.webflow.support.EventFactorySupport;
  * Base action that provides assistance commonly needed by action
  * implementations. These include:
  * <ul>
- * <li>Implementing {@link InitializingBean}, for receiving an init callback
+ * <li>Implementing {@link InitializingBean} to receive an init callback
  * when deployed within a Spring bean factory.
- * <li>Exposing convenient event factory methods, for creating common result
+ * <li>Exposing convenient event factory methods to create common result
  * {@link Event} objects such as "success" and "error".
- * <li>A hook for inserting action pre and post execution logic
+ * <li>A hook for inserting action pre and post execution logic.
  * </ul>
  * 
  * @author Keith Donald
@@ -147,14 +147,14 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * Typically called as part of return, for example:
 	 * 
 	 * <pre>
-	 *       protected Event doExecute(RequestContext context) {
-	 *           // do some work
-	 *           if (some condition) {
-	 *               return result(&quot;success&quot;);
-	 *           } else {
-	 *               return result(&quot;error&quot;);
-	 *           }
-	 *       }
+	 *     protected Event doExecute(RequestContext context) {
+	 *         // do some work
+	 *         if (some condition) {
+	 *             return result(&quot;success&quot;);
+	 *         } else {
+	 *             return result(&quot;error&quot;);
+	 *         }
+	 *     }
 	 * </pre>
 	 * 
 	 * Consider calling the error() or success() factory methods for returning
@@ -172,16 +172,16 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * example:
 	 * 
 	 * <pre>
-	 *       protected Event doExecute(RequestContext context) {
-	 *           // do some work
-	 *           AttributeMap resultAttributes = new AttributeMap();
-	 *           resultAttributes.put(&quot;name&quot;, &quot;value&quot;);
-	 *           if (some condition) {
-	 *               return result(&quot;success&quot;, resultAttributes);
-	 *           } else {
-	 *               return result(&quot;error&quot;, resultAttributes);
-	 *           }
-	 *       }
+	 *     protected Event doExecute(RequestContext context) {
+	 *         // do some work
+	 *         AttributeMap resultAttributes = new AttributeMap();
+	 *         resultAttributes.put(&quot;name&quot;, &quot;value&quot;);
+	 *         if (some condition) {
+	 *             return result(&quot;success&quot;, resultAttributes);
+	 *         } else {
+	 *             return result(&quot;error&quot;, resultAttributes);
+	 *         }
+	 *     }
 	 * </pre>
 	 * 
 	 * Consider calling the error() or success() factory methods for returning

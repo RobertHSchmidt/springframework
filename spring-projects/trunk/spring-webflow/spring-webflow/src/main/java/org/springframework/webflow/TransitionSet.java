@@ -22,7 +22,7 @@ import java.util.List;
 import org.springframework.core.style.StylerUtils;
 
 /**
- * A typed set of transitions, mainly for use internally by artifacts that can
+ * A typed set of transitions for use internally by artifacts that can
  * apply transition execution logic.
  * 
  * @see TransitionableState#getTransitionSet()

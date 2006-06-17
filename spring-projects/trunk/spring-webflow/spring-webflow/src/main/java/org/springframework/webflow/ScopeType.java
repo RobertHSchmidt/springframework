@@ -18,7 +18,11 @@ package org.springframework.webflow;
 import org.springframework.core.enums.StaticLabeledEnum;
 
 /**
- * Supported scope types for the web flow system.
+ * The core scope types of Spring Web Flow.
+ * <p>
+ * Defines a type of "bucket" (or map) for storing custom user attributes within
+ * a flow execution. Different scope types have different semantics in terms of
+ * how long attributes placed in those scope maps remain valid.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -26,8 +30,9 @@ import org.springframework.core.enums.StaticLabeledEnum;
 public abstract class ScopeType extends StaticLabeledEnum {
 
 	/**
-	 * Constant indicating request scope. Data in request scope lives for the
-	 * life of a request submitted to a flow execution for processing.
+	 * Constant indicating request scope. Data in request scope exists for the
+	 * life of a request submitted to a flow execution for processing. When that
+	 * request ends any data in request scope goes out of scope.
 	 */
 	public static final ScopeType REQUEST = new ScopeType(0, "Request") {
 		public AttributeMap getScope(RequestContext context) {
@@ -38,7 +43,8 @@ public abstract class ScopeType extends StaticLabeledEnum {
 	/**
 	 * Constant indicating flow scope. Data in flow scope is shared by all
 	 * artifacts of exactly one flow definition (actions, view, states, etc.)
-	 * and lives locally for the life of a executing flow session.
+	 * and lives locally for the life of a executing flow session. When the flow
+	 * session ends an data in flow scope goes out of scope.
 	 */
 	public static final ScopeType FLOW = new ScopeType(1, "Flow") {
 		public AttributeMap getScope(RequestContext context) {
@@ -48,9 +54,10 @@ public abstract class ScopeType extends StaticLabeledEnum {
 
 	/**
 	 * Constant indicating conversation scope. Data in conversation scope is
-	 * shared by all flow sessions associated with a flow execution, and lives
-	 * for the life of the entire flow execution (repersenting a single logical
-	 * conversation).
+	 * shared by all flow sessions associated with a flow execution and lives
+	 * for the life of the entire flow execution (representing a single logical
+	 * conversation). When the overall execution ends, any data in conversation
+	 * scope goes out of scope.
 	 */
 	public static final ScopeType CONVERSATION = new ScopeType(2, "Conversation") {
 		public AttributeMap getScope(RequestContext context) {
@@ -70,10 +77,10 @@ public abstract class ScopeType extends StaticLabeledEnum {
 	}
 
 	/**
-	 * Returns the <code>Scope</code> associated with this scope type for an
-	 * executing flow execution request.
+	 * Returns the mutable attribute map for this scope type for an executing
+	 * flow execution request.
 	 * @param context a flow execution request context
-	 * @return the scope
+	 * @return the scope map, allowing for attributes to be accessed and set
 	 */
 	public abstract AttributeMap getScope(RequestContext context);
 }

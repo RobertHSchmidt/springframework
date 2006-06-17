@@ -21,23 +21,26 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
- * When executed, a transition takes a flow execution from its current state,
+ * A path from one {@link TransitionableState state} to another
+ * {@link State state}.
+ * <p>
+ * When executed a transition takes a flow execution from its current state,
  * called the <i>source state</i>, to another state, called the </i>target
  * state</i>. A transition may become eligible for execution on the occurence
  * of {@link Event} from within a transitionable source state.
  * <p>
  * When an event occurs within this transition's source
- * <code>TransitionableState</code>, the determination of the eligibility of
+ * <code>TransitionableState</code> the determination of the eligibility of
  * this transition is made by a <code>TransitionCriteria</code> object called
  * the <i>matching criteria</i>. If the matching criteria returns
- * <code>true</code>, this transition is marked eligible for execution for
- * that event.
+ * <code>true</code> this transition is marked eligible for execution for that
+ * event.
  * <p>
  * Determination as to whether an eligible transition should be allowed to
  * execute is made by a <code>TransitionCriteria</code> object called the
- * <i>execution criteria</i>. If the execution criteria test fails, this
+ * <i>execution criteria</i>. If the execution criteria test fails this
  * transition will <i>roll back</i> and reenter its source state. If the
- * execution criteria test succeeds, this transition will execute and take the
+ * execution criteria test succeeds this transition will execute and take the
  * flow to the transition's target state.
  * <p>
  * The target state of this transition is typically specified at configuration
@@ -222,9 +225,9 @@ public class Transition extends AnnotatedObject {
 				selectedView = sourceState.reenter(context);
 			}
 			else {
-				throw new IllegalStateException(
-						"Execution of transition '" + this + "' was blocked by execution criteria '" + getExecutionCriteria() + "', " +
-						"however it no source state was specified at runtime. -- This is an illegal situation, check your flow definition.");
+				throw new IllegalStateException("Execution of '" + this + "' was blocked by '" + getExecutionCriteria()
+						+ "', " + "; however, no source state is set at runtime.  "
+						+ "This is an illegal situation: check your flow definition.");
 			}
 		}
 		if (logger.isDebugEnabled()) {

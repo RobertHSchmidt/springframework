@@ -16,19 +16,13 @@
 package org.springframework.webflow;
 
 /**
- * A runtime object that represents a single client session of a specific
- * <code>Flow</code> definition. This object maintains all the state of the
- * session, including its status within exactly one governing FlowExecution and
- * its current State. This object also acts as the "flow scope" data model. Data
- * in "flow scope" lives for the life of this object, and is cleaned up
- * automatically when this object is destroyed. Destruction happens when this
- * session enters an end state.
+ * Represents a single client instance of a single {@link Flow} definition.
  * <p>
- * This object is fully managed by a FlowExecution within a stack-based data
- * structure, where each session in the stack is a spawned flow at a specific
- * state. The session at the top of the stack is the currently active flow. This
- * stack of all flow sessions captures the complete and current state (snapshot)
- * of an executing flow.
+ * This object maintains all the state of the session including its status
+ * within exactly one governing FlowExecution and its current State. This object
+ * also acts as the "flow scope" data model. Data in "flow scope" lives for the
+ * life of this object and is cleaned up automatically when this object is
+ * destroyed. Destruction happens when this session enters an end state.
  * <p>
  * A flow session will go through several status changes during its lifecycle.
  * Initially it will be {@link FlowSessionStatus#CREATED}. For example, when a
@@ -54,10 +48,11 @@ package org.springframework.webflow;
  * is popped off the stack and discarded, and any allocated resources in "flow
  * scope" are automatically cleaned up.
  * <p>
- * Note that a flow <i>session</i> is in no way linked to an HTTP session! It
+ * Note that a flow <i>session</i> is in no way linked to an HTTP session. It
  * just uses the familiar "session" naming convention to denote a stateful
- * interaction.
+ * object.
  * 
+ * @see org.springframework.webflow.FlowSessionStatus
  * @see org.springframework.webflow.execution.FlowExecution
  * 
  * @author Keith Donald
@@ -71,12 +66,14 @@ public interface FlowSession {
 	public Flow getFlow();
 
 	/**
-	 * Returns the state of this flow session.
+	 * Returns the current state of this flow session. This value changes as the
+	 * flow is executes.
 	 */
 	public State getState();
 
 	/**
-	 * Returns the current status of this flow session.
+	 * Returns the current status of this flow session. This value changes as
+	 * the flow executes.
 	 */
 	public FlowSessionStatus getStatus();
 

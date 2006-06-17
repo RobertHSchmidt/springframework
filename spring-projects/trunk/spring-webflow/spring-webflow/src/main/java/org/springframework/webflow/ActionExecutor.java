@@ -19,9 +19,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A helper that performs action execution, encapsulating common logging and
- * exception handling logic. This is an internal helper class that is not
- * normally used by application code.
+ * A simple static helper that performs action execution that encapsulates
+ * common logging and exception handling logic. This is an internal helper class
+ * that is not normally used by application code.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -62,12 +62,9 @@ public class ActionExecutor {
 		}
 		catch (Exception e) {
 			// wrap the action as an ActionExecutionException
-			throw new ActionExecutionException(
-					context.getActiveFlow().getId(),
-					context.getCurrentState() != null ? context.getCurrentState().getId() : null,
-					action,
-					context.getAttributes(),
-					e);
+			throw new ActionExecutionException(context.getActiveFlow().getId(),
+					context.getCurrentState() != null ? context.getCurrentState().getId() : null, action, context
+							.getAttributes(), e);
 		}
 	}
 }

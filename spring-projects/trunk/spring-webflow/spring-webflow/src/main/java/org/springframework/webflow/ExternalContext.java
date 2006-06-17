@@ -16,16 +16,16 @@
 package org.springframework.webflow;
 
 /**
- * A facade that provides access to the state of an external system that has
- * interacted with Spring Web Flow.
+ * A facade that provides access to an external system that has interacted with
+ * Spring Web Flow.
  * <p>
- * This context object provides a single, consistent interface for internal SWF
+ * This context object provides a normalized interface for internal web flow
  * artifacts to use to reason on and manipulate the state of an external actor
  * calling into SWF to execute flows. It represents the context about a single,
- * <i>external</i> request to manipulate a flow execution.
+ * <i>external</i> client request to manipulate a flow execution.
  * <p>
  * The design of this interface was inspired by JSF's own ExternalContext
- * abstraction, and thus shares the same name for consistency. If a particular
+ * abstraction and shares the same name for consistency. If a particular
  * external client type does not support all methods defined by this interface,
  * they can just be implemented as returning an empty map.
  * 

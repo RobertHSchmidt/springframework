@@ -16,11 +16,12 @@
 package org.springframework.webflow;
 
 /**
- * A command that executes arbitrary behavior and returns a logical execution
- * result a calling Flow can respond to. Actions typically delegate down to the
- * service-layer to perform business operations. They often prepare views with
- * dynamic or calculated model data to support response rendering. They act as a
- * bridge between a SWF web-tier and your middle-tier business logic layer.
+ * A command that executes a behavior and returns a logical execution result a
+ * calling {@link Flow} or {@link State} can respond to. Actions typically
+ * delegate down to the application (or service) layer to perform business
+ * operations. They often prepare views with dynamic or calculated model data to
+ * support response rendering. They act as a bridge between a SWF web-tier and
+ * your middle-tier business logic layer.
  * <p>
  * When an action completes execution it signals a result event describing the
  * outcome of that execution (for example, "success", "error", "yes", "no",
@@ -38,8 +39,8 @@ package org.springframework.webflow;
  * {@link org.springframework.webflow.action.StatefulBeanInvokingAction} and
  * {@link org.springframework.webflow.action.AbstractBeanInvokingAction} for
  * more information). Action instance definitions may also be locally scoped to
- * a specific flow definition (see use of the "import" element of the root XML flow
- * definition element.)
+ * a specific flow definition (see use of the "import" element of the root XML
+ * flow definition element.)
  * <p>
  * Note: Actions are directly instantiatable for use in a standalone test
  * environment and can be parameterized with mocks or stubs, as they are simple
@@ -52,7 +53,7 @@ package org.springframework.webflow;
  * Note: if an Action is a singleton managed in application scope, take care not
  * to store and/or modify caller-specific state in a unsafe manner. The Action
  * {@link #execute(RequestContext)} method runs in an independently executing
- * thread on each invocation, so make sure you deal only with local data or
+ * thread on each invocation so make sure you deal only with local data or
  * internal, thread-safe services.
  * <p>
  * Note: an Action is not a controller like a Spring MVC controller or a Struts
@@ -75,17 +76,16 @@ public interface Action {
 	 * Execute this action. Action execution will occur in the context of a
 	 * request associated with an active flow execution.
 	 * <p>
-	 * More specifically, action execution is triggered in a production
-	 * environment when invoked within the state of an ongoing flow execution
-	 * for a specific <code>Flow</code> definition. The result of action
-	 * execution, a logical outcome event, can be used as grounds for a
-	 * transition out of the calling state.
+	 * Action execution is typically triggered in a production environment by a
+	 * state of an active flow execution for a specific flow definition. The
+	 * result of action execution, a logical outcome event, can be used as
+	 * grounds for a transition out of the calling state.
 	 * <p>
 	 * Note: The <code>RequestContext</code> argument to this method provides
-	 * access to the <b>data model</b> of the active flow execution in the
-	 * context of the currently executing thread. Among other things, this
-	 * allows this action to access model data set by other actions, as well as
-	 * set its own attributes it wishes to expose in a given scope.
+	 * access to data about the active flow execution in the context of the
+	 * currently executing thread. Among other things, this allows this action
+	 * to access model data set by other actions, as well as set its own
+	 * attributes it wishes to expose in a given {@link ScopeType scope type}.
 	 * <p>
 	 * All attributes set in "flow scope" by Actions will exist for the life of
 	 * the flow session and will be cleaned up automatically when the flow

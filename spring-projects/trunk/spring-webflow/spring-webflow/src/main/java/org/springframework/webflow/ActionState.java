@@ -22,16 +22,16 @@ import org.springframework.core.style.ToStringCreator;
 
 /**
  * A transitionable state that executes one or more actions when entered. When
- * the action(s) are executed, this state responds to their result(s) to decide
+ * the action(s) are executed this state responds to their result(s) to decide
  * what state to transition to next.
  * <p>
- * If more than one action is configured, they are executed in an ordered chain
- * until one returns a result event that matches a valid state transition out of
+ * If more than one action is configured they are executed in an ordered chain
+ * until one returns a result event that matches a state transition out of
  * this state. This is a form of the Chain of Responsibility (CoR) pattern.
  * <p>
- * The result of an action's execution is typically treated as the contributing
- * criteria for a state transition. In addition, any state accessible via the
- * <code>RequestContext</code> may be tested as part of custom transitional
+ * The result of an action's execution is typically the criteria for a
+ * transition out of this state. Additional information in the current
+ * {@link RequestContext} may also be tested as part of custom transitional
  * criteria, allowing for sophisticated transition expressions that reason on
  * contextual state.
  * <p>
@@ -49,12 +49,12 @@ import org.springframework.core.style.ToStringCreator;
  * <td valign="top">name</td>
  * <td>The 'name' property is used as a qualifier for an action's result event,
  * and is typically used to allow the flow to respond to a specific action's
- * outcome within a larger action execution chain. For example, if an action
- * named <code>myAction</code> returns a <code>success</code> result, a
- * transition that matches on event <code>myAction.success</code> will be
- * searched, and if found, executed. If this action is not assigned a name, a
- * transition for the base <code>success</code> event will be searched and if
- * found, executed. <br>
+ * outcome within a larger action chain. For example, if an action named
+ * <code>myAction</code> returns a <code>success</code> result, a transition
+ * that matches on event <code>myAction.success</code> will be searched, and
+ * if found, executed. If this action is not assigned a name a transition for
+ * the base <code>success</code> event will be searched and if found,
+ * executed. <br>
  * This is useful in situations where you want to execute actions in an ordered
  * chain as part of one action state, and wish to transition on the result of
  * the last one in the chain. For example:
@@ -73,7 +73,7 @@ import org.springframework.core.style.ToStringCreator;
  * to the 'displayForm' state. </td>
  * <tr>
  * <td valign="top">method</td>
- * <td>The 'method' property is the name of a specific method on a
+ * <td>The 'method' property is the name of a target method on a
  * <code>{@link org.springframework.webflow.action.MultiAction}</code> to
  * execute. In the MultiAction scenario the named method must have the signature
  * <code>public Event ${method}(RequestContext)</code>. As an example of this
@@ -85,11 +85,16 @@ import org.springframework.core.style.ToStringCreator;
  * excute a
  * {@link org.springframework.webflow.action.AbstractBeanInvokingAction bean invoking action}
  * that invokes a method on a POJO (plain old java.lang.Object). If the method
- * signature does accept arguments, those arguments may be specified by using
- * the format: <code>methodName(${arg1}, ${parg}, ...)</code>. Argument
- * ${expressions} are evaluated against the current <code>RequestContext</code>,
- * allowing for data stored in flow scope or request scope to be passed as
- * arguments to the POJO in an automatic fashion. In addition, POJO return
+ * signature does accept arguments those arguments may be specified by using the
+ * format:
+ * 
+ * <pre>
+ *      methodName(${arg1}, ${parg}, ...)
+ * </pre>
+ * 
+ * Argument ${expressions} are evaluated against the current
+ * <code>RequestContext</code>, allowing for data stored in flow scope or
+ * request scope to be passed as arguments to the POJO. In addition, POJO return
  * values may be exposed to the flow automatically. See the bean invoking action
  * type hierarchy for more information. </td>
  * </tr>
@@ -97,6 +102,7 @@ import org.springframework.core.style.ToStringCreator;
  * 
  * @see org.springframework.webflow.Action
  * @see org.springframework.webflow.action.MultiAction
+ * @see org.springframework.webflow.action.AbstractBeanInvokingAction
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -104,7 +110,7 @@ import org.springframework.core.style.ToStringCreator;
 public class ActionState extends TransitionableState {
 
 	/**
-	 * The list of actions to be executed when this action state is entered.
+	 * The list of actions to be executed when this state is entered.
 	 */
 	private ActionList actionList = new ActionList();
 
@@ -133,11 +139,10 @@ public class ActionState extends TransitionableState {
 	 * Overrides getRequiredTransition(RequestContext) to throw a local
 	 * NoMatchingActionResultTransitionException if a transition on the
 	 * occurence of an action result event cannot be matched. Used to facilitate
-	 * an action invocation chain.
-	 * <p>
-	 * Note that we cannot catch NoMatchingTransitionException since that could
-	 * lead to unwanted situations where we're catching a exception that's generated
-	 * by another state, e.g. because of a configuration error!
+	 * an action invocation chain. <p> Note that we cannot catch
+	 * NoMatchingTransitionException since that could lead to unwanted
+	 * situations where we're catching a exception that's generated by another
+	 * state, e.g. because of a configuration error!
 	 * @see org.springframework.webflow.TransitionableState#getRequiredTransition(org.springframework.webflow.RequestContext)
 	 */
 	public Transition getRequiredTransition(RequestContext context) throws NoMatchingTransitionException {
@@ -182,17 +187,19 @@ public class ActionState extends TransitionableState {
 								+ "] resulted in no matching transition on event '"
 								+ event.getId()
 								+ "'"
-								+ (it.hasNext() ? ": proceeding to the next action in the list" : ": action list exhausted"));
+								+ (it.hasNext() ? ": proceeding to the next action in the list"
+										: ": action list exhausted"));
 					}
 				}
 			}
 			else {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Action execution ["
-							+ (executionCount + 1)
-							+ "] returned a [null] event"
-							+ (it.hasNext() ? ": proceeding to the next action in the list"
-									: ": action list exhausted"));
+					logger
+							.debug("Action execution ["
+									+ (executionCount + 1)
+									+ "] returned a [null] event"
+									+ (it.hasNext() ? ": proceeding to the next action in the list"
+											: ": action list exhausted"));
 				}
 				eventIds[executionCount] = null;
 			}
@@ -201,17 +208,17 @@ public class ActionState extends TransitionableState {
 		if (executionCount > 0) {
 			throw new NoMatchingTransitionException(getFlow().getId(), getId(), context.getLastEvent(),
 					"No transition was matched on the event(s) signaled by the [" + executionCount
-					+ "] action(s) that executed in this action state '" + getId() + "' of flow '"
-					+ getFlow().getId() + "'; transitions must be defined to handle action result outcomes -- "
-					+ "possible flow configuration error? Note: the eventIds signaled were: '"
-					+ StylerUtils.style(eventIds)
-					+ "', while the supported set of transitional criteria for this action state is '"
-					+ StylerUtils.style(getTransitionSet().getTransitionCriterias()) + "'");
+							+ "] action(s) that executed in this action state '" + getId() + "' of flow '"
+							+ getFlow().getId() + "'; transitions must be defined to handle action result outcomes -- "
+							+ "possible flow configuration error? Note: the eventIds signaled were: '"
+							+ StylerUtils.style(eventIds)
+							+ "', while the supported set of transitional criteria for this action state is '"
+							+ StylerUtils.style(getTransitionSet().getTransitionCriterias()) + "'");
 		}
 		else {
 			throw new IllegalStateException(
 					"No actions were executed, thus I cannot execute any state transition "
-					+ "-- programmer configuration error; make sure you add at least one action to this state's action list");
+							+ "-- programmer configuration error; make sure you add at least one action to this state's action list");
 		}
 	}
 

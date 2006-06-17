@@ -72,11 +72,11 @@ public class TestFlowArtifactFactory extends BaseFlowServiceLocator {
 	}
 	
 	public class TestAttributeMapper implements FlowAttributeMapper {
-		public AttributeMap createSubflowInput(RequestContext context) {
+		public AttributeMap createFlowInput(RequestContext context) {
 			return new AttributeMap();
 		}
 
-		public void mapSubflowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {
+		public void mapFlowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {
 		}
 	}
 

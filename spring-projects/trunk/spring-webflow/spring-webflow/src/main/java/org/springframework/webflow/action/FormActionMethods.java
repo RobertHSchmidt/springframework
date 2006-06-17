@@ -11,12 +11,7 @@ import org.springframework.webflow.RequestContext;
 public interface FormActionMethods {
 
 	/**
-	 * Prepares a form object for display in a new form. This will initialize
-	 * the binder so that all custom property editors are available for use in
-	 * the new form.
-	 * <p>
-	 * If the setupBindingEnabled method returns true a data binding operation
-	 * will occur to pre-populate the new form with incoming event parameters.
+	 * Prepares a form object for display in a new form, loading it if necessary.
 	 * @param context the action execution context, for accessing and setting
 	 * data in "flow scope" or "request scope"
 	 * @return "success" when binding and validation is successful, "error" if

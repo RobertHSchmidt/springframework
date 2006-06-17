@@ -18,16 +18,17 @@ package org.springframework.webflow;
 import org.springframework.webflow.builder.FlowArtifactLookupException;
 
 /**
- * Core base class for exceptions that occur while a flow is executing.
- * Can be used directly, but you are encouraged to create a specific subclass for a
+ * Base class for exceptions that occur within a flow while it is executing. Can
+ * be used directly, but you are encouraged to create a specific subclass for a
  * particular use case.
  * <p>
- * Execution exceptions occur at runtime, when the flow is executing requests on
+ * Execution exceptions occur at runtime when the flow is executing requests on
  * behalf of a client. They signal that an execution problem occured: e.g.
- * action execution failed or no transition matched a particular
- * request context. An execution exception does not indicate a flow definition
- * problem, a {@link FlowArtifactLookupException} is used for that.
+ * action execution failed or no transition matched the current request context.
+ * An execution exception does not indicate a flow definition problem, a
+ * {@link FlowArtifactLookupException} is used for that.
  * 
+ * @see org.springframework.webflow.Flow
  * @see org.springframework.webflow.State
  * @see org.springframework.webflow.builder.FlowArtifactLookupException
  * 
@@ -35,14 +36,14 @@ import org.springframework.webflow.builder.FlowArtifactLookupException;
  * @author Erwin Vervaet
  */
 public class FlowExecutionException extends FlowException {
-	
+
 	/**
 	 * The flow in which the exception occured.
 	 */
 	private String flowId;
-	
+
 	/**
-	 * The state where the exception occured (optional).
+	 * The state of the flow where the exception occured (optional).
 	 */
 	private String stateId;
 
@@ -72,16 +73,16 @@ public class FlowExecutionException extends FlowException {
 	}
 
 	/**
-	 * Returns the id of the flow that was executing when this exception occured.
+	 * Returns the id of the flow that was executing when this exception
+	 * occured.
 	 */
 	public String getFlowId() {
 		return flowId;
 	}
-	
+
 	/**
-	 * Returns the id of the state where the exception occured.
-	 * Could be null if no state was active at the time when the exception
-	 * was thrown.
+	 * Returns the id of the state where the exception occured. Could be null if
+	 * no state was active at the time when the exception was thrown.
 	 */
 	public String getStateId() {
 		return stateId;

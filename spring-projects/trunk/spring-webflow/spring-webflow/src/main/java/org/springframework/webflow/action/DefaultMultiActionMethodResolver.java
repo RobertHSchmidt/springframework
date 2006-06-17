@@ -25,7 +25,7 @@ import org.springframework.webflow.action.MultiAction.MethodResolver;
  * <ol>
  * <li>If the currently executing action has a "method" property defined,
  * use the value as method name.</li>
- * <li>Else, use the name of the current state of the flow execution as a
+ * <li>Else use the name of the current state of the flow execution as a
  * method name.</li>
  * </ol>
  * 

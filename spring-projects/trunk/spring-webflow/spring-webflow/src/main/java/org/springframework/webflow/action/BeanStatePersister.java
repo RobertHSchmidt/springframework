@@ -22,7 +22,7 @@ import org.springframework.webflow.RequestContext;
  * invokable bean.
  * <p>
  * Some people might call what this strategy enables is memento-like
- * <i>bijection</i>, where state is <i>injected</i> into a bean before
+ * <i>bijection</i> where state is <i>injected</i> into a bean before
  * invocation and then <i>outjected</i> after invocation.
  * 
  * @author Keith Donald

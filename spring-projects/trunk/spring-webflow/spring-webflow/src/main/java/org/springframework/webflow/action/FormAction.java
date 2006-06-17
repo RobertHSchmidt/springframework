@@ -38,17 +38,18 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <p>
  * Several action execution methods are provided:
  * <ul>
- * <li> {@link #setupForm(RequestContext)} - Prepares the backing form object
- * for display on a form. This method behaves exactly like exposeFormObject but
- * goes further by adding a capability to perform optional data binding on
- * setup. This action method will return the success() event if there are no
- * setup errors, otherwise it will return the error() event. </li>
- * <li> {@link #bindAndValidate(RequestContext)} - Binds all incoming event
- * parameters to the form object and validates the form object using a
+ * <li> {@link #setupForm(RequestContext)} - Prepares the form object for
+ * display on a form, {@link #loadFormObject(RequestContext) loading it} if
+ * necessary and caching it in the configured
+ * {@link #getFormObjectScope() form object scope}. Also installs any custom
+ * property editors for formatting form object field values. This action method
+ * will return the success() event unless an exception was thrown.
+ * <li> {@link #bindAndValidate(RequestContext)} - Binds all incoming request
+ * parameters to the form object and then validates the form object using a
  * registered validator. This action method will return the success() event if
  * there are no binding or validation errors, otherwise it will return the
  * error() event. </li>
- * <li> {@link #bind(RequestContext)} - Binds all incoming event parameters to
+ * <li> {@link #bind(RequestContext)} - Binds all incoming request parameters to
  * the form object. No additional validation is performed. This action method
  * will return the success() event if there are no binding errors, otherwise it
  * will return the error() event. </li>
@@ -61,7 +62,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * success() on completion, error() if a form object load failure occurs. </li>
  * </ul>
  * <p>
- * Since this is a multi-action, a subclass could add any number of additional
+ * Since this is a multi-action a subclass could add any number of additional
  * action execution methods, e.g. "setupReferenceData(RequestContext)", or
  * "processSubmit(RequestContext)".
  * <p>
@@ -71,13 +72,13 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <li> Create a view state to display the form. In an entry action of that
  * state, invoke {@link #setupForm(RequestContext) setupForm} to prepare the new
  * form for display. </li>
- * <li> On submit, execute a state transition action that performs a
+ * <li> On a matching "submit" transition execute an action that invokes
  * bindAndValidate. This will invoke
  * {@link #bindAndValidate(RequestContext) bindAndValidate} to bind incoming
- * event parameters to the form object and validate the form object.
+ * request parameters to the form object and validate the form object.
  * <li>If there are binding or validation errors, the transition will not be
  * allowed and the view state will automatically be re-entered.
- * <li> If binding and validation is successful, go to an action state called
+ * <li> If binding and validation is successful go to an action state called
  * "processSubmit" (or any other appropriate name). This will invoke an action
  * method called "processSubmit" you must provide on a subclass to process form
  * submission, e.g. interacting with the business logic. </li>
@@ -96,7 +97,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
  *         &lt;/transition&gt;
  *     &lt;/view-state&gt;
- *                                   
+ *                                         
  *     &lt;action-state id=&quot;executeSearch&quot;&gt;
  *         &lt;action bean=&quot;searchFormAction&quot;/&gt;
  *         &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
@@ -105,7 +106,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * 
  * </p>
  * <p>
- * When you need additional flexibility, consider splitting the view state above
+ * When you need additional flexibility consider splitting the view state above
  * acting as a single logical <i>form state</i> into multiple states. For
  * example, you could have one action state handle form setup, a view state
  * trigger form display, another action state handle data binding and
@@ -119,7 +120,9 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * {@link #initBinder(RequestContext, DataBinder) initBinder}. This is called
  * after a new data binder is created by any of the action execution methods. It
  * allows you to install any custom property editors required to format
- * richly-typed form object property values. Note: consider setting an explicit
+ * richly-typed form object property values.
+ * <p>
+ * Note: consider setting an explicit
  * {@link org.springframework.beans.PropertyEditorRegistrar} strategy as a more
  * reusable way to encapsulate custom PropertyEditor installation logic.
  * <li>Another important hook is
@@ -130,22 +133,32 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <p>
  * Note that this action does not provide a <i>referenceData()</i> hook method
  * similar to that of Spring MVC's <code>SimpleFormController</code>. If you
- * need to expose reference data to populate form drop downs for example, you
- * should create a custom action method in your FormAction subclass that does
- * just that, and invoke it as either a chained action as part of a form setup
+ * wish to expose reference data to populate form drop downs you can
+ * define a custom action method in your FormAction subclass that does
+ * just that.  Simply invoke it as either a chained action as part of setupForm
  * state, or as a fine grained state definition itself.
  * <p>
  * For example, you might create this method in your subclass:
  * 
  * <pre>
- * public Event setupReferenceData(RequestContext context) throws Exception {
- *     Scope requestScope = context.getRequestScope();
- * 	   requestScope.setAttribute(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
- *     return success();
- * }
+ *     public Event setupReferenceData(RequestContext context) throws Exception {
+ *         Scope requestScope = context.getRequestScope();
+ * 	       requestScope.setAttribute(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
+ * 	       return success();
+ *     }
  * </pre>
  * 
- * <p>
+ * ... and then invoke it like this:
+ * <pre>
+ *     &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *         &lt;entry-actions&gt;
+ *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupReferenceData&quot;/&gt;
+ *         &lt;/entry-actions&gt;
+ *         ...
+ *     &lt;/view-state&gt;
+ * </pre>
+ * 
  * <b>FormAction configurable properties</b><br>
  * <table border="1">
  * <tr>
@@ -213,10 +226,10 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * @author Keith Donald
  */
 public class FormAction extends MultiAction implements InitializingBean, FormActionMethods {
-	
+
 	/*
-	 * Implementation note:
-	 * Uses deprecated DataBinder.getErrors() to remain compatible with Spring 1.2.x.
+	 * Implementation note: Uses deprecated DataBinder.getErrors() to remain
+	 * compatible with Spring 1.2.x.
 	 */
 
 	/**

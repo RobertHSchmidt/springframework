@@ -20,22 +20,27 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
- * Terminates an active flow session when entered. If the terminated session is
- * the root flow session, the entire flow execution ends. If the terminated
- * session was acting as a subflow, the governing flow execution continues and
- * control is returned to the parent flow session. In that case, this state is
- * treated as an ending result event the resuming parent flow is expected to
- * respond to.
+ * A state that ends a flow when entered. More specifically, this state ends the
+ * active flow session of the active flow execution associated with the current
+ * request context.
+ * <p>
+ * If the ended session is the "root flow session" the entire flow execution
+ * ends, signaling the end of a logical conversation.
+ * <p>
+ * If the terminated session was acting as a subflow the flow execution
+ * continues and control is returned to the parent flow session. In that case,
+ * this state returns an ending result event the resuming parent flow is
+ * expected to respond to.
  * <p>
  * An end state may optionally be configured with the name of a view to render
  * when entered. This view will be rendered if the end state terminates the
  * entire flow execution as a kind of flow ending "confirmation page".
  * <p>
  * Note: if no <code>viewName</code> property is specified <b>and</b> this
- * end state terminates the entire flow execution, it is expected that some
+ * end state terminates the entire flow execution it is expected that some
  * action has already written the response (or else a blank response will
  * result). On the other hand, if no <code>viewName</code> is specified <b>and</b>
- * this end state relinquishes control back to a parent flow, view rendering
+ * this end state relinquishes control back to a parent flow, view selection
  * responsibility falls on the parent flow.
  * 
  * @see org.springframework.webflow.ViewSelector
@@ -49,7 +54,7 @@ public class EndState extends State {
 
 	/**
 	 * The optional view selector that will select a view to render if this end
-	 * state terminates an executing root flow.
+	 * state terminates a root flow session.
 	 */
 	private ViewSelector viewSelector = NullViewSelector.INSTANCE;
 

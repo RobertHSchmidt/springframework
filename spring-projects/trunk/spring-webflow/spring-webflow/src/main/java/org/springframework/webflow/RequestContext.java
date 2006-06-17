@@ -22,19 +22,20 @@ package org.springframework.webflow;
  * system by an external actor to manipulate exactly one flow execution.
  * <p>
  * A new instance of this object is created when one of the core operations
- * supported by a <code>FlowExecution</code> is invoked, either <i>start</i>
- * to launch the flow execution, <i>signalEvent</i> to resume the flow
- * execution, or <i>refresh</i> to reconstitute the flow execution's last view
- * selection for purposes of reissuing a user response.
+ * supported by a flow execution is invoked, either <i>start</i> to launch the
+ * flow execution, <i>signalEvent</i> to resume the flow execution, or
+ * <i>refresh</i> to reconstitute the flow execution's last view selection for
+ * purposes of reissuing a user response.
  * <p>
- * Once created this context object is passed around throughout request
- * processing where it may be accessed and reasoned upon, typically by
- * user-implemented action code and/or state transition criteria.
+ * Once created this context object is passed around throughout flow execution
+ * request processing where it may be accessed and reasoned upon by SWF-internal
+ * artifacts such as states, user-implemented action code, and state transition
+ * criteria.
  * <p>
- * When a call into a flow execution returns, this object goes out of scope and
+ * When a call into a flow execution returns this object goes out of scope and
  * is disposed of automatically. Thus this object is an internal artifact used
- * within a FlowExecution: this object is NOT directly exposed to external
- * client code, e.g. a view implementation (JSP).
+ * within a FlowExecution: this object is not exposed to external client code,
+ * e.g. a view implementation (JSP).
  * <p>
  * Note: the "requestScope" property may be used as a store for arbitrary data
  * that should exist for the life of this object.
@@ -45,23 +46,26 @@ package org.springframework.webflow;
  * returned when a {@link org.springframework.webflow.ViewState} or
  * {@link org.springframework.webflow.EndState} is entered.
  * <p>
- * This interface does not allow direct manipulation of the flow execution. That
- * is only possible via the
- * {@link org.springframework.webflow.RequestControlContext} sub
- * interface, which is used by privelged state types to manipulate the flow.
+ * This interface does not allow manipulation of the state of the executing
+ * flow. That is only possible via the
+ * {@link org.springframework.webflow.RequestControlContext} sub interface,
+ * which is used by privelged state types to manipulate the flow from within a
+ * request.
  * <p>
  * The web flow system will ensure that a RequestContext object is local to the
  * current thread. It can be safely manipulated without needing to worry about
  * concurrent access.
  * <p>
  * Note: the <i>request</i> context is in no way linked to an HTTP or Portlet
- * request! It uses the familiar "request" naming convention to indicate a
- * single call to manipulate a runtime execution of a flow.
+ * request. It uses the familiar "request" naming convention to indicate a
+ * single call to manipulate a runtime execution of a flow definition.
  * 
- * @see org.springframework.webflow.execution.FlowExecution
  * @see org.springframework.webflow.RequestControlContext
+ * @see org.springframework.webflow.Flow
+ * @see org.springframework.webflow.State
  * @see org.springframework.webflow.Action
  * @see org.springframework.webflow.TransitionCriteria
+ * @see org.springframework.webflow.execution.FlowExecution
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
