@@ -35,8 +35,9 @@ import org.springframework.ws.soap.security.xwss.callback.AbstractCallbackHandle
  * Callback handler that validates a certificate uses an Acegi <code>AuthenticationManager</code>. Logic based on
  * Acegi's <code>BasicProcessingFilter</code>.
  * <p/>
- * An Acegi <code>UsernamePasswordAuthenticationToken</code> is created with the username as principal and password as
- * credentials.
+ * This handler requires an Acegi <code>AuthenticationManager</code> to operate. It can be set using the
+ * <code>authenticationManager</code> property. An Acegi <code>UsernamePasswordAuthenticationToken</code> is created
+ * with the username as principal and password as credentials.
  * <p/>
  * This class only handles <code>PasswordValidationCallback</code>s that contain a
  * <code>PlainTextPasswordRequest</code>, and throws an <code>UnsupportedCallbackException</code> for others.
