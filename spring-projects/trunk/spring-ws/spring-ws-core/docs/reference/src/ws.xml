@@ -17,7 +17,7 @@
     <section>
         <title>Endpoints</title>
     </section>
-    <section>
+    <section id="ws-endpoint-mapping">
         <title>Endpoint mappings</title>
         <para>
             The endpoint mapping is responsible for mapping incoming messages to appropriate endpoints. It does this by
