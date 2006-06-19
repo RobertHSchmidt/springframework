@@ -2,7 +2,7 @@ SPRING WEB FLOW (SWF) CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 RC3 (15.6.2006)
+Changes in version 1.0 RC3 (21.6.2006)
 ------------------------------------
 Package org.springframework.webflow
 * Renamed TransitionSet.transitionMatches to "hasMatchingTransition".
@@ -16,8 +16,8 @@ Package org.springframework.webflow
 * Renamed StateExceptionHandlerSet to FlowExecutionHandlerSet.
 * Removed FlowExecutionStatistics, merging its only useful method (isActive) into the FlowExecutionContext interface
 * Removed unnecessary Event argument from Flow.onEvent and TransitionableState.onEvent.
-* Removed CannotExecuteTransitionException.
-* Removed NoSuchFlowStateException.
+* Removed CannotExecuteTransitionException, as its use reflected an illegal state.
+* Removed NoSuchFlowStateException, as its use reflected an illegal argument.
 * Made all exceptions serializable, removing dependencies on internal transient arguments such as Flow, State, and Transition 
   in favor of serializable artifact identifiers such as the flowId and stateId.
   
@@ -39,13 +39,16 @@ Package org.springframework.webflow.execution
 * NoSuchConversationException now triggers a NoSuchFlowExecution exception.
 * InvalidContinuationIdException, ContinuationNotFoundException, and ContinuationUnmarshalException 
   now trigger a FlowExecutionRestorationException.
+
+Package org.springframework.webflow.executor
+* Refined PortletFlowController to no longer set flowExecutionKey render parameter when an execution terminates.
   
+Package org.springframework.webflow.registry
+* Made NoSuchFlowDefinitionException a standalone exception of the flow registry subsystem.
+
 Package org.springframework.webflow.samples
 * Simplified 'flowLauncher' to take advantage of latest attribute mapping features.
 * Simplified 'fileUpload' to take advantage of convenient MultipartFile parameter access support.
-
-Package org.springframework.webflow.registry
-* Made NoSuchFlowDefinitionException a standalone exception of the flow registry subsystem.
 
 Package org.springframework.webflow.support
 * Fixed bug in FlowRedirectSelector where a NPE was thrown on null redirect expression.
