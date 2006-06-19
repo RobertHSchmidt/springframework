@@ -109,6 +109,7 @@ public class PortletFlowController extends AbstractController implements Initial
 		// set the cache seconds property to 0 so no pages are cached by default
 		// for flows.
 		setCacheSeconds(0);
+		setSynchronizeOnSession(true);
 	}
 
 	/**
@@ -175,16 +176,19 @@ public class PortletFlowController extends AbstractController implements Initial
 		PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
 		if (argumentExtractor.isFlowExecutionKeyPresent(context)) {
 			String flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
-			ResponseInstruction responseInstruction = getActionResponseInstruction(request, flowExecutionKey);
+			ResponseInstruction responseInstruction = getActionResponseInstruction(request);
 			if (responseInstruction == null) {
 				responseInstruction = flowExecutor.refresh(flowExecutionKey, context);
 			}
 			return toModelAndView(responseInstruction);
 		}
 		else {
-			// launch a new flow execution
-			String flowId = argumentExtractor.extractFlowId(context);
-			ResponseInstruction responseInstruction = flowExecutor.launch(flowId, context);
+			ResponseInstruction responseInstruction = getActionResponseInstruction(request);
+			if (responseInstruction == null) {
+				// launch a new flow execution
+				String flowId = argumentExtractor.extractFlowId(context);
+				responseInstruction = flowExecutor.launch(flowId, context);
+			}
 			return toModelAndView(responseInstruction);
 		}
 	}
@@ -222,11 +226,11 @@ public class PortletFlowController extends AbstractController implements Initial
 
 	// helpers
 
-	private ResponseInstruction getActionResponseInstruction(PortletRequest request, String flowExecutionKey) {
+	private ResponseInstruction getActionResponseInstruction(PortletRequest request) {
 		PortletSession session = request.getPortletSession(false);
 		ResponseInstruction response = null;
 		if (session != null) {
-			String attributeName = getAttributeName(flowExecutionKey);
+			String attributeName = getAttributeName();
 			response = (ResponseInstruction)session.getAttribute(attributeName);
 			if (response != null) {
 				// remove it
@@ -256,11 +260,11 @@ public class PortletFlowController extends AbstractController implements Initial
 	private void exposeToRenderPhase(ResponseInstruction responseInstruction, ActionRequest request) {
 		PortletSession session = request.getPortletSession(false);
 		if (session != null) {
-			session.setAttribute(getAttributeName(responseInstruction.getFlowExecutionKey()), responseInstruction);
+			session.setAttribute(getAttributeName(), responseInstruction);
 		}
 	}
 
-	private String getAttributeName(String flowExecutionKey) {
-		return "actionRequest.responseInstruction." + flowExecutionKey;
+	private String getAttributeName() {
+		return "actionRequest.responseInstruction";
 	}
 }
