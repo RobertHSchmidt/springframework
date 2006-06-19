@@ -26,8 +26,8 @@ import org.springframework.util.StringUtils;
  * <code>TransitionCriteria</code> definition, or in a test environment.
  * <p>
  * An annotated action is an action that wraps another action (referred to as
- * the <i>target action), setting up the target action's execution properties
- * before invoking {@link Action#execute}
+ * the <i>target</i> action), setting up the target action's execution properties
+ * before invoking {@link Action#execute}.
  * 
  * @author Keith Donald
  */
@@ -38,10 +38,9 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	/**
 	 * The action name attribute ("name").
 	 * <p>
-	 * The name attrubte is often used as a qualifier for an action's result
+	 * The name attribute is often used as a qualifier for an action's result
 	 * event, and is typically used to allow the flow to respond to a specific
 	 * action's outcome within a larger action execution chain.
-	 * <p>
 	 * @see ActionState
 	 */
 	public static final String NAME_ATTRIBUTE = "name";
@@ -52,8 +51,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * The method property is a hint about what method should be invoked; for
 	 * example, the name of a specific target method on a
 	 * {@link org.springframework.webflow.action.MultiAction multi action}.
-	 * <p>
-	 * @see org.springframework.webflow.ActionState
+	 * @see ActionState
 	 */
 	public static final String METHOD_ATTRIBUTE = "method";
 
@@ -107,6 +105,15 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	}
 
 	/**
+	 * Returns whether or not the wrapped target action is a named action.
+	 * @see #getName()
+	 * @see #setName(String)
+	 */
+	public boolean isNamed() {
+		return StringUtils.hasText(getName());
+	}
+	
+	/**
 	 * Returns the name of the action method to invoke when the target action is
 	 * executed.
 	 */
@@ -123,22 +130,16 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 		getAttributeMap().put(METHOD_ATTRIBUTE, method);
 	}
 
-	/**
-	 * Returns whether or not the wrapped target action is a named action.
-	 * @see #setName(String)
-	 */
-	public boolean isNamed() {
-		return StringUtils.hasText(getName());
-	}
-
 	public Event execute(RequestContext context) throws Exception {
+		AttributeCollection origAttributes = getAttributeMap();
 		try {
 			context.setAttributes(getAttributeMap());
 			Event result = getTargetAction().execute(context);
 			return postProcessResult(result);
 		}
 		finally {
-			context.setAttributes(null);
+			// restore original attributes
+			context.setAttributes(origAttributes);
 		}
 	}
 

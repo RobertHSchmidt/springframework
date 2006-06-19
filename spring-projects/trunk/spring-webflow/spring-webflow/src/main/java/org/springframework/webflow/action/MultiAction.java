@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.action;
 
+import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.util.DispatchMethodInvoker;
@@ -51,8 +52,8 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Alternatively you may explictly specify the method name:
  * 
  * <pre>
- *     &lt;action-state id=&quot;executingSearch&quot;&gt;
- *         &lt;action bean=&quot;phonebook&amp;quot method=&quot;executeSearch&quot;/&gt;
+ *     &lt;action-state id=&quot;search&quot;&gt;
+ *         &lt;action bean=&quot;searchAction&amp;quot method=&quot;executeSearch&quot;/&gt;
  *         &lt;transition on=&quot;success&quot; to=&quot;results&quot;/&gt;
  *     &lt;/action-state&gt;
  * </pre>
@@ -60,25 +61,11 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <p>
  * A typical use of the MultiAction is to centralize all command logic for a
  * flow in one place. Another common use is to centralize form setup and submit
- * logic into one place, or CRUD (create/read/update/delete) operations for a
+ * logic in one place, or CRUD (create/read/update/delete) operations for a
  * single domain object in one place.
- * <p>
- * <b>Exposed configuration properties:</b> <br>
- * <table border="1">
- * <tr>
- * <td><b>Name </b></td>
- * <td><b>Default </b></td>
- * <td><b>Description </b></td>
- * </tr>
- * <tr>
- * <td>methodResolver</td>
- * <td>Treats the id of the "currentState" as the target method name</td>
- * <td>Set the strategy used to resolve the name (key) of an action execution
- * method. Allows full control over the method resolution algorithm.</td>
- * </tr>
- * </table>
  * 
  * @see MultiAction.MethodResolver
+ * @see org.springframework.webflow.action.DefaultMultiActionMethodResolver
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -97,7 +84,11 @@ public class MultiAction extends AbstractAction {
 	private MethodResolver methodResolver = new DefaultMultiActionMethodResolver();
 
 	/**
-	 * Protected default constructor; not invokable by direct MultiAction instantiation.
+	 * Protected default constructor; not invokable for direct MultiAction instantiation.
+	 * Intended for use by subclasses.
+	 * <p>
+	 * Sets the target to this multi action instance.
+	 * @see #setTarget(Object)
 	 */
 	protected MultiAction() {
 		setTarget(this);
@@ -110,14 +101,14 @@ public class MultiAction extends AbstractAction {
 	 * <pre>
 	 *       public Event ${method}(RequestContext context) throws Exception;
 	 * </pre>
-	 * @param target the target of this multi action's invocation
+	 * @param target the target of this multi action's invocations
 	 */
 	public MultiAction(Object target) {
 		setTarget(target);
 	}
 
 	/**
-	 * Sets the target of this multi action invocation.
+	 * Sets the target of this multi action invocations.
 	 * @param target the target
 	 */
 	protected final void setTarget(Object target) {
@@ -125,14 +116,16 @@ public class MultiAction extends AbstractAction {
 	}
 
 	/**
-	 * Get the strategy used to resolve action execution method keys.
+	 * Get the strategy used to resolve action execution method names.
 	 */
 	public MethodResolver getMethodResolver() {
 		return methodResolver;
 	}
 
 	/**
-	 * Set the strategy used to resolve action execution method keys.
+	 * Set the strategy used to resolve action execution method names.
+	 * Allows full control over the method resolution algorithm.
+	 * Defaults to {@link DefaultMultiActionMethodResolver}.
 	 */
 	public void setMethodResolver(MethodResolver methodResolver) {
 		this.methodResolver = methodResolver;
@@ -140,12 +133,21 @@ public class MultiAction extends AbstractAction {
 
 	protected final Event doExecute(RequestContext context) throws Exception {
 		String method = getMethodResolver().resolveMethod(context);
-		return (Event)methodInvoker.invoke(method, new Object[] { context });
+		Object obj = methodInvoker.invoke(method, new Object[] { context });
+		if (obj != null) {
+			Assert.isInstanceOf(Event.class, obj,
+					"the '" + method + "' action execution method on target object '" +
+					methodInvoker.getTarget() + "' did not return an Event object but '" +
+					obj + "' of type " + obj.getClass().getName() + " -- " +
+					"Programmer error; make sure the method signature conforms to " +
+					"'public Event ${method}(RequestContext context) throws Exception;'.");
+		}
+		return (Event)obj;
 	}
 
 	/**
 	 * Strategy interface used by the MultiAction to map a request context to
-	 * the name (key) of an action execution method.
+	 * the name of an action execution method.
 	 * 
 	 * @author Keith Donald
 	 * @author Erwin Vervaet
@@ -153,9 +155,9 @@ public class MultiAction extends AbstractAction {
 	public interface MethodResolver {
 
 		/**
-		 * Resolve a method key from given flow execution request context.
+		 * Resolve a method name from given flow execution request context.
 		 * @param context the flow execution request context
-		 * @return the key identifying the method that should handle action
+		 * @return the name of the method that should handle action
 		 * execution
 		 */
 		public String resolveMethod(RequestContext context);

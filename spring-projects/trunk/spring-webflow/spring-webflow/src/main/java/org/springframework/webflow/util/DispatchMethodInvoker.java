@@ -75,6 +75,21 @@ public class DispatchMethodInvoker {
 		this.target = target;
 		this.parameterTypes = parameterTypes;
 	}
+	
+	/**
+	 * Returns the target object method calls are dispatched to.
+	 */
+	public Object getTarget() {
+		return target;
+	}
+	
+	/**
+	 * Returns the parameter types defining the argument signature of the
+	 * dispatch methods.
+	 */
+	public Class[] getParameterTypes() {
+		return parameterTypes;
+	}
 
 	/**
 	 * Dispatch a call with given arguments to named dispatcher method.

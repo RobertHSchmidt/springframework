@@ -20,7 +20,7 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.MultiAction.MethodResolver;
 
 /**
- * Default method key resolver used by the MultiAction class. It uses the
+ * Default method resolver used by the MultiAction class. It uses the
  * following algorithm to calculate a method name:
  * <ol>
  * <li>If the currently executing action has a "method" property defined,
@@ -29,14 +29,17 @@ import org.springframework.webflow.action.MultiAction.MethodResolver;
  * method name.</li>
  * </ol>
  * 
+ * @see org.springframework.webflow.action.MultiAction
+ * 
  * @author Erwin Vervaet
  */
 class DefaultMultiActionMethodResolver implements MethodResolver {
+	
 	public String resolveMethod(RequestContext context) {
 		String method = context.getAttributes().getString(AnnotatedAction.METHOD_ATTRIBUTE);
 		if (method == null) {
 			if (context.getCurrentState() != null) {
-				// default to the stateId
+				// default to the state id
 				method = context.getCurrentState().getId();
 			}
 			else {

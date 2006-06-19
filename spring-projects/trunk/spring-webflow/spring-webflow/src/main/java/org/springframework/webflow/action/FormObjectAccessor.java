@@ -55,7 +55,7 @@ public class FormObjectAccessor {
 	private static final String ERRORS_PREFIX = BindException.ERROR_KEY_PREFIX;
 	
 	/**
-	 * The current request context.
+	 * The wrapped request context.
 	 */
 	private RequestContext context;
 
