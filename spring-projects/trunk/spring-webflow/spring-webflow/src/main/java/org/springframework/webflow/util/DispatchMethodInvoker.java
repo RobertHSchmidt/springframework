@@ -66,7 +66,7 @@ public class DispatchMethodInvoker {
 
 	/**
 	 * Creates a dispatch method invoker.
-	 * @param target the target to dispatch to.
+	 * @param target the target to dispatch to
 	 * @param parameterTypes the parameter types defining the argument signature
 	 * of the dispatch methods
 	 */
@@ -90,6 +90,7 @@ public class DispatchMethodInvoker {
 			return dispatchMethod.invoke(target, arguments);
 		}
 		catch (InvocationTargetException e) {
+			// the invoced method threw an exception; have it propagate to the caller
 			Throwable t = e.getTargetException();
 			if (t instanceof Exception) {
 				throw (Exception)e.getTargetException();
@@ -135,7 +136,7 @@ public class DispatchMethodInvoker {
 	}
 
 	/**
-	 * Thrown when a method could not be resolved.
+	 * Thrown when a dispatch method could not be resolved.
 	 */
 	public static class MethodLookupException extends NestedRuntimeException {
 

@@ -31,14 +31,17 @@ public class RandomGuidUidGenerator implements UidGenerator, Serializable {
 	private boolean secure;
 
 	/**
-	 * Returns the secure flag.
+	 * Returns whether or not the generated random numbers are
+	 * <i>secure</i>, meaning cryptographically strong.
 	 */
 	public boolean isSecure() {
 		return secure;
 	}
 
 	/**
-	 * Sets the secure flag.
+	 * Sets whether or not the generated random numbers should be
+	 * <i>secure</i>. If set to true, generated GUIDs are cryptographically
+	 * strong.
 	 */
 	public void setSecure(boolean secure) {
 		this.secure = secure;
