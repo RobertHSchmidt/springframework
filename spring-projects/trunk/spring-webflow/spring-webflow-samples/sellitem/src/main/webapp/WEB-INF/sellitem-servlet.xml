@@ -15,13 +15,18 @@
 	<!-- Launches new flow executions and resumes existing executions. -->	
 	<bean id="flowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl">
 		<constructor-arg ref="repositoryFactory"/>
+		<property name="redirectOnPause" value="true"/>
 	</bean>
 
 	<!-- Creates, saves, and restores managed flow executions -->
-	<bean id="repositoryFactory" class="org.springframework.webflow.execution.repository.continuation.ClientContinuationFlowExecutionRepositoryFactory">
+	<bean id="repositoryFactory" class="org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepositoryFactory">
 		<constructor-arg ref="flowRegistry"/>
 		<property name="listenerLoader">
-			<bean class="org.springframework.webflow.samples.sellitem.FlowExecutionListenerLoader"/>
+			<bean class="org.springframework.webflow.execution.StaticFlowExecutionListenerLoader">
+				<constructor-arg>
+					<bean class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>
+				</constructor-arg>
+			</bean>
 		</property>
 	</bean>
 
