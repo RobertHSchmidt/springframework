@@ -39,6 +39,4 @@
 		<property name="suffix" value=".jsp"/>
 	</bean>
 
-	<bean id="mapper" class="org.springframework.webflow.samples.flowlauncher.SampleFlowAttributeMapper"/>
-	
 </beans>
