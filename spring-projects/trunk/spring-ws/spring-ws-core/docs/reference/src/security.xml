@@ -132,8 +132,20 @@
         <section>
             <title>Plain Text Username Authentication</title>
             <para>
-                To require that every incoming message contains a <literal>UsernameToken</literal> element with a plain
-                text username, the security policy file should contain a <literal>RequireUsernameToken</literal>
+                The simplest form of username authentication uses <emphasis>plain text passwords</emphasis>. In this
+                scenario, the SOAP message will contain a <literal>UsernameToken</literal> element, which itself
+                contains a <literal>Username</literal> element and a <literal>Password</literal> element which contains
+                the plain text password. Plain text authentication can be compared to the Basic Authentication provided
+                by HTTP servers.
+            </para>
+            <para>
+                Note that plain text passwords are not very secure. Therefore, you should always add additional security
+                measures to your transport layer if you are using them (using HTTPS instead of plain HTTP, for
+                instance).
+            </para>
+            <para>
+                To require that every incoming message contains a <literal>UsernameToken</literal> with a plain
+                text password, the security policy file should contain a <literal>RequireUsernameToken</literal>
                 element, with the <literal>passwordDigestRequired</literal> attribute set to <literal>false</literal>:
             </para>
             <programlisting><![CDATA[
@@ -143,10 +155,11 @@
     ...
 </xwss:SecurityConfiguration>]]></programlisting>
             <para>
-                If the username token is not present, the <classname>XwsSecurityInterceptor</classname> will return a   
-                SOAP Fault to the sender. If it is present, it will fire a 
-                <classname>PasswordValidationCallback</classname> to the registered handlers. Withing Spring-WS, there 
-                are three classes which handle this particular callback.
+                If the username token is not present, the <classname>XwsSecurityInterceptor</classname> will return a
+                SOAP Fault to the sender. If it is present, it will fire a
+                <classname>PasswordValidationCallback</classname> with a <classname>PlainTextPasswordRequest</classname>
+                to the registered handlers. Withing Spring-WS, there are three classes which handle this particular
+                callback.
             </para>
             <section id="security-simple-password-validation-callback-handler">
                 <title>SimplePasswordValidationCallbackHandler</title>
@@ -180,9 +193,11 @@
                     documentation</citetitle></ulink>.
                 </para>
                 <para>
-                    The <classname>AcegiPlainTextPasswordValidationCallbackHandler</classname> requires an
-                    Acegi <classname>AuthenticationManager</classname> to operate. You can set it using the
-                    <methodname>authenticationManager</methodname> property:
+                    The <classname>AcegiPlainTextPasswordValidationCallbackHandler</classname> requires an Acegi
+                    <classname>AuthenticationManager</classname> to operate. It uses this manager authenticate against a
+                    <classname>UsernamePasswordAuthenticationToken</classname> that it creates. If authentication is
+                    succesfull, the token is stored in the <classname>SecurityContextHolder</classname>. You can set the
+                    authentication manager using the <methodname>authenticationManager</methodname> property:
                 </para>
 <programlisting><![CDATA[
 <beans>              
@@ -209,9 +224,9 @@
                     The <classname>JaasPlainTextPasswordValidationCallbackHandler</classname> is based on the standard 
                     <ulink url="http://java.sun.com/products/jaas/"><citetitle>Java Authentication and Authorization 
                     Service</citetitle></ulink>. It is beyond the scope of this document to provide a full 
-                    introduction into JAAS, but you can find a good tutorial <ulink 
+                    introduction into JAAS, but there is a <ulink 
                     url="http://www.javaworld.com/javaworld/jw-09-2002/jw-0913-jaas.html">
-                    <citetitle>here</citetitle></ulink>.
+                    <citetitle>good tutorial</citetitle></ulink> available.
                 </para>
                 <para>
                     The <classname>JaasPlainTextPasswordValidationCallbackHandler</classname> only requires a 
@@ -241,11 +256,186 @@
 
         <section>
             <title>Digest Username Authentication</title>
+            <para>
+                When using password digests, the SOAP message also contain a <literal>UsernameToken</literal> element,
+                which itself contains a <literal>Username</literal> element and a <literal>Password</literal> element.
+                The difference is that the password is not sent as plaint text, but as a <emphasis>digest</emphasis>.The
+                recipient compares this digest to the digest he calculated from the known password of the user, and if
+                they are the same, the user is authenticated. Digest authentication can be compared to the Digest
+                Authentication provided by HTTP servers.
+            </para>
+           <para>
+                To require that every incoming message contains a <literal>UsernameToken</literal> element with a
+                password digest, the security policy file should contain a <literal>RequireUsernameToken</literal>
+                element, with the <literal>passwordDigestRequired</literal> attribute set to <literal>true</literal>.
+                Additionally, the <literal>nonceRequired</literal> should be set to <literal>true</literal>:
+            </para>
+<programlisting><![CDATA[
+<xwss:SecurityConfiguration xmlns:xwss="http://java.sun.com/xml/ns/xwss/config">
+    ...
+    <xwss:RequireUsernameToken passwordDigestRequired="true" nonceRequired="true"/>
+    ...
+</xwss:SecurityConfiguration>]]></programlisting>
+            <para>
+                If the username token is not present, the <classname>XwsSecurityInterceptor</classname> will return a
+                SOAP Fault to the sender. If it is present, it will fire a
+                <classname>PasswordValidationCallback</classname> with a <classname>DigestPasswordRequest</classname>
+                to the registered handlers. Withing Spring-WS, there are two classes which handle this particular
+                callback.
+            </para>
+            <section>
+                <title>SimplePasswordValidationCallbackHandler</title>
+                <para>
+                    The <classname>SimplePasswordValidationCallbackHandler</classname> can handle both plain text 
+                    passwords as well as password digests. It is described in <xref 
+                    linkend="security-simple-password-validation-callback-handler"/>.
+                </para>
+            </section>
+            <section>
+                <title>AcegiDigestPasswordValidationCallbackHandler</title>
+                <para>
+                    The <classname>AcegiPlainTextPasswordValidationCallbackHandler</classname> requires an Acegi
+                    <classname>UserDetailService</classname> to operate. It uses this service to retrieve the password
+                    of the user specified in the token. The digest of the password contained in this details object is
+                    then compared with the digest in the message. If they are equal, the user has succesfully
+                    authenticated, and a <classname>UsernamePasswordAuthenticationToken</classname> is stored in the
+                    <classname>SecurityContextHolder</classname>. You can set the service using the
+                    <methodname>userDetailsService</methodname>. Additionally, you can set a
+                    <methodname>userCache</methodname> property, to cache loaded user details.
+                </para>
+<programlisting><![CDATA[
+<beans>
+    <bean class="org.springframework.ws.soap.security.xwss.callback.acegi.AcegiDigestPasswordValidationCallbackHandler">
+        <property name="userDetailsService" ref="userDetailsService"/>
+    </bean>
+    
+    <bean id="userDetailsService" class="com.mycompany.app.dao.UserDetailService" />
+    ...
+</beans>]]></programlisting>    
+            </section>
         </section>
-
-
+        
         <section>
             <title>Certificate Authentication</title>
+            <para>
+                A more secure way of authentication uses X509 certificates. In this scenerario, the SOAP message 
+                contains a <literal>BinarySecurityToken</literal>, which contains a Base 64-encoded version of a X509
+                certificate. The recipient is used by the recipient to authenticate. The certificate stored in the
+                message is also used to sign the message (see <xref linkend="security-verifying-signatures"/>).
+            </para>
+            <para>
+                To make sure that all incoming SOAP messages carry a <literal>BinarySecurityToken</literal>, the 
+                security policy file should contain a <literal>RequireSignature</literal> element. This element can
+                further carry a <literal>Target</literal> tag, which will be covered in <xref
+                linkend="security-verifying-signatures"/>, and a <literal>requireTimeStamp</literal> attribute.
+            </para>
+<programlisting><![CDATA[
+<xwss:SecurityConfiguration xmlns:xwss="http://java.sun.com/xml/ns/xwss/config">
+    ...
+    <xwss:RequireSignature requireTimestamp="false">
+    ...
+</xwss:SecurityConfiguration>]]></programlisting>
+            <para>
+                When a message arrives that carries no certificate, the <classname>XwsSecurityInterceptor</classname> 
+                will return a SOAP Fault to the sender. If it is present, it will fire a 
+                <classname>CertificateValidationCallback</classname>. There are two handlers within Spring-WS
+                which handle this callback for authentication purposes.
+            </para>
+            <note>
+                <para>
+                    In most cases, certificate <emphasis>authentication</emphasis> should be preceeded by certificate
+                    <emphasis>validation</emphasis>, since you only want authenticate against valid certificates. 
+                    Invalid certificates such as certificates for which the expiration date has passed, or which are not
+                    in your store of trusted certificates, should be ignored.
+                </para>
+                <para>
+                    In Spring-WS terms, this means that the
+                    <classname>AcegiCertificateValidationCallbackHandler</classname> or
+                    <classname>JaasCertificateValidationCallbackHandler</classname> should be preceded by
+                    <classname>KeyStoreCallbackHandler</classname> (described in <xref
+                    linkend="security-key-store-callback-handler"/>). This can be accomplished in the configuration of
+                    the <classname>XwsSecurityInterceptor</classname>:
+<programlisting><![CDATA[
+<bean id="wsSecurityInterceptor"
+    class="org.springframework.ws.soap.security.xwss.XwsSecurityInterceptor">
+    <property name="policyConfiguration" value="classpath:securityPolicy.xml"/>
+    <property name="callbackHandlers">
+        <list>
+            <ref bean="keyStoreHandler"/>
+            <ref bean="acegiHandler"/>
+        </list>
+    </property>
+</bean>
+]]></programlisting>
+                    Using this setup, the interceptor will first determine if the certificate in the message is valid
+                    using the keystore, and then authenticate against it.
+                </para>
+            </note>
+            <section>
+                <title>AcegiCertificateValidationCallbackHandler</title>
+                <para>
+                    The <classname>AcegiCertificateValidationCallbackHandler</classname> requires an Acegi
+                    <classname>AuthenticationManager</classname> to operate. It uses this manager authenticate against a
+                    <classname>X509AuthenticationToken</classname> that it creates. The configured authentication
+                    manager is expected to supply a provider which can handle this token (usually an instance of
+                    <classname>X509AuthenticationProvider</classname>). If authentication is succesfull, the token is
+                    stored in the <classname>SecurityContextHolder</classname>. You can set the authentication manager
+                    using the <methodname>authenticationManager</methodname> property:
+                </para>
+<programlisting><![CDATA[
+<beans>              
+    <bean id="acegiCertificateHandler"
+        class="org.springframework.ws.soap.security.xwss.callback.acegi.AcegiCertificateValidationCallbackHandler">
+        <property name="authenticationManager" ref="authenticationManager"/>
+    </bean>
+
+    <bean id="authenticationManager"
+        class="org.acegisecurity.providers.ProviderManager">
+        <property name="providers">
+            <bean class="org.acegisecurity.providers.x509.X509AuthenticationProvider">
+                <property name="x509AuthoritiesPopulator">
+                    <bean class="org.acegisecurity.providers.x509.populator.DaoX509AuthoritiesPopulator">
+                        <property name="userDetailsService" ref="userDetailsService"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+  <bean id="userDetailsService" class="com.mycompany.app.dao.UserDetailService" />
+  ...
+</beans>]]></programlisting>     
+                <para>
+                    In this case, we are using a custom user details service to obtain authentication details based on
+                    the certificate. Refer to the <ulink
+                    url="http://acegisecurity.org/docbook/acegi.html"><citetitle>Acegi reference
+                    documentation</citetitle></ulink> for more information about authentication against X509
+                    certificates.
+                </para>
+            </section>
+            <section>
+                <title>JaasCertificateValidationCallbackHandler</title>
+                <para>
+                    The <classname>JaasCertificateValidationCallbackHandler</classname> requires a 
+                    <methodname>loginContextName</methodname> to operate. It creates a new JAAS 
+                    <classname>LoginContext</classname> using this name and with the
+                    <classname>X500Principal</classname> of the certificate. This means that this callback handler
+                    integrates with any JAAS <classname>LoginModule</classname> that handles X500 principals.
+                </para>
+                <para>
+                    You can wire up a <classname>JaasCertificateValidationCallbackHandler</classname> as follows:
+                </para>
+<programlisting><![CDATA[
+<bean id="jaasValidationHandler" 
+    class="org.springframework.ws.soap.security.xwss.callback.jaas.JaasCertificateValidationCallbackHandler">
+    <property name="loginContextName">MyLoginModule</property>
+</bean>]]></programlisting>
+                <para>
+                    In this case, the callback handler uses the <classname>LoginContext</classname> named 
+                    "MyLoginModule". This module should be defined in your <filename>jaas.config</filename> file, and 
+                    should be able to authenticate against X500 principals.
+                </para>
+            </section>
         </section>
             
     </section>
@@ -253,8 +443,13 @@
     <section>
         <title>Digital Signatures</title>
         
-        <section>
+        <section id="security-verifying-signatures">
             <title>Verifying Signatures</title>
+            
+            <section id="security-key-store-callback-handler">
+                <title>KeyStoreCallbackHandler</title>
+            </section>
+                
         </section>
 
         <section>
