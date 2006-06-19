@@ -27,6 +27,10 @@ import org.springframework.webflow.TransitionCriteria;
  * The guard is represented by a TransitionCriteria object. If the guard
  * disallows execution, the wrapped action is just skipped and this
  * action will return the "success" event.
+ * <p>
+ * As an alternative, consider overriding the
+ * {@link org.springframework.webflow.action.AbstractAction#doPreExecute(RequestContext)}
+ * hook method in your own action implementation class.
  * 
  * @see org.springframework.webflow.TransitionCriteria
  * 

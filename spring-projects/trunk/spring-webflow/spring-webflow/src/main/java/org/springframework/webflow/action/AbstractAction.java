@@ -29,7 +29,7 @@ import org.springframework.webflow.support.EventFactorySupport;
 
 /**
  * Base action that provides assistance commonly needed by action
- * implementations. These include:
+ * implementations. This includes:
  * <ul>
  * <li>Implementing {@link InitializingBean} to receive an init callback
  * when deployed within a Spring bean factory.
@@ -97,7 +97,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	/**
 	 * Returns a "success" result event with the provided result object as a
 	 * parameter.
-	 * @param result the action success result;
+	 * @param result the action success result
 	 */
 	protected Event success(Object result) {
 		return eventFactorySupport.success(this, result);
@@ -113,7 +113,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	/**
 	 * Returns an "error" result event caused by the provided exception.
 	 * @param e the exception that caused the error event, to be configured as
-	 * an event attribute.
+	 * an event attribute
 	 */
 	protected Event error(Exception e) {
 		return eventFactorySupport.error(this, e);
@@ -215,8 +215,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 			result = doExecute(context);
 			if (logger.isDebugEnabled()) {
 				if (result != null) {
-					logger.debug("Action '" + getLoggingName() + "' completed execution; result is '" + result.getId()
-							+ "'");
+					logger.debug("Action '" + getLoggingName() + "' completed execution; result is '" + result.getId() + "'");
 				}
 				else {
 					logger.debug("Action '" + getLoggingName() + "' completed execution; result is [null]");
@@ -232,6 +231,10 @@ public abstract class AbstractAction implements Action, InitializingBean {
 		return result;
 	}
 
+	/**
+	 * Internal helper to return the name of this action for logging
+	 * purposes.
+	 */
 	private String getLoggingName() {
 		return ClassUtils.getShortName(getClass());
 	}
@@ -270,7 +273,9 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	protected abstract Event doExecute(RequestContext context) throws Exception;
 
 	/**
-	 * Post-action execution hook, subclasses may override.
+	 * Post-action execution hook, subclasses may override. Will only be called
+	 * if <code>doExecute()</code> was called, e.g. when <code>doPreExecute()</code>
+	 * returned <code>null</code>.
 	 * <p>
 	 * This implementation does nothing.
 	 * @param context the action execution context, for accessing and setting

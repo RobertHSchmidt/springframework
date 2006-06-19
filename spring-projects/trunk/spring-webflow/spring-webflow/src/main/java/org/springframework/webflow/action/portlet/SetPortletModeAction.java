@@ -27,9 +27,11 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.portlet.PortletExternalContext;
 
 /**
- * Action implementation that changes a PortletResponse mode.
+ * Action implementation that changes a PortletResponse mode. The action only
+ * generates the {@link org.springframework.webflow.action.AbstractAction#success()}
+ * event. All error cases result in an exception being thrown.
  * <p>
- * This class is usefullwhen you want to change the current PortletMode before
+ * This class is usefull when you want to change the current PortletMode before
  * entering a specific state, e.g. it can be the first state in a subflow.
  * <p>
  * Note: if you can, change the PortletMode using Portlet URLs (PortletURL class
@@ -43,7 +45,7 @@ public class SetPortletModeAction extends AbstractAction {
 
 	/**
 	 * The portlet mode to set can be specified in an action state action
-	 * property with this name.
+	 * property with this name ("portletMode").
 	 */
 	public static final String PORTLET_MODE_ATTRIBUTE = "portletMode";
 
@@ -63,6 +65,7 @@ public class SetPortletModeAction extends AbstractAction {
 	 * Sets the mode that will be set in the response.
 	 */
 	public void setPortletMode(PortletMode portletMode) {
+		Assert.notNull(portletMode, "The portlet mode is required and cannot be null");
 		this.portletMode = portletMode;
 	}
 
@@ -71,7 +74,7 @@ public class SetPortletModeAction extends AbstractAction {
 	 * @param context the action execution context, for accessing and setting
 	 * data in "flow scope" or "request scope"
 	 * @return the action result event
-	 * @throws Exception an <b>unrecoverable </b> exception occured, either
+	 * @throws Exception an <b>unrecoverable</b> exception occured, either
 	 * checked or unchecked
 	 */
 	protected Event doExecute(RequestContext context) throws Exception {
@@ -90,8 +93,7 @@ public class SetPortletModeAction extends AbstractAction {
 			// action has been invoked directly in a RenderRequest
 			throw new ActionExecutionException(
 					context.getActiveFlow().getId(), context.getCurrentState().getId(), this, context.getAttributes(),
-					"This SetPortletModeAction can only work with 'ActionResponse' "
-							+ "-- make sure you are not invoking it in a RenderRequest", null);
+					"SetPortletModeAction can only work with ActionResponse -- make sure you are not invoking it in a RenderRequest", null);
 		}
 	}
 }
