@@ -16,7 +16,7 @@
 package org.springframework.webflow;
 
 /**
- * A service interface used to map attributes between two flows. Used by the
+ * A service interface that maps attributes between two flows. Used by the
  * subflow state to map attributes between a parent flow and its sub flow.
  * <p>
  * An attribute mapper may map attributes of a parent flow down to a child flow
@@ -36,7 +36,7 @@ package org.springframework.webflow;
  * </pre>
  * 
  * <p>
- * For the "Parent Flow Session" above, there are [3] attributes in flow scope
+ * For the "Parent Flow Session" above, there are 3 attributes in flow scope
  * ("attribute1", "attribute2" and "attribute3", respectively). Any of these
  * three attributes may be mapped as input down to child subflows when those
  * subflows are spawned. An implementation of this interface performs the actual
@@ -51,7 +51,7 @@ package org.springframework.webflow;
  *     Flow Attribute Mapper Configuration
  *     -----------------------------------
  *     -&gt; inputMappings  = [map-&gt; flowScope.attribute1-&gt;attribute1, flowScope.attribute3-&gt;attribute4]
- *     -&gt; outputMappings = [map-&gt; flowScope.attribute4-&gt;attribute3]
+ *     -&gt; outputMappings = [map-&gt; attribute4-&gt;flowScope.attribute3]
  * </pre>
  * 
  * <p>
@@ -64,11 +64,15 @@ package org.springframework.webflow;
  * flow.
  * <p>
  * Likewise, when a child flow ends the <code>outputMappings</code> define
- * which output attributes to map into the parent. In this case the attribute
- * "attribute4" in flow scope will be mapped up to the parent as "attribute3",
+ * which output attributes to map into the parent. In this case the subflow
+ * output attribute "attribute4" will be mapped up to the parent as "attribute3",
  * updating the value of "attribute3" in the parent's flow scope. Note: only
  * output attributes exposed by the end state of the ending subflow are eligible
  * for mapping.
+ * <p>
+ * A FlowAttributeMapper is typically implemented using 2 distinct
+ * {@link org.springframework.binding.mapping.AttributeMapper} implementations:
+ * one responsible for input mapping and one taking care of output mapping. 
  * <p>
  * Note: because FlowAttributeMappers are singletons, take care not to store
  * and/or modify caller-specific state in a unsafe manner. The
@@ -77,6 +81,7 @@ package org.springframework.webflow;
  * thread-safe services.
  * 
  * @see org.springframework.webflow.SubflowState
+ * @see org.springframework.binding.mapping.AttributeMapper
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -87,11 +92,10 @@ public interface FlowAttributeMapper {
 	 * Create a map of attributes that should be passed as <i>input</i> to a
 	 * spawning flow.
 	 * <p>
-	 * Attributes set in the <code>Map</code> returned by this method will be
-	 * added to flow scope of the child subflow session when the session is
-	 * spawned and activated.
+	 * Attributes set in the map returned by this method are availale
+	 * as input to the subflow when its session is spawned.
 	 * @param context the current request execution context, which gives access
-	 * to the parent flow scope, the request scope, any event parameter, etc.
+	 * to the parent flow scope, the request scope, any event parameters, etc.
 	 * @return a map of attributes (name=value pairs) to pass as input to the
 	 * spawning subflow
 	 */
@@ -100,7 +104,7 @@ public interface FlowAttributeMapper {
 	/**
 	 * Map output attributes of an ended flow to a resuming parent flow session.
 	 * This maps the <i>output</i> of the child as new input to the resuming
-	 * parent.
+	 * parent, typically adding data to flow scope.
 	 * @param flowOutput the output attributes exposed by the ended subflow
 	 * @param context the current request execution context, which gives access
 	 * to the parent flow scope

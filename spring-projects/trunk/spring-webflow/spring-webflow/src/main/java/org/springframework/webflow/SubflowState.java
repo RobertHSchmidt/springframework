@@ -82,16 +82,16 @@ public class SubflowState extends TransitionableState {
 	}
 
 	/**
-	 * Returns the attribute mapper used to map data between parent and child
-	 * subflow model, or null if no mapping is needed.
+	 * Returns the attribute mapper used to map data between the parent and child
+	 * flow, or null if no mapping is needed.
 	 */
 	public FlowAttributeMapper getAttributeMapper() {
 		return attributeMapper;
 	}
 
 	/**
-	 * Set the attribute mapper to use to map model data between parent and
-	 * child subflow model. Can be null if no mapping is needed.
+	 * Set the attribute mapper used to map model data between the parent and
+	 * child flow. Can be null if no mapping is needed.
 	 */
 	public void setAttributeMapper(FlowAttributeMapper attributeMapper) {
 		this.attributeMapper = attributeMapper;
@@ -131,7 +131,7 @@ public class SubflowState extends TransitionableState {
 		else {
 			if (logger.isDebugEnabled()) {
 				logger.debug("No attribute mapper configured for this subflow state '" + getId()
-						+ "' -- as a result, no attributes in flow scope will be passed to the spawned subflow '"
+						+ "' -- As a result, no attributes will be passed to the spawned subflow '"
 						+ subflow.getId() + "'");
 			}
 			return null;
@@ -161,9 +161,8 @@ public class SubflowState extends TransitionableState {
 		}
 		else {
 			if (logger.isDebugEnabled()) {
-				logger.debug("No attribute mapper is configured for the resuming state '"
-						+ getId()
-						+ "' -- as a result, no attributes in the ending subflow scope will be passed to the resuming flow");
+				logger.debug("No attribute mapper is configured for the resuming state '" + getId()
+						+ "' -- As a result, no attributes of the ending flow will be passed to the resuming parent flow");
 			}
 		}
 	}
