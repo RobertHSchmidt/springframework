@@ -26,33 +26,50 @@
             All of these three areas are implemented using the <classname>XwsSecurityInterceptor</classname>, which we
             will describe in <xref linkend="security-xws-security-interceptor"/>
         </para>
-        <section>
-            <title>Sample SOAP message</title>
+<!--        <section>
+            <title>Sample SOAP messages</title>
             <para>
                 The following SOAP message shows the different aspects of WS-Security.
             </para>
+<programlistingco>
+    <areaspec>
+        <area id="security-msg-security" coords="6" />
+        <area id="security-msg-username" coords="7" />
+    </areaspec>         
 <programlisting><![CDATA[
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-    <SOAP-ENV:Header>
-        <wsse:Security
-            xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
-        <wsse:UsernameToken
-            xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
-            <wsse:Username>Bert</wsse:Username>
-            <wsse:Password
-                Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">
-                Ernie</wsse:Password>
-            </wsse:UsernameToken>
-        </wsse:Security>
-    </SOAP-ENV:Header>
-    <SOAP-ENV:Body>
-        ...
-    </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>]]></programlisting>
-            <para>
-                This sample shows the following WS-Security elements:
-            </para>
+<SOAP-ENV:Envelope
+    xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+ <SOAP-ENV:Header>
+  <wsse:Security>
+   <wsse:UsernameToken>
+    <wsse:Username>Bert</wsse:Username>
+    <wsse:Password                
+        Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0
+        #PasswordText">Ernie</wsse:Password>
+   </wsse:UsernameToken>
+  </wsse:Security>
+ </SOAP-ENV:Header>
+ <SOAP-ENV:Body>
+  ...
+ </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>]]>
+</programlisting>
+<calloutlist>
+    <callout arearefs="security-msg-security">
+        <para>
+            All WS-Security related information is contained in the <literal>Security</literal> header.
+        </para>
+    </callout>
+    <callout arearefs="security-msg-username">
+        <para>
+            This <literal>UsernameToken</literal> contains the username "Bert" and a plain text password "Ernie".
+        </para>            
+    </callout>
+</calloutlist>
+</programlistingco>
         </section>                    
+    -->
     </section>
     <section id="security-xws-security-interceptor">
         <title>XwsSecurityInterceptor</title>
@@ -117,7 +134,7 @@
             <para>
                 To require that every incoming message contains a <literal>UsernameToken</literal> element with a plain
                 text username, the security policy file should contain a <literal>RequireUsernameToken</literal>
-                elemement, with the <literal>passwordDigestRequired</literal> attribute set to <literal>false</literal>:
+                element, with the <literal>passwordDigestRequired</literal> attribute set to <literal>false</literal>:
             </para>
             <programlisting><![CDATA[
 <xwss:SecurityConfiguration xmlns:xwss="http://java.sun.com/xml/ns/xwss/config">
@@ -131,16 +148,95 @@
                 <classname>PasswordValidationCallback</classname> to the registered handlers. Withing Spring-WS, there 
                 are three classes which handle this particular callback.
             </para>
-            <section>
+            <section id="security-simple-password-validation-callback-handler">
                 <title>SimplePasswordValidationCallbackHandler</title>
                 <para>
-                    The simplest handler is the <classname>SimplePasswordValidationCallbackHandler</classname>. This 
-                    handler validates passwords agains a in-memory <classname>Properties</classname> object.
+                    The simplest password validation handler is the
+                    <classname>SimplePasswordValidationCallbackHandler</classname>. This handler validates passwords
+                    agains a in-memory <classname>Properties</classname> object, which you can specify using the
+                    <methodname>users</methodname> property, like so:
+                </para>
+<programlisting><![CDATA[
+<bean id="passwordValidationHandler" 
+    class="org.springframework.ws.soap.security.xwss.callback.SimplePasswordValidationCallbackHandler">
+    <property name="users">
+        <props>
+            <prop key="Bert">Ernie</prop>
+        </props>
+    </property>
+</bean>]]></programlisting>
+                <para>
+                    In this case, we are only allowing the user "Bert" to log in using the password "Ernie".
                 </para>
             </section>
-                    
-                
-          
+            <section>
+                <title>AcegiPlainTextPasswordValidationCallbackHandler</title>
+                <para>
+                    The <classname>AcegiPlainTextPasswordValidationCallbackHandler</classname> uses the excellent <ulink
+                    url="http://acegisecurity.org/"><citetitle>Acegi Security Framework</citetitle></ulink> to
+                    authenticate users. It is beyond the scope of this document to describe Acegi, but suffice it to say
+                    that Acegi is a full-fledged security framework. You can read more about Acegi in the <ulink
+                    url="http://acegisecurity.org/docbook/acegi.html"><citetitle>Acegi reference
+                    documentation</citetitle></ulink>.
+                </para>
+                <para>
+                    The <classname>AcegiPlainTextPasswordValidationCallbackHandler</classname> requires an
+                    Acegi <classname>AuthenticationManager</classname> to operate. You can set it using the
+                    <methodname>authenticationManager</methodname> property:
+                </para>
+<programlisting><![CDATA[
+<beans>              
+  <bean id="acegiHandler" 
+      class="org.springframework.ws.soap.security.xwss.callback.acegi.AcegiPlainTextPasswordValidationCallbackHandler">
+    <property name="authenticationManager" ref="authenticationManager"/>
+  </bean>
+  
+  <bean id="authenticationManager" class="org.acegisecurity.providers.ProviderManager">
+      <property name="providers">
+          <bean class="org.acegisecurity.providers.dao.DaoAuthenticationProvider">
+              <property name="userDetailsService" ref="userDetailsService"/>
+          </bean>
+      </property>
+  </bean>
+
+  <bean id="userDetailsService" class="com.mycompany.app.dao.UserDetailService" />
+  ...
+</beans>]]></programlisting>
+            </section>
+            <section>
+                <title>JaasPlainTextPasswordValidationCallbackHandler</title>
+                <para>
+                    The <classname>JaasPlainTextPasswordValidationCallbackHandler</classname> is based on the standard 
+                    <ulink url="http://java.sun.com/products/jaas/"><citetitle>Java Authentication and Authorization 
+                    Service</citetitle></ulink>. It is beyond the scope of this document to provide a full 
+                    introduction into JAAS, but you can find a good tutorial <ulink 
+                    url="http://www.javaworld.com/javaworld/jw-09-2002/jw-0913-jaas.html">
+                    <citetitle>here</citetitle></ulink>.
+                </para>
+                <para>
+                    The <classname>JaasPlainTextPasswordValidationCallbackHandler</classname> only requires a 
+                    <methodname>loginContextName</methodname> to operate. It creates a new JAAS 
+                    <classname>LoginContext</classname> using this name, and handles the standard JAAS
+                    <classname>NameCallback</classname> and <classname>PasswordCallback</classname> using the username
+                    and password provided in the SOAP message. This means that this callback handler 
+                    integrates with any JAAS 
+                    <classname>LoginModule</classname> that fires these callbacks during the
+                    <methodname>login()</methodname> phase, which is standard behavior.
+                </para>
+                <para>
+                    You can wire up a <classname>JaasPlainTextPasswordValidationCallbackHandler</classname> as follows:
+                </para>
+<programlisting><![CDATA[
+<bean id="jaasValidationHandler" 
+    class="org.springframework.ws.soap.security.xwss.callback.jaas.JaasPlainTextPasswordValidationCallbackHandler">
+    <property name="loginContextName">MyLoginModule</property>
+</bean>]]></programlisting>
+                <para>
+                    In this case, the callback handler uses the <classname>LoginContext</classname> named 
+                    "MyLoginModule". This module should be defined in your <filename>jaas.config</filename> file, as 
+                    explained in the abovementioned tutorial.
+                </para>
+            </section>
         </section>
 
         <section>
