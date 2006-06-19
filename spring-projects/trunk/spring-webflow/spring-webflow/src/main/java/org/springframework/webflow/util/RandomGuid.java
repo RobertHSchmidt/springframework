@@ -42,7 +42,6 @@ import java.util.Random;
 
 /**
  * Globally unique identifier generator.
- * 
  * <p>
  * In the multitude of java GUID generators, I found none that guaranteed
  * randomness. GUIDs are guaranteed to be globally unique by using ethernet
@@ -132,7 +131,6 @@ public class RandomGuid extends Object {
 		catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	/**
@@ -154,7 +152,7 @@ public class RandomGuid extends Object {
 	}
 
 	/**
-	 * Method to generate the random GUID
+	 * Method to generate the random GUID.
 	 */
 	private void getRandomGuid(boolean secure) {
 		MessageDigest md5 = null;
@@ -211,7 +209,7 @@ public class RandomGuid extends Object {
 	/**
 	 * Convert to the standard format for GUID (Useful for SQL Server
 	 * UniqueIdentifiers, etc).
-	 * Example: C2FEEEAC-CFCD-11D1-8B05-00600806D9B6
+	 * Example: "C2FEEEAC-CFCD-11D1-8B05-00600806D9B6".
 	 */
 	public String toString() {
 		String raw = valueAfterMD5.toUpperCase();
