@@ -17,7 +17,6 @@ package org.springframework.webflow;
 
 import java.util.EventObject;
 
-import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
