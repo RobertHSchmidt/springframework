@@ -45,6 +45,10 @@ public class FormObjectAccessor {
 	 * <p>
 	 * Note that if you would have multiple form objects in the request context,
 	 * the last one that was used would be available using this alias!
+	 * <p>
+	 * We need to keep track of the 'current form object' using this attribute
+	 * to be able to deal with the limitations of some clients, e.g. when using
+	 * the Struts FlowAction.
 	 */
 	private static final String CURRENT_FORM_OBJECT_ATTRIBUTE = "currentFormObject";
 

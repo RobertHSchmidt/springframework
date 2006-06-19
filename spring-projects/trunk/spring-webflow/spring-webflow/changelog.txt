@@ -20,6 +20,10 @@ Package org.springframework.webflow
 * Removed NoSuchFlowStateException.
 * Made all exceptions serializable, removing dependencies on internal transient arguments such as Flow, State, and Transition 
   in favor of serializable artifact identifiers such as the flowId and stateId.
+  
+Package org.springframework.webflow.action
+* Renamed FormAction.VALIDATOR_METHOD_PROPERTY to VALIDATOR_METHOD_ATTRIBUTE for consistency with other
+  context attributes.
 
 Package org.springframework.webflow.builder
 * Reapplied 1.0 rc2 fix for inline flow parsing, which was lost in SourceForge CVS issues occurring between 7/5/06 and 15/5/06
