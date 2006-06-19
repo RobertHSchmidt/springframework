@@ -159,7 +159,37 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  *         ...
  *     &lt;/view-state&gt;
  * </pre>
+ * <p>
+ * When it comes to validating submitted input data using a registered
+ * validator, this class offers the following options:
+ * <ul>
+ * <li>If you don't want validation at all, just call {@link #bind(RequestContext)}
+ * instead of {@link #bindAndValidate(RequestContext)}.</li>
+ * <li>If you want piecemeal validation, e.g. in a multi-page wizard, call
+ * {@link #bindAndValidate(RequestContext)} or {@link #validate(RequestContext)}
+ * and specifying a "validatorMethod" action attribute. In this case, the
+ * signature of the custom validator method on the registered validator should
+ * follow the following signature:
+ * <pre>
+ *     public void ${validateMethodName}(${formObjectClass}, Errors)
+ * </pre>
+ * For instance, having a action definition like this:
+ * <pre>
+ *     &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;&gt;
+ *         &lt;attribute name=&quot;validatorMethod&quot; value=&quot;validateSearchCriteria&quot;/&gt;
+ *     &lt;/action&gt;
+ * </pre>
+ * Would result in the <tt>public void validateSearchCriteria(SearchCriteria, Errors)</tt>
+ * method of the registered validator being called if the form object class would
+ * be <code>SearchCriteria</code>.</li>
+ * <li>If you want to do full validation using the
+ * {@link org.springframework.validation.Validator#validate(java.lang.Object, org.springframework.validation.Errors) validate}
+ * method of the registered validator, call {@link #bindAndValidate(RequestContext)}
+ * or {@link #validate(RequestContext)} without specifying a "validatorMethod"
+ * action attribute.</li>
+ * </ul>
  * 
+ * <p>
  * <b>FormAction configurable properties</b><br>
  * <table border="1">
  * <tr>
@@ -206,18 +236,6 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <td>null</td>
  * <td>The validator for this action. The validator must support the specified
  * form object class. </td>
- * </tr>
- * <td>validateUsingValidatorMethod</td>
- * <td>false</td>
- * <td>Indicates if the validator should be invoked ONLY if the
- * {@link #VALIDATOR_METHOD_ATTRIBUTE} context property is set before this action
- * is executed. Useful for supporting piecemeal validation of a form object as
- * part of a wizard flow. Note that the validation methods used for piecemeal
- * validation should comply to the following signature:
- * <pre>
- * 	public void ${methodName}(${formObjectClass}, Errors)
- * </pre>
- * </td>
  * </tr>
  * <tr>
  * <td>messageCodesResolver</td>
@@ -291,13 +309,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 */
 	private MessageCodesResolver messageCodesResolver;
 
-	/**
-	 * Determines if validation should only be invoked if the "validatorMethod"
-	 * attribute is set before this action is executed. Useful for piecemeal
-	 * validation as part of a wizard.
-	 */
-	private boolean validateUsingValidatorMethod;
-	
+
 	/**
 	 * A cache for dispatched action execute methods.
 	 */
@@ -420,22 +432,6 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 */
 	public void setValidator(Validator validator) {
 		this.validator = validator;
-	}
-
-	/**
-	 * Returns if the validator should only be invoked if the
-	 * {@link #VALIDATOR_METHOD_ATTRIBUTE} request context attribute is set.
-	 */
-	public boolean getValidateUsingValidatorMethod() {
-		return validateUsingValidatorMethod;
-	}
-
-	/**
-	 * Set if the validator should only be invoked if the
-	 * {@link #VALIDATOR_METHOD_ATTRIBUTE} request context attribute is set.
-	 */
-	public void setValidateUsingValidatorMethod(boolean validateUsingValidatorMethod) {
-		this.validateUsingValidatorMethod = validateUsingValidatorMethod;
 	}
 
 	/**
@@ -636,7 +632,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * action. The validator method for piecemeal validation should have the following
 	 * signature:
 	 * <pre>
-	 * 	public void ${methodName}(${formObjectClass}, Errors)
+	 *     public void ${validateMethodName}(${formObjectClass}, Errors)
 	 * </pre>
 	 * @param validatorMethod the name of the validator method to invoke
 	 * @param formObject the form object
@@ -843,23 +839,12 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 
 	/**
 	 * Return whether validation should be performed given the state of the flow
-	 * request context.
-	 * <p>
-	 * Default implementation always returns true, unless the
-	 * "validateUsingValidatorMethod" property is set to true, then this
-	 * implementation returns true only if the "validatorMethod" property is
-	 * set. Can be overridden in subclasses to test validation, for example, if
-	 * a special event parameter is set.
+	 * request context. Default implementation always returns true.
 	 * @param context the request context, for accessing and setting data in
 	 * "flow scope" or "request scope"
 	 * @return whether or not validation is enabled
 	 */
 	protected boolean validationEnabled(RequestContext context) {
-		if (getValidateUsingValidatorMethod()) {
-			return context.getAttributes().contains(VALIDATOR_METHOD_ATTRIBUTE);
-		}
-		else {
-			return true;
-		}
+		return true;
 	}
 }
