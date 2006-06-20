@@ -33,8 +33,9 @@ Package org.springframework.webflow.builder
 Package org.springframework.webflow.execution
 * Renamed ConversationService.begin to "beginConversation".
 * Removed implicit unlock call in LocalConversationService.removeFlowExecution
+* Fixed a bug where ConversationEntry.lock field was serializable--it should be transient.
 * Made ConversationServiceException extend NestedRuntimeException, since it is a distinct subsystem root exception.
-* Added FlowExecutionRestorationException.
+* Added FlowExecutionRestorationFailureException.
 * Added BadlyFormattedFlowExecutionKeyException.
 * NoSuchConversationException now triggers a NoSuchFlowExecution exception.
 * InvalidContinuationIdException, ContinuationNotFoundException, and ContinuationUnmarshalException 
@@ -49,6 +50,7 @@ Package org.springframework.webflow.registry
 Package org.springframework.webflow.samples
 * Simplified 'flowLauncher' to take advantage of latest attribute mapping features.
 * Simplified 'fileUpload' to take advantage of convenient MultipartFile parameter access support.
+* Refined 'birthdate', 'sellitem', and 'sellitem-jsf' to use simpler "bind" methods instead of 'bindAndValidate' with a 'validateUsingValidatorMethod=true' flag.
 
 Package org.springframework.webflow.support
 * Fixed bug in FlowRedirectSelector where a NPE was thrown on null redirect expression.
