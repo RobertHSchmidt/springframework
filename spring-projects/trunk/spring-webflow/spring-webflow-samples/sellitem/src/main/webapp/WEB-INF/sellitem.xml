@@ -17,7 +17,7 @@
 
 	<view-state id="enterCategory" view="categoryForm">
 		<transition on="submit" to="requiresShipping">
-			<action bean="formAction" method="bindAndValidate"/>
+			<action bean="formAction" method="bind"/>
 		</transition>
 	</view-state>
 
@@ -27,7 +27,7 @@
 
 	<view-state id="enterShippingDetails" view="shippingDetailsForm">
 		<transition on="submit" to="processSale">
-			<action bean="formAction" method="bindAndValidate"/>
+			<action bean="formAction" method="bind"/>
 		</transition>
 	</view-state>
 
