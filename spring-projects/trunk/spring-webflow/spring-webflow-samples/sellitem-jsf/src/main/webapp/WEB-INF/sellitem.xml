@@ -4,7 +4,7 @@
 
 <flow start-state="enterPriceAndItemCount">
 
-	<view-state id="enterPriceAndItemCount" view="/priceAndItemCountForm">
+	<view-state id="enterPriceAndItemCount" view="/priceAndItemCountForm.jsp">
 		<transition on="submit" to="enterCategory">
 			<action bean="sellItemFormAction" method="validate">
 				<attribute name="validatorMethod" value="validatePriceAndItemCount"/>
@@ -12,7 +12,7 @@
 		</transition>
 	</view-state>
 
-	<view-state id="enterCategory" view="/categoryForm">
+	<view-state id="enterCategory" view="/categoryForm.jsp">
 		<transition on="submit" to="requiresShipping"/>
 	</view-state>
 
@@ -20,7 +20,7 @@
 		<if test="${flowScope.sale.shipping}" then="enterShippingDetails" else="processSale"/>
 	</decision-state>
 
-	<view-state id="enterShippingDetails" view="/shippingDetailsForm">
+	<view-state id="enterShippingDetails" view="/shippingDetailsForm.jsp">
 		<transition on="submit" to="processSale"/>
 	</view-state>
 
