@@ -255,7 +255,7 @@ public class FlowPhaseListener implements PhaseListener {
 		if (viewRoot == null || hasViewChanged(viewRoot, viewId)) {
 			// create the specified view so that it can be rendered
 			if (logger.isDebugEnabled()) {
-				logger.debug("Creating new view '" + viewId + "' from previous view '" + viewRoot.getViewId() + "'");
+				logger.debug("Creating new view with id '" + viewId + "' from previous view with id '" + viewRoot.getViewId() + "'");
 			}
 			ViewHandler handler = facesContext.getApplication().getViewHandler();
 			UIViewRoot view = handler.createView(facesContext, viewId);

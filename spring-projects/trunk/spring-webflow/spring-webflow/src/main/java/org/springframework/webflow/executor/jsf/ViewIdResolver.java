@@ -28,4 +28,5 @@ public interface ViewIdResolver {
 	 * @return the corresponding JSF view id
 	 */
 	public String resolveViewId(String viewName);
+
 }
