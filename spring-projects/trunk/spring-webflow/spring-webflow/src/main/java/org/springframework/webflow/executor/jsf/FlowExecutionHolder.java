@@ -95,11 +95,11 @@ public class FlowExecutionHolder implements Serializable {
 		this.viewSelection = viewSelection;
 	}
 
-	public boolean isChanged() {
+	public boolean needsSave() {
 		return changed;
 	}
 	
-	public void changed() {
+	public void markNeedsSave() {
 		this.changed = true;
 	}
 	
