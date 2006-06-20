@@ -25,7 +25,6 @@
 		<property name="validator">
 			<bean class="org.springframework.webflow.samples.shippingrate.domain.RateCriteriaValidator"/>
 		</property>
-		<property name="validateUsingValidatorMethod" value="true"/>
 	</bean>	
 	
 	<!-- Maps flow view-state view names to JSP templates -->

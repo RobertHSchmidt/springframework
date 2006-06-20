@@ -9,7 +9,7 @@
 			<action bean="formAction" method="setupForm"/>
 		</entry-actions>
         <transition on="submit" to="selectSender">
-			<action bean="formAction" method="bindAndValidate"/>
+			<action bean="formAction" method="bind"/>
         </transition>
 	</view-state>
 	
