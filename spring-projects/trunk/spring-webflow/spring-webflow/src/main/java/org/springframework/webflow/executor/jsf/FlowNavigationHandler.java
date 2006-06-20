@@ -143,7 +143,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 				FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
 				ViewSelection selectedView = holder.getFlowExecution().signalEvent(new EventId(eventId), context);
 				holder.setViewSelection(selectedView);
-				holder.changed();
+				holder.markNeedsSave();
 			}
 		}
 		else {
@@ -157,7 +157,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 				FlowExecutionHolderUtils.setFlowExecutionHolder(holder, facesContext);
 				ViewSelection selectedView = flowExecution.start(createInput(flowExecution, context), context);
 				holder.setViewSelection(selectedView);
-				holder.changed();
+				holder.markNeedsSave();
 			}
 			else {
 				// no flow id submitted, proceed with std navigation

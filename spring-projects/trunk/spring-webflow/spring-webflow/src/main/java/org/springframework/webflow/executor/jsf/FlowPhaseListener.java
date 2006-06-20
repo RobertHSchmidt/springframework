@@ -187,7 +187,7 @@ public class FlowPhaseListener implements PhaseListener {
 				logger.debug("Started new flow execution");
 			}
 			holder.setViewSelection(selectedView);
-			holder.changed();
+			holder.markNeedsSave();
 		}
 	}
 
@@ -203,7 +203,7 @@ public class FlowPhaseListener implements PhaseListener {
 	}
 
 	protected void prepareResponse(JsfExternalContext context, FlowExecutionHolder holder) {
-		if (holder.isChanged()) {
+		if (holder.needsSave()) {
 			generateKey(context, holder);
 		}
 		ViewSelection selectedView = holder.getViewSelection();
@@ -215,7 +215,7 @@ public class FlowPhaseListener implements PhaseListener {
 			prepareApplicationView(context.getFacesContext(), holder);
 		}
 		else if (selectedView instanceof FlowExecutionRedirect) {
-			if (holder.isChanged()) {
+			if (holder.needsSave()) {
 				saveFlowExecution(context, holder);
 			}
 			String url = argumentExtractor.createFlowExecutionUrl(holder.getFlowExecutionKey().toString(), holder
@@ -223,7 +223,7 @@ public class FlowPhaseListener implements PhaseListener {
 			sendRedirect(url, context);
 		}
 		else if (selectedView instanceof ExternalRedirect) {
-			if (holder.isChanged()) {
+			if (holder.needsSave()) {
 				saveFlowExecution(context, holder);
 			}
 			String url = argumentExtractor.createExternalUrl((ExternalRedirect)holder.getViewSelection(), holder
@@ -231,7 +231,7 @@ public class FlowPhaseListener implements PhaseListener {
 			sendRedirect(url, context);
 		}
 		else if (selectedView instanceof FlowRedirect) {
-			if (holder.isChanged()) {
+			if (holder.needsSave()) {
 				saveFlowExecution(context, holder);
 			}
 			String url = argumentExtractor.createFlowUrl((FlowRedirect)holder.getViewSelection(), context);
@@ -252,7 +252,7 @@ public class FlowPhaseListener implements PhaseListener {
 
 	private void updateViewRoot(FacesContext facesContext, String viewId) {
 		UIViewRoot viewRoot = facesContext.getViewRoot();
-		if (viewRoot == null || isDifferentView(viewId, viewRoot)) {
+		if (viewRoot == null || hasViewChanged(viewRoot, viewId)) {
 			// create the specified view so that it can be rendered
 			if (logger.isDebugEnabled()) {
 				logger.debug("Creating new view '" + viewId + "' from previous view '" + viewRoot.getViewId() + "'");
@@ -263,14 +263,8 @@ public class FlowPhaseListener implements PhaseListener {
 		}
 	}
 
-	private boolean isDifferentView(String viewId, UIViewRoot viewRoot) {
-		int suffixIndex = viewRoot.getViewId().indexOf('.');
-		if (suffixIndex != -1) {
-			return !viewRoot.getViewId().substring(0, suffixIndex).equals(viewId);
-		}
-		else {
-			return !viewRoot.getViewId().equals(viewId);
-		}
+	private boolean hasViewChanged(UIViewRoot viewRoot, String viewId) {
+		return !viewRoot.getViewId().equals(viewId);
 	}
 
 	private void generateKey(JsfExternalContext context, FlowExecutionHolder holder) {

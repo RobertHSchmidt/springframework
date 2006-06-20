@@ -57,6 +57,6 @@ public class FlowExecutionHolderUtils {
 	}
 	
 	public static boolean isFlowExecutionChanged(FacesContext context) {
-		return isFlowExecutionRestored(context) && getFlowExecutionHolder(context).isChanged();
+		return isFlowExecutionRestored(context) && getFlowExecutionHolder(context).needsSave();
 	}
 }
