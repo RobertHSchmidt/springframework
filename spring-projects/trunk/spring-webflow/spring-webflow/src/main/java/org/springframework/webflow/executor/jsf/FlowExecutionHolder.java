@@ -45,7 +45,7 @@ public class FlowExecutionHolder implements Serializable {
 
 	private ViewSelection viewSelection;
 	
-	private boolean changed;
+	private boolean needsSave;
 	
 	/**
 	 * Creates a new flow execution holder for a flow execution that has not yet
@@ -96,11 +96,11 @@ public class FlowExecutionHolder implements Serializable {
 	}
 
 	public boolean needsSave() {
-		return changed;
+		return needsSave;
 	}
 	
 	public void markNeedsSave() {
-		this.changed = true;
+		this.needsSave = true;
 	}
 	
 	public String toString() {
