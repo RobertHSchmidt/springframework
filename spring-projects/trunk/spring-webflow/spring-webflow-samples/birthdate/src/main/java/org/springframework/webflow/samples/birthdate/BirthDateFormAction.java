@@ -41,7 +41,6 @@ public class BirthDateFormAction extends FormAction {
 		setFormObjectClass(BirthDate.class);
 		setFormObjectScope(ScopeType.FLOW);
 		setValidator(new BirthDateValidator());
-		setValidateUsingValidatorMethod(true);
 	}
 
 	protected void initBinder(RequestContext context, DataBinder binder) {
