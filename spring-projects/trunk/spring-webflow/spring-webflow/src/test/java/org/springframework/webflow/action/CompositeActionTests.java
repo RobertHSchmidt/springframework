@@ -21,6 +21,7 @@ import org.easymock.MockControl;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Event;
+import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -60,7 +61,7 @@ public class CompositeActionTests extends TestCase {
 		actionControl.replay();
 		Event result = tested.doExecute(mockRequestContext);
 		actionControl.verify();
-		assertEquals("success", result.getId());
+		assertEquals("some event", result.getId());
 		assertEquals(1, result.getAttributes().size());
 	}
 
@@ -82,5 +83,22 @@ public class CompositeActionTests extends TestCase {
 		Event result = tested.doExecute(mockRequestContext);
 		actionControl.verify();
 		assertEquals("Expecting success since no check is performed if null result,", "success", result.getId());
+	}
+	
+	public void testMultipleActions() throws Exception {
+		CompositeAction ca = new CompositeAction(new Action[] {
+				new Action() {
+					public Event execute(RequestContext context) throws Exception {
+						return new Event(this, "foo");
+					}
+				},
+				new Action() {
+					public Event execute(RequestContext context) throws Exception {
+						return new Event(this, "bar");
+					}
+				}
+		});
+		assertEquals("Result of last executed action should be returned",
+				"bar", ca.execute(new MockRequestContext()).getId());
 	}
 }

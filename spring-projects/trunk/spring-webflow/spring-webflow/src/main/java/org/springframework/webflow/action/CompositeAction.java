@@ -27,8 +27,14 @@ import org.springframework.webflow.RequestContext;
 
 /**
  * An action that will execute an ordered chain of other actions when executed.
- * The result of the last executed action is returned. This is the classic GoF
- * composite design pattern.
+ * The event id of the last not-null result returned by the executed actions
+ * will be used as the result event id of the composite action. Lacking that,
+ * the action will return the "success" event. The resulting event will have an
+ * "actionResults" event attribute with a List of all events returned
+ * by the executed action, including the null events. This allows you to relate
+ * an executed action and its result event by their index in the list.
+ * <p>
+ * This is the classic GoF composite design pattern.
  * 
  * @author Keith Donald
  */
@@ -82,11 +88,10 @@ public class CompositeAction extends AbstractAction {
 		List actionResults = new ArrayList(actions.length);
 		for (int i = 0; i < actions.length; i++) {
 			Event result = actions[i].execute(context);
+			actionResults.add(result);
 			if (result != null) {
-				actionResults.add(result);
-				if (isStopOnError() && result != null
-						&& result.getId().equals(getEventFactorySupport().getErrorEventId())) {
-					eventId = getEventFactorySupport().getErrorEventId();
+				eventId = result.getId();
+				if (isStopOnError() && result.getId().equals(getEventFactorySupport().getErrorEventId())) {
 					break;
 				}
 			}
@@ -96,7 +101,7 @@ public class CompositeAction extends AbstractAction {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("actions", getActions()).append("stopOnError", isStopOnError())
-				.toString();
+		return new ToStringCreator(this).append("actions", getActions())
+			.append("stopOnError", isStopOnError()).toString();
 	}
 }
