@@ -121,7 +121,7 @@ public class ExternalizedFlowDefinition implements Serializable {
 	}
 
 	private String stripExtension(String fileName) {
-		int extensionIndex = fileName.indexOf('.');
+		int extensionIndex = fileName.lastIndexOf('.');
 		if (extensionIndex != -1) {
 			return fileName.substring(0, extensionIndex);
 		}
