@@ -20,13 +20,13 @@ package org.springframework.webflow.executor.jsf;
  * JSF view identifiers.
  * @author Colin Sampaleanu
  */
-public interface ViewIdResolver {
+public interface ViewIdMapper {
 
 	/**
-	 * Resolve the given Web Flow view name to a JSF view id.
-	 * @param viewName name of the view to resolve
+	 * Map the given Web Flow view name to a JSF view id.
+	 * @param viewName name of the view to map
 	 * @return the corresponding JSF view id
 	 */
-	public String resolveViewId(String viewName);
+	public String mapViewId(String viewName);
 
 }

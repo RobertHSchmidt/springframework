@@ -88,7 +88,7 @@ public class FlowPhaseListener implements PhaseListener {
 	/**
 	 * Resolves selected Web Flow view names to JSF view ids.
 	 */
-	private ViewIdResolver viewIdResolver = new DefaultViewIdResolver();
+	private ViewIdMapper viewIdMapper = new DefaultViewIdMapper();
 
 	/**
 	 * Returns the repository factory used by this phase listener.
@@ -119,17 +119,17 @@ public class FlowPhaseListener implements PhaseListener {
 	}
 
 	/**
-	 * Returns the JSF view id resolver used by this navigation handler.
+	 * Returns the JSF view id resolver used by this phase listener.
 	 */
-	public ViewIdResolver getViewIdResolver() {
-		return viewIdResolver;
+	public ViewIdMapper getViewIdMapper() {
+		return viewIdMapper;
 	}
 
 	/**
-	 * Sets the JSF view id resolver used by this navigation handler.
+	 * Sets the JSF view id mapper used by this phase listener.
 	 */
-	public void setViewIdResolver(ViewIdResolver viewIdResolver) {
-		this.viewIdResolver = viewIdResolver;
+	public void setViewIdMapper(ViewIdMapper viewIdMapper) {
+		this.viewIdMapper = viewIdMapper;
 	}
 
 	public PhaseId getPhaseId() {
@@ -243,7 +243,7 @@ public class FlowPhaseListener implements PhaseListener {
 		ApplicationView forward = (ApplicationView)holder.getViewSelection();
 		if (forward != null) {
 			putInto(facesContext.getExternalContext().getRequestMap(), forward.getModel());
-			updateViewRoot(facesContext, viewIdResolver.resolveViewId(forward.getViewName()));
+			updateViewRoot(facesContext, viewIdMapper.mapViewId(forward.getViewName()));
 		}
 		Map requestMap = facesContext.getExternalContext().getRequestMap();
 		argumentExtractor.put(holder.getFlowExecutionKey().toString(), requestMap);
@@ -255,7 +255,8 @@ public class FlowPhaseListener implements PhaseListener {
 		if (viewRoot == null || hasViewChanged(viewRoot, viewId)) {
 			// create the specified view so that it can be rendered
 			if (logger.isDebugEnabled()) {
-				logger.debug("Creating new view with id '" + viewId + "' from previous view with id '" + viewRoot.getViewId() + "'");
+				logger.debug("Creating new view with id '" + viewId + "' from previous view with id '"
+						+ viewRoot.getViewId() + "'");
 			}
 			ViewHandler handler = facesContext.getApplication().getViewHandler();
 			UIViewRoot view = handler.createView(facesContext, viewId);
@@ -354,8 +355,8 @@ public class FlowPhaseListener implements PhaseListener {
 	 * Standard default view id resolver which uses the web flow view name as
 	 * the jsf view id
 	 */
-	public static class DefaultViewIdResolver implements ViewIdResolver {
-		public String resolveViewId(String viewName) {
+	public static class DefaultViewIdMapper implements ViewIdMapper {
+		public String mapViewId(String viewName) {
 			return viewName;
 		}
 	}

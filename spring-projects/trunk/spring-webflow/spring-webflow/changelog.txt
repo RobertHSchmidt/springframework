@@ -43,6 +43,10 @@ Package org.springframework.webflow.execution
 
 Package org.springframework.webflow.executor
 * Refined PortletFlowController to no longer set flowExecutionKey render parameter when an execution terminates.
+* Removed the temporary workaround accounting for differences between SWF view names and JSF view ids.  Now 
+  by default it is expected that the SWF view name match the JSF view id exactly.  A custom ViewIdMapper can be
+  configured to configure a specific mapping strategy.
+* Renamed ViewIdResolver to ViewIdMapper.
   
 Package org.springframework.webflow.registry
 * Made NoSuchFlowDefinitionException a standalone exception of the flow registry subsystem.
@@ -51,7 +55,9 @@ Package org.springframework.webflow.samples
 * Simplified 'flowLauncher' to take advantage of latest attribute mapping features.
 * Simplified 'fileUpload' to take advantage of convenient MultipartFile parameter access support.
 * Refined 'birthdate', 'sellitem', and 'sellitem-jsf' to use simpler "bind" methods instead of 'bindAndValidate' with a 'validateUsingValidatorMethod=true' flag.
-
+* Refined sellitem-jsf to demonstrate default view name behavior within a JSF environment--that is, 
+  where view-state 'view' names should match JSF view ids exactly.
+  
 Package org.springframework.webflow.support
 * Fixed bug in FlowRedirectSelector where a NPE was thrown on null redirect expression.
 * Removed RedirectType. Classes using it now have a simple boolean redirect flag.
