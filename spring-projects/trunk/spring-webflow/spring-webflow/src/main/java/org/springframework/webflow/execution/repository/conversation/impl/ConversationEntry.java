@@ -15,6 +15,9 @@
  */
 package org.springframework.webflow.execution.repository.conversation.impl;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +44,7 @@ class ConversationEntry implements Serializable {
 
 	private String description;
 
-	private ConversationLock lock = ConversationLockFactory.createLock();
+	private transient ConversationLock lock = ConversationLockFactory.createLock();
 
 	private Map attributes = new HashMap();
 
@@ -87,6 +90,17 @@ class ConversationEntry implements Serializable {
 		return id.hashCode();
 	}
 
+	//custom serialization
+
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.defaultWriteObject();
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		in.defaultReadObject();
+		lock = ConversationLockFactory.createLock();
+	}
+	
 	public String toString() {
 		return new ToStringCreator(this).append("id", id).append("caption", caption).append("lock", lock).toString();
 	}
