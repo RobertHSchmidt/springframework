@@ -42,13 +42,19 @@ import org.springframework.oxm.XmlMappingException;
 
 /**
  * Implementation of the <code>Marshaller</code> interface for Castor. By default, Castor does not require any further
- * configuration, though a mapping file can be used to have more control over the behavior of Castor.
+ * configuration, though setting a target class or providing a mapping file can be used to have more control over the
+ * behavior of Castor.
  * <p/>
- * Due to Castor's API, it is required to set the encoding used for writing to outputstreams. It defaults to
+ * If a target class is specified using <code>setTargetClass</code>, the <code>CastorMarshaller</code> can only be used
+ * to unmarshall XML that represents that specific class. If you want to unmarshall multiple classes, you have to
+ * provide a mapping file using <code>setMappingLocation</code>.
+ * <p/>
+ * Due to Castor's API, it is required to set the encoding used for writing to output streams. It defaults to
  * <code>UTF-8</code>.
  *
  * @author Arjen Poutsma
  * @see #setEncoding(String)
+ * @see #setTargetClass(Class)
  * @see #setMappingLocation(org.springframework.core.io.Resource)
  */
 public class CastorMarshaller extends AbstractMarshaller implements InitializingBean {
@@ -65,6 +71,8 @@ public class CastorMarshaller extends AbstractMarshaller implements Initializing
     private Mapping mapping;
 
     private Unmarshaller unmarshaller;
+
+    private Class targetClass;
 
     /**
      * Returns the encoding to be used for stream access. If this property is not set, the default encoding is used.
@@ -94,26 +102,29 @@ public class CastorMarshaller extends AbstractMarshaller implements Initializing
     }
 
     /**
+     * Sets the Castor target class. If this property is set, this <code>CastorMarshaller</code> is tied to this one
+     * specific class. Use a mapping file for unmarshalling multiple classes.
+     * <p/>
+     * You cannot set both this property and the mapping (location).
+     */
+    public void setTargetClass(Class targetClass) {
+        this.targetClass = targetClass;
+    }
+
+    /**
      * Sets the location of the Castor XML Mapping file.
      */
     public void setMappingLocation(Resource mappingLocation) {
         this.mappingLocation = mappingLocation;
     }
 
-    public final void afterPropertiesSet() throws Exception {
+    public final void afterPropertiesSet() throws IOException {
+        if ((mappingLocation != null || mapping != null) && targetClass != null) {
+            throw new IllegalArgumentException("Cannot set both the 'mappingLocation' and 'targetClass' property. " +
+                    "Set targetClass for unmarshalling a single class, and 'mappingLocation' for multiple classes'");
+        }
         if ((mappingLocation != null) && (mapping == null)) {
-            Mapping castorMapping = new Mapping();
-            InputStream inputStream = mappingLocation.getInputStream();
-            try {
-                castorMapping.loadMapping(new InputSource(inputStream));
-                this.mapping = castorMapping;
-            }
-            catch (MappingException ex) {
-                throw new CastorSystemException("Could not load Castor mapping: " + ex.getMessage(), ex);
-            }
-            finally {
-                inputStream.close();
-            }
+            loadMapping();
         }
         if (mapping != null) {
             try {
@@ -123,8 +134,26 @@ public class CastorMarshaller extends AbstractMarshaller implements Initializing
                 throw new CastorSystemException("Could not load Castor mapping: " + ex.getMessage(), ex);
             }
         }
+        else if (targetClass != null) {
+            unmarshaller = new Unmarshaller(targetClass);
+        }
         else {
             unmarshaller = new Unmarshaller();
+        }
+    }
+
+    private void loadMapping() throws IOException {
+        Mapping castorMapping = new Mapping();
+        InputStream inputStream = mappingLocation.getInputStream();
+        try {
+            castorMapping.loadMapping(new InputSource(inputStream));
+            this.mapping = castorMapping;
+        }
+        catch (MappingException ex) {
+            throw new CastorSystemException("Could not load Castor mapping: " + ex.getMessage(), ex);
+        }
+        finally {
+            inputStream.close();
         }
     }
 

@@ -15,6 +15,13 @@
  */
 package org.springframework.oxm.castor;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import javax.xml.transform.stream.StreamSource;
+
+import org.exolab.castor.mapping.Mapping;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.oxm.AbstractUnmarshallerTestCase;
 import org.springframework.oxm.Unmarshaller;
@@ -36,6 +43,28 @@ public class CastorUnmarshallerTest extends AbstractUnmarshallerTestCase {
         marshaller.setMappingLocation(mappingLocation);
         marshaller.afterPropertiesSet();
         return marshaller;
+    }
+
+    public void testUnmarhsalTargetClass() throws Exception {
+        CastorMarshaller unmarshaller = new CastorMarshaller();
+        unmarshaller.setTargetClass(Flights.class);
+        unmarshaller.afterPropertiesSet();
+        StreamSource source = new StreamSource(new ByteArrayInputStream(INPUT_STRING.getBytes("UTF-8")));
+        Object flights = unmarshaller.unmarshal(source);
+        testFlights(flights);
+    }
+
+    public void testSetBothTargetClassAndMapping() throws IOException {
+        try {
+            CastorMarshaller marshaller = new CastorMarshaller();
+            marshaller.setMapping(new Mapping());
+            marshaller.setTargetClass(getClass());
+            marshaller.afterPropertiesSet();
+            fail("IllegalArgumentException expected");
+        }
+        catch (IllegalArgumentException ex) {
+            // expected
+        }
     }
 
 }
