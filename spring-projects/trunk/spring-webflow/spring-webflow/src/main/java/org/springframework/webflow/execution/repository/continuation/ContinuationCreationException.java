@@ -15,8 +15,8 @@
  */
 package org.springframework.webflow.execution.repository.continuation;
 
+import org.springframework.core.NestedRuntimeException;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 
 /**
  * Root exception hierarchy for exceptions that occur during FlowExecution
@@ -24,7 +24,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryE
  * 
  * @author Keith Donald
  */
-public class ContinuationCreationException extends FlowExecutionRepositoryException {
+public class ContinuationCreationException extends NestedRuntimeException {
 
 	/**
 	 * The flow execution that could not be serialized.
