@@ -17,7 +17,7 @@ package org.springframework.webflow.execution.repository.continuation;
 
 import java.io.Serializable;
 
-import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
+import org.springframework.core.NestedRuntimeException;
 
 /**
  * Thrown when no flow execution continuation exists within a continuation
@@ -28,7 +28,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryE
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class ContinuationNotFoundException extends FlowExecutionRepositoryException {
+public class ContinuationNotFoundException extends NestedRuntimeException {
 
 	/**
 	 * The unique continuation identifier that was invalid.
