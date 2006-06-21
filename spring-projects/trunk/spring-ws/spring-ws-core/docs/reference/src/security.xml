@@ -11,7 +11,7 @@
         <formalpara>
             <title>Authentication</title>
             <para>
-                This is the process of establishing a <emphasis>principal</emphasis> is who they claim to be.
+                This is the process of determining whether a <emphasis>principal</emphasis> is who they claim to be.
                 In this context, a "principal" generally means a user, device or some other system which can perform an
                 action in your application.
             </para>
@@ -74,15 +74,15 @@
     <section id="security-xws-security-interceptor">
         <title>XwsSecurityInterceptor</title>
         <para>
-            The <classname>XwsSecurityInterceptor</classname> is a <classname>EndpointInterceptor</classname> (see <xref
-            linkend="ws-endpoint-interceptor"/>) that is based on SUN's XML and Web Services Security package (XWSS).
-            This WS-Security implementation is part of the Java Web Services Developer Pack (<ulink
+            The <classname>XwsSecurityInterceptor</classname> is an <classname>EndpointInterceptor</classname> (see
+            <xref linkend="ws-endpoint-interceptor"/>) that is based on SUN's XML and Web Services Security package
+            (XWSS). This WS-Security implementation is part of the Java Web Services Developer Pack (<ulink
             url="http://java.sun.com/webservices/"><citetitle>Java WSDP</citetitle></ulink>).
         </para>
         <para>
             Like any other endpoint interceptor, it is defined in the endpoint mapping (see <xref
-            linkend="ws-endpoint-mapping"/>). This means that you can be selective to adding WS-Security support: some
-            endpoint mappings require it, while others do not.
+            linkend="ws-endpoint-mapping"/>). This means that you can be selective about adding WS-Security support:
+            some endpoint mappings require it, while others do not.
         </para>
         <para>
             The <classname>XwsSecurityInterceptor</classname> requires a <emphasis>security policy file</emphasis> to
@@ -166,7 +166,7 @@
                 <para>
                     The simplest password validation handler is the
                     <classname>SimplePasswordValidationCallbackHandler</classname>. This handler validates passwords
-                    agains a in-memory <classname>Properties</classname> object, which you can specify using the
+                    against a in-memory <classname>Properties</classname> object, which you can specify using the
                     <methodname>users</methodname> property, like so:
                 </para>
 <programlisting><![CDATA[
@@ -194,9 +194,9 @@
                 </para>
                 <para>
                     The <classname>AcegiPlainTextPasswordValidationCallbackHandler</classname> requires an Acegi
-                    <classname>AuthenticationManager</classname> to operate. It uses this manager authenticate against a
+                    <classname>AuthenticationManager</classname> to operate. It uses this manager to authenticate against a
                     <classname>UsernamePasswordAuthenticationToken</classname> that it creates. If authentication is
-                    succesfull, the token is stored in the <classname>SecurityContextHolder</classname>. You can set the
+                    successful, the token is stored in the <classname>SecurityContextHolder</classname>. You can set the
                     authentication manager using the <methodname>authenticationManager</methodname> property:
                 </para>
 <programlisting><![CDATA[
@@ -244,7 +244,7 @@
 <programlisting><![CDATA[
 <bean id="jaasValidationHandler" 
     class="org.springframework.ws.soap.security.xwss.callback.jaas.JaasPlainTextPasswordValidationCallbackHandler">
-    <property name="loginContextName">MyLoginModule</property>
+    <property name="loginContextName" value="MyLoginModule</property">
 </bean>]]></programlisting>
                 <para>
                     In this case, the callback handler uses the <classname>LoginContext</classname> named 
@@ -259,7 +259,7 @@
             <para>
                 When using password digests, the SOAP message also contain a <literal>UsernameToken</literal> element,
                 which itself contains a <literal>Username</literal> element and a <literal>Password</literal> element.
-                The difference is that the password is not sent as plaint text, but as a <emphasis>digest</emphasis>.The
+                The difference is that the password is not sent as plain text, but as a <emphasis>digest</emphasis>.The
                 recipient compares this digest to the digest he calculated from the known password of the user, and if
                 they are the same, the user is authenticated. Digest authentication can be compared to the Digest
                 Authentication provided by HTTP servers.
