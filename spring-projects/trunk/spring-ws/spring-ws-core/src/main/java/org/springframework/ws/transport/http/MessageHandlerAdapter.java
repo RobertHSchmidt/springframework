@@ -59,8 +59,12 @@ public class MessageHandlerAdapter implements HandlerAdapter, InitializingBean {
                 if (responseMessage != null) {
                     if (responseMessage instanceof SoapMessage) {
                         SoapMessage soapMessage = (SoapMessage) responseMessage;
-                        response.setStatus(soapMessage.getSoapBody().hasFault() ?
-                                HttpServletResponse.SC_INTERNAL_SERVER_ERROR : HttpServletResponse.SC_OK);
+                        if (!soapMessage.getSoapBody().hasFault()) {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        }
+                        else {
+                            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                        }
                         response.setContentType(soapMessage.getVersion().getContentType());
                     }
                     else {

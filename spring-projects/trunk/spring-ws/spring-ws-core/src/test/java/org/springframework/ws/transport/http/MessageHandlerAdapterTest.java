@@ -26,7 +26,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ws.NoEndpointFoundException;
 import org.springframework.ws.context.MessageContextFactory;
 import org.springframework.ws.endpoint.MessageEndpoint;
+import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.context.SoapMessageContext;
 
 public class MessageHandlerAdapterTest extends TestCase {
@@ -59,6 +61,10 @@ public class MessageHandlerAdapterTest extends TestCase {
 
     private SoapMessage messageMock;
 
+    private MockControl bodyControl;
+
+    private SoapBody bodyMock;
+
     protected void setUp() throws Exception {
         adapter = new MessageHandlerAdapter();
         httpRequest = new MockHttpServletRequest();
@@ -72,6 +78,8 @@ public class MessageHandlerAdapterTest extends TestCase {
         contextMock = (SoapMessageContext) contextControl.getMock();
         messageControl = MockControl.createControl(SoapMessage.class);
         messageMock = (SoapMessage) messageControl.getMock();
+        bodyControl = MockControl.createControl(SoapBody.class);
+        bodyMock = (SoapBody) bodyControl.getMock();
     }
 
     public void testHandleNonPost() throws Exception {
@@ -109,6 +117,9 @@ public class MessageHandlerAdapterTest extends TestCase {
         endpointControl.setMatcher(MockControl.ALWAYS_MATCHER);
         factoryControl.expectAndReturn(factoryMock.createContext(httpRequest), contextMock);
         contextControl.expectAndReturn(contextMock.getResponse(), messageMock);
+        messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
+        bodyControl.expectAndReturn(bodyMock.hasFault(), false);
+        messageControl.expectAndReturn(messageMock.getVersion(), SoapVersion.SOAP_11);
         messageMock.writeTo(httpResponse.getOutputStream());
 
         replayMockControls();
@@ -116,6 +127,31 @@ public class MessageHandlerAdapterTest extends TestCase {
         adapter.handle(httpRequest, httpResponse, endpointMock);
 
         assertEquals("Invalid status code on response", HttpServletResponse.SC_OK, httpResponse.getStatus());
+        assertEquals("Invalid status code on response", SoapVersion.SOAP_11.getContentType(),
+                httpResponse.getContentType());
+        verifyMockControls();
+    }
+
+    public void testHandlePostFault() throws Exception {
+        httpRequest.setMethod("POST");
+        httpRequest.setContent(REQUEST.getBytes("UTF-8"));
+        httpRequest.setContentType("text/xml; charset=\"utf-8\"");
+        httpRequest.setCharacterEncoding("UTF-8");
+        endpointMock.invoke(null);
+        endpointControl.setMatcher(MockControl.ALWAYS_MATCHER);
+        factoryControl.expectAndReturn(factoryMock.createContext(httpRequest), contextMock);
+        contextControl.expectAndReturn(contextMock.getResponse(), messageMock);
+        messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
+        bodyControl.expectAndReturn(bodyMock.hasFault(), true);
+        messageControl.expectAndReturn(messageMock.getVersion(), SoapVersion.SOAP_11);
+        messageMock.writeTo(httpResponse.getOutputStream());
+
+        replayMockControls();
+
+        adapter.handle(httpRequest, httpResponse, endpointMock);
+
+        assertEquals("Invalid status code on response", HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                httpResponse.getStatus());
         verifyMockControls();
     }
 
@@ -143,6 +179,7 @@ public class MessageHandlerAdapterTest extends TestCase {
         factoryControl.replay();
         contextControl.replay();
         messageControl.replay();
+        bodyControl.replay();
     }
 
     private void verifyMockControls() {
@@ -150,6 +187,7 @@ public class MessageHandlerAdapterTest extends TestCase {
         factoryControl.verify();
         contextControl.verify();
         messageControl.verify();
+        bodyControl.verify();
     }
 
 }
