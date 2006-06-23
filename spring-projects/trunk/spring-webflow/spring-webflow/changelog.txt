@@ -2,7 +2,7 @@ SPRING WEB FLOW (SWF) CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 RC3 (21.6.2006)
+Changes in version 1.0 RC3 (23.6.2006)
 ------------------------------------
 Package org.springframework.webflow
 * Renamed TransitionSet.transitionMatches to "hasMatchingTransition".
@@ -18,14 +18,14 @@ Package org.springframework.webflow
 * Removed unnecessary Event argument from Flow.onEvent and TransitionableState.onEvent.
 * Removed CannotExecuteTransitionException, as its use reflected an illegal state.
 * Removed NoSuchFlowStateException, as its use reflected an illegal argument.
-* Made all exceptions serializable, removing dependencies on internal transient arguments such as Flow, State, and Transition 
+* Made all exceptions honor serializable contract, removing dependencies on internal transient arguments such as Flow, State, and Transition 
   in favor of serializable artifact identifiers such as the flowId and stateId.
   
 Package org.springframework.webflow.action
 * Renamed FormAction.VALIDATOR_METHOD_PROPERTY to VALIDATOR_METHOD_ATTRIBUTE for consistency with other
   context attributes.
 * Removed FormAction.validateUsingValidatorMethod property. If you don't want validation, don't call bindAndValidate()
-  or validate() but just bind().
+  or validate() but just bind().  Updated samples accordingly.
 * Removed AbstractAction.setEventFactorySupport(). In the unlikely case that you want to use an custom subclass of
   EventFactorySupport, just override AbstractAction.getEventFactorySupport().
 * Removed FormActionMethods since it served little purpose and was very closely linked to the way FormAction
