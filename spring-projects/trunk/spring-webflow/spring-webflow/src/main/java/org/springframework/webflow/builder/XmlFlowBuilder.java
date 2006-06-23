@@ -61,6 +61,7 @@ import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.action.ResultSpecification;
+import org.springframework.webflow.action.SimpleResultSpecification;
 import org.springframework.webflow.support.BeanFactoryFlowVariable;
 import org.springframework.webflow.support.CollectionAddingPropertyExpression;
 import org.springframework.webflow.support.ImmutableFlowAttributeMapper;
@@ -731,8 +732,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 		ResultSpecification resultSpecification = null;
 		if (resultName != null) {
-			resultSpecification = new ResultSpecification(resultName, (resultScope != null ? resultScope
-					: ScopeType.REQUEST));
+			resultSpecification = new SimpleResultSpecification(
+					resultName,
+					(resultScope != null ? resultScope : ScopeType.REQUEST));
 		}
 		return getBeanInvokingActionFactory().createBeanInvokingAction(beanId,
 				getLocalFlowServiceLocator().getBeanFactory(), methodSignature, resultSpecification,

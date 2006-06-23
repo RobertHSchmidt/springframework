@@ -49,26 +49,11 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
-	 * A helper for creating action execution result events. The default value
-	 * is {@link EventFactorySupport}.
-	 */
-	private EventFactorySupport eventFactorySupport = new EventFactorySupport();
-
-	/**
 	 * Returns the helper delegate for creating action execution result events.
 	 * @return the event factory support
 	 */
 	public EventFactorySupport getEventFactorySupport() {
-		return eventFactorySupport;
-	}
-
-	/**
-	 * Sets the helper delegate for creating action execution result events.
-	 * This allows for customizing how common action result events such as
-	 * "success" and "error" are created.
-	 */
-	public void setEventFactorySupport(EventFactorySupport eventFactorySupport) {
-		this.eventFactorySupport = eventFactorySupport;
+		return new EventFactorySupport();
 	}
 
 	public void afterPropertiesSet() throws Exception {
@@ -83,6 +68,10 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	/**
 	 * Action initializing callback, may be overriden by subclasses to perform
 	 * custom initialization logic.
+	 * <p>
+	 * Keep in mind that this hook will only be invoked when this action is
+	 * deployed in a Spring application context since it uses the Spring
+	 * {@link InitializingBean} mechanism to trigger actionn initialisation.
 	 */
 	protected void initAction() throws Exception {
 	}
@@ -91,7 +80,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * Returns a "success" result event.
 	 */
 	protected Event success() {
-		return eventFactorySupport.success(this);
+		return getEventFactorySupport().success(this);
 	}
 
 	/**
@@ -100,14 +89,14 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * @param result the action success result
 	 */
 	protected Event success(Object result) {
-		return eventFactorySupport.success(this, result);
+		return getEventFactorySupport().success(this, result);
 	}
 
 	/**
 	 * Returns an "error" result event.
 	 */
 	protected Event error() {
-		return eventFactorySupport.error(this);
+		return getEventFactorySupport().error(this);
 	}
 
 	/**
@@ -116,21 +105,21 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * an event attribute
 	 */
 	protected Event error(Exception e) {
-		return eventFactorySupport.error(this, e);
+		return getEventFactorySupport().error(this, e);
 	}
 
 	/**
 	 * Returns a "yes" result event.
 	 */
 	protected Event yes() {
-		return eventFactorySupport.yes(this);
+		return getEventFactorySupport().yes(this);
 	}
 
 	/**
 	 * Returns a "no" result event.
 	 */
 	protected Event no() {
-		return eventFactorySupport.no(this);
+		return getEventFactorySupport().no(this);
 	}
 
 	/**
@@ -139,7 +128,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * @return yes or no
 	 */
 	protected Event result(boolean booleanResult) {
-		return eventFactorySupport.event(this, booleanResult);
+		return getEventFactorySupport().event(this, booleanResult);
 	}
 
 	/**
@@ -163,7 +152,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * @return the action result event
 	 */
 	protected Event result(String eventId) {
-		return eventFactorySupport.event(this, eventId);
+		return getEventFactorySupport().event(this, eventId);
 	}
 
 	/**
@@ -191,7 +180,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * @return the action result event
 	 */
 	protected Event result(String eventId, AttributeCollection resultAttributes) {
-		return eventFactorySupport.event(this, eventId, resultAttributes);
+		return getEventFactorySupport().event(this, eventId, resultAttributes);
 	}
 
 	/**
@@ -208,17 +197,17 @@ public abstract class AbstractAction implements Action, InitializingBean {
 
 	public final Event execute(RequestContext context) throws Exception {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Action '" + getLoggingName() + "' beginning execution");
+			logger.debug("Action '" + getActionNameForLogging() + "' beginning execution");
 		}
 		Event result = doPreExecute(context);
 		if (result == null) {
 			result = doExecute(context);
 			if (logger.isDebugEnabled()) {
 				if (result != null) {
-					logger.debug("Action '" + getLoggingName() + "' completed execution; result is '" + result.getId() + "'");
+					logger.debug("Action '" + getActionNameForLogging() + "' completed execution; result is '" + result.getId() + "'");
 				}
 				else {
-					logger.debug("Action '" + getLoggingName() + "' completed execution; result is [null]");
+					logger.debug("Action '" + getActionNameForLogging() + "' completed execution; result is [null]");
 				}
 			}
 			doPostExecute(context);
@@ -230,12 +219,15 @@ public abstract class AbstractAction implements Action, InitializingBean {
 		}
 		return result;
 	}
+	
+	// subclassing hooks
 
 	/**
 	 * Internal helper to return the name of this action for logging
-	 * purposes.
+	 * purposes. Defaults to the sort class name.
+	 * @see ClassUtils#getShortName(java.lang.Class)
 	 */
-	private String getLoggingName() {
+	protected String getActionNameForLogging() {
 		return ClassUtils.getShortName(getClass());
 	}
 

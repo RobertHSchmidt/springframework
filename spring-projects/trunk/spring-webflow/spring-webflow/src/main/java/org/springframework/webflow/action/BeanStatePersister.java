@@ -19,11 +19,13 @@ import org.springframework.webflow.RequestContext;
 
 /**
  * A service for managing the saving and restoring of state associated with a
- * invokable bean.
+ * invokable bean, typically a POJO.
  * <p>
  * Some people might call what this strategy enables is memento-like
  * <i>bijection</i> where state is <i>injected</i> into a bean before
  * invocation and then <i>outjected</i> after invocation.
+ * 
+ * @see org.springframework.webflow.action.AbstractBeanInvokingAction
  * 
  * @author Keith Donald
  */

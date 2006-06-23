@@ -24,9 +24,10 @@ import org.springframework.webflow.TransitionCriteria;
 
 /**
  * An action that will execute another action if a guard allows it to.
- * The guard is represented by a TransitionCriteria object. If the guard
- * disallows execution, the wrapped action is just skipped and this
- * action will return the "success" event.
+ * The guard is represented by a {@link TransitionCriteria} object. If the guard
+ * disallows execution the wrapped action is just skipped and this
+ * action will return the "success" event. Otherwise this action will execute
+ * the wrapped action and return its result event.
  * <p>
  * As an alternative, consider overriding the
  * {@link org.springframework.webflow.action.AbstractAction#doPreExecute(RequestContext)}

@@ -30,7 +30,9 @@ import org.springframework.webflow.RequestContext;
  * <p>
  * This action always returns the
  * {@link org.springframework.webflow.action.AbstractAction#success() success}
- * event.
+ * event. If something goes wrong while executing the mapping, an exception
+ * is thrown. 
+ * 
  * @see org.springframework.binding.mapping.AttributeMapper
  * @see org.springframework.webflow.RequestContext
  * 
@@ -55,7 +57,7 @@ public class AttributeMapperAction extends AbstractAction {
 
 	protected Event doExecute(RequestContext context) throws Exception {
 		if (attributeMapper != null) {
-			// map ttributes from the request context to the request context
+			// map attributes from the request context to the request context
 			attributeMapper.map(context, context, getMappingContext(context));
 		}
 		return success();

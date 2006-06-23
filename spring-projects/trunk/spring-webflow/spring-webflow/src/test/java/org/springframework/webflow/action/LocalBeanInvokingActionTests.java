@@ -67,13 +67,13 @@ public class LocalBeanInvokingActionTests extends TestCase {
 				new Parameter(String.class, expression("lastEvent.attributes.foo")),
 				new Parameter(Integer.class, expression("lastEvent.attributes.bar")) }));
 		action = new LocalBeanInvokingAction(method, bean);
-		action.setResultSpecification(new ResultSpecification("foo", ScopeType.REQUEST));
+		action.setResultSpecification(new SimpleResultSpecification("foo", ScopeType.REQUEST));
 		testInvokeBean();
 		assertEquals(new Integer(12345), context.getRequestScope().get("foo"));
 
 		context.getRequestScope().clear();
 
-		action.setResultSpecification(new ResultSpecification("foo", ScopeType.FLOW));
+		action.setResultSpecification(new SimpleResultSpecification("foo", ScopeType.FLOW));
 		testInvokeBean();
 		assertEquals(new Integer(12345), context.getFlowScope().get("foo"));
 		assertNull(context.getRequestScope().get("foo"));

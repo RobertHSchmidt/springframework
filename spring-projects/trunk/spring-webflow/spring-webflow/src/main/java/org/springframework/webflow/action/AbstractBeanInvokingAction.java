@@ -24,9 +24,12 @@ import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
 /**
- * Base class for actions that delegate to methods on beans (plain old
- * java.lang.Objects). Acts as an adapter that adapts an {@link Object} method
+ * Base class for actions that delegate to methods on beans (POJOs - Plain Old
+ * Java Objects). Acts as an adapter that adapts an {@link Object} method
  * to the Spring Web Flow {@link Action} contract.
+ * <p>
+ * Subclasses are required to implement the {@link #getBean(RequestContext)} method,
+ * returning the bean on which a method should be invoked.
  * 
  * @author Keith Donald
  */
@@ -37,12 +40,6 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * resolving the method when used with a {@link MethodInvoker}. Required.
 	 */
 	private MethodSignature methodSignature;
-
-	/**
-	 * The specification (configuration) for how bean method returns values
-	 * should be exposed to an executing flow that invokes this action.
-	 */
-	private ResultSpecification resultSpecification;
 
 	/**
 	 * The method invoker that performs the action-&gt;bean method binding,
@@ -60,13 +57,19 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	private BeanStatePersister beanStatePersister = new NoOpBeanStatePersister();
 
 	/**
+	 * The specification (configuration) for how bean method return values
+	 * should be exposed to an executing flow that invokes this action.
+	 */
+	private ResultSpecification resultSpecification;
+
+	/**
 	 * The strategy that adapts bean method return values to Event objects.
 	 */
 	private ResultEventFactory resultEventFactory = new SuccessEventFactory();
 
 	/**
 	 * Creates a new bean invoking action.
-	 * @param methodSignature the signature of the method to invoke.
+	 * @param methodSignature the signature of the method to invoke
 	 */
 	protected AbstractBeanInvokingAction(MethodSignature methodSignature) {
 		Assert.notNull(methodSignature, "The signature of the target method to invoke is required");
@@ -74,26 +77,10 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	}
 
 	/**
-	 * Returns the signature of the method to invoke on the target bean
+	 * Returns the signature of the method to invoke on the target bean.
 	 */
 	public MethodSignature getMethodSignature() {
 		return methodSignature;
-	}
-
-	/**
-	 * Returns the specification (configuration) for how bean method returns
-	 * values should be exposed to an executing flow that invokes this action.
-	 */
-	public ResultSpecification getResultSpecification() {
-		return resultSpecification;
-	}
-
-	/**
-	 * Sets the specification (configuration) for how bean method returns values
-	 * should be exposed to an executing flow that invokes this action.
-	 */
-	public void setResultSpecification(ResultSpecification resultSpecification) {
-		this.resultSpecification = resultSpecification;
 	}
 
 	/**
@@ -104,10 +91,29 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	}
 
 	/**
-	 * Set the bean state management strategy.
+	 * Set the bean state management strategy. Defaults to no bean
+	 * state persistence.
 	 */
 	public void setBeanStatePersister(BeanStatePersister beanStatePersister) {
 		this.beanStatePersister = beanStatePersister;
+	}
+
+	/**
+	 * Returns the specification (configuration) for how bean method return
+	 * values should be exposed to an executing flow that invokes this action.
+	 */
+	public ResultSpecification getResultSpecification() {
+		return resultSpecification;
+	}
+
+	/**
+	 * Sets the specification (configuration) for how bean method return values
+	 * should be exposed to an executing flow that invokes this action.
+	 * This is optional. By default the bean method return values do net get
+	 * exposed to the executing flow.
+	 */
+	public void setResultSpecification(ResultSpecification resultSpecification) {
+		this.resultSpecification = resultSpecification;
 	}
 
 	/**
@@ -118,7 +124,9 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	}
 
 	/**
-	 * Set the bean return value-&gt;event adaption strategy.
+	 * Set the bean return value-&gt;event adaption strategy. Defaults
+	 * to {@link SuccessEventFactory}, so all bean method return values
+	 * will be interpreted as "success".
 	 */
 	public void setResultEventFactory(ResultEventFactory resultEventFactory) {
 		this.resultEventFactory = resultEventFactory;
@@ -138,7 +146,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	public void setConversionService(ConversionService conversionService) {
 		methodInvoker.setConversionService(conversionService);
 	}
-
+	
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBeanStatePersister().restoreState(getBean(context), context);
 		Object returnValue = getMethodInvoker().invoke(methodSignature, bean, context);
@@ -148,12 +156,18 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 		getBeanStatePersister().saveState(bean, context);
 		return getResultEventFactory().createResultEvent(bean, returnValue, context);
 	}
+	
+	// subclassing hooks
 
 	/**
 	 * Retrieves the bean to invoke a method on. Subclasses need to implement
 	 * this method.
+	 * @param the flow execution request context
+	 * @return the bean on which to invoke methods
+	 * @throws Exception when the bean cannot be retreived
 	 */
-	protected abstract Object getBean(RequestContext context);
+	protected abstract Object getBean(RequestContext context) throws Exception;
+	
 
 	/**
 	 * State persister that doesn't take any action - default, private
@@ -162,11 +176,12 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * @author Keith Donald
 	 */
 	private static class NoOpBeanStatePersister implements BeanStatePersister {
-		public Object restoreState(Object bean, RequestContext context) {
-			return bean;
-		}
 
 		public void saveState(Object bean, RequestContext context) {
+		}
+
+		public Object restoreState(Object bean, RequestContext context) {
+			return bean;
 		}
 	}
 }

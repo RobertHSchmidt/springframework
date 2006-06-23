@@ -35,8 +35,8 @@ public class LocalBeanInvokingAction extends AbstractBeanInvokingAction implemen
 	private Object bean;
 
 	/**
-	 * Creates a bean invoking action that invokes the specified bean. The bean
-	 * may be a proxy providing a layer of indirection if necessary.
+	 * Creates a bean invoking action that invokes a method on the specified bean.
+	 * The bean may be a proxy providing a layer of indirection if necessary.
 	 * @param bean the bean to invoke
 	 */
 	public LocalBeanInvokingAction(MethodSignature methodSignature, Object bean) {
@@ -52,7 +52,7 @@ public class LocalBeanInvokingAction extends AbstractBeanInvokingAction implemen
 		return bean;
 	}
 
-	protected Object getBean(RequestContext context) {
+	protected Object getBean(RequestContext context) throws Exception {
 		return getBean();
 	}
 }

@@ -136,7 +136,7 @@ public class MultiAction extends AbstractAction {
 		Object obj = methodInvoker.invoke(method, new Object[] { context });
 		if (obj != null) {
 			Assert.isInstanceOf(Event.class, obj,
-					"the '" + method + "' action execution method on target object '" +
+					"The '" + method + "' action execution method on target object '" +
 					methodInvoker.getTarget() + "' did not return an Event object but '" +
 					obj + "' of type " + obj.getClass().getName() + " -- " +
 					"Programmer error; make sure the method signature conforms to " +

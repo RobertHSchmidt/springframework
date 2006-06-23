@@ -161,15 +161,15 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * </pre>
  * <p>
  * When it comes to validating submitted input data using a registered
- * validator, this class offers the following options:
+ * {@link org.springframework.validation.Validator}, this class offers the following options:
  * <ul>
  * <li>If you don't want validation at all, just call {@link #bind(RequestContext)}
  * instead of {@link #bindAndValidate(RequestContext)}.</li>
  * <li>If you want piecemeal validation, e.g. in a multi-page wizard, call
  * {@link #bindAndValidate(RequestContext)} or {@link #validate(RequestContext)}
- * and specifying a "validatorMethod" action attribute. In this case, the
- * signature of the custom validator method on the registered validator should
- * follow the following signature:
+ * and specify a "validatorMethod" action execution attribute. This will invoke
+ * the identified custom validator method on the validator. The validator method
+ * signature should follow the following pattern:
  * <pre>
  *     public void ${validateMethodName}(${formObjectClass}, Errors)
  * </pre>
@@ -186,7 +186,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * {@link org.springframework.validation.Validator#validate(java.lang.Object, org.springframework.validation.Errors) validate}
  * method of the registered validator, call {@link #bindAndValidate(RequestContext)}
  * or {@link #validate(RequestContext)} without specifying a "validatorMethod"
- * action attribute.</li>
+ * action execution attribute.</li>
  * </ul>
  * 
  * <p>
@@ -218,7 +218,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * be created on each request into the flow execution.</td>
  * </tr>
  * <tr>
- * <td>errorsScope</td>
+ * <td>formErrorsScope</td>
  * <td>{@link org.springframework.webflow.ScopeType#REQUEST request}</td>
  * <td>The scope in which the form object errors instance will be put. If put
  * in flow scope the errors will be cached and reused over the life of the flow.
@@ -245,12 +245,12 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * </table>
  * 
  * @see org.springframework.beans.PropertyEditorRegistrar
- * @see org.springframework.webflow.action.FormActionMethods
+ * @see org.springframework.webflow.action.FormHandlingAction
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
  */
-public class FormAction extends MultiAction implements InitializingBean, FormActionMethods {
+public class FormAction extends MultiAction implements InitializingBean, FormHandlingAction {
 
 	/*
 	 * Implementation note: Uses deprecated DataBinder.getErrors() to remain
@@ -308,7 +308,6 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * Strategy for resolving error message codes.
 	 */
 	private MessageCodesResolver messageCodesResolver;
-
 
 	/**
 	 * A cache for dispatched action execute methods.
@@ -607,6 +606,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * @param context the action execution context, for accessing and setting
 	 * data in "flow scope" or "request scope"
 	 * @param binder the data binder to use
+	 * @throws Exception when an unrecoverable exception occurs
 	 */
 	protected void doValidate(RequestContext context, DataBinder binder) throws Exception {
 		Assert.notNull(validator, "The validator must not be null when attempting validation -- programmer error");
@@ -637,6 +637,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * @param validatorMethod the name of the validator method to invoke
 	 * @param formObject the form object
 	 * @param errors possible binding errors
+	 * @throws Exception when an unrecoverable exception occurs
 	 */
 	private void invokeValidatorMethod(String validatorMethod, Object formObject, Errors errors) throws Exception {
 		if (logger.isDebugEnabled()) {
@@ -651,6 +652,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * loaded by a call to {@link #loadFormObject(RequestContext)}.
 	 * @param context the flow request context
 	 * @return the form object
+	 * @throws Exception when an unrecoverable exception occurs
 	 */
 	protected Object getFormObject(RequestContext context) throws Exception {
 		FormObjectAccessor accessor = getFormObjectAccessor(context);
@@ -689,6 +691,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * will be created.
 	 * @param context the flow request context
 	 * @return the form errors
+	 * @throws Exception when an unrecoverable exception occurs
 	 */
 	protected Errors getFormErrors(RequestContext context) throws Exception {
 		return ensureFormErrorsExposed(context, getFormObject(context));
@@ -696,7 +699,8 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 
 	/**
 	 * Expose an empty errors collection in the model of the currently executing
-	 * flow if neccessary.
+	 * flow if neccessary. If a seemingly valid Errors instance is found in the
+	 * configured scope, this method will do nothing.
 	 * @param context the flow execution request context
 	 * @param errors the errors
 	 */
@@ -778,6 +782,7 @@ public class FormAction extends MultiAction implements InitializingBean, FormAct
 	 * @param context the action execution context, for accessing and setting
 	 * data in "flow scope" or "request scope"
 	 * @return the form object
+	 * @throws Exception when an unrecoverable exception occurs
 	 */
 	protected Object loadFormObject(RequestContext context) throws Exception {
 		return createFormObject(context);

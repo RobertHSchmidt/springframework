@@ -22,14 +22,14 @@ import org.springframework.webflow.ScopeType;
 
 /**
  * Convenience helper that encapsulates logic on how to retrieve and expose form
- * objects and associated errors to and from a flow execution context.
+ * objects and associated errors to and from a flow execution request context.
  * <p>
  * <b>Note</b>: The form object available under the well known attribute name
  * {@link #CURRENT_FORM_OBJECT_ATTRIBUTE} will be the last ("current") form
  * object set in the request context. The same is true for the associated errors
  * object. This implies that special care should be taken when accessing the
  * form object using this alias if there are multiple form objects available in
- * the flow execution context!
+ * the flow execution request context!
  * 
  * @see org.springframework.webflow.RequestContext
  * @see org.springframework.validation.Errors
@@ -47,8 +47,9 @@ public class FormObjectAccessor {
 	 * the last one that was used would be available using this alias!
 	 * <p>
 	 * We need to keep track of the 'current form object' using this attribute
-	 * to be able to deal with the limitations of some clients, e.g. when using
-	 * the Struts FlowAction.
+	 * to be able to deal with the limitations of some clients that can only
+	 * deal with a single form backing object, e.g. Struts when using the Struts
+	 * FlowAction.
 	 */
 	private static final String CURRENT_FORM_OBJECT_ATTRIBUTE = "currentFormObject";
 
@@ -72,6 +73,22 @@ public class FormObjectAccessor {
 	}
 
 	/**
+	 * Returns the current form object name.
+	 * @return the current form object name
+	 */
+	public static String getCurrentFormObjectName() {
+		return CURRENT_FORM_OBJECT_ATTRIBUTE;
+	}
+	
+	/**
+	 * Returns the current form object errors attribute name.
+	 * @return the current form object errors attribute name
+	 */
+	public static String getCurrentFormErrorsName() {
+		return ERRORS_PREFIX + getCurrentFormObjectName();
+	}
+
+	/**
 	 * Gets the form object from the context, using the well-known attribute
 	 * name {@link #CURRENT_FORM_OBJECT_ATTRIBUTE}. Will try all scopes.
 	 * @return the form object, or null if not found
@@ -91,11 +108,21 @@ public class FormObjectAccessor {
 	/**
 	 * Gets the form object from the context, using the well-known attribute
 	 * name {@link #CURRENT_FORM_OBJECT_ATTRIBUTE}.
-	 * @param scope the scope to obtain the form object from
+	 * @param scopeType the scope to obtain the form object from
 	 * @return the form object, or null if not found
 	 */
-	public Object getCurrentFormObject(ScopeType scope) {
-		return getFormObject(getCurrentFormObjectName(), scope);
+	public Object getCurrentFormObject(ScopeType scopeType) {
+		return getFormObject(getCurrentFormObjectName(), scopeType);
+	}
+
+	/**
+	 * Expose given form object using the well known alias
+	 * {@link #CURRENT_FORM_OBJECT_ATTRIBUTE} in the specified scope.
+	 * @param formObject the form object
+	 * @param scopeType the scope in which to expose the form object
+	 */
+	public void setCurrentFormObject(Object formObject, ScopeType scopeType) {
+		setFormObject(formObject, getCurrentFormObjectName(), scopeType);
 	}
 
 	/**
@@ -121,7 +148,8 @@ public class FormObjectAccessor {
 	}
 
 	/**
-	 * Expose given form object using given name in specified scope.
+	 * Expose given form object using given name in specified scope. Given
+	 * object will become the <i>current</i> form object.
 	 * @param formObject the form object
 	 * @param formObjectName the name of the form object
 	 * @param scopeType the scope in which to expose the form object
@@ -129,16 +157,6 @@ public class FormObjectAccessor {
 	public void setFormObject(Object formObject, String formObjectName, ScopeType scopeType) {
 		scopeType.getScope(context).put(formObjectName, formObject);
 		setCurrentFormObject(formObject, scopeType);
-	}
-
-	/**
-	 * Expose given form object using the well known alias
-	 * {@link #CURRENT_FORM_OBJECT_ATTRIBUTE} in the specified scope.
-	 * @param formObject the form object
-	 * @param scopeType the scope in which to expose the form object
-	 */
-	public void setCurrentFormObject(Object formObject, ScopeType scopeType) {
-		scopeType.getScope(context).put(getCurrentFormObjectName(), formObject);
 	}
 
 	/**
@@ -171,29 +189,6 @@ public class FormObjectAccessor {
 	}
 
 	/**
-	 * Gets the form object <code>Errors</code> tracker from the context,
-	 * using the specified form object name.
-	 * @param formObjectName the name of the Errors object, which will be
-	 * prefixed with {@link BindException#ERROR_KEY_PREFIX}
-	 * @param scopeType the scope to obtain the errors from
-	 * @return the form object errors instance, or null if not found
-	 */
-	public Errors getFormErrors(String formObjectName, ScopeType scopeType) {
-		return (Errors)scopeType.getScope(context).get(ERRORS_PREFIX + formObjectName,
-				Errors.class);
-	}
-
-	/**
-	 * Expose given errors instance in the specified scope.
-	 * @param errors the errors object
-	 * @param scopeType the scope to expose the errors in
-	 */
-	public void setFormErrors(Errors errors, ScopeType scopeType) {
-		scopeType.getScope(context).put(ERRORS_PREFIX + errors.getObjectName(), errors);
-		setCurrentFormErrors(errors, scopeType);
-	}
-
-	/**
 	 * Expose given errors instance using the well known alias
 	 * {@link #CURRENT_FORM_OBJECT_ATTRIBUTE} in the specified scope.
 	 * @param errors the errors instance
@@ -204,18 +199,25 @@ public class FormObjectAccessor {
 	}
 
 	/**
-	 * Returns the current form object name.
-	 * @return the current form object name
+	 * Gets the form object <code>Errors</code> tracker from the context,
+	 * using the specified form object name.
+	 * @param formObjectName the name of the Errors object, which will be
+	 * prefixed with {@link BindException#ERROR_KEY_PREFIX}
+	 * @param scopeType the scope to obtain the errors from
+	 * @return the form object errors instance, or null if not found
 	 */
-	public static String getCurrentFormObjectName() {
-		return CURRENT_FORM_OBJECT_ATTRIBUTE;
+	public Errors getFormErrors(String formObjectName, ScopeType scopeType) {
+		return (Errors)scopeType.getScope(context).get(ERRORS_PREFIX + formObjectName, Errors.class);
 	}
-	
+
 	/**
-	 * Returns the current form object errors attribute name.
-	 * @return the current form object errors attribute name
+	 * Expose given errors instance in the specified scope. Given errors
+	 * instance will become the <i>current</i> form errors instance.
+	 * @param errors the errors object
+	 * @param scopeType the scope to expose the errors in
 	 */
-	public static String getCurrentFormErrorsName() {
-		return ERRORS_PREFIX + getCurrentFormObjectName();
+	public void setFormErrors(Errors errors, ScopeType scopeType) {
+		scopeType.getScope(context).put(ERRORS_PREFIX + errors.getObjectName(), errors);
+		setCurrentFormErrors(errors, scopeType);
 	}
 }

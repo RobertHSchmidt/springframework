@@ -21,8 +21,19 @@ import org.springframework.webflow.Event;
 
 /**
  * A convenience support class assisting in the creation of event objects.
+ * <p>
+ * This class can be used as a simple utility class when you need to create
+ * common event objects. The {@link org.springframework.webflow.action.AbstractAction}
+ * uses it in this way. Alternatively you could extend it as a base support class
+ * when creating custom event factories. The
+ * {@link org.springframework.webflow.action.ResultEventFactory} implementations
+ * use it like this. 
+ * 
+ * @see org.springframework.webflow.action.AbstractAction
+ * @see org.springframework.webflow.action.ResultEventFactory
  * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
 public class EventFactorySupport {
 
@@ -61,6 +72,7 @@ public class EventFactorySupport {
 	 */
 	private static final String RESULT_ATTRIBUTE_NAME = "result";
 
+	
 	/**
 	 * The success event identifier.
 	 */
@@ -136,20 +148,20 @@ public class EventFactorySupport {
 		this.nullEventId = nullEventId;
 	}
 
-	public String getResultAttributeName() {
-		return resultAttributeName;
-	}
-
-	public void setResultAttributeName(String resultAttributeName) {
-		this.resultAttributeName = resultAttributeName;
-	}
-
 	public String getExceptionAttributeName() {
 		return exceptionAttributeName;
 	}
 
 	public void setExceptionAttributeName(String exceptionAttributeName) {
 		this.exceptionAttributeName = exceptionAttributeName;
+	}
+
+	public String getResultAttributeName() {
+		return resultAttributeName;
+	}
+
+	public void setResultAttributeName(String resultAttributeName) {
+		this.resultAttributeName = resultAttributeName;
 	}
 
 	/**

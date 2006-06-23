@@ -29,7 +29,7 @@ import org.springframework.webflow.ScopeType;
  * <p>
  * The resolved bean name will be treated as the identifier of a prototype bean
  * definition in the configured bean factory to retrieve, as well as the name of
- * the attribute to expose the bean in under the configured
+ * the attribute to expose the bean under in the configured
  * {@link #getBeanScope() scope}. Subsequent requests to invoke this action
  * will pull the cached bean instance from the scope.
  * <p>
@@ -49,6 +49,8 @@ import org.springframework.webflow.ScopeType;
  * memento-based or metadata-driven based strategy for selectively storing
  * serializable fields separately from the bean itself when you mix transient
  * and serializable references within the same stateful object.
+ * 
+ * @see org.springframework.webflow.action.BeanStatePersister
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
@@ -88,16 +90,22 @@ public class StatefulBeanInvokingAction extends BeanFactoryBeanInvokingAction {
 	/**
 	 * Retrieves the bean to invoke from the configured {@link #getBeanScope()}.
 	 */
-	protected Object getBean(RequestContext context) {
+	protected Object getBean(RequestContext context) throws Exception {
 		return beanScope.getScope(context).get(getBeanName());
 	}
 
 	/**
 	 * Bean state perister that loads new stateful beans from the configured
 	 * bean factory and saves modified beans out to the configured bean scope.
+	 * 
 	 * @author Keith Donald
 	 */
 	private class ScopeBeanStatePersister implements BeanStatePersister {
+		
+		public void saveState(Object bean, RequestContext context) {
+			getBeanScope().getScope(context).put(getBeanName(), bean);
+		}
+		
 		public Object restoreState(Object bean, RequestContext context) {
 			if (bean == null) {
 				return getPrototypeBean(getBeanName());
@@ -107,13 +115,9 @@ public class StatefulBeanInvokingAction extends BeanFactoryBeanInvokingAction {
 			}
 		}
 
-		public void saveState(Object bean, RequestContext context) {
-			getBeanScope().getScope(context).put(getBeanName(), bean);
-		}
-
 		private Object getPrototypeBean(String beanName) {
-			Assert.isTrue(!getBeanFactory().isSingleton(beanName), "The definition of the stateful with name '"
-					+ beanName + "' must be a prototype");
+			Assert.isTrue(!getBeanFactory().isSingleton(beanName),
+					"The definition of the stateful bean with name '" + beanName + "' must be a prototype");
 			return getBeanFactory().getBean(beanName);
 		}
 	}
