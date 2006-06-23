@@ -14,7 +14,8 @@ A C# client is available in the client directory.
 
 The Airline sample is a normal web application that connects to a database of your choice.
 
-1. Create a database using one of the scripts in src/etc/db
+1. Create a database using one of the scripts in src/etc/db. First, initialize the database using either the MySQL or
+   PostgreSQL initDB.sql script, and after that run populateDb.sql.
 2. Adjust the jdbc.properties in src/etc/resources/org/springframework/ws/samples/airline/dao
    to reflect your database connection settings
 3. Adjust the hibernate.propeties in src/etc/resources/org/springframework/ws/samples/airline/dao/hibernate
