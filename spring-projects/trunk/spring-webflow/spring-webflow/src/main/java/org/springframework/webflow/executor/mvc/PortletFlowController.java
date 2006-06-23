@@ -59,18 +59,18 @@ import org.springframework.webflow.support.FlowRedirect;
  * Usage example:
  * 
  * <pre>
- *    &lt;!--
- *        Exposes flows for execution.
- *    --&gt;
- *    &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
- *        &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
- *        &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
- *    &lt;/bean&gt;
- *                                                                                             
- *    &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *        &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *        &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
- *    &lt;/bean&gt;
+ *             &lt;!--
+ *                 Exposes flows for execution.
+ *             --&gt;
+ *             &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
+ *                 &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
+ *                 &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
+ *             &lt;/bean&gt;
+ *                                                                                                      
+ *             &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *                 &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *                 &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
+ *             &lt;/bean&gt;
  * </pre>
  * 
  * <p>
@@ -108,7 +108,8 @@ public class PortletFlowController extends AbstractController implements Initial
 		// set the cache seconds property to 0 so no pages are cached by default
 		// for flows
 		setCacheSeconds(0);
-		// this controller stores ResponseInstruction objects in the session, so we
+		// this controller stores ResponseInstruction objects in the session, so
+		// we
 		// need to take doing this in an orderly manner
 		setSynchronizeOnSession(true);
 	}
@@ -178,21 +179,37 @@ public class PortletFlowController extends AbstractController implements Initial
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
 		PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
 		if (argumentExtractor.isFlowExecutionKeyPresent(context)) {
+			// flowExecutionKey render param present: this is a request to
+			// render an active flow execution -- extract its key
 			String flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
-			ResponseInstruction responseInstruction = getActionResponseInstruction(request);
+			// look for a cached response instruction in session put there by
+			// the action phase as part of an "active view" forward
+			ResponseInstruction responseInstruction = extractActionResponseInstruction(request);
 			if (responseInstruction == null) {
-				responseInstruction = flowExecutor.refresh(flowExecutionKey, context);
+				// no response instruction found, simply refresh the current
+				// view state of the flow execution
+				return toModelAndView(flowExecutor.refresh(flowExecutionKey, context));
 			}
-			return toModelAndView(responseInstruction);
+			else {
+				// found: convert to model and view for rendering
+				return toModelAndView(responseInstruction);
+			}
 		}
 		else {
-			ResponseInstruction responseInstruction = getActionResponseInstruction(request);
+			// this is either a "launch" flow request or a "confirmation view"
+			// render request -- look for the cached "confirmation view"
+			// response instruction
+			ResponseInstruction responseInstruction = extractActionResponseInstruction(request);
 			if (responseInstruction == null) {
-				// launch a new flow execution
+				// no response instruction found in session - launch a new flow
+				// execution
 				String flowId = argumentExtractor.extractFlowId(context);
-				responseInstruction = flowExecutor.launch(flowId, context);
+				return toModelAndView(flowExecutor.launch(flowId, context));
 			}
-			return toModelAndView(responseInstruction);
+			else {
+				// found: convert to model and view for rendering
+				return toModelAndView(responseInstruction);
+			}
 		}
 	}
 
@@ -200,24 +217,36 @@ public class PortletFlowController extends AbstractController implements Initial
 		PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
 		String flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
 		String eventId = argumentExtractor.extractEventId(context);
+		// signal the event against the flow execution, returning the next
+		// response instruction
 		ResponseInstruction responseInstruction = flowExecutor.signalEvent(eventId, flowExecutionKey, context);
 		if (responseInstruction.isApplicationView()) {
+			// response instruction is a forward to an "application view"
 			if (responseInstruction.isActiveView()) {
+				// is a "active" forward from a view-state (not end-state) --
+				// set the flow execution key render parameter to support
+				// browser refresh.
 				response.setRenderParameter(argumentExtractor.getFlowExecutionKeyParameterName(), responseInstruction
 						.getFlowExecutionKey());
 			}
+			// cache response instruction for access during render phase of this
+			// portlet
 			exposeToRenderPhase(responseInstruction, request);
 		}
 		else if (responseInstruction.isFlowExecutionRedirect()) {
-			response.setRenderParameter(argumentExtractor.getFlowExecutionKeyParameterName(),
-					responseInstruction.getFlowExecutionKey());
+			// is a flow execution redirect: simply expose key parameter to
+			// support refresh during render phase
+			response.setRenderParameter(argumentExtractor.getFlowExecutionKeyParameterName(), responseInstruction
+					.getFlowExecutionKey());
 		}
 		else if (responseInstruction.isFlowRedirect()) {
-			// request that a new flow be launched within this portlet
+			// set flow id render parameter to request that a new flow be
+			// launched within this portlet
 			String flowId = ((FlowRedirect)responseInstruction.getViewSelection()).getFlowId();
 			response.setRenderParameter(argumentExtractor.getFlowIdParameterName(), flowId);
 		}
 		else if (responseInstruction.isExternalRedirect()) {
+			// issue the redirect to the external URL
 			ExternalRedirect redirect = (ExternalRedirect)responseInstruction.getViewSelection();
 			String url = argumentExtractor.createExternalUrl(redirect, flowExecutionKey, context);
 			response.sendRedirect(url);
@@ -229,7 +258,7 @@ public class PortletFlowController extends AbstractController implements Initial
 
 	// helpers
 
-	private ResponseInstruction getActionResponseInstruction(PortletRequest request) {
+	private ResponseInstruction extractActionResponseInstruction(PortletRequest request) {
 		PortletSession session = request.getPortletSession(false);
 		ResponseInstruction response = null;
 		if (session != null) {
