@@ -26,7 +26,6 @@ Package org.springframework.webflow.action
   context attributes.
 * Removed FormAction.validateUsingValidatorMethod property. If you don't want validation, don't call bindAndValidate()
   or validate() but just bind().
-* Refactored ResultSpecification to be an interface. The default implementation is SimpleResultSpecification.
 * Removed AbstractAction.setEventFactorySupport(). In the unlikely case that you want to use an custom subclass of
   EventFactorySupport, just override AbstractAction.getEventFactorySupport().
 * Removed FormActionMethods since it served little purpose and was very closely linked to the way FormAction

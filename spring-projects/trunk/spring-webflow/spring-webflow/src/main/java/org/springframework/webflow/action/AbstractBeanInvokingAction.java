@@ -60,7 +60,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * The specification (configuration) for how bean method return values
 	 * should be exposed to an executing flow that invokes this action.
 	 */
-	private ResultSpecification resultSpecification;
+	private SimpleResultSpecification resultSpecification;
 
 	/**
 	 * The strategy that adapts bean method return values to Event objects.
@@ -102,7 +102,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * Returns the specification (configuration) for how bean method return
 	 * values should be exposed to an executing flow that invokes this action.
 	 */
-	public ResultSpecification getResultSpecification() {
+	public SimpleResultSpecification getResultSpecification() {
 		return resultSpecification;
 	}
 
@@ -112,7 +112,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * This is optional. By default the bean method return values do net get
 	 * exposed to the executing flow.
 	 */
-	public void setResultSpecification(ResultSpecification resultSpecification) {
+	public void setResultSpecification(SimpleResultSpecification resultSpecification) {
 		this.resultSpecification = resultSpecification;
 	}
 

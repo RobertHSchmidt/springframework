@@ -21,16 +21,15 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ScopeType;
 
 /**
- * Simple implementation of the {@link org.springframework.webflow.action.ResultSpecification}
- * interface that exposes the return value as an attribute in a configured scope, if
- * necessary.
+ * Exposes a bean method result value to an executing flow.
+ * The return value is exposed as an attribute in a configured scope.
  * 
  * @see org.springframework.webflow.action.AbstractBeanInvokingAction
  * @see org.springframework.webflow.RequestContext
  * 
  * @author Keith Donald
  */
-public class SimpleResultSpecification implements ResultSpecification {
+public class SimpleResultSpecification {
 
 	/**
 	 * The name of the attribute to index the return value of the invoked bean
@@ -72,6 +71,12 @@ public class SimpleResultSpecification implements ResultSpecification {
 		return resultScope;
 	}
 
+	/**
+	 * Expose given bean method return value in given flow execution request
+	 * context.
+	 * @param returnValue the return value
+	 * @param context the request context
+	 */
 	public void exposeResult(Object returnValue, RequestContext context) {
 		resultScope.getScope(context).put(resultName, returnValue);
 	}
