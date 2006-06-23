@@ -15,7 +15,7 @@
 
 <!DOCTYPE xsl:stylesheet [
     <!ENTITY db_xsl_path        "../lib/docbook-xsl/">
-    <!ENTITY callout_gfx_path   "../images/callouts/">
+    <!ENTITY callout_gfx_path   "../html_single/images/callouts/">
     <!ENTITY admon_gfx_path     "../html_single/images/admons/">
 ]>
 
