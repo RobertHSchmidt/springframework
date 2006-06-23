@@ -120,6 +120,7 @@ public class MessageHandlerAdapterTest extends TestCase {
         messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
         bodyControl.expectAndReturn(bodyMock.hasFault(), false);
         messageControl.expectAndReturn(messageMock.getVersion(), SoapVersion.SOAP_11);
+        messageControl.expectAndReturn(messageMock.getCharacterEncoding(), "UTF-8");
         messageMock.writeTo(httpResponse.getOutputStream());
 
         replayMockControls();
@@ -127,8 +128,7 @@ public class MessageHandlerAdapterTest extends TestCase {
         adapter.handle(httpRequest, httpResponse, endpointMock);
 
         assertEquals("Invalid status code on response", HttpServletResponse.SC_OK, httpResponse.getStatus());
-        assertEquals("Invalid status code on response", SoapVersion.SOAP_11.getContentType(),
-                httpResponse.getContentType());
+        assertEquals("Invalid status code on response", "text/xml; charset=UTF-8", httpResponse.getContentType());
         verifyMockControls();
     }
 
@@ -144,6 +144,7 @@ public class MessageHandlerAdapterTest extends TestCase {
         messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
         bodyControl.expectAndReturn(bodyMock.hasFault(), true);
         messageControl.expectAndReturn(messageMock.getVersion(), SoapVersion.SOAP_11);
+        messageControl.expectAndReturn(messageMock.getCharacterEncoding(), "UTF-8");
         messageMock.writeTo(httpResponse.getOutputStream());
 
         replayMockControls();

@@ -59,7 +59,11 @@ public class MockWebServiceMessage implements WebServiceMessage {
 
     public void writeTo(OutputStream outputStream) throws IOException {
         PrintWriter writer = new PrintWriter(outputStream);
-        writer.append(content);
+        writer.write(content.toString());
+    }
+
+    public String getCharacterEncoding() {
+        return "UTF-8";
     }
 
     public String getPayloadAsString() {

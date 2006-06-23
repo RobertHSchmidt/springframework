@@ -54,4 +54,11 @@ public interface WebServiceMessage {
      * @throws IOException if an I/O exception occurs
      */
     void writeTo(OutputStream outputStream) throws IOException;
+
+    /**
+     * Returns the name of the character encoding used for the message. Typically, this returns <code>UTF-8</code>.
+     *
+     * @return the character encoding
+     */
+    String getCharacterEncoding();
 }

@@ -41,12 +41,23 @@ import org.springframework.ws.soap.SoapMessage;
  */
 public class MessageHandlerAdapter implements HandlerAdapter, InitializingBean {
 
+    /**
+     * Default content type. Normally retrieved from the <code>SoapVersion</code>.
+     *
+     * @see org.springframework.ws.soap.SoapVersion.getContentType()
+     */
+    public static final String DEFAULT_CONTENT_TYPE = "text/xml";
+
     private static final Log logger = LogFactory.getLog(MessageHandlerAdapter.class);
 
     private MessageContextFactory messageContextFactory;
 
-    public boolean supports(Object handler) {
-        return (handler instanceof MessageEndpoint);
+    public void setMessageContextFactory(MessageContextFactory messageContextFactory) {
+        this.messageContextFactory = messageContextFactory;
+    }
+
+    public long getLastModified(HttpServletRequest request, Object handler) {
+        return -1L;
     }
 
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -57,6 +68,7 @@ public class MessageHandlerAdapter implements HandlerAdapter, InitializingBean {
                 ((MessageEndpoint) handler).invoke(messageContext);
                 WebServiceMessage responseMessage = messageContext.getResponse();
                 if (responseMessage != null) {
+                    String contentType;
                     if (responseMessage instanceof SoapMessage) {
                         SoapMessage soapMessage = (SoapMessage) responseMessage;
                         if (!soapMessage.getSoapBody().hasFault()) {
@@ -65,13 +77,13 @@ public class MessageHandlerAdapter implements HandlerAdapter, InitializingBean {
                         else {
                             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                         }
-                        response.setContentType(soapMessage.getVersion().getContentType());
+                        contentType = soapMessage.getVersion().getContentType();
                     }
                     else {
                         response.setStatus(HttpServletResponse.SC_OK);
-                        response.setContentType("text/xml");
+                        contentType = DEFAULT_CONTENT_TYPE;
                     }
-                    response.setCharacterEncoding("UTF-8");
+                    response.setContentType(contentType + "; charset=" + responseMessage.getCharacterEncoding());
                     responseMessage.writeTo(response.getOutputStream());
                 }
             }
@@ -84,12 +96,8 @@ public class MessageHandlerAdapter implements HandlerAdapter, InitializingBean {
         return null;
     }
 
-    public long getLastModified(HttpServletRequest request, Object handler) {
-        return -1L;
-    }
-
-    public void setMessageContextFactory(MessageContextFactory messageContextFactory) {
-        this.messageContextFactory = messageContextFactory;
+    public boolean supports(Object handler) {
+        return (handler instanceof MessageEndpoint);
     }
 
     public final void afterPropertiesSet() throws Exception {
