@@ -82,7 +82,8 @@ public class AirlineServiceImpl implements AirlineService {
         ticket.setFlight(flight);
         for (Iterator iterator = passengers.iterator(); iterator.hasNext();) {
             Passenger passenger = (Passenger) iterator.next();
-            if (passenger instanceof FrequentFlyer) {
+            // frequent flyer service is not required
+            if (passenger instanceof FrequentFlyer && frequentFlyerSecurityService != null) {
                 String username = ((FrequentFlyer) passenger).getUsername();
                 Assert.hasLength(username, "No username specified");
                 FrequentFlyer frequentFlyer = frequentFlyerSecurityService.getFrequentFlyer(username);

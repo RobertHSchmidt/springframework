@@ -14,6 +14,7 @@
             <list>
                 <ref local="payloadMapping"/>
                 <ref local="soapActionMapping"/>
+                <!-- Remove the following line if you want to disable WS-Security and Acegi -->
                 <ref bean="secureMapping"/>
             </list>
         </property>

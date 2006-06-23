@@ -143,6 +143,22 @@ public class SaajSoapMessage extends AbstractSoapMessage {
         }
     }
 
+    public String getCharacterEncoding() {
+        try {
+            String characterEncoding = (String) this.saajMessage.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
+            if (!StringUtils.hasLength(characterEncoding)) {
+                characterEncoding = "utf-8";
+                this.saajMessage.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, characterEncoding);
+            }
+            return characterEncoding;
+
+        }
+        catch (SOAPException ex) {
+            throw new SaajSoapMessageException("Could not retrieve character encoding property: " + ex.getMessage(),
+                    ex);
+        }
+    }
+
     public Attachment getAttachment(String contentId) {
         MimeHeaders mimeHeaders = new MimeHeaders();
         mimeHeaders.addHeader("Content-Id", contentId);

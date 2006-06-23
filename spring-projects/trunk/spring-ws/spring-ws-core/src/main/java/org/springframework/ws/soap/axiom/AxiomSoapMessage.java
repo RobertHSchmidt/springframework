@@ -190,6 +190,16 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
         }
     }
 
+    public String getCharacterEncoding() {
+        try {
+            return this.axiomMessage.getCharsetEncoding();
+        }
+        catch (OMException ex) {
+            throw new AxiomSoapMessageException("Could not retrieve character encoding: " + ex.getMessage(), ex);
+
+        }
+    }
+
     /**
      * Axiom-Specific version of <code>org.springframework.ws.soap.SoapEnvelope</code>.
      */
