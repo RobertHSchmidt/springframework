@@ -25,7 +25,7 @@ import org.springframework.webflow.action.BeanFactoryBeanInvokingAction;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.action.MementoBeanStatePersister;
 import org.springframework.webflow.action.MementoOriginator;
-import org.springframework.webflow.action.ResultSpecification;
+import org.springframework.webflow.action.SimpleResultSpecification;
 import org.springframework.webflow.action.StatefulBeanInvokingAction;
 
 /**
@@ -78,7 +78,7 @@ public class BeanInvokingActionFactory {
 	 * @throws FlowArtifactLookupException an exception occured creating the action
 	 */
 	public Action createBeanInvokingAction(String beanId, BeanFactory beanFactory, MethodSignature methodSignature,
-			ResultSpecification resultSpecification, ConversionService conversionService, AttributeCollection attributes) {
+			SimpleResultSpecification resultSpecification, ConversionService conversionService, AttributeCollection attributes) {
 		if (!beanFactory.isSingleton(beanId)) {
 			return createStatefulAction(beanId, beanFactory, methodSignature, resultSpecification, conversionService,
 					attributes);
@@ -92,7 +92,7 @@ public class BeanInvokingActionFactory {
 	}
 
 	protected Action createStatefulAction(String beanId, BeanFactory beanFactory, MethodSignature methodSignature,
-			ResultSpecification resultSpecification, ConversionService conversionService, AttributeCollection attributes) {
+			SimpleResultSpecification resultSpecification, ConversionService conversionService, AttributeCollection attributes) {
 		Class beanClass = beanFactory.getType(beanId);
 		if (MementoOriginator.class.isAssignableFrom(beanClass)) {
 			BeanFactoryBeanInvokingAction action = new BeanFactoryBeanInvokingAction(methodSignature, beanId,
@@ -109,7 +109,7 @@ public class BeanInvokingActionFactory {
 	}
 
 	private void configureCommonProperties(AbstractBeanInvokingAction action, MethodSignature methodSignature,
-			ResultSpecification resultSpecification, Class beanClass, ConversionService conversionService) {
+			SimpleResultSpecification resultSpecification, Class beanClass, ConversionService conversionService) {
 		action.setResultSpecification(resultSpecification);
 		action.setResultEventFactory(resultEventFactorySelector.forMethod(methodSignature, beanClass));
 		action.setConversionService(conversionService);
