@@ -37,7 +37,7 @@ import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.action.AbstractBeanInvokingAction;
 import org.springframework.webflow.action.MultiAction;
-import org.springframework.webflow.action.SimpleResultSpecification;
+import org.springframework.webflow.action.MethodResultSpecification;
 import org.springframework.webflow.support.ActionTransitionCriteria;
 import org.springframework.webflow.support.EventFactorySupport;
 
@@ -516,7 +516,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the adapted bean invoking action
 	 * @throws FlowArtifactLookupException the action could not be resolved
 	 */
-	protected Action action(String id, MethodSignature methodSignature, SimpleResultSpecification resultSpecification)
+	protected Action action(String id, MethodSignature methodSignature, MethodResultSpecification resultSpecification)
 			throws FlowArtifactLookupException {
 		return getBeanInvokingActionFactory().createBeanInvokingAction(id, getFlowServiceLocator().getBeanFactory(),
 				methodSignature, resultSpecification, getFlowServiceLocator().getConversionService(), null);
@@ -557,7 +557,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the result specification
 	 * @see #action(String, MethodSignature, ResultSpecification)
 	 */
-	protected SimpleResultSpecification result(String resultName) {
+	protected MethodResultSpecification result(String resultName) {
 		return result(resultName, null);
 	}
 
@@ -571,8 +571,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the result specification
 	 * @see #action(String, MethodSignature, ResultSpecification)
 	 */
-	protected SimpleResultSpecification result(String resultName, ScopeType resultScope) {
-		return new SimpleResultSpecification(resultName, resultScope);
+	protected MethodResultSpecification result(String resultName, ScopeType resultScope) {
+		return new MethodResultSpecification(resultName, resultScope);
 	}
 
 	/**

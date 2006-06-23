@@ -60,7 +60,7 @@ import org.springframework.webflow.Transition;
 import org.springframework.webflow.TransitionCriteria;
 import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.action.SimpleResultSpecification;
+import org.springframework.webflow.action.MethodResultSpecification;
 import org.springframework.webflow.support.BeanFactoryFlowVariable;
 import org.springframework.webflow.support.CollectionAddingPropertyExpression;
 import org.springframework.webflow.support.ImmutableFlowAttributeMapper;
@@ -729,9 +729,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			resultScope = (ScopeType)fromStringTo(ScopeType.class)
 					.execute(element.getAttribute(RESULT_SCOPE_ATTRIBUTE));
 		}
-		SimpleResultSpecification resultSpecification = null;
+		MethodResultSpecification resultSpecification = null;
 		if (resultName != null) {
-			resultSpecification = new SimpleResultSpecification(
+			resultSpecification = new MethodResultSpecification(
 					resultName,
 					(resultScope != null ? resultScope : ScopeType.REQUEST));
 		}
