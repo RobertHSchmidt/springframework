@@ -5,11 +5,15 @@ import org.springframework.webflow.RequestContext;
 
 /**
  * Interface defining core action methods for working with input forms.
+ * The default implementation is provided by the
+ * {@link org.springframework.webflow.action.FormAction}.
+ * 
+ * @see org.springframework.webflow.action.FormAction
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public interface FormActionMethods {
+public interface FormHandlingAction {
 
 	/**
 	 * Prepares a form object for display in a new form, loading it if necessary.

@@ -26,10 +26,11 @@ import org.springframework.util.StringUtils;
  * <code>TransitionCriteria</code> definition, or in a test environment.
  * <p>
  * An annotated action is an action that wraps another action (referred to as
- * the <i>target</i> action), setting up the target action's execution properties
+ * the <i>target</i> action), setting up the target action's execution attributes
  * before invoking {@link Action#execute}.
  * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
 public class AnnotatedAction extends AnnotatedObject implements Action {
 
@@ -54,6 +55,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	 * @see ActionState
 	 */
 	public static final String METHOD_ATTRIBUTE = "method";
+	
 
 	/**
 	 * The target action to execute.
@@ -164,7 +166,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("targetAction", getTargetAction()).append("attributes",
-				getAttributeMap()).toString();
+		return new ToStringCreator(this).append("targetAction", getTargetAction())
+			.append("attributes", getAttributeMap()).toString();
 	}
 }

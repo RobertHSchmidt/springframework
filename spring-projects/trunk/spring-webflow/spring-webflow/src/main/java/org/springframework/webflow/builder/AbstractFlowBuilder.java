@@ -38,6 +38,7 @@ import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.action.AbstractBeanInvokingAction;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.action.ResultSpecification;
+import org.springframework.webflow.action.SimpleResultSpecification;
 import org.springframework.webflow.support.ActionTransitionCriteria;
 import org.springframework.webflow.support.EventFactorySupport;
 
@@ -572,7 +573,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @see #action(String, MethodSignature, ResultSpecification)
 	 */
 	protected ResultSpecification result(String resultName, ScopeType resultScope) {
-		return new ResultSpecification(resultName, resultScope);
+		return new SimpleResultSpecification(resultName, resultScope);
 	}
 
 	/**

@@ -75,7 +75,10 @@ public class CompositeAction extends AbstractAction {
 	}
 
 	/**
-	 * Sets the stop on error flag.
+	 * Sets the stop on error flag. This determines whether or not
+	 * execution should stop with the first action that returns an error event.
+	 * In the error case, the composite action will also return
+	 * the "error" event.
 	 */
 	public void setStopOnError(boolean stopOnError) {
 		this.stopOnError = stopOnError;

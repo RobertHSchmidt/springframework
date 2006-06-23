@@ -35,6 +35,8 @@ import org.springframework.webflow.RequestContext;
  *     action.execute(context);
  * </pre>
  * 
+ * This would invoke the <tt>public void myMethod()</tt> method on "myBean".
+ * 
  * @author Keith Donald
  */
 public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction {
@@ -71,7 +73,7 @@ public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction {
 	}
 
 	/**
-	 * Returns the configured bean factory member.
+	 * Returns the configured bean factory.
 	 */
 	public BeanFactory getBeanFactory() {
 		return beanFactory;
@@ -81,7 +83,7 @@ public class BeanFactoryBeanInvokingAction extends AbstractBeanInvokingAction {
 	 * Looks up the bean to invoke. This implementation loads the bean by name
 	 * from the BeanFactory.
 	 */
-	protected Object getBean(RequestContext context) {
+	protected Object getBean(RequestContext context) throws Exception {
 		return getBeanFactory().getBean(getBeanName());
 	}
 }
