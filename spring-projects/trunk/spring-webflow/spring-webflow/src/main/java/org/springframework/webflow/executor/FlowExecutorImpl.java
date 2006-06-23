@@ -59,28 +59,29 @@ import org.springframework.webflow.support.FlowExecutionRedirect;
  * <td>The strategy for accessing flow execution repositories that are used
  * to create, save, and store managed flow executions driven by this executor.</td>
  * <td>A {@link DefaultFlowExecutionRepositoryFactory simple}, stateful
- * server-side session-based repository factory</td>
+ * server-side session-based repository factory.</td>
  * </tr>
  * <tr>
  * <td>redirectOnPause</td>
  * <td>A flag indicating if this executor should force a redirect to an
  * {@link ApplicationView} after pausing an active flow execution.</td>
- * <td>false, indicating no special redirect action should be taken</td>
+ * <td>false, indicating no special redirect action should be taken.</td>
  * </tr>
  * <tr>
  * <td>inputMapper</td>
  * <td>The service responsible for mapping attributes of
  * {@link ExternalContext external contexts} that request to launch new
  * {@link FlowExecution flow executions}. After mapping, the target map is then
- * passed to the FlowExecution, exposing context attributes as input to the flow
- * during startup.</td>
- * <td>A {@link RequestParameterInputMapper}, which exposes all request params in to
- * the flow execution for input mapping. </td>
+ * passed to the FlowExecution, exposing extern context attributes as input
+ * to the flow during startup.</td>
+ * <td>A {@link RequestParameterInputMapper}, which exposes all request parameters
+ * in to the flow execution for input mapping. </td>
  * </tr>
  * </table>
  * </p>
  * 
  * @see org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory
+ * @see org.springframework.webflow.execution.repository.FlowExecutionRepository
  * @see org.springframework.webflow.execution.FlowExecution
  * @see org.springframework.webflow.ViewSelection
  * @see org.springframework.webflow.support.ApplicationView
@@ -134,7 +135,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * Create a new flow executor that configures use of the default repository
 	 * strategy ({@link DefaultFlowExecutionRepositoryFactory}) to drive the
 	 * the execution of flows loaded by the provided flow locator.
-	 * @param flowLocator the flow locator
+	 * @param flowLocator the flow locator used to locate flow definitions
 	 */
 	public FlowExecutorImpl(FlowLocator flowLocator) {
 		this(new DefaultFlowExecutionRepositoryFactory(flowLocator));
@@ -150,6 +151,13 @@ public class FlowExecutorImpl implements FlowExecutor {
 		Assert.notNull(repositoryFactory,
 				"The repository factory for creating, saving, and restoring flow executions is required");
 		this.repositoryFactory = repositoryFactory;
+	}
+	
+	/**
+	 * Returns the configured flow execution repository factory.
+	 */
+	public FlowExecutionRepositoryFactory getRepositoryFactory() {
+		return repositoryFactory;
 	}
 
 	/**
@@ -169,6 +177,28 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 */
 	public void setRedirectOnPause(boolean b) {
 		this.redirectOnPause = b;
+	}
+	
+	/**
+	 * Set the service responsible for mapping attributes of an
+	 * {@link ExternalContext} to a new {@link FlowExecution} during the
+	 * {@link #launch(String, ExternalContext) launch flow} operation.
+	 * <p>
+	 * The default implementation simply exposes all request parameters as flow
+	 * execution input attributes. May be null.
+	 * @see RequestParameterInputMapper
+	 */
+	public void setInputMapper(AttributeMapper inputMapper) {
+		this.inputMapper = inputMapper;
+	}
+	
+	/**
+	 * Returns the service responsible for mapping attributes of an
+	 * {@link ExternalContext} to a new {@link FlowExecution} during the
+	 * {@link #launch(String, ExternalContext) launch flow} operation.
+	 */
+	public AttributeMapper getInputMapper() {
+		return inputMapper;
 	}
 
 	public ResponseInstruction launch(String flowId, ExternalContext context) throws FlowException {

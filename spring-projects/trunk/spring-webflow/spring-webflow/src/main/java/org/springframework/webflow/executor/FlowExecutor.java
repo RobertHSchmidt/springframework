@@ -27,12 +27,15 @@ import org.springframework.webflow.FlowException;
  * complexity of the web flow execution subsystem, which consists of launching
  * and resuming managed flow executions from repositories.
  * 
+ * @see org.springframework.webflow.execution.FlowExecution
+ * @see org.springframework.webflow.execution.repository.FlowExecutionRepository
+ * 
  * @author Keith Donald
  */
 public interface FlowExecutor {
 
 	/**
-	 * Launch a new execution of the flow provided in the context of the current
+	 * Launch a new execution of identified flow in the context of the current
 	 * external request.
 	 * @param flowId the unique id of the flow definition to launch
 	 * @param context the external context representing the state of a request
@@ -49,7 +52,7 @@ public interface FlowExecutor {
 	 * event.
 	 * @param eventId the user event that occured
 	 * @param flowExecutionKey the identifying key of a paused flow execution
-	 * that is waiting to resume on the occurrence of an user event
+	 * that is waiting to resume on the occurrence of a user event
 	 * @param context the external context representing the state of a request
 	 * into Spring Web Flow from an external system
 	 * @return the next response instruction
@@ -64,7 +67,7 @@ public interface FlowExecutor {
 	 * a logical refresh operation that allows the "current response" to be
 	 * re-issued. This operation does not affect the state of the flow execution.
 	 * @param flowExecutionKey the identifying key of a paused flow execution
-	 * that is waiting to resume on the ocurrence of an user event
+	 * that is waiting to resume on the ocurrence of a user event
 	 * @param context the external context representing the state of a request
 	 * into Spring Web Flow from an external system.
 	 * @return the current response instruction
