@@ -7,7 +7,7 @@ import org.springframework.webflow.ActionState;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.action.AbstractBeanInvokingAction;
-import org.springframework.webflow.action.SimpleResultSpecification;
+import org.springframework.webflow.action.MethodResultSpecification;
 
 public class PojoActionXmlFlowBuilderTests extends TestCase {
 	private Flow flow;
@@ -23,14 +23,14 @@ public class PojoActionXmlFlowBuilderTests extends TestCase {
 		ActionState as1 = (ActionState)flow.getRequiredState("actionState1");
 		AbstractBeanInvokingAction targetAction = (AbstractBeanInvokingAction)as1.getActionList().getAnnotated(0)
 				.getTargetAction();
-		assertEquals(ScopeType.REQUEST, ((SimpleResultSpecification)targetAction.getResultSpecification()).getResultScope());
+		assertEquals(ScopeType.REQUEST, ((MethodResultSpecification)targetAction.getMethodResultSpecification()).getResultScope());
 
 		ActionState as2 = (ActionState)flow.getRequiredState("actionState2");
 		targetAction = (AbstractBeanInvokingAction)as2.getActionList().getAnnotated(0).getTargetAction();
-		assertEquals(ScopeType.FLOW, ((SimpleResultSpecification)targetAction.getResultSpecification()).getResultScope());
+		assertEquals(ScopeType.FLOW, ((MethodResultSpecification)targetAction.getMethodResultSpecification()).getResultScope());
 
 		ActionState as3 = (ActionState)flow.getRequiredState("actionState3");
 		targetAction = (AbstractBeanInvokingAction)as3.getActionList().getAnnotated(0).getTargetAction();
-		assertEquals(ScopeType.CONVERSATION, ((SimpleResultSpecification)targetAction.getResultSpecification()).getResultScope());
+		assertEquals(ScopeType.CONVERSATION, ((MethodResultSpecification)targetAction.getMethodResultSpecification()).getResultScope());
 	}
 }

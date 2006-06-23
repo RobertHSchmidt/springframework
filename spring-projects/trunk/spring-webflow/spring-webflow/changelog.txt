@@ -30,6 +30,8 @@ Package org.springframework.webflow.action
   EventFactorySupport, just override AbstractAction.getEventFactorySupport().
 * Removed FormActionMethods since it served little purpose and was very closely linked to the way FormAction
   implemented form handling.
+* Renamed ResultSpecification to MethodResultSpecification for clarity. The property AbstractBeanInvokingAction.resultSpecification
+  was also renamed accordingly.
 
 Package org.springframework.webflow.builder
 * Reapplied 1.0 rc2 fix for inline flow parsing, which was lost in SourceForge CVS issues occurring between 7/5/06 and 15/5/06

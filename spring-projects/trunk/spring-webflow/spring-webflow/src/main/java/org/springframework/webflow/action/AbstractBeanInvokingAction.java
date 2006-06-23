@@ -60,7 +60,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * The specification (configuration) for how bean method return values
 	 * should be exposed to an executing flow that invokes this action.
 	 */
-	private SimpleResultSpecification resultSpecification;
+	private MethodResultSpecification methodResultSpecification;
 
 	/**
 	 * The strategy that adapts bean method return values to Event objects.
@@ -102,8 +102,8 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * Returns the specification (configuration) for how bean method return
 	 * values should be exposed to an executing flow that invokes this action.
 	 */
-	public SimpleResultSpecification getResultSpecification() {
-		return resultSpecification;
+	public MethodResultSpecification getMethodResultSpecification() {
+		return methodResultSpecification;
 	}
 
 	/**
@@ -112,8 +112,8 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * This is optional. By default the bean method return values do net get
 	 * exposed to the executing flow.
 	 */
-	public void setResultSpecification(SimpleResultSpecification resultSpecification) {
-		this.resultSpecification = resultSpecification;
+	public void setMethodResultSpecification(MethodResultSpecification resultSpecification) {
+		this.methodResultSpecification = resultSpecification;
 	}
 
 	/**
@@ -150,8 +150,8 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBeanStatePersister().restoreState(getBean(context), context);
 		Object returnValue = getMethodInvoker().invoke(methodSignature, bean, context);
-		if (resultSpecification != null) {
-			resultSpecification.exposeResult(returnValue, context);
+		if (methodResultSpecification != null) {
+			methodResultSpecification.exposeResult(returnValue, context);
 		}
 		getBeanStatePersister().saveState(bean, context);
 		return getResultEventFactory().createResultEvent(bean, returnValue, context);
