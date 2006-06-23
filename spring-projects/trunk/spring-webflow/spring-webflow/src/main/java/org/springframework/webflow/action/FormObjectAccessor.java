@@ -122,7 +122,8 @@ public class FormObjectAccessor {
 	 * @param scopeType the scope in which to expose the form object
 	 */
 	public void setCurrentFormObject(Object formObject, ScopeType scopeType) {
-		setFormObject(formObject, getCurrentFormObjectName(), scopeType);
+		//don't call setFormObject since that would cause infinite recursion!
+		scopeType.getScope(context).put(getCurrentFormObjectName(), formObject);
 	}
 
 	/**
