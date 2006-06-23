@@ -25,9 +25,7 @@ import org.springframework.webflow.executor.ResponseInstruction;
 
 /**
  * An immutable helper for flow controllers that encapsulates reusable workflow
- * required to use launch and resume flow executions using a
- * {@link FlowExecutor}.
- * <p>
+ * required to use launch and resume flow executions using a {@link FlowExecutor}.
  * <p>
  * The {@link #handleFlowRequest(ExternalContext)} method is the central helper
  * operation and implements the following algorithm:
@@ -40,11 +38,12 @@ import org.springframework.webflow.executor.ResponseInstruction;
  * method.
  * <li>If no flow execution id was extracted, launch a new flow execution. The
  * top-level flow definition for which an execution is created is determined by
- * extracting the flow id using the
- * {@link FlowExecutorArgumentExtractor#extractFlowId(ExternalContext)}. If
- * this parameter is not present, an exception is thrown.
+ * extracting the flow id using the method
+ * {@link FlowExecutorArgumentExtractor#extractFlowId(ExternalContext)}. If no
+ * valid flow id can be determined, an exception is thrown.
  * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
 public class FlowRequestHandler {
 
@@ -54,7 +53,7 @@ public class FlowRequestHandler {
 	private static final Log logger = LogFactory.getLog(FlowRequestHandler.class);
 
 	/**
-	 * The flow execution executor this helper will coordinate with.
+	 * The flow executor this helper will coordinate with.
 	 */
 	private FlowExecutor flowExecutor;
 
@@ -64,8 +63,9 @@ public class FlowRequestHandler {
 	private FlowExecutorArgumentExtractor argumentExtractor;
 
 	/**
-	 * Creates a new flow controller helper.
-	 * @param flowExecutor the flow execution manager to delegate to.
+	 * Creates a new flow controller helper. Will use the default
+	 * {@link FlowExecutorArgumentExtractor}.
+	 * @param flowExecutor the flow execution manager to delegate to
 	 */
 	public FlowRequestHandler(FlowExecutor flowExecutor) {
 		this(flowExecutor, new FlowExecutorArgumentExtractor());
@@ -73,7 +73,7 @@ public class FlowRequestHandler {
 
 	/**
 	 * Creates a new flow controller helper.
-	 * @param flowExecutor the flow executor to delegate to.
+	 * @param flowExecutor the flow executor to delegate to
 	 * @param argumentExtractor the flow executor argument extractor
 	 */
 	public FlowRequestHandler(FlowExecutor flowExecutor, FlowExecutorArgumentExtractor argumentExtractor) {
@@ -82,10 +82,24 @@ public class FlowRequestHandler {
 		this.flowExecutor = flowExecutor;
 		this.argumentExtractor = argumentExtractor;
 	}
+	
+	/**
+	 * Returns the flow executor used by this helper.
+	 */
+	public FlowExecutor getFlowExecutor() {
+		return flowExecutor;
+	}
+
+	/**
+	 * Returns the argument extractor used by this helper.
+	 */
+	public FlowExecutorArgumentExtractor getArgumentExtractor() {
+		return argumentExtractor;
+	}
 
 	/**
 	 * Handle a request into the Spring Web Flow system from an external system.
-	 * @param context the context in which the request occured.
+	 * @param context the external context in which the request occured
 	 * @return the selected view that should be rendered as a response
 	 */
 	public ResponseInstruction handleFlowRequest(ExternalContext context) throws FlowException {

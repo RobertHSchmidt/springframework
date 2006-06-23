@@ -51,7 +51,7 @@ import org.springframework.webflow.support.FlowRedirect;
  * information on how requests are processed.
  * <p>
  * Note: a single PortletFlowController may execute all flows within your
- * portlet. See the phonebook-portlet sample application for examples of the
+ * application. See the phonebook-portlet sample application for examples of the
  * various strategies for launching and resuming flow executions in a Portlet
  * environment.
  * </ul>
@@ -73,12 +73,13 @@ import org.springframework.webflow.support.FlowRedirect;
  *    &lt;/bean&gt;
  * </pre>
  * 
+ * <p>
  * It is also possible to customize the {@link FlowExecutorArgumentExtractor}
  * strategy to allow for different types of controller parameterization, for
  * example perhaps in conjunction with a REST-style request mapper.
  * 
- * @see FlowExecutor
- * @see FlowExecutorArgumentExtractor
+ * @see org.springframework.webflow.executor.FlowExecutor
+ * @see org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor
  * 
  * @author J.Enrique Ruiz
  * @author César Ordiñana
@@ -98,32 +99,18 @@ public class PortletFlowController extends AbstractController implements Initial
 	 */
 	private FlowExecutorArgumentExtractor argumentExtractor = new FlowExecutorArgumentExtractor();
 
+	/**
+	 * Create a new portlet flow controller. Allows for bean style usage.
+	 * @see #setFlowExecutor(FlowExecutor)
+	 * @see #setFlowLocator(FlowLocator)
+	 */
 	public PortletFlowController() {
-		initDefaults();
-	}
-
-	/**
-	 * Initialize the defaults of this constructor.
-	 */
-	protected void initDefaults() {
 		// set the cache seconds property to 0 so no pages are cached by default
-		// for flows.
+		// for flows
 		setCacheSeconds(0);
+		// this controller stores ResponseInstruction objects in the session, so we
+		// need to take doing this in an orderly manner
 		setSynchronizeOnSession(true);
-	}
-
-	/**
-	 * Sets the flow locator responsible for loading flow definitions when
-	 * requested for execution by clients.
-	 * <p>
-	 * This is a convenience setter that configures a {@link FlowExecutorImpl}
-	 * with a default {@link DefaultFlowExecutionRepositoryFactory} for managing
-	 * the storage of executing flows.
-	 * @param flowLocator the locator responsible for loading flow definitions
-	 * when this controller is invoked.
-	 */
-	public void setFlowLocator(FlowLocator flowLocator) {
-		flowExecutor = new FlowExecutorImpl(new DefaultFlowExecutionRepositoryFactory(flowLocator));
 	}
 
 	/**
@@ -136,10 +123,26 @@ public class PortletFlowController extends AbstractController implements Initial
 
 	/**
 	 * Configures the flow executor implementation to use.
-	 * @param flowExecutor the flow executor
+	 * @param flowExecutor the fully configured flow executor
 	 */
 	public void setFlowExecutor(FlowExecutor flowExecutor) {
 		this.flowExecutor = flowExecutor;
+	}
+
+	/**
+	 * Sets the flow locator responsible for loading flow definitions when
+	 * requested for execution by clients.
+	 * <p>
+	 * This is a convenience setter that configures a {@link FlowExecutorImpl}
+	 * with a default {@link DefaultFlowExecutionRepositoryFactory} for managing
+	 * the storage of executing flows.
+	 * <p>
+	 * Don't use this together with {@link #setFlowExecutor(FlowExecutor)}.
+	 * @param flowLocator the locator responsible for loading flow definitions
+	 * when this controller is invoked
+	 */
+	public void setFlowLocator(FlowLocator flowLocator) {
+		flowExecutor = new FlowExecutorImpl(new DefaultFlowExecutionRepositoryFactory(flowLocator));
 	}
 
 	/**
@@ -206,8 +209,8 @@ public class PortletFlowController extends AbstractController implements Initial
 			exposeToRenderPhase(responseInstruction, request);
 		}
 		else if (responseInstruction.isFlowExecutionRedirect()) {
-			response.setRenderParameter(argumentExtractor.getFlowExecutionKeyParameterName(), responseInstruction
-					.getFlowExecutionKey());
+			response.setRenderParameter(argumentExtractor.getFlowExecutionKeyParameterName(),
+					responseInstruction.getFlowExecutionKey());
 		}
 		else if (responseInstruction.isFlowRedirect()) {
 			// request that a new flow be launched within this portlet

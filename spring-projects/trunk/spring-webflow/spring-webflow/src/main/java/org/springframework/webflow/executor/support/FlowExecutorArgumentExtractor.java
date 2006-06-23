@@ -1,3 +1,18 @@
+/*
+ * Copyright 2002-2006 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.springframework.webflow.executor.support;
 
 import java.io.UnsupportedEncodingException;
@@ -20,8 +35,9 @@ import org.springframework.webflow.support.FlowRedirect;
  * A simple helper for extracting {@link FlowExecutor} method input arguments
  * from an request initiated by an {@link ExternalContext}. After request
  * processing, this class is also responsible for supporting response generation
- * by provisioning context attributes necessary to execute subsequent callbacks
- * into Spring Web Flow.
+ * by provisioning model attributes necessary to execute subsequent callbacks
+ * into Spring Web Flow. Those attributes can then again be extracted using this
+ * class.
  * <p>
  * By default, this class extracts flow executor method arguments from the
  * {@link ExternalContext#getRequestParameterMap()}.
@@ -59,6 +75,7 @@ public class FlowExecutorArgumentExtractor {
 	 * to a button.
 	 */
 	private static final String PARAMETER_VALUE_DELIMITER = "_";
+	
 
 	/**
 	 * Identifies a flow definition to launch a new execution for, defaults to
@@ -69,28 +86,28 @@ public class FlowExecutorArgumentExtractor {
 	/**
 	 * The default flowId value that will be returned if no flowId parameter
 	 * value can be extracted during {@link #extractFlowId(ExternalContext)}
-	 * operation.
+	 * operation. Default value is <code>null</code>.
 	 */
 	private String defaultFlowId;
 
 	/**
 	 * Input parameter that identifies an existing flow execution to participate
-	 * in, defaults to {@link #FLOW_EXECUTION_KEY_PARAMETER }.
+	 * in, defaults to {@link #FLOW_EXECUTION_KEY_PARAMETER}.
 	 */
 	private String flowExecutionKeyParameterName = FLOW_EXECUTION_KEY_PARAMETER;
 
 	/**
 	 * Identifies an event that occured in an existing flow execution, defaults
-	 * to ("_eventId_submit").
+	 * to {@link #EVENT_ID_PARAMETER}.
 	 */
 	private String eventIdParameterName = EVENT_ID_PARAMETER;
 
 	/**
-	 * The embedded parameter name/value delimiter value, used to parse a
+	 * The embedded parameter name/value delimiter, used to parse a
 	 * parameter value when a value is embedded in a parameter name (e.g.
-	 * "_eventId_bar").
+	 * "_eventId_submit"). Defaults to {@link #PARAMETER_VALUE_DELIMITER}.
 	 */
-	private String parameterDelimiter = PARAMETER_VALUE_DELIMITER;
+	private String parameterValueDelimiter = PARAMETER_VALUE_DELIMITER;
 
 	/**
 	 * Returns the flow id parameter name, used to request a flow to launch.
@@ -108,7 +125,8 @@ public class FlowExecutorArgumentExtractor {
 
 	/**
 	 * Returns the <i>default</i> flowId parameter value. If no flow id
-	 * parameter is provided, the default acts as a fallback.
+	 * parameter is provided, the default acts as a fallback. Defaults
+	 * to <code>null</code>.
 	 */
 	public String getDefaultFlowId() {
 		return defaultFlowId;
@@ -118,7 +136,7 @@ public class FlowExecutorArgumentExtractor {
 	 * Sets the default flowId parameter value.
 	 * <p>
 	 * This value will be used if no flowId parameter value can be extracted
-	 * from the request during {@link #extractFlowId(ExternalContext)}
+	 * from the request by the {@link #extractFlowId(ExternalContext)}
 	 * operation.
 	 */
 	public void setDefaultFlowId(String defaultFlowId) {
@@ -127,7 +145,7 @@ public class FlowExecutorArgumentExtractor {
 
 	/**
 	 * Returns the flow execution key parameter name, used to request that an
-	 * executing conversation resume at a specific point in time.
+	 * executing conversation resumes.
 	 */
 	public String getFlowExecutionKeyParameterName() {
 		return flowExecutionKeyParameterName;
@@ -135,7 +153,7 @@ public class FlowExecutorArgumentExtractor {
 
 	/**
 	 * Sets the flow execution key parameter name, used to request that an
-	 * executing conversation resume at a specific point in time.
+	 * executing conversation resumes.
 	 */
 	public void setFlowExecutionKeyParameterName(String flowExecutionIdParameterName) {
 		this.flowExecutionKeyParameterName = flowExecutionIdParameterName;
@@ -158,33 +176,51 @@ public class FlowExecutorArgumentExtractor {
 	}
 
 	/**
+	 * Returns the delimiter used to parse a parameter value when a value is
+	 * embedded in a parameter name (e.g. "_eventId_submit"). Defaults to
+	 * {@link #PARAMETER_VALUE_DELIMITER}.
+	 */
+	public String getParameterValueDelimiter() {
+		return parameterValueDelimiter;
+	}
+	
+	/**
+	 * Set the delimiter used to parse a parameter value when a value is
+	 * embedded in a parameter name (e.g. "_eventId_submit"). Defaults to
+	 * {@link #PARAMETER_VALUE_DELIMITER}.
+	 */
+	public void setParameterValueDelimiter(String parameterValueDelimiter) {
+		this.parameterValueDelimiter = parameterValueDelimiter;
+	}
+	
+	/**
 	 * Returns true if the flow id is extractable from the context.
 	 * @param context the context in which a external user event occured
 	 * @return true if extractable, false if not
 	 */
 	public boolean isFlowIdPresent(ExternalContext context) {
-		return context.getRequestParameterMap().contains(flowIdParameterName);
+		return context.getRequestParameterMap().contains(getFlowIdParameterName());
 	}
 
 	/**
 	 * Extracts the flow id from the external context, falling back on the
-	 * defaultFlowId if flow id could be extracted.
-	 * @param context the context in which a external user event occurred
+	 * defaultFlowId (if set) if the flow id could not be extracted.
+	 * @param context the context in which a external user event occured
 	 * @return the extracted flow id
 	 * @throws FlowExecutorArgumentExtractionException if the flow id could not
 	 * be extracted and no default value was set
 	 */
 	public String extractFlowId(ExternalContext context) throws FlowExecutorArgumentExtractionException {
-		String flowId = context.getRequestParameterMap().get(flowIdParameterName);
+		String flowId = context.getRequestParameterMap().get(getFlowIdParameterName());
 		if (flowId == null) {
 			flowId = defaultFlowId;
 		}
 		if (!StringUtils.hasText(flowId)) {
 			throw new FlowExecutorArgumentExtractionException(
-					"Unable to extract the flowId argument: make sure the client provides the '" + flowIdParameterName
-							+ "' parameter as input or set the 'defaultFlowId' property; "
-							+ "the parameters provided in this request are: "
-							+ StylerUtils.style(context.getRequestParameterMap()));
+					"Unable to extract the flowId argument: make sure the client provides the '" + getFlowIdParameterName()
+					+ "' parameter as input or set the 'defaultFlowId' property; "
+					+ "the parameters provided in this request are: "
+					+ StylerUtils.style(context.getRequestParameterMap()));
 		}
 		return flowId;
 	}
@@ -195,36 +231,35 @@ public class FlowExecutorArgumentExtractor {
 	 * @return true if extractable, false if not
 	 */
 	public boolean isFlowExecutionKeyPresent(ExternalContext context) {
-		return context.getRequestParameterMap().contains(flowExecutionKeyParameterName);
+		return context.getRequestParameterMap().contains(getFlowExecutionKeyParameterName());
 	}
 
 	/**
 	 * Extract the flow execution key from the external context.
 	 * @param context the context in which the external user event occured
-	 * @return the obtained flow execution key or <code>null</code> if not
-	 * found
+	 * @return the obtained flow execution key
 	 * @throws FlowExecutorArgumentExtractionException if the flow execution key
 	 * could not be extracted
 	 */
 	public String extractFlowExecutionKey(ExternalContext context) throws FlowExecutorArgumentExtractionException {
-		String encodedKey = context.getRequestParameterMap().get(flowExecutionKeyParameterName);
+		String encodedKey = context.getRequestParameterMap().get(getFlowExecutionKeyParameterName());
 		if (!StringUtils.hasText(encodedKey)) {
 			throw new FlowExecutorArgumentExtractionException(
 					"Unable to extract the flowExecutionKey argument: make sure the client provides the '"
-							+ flowExecutionKeyParameterName
-							+ "' parameter as input; the parameters provided in this request are: "
-							+ StylerUtils.style(context.getRequestParameterMap()));
+					+ getFlowExecutionKeyParameterName()
+					+ "' parameter as input; the parameters provided in this request are: "
+					+ StylerUtils.style(context.getRequestParameterMap()));
 		}
 		return encodedKey;
 	}
 
 	/**
-	 * Returns true if the flow execution key is extractable from the context.
+	 * Returns true if the event id is extractable from the context.
 	 * @param context the context in which a external user event occured
 	 * @return true if extractable, false if not
 	 */
 	public boolean isEventIdPresent(ExternalContext context) {
-		return findParameter(eventIdParameterName, context.getRequestParameterMap()) != null;
+		return findParameter(getEventIdParameterName(), context.getRequestParameterMap()) != null;
 	}
 
 	/**
@@ -233,21 +268,20 @@ public class FlowExecutorArgumentExtractor {
 	 * This method should only be called if a {@link FlowExecutionKey} was
 	 * successfully extracted, indicating a request to resume a flow execution.
 	 * It should never return null.
-	 * 
 	 * @param context the context in which a external user event occured
 	 * @return the event id
 	 * @throws FlowExecutorArgumentExtractionException if the event id could not
 	 * be extracted
 	 */
 	public String extractEventId(ExternalContext context) throws FlowExecutorArgumentExtractionException {
-		String eventId = findParameter(eventIdParameterName, context.getRequestParameterMap());
+		String eventId = findParameter(getEventIdParameterName(), context.getRequestParameterMap());
 		if (!StringUtils.hasText(eventId)) {
 			throw new FlowExecutorArgumentExtractionException(
 					"Unable to extract the eventId argument: make sure the client provides the '"
-							+ eventIdParameterName + "' parameter as input along with the '"
-							+ flowExecutionKeyParameterName
-							+ "' parameter; the parameters provided in this request are: "
-							+ StylerUtils.style(context.getRequestParameterMap()));
+					+ getEventIdParameterName() + "' parameter as input along with the '"
+					+ getFlowExecutionKeyParameterName()
+					+ "' parameter; the parameters provided in this request are: "
+					+ StylerUtils.style(context.getRequestParameterMap()));
 		}
 		return eventId;
 	}
@@ -262,7 +296,7 @@ public class FlowExecutorArgumentExtractor {
 	 * this will return the requested value.</li>
 	 * <li>Try to obtain the parameter value from the parameter name, where the
 	 * parameter name in the event is of the form
-	 * <tt>logicalName_value = xyz</tt> with "_" being the specified
+	 * <tt>logicalName_value = xyz</tt> with "_" being the configured
 	 * delimiter. This deals with parameter values submitted using an HTML form
 	 * submit button.</li>
 	 * <li>If the value obtained in the previous step has a ".x" or ".y"
@@ -284,7 +318,7 @@ public class FlowExecutorArgumentExtractor {
 			return value;
 		}
 		// if no value yet, try to get it as a name_value=xyz parameter
-		String prefix = logicalParameterName + parameterDelimiter;
+		String prefix = logicalParameterName + getParameterValueDelimiter();
 		Iterator paramNames = parameters.getMap().keySet().iterator();
 		while (paramNames.hasNext()) {
 			String paramName = (String)paramNames.next();
@@ -302,7 +336,7 @@ public class FlowExecutorArgumentExtractor {
 		return null;
 	}
 
-	// data and behavior response issuance
+	// data and behavior for response issuance
 
 	/**
 	 * The string-encoded id of the flow execution will be exposed to the view
@@ -317,18 +351,19 @@ public class FlowExecutorArgumentExtractor {
 	private static final String FLOW_EXECUTION_CONTEXT_ATTRIBUTE = "flowExecutionContext";
 
 	/**
-	 * The default URL encoding scheme.
+	 * The default URL encoding scheme: UTF-8.
 	 */
 	private static final String DEFAULT_URL_ENCODING_SCHEME = "UTF-8";
+	
 
 	/**
-	 * Context attribuet that identifies the the flow execution participated in,
+	 * Model attribute that identifies the flow execution participated in,
 	 * defaults to {@link #FLOW_EXECUTION_KEY_ATTRIBUTE }.
 	 */
 	private String flowExecutionKeyAttributeName = FLOW_EXECUTION_KEY_ATTRIBUTE;
 
 	/**
-	 * Context attribute that provides state about the flow execution
+	 * Model attribute that provides state about the flow execution
 	 * participated in, defaults to {@link #FLOW_EXECUTION_CONTEXT_ATTRIBUTE }.
 	 */
 	private String flowExecutionContextAttributeName = FLOW_EXECUTION_CONTEXT_ATTRIBUTE;
@@ -336,18 +371,18 @@ public class FlowExecutorArgumentExtractor {
 	/**
 	 * A flag indicating whether to interpret a redirect URL that starts with a
 	 * slash ("/") as relative to the current ServletContext, i.e. as relative
-	 * to the web application root, as opposed to absolute.
+	 * to the web application root, as opposed to absolute. Default is true.
 	 */
 	private boolean redirectContextRelative = true;
 
 	/**
 	 * The url encoding scheme to be used to encode URLs built by this parameter
-	 * extractor.
+	 * extractor. Defaults to {@link #DEFAULT_URL_ENCODING_SCHEME}.
 	 */
 	private String urlEncodingScheme = DEFAULT_URL_ENCODING_SCHEME;
 
 	/**
-	 * Returns the flow execution key attribute name, used as a context
+	 * Returns the flow execution key attribute name, used as a model
 	 * attribute for identifying the executing flow being participated in.
 	 */
 	public String getFlowExecutionKeyAttributeName() {
@@ -355,7 +390,7 @@ public class FlowExecutorArgumentExtractor {
 	}
 
 	/**
-	 * Sets the flow execution key attribute name, used as a context attribute
+	 * Sets the flow execution key attribute name, used as a model attribute
 	 * for identifying the current state of the executing flow being
 	 * participated in (typically used by view templates during rendering).
 	 */
@@ -395,15 +430,31 @@ public class FlowExecutorArgumentExtractor {
 	 * ("/") as relative to the current ServletContext, i.e. as relative to the
 	 * web application root.
 	 */
-	protected boolean isRedirectContextRelative() {
+	public boolean isRedirectContextRelative() {
 		return redirectContextRelative;
+	}
+	
+	/**
+	 * Returns the url encoding scheme to be used to encode URLs built by this parameter
+	 * extractor. Defaults to {@link #DEFAULT_URL_ENCODING_SCHEME}.
+	 */
+	public String getUrlEncodingScheme() {
+		return urlEncodingScheme;
+	}
+	
+	/**
+	 * Set the url encoding scheme to be used to encode URLs built by this parameter
+	 * extractor. Defaults to {@link #DEFAULT_URL_ENCODING_SCHEME}.
+	 */
+	public void setUrlEncodingScheme(String urlEncodingScheme) {
+		this.urlEncodingScheme = urlEncodingScheme;
 	}
 
 	/**
 	 * Create a URL that when redirected to launches a entirely new execution of
 	 * a flow (starts a new conversation). Used to support the <i>restart flow</i>
 	 * and <i>redirect to flow</i> use cases.
-	 * @param flowRedirect the flow redirect selection
+	 * @param flowRedirect the flow redirect view selection
 	 * @param externalContext the external context
 	 * @return the relative flow URL path to redirect to
 	 */
@@ -412,7 +463,7 @@ public class FlowExecutorArgumentExtractor {
 		flowUrl.append(externalContext.getContextPath());
 		flowUrl.append(externalContext.getDispatcherPath());
 		flowUrl.append('?');
-		appendQueryParameter(flowIdParameterName, flowRedirect.getFlowId(), flowUrl);
+		appendQueryParameter(getFlowIdParameterName(), flowRedirect.getFlowId(), flowUrl);
 		if (!flowRedirect.getInput().isEmpty()) {
 			flowUrl.append('&');
 		}
@@ -422,7 +473,7 @@ public class FlowExecutorArgumentExtractor {
 
 	/**
 	 * Create a URL path that when redirected to renders the <i>current</i> (or
-	 * last) view selection</i> made by the flow execution identified by the
+	 * last) view selection made by the flow execution identified by the
 	 * flow execution key. Used to support the <i>flow execution redirect</i>
 	 * use case.
 	 * @param flowExecutionKey the flow execution key
@@ -436,12 +487,12 @@ public class FlowExecutorArgumentExtractor {
 		flowExecutionUrl.append(context.getContextPath());
 		flowExecutionUrl.append(context.getDispatcherPath());
 		flowExecutionUrl.append('?');
-		appendQueryParameter(flowExecutionKeyParameterName, flowExecutionKey, flowExecutionUrl);
+		appendQueryParameter(getFlowExecutionKeyParameterName(), flowExecutionKey, flowExecutionUrl);
 		return flowExecutionUrl.toString();
 	}
 
 	/**
-	 * Create a URL path to that when redirected to communicates with an
+	 * Create a URL path that when redirected to communicates with an
 	 * external system outside of Spring Web Flow.
 	 * @param redirect the external redirect request
 	 * @param flowExecutionKey the flow execution key to send through the
@@ -469,26 +520,28 @@ public class FlowExecutorArgumentExtractor {
 
 	/**
 	 * Put the flow execution key into the provided model map under the
-	 * configured context attribute name.
+	 * configured model attribute name.
 	 * @param flowExecutionKey the flow execution key (may be null if the
 	 * conversation has ended).
 	 * @param model the model
 	 */
 	public void put(String flowExecutionKey, Map model) {
 		if (flowExecutionKey != null) {
-			model.put(flowExecutionKeyAttributeName, flowExecutionKey);
+			model.put(getFlowExecutionKeyAttributeName(), flowExecutionKey);
 		}
 	}
 
 	/**
 	 * Put the flow execution context into the provided model map under the
-	 * configured context attribute name.
+	 * configured model attribute name.
 	 * @param context the flow execution context
 	 * @param model the model
 	 */
 	public void put(FlowExecutionContext context, Map model) {
-		model.put(flowExecutionContextAttributeName, context);
+		model.put(getFlowExecutionContextAttributeName(), context);
 	}
+	
+	// internal helpers
 
 	/**
 	 * URL-encode the given input String with the given encoding scheme.
@@ -500,8 +553,8 @@ public class FlowExecutorArgumentExtractor {
 	}
 
 	/**
-	 * Append query properties to the redirect URL. Stringifies, URL-encodes and
-	 * formats model attributes as query properties.
+	 * Append query parameters to the redirect URL. Stringifies, URL-encodes and
+	 * formats model attributes as query parameters.
 	 * @param targetUrl the StringBuffer to append the properties to
 	 * @param map Map that contains attributes
 	 */
@@ -529,16 +582,13 @@ public class FlowExecutorArgumentExtractor {
 	}
 
 	/**
-	 * URL-encode the given input String with the given encoding scheme.
+	 * URL-encode the given input String with the configured encoding scheme.
 	 * <p>
 	 * Default implementation uses <code>URLEncoder.encode(input, enc)</code>
 	 * on JDK 1.4+, falling back to <code>URLEncoder.encode(input)</code>
 	 * (which uses the platform default encoding) on JDK 1.3.
 	 * @param input the unencoded input String
-	 * @param encodingScheme the encoding scheme
 	 * @return the encoded output String
-	 * @see java.net.URLEncoder#encode(String, String)
-	 * @see java.net.URLEncoder#encode(String)
 	 */
 	private String urlEncode(String input) {
 		if (JdkVersion.getMajorJavaVersion() < JdkVersion.JAVA_14) {

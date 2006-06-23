@@ -62,18 +62,6 @@ public class RequestPathFlowExecutorArgumentExtractorTests extends TestCase {
 		assertEquals("/app/flows/flow?foo=bar&baz=3", url);
 	}
 
-	public void testCreateFlowUrlInputRequestPath() {
-		context.setContextPath("/app");
-		context.setDispatcherPath("/flows");
-		Map input = new HashMap();
-		input.put("foo", "bar");
-		input.put("baz", new Integer(3));
-		FlowRedirect flowRedirect = new FlowRedirect("flow", input);
-		argumentExtractor.setAppendFlowInputAttributesToRequestPath(true);
-		String url = argumentExtractor.createFlowUrl(flowRedirect, context);
-		assertEquals("/app/flows/flow/bar/3", url);
-	}
-
 	public void testCreateFlowExecutionUrl() {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows");

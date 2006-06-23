@@ -54,6 +54,10 @@ Package org.springframework.webflow.executor
   configured to configure a specific mapping strategy.
 * Renamed ViewIdResolver to ViewIdMapper.
   
+Package org.springframework.webflow.executor.support
+* Removed the appendFlowInputAttributesToRequestPath of RequestPathFlowExecutorArgumentExtractor since it didn't offer
+  a ready-to-use system and you would still need to do a bunch of custom coding anyway to make it work.
+
 Package org.springframework.webflow.registry
 * Made NoSuchFlowDefinitionException a standalone exception of the flow registry subsystem.
 
