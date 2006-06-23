@@ -155,8 +155,8 @@ public class FlowExecutorArgumentExtractor {
 	 * Sets the flow execution key parameter name, used to request that an
 	 * executing conversation resumes.
 	 */
-	public void setFlowExecutionKeyParameterName(String flowExecutionIdParameterName) {
-		this.flowExecutionKeyParameterName = flowExecutionIdParameterName;
+	public void setFlowExecutionKeyParameterName(String flowExecutionKeyParameterName) {
+		this.flowExecutionKeyParameterName = flowExecutionKeyParameterName;
 	}
 
 	/**
