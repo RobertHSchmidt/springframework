@@ -25,6 +25,10 @@ import java.io.Serializable;
  * Mementos are expected to be managed by caretakers (clients) without
  * the clents being aware of their internal structure. Only the originator is aware of
  * the internal structure of a concrete Memento implementation.
+ * <p>
+ * Memento is an abstract class because it's expected implementations are concrete
+ * mementos and not part of some other inheritence hierarchy. Mementos are
+ * serializable snapshots of data.
  * 
  * @see org.springframework.webflow.action.MementoOriginator
  * 
