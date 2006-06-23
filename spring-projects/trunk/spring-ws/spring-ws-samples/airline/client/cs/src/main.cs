@@ -13,6 +13,7 @@ namespace Spring.Ws.Samples.Airline.Client.CSharp {
 				} else {
 					service.Url = "http://localhost:8080/airline/Airline";
 				}
+				// Get all flights on 31st Januari, 2006 from Amsterdam to Venice
 				MessageGetFlightsRequest getFlightsRequest = new MessageGetFlightsRequest();
 				getFlightsRequest.from = "AMS";
 				getFlightsRequest.to = "VCE";
@@ -21,6 +22,7 @@ namespace Spring.Ws.Samples.Airline.Client.CSharp {
 				Flight[] flights = service.GetFlights(getFlightsRequest);
 				Console.WriteLine("Got {0} results", flights.Length);
 				if (flights.Length > 0) {
+					// Book the first flight using John Doe as a frequent flyer
 					MessageBookFlightRequest bookFlightRequest = new MessageBookFlightRequest();
 					bookFlightRequest.flightNumber = flights[0].number;
 					bookFlightRequest.departureTime = flights[0].departureTime;
@@ -46,6 +48,23 @@ namespace Spring.Ws.Samples.Airline.Client.CSharp {
 		private static void WriteName(Name name) {
 			Console.WriteLine("Passenger Name:");
 			Console.WriteLine("{0} {1}", name.first, name.last);
+			Console.WriteLine("------------");
+		}
+
+		private static void WriteFlight(Flight flight) {
+			Console.WriteLine("{0:d}", flight.departureTime);
+			Console.WriteLine("{0}\t{1}", flight.number, flight.serviceClass);
+			Console.WriteLine("------------");
+			Console.WriteLine("Depart:\t{0}-{1}\t{2:t}", flight.from.code, flight.from.name,
+				flight.departureTime);
+			Console.WriteLine("\t{0}", flight.from.city);
+			Console.WriteLine("Arrive:\t{0}-{1}\t{2:t}", flight.to.code, flight.to.name,
+				flight.arrivalTime);
+			Console.WriteLine("\t{0}", flight.to.city);
+		}
+	}
+}
+} {1}", name.first, name.last);
 			Console.WriteLine("------------");
 		}
 
