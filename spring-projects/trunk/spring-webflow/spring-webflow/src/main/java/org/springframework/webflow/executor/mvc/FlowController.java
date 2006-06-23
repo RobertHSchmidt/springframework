@@ -44,7 +44,7 @@ import org.springframework.webflow.support.ExternalRedirect;
 import org.springframework.webflow.support.FlowRedirect;
 
 /**
- * Point of integration between Spring MVC and Spring Web Flow: a
+ * Point of integration between Spring Web MVC and Spring Web Flow: a
  * {@link Controller} that routes incoming requests to one or more managed flow
  * executions.
  * <p>
@@ -64,7 +64,7 @@ import org.springframework.webflow.support.FlowRedirect;
  * {@link FlowExecutorArgumentExtractor#getFlowExecutionKeyParameterName()}
  * request parameter identifying the conversation to participate in.
  * <p>
- * See the flowLauncher sample application for examples of the various
+ * See the <tt>flowLauncher</tt> sample application for examples of the various
  * strategies for launching and resuming flow executions.
  * <p>
  * Usage example:
@@ -86,13 +86,15 @@ import org.springframework.webflow.support.FlowRedirect;
  *     &lt;/bean&gt;
  * </pre>
  * 
+ * <p>
  * It is also possible to customize the {@link FlowExecutorArgumentExtractor}
  * strategy to allow for different types of controller parameterization, for
  * example perhaps in conjunction with a REST-style request mapper (see
  * {@link RequestPathFlowExecutorArgumentExtractor}).
  * 
- * @see FlowExecutor
- * @see FlowExecutorArgumentExtractor
+ * @see org.springframework.webflow.executor.FlowExecutor
+ * @see org.springframework.webflow.executor.support.FlowRequestHandler
+ * @see org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
@@ -107,35 +109,19 @@ public class FlowController extends AbstractController implements InitializingBe
 
 	/**
 	 * The strategy for extracting flow executor parameters from a request made
-	 * by a {@link ExternalContext}.
+	 * by an {@link ExternalContext}.
 	 */
 	private FlowExecutorArgumentExtractor argumentExtractor = new FlowExecutorArgumentExtractor();
 
-	public FlowController() {
-		initDefaults();
-	}
-
 	/**
-	 * Initialize the defaults of this constructor.
+	 * Create a new flow controller. Allows bean style usage.
+	 * @see #setFlowExecutor(FlowExecutor)
+	 * @see #setFlowLocator(FlowLocator)
 	 */
-	protected void initDefaults() {
+	public FlowController() {
 		// set the cache seconds property to 0 so no pages are cached by default
 		// for flows.
 		setCacheSeconds(0);
-	}
-
-	/**
-	 * Sets the flow locator responsible for loading flow definitions when
-	 * requested for execution by clients.
-	 * <p>
-	 * This is a convenience setter that configures a {@link FlowExecutorImpl}
-	 * with a default {@link DefaultFlowExecutionRepositoryFactory} for managing
-	 * the storage of executing flows.
-	 * @param flowLocator the locator responsible for loading flow definitions
-	 * when this controller is invoked.
-	 */
-	public void setFlowLocator(FlowLocator flowLocator) {
-		this.flowExecutor = new FlowExecutorImpl(flowLocator);
 	}
 
 	/**
@@ -154,10 +140,26 @@ public class FlowController extends AbstractController implements InitializingBe
 	 * {@link FlowExecutionRepositoryFactory} for managing the storage of flows
 	 * and/or one or more {@link FlowExecutionListener} objects for observing
 	 * the lifecycle of executing flows.
-	 * @param flowExecutor the flow executor
+	 * @param flowExecutor the fully configured flow executor to use 
 	 */
 	public void setFlowExecutor(FlowExecutor flowExecutor) {
 		this.flowExecutor = flowExecutor;
+	}
+
+	/**
+	 * Sets the flow locator responsible for loading flow definitions when
+	 * requested for execution by clients.
+	 * <p>
+	 * This is a convenience setter that configures a default {@link FlowExecutorImpl}
+	 * with a simple {@link DefaultFlowExecutionRepositoryFactory} for managing
+	 * the storage of executing flows.
+	 * <p>
+	 * Don't use this together with {@link #setFlowExecutor(FlowExecutor)}.
+	 * @param flowLocator the locator responsible for loading flow definitions
+	 * when this controller is invoked
+	 */
+	public void setFlowLocator(FlowLocator flowLocator) {
+		this.flowExecutor = new FlowExecutorImpl(flowLocator);
 	}
 
 	/**
@@ -169,7 +171,8 @@ public class FlowController extends AbstractController implements InitializingBe
 	}
 
 	/**
-	 * Sets the flow executor argument extractor to use.
+	 * Sets the flow executor argument extractor to use. The default is
+	 * {@link FlowExecutorArgumentExtractor}.
 	 * @param parameterExtractor the argument extractor
 	 */
 	public void setArgumentExtractor(FlowExecutorArgumentExtractor parameterExtractor) {
@@ -199,7 +202,7 @@ public class FlowController extends AbstractController implements InitializingBe
 
 	/**
 	 * Factory method that creates a new helper for processing a request into
-	 * this flow controller. The controller is a basic template encapsulating
+	 * this flow controller. The handler is a basic template encapsulating
 	 * reusable flow execution request handling workflow.
 	 * @return the controller helper
 	 */
@@ -225,8 +228,8 @@ public class FlowController extends AbstractController implements InitializingBe
 		}
 		else if (response.isFlowExecutionRedirect()) {
 			// redirect to active flow execution URL
-			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(response.getFlowExecutionKey(), response
-					.getFlowExecutionContext(), context);
+			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(
+					response.getFlowExecutionKey(), response.getFlowExecutionContext(), context);
 			return new ModelAndView(new RedirectView(flowExecutionUrl));
 		}
 		else if (response.isExternalRedirect()) {

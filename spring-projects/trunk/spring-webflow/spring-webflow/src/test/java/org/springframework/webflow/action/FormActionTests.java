@@ -236,7 +236,7 @@ public class FormActionTests extends TestCase {
 	public void testMultipleFormObjectsInOneFlow() throws Exception {
 		MockRequestContext context = new MockRequestContext(parameters());
 
-		FormHandlingAction otherAction = createFormAction("otherTest");
+		FormAction otherAction = createFormAction("otherTest");
 
 		assertEquals(action.getEventFactorySupport().getSuccessEventId(), action.setupForm(context).getId());
 		assertEquals(action.getEventFactorySupport().getSuccessEventId(), otherAction.setupForm(context).getId());
@@ -305,7 +305,7 @@ public class FormActionTests extends TestCase {
 	public void testFormObjectAccessUsingAlias() throws Exception {
 		MockRequestContext context = new MockRequestContext(blankParameters());
 
-		FormHandlingAction otherAction = createFormAction("otherTest");
+		FormAction otherAction = createFormAction("otherTest");
 
 		assertEquals(action.getEventFactorySupport().getSuccessEventId(), action.setupForm(context).getId());
 
@@ -368,13 +368,13 @@ public class FormActionTests extends TestCase {
 	public void testMultipleFormObjects() throws Exception {
 		MockRequestContext context = new MockRequestContext(parameters());
 
-		FormHandlingAction action1 = createFormAction("test1");
+		FormAction action1 = createFormAction("test1");
 		action1.setupForm(context);
 		TestBean test1 = (TestBean)context.getFlowScope().get("test1");
 		assertNotNull(test1);
 		assertSame(test1, new FormObjectAccessor(context).getCurrentFormObject());
 
-		FormHandlingAction action2 = createFormAction("test2");
+		FormAction action2 = createFormAction("test2");
 		action2.setupForm(context);
 		TestBean test2 = (TestBean)context.getFlowScope().get("test2");
 		assertNotNull(test2);

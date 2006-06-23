@@ -250,7 +250,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * @author Erwin Vervaet
  * @author Keith Donald
  */
-public class FormAction extends MultiAction implements InitializingBean, FormHandlingAction {
+public class FormAction extends MultiAction implements InitializingBean {
 
 	/*
 	 * Implementation note: Uses deprecated DataBinder.getErrors() to remain
@@ -466,6 +466,14 @@ public class FormAction extends MultiAction implements InitializingBean, FormHan
 
 	// action execute methods (as defined by the FormActionMethods interface)
 
+	/**
+	 * Prepares a form object for display in a new form, loading it if necessary.
+	 * @param context the action execution context, for accessing and setting
+	 * data in "flow scope" or "request scope"
+	 * @return "success" when binding and validation is successful
+	 * @throws Exception an <b>unrecoverable</b> exception occured, either
+	 * checked or unchecked
+	 */
 	public Event setupForm(RequestContext context) throws Exception {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing setupForm");
@@ -474,6 +482,16 @@ public class FormAction extends MultiAction implements InitializingBean, FormHan
 		return success();
 	}
 
+	/**
+	 * Bind incoming request parameters to allowed fields of the form object and
+	 * then validate the bound form object if a validator is configured.
+	 * @param context the action execution context, for accessing and setting
+	 * data in "flow scope" or "request scope"
+	 * @return "success" when binding and validation is successful, "error" if
+	 * ther were binding and/or validation errors
+	 * @throws Exception an <b>unrecoverable</b> exception occured, either
+	 * checked or unchecked
+	 */
 	public Event bindAndValidate(RequestContext context) throws Exception {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing bind");
@@ -501,6 +519,14 @@ public class FormAction extends MultiAction implements InitializingBean, FormHan
 		return binder.getErrors().hasErrors() ? error() : success();
 	}
 
+	/**
+	 * Bind incoming request parameters to allowed fields of the form object.
+	 * @param context the action execution context, for accessing and setting
+	 * data in "flow scope" or "request scope"
+	 * @return "success" if there are no binding errors, "error" otherwise
+	 * @throws Exception an <b>unrecoverable</b> exception occured, either
+	 * checked or unchecked
+	 */
 	public Event bind(RequestContext context) throws Exception {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing bind");
@@ -512,6 +538,14 @@ public class FormAction extends MultiAction implements InitializingBean, FormHan
 		return binder.getErrors().hasErrors() ? error() : success();
 	}
 
+	/**
+	 * Validate the form object.
+	 * @param context the action execution context, for accessing and setting
+	 * data in "flow scope" or "request scope"
+	 * @return "success" if there are no validation errors, "error" otherwise
+	 * @throws Exception an <b>unrecoverable</b> exception occured, either
+	 * checked or unchecked
+	 */
 	public Event validate(RequestContext context) throws Exception {
 		if (getValidator() != null && validationEnabled(context)) {
 			if (logger.isDebugEnabled()) {
@@ -536,6 +570,13 @@ public class FormAction extends MultiAction implements InitializingBean, FormHan
 		}
 	}
 
+	/**
+	 * Resets the form by clearing out the form object in the specified scope
+	 * and reloading it.
+	 * @param context the request context
+	 * @return "success" if the reset action completed successfully
+	 * @throws Exception if an exception occured
+	 */
 	public Event resetForm(RequestContext context) throws Exception {
 		Object formObject = loadFormObject(context);
 		setFormObject(context, formObject);

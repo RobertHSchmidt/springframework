@@ -29,7 +29,8 @@ Package org.springframework.webflow.action
 * Refactored ResultSpecification to be an interface. The default implementation is SimpleResultSpecification.
 * Removed AbstractAction.setEventFactorySupport(). In the unlikely case that you want to use an custom subclass of
   EventFactorySupport, just override AbstractAction.getEventFactorySupport().
-* Renamed FormActionMethods to FormHandlingAction.
+* Removed FormActionMethods since it served little purpose and was very closely linked to the way FormAction
+  implemented form handling.
 
 Package org.springframework.webflow.builder
 * Reapplied 1.0 rc2 fix for inline flow parsing, which was lost in SourceForge CVS issues occurring between 7/5/06 and 15/5/06
