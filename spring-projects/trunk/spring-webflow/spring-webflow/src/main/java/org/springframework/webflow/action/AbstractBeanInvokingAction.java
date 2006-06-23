@@ -49,14 +49,6 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	private MethodInvoker methodInvoker = new MethodInvoker();
 
 	/**
-	 * The strategy that saves and restores stateful bean fields. Some people
-	 * might call what this enables memento-like <i>bijection</i>, where state
-	 * is <i>injected</i> into a bean before invocation and then <i>outjected</i>
-	 * after invocation.
-	 */
-	private BeanStatePersister beanStatePersister = new NoOpBeanStatePersister();
-
-	/**
 	 * The specification (configuration) for how bean method return values
 	 * should be exposed to an executing flow that invokes this action.
 	 */
@@ -66,6 +58,14 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * The strategy that adapts bean method return values to Event objects.
 	 */
 	private ResultEventFactory resultEventFactory = new SuccessEventFactory();
+
+	/**
+	 * The strategy that saves and restores stateful bean fields. Some people
+	 * might call what this enables memento-like <i>bijection</i>, where state
+	 * is <i>injected</i> into a bean before invocation and then <i>outjected</i>
+	 * after invocation.
+	 */
+	private BeanStatePersister beanStatePersister = new NoOpBeanStatePersister();
 
 	/**
 	 * Creates a new bean invoking action.
@@ -81,21 +81,6 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 */
 	public MethodSignature getMethodSignature() {
 		return methodSignature;
-	}
-
-	/**
-	 * Returns the bean state management strategy used by this action.
-	 */
-	protected BeanStatePersister getBeanStatePersister() {
-		return beanStatePersister;
-	}
-
-	/**
-	 * Set the bean state management strategy. Defaults to no bean
-	 * state persistence.
-	 */
-	public void setBeanStatePersister(BeanStatePersister beanStatePersister) {
-		this.beanStatePersister = beanStatePersister;
 	}
 
 	/**
@@ -133,10 +118,18 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	}
 
 	/**
-	 * Returns the bean method invoker helper.
+	 * Returns the bean state management strategy used by this action.
 	 */
-	protected MethodInvoker getMethodInvoker() {
-		return methodInvoker;
+	protected BeanStatePersister getBeanStatePersister() {
+		return beanStatePersister;
+	}
+
+	/**
+	 * Set the bean state management strategy. Defaults to no bean
+	 * state persistence.
+	 */
+	public void setBeanStatePersister(BeanStatePersister beanStatePersister) {
+		this.beanStatePersister = beanStatePersister;
 	}
 
 	/**
@@ -147,6 +140,13 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 		methodInvoker.setConversionService(conversionService);
 	}
 	
+	/**
+	 * Returns the bean method invoker helper.
+	 */
+	protected MethodInvoker getMethodInvoker() {
+		return methodInvoker;
+	}
+
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBeanStatePersister().restoreState(getBean(context), context);
 		Object returnValue = getMethodInvoker().invoke(methodSignature, bean, context);
