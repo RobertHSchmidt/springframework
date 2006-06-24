@@ -16,11 +16,18 @@
 
 package org.springframework.ws.soap.saaj.support;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import javax.xml.namespace.QName;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 
+import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 
 /**
@@ -71,6 +78,41 @@ public abstract class SaajUtils {
         }
         else {
             return new QName(name.getLocalName());
+        }
+    }
+
+    /**
+     * Loads a SAAJ <code>SOAPMessage</code> from the given resource.
+     *
+     * @param resource the resource to read from
+     * @return the loaded SAAJ message
+     * @throws SOAPException if the message cannot be constructed
+     * @throws IOException   if the input stream resource cannot be loaded
+     */
+    public static SOAPMessage loadMessage(Resource resource) throws SOAPException, IOException {
+        return loadMessage(resource, MessageFactory.newInstance());
+    }
+
+    /**
+     * Loads a SAAJ <code>SOAPMessage</code> from the given resource with a given message factory.
+     *
+     * @param resource       the resource to read from
+     * @param messageFactory SAAJ message factory used to construct the message
+     * @return the loaded SAAJ message
+     * @throws SOAPException if the message cannot be constructed
+     * @throws IOException   if the input stream resource cannot be loaded
+     */
+    public static SOAPMessage loadMessage(Resource resource, MessageFactory messageFactory)
+            throws SOAPException, IOException {
+        InputStream is = resource.getInputStream();
+        try {
+            MimeHeaders mimeHeaders = new MimeHeaders();
+            mimeHeaders.addHeader("Content-Type", "text/xml");
+            mimeHeaders.addHeader("Content-Length", Long.toString(resource.getFile().length()));
+            return messageFactory.createMessage(mimeHeaders, is);
+        }
+        finally {
+            is.close();
         }
     }
 }
