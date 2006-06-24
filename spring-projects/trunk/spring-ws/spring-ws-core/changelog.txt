@@ -8,7 +8,7 @@ Package org.springframework.ws.soap
 * improved content-type handling (#SWS-32)
 
 Package org.springframework.ws.soap.endpoint
-* added SoapMessageLoggingInterceptor, which logs the entire SoapEnvelope
+* added SoapEnvelopeLoggingInterceptor, which logs the entire SoapEnvelope
 
 Package org.springframework.ws.transport.http
 * removed J2EE 1.4 dependency (#SWS-31)

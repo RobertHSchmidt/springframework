@@ -29,17 +29,17 @@ import org.apache.log4j.spi.LoggingEvent;
 
 import org.springframework.ws.soap.saaj.SaajSoapMessageContext;
 
-public class SoapMessageLoggingInterceptorTest extends TestCase {
+public class SoapEnvelopeLoggingInterceptorTest extends TestCase {
 
-    private SoapMessageLoggingInterceptor interceptor;
+    private SoapEnvelopeLoggingInterceptor interceptor;
 
     private CountingAppender appender;
 
     private SaajSoapMessageContext messageContext;
 
     protected void setUp() throws Exception {
-        interceptor = new SoapMessageLoggingInterceptor();
-        appender = new SoapMessageLoggingInterceptorTest.CountingAppender();
+        interceptor = new SoapEnvelopeLoggingInterceptor();
+        appender = new SoapEnvelopeLoggingInterceptorTest.CountingAppender();
         BasicConfigurator.configure(appender);
         Logger.getRootLogger().setLevel(Level.DEBUG);
         MessageFactory messageFactory = MessageFactory.newInstance();

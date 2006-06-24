@@ -10,16 +10,16 @@ import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
 
 /**
- * SOAP-specific <code>EndpointInterceptor</code> that logs the complete request and response
- * <code>SoapMessage</code>messages. By default, request, response and fault messages are logged, but this behaviour can
- * be changed using the <code>logRequest</code>, <code>logResponse</code>, <code>logFault</code> properties.
+ * SOAP-specific <code>EndpointInterceptor</code> that logs the complete request and response envelope of
+ * <code>SoapMessage</code> messages. By default, request, response and fault messages are logged, but this behaviour
+ * can be changed using the <code>logRequest</code>, <code>logResponse</code>, <code>logFault</code> properties.
  *
  * @author Arjen Poutsma
  * @see #setLogRequest(boolean)
  * @see #setLogResponse(boolean)
  * @see #setLogFault(boolean)
  */
-public class SoapMessageLoggingInterceptor extends AbstractLoggingInterceptor implements SoapEndpointInterceptor {
+public class SoapEnvelopeLoggingInterceptor extends AbstractLoggingInterceptor implements SoapEndpointInterceptor {
 
     private boolean logFault = true;
 
