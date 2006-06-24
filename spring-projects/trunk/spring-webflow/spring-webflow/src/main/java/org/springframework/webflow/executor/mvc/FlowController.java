@@ -173,7 +173,7 @@ public class FlowController extends AbstractController implements InitializingBe
 	/**
 	 * Sets the flow executor argument extractor to use. The default is
 	 * {@link FlowExecutorArgumentExtractor}.
-	 * @param parameterExtractor the argument extractor
+	 * @param parameterExtractor the fully configured argument extractor
 	 */
 	public void setArgumentExtractor(FlowExecutorArgumentExtractor parameterExtractor) {
 		this.argumentExtractor = parameterExtractor;
@@ -183,6 +183,10 @@ public class FlowController extends AbstractController implements InitializingBe
 	 * Sets the identifier of the default flow to launch if no flowId argument
 	 * can be extracted by the configured {@link FlowExecutorArgumentExtractor}
 	 * during request processing.
+	 * <p>
+	 * This is a convenience method that sets the default flow id of the
+	 * controller's argument extractor. Don't use this when using
+	 * {@link #setArgumentExtractor(FlowExecutorArgumentExtractor)}.
 	 */
 	public void setDefaultFlowId(String defaultFlowId) {
 		this.argumentExtractor.setDefaultFlowId(defaultFlowId);
