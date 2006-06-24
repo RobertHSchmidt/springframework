@@ -17,14 +17,19 @@
 package org.springframework.ws.mock;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.Writer;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamResult;
 
+import org.springframework.core.io.InputStreamSource;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.xml.transform.StringSource;
 
@@ -72,6 +77,20 @@ public class MockWebServiceMessage implements WebServiceMessage {
 
     public void setPayload(String content) {
         this.content.replace(0, this.content.length(), content);
+    }
+
+    public void setPayload(InputStreamSource inputStreamSource) throws IOException {
+        InputStream is = null;
+        try {
+            is = inputStreamSource.getInputStream();
+            Reader reader = new InputStreamReader(is, "UTF-8");
+            this.content.replace(0, this.content.length(), FileCopyUtils.copyToString(reader));
+        }
+        finally {
+            if (is != null) {
+                is.close();
+            }
+        }
     }
 
     private class StringBufferWriter extends Writer {
