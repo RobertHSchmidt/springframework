@@ -16,18 +16,9 @@
 
 package org.springframework.ws.endpoint;
 
-import java.io.StringWriter;
-
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.stream.StreamResult;
 
-import org.springframework.ws.EndpointInterceptor;
 import org.springframework.ws.WebServiceMessage;
-import org.springframework.ws.context.MessageContext;
 
 /**
  * Simple <code>EndpointInterceptor</code> that logs the payload of request and response messages.  By default, both
@@ -38,70 +29,9 @@ import org.springframework.ws.context.MessageContext;
  * @see #setLogRequest(boolean)
  * @see #setLogResponse(boolean)
  */
-public class PayloadLoggingInterceptor extends TransformerObjectSupport implements EndpointInterceptor {
+public class PayloadLoggingInterceptor extends AbstractLoggingInterceptor {
 
-    private boolean logRequest = true;
-
-    private boolean logResponse = true;
-
-    /**
-     * Indicates whether the request should be logged. Default is <code>true</code>.
-     */
-    public void setLogRequest(boolean logRequest) {
-        this.logRequest = logRequest;
-    }
-
-    /**
-     * Indicates whether the response should be logged. Default is <code>true</code>.
-     */
-    public void setLogResponse(boolean logResponse) {
-        this.logResponse = logResponse;
-    }
-
-    /**
-     * Logs the request message payload. Logging only ocurs if <code>logRequest</code> is set to <code>true</code>,
-     * which is the default.
-     *
-     * @param messageContext the message context
-     * @return <code>true</code>
-     * @throws TransformerException when the payload cannot be transformed to a string
-     */
-    public boolean handleRequest(MessageContext messageContext, Object endpoint) throws TransformerException {
-        if (logRequest && logger.isDebugEnabled()) {
-            logMessagePayload("Request payload: ", messageContext.getRequest());
-        }
-        return true;
-    }
-
-    /**
-     * Logs the response message payload. Logging only ocurs if <code>logResponse</code> is set to <code>true</code>,
-     * which is the default.
-     *
-     * @param messageContext the message context
-     * @return <code>true</code>
-     * @throws TransformerException when the payload cannot be transformed to a string
-     */
-    public boolean handleResponse(MessageContext messageContext, Object endpoint) throws Exception {
-        if (logResponse && logger.isDebugEnabled()) {
-            logMessagePayload("Response payload: ", messageContext.getResponse());
-        }
-        return true;
-    }
-
-    private void logMessagePayload(String logMessage, WebServiceMessage message) throws TransformerException {
-        Source source = message.getPayloadSource();
-        if (source != null) {
-            Transformer transformer = createNonIndentingTransformer();
-            StringWriter writer = new StringWriter();
-            transformer.transform(source, new StreamResult(writer));
-            logger.debug(logMessage + writer.toString());
-        }
-    }
-
-    private Transformer createNonIndentingTransformer() throws TransformerConfigurationException {
-        Transformer transformer = createTransformer();
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        transformer.setOutputProperty(OutputKeys.INDENT, "no");
-        return transformer;
+    protected Source getSource(WebServiceMessage message) {
+        return message.getPayloadSource();
     }
 }
