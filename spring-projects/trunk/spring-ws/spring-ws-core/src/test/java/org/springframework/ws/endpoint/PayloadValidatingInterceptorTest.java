@@ -16,6 +16,13 @@
 
 package org.springframework.ws.endpoint;
 
+import java.io.InputStream;
+
+import javax.xml.XMLConstants;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.transform.stream.StreamSource;
+
 import junit.framework.TestCase;
 import org.easymock.MockControl;
 
@@ -30,17 +37,12 @@ import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.context.AbstractSoapMessageContext;
 import org.springframework.ws.soap.context.SoapMessageContext;
-import org.springframework.xml.transform.StringSource;
+import org.springframework.ws.soap.saaj.SaajSoapMessageContext;
+import org.springframework.ws.soap.saaj.support.SaajUtils;
 
 public class PayloadValidatingInterceptorTest extends TestCase {
 
     private PayloadValidatingInterceptor interceptor;
-
-    private static final String VALID_MESSAGE =
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><product xmlns=\"http://www.springframework.org/spring-ws/test/validation\" effDate=\"2006-01-01\"><number>42</number><size>10</size></product>";
-
-    private static final String INVALID_MESSAGE =
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><product xmlns=\"http://www.springframework.org/spring-ws/test/validation\" effDate=\"2006-01-01\"><size>20</size></product>";
 
     private MockWebServiceMessage request;
 
@@ -48,7 +50,7 @@ public class PayloadValidatingInterceptorTest extends TestCase {
 
     protected void setUp() throws Exception {
         interceptor = new PayloadValidatingInterceptor();
-        interceptor.setSchema(new ClassPathResource("schema.xsd", PayloadValidatingInterceptorTest.class));
+        interceptor.setSchema(new ClassPathResource("schema.xsd", getClass()));
         interceptor.setValidateRequest(true);
         interceptor.setValidateResponse(true);
         interceptor.afterPropertiesSet();
@@ -57,7 +59,7 @@ public class PayloadValidatingInterceptorTest extends TestCase {
     }
 
     public void testHandleValidRequest() throws Exception {
-        request.setPayload(VALID_MESSAGE);
+        request.setPayload(new ClassPathResource("validMessage.xml", getClass()));
         boolean result = interceptor.handleRequest(messageContext, null);
         assertTrue("Invalid response from interceptor", result);
         assertNull("Response set", messageContext.getResponse());
@@ -92,7 +94,8 @@ public class PayloadValidatingInterceptorTest extends TestCase {
                 return response;
             }
         };
-        messageControl.expectAndReturn(requestMock.getPayloadSource(), new StringSource(INVALID_MESSAGE));
+        InputStream is = getClass().getResourceAsStream("invalidMessage.xml");
+        messageControl.expectAndReturn(requestMock.getPayloadSource(), new StreamSource(is));
         messageControl.expectAndReturn(responseMock.getSoapBody(), bodyMock);
         messageControl.expectAndReturn(responseMock.getVersion(), SoapVersion.SOAP_11);
         bodyControl.expectAndReturn(bodyMock.addFault(SoapVersion.SOAP_11.getSenderFaultName(), "Validation error"),
@@ -122,16 +125,39 @@ public class PayloadValidatingInterceptorTest extends TestCase {
 
     public void testHandleValidResponse() throws Exception {
         MockWebServiceMessage response = (MockWebServiceMessage) messageContext.createResponse();
-        response.setPayload(VALID_MESSAGE);
+        response.setPayload(new ClassPathResource("validMessage.xml", getClass()));
         boolean result = interceptor.handleResponse(messageContext, null);
         assertTrue("Invalid response from interceptor", result);
     }
 
     public void testHandleInvalidResponse() throws Exception {
         MockWebServiceMessage response = (MockWebServiceMessage) messageContext.createResponse();
-        response.setPayload(INVALID_MESSAGE);
+        response.setPayload(new ClassPathResource("invalidMessage.xml", getClass()));
         boolean result = interceptor.handleResponse(messageContext, null);
         assertFalse("Invalid response from interceptor", result);
+    }
+
+    public void testNamespacesInType() throws Exception {
+        // Make sure we use Xerces for this testcase: the JAXP implementation used internally by JDK 1.5 has a bug
+        // See http://opensource.atlassian.com/projects/spring/browse/SWS-35
+        System.setProperty("javax.xml.validation.SchemaFactory:" + XMLConstants.W3C_XML_SCHEMA_NS_URI,
+                "org.apache.xerces.jaxp.validation.XMLSchemaFactory");
+        try {
+            interceptor.setSchema(new ClassPathResource("schema2.xsd", PayloadValidatingInterceptorTest.class));
+            interceptor.afterPropertiesSet();
+            MessageFactory messageFactory = MessageFactory.newInstance();
+            SOAPMessage saajMessage =
+                    SaajUtils.loadMessage(new ClassPathResource("validSoapMessage.xml", getClass()), messageFactory);
+            SaajSoapMessageContext messageContext = new SaajSoapMessageContext(saajMessage, messageFactory);
+            boolean result = interceptor.handleRequest(messageContext, null);
+            assertTrue("Invalid response from interceptor", result);
+            assertNull("Response set", messageContext.getResponse());
+        }
+        finally {
+            // Reset the property
+            System.setProperty("javax.xml.validation.SchemaFactory:" + XMLConstants.W3C_XML_SCHEMA_NS_URI, "");
+
+        }
     }
 
 }
