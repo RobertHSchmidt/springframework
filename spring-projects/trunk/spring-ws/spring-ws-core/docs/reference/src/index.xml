@@ -8,7 +8,7 @@
                 <!ENTITY ws                 SYSTEM "ws.xml">
                 <!ENTITY security           SYSTEM "security.xml">
                 <!ENTITY bibliography      SYSTEM "bibliography.xml">
-                
+
                 ]>
 
 
@@ -19,7 +19,7 @@
         <subtitle>
             Reference Documentation
         </subtitle>
-        <releaseinfo>Version 1.0-M2</releaseinfo>
+        <releaseinfo>Version 1.0-M1</releaseinfo>
         <pubdate>(Work in progress)</pubdate>
 
         <authorgroup>
@@ -41,11 +41,11 @@
     &contract-first;
 
     &ws;
-        
+
     &security;
-    
+
     &oxm;
-    
+
     &bibliography;
 
 </book>
