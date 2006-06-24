@@ -92,7 +92,8 @@ public class SaajUtilsTest extends XMLTestCase {
         factory.setNamespaceAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.parse(getClass().getResourceAsStream("soapMessage.xml"));
-        SOAPMessage soapMessage = SaajUtils.loadMessage(new ClassPathResource("soapMessage.xml", getClass()));
+        SOAPMessage soapMessage =
+                SaajUtils.loadMessage(new ClassPathResource("soapMessage.xml", getClass()), messageFactory);
         assertXMLEqual(soapMessage.getSOAPPart(), document);
     }
 }
