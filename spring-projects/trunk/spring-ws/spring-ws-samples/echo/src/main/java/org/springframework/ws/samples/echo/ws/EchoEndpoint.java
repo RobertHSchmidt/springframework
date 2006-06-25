@@ -19,6 +19,9 @@ package org.springframework.ws.samples.echo.ws;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 import org.springframework.util.Assert;
 import org.springframework.ws.endpoint.AbstractDomPayloadEndpoint;
@@ -66,11 +69,22 @@ public class EchoEndpoint extends AbstractDomPayloadEndpoint {
     protected Element invokeInternal(Element requestElement, Document document) throws Exception {
         Assert.isTrue(NAMESPACE_URI.equals(requestElement.getNamespaceURI()), "Invalid namespace");
         Assert.isTrue(ECHO_REQUEST_LOCAL_NAME.equals(requestElement.getLocalName()), "Invalid local name");
-        String echoText = requestElement.getTextContent();
+        NodeList children = requestElement.getChildNodes();
+        Text requestText = null;
+        for (int i = 0; i < children.getLength(); i++) {
+            if (children.item(i).getNodeType() == Node.TEXT_NODE) {
+                requestText = (Text) children.item(i);
+                break;
+            }
+        }
+        if (requestText == null) {
+            throw new IllegalArgumentException("Could not find request text node");
+        }
 
-        String echo = echoService.echo(echoText);
+        String echo = echoService.echo(requestText.getNodeValue());
         Element responseElement = document.createElementNS(NAMESPACE_URI, ECHO_RESPONSE_LOCAL_NAME);
-        responseElement.setTextContent(echo);
+        Text responseText = document.createTextNode(echo);
+        responseElement.appendChild(responseText);
         return responseElement;
     }
 }
