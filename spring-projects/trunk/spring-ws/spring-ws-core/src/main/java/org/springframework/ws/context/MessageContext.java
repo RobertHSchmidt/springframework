@@ -39,16 +39,25 @@ public interface MessageContext {
      * @return the created response message
      * @throws IllegalStateException if a response was already created
      * @see #getResponse()
+     * @deprecated Will be replaced in future version by the logic provided by <code>hasResponse()</code> and
+     *             <code>getResponse</code>
      */
     WebServiceMessage createResponse();
 
     /**
-     * Returns the response message, if created. Returns <code>null</code> if no response message was created so far.
+     * Returns the response message. Creates a new response if no response was created.
      *
-     * @return the response message, or <code>null</code> if none was created
+     * @return the response message
      * @see #createResponse()
      */
     WebServiceMessage getResponse();
+
+    /**
+     * Indicates whether this context has a resonse.
+     *
+     * @return <code>true</code> if this context has a response; <code>false</code> otherwise
+     */
+    boolean hasResponse();
 
     /**
      * Sets the name and value of a property associated with the <code>MessageContext</code>. If the

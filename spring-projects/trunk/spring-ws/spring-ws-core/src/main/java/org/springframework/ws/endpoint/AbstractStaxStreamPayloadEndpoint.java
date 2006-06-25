@@ -68,7 +68,7 @@ public abstract class AbstractStaxStreamPayloadEndpoint extends AbstractStaxPayl
 
         private void createStreamWriter() throws XMLStreamException {
             if (streamWriter == null) {
-                WebServiceMessage response = messageContext.createResponse();
+                WebServiceMessage response = messageContext.getResponse();
                 streamWriter = getOutputFactory().createXMLStreamWriter(response.getPayloadResult());
             }
         }

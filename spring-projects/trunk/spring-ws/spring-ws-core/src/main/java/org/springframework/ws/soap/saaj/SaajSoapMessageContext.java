@@ -34,10 +34,6 @@ import org.springframework.ws.soap.context.AbstractSoapMessageContext;
  */
 public class SaajSoapMessageContext extends AbstractSoapMessageContext {
 
-    private SaajSoapMessage request;
-
-    private SaajSoapMessage response;
-
     private final MessageFactory messageFactory;
 
     /**
@@ -47,9 +43,8 @@ public class SaajSoapMessageContext extends AbstractSoapMessageContext {
      * @param messageFactory the message factory used for creating a response
      */
     public SaajSoapMessageContext(SOAPMessage request, MessageFactory messageFactory) {
-        Assert.notNull(request);
+        super(new SaajSoapMessage(request));
         Assert.notNull(messageFactory);
-        this.request = new SaajSoapMessage(request);
         this.messageFactory = messageFactory;
     }
 
@@ -57,45 +52,34 @@ public class SaajSoapMessageContext extends AbstractSoapMessageContext {
      * Returns the request as a SAAJ SOAP message.
      */
     public SOAPMessage getSaajRequest() {
-        return request.getSaajMessage();
+        return ((SaajSoapMessage) getSoapRequest()).getSaajMessage();
     }
 
     /**
      * Sets the request to the given SAAJ SOAP message.
      */
     public void setSaajRequest(SOAPMessage request) {
-        Assert.notNull(request);
-        this.request = new SaajSoapMessage(request);
+        setRequest(new SaajSoapMessage(request));
     }
 
     /**
      * Returns the response as a SAAJ SOAP message.
      */
     public SOAPMessage getSaajResponse() {
-        return response != null ? response.getSaajMessage() : null;
+        return ((SaajSoapMessage) getSoapResponse()).getSaajMessage();
     }
 
     /**
      * Sets the response to the given SAAJ SOAP message.
      */
     public void setSaajResponse(SOAPMessage response) {
-        Assert.notNull(response);
-        this.response = new SaajSoapMessage(response);
+        setResponse(new SaajSoapMessage(response));
     }
 
-    public SoapMessage getSoapResponse() {
-        return response;
-    }
-
-    public SoapMessage getSoapRequest() {
-        return request;
-    }
-
-    public SoapMessage createSoapResponseInternal() {
+    protected SoapMessage createSoapMessage() {
         try {
             SOAPMessage saajMessage = messageFactory.createMessage();
-            response = new SaajSoapMessage(saajMessage);
-            return response;
+            return new SaajSoapMessage(saajMessage);
         }
         catch (SOAPException ex) {
             throw new SoapMessageCreationException("Could not create message: " + ex.toString(), ex);

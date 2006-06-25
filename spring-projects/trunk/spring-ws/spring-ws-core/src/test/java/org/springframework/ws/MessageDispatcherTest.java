@@ -100,7 +100,7 @@ public class MessageDispatcherTest extends TestCase {
                 assertEquals("Invalid message context", messageContext, givenMessageContext);
                 assertEquals("Invalid endpoint", endpoint, givenEndpoint);
                 assertEquals("Invalid exception", ex, givenException);
-                givenMessageContext.createResponse();
+                givenMessageContext.getResponse();
                 return true;
             }
 

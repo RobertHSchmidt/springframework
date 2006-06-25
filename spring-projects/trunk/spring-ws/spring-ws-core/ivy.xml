@@ -12,6 +12,7 @@
         <!-- public configurations other projects may use -->
         <conf name="saaj" visibility="public" extends="global"/>
         <conf name="axiom" visibility="public" extends="global"/>
+        <conf name="optional" visibility="public" extends="global"/>
     </configurations>
 
     <dependencies defaultconf="global->default">
@@ -22,15 +23,6 @@
         <dependency org="org.springframework" name="spring-context" rev="1.2.8"/>
         <dependency org="org.springframework" name="spring-web" rev="1.2.8"/>
         <dependency org="org.springframework" name="spring-webmvc" rev="1.2.8"/>
-        <dependency org="jdom" name="jdom" rev="1.0"/>
-        <dependency org="stax" name="stax-api" rev="1.0"/>
-        <dependency org="xom" name="xom" rev="1.1">
-            <exclude org="xerces"/>
-        </dependency>
-        <dependency org="dom4j" name="dom4j" rev="1.6.1"/>
-        <dependency org="apache" name="xerces" rev="2.8.0">
-            <artifact name="xercesImpl" type="jar"/>
-        </dependency>
 
         <!-- spring-ws dependencies -->
         <dependency org="org.springframework" name="spring-oxm" rev="latest.integration"/>
@@ -52,10 +44,28 @@
 
         <!--  build time dependencies -->
         <dependency org="javax.servlet" name="servlet-api" rev="2.4" conf="buildtime->default"/>
-        <dependency org="jaxen" name="jaxen" rev="1.1-beta-8" conf="buildtime->default">
-            <exclude org="xom"/>
+        <!--  optional dependencies -->
+        <dependency org="jaxen" name="jaxen" rev="1.1-beta-8" conf="buildtime,optional->default">
+            <exclude org="dom4j" name="dom4j"/>
+            <exclude org="jdom" name="jdom"/>
+            <exclude org="xerces" name="xmlParserAPIs"/>
+            <exclude org="xerces" name="xercesImpl"/>
+            <exclude org="xom" name="xom"/>
         </dependency>
-        <dependency org="xalan" name="xalan" rev="2.7.0" conf="buildtime->default"/>
+        <dependency org="xalan" name="xalan" rev="2.7.0" conf="buildtime,optional->default">
+            <exclude org="xml-apis" name="xml-apis"/>
+            <exclude org="xerces" name="xercesImpl"/>
+        </dependency>
+        <dependency org="jdom" name="jdom" rev="1.0" conf="buildtime,optional->default"/>
+        <dependency org="stax" name="stax-api" rev="1.0" conf="buildtime,optional->default"/>
+        <dependency org="xom" name="xom" rev="1.1" conf="buildtime,optional->default">
+            <exclude org="xerces"/>
+        </dependency>
+        <dependency org="dom4j" name="dom4j" rev="1.6.1" conf="buildtime,optional->default"/>
+        <dependency org="apache" name="xerces" rev="2.8.0" conf="buildtime,optional->default">
+            <artifact name="xercesImpl" type="jar"/>
+        </dependency>
+
 
         <!-- test time only dependencies -->
         <dependency org="junit" name="junit" rev="3.8.1" conf="test->default"/>

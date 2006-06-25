@@ -98,7 +98,7 @@ public abstract class AbstractStaxEventPayloadEndpoint extends AbstractStaxPaylo
 
         private void createEventWriter() throws XMLStreamException {
             if (eventWriter == null) {
-                WebServiceMessage response = messageContext.createResponse();
+                WebServiceMessage response = messageContext.getResponse();
                 eventWriter = getOutputFactory().createXMLEventWriter(response.getPayloadResult());
             }
         }

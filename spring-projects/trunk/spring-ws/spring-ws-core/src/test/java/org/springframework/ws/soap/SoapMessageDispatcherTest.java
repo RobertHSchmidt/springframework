@@ -122,7 +122,7 @@ public class SoapMessageDispatcherTest extends TestCase {
         interceptorControl.expectAndReturn(interceptorMock.understands(headerElementMock), false);
         QName headerElementName = new QName("header");
         headerElementControl.expectAndReturn(headerElementMock.getName(), headerElementName);
-        contextControl.expectAndReturn(contextMock.createSoapResponse(), responseMock);
+        contextControl.expectAndReturn(contextMock.getSoapResponse(), responseMock);
         messageControl.expectAndReturn(responseMock.getSoapBody(), bodyMock);
         messageControl.expectAndReturn(responseMock.getVersion(), SoapVersion.SOAP_11);
         messageControl.expectAndReturn(responseMock.getVersion(), SoapVersion.SOAP_11);

@@ -19,6 +19,9 @@ package org.springframework.ws.context;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.util.Assert;
+import org.springframework.ws.WebServiceMessage;
+
 /**
  * Abstract implementation of the <code>MessageContext</code> interface. Contains functionality to set and remove
  * properties.
@@ -27,28 +30,81 @@ import java.util.Map;
  */
 public abstract class AbstractMessageContext implements MessageContext {
 
+    private WebServiceMessage request;
+
+    private WebServiceMessage response;
+
     /**
      * Keys are Strings, values are Objects
      */
     private Map properties = new HashMap();
 
-    public void setProperty(String name, Object value) {
-        properties.put(name, value);
+    protected AbstractMessageContext(WebServiceMessage request) {
+        Assert.notNull(request);
+        this.request = request;
     }
 
-    public Object getProperty(String name) {
-        return properties.get(name);
+    public final WebServiceMessage getRequest() {
+        return request;
     }
 
-    public void removeProperty(String name) {
-        properties.remove(name);
+    /**
+     * Protected method that sets the request message directly.
+     */
+    protected final void setRequest(WebServiceMessage request) {
+        Assert.notNull(request);
+        this.request = request;
+    }
+
+    public final WebServiceMessage createResponse() {
+        if (response != null) {
+            throw new IllegalStateException("Response already created");
+        }
+        response = createWebServiceMessage();
+        return response;
+    }
+
+    public final WebServiceMessage getResponse() {
+        if (response == null) {
+            response = createWebServiceMessage();
+        }
+        return response;
+    }
+
+    public final boolean hasResponse() {
+        return (response != null);
+    }
+
+    /**
+     * Protected method that sets the response message directly.
+     */
+    protected final void setResponse(WebServiceMessage response) {
+        Assert.notNull(response);
+        this.response = response;
     }
 
     public boolean containsProperty(String name) {
         return properties.containsKey(name);
     }
 
+    public Object getProperty(String name) {
+        return properties.get(name);
+    }
+
     public String[] getPropertyNames() {
         return (String[]) properties.keySet().toArray(new String[properties.size()]);
     }
+
+    public void removeProperty(String name) {
+        properties.remove(name);
+    }
+
+    public void setProperty(String name, Object value) {
+        properties.put(name, value);
+    }
+
+    /**
+     * Abstract template method that creates a new <code>WebServiceMessage</code>.
+     */
+    protected abstract WebServiceMessage createWebServiceMessage();
 }

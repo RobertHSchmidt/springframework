@@ -77,7 +77,7 @@ public class PayloadEndpointAdapterTest extends XMLTestCase {
         endpointControl.replay();
         adapter.invoke(messageContext, endpointMock);
         endpointControl.verify();
-        assertNull("SOAPMessage has body elements", messageContext.getResponse());
+        assertFalse("Response created", messageContext.hasResponse());
     }
 
 }

@@ -4,11 +4,19 @@ http://www.springframework.org/spring-ws
 
 Changes in version 1.0-M2
 -------------------------
+Package org.springframework.ws.context
+* changed contract of MessageContext.getResponse(): now creates a response if none has been created. Required because
+  creating SOAP fault when a response was already set threw an exception
+
 Package org.springframework.ws.soap
 * improved content-type handling (#SWS-32)
+* changed contract of Mess
 
 Package org.springframework.ws.soap.endpoint
 * added SoapEnvelopeLoggingInterceptor, which logs the entire SoapEnvelope
+
+Package org.springframework.ws.soap.saaj.support
+* added SaajUtils.getVersion()
 
 Package org.springframework.ws.transport.http
 * removed J2EE 1.4 dependency (#SWS-31)

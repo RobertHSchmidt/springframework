@@ -72,7 +72,7 @@ public class SoapFaultMappingExceptionResolver extends AbstractEndpointException
             return false;
         }
         SoapMessageContext soapContext = (SoapMessageContext) messageContext;
-        SoapMessage response = soapContext.createSoapResponse();
+        SoapMessage response = soapContext.getSoapResponse();
         if (SoapFaultDefinition.RECEIVER.equals(definition.getFaultCode())) {
             SoapMessageUtils.addReceiverFault(response, definition.getFaultString());
         }

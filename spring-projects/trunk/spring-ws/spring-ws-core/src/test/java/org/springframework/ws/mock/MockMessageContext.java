@@ -26,37 +26,19 @@ import org.springframework.ws.context.AbstractMessageContext;
  */
 public class MockMessageContext extends AbstractMessageContext {
 
-    private final WebServiceMessage request;
-
-    private WebServiceMessage response;
-
     public MockMessageContext() {
-        request = new MockWebServiceMessage();
+        super(new MockWebServiceMessage());
     }
 
-    public MockMessageContext(WebServiceMessage request) {
-        this.request = request;
+    public MockMessageContext(MockWebServiceMessage request) {
+        super(request);
     }
 
     public MockMessageContext(String content) {
-        this.request = new MockWebServiceMessage(content);
+        super(new MockWebServiceMessage(content));
     }
 
-    public WebServiceMessage getRequest() {
-        return request;
-    }
-
-    public WebServiceMessage getResponse() {
-        return response;
-    }
-
-    public WebServiceMessage createResponse() {
-        if (response != null) {
-            throw new IllegalStateException("Response already created");
-        }
-        else {
-            response = new MockWebServiceMessage();
-            return response;
-        }
+    protected WebServiceMessage createWebServiceMessage() {
+        return new MockWebServiceMessage();
     }
 }

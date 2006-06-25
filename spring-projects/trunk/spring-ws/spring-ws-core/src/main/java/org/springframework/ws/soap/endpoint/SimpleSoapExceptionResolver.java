@@ -18,7 +18,7 @@ public class SimpleSoapExceptionResolver extends AbstractEndpointExceptionResolv
         }
         String faultString = StringUtils.hasLength(ex.getMessage()) ? ex.getMessage() : ex.toString();
         SoapMessageContext soapContext = (SoapMessageContext) messageContext;
-        SoapMessage response = soapContext.createSoapResponse();
+        SoapMessage response = soapContext.getSoapResponse();
         SoapMessageUtils.addReceiverFault(response, faultString);
         return true;
     }

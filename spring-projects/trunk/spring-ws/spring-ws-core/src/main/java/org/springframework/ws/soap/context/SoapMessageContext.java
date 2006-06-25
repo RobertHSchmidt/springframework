@@ -41,6 +41,8 @@ public interface SoapMessageContext extends MessageContext {
      * @return the created response message
      * @throws IllegalStateException if a response was already created
      * @see #getResponse()
+     * @deprecated Will be replaced in future version by the logic provided by <code>hasResponse()</code> and
+     *             <code>getSoapResponse</code>
      */
     SoapMessage createSoapResponse();
 
@@ -51,5 +53,6 @@ public interface SoapMessageContext extends MessageContext {
      * @see #createResponse()
      */
     SoapMessage getSoapResponse();
+
 
 }
