@@ -30,6 +30,10 @@ import org.springframework.xml.stream.StaxStreamXmlReader;
  * Implementation of the <code>Source</code> tagging interface for StAX readers. Can be constructed with a
  * <code>XMLEventReader</code> or a <code>XMLStreamReader</code>.
  * <p/>
+ * This class is necessary because there is no implementation of <code>Source</code> for StaxReaders in JAXP 1.3. There
+ * will be a <code>StaxSource</code> in JAXP 1.4 (JDK 1.6), and by the time that version is available, this class will
+ * probably be deprecated.
+ * <p/>
  * Even though <code>StaxSource</code> extends from <code>SAXSource</code>, calling the methods of
  * <code>SAXSource</code> is <strong>not supported</strong>. In general, the only supported operation on this class is
  * to use the <code>XMLReader</code> obtained via {@link #getXMLReader()} to parse the input source obtained via {@link
