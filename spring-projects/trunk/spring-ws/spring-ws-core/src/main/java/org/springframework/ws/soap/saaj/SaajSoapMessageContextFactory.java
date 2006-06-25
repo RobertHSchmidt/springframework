@@ -28,6 +28,7 @@ import javax.xml.soap.SOAPMessage;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.context.MessageContextFactory;
 import org.springframework.ws.soap.SoapMessageCreationException;
@@ -43,19 +44,30 @@ public class SaajSoapMessageContextFactory implements MessageContextFactory, Ini
 
     private MessageFactory messageFactory;
 
+    public static final String CONTENT_TYPE_HEADER = "Content-Type";
+
+    public static final String CONTENT_LENGTH_HEADER = "Content-Length";
+
     public MessageContext createContext(HttpServletRequest httpRequest) throws IOException {
         Assert.isTrue("POST".equals(httpRequest.getMethod()), "HttpServletRequest does not have POST method");
         MimeHeaders mimeHeaders = new MimeHeaders();
-        for (Enumeration enumeration = httpRequest.getHeaderNames(); enumeration.hasMoreElements();) {
-            String headerName = (String) enumeration.nextElement();
-            String headerValue = httpRequest.getHeader(headerName);
-            StringTokenizer tokenizer = new StringTokenizer(headerValue, ",");
-            while (tokenizer.hasMoreTokens()) {
-                mimeHeaders.addHeader(headerName, tokenizer.nextToken().trim());
+        for (Enumeration headerNames = httpRequest.getHeaderNames(); headerNames.hasMoreElements();) {
+            String headerName = (String) headerNames.nextElement();
+            for (Enumeration headerValues = httpRequest.getHeaders(headerName); headerValues.hasMoreElements();) {
+                String headerValue = (String) headerValues.nextElement();
+                StringTokenizer tokenizer = new StringTokenizer(headerValue, ",");
+                while (tokenizer.hasMoreTokens()) {
+                    mimeHeaders.addHeader(headerName, tokenizer.nextToken().trim());
+                }
             }
         }
-        mimeHeaders.addHeader("Content-Type", httpRequest.getContentType());
-        mimeHeaders.addHeader("Content-Length", Integer.toString(httpRequest.getContentLength()));
+        // Some application servers include the Content-Type and Content-Length headers in the getHeaderNames() enum
+        if (ObjectUtils.isEmpty(mimeHeaders.getHeader(CONTENT_TYPE_HEADER))) {
+            mimeHeaders.addHeader(CONTENT_TYPE_HEADER, httpRequest.getContentType());
+        }
+        if (ObjectUtils.isEmpty(mimeHeaders.getHeader(CONTENT_LENGTH_HEADER))) {
+            mimeHeaders.addHeader(CONTENT_LENGTH_HEADER, Integer.toString(httpRequest.getContentLength()));
+        }
         try {
             SOAPMessage requestMessage = messageFactory.createMessage(mimeHeaders, httpRequest.getInputStream());
             return new SaajSoapMessageContext(requestMessage, messageFactory);
