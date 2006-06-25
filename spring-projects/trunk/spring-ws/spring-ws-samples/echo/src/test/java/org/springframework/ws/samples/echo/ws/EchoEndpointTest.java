@@ -21,9 +21,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+import org.easymock.MockControl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.easymock.MockControl;
+import org.w3c.dom.Text;
 
 import org.springframework.ws.samples.echo.service.EchoService;
 
@@ -55,14 +56,17 @@ public class EchoEndpointTest extends XMLTestCase {
         Element echoRequest =
                 requestDocument.createElementNS(EchoEndpoint.NAMESPACE_URI, EchoEndpoint.ECHO_REQUEST_LOCAL_NAME);
         String content = "ABC";
-        echoRequest.setTextContent(content);
+        Text requestText = requestDocument.createTextNode(content);
+        echoRequest.appendChild(requestText);
         String result = "DEF";
         control.expectAndReturn(mock.echo(content), result);
         control.replay();
         Element echoResponse = endpoint.invokeInternal(echoRequest, responseDocument);
         assertEquals("Invalid namespace", EchoEndpoint.NAMESPACE_URI, echoResponse.getNamespaceURI());
         assertEquals("Invalid namespace", EchoEndpoint.ECHO_RESPONSE_LOCAL_NAME, echoResponse.getLocalName());
-        assertEquals("Invalid content", result, echoResponse.getTextContent());
+        Text responseText = (Text) echoResponse.getChildNodes().item(0);
+        assertEquals("Invalid content", result, responseText.getNodeValue());
         control.verify();
     }
+
 }
