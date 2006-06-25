@@ -32,13 +32,42 @@ import org.springframework.util.StringUtils;
 
 /**
  * Collection of generic utility methods to work with SAAJ. Includes conversion from <code>Name</code>s to
- * <code>QName</code>s and vice-versa.
+ * <code>QName</code>s and vice-versa, and SAAJ version checking.
  *
  * @author Arjen Poutsma
  * @see Name
  * @see QName
  */
 public abstract class SaajUtils {
+
+    public static final int SAAJ_12 = 0;
+
+    public static final int SAAJ_13 = 1;
+
+    private static final String SAAJ_13_CLASS_NAME = "javax.xml.soap.SAAJMetaFactory";
+
+    private static int saajVersion = SAAJ_12;
+
+    static {
+        try {
+            Class.forName(SAAJ_13_CLASS_NAME);
+            saajVersion = SAAJ_13;
+        }
+        catch (ClassNotFoundException ex3) {
+            // default to SAAJ 1.2
+        }
+    }
+
+    /**
+     * Gets the SAAJ version.
+     *
+     * @return a code comparable to the SAAJ_XX codes in this class
+     * @see #SAAJ_12
+     * @see #SAAJ_13
+     */
+    public static int getSaajVersion() {
+        return saajVersion;
+    }
 
     /**
      * Converts a <code>javax.xml.namespace.QName</code> to a <code>javax.xml.soap.Name</code>. A
