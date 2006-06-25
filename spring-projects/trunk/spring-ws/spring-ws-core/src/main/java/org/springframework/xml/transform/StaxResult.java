@@ -26,8 +26,12 @@ import org.springframework.xml.stream.StaxEventContentHandler;
 import org.springframework.xml.stream.StaxStreamContentHandler;
 
 /**
- * Implementation of the <code>Source</code> tagging interface for StAX writers. Can be constructed with a
+ * Implementation of the <code>Result</code> tagging interface for StAX writers. Can be constructed with a
  * <code>XMLEventConsumer</code> or a <code>XMLStreamWriter</code>.
+ * <p/>
+ * This class is necessary because there is no implementation of <code>Source</code> for StaxReaders in JAXP 1.3. There
+ * will be a <code>StaxResult</code> in JAXP 1.4 (JDK 1.6), and by the time that version is available, this class will
+ * probably be deprecated.
  * <p/>
  * Even though <code>StaxResult</code> extends from <code>SAXResult</code>, calling the methods of
  * <code>SAXResult</code> is <strong>not supported</strong>. In general, the only supported operation on this class is
@@ -42,7 +46,7 @@ import org.springframework.xml.stream.StaxStreamContentHandler;
  */
 public class StaxResult extends SAXResult {
 
-    private XMLEventConsumer eventWriter;
+    private XMLEventConsumer eventConsumer;
 
     private XMLStreamWriter streamWriter;
 
@@ -63,7 +67,7 @@ public class StaxResult extends SAXResult {
      */
     public StaxResult(XMLEventConsumer eventConsumer) {
         super.setHandler(new StaxEventContentHandler(eventConsumer));
-        this.eventWriter = eventConsumer;
+        this.eventConsumer = eventConsumer;
     }
 
     /**
@@ -74,7 +78,7 @@ public class StaxResult extends SAXResult {
      * @see #StaxResult(javax.xml.stream.util.XMLEventConsumer)
      */
     public XMLEventConsumer getXMLEventConsumer() {
-        return eventWriter;
+        return eventConsumer;
     }
 
     /**
