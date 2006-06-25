@@ -13,7 +13,7 @@
     	<!-- global (compile, test, runtime) dependencies -->
 	    <dependency org="apache" name="commons-logging" rev="1.0.4"/>
     	<dependency org="apache" name="log4j" rev="1.2.9"/>
-        <dependency org="org.springframework" name="spring-ws-core" rev="latest.integration" conf="global->default,saaj"/>
+        <dependency org="org.springframework" name="spring-ws-core" rev="latest.integration" conf="global->saaj"/>
 		<!-- build time only dependencies -->
 
         <!-- test time only dependencies -->
