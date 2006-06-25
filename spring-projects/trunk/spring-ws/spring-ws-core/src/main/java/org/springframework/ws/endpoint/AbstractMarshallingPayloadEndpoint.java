@@ -50,7 +50,7 @@ public abstract class AbstractMarshallingPayloadEndpoint implements MessageEndpo
             if (logger.isDebugEnabled()) {
                 logger.debug("Marshalling [" + responseObject + "] to response payload");
             }
-            WebServiceMessage response = messageContext.createResponse();
+            WebServiceMessage response = messageContext.getResponse();
             marshaller.marshal(responseObject, response.getPayloadResult());
         }
     }

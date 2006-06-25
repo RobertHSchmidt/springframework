@@ -58,13 +58,6 @@ public class PayloadValidatingInterceptorTest extends TestCase {
         messageContext = new MockMessageContext(request);
     }
 
-    public void testHandleValidRequest() throws Exception {
-        request.setPayload(new ClassPathResource("validMessage.xml", getClass()));
-        boolean result = interceptor.handleRequest(messageContext, null);
-        assertTrue("Invalid response from interceptor", result);
-        assertNull("Response set", messageContext.getResponse());
-    }
-
     public void testHandleInvalidRequest() throws Exception {
         MockControl messageControl = MockControl.createControl(SoapMessage.class);
         MockControl bodyControl = MockControl.createControl(SoapBody.class);
@@ -78,20 +71,10 @@ public class PayloadValidatingInterceptorTest extends TestCase {
 
         final SoapMessage requestMock = (SoapMessage) messageControl.getMock();
         final SoapMessage responseMock = (SoapMessage) messageControl.getMock();
-        SoapMessageContext soapMessageContext = new AbstractSoapMessageContext() {
-            SoapMessage response = null;
+        SoapMessageContext soapMessageContext = new AbstractSoapMessageContext(requestMock) {
 
-            public SoapMessage getSoapRequest() {
-                return requestMock;
-            }
-
-            public SoapMessage createSoapResponseInternal() {
-                response = responseMock;
-                return response;
-            }
-
-            public SoapMessage getSoapResponse() {
-                return response;
+            protected SoapMessage createSoapMessage() {
+                return responseMock;
             }
         };
         InputStream is = getClass().getResourceAsStream("invalidMessage.xml");
@@ -123,18 +106,25 @@ public class PayloadValidatingInterceptorTest extends TestCase {
         faultDetailElementControl.verify();
     }
 
-    public void testHandleValidResponse() throws Exception {
-        MockWebServiceMessage response = (MockWebServiceMessage) messageContext.createResponse();
-        response.setPayload(new ClassPathResource("validMessage.xml", getClass()));
-        boolean result = interceptor.handleResponse(messageContext, null);
-        assertTrue("Invalid response from interceptor", result);
-    }
-
     public void testHandleInvalidResponse() throws Exception {
         MockWebServiceMessage response = (MockWebServiceMessage) messageContext.createResponse();
         response.setPayload(new ClassPathResource("invalidMessage.xml", getClass()));
         boolean result = interceptor.handleResponse(messageContext, null);
         assertFalse("Invalid response from interceptor", result);
+    }
+
+    public void testHandleValidRequest() throws Exception {
+        request.setPayload(new ClassPathResource("validMessage.xml", getClass()));
+        boolean result = interceptor.handleRequest(messageContext, null);
+        assertTrue("Invalid response from interceptor", result);
+        assertFalse("Response set", messageContext.hasResponse());
+    }
+
+    public void testHandleValidResponse() throws Exception {
+        MockWebServiceMessage response = (MockWebServiceMessage) messageContext.createResponse();
+        response.setPayload(new ClassPathResource("validMessage.xml", getClass()));
+        boolean result = interceptor.handleResponse(messageContext, null);
+        assertTrue("Invalid response from interceptor", result);
     }
 
     public void testNamespacesInType() throws Exception {
@@ -151,13 +141,11 @@ public class PayloadValidatingInterceptorTest extends TestCase {
             SaajSoapMessageContext messageContext = new SaajSoapMessageContext(saajMessage, messageFactory);
             boolean result = interceptor.handleRequest(messageContext, null);
             assertTrue("Invalid response from interceptor", result);
-            assertNull("Response set", messageContext.getResponse());
+            assertFalse("Response set", messageContext.hasResponse());
         }
         finally {
             // Reset the property
             System.setProperty("javax.xml.validation.SchemaFactory:" + XMLConstants.W3C_XML_SCHEMA_NS_URI, "");
-
         }
     }
-
 }

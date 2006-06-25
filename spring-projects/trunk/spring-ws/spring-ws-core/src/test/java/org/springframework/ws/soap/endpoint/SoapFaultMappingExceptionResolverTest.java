@@ -76,7 +76,7 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
         mappings.setProperty(Exception.class.getName(), "RECEIVER,Receiver error");
         mappings.setProperty(RuntimeException.class.getName(), "SENDER, Sender error");
         resolver.setExceptionMappings(mappings);
-        contextControl.expectAndReturn(contextMock.createSoapResponse(), messageMock);
+        contextControl.expectAndReturn(contextMock.getSoapResponse(), messageMock);
         messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
         messageControl.expectAndReturn(messageMock.getVersion(), SoapVersion.SOAP_11);
         bodyControl.expectAndReturn(bodyMock.addFault(SoapVersion.SOAP_11.getSenderFaultName(), "Sender error"),
@@ -95,7 +95,7 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
         mappings.setProperty(Exception.class.getName(), "SENDER,Sender error");
         mappings.setProperty(RuntimeException.class.getName(), "RECEIVER, Receiver error, en");
         resolver.setExceptionMappings(mappings);
-        contextControl.expectAndReturn(contextMock.createSoapResponse(), messageMock);
+        contextControl.expectAndReturn(contextMock.getSoapResponse(), messageMock);
         messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
         messageControl.expectAndReturn(messageMock.getVersion(), SoapVersion.SOAP_11);
         bodyControl.expectAndReturn(bodyMock.addFault(SoapVersion.SOAP_11.getReceiverFaultName(), "Receiver error"),
@@ -118,7 +118,7 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
         defaultFault.setFaultCode(faultCode);
         defaultFault.setFaultString("faultstring");
         resolver.setDefaultFault(defaultFault);
-        contextControl.expectAndReturn(contextMock.createSoapResponse(), messageMock);
+        contextControl.expectAndReturn(contextMock.getSoapResponse(), messageMock);
         messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
         bodyControl.expectAndReturn(bodyMock.addFault(faultCode, "faultstring"), faultMock);
 

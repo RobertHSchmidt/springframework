@@ -52,7 +52,7 @@ public class SimpleSoapExceptionResolverTest extends TestCase {
 
     public void testResolveExceptionInternal() throws Exception {
         Exception exception = new Exception("message");
-        contextControl.expectAndReturn(contextMock.createSoapResponse(), messageMock);
+        contextControl.expectAndReturn(contextMock.getSoapResponse(), messageMock);
         messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
         messageControl.expectAndReturn(messageMock.getVersion(), SoapVersion.SOAP_11);
         bodyControl.expectAndReturn(

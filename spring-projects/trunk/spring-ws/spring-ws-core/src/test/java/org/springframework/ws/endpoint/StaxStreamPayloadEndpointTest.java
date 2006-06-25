@@ -73,7 +73,7 @@ public class StaxStreamPayloadEndpointTest extends XMLTestCase {
         };
         MockMessageContext context = new MockMessageContext("<request/>");
         endpoint.invoke(context);
-        assertNull("Response created", context.getResponse());
+        assertFalse("Response created", context.hasResponse());
     }
 
 

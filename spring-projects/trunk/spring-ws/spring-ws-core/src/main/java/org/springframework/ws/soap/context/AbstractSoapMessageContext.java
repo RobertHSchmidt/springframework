@@ -28,42 +28,25 @@ import org.springframework.ws.soap.SoapMessage;
  */
 public abstract class AbstractSoapMessageContext extends AbstractMessageContext implements SoapMessageContext {
 
-    /**
-     * Delegates to <code>getSoapRequest</code>.
-     *
-     * @see #getSoapRequest()
-     */
-    public WebServiceMessage getRequest() {
-        return getSoapRequest();
+    protected AbstractSoapMessageContext(SoapMessage request) {
+        super(request);
     }
 
-    /**
-     * Delegates to <code>createSoapResponse</code>.
-     *
-     * @see #createSoapResponse()
-     */
-    public WebServiceMessage createResponse() {
-        return createSoapResponse();
+    public final SoapMessage getSoapResponse() {
+        return (SoapMessage) getResponse();
     }
 
     public final SoapMessage createSoapResponse() {
-        if (getSoapResponse() != null) {
-            throw new IllegalStateException("Response already created");
-        }
-        return createSoapResponseInternal();
+        return (SoapMessage) createResponse();
     }
 
-    /**
-     * Protected template method that should create a <code>SoapMessage</code> response.
-     */
-    protected abstract SoapMessage createSoapResponseInternal();
-
-    /**
-     * Delegates to <code>getSoapResponse</code>.
-     *
-     * @see #getSoapResponse()
-     */
-    public WebServiceMessage getResponse() {
-        return getSoapResponse();
+    public final SoapMessage getSoapRequest() {
+        return (SoapMessage) getRequest();
     }
+
+    protected final WebServiceMessage createWebServiceMessage() {
+        return createSoapMessage();
+    }
+
+    protected abstract SoapMessage createSoapMessage();
 }

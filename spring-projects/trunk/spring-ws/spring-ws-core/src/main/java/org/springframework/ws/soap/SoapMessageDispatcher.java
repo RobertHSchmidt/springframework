@@ -125,7 +125,7 @@ public class SoapMessageDispatcher extends MessageDispatcher {
                 logger.warn(
                         "Could not handle mustUnderstand headers: " + notUnderstoodHeaderNames + ". Returning fault");
             }
-            SoapMessage response = (SoapMessage) messageContext.createSoapResponse();
+            SoapMessage response = messageContext.getSoapResponse();
             SoapFault fault = SoapMessageUtils.addMustUnderstandFault(response,
                     (QName[]) notUnderstoodHeaderNames.toArray(new QName[notUnderstoodHeaderNames.size()]));
             fault.setFaultRole(role);
@@ -147,7 +147,7 @@ public class SoapMessageDispatcher extends MessageDispatcher {
     protected void triggerHandleResponse(EndpointInvocationChain mappedEndpoint,
                                          int interceptorIndex,
                                          MessageContext messageContext) throws Exception {
-        if (mappedEndpoint != null && messageContext.getResponse() != null &&
+        if (mappedEndpoint != null && messageContext.hasResponse() &&
                 !ObjectUtils.isEmpty(mappedEndpoint.getInterceptors())) {
             boolean hasFault = false;
             if (messageContext instanceof SoapMessageContext) {

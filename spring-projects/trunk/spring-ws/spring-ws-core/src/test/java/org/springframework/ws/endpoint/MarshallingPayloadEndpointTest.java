@@ -117,8 +117,7 @@ public class MarshallingPayloadEndpointTest extends XMLTestCase {
         endpoint.afterPropertiesSet();
         MockMessageContext context = new MockMessageContext(request);
         endpoint.invoke(context);
-        MockWebServiceMessage response = (MockWebServiceMessage) context.getResponse();
-        assertNull("Invalid result", response);
+        assertFalse("Response created", context.hasResponse());
     }
 
 }

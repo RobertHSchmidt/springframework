@@ -53,7 +53,7 @@ public abstract class SaajUtils {
             Class.forName(SAAJ_13_CLASS_NAME);
             saajVersion = SAAJ_13;
         }
-        catch (ClassNotFoundException ex3) {
+        catch (ClassNotFoundException ex) {
             // default to SAAJ 1.2
         }
     }

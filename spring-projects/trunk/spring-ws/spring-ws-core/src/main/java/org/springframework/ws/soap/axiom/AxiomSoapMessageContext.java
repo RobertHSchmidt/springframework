@@ -32,25 +32,12 @@ public class AxiomSoapMessageContext extends AbstractSoapMessageContext {
 
     private final SOAPFactory soapFactory;
 
-    private final AxiomSoapMessage request;
-
-    private AxiomSoapMessage response;
-
     public AxiomSoapMessageContext(AxiomSoapMessage request, SOAPFactory soapFactory) {
+        super(request);
         this.soapFactory = soapFactory;
-        this.request = request;
     }
 
-    public SoapMessage getSoapRequest() {
-        return request;
-    }
-
-    public SoapMessage createSoapResponseInternal() {
-        response = new AxiomSoapMessage(soapFactory);
-        return response;
-    }
-
-    public SoapMessage getSoapResponse() {
-        return response;
+    protected SoapMessage createSoapMessage() {
+        return new AxiomSoapMessage(soapFactory);
     }
 }

@@ -113,24 +113,29 @@ public class SaajSoapMessage extends AbstractSoapMessage {
     }
 
     public SoapVersion getVersion() {
-        String[] contentTypes = saajMessage.getSOAPPart().getMimeHeader(CONTENT_TYPE_HEADER);
-        if (ObjectUtils.isEmpty(contentTypes)) {
-            throw new SaajSoapMessageException("Could not read '" + CONTENT_TYPE_HEADER + "' header from message");
-        }
-        String contentType = contentTypes[0];
-        // Ignore parameters in content type (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.7)
-        int idx = contentType.indexOf(';');
-        if (idx != -1) {
-            contentType = contentType.substring(0, idx);
-        }
-        if (SoapVersion.SOAP_11.getContentType().equals(contentType)) {
+        if (SaajUtils.getSaajVersion() == SaajUtils.SAAJ_12) {
             return SoapVersion.SOAP_11;
         }
-        else if (SoapVersion.SOAP_12.getContentType().equals(contentType)) {
-            return SoapVersion.SOAP_12;
-        }
         else {
-            throw new SaajSoapMessageException("Unknown content type [" + contentType + "]");
+            String[] contentTypes = saajMessage.getSOAPPart().getMimeHeader(CONTENT_TYPE_HEADER);
+            if (ObjectUtils.isEmpty(contentTypes)) {
+                throw new SaajSoapMessageException("Could not read '" + CONTENT_TYPE_HEADER + "' header from message");
+            }
+            String contentType = contentTypes[0];
+            // Ignore parameters in content type (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.7)
+            int idx = contentType.indexOf(';');
+            if (idx != -1) {
+                contentType = contentType.substring(0, idx);
+            }
+            if (SoapVersion.SOAP_11.getContentType().equals(contentType)) {
+                return SoapVersion.SOAP_11;
+            }
+            else if (SoapVersion.SOAP_12.getContentType().equals(contentType)) {
+                return SoapVersion.SOAP_12;
+            }
+            else {
+                throw new SaajSoapMessageException("Unknown content type [" + contentType + "]");
+            }
         }
     }
 

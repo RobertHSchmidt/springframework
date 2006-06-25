@@ -207,7 +207,7 @@ public class MessageDispatcher extends ApplicationObjectSupport implements Messa
                     messageContext.getRequest() + "]");
         }
         dispatch(messageContext);
-        if (logger.isDebugEnabled() && messageContext.getResponse() != null) {
+        if (logger.isDebugEnabled() && messageContext.hasResponse()) {
             logger.debug("MessageDispatcher with name '" + beanName + "' sends response [" +
                     messageContext.getResponse() + "]");
         }
@@ -290,7 +290,7 @@ public class MessageDispatcher extends ApplicationObjectSupport implements Messa
     protected void triggerHandleResponse(EndpointInvocationChain mappedEndpoint,
                                          int interceptorIndex,
                                          MessageContext messageContext) throws Exception {
-        if (mappedEndpoint != null && messageContext.getResponse() != null &&
+        if (mappedEndpoint != null && messageContext.hasResponse() &&
                 !ObjectUtils.isEmpty(mappedEndpoint.getInterceptors())) {
             boolean resume = true;
             for (int i = interceptorIndex; resume && i >= 0; i--) {

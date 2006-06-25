@@ -193,7 +193,7 @@ public class PayloadValidatingInterceptor extends TransformerObjectSupport
      */
     protected void createRequestValidationFault(SoapMessageContext context, SAXParseException[] errors)
             throws TransformerException {
-        SoapMessage response = context.createSoapResponse();
+        SoapMessage response = context.getSoapResponse();
         SoapFault fault = SoapMessageUtils.addSenderFault(response, VALIDATION_ERROR_FAULT_STRING);
         SoapFaultDetail detail = fault.addFaultDetail();
         for (int i = 0; i < errors.length; i++) {

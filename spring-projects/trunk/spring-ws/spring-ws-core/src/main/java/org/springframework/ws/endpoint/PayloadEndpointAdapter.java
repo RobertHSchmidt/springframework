@@ -41,7 +41,7 @@ public class PayloadEndpointAdapter extends TransformerObjectSupport implements 
         Source requestSource = messageContext.getRequest().getPayloadSource();
         Source responseSource = payloadEndpoint.invoke(requestSource);
         if (responseSource != null) {
-            WebServiceMessage response = messageContext.createResponse();
+            WebServiceMessage response = messageContext.getResponse();
             Transformer transformer = createTransformer();
             transformer.transform(responseSource, response.getPayloadResult());
         }
