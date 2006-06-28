@@ -162,7 +162,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	/**
 	 * Retrieves the bean to invoke a method on. Subclasses need to implement
 	 * this method.
-	 * @param the flow execution request context
+	 * @param context the flow execution request context
 	 * @return the bean on which to invoke methods
 	 * @throws Exception when the bean cannot be retreived
 	 */

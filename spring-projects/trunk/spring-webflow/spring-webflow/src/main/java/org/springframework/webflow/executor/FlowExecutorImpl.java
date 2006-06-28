@@ -74,8 +74,9 @@ import org.springframework.webflow.support.FlowExecutionRedirect;
  * {@link FlowExecution flow executions}. After mapping, the target map is then
  * passed to the FlowExecution, exposing extern context attributes as input
  * to the flow during startup.</td>
- * <td>A {@link RequestParameterInputMapper}, which exposes all request parameters
- * in to the flow execution for input mapping. </td>
+ * <td>A {@link org.springframework.webflow.executor.RequestParameterInputMapper},
+ * which exposes all request parameters in to the flow execution for input
+ * mapping.</td>
  * </tr>
  * </table>
  * </p>
@@ -85,7 +86,6 @@ import org.springframework.webflow.support.FlowExecutionRedirect;
  * @see org.springframework.webflow.execution.FlowExecution
  * @see org.springframework.webflow.ViewSelection
  * @see org.springframework.webflow.support.ApplicationView
- * @see org.springframework.webflow.support.RedirectType
  * 
  * @author Erwin Vervaet
  * @author Keith Donald

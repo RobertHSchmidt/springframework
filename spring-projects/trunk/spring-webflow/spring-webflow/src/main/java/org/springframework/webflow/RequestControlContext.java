@@ -23,7 +23,7 @@ package org.springframework.webflow;
  * This interface acts as a facade for core definition constructs such as the
  * central <code>Flow</code> and <code>State</code> classes, abstracting
  * away details about the runtime <i>execution</i> subsystem defined in the
- * {@link org.springframework.webflow.execution} package.
+ * {@link org.springframework.webflow.execution execution} package.
  * <p>
  * Note this type is not the same as the {@link FlowExecutionContext}. Objects
  * of this type are <i>request specific</i>: they provide a control interface
@@ -46,7 +46,7 @@ public interface RequestControlContext extends RequestContext {
 	 * called as part of signaling an event in a flow to indicate the
 	 * 'lastEvent' that was signaled.
 	 * @param lastEvent the last event signaled
-	 * @see Flow#onEvent(FlowExecutionControlContext)
+	 * @see Flow#onEvent(RequestControlContext)
 	 */
 	public void setLastEvent(Event lastEvent);
 
@@ -55,7 +55,7 @@ public interface RequestControlContext extends RequestContext {
 	 * method will be called as part of executing a transition from one state to
 	 * another.
 	 * @param lastTransition the last transition that executed
-	 * @see Transition#execute(TransitionableState, FlowExecutionControlContext)
+	 * @see Transition#execute(TransitionableState, RequestControlContext)
 	 */
 	public void setLastTransition(Transition lastTransition);
 
@@ -64,7 +64,7 @@ public interface RequestControlContext extends RequestContext {
 	 * method will be called as part of entering a new state by the State type
 	 * itself.
 	 * @param state the current state
-	 * @see State#enter(FlowExecutionControlContext)
+	 * @see State#enter(RequestControlContext)
 	 */
 	public void setCurrentState(State state);
 
@@ -82,7 +82,7 @@ public interface RequestControlContext extends RequestContext {
 	 * and requests that a view be rendered with model data
 	 * @throws FlowExecutionException if an exception was thrown within a state of the
 	 * flow during execution of this start operation
-	 * @see Flow#start(FlowExecutionControlContext, AttributeMap)
+	 * @see Flow#start(RequestControlContext, AttributeMap)
 	 */
 	public ViewSelection start(Flow flow, AttributeMap input) throws FlowExecutionException;
 
@@ -97,7 +97,7 @@ public interface RequestControlContext extends RequestContext {
 	 * requests that a view be rendered with model data
 	 * @throws FlowExecutionException if an exception was thrown within a state of the
 	 * flow during execution of this signalEvent operation
-	 * @see Flow#onEvent(FlowExecutionControlContext)
+	 * @see Flow#onEvent(RequestControlContext)
 	 */
 	public ViewSelection signalEvent(Event event) throws FlowExecutionException;
 
@@ -110,7 +110,7 @@ public interface RequestControlContext extends RequestContext {
 	 * mapping by a resuming parent flow.
 	 * @return the ended session
 	 * @throws IllegalStateException when the flow execution is not active
-	 * @see Flow#end(FlowExecutionControlContext, AttributeMap)
+	 * @see Flow#end(RequestControlContext, AttributeMap)
 	 */
 	public FlowSession endActiveFlowSession(AttributeMap output) throws IllegalStateException;
 

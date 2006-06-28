@@ -52,7 +52,6 @@ public class ExternalRedirectSelector implements ViewSelector, Serializable {
 	 * input. The expression is the parsed form (expression-tokenized) of the
 	 * encoded view (e.g. "/pathInfo?param0=value0&param1=value1").
 	 * @param urlExpression the url expression
-	 * @param contextRelative a context relative flag
 	 */
 	public ExternalRedirectSelector(Expression urlExpression) {
 		this.urlExpression = urlExpression;

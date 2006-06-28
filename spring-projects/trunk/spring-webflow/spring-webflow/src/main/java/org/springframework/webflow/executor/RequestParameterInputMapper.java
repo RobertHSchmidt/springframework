@@ -32,7 +32,7 @@ import org.springframework.webflow.ExternalContext;
  * 
  * @author Keith Donald
  */
-class RequestParameterInputMapper implements AttributeMapper {
+public class RequestParameterInputMapper implements AttributeMapper {
 	
 	public void map(Object source, Object target, Map mappingContext) {
 		ExternalContext context = (ExternalContext)source;
