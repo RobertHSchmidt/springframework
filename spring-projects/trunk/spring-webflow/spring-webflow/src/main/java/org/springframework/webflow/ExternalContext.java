@@ -27,7 +27,7 @@ package org.springframework.webflow;
  * The design of this interface was inspired by JSF's own ExternalContext
  * abstraction and shares the same name for consistency. If a particular
  * external client type does not support all methods defined by this interface,
- * they can just be implemented as returning an empty map.
+ * they can just be implemented as returning an empty map or null.
  * 
  * @author Keith Donald
  */
@@ -35,20 +35,20 @@ public interface ExternalContext {
 
 	/**
 	 * Returns the path (or identifier) of the application that is executing.
-	 * @return the application context path
+	 * @return the application context path (e.g. "/myapp")
 	 */
 	public String getContextPath();
 
 	/**
 	 * Returns the path (or identifier) of the dispatcher within the application
 	 * that dispatched this request.
-	 * @return the dispatcher path
+	 * @return the dispatcher path (e.g. "/dispatcher")
 	 */
 	public String getDispatcherPath();
 
 	/**
-	 * Returns the path info of this external request.
-	 * @return the request path info
+	 * Returns the path info of this external request. Could be null.
+	 * @return the request path info (e.g. "/flows.htm")
 	 */
 	public String getRequestPathInfo();
 
