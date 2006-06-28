@@ -19,9 +19,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.method.MethodKey;
-import org.springframework.binding.support.Assert;
-import org.springframework.binding.support.MapAttributeSource;
+import org.springframework.binding.method.MethodSignature;
 import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -32,43 +30,38 @@ import org.springframework.webflow.test.MockRequestContext;
  */
 public class StateManagementTests extends TestCase {
 
-	@SuppressWarnings(value = "all")
 	@Stateful(name = "bean")
 	public static class Bean {
 		private String datum1 = "initial value";
 
 		private Integer datum2;
 
-		private boolean executed;
-
 		@Transient
 		private NotSerializable datum3;
 
 		public void execute() {
-			this.executed = true;
 		}
+	}
+
+	public static class NotSerializable extends Object {
 	}
 
 	public void testStateSavingAndRestoring() throws Exception {
 		Bean bean = new Bean();
-		LocalBeanInvokingAction action = new LocalBeanInvokingAction(bean);
-		action.setStatePersister(new AnnotationBeanStatePersister());
+		LocalBeanInvokingAction action = new LocalBeanInvokingAction(new MethodSignature("execute"), bean);
+		action.setBeanStatePersister(new AnnotationBeanStatePersister());
 		MockRequestContext context = new MockRequestContext();
-		context.setProperty("method", new MethodKey("execute"));
 		action.execute(context);
 		assertNotNull("Bean memento not saved", context.getFlowScope().get("bean"));
-		MapAttributeSource map = new MapAttributeSource((Map)context.getFlowScope().get("bean"));
-		assertNotNull("Bean memento not saved", context.getFlowScope().get("bean"));
-		Assert.attributeEquals(map, "datum1", "initial value");
-		Assert.attributeNotPresent(map, "datum3");
-		map.getAttributeMap().put("datum1", "new value");
-		map.getAttributeMap().put("datum2", new Integer(12345));
+		@SuppressWarnings("unchecked")
+		Map<String, Object> memento = (Map<String, Object>)context.getFlowScope().get("bean");
+		assertEquals("initial value", memento.get("datum1"));
+		assertFalse(memento.containsKey("datum3"));
+		memento.put("datum1", "new value");
+		memento.put("datum2", new Integer(12345));
 		action.execute(context);
 		assertEquals("Wrong value", "new value", bean.datum1);
 		assertEquals("Wrong value", new Integer(12345), bean.datum2);
-	}
-
-	public static class NotSerializable extends Object {
-
+		assertNull("Wrong value", bean.datum3);
 	}
 }
