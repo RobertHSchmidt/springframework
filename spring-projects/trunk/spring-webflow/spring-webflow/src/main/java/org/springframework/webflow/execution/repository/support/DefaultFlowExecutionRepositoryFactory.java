@@ -26,7 +26,7 @@ import org.springframework.webflow.util.UidGenerator;
 /**
  * Convenient implementation that encapsulates the assembly of a <i>default</i>
  * flow execution repository factory and delegates to it at runtime.
- * <ul>
+ * <p>
  * Specifically, <i>default</i> means this delegating repository factory:
  * <ul>
  * <li>Sets a {@link SharedMapFlowExecutionRepositoryFactory} to manage flow
@@ -89,7 +89,7 @@ public class DefaultFlowExecutionRepositoryFactory extends DelegatingFlowExecuti
 	 * 
 	 * @author Keith Donald
 	 */
-	private static class DefaultFlowExecutionRepositoryCreator extends AbstractFlowExecutionRepositoryCreator {
+	protected static class DefaultFlowExecutionRepositoryCreator extends AbstractFlowExecutionRepositoryCreator {
 
 		/**
 		 * The continuation uid generation strategy to use.

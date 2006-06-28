@@ -26,11 +26,11 @@ import org.springframework.webflow.support.EventFactorySupport;
  * sensible conversion of the result object into a web flow event.
  * It uses the following conversion table:
  * <table border="1">
- * <th>
- * <td>Result object type</td>
- * <td>Event id</td>
- * <td>Remarks</td>
- * </th>
+ * <tr>
+ * <th>Result object type</th>
+ * <th>Event id</th>
+ * <th>Remarks</th>
+ * </tr>
  * <tr>
  * <td>null</td>
  * <td>{@link org.springframework.webflow.support.EventFactorySupport#getNullEventId()}</td>
