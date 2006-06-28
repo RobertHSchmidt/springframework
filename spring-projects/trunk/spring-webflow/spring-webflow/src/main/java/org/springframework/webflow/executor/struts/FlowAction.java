@@ -33,7 +33,6 @@ import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.action.FormObjectAccessor;
-import org.springframework.webflow.builder.FlowArtifactLookupException;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
@@ -66,7 +65,7 @@ import org.springframework.webflow.support.FlowRedirect;
  * <p>
  * On each request received by this action, a {@link StrutsExternalContext}
  * object is created as input to the web flow system. This external source event
- * provides access to the action form, action mapping, and other struts-specific
+ * provides access to the action form, action mapping, and other Struts-specific
  * constructs.
  * <p>
  * This class also is aware of the {@link SpringBindingActionForm} adapter,
@@ -87,8 +86,8 @@ import org.springframework.webflow.support.FlowRedirect;
  *     &lt;/action&gt;
  * </pre>
  * 
- * This example associates the logical request URL
- * <code>/userRegistration.do</code> as a Flow controller. It is expected that
+ * This example maps the logical request URL <code>/userRegistration.do</code>
+ * as a Flow controller (<code>FlowAction</code>). It is expected that
  * flows to launch be provided in a dynamic fashion by the views (allowing this
  * single <code>FlowAction</code> to manage any number of flow executions). A
  * Spring binding action form instance is set in request scope, acting as an
@@ -99,25 +98,31 @@ import org.springframework.webflow.support.FlowRedirect;
  * <ul>
  * <li>Logical view names returned when <code>ViewStates</code> and
  * <code>EndStates</code> are entered are mapped to physical view templates
- * using standard Struts action forwards (typically global forwards).
+ * using standard Struts action forwards (typically global forwards).</li>
  * <li>Use of the <code>SpringBindingActionForm</code> requires no special
  * setup in <code>struts-config.xml</code>: simply declare a form bean in
  * request scope of the class
  * <code>org.springframework.web.struts.SpringBindingActionForm</code> and use
- * it with your FlowAction.
+ * it with your FlowAction.</li>
  * <li>This class depends on a {@link FlowExecutor} instance to be configured.
- * <li> If relying on Spring's {@link DelegatingActionProxy} (which is
+ * If relying on Spring's {@link DelegatingActionProxy} (which is
  * recommended), a FlowExecutor reference can simply be injected using standard
- * Spring DependencyInjection techniques. If you are not using the proxy-based
+ * Spring dependency injection techniques. If you are not using the proxy-based
  * approach, this class will attempt a root context lookup on initialization,
  * first querying for a bean of instance {@link FlowExecutor} named
  * {@link #FLOW_EXECUTOR_BEAN_NAME}, then, if not found, querying for a bean of
  * instance {@link FlowLocator} named {@link #FLOW_LOCATOR_BEAN_NAME}. If the
  * FlowLocator dependency is resolved, this class will automatically configure a
  * default flow executor implementation suitable for a Struts environment (see
- * {@link #setFlowLocator(FlowLocator)}). In addition, you may choose to simply
+ * {@link #setFlowLocator(FlowLocator)}). Alternatively, you may choose to simply
  * inject a FlowLocator directly if the FlowExecutor defaults meet your
- * requirements.
+ * requirements.</li>
+ * <li>The {@link org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor}
+ * used by the FlowAction can be configured in the root context using
+ * a bean of name {@link #FLOW_EXECUTOR_ARGUMENT_EXTRACTOR_BEAN_NAME}. If not
+ * explicitly specified it will default to a normal
+ * {@link org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor}
+ * with standard configuration.</li>
  * </ul>
  * <p>
  * The benefits here are substantial: developers now have a powerful web flow
@@ -125,6 +130,7 @@ import org.springframework.webflow.support.FlowRedirect;
  * binding and validation that addresses the proliferation of
  * <code>ActionForm</code> classes found in traditional Struts-based apps.
  * 
+ * @see org.springframework.webflow.execution.FlowExecution
  * @see org.springframework.webflow.executor.FlowExecutor
  * @see org.springframework.webflow.executor.support.FlowRequestHandler
  * @see org.springframework.web.struts.SpringBindingActionForm
@@ -142,24 +148,36 @@ public class FlowAction extends ActionSupport {
 
 	/**
 	 * The flow locator will be retreived from the application context using
-	 * this bean name if no executor and locator is explicitly set.
+	 * this bean name if no executor and locator are explicitly set.
 	 */
 	protected static final String FLOW_LOCATOR_BEAN_NAME = "flowLocator";
+	
+	/**
+	 * The flow executor argument extractor will be retreived from the application
+	 * context using this bean name if no argument extractor is explicitly set.
+	 */
+	protected static final String FLOW_EXECUTOR_ARGUMENT_EXTRACTOR_BEAN_NAME = "argumentExtractor";
 
 	/**
-	 * The service responsible for launching and signaling struts-originating
+	 * The service responsible for launching and signaling Struts-originating
 	 * events in flow executions.
 	 */
 	private FlowExecutor flowExecutor;
 
 	/**
-	 * Delegate for extract flow executor parameters.
+	 * Delegate to extract flow executor parameters.
 	 */
 	private FlowExecutorArgumentExtractor argumentExtractor;
 
 	/**
 	 * Set the flow locator to use for the lookup of flow definitions to
 	 * execute.
+	 * <p>
+	 * This is a convenience setter that configures a default {@link FlowExecutorImpl}
+	 * for managing the storage of executing flows.
+	 * <p>
+	 * Don't use this together with {@link #setFlowExecutor(FlowExecutor)}.
+	 * @see #setFlowExecutor(FlowExecutor)
 	 */
 	public void setFlowLocator(FlowLocator flowLocator) {
 		flowExecutor = new FlowExecutorImpl(flowLocator);
@@ -175,6 +193,7 @@ public class FlowAction extends ActionSupport {
 
 	/**
 	 * Configures the flow executor implementation to use.
+	 * @param flowExecutor the fully configured flow executor
 	 */
 	public void setFlowExecutor(FlowExecutor flowExecutor) {
 		this.flowExecutor = flowExecutor;
@@ -190,15 +209,15 @@ public class FlowAction extends ActionSupport {
 
 	/**
 	 * Sets the flow executor argument extractor to use.
-	 * @param argumentExtractor the argument extractor
+	 * @param argumentExtractor the fully configured argument extractor
 	 */
 	public void setArgumentExtractor(FlowExecutorArgumentExtractor argumentExtractor) {
 		this.argumentExtractor = argumentExtractor;
 	}
 
 	protected void onInit() {
+		WebApplicationContext context = getWebApplicationContext();
 		if (getFlowExecutor() == null) {
-			WebApplicationContext context = getWebApplicationContext();
 			if (context.containsBean(FLOW_EXECUTOR_BEAN_NAME)) {
 				setFlowExecutor((FlowExecutor)context.getBean(FLOW_EXECUTOR_BEAN_NAME, FlowExecutor.class));
 			}
@@ -207,17 +226,24 @@ public class FlowAction extends ActionSupport {
 					setFlowLocator((FlowLocator)context.getBean(FLOW_LOCATOR_BEAN_NAME, FlowLocator.class));
 				}
 				catch (NoSuchBeanDefinitionException e) {
-					String message = "No '" + FLOW_LOCATOR_BEAN_NAME + "' or '" + FLOW_EXECUTOR_BEAN_NAME
-							+ "' bean definition could be found; to use Spring Web Flow with Struts you must "
-							+ "configure this FlowAction with either a FlowLocator "
-							+ "(exposing a registry of flow definitions) or a custom FlowExecutor "
-							+ "(allowing more configuration options)";
-					throw new FlowArtifactLookupException(FLOW_LOCATOR_BEAN_NAME, FlowLocator.class, message, e);
+					String message =
+						"No '" + FLOW_LOCATOR_BEAN_NAME + "' or '" + FLOW_EXECUTOR_BEAN_NAME
+						+ "' bean definition could be found; to use Spring Web Flow with Struts you must "
+						+ "configure this FlowAction with either a FlowLocator "
+						+ "(exposing a registry of flow definitions) or a custom FlowExecutor "
+						+ "(allowing more configuration options)";
+					throw new IllegalArgumentException(message, e);
 				}
 			}
 		}
 		if (getArgumentExtractor() == null) {
-			argumentExtractor = new FlowExecutorArgumentExtractor();
+			if (context.containsBean(FLOW_EXECUTOR_ARGUMENT_EXTRACTOR_BEAN_NAME)) {
+				setArgumentExtractor((FlowExecutorArgumentExtractor)context.getBean(
+						FLOW_EXECUTOR_ARGUMENT_EXTRACTOR_BEAN_NAME, FlowExecutorArgumentExtractor.class));
+			}
+			else {
+				argumentExtractor = new FlowExecutorArgumentExtractor();
+			}
 		}
 	}
 
@@ -238,8 +264,8 @@ public class FlowAction extends ActionSupport {
 	}
 
 	/**
-	 * Return a Struts ActionForward given a ViewSelection. Adds all attributes
-	 * from the ViewSelection as request attributes.
+	 * Return a Struts ActionForward given a ResponseInstruction. Adds all attributes
+	 * from the ResponseInstruction as request attributes.
 	 */
 	protected ActionForward toActionForward(ResponseInstruction response, ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse httpResponse, ExternalContext context) throws Exception {
@@ -252,21 +278,25 @@ public class FlowAction extends ActionSupport {
 			WebUtils.exposeRequestAttributes(request, model);
 			if (form instanceof SpringBindingActionForm) {
 				SpringBindingActionForm bindingForm = (SpringBindingActionForm)form;
-				bindingForm.expose(getCurrentErrors(forward.getModel()), request);
+				
+				// expose the form object and associated errors as the
+				// "current form object" in the request
+				Errors currentErrors = (Errors)model.get(FormObjectAccessor.getCurrentFormErrorsName());
+				bindingForm.expose(currentErrors, request);
 			}
-			return findActionForward(forward, mapping);
+			return findForward(forward, mapping);
 
 		}
 		else if (response.isFlowExecutionRedirect()) {
 			// redirect to active flow execution URL
-			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(response.getFlowExecutionKey(), response
-					.getFlowExecutionContext(), context);
+			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(
+					response.getFlowExecutionKey(), response.getFlowExecutionContext(), context);
 			return createRedirectForward(flowExecutionUrl, httpResponse);
 		}
 		else if (response.isExternalRedirect()) {
 			// redirect to external URL
-			String externalUrl = argumentExtractor.createExternalUrl((ExternalRedirect)response.getViewSelection(),
-					response.getFlowExecutionKey(), context);
+			String externalUrl = argumentExtractor.createExternalUrl(
+					(ExternalRedirect)response.getViewSelection(), response.getFlowExecutionKey(), context);
 			return createRedirectForward(externalUrl, httpResponse);
 		}
 		else if (response.isFlowRedirect()) {
@@ -284,22 +314,27 @@ public class FlowAction extends ActionSupport {
 	}
 
 	/**
-	 * Handles a redirect.  This implementation simply calls sendRedirect on the response object.
+	 * Handles a redirect. This implementation simply calls sendRedirect on the response object.
 	 * @param url the url to redirect to
 	 * @param response the http response
 	 * @return the redirect forward, this implementation returns null
 	 * @throws Exception an excpetion occured processing the redirect
+	 * @see HttpServletResponse#sendRedirect(java.lang.String)
 	 */
 	protected ActionForward createRedirectForward(String url, HttpServletResponse response) throws Exception {
 		response.sendRedirect(url);
 		return null;
 	}
 
-	private Errors getCurrentErrors(Map model) {
-		return (Errors)model.get(FormObjectAccessor.getCurrentFormErrorsName());
-	}
-
-	private ActionForward findActionForward(ApplicationView forward, ActionMapping mapping) {
+	/**
+	 * Find an action forward for given application view. If no suitable forward
+	 * is found in the action mapping using the view name as a key, this method
+	 * will create a new action forward using the view name.
+	 * @param forward the application view to find a forward for
+	 * @param mapping the action mapping to use
+	 * @return the action forward, never null
+	 */
+	protected ActionForward findForward(ApplicationView forward, ActionMapping mapping) {
 		ActionForward actionForward = mapping.findForward(forward.getViewName());
 		if (actionForward != null) {
 			// the 1.2.1 copy constructor would ideally be better to

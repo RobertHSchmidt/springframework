@@ -50,7 +50,8 @@ public class ServletExternalContext implements ExternalContext {
 
 	/**
 	 * Create a new external context wrapping given servlet HTTP request and
-	 * response.
+	 * response and given servlet context.
+	 * @param context the servlet context
 	 * @param request the HTTP request
 	 * @param response the HTTP response
 	 */

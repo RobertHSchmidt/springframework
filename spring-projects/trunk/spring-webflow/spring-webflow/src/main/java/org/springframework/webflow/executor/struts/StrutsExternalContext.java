@@ -45,6 +45,7 @@ public class StrutsExternalContext extends ServletExternalContext {
 	 * Creates a new Struts external context.
 	 * @param mapping the action mapping
 	 * @param form the action form
+	 * @param the servlet  context
 	 * @param request the request
 	 * @param response the response
 	 */
