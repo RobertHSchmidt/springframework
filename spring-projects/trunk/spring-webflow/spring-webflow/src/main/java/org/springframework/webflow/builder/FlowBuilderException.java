@@ -15,14 +15,14 @@
  */
 package org.springframework.webflow.builder;
 
-import org.springframework.core.NestedRuntimeException;
+import org.springframework.webflow.FlowException;
 
 /**
  * Exception thrown to indicate a problem while building a flow.
  * 
  * @author Erwin Vervaet
  */
-public class FlowBuilderException extends NestedRuntimeException {
+public class FlowBuilderException extends FlowException {
 	
 	/**
 	 * Create a new flow builder exception.
