@@ -15,7 +15,6 @@
 	<classpathentry kind="lib" path="lib/global/spring-beans.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-context.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-core.jar"/>
-	<classpathentry kind="lib" path="lib/global/spring-mock.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-web.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-webmvc.jar"/>
 	<classpathentry kind="output" path="target/classes"/>

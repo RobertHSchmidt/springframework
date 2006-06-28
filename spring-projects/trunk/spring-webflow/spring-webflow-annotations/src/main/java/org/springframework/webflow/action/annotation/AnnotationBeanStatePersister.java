@@ -25,38 +25,47 @@ import org.springframework.webflow.action.BeanStatePersister;
 /**
  * Uses annotations to determine which beans are stateful and which fields on
  * those stateful beans should be saved and restored.
+ * 
  * @author Keith Donald
  */
 public class AnnotationBeanStatePersister implements BeanStatePersister {
 
-	public void saveState(Object bean, RequestContext context) throws Exception {
+	public void saveState(Object bean, RequestContext context) {
 		if (!bean.getClass().isAnnotationPresent(Stateful.class)) {
 			return;
 		}
 		Stateful stateful = bean.getClass().getAnnotation(Stateful.class);
-		Map memento = (Map)context.getFlowScope().getAttribute(stateful.name());
+		@SuppressWarnings("unchecked")
+		Map<String, Object> memento = (Map<String, Object>)context.getFlowScope().get(stateful.name());
 		Field[] fields = bean.getClass().getDeclaredFields();
 		if (memento == null) {
-			memento = new HashMap(fields.length);
-			context.getFlowScope().setAttribute(stateful.name(), memento);
+			memento = new HashMap<String, Object>(fields.length);
+			context.getFlowScope().put(stateful.name(), memento);
 		}
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
 			if (!field.isAnnotationPresent(Transient.class)) {
 				boolean accessible = field.isAccessible();
 				field.setAccessible(true);
-				memento.put(field.getName(), field.get(bean));
+				try {
+					memento.put(field.getName(), field.get(bean));
+				}
+				catch (IllegalAccessException e) {
+					//should not happen since we made it accessible
+					throw new RuntimeException(e);
+				}
 				field.setAccessible(accessible);
 			}
 		}
 	}
 
-	public void restoreState(Object bean, RequestContext context) throws Exception {
+	public Object restoreState(Object bean, RequestContext context) {
 		if (!bean.getClass().isAnnotationPresent(Stateful.class)) {
-			return;
+			return bean;
 		}
 		Stateful stateful = bean.getClass().getAnnotation(Stateful.class);
-		Map memento = (Map)context.getFlowScope().get(stateful.name());
+		@SuppressWarnings("unchecked")
+		Map<String, Object> memento = (Map<String, Object>)context.getFlowScope().get(stateful.name());
 		if (memento != null) {
 			Field[] fields = bean.getClass().getDeclaredFields();
 			for (int i = 0; i < fields.length; i++) {
@@ -64,10 +73,17 @@ public class AnnotationBeanStatePersister implements BeanStatePersister {
 				if (!field.isAnnotationPresent(Transient.class)) {
 					boolean accessible = field.isAccessible();
 					field.setAccessible(true);
-					field.set(bean, memento.get(field.getName()));
+					try {
+						field.set(bean, memento.get(field.getName()));
+					}
+					catch (IllegalAccessException e) {
+						//should not happen since we made it accessible
+						throw new RuntimeException(e);
+					}
 					field.setAccessible(accessible);
 				}
 			}
 		}
+		return bean;
 	}
 }
