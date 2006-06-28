@@ -65,20 +65,20 @@ public class FlowExecutionTests extends TestCase {
 		flow.setInputMapper(inputMapper);
 		ActionState actionState = new ActionState(flow, "actionState");
 		actionState.getActionList().add(new TestAction());
-		actionState.getTransitionSet().add(new Transition(on("success"), to("viewState")));
+		actionState.getTransitionSet().add(new Transition(onEvent("success"), toState("viewState")));
 
 		ViewState viewState = new ViewState(flow, "viewState");
-		viewState.setViewSelector(view("myView"));
-		viewState.getTransitionSet().add(new Transition(on("submit"), to("subFlowState")));
+		viewState.setViewSelector(selectView("myView"));
+		viewState.getTransitionSet().add(new Transition(onEvent("submit"), toState("subFlowState")));
 
 		Flow subFlow = new Flow("mySubFlow");
 		ViewState state1 = new ViewState(subFlow, "subFlowViewState");
-		state1.setViewSelector(view("mySubFlowViewName"));
-		state1.getTransitionSet().add(new Transition(on("submit"), to("finish")));
+		state1.setViewSelector(selectView("mySubFlowViewName"));
+		state1.getTransitionSet().add(new Transition(onEvent("submit"), toState("finish")));
 		new EndState(subFlow, "finish");
 
 		SubflowState subflowState = new SubflowState(flow, "subFlowState", subFlow);
-		subflowState.getTransitionSet().add(new Transition(on("finish"), to("finish")));
+		subflowState.getTransitionSet().add(new Transition(onEvent("finish"), toState("finish")));
 
 		new EndState(flow, "finish");
 
@@ -203,15 +203,15 @@ public class FlowExecutionTests extends TestCase {
 		assertTrue(!execution.isActive());
 	}
 
-	public static TransitionCriteria on(String event) {
+	public static TransitionCriteria onEvent(String event) {
 		return new EventIdTransitionCriteria(event);
 	}
 
-	public static TargetStateResolver to(String stateId) {
+	public static TargetStateResolver toState(String stateId) {
 		return new DefaultTargetStateResolver(stateId);
 	}
 
-	public static ViewSelector view(String viewName) {
+	public static ViewSelector selectView(String viewName) {
 		return new ApplicationViewSelector(new StaticExpression(viewName));
 	}
 }
