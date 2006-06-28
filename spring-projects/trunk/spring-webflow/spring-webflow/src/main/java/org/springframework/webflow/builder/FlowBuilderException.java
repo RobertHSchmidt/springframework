@@ -26,7 +26,6 @@ public class FlowBuilderException extends NestedRuntimeException {
 	
 	/**
 	 * Create a new flow builder exception.
-	 * @param builder the flow builder that encountered the problem
 	 * @param message descriptive message
 	 */
 	public FlowBuilderException(String message) {
@@ -35,7 +34,6 @@ public class FlowBuilderException extends NestedRuntimeException {
 
 	/**
 	 * Create a new flow builder exception.
-	 * @param builder the flow builder that encountered the problem
 	 * @param message descriptive message
 	 * @param cause the underlying cause of this exception
 	 */

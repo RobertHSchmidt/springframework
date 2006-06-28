@@ -245,7 +245,6 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * </table>
  * 
  * @see org.springframework.beans.PropertyEditorRegistrar
- * @see org.springframework.webflow.action.FormHandlingAction
  * 
  * @author Erwin Vervaet
  * @author Keith Donald

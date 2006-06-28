@@ -28,10 +28,10 @@ that are used to move to another state.  Transitions are triggered on the occurr
 Furthermore, this package also defines a number of interfaces related to flow execution, 
 allowing core webflow artifacts to reason on a flow execution context.
 The central abstractions are the {@link org.springframework.webflow.RequestContext}
-and its sub interface {@link org.springframework.webflow.FlowExecutionControlContext},
+and its sub interface {@link org.springframework.webflow.RequestControlContext},
 which are used by all artifacts of a web flow to gain access to information about an
 ongoing flow execution and to manipulate that flow execution (respectively). The
-<code>FlowExecutionControlContext</code> also acts a facade to the 
+<code>RequestControlContext</code> also acts a facade to the 
 {@link org.springframework.webflow.execution flow execution system}.
 </p>
 
@@ -63,9 +63,9 @@ strategy objects encapsulating criteria that determine whether or not a
 transition should execute given the current state of a flow execution.
 </li>
 <li>
-{@link org.springframework.webflow.StateExceptionHandler} - The interface for
+{@link org.springframework.webflow.FlowExecutionExceptionExceptionHandler} - The interface for
 strategy objects encapsulating flow exception handling behavior.  Allows for
-taking custom action in response to the occurrence of a StateException.
+taking custom action in response to the occurrence of a FlowExecutionException.
 </li>
 </ul>
 </p>

@@ -38,7 +38,7 @@ import org.springframework.webflow.util.UidGenerator;
  * execution repository implementations statefully in the
  * {@link ExternalContext#getSessionMap()}, typically backed by the HTTP
  * session.
- * <li>Configures it with a {@link ContinuationFlowExecutionRepositoryCreator}
+ * <li>Configures it with a {@link ContinuationFlowExecutionRepositoryFactory}
  * to create instances of {@link ContinuationFlowExecutionRepository} when
  * requested for placement in the session map.
  * </ul>
@@ -47,7 +47,7 @@ import org.springframework.webflow.util.UidGenerator;
  * direct configuration of services needed by the repositories created by this
  * factory.
  * 
- * @see ContinuationFlowExecutionRepositoryCreator
+ * @see ContinuationFlowExecutionRepositoryFactory
  * @see ContinuationFlowExecutionRepository
  * 
  * @author Keith Donald

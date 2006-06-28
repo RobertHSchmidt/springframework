@@ -27,7 +27,7 @@ public class FlowConstructionException extends FlowLocatorException {
 	/**
 	 * Creates an exception indicating a flow definition could not be found.
 	 * @param flowId the flow id
-	 * @param registeredFlowIds all flow ids known to the registry generating this exception
+	 * @param cause underlying cause of the exception
 	 */
 	public FlowConstructionException(String flowId, Throwable cause) {
 		super(flowId, "An exception occured constructing the flow with id '" + flowId + "'", cause);

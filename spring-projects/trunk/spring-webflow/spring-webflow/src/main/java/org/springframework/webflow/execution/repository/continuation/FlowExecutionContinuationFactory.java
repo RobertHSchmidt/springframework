@@ -27,7 +27,6 @@ public interface FlowExecutionContinuationFactory {
 
 	/**
 	 * Creates a new flow execution continuation.
-	 * @param continuationId the assigned continuation id
 	 * @param flowExecution the flow execution
 	 * @return the continuation
 	 */
