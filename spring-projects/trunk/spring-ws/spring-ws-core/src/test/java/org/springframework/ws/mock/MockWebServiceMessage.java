@@ -26,6 +26,9 @@ import java.io.Writer;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 
 import org.springframework.core.io.InputStreamSource;
@@ -52,6 +55,13 @@ public class MockWebServiceMessage implements WebServiceMessage {
 
     public MockWebServiceMessage(StringBuffer content) {
         this.content = content;
+    }
+
+    public MockWebServiceMessage(Source source) throws TransformerException {
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        content = new StringBuffer();
+        transformer.transform(source, getPayloadResult());
     }
 
     public Source getPayloadSource() {

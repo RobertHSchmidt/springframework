@@ -16,53 +16,36 @@
 
 package org.springframework.ws.endpoint;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-
 import nu.xom.Element;
-import org.custommonkey.xmlunit.XMLTestCase;
 
-import org.springframework.xml.transform.StringResult;
-import org.springframework.xml.transform.StringSource;
+public class XomPayloadEndpointTest extends AbstractPayloadEndpointTestCase {
 
-public class XomPayloadEndpointTest extends XMLTestCase {
-
-    public void testInvokeInternalNullResponse() throws Exception {
-        Source request = new StringSource("<request xmlns='http://www.springframework.org'/>");
-        AbstractXomPayloadEndpoint endpoint = new AbstractXomPayloadEndpoint() {
+    protected PayloadEndpoint createNoResponseEndpoint() throws Exception {
+        return new AbstractXomPayloadEndpoint() {
 
             protected Element invokeInternal(Element requestElement) throws Exception {
-                assertEquals("Invalid request element", "request", requestElement.getLocalName());
-                assertEquals("Invalid request element", "http://www.springframework.org",
-                        requestElement.getNamespaceURI());
                 return null;
             }
-
         };
-        Source response = endpoint.invoke(request);
-        assertNull("Invalid response", response);
     }
 
-    public void testInvokeInternal() throws Exception {
-        Source request = new StringSource("<request xmlns='http://www.springframework.org'/>");
-        AbstractXomPayloadEndpoint endpoint = new AbstractXomPayloadEndpoint() {
+    protected PayloadEndpoint createResponseEndpoint() throws Exception {
+        return new AbstractXomPayloadEndpoint() {
 
             protected Element invokeInternal(Element requestElement) throws Exception {
-                assertEquals("Invalid request element", "request", requestElement.getLocalName());
-                assertEquals("Invalid request element", "http://www.springframework.org",
-                        requestElement.getNamespaceURI());
-                return new Element("response", "http://www.springframework.org");
+                assertNotNull("No requestElement passed", requestElement);
+                assertEquals("Invalid request element", REQUEST_ELEMENT, requestElement.getLocalName());
+                assertEquals("Invalid request element", NAMESPACE_URI, requestElement.getNamespaceURI());
+                return new Element(RESPONSE_ELEMENT, NAMESPACE_URI);
             }
         };
-
-        Source response = endpoint.invoke(request);
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        StringResult result = new StringResult();
-        transformer.transform(response, result);
-        assertXMLEqual("Invalid response", "<prefix:response xmlns:prefix='http://www.springframework.org'/>",
-                result.toString());
     }
 
+    public void testStaxSourceEventReader() throws Exception {
+        // Unfortutately, XOM does not support these, hence the override here
+    }
 
+    public void testStaxSourceStreamReader() throws Exception {
+        // Unfortutately, XOM does not support these, hence the override here
+    }
 }

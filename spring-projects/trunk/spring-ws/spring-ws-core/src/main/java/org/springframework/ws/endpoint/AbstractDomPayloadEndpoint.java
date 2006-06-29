@@ -115,9 +115,9 @@ public abstract class AbstractDomPayloadEndpoint extends TransformerObjectSuppor
      * The given DOM <code>Document</code> is to be used for constructing <code>Node</code>s, by using the various
      * <code>create</code> methods.
      *
-     * @param requestElement the contents of the SOAP message as DOM elements
-     * @param document       a DOM document to be used for constructing <code>Node</code>s
+     * @param requestElement   the contents of the SOAP message as DOM elements
+     * @param responseDocument a DOM document to be used for constructing <code>Node</code>s
      * @return the response element. Can be <code>null</code> to specify no response.
      */
-    protected abstract Element invokeInternal(Element requestElement, Document document) throws Exception;
+    protected abstract Element invokeInternal(Element requestElement, Document responseDocument) throws Exception;
 }

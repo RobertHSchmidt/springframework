@@ -4,6 +4,13 @@ http://www.springframework.org/spring-ws
 
 Changes in version 1.0-M2
 -------------------------
+Package org.springframework.oxm
+* all marshallers support StaxSources now (#SWS-36)
+
+Pacakge org.springframework.ws.endpoint
+* improved endpoint test suite
+* AbstractStaxPayloadEndpoint now use StaxSource corrently (#SWS-38)
+
 Package org.springframework.ws.context
 * changed contract of MessageContext.getResponse(): now creates a response if none has been created. Required because
   creating SOAP fault when a response was already set threw an exception
@@ -20,6 +27,9 @@ Package org.springframework.ws.soap.saaj.support
 
 Package org.springframework.ws.transport.http
 * removed J2EE 1.4 dependency (#SWS-31)
+
+Package org.springframework.xml
+* moved package to seperate jar file, since oxm depended on it
 
 Changes in version 1.0-M1
 -------------------------

@@ -16,50 +16,32 @@
 
 package org.springframework.ws.endpoint;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-
-import org.custommonkey.xmlunit.XMLTestCase;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import org.springframework.xml.transform.StringResult;
-import org.springframework.xml.transform.StringSource;
+public class Dom4JPayloadEndpointTest extends AbstractPayloadEndpointTestCase {
 
-public class Dom4JPayloadEndpointTest extends XMLTestCase {
-
-    public void testInvokeInternalNullResponse() throws Exception {
-        Source request = new StringSource("<request xmlns='namespace'/>");
-        AbstractDom4JPayloadEndpoint endpoint = new AbstractDom4JPayloadEndpoint() {
+    protected PayloadEndpoint createResponseEndpoint() {
+        return new AbstractDom4JPayloadEndpoint() {
 
             protected Element invokeInternal(Element requestElement, Document responseDocument) throws Exception {
-                assertEquals("Invalid request element", "request", requestElement.getName());
-                assertEquals("Invalid request element", "namespace", requestElement.getNamespaceURI());
+                assertNotNull("No requestElement passed", requestElement);
+                assertNotNull("No responseDocument passed", responseDocument);
+                assertEquals("Invalid request element", REQUEST_ELEMENT, requestElement.getName());
+                assertEquals("Invalid request element", NAMESPACE_URI, requestElement.getNamespaceURI());
+                return responseDocument.addElement(RESPONSE_ELEMENT, NAMESPACE_URI);
+            }
+        };
+    }
+
+    protected PayloadEndpoint createNoResponseEndpoint() throws Exception {
+        return new AbstractDom4JPayloadEndpoint() {
+
+            protected Element invokeInternal(Element requestElement, Document responseDocument) throws Exception {
                 return null;
             }
-
         };
-        Source response = endpoint.invoke(request);
-        assertNull("Invalid response", response);
     }
 
-    public void testInvokeInternal() throws Exception {
-        AbstractDom4JPayloadEndpoint endpoint = new AbstractDom4JPayloadEndpoint() {
-
-            protected Element invokeInternal(Element requestElement, Document responseDocument) throws Exception {
-                assertEquals("Invalid request element", "request", requestElement.getName());
-                assertEquals("Invalid request element", "namespace", requestElement.getNamespaceURI());
-                return responseDocument.addElement("prefix:response", "namespace");
-            }
-        };
-
-        Source request = new StringSource("<request xmlns='namespace'/>");
-        Source response = endpoint.invoke(request);
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        StringResult result = new StringResult();
-        transformer.transform(response, result);
-        assertXMLEqual("Invalid response", "<prefix:response xmlns:prefix='namespace'/>", result.toString());
-    }
 
 }

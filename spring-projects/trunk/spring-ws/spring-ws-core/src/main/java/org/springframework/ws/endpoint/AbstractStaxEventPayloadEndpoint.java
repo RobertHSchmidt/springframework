@@ -16,6 +16,9 @@
 
 package org.springframework.ws.endpoint;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
@@ -23,9 +26,17 @@ import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.stream.util.XMLEventConsumer;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.context.MessageContext;
+import org.springframework.xml.transform.StaxResult;
+import org.springframework.xml.transform.StaxSource;
 
 /**
  * Abstract base class for endpoints that handle the message payload with event-based StAX. Allows subclasses to read
@@ -41,14 +52,11 @@ public abstract class AbstractStaxEventPayloadEndpoint extends AbstractStaxPaylo
 
     private XMLEventFactory eventFactory;
 
-    /**
-     * Returns an <code>XMLEventFactory</code> to read XML from.
-     */
-    private XMLEventFactory getEventFactory() {
-        if (eventFactory == null) {
-            eventFactory = createXmlEventFactory();
-        }
-        return eventFactory;
+    public final void invoke(MessageContext messageContext) throws Exception {
+        XMLEventReader eventReader = getEventReader(messageContext.getRequest().getPayloadSource());
+        XMLEventWriter streamWriter = new ResponseCreatingEventWriter(messageContext);
+        invokeInternal(eventReader, streamWriter, getEventFactory());
+        streamWriter.flush();
     }
 
     /**
@@ -62,12 +70,64 @@ public abstract class AbstractStaxEventPayloadEndpoint extends AbstractStaxPaylo
         return XMLEventFactory.newInstance();
     }
 
-    public final void invoke(MessageContext messageContext) throws Exception {
-        XMLEventReader eventReader =
-                getInputFactory().createXMLEventReader(messageContext.getRequest().getPayloadSource());
-        XMLEventWriter streamWriter = new ResponseCreatingEventWriter(messageContext);
-        invokeInternal(eventReader, streamWriter, getEventFactory());
-        streamWriter.flush();
+    /**
+     * Returns an <code>XMLEventFactory</code> to read XML from.
+     */
+    private XMLEventFactory getEventFactory() {
+        if (eventFactory == null) {
+            eventFactory = createXmlEventFactory();
+        }
+        return eventFactory;
+    }
+
+    private XMLEventReader getEventReader(Source source) throws XMLStreamException, TransformerException {
+        XMLEventReader eventReader = null;
+        if (source instanceof StaxSource) {
+            StaxSource staxSource = (StaxSource) source;
+            eventReader = staxSource.getXMLEventReader();
+            if (eventReader == null && staxSource.getXMLStreamReader() != null) {
+                try {
+                    eventReader = getInputFactory().createXMLEventReader(staxSource.getXMLStreamReader());
+                }
+                catch (XMLStreamException ex) {
+                    // ignore
+                }
+            }
+        }
+        if (eventReader == null) {
+            try {
+                eventReader = getInputFactory().createXMLEventReader(source);
+            }
+            catch (XMLStreamException ex) {
+                // ignore
+            }
+        }
+        if (eventReader == null) {
+            // as a final resort, transform the source to a stream, and read from that
+            Transformer transformer = createTransformer();
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            transformer.transform(source, new StreamResult(os));
+            ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+            eventReader = getInputFactory().createXMLEventReader(is);
+        }
+        return eventReader;
+    }
+
+    private XMLEventWriter getEventWriter(Result result) {
+        XMLEventWriter eventWriter = null;
+        if (result instanceof StaxResult) {
+            StaxResult staxResult = (StaxResult) result;
+            eventWriter = staxResult.getXMLEventWriter();
+        }
+        if (eventWriter == null) {
+            try {
+                eventWriter = getOutputFactory().createXMLEventWriter(result);
+            }
+            catch (XMLStreamException ex) {
+                // ignore
+            }
+        }
+        return eventWriter;
     }
 
     /**
@@ -92,20 +152,44 @@ public abstract class AbstractStaxEventPayloadEndpoint extends AbstractStaxPaylo
 
         private MessageContext messageContext;
 
+        private ByteArrayOutputStream os;
+
         public ResponseCreatingEventWriter(MessageContext messageContext) {
             this.messageContext = messageContext;
         }
 
-        private void createEventWriter() throws XMLStreamException {
-            if (eventWriter == null) {
-                WebServiceMessage response = messageContext.getResponse();
-                eventWriter = getOutputFactory().createXMLEventWriter(response.getPayloadResult());
+        public NamespaceContext getNamespaceContext() {
+            return eventWriter.getNamespaceContext();
+        }
+
+        public void setNamespaceContext(NamespaceContext context) throws XMLStreamException {
+            createEventWriter();
+            eventWriter.setNamespaceContext(context);
+        }
+
+        public void add(XMLEventReader reader) throws XMLStreamException {
+            createEventWriter();
+            while (reader.hasNext()) {
+                add(reader.nextEvent());
             }
         }
 
-        public void flush() throws XMLStreamException {
-            if (eventWriter != null) {
-                eventWriter.flush();
+        public void add(XMLEvent event) throws XMLStreamException {
+            createEventWriter();
+            eventWriter.add(event);
+            if (event.isEndDocument()) {
+                if (os != null) {
+                    eventWriter.flush();
+                    // if we used an output stream cache, we have to transform it to the response again
+                    try {
+                        Transformer transformer = createTransformer();
+                        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+                        transformer.transform(new StreamSource(is), messageContext.getResponse().getPayloadResult());
+                    }
+                    catch (TransformerException ex) {
+                        throw new XMLStreamException(ex);
+                    }
+                }
             }
         }
 
@@ -115,14 +199,10 @@ public abstract class AbstractStaxEventPayloadEndpoint extends AbstractStaxPaylo
             }
         }
 
-        public void add(XMLEvent event) throws XMLStreamException {
-            createEventWriter();
-            eventWriter.add(event);
-        }
-
-        public void add(XMLEventReader reader) throws XMLStreamException {
-            createEventWriter();
-            eventWriter.add(reader);
+        public void flush() throws XMLStreamException {
+            if (eventWriter != null) {
+                eventWriter.flush();
+            }
         }
 
         public String getPrefix(String uri) throws XMLStreamException {
@@ -130,24 +210,26 @@ public abstract class AbstractStaxEventPayloadEndpoint extends AbstractStaxPaylo
             return eventWriter.getPrefix(uri);
         }
 
-        public void setPrefix(String prefix, String uri) throws XMLStreamException {
-            createEventWriter();
-            eventWriter.setPrefix(prefix, uri);
-        }
-
         public void setDefaultNamespace(String uri) throws XMLStreamException {
             createEventWriter();
             eventWriter.setDefaultNamespace(uri);
         }
 
-        public void setNamespaceContext(NamespaceContext context) throws XMLStreamException {
+        public void setPrefix(String prefix, String uri) throws XMLStreamException {
             createEventWriter();
-            eventWriter.setNamespaceContext(context);
+            eventWriter.setPrefix(prefix, uri);
         }
 
-        public NamespaceContext getNamespaceContext() {
-            return eventWriter.getNamespaceContext();
+        private void createEventWriter() throws XMLStreamException {
+            if (eventWriter == null) {
+                WebServiceMessage response = messageContext.getResponse();
+                eventWriter = getEventWriter(response.getPayloadResult());
+                if (eventWriter == null) {
+                    // as a final resort, use a stream, and transform that at endDocument()
+                    os = new ByteArrayOutputStream();
+                    eventWriter = getOutputFactory().createXMLEventWriter(os);
+                }
+            }
         }
     }
-
 }

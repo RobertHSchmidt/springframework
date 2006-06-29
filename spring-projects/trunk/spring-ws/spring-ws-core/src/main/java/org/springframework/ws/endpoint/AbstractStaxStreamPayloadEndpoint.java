@@ -16,13 +16,24 @@
 
 package org.springframework.ws.endpoint;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.context.MessageContext;
+import org.springframework.xml.transform.StaxResult;
+import org.springframework.xml.transform.StaxSource;
 
 /**
  * Abstract base class for endpoints that handle the message payload with streaming StAX. Allows subclasses to read the
@@ -36,11 +47,52 @@ import org.springframework.ws.context.MessageContext;
 public abstract class AbstractStaxStreamPayloadEndpoint extends AbstractStaxPayloadEndpoint implements MessageEndpoint {
 
     public final void invoke(MessageContext messageContext) throws Exception {
-        XMLStreamReader streamReader =
-                getInputFactory().createXMLStreamReader(messageContext.getRequest().getPayloadSource());
+        XMLStreamReader streamReader = getStreamReader(messageContext.getRequest().getPayloadSource());
         XMLStreamWriter streamWriter = new ResponseCreatingStreamWriter(messageContext);
         invokeInternal(streamReader, streamWriter);
         streamWriter.flush();
+    }
+
+    private XMLStreamReader getStreamReader(Source source) throws XMLStreamException, TransformerException {
+        XMLStreamReader streamReader = null;
+        if (source instanceof StaxSource) {
+            StaxSource staxSource = (StaxSource) source;
+            streamReader = staxSource.getXMLStreamReader();
+        }
+        if (streamReader == null) {
+            try {
+                streamReader = getInputFactory().createXMLStreamReader(source);
+            }
+            catch (XMLStreamException ex) {
+                // ignore
+            }
+        }
+        if (streamReader == null) {
+            // as a final resort, transform the source to a stream, and read from that
+            Transformer transformer = createTransformer();
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            transformer.transform(source, new StreamResult(os));
+            ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+            streamReader = getInputFactory().createXMLStreamReader(is);
+        }
+        return streamReader;
+    }
+
+    private XMLStreamWriter getStreamWriter(Result result) {
+        XMLStreamWriter streamWriter = null;
+        if (result instanceof StaxResult) {
+            StaxResult staxResult = (StaxResult) result;
+            streamWriter = staxResult.getXMLStreamWriter();
+        }
+        if (streamWriter == null) {
+            try {
+                streamWriter = getOutputFactory().createXMLStreamWriter(result);
+            }
+            catch (XMLStreamException ex) {
+                // ignore
+            }
+        }
+        return streamWriter;
     }
 
     /**
@@ -62,55 +114,19 @@ public abstract class AbstractStaxStreamPayloadEndpoint extends AbstractStaxPayl
 
         private XMLStreamWriter streamWriter;
 
+        private ByteArrayOutputStream os;
+
         private ResponseCreatingStreamWriter(MessageContext messageContext) {
             this.messageContext = messageContext;
         }
 
-        private void createStreamWriter() throws XMLStreamException {
-            if (streamWriter == null) {
-                WebServiceMessage response = messageContext.getResponse();
-                streamWriter = getOutputFactory().createXMLStreamWriter(response.getPayloadResult());
-            }
+        public NamespaceContext getNamespaceContext() {
+            return streamWriter.getNamespaceContext();
         }
 
-        public void writeStartElement(String localName) throws XMLStreamException {
+        public void setNamespaceContext(NamespaceContext context) throws XMLStreamException {
             createStreamWriter();
-            streamWriter.writeStartElement(localName);
-        }
-
-        public void writeStartElement(String namespaceURI, String localName) throws XMLStreamException {
-            createStreamWriter();
-            streamWriter.writeStartElement(namespaceURI, localName);
-        }
-
-        public void writeStartElement(String prefix, String localName, String namespaceURI) throws XMLStreamException {
-            createStreamWriter();
-            streamWriter.writeStartElement(prefix, localName, namespaceURI);
-        }
-
-        public void writeEmptyElement(String namespaceURI, String localName) throws XMLStreamException {
-            createStreamWriter();
-            streamWriter.writeEmptyElement(namespaceURI, localName);
-        }
-
-        public void writeEmptyElement(String prefix, String localName, String namespaceURI) throws XMLStreamException {
-            createStreamWriter();
-            streamWriter.writeEmptyElement(prefix, localName, namespaceURI);
-        }
-
-        public void writeEmptyElement(String localName) throws XMLStreamException {
-            createStreamWriter();
-            streamWriter.writeEmptyElement(localName);
-        }
-
-        public void writeEndElement() throws XMLStreamException {
-            createStreamWriter();
-            streamWriter.writeEndElement();
-        }
-
-        public void writeEndDocument() throws XMLStreamException {
-            createStreamWriter();
-            streamWriter.writeEndDocument();
+            streamWriter.setNamespaceContext(context);
         }
 
         public void close() throws XMLStreamException {
@@ -125,9 +141,33 @@ public abstract class AbstractStaxStreamPayloadEndpoint extends AbstractStaxPayl
             }
         }
 
+        public String getPrefix(String uri) throws XMLStreamException {
+            createStreamWriter();
+            return streamWriter.getPrefix(uri);
+        }
+
+        public Object getProperty(String name) throws IllegalArgumentException {
+            return streamWriter.getProperty(name);
+        }
+
+        public void setDefaultNamespace(String uri) throws XMLStreamException {
+            createStreamWriter();
+            streamWriter.setDefaultNamespace(uri);
+        }
+
+        public void setPrefix(String prefix, String uri) throws XMLStreamException {
+            createStreamWriter();
+            streamWriter.setPrefix(prefix, uri);
+        }
+
         public void writeAttribute(String localName, String value) throws XMLStreamException {
             createStreamWriter();
             streamWriter.writeAttribute(localName, value);
+        }
+
+        public void writeAttribute(String namespaceURI, String localName, String value) throws XMLStreamException {
+            createStreamWriter();
+            streamWriter.writeAttribute(namespaceURI, localName, value);
         }
 
         public void writeAttribute(String prefix, String namespaceURI, String localName, String value)
@@ -136,14 +176,29 @@ public abstract class AbstractStaxStreamPayloadEndpoint extends AbstractStaxPayl
             streamWriter.writeAttribute(prefix, namespaceURI, localName, value);
         }
 
-        public void writeAttribute(String namespaceURI, String localName, String value) throws XMLStreamException {
+        public void writeCData(String data) throws XMLStreamException {
             createStreamWriter();
-            streamWriter.writeAttribute(namespaceURI, localName, value);
+            streamWriter.writeCData(data);
         }
 
-        public void writeNamespace(String prefix, String namespaceURI) throws XMLStreamException {
+        public void writeCharacters(String text) throws XMLStreamException {
             createStreamWriter();
-            streamWriter.writeNamespace(prefix, namespaceURI);
+            streamWriter.writeCharacters(text);
+        }
+
+        public void writeCharacters(char[] text, int start, int len) throws XMLStreamException {
+            createStreamWriter();
+            streamWriter.writeCharacters(text, start, len);
+        }
+
+        public void writeComment(String data) throws XMLStreamException {
+            createStreamWriter();
+            streamWriter.writeComment(data);
+        }
+
+        public void writeDTD(String dtd) throws XMLStreamException {
+            createStreamWriter();
+            streamWriter.writeDTD(dtd);
         }
 
         public void writeDefaultNamespace(String namespaceURI) throws XMLStreamException {
@@ -151,9 +206,51 @@ public abstract class AbstractStaxStreamPayloadEndpoint extends AbstractStaxPayl
             streamWriter.writeDefaultNamespace(namespaceURI);
         }
 
-        public void writeComment(String data) throws XMLStreamException {
+        public void writeEmptyElement(String localName) throws XMLStreamException {
             createStreamWriter();
-            streamWriter.writeComment(data);
+            streamWriter.writeEmptyElement(localName);
+        }
+
+        public void writeEmptyElement(String namespaceURI, String localName) throws XMLStreamException {
+            createStreamWriter();
+            streamWriter.writeEmptyElement(namespaceURI, localName);
+        }
+
+        public void writeEmptyElement(String prefix, String localName, String namespaceURI) throws XMLStreamException {
+            createStreamWriter();
+            streamWriter.writeEmptyElement(prefix, localName, namespaceURI);
+        }
+
+        public void writeEndDocument() throws XMLStreamException {
+            createStreamWriter();
+            streamWriter.writeEndDocument();
+            if (os != null) {
+                streamWriter.flush();
+                // if we used an output stream cache, we have to transform it to the response again
+                try {
+                    Transformer transformer = createTransformer();
+                    ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+                    transformer.transform(new StreamSource(is), messageContext.getResponse().getPayloadResult());
+                }
+                catch (TransformerException ex) {
+                    throw new XMLStreamException(ex);
+                }
+            }
+        }
+
+        public void writeEndElement() throws XMLStreamException {
+            createStreamWriter();
+            streamWriter.writeEndElement();
+        }
+
+        public void writeEntityRef(String name) throws XMLStreamException {
+            createStreamWriter();
+            streamWriter.writeEntityRef(name);
+        }
+
+        public void writeNamespace(String prefix, String namespaceURI) throws XMLStreamException {
+            createStreamWriter();
+            streamWriter.writeNamespace(prefix, namespaceURI);
         }
 
         public void writeProcessingInstruction(String target) throws XMLStreamException {
@@ -164,21 +261,6 @@ public abstract class AbstractStaxStreamPayloadEndpoint extends AbstractStaxPayl
         public void writeProcessingInstruction(String target, String data) throws XMLStreamException {
             createStreamWriter();
             streamWriter.writeProcessingInstruction(target, data);
-        }
-
-        public void writeCData(String data) throws XMLStreamException {
-            createStreamWriter();
-            streamWriter.writeCData(data);
-        }
-
-        public void writeDTD(String dtd) throws XMLStreamException {
-            createStreamWriter();
-            streamWriter.writeDTD(dtd);
-        }
-
-        public void writeEntityRef(String name) throws XMLStreamException {
-            createStreamWriter();
-            streamWriter.writeEntityRef(name);
         }
 
         public void writeStartDocument() throws XMLStreamException {
@@ -196,42 +278,31 @@ public abstract class AbstractStaxStreamPayloadEndpoint extends AbstractStaxPayl
             streamWriter.writeStartDocument(encoding, version);
         }
 
-        public void writeCharacters(String text) throws XMLStreamException {
+        public void writeStartElement(String localName) throws XMLStreamException {
             createStreamWriter();
-            streamWriter.writeCharacters(text);
+            streamWriter.writeStartElement(localName);
         }
 
-        public void writeCharacters(char[] text, int start, int len) throws XMLStreamException {
+        public void writeStartElement(String namespaceURI, String localName) throws XMLStreamException {
             createStreamWriter();
-            streamWriter.writeCharacters(text, start, len);
+            streamWriter.writeStartElement(namespaceURI, localName);
         }
 
-        public String getPrefix(String uri) throws XMLStreamException {
+        public void writeStartElement(String prefix, String localName, String namespaceURI) throws XMLStreamException {
             createStreamWriter();
-            return streamWriter.getPrefix(uri);
+            streamWriter.writeStartElement(prefix, localName, namespaceURI);
         }
 
-        public void setPrefix(String prefix, String uri) throws XMLStreamException {
-            createStreamWriter();
-            streamWriter.setPrefix(prefix, uri);
-        }
-
-        public void setDefaultNamespace(String uri) throws XMLStreamException {
-            createStreamWriter();
-            streamWriter.setDefaultNamespace(uri);
-        }
-
-        public void setNamespaceContext(NamespaceContext context) throws XMLStreamException {
-            createStreamWriter();
-            streamWriter.setNamespaceContext(context);
-        }
-
-        public NamespaceContext getNamespaceContext() {
-            return streamWriter.getNamespaceContext();
-        }
-
-        public Object getProperty(String name) throws IllegalArgumentException {
-            return streamWriter.getProperty(name);
+        private void createStreamWriter() throws XMLStreamException {
+            if (streamWriter == null) {
+                WebServiceMessage response = messageContext.getResponse();
+                streamWriter = getStreamWriter(response.getPayloadResult());
+                if (streamWriter == null) {
+                    // as a final resort, use a stream, and transform that at endDocument()
+                    os = new ByteArrayOutputStream();
+                    streamWriter = getOutputFactory().createXMLStreamWriter(os);
+                }
+            }
         }
     }
 }

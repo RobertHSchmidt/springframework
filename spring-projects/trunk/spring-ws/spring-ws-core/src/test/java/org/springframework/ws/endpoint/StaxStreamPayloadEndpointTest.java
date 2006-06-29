@@ -16,64 +16,47 @@
 
 package org.springframework.ws.endpoint;
 
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-
-import org.custommonkey.xmlunit.XMLTestCase;
-
-import org.springframework.ws.mock.MockMessageContext;
-import org.springframework.ws.mock.MockWebServiceMessage;
 
 /**
  * Test case for AbstractStaxStreamPayloadEndpoint.
  *
  * @see AbstractStaxStreamPayloadEndpoint
  */
-public class StaxStreamPayloadEndpointTest extends XMLTestCase {
+public class StaxStreamPayloadEndpointTest extends AbstractMessageEndpointTestCase {
 
-    public void testInvoke() throws Exception {
-
-        AbstractStaxStreamPayloadEndpoint endpoint = new AbstractStaxStreamPayloadEndpoint() {
-
-            protected void invokeInternal(XMLStreamReader streamReader, XMLStreamWriter streamWriter)
-                    throws XMLStreamException {
-                assertTrue("streamReader has not next element", streamReader.hasNext());
-                assertEquals("Not a start element", XMLStreamConstants.START_ELEMENT, streamReader.next());
-                assertEquals("Invalid start event", "request", streamReader.getLocalName());
-                assertTrue("streamReader has not next element", streamReader.hasNext());
-                assertEquals("Not a end element", XMLStreamConstants.END_ELEMENT, streamReader.next());
-                assertEquals("Invalid end event", "request", streamReader.getLocalName());
-                streamWriter.writeEmptyElement("response");
+    protected MessageEndpoint createNoResponseEndpoint() {
+        return new AbstractStaxStreamPayloadEndpoint() {
+            protected void invokeInternal(XMLStreamReader streamReader, XMLStreamWriter streamWriter) throws Exception {
             }
-
         };
-        MockMessageContext context = new MockMessageContext("<request/>");
-        endpoint.invoke(context);
-        assertNotNull("No response created", context.getResponse());
-        MockWebServiceMessage response = (MockWebServiceMessage) context.getResponse();
-        assertXMLEqual("Invalid response", "<response/>", response.getPayloadAsString());
     }
 
-    public void testInvokeNoResponse() throws Exception {
-
-        AbstractStaxStreamPayloadEndpoint endpoint = new AbstractStaxStreamPayloadEndpoint() {
-
-            protected void invokeInternal(XMLStreamReader streamReader, XMLStreamWriter streamWriter)
-                    throws XMLStreamException {
-                assertTrue("streamReader has not next element", streamReader.hasNext());
+    protected MessageEndpoint createResponseEndpoint() {
+        return new AbstractStaxStreamPayloadEndpoint() {
+            protected void invokeInternal(XMLStreamReader streamReader, XMLStreamWriter streamWriter) throws Exception {
+                assertNotNull("No streamReader passed", streamReader);
+                assertNotNull("No streamWriter passed", streamReader);
                 assertEquals("Not a start element", XMLStreamConstants.START_ELEMENT, streamReader.next());
-                assertEquals("Invalid start event", "request", streamReader.getLocalName());
-                assertTrue("streamReader has not next element", streamReader.hasNext());
+                assertEquals("Invalid start event local name", REQUEST_ELEMENT, streamReader.getLocalName());
+                assertEquals("Invalid start event namespace", NAMESPACE_URI, streamReader.getNamespaceURI());
+                assertTrue("streamReader has no next element", streamReader.hasNext());
                 assertEquals("Not a end element", XMLStreamConstants.END_ELEMENT, streamReader.next());
-                assertEquals("Invalid end event", "request", streamReader.getLocalName());
+                assertEquals("Invalid end event local name", REQUEST_ELEMENT, streamReader.getLocalName());
+                assertEquals("Invalid end event namespace", NAMESPACE_URI, streamReader.getNamespaceURI());
+                streamWriter.writeEmptyElement(NAMESPACE_URI, RESPONSE_ELEMENT);
+                streamWriter.writeEndDocument();
             }
 
+            protected XMLOutputFactory createXmlOutputFactory() {
+                XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+                outputFactory.setProperty("javax.xml.stream.isRepairingNamespaces", Boolean.TRUE);
+                return outputFactory;
+            }
         };
-        MockMessageContext context = new MockMessageContext("<request/>");
-        endpoint.invoke(context);
-        assertFalse("Response created", context.hasResponse());
     }
 
 
