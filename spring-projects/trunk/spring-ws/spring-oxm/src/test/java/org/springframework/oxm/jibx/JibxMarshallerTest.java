@@ -36,11 +36,6 @@ public class JibxMarshallerTest extends AbstractMarshallerTestCase {
         return flights;
     }
 
-    public void testMarshalDOMResult() throws Exception {
-        // Unfortunately, JiBX does not support DOMResults
-        // hence the override here
-    }
-
     public void testAfterPropertiesSetNoContextPath() throws Exception {
         try {
             JibxMarshaller marshaller = new JibxMarshaller();

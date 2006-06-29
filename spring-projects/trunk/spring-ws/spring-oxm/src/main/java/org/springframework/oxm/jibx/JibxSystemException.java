@@ -16,8 +16,6 @@
 
 package org.springframework.oxm.jibx;
 
-import org.jibx.runtime.JiBXException;
-
 import org.springframework.oxm.UncategorizedXmlMappingException;
 
 /**
@@ -29,7 +27,7 @@ import org.springframework.oxm.UncategorizedXmlMappingException;
  */
 public class JibxSystemException extends UncategorizedXmlMappingException {
 
-    public JibxSystemException(JiBXException ex) {
+    public JibxSystemException(Exception ex) {
         super(ex.getMessage(), ex);
     }
 }

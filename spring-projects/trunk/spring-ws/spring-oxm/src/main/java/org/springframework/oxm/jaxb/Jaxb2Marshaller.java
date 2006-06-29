@@ -26,6 +26,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -36,6 +38,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.xml.transform.StaxResult;
+import org.springframework.xml.transform.StaxSource;
 
 /**
  * Implementation of the <code>Marshaller</code> interface for JAXB 2.0.
@@ -75,14 +79,6 @@ public class Jaxb2Marshaller extends AbstractJaxbMarshaller {
     private Map jaxbContextProperties;
 
     /**
-     * Sets the <code>JAXBContext</code> properties. These implementation-specific properties will be set on the
-     * <code>JAXBContext</code>.
-     */
-    public void setJaxbContextProperties(Map jaxbContextProperties) {
-        this.jaxbContextProperties = jaxbContextProperties;
-    }
-
-    /**
      * Sets the <code>XmlAdapter</code>s to be registered with the JAXB <code>Marshaller</code> and
      * <code>Unmarshaller</code>
      */
@@ -98,6 +94,14 @@ public class Jaxb2Marshaller extends AbstractJaxbMarshaller {
      */
     public void setClassesToBeBound(Class[] classesToBeBound) {
         this.classesToBeBound = classesToBeBound;
+    }
+
+    /**
+     * Sets the <code>JAXBContext</code> properties. These implementation-specific properties will be set on the
+     * <code>JAXBContext</code>.
+     */
+    public void setJaxbContextProperties(Map jaxbContextProperties) {
+        this.jaxbContextProperties = jaxbContextProperties;
     }
 
     /**
@@ -136,6 +140,34 @@ public class Jaxb2Marshaller extends AbstractJaxbMarshaller {
      */
     public void setUnmarshallerListener(Unmarshaller.Listener unmarshallerListener) {
         this.unmarshallerListener = unmarshallerListener;
+    }
+
+    public void marshal(Object graph, Result result) {
+        try {
+            if (result instanceof StaxResult) {
+                marshalStaxResult(graph, (StaxResult) result);
+            }
+            else {
+                createMarshaller().marshal(graph, result);
+            }
+        }
+        catch (JAXBException ex) {
+            throw convertJaxbException(ex);
+        }
+    }
+
+    public Object unmarshal(Source source) {
+        try {
+            if (source instanceof StaxSource) {
+                return unmarshalStaxSource((StaxSource) source);
+            }
+            else {
+                return createUnmarshaller().unmarshal(source);
+            }
+        }
+        catch (JAXBException ex) {
+            throw convertJaxbException(ex);
+        }
     }
 
     protected void initJaxbMarshaller(Marshaller marshaller) throws JAXBException {
@@ -228,6 +260,30 @@ public class Jaxb2Marshaller extends AbstractJaxbMarshaller {
                     }
                 }
             }
+        }
+    }
+
+    private void marshalStaxResult(Object graph, StaxResult staxResult) throws JAXBException {
+        if (staxResult.getXMLStreamWriter() != null) {
+            createMarshaller().marshal(graph, staxResult.getXMLStreamWriter());
+        }
+        else if (staxResult.getXMLEventWriter() != null) {
+            createMarshaller().marshal(graph, staxResult.getXMLEventWriter());
+        }
+        else {
+            throw new IllegalArgumentException("StaxResult contains neither XMLStreamWriter nor XMLEventConsumer");
+        }
+    }
+
+    private Object unmarshalStaxSource(StaxSource staxSource) throws JAXBException {
+        if (staxSource.getXMLStreamReader() != null) {
+            return createUnmarshaller().unmarshal(staxSource.getXMLStreamReader());
+        }
+        else if (staxSource.getXMLEventReader() != null) {
+            return createUnmarshaller().unmarshal(staxSource.getXMLEventReader());
+        }
+        else {
+            throw new IllegalArgumentException("StaxSource contains neither XMLStreamReader nor XMLEventReader");
         }
     }
 }

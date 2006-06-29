@@ -20,6 +20,9 @@ import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
@@ -32,9 +35,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import org.springframework.xml.transform.StaxSource;
+
 public abstract class AbstractUnmarshallerTestCase extends TestCase {
 
-    private Unmarshaller unmarshaller;
+    protected Unmarshaller unmarshaller;
 
     protected static final String INPUT_STRING =
             "<tns:flights xmlns:tns=\"http://samples.springframework.org/flight\">" +
@@ -83,4 +88,19 @@ public abstract class AbstractUnmarshallerTestCase extends TestCase {
         testFlights(flights);
     }
 
+    public void testUnmarshalStaxSourceXmlStreamReader() throws Exception {
+        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+        XMLStreamReader streamReader = inputFactory.createXMLStreamReader(new StringReader(INPUT_STRING));
+        StaxSource source = new StaxSource(streamReader);
+        Object flights = unmarshaller.unmarshal(source);
+        testFlights(flights);
+    }
+
+    public void testUnmarshalStaxSourceXmlEventReader() throws Exception {
+        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+        XMLEventReader eventReader = inputFactory.createXMLEventReader(new StringReader(INPUT_STRING));
+        StaxSource source = new StaxSource(eventReader);
+        Object flights = unmarshaller.unmarshal(source);
+        testFlights(flights);
+    }
 }

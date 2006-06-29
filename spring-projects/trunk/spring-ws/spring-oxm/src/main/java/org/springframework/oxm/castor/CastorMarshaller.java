@@ -22,8 +22,14 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.mapping.MappingException;
+import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.UnmarshalHandler;
 import org.exolab.castor.xml.Unmarshaller;
@@ -39,6 +45,10 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.oxm.AbstractMarshaller;
 import org.springframework.oxm.XmlMappingException;
+import org.springframework.xml.stream.StaxEventContentHandler;
+import org.springframework.xml.stream.StaxEventXmlReader;
+import org.springframework.xml.stream.StaxStreamContentHandler;
+import org.springframework.xml.stream.StaxStreamXmlReader;
 
 /**
  * Implementation of the <code>Marshaller</code> interface for Castor. By default, Castor does not require any further
@@ -196,6 +206,16 @@ public class CastorMarshaller extends AbstractMarshaller implements Initializing
         marshal(graph, marshaller);
     }
 
+    protected void marshalXmlEventWriter(Object graph, XMLEventWriter eventWriter) throws XmlMappingException {
+        ContentHandler contentHandler = new StaxEventContentHandler(eventWriter);
+        marshalSaxHandlers(graph, contentHandler, null);
+    }
+
+    protected void marshalXmlStreamWriter(Object graph, XMLStreamWriter streamWriter) throws XmlMappingException {
+        ContentHandler contentHandler = new StaxStreamContentHandler(streamWriter);
+        marshalSaxHandlers(graph, contentHandler, null);
+    }
+
     protected void marshalOutputStream(Object graph, OutputStream outputStream)
             throws XmlMappingException, IOException {
         OutputStreamWriter writer = new OutputStreamWriter(outputStream, getEncoding());
@@ -224,6 +244,26 @@ public class CastorMarshaller extends AbstractMarshaller implements Initializing
         }
         catch (XMLException ex) {
             throw convertCastorException(ex, false);
+        }
+    }
+
+    protected Object unmarshalXmlEventReader(XMLEventReader eventReader) {
+        XMLReader reader = new StaxEventXmlReader(eventReader);
+        try {
+            return unmarshalSaxReader(reader, new InputSource());
+        }
+        catch (IOException ex) {
+            throw new CastorUnmarshallingFailureException(new MarshalException(ex));
+        }
+    }
+
+    protected Object unmarshalXmlStreamReader(XMLStreamReader streamReader) {
+        XMLReader reader = new StaxStreamXmlReader(streamReader);
+        try {
+            return unmarshalSaxReader(reader, new InputSource());
+        }
+        catch (IOException ex) {
+            throw new CastorUnmarshallingFailureException(new MarshalException(ex));
         }
     }
 

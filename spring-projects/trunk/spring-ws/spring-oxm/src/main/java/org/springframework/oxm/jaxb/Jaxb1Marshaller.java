@@ -18,6 +18,8 @@ package org.springframework.oxm.jaxb;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StringUtils;
@@ -59,4 +61,21 @@ public class Jaxb1Marshaller extends AbstractJaxbMarshaller implements Initializ
         unmarshaller.setValidating(validating);
     }
 
+    public void marshal(Object graph, Result result) {
+        try {
+            createMarshaller().marshal(graph, result);
+        }
+        catch (JAXBException ex) {
+            throw convertJaxbException(ex);
+        }
+    }
+
+    public Object unmarshal(Source source) {
+        try {
+            return createUnmarshaller().unmarshal(source);
+        }
+        catch (JAXBException ex) {
+            throw convertJaxbException(ex);
+        }
+    }
 }
