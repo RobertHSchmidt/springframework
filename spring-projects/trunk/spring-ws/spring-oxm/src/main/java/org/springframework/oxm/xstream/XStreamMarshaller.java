@@ -26,13 +26,22 @@ import java.io.Writer;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.CompactWriter;
 import com.thoughtworks.xstream.io.xml.DomReader;
 import com.thoughtworks.xstream.io.xml.DomWriter;
+import com.thoughtworks.xstream.io.xml.QNameMap;
 import com.thoughtworks.xstream.io.xml.SaxWriter;
+import com.thoughtworks.xstream.io.xml.StaxReader;
+import com.thoughtworks.xstream.io.xml.StaxWriter;
 import com.thoughtworks.xstream.io.xml.XppReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -45,6 +54,8 @@ import org.xml.sax.ext.LexicalHandler;
 import org.springframework.beans.propertyeditors.ClassEditor;
 import org.springframework.oxm.AbstractMarshaller;
 import org.springframework.oxm.XmlMappingException;
+import org.springframework.xml.stream.StaxEventContentHandler;
+import org.springframework.xml.stream.StaxEventXmlReader;
 
 /**
  * Implementation of the <code>Marshaller</code> interface for XStream. By default, XStream does not require any further
@@ -127,8 +138,9 @@ public class XStreamMarshaller extends AbstractMarshaller {
 
     /**
      * Convert the given XStream exception to an appropriate exception from the <code>org.springframework.oxm</code>
-     * hierarchy. <p/> The default implementation delegates to <code>XStreamUtils</code>. Can be overridden in
-     * subclasses.
+     * hierarchy.
+     * <p/>
+     * The default implementation delegates to <code>XStreamUtils</code>. Can be overridden in subclasses.
      *
      * @param ex          exception that occured
      * @param marshalling indicates whether the exception occurs during marshalling (<code>true</code>), or
@@ -165,6 +177,20 @@ public class XStreamMarshaller extends AbstractMarshaller {
             throw new IllegalArgumentException("DOMResult contains neither Document nor Element");
         }
         marshal(graph, streamWriter);
+    }
+
+    protected void marshalXmlEventWriter(Object graph, XMLEventWriter eventWriter) throws XmlMappingException {
+        ContentHandler contentHandler = new StaxEventContentHandler(eventWriter);
+        marshalSaxHandlers(graph, contentHandler, null);
+    }
+
+    protected void marshalXmlStreamWriter(Object graph, XMLStreamWriter streamWriter) throws XmlMappingException {
+        try {
+            marshal(graph, new StaxWriter(new QNameMap(), streamWriter));
+        }
+        catch (XMLStreamException ex) {
+            throw convertXStreamException(ex, true);
+        }
     }
 
     protected void marshalOutputStream(Object graph, OutputStream outputStream)
@@ -204,6 +230,20 @@ public class XStreamMarshaller extends AbstractMarshaller {
             throw new IllegalArgumentException("DOMSource contains neither Document nor Element");
         }
         return unmarshal(streamReader);
+    }
+
+    protected Object unmarshalXmlEventReader(XMLEventReader eventReader) throws XmlMappingException {
+        XMLReader reader = new StaxEventXmlReader(eventReader);
+        try {
+            return unmarshalSaxReader(reader, new InputSource());
+        }
+        catch (IOException ex) {
+            throw convertXStreamException(ex, false);
+        }
+    }
+
+    protected Object unmarshalXmlStreamReader(XMLStreamReader streamReader) throws XmlMappingException {
+        return unmarshal(new StaxReader(new QNameMap(), streamReader));
     }
 
     protected Object unmarshalInputStream(InputStream inputStream) throws XmlMappingException, IOException {

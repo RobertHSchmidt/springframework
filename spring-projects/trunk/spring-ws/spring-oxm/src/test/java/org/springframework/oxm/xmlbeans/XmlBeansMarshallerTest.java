@@ -49,4 +49,8 @@ public class XmlBeansMarshallerTest extends AbstractMarshallerTestCase {
         return flightsDocument;
     }
 
+    public void testMarshalStaxResultXMLStreamWriter() throws Exception {
+        // Unfortu
+    }
+
 }

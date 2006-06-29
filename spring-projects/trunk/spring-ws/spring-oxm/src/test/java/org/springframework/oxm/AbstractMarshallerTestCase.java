@@ -20,6 +20,9 @@ import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamResult;
 
@@ -28,6 +31,8 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
+
+import org.springframework.xml.transform.StaxResult;
 
 public abstract class AbstractMarshallerTestCase extends XMLTestCase {
 
@@ -82,4 +87,21 @@ public abstract class AbstractMarshallerTestCase extends XMLTestCase {
                 new String(os.toByteArray(), "UTF-8"));
     }
 
+    public void testMarshalStaxResultXMLStreamWriter() throws Exception {
+        XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+        StringWriter writer = new StringWriter();
+        XMLStreamWriter streamWriter = outputFactory.createXMLStreamWriter(writer);
+        StaxResult result = new StaxResult(streamWriter);
+        marshaller.marshal(flights, result);
+        assertXMLEqual("Marshaller writes invalid StreamResult", EXPECTED_STRING, writer.toString());
+    }
+
+    public void testMarshalStaxResultXMLEventWriter() throws Exception {
+        XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+        StringWriter writer = new StringWriter();
+        XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(writer);
+        StaxResult result = new StaxResult(eventWriter);
+        marshaller.marshal(flights, result);
+        assertXMLEqual("Marshaller writes invalid StreamResult", EXPECTED_STRING, writer.toString());
+    }
 }

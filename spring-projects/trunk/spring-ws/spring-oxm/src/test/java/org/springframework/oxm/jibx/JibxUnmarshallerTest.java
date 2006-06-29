@@ -36,14 +36,5 @@ public class JibxUnmarshallerTest extends AbstractUnmarshallerTestCase {
         assertEquals("Number is invalid", 42L, flight.getNumber());
     }
 
-    public void testUnmarshalDomSource() throws Exception {
-        // Unfortunately, JiBX does not support DOMSources
-        // hence the override here
-    }
-
-    public void testUnmarshalSAXSource() throws Exception {
-        // Unfortunately, JiBX does not support SAXSources
-        // hence the override here
-    }
 
 }
