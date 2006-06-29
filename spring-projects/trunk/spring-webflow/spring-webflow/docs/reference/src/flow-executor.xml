@@ -252,7 +252,7 @@
     	<sect2 id="executor-mvc-resume-anchor">
     		<title>Resuming a flow execution - anchor</title>
 	    	<programlisting>
-    &lt;a href="flowController.htm?_flowExecutionKey=${flowExecutionKey}&amp;eventId=submit"/&gt;
+    &lt;a href="flowController.htm?_flowExecutionKey=${flowExecutionKey}&amp;_eventId=submit"/&gt;
 	    	</programlisting>
     	</sect2>
     	<sect2 id="executor-mvc-resume-form">
