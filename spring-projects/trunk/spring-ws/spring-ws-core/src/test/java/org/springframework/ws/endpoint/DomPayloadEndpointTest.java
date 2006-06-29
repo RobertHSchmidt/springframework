@@ -16,48 +16,32 @@
 
 package org.springframework.ws.endpoint;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-
-import org.custommonkey.xmlunit.XMLTestCase;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import org.springframework.xml.transform.StringResult;
-import org.springframework.xml.transform.StringSource;
+public class DomPayloadEndpointTest extends AbstractPayloadEndpointTestCase {
 
-public class DomPayloadEndpointTest extends XMLTestCase {
-
-    public void testInvokeInternalNullResponse() throws Exception {
-        Source request = new StringSource("<request/>");
-        AbstractDomPayloadEndpoint endpoint = new AbstractDomPayloadEndpoint() {
+    protected PayloadEndpoint createNoResponseEndpoint() throws Exception {
+        return new AbstractDomPayloadEndpoint() {
 
             protected Element invokeInternal(Element requestElement, Document document) throws Exception {
-                assertEquals("Invalid request element", "request", requestElement.getNodeName());
                 return null;
             }
-
         };
-        Source response = endpoint.invoke(request);
-        assertNull("Invalid response", response);
     }
 
-    public void testInvokeInternal() throws Exception {
-        AbstractDomPayloadEndpoint endpoint = new AbstractDomPayloadEndpoint() {
+    protected PayloadEndpoint createResponseEndpoint() throws Exception {
+        return new AbstractDomPayloadEndpoint() {
 
-            protected Element invokeInternal(Element requestElement, Document document) throws Exception {
-                assertEquals("Invalid request element", "request", requestElement.getNodeName());
-                return document.createElement("response");
+            protected Element invokeInternal(Element requestElement, Document responseDocument) throws Exception {
+                assertNotNull("No requestElement passed", requestElement);
+                assertNotNull("No responseDocument passed", responseDocument);
+                assertEquals("Invalid request element", REQUEST_ELEMENT, requestElement.getLocalName());
+                assertEquals("Invalid request element", NAMESPACE_URI, requestElement.getNamespaceURI());
+                return responseDocument.createElementNS(NAMESPACE_URI, RESPONSE_ELEMENT);
             }
         };
-
-        Source request = new StringSource("<request/>");
-        Source response = endpoint.invoke(request);
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        StringResult result = new StringResult();
-        transformer.transform(response, result);
-        assertXMLEqual("Invalid response", "<response/>", result.toString());
     }
+
 
 }

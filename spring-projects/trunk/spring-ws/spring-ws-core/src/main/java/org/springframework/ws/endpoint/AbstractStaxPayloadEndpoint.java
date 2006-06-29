@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
  * @see XMLInputFactory
  * @see XMLOutputFactory
  */
-public abstract class AbstractStaxPayloadEndpoint {
+public abstract class AbstractStaxPayloadEndpoint extends TransformerObjectSupport {
 
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -41,7 +41,7 @@ public abstract class AbstractStaxPayloadEndpoint {
     /**
      * Returns an <code>XMLInputFactory</code> to read XML from.
      */
-    protected XMLInputFactory getInputFactory() {
+    protected final XMLInputFactory getInputFactory() {
         if (inputFactory == null) {
             inputFactory = createXmlInputFactory();
         }
@@ -51,7 +51,7 @@ public abstract class AbstractStaxPayloadEndpoint {
     /**
      * Returns an <code>XMLOutputFactory</code> to write XML to.
      */
-    public XMLOutputFactory getOutputFactory() {
+    protected final XMLOutputFactory getOutputFactory() {
         if (outputFactory == null) {
             outputFactory = createXmlOutputFactory();
         }

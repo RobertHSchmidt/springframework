@@ -16,75 +16,65 @@
 
 package org.springframework.ws.endpoint;
 
+import java.util.Collections;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.stream.util.XMLEventConsumer;
-
-import org.custommonkey.xmlunit.XMLTestCase;
-
-import org.springframework.ws.mock.MockMessageContext;
-import org.springframework.ws.mock.MockWebServiceMessage;
 
 /**
  * Test case for AbstractStaxEventPayloadEndpoint.
  *
  * @see AbstractStaxEventPayloadEndpoint
  */
-public class StaxEventPayloadEndpointTest extends XMLTestCase {
+public class StaxEventPayloadEndpointTest extends AbstractMessageEndpointTestCase {
 
-    public void testInvoke() throws Exception {
-        AbstractStaxEventPayloadEndpoint endpoint = new AbstractStaxEventPayloadEndpoint() {
-
+    protected MessageEndpoint createNoResponseEndpoint() {
+        return new AbstractStaxEventPayloadEndpoint() {
             protected void invokeInternal(XMLEventReader eventReader,
                                           XMLEventConsumer eventWriter,
-                                          XMLEventFactory eventFactory) throws XMLStreamException {
-                assertTrue("eventReader has not next element", eventReader.hasNext());
-                XMLEvent event = eventReader.nextEvent();
-                assertTrue("Not a start document", event.isStartDocument());
-                event = eventReader.nextEvent();
-                assertTrue("Not a start element", event.isStartElement());
-                assertEquals("Invalid start event", "request", event.asStartElement().getName().getLocalPart());
-                assertTrue("eventReader has not next element", eventReader.hasNext());
-                event = eventReader.nextEvent();
-                assertTrue("Not a end element", event.isEndElement());
-                assertEquals("Invalid end event", "request", event.asEndElement().getName().getLocalPart());
-                eventWriter.add(eventFactory.createStartElement(new QName("response"), null, null));
-                eventWriter.add(eventFactory.createEndElement(new QName("response"), null));
+                                          XMLEventFactory eventFactory) throws Exception {
             }
-
         };
-        MockMessageContext context = new MockMessageContext("<request/>");
-        endpoint.invoke(context);
-        assertNotNull("No response created", context.getResponse());
-        MockWebServiceMessage response = (MockWebServiceMessage) context.getResponse();
-        assertXMLEqual("Invalid response", "<response/>", response.getPayloadAsString());
     }
 
-    public void testInvokeNoResponse() throws Exception {
-        AbstractStaxEventPayloadEndpoint endpoint = new AbstractStaxEventPayloadEndpoint() {
+    protected MessageEndpoint createResponseEndpoint() {
+        return new AbstractStaxEventPayloadEndpoint() {
 
             protected void invokeInternal(XMLEventReader eventReader,
                                           XMLEventConsumer eventWriter,
                                           XMLEventFactory eventFactory) throws XMLStreamException {
+                assertNotNull("eventReader not given", eventReader);
+                assertNotNull("eventWriter not given", eventWriter);
+                assertNotNull("eventFactory not given", eventFactory);
                 assertTrue("eventReader has not next element", eventReader.hasNext());
                 XMLEvent event = eventReader.nextEvent();
                 assertTrue("Not a start document", event.isStartDocument());
                 event = eventReader.nextEvent();
                 assertTrue("Not a start element", event.isStartElement());
-                assertEquals("Invalid start event", "request", event.asStartElement().getName().getLocalPart());
+                assertEquals("Invalid start event local name", REQUEST_ELEMENT,
+                        event.asStartElement().getName().getLocalPart());
+                assertEquals("Invalid start event namespace", NAMESPACE_URI,
+                        event.asStartElement().getName().getNamespaceURI());
                 assertTrue("eventReader has not next element", eventReader.hasNext());
                 event = eventReader.nextEvent();
                 assertTrue("Not a end element", event.isEndElement());
-                assertEquals("Invalid end event", "request", event.asEndElement().getName().getLocalPart());
+                assertEquals("Invalid end event local name", REQUEST_ELEMENT,
+                        event.asEndElement().getName().getLocalPart());
+                assertEquals("Invalid end event namespace", NAMESPACE_URI,
+                        event.asEndElement().getName().getNamespaceURI());
+                Namespace namespace = eventFactory.createNamespace(NAMESPACE_URI);
+                QName name = new QName(NAMESPACE_URI, RESPONSE_ELEMENT);
+                eventWriter
+                        .add(eventFactory.createStartElement(name, null, Collections.singleton(namespace).iterator()));
+                eventWriter.add(eventFactory.createEndElement(name, Collections.singleton(namespace).iterator()));
+                eventWriter.add(eventFactory.createEndDocument());
             }
-
         };
-        MockMessageContext context = new MockMessageContext("<request/>");
-        endpoint.invoke(context);
-        assertFalse("Response created", context.hasResponse());
     }
 
 

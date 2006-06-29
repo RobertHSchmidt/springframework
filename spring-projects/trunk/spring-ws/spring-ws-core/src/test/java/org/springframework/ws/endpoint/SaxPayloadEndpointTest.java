@@ -16,70 +16,56 @@
 
 package org.springframework.ws.endpoint;
 
-import java.io.StringReader;
-
 import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
-import junit.framework.TestCase;
-import org.easymock.MockControl;
+import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
-public class SaxPayloadEndpointTest extends TestCase {
+import org.springframework.xml.transform.StringSource;
 
-    private MySaxPayloadEndpoint endpoint;
+public class SaxPayloadEndpointTest extends AbstractPayloadEndpointTestCase {
 
-    private MockControl contentHandlerControl;
+    protected PayloadEndpoint createNoResponseEndpoint() throws Exception {
+        return new AbstractSaxPayloadEndpoint() {
 
-    private ContentHandler contentHandlerMock;
+            protected Source getResponse(ContentHandler contentHandler) {
+                return null;
+            }
 
-    protected void setUp() throws Exception {
-        contentHandlerControl = MockControl.createStrictControl(ContentHandler.class);
-        contentHandlerMock = (ContentHandler) contentHandlerControl.getMock();
-        endpoint = new MySaxPayloadEndpoint(contentHandlerMock);
+            protected ContentHandler createContentHandler() {
+                return new DefaultHandler();
+            }
+        };
     }
 
-    public void testInvoke() throws Exception {
-        Source requestSource = new StreamSource(new StringReader("<request/>"));
-        Source responseSource = new StreamSource(new StringReader("<response/>"));
-        endpoint.setResponse(responseSource);
+    protected PayloadEndpoint createResponseEndpoint() throws Exception {
+        return new AbstractSaxPayloadEndpoint() {
 
-        contentHandlerMock.setDocumentLocator(null);
-        contentHandlerControl.setMatcher(MockControl.ALWAYS_MATCHER);
-        contentHandlerMock.startDocument();
-        contentHandlerMock.startElement("", "request", "request", null);
-        contentHandlerControl.setMatcher(MockControl.ALWAYS_MATCHER);
-        contentHandlerMock.endElement("", "request", "request");
-        contentHandlerMock.endDocument();
-        contentHandlerControl.replay();
-        Source result = endpoint.invoke(requestSource);
-        contentHandlerControl.verify();
-        assertEquals("Invalid response", responseSource, result);
+            protected ContentHandler createContentHandler() {
+                return new TestContentHandler();
+            }
+
+            protected Source getResponse(ContentHandler contentHandler) {
+                return new StringSource(RESPONSE);
+            }
+        };
     }
 
-    private class MySaxPayloadEndpoint extends AbstractSaxPayloadEndpoint {
+    private static class TestContentHandler extends DefaultHandler {
 
-        private ContentHandler contentHandler;
-
-        private Source response;
-
-        public MySaxPayloadEndpoint(ContentHandler contentHandler) {
-            this.contentHandler = contentHandler;
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            assertEquals("Invalid local name", REQUEST_ELEMENT, localName);
+            assertEquals("Invalid qName", REQUEST_ELEMENT, localName);
+            assertEquals("Invalid namespace", NAMESPACE_URI, uri);
         }
 
-        public void setResponse(Source response) {
-            this.response = response;
+        public void startElement(String uri, String localName, String qName, Attributes attributes)
+                throws SAXException {
+            assertEquals("Invalid local name", REQUEST_ELEMENT, localName);
+            assertEquals("Invalid qName", REQUEST_ELEMENT, localName);
+            assertEquals("Invalid namespace", NAMESPACE_URI, uri);
         }
-
-        protected Source getResponse(ContentHandler contentHandler) {
-            assertEquals("Invalid contentHandler", this.contentHandler, contentHandler);
-            return response;
-        }
-
-        protected ContentHandler createContentHandler() {
-            return contentHandler;
-        }
-
     }
-
 }

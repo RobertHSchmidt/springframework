@@ -16,49 +16,29 @@
 
 package org.springframework.ws.endpoint;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-
-import org.custommonkey.xmlunit.XMLTestCase;
 import org.jdom.Element;
+import org.jdom.Namespace;
 
-import org.springframework.xml.transform.StringResult;
-import org.springframework.xml.transform.StringSource;
+public class JDomPayloadEndpointTest extends AbstractPayloadEndpointTestCase {
 
-public class JDomPayloadEndpointTest extends XMLTestCase {
-
-    public void testInvokeInternalNullResponse() throws Exception {
-        Source request = new StringSource("<request xmlns='namespace'/>");
-        AbstractJDomPayloadEndpoint endpoint = new AbstractJDomPayloadEndpoint() {
+    protected PayloadEndpoint createNoResponseEndpoint() throws Exception {
+        return new AbstractJDomPayloadEndpoint() {
 
             protected Element invokeInternal(Element requestElement) throws Exception {
-                assertEquals("Invalid request element", "request", requestElement.getName());
-                assertEquals("Invalid request element", "namespace", requestElement.getNamespaceURI());
                 return null;
             }
-
         };
-        Source response = endpoint.invoke(request);
-        assertNull("Invalid response", response);
     }
 
-    public void testInvokeInternal() throws Exception {
-        AbstractJDomPayloadEndpoint endpoint = new AbstractJDomPayloadEndpoint() {
+    protected PayloadEndpoint createResponseEndpoint() throws Exception {
+        return new AbstractJDomPayloadEndpoint() {
 
             protected Element invokeInternal(Element requestElement) throws Exception {
-                assertEquals("Invalid request element", "request", requestElement.getName());
-                assertEquals("Invalid request element", "namespace", requestElement.getNamespaceURI());
-                return new Element("response", "prefix", "namespace");
+                assertNotNull("No requestElement passed", requestElement);
+                assertEquals("Invalid request element", REQUEST_ELEMENT, requestElement.getName());
+                assertEquals("Invalid request element", NAMESPACE_URI, requestElement.getNamespaceURI());
+                return new Element(RESPONSE_ELEMENT, Namespace.getNamespace("tns", NAMESPACE_URI));
             }
         };
-
-        Source request = new StringSource("<request xmlns='namespace'/>");
-        Source response = endpoint.invoke(request);
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        StringResult result = new StringResult();
-        transformer.transform(response, result);
-        assertXMLEqual("Invalid response", "<prefix:response xmlns:prefix='namespace'/>", result.toString());
     }
-
 }
