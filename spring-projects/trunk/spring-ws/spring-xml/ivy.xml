@@ -18,8 +18,12 @@
         <dependency org="apache" name="commons-logging" rev="1.0.4"/>
         <dependency org="org.springframework" name="spring-core" rev="1.2.8"/>
         <dependency org="org.springframework" name="spring-beans" rev="1.2.8"/>
-        <dependency org="stax" name="stax-api" rev="1.0" />
+        <dependency org="stax" name="stax-api" rev="1.0"/>
         <!--  optional dependencies -->
+        <dependency org="xalan" name="xalan" rev="2.7.0" conf="buildtime,optional->default">
+            <exclude org="xml-apis" name="xml-apis"/>
+            <exclude org="xerces" name="xercesImpl"/>
+        </dependency>
         <dependency org="jaxen" name="jaxen" rev="1.1-beta-8" conf="buildtime,optional->default">
             <exclude name="dom4j"/>
             <exclude name="jdom"/>

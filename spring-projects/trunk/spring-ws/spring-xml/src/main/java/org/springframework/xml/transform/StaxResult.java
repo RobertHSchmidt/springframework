@@ -16,6 +16,7 @@
 
 package org.springframework.xml.transform;
 
+import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.util.XMLEventConsumer;
 import javax.xml.transform.sax.SAXResult;
@@ -46,7 +47,7 @@ import org.springframework.xml.stream.StaxStreamContentHandler;
  */
 public class StaxResult extends SAXResult {
 
-    private XMLEventConsumer eventConsumer;
+    private XMLEventWriter eventWriter;
 
     private XMLStreamWriter streamWriter;
 
@@ -61,24 +62,24 @@ public class StaxResult extends SAXResult {
     }
 
     /**
-     * Constructs a new instance of the <code>StaxResult</code> with the specified <code>XMLEventConsumer</code>.
+     * Constructs a new instance of the <code>StaxResult</code> with the specified <code>XMLEventWriter</code>.
      *
-     * @param eventConsumer the <code>XMLEventConsumer</code> to write to
+     * @param eventWriter the <code>XMLEventWriter</code> to write to
      */
-    public StaxResult(XMLEventConsumer eventConsumer) {
-        super.setHandler(new StaxEventContentHandler(eventConsumer));
-        this.eventConsumer = eventConsumer;
+    public StaxResult(XMLEventWriter eventWriter) {
+        super.setHandler(new StaxEventContentHandler(eventWriter));
+        this.eventWriter = eventWriter;
     }
 
     /**
-     * Returns the <code>XMLEventConsumer</code> used by this <code>StaxResult</code>. If this <code>StaxResult</code>
-     * was created with an <code>XMLStreamWriter</code>, the result will be <code>null</code>.
+     * Returns the <code>XMLEventWriter</code> used by this <code>StaxResult</code>. If this <code>StaxResult</code> was
+     * created with an <code>XMLStreamWriter</code>, the result will be <code>null</code>.
      *
      * @return the StAX event writer used by this result
-     * @see #StaxResult(javax.xml.stream.util.XMLEventConsumer)
+     * @see #StaxResult(javax.xml.stream.XMLEventWriter)
      */
-    public XMLEventConsumer getXMLEventConsumer() {
-        return eventConsumer;
+    public XMLEventWriter getXMLEventWriter() {
+        return eventWriter;
     }
 
     /**
