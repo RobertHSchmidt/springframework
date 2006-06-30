@@ -30,6 +30,7 @@ import org.springframework.beans.factory.InitializingBean;
  * Typical usage will be to set XMLBeans options on this bean, and refer to it in the <code>XmlBeansMarshaller</code>.
  *
  * @author Arjen Poutsma
+ * @see XmlOptions
  * @see #setOptions(java.util.Map)
  * @see XmlBeansMarshaller#setXmlOptions(org.apache.xmlbeans.XmlOptions)
  */
