@@ -5,16 +5,21 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.xmlbeans.XmlError;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlSaxHandler;
+import org.apache.xmlbeans.XmlValidationError;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -27,24 +32,40 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
 
 import org.springframework.oxm.AbstractMarshaller;
-import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.XmlMappingException;
 import org.springframework.xml.stream.StaxEventContentHandler;
 import org.springframework.xml.stream.StaxEventXmlReader;
 import org.springframework.xml.stream.StaxStreamContentHandler;
 
 /**
- * Implementation of the <code>Marshaller</code> interface for XMLBeans.
+ * Implementation of the <code>Marshaller</code> interface for XMLBeans. Further options can be set by setting the
+ * <code>xmlOptions</code> property. A <code>XmlOptionsFactoryBean</code> is provided to easily wire up
+ * <code>XmlObjects</code> instances.
+ * <p/>
+ * Unmarshalled objects can be validated by setting the <code>validating</code> property, or by calling the
+ * <code>validiate()</code> method directly. Invalid objects will result in an <code>XmlBeansValidationFailureException</code>.
  * <p/>
  * <strong>Note</strong> that due to the nature of XMLBeans, this marshaller requires all passed objects to be of type
  * <code>XmlObject</code>.
  *
  * @author Arjen Poutsma
+ * @see #setXmlOptions(org.apache.xmlbeans.XmlOptions)
+ * @see XmlOptionsFactoryBean
+ * @see #setValidating(boolean)
  * @see org.apache.xmlbeans.XmlObject
  */
-public class XmlBeansMarshaller extends AbstractMarshaller implements Marshaller {
+public class XmlBeansMarshaller extends AbstractMarshaller {
 
     private XmlOptions xmlOptions;
+
+    private boolean validating = false;
+
+    /**
+     * Set if this marshaller should validate the incoming document. Default is <code>false</code>.
+     */
+    public void setValidating(boolean validating) {
+        this.validating = validating;
+    }
 
     /**
      * Sets the <code>XmlOptions</code>.
@@ -116,7 +137,9 @@ public class XmlBeansMarshaller extends AbstractMarshaller implements Marshaller
 
     protected Object unmarshalDomNode(Node node) throws XmlMappingException {
         try {
-            return XmlObject.Factory.parse(node, xmlOptions);
+            XmlObject object = XmlObject.Factory.parse(node, xmlOptions);
+            validate(object);
+            return object;
         }
         catch (XmlException ex) {
             throw convertXmlBeansException(ex, false);
@@ -125,7 +148,9 @@ public class XmlBeansMarshaller extends AbstractMarshaller implements Marshaller
 
     protected Object unmarshalInputStream(InputStream inputStream) throws XmlMappingException, IOException {
         try {
-            return XmlObject.Factory.parse(inputStream, xmlOptions);
+            XmlObject object = XmlObject.Factory.parse(inputStream, xmlOptions);
+            validate(object);
+            return object;
         }
         catch (XmlException ex) {
             throw convertXmlBeansException(ex, false);
@@ -134,7 +159,9 @@ public class XmlBeansMarshaller extends AbstractMarshaller implements Marshaller
 
     protected Object unmarshalReader(Reader reader) throws XmlMappingException, IOException {
         try {
-            return XmlObject.Factory.parse(reader, xmlOptions);
+            XmlObject object = XmlObject.Factory.parse(reader, xmlOptions);
+            validate(object);
+            return object;
         }
         catch (XmlException ex) {
             throw convertXmlBeansException(ex, false);
@@ -154,7 +181,9 @@ public class XmlBeansMarshaller extends AbstractMarshaller implements Marshaller
         }
         try {
             xmlReader.parse(inputSource);
-            return saxHandler.getObject();
+            XmlObject object = saxHandler.getObject();
+            validate(object);
+            return object;
         }
         catch (SAXException ex) {
             throw convertXmlBeansException(ex, false);
@@ -164,7 +193,7 @@ public class XmlBeansMarshaller extends AbstractMarshaller implements Marshaller
         }
     }
 
-    protected Object unmarshalXmlEventReader(XMLEventReader eventReader) {
+    protected Object unmarshalXmlEventReader(XMLEventReader eventReader) throws XmlMappingException {
         XMLReader reader = new StaxEventXmlReader(eventReader);
         try {
             return unmarshalSaxReader(reader, new InputSource());
@@ -174,12 +203,41 @@ public class XmlBeansMarshaller extends AbstractMarshaller implements Marshaller
         }
     }
 
-    protected Object unmarshalXmlStreamReader(XMLStreamReader streamReader) {
+    protected Object unmarshalXmlStreamReader(XMLStreamReader streamReader) throws XmlMappingException {
         try {
-            return XmlObject.Factory.parse(streamReader, xmlOptions);
+            XmlObject object = XmlObject.Factory.parse(streamReader, xmlOptions);
+            validate(object);
+            return object;
         }
         catch (XmlException ex) {
             throw convertXmlBeansException(ex, false);
+        }
+    }
+
+    /**
+     * Validates the given <code>XmlObject</code>.
+     *
+     * @param object the xml object to validate
+     * @throws XmlBeansValidationFailureException
+     *          if the given object is not valid
+     */
+    public void validate(XmlObject object) throws XmlBeansValidationFailureException {
+        if (validating && object != null) {
+            // create a temporary xmlOptions just for validation
+            XmlOptions validateOptions = (xmlOptions != null) ? xmlOptions : new XmlOptions();
+            List errorsList = new ArrayList();
+            validateOptions.setErrorListener(errorsList);
+            if (!object.validate(validateOptions)) {
+                StringBuffer buffer = new StringBuffer("Could not validate XmlObject :");
+                for (Iterator iterator = errorsList.iterator(); iterator.hasNext();) {
+                    XmlError xmlError = (XmlError) iterator.next();
+                    if (xmlError instanceof XmlValidationError) {
+                        buffer.append(xmlError.toString());
+                    }
+                }
+                XmlException ex = new XmlException(buffer.toString(), null, errorsList);
+                throw new XmlBeansValidationFailureException(ex);
+            }
         }
     }
 }

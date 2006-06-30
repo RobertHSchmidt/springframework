@@ -20,6 +20,7 @@ import org.springframework.oxm.Unmarshaller;
 import org.springframework.samples.flight.FlightType;
 import org.springframework.samples.flight.FlightsDocument;
 import org.springframework.samples.flight.FlightsDocument.Flights;
+import org.springframework.xml.transform.StringSource;
 
 public class XmlBeansUnmarshallerTest extends AbstractUnmarshallerTestCase {
 
@@ -35,6 +36,22 @@ public class XmlBeansUnmarshallerTest extends AbstractUnmarshallerTestCase {
         FlightType flight = flights.getFlightArray(0);
         assertNotNull("Flight is null", flight);
         assertEquals("Number is invalid", 42L, flight.getNumber());
+    }
+
+    public void testValidate() throws Exception {
+        ((XmlBeansMarshaller) unmarshaller).setValidating(true);
+        String invalidInput = "<tns:flights xmlns:tns=\"http://samples.springframework.org/flight\">" +
+                "<tns:flight><tns:number>abc</tns:number></tns:flight></tns:flights>";
+
+        try {
+            unmarshaller.unmarshal(new StringSource(invalidInput));
+            fail("Expected a XmlBeansValidationFailureException");
+        }
+        catch (XmlBeansValidationFailureException ex) {
+            // expected
+        }
+
+
     }
 
 }
