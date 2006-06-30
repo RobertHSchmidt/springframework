@@ -64,20 +64,3 @@ namespace Spring.Ws.Samples.Airline.Client.CSharp {
 		}
 	}
 }
-} {1}", name.first, name.last);
-			Console.WriteLine("------------");
-		}
-
-		private static void WriteFlight(Flight flight) {
-			Console.WriteLine("{0:d}", flight.departureTime);
-			Console.WriteLine("{0}\t{1}", flight.number, flight.serviceClass);
-			Console.WriteLine("------------");
-			Console.WriteLine("Depart:\t{0}-{1}\t{2:t}", flight.from.code, flight.from.name,
-				flight.departureTime);
-			Console.WriteLine("\t{0}", flight.from.city);
-			Console.WriteLine("Arrive:\t{0}-{1}\t{2:t}", flight.to.code, flight.to.name,
-				flight.arrivalTime);
-			Console.WriteLine("\t{0}", flight.to.city);
-		}
-	}
-}

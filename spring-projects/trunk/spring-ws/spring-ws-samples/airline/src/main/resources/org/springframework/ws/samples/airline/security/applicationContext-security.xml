@@ -37,7 +37,10 @@
             </props>
         </property>
         <property name="interceptors">
-            <ref local="wsSecurityInterceptor"/>
+            <list>
+                <bean class="org.springframework.ws.soap.endpoint.SoapEnvelopeLoggingInterceptor"/>
+                <ref local="wsSecurityInterceptor"/>
+            </list>
         </property>
     </bean>
 
