@@ -44,7 +44,7 @@ public class MessageHandlerAdapter implements HandlerAdapter, InitializingBean {
     /**
      * Default content type. Normally retrieved from the <code>SoapVersion</code>.
      *
-     * @see org.springframework.ws.soap.SoapVersion.getContentType()
+     * @see org.springframework.ws.soap.SoapVersion#getContentType()
      */
     public static final String DEFAULT_CONTENT_TYPE = "text/xml";
 
