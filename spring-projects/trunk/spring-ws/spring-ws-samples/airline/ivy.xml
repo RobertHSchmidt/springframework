@@ -7,9 +7,6 @@
         <conf name="global" visibility="private"/>
         <conf name="buildtime" visibility="private"/>
         <conf name="test" visibility="private"/>
-        <!-- public configurations other projects may use -->
-        <conf name="saaj" visibility="public" extends="global"/>
-        <conf name="axiom" visibility="public" extends="global"/>
     </configurations>
 
     <dependencies defaultconf="global->default">
@@ -23,6 +20,16 @@
         <dependency org="jdom" name="jdom" rev="1.0"/>
         <dependency org="mysql" name="mysql-connector-java" rev="3.1.11"/>
         <dependency org="postgresql" name="postgresql" rev="8.1-404.jdbc3"/>
+        <dependency org="jaxen" name="jaxen" rev="1.1-beta-8">
+            <exclude name="dom4j"/>
+            <exclude name="xml-apis"/>
+            <exclude name="xmlParserAPIs"/>
+            <exclude name="xercesImpl"/>
+            <exclude name="xom"/>
+            <exclude name="xalan"/>
+            <exclude name="icu4j"/>
+            <exclude name="tagsoup"/>
+        </dependency>
 
         <!-- acegi depencies -->
         <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.0">
@@ -40,9 +47,9 @@
 
         <dependency org="org.springframework" name="spring-oxm" rev="latest.integration" conf="global->default,jaxb1"/>
         <dependency org="org.springframework" name="spring-ws-core" rev="latest.integration"
-                    conf="global->default,saaj"/>
+                    conf="global->saaj"/>
         <dependency org="org.springframework" name="spring-ws-security" rev="latest.integration"
-                    conf="global->default,xwss"/>
+                    conf="global->xwss"/>
 
         <!--  build time dependencies -->
         <dependency org="javax.xml" name="jaxb-xjc" rev="2.0.1" conf="buildtime->default"/>
