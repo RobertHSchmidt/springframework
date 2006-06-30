@@ -18,20 +18,30 @@ package org.springframework.oxm.xstream;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
 
+import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.converters.extended.EncodedByteArrayConverter;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.easymock.MockControl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import org.xml.sax.ContentHandler;
+
+import org.springframework.xml.transform.StaxResult;
+import org.springframework.xml.transform.StringResult;
+import org.springframework.xml.transform.StringSource;
 
 public class XStreamMarshallerTest extends XMLTestCase {
 
@@ -98,4 +108,35 @@ public class XStreamMarshallerTest extends XMLTestCase {
         marshaller.marshal(flight, result);
         handlerControl.verify();
     }
+
+    public void testMarshalStaxResultXMLStreamWriter() throws Exception {
+        XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+        StringWriter writer = new StringWriter();
+        XMLStreamWriter streamWriter = outputFactory.createXMLStreamWriter(writer);
+        StaxResult result = new StaxResult(streamWriter);
+        marshaller.marshal(flight, result);
+        assertXMLEqual("Marshaller writes invalid StreamResult", EXPECTED_STRING, writer.toString());
+    }
+
+    public void testMarshalStaxResultXMLEventWriter() throws Exception {
+        XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+        StringWriter writer = new StringWriter();
+        XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(writer);
+        StaxResult result = new StaxResult(eventWriter);
+        marshaller.marshal(flight, result);
+        assertXMLEqual("Marshaller writes invalid StreamResult", EXPECTED_STRING, writer.toString());
+    }
+
+    public void testConverters() throws Exception {
+        marshaller.setConverters(new Converter[]{new EncodedByteArrayConverter()});
+        byte[] buf = new byte[]{0x1, 0x2};
+        StringResult result = new StringResult();
+        marshaller.marshal(buf, result);
+        assertXMLEqual("<byte-array>AQI=</byte-array>", result.toString());
+        StringSource source = new StringSource(result.toString());
+        byte[] bufResult = (byte[]) marshaller.unmarshal(source);
+        assertTrue("Invalid result", Arrays.equals(buf, bufResult));
+    }
+
+
 }

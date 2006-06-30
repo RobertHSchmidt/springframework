@@ -7,6 +7,9 @@ Changes in version 1.0-M2
 Package org.springframework.oxm
 * all marshallers support StaxSources now (#SWS-36)
 
+Package org.springframework.oxm.xstream
+* added support for registering custom Converters (#SWS-34)
+
 Pacakge org.springframework.ws.endpoint
 * improved endpoint test suite
 * AbstractStaxPayloadEndpoint now use StaxSource corrently (#SWS-38)

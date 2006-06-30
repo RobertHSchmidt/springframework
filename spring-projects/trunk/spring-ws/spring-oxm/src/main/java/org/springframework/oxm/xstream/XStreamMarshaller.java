@@ -33,6 +33,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.CompactWriter;
@@ -72,6 +73,7 @@ import org.springframework.xml.stream.StaxEventXmlReader;
  * @see #setEncoding(String)
  * @see #DEFAULT_ENCODING
  * @see #setAliases(java.util.Map)
+ * @see #setConverters(com.thoughtworks.xstream.converters.Converter[])
  */
 public class XStreamMarshaller extends AbstractMarshaller {
 
@@ -100,6 +102,26 @@ public class XStreamMarshaller extends AbstractMarshaller {
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
+    }
+
+    /**
+     * Sets the XStream mode.
+     *
+     * @see XStream#XPATH_REFERENCES
+     * @see XStream#ID_REFERENCES
+     * @see XStream#NO_REFERENCES
+     */
+    public void setMode(int mode) {
+        xstream.setMode(mode);
+    }
+
+    /**
+     * Sets the <code>Converters</code> to be registered with the <code>XStream</code> instance.
+     */
+    public void setConverters(Converter[] converters) {
+        for (int i = 0; i < converters.length; i++) {
+            xstream.registerConverter(converters[i]);
+        }
     }
 
     /**
