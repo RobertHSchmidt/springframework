@@ -16,6 +16,7 @@
 package org.springframework.oxm.xmlbeans;
 
 import org.apache.xmlbeans.XMLStreamValidationException;
+import org.apache.xmlbeans.XmlException;
 
 import org.springframework.oxm.ValidationFailureException;
 
@@ -31,4 +32,7 @@ public class XmlBeansValidationFailureException extends ValidationFailureExcepti
         super("XmlBeans validation exception: " + ex.getMessage(), ex);
     }
 
+    public XmlBeansValidationFailureException(XmlException ex) {
+        super("XmlBeans validation exception: " + ex.getMessage(), ex);
+    }
 }
