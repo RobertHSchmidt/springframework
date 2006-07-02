@@ -99,18 +99,20 @@
 
 <!--
 	The source value type.  If the source type differs from the target type a type conversion
-	will be performed.  The type may be an alias (e.g 'string') or a fully-qualified class (e.g. 'java.lang.String').
+	will be performed.  The type may be an alias (e.g 'string') or a fully-qualified class
+	(e.g. 'java.lang.String').
 -->
 <!ATTLIST mapping from CDATA #IMPLIED>
 
 <!--
 	The target value type.  If the source type differs from the target type a type conversion
-	will be performed.  The type may be an alias (e.g 'int') or a fully-qualified class (e.g. 'java.lang.Integer').
+	will be performed.  The type may be an alias (e.g 'int') or a fully-qualified class
+	(e.g. 'java.lang.Integer').
 -->
 <!ATTLIST mapping to CDATA #IMPLIED>
 
 <!--
-	An attribute about this element.
+	An attribute for the containing element.
 	
 	Attributes are simple strings or typed values that allow you to annotate an element with metadata.
 	For example:
@@ -141,7 +143,7 @@
 <!ELEMENT value ( #PCDATA )>
 
 <!--
-	A flow variable definition.  Flow variables are automatically created in "flow scope" 
+	A flow variable definition.  Flow variables are automatically created 
 	when an execution of this flow starts.
 -->
 <!ELEMENT var EMPTY>
@@ -158,13 +160,13 @@
 	This scope of this variable.  The available scope types are:
 	
 	1. request
-	    - the variable goes out of scope when a call to start the flow completes.
+	    - The variable goes out of scope when a call to start the flow completes.
 	2. flow
-	    - the variable goes out of scope when the flow session ends.  For example, if a
+	    - The variable goes out of scope when the flow session ends.  For example, if a
 	      flow spawns another flow as a subflow and that subflow allocates flow-scoped
 	      variables, those variables will be cleaned up when the subflow ends.
 	3. conversation
-	    - the variable goes out of scope when the overall conversation governing the 
+	    - The variable goes out of scope when the overall conversation governing the 
 	      flow execution ends.
 	
 	The 'default' value is flow scope.
@@ -248,7 +250,7 @@
 	on the referenced action bean.
 	
 	If this action bean extends org.springframework.webflow.action.MultiAction,
-	the expression is simply a static method name.
+	the expression is simply an action execution method name.
 
     For example:
         <action bean="formAction" method="setupForm"/>
@@ -295,14 +297,14 @@
     The available scope types are:
     
 	1. request
-	    - the result goes out of scope when the call into the flow that invoked this method completes.
+	    - The result goes out of scope when the call into the flow that invoked this method completes.
 	2. flow
-	    - the result goes out of scope when the flow session ends.  For example, if a
+	    - The result goes out of scope when the flow session ends.  For example, if a
 	      flow spawns another flow as a subflow and that subflow invokes a method that 
 	      exposes a result in "flow scope", that result will be cleaned up when
 	      the subflow ends.
 	3. conversation
-	    - the result goes out of scope when the overall conversation governing this flow 
+	    - The result goes out of scope when the overall conversation governing this flow 
 	      execution ends.
 	      
     The default value if not specified is request scope.     
@@ -397,6 +399,10 @@
 	External redirect query parameters may be specified using ${expressions} that evaluate
 	against the request context. For example:
 	    "externalRedirect:/someOtherSystem.htm?orderId=${flowScope.order.id}"
+	    
+	Use of the "flowRedirect:" prefix has this view state generate a redirect to a URL
+	that launches a new flow execution of an identified flow. For example:
+		"flowRedirect:editOrderFlow?orderId=${flowScope.order.id}"
 	
 	Use of the "bean:" prefix references a custom ViewSelector implementation you define,
 	exposed by id in either a flow-local context using the "import" element or in the parent 
@@ -450,7 +456,7 @@
 
 <!--
 	A transition specification that defines a boolean expression to evaluate when this state
-	is entered and a state to transition to if that	expression evaluates to true.
+	is entered and a state to transition to if that expression evaluates to true.
 	Optionally, this element may also define an 'else' attribute to define a state to
 	transition to if the expression evaluates to false.
 
@@ -514,6 +520,31 @@
 
 <!--
 	Defines an attribute mapper to map attributes to and from the subflow.
+	
+	Note that in the case of an attribute-mapper, the input-mapper and output-mapper
+	elements have slightly different characteristics than when used to define
+	a flow input or output mapper.
+
+	For the subflow input mapper the following mapping characteristics apply:
+	- The 'source' of each input mapping is the RequestContext, exposing access to the central 
+	  parent flow data structures such as flowScope.
+	- The 'target' of each input mapping is the subflow input map.
+	
+	For the subflow output mapper the following mapping characteristics apply:
+	- The 'source' of each output mapping is the subflow output map.
+	- The 'target' of each output mapping is the RequestContext, exposing access to the central
+	  flow data structures of the resuming parent flow, e.g. flowScope.
+	  
+	For example:
+	
+	<attribute-mapper>
+		<input-mapper>
+		    <mapping source="flowScope.myFlowAttribute" target="clientInputAttribute"/>
+		</input-mapper>
+		<output-mapper>
+		    <mapping source="clientOutputAttribute" target="flowScope.myFlowAttribute"/>
+		</output-mapper>
+	</attribute-mapper>
 -->
 <!ELEMENT attribute-mapper ( input-mapper?, output-mapper? )>
 
@@ -532,7 +563,7 @@
 	A end state is not transitionable, there are no transitions out of an end state.
 	When an end-state is entered, a instance of this flow is terminated.
 	
-	When an end state is entered, if the executingflow is a "root" or top-level flow
+	When an end state is entered, if the executing flow is a "root" or top-level flow
 	the entire execution (conversation) is terminated. If the executing flow is a subflow
 	the subflow session ends and the parent session resumes. To resume, the parent session
 	responds to the result of the subflow, typically by reasoning on the id of the end
@@ -546,7 +577,7 @@
 <!ATTLIST end-state id ID #REQUIRED>
 
 <!--
-	The name of the view to to render when this end state is entered.
+	The name of the view to render when this end state is entered.
 	
 	This value may be a static view name or even a direct pointer to a view template. For example:
 	    "priceForm", or "/WEB-INF/jsp/priceForm.jsp"
@@ -555,7 +586,8 @@
 	ViewSelector strategy. Specifically:
 	
 	Use of the "redirect:" prefix triggers a redirect to a specific "after conversation completion"
-	external URL.  For example:
+	external URL. For end states, the "redirect:" prefix is synonymous to "externalRedirect:".
+	For example:
 	    "redirect:/home.html"
 	
 	Redirect query parameters may also be specified using ${expressions} that evaluate against
@@ -618,7 +650,7 @@
 <!ELEMENT exception-handler EMPTY>
 
 <!--
-	The id of a custom exception handler implementation to attach.
+	The bean id of a custom exception handler implementation to attach.
 -->
 <!ATTLIST exception-handler bean CDATA #REQUIRED>
 
