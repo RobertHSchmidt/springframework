@@ -49,7 +49,6 @@ public class LocalFlowServiceRegistry {
 
 	/**
 	 * Create new registry
-	 * @param context the local registry
 	 */
 	public LocalFlowServiceRegistry(Flow flow, Resource[] resources) {
 		this.flow = flow;

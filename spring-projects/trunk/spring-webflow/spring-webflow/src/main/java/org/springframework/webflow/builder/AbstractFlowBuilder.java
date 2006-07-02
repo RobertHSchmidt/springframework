@@ -541,35 +541,34 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * 
 	 * @param method the encoded method signature
 	 * @return the method signature
-	 * @see #action(String, MethodSignature, ResultSpecification)
-	 * 
+	 * @see #action(String, MethodSignature, MethodResultSpecification)
 	 */
 	protected MethodSignature method(String method) {
 		return (MethodSignature)fromStringTo(MethodSignature.class).execute(method);
 	}
 
 	/**
-	 * Factory method for a {@link {@link MethodSignature} method signature}
-	 * {@link {@link ResultSpecification} result specification}.
+	 * Factory method for a {@link MethodSignature method signature}
+	 * {@link MethodResultSpecification result specification}.
 	 * A result specification is used to expose a return value of a POJO invoked 
 	 * as part of a {@link AbstractBeanInvokingAction bean invoking action}.
 	 * @param resultName the result name
 	 * @return the result specification
-	 * @see #action(String, MethodSignature, ResultSpecification)
+	 * @see #action(String, MethodSignature, MethodResultSpecification)
 	 */
 	protected MethodResultSpecification result(String resultName) {
 		return result(resultName, null);
 	}
 
 	/**
-	 * Factory method for a {@link {@link MethodSignature} method signature}
-	 * {@link {@link ResultSpecification} result specification}.
+	 * Factory method for a {@link MethodSignature method signature}
+	 * {@link MethodResultSpecification result specification}.
 	 * A result specification is used to expose a return value of a POJO invoked 
 	 * as part of a {@link AbstractBeanInvokingAction bean invoking action}.
 	 * @param resultName the result name attribute
 	 * @param resultScope the scope of the result
 	 * @return the result specification
-	 * @see #action(String, MethodSignature, ResultSpecification)
+	 * @see #action(String, MethodSignature, MethodResultSpecification)
 	 */
 	protected MethodResultSpecification result(String resultName, ScopeType resultScope) {
 		return new MethodResultSpecification(resultName, resultScope);
