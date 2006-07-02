@@ -37,6 +37,8 @@ import org.springframework.webflow.ViewSelector;
  * be provided the flow execution context necessary to allow it to communicate
  * back to the executing flow at a later time.
  * 
+ * @see org.springframework.webflow.support.ExternalRedirect
+ * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */

@@ -21,6 +21,8 @@ import java.io.Serializable;
 /**
  * Makes a null view selection, indicating no response should be issued.
  * 
+ * @see org.springframework.webflow.ViewSelection#NULL_VIEW
+ * 
  * @author Keith Donald
  */
 public final class NullViewSelector implements ViewSelector, Serializable {
@@ -31,7 +33,6 @@ public final class NullViewSelector implements ViewSelector, Serializable {
 	public static final ViewSelector INSTANCE = new NullViewSelector();
 
 	private NullViewSelector() {
-
 	}
 
 	public ViewSelection makeRefreshSelection(RequestContext context) {

@@ -48,7 +48,7 @@ public abstract class ViewSelection implements Serializable {
 	 * Constant for a <code>null</code> or empty view selection, indicating no
 	 * response should be issued.
 	 */
-	public static final ViewSelection NULL_VIEW = new NullViewSelection();
+	public static final ViewSelection NULL_VIEW = new NullView();
 
 	/**
 	 * The definition of the 'null' view selection type, indicating that no
@@ -56,10 +56,15 @@ public abstract class ViewSelection implements Serializable {
 	 * 
 	 * @author Keith Donald
 	 */
-	private static final class NullViewSelection extends ViewSelection {
+	private static final class NullView extends ViewSelection {
+		
 		// resolve the singleton instance
 		private Object readResolve() throws ObjectStreamException {
 			return NULL_VIEW;
+		}
+		
+		public String toString() {
+			return "nullView";
 		}
 	}
 

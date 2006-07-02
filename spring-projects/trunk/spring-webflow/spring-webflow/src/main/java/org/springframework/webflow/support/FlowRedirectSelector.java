@@ -30,13 +30,15 @@ import org.springframework.webflow.ViewSelector;
  * the flowId and flow input by evaluating an expression against the request
  * context.
  * 
+ * @see org.springframework.webflow.support.FlowRedirect
+ * 
  * @author Keith Donald
  */
 public class FlowRedirectSelector implements ViewSelector {
 
 	/**
 	 * The parsed flow expression, evaluatable to the string format:
-	 * flowId?param1Name=parmValue&param2Name=paramValue
+	 * flowId?param1Name=parmValue&param2Name=paramValue.
 	 */
 	private Expression expression;
 
