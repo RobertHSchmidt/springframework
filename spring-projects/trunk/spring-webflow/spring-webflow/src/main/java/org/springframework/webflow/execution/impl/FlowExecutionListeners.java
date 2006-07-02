@@ -34,7 +34,7 @@ import org.springframework.webflow.execution.FlowExecutionListener;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowExecutionListeners {
+class FlowExecutionListeners {
 
 	/**
 	 * The list of listeners that should receive event callbacks during managed
