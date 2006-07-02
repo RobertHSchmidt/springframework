@@ -335,6 +335,10 @@ public class FlowAction extends ActionSupport {
 	 * @return the action forward, never null
 	 */
 	protected ActionForward findForward(ApplicationView forward, ActionMapping mapping) {
+		// note that this method is always creating a new ActionForward to make
+		// sure that the redirect flag is false -- redirect is controlled by SWF
+		// itself, not Struts
+		
 		ActionForward actionForward = mapping.findForward(forward.getViewName());
 		if (actionForward != null) {
 			// the 1.2.1 copy constructor would ideally be better to
