@@ -11,6 +11,9 @@ Package org.springframework.webflow.builder
 * BaseFlowBuilder now resets its internal flow reference on a call to dispose.
 * FlowAssembler.assembleFlow now returns the constructed flow for clarity. This also clarifies the API in that it is no longer
   required to call getFlow on a FlowBuilder that has already been disposed by the FlowAssembler.
+* Replaced STATE_TYPE_CONTEXT_PARAMETER parameter used by the TextToViewSelector by END_STATE_VIEW_FLAG_PARAMETER which just
+  has a boolean value (a flag). This makes the contract a bit clearer. As a result, the VIEW_STATE_TYPE and END_STATE_TYPE
+  constants in TextToViewSelector were also dropped.
 
 Changes in version 1.0 RC3 (23.6.2006)
 ------------------------------------
