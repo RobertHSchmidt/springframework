@@ -1,0 +1,14 @@
+LDAPTEMPLATE
+
+Release archive table of contents
+---------------------------------------------------
+* build-ldaptemplate - contains master build files to produce this release archive
+* common-build - contains the ant 1.6 "common build system" used by all ldaptemplate projects to compile/build/test
+* dist - contains project distribution units (jars and source zip archives)
+* doc - contains project API JavaDocs
+* repository - contains distribution units (jars) for this project's dependencies
+* ldaptemplate - contains project sources
+* ldaptemplate-person - contains a sample project.
+* ldaptemplate-article - contains source code for an article published on java.net.
+
+See the readme.txt within the above directories for additional information.
