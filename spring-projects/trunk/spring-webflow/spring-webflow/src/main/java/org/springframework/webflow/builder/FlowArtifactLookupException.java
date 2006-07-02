@@ -28,8 +28,8 @@ import org.springframework.webflow.FlowExecutionException;
  * <p>
  * Flow artifact lookup exceptions indicate unrecoverable problems with the flow
  * definition, e.g. a required state of a flow cannot be found. They're not used
- * to signal problems related to execution of a client request. A {@link FlowExecutionException}
- * is used for that.
+ * to signal problems related to execution of a client request. A
+ * {@link FlowExecutionException} is used for that.
  * 
  * @see org.springframework.webflow.FlowExecutionException
  * 

@@ -31,16 +31,16 @@ import org.springframework.webflow.support.FlowRedirectSelector;
 /**
  * Converter that converts an encoded string representation of a view selector
  * into a {@link ViewSelector} object that will make selections at runtime.
- * 
+ * <p>
  * This converter supports the following encoded forms:
  * <ul>
- * <li>"viewName" - will result in a {@link ApplicationViewSelector} that
+ * <li>"viewName" - will result in an {@link ApplicationViewSelector} that
  * returns a ViewSelection with the provided view name expression.</li>
  * <li>"redirect:&lt;viewName&gt;" - will result in a
  * {@link ApplicationViewSelector} that returns a {@link FlowExecutionRedirect}
  * to a flow execution URL.</li>
  * <li>"externalRedirect:&lt;url&gt;" - will result in a
- * {@link ExternalRedirectSelector} that returns a {@link ExternalRedirect} to a
+ * {@link ExternalRedirectSelector} that returns an {@link ExternalRedirect} to a
  * URL.</li>
  * <li>"flowRedirect:&lt;url&gt;" - will result in a
  * {@link FlowRedirectSelector} that returns a {@link FlowRedirect} to a flow.</li>

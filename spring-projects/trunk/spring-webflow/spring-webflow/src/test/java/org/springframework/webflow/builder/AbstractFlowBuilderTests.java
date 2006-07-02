@@ -65,8 +65,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 					BaseFlowBuilder builder = new TestDetailFlowBuilderLookupById();
 					builder.setFlowServiceLocator(this);
 					FlowAssembler assembler = new FlowAssembler(PERSON_DETAILS, builder);
-					assembler.assembleFlow();
-					return builder.getFlow();
+					return assembler.assembleFlow();
 				}
 				else {
 					throw new FlowArtifactLookupException(id, Flow.class);
@@ -88,8 +87,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 		});
 
 		FlowAssembler assembler = new FlowAssembler(PERSONS_LIST, master);
-		assembler.assembleFlow();
-		Flow flow = master.getFlow();
+		Flow flow = assembler.assembleFlow();
 
 		assertEquals("person.List", flow.getId());
 		assertTrue(flow.getStateCount() == 4);

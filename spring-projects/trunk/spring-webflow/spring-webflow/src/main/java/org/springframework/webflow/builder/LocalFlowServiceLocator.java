@@ -33,6 +33,7 @@ import org.springframework.webflow.ViewSelector;
 /**
  * Searches flow-local registries first before querying the global, externally
  * managed flow service locator.
+ * 
  * @author Keith Donald
  */
 class LocalFlowServiceLocator implements FlowServiceLocator {
@@ -48,8 +49,8 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 	private FlowServiceLocator parent;
 
 	/**
-	 * Creates a new local service locator
-	 * @param parent the root service locator
+	 * Creates a new local service locator.
+	 * @param parent the parent service locator
 	 */
 	public LocalFlowServiceLocator(FlowServiceLocator parent) {
 		this.parent = parent;

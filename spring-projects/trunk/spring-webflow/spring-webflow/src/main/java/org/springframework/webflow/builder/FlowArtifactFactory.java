@@ -37,7 +37,7 @@ import org.springframework.webflow.ViewState;
  * A factory for core web flow elements such as {@link Flow flows},
  * {@link State states}, and {@link Transition transitions}.
  * <p>
- * This factory encapsulates the construct of each Flow implementation as well
+ * This factory encapsulates the construction of each Flow implementation as well
  * as each core state type. Subclasses may customize how the core elements are
  * created, useful for plugging in custom implementations.
  * 
@@ -53,7 +53,7 @@ public class FlowArtifactFactory {
 	 * {@link FlowAssembler} delegating to a calling {@link FlowBuilder} is
 	 * expected to assemble the Flow fully before returning it to external
 	 * clients.
-	 * @param id the flow id the flow identifier, should be unique to all flows
+	 * @param id the flow identifier, should be unique to all flows
 	 * in an application (required)
 	 * @param attributes attributes to assign to the Flow, which may also be
 	 * used to affect flow construction; may be null
@@ -80,8 +80,8 @@ public class FlowArtifactFactory {
 	 * @param transitions any transitions (paths) out of this state; may be null
 	 * @param exceptionHandlers any exception handlers; may be null
 	 * @param exitActions any state exit actions; may be null
-	 * @param attributes attributes to assign to the State; which may also be
-	 * used to affect state construction. May be null.
+	 * @param attributes attributes to assign to the State, which may also be
+	 * used to affect state construction; may be null
 	 * @return the fully initialized view state instance
 	 * @throws FlowArtifactLookupException an exception occured creating the state
 	 */
@@ -110,8 +110,8 @@ public class FlowArtifactFactory {
 	 * @param transitions any transitions (paths) out of this state; may be null
 	 * @param exceptionHandlers any exception handlers; may be null
 	 * @param exitActions any state exit actions; may be null
-	 * @param attributes attributes to assign to the State; which may also be
-	 * used to affect state construction. May be null.
+	 * @param attributes attributes to assign to the State, which may also be
+	 * used to affect state construction; may be null
 	 * @return the fully initialized action state instance
 	 * @throws FlowArtifactLookupException an exception occured creating the state
 	 */
@@ -136,8 +136,8 @@ public class FlowArtifactFactory {
 	 * @param transitions any transitions (paths) out of this state
 	 * @param exceptionHandlers any exception handlers; may be null
 	 * @param exitActions any state exit actions; may be null
-	 * @param attributes attributes to assign to the State; which may also be
-	 * used to affect state construction. May be null.
+	 * @param attributes attributes to assign to the State, which may also be
+	 * used to affect state construction; may be null
 	 * @return the fully initialized decision state instance
 	 * @throws FlowArtifactLookupException an exception occured creating the state
 	 */
@@ -164,8 +164,8 @@ public class FlowArtifactFactory {
 	 * @param transitions any transitions (paths) out of this state
 	 * @param exceptionHandlers any exception handlers; may be null
 	 * @param exitActions any state exit actions; may be null
-	 * @param attributes attributes to assign to the State; which may also be
-	 * used to affect state construction. May be null.
+	 * @param attributes attributes to assign to the State, which may also be
+	 * used to affect state construction; may be null
 	 * @return the fully initialized subflow state instance
 	 * @throws FlowArtifactLookupException an exception occured creating the state
 	 */
@@ -193,8 +193,8 @@ public class FlowArtifactFactory {
 	 * null
 	 * @param outputMapper the state output mapper; may be null
 	 * @param exceptionHandlers any exception handlers; may be null
-	 * @param attributes attributes to assign to the State; which may also be
-	 * used to affect state construction. May be null.
+	 * @param attributes attributes to assign to the State, which may also be
+	 * used to affect state construction; may be null
 	 * @return the fully initialized subflow state instance
 	 * @throws FlowArtifactLookupException an exception occured creating the state
 	 */
@@ -224,7 +224,7 @@ public class FlowArtifactFactory {
 	 * @param targetStateResolver the resolver for calculating the target state
 	 * of the transition (required)
 	 * @param attributes attributes to assign to the transition, which may also
-	 * be used to affect transition construction. May be null.
+	 * be used to affect transition construction; may be null
 	 * @return the fully initialized transition instance
 	 * @throws FlowArtifactLookupException an exception occured creating the
 	 * transition
@@ -241,7 +241,12 @@ public class FlowArtifactFactory {
 		transition.getAttributeMap().putAll(attributes);
 		return transition;
 	}
+	
+	// internal helpers
 
+	/**
+	 * Configure common properties for a transitionable state.
+	 */
 	private void configureCommonProperties(TransitionableState state, Action[] entryActions, Transition[] transitions,
 			FlowExecutionExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeCollection attributes) {
 		configureCommonProperties(state, entryActions, exceptionHandlers, attributes);
@@ -249,6 +254,9 @@ public class FlowArtifactFactory {
 		state.getExitActionList().addAll(exitActions);
 	}
 
+	/**
+	 * Configure common properties for a state.
+	 */
 	private void configureCommonProperties(State state, Action[] entryActions,
 			FlowExecutionExceptionHandler[] exceptionHandlers, AttributeCollection attributes) {
 		state.getEntryActionList().addAll(entryActions);

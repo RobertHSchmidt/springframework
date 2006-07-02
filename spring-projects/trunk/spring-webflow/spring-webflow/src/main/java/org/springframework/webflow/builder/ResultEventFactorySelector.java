@@ -46,11 +46,10 @@ public class ResultEventFactorySelector {
 	 * method on the specified bean class.
 	 * @param signature the method signature
 	 * @param beanClass the bean class
-	 * @return the result event factory.
+	 * @return the result event factory
 	 */
 	public ResultEventFactory forMethod(MethodSignature signature, Class beanClass) {
-		ClassMethodKey key = new ClassMethodKey(beanClass, signature.getMethodName(), signature.getParameters()
-				.getTypesArray());
+		ClassMethodKey key = new ClassMethodKey(beanClass, signature.getMethodName(), signature.getParameters().getTypesArray());
 		if (resultObjectBasedEventFactory.isMappedValueType(key.getMethod().getReturnType())) {
 			return resultObjectBasedEventFactory;
 		}

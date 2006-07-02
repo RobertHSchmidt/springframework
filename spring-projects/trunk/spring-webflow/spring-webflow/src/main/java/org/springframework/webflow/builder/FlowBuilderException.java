@@ -20,6 +20,8 @@ import org.springframework.webflow.FlowException;
 /**
  * Exception thrown to indicate a problem while building a flow.
  * 
+ * @see org.springframework.webflow.builder.FlowBuilder
+ * 
  * @author Erwin Vervaet
  */
 public class FlowBuilderException extends FlowException {

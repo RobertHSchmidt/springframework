@@ -1,3 +1,18 @@
+/*
+ * Copyright 2002-2006 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.springframework.webflow.builder;
 
 import org.springframework.beans.factory.BeanFactory;
@@ -26,12 +41,17 @@ import org.springframework.webflow.action.AbstractBeanInvokingAction;
  * artifacts such as {@link Flow}, {@link State}, {@link Transition}, and
  * {@link AbstractBeanInvokingAction bean invoking actions}. These artifacts
  * are unique to each flow and are typically not shared.
- * 
+ * </ol>
+ * <p>
  * In general, implementations of this interface act as facades to accessing and
  * creating flow artifacts during {@link FlowAssembler flow assembly}. Finally,
  * this interface also exposes access to generic infrastructure services also
  * needed by flow assemblers such as a {@link ConversionService} and
  * {@link ExpressionParser}.
+ * 
+ * @see org.springframework.webflow.builder.FlowBuilder
+ * @see org.springframework.webflow.builder.BaseFlowBuilder
+ * @see org.springframework.webflow.builder.FlowAssembler
  * 
  * @author Keith Donald
  */
@@ -46,29 +66,27 @@ public interface FlowServiceLocator {
 	public Flow getSubflow(String id) throws FlowArtifactLookupException;
 
 	/**
-	 * Retrieve the action to be executed within a flow with the assigned
-	 * parameters.
+	 * Retrieve an action to be executed within a flow with the assigned id.
 	 * @param id the id of the action
 	 * @throws FlowArtifactLookupException when no such action is found
 	 */
 	public Action getAction(String id) throws FlowArtifactLookupException;
 
 	/**
-	 * Returns true if the action with the given <code>actionId</code> is an
+	 * Returns true if the action with the given <code>id</code> is an
 	 * actual implementation of the {@link Action} interface. It could be an
-	 * arbitrary bean (any <code>java.lang.Object</code>), at which it needs
-	 * to be adapted by a
-	 * {@link AbstractBeanInvokingAction bean invoking action}.
-	 * @param actionId the action id
+	 * arbitrary bean (any <code>java.lang.Object</code>), in which case it needs
+	 * to be adapted by a {@link AbstractBeanInvokingAction bean invoking action}.
+	 * @param id the action id
 	 * @return true if the action is an Action, false otherwise
 	 * @throws FlowArtifactLookupException when no such action is found
 	 */
-	public boolean isAction(String actionId) throws FlowArtifactLookupException;
+	public boolean isAction(String id) throws FlowArtifactLookupException;
 
 	/**
 	 * Returns the flow attribute mapper with the provided id. Flow attribute
 	 * mappers are used from subflow states to map input and output attributes.
-	 * @param id the id
+	 * @param id the attribute mapper id
 	 * @return the attribute mapper
 	 * @throws FlowArtifactLookupException when no such mapper is found
 	 */
@@ -77,7 +95,7 @@ public interface FlowServiceLocator {
 	/**
 	 * Returns the transition criteria to drive state transitions with the
 	 * provided id.
-	 * @param id the id
+	 * @param id the transition criteria id
 	 * @return the transition criteria
 	 * @throws FlowArtifactLookupException when no such criteria is found
 	 */
@@ -86,16 +104,16 @@ public interface FlowServiceLocator {
 	/**
 	 * Returns the view selector to make view selections in view states with the
 	 * provided id.
-	 * @param id the id
+	 * @param id the view selector id
 	 * @return the view selector
 	 * @throws FlowArtifactLookupException when no such selector is found
 	 */
 	public ViewSelector getViewSelector(String id) throws FlowArtifactLookupException;
 
 	/**
-	 * Returns the exception handler to handle state exceptions with the
+	 * Returns the exception handler to handle flow execution exceptions with the
 	 * provided id.
-	 * @param id the id
+	 * @param id the exception handler id
 	 * @return the exception handler
 	 * @throws FlowArtifactLookupException when no such handler is found
 	 */
@@ -103,21 +121,21 @@ public interface FlowServiceLocator {
 
 	/**
 	 * Returns the transition target state resolver with the specified id.
-	 * @param id the id
+	 * @param id the target state resolver id
 	 * @return the target state resolver
 	 * @throws FlowArtifactLookupException when no such resolver is found
 	 */
 	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactLookupException;
 
 	/**
-	 * Returns the factory for core entity artifacts such as Flow and State.
-	 * @return the flow entity factory.
+	 * Returns the factory for core flow artifacts such as Flow and State.
+	 * @return the flow artifact factory
 	 */
 	public FlowArtifactFactory getFlowArtifactFactory();
 
 	/**
 	 * Returns the factory for bean invoking actions.
-	 * @return the bean invoking action factory.
+	 * @return the bean invoking action factory
 	 */
 	public BeanInvokingActionFactory getBeanInvokingActionFactory();
 

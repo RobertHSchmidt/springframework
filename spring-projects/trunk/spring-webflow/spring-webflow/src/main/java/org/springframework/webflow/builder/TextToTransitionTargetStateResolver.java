@@ -23,18 +23,20 @@ import org.springframework.webflow.support.DefaultTargetStateResolver;
 
 /**
  * Converter that takes an encoded string representation and produces a
- * corresponding <code>Transition.TargetStateResolver</code> object.
+ * corresponding <code>TargetStateResolver</code> object.
  * <p>
  * This converter supports the following encoded forms:
  * <ul>
  * <li>"stateId" - will result in a TargetStateResolver that always resolves to
  * the same state, an instance of ({@link org.springframework.webflow.support.DefaultTargetStateResolver})
  * </li>
+ * <li>"${...}" - will result in a TargetStateResolver object that evaluates
+ * given condition, expressed as an expression.</li>
  * <li>"bean:&lt;id&gt;" - will result in usage of a custom TargetStateResolver
  * bean implementation.</li>
  * </ul>
  * 
- * @see org.springframework.webflow.TransitionCriteria
+ * @see org.springframework.webflow.TargetStateResolver
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -42,20 +44,20 @@ import org.springframework.webflow.support.DefaultTargetStateResolver;
 public class TextToTransitionTargetStateResolver extends AbstractConverter {
 
 	/**
-	 * Prefix used when the user wants to use a custom TransitionCriteria
+	 * Prefix used when the user wants to use a custom TargetStateResolver
 	 * implementation managed by a factory.
 	 */
 	private static final String BEAN_PREFIX = "bean:";
 
 	/**
-	 * Locator to use for loading custom TransitionCriteria beans.
+	 * Locator to use for loading custom TargetStateResolver beans.
 	 */
 	private FlowServiceLocator flowServiceLocator;
 
 	/**
 	 * Create a new converter that converts strings to transition target state
-	 * resovler objects. The given conversion service will be used to do all
-	 * necessary internal conversion (e.g. parsing expression strings).
+	 * resovler objects. The given conversion service of given locator will be used
+	 * to do all necessary internal conversion (e.g. parsing expression strings).
 	 */
 	public TextToTransitionTargetStateResolver(FlowServiceLocator flowServiceLocator) {
 		this.flowServiceLocator = flowServiceLocator;
