@@ -30,17 +30,17 @@ import org.springframework.webflow.Flow;
  * the flow.
  * <li> Call {@link #buildStartActions()} to create and add any start actions to
  * the flow.
- * <li> Call {@link #buildInlineFlows()} to create and add any inline flows
+ * <li> Call {@link #buildInlineFlows()} to create any inline flows
  * encapsulated by the flow and add them to the flow definition.
  * <li> Call {@link #buildStates()} to create the states of the flow and add
  * them to the flow definition.
- * <li> Call {@link #buildGlobalTransitions()} to create the state exception
- * handlers of the flow and add them to the flow definition.
+ * <li> Call {@link #buildGlobalTransitions()} to create the any transitions
+ * shared by all states of the flow and add them to the flow definition.
  * <li> Call {@link #buildEndActions()} to create and add any end actions to
  * the flow.
  * <li> Call {@link #buildOutputMapper()} to create and set the output mapper
  * for the flow.
- * <li> Call {@link #buildExceptionHandlers()} to create the state exception
+ * <li> Call {@link #buildExceptionHandlers()} to create the exception
  * handlers of the flow and add them to the flow definition.
  * <li> Call {@link #getFlow()} to return the fully-built {@link Flow}
  * definition.
@@ -105,7 +105,7 @@ public interface FlowBuilder {
 	public void buildInlineFlows() throws FlowBuilderException;
 
 	/**
-	 * Builds the states (steps) of the flow.
+	 * Builds the states of the flow.
 	 * @throws FlowBuilderException an exception occured building the flow
 	 */
 	public void buildStates() throws FlowBuilderException;
@@ -129,7 +129,7 @@ public interface FlowBuilder {
 	public void buildOutputMapper() throws FlowBuilderException;
 
 	/**
-	 * Creates and adds all state exception handlers to the flow built by this
+	 * Creates and adds all exception handlers to the flow built by this
 	 * builder.
 	 * @throws FlowBuilderException an exception occured building this flow
 	 */
@@ -137,8 +137,8 @@ public interface FlowBuilder {
 
 	/**
 	 * Get the fully constructed and configured Flow object - called by the
-	 * builder's assembler (director) after assembly. Ehen this method is called
-	 * by the assembler, it is expectred flow construction wto have completed
+	 * builder's assembler (director) after assembly. When this method is called
+	 * by the assembler, it is expected flow construction has completed
 	 * and the returned flow is ready for use.
 	 */
 	public Flow getFlow();

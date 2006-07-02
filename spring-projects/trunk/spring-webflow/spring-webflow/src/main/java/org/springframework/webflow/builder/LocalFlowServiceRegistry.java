@@ -27,9 +27,10 @@ import org.springframework.webflow.Flow;
 /**
  * Simple value object that holds a reference to a local artifact registry
  * of a flow definition that is in the process of being constructed.
+ * 
  * @author Keith Donald
  */
-class LocalFlowServiceRegistry {
+public class LocalFlowServiceRegistry {
 
 	/**
 	 * The flow for which this registry is for (and scoped by).

@@ -18,6 +18,7 @@ package org.springframework.webflow.builder;
 import org.springframework.util.Assert;
 import org.springframework.webflow.AttributeCollection;
 import org.springframework.webflow.CollectionUtils;
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.UnmodifiableAttributeMap;
 
 /**
@@ -30,8 +31,7 @@ import org.springframework.webflow.UnmodifiableAttributeMap;
  * 
  * <pre>
  *     FlowBuilder builder = ...;
- *     new FlowAssembler(&quot;myFlow&quot;, builder).assembleFlow();
- *     Flow flow = builder.getFlow();
+ *     Flow flow = new FlowAssembler(&quot;myFlow&quot;, builder).assembleFlow();
  * </pre>
  * 
  * @see org.springframework.webflow.builder.FlowBuilder
@@ -60,7 +60,7 @@ public class FlowAssembler {
 	/**
 	 * Create a new flow assembler that will direct Flow assembly using the
 	 * specified builder strategy.
-	 * @param flowId the assigned flow id
+	 * @param flowId the flow id to assign
 	 * @param flowBuilder the builder the factory will use to build flows
 	 */
 	public FlowAssembler(String flowId, FlowBuilder flowBuilder) {
@@ -70,7 +70,7 @@ public class FlowAssembler {
 	/**
 	 * Create a new flow assembler that will direct Flow assembly using the
 	 * specified builder strategy.
-	 * @param flowId the assigned flow id
+	 * @param flowId the flow id to assign
 	 * @param flowAttributes externally assigned flow attributes that can affect
 	 * flow construction
 	 * @param flowBuilder the builder the factory will use to build flows
@@ -79,8 +79,7 @@ public class FlowAssembler {
 		Assert.hasText(flowId, "The flow id is required");
 		Assert.notNull(flowBuilder, "The flow builder is required");
 		this.flowId = flowId;
-		this.flowAttributes = (flowAttributes != null ? flowAttributes.unmodifiable()
-				: CollectionUtils.EMPTY_ATTRIBUTE_MAP);
+		this.flowAttributes = (flowAttributes != null ? flowAttributes.unmodifiable() : CollectionUtils.EMPTY_ATTRIBUTE_MAP);
 		this.flowBuilder = flowBuilder;
 	}
 
@@ -109,20 +108,40 @@ public class FlowAssembler {
 
 	/**
 	 * Assembles the flow, directing the construction process by delegating to
-	 * the configured FlowBuilder. While the assembly process is ongoing the
-	 * "assembling" flag is set to true.
+	 * the configured FlowBuilder.
+	 * <p>
+	 * This will drive the flow construction process as described in
+	 * the {@link FlowBuilder} JavaDoc, starting with builder initialisation
+	 * using {@link FlowBuilder#init(String, AttributeCollection)} and finishing
+	 * by cleaning up the builder with a call to {@link FlowBuilder#dispose()}.
+	 * @return the constructed flow
+	 * @throws FlowBuilderException when flow assembly fails
 	 */
-	public void assembleFlow() throws FlowBuilderException {
-		flowBuilder.init(flowId, flowAttributes);
+	public Flow assembleFlow() throws FlowBuilderException {
+		try {
+			flowBuilder.init(flowId, flowAttributes);
+			directAssembly();
+			return flowBuilder.getFlow();
+		}
+		finally {
+			flowBuilder.dispose();
+		}
+	}
+	
+	/**
+	 * Build all parts of the flow by directing flow assembly by the
+	 * flow builder.
+	 * @throws FlowBuilderException when flow assembly fails
+	 */
+	protected void directAssembly() throws FlowBuilderException {
 		flowBuilder.buildVariables();
-		flowBuilder.buildStartActions();
 		flowBuilder.buildInputMapper();
+		flowBuilder.buildStartActions();
 		flowBuilder.buildInlineFlows();
 		flowBuilder.buildStates();
 		flowBuilder.buildGlobalTransitions();
 		flowBuilder.buildEndActions();
 		flowBuilder.buildOutputMapper();
 		flowBuilder.buildExceptionHandlers();
-		flowBuilder.dispose();
 	}
 }

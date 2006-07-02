@@ -116,8 +116,7 @@ public class FlowExecutionTests extends TestCase {
 				addEndState("endState");
 			}
 		};
-		new FlowAssembler("flow", builder).assembleFlow();
-		Flow flow = builder.getFlow();
+		Flow flow = new FlowAssembler("flow", builder).assembleFlow();
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ApplicationView view = (ApplicationView)flowExecution.start(null, new MockExternalContext());
 		assertNotNull(view);
@@ -151,8 +150,7 @@ public class FlowExecutionTests extends TestCase {
 				addEndState("stopTest");
 			}
 		};
-		new FlowAssembler("flow", childBuilder).assembleFlow();
-		final Flow childFlow = childBuilder.getFlow();
+		final Flow childFlow = new FlowAssembler("flow", childBuilder).assembleFlow();
 		AbstractFlowBuilder parentBuilder = new AbstractFlowBuilder() {
 			public void buildStates() throws FlowBuilderException {
 				addActionState("doStuff", new AbstractAction() {
@@ -165,8 +163,7 @@ public class FlowExecutionTests extends TestCase {
 				addEndState("stopTest");
 			}
 		};
-		new FlowAssembler("parentFlow", parentBuilder).assembleFlow();
-		Flow parentFlow = parentBuilder.getFlow();
+		Flow parentFlow = new FlowAssembler("parentFlow", parentBuilder).assembleFlow();
 
 		FlowExecution flowExecution = new FlowExecutionImpl(parentFlow);
 		flowExecution.start(null, new MockExternalContext());

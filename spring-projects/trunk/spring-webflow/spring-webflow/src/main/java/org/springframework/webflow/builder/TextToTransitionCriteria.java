@@ -64,8 +64,8 @@ public class TextToTransitionCriteria extends AbstractConverter {
 
 	/**
 	 * Create a new converter that converts strings to transition criteria
-	 * objects. The given conversion service will be used to do all necessary
-	 * internal conversion (e.g. parsing expression strings).
+	 * objects. The given conversion service of given locator will be used to do
+	 * all necessary internal conversion (e.g. parsing expression strings).
 	 */
 	public TextToTransitionCriteria(FlowServiceLocator flowServiceLocator) {
 		this.flowServiceLocator = flowServiceLocator;

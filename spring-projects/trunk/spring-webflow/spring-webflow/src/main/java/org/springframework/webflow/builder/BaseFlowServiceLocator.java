@@ -127,8 +127,8 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 		return (Action)getBean(id, Action.class);
 	}
 
-	public boolean isAction(String actionId) throws FlowArtifactLookupException {
-		return Action.class.isAssignableFrom(getBeanType(actionId, Action.class));
+	public boolean isAction(String id) throws FlowArtifactLookupException {
+		return Action.class.isAssignableFrom(getBeanType(id, Action.class));
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
@@ -221,6 +221,11 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 		}
 	}
 
+	/**
+	 * Setup a conversion service used by this flow service locator.
+	 * @param parent the parent of the conversion service that will be created; optional
+	 * @return the newly created conversion service
+	 */
 	protected ConversionService createConversionService(ConversionService parent) {
 		if (parent != null) {
 			GenericConversionService conversionService = new GenericConversionService();
@@ -235,6 +240,9 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 		}
 	}
 
+	/**
+	 * Add all web flow specific converters to given conversion service.
+	 */
 	protected void addWebFlowConverters(GenericConversionService conversionService) {
 		conversionService.addConverter(new TextToTransitionCriteria(this));
 		conversionService.addConverter(new TextToViewSelector(this));

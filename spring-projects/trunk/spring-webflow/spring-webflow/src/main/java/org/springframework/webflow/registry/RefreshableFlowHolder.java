@@ -115,8 +115,7 @@ public class RefreshableFlowHolder implements FlowHolder {
 	protected void assembleFlow() throws FlowBuilderException {
 		try {
 			assembling = true;
-			assembler.assembleFlow();
-			flow = getFlowBuilder().getFlow();
+			flow = assembler.assembleFlow();
 		}
 		finally {
 			assembling = false;

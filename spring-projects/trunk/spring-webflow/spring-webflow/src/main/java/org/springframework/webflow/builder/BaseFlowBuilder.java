@@ -23,9 +23,11 @@ import org.springframework.webflow.Flow;
 
 /**
  * Abstract base implementation of a flow builder defining common functionality
- * needed by most concrete flow builder implementations.
+ * needed by most concrete flow builder implementations. This class implements
+ * all optional parts of the FlowBuilder process as no-op methods. Subclasses
+ * are only required to implement {@link #init(String, AttributeCollection)} and
+ * {@link #buildStates()}.
  * 
- * @see org.springframework.beans.factory.BeanFactory
  * @see org.springframework.webflow.builder.FlowServiceLocator
  * 
  * @author Keith Donald
@@ -45,14 +47,15 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	private FlowServiceLocator flowServiceLocator;
 
 	/**
-	 * Default constructor for subclassing.
+	 * Default constructor for subclassing. Sets up use of a {@link BaseFlowServiceLocator}.
+	 * @see #setFlowServiceLocator(FlowServiceLocator)
 	 */
 	protected BaseFlowBuilder() {
 		setFlowServiceLocator(new BaseFlowServiceLocator());
 	}
 
 	/**
-	 * Creates a flow builder using the locator to link in artifacts
+	 * Creates a flow builder using the locator to link in artifacts.
 	 * @param flowServiceLocator the locator for services needed by this builder to build its Flow
 	 */
 	protected BaseFlowBuilder(FlowServiceLocator flowServiceLocator) {
@@ -86,40 +89,29 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	public abstract void init(String id, AttributeCollection attributes) throws FlowBuilderException;
 
 	public void buildVariables() throws FlowBuilderException {
-
-	}
-
-	public void buildStartActions() throws FlowBuilderException {
-
 	}
 
 	public void buildInputMapper() throws FlowBuilderException {
+	}
 
+	public void buildStartActions() throws FlowBuilderException {
 	}
 
 	public void buildInlineFlows() throws FlowBuilderException {
-
 	}
 
 	public abstract void buildStates() throws FlowBuilderException;
 
-	public void buildExceptionHandlers() throws FlowBuilderException {
-
-	}
-
 	public void buildGlobalTransitions() throws FlowBuilderException {
-
 	}
 
 	public void buildEndActions() throws FlowBuilderException {
-
 	}
 
 	public void buildOutputMapper() throws FlowBuilderException {
-
 	}
 
-	public void dispose() {
+	public void buildExceptionHandlers() throws FlowBuilderException {
 	}
 
 	/**
@@ -129,16 +121,21 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 		return flow;
 	}
 
+	public void dispose() {
+		setFlow(null);
+	}
+	
+	// helpers for use in subclasses
+
 	/**
 	 * Returns a conversion executor capable of converting string objects to the
 	 * target class aliased by the provided alias.
-	 * @param targetAlias the target class alias, e.g "long" or "float"
+	 * @param targetAlias the target class alias, e.g. "long" or "float"
 	 * @return the conversion executor, or <code>null</code> if no suitable
 	 * converter exists for given alias
 	 */
 	protected ConversionExecutor fromStringTo(String targetAlias) {
-		return getFlowServiceLocator().getConversionService().getConversionExecutorByTargetAlias(String.class,
-				targetAlias);
+		return getFlowServiceLocator().getConversionService().getConversionExecutorByTargetAlias(String.class, targetAlias);
 	}
 
 	/**

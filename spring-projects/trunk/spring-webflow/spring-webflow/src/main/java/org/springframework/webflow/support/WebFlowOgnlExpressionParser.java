@@ -25,8 +25,9 @@ import org.springframework.binding.util.MapAdaptable;
 import org.springframework.webflow.AttributeMap;
 
 /**
- * An extension of {@link OgnlExpressionParser} that registers webflow-specific
+ * An extension of {@link OgnlExpressionParser} that registers web flow specific
  * property accessors.
+ * 
  * @author Keith Donald
  */
 public class WebFlowOgnlExpressionParser extends OgnlExpressionParser {
@@ -41,6 +42,7 @@ public class WebFlowOgnlExpressionParser extends OgnlExpressionParser {
 
 	/**
 	 * The {@link MapAdaptable} property accessor.
+	 * 
 	 * @author Keith Donald
 	 */
 	private static class MapAdaptablePropertyAccessor implements PropertyAccessor {
@@ -56,6 +58,7 @@ public class WebFlowOgnlExpressionParser extends OgnlExpressionParser {
 
 	/**
 	 * The {@link AttributeMap} property accessor.
+	 * 
 	 * @author Keith Donald
 	 */
 	private static class AttributeMapPropertyAccessor extends MapAdaptablePropertyAccessor {

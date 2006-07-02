@@ -7,6 +7,11 @@ Changes in version 1.0 ()
 General
 * Several JavaDoc enhancements all over the source code.
 
+Package org.springframework.webflow.builder
+* BaseFlowBuilder now resets its internal flow reference on a call to dispose.
+* FlowAssembler.assembleFlow now returns the constructed flow for clarity. This also clarifies the API in that it is no longer
+  required to call getFlow on a FlowBuilder that has already been disposed by the FlowAssembler.
+
 Changes in version 1.0 RC3 (23.6.2006)
 ------------------------------------
 Package org.springframework.webflow

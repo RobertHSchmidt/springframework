@@ -9,6 +9,7 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.webflow.Flow;
 import org.springframework.webflow.builder.AbstractFlowBuilder;
 import org.springframework.webflow.builder.BaseFlowServiceLocator;
 import org.springframework.webflow.builder.FlowAssembler;
@@ -26,17 +27,17 @@ public class FlowRegistryPopulationTests extends TestCase {
 				addEndState("end");
 			}
 		};
-		new FlowAssembler("flow1", builder1).assembleFlow();
+		Flow flow1 = new FlowAssembler("flow1", builder1).assembleFlow();
 
 		FlowBuilder builder2 = new AbstractFlowBuilder(factory) {
 			public void buildStates() throws FlowBuilderException {
 				addEndState("end");
 			}
 		};
-		new FlowAssembler("flow2", builder2).assembleFlow();
+		Flow flow2 = new FlowAssembler("flow2", builder2).assembleFlow();
 
-		registry.registerFlow(new StaticFlowHolder(builder1.getFlow()));
-		registry.registerFlow(new StaticFlowHolder(builder2.getFlow()));
+		registry.registerFlow(new StaticFlowHolder(flow1));
+		registry.registerFlow(new StaticFlowHolder(flow2));
 		assertEquals("Wrong registry definition count", 2, registry.getFlowCount());
 		registry.refresh();
 		assertEquals("Wrong registry definition count", 2, registry.getFlowCount());
