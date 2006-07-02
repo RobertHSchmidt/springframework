@@ -27,12 +27,16 @@ import org.springframework.webflow.Flow;
 /**
  * Simple value object that holds a reference to a local artifact registry
  * of a flow definition that is in the process of being constructed.
+ * <p>
+ * Internal helper class of the {@link org.springframework.webflow.builder.XmlFlowBuilder}.
+ * Package private to highlight it's non-public nature.
+ * 
+ * @see org.springframework.webflow.builder.XmlFlowBuilder
  * 
  * @author Keith Donald
  */
 class LocalFlowServiceRegistry {
 
-	// not that this is a package private class!
 	
 	/**
 	 * The flow for which this registry is for (and scoped by).
