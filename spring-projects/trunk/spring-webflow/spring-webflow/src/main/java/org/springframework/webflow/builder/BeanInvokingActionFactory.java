@@ -17,6 +17,7 @@ package org.springframework.webflow.builder;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionService;
+import org.springframework.binding.method.ClassMethodKey;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.webflow.Action;
 import org.springframework.webflow.AttributeCollection;
@@ -26,7 +27,10 @@ import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.action.MementoBeanStatePersister;
 import org.springframework.webflow.action.MementoOriginator;
 import org.springframework.webflow.action.MethodResultSpecification;
+import org.springframework.webflow.action.ResultEventFactory;
+import org.springframework.webflow.action.ResultObjectBasedEventFactory;
 import org.springframework.webflow.action.StatefulBeanInvokingAction;
+import org.springframework.webflow.action.SuccessEventFactory;
 
 /**
  * A factory for {@link Action} instances that invoke methods on beans.
@@ -34,6 +38,10 @@ import org.springframework.webflow.action.StatefulBeanInvokingAction;
  * This factory encapsulates the logic required to take an arbitrary
  * <code>java.lang.Object</code> method and adapt it to the {@link Action}
  * interface.
+ * 
+ * @see org.springframework.webflow.action.LocalBeanInvokingAction
+ * @see org.springframework.webflow.action.BeanFactoryBeanInvokingAction
+ * @see org.springframework.webflow.action.StatefulBeanInvokingAction
  * 
  * @author Keith Donald
  */
@@ -132,5 +140,43 @@ public class BeanInvokingActionFactory {
 		action.setMethodResultSpecification(resultSpecification);
 		action.setResultEventFactory(resultEventFactorySelector.forMethod(methodSignature, beanClass));
 		action.setConversionService(conversionService);
+	}
+	
+	/**
+	 * Helper strategy that selects the {@link ResultEventFactory} to use for each
+	 * {@link AbstractBeanInvokingAction bean invoking action} that is constructed
+	 * by a {@link org.springframework.webflow.builder.BeanInvokingActionFactory}.
+	 * 
+	 * @author Keith Donald
+	 */
+	public static class ResultEventFactorySelector {
+
+		/**
+		 * The event factory instance for mapping a return value to a success event.
+		 */
+		private SuccessEventFactory successEventFactory = new SuccessEventFactory();
+
+		/**
+		 * The event factory instance for mapping a result object to an event, using
+		 * the type of the result object as the mapping criteria.
+		 */
+		private ResultObjectBasedEventFactory resultObjectBasedEventFactory = new ResultObjectBasedEventFactory();
+
+		/**
+		 * Select the appropriate result event factory for attempts to invoke the
+		 * method on the specified bean class.
+		 * @param signature the method signature
+		 * @param beanClass the bean class
+		 * @return the result event factory
+		 */
+		public ResultEventFactory forMethod(MethodSignature signature, Class beanClass) {
+			ClassMethodKey key = new ClassMethodKey(beanClass, signature.getMethodName(), signature.getParameters().getTypesArray());
+			if (resultObjectBasedEventFactory.isMappedValueType(key.getMethod().getReturnType())) {
+				return resultObjectBasedEventFactory;
+			}
+			else {
+				return successEventFactory;
+			}
+		}
 	}
 }

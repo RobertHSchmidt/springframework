@@ -14,6 +14,8 @@ Package org.springframework.webflow.builder
 * Replaced STATE_TYPE_CONTEXT_PARAMETER parameter used by the TextToViewSelector by END_STATE_VIEW_FLAG_PARAMETER which just
   has a boolean value (a flag). This makes the contract a bit clearer. As a result, the VIEW_STATE_TYPE and END_STATE_TYPE
   constants in TextToViewSelector were also dropped.
+* Refactored ResultEventFactorySelector to be a static inner class of BeanInvokingActionFactory to highlight the fact that it
+  is a helper strategy of this class.
 
 Changes in version 1.0 RC3 (23.6.2006)
 ------------------------------------

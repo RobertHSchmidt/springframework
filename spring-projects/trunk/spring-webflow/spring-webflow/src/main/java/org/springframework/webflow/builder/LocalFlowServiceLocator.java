@@ -33,6 +33,11 @@ import org.springframework.webflow.ViewSelector;
 /**
  * Searches flow-local registries first before querying the global, externally
  * managed flow service locator.
+ * <p>
+ * Internal helper class of the {@link org.springframework.webflow.builder.XmlFlowBuilder}.
+ * Package private to highlight it's non-public nature.
+ * 
+ * @see org.springframework.webflow.builder.XmlFlowBuilder
  * 
  * @author Keith Donald
  */
