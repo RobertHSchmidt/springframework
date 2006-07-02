@@ -39,6 +39,10 @@ import org.springframework.webflow.ViewSelector;
  * used to trigger a redirect to the {@link ApplicationView} at a bookmarkable
  * URL.
  * 
+ * @see org.springframework.webflow.support.ApplicationView
+ * @see org.springframework.webflow.support.FlowExecutionRedirect
+ * @see org.springframework.webflow.ViewSelection#NULL_VIEW
+ * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */

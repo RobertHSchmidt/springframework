@@ -600,7 +600,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private void parseAndAddViewState(Element element, Flow flow) {
 		getFlowArtifactFactory().createViewState(parseId(element), flow, parseEntryActions(element),
-				parseViewSelector(TextToViewSelector.VIEW_STATE_TYPE, element), parseTransitions(element),
+				parseViewSelector(element, false), parseTransitions(element),
 				parseExceptionHandlers(element), parseExitActions(element), parseAttributes(element));
 	}
 
@@ -618,7 +618,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private void parseAndAddEndState(Element element, Flow flow) {
 		getFlowArtifactFactory().createEndState(parseId(element), flow, parseEntryActions(element),
-				parseViewSelector(TextToViewSelector.END_STATE_TYPE, element), parseOutputMapper(element),
+				parseViewSelector(element, true), parseOutputMapper(element),
 				parseExceptionHandlers(element), parseAttributes(element));
 	}
 
@@ -670,10 +670,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				parseAttributes(element));
 	}
 
-	private ViewSelector parseViewSelector(String stateType, Element element) {
+	private ViewSelector parseViewSelector(Element element, boolean endStateView) {
 		String viewName = element.getAttribute(VIEW_ATTRIBUTE);
 		Map context = new HashMap(1, 1);
-		context.put(TextToViewSelector.STATE_TYPE_CONTEXT_PARAMETER, stateType);
+		context.put(TextToViewSelector.END_STATE_VIEW_FLAG_PARAMETER, new Boolean(endStateView));
 		return (ViewSelector)fromStringTo(ViewSelector.class).execute(viewName, context);
 	}
 

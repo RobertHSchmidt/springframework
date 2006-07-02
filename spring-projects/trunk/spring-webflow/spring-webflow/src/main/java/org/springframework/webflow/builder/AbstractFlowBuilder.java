@@ -52,25 +52,25 @@ import org.springframework.webflow.support.EventFactorySupport;
  * 
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
- *     public void buildStates() {
- *         // get customer information
- *         addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;),
- *             on(success(), to(&quot;displayDetails&quot;)));
- *                                                                                 
- *         // view customer information               
- *         addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;,
- *             on(submit(), to(&quot;bindAndValidate&quot;));
- *                                                                             
- *         // bind and validate customer information updates 
- *         addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;),
- *             new Transition[] {
- *                 on(error(), to(&quot;displayDetails&quot;)),
- *                 on(success(), to(&quot;finish&quot;))
- *             });
- *                                                                                 
- *         // finish
- *         addEndState(&quot;finish&quot;);
- *     }
+ *      public void buildStates() {
+ *          // get customer information
+ *          addActionState("getDetails", action("customerAction"),
+ *              transition(on(success()), to("displayDetails")));
+ *                                                                                  
+ *          // view customer information               
+ *          addViewState("displayDetails", "customerDetails",
+ *              transition(on(submit()), to("bindAndValidate")));
+ *                                                                              
+ *          // bind and validate customer information updates 
+ *          addActionState("bindAndValidate", action("customerAction"),
+ *              new Transition[] {
+ *                  transition(on(error()), to("displayDetails")),
+ *                  transition(on(success()), to("finish"))
+ *              });
+ *                                                                                  
+ *          // finish
+ *          addEndState("finish");
+ *      }
  * }
  * </pre>
  * 
@@ -113,8 +113,7 @@ import org.springframework.webflow.support.EventFactorySupport;
  * executed.
  * </ol>
  * 
- * The third state, an action state, will be indentified as <code>
- * bindAndValidate</code>.
+ * The third state, an action state, will be indentified as <code>bindAndValidate</code>.
  * This action state will automatically be configured with the following
  * defaults:
  * <ol>
@@ -130,8 +129,7 @@ import org.springframework.webflow.support.EventFactorySupport;
  * transitioned to and the flow will terminate.
  * <li>An <code>error</code> transition back to the form view. This means if
  * the <code>Action</code> returns an <code>error</code> event, the <code>
- * displayDetails</code>
- * view state will be transitioned back to.
+ * displayDetails</code> view state will be transitioned back to.
  * </ol>
  * 
  * The fourth and last state, an end state, will be indentified with the default
@@ -200,6 +198,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	protected AttributeCollection flowAttributes() {
 		return CollectionUtils.EMPTY_ATTRIBUTE_MAP;
 	}
+	
+	// view state
 
 	/**
 	 * Adds a view state to the flow built by this builder.
@@ -244,6 +244,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		return getFlowArtifactFactory().createViewState(stateId, getFlow(), entryActions, viewSelector, transitions,
 				exceptionHandlers, exitActions, attributes);
 	}
+	
+	// action state
 
 	/**
 	 * Adds an action state to the flow built by this builder.
@@ -302,6 +304,18 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		return getFlowArtifactFactory().createActionState(stateId, getFlow(), entryActions, actions, transitions,
 				exceptionHandlers, exitActions, attributes);
 	}
+	
+	// decision state
+
+	/**
+	 * Adds a decision state to the flow built by this builder.
+	 * @param stateId the state identifier
+	 * @param transitions the transitions (paths) out of this state
+	 * @return the fully constructed decision state instance
+	 */
+	protected State addDecisionState(String stateId, Transition[] transitions) {
+		return getFlowArtifactFactory().createDecisionState(stateId, getFlow(), null, transitions, null, null, null);
+	}
 
 	/**
 	 * Adds a decision state to the flow built by this builder.
@@ -325,16 +339,6 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Adds a decision state to the flow built by this builder.
 	 * @param stateId the state identifier
-	 * @param transitions the transitions (paths) out of this state
-	 * @return the fully constructed decision state instance
-	 */
-	protected State addDecisionState(String stateId, Transition[] transitions) {
-		return getFlowArtifactFactory().createDecisionState(stateId, getFlow(), null, transitions, null, null, null);
-	}
-
-	/**
-	 * Adds a decision state to the flow built by this builder.
-	 * @param stateId the state identifier
 	 * @param entryActions the entry actions to execute when the state enters
 	 * @param transitions the transitions (paths) out of this state
 	 * @param exceptionHandlers the exception handlers to handle exceptions
@@ -349,6 +353,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		return getFlowArtifactFactory().createDecisionState(stateId, getFlow(), entryActions, transitions,
 				exceptionHandlers, exitActions, attributes);
 	}
+	
+	// subflow state
 
 	/**
 	 * Adds a subflow state to the flow built by this builder.
@@ -401,6 +407,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		return getFlowArtifactFactory().createSubflowState(stateId, getFlow(), entryActions, subflow, attributeMapper,
 				transitions, exceptionHandlers, exitActions, attributes);
 	}
+	
+	// end state
 
 	/**
 	 * Adds an end state to the flow built by this builder.
@@ -453,6 +461,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		return getFlowArtifactFactory().createEndState(stateId, getFlow(), entryActions, viewSelector, outputMapper,
 				exceptionHandlers, attributes);
 	}
+	
+	// helpers to create misc. flow artifacts
 
 	/**
 	 * Factory method that creates a view state view selector from an encoded
@@ -462,7 +472,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the view selector
 	 */
 	protected ViewSelector viewSelector(String viewName) {
-		return viewSelector(TextToViewSelector.VIEW_STATE_TYPE, viewName);
+		return viewSelector(viewName, false);
 	}
 
 	/**
@@ -473,12 +483,18 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the view selector
 	 */
 	protected ViewSelector endingViewSelector(String viewName) {
-		return viewSelector(TextToViewSelector.END_STATE_TYPE, viewName);
+		return viewSelector(viewName, true);
 	}
 
-	private ViewSelector viewSelector(String stateType, String viewName) {
+	/**
+	 * Internal helper that creates a view selector as requested by the parameters.
+	 * @param viewName the encoded view selector
+	 * @param endStateView whether or not the view selector selects a view for an end state
+	 * @return the view selector
+	 */
+	private ViewSelector viewSelector(String viewName, boolean endStateView) {
 		Map context = new HashMap(1, 1);
-		context.put(TextToViewSelector.STATE_TYPE_CONTEXT_PARAMETER, stateType);
+		context.put(TextToViewSelector.END_STATE_VIEW_FLAG_PARAMETER, new Boolean(endStateView));
 		return (ViewSelector)fromStringTo(ViewSelector.class).execute(viewName, context);
 	}
 
@@ -813,6 +829,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		mapping.setConversionService(getFlowServiceLocator().getConversionService());
 		return mapping;
 	}
+	
+	// internal helpers
 
 	private FlowArtifactFactory getFlowArtifactFactory() {
 		return getFlowServiceLocator().getFlowArtifactFactory();

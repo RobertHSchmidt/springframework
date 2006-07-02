@@ -48,7 +48,7 @@ public final class FlowRedirect extends ViewSelection {
 	/**
 	 * Creates a new flow redirect.
 	 * @param flowId the id of the flow to launch
-	 * @param input the input data to pass to the flow.
+	 * @param input the input data to pass to the flow
 	 */
 	public FlowRedirect(String flowId, Map input) {
 		Assert.hasText(flowId, "The flow id is required");
