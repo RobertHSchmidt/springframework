@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+
+<project name="spring-ldap" default="dist">
+
+	<property file="build.properties" />
+	<property file="project.properties" />
+	<property file="${common.build.dir}/build.properties" />
+	<property file="${common.build.dir}/project.properties" />
+	<property file="${user.home}/build.properties" />
+
+	<property name="project.title" value="LDAP Template" />
+	<property name="project.package" value="org.springframework.ldap" />
+
+	<property name="src.java.iutest.dir" location="${src.dir}/iutest" />
+	
+	<property name="ldap.server" value="127.0.0.1" />
+	<property name="ldap.user" value="&quot;cn=Manager,dc=jayway,dc=se&quot;" />
+	<property name="ldap.password" value="secret" />
+	
+	<import file="${common.build.dir}/common-targets.xml" />
+	<import file="${common.build.dir}/clover-targets.xml" />
+
+	<target name="iutest.ldap.setup">
+		<exec executable="ldapadd">
+			<arg value="-x"/>
+			<arg value="-h"/>
+			<arg value="${ldap.server}"/>
+			<arg value="-D"/>
+			<arg value="${ldap.user}"/>
+			<arg value="-w"/>
+			<arg value="${ldap.password}"/>
+			<arg value="-f"/>
+			<arg value="${src.java.iutest.dir}/setup_data.ldif"/>
+		</exec>
+	</target>
+
+	<target name="iutest.ldap.teardown" depends="iutest.ldap.teardown.1, iutest.ldap.teardown.2"/>
+	
+	<target name="iutest.ldap.teardown.1">
+		<exec executable="ldapdelete" failonerror="false">
+			<arg value="-x"/>
+			<arg value="-h"/>
+			<arg value="${ldap.server}"/>
+			<arg value="-D"/>
+			<arg value="${ldap.user}"/>
+			<arg value="-w"/>
+			<arg value="${ldap.password}"/>
+			<arg value="-r"/>
+			<arg value="&quot;c=Sweden,dc=jayway,dc=se&quot;"/>
+		</exec>
+	</target>
+
+	<target name="iutest.ldap.teardown.2">
+		<exec executable="ldapdelete" failonerror="false">
+			<arg value="-x"/>
+			<arg value="-h"/>
+			<arg value="${ldap.server}"/>
+			<arg value="-D"/>
+			<arg value="${ldap.user}"/>
+			<arg value="-w"/>
+			<arg value="${ldap.password}"/>
+			<arg value="-r"/>
+			<arg value="&quot;c=Norway,dc=jayway,dc=se&quot;"/>
+		</exec>
+	</target>
+
+</project>

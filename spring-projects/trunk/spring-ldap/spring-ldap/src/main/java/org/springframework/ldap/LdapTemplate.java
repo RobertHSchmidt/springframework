@@ -1,0 +1,894 @@
+/*
+ * Copyright 2002-2005 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.springframework.ldap;
+
+import java.util.List;
+
+import javax.naming.Binding;
+import javax.naming.Name;
+import javax.naming.NameNotFoundException;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.PartialResultException;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.ModificationItem;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
+
+
+import org.apache.commons.lang.Validate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.dao.DataAccessException;
+import org.springframework.ldap.support.DistinguishedName;
+
+/**
+ * Executes core LDAP functionality and helps to avoid common errors, relieving
+ * the user of the burden of looking up contexts, looping through
+ * NamingEnumerations and closing contexts.
+ * <p>
+ * <b>Note for Active Directory (AD) users:</b> AD servers are apparently
+ * unable to handle referrals automatically, which causes a
+ * <code>PartialResultException</code> to be thrown whenever a referral is
+ * encountered in a search. To avoid this, set the
+ * <code>ignorePartialResultException</code> property to <code>true</code>.
+ * There is currently no way of manually handling these referrals in the form of
+ * <code>ReferralException</code>, i.e. either you get the exception (and
+ * your results are lost) or all referrals are ignored (if the server is unable
+ * to handle them properly. Neither is there any simple way to get notified that
+ * a <code>PartialResultException</code> has been ignored (other than in the
+ * log).
+ * 
+ * @see org.springframework.ldap.ContextSource
+ * 
+ * @author Mattias Arthursson
+ * @author Ulrik Sandberg
+ */
+public class LdapTemplate implements LdapOperations, InitializingBean {
+
+    private static final Log log = LogFactory.getLog(LdapTemplate.class);
+
+    private static final int DEFAULT_SEARCH_SCOPE = SearchControls.SUBTREE_SCOPE;
+
+    private static final boolean DONT_RETURN_OBJ_FLAG = false;
+
+    private static final boolean RETURN_OBJ_FLAG = true;
+
+    private ContextSource contextSource;
+
+    private NamingExceptionTranslator exceptionTranslator = new DefaultNamingExceptionTranslator();
+
+    private boolean ignorePartialResultException = false;
+
+    /**
+     * Constructor for bean usage.
+     */
+    public LdapTemplate() {
+    }
+
+    /**
+     * Constructor to setup instance directly.
+     * 
+     * @param contextSource
+     *            the ContextSource to use.
+     */
+    public LdapTemplate(ContextSource contextSource) {
+        this.contextSource = contextSource;
+    }
+
+    /**
+     * Set the ContextSource. Call this method when the default constructor has
+     * been used.
+     * 
+     * @param contextSource
+     *            the ContextSource.
+     */
+    public void setContextSource(ContextSource contextSource) {
+        this.contextSource = contextSource;
+    }
+
+    /**
+     * Specify whether <code>PartialResultException</code> should be ignored
+     * in searches. AD servers typically have a problem with referrals. Normally
+     * a referral should be followed automatically, but this does not seem to
+     * work with AD servers. The problem manifests itself with a a
+     * <code>PartialResultException</code> being thrown when a referral is
+     * encountered by the server. Setting this property to <code>true</code>
+     * presents a workaround to this problem by causing
+     * <code>PartialResultException</code> to be ignored, so that the search
+     * method returns normally. Default value of this parameter is
+     * <code>false</code>.
+     * 
+     * @param ignore
+     *            <code>true</code> if <code>PartialResultException</code>
+     *            should be ignored in searches, <code>false</code> otherwise.
+     *            Default is <code>false</code>.
+     */
+    public void setIgnorePartialResultException(boolean ignore) {
+        this.ignorePartialResultException = ignore;
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
+     *      java.lang.String, int, boolean,
+     *      org.springframework.ldap.SearchResultCallbackHandler)
+     */
+    public void search(Name base, String filter, int searchScope,
+            boolean returningObjFlag, SearchResultCallbackHandler handler) {
+
+        search(base, filter, getDefaultSearchControls(searchScope,
+                returningObjFlag), handler);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
+     *      java.lang.String, int, boolean,
+     *      org.springframework.ldap.SearchResultCallbackHandler)
+     */
+    public void search(String base, String filter, int searchScope,
+            boolean returningObjFlag, SearchResultCallbackHandler handler)
+            throws DataAccessException {
+
+        search(base, filter, getDefaultSearchControls(searchScope,
+                returningObjFlag), handler);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
+     *      java.lang.String, javax.naming.directory.SearchControls,
+     *      org.springframework.ldap.SearchResultCallbackHandler)
+     */
+    public void search(final Name base, final String filter,
+            final SearchControls controls, SearchResultCallbackHandler handler) {
+
+        // Create a SearchExecutor to perform the search.
+        SearchExecutor se = new SearchExecutor() {
+            public NamingEnumeration executeSearch(DirContext ctx)
+                    throws NamingException {
+                return ctx.search(base, filter, controls);
+            }
+        };
+
+        search(se, handler);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
+     *      java.lang.String, javax.naming.directory.SearchControls,
+     *      org.springframework.ldap.SearchResultCallbackHandler)
+     */
+    public void search(final String base, final String filter,
+            final SearchControls controls, SearchResultCallbackHandler handler) {
+
+        // Create a SearchExecutor to perform the search.
+        SearchExecutor se = new SearchExecutor() {
+            public NamingEnumeration executeSearch(DirContext ctx)
+                    throws NamingException {
+                return ctx.search(base, filter, controls);
+            }
+        };
+
+        search(se, handler);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#doSearch(org.springframework.ldap.LdapTemplate.SearchExecutor,
+     *      org.springframework.ldap.SearchResultCallbackHandler)
+     */
+    public void search(SearchExecutor se, SearchResultCallbackHandler handler) {
+        DirContext ctx = contextSource.getReadOnlyContext();
+
+        NamingEnumeration results = null;
+        try {
+            results = se.executeSearch(ctx);
+
+            while (results.hasMore()) {
+                SearchResult searchResult = (SearchResult) results.next();
+                handler.handleSearchResult(searchResult);
+            }
+        } catch (NameNotFoundException e) {
+            // The base context was not found, which basically means
+            // that the search did not return any results. Just clean up and
+            // exit.
+        } catch (PartialResultException e) {
+            // Workaround for AD servers not handling referrals correctly.
+            if (ignorePartialResultException) {
+                log.debug("PartialResultException encountered and ignored", e);
+            } else {
+                throw getExceptionTranslator().translate(e);
+            }
+        } catch (NamingException e) {
+            throw getExceptionTranslator().translate(e);
+        } finally {
+            closeContextAndNamingEnumeration(ctx, results);
+        }
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
+     *      java.lang.String, org.springframework.ldap.SearchResultCallbackHandler)
+     */
+    public void search(Name base, String filter,
+            SearchResultCallbackHandler handler) throws DataAccessException {
+
+        search(base, filter, getDefaultSearchControls(DEFAULT_SEARCH_SCOPE,
+                DONT_RETURN_OBJ_FLAG), handler);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
+     *      java.lang.String, org.springframework.ldap.SearchResultCallbackHandler)
+     */
+    public void search(String base, String filter,
+            SearchResultCallbackHandler handler) throws DataAccessException {
+
+        search(base, filter, getDefaultSearchControls(DEFAULT_SEARCH_SCOPE,
+                DONT_RETURN_OBJ_FLAG), handler);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
+     *      java.lang.String, int, org.springframework.ldap.AttributesMapper)
+     */
+    public List search(Name base, String filter, int searchScope,
+            AttributesMapper mapper) {
+
+        return search(base, filter, getDefaultSearchControls(searchScope,
+                DONT_RETURN_OBJ_FLAG), mapper);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
+     *      java.lang.String, int, org.springframework.ldap.AttributesMapper)
+     */
+    public List search(String base, String filter, int searchScope,
+            AttributesMapper mapper) throws DataAccessException {
+
+        return search(base, filter, getDefaultSearchControls(searchScope,
+                DONT_RETURN_OBJ_FLAG), mapper);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
+     *      java.lang.String, org.springframework.ldap.AttributesMapper)
+     */
+    public List search(Name base, String filter, AttributesMapper mapper)
+            throws DataAccessException {
+
+        return search(base, filter, DEFAULT_SEARCH_SCOPE, mapper);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
+     *      java.lang.String, org.springframework.ldap.AttributesMapper)
+     */
+    public List search(String base, String filter, AttributesMapper mapper)
+            throws DataAccessException {
+
+        return search(base, filter, DEFAULT_SEARCH_SCOPE, mapper);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
+     *      java.lang.String, int, org.springframework.ldap.ContextMapper)
+     */
+    public List search(Name base, String filter, int searchScope,
+            ContextMapper mapper) {
+
+        return search(base, filter, getDefaultSearchControls(searchScope,
+                RETURN_OBJ_FLAG), mapper);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
+     *      java.lang.String, int, org.springframework.ldap.ContextMapper)
+     */
+    public List search(String base, String filter, int searchScope,
+            ContextMapper mapper) throws DataAccessException {
+
+        return search(base, filter, getDefaultSearchControls(searchScope,
+                RETURN_OBJ_FLAG), mapper);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
+     *      java.lang.String, org.springframework.ldap.ContextMapper)
+     */
+    public List search(Name base, String filter, ContextMapper mapper)
+            throws DataAccessException {
+
+        return search(base, filter, DEFAULT_SEARCH_SCOPE, mapper);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
+     *      java.lang.String, org.springframework.ldap.ContextMapper)
+     */
+    public List search(String base, String filter, ContextMapper mapper)
+            throws DataAccessException {
+
+        return search(base, filter, DEFAULT_SEARCH_SCOPE, mapper);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
+     *      java.lang.String, javax.naming.directory.SearchControls,
+     *      org.springframework.ldap.ContextMapper)
+     */
+    public List search(String base, String filter, SearchControls controls,
+            ContextMapper mapper) {
+
+        assureReturnObjFlagSet(controls);
+        ContextMapperCallbackHandler handler = new ContextMapperCallbackHandler(
+                mapper);
+        search(base, filter, controls, handler);
+
+        return handler.getList();
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
+     *      java.lang.String, javax.naming.directory.SearchControls,
+     *      org.springframework.ldap.ContextMapper)
+     */
+    public List search(Name base, String filter, SearchControls controls,
+            ContextMapper mapper) {
+
+        assureReturnObjFlagSet(controls);
+        ContextMapperCallbackHandler handler = new ContextMapperCallbackHandler(
+                mapper);
+        search(base, filter, controls, handler);
+
+        return handler.getList();
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
+     *      java.lang.String, javax.naming.directory.SearchControls,
+     *      org.springframework.ldap.AttributesMapper)
+     */
+    public List search(Name base, String filter, SearchControls controls,
+            AttributesMapper mapper) {
+
+        AttributesMapperCallbackHandler handler = new AttributesMapperCallbackHandler(
+                mapper);
+        search(base, filter, controls, handler);
+
+        return handler.getList();
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
+     *      java.lang.String, javax.naming.directory.SearchControls,
+     *      org.springframework.ldap.AttributesMapper)
+     */
+    public List search(String base, String filter, SearchControls controls,
+            AttributesMapper mapper) {
+
+        AttributesMapperCallbackHandler handler = new AttributesMapperCallbackHandler(
+                mapper);
+        search(base, filter, controls, handler);
+
+        return handler.getList();
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#executeReadOnly(org.springframework.ldap.ContextExecutor)
+     */
+    public Object executeReadOnly(ContextExecutor ce) {
+        DirContext ctx = contextSource.getReadOnlyContext();
+        return executeWithContext(ce, ctx);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#executeReadWrite(org.springframework.ldap.ContextExecutor)
+     */
+    public Object executeReadWrite(ContextExecutor ce) {
+        DirContext ctx = contextSource.getReadWriteContext();
+        return executeWithContext(ce, ctx);
+    }
+
+    private Object executeWithContext(ContextExecutor ce, DirContext ctx) {
+        try {
+            return ce.executeWithContext(ctx);
+        } catch (NamingException e) {
+            throw getExceptionTranslator().translate(e);
+        } finally {
+            closeContext(ctx);
+        }
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#lookup(javax.naming.Name)
+     */
+    public Object lookup(final Name dn) {
+        return executeReadOnly(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                return ctx.lookup(dn);
+            }
+        });
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#lookup(java.lang.String)
+     */
+    public Object lookup(final String dn) throws DataAccessException {
+        return executeReadOnly(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                return ctx.lookup(dn);
+            }
+        });
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#lookup(javax.naming.Name,
+     *      org.springframework.ldap.AttributesMapper)
+     */
+    public Object lookup(final Name dn, final AttributesMapper mapper) {
+        return executeReadOnly(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                Attributes attributes = ctx.getAttributes(dn);
+                return mapper.mapFromAttributes(attributes);
+            }
+        });
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#lookup(java.lang.String,
+     *      org.springframework.ldap.AttributesMapper)
+     */
+    public Object lookup(final String dn, final AttributesMapper mapper)
+            throws DataAccessException {
+
+        return executeReadOnly(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                Attributes attributes = ctx.getAttributes(dn);
+                return mapper.mapFromAttributes(attributes);
+            }
+        });
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#lookup(javax.naming.Name,
+     *      org.springframework.ldap.ContextMapper)
+     */
+    public Object lookup(final Name dn, final ContextMapper mapper) {
+        return executeReadOnly(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                Object object = ctx.lookup(dn);
+                return mapper.mapFromContext(object);
+            }
+        });
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#lookup(java.lang.String,
+     *      org.springframework.ldap.ContextMapper)
+     */
+    public Object lookup(final String dn, final ContextMapper mapper)
+            throws DataAccessException {
+
+        return executeReadOnly(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                Object object = ctx.lookup(dn);
+                return mapper.mapFromContext(object);
+            }
+        });
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#modifyAttributes(javax.naming.Name,
+     *      javax.naming.directory.ModificationItem[])
+     */
+    public void modifyAttributes(final Name dn, final ModificationItem[] mods) {
+        executeReadWrite(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                ctx.modifyAttributes(dn, mods);
+                return null;
+            }
+        });
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#modifyAttributes(java.lang.String,
+     *      javax.naming.directory.ModificationItem[])
+     */
+    public void modifyAttributes(final String dn, final ModificationItem[] mods)
+            throws DataAccessException {
+
+        executeReadWrite(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                ctx.modifyAttributes(dn, mods);
+                return null;
+            }
+        });
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#bind(javax.naming.Name,
+     *      java.lang.Object, javax.naming.directory.Attributes)
+     */
+    public void bind(final Name dn, final Object obj,
+            final Attributes attributes) {
+
+        executeReadWrite(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                ctx.bind(dn, obj, attributes);
+                return null;
+            }
+        });
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#bind(java.lang.String,
+     *      java.lang.Object, javax.naming.directory.Attributes)
+     */
+    public void bind(final String dn, final Object obj,
+            final Attributes attributes) throws DataAccessException {
+
+        executeReadWrite(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                ctx.bind(dn, obj, attributes);
+                return null;
+            }
+        });
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#unbind(javax.naming.Name)
+     */
+    public void unbind(final Name dn) {
+        doUnbind(dn);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#unbind(java.lang.String)
+     */
+    public void unbind(final String dn) throws DataAccessException {
+        doUnbind(dn);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#unbind(javax.naming.Name,
+     *      boolean)
+     */
+    public void unbind(final Name dn, boolean recursive)
+            throws DataAccessException {
+        if (!recursive) {
+            doUnbind(dn);
+        } else {
+            doUnbindRecursively(dn);
+        }
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#unbind(java.lang.String, boolean)
+     */
+    public void unbind(final String dn, boolean recursive)
+            throws DataAccessException {
+        if (!recursive) {
+            doUnbind(dn);
+        } else {
+            doUnbindRecursively(dn);
+        }
+    }
+
+    private void doUnbind(final Name dn) throws DataAccessException {
+        executeReadWrite(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                ctx.unbind(dn);
+                return null;
+            }
+        });
+    }
+
+    private void doUnbind(final String dn) throws DataAccessException {
+        executeReadWrite(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                ctx.unbind(dn);
+                return null;
+            }
+        });
+    }
+
+    private void doUnbindRecursively(final Name dn) throws DataAccessException {
+        executeReadWrite(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                deleteRecursively(ctx, new DistinguishedName(dn));
+                return null;
+            }
+        });
+    }
+
+    private void doUnbindRecursively(final String dn)
+            throws DataAccessException {
+        executeReadWrite(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                deleteRecursively(ctx, new DistinguishedName(dn));
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Delete all subcontexts including the current one recursively.
+     * 
+     * @param ctx
+     *            The context to use for deleting.
+     * @param name
+     *            The starting point to delete recursively.
+     * @throws DataAccessException
+     *             if any error occurs
+     */
+    protected void deleteRecursively(DirContext ctx, DistinguishedName name)
+            throws DataAccessException {
+
+        NamingEnumeration enumeration = null;
+        try {
+            enumeration = ctx.listBindings(name);
+            while (enumeration.hasMore()) {
+                Binding binding = (Binding) enumeration.next();
+                DistinguishedName childName = new DistinguishedName(binding
+                        .getName());
+                childName.prepend((DistinguishedName) name);
+                deleteRecursively(ctx, childName);
+            }
+            ctx.unbind(name);
+            if (log.isDebugEnabled()) {
+                log.debug("Entry " + name + " deleted");
+            }
+        } catch (NamingException e) {
+            throw exceptionTranslator.translate(e);
+        } finally {
+            try {
+                enumeration.close();
+            } catch (Exception e) {
+                // Never mind this
+            }
+        }
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#rebind(javax.naming.Name,
+     *      java.lang.Object, javax.naming.directory.Attributes)
+     */
+    public void rebind(final Name dn, final Object obj,
+            final Attributes attributes) throws DataAccessException {
+
+        executeReadWrite(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                ctx.rebind(dn, obj, attributes);
+                return null;
+            }
+        });
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#rebind(java.lang.String,
+     *      java.lang.Object, javax.naming.directory.Attributes)
+     */
+    public void rebind(final String dn, final Object obj,
+            final Attributes attributes) throws DataAccessException {
+
+        executeReadWrite(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                ctx.rebind(dn, obj, attributes);
+                return null;
+            }
+        });
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#rename(javax.naming.Name,
+     *      javax.naming.Name)
+     */
+    public void rename(final Name oldDn, final Name newDn)
+            throws DataAccessException {
+
+        executeReadWrite(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                ctx.rename(oldDn, newDn);
+                return null;
+            }
+        });
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#rename(java.lang.String,
+     *      java.lang.String)
+     */
+    public void rename(final String oldDn, final String newDn)
+            throws DataAccessException {
+
+        executeReadWrite(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                ctx.rename(oldDn, newDn);
+                return null;
+            }
+        });
+    }
+
+    /*
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
+    public void afterPropertiesSet() throws Exception {
+        if (contextSource == null) {
+            throw new IllegalArgumentException(
+                    "Property 'contextSource' must be set.");
+        }
+    }
+
+    private void closeContextAndNamingEnumeration(DirContext ctx,
+            NamingEnumeration results) {
+
+        closeNamingEnumeration(results);
+        closeContext(ctx);
+    }
+
+    /**
+     * Close the supplied DirContext if it is not null. Swallow any exceptions,
+     * as this is only for cleanup.
+     * 
+     * @param ctx
+     *            the context to close.
+     */
+    private void closeContext(DirContext ctx) {
+        if (ctx != null) {
+            try {
+                ctx.close();
+            } catch (Exception e) {
+                // Never mind this.
+            }
+        }
+    }
+
+    /**
+     * Close the supplied NamingEnumeration if it is not null. Swallow any
+     * exceptions, as this is only for cleanup.
+     * 
+     * @param results
+     *            the NamingEnumeration to close.
+     */
+    private void closeNamingEnumeration(NamingEnumeration results) {
+        if (results != null) {
+            try {
+                results.close();
+            } catch (Exception e) {
+                // Never mind this.
+            }
+        }
+    }
+
+    /**
+     * Get the NamingExceptionTranslator that will be used by this instance. If
+     * no exceptionTranslator has been set, a default instance will be created.
+     * 
+     * @return the NamingExceptionTranslator to be used by this instance.
+     */
+    public NamingExceptionTranslator getExceptionTranslator() {
+        return exceptionTranslator;
+    }
+
+    /**
+     * Set the NamingExceptionTranslator to be used by this instance.
+     * 
+     * @param exceptionTranslator
+     *            the NamingExceptionTranslator to use.
+     */
+    public void setExceptionTranslator(
+            NamingExceptionTranslator exceptionTranslator) {
+
+        this.exceptionTranslator = exceptionTranslator;
+    }
+
+    private SearchControls getDefaultSearchControls(int searchScope,
+            boolean returningObjFlag) {
+
+        SearchControls controls = new SearchControls();
+        controls.setSearchScope(searchScope);
+        controls.setReturningObjFlag(returningObjFlag);
+        return controls;
+    }
+
+    /**
+     * Make sure the returnObjFlag is set in the supplied SearchControls. Set it
+     * and log if it's not set.
+     * 
+     * @param controls
+     *            the SearchControls to check.
+     */
+    private void assureReturnObjFlagSet(SearchControls controls) {
+        Validate.notNull(controls);
+        if (!controls.getReturningObjFlag()) {
+            log.info("The returnObjFlag of supplied SearchControls is not set"
+                    + " but a ContextMapper is used - setting flag to true");
+            controls.setReturningObjFlag(true);
+        }
+    }
+
+    /**
+     * A CollectingSearchResultCallbackHandler to wrap an AttributesMapper. That
+     * is, the found objects are extracted from all SearchResults, and then
+     * passed to the specified AttributesMapper for translation. This class
+     * needs to be nested, since we want to be able to get hold of the exception
+     * translator of this instance.
+     * 
+     * @author Mattias Arthursson
+     * @author Ulrik Sandberg
+     */
+    public class AttributesMapperCallbackHandler extends
+            CollectingSearchResultCallbackHandler {
+        private AttributesMapper mapper;
+
+        public AttributesMapperCallbackHandler(AttributesMapper mapper) {
+            this.mapper = mapper;
+        }
+
+        protected Object getObjectFromResult(SearchResult searchResult) {
+            Attributes attributes = searchResult.getAttributes();
+            try {
+                return mapper.mapFromAttributes(attributes);
+            } catch (NamingException e) {
+                throw getExceptionTranslator().translate(e);
+            }
+        }
+    }
+
+    /**
+     * A CollectingSearchResultCallbackHandler to wrap a ContextMapper. That is,
+     * the found objects are extracted from all SearchResults, and then passed
+     * to the specified ContextMapper for translation.
+     * 
+     * @author Mattias Arthursson
+     */
+    public class ContextMapperCallbackHandler extends
+            CollectingSearchResultCallbackHandler {
+        private ContextMapper mapper;
+
+        public ContextMapperCallbackHandler(ContextMapper mapper) {
+            this.mapper = mapper;
+        }
+
+        protected Object getObjectFromResult(SearchResult searchResult) {
+            Object object = searchResult.getObject();
+            if (object == null) {
+                throw new EntryNotFoundException(
+                        "SearchResult did not contain any object.");
+            }
+            return mapper.mapFromContext(object);
+        }
+    }
+}
