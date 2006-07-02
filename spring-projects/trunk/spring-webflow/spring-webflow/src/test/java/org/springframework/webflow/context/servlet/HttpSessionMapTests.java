@@ -84,7 +84,6 @@ public class HttpSessionMapTests extends TestCase {
 		// perform test
 		Iterator names = tested.getAttributeNames();
 		assertNotNull("Null result unexpected", names);
-		System.out.println(names);
 		assertTrue("More elements", names.hasNext());
 		String name = (String)names.next();
 		assertEquals("Some key", name);
