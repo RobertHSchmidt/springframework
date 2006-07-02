@@ -30,8 +30,10 @@ import org.springframework.webflow.Flow;
  * 
  * @author Keith Donald
  */
-public class LocalFlowServiceRegistry {
+class LocalFlowServiceRegistry {
 
+	// not that this is a package private class!
+	
 	/**
 	 * The flow for which this registry is for (and scoped by).
 	 */
