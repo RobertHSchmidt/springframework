@@ -50,14 +50,13 @@ public abstract class AbstractStaxStreamPayloadEndpoint extends AbstractStaxPayl
         XMLStreamReader streamReader = getStreamReader(messageContext.getRequest().getPayloadSource());
         XMLStreamWriter streamWriter = new ResponseCreatingStreamWriter(messageContext);
         invokeInternal(streamReader, streamWriter);
-        streamWriter.flush();
+        streamWriter.close();
     }
 
     private XMLStreamReader getStreamReader(Source source) throws XMLStreamException, TransformerException {
         XMLStreamReader streamReader = null;
         if (source instanceof StaxSource) {
-            StaxSource staxSource = (StaxSource) source;
-            streamReader = staxSource.getXMLStreamReader();
+            streamReader = ((StaxSource) source).getXMLStreamReader();
         }
         if (streamReader == null) {
             try {
@@ -132,7 +131,22 @@ public abstract class AbstractStaxStreamPayloadEndpoint extends AbstractStaxPayl
         public void close() throws XMLStreamException {
             if (streamWriter != null) {
                 streamWriter.close();
+                if (os != null) {
+                    streamWriter.flush();
+                    // if we used an output stream cache, we have to transform it to the response again
+                    try {
+                        Transformer transformer = createTransformer();
+                        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+                        transformer.transform(new StreamSource(is), messageContext.getResponse().getPayloadResult());
+                        os = null;
+                    }
+                    catch (TransformerException ex) {
+                        throw new XMLStreamException(ex);
+                    }
+                }
+                streamWriter = null;
             }
+
         }
 
         public void flush() throws XMLStreamException {
@@ -224,18 +238,6 @@ public abstract class AbstractStaxStreamPayloadEndpoint extends AbstractStaxPayl
         public void writeEndDocument() throws XMLStreamException {
             createStreamWriter();
             streamWriter.writeEndDocument();
-            if (os != null) {
-                streamWriter.flush();
-                // if we used an output stream cache, we have to transform it to the response again
-                try {
-                    Transformer transformer = createTransformer();
-                    ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
-                    transformer.transform(new StreamSource(is), messageContext.getResponse().getPayloadResult());
-                }
-                catch (TransformerException ex) {
-                    throw new XMLStreamException(ex);
-                }
-            }
         }
 
         public void writeEndElement() throws XMLStreamException {

@@ -20,6 +20,16 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.soap.SOAPFactory;
+
+import org.springframework.ws.soap.axiom.AxiomSoapMessage;
+import org.springframework.ws.soap.axiom.AxiomSoapMessageContext;
+import org.springframework.xml.transform.StringResult;
+import org.springframework.xml.transform.StringSource;
 
 /**
  * Test case for AbstractStaxStreamPayloadEndpoint.
@@ -48,7 +58,8 @@ public class StaxStreamPayloadEndpointTest extends AbstractMessageEndpointTestCa
                 assertEquals("Invalid end event local name", REQUEST_ELEMENT, streamReader.getLocalName());
                 assertEquals("Invalid end event namespace", NAMESPACE_URI, streamReader.getNamespaceURI());
                 streamWriter.writeEmptyElement(NAMESPACE_URI, RESPONSE_ELEMENT);
-                streamWriter.writeEndDocument();
+                streamWriter.flush();
+                streamWriter.close();
             }
 
             protected XMLOutputFactory createXmlOutputFactory() {
@@ -57,6 +68,33 @@ public class StaxStreamPayloadEndpointTest extends AbstractMessageEndpointTestCa
                 return outputFactory;
             }
         };
+    }
+
+    public void testAxiomResponse() throws Exception {
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        SOAPFactory axiomFactory = OMAbstractFactory.getSOAP11Factory();
+        AxiomSoapMessage request = new AxiomSoapMessage(axiomFactory);
+        transformer.transform(new StringSource(REQUEST), request.getPayloadResult());
+        AxiomSoapMessageContext context = new AxiomSoapMessageContext(request, axiomFactory);
+
+        MessageEndpoint endpoint = createResponseEndpoint();
+        endpoint.invoke(context);
+        assertTrue("context has not response", context.hasResponse());
+        StringResult stringResult = new StringResult();
+        transformer.transform(context.getResponse().getPayloadSource(), stringResult);
+        assertXMLEqual(RESPONSE, stringResult.toString());
+    }
+
+    public void testAxiomNoResponse() throws Exception {
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        SOAPFactory axiomFactory = OMAbstractFactory.getSOAP11Factory();
+        AxiomSoapMessage request = new AxiomSoapMessage(axiomFactory);
+        transformer.transform(new StringSource(REQUEST), request.getPayloadResult());
+        AxiomSoapMessageContext context = new AxiomSoapMessageContext(request, axiomFactory);
+
+        MessageEndpoint endpoint = createNoResponseEndpoint();
+        endpoint.invoke(context);
+        assertFalse("context has response", context.hasResponse());
     }
 
 
