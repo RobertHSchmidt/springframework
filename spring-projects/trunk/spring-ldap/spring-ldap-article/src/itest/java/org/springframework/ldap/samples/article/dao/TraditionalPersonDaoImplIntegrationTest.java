@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.sf.ldaptemplate.samples.article.dao;
+package org.springframework.ldap.samples.article.dao;
 
 import org.springframework.ldap.samples.article.dao.TraditionalPersonDaoImpl;
 
