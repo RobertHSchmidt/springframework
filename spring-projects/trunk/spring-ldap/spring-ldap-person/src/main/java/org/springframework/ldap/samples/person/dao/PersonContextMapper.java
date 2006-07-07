@@ -17,9 +17,9 @@ package org.springframework.ldap.samples.person.dao;
 
 import org.springframework.ldap.samples.person.domain.Person;
 
-import net.sf.ldaptemplate.ContextMapper;
-import net.sf.ldaptemplate.support.DirContextOperations;
-import net.sf.ldaptemplate.support.DistinguishedName;
+import org.springframework.ldap.ContextMapper;
+import org.springframework.ldap.support.DirContextOperations;
+import org.springframework.ldap.support.DistinguishedName;
 
 /**
  * Maps from DirContextOperations (DirContextAdapters, really) to Person

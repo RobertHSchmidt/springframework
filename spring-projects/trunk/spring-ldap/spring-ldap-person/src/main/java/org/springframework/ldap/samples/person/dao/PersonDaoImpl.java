@@ -19,12 +19,12 @@ import java.util.List;
 
 import org.springframework.ldap.samples.person.domain.Person;
 
-import net.sf.ldaptemplate.ContextMapper;
-import net.sf.ldaptemplate.LdapOperations;
-import net.sf.ldaptemplate.support.DirContextAdapter;
-import net.sf.ldaptemplate.support.DirContextOperations;
-import net.sf.ldaptemplate.support.DistinguishedName;
-import net.sf.ldaptemplate.support.filter.EqualsFilter;
+import org.springframework.ldap.ContextMapper;
+import org.springframework.ldap.LdapOperations;
+import org.springframework.ldap.support.DirContextAdapter;
+import org.springframework.ldap.support.DirContextOperations;
+import org.springframework.ldap.support.DistinguishedName;
+import org.springframework.ldap.support.filter.EqualsFilter;
 
 /**
  * Default implementation of PersonDao. This implementation uses

@@ -30,8 +30,8 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
-import net.sf.ldaptemplate.support.DirContextAdapter;
-import net.sf.ldaptemplate.support.DirContextOperations;
+import org.springframework.ldap.support.DirContextAdapter;
+import org.springframework.ldap.support.DirContextOperations;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.ldap.samples.person.domain.Person;
