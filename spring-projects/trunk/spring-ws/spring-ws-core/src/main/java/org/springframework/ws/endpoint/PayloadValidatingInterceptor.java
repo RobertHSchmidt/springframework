@@ -171,6 +171,11 @@ public class PayloadValidatingInterceptor extends TransformerObjectSupport
 
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(schemaResource, "schema is required");
+        Assert.isTrue(schemaResource.exists(), "schema [" + schemaResource + "] does not exist");
+        Assert.hasLength(schemaLanguage, "schemaLanguage is required");
+        if (logger.isInfoEnabled()) {
+            logger.info("Validating using [" + schemaResource + "]");
+        }
         validator = XmlValidatorFactory.createValidator(schemaResource, schemaLanguage);
     }
 
