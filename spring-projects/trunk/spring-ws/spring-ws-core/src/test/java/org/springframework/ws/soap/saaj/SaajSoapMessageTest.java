@@ -65,4 +65,5 @@ public class SaajSoapMessageTest extends AbstractSoap11MessageTestCase {
         saajMessage.getMimeHeaders().addHeader("SOAPAction", "value");
         assertEquals("Invalid mime header value", "value", soapMessage.getSoapAction());
     }
+
 }
