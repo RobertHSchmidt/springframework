@@ -148,4 +148,15 @@ public class PayloadValidatingInterceptorTest extends TestCase {
             System.setProperty("javax.xml.validation.SchemaFactory:" + XMLConstants.W3C_XML_SCHEMA_NS_URI, "");
         }
     }
+
+    public void testNonExistingSchema() throws Exception {
+        interceptor.setSchema(new ClassPathResource("invalid"));
+        try {
+            interceptor.afterPropertiesSet();
+            fail("IllegalArgumentException expected");
+        }
+        catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
 }
