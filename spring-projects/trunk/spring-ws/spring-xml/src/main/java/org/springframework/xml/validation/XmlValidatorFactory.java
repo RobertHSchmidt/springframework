@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.core.io.Resource;
+import org.springframework.util.Assert;
 import org.springframework.xml.JaxpVersion;
 
 /**
@@ -63,6 +64,9 @@ public abstract class XmlValidatorFactory {
      * @see #SCHEMA_W3C_XML
      */
     public static XmlValidator createValidator(Resource schemaResource, String schemaLanguage) throws IOException {
+        Assert.notNull(schemaResource, "schema is required");
+        Assert.isTrue(schemaResource.exists(), "schema [" + schemaResource + "] file does not exist");
+        Assert.hasLength(schemaLanguage, "schemaLanguage is required");
         if (JaxpVersion.getJaxpVersion() >= JaxpVersion.JAXP_13) {
             logger.debug("Creating JAXP 1.3 XmlValidator");
             return Jaxp13ValidatorFactory.createValidator(schemaResource, schemaLanguage);
