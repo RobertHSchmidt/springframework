@@ -1,1 +1,0 @@
-Test file to try out write access to subversion.
