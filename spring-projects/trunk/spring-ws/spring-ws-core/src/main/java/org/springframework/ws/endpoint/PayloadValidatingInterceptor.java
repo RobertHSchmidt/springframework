@@ -62,9 +62,19 @@ public class PayloadValidatingInterceptor extends TransformerObjectSupport
         implements SoapEndpointInterceptor, InitializingBean {
 
     /**
-     * Fault string used when a validation errors occurs on the request.
+     * Default SOAP Fault string used when a validation errors occur on the request.
+     *
+     * @see #setValidationErrorFaultString(String)
      */
-    public static final String VALIDATION_ERROR_FAULT_STRING = "Validation error";
+    public static final String DEFAULT_VALIDATION_ERROR_FAULT_STRING = "Validation error";
+
+    /**
+     * Default SOAP Fault Detail name used when a validation errors occur on the request.
+     *
+     * @see #setValidationErrorDetailElementName(javax.xml.namespace.QName)
+     */
+    public static final QName DEFAULT_VALIDATION_ERROR_DETAIL_ELEMENT_NAME =
+            new QName("http://springframework.org/spring-ws", "ValidationError", "spring-ws");
 
     private static final Log logger = LogFactory.getLog(PayloadValidatingInterceptor.class);
 
@@ -78,8 +88,19 @@ public class PayloadValidatingInterceptor extends TransformerObjectSupport
 
     private XmlValidator validator;
 
-    public static final QName VALIDATION_ERROR_DETAIL_ELEMENT_NAME =
-            new QName("http://springframework.org/spring-ws", "ValidationError", "spring-ws");
+    private String validationErrorFaultString = DEFAULT_VALIDATION_ERROR_FAULT_STRING;
+
+    private QName validationErrorDetailElementName = DEFAULT_VALIDATION_ERROR_DETAIL_ELEMENT_NAME;
+
+    private boolean addValidationErrorDetail = true;
+
+    /**
+     * Indicates whether a SOAP Fault detail element should be created when a validation error occurs. This detail
+     * element will contain the exact validation errors. Defaults to <code>true</code>.
+     */
+    public void setAddValidationErrorDetail(boolean addValidationErrorDetail) {
+        this.addValidationErrorDetail = addValidationErrorDetail;
+    }
 
     /**
      * Sets the schema resource to use for validation.
@@ -110,6 +131,26 @@ public class PayloadValidatingInterceptor extends TransformerObjectSupport
      */
     public void setValidateResponse(boolean validateResponse) {
         this.validateResponse = validateResponse;
+    }
+
+    /**
+     * Sets the fault detail element name when validation errors occur on the request. Defaults to
+     * <code>DEFAULT_VALIDATION_ERROR_DETAIL_ELEMENT_NAME</code>.
+     *
+     * @see #DEFAULT_VALIDATION_ERROR_DETAIL_ELEMENT_NAME
+     */
+    public void setValidationErrorDetailElementName(QName validationErrorDetailElementName) {
+        this.validationErrorDetailElementName = validationErrorDetailElementName;
+    }
+
+    /**
+     * Sets the fault string used when validation errors occur on the request. Defaults to
+     * <code>DEFAULT_VALIDATION_ERROR_FAULT_STRING</code>.
+     *
+     * @see #DEFAULT_VALIDATION_ERROR_FAULT_STRING
+     */
+    public void setValidationErrorFaultString(String validationErrorFaultString) {
+        this.validationErrorFaultString = validationErrorFaultString;
     }
 
     /**
@@ -174,7 +215,7 @@ public class PayloadValidatingInterceptor extends TransformerObjectSupport
         Assert.isTrue(schemaResource.exists(), "schema [" + schemaResource + "] does not exist");
         Assert.hasLength(schemaLanguage, "schemaLanguage is required");
         if (logger.isInfoEnabled()) {
-            logger.info("Validating using [" + schemaResource + "]");
+            logger.info("Validating using " + schemaResource);
         }
         validator = XmlValidatorFactory.createValidator(schemaResource, schemaLanguage);
     }
@@ -194,16 +235,18 @@ public class PayloadValidatingInterceptor extends TransformerObjectSupport
     }
 
     /**
-     * Creates a response soap message that contains a <code>SoapFault</code> that descibes the validation errors.
+     * Creates a response soap message containing a <code>SoapFault</code> that descibes the validation errors.
      */
     protected void createRequestValidationFault(SoapMessageContext context, SAXParseException[] errors)
             throws TransformerException {
         SoapMessage response = context.getSoapResponse();
-        SoapFault fault = SoapMessageUtils.addSenderFault(response, VALIDATION_ERROR_FAULT_STRING);
-        SoapFaultDetail detail = fault.addFaultDetail();
-        for (int i = 0; i < errors.length; i++) {
-            SoapFaultDetailElement detailElement = detail.addFaultDetailElement(VALIDATION_ERROR_DETAIL_ELEMENT_NAME);
-            detailElement.addText(errors[0].getMessage());
+        SoapFault fault = SoapMessageUtils.addSenderFault(response, validationErrorFaultString);
+        if (addValidationErrorDetail) {
+            SoapFaultDetail detail = fault.addFaultDetail();
+            for (int i = 0; i < errors.length; i++) {
+                SoapFaultDetailElement detailElement = detail.addFaultDetailElement(validationErrorDetailElementName);
+                detailElement.addText(errors[0].getMessage());
+            }
         }
     }
 }

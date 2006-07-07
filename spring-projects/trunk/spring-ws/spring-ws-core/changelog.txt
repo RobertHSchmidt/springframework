@@ -13,6 +13,7 @@ Package org.springframework.oxm.xstream
 Pacakge org.springframework.ws.endpoint
 * improved endpoint test suite
 * AbstractStaxPayloadEndpoint now use StaxSource corrently (#SWS-38)
+* made PayloadValidatingInterceptor more customizable (#SWS-43)
 
 Package org.springframework.ws.context
 * changed contract of MessageContext.getResponse(): now creates a response if none has been created. Required because
