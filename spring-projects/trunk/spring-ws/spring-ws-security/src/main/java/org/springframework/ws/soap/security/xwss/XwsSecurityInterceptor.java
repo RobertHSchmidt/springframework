@@ -99,6 +99,7 @@ public class XwsSecurityInterceptor extends AbstractWsSecurityInterceptor implem
 
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(policyConfiguration, "policyConfiguration is required");
+        Assert.isTrue(policyConfiguration.exists(), "policyConfiguration [" + policyConfiguration + "] does not exist");
         Assert.notNull(callbackHandler, "callbackHandler is required");
         XWSSProcessorFactory processorFactory = XWSSProcessorFactory.newInstance();
         InputStream is = null;
