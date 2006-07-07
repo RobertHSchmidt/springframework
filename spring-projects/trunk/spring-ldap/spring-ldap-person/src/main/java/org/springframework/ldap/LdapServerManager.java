@@ -29,9 +29,9 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 
-import net.sf.ldaptemplate.ContextSource;
-import net.sf.ldaptemplate.support.DefaultDirObjectFactory;
-import net.sf.ldaptemplate.support.DistinguishedName;
+import org.springframework.ldap.ContextSource;
+import org.springframework.ldap.support.DefaultDirObjectFactory;
+import org.springframework.ldap.support.DistinguishedName;
 
 import org.apache.directory.server.core.configuration.ShutdownConfiguration;
 import org.apache.directory.server.jndi.ServerContextFactory;

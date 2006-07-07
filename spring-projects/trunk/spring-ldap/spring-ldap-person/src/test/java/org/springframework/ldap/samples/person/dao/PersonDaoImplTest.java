@@ -19,10 +19,10 @@ import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
-import net.sf.ldaptemplate.ContextMapper;
-import net.sf.ldaptemplate.LdapOperations;
-import net.sf.ldaptemplate.support.DirContextOperations;
-import net.sf.ldaptemplate.support.DistinguishedName;
+import org.springframework.ldap.ContextMapper;
+import org.springframework.ldap.LdapOperations;
+import org.springframework.ldap.support.DirContextOperations;
+import org.springframework.ldap.support.DistinguishedName;
 
 import org.easymock.MockControl;
 import org.springframework.ldap.samples.person.dao.PersonDaoImpl;
