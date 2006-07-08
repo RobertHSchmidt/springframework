@@ -64,7 +64,6 @@ import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.action.MethodResultSpecification;
 import org.springframework.webflow.support.BeanFactoryFlowVariable;
 import org.springframework.webflow.support.CollectionAddingPropertyExpression;
-import org.springframework.webflow.support.ImmutableFlowAttributeMapper;
 import org.springframework.webflow.support.SimpleFlowVariable;
 import org.springframework.webflow.support.TransitionCriteriaChain;
 import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
