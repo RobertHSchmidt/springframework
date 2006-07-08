@@ -37,10 +37,11 @@ import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.ViewSelection;
 
 /**
- * Default flow execution control context implementation used internally by the
- * web flow system. This class is closely coupled with
+ * Default request control context implementation used internally by the web
+ * flow system. This class is closely coupled with
  * <code>FlowExecutionImpl</code> and <code>FlowSessionImpl</code>. The
- * three classes work together to form a complete flow execution implementation.
+ * three classes work together to form a complete flow execution implementation
+ * based on a finite state machine.
  * 
  * @see org.springframework.webflow.execution.impl.FlowExecutionImpl
  * @see org.springframework.webflow.execution.impl.FlowSessionImpl
@@ -63,17 +64,17 @@ class RequestControlContextImpl implements RequestControlContext {
 	private AttributeMap requestScope = new AttributeMap();
 
 	/**
-	 * The original event that triggered the creation of this state context.
+	 * A source context for the caller who initiated this request.
 	 */
 	private ExternalContext externalContext;
 
 	/**
-	 * The last event that occured in this context.
+	 * The last event that occured in this request context.
 	 */
 	private Event lastEvent;
 
 	/**
-	 * The last transition that executed in this context.
+	 * The last transition that executed in this request context.
 	 */
 	private Transition lastTransition;
 
@@ -153,7 +154,7 @@ class RequestControlContextImpl implements RequestControlContext {
 		return getConversationScope().union(getFlowScope()).union(getRequestScope()).unmodifiable();
 	}
 
-	// implementing FlowExecutionControlContext
+	// implementing RequestControlContext
 
 	public void setLastEvent(Event lastEvent) {
 		this.lastEvent = lastEvent;
