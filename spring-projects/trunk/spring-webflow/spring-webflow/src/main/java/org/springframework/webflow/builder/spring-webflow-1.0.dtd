@@ -488,7 +488,7 @@
 	or an expression to be evaluated at runtime against the request context
 	(e.g. then="${flowScope.previousViewState}").
 -->
-<!ATTLIST if then IDREF #REQUIRED>
+<!ATTLIST if then CDATA #REQUIRED>
 
 <!--
 	The state to transition to if the boolean expression is false (optional).
@@ -497,7 +497,7 @@
 	or an expression to be evaluated at runtime against the request context
 	(e.g. else="${flowScope.previousViewState}").
 -->
-<!ATTLIST if else IDREF #IMPLIED>
+<!ATTLIST if else CDATA #IMPLIED>
 
 <!--
 	Defines a subflow state, a state that spawns another flow as a subflow when entered.  When the
