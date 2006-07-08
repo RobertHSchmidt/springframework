@@ -4,7 +4,7 @@ import java.util.Map;
 
 /**
  * An evaluator that is capable of setting a property on a target object at the
- * value path defined by an expression.
+ * path defined by this expression.
  * @author Keith Donald
  */
 public interface PropertyExpression extends Expression {

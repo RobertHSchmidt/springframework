@@ -57,6 +57,11 @@ public class MappingBuilder {
 	private ConversionService conversionService = new DefaultConversionService();
 
 	/**
+	 * Whether or not the built mapping is a required mapping.
+	 */
+	private boolean required;
+	
+	/**
 	 * Creates a mapping builder that uses the expression parser to parse
 	 * attribute mapping expressions.
 	 * @param expressionParser the expression parser.
@@ -119,6 +124,15 @@ public class MappingBuilder {
 	}
 
 	/**
+	 * Marks the mapping to be built a "required" mapping.
+	 * @return this, to support call-chaining
+	 */
+	public MappingBuilder required() {
+		this.required = true;
+		return this;
+	}
+	
+	/**
 	 * The logical GOF builder getResult method, returning a fully constructed
 	 * Mapping from the configured pieces. Once called, the state of this
 	 * builder is nulled out to support building a new mapping object again.
@@ -134,11 +148,17 @@ public class MappingBuilder {
 			Assert.notNull(targetType, "The target type is required when the source type is specified");
 			typeConverter = conversionService.getConversionExecutor(sourceType, targetType);
 		}
-		Mapping result = new Mapping(sourceExpression, targetExpression, typeConverter);
+		Mapping result;
+		if (required) {
+			result = new RequiredMapping(sourceExpression, targetExpression, typeConverter);
+		} else {
+			result = new Mapping(sourceExpression, targetExpression, typeConverter);
+		}
 		sourceExpression = null;
 		targetExpression = null;
 		sourceType = null;
 		targetType = null;
+		required = false;
 		return result;
 	}
 }

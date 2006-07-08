@@ -7,7 +7,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.binding.expression.EvaluationAttempt;
 import org.springframework.binding.expression.EvaluationException;
 import org.springframework.binding.expression.PropertyExpression;
-import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
@@ -58,6 +57,6 @@ public class BeanWrapperExpression implements PropertyExpression {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("expression", expression).toString();
+		return expression;
 	}
 }
