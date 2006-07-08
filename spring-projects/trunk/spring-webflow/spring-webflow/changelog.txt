@@ -22,6 +22,9 @@ Package org.springframework.webflow.builder
 * Refactored ResultEventFactorySelector to be a static inner class of BeanInvokingActionFactory to highlight the fact that it
   is a helper strategy of this class.
 
+Package org.springframework.webflow.support
+* Moved ImmutableFlowAttributeMapper to builder and made package-private.  Not a general support class.
+
 Changes in version 1.0 RC3 (23.6.2006)
 ------------------------------------
 Package org.springframework.webflow
