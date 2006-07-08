@@ -213,6 +213,17 @@ public class FlowTests extends TestCase {
 		assertEquals("foo", context.getFlowScope().get("attr"));
 	}
 
+	public void testStartWithMapperButNoInput() {
+		DefaultAttributeMapper attributeMapper = new DefaultAttributeMapper();
+		MappingBuilder mapping = new MappingBuilder(new DefaultExpressionParserFactory().getExpressionParser());
+		attributeMapper.addMapping(mapping.source("attr").target("flowScope.attr").value());
+		flow.setInputMapper(attributeMapper);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
+		AttributeMap sessionInput = new AttributeMap();
+		flow.start(context, sessionInput); 
+		assertFalse(context.getFlowScope().contains("attr"));
+	}
+	
 	public void testOnEventNullCurrentState() {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		Event event = new Event(this, "foo");
