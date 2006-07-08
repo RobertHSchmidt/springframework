@@ -139,20 +139,16 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 
 		context.setActiveSession(parentSession);
 		AttributeMap input = mapper.createFlowInput(context);
-		assertEquals(2, input.size());
-		assertTrue(input.contains("y"));
-		assertNull(input.get("y"));
-		assertTrue(input.contains("b"));
-		assertNull(input.get("b"));
+		assertEquals(0, input.size());
+		assertFalse(input.contains("y"));
+		assertFalse(input.contains("b"));
 
 		parentSession.getScope().clear();
 
 		mapper.mapFlowOutput(CollectionUtils.EMPTY_ATTRIBUTE_MAP, context);
-		assertEquals(2, parentSession.getScope().size());
-		assertTrue(parentSession.getScope().contains("c"));
-		assertNull(parentSession.getScope().get("c"));
-		assertTrue(parentSession.getScope().contains("z"));
-		assertNull(parentSession.getScope().get("z"));
+		assertEquals(0, parentSession.getScope().size());
+		assertFalse(parentSession.getScope().contains("c"));
+		assertFalse(parentSession.getScope().contains("z"));
 	}
 
 	public void testFormActionInCombinationWithMapping() throws Exception {
