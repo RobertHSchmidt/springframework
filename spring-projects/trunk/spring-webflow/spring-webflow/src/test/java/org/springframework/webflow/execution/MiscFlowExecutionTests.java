@@ -3,7 +3,9 @@ package org.springframework.webflow.execution;
 import junit.framework.TestCase;
 
 import org.springframework.binding.expression.support.StaticExpression;
+import org.springframework.binding.mapping.RequiredMappingException;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.webflow.AttributeMap;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.Flow;
 import org.springframework.webflow.RequestContext;
@@ -37,11 +39,25 @@ public class MiscFlowExecutionTests extends TestCase {
 		assertNotNull(response.getModel().get("order"));
 		assertEquals(order, response.getModel().get("order"));
 	}
-	
+
 	public void testRequiredMapping() {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("required-mapping.xml", getClass()));
 		Flow flow = new FlowAssembler("myFlow", builder).assembleFlow();
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
-		execution.start(null, new MockExternalContext());
+		AttributeMap input = new AttributeMap();
+		input.put("id", "23");
+		ApplicationView view = (ApplicationView)execution.start(input, new MockExternalContext());
+		assertEquals(new Long(23), view.getModel().get("id"));
+	}
+	
+	public void testRequiredMappingException() {
+		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("required-mapping.xml", getClass()));
+		Flow flow = new FlowAssembler("myFlow", builder).assembleFlow();
+		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		try {
+			execution.start(null, new MockExternalContext());
+		} catch (RequiredMappingException e) {
+			
+		}
 	}
 }
