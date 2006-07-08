@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
+	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
+
+<flow start-state="displayCustomer">
+	<input-mapper>
+		<mapping source="id" target="flowScope.id" from="string" to="long" required="true"/>
+	</input-mapper>
+	
+	<end-state id="displayCustomer" view="customer"/>	
+</flow>  
