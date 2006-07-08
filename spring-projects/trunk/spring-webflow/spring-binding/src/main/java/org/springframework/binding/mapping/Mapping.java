@@ -98,8 +98,9 @@ public class Mapping implements AttributeMapper, Serializable {
 		Object sourceValue = sourceExpression.evaluateAgainst(source, mappingContext);
 		if (sourceValue == null) {
 			if (required) {
-				throw new RequiredMappingException("This mapping is required; '" + sourceExpression
-						+ "' expression evaluation against source of type [" + source.getClass() + "] must return a non-null value");
+				throw new RequiredMappingException("This mapping is required; evaluation of expression '"
+						+ sourceExpression + "' against source of type [" + source.getClass()
+						+ "] must return a non-null value");
 			}
 			else {
 				// source expression returned no value, simply abort mapping
