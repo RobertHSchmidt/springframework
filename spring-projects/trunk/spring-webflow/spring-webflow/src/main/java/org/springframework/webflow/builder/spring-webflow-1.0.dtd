@@ -115,7 +115,7 @@
 	Whether or not this mapping is a required mapping.  If marked required and the source 
 	evaluates to null an error will be reported.
 -->
-<!ATTLIST mapping required (true | false) "false">
+<!ATTLIST mapping required (true | false) #IMPLIED>
 
 <!--
 	An attribute for the containing element.
