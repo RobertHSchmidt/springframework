@@ -32,8 +32,8 @@ public class StringSourceTest extends TestCase {
         DOMResult result = new DOMResult();
         transformer.transform(new StringSource(content), result);
         Element rootElement = (Element) result.getNode().getFirstChild();
-        assertEquals("content", rootElement.getLocalName());
-        assertEquals("prefix", rootElement.getPrefix());
-        assertEquals("namespace", rootElement.getNamespaceURI());
+        assertEquals("Invalid local name", "content", rootElement.getLocalName());
+        assertEquals("Invalid prefix", "prefix", rootElement.getPrefix());
+        assertEquals("Invalid namespace", "namespace", rootElement.getNamespaceURI());
     }
 }
