@@ -398,7 +398,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	public void dispose() {
-		destroyLocalServiceRegistry(getFlow());
+		localFlowServiceLocator.diposeOfAnyRegistries();
 		document = null;
 	}
 

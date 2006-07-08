@@ -179,6 +179,15 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 	}
 
 	/**
+	 * Pops all registries off the stack until the stack is empty.
+	 */
+	public void diposeOfAnyRegistries() {
+		while (!localRegistries.isEmpty()) {
+			pop();
+		}
+	}
+	
+	/**
 	 * Returns the top registry on the stack
 	 */
 	public LocalFlowServiceRegistry top() {
