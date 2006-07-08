@@ -40,6 +40,7 @@ import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.Mapping;
+import org.springframework.binding.mapping.RequiredMapping;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
@@ -80,8 +81,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *      &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *      &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -186,6 +187,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String FROM_ATTRIBUTE = "from";
 
 	private static final String TO_ATTRIBUTE = "to";
+
+	private static final String REQUIRED_ATTRIBUTE = "required";
 
 	private static final String TARGET_COLLECTION_ATTRIBUTE = "target-collection";
 
@@ -600,8 +603,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private void parseAndAddViewState(Element element, Flow flow) {
 		getFlowArtifactFactory().createViewState(parseId(element), flow, parseEntryActions(element),
-				parseViewSelector(element, false), parseTransitions(element),
-				parseExceptionHandlers(element), parseExitActions(element), parseAttributes(element));
+				parseViewSelector(element, false), parseTransitions(element), parseExceptionHandlers(element),
+				parseExitActions(element), parseAttributes(element));
 	}
 
 	private void parseAndAddDecisionState(Element element, Flow flow) {
@@ -618,8 +621,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private void parseAndAddEndState(Element element, Flow flow) {
 		getFlowArtifactFactory().createEndState(parseId(element), flow, parseEntryActions(element),
-				parseViewSelector(element, true), parseOutputMapper(element),
-				parseExceptionHandlers(element), parseAttributes(element));
+				parseViewSelector(element, true), parseOutputMapper(element), parseExceptionHandlers(element),
+				parseAttributes(element));
 	}
 
 	private String parseId(Element element) {
@@ -731,9 +734,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 		MethodResultSpecification resultSpecification = null;
 		if (resultName != null) {
-			resultSpecification = new MethodResultSpecification(
-					resultName,
-					(resultScope != null ? resultScope : ScopeType.REQUEST));
+			resultSpecification = new MethodResultSpecification(resultName, (resultScope != null ? resultScope
+					: ScopeType.REQUEST));
 		}
 		return getBeanInvokingActionFactory().createBeanInvokingAction(beanId,
 				getLocalFlowServiceLocator().getBeanFactory(), methodSignature, resultSpecification,
@@ -860,7 +862,16 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				target = new CollectionAddingPropertyExpression(parser.parsePropertyExpression(mappingElement
 						.getAttribute(TARGET_COLLECTION_ATTRIBUTE)));
 			}
-			mapper.addMapping(new Mapping(source, target, parseTypeConverter(mappingElement)));
+			boolean required = false;
+			if (StringUtils.hasText(mappingElement.getAttribute(REQUIRED_ATTRIBUTE))) {
+				required = ((Boolean)fromStringTo(Boolean.class).execute(
+						mappingElement.getAttribute(REQUIRED_ATTRIBUTE))).booleanValue();
+			}
+			if (required) {
+				mapper.addMapping(new RequiredMapping(source, target, parseTypeConverter(mappingElement)));
+			} else {
+				mapper.addMapping(new Mapping(source, target, parseTypeConverter(mappingElement)));
+			}
 		}
 		return mapper;
 	}
