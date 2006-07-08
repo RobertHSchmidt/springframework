@@ -53,6 +53,12 @@ public class Mapping implements AttributeMapper, Serializable {
 	private final ConversionExecutor typeConverter;
 
 	/**
+	 * Whether or not this is a required mapping; if true, the source expression
+	 * must return a non-null value.
+	 */
+	private boolean required;
+
+	/**
 	 * Creates a new mapping.
 	 * @param sourceExpression
 	 * @param targetPropertyExpression
@@ -60,11 +66,24 @@ public class Mapping implements AttributeMapper, Serializable {
 	 */
 	public Mapping(Expression sourceExpression, PropertyExpression targetPropertyExpression,
 			ConversionExecutor typeConverter) {
+		this(sourceExpression, targetPropertyExpression, typeConverter, false);
+	}
+
+	/**
+	 * Creates a new mapping.
+	 * @param sourceExpression
+	 * @param targetPropertyExpression
+	 * @param typeConverter
+	 * @param required
+	 */
+	protected Mapping(Expression sourceExpression, PropertyExpression targetPropertyExpression,
+			ConversionExecutor typeConverter, boolean required) {
 		Assert.notNull(sourceExpression, "The source expression is required");
 		Assert.notNull(targetPropertyExpression, "The target property expression is required");
 		this.sourceExpression = sourceExpression;
 		this.targetPropertyExpression = targetPropertyExpression;
 		this.typeConverter = typeConverter;
+		this.required = required;
 	}
 
 	/**
@@ -77,13 +96,23 @@ public class Mapping implements AttributeMapper, Serializable {
 	public void map(Object source, Object target, Map mappingContext) {
 		// get source value
 		Object sourceValue = sourceExpression.evaluateAgainst(source, mappingContext);
+		if (sourceValue == null) {
+			if (required) {
+				throw new RequiredMappingException("This mapping is required; '" + sourceExpression
+						+ "' expression evaluation against source of type [" + source.getClass() + "] must return a non-null value");
+			}
+			else {
+				// source expression returned no value, simply abort mapping
+				return;
+			}
+		}
 		Object targetValue = sourceValue;
 		if (typeConverter != null) {
 			targetValue = typeConverter.execute(sourceValue);
 		}
 		// set target value
 		if (logger.isDebugEnabled()) {
-			logger.debug("Mapping " + sourceExpression + " value [" + sourceValue + "] to target property '"
+			logger.debug("Mapping '" + sourceExpression + "' value [" + sourceValue + "] to target property '"
 					+ targetPropertyExpression + "'; setting property value to [" + targetValue + "]");
 		}
 		targetPropertyExpression.setValue(target, targetValue, mappingContext);
