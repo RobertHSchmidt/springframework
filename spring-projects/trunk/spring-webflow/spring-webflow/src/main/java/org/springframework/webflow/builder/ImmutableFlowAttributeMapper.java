@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.support;
+package org.springframework.webflow.builder;
 
 import java.io.Serializable;
 
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.webflow.support.AbstractFlowAttributeMapper;
 
 /**
  * @author Keith Donald
  */
-public final class ImmutableFlowAttributeMapper extends AbstractFlowAttributeMapper implements Serializable {
+final class ImmutableFlowAttributeMapper extends AbstractFlowAttributeMapper implements Serializable {
 
 	private final AttributeMapper inputMapper;
 

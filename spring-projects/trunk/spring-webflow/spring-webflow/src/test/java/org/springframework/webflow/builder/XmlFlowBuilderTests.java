@@ -19,6 +19,8 @@ import java.math.BigDecimal;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.mapping.DefaultAttributeMapper;
+import org.springframework.binding.mapping.RequiredMapping;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.ActionState;
 import org.springframework.webflow.DecisionState;
@@ -128,6 +130,11 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(subFlowState2.getSubflow());
 		assertEquals("subFlow2", subFlowState2.getSubflow().getId());
 		assertNotNull(subFlowState2.getAttributeMapper());
+		ImmutableFlowAttributeMapper mapper = (ImmutableFlowAttributeMapper)subFlowState2.getAttributeMapper();
+		assertEquals(3, ((DefaultAttributeMapper)mapper.getInputMapper()).getMappings().length);
+		assertEquals(3, ((DefaultAttributeMapper)mapper.getOutputMapper()).getMappings().length);
+		assertTrue(((DefaultAttributeMapper)mapper.getInputMapper()).getMappings()[0] instanceof RequiredMapping);
+
 		assertEquals(1, subFlowState2.getTransitionSet().size());
 		context.setLastEvent(createEvent("finish"));
 		assertTrue(subFlowState2.getTransitionSet().hasMatchingTransition(context));
