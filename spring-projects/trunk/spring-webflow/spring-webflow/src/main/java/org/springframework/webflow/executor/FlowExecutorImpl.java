@@ -115,7 +115,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * This allows the user to participate in the current state of the flow
 	 * execution using a bookmarkable URL.
 	 */
-	private boolean redirectOnPause;
+	private boolean alwaysRedirectOnPause;
 
 	/**
 	 * The service responsible for mapping attributes of an
@@ -165,19 +165,19 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * Returns a value indicating if this executor should redirect after pausing
 	 * an active flow execution.
 	 */
-	public boolean isRedirectOnPause() {
-		return redirectOnPause;
+	public boolean isAlwaysRedirectOnPause() {
+		return alwaysRedirectOnPause;
 	}
 
 	/**
-	 * Sets the value that indicates if this executor should redirect after
-	 * pausing an active flow execution.
+	 * Sets the value that indicates if this executor should always redirect
+	 * after pausing an active flow execution.
 	 * <p>
 	 * Setting this to true allows the user to participate in the current
 	 * view-state of a conversation at a refreshable URL.
 	 */
-	public void setRedirectOnPause(boolean redirectOnPause) {
-		this.redirectOnPause = redirectOnPause;
+	public void setAlwaysRedirectOnPause(boolean alwaysRedirectOnPause) {
+		this.alwaysRedirectOnPause = alwaysRedirectOnPause;
 	}
 
 	/**
@@ -251,8 +251,8 @@ public class FlowExecutorImpl implements FlowExecutor {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionKey repositoryKey = repository.parseFlowExecutionKey(flowExecutionKey);
 		FlowExecutionLock lock = repository.getLock(repositoryKey);
-		// make sure we're the only one manipulating the flow execution		
-		lock.lock(); 
+		// make sure we're the only one manipulating the flow execution
+		lock.lock();
 		try {
 			FlowExecution flowExecution = repository.getFlowExecution(repositoryKey);
 			ViewSelection selectedView = flowExecution.refresh(context);
@@ -300,7 +300,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * @return the view to return to callers
 	 */
 	protected ViewSelection redirectOnPauseIfNecessary(ViewSelection selectedView) {
-		if (selectedView instanceof ApplicationView && redirectOnPause) {
+		if (selectedView instanceof ApplicationView && alwaysRedirectOnPause) {
 			return FlowExecutionRedirect.INSTANCE;
 		}
 		else {
