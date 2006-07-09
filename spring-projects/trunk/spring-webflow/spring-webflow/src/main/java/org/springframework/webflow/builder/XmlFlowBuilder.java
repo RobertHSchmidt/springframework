@@ -932,6 +932,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		Class exceptionClass = (Class)fromStringTo(Class.class).execute(element.getAttribute(ON_EXCEPTION_ATTRIBUTE));
 		handler.add(exceptionClass, (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(
 				element.getAttribute(TO_ATTRIBUTE)));
+		handler.getActionList().addAll(parseAnnotatedActions(element));
 		return handler;
 	}
 
