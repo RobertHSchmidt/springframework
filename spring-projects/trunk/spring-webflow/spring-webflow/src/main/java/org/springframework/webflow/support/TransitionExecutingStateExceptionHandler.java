@@ -24,6 +24,7 @@ import org.springframework.core.JdkVersion;
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
+import org.springframework.webflow.ActionList;
 import org.springframework.webflow.FlowExecutionException;
 import org.springframework.webflow.FlowExecutionExceptionHandler;
 import org.springframework.webflow.RequestControlContext;
@@ -61,6 +62,11 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 	private Map exceptionTargetStateResolverMappings = new HashMap();
 
 	/**
+	 * The list of actions to execute when this handler handles an exception.
+	 */
+	private ActionList actionList = new ActionList();
+	
+	/**
 	 * Adds an exception->state mapping to this handler.
 	 * @param exceptionClass the type of exception to map
 	 * @param targetStateId the id of the state to transition to if the
@@ -87,6 +93,10 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 		return this;
 	}
 
+	public ActionList getActionList() {
+		return actionList;
+	}
+	
 	public boolean handles(FlowExecutionException e) {
 		return getTargetStateResolver(e) != null;
 	}
@@ -107,6 +117,7 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 					+ ROOT_CAUSE_EXCEPTION_ATTRIBUTE + "'");
 		}
 		context.getRequestScope().put(ROOT_CAUSE_EXCEPTION_ATTRIBUTE, rootCause);
+		actionList.execute(context);
 		return new Transition(getTargetStateResolver(e)).execute((TransitionableState)sourceState, context);
 	}
 
