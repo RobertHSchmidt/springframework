@@ -45,6 +45,6 @@ public class JaxbUtilsTest extends TestCase {
     }
 
     public void testGetJaxbVersion() throws Exception {
-        assertEquals("Invalid JAXB version", JaxbUtils.JAXB_2, JaxbUtils.getJaxbVersion());
+        assertEquals("Invalid JAXB version", JaxbUtils.JAXB_1, JaxbUtils.getJaxbVersion());
     }
 }
