@@ -53,4 +53,19 @@ public abstract class AbstractSoapMessage implements SoapMessage {
     public Result getPayloadResult() {
         return getSoapBody().getPayloadResult();
     }
+
+    public SoapVersion getVersion() {
+        String envelopeNamespace = getEnvelope().getName().getNamespaceURI();
+        if (SoapVersion.SOAP_11.getEnvelopeNamespaceUri().equals(envelopeNamespace)) {
+            return SoapVersion.SOAP_11;
+        }
+        else if (SoapVersion.SOAP_12.getEnvelopeNamespaceUri().equals(envelopeNamespace)) {
+            return SoapVersion.SOAP_12;
+        }
+        else {
+            throw new IllegalStateException(
+                    "Unknown Envelope namespace uri '" + envelopeNamespace + "'. " + "Cannot deduce SoapVersion.");
+        }
+    }
+
 }

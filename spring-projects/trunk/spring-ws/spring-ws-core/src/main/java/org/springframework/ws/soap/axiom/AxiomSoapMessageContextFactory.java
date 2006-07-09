@@ -18,8 +18,8 @@ package org.springframework.ws.soap.axiom;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -40,6 +40,7 @@ import org.springframework.util.Assert;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.context.MessageContextFactory;
 import org.springframework.ws.soap.SoapMessageCreationException;
+import org.springframework.ws.transport.TransportRequest;
 
 /**
  * SAAJ-specific implementation of the <code>MessageContextFactory</code> interface. Creates a
@@ -59,6 +60,8 @@ public class AxiomSoapMessageContextFactory implements MessageContextFactory, In
 
     private static final String SOAP_ACTION_HEADER = "SOAPAction";
 
+    private static final String CONTENT_TYPE_HEADER = "Content-Type";
+
     private static final String MULTI_PART_RELATED_CONTENT_TYPE = "multipart/related";
 
     private XMLInputFactory inputFactory;
@@ -67,12 +70,17 @@ public class AxiomSoapMessageContextFactory implements MessageContextFactory, In
         inputFactory = createXmlInputFactory();
     }
 
-    public MessageContext createContext(HttpServletRequest httpRequest) throws IOException {
-        Assert.isTrue("POST".equals(httpRequest.getMethod()), "HttpServletRequest does not have POST method");
-        String contentType = httpRequest.getContentType();
-        Assert.notNull(contentType, "No content type set on HttpServletRequest");
-        InputStream inputStream = httpRequest.getInputStream();
-        String soapAction = httpRequest.getHeader(SOAP_ACTION_HEADER);
+    public MessageContext createContext(TransportRequest transportRequest) throws IOException {
+        Iterator iterator = transportRequest.getHeaders(CONTENT_TYPE_HEADER);
+        Assert.isTrue(iterator.hasNext(), "No " + CONTENT_TYPE_HEADER + " header present of TransportRequest");
+        String contentType = (String) iterator.next();
+        Assert.hasLength(contentType, "No " + CONTENT_TYPE_HEADER + " header present of TransportRequest");
+        String soapAction = "";
+        iterator = transportRequest.getHeaders(SOAP_ACTION_HEADER);
+        if (iterator.hasNext()) {
+            soapAction = (String) iterator.next();
+        }
+        InputStream inputStream = transportRequest.getInputStream();
         try {
             if (contentType.indexOf(MULTI_PART_RELATED_CONTENT_TYPE) != -1) {
                 return createMultiPartContext(inputStream, contentType, soapAction);

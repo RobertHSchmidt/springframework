@@ -16,16 +16,23 @@
 
 package org.springframework.ws.soap.context;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Properties;
+
 import junit.framework.TestCase;
 
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.context.MessageContextFactory;
 import org.springframework.ws.soap.Attachment;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.SoapVersion;
+import org.springframework.ws.transport.TransportRequest;
 
 public abstract class AbstractSoapMessageContextFactoryTestCase extends TestCase {
 
@@ -41,16 +48,12 @@ public abstract class AbstractSoapMessageContextFactoryTestCase extends TestCase
     protected abstract MessageContextFactory createSoapMessageContextFactory();
 
     public void testCreateMessageFromHttpServletRequest11() throws Exception {
-        MockHttpServletRequest servletRequest = new MockHttpServletRequest();
-        servletRequest.setMethod("POST");
-        byte[] contents = FileCopyUtils
-                .copyToByteArray(AbstractSoapMessageContextFactoryTestCase.class.getResourceAsStream("soap11.xml"));
-        servletRequest.setContent(contents);
-        servletRequest.setContentType("text/xml");
-        servletRequest.setCharacterEncoding("UTF-8");
-        servletRequest.addHeader("SOAPAction", "\"Some-URI\"");
+        Properties headers = new Properties();
+        headers.setProperty("Content-Type", "text/xml");
+        headers.setProperty("SOAPAction", "\"Some-URI\"");
+        MockTransportRequest request = new MockTransportRequest(headers, "soap11.xml");
 
-        MessageContext messageContext = contextFactory.createContext(servletRequest);
+        MessageContext messageContext = contextFactory.createContext(request);
         SoapMessage requestMessage = (SoapMessage) messageContext.getRequest();
         assertNotNull("Request null", requestMessage);
         assertEquals("Invalid soap version", SoapVersion.SOAP_11, requestMessage.getVersion());
@@ -58,16 +61,12 @@ public abstract class AbstractSoapMessageContextFactoryTestCase extends TestCase
     }
 
     public void testCreateMessageFromHttpServletRequest11WithAttachment() throws Exception {
-        MockHttpServletRequest servletRequest = new MockHttpServletRequest();
-        servletRequest.setMethod("POST");
-        byte[] contents = FileCopyUtils
-                .copyToByteArray(
-                        AbstractSoapMessageContextFactoryTestCase.class.getResourceAsStream("soap11-attachment.bin"));
-        servletRequest.setContent(contents);
-        servletRequest.setContentType(
+        Properties headers = new Properties();
+        headers.setProperty("Content-Type",
                 "multipart/related; type=\"text/xml\"; boundary=\"----=_Part_0_11416420.1149699787554\"");
+        MockTransportRequest request = new MockTransportRequest(headers, "soap11-attachment.bin");
 
-        MessageContext messageContext = contextFactory.createContext(servletRequest);
+        MessageContext messageContext = contextFactory.createContext(request);
         SoapMessage requestMessage = (SoapMessage) messageContext.getRequest();
         assertEquals("Invalid soap version", SoapVersion.SOAP_11, requestMessage.getVersion());
         Attachment attachment = requestMessage.getAttachment("interface21");
@@ -75,16 +74,12 @@ public abstract class AbstractSoapMessageContextFactoryTestCase extends TestCase
     }
 
     public void testCreateMessageFromHttpServletRequest12() throws Exception {
-        MockHttpServletRequest servletRequest = new MockHttpServletRequest();
-        servletRequest.setMethod("POST");
-        byte[] contents = FileCopyUtils
-                .copyToByteArray(AbstractSoapMessageContextFactoryTestCase.class.getResourceAsStream("soap12.xml"));
-        servletRequest.setContent(contents);
-        servletRequest.setContentType("application/soap+xml");
-        servletRequest.setCharacterEncoding("UTF-8");
-        servletRequest.addHeader("SOAPAction", "\"Some-URI\"");
+        Properties headers = new Properties();
+        headers.setProperty("Content-Type", "application/soap+xml");
+        headers.setProperty("SOAPAction", "\"Some-URI\"");
+        MockTransportRequest request = new MockTransportRequest(headers, "soap12.xml");
 
-        MessageContext messageContext = contextFactory.createContext(servletRequest);
+        MessageContext messageContext = contextFactory.createContext(request);
         SoapMessage requestMessage = (SoapMessage) messageContext.getRequest();
         assertNotNull("Request null", requestMessage);
         assertEquals("Invalid soap version", SoapVersion.SOAP_12, requestMessage.getVersion());
@@ -92,19 +87,41 @@ public abstract class AbstractSoapMessageContextFactoryTestCase extends TestCase
     }
 
     public void testCreateMessageFromHttpServletRequest12WithAttachment() throws Exception {
-        MockHttpServletRequest servletRequest = new MockHttpServletRequest();
-        servletRequest.setMethod("POST");
-        byte[] contents = FileCopyUtils
-                .copyToByteArray(
-                        AbstractSoapMessageContextFactoryTestCase.class.getResourceAsStream("soap12-attachment.bin"));
-        servletRequest.setContent(contents);
-        servletRequest.setContentType(
+        Properties headers = new Properties();
+        headers.setProperty("Content-Type",
                 "multipart/related; type=\"application/soap+xml\"; boundary=\"----=_Part_0_11416420.1149699787554\"");
+        MockTransportRequest request = new MockTransportRequest(headers, "soap12-attachment.bin");
 
-        MessageContext messageContext = contextFactory.createContext(servletRequest);
+        MessageContext messageContext = contextFactory.createContext(request);
         SoapMessage requestMessage = (SoapMessage) messageContext.getRequest();
         assertEquals("Invalid soap version", SoapVersion.SOAP_12, requestMessage.getVersion());
         Attachment attachment = requestMessage.getAttachment("interface21");
         assertNotNull("No attachment read", attachment);
+    }
+
+    private static class MockTransportRequest implements TransportRequest {
+
+        private Properties headers;
+
+        private byte[] contents;
+
+        private MockTransportRequest(Properties headers, String fileName) throws IOException {
+            this.headers = headers;
+            this.contents = FileCopyUtils
+                    .copyToByteArray(AbstractSoapMessageContextFactoryTestCase.class.getResourceAsStream(fileName));
+        }
+
+        public Iterator getHeaderNames() {
+            return headers.keySet().iterator();
+        }
+
+        public Iterator getHeaders(String name) {
+            String value = headers.getProperty(name);
+            return value != null ? Collections.singletonList(value).iterator() : Collections.EMPTY_LIST.iterator();
+        }
+
+        public InputStream getInputStream() throws IOException {
+            return new ByteArrayInputStream(contents);
+        }
     }
 }

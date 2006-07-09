@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 the original author or authors.
+ * Copyright 2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,15 +23,15 @@ import org.easymock.MockControl;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.servlet.support.RequestMethodNotSupportedException;
 import org.springframework.ws.NoEndpointFoundException;
 import org.springframework.ws.context.MessageContextFactory;
 import org.springframework.ws.endpoint.MessageEndpoint;
 import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.SoapMessage;
-import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.context.SoapMessageContext;
 
-public class MessageHandlerAdapterTest extends TestCase {
+public class MessageEndpointHandlerAdapterTest extends TestCase {
 
     private static final String REQUEST = " <SOAP-ENV:Envelope\n" +
             "  xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
@@ -39,7 +39,7 @@ public class MessageHandlerAdapterTest extends TestCase {
             "       <m:GetLastTradePrice xmlns:m=\"Some-URI\">\n" + "           <symbol>DIS</symbol>\n" +
             "       </m:GetLastTradePrice>\n" + "   </SOAP-ENV:Body>\n" + "</SOAP-ENV:Envelope>";
 
-    private MessageHandlerAdapter adapter;
+    private MessageEndpointHandlerAdapter adapter;
 
     private MockHttpServletRequest httpRequest;
 
@@ -66,7 +66,7 @@ public class MessageHandlerAdapterTest extends TestCase {
     private SoapBody bodyMock;
 
     protected void setUp() throws Exception {
-        adapter = new MessageHandlerAdapter();
+        adapter = new MessageEndpointHandlerAdapter();
         httpRequest = new MockHttpServletRequest();
         httpResponse = new MockHttpServletResponse();
         endpointControl = MockControl.createControl(MessageEndpoint.class);
@@ -85,67 +85,78 @@ public class MessageHandlerAdapterTest extends TestCase {
     public void testHandleNonPost() throws Exception {
         httpRequest.setMethod("GET");
         endpointControl.replay();
-        adapter.handle(httpRequest, httpResponse, endpointMock);
+        try {
+            adapter.handle(httpRequest, httpResponse, endpointMock);
+            fail("RequestMethodNotSupportedException expected");
+        }
+        catch (RequestMethodNotSupportedException ex) {
+            // expected
+        }
         endpointControl.verify();
     }
 
     public void testHandlePostNoResponse() throws Exception {
         httpRequest.setMethod("POST");
-        httpRequest.setContent(REQUEST.getBytes("UTF-8"));
+        httpRequest.setContent(MessageEndpointHandlerAdapterTest.REQUEST.getBytes("UTF-8"));
         httpRequest.setContentType("text/xml; charset=\"utf-8\"");
         httpRequest.setCharacterEncoding("UTF-8");
         endpointMock.invoke(null);
         endpointControl.setMatcher(MockControl.ALWAYS_MATCHER);
-        factoryControl.expectAndReturn(factoryMock.createContext(httpRequest), contextMock);
-        contextControl.expectAndReturn(contextMock.getResponse(), null);
+        factoryMock.createContext(new HttpTransportRequest(httpRequest));
+        factoryControl.setMatcher(MockControl.ALWAYS_MATCHER);
+        factoryControl.setReturnValue(contextMock);
+        contextControl.expectAndReturn(contextMock.hasResponse(), false);
 
         replayMockControls();
 
         adapter.handle(httpRequest, httpResponse, endpointMock);
 
-        assertEquals("Invalid status code on response", HttpServletResponse.SC_OK, httpResponse.getStatus());
+        assertEquals("Invalid status code on response", HttpServletResponse.SC_NO_CONTENT, httpResponse.getStatus());
         assertEquals("Response written", 0, httpResponse.getContentAsString().length());
         verifyMockControls();
     }
 
     public void testHandlePostResponse() throws Exception {
         httpRequest.setMethod("POST");
-        httpRequest.setContent(REQUEST.getBytes("UTF-8"));
+        httpRequest.setContent(MessageEndpointHandlerAdapterTest.REQUEST.getBytes("UTF-8"));
         httpRequest.setContentType("text/xml; charset=\"utf-8\"");
         httpRequest.setCharacterEncoding("UTF-8");
         endpointMock.invoke(null);
         endpointControl.setMatcher(MockControl.ALWAYS_MATCHER);
-        factoryControl.expectAndReturn(factoryMock.createContext(httpRequest), contextMock);
+        factoryMock.createContext(new HttpTransportRequest(httpRequest));
+        factoryControl.setMatcher(MockControl.ALWAYS_MATCHER);
+        factoryControl.setReturnValue(contextMock);
+        contextControl.expectAndReturn(contextMock.hasResponse(), true);
         contextControl.expectAndReturn(contextMock.getResponse(), messageMock);
         messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
         bodyControl.expectAndReturn(bodyMock.hasFault(), false);
-        messageControl.expectAndReturn(messageMock.getVersion(), SoapVersion.SOAP_11);
-        messageControl.expectAndReturn(messageMock.getCharacterEncoding(), "UTF-8");
-        messageMock.writeTo(httpResponse.getOutputStream());
+        messageMock.writeTo(new HttpTransportResponse(httpResponse));
+        messageControl.setMatcher(MockControl.ALWAYS_MATCHER);
 
         replayMockControls();
 
         adapter.handle(httpRequest, httpResponse, endpointMock);
 
         assertEquals("Invalid status code on response", HttpServletResponse.SC_OK, httpResponse.getStatus());
-        assertEquals("Invalid status code on response", "text/xml; charset=UTF-8", httpResponse.getContentType());
         verifyMockControls();
     }
 
     public void testHandlePostFault() throws Exception {
         httpRequest.setMethod("POST");
-        httpRequest.setContent(REQUEST.getBytes("UTF-8"));
+        httpRequest.setContent(MessageEndpointHandlerAdapterTest.REQUEST.getBytes("UTF-8"));
         httpRequest.setContentType("text/xml; charset=\"utf-8\"");
         httpRequest.setCharacterEncoding("UTF-8");
         endpointMock.invoke(null);
         endpointControl.setMatcher(MockControl.ALWAYS_MATCHER);
-        factoryControl.expectAndReturn(factoryMock.createContext(httpRequest), contextMock);
+        factoryMock.createContext(new HttpTransportRequest(httpRequest));
+        factoryControl.setMatcher(MockControl.ALWAYS_MATCHER);
+        factoryControl.setReturnValue(contextMock);
+        contextControl.expectAndReturn(contextMock.hasResponse(), true);
         contextControl.expectAndReturn(contextMock.getResponse(), messageMock);
         messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
         bodyControl.expectAndReturn(bodyMock.hasFault(), true);
-        messageControl.expectAndReturn(messageMock.getVersion(), SoapVersion.SOAP_11);
-        messageControl.expectAndReturn(messageMock.getCharacterEncoding(), "UTF-8");
-        messageMock.writeTo(httpResponse.getOutputStream());
+        messageMock.writeTo(new HttpTransportResponse(httpResponse));
+        messageControl.setMatcher(MockControl.ALWAYS_MATCHER);
 
         replayMockControls();
 
@@ -158,13 +169,15 @@ public class MessageHandlerAdapterTest extends TestCase {
 
     public void testHandleNotFound() throws Exception {
         httpRequest.setMethod("POST");
-        httpRequest.setContent(REQUEST.getBytes("UTF-8"));
+        httpRequest.setContent(MessageEndpointHandlerAdapterTest.REQUEST.getBytes("UTF-8"));
         httpRequest.setContentType("text/xml; charset=\"utf-8\"");
         httpRequest.setCharacterEncoding("UTF-8");
         endpointMock.invoke(null);
         endpointControl.setMatcher(MockControl.ALWAYS_MATCHER);
         endpointControl.setThrowable(new NoEndpointFoundException(null));
-        factoryControl.expectAndReturn(factoryMock.createContext(httpRequest), contextMock);
+        factoryMock.createContext(new HttpTransportRequest(httpRequest));
+        factoryControl.setMatcher(MockControl.ALWAYS_MATCHER);
+        factoryControl.setReturnValue(contextMock);
 
         replayMockControls();
 

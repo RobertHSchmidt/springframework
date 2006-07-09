@@ -33,4 +33,7 @@ public class AxiomSoapMessageTest extends AbstractSoap12MessageTestCase {
         // Attachment support not implemented yet
     }
 
+    public void testWriteToTransportResponseAttachment() throws Exception {
+        // Attachment support not implemented yet
+    }
 }

@@ -18,26 +18,24 @@ package org.springframework.ws.context;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.ws.transport.TransportRequest;
 
 /**
  * The <code>MessageContextFactory</code> serves as factory for <code>MessageContext</code>s. Allows creation of
- * contexts based on HTTP requests, and other transports.
+ * contexts based on <code>TransportRequest</code>.
  *
  * @author Arjen Poutsma
  */
 public interface MessageContextFactory {
 
     /**
-     * Creates a <code>MessaageContext</code> based on the given HTTP request. Implementations use the requests input
-     * stream to create a request message, and possibly copy the request headers to the message.
+     * Creates a <code>MessageContext</code> based on the given transport request. Implementations use the request's
+     * input stream to create a request message, and possibly copy the request headers to the message.
      *
-     * @param request the HTTP request
+     * @param request the incoming request
      * @return the created message context
      * @throws IOException if an I/O exception occurs
-     * @see HttpServletRequest#getInputStream()
-     * @see HttpServletRequest#getHeaders(String)
      */
-    MessageContext createContext(HttpServletRequest request) throws IOException;
+    MessageContext createContext(TransportRequest request) throws IOException;
 
 }

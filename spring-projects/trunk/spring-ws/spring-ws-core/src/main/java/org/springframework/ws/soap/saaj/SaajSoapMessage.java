@@ -31,6 +31,7 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.Detail;
 import javax.xml.soap.DetailEntry;
+import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
@@ -65,6 +66,7 @@ import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapHeaderException;
 import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.saaj.support.SaajUtils;
+import org.springframework.ws.transport.TransportResponse;
 
 /**
  * SAAJ-specific implementation of the <code>SoapMessage</code> interface. Accessed via the
@@ -75,8 +77,6 @@ import org.springframework.ws.soap.saaj.support.SaajUtils;
  * @see SaajSoapMessageContext
  */
 public class SaajSoapMessage extends AbstractSoapMessage {
-
-    private static final String CONTENT_TYPE_HEADER = "Content-Type";
 
     private static final String SOAP_ACTION_HEADER = "SOAPAction";
 
@@ -112,55 +112,31 @@ public class SaajSoapMessage extends AbstractSoapMessage {
         return (ObjectUtils.isEmpty(values)) ? null : values[0];
     }
 
-    public SoapVersion getVersion() {
-        if (SaajUtils.getSaajVersion() == SaajUtils.SAAJ_12) {
-            return SoapVersion.SOAP_11;
-        }
-        else {
-            String[] contentTypes = saajMessage.getSOAPPart().getMimeHeader(CONTENT_TYPE_HEADER);
-            if (ObjectUtils.isEmpty(contentTypes)) {
-                throw new SaajSoapMessageException("Could not read '" + CONTENT_TYPE_HEADER + "' header from message");
-            }
-            String contentType = contentTypes[0];
-            // Ignore parameters in content type (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.7)
-            int idx = contentType.indexOf(';');
-            if (idx != -1) {
-                contentType = contentType.substring(0, idx);
-            }
-            if (SoapVersion.SOAP_11.getContentType().equals(contentType)) {
-                return SoapVersion.SOAP_11;
-            }
-            else if (SoapVersion.SOAP_12.getContentType().equals(contentType)) {
-                return SoapVersion.SOAP_12;
-            }
-            else {
-                throw new SaajSoapMessageException("Unknown content type [" + contentType + "]");
-            }
-        }
-    }
-
     public void writeTo(OutputStream outputStream) throws IOException {
         try {
-            this.saajMessage.writeTo(outputStream);
+            if (saajMessage.saveRequired()) {
+                saajMessage.saveChanges();
+            }
+            saajMessage.writeTo(outputStream);
         }
         catch (SOAPException ex) {
             throw new SaajSoapMessageException("Could not write message to OutputStream: " + ex.getMessage(), ex);
         }
     }
 
-    public String getCharacterEncoding() {
+    public void writeTo(TransportResponse response) throws IOException {
         try {
-            String characterEncoding = (String) this.saajMessage.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
-            if (!StringUtils.hasLength(characterEncoding)) {
-                characterEncoding = "utf-8";
-                this.saajMessage.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, characterEncoding);
+            if (saajMessage.saveRequired()) {
+                saajMessage.saveChanges();
             }
-            return characterEncoding;
-
+            for (Iterator iterator = saajMessage.getMimeHeaders().getAllHeaders(); iterator.hasNext();) {
+                MimeHeader mimeHeader = (MimeHeader) iterator.next();
+                response.addHeader(mimeHeader.getName(), mimeHeader.getValue());
+            }
+            saajMessage.writeTo(response.getOutputStream());
         }
         catch (SOAPException ex) {
-            throw new SaajSoapMessageException("Could not retrieve character encoding property: " + ex.getMessage(),
-                    ex);
+            throw new SaajSoapMessageException("Could not write message to TransportResponse: " + ex.getMessage(), ex);
         }
     }
 
@@ -227,6 +203,10 @@ public class SaajSoapMessage extends AbstractSoapMessage {
                 throw new UnsupportedOperationException("DataSource name not available");
             }
         };
+    }
+
+    public SoapVersion getVersion() {
+        return SoapVersion.SOAP_11;
     }
 
     /**
