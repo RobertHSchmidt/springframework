@@ -28,6 +28,7 @@
           <and>
               <or>
                   <filename name="spring-ws/build-spring-ws/**" />
+                  <filename name="spring-ws/spring-xml/**" />
                   <filename name="spring-ws/spring-oxm/**" />
                   <filename name="spring-ws/spring-ws-core/**" />
                   <filename name="spring-ws/spring-ws-security/**" />
@@ -82,6 +83,7 @@
 
       <ivy:buildlist reference="modules">
           <fileset dir="..">
+              <include name="spring-xml/build.xml" />
               <include name="spring-oxm/build.xml" />
               <include name="spring-ws-core/build.xml" />
               <include name="spring-ws-security/build.xml" />
@@ -197,23 +199,31 @@
           <link href="http://jdom.org/docs/apidocs/"/>
           <link href="http://www.xom.nu/apidocs/"/>
           <link href="http://acegisecurity.org/multiproject/acegi-security/apidocs/"/>
+          <packageset dir="../spring-xml/src/main/java" />
           <packageset dir="../spring-oxm/src/main/java" />
           <packageset dir="../spring-ws-core/src/main/java" />
           <packageset dir="../spring-ws-security/src/main/java" />
           <classpath>
+              <fileset dir="../spring-xml/lib">
+                  <include name="**/*.jar"/>
+                  <exclude name="**/test/*.jar"/>
+              </fileset>
               <fileset dir="../spring-oxm/lib">
                   <include name="**/*.jar"/>
+                  <exclude name="**/spring-xml.jar"/>
                   <exclude name="**/test/*.jar"/>
               </fileset>
               <fileset dir="../spring-ws-core/lib">
                   <include name="**/*.jar"/>
                   <exclude name="**/spring-oxm.jar"/>
+                  <exclude name="**/spring-xml.jar"/>
                   <exclude name="**/commons-logging.jar"/>
                   <exclude name="**/test/*.jar"/>
               </fileset>
               <fileset dir="../spring-ws-security/lib">
                   <include name="**/*.jar"/>
                   <exclude name="**/spring-oxm.jar"/>
+                  <exclude name="**/spring-xml.jar"/>
                   <exclude name="**/spring-ws-core.jar"/>
                   <exclude name="**/commons-logging.jar"/>
                   <exclude name="**/test/*.jar"/>
@@ -245,6 +255,7 @@
 			<zipfileset dir="../spring-ws-core/target/dist/jars" prefix="${zip.toplevel.dir}" />
 			<zipfileset dir="../spring-ws-security/target/dist/jars" prefix="${zip.toplevel.dir}" />
 			<zipfileset dir="../spring-oxm/target/dist/jars" prefix="${zip.toplevel.dir}" />
+			<zipfileset dir="../spring-xml/target/dist/jars" prefix="${zip.toplevel.dir}" />
 			<zipfileset dir="${target.doc.dir}" prefix="${zip.toplevel.dir}/docs/api" />
 			<zipfileset dir="../spring-ws-core/docs/reference/target" prefix="${zip.toplevel.dir}/docs/reference">
 				<exclude name="**/html_single/**" />
