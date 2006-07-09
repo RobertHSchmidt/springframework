@@ -34,6 +34,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.transport.TransportResponse;
 import org.springframework.xml.transform.StringSource;
 
 /**
@@ -49,14 +50,6 @@ public class MockWebServiceMessage implements WebServiceMessage {
         this.content = new StringBuffer();
     }
 
-    public MockWebServiceMessage(String content) {
-        this.content = new StringBuffer(content);
-    }
-
-    public MockWebServiceMessage(StringBuffer content) {
-        this.content = content;
-    }
-
     public MockWebServiceMessage(Source source) throws TransformerException {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
@@ -64,29 +57,16 @@ public class MockWebServiceMessage implements WebServiceMessage {
         transformer.transform(source, getPayloadResult());
     }
 
-    public Source getPayloadSource() {
-        return new StringSource(content.toString());
+    public MockWebServiceMessage(StringBuffer content) {
+        this.content = content;
     }
 
-    public Result getPayloadResult() {
-        return new StreamResult(new StringBufferWriter());
-    }
-
-    public void writeTo(OutputStream outputStream) throws IOException {
-        PrintWriter writer = new PrintWriter(outputStream);
-        writer.write(content.toString());
-    }
-
-    public String getCharacterEncoding() {
-        return "UTF-8";
+    public MockWebServiceMessage(String content) {
+        this.content = new StringBuffer(content);
     }
 
     public String getPayloadAsString() {
         return content.toString();
-    }
-
-    public void setPayload(String content) {
-        this.content.replace(0, this.content.length(), content);
     }
 
     public void setPayload(InputStreamSource inputStreamSource) throws IOException {
@@ -103,14 +83,49 @@ public class MockWebServiceMessage implements WebServiceMessage {
         }
     }
 
+    public void setPayload(String content) {
+        this.content.replace(0, this.content.length(), content);
+    }
+
+    public Result getPayloadResult() {
+        return new StreamResult(new StringBufferWriter());
+    }
+
+    public Source getPayloadSource() {
+        return new StringSource(content.toString());
+    }
+
+    public void writeTo(OutputStream outputStream) throws IOException {
+        PrintWriter writer = new PrintWriter(outputStream);
+        writer.write(content.toString());
+    }
+
+    public void writeTo(TransportResponse response) throws IOException {
+        writeTo(response.getOutputStream());
+    }
+
     private class StringBufferWriter extends Writer {
 
         private StringBufferWriter() {
             super(content);
         }
 
+        public void write(String str) {
+            content.append(str);
+        }
+
         public void write(int c) {
             content.append((char) c);
+        }
+
+        public void write(String str, int off, int len) {
+            content.append(str.substring(off, off + len));
+        }
+
+        public void close() throws IOException {
+        }
+
+        public void flush() {
         }
 
         public void write(char cbuf[], int off, int len) {
@@ -122,20 +137,5 @@ public class MockWebServiceMessage implements WebServiceMessage {
             }
             content.append(cbuf, off, len);
         }
-
-        public void write(String str) {
-            content.append(str);
-        }
-
-        public void write(String str, int off, int len) {
-            content.append(str.substring(off, off + len));
-        }
-
-        public void flush() {
-        }
-
-        public void close() throws IOException {
-        }
-
     }
 }

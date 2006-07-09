@@ -22,6 +22,8 @@ import java.io.OutputStream;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 
+import org.springframework.ws.transport.TransportResponse;
+
 /**
  * Represents a protocol agnostic XML message. Contains methods that provide access to the payload of the message.
  *
@@ -56,9 +58,10 @@ public interface WebServiceMessage {
     void writeTo(OutputStream outputStream) throws IOException;
 
     /**
-     * Returns the name of the character encoding used for the message. Typically, this returns <code>UTF-8</code>.
+     * Writes the entire message to the given transport response.
      *
-     * @return the character encoding
+     * @param response the response to write to
+     * @throws IOException if an I/O exception occurs
      */
-    String getCharacterEncoding();
+    void writeTo(TransportResponse response) throws IOException;
 }

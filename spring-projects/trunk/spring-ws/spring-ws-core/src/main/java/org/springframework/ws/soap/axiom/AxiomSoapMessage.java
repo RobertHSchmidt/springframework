@@ -67,7 +67,7 @@ import org.springframework.ws.soap.SoapFaultDetailElement;
 import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapHeaderException;
-import org.springframework.ws.soap.SoapVersion;
+import org.springframework.ws.transport.TransportResponse;
 import org.springframework.xml.transform.StaxSource;
 
 /**
@@ -145,20 +145,6 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
         return soapAction;
     }
 
-    public SoapVersion getVersion() {
-        String envelopeNamespace = axiomMessage.getSOAPEnvelope().getNamespace().getName();
-        if (SoapVersion.SOAP_11.getEnvelopeNamespaceUri().equals(envelopeNamespace)) {
-            return SoapVersion.SOAP_11;
-        }
-        else if (SoapVersion.SOAP_12.getEnvelopeNamespaceUri().equals(envelopeNamespace)) {
-            return SoapVersion.SOAP_12;
-        }
-        else {
-            throw new IllegalStateException(
-                    "Unknown Envelope namespace uri '" + envelopeNamespace + "'. " + "Cannot deduce SoapVersion.");
-        }
-    }
-
     public Attachment getAttachment(String contentId) {
         Part part = attachments.getPart(contentId);
         return part != null ? new AxiomAttachment(part) : null;
@@ -169,13 +155,11 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
     }
 
     public Attachment addAttachment(File file) throws AttachmentException {
-        //TODO implement
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Axiom does not support SwA attachments.");
     }
 
     public Attachment addAttachment(InputStreamSource inputStreamSource, String contentType) {
-        //TODO implement
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Axiom does not support SwA attachments.");
     }
 
     public void writeTo(OutputStream outputStream) throws IOException {
@@ -190,14 +174,11 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
         }
     }
 
-    public String getCharacterEncoding() {
-        try {
-            return this.axiomMessage.getCharsetEncoding();
-        }
-        catch (OMException ex) {
-            throw new AxiomSoapMessageException("Could not retrieve character encoding: " + ex.getMessage(), ex);
-
-        }
+    public void writeTo(TransportResponse response) throws IOException {
+        String contentType = getVersion().getContentType();
+        contentType += "; charset=\"" + axiomMessage.getCharsetEncoding() + "\"";
+        response.addHeader("Content-Type", contentType);
+        writeTo(response.getOutputStream());
     }
 
     /**
