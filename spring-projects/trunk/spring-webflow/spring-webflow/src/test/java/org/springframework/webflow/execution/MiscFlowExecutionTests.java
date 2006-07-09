@@ -60,4 +60,17 @@ public class MiscFlowExecutionTests extends TestCase {
 			
 		}
 	}
+
+	/*
+	public void testInfiniteLoop() {
+		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("infinite-loop.xml", getClass()));
+		Flow flow = new FlowAssembler("myFlow", builder).assembleFlow();
+		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		try {
+			execution.start(null, new MockExternalContext());
+		} catch (RequiredMappingException e) {
+			
+		}
+	}
+	*/
 }
