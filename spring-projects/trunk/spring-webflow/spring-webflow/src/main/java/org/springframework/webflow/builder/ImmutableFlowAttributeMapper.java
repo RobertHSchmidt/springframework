@@ -22,6 +22,11 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.support.AbstractFlowAttributeMapper;
 
 /**
+ * Simple flow attribute mapper that holds an input and output mapper strategy.
+ * This is an internal helper class of the XmlFlowBuilder.
+ * 
+ * @see org.springframework.webflow.builder.XmlFlowBuilder
+ * 
  * @author Keith Donald
  */
 final class ImmutableFlowAttributeMapper extends AbstractFlowAttributeMapper implements Serializable {
@@ -30,6 +35,11 @@ final class ImmutableFlowAttributeMapper extends AbstractFlowAttributeMapper imp
 
 	private final AttributeMapper outputMapper;
 
+	/**
+	 * Create a new flow attribute mapper using given mapping strategies
+	 * @param inputMapper the input mapping strategy
+	 * @param outputMapper the output mapping strategy
+	 */
 	public ImmutableFlowAttributeMapper(AttributeMapper inputMapper, AttributeMapper outputMapper) {
 		this.inputMapper = inputMapper;
 		this.outputMapper = outputMapper;
@@ -44,7 +54,7 @@ final class ImmutableFlowAttributeMapper extends AbstractFlowAttributeMapper imp
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("inputMapper", inputMapper).append("outputMapper", outputMapper)
-				.toString();
+		return new ToStringCreator(this).append("inputMapper", inputMapper)
+			.append("outputMapper", outputMapper).toString();
 	}
 }
