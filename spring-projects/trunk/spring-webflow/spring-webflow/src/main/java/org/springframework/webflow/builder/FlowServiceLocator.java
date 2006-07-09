@@ -80,7 +80,7 @@ public interface FlowServiceLocator {
 	 * @param id the action id
 	 * @return true if the action is an Action, false otherwise
 	 */
-	public boolean isAction(String id);
+	public boolean isAction(String id) throws FlowArtifactLookupException;
 
 	/**
 	 * Returns the flow attribute mapper with the provided id. Flow attribute

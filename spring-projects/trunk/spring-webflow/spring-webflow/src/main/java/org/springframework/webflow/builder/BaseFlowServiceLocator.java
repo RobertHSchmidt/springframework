@@ -127,12 +127,8 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 		return (Action)getBean(id, Action.class);
 	}
 
-	public boolean isAction(String id) {
-		if (containsBean(id)) {
-			return Action.class.isAssignableFrom(getBeanType(id, Action.class));
-		} else {
-			return false;
-		}
+	public boolean isAction(String id) throws FlowArtifactLookupException {
+		return Action.class.isAssignableFrom(getBeanType(id, Action.class));
 	}
 
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
