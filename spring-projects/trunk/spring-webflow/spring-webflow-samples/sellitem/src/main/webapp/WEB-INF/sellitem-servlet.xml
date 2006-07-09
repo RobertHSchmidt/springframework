@@ -15,7 +15,7 @@
 	<!-- Launches new flow executions and resumes existing executions. -->	
 	<bean id="flowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl">
 		<constructor-arg ref="repositoryFactory"/>
-		<property name="redirectOnPause" value="true"/>
+		<property name="alwaysRedirectOnPause" value="true"/>
 	</bean>
 
 	<!-- Creates, saves, and restores managed flow executions -->
