@@ -44,7 +44,7 @@ import org.springframework.webflow.execution.repository.support.FlowExecutionRep
  * server-side store this repository <i>encodes</i> them directly into the
  * <code>continuationId</code> of a generated
  * {@link CompositeFlowExecutionKey}. When asked to load a flow execution by
- * its key, this repository decodes the serialized <code>continuationId</code>,
+ * its key this repository decodes the serialized <code>continuationId</code>,
  * restoring the {@link FlowExecution} object at the state it was when encoded.
  * <p>
  * Note: currently this repository implementation does not by default support
@@ -113,7 +113,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
-		FlowExecutionContinuation continuation = (FlowExecutionContinuation)getContinuationId(key);
+		FlowExecutionContinuation continuation = decode((String)getContinuationId(key));
 		try {
 			FlowExecution flowExecution = continuation.unmarshal();
 			return rehydrate(flowExecution, key);
@@ -131,7 +131,8 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	}
 
 	protected final Serializable parseContinuationId(String encodedId) {
-		return decode(encodedId);
+		// just return here, continuation decoding happens in get
+		return encodedId;
 	}
 
 	/**
