@@ -79,9 +79,8 @@ public interface FlowServiceLocator {
 	 * to be adapted by a {@link AbstractBeanInvokingAction bean invoking action}.
 	 * @param id the action id
 	 * @return true if the action is an Action, false otherwise
-	 * @throws FlowArtifactLookupException when no such action is found
 	 */
-	public boolean isAction(String id) throws FlowArtifactLookupException;
+	public boolean isAction(String id);
 
 	/**
 	 * Returns the flow attribute mapper with the provided id. Flow attribute
