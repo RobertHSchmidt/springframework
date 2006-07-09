@@ -21,8 +21,6 @@ Package org.springframework.webflow.builder
   constants in TextToViewSelector were also dropped.
 * Refactored ResultEventFactorySelector to be a static inner class of BeanInvokingActionFactory to highlight the fact that it
   is a helper strategy of this class.
-* The 'isAction' method on FlowServiceLocator never throws an exception now, simply returns 'false' when the referenced artifact 
-  is not an Action or no such artifact is found.
 
 Package org.springframework.webflow.execution
 * Fixed inconsistency in continuation id parsing within ClientContinuationFlowExecutionRepository.
