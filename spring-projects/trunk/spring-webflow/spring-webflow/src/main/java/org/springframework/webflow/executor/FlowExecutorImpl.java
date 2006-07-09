@@ -56,8 +56,8 @@ import org.springframework.webflow.support.FlowExecutionRedirect;
  * </tr>
  * <tr>
  * <td>repositoryFactory</td>
- * <td>The strategy for accessing flow execution repositories that are used
- * to create, save, and store managed flow executions driven by this executor.</td>
+ * <td>The strategy for accessing flow execution repositories that are used to
+ * create, save, and store managed flow executions driven by this executor.</td>
  * <td>A {@link DefaultFlowExecutionRepositoryFactory simple}, stateful
  * server-side session-based repository factory.</td>
  * </tr>
@@ -72,9 +72,10 @@ import org.springframework.webflow.support.FlowExecutionRedirect;
  * <td>The service responsible for mapping attributes of
  * {@link ExternalContext external contexts} that request to launch new
  * {@link FlowExecution flow executions}. After mapping, the target map is then
- * passed to the FlowExecution, exposing extern context attributes as input
- * to the flow during startup.</td>
- * <td>A {@link org.springframework.webflow.executor.RequestParameterInputMapper},
+ * passed to the FlowExecution, exposing extern context attributes as input to
+ * the flow during startup.</td>
+ * <td>A
+ * {@link org.springframework.webflow.executor.RequestParameterInputMapper},
  * which exposes all request parameters in to the flow execution for input
  * mapping.</td>
  * </tr>
@@ -152,7 +153,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 				"The repository factory for creating, saving, and restoring flow executions is required");
 		this.repositoryFactory = repositoryFactory;
 	}
-	
+
 	/**
 	 * Returns the configured flow execution repository factory.
 	 */
@@ -175,10 +176,10 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * Setting this to true allows the user to participate in the current
 	 * view-state of a conversation at a refreshable URL.
 	 */
-	public void setRedirectOnPause(boolean b) {
-		this.redirectOnPause = b;
+	public void setRedirectOnPause(boolean redirectOnPause) {
+		this.redirectOnPause = redirectOnPause;
 	}
-	
+
 	/**
 	 * Set the service responsible for mapping attributes of an
 	 * {@link ExternalContext} to a new {@link FlowExecution} during the
@@ -191,7 +192,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	public void setInputMapper(AttributeMapper inputMapper) {
 		this.inputMapper = inputMapper;
 	}
-	
+
 	/**
 	 * Returns the service responsible for mapping attributes of an
 	 * {@link ExternalContext} to a new {@link FlowExecution} during the
@@ -209,7 +210,8 @@ public class FlowExecutorImpl implements FlowExecutor {
 			// execution still active => store it in the repository
 			FlowExecutionKey flowExecutionKey = repository.generateKey(flowExecution);
 			repository.putFlowExecution(flowExecutionKey, flowExecution);
-			return new ResponseInstruction(flowExecutionKey.toString(), flowExecution, redirectOnPauseIfNecessary(selectedView));
+			return new ResponseInstruction(flowExecutionKey.toString(), flowExecution,
+					redirectOnPauseIfNecessary(selectedView));
 		}
 		else {
 			// execution already ended => just render the selected view
@@ -222,7 +224,8 @@ public class FlowExecutorImpl implements FlowExecutor {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionKey repositoryKey = repository.parseFlowExecutionKey(flowExecutionKey);
 		FlowExecutionLock lock = repository.getLock(repositoryKey);
-		lock.lock(); // make sure we're the only one manipulating the flow execution
+		// make sure we're the only one manipulating the flow execution
+		lock.lock();
 		try {
 			FlowExecution flowExecution = repository.getFlowExecution(repositoryKey);
 			ViewSelection selectedView = flowExecution.signalEvent(new EventId(eventId), context);
@@ -230,7 +233,8 @@ public class FlowExecutorImpl implements FlowExecutor {
 				// execution still active => store it in the repository
 				repositoryKey = repository.getNextKey(flowExecution, repositoryKey);
 				repository.putFlowExecution(repositoryKey, flowExecution);
-				return new ResponseInstruction(repositoryKey.toString(), flowExecution, redirectOnPauseIfNecessary(selectedView));
+				return new ResponseInstruction(repositoryKey.toString(), flowExecution,
+						redirectOnPauseIfNecessary(selectedView));
 			}
 			else {
 				// execution ended => remove it from the repository
@@ -247,11 +251,13 @@ public class FlowExecutorImpl implements FlowExecutor {
 		FlowExecutionRepository repository = getRepository(context);
 		FlowExecutionKey repositoryKey = repository.parseFlowExecutionKey(flowExecutionKey);
 		FlowExecutionLock lock = repository.getLock(repositoryKey);
-		lock.lock(); // make sure we're the only one manipulating the flow execution
+		// make sure we're the only one manipulating the flow execution		
+		lock.lock(); 
 		try {
 			FlowExecution flowExecution = repository.getFlowExecution(repositoryKey);
 			ViewSelection selectedView = flowExecution.refresh(context);
-			//note that we're not calling redirectOnPauseIfNecessary since this is already a refresh!
+			// note that we're not calling redirectOnPauseIfNecessary since this
+			// is already a refresh!
 			return new ResponseInstruction(repositoryKey.toString(), flowExecution, selectedView);
 		}
 		finally {
@@ -260,7 +266,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	}
 
 	// helper methods
-	
+
 	/**
 	 * Returns the repository retrieved by the configured
 	 * {@link FlowExecutionRepositoryFactory}.
