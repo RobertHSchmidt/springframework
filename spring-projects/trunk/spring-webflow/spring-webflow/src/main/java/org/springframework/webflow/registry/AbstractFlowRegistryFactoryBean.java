@@ -137,23 +137,52 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 		this.beanFactory = beanFactory;
 	}
 
+	public Class getObjectType() {
+		return FlowRegistry.class;
+	}
+
+	public boolean isSingleton() {
+		return true;
+	}
+
 	public void afterPropertiesSet() {
 		flowServiceLocator = createFlowServiceLocator();
 	}
 
 	/**
-	 * Returns the flow registry constructed by the factory bean.
+	 * Factory method for creating the service locator used to locate webflow
+	 * services during flow assembly. Subclasses may override to customize the
+	 * configuration of the locator returned.
+	 * @return the service locator
 	 */
-	protected FlowRegistry getFlowRegistry() {
-		return flowRegistry;
+	protected FlowServiceLocator createFlowServiceLocator() {
+		DefaultFlowServiceLocator serviceLocator = newDefaultFlowServiceLocator();
+		if (flowArtifactFactory != null) {
+			serviceLocator.setFlowArtifactFactory(flowArtifactFactory);
+		}
+		if (beanInvokingActionFactory != null) {
+			serviceLocator.setBeanInvokingActionFactory(beanInvokingActionFactory);
+		}
+		if (expressionParser != null) {
+			serviceLocator.setExpressionParser(expressionParser);
+		}
+		if (conversionService != null) {
+			serviceLocator.setConversionService(conversionService);
+		}
+		if (resourceLoader != null) {
+			serviceLocator.setResourceLoader(resourceLoader);
+		}
+		return serviceLocator;
 	}
 
 	/**
-	 * Returns the strategy for locating dependent artifacts when a Flow is
-	 * being built.
+	 * Template method for creating the default service locator used to locate
+	 * webflow services during flow assembly. Subclasses may override to
+	 * customize the implementation of the default locator returned.
+	 * @return the default service locator
 	 */
-	public FlowServiceLocator getFlowServiceLocator() {
-		return flowServiceLocator;
+	protected DefaultFlowServiceLocator newDefaultFlowServiceLocator() {
+		return new DefaultFlowServiceLocator(flowRegistry, beanFactory);
 	}
 
 	public Object getObject() throws Exception {
@@ -174,37 +203,66 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	 */
 	protected abstract void doPopulate(FlowRegistry registry);
 
-	public Class getObjectType() {
-		return FlowRegistry.class;
-	}
-
-	public boolean isSingleton() {
-		return true;
+	/**
+	 * Returns the strategy for locating dependent artifacts when a Flow is
+	 * being built.
+	 */
+	public FlowServiceLocator getFlowServiceLocator() {
+		return flowServiceLocator;
 	}
 
 	/**
-	 * Factory method for creating the service locator used to locate webflow
-	 * services during flow assembly. Subclasses may override to customize the
-	 * configuration of the locator returned.
-	 * @return the service locator
+	 * Returns the flow registry constructed by the factory bean.
 	 */
-	protected FlowServiceLocator createFlowServiceLocator() {
-		DefaultFlowServiceLocator serviceLocator = new DefaultFlowServiceLocator(flowRegistry, beanFactory);
-		if (flowArtifactFactory != null) {
-			serviceLocator.setFlowArtifactFactory(flowArtifactFactory);
-		}
-		if (beanInvokingActionFactory != null) {
-			serviceLocator.setBeanInvokingActionFactory(beanInvokingActionFactory);
-		}
-		if (expressionParser != null) {
-			serviceLocator.setExpressionParser(expressionParser);
-		}
-		if (conversionService != null) {
-			serviceLocator.setConversionService(conversionService);
-		}
-		if (resourceLoader != null) {
-			serviceLocator.setResourceLoader(resourceLoader);
-		}
-		return serviceLocator;
+	protected FlowRegistry getFlowRegistry() {
+		return flowRegistry;
+	}
+
+	/**
+	 * Returns the configured factory encapsulating the creation of central Flow
+	 * artifacts such as {@link Flow flows} and {@link State states}.
+	 */
+	protected FlowArtifactFactory getFlowArtifactFactory() {
+		return flowArtifactFactory;
+	}
+
+	/**
+	 * Returns the configured factory for creating bean invoking actions,
+	 * actions that adapt methods on objects to the {@link Action} interface.
+	 */
+	protected BeanInvokingActionFactory getBeanInvokingActionFactory() {
+		return beanInvokingActionFactory;
+	}
+
+	/**
+	 * Returns the configured expression parser responsible for parsing
+	 * expression strings into evaluatable expression objects.
+	 */
+	protected ExpressionParser getExpressionParser() {
+		return expressionParser;
+	}
+
+	/**
+	 * Returns the configured conversion service to use to convert between
+	 * types; typically from string to a rich object type.
+	 */
+	protected ConversionService getConversionService() {
+		return conversionService;
+	}
+
+	/**
+	 * Returns the configured resource loader used to access file-based
+	 * resources.
+	 */
+	protected ResourceLoader getResourceLoader() {
+		return resourceLoader;
+	}
+
+	/**
+	 * Returns the configured bean factory used to access other
+	 * externally-managed flow artifacts and services.
+	 */
+	protected BeanFactory getBeanFactory() {
+		return beanFactory;
 	}
 }
