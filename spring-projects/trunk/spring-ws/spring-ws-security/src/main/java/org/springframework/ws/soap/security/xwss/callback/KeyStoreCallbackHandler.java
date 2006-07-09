@@ -180,18 +180,22 @@ public class KeyStoreCallbackHandler extends CryptographyCallbackHandler impleme
      * Sets the password used to retrieve private keys from the keystore. This property is required for decription based
      * on private keys, and signing.
      */
-    public void setPrivateKeyPassword(char[] privateKeyPassword) {
-        this.privateKeyPassword = privateKeyPassword;
+    public void setPrivateKeyPassword(String privateKeyPassword) {
+        if (privateKeyPassword != null) {
+            this.privateKeyPassword = privateKeyPassword.toCharArray();
+        }
     }
 
     /**
      * Sets the password used to retrieve keys from the symmetric keystore. If this property is not set, it default to
      * the private key password.
      *
-     * @see #setPrivateKeyPassword(char[])
+     * @see #setPrivateKeyPassword(String)
      */
-    public void setSymmetricKeyPassword(char[] symmetricKeyPassword) {
-        this.symmetricKeyPassword = symmetricKeyPassword;
+    public void setSymmetricKeyPassword(String symmetricKeyPassword) {
+        if (symmetricKeyPassword != null) {
+            this.symmetricKeyPassword = symmetricKeyPassword.toCharArray();
+        }
     }
 
     /**
@@ -577,7 +581,7 @@ public class KeyStoreCallbackHandler extends CryptographyCallbackHandler impleme
     protected void loadDefaultKeyStore() {
         Resource location = null;
         String type = null;
-        char[] password = null;
+        String password = null;
         String locationProperty = System.getProperty("javax.net.ssl.keyStore");
         if (StringUtils.hasLength(locationProperty)) {
             File f = new File(locationProperty);
@@ -586,7 +590,7 @@ public class KeyStoreCallbackHandler extends CryptographyCallbackHandler impleme
             }
             String passwordProperty = System.getProperty("javax.net.ssl.keyStorePassword");
             if (StringUtils.hasLength(passwordProperty)) {
-                password = passwordProperty.toCharArray();
+                password = passwordProperty;
             }
             type = System.getProperty("javax.net.ssl.trustStore");
         }
@@ -627,7 +631,7 @@ public class KeyStoreCallbackHandler extends CryptographyCallbackHandler impleme
     protected void loadDefaultTrustStore() {
         Resource location = null;
         String type = null;
-        char[] password = null;
+        String password = null;
         String locationProperty = System.getProperty("javax.net.ssl.trustStore");
         if (StringUtils.hasLength(locationProperty)) {
             File f = new File(locationProperty);
@@ -636,7 +640,7 @@ public class KeyStoreCallbackHandler extends CryptographyCallbackHandler impleme
             }
             String passwordProperty = System.getProperty("javax.net.ssl.trustStorePassword");
             if (StringUtils.hasLength(passwordProperty)) {
-                password = passwordProperty.toCharArray();
+                password = passwordProperty;
             }
             type = System.getProperty("javax.net.ssl.trustStoreType");
         }

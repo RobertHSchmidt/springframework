@@ -65,8 +65,10 @@ public class KeyStoreFactoryBean implements FactoryBean, InitializingBean {
      * Sets the password to use for integrity checking. If this property is not set, then integrity checking is not
      * performed.
      */
-    public void setPassword(char[] password) {
-        this.password = password;
+    public void setPassword(String password) {
+        if (password != null) {
+            this.password = password.toCharArray();
+        }
     }
 
     /**
