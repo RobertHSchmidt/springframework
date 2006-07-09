@@ -25,6 +25,9 @@ Package org.springframework.webflow.builder
 Package org.springframework.webflow.execution
 * Fixed inconsistency in continuation id parsing within ClientContinuationFlowExecutionRepository.
 
+Package org.springframework.webflow.executor
+* Renamed 'redirectOnPause' property to 'alwaysRedirectOnPause' for clarity.
+
 Package org.springframework.webflow.support
 * Moved ImmutableFlowAttributeMapper to builder and made package-private.  Not a general support class.
 * Added the ability to invoke a list of actions before executing an exception handling transition.
