@@ -22,7 +22,10 @@
 	    Support for multipart requests using commons file upload
 		Make sure you have the commons-fileupload.jar in your classpath
 	-->
-	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- Limit uploads to small (5KB) files for this sample -->
+		<property name="maxUploadSize" value="5120"/>
+	</bean>
 
 	<!-- Resolves flow view names to .jsp templates -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
