@@ -2,9 +2,9 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
         "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
-    <bean id="messageHandlerAdapter" class="org.springframework.ws.transport.http.MessageHandlerAdapter">
+    <bean id="handlerAdapter" class="org.springframework.ws.transport.http.MessageEndpointHandlerAdapter">
         <description>
-            The messageHandlerAdapter makes sure that Spring's DispatcherServlet supports MessageHandler instances as
+            The handlerAdapter makes sure that Spring's DispatcherServlet supports MessageEndpoint instances as
             handlers. It uses a SAAJ to construct SoapMessageContexts (and SoapMessages).</description>
         <property name="messageContextFactory">
             <bean class="org.springframework.ws.soap.saaj.SaajSoapMessageContextFactory"/>
