@@ -22,7 +22,6 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
-
 import org.springframework.ws.mock.MockMessageContext;
 import org.springframework.ws.mock.MockWebServiceMessage;
 
@@ -58,7 +57,7 @@ public class PayloadLoggingInterceptorTest extends TestCase {
     }
 
     public void testHandleResponseDisabled() throws Exception {
-        MockWebServiceMessage response = (MockWebServiceMessage) messageContext.createResponse();
+        MockWebServiceMessage response = (MockWebServiceMessage) messageContext.getResponse();
         response.setPayload("<response/>");
         interceptor.setLogResponse(false);
         int eventCount = appender.getCount();
@@ -67,7 +66,7 @@ public class PayloadLoggingInterceptorTest extends TestCase {
     }
 
     public void testHandleResponseEnabled() throws Exception {
-        MockWebServiceMessage response = (MockWebServiceMessage) messageContext.createResponse();
+        MockWebServiceMessage response = (MockWebServiceMessage) messageContext.getResponse();
         response.setPayload("<response/>");
         int eventCount = appender.getCount();
         interceptor.handleResponse(messageContext, null);

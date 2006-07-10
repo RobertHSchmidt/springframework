@@ -20,7 +20,6 @@ import java.util.Collections;
 
 import junit.framework.TestCase;
 import org.easymock.MockControl;
-
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.mock.MockMessageContext;
@@ -162,7 +161,7 @@ public class MessageDispatcherTest extends TestCase {
         interceptorControl.replay();
         adapterControl.replay();
         //  response required for interceptor invocation
-        messageContext.createResponse();
+        messageContext.getResponse();
         dispatcher.dispatch(messageContext);
 
         mappingControl.verify();
@@ -232,7 +231,7 @@ public class MessageDispatcherTest extends TestCase {
         adapterControl.replay();
 
         //  response required for interceptor invocation
-        messageContext.createResponse();
+        messageContext.getResponse();
 
         dispatcher.dispatch(messageContext);
 
@@ -268,7 +267,7 @@ public class MessageDispatcherTest extends TestCase {
         interceptorControl.replay();
         adapterControl.replay();
         //  response required for interceptor invocation
-        messageContext.createResponse();
+        messageContext.getResponse();
 
         dispatcher.dispatch(messageContext);
 

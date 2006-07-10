@@ -36,10 +36,6 @@ public abstract class AbstractSoapMessageContext extends AbstractMessageContext 
         return (SoapMessage) getResponse();
     }
 
-    public final SoapMessage createSoapResponse() {
-        return (SoapMessage) createResponse();
-    }
-
     public final SoapMessage getSoapRequest() {
         return (SoapMessage) getRequest();
     }

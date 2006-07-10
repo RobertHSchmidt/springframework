@@ -56,14 +56,6 @@ public abstract class AbstractMessageContext implements MessageContext {
         this.request = request;
     }
 
-    public final WebServiceMessage createResponse() {
-        if (response != null) {
-            throw new IllegalStateException("Response already created");
-        }
-        response = createWebServiceMessage();
-        return response;
-    }
-
     public final WebServiceMessage getResponse() {
         if (response == null) {
             response = createWebServiceMessage();

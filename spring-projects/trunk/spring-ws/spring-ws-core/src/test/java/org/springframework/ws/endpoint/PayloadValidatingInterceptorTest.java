@@ -17,7 +17,6 @@
 package org.springframework.ws.endpoint;
 
 import java.io.InputStream;
-
 import javax.xml.XMLConstants;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
@@ -25,7 +24,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import junit.framework.TestCase;
 import org.easymock.MockControl;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.ws.mock.MockMessageContext;
 import org.springframework.ws.mock.MockWebServiceMessage;
@@ -144,7 +142,7 @@ public class PayloadValidatingInterceptorTest extends TestCase {
     }
 
     public void testHandleInvalidResponse() throws Exception {
-        MockWebServiceMessage response = (MockWebServiceMessage) messageContext.createResponse();
+        MockWebServiceMessage response = (MockWebServiceMessage) messageContext.getResponse();
         response.setPayload(new ClassPathResource("invalidMessage.xml", getClass()));
         boolean result = interceptor.handleResponse(messageContext, null);
         assertFalse("Invalid response from interceptor", result);
@@ -158,7 +156,7 @@ public class PayloadValidatingInterceptorTest extends TestCase {
     }
 
     public void testHandleValidResponse() throws Exception {
-        MockWebServiceMessage response = (MockWebServiceMessage) messageContext.createResponse();
+        MockWebServiceMessage response = (MockWebServiceMessage) messageContext.getResponse();
         response.setPayload(new ClassPathResource("validMessage.xml", getClass()));
         boolean result = interceptor.handleResponse(messageContext, null);
         assertTrue("Invalid response from interceptor", result);
@@ -175,10 +173,10 @@ public class PayloadValidatingInterceptorTest extends TestCase {
             MessageFactory messageFactory = MessageFactory.newInstance();
             SOAPMessage saajMessage =
                     SaajUtils.loadMessage(new ClassPathResource("validSoapMessage.xml", getClass()), messageFactory);
-            SaajSoapMessageContext messageContext = new SaajSoapMessageContext(saajMessage, messageFactory);
-            boolean result = interceptor.handleRequest(messageContext, null);
+            SaajSoapMessageContext soapContext = new SaajSoapMessageContext(saajMessage, messageFactory);
+            boolean result = interceptor.handleRequest(soapContext, null);
             assertTrue("Invalid response from interceptor", result);
-            assertFalse("Response set", messageContext.hasResponse());
+            assertFalse("Response set", soapContext.hasResponse());
         }
         finally {
             // Reset the property

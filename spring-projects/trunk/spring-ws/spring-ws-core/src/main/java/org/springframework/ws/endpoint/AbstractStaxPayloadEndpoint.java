@@ -19,9 +19,6 @@ package org.springframework.ws.endpoint;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Abstract base class for endpoints use StAX. Provides an <code>XMLInputFactory</code> and an
  * <code>XMLOutputFactory</code>.
@@ -31,8 +28,6 @@ import org.apache.commons.logging.LogFactory;
  * @see XMLOutputFactory
  */
 public abstract class AbstractStaxPayloadEndpoint extends TransformerObjectSupport {
-
-    protected final Log logger = LogFactory.getLog(getClass());
 
     private XMLInputFactory inputFactory;
 

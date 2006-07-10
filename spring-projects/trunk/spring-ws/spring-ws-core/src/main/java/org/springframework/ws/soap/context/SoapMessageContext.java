@@ -35,22 +35,10 @@ public interface SoapMessageContext extends MessageContext {
     SoapMessage getSoapRequest();
 
     /**
-     * Creates a new response SOAP message. This method can be called only once, afterwards, the response can be
-     * retrieved using <code>getResponse</code>.
-     *
-     * @return the created response message
-     * @throws IllegalStateException if a response was already created
-     * @see #getResponse()
-     * @deprecated Will be replaced in future version by the logic provided by <code>hasResponse()</code> and
-     *             <code>getSoapResponse</code>
-     */
-    SoapMessage createSoapResponse();
-
-    /**
      * Returns the response message, if created. Returns <code>null</code> if no response message was created so far.
      *
      * @return the response message, or <code>null</code> if none was created
-     * @see #createResponse()
+     * @see #hasResponse()
      */
     SoapMessage getSoapResponse();
 

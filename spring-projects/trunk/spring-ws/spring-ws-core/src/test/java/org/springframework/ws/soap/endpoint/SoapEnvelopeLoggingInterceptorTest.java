@@ -25,7 +25,6 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
-
 import org.springframework.ws.soap.saaj.SaajSoapMessageContext;
 
 public class SoapEnvelopeLoggingInterceptorTest extends TestCase {
@@ -61,7 +60,7 @@ public class SoapEnvelopeLoggingInterceptorTest extends TestCase {
     }
 
     public void testHandleResponseDisabled() throws Exception {
-        messageContext.createResponse();
+        messageContext.getResponse();
         interceptor.setLogResponse(false);
         int eventCount = appender.getCount();
         interceptor.handleResponse(messageContext, null);
@@ -69,14 +68,14 @@ public class SoapEnvelopeLoggingInterceptorTest extends TestCase {
     }
 
     public void testHandleResponseEnabled() throws Exception {
-        messageContext.createResponse();
+        messageContext.getResponse();
         int eventCount = appender.getCount();
         interceptor.handleResponse(messageContext, null);
         assertTrue("interceptor did not log", appender.getCount() > eventCount);
     }
 
     public void testHandleFaultDisabled() throws Exception {
-        messageContext.createResponse();
+        messageContext.getResponse();
         interceptor.setLogFault(false);
         int eventCount = appender.getCount();
         interceptor.handleFault(messageContext, null);
@@ -84,7 +83,7 @@ public class SoapEnvelopeLoggingInterceptorTest extends TestCase {
     }
 
     public void testHandleFaultEnabled() throws Exception {
-        messageContext.createResponse();
+        messageContext.getResponse();
         int eventCount = appender.getCount();
         interceptor.handleResponse(messageContext, null);
         assertTrue("interceptor did not log", appender.getCount() > eventCount);
