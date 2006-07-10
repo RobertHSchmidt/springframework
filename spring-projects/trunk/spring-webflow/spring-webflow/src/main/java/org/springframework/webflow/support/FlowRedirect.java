@@ -86,6 +86,6 @@ public final class FlowRedirect extends ViewSelection {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("flowId", flowId).append("input", input).toString();
+		return new ToStringCreator(this).append("flowId", flowId).append("inputKeys", input.keySet()).toString();
 	}
 }
