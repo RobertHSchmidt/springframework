@@ -18,7 +18,6 @@ package org.springframework.webflow.execution.repository.support;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.conversation.Conversation;
 import org.springframework.webflow.execution.repository.conversation.ConversationService;
-import org.springframework.webflow.execution.repository.conversation.NoSuchConversationException;
 
 /**
  * A flow execution lock that locks a conversation managed by a
@@ -52,11 +51,6 @@ class ConversationBackedFlowExecutionLock implements FlowExecutionLock {
 	}
 
 	public void unlock() {
-		try {
-			conversation.unlock();
-		}
-		catch (NoSuchConversationException e) {
-			// ignore
-		}
+		conversation.unlock();
 	}
 }
