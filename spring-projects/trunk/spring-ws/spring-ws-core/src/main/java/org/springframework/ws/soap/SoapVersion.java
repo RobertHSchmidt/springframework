@@ -123,6 +123,10 @@ public interface SoapVersion {
         public QName getMustUnderstandFaultName() {
             return MUST_UNDERSTAND_FAULT_NAME;
         }
+
+        public String toString() {
+            return "SOAP 1.1";
+        }
     };
 
     /**
@@ -226,9 +230,10 @@ public interface SoapVersion {
             return MUST_UNDERSTAND_FAULT_NAME;
         }
 
-        public QName getNotUnderstoodHeaderName() {
-            return null;
+        public String toString() {
+            return "SOAP 1.1";
         }
+
     };
 
     /**

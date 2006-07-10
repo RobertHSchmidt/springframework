@@ -21,7 +21,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -34,12 +33,11 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.springframework.core.io.Resource;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import org.springframework.core.io.Resource;
 
 /**
  * Internal class that uses JAXP 1.0 features to create <code>XmlValidator</code> instances.
@@ -52,11 +50,13 @@ abstract class Jaxp10ValidatorFactory {
 
     private static final String SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
 
-    static XmlValidator createValidator(Resource schemaResource, String schemaLanguage) {
-        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-        parserFactory.setNamespaceAware(true);
-        parserFactory.setValidating(true);
-        return new Jaxp10Validator(parserFactory, schemaResource, schemaLanguage);
+    static XmlValidator createValidator(Resource[] schemaResources, String schemaLanguage) throws IOException {
+        InputSource[] inputSources = new InputSource[schemaResources.length];
+        for (int i = 0; i < schemaResources.length; i++) {
+            inputSources[i] = new InputSource(schemaResources[i].getInputStream());
+            inputSources[i].setSystemId(SchemaLoaderUtils.getSystemId(schemaResources[i]));
+        }
+        return new Jaxp10Validator(inputSources, schemaLanguage);
     }
 
     private static class Jaxp10Validator implements XmlValidator {
@@ -65,15 +65,17 @@ abstract class Jaxp10ValidatorFactory {
 
         private TransformerFactory transformerFactory;
 
-        private Resource schemaResource;
+        private InputSource[] schemaInputSources;
 
         private String schemaLanguage;
 
-        private Jaxp10Validator(SAXParserFactory parserFactory, Resource schemaResource, String schemaLanguage) {
-            this.parserFactory = parserFactory;
-            this.schemaResource = schemaResource;
+        private Jaxp10Validator(InputSource[] schemaInputSources, String schemaLanguage) {
+            this.schemaInputSources = schemaInputSources;
             this.schemaLanguage = schemaLanguage;
             transformerFactory = TransformerFactory.newInstance();
+            parserFactory = SAXParserFactory.newInstance();
+            parserFactory.setNamespaceAware(true);
+            parserFactory.setValidating(true);
         }
 
         public SAXParseException[] validate(Source source) throws IOException {
@@ -136,11 +138,11 @@ abstract class Jaxp10ValidatorFactory {
             parser.parse(source.getInputSource(), errorHandler);
         }
 
-        private SAXParser createSAXParser() throws IOException {
+        private SAXParser createSAXParser() {
             try {
                 SAXParser parser = parserFactory.newSAXParser();
                 parser.setProperty(SCHEMA_LANGUAGE, schemaLanguage);
-                parser.setProperty(SCHEMA_SOURCE, schemaResource.getFile());
+                parser.setProperty(SCHEMA_SOURCE, schemaInputSources);
                 return parser;
             }
             catch (ParserConfigurationException ex) {

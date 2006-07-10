@@ -17,9 +17,7 @@
 package org.springframework.oxm.jaxb;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
-
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -28,11 +26,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
-import org.xml.sax.SAXException;
 
 import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;
@@ -40,6 +34,8 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.xml.transform.StaxResult;
 import org.springframework.xml.transform.StaxSource;
+import org.springframework.xml.validation.SchemaLoaderUtils;
+import org.xml.sax.SAXException;
 
 /**
  * Implementation of the <code>Marshaller</code> interface for JAXB 2.0.
@@ -203,63 +199,54 @@ public class Jaxb2Marshaller extends AbstractJaxbMarshaller {
             throw new IllegalStateException(
                     "Cannot use Jaxb2Marshaller in combination with JAXB 1.0. Use Jaxb1Marshaller instead.");
         }
-        JAXBContext jaxbContext;
+        if (StringUtils.hasLength(getContextPath()) && !ObjectUtils.isEmpty(classesToBeBound)) {
+            throw new IllegalArgumentException("specify either contextPath or classesToBeBound property; not both");
+        }
+        loadSchema();
         if (StringUtils.hasLength(getContextPath())) {
-            if (logger.isInfoEnabled()) {
-                logger.info("Creating JAXBContext with context path [" + getContextPath() + "]");
-            }
-            if (jaxbContextProperties != null) {
-                jaxbContext = JAXBContext
-                        .newInstance(getContextPath(), ClassUtils.getDefaultClassLoader(), jaxbContextProperties);
-            }
-            else {
-                jaxbContext = JAXBContext.newInstance(getContextPath());
-            }
+            return createJaxbContextFromContextPath();
         }
         else if (!ObjectUtils.isEmpty(classesToBeBound)) {
-            if (logger.isInfoEnabled()) {
-                logger.info("Creating JAXBContext with classes to be bound [" +
-                        StringUtils.arrayToCommaDelimitedString(classesToBeBound) + "]");
-            }
-            if (jaxbContextProperties != null) {
-                jaxbContext = JAXBContext.newInstance(classesToBeBound, jaxbContextProperties);
-            }
-            else {
-                jaxbContext = JAXBContext.newInstance(classesToBeBound);
-            }
+            return createJaxbContextFromClasses();
         }
         else {
             throw new IllegalArgumentException("setting either contextPath or classesToBeBound is required");
         }
-        createSchema();
-
-        return jaxbContext;
     }
 
-    private void createSchema() throws IOException, SAXException {
+    private JAXBContext createJaxbContextFromContextPath() throws JAXBException {
+        if (logger.isInfoEnabled()) {
+            logger.info("Creating JAXBContext with context path [" + getContextPath() + "]");
+        }
+        if (jaxbContextProperties != null) {
+            return JAXBContext
+                    .newInstance(getContextPath(), ClassUtils.getDefaultClassLoader(), jaxbContextProperties);
+        }
+        else {
+            return JAXBContext.newInstance(getContextPath());
+        }
+    }
+
+    private JAXBContext createJaxbContextFromClasses() throws JAXBException {
+        if (logger.isInfoEnabled()) {
+            logger.info("Creating JAXBContext with classes to be bound [" +
+                    StringUtils.arrayToCommaDelimitedString(classesToBeBound) + "]");
+        }
+        if (jaxbContextProperties != null) {
+            return JAXBContext.newInstance(classesToBeBound, jaxbContextProperties);
+        }
+        else {
+            return JAXBContext.newInstance(classesToBeBound);
+        }
+    }
+
+    private void loadSchema() throws IOException, SAXException {
         if (!ObjectUtils.isEmpty(schemaResources)) {
-            SchemaFactory schemaFactory = SchemaFactory.newInstance(schemaLanguage);
-            StreamSource[] schemaSources = new StreamSource[schemaResources.length];
-            try {
-                for (int i = 0; i < schemaResources.length; i++) {
-                    Resource schemaResource = schemaResources[i];
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Setting validation schema to " + schemaResource);
-                    }
-                    schemaSources[i] = new StreamSource(schemaResource.getInputStream());
-                }
-                schema = schemaFactory.newSchema(schemaSources);
+            if (logger.isDebugEnabled()) {
+                logger.debug(
+                        "Setting validation schema to " + StringUtils.arrayToCommaDelimitedString(schemaResources));
             }
-            finally {
-                for (int i = 0; i < schemaSources.length; i++) {
-                    if (schemaSources[i] != null) {
-                        InputStream inputStream = schemaSources[i].getInputStream();
-                        if (inputStream != null) {
-                            inputStream.close();
-                        }
-                    }
-                }
-            }
+            schema = SchemaLoaderUtils.loadSchema(schemaResources, schemaLanguage);
         }
     }
 

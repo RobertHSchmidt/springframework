@@ -17,20 +17,15 @@
 package org.springframework.xml.validation;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 
+import org.springframework.core.io.Resource;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-
-import org.springframework.core.io.Resource;
 
 /**
  * Internal class that uses JAXP 1.0 features to create <code>XmlValidator</code> instances.
@@ -39,21 +34,14 @@ import org.springframework.core.io.Resource;
  */
 abstract class Jaxp13ValidatorFactory {
 
-    static XmlValidator createValidator(Resource schemaResource, String schemaLanguage) throws IOException {
-        SchemaFactory schemaFactory = SchemaFactory.newInstance(schemaLanguage);
-        InputStream schemaInputStream = schemaResource.getInputStream();
+    static XmlValidator createValidator(Resource[] resources, String schemaLanguage) throws IOException {
         try {
-            Source schemaSource = new StreamSource(schemaInputStream);
-            Schema schema = schemaFactory.newSchema(schemaSource);
+            Schema schema = SchemaLoaderUtils.loadSchema(resources, schemaLanguage);
             return new Jaxp13Validator(schema);
         }
         catch (SAXException ex) {
             throw new XmlValidationException("Could not create Schema: " + ex.getMessage(), ex);
         }
-        finally {
-            schemaInputStream.close();
-        }
-
     }
 
     private static class Jaxp13Validator implements XmlValidator {

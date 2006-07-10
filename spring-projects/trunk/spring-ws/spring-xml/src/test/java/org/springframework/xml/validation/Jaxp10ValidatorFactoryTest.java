@@ -22,7 +22,7 @@ import org.springframework.core.io.Resource;
 
 public class Jaxp10ValidatorFactoryTest extends AbstractValidatorFactoryTestCase {
 
-    protected XmlValidator createValidator(Resource schemaResource, String schemaLanguage) throws IOException {
-        return Jaxp10ValidatorFactory.createValidator(schemaResource, schemaLanguage);
+    protected XmlValidator createValidator(Resource[] schemaResources, String schemaLanguage) throws IOException {
+        return Jaxp10ValidatorFactory.createValidator(schemaResources, schemaLanguage);
     }
 }

@@ -16,60 +16,68 @@
 
 package org.springframework.xml.validation;
 
-import java.io.StringReader;
-
+import java.io.InputStream;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import junit.framework.TestCase;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-
 public abstract class AbstractValidatorFactoryTestCase extends TestCase {
-
-    private static final String VALID_MESSAGE =
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><product xmlns=\"http://www.springframework.org/spring-ws/test/validation\" effDate=\"2006-01-01\"><number>42</number><size>10</size></product>";
-
-    private static final String INVALID_MESSAGE =
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><product xmlns=\"http://www.springframework.org/spring-ws/test/validation\" effDate=\"2006-01-01\"><size>20</size></product>";
 
     private XmlValidator validator;
 
+    private InputStream validInputStream;
+
+    private InputStream invalidInputStream;
+
     protected void setUp() throws Exception {
-        Resource schemaResource = new ClassPathResource("schema.xsd", Jaxp13ValidatorFactoryTest.class);
+        Resource[] schemaResource =
+                new Resource[]{new ClassPathResource("schema.xsd", AbstractValidatorFactoryTestCase.class)};
         validator = createValidator(schemaResource, XmlValidatorFactory.SCHEMA_W3C_XML);
+        validInputStream = AbstractValidatorFactoryTestCase.class.getResourceAsStream("validDocument.xml");
+        invalidInputStream = AbstractValidatorFactoryTestCase.class.getResourceAsStream("invalidDocument.xml");
     }
 
-    protected abstract XmlValidator createValidator(Resource schemaResource, String schemaLanguage) throws Exception;
+    protected void tearDown() throws Exception {
+        validInputStream.close();
+        invalidInputStream.close();
+    }
+
+    protected abstract XmlValidator createValidator(Resource[] schemaResources, String schemaLanguage) throws Exception;
 
     public void testHandleValidMessageStream() throws Exception {
-        SAXParseException[] errors = validator.validate(new StreamSource(new StringReader(VALID_MESSAGE)));
+        SAXParseException[] errors = validator.validate(new StreamSource(validInputStream));
         assertNotNull("Null returned for errors", errors);
         assertEquals("ValidationErrors returned", 0, errors.length);
     }
 
+    public void testValidateTwice() throws Exception {
+        validator.validate(new StreamSource(validInputStream));
+        validInputStream = AbstractValidatorFactoryTestCase.class.getResourceAsStream("validDocument.xml");
+        validator.validate(new StreamSource(validInputStream));
+    }
+
     public void testHandleInvalidMessageStream() throws Exception {
-        SAXParseException[] errors = validator.validate(new StreamSource(new StringReader(INVALID_MESSAGE)));
+        SAXParseException[] errors = validator.validate(new StreamSource(invalidInputStream));
         assertNotNull("Null returned for errors", errors);
         assertEquals("ValidationErrors returned", 3, errors.length);
     }
 
     public void testHandleValidMessageSax() throws Exception {
-        SAXParseException[] errors =
-                validator.validate(new SAXSource(new InputSource(new StringReader(VALID_MESSAGE))));
+        SAXParseException[] errors = validator.validate(new SAXSource(new InputSource(validInputStream)));
         assertNotNull("Null returned for errors", errors);
         assertEquals("ValidationErrors returned", 0, errors.length);
     }
 
     public void testHandleInvalidMessageSax() throws Exception {
-        SAXParseException[] errors =
-                validator.validate(new SAXSource(new InputSource(new StringReader(INVALID_MESSAGE))));
+        SAXParseException[] errors = validator.validate(new SAXSource(new InputSource(invalidInputStream)));
         assertNotNull("Null returned for errors", errors);
         assertEquals("ValidationErrors returned", 3, errors.length);
     }
@@ -78,7 +86,7 @@ public abstract class AbstractValidatorFactoryTestCase extends TestCase {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
         Document document = documentBuilderFactory.newDocumentBuilder()
-                .parse(new InputSource(new StringReader(VALID_MESSAGE)));
+                .parse(new InputSource(validInputStream));
         SAXParseException[] errors = validator.validate(new DOMSource(document));
         assertNotNull("Null returned for errors", errors);
         assertEquals("ValidationErrors returned", 0, errors.length);
@@ -88,7 +96,7 @@ public abstract class AbstractValidatorFactoryTestCase extends TestCase {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
         Document document = documentBuilderFactory.newDocumentBuilder()
-                .parse(new InputSource(new StringReader(INVALID_MESSAGE)));
+                .parse(new InputSource(invalidInputStream));
         SAXParseException[] errors = validator.validate(new DOMSource(document));
         assertNotNull("Null returned for errors", errors);
         assertEquals("ValidationErrors returned", 3, errors.length);

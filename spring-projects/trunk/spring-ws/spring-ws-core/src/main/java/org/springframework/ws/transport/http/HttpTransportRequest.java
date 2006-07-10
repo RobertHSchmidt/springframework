@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Iterator;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.util.Assert;
@@ -46,7 +45,7 @@ public class HttpTransportRequest implements TransportRequest {
     }
 
     /**
-     * Returns the <code>HttpServletRequest</code>.
+     * Returns the wrapped <code>HttpServletRequest</code>.
      */
     public HttpServletRequest getHttpServletRequest() {
         return request;
