@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +39,8 @@ class ConversationEntry implements Serializable {
 
 	private ConversationId id;
 
+	private long beginTime = new Date().getTime();
+	
 	private String name;
 	
 	private String caption;
@@ -55,6 +58,14 @@ class ConversationEntry implements Serializable {
 		this.description = description;
 	}
 
+	public ConversationId getId() {
+		return id;
+	}
+
+	public long getBeginTime() {
+		return beginTime;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -69,10 +80,6 @@ class ConversationEntry implements Serializable {
 
 	public String getDescription() {
 		return description;
-	}
-
-	public ConversationId getId() {
-		return id;
 	}
 
 	public ConversationLock getLock() {
