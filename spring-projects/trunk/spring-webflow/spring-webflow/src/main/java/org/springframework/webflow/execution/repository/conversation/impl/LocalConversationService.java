@@ -17,6 +17,7 @@ package org.springframework.webflow.execution.repository.conversation.impl;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.springframework.util.Assert;
@@ -44,10 +45,31 @@ public class LocalConversationService implements ConversationService, Serializab
 	private Map conversations = new HashMap();
 
 	/**
+	 * An ordered list of conversation ids. Each conversation id represents an
+	 * pointer to an actiove conversation in the map.  The first element is the oldest 
+	 * conversation and the last is the youngest. 
+	 */
+	private LinkedList conversationIds = new LinkedList();
+
+	/**
+	 * The maximum number of active conversations allowed.
+	 */
+	private int maxConversations;
+	
+	/**
 	 * The uid generation strategy to use.
 	 */
 	private UidGenerator conversationIdGenerator = new RandomGuidUidGenerator();
 
+	/**
+	 * Creates a new local conversation service.
+	 * @param maxConversations the maximum number of conversations that can be 
+	 * active at once within this service.
+	 */
+	public LocalConversationService(int maxConversations) {
+		this.maxConversations = maxConversations;
+	}
+	
 	/**
 	 * Returns the configured generator for simple conversation ids.
 	 */
@@ -66,6 +88,12 @@ public class LocalConversationService implements ConversationService, Serializab
 		Assert.notNull(conversationParameters, "newConversation must not be null");
 		ConversationId conversationId = new SimpleConversationId(conversationIdGenerator.generateUid());
 		conversations.put(conversationId, createConversation(conversationParameters, conversationId));
+		conversationIds.add(conversationId);
+		// end the oldest conversation if them maximium number of
+		// conversations has been exceeded
+		if (maxExceeded()) {
+			endOldestConversation();
+		}		
 		return getConversation(conversationId);
 	}
 
@@ -85,6 +113,14 @@ public class LocalConversationService implements ConversationService, Serializab
 				newConversation.getDescription());
 	}
 
+	private boolean maxExceeded() {
+		return maxConversations > 0 && conversationIds.size() > maxConversations;
+	}
+
+	private void endOldestConversation() {
+		getConversation((ConversationId)conversationIds.getFirst()).end();
+	}
+	
 	private ConversationLock getLock(ConversationId conversationId) {
 		Assert.notNull(conversationId, "conversationId must not be null");
 		if (!conversations.containsKey(conversationId)) {
@@ -126,6 +162,7 @@ public class LocalConversationService implements ConversationService, Serializab
 			throw new NoSuchConversationException(conversationId);
 		}
 		conversations.remove(conversationId);
+		conversationIds.remove(conversationId);
 	}
 
 	private ConversationEntry getConversationEntry(ConversationId conversationId) {
