@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
+	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
+
+<flow start-state="displayItemView">
+
+	<input-mapper>
+		<mapping source="cart" target="flowScope.cart"/>
+		<mapping source="item" target="flowScope.item"/>
+	</input-mapper>
+	
+	<view-state id="displayItemView" view="item">
+		<transition on="addToCart" to="addToCart"/>
+		<transition on="done" to="done"/>
+	</view-state>
+
+	<action-state id="addToCart">
+		<action bean="${flowScope.cart}" method="add(${flowScope.item})"/>
+	</action-state>
+			
+	<end-state id="done"/>
+	
+</flow>
