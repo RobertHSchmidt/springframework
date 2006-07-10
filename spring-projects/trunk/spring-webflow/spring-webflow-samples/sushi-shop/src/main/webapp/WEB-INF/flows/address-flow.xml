@@ -5,6 +5,10 @@
 <flow start-state="displayShippingForm">
 
 	<var name="address" class="example.Address"/>
+
+	<input-mapper>
+		<mapping source="message" target="flowScope.message"/>
+	</input-mapper>
 	
 	<view-state id="displayShippingForm" view="shippingForm">
 		<transition on="submit" to="finish"/>
