@@ -26,6 +26,7 @@ Package org.springframework.webflow.execution
 * Fixed inconsistency in continuation id parsing within ClientContinuationFlowExecutionRepository.
 * Added 'maxConversations' property to LocalConversationService to allow setting an upper bound on the number 
   of conversations that can be active at one time.
+* Fixed bug where ConversationEntry lock was not released on 'end'.
 
 Package org.springframework.webflow.executor
 * Renamed 'redirectOnPause' property to 'alwaysRedirectOnPause' for clarity.
