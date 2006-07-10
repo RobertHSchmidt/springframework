@@ -80,6 +80,11 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 		Serializable {
 
 	/**
+	 * The default number of conversations that can be active at one time within this service.  No max by default.
+	 */
+	private final static int DEFAULT_MAX_CONVERSATIONS = -1;
+	
+	/**
 	 * The conversation "continuation group" attribute.
 	 */
 	private static final String CONTINUATION_GROUP_ATTRIBUTE = "continuationGroup";
@@ -105,7 +110,7 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	 * @param repositoryServices the repository services holder
 	 */
 	public ContinuationFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices) {
-		super(repositoryServices, new LocalConversationService());
+		super(repositoryServices, new LocalConversationService(DEFAULT_MAX_CONVERSATIONS));
 	}
 
 	/**

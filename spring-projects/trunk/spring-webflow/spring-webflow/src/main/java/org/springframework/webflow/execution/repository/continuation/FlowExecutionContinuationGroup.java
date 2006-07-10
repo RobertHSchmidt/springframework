@@ -36,9 +36,9 @@ class FlowExecutionContinuationGroup implements Serializable {
 	private Map continuations = new HashMap();
 
 	/**
-	 * A stack of conversation continuations. Each continuation represents a
-	 * restorable snapshot of this conversation at a point in time relevant to
-	 * the user.
+	 * An ordered list of continuation ids. Each continuation id represents an
+	 * pointer to a continuation in the map.  The first element is the oldest 
+	 * continuation and the last is the youngest. 
 	 */
 	private LinkedList continuationIds = new LinkedList();
 
@@ -51,11 +51,11 @@ class FlowExecutionContinuationGroup implements Serializable {
 	 * Creates a new flow execution continuation group.
 	 * @param maxContinuations the maximum number of continuations that can be
 	 * stored in this group.
-	 */
+	 */                                                                            
 	public FlowExecutionContinuationGroup(int maxContinuations) {
 		this.maxContinuations = maxContinuations;
 	}
-
+	
 	/**
 	 * Returns the count of continuations in this repository.
 	 */
@@ -82,8 +82,8 @@ class FlowExecutionContinuationGroup implements Serializable {
 	public void add(Serializable continuationId, FlowExecutionContinuation continuation) {
 		continuations.put(continuationId, continuation);
 		continuationIds.add(continuationId);
-		// remove the first continuation if them maximium number of
-		// continuations has been reached
+		// remove the oldest continuation if them maximium number of
+		// continuations has been exceeded
 		if (maxExceeded()) {
 			removeOldestContinuation();
 		}
