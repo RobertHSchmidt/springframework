@@ -33,22 +33,10 @@ public interface MessageContext {
     WebServiceMessage getRequest();
 
     /**
-     * Creates a new response message. This method can be called only once, afterwards, the response can be retrieved
-     * using <code>getResponse</code>.
-     *
-     * @return the created response message
-     * @throws IllegalStateException if a response was already created
-     * @see #getResponse()
-     * @deprecated Will be replaced in future version by the logic provided by <code>hasResponse()</code> and
-     *             <code>getResponse</code>
-     */
-    WebServiceMessage createResponse();
-
-    /**
      * Returns the response message. Creates a new response if no response was created.
      *
      * @return the response message
-     * @see #createResponse()
+     * @see #hasResponse()
      */
     WebServiceMessage getResponse();
 

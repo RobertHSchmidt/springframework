@@ -20,7 +20,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.util.Assert;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapEndpointInterceptor;
@@ -30,7 +29,7 @@ import org.springframework.ws.soap.context.SoapMessageContext;
 import org.springframework.ws.soap.support.SoapMessageUtils;
 
 /**
- * Endpoint base class for interceptors that handles WS-Security.
+ * Interceptor base class for interceptors that handle WS-Security.
  * <p/>
  * Subclasses of this base class can be configured to validate incoming and secure outgoing messages. By default, both
  * are on.
@@ -78,7 +77,7 @@ public abstract class AbstractWsSecurityInterceptor implements SoapEndpointInter
                 if (logger.isWarnEnabled()) {
                     logger.warn("Could not validate request: " + ex.getMessage());
                 }
-                SoapMessage response = soapMessageContext.createSoapResponse();
+                SoapMessage response = soapMessageContext.getSoapResponse();
                 SoapMessageUtils.addSenderFault(response, ex.getMessage());
                 return false;
             }
