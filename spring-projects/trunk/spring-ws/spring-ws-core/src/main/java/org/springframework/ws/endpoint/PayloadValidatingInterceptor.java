@@ -17,19 +17,16 @@
 package org.springframework.ws.endpoint;
 
 import java.io.IOException;
-
 import javax.xml.namespace.QName;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapEndpointInterceptor;
 import org.springframework.ws.soap.SoapFault;
@@ -41,6 +38,8 @@ import org.springframework.ws.soap.context.SoapMessageContext;
 import org.springframework.ws.soap.support.SoapMessageUtils;
 import org.springframework.xml.validation.XmlValidator;
 import org.springframework.xml.validation.XmlValidatorFactory;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * Interceptor that validates the contents of <code>WebServiceMessage</code>s using a schema. Allows for both W3C XML
@@ -80,7 +79,7 @@ public class PayloadValidatingInterceptor extends TransformerObjectSupport
 
     private String schemaLanguage = XmlValidatorFactory.SCHEMA_W3C_XML;
 
-    private Resource schemaResource;
+    private Resource[] schemaResources;
 
     private boolean validateRequest = true;
 
@@ -105,8 +104,15 @@ public class PayloadValidatingInterceptor extends TransformerObjectSupport
     /**
      * Sets the schema resource to use for validation.
      */
-    public void setSchema(Resource schema) {
-        this.schemaResource = schema;
+    public void setSchema(Resource schemaResource) {
+        this.schemaResources = new Resource[]{schemaResource};
+    }
+
+    /**
+     * Sets the schema resources to use for validation.
+     */
+    public void setSchemas(Resource[] schemaResources) {
+        this.schemaResources = schemaResources;
     }
 
     /**
@@ -211,13 +217,15 @@ public class PayloadValidatingInterceptor extends TransformerObjectSupport
     }
 
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(schemaResource, "schema is required");
-        Assert.isTrue(schemaResource.exists(), "schema [" + schemaResource + "] does not exist");
+        Assert.notEmpty(schemaResources, "setting either the schema or schemas property is required");
         Assert.hasLength(schemaLanguage, "schemaLanguage is required");
-        if (logger.isInfoEnabled()) {
-            logger.info("Validating using " + schemaResource);
+        for (int i = 0; i < schemaResources.length; i++) {
+            Assert.isTrue(schemaResources[i].exists(), "schema [" + schemaResources + "] does not exist");
         }
-        validator = XmlValidatorFactory.createValidator(schemaResource, schemaLanguage);
+        if (logger.isInfoEnabled()) {
+            logger.info("Validating using " + StringUtils.arrayToCommaDelimitedString(schemaResources));
+        }
+        validator = XmlValidatorFactory.createValidator(schemaResources, schemaLanguage);
     }
 
     /**

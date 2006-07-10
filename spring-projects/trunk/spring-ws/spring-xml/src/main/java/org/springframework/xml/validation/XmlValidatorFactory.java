@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.xml.JaxpVersion;
@@ -64,16 +63,36 @@ public abstract class XmlValidatorFactory {
      * @see #SCHEMA_W3C_XML
      */
     public static XmlValidator createValidator(Resource schemaResource, String schemaLanguage) throws IOException {
-        Assert.notNull(schemaResource, "schema is required");
-        Assert.isTrue(schemaResource.exists(), "schema [" + schemaResource + "] file does not exist");
-        Assert.hasLength(schemaLanguage, "schemaLanguage is required");
+        return createValidator(new Resource[]{schemaResource}, schemaLanguage);
+    }
+
+    /**
+     * Create a <code>XmlValidator</code> with the given schema resources and schema language type. The schema language
+     * must be one of the <code>SCHEMA_XXX</code> constants.
+     *
+     * @param schemaResources an array of resource that locate the schemas to validate against
+     * @param schemaLanguage  the language of the schemas
+     * @return a validator
+     * @throws IOException              if the schema resource cannot be read
+     * @throws IllegalArgumentException if the schema language is not supported
+     * @throws IllegalStateException    if JAXP 1.0 cannot be located
+     * @throws XmlValidationException   if a <code>XmlValidator</code> cannot be created
+     * @see #SCHEMA_RELAX_NG
+     * @see #SCHEMA_W3C_XML
+     */
+    public static XmlValidator createValidator(Resource[] schemaResources, String schemaLanguage) throws IOException {
+        Assert.notEmpty(schemaResources, "No resources given");
+        Assert.hasLength(schemaLanguage, "No schema language provided");
+        for (int i = 0; i < schemaResources.length; i++) {
+            Assert.isTrue(schemaResources[i].exists(), "schema [" + schemaResources + "] does not exist");
+        }
         if (JaxpVersion.getJaxpVersion() >= JaxpVersion.JAXP_13) {
             logger.debug("Creating JAXP 1.3 XmlValidator");
-            return Jaxp13ValidatorFactory.createValidator(schemaResource, schemaLanguage);
+            return Jaxp13ValidatorFactory.createValidator(schemaResources, schemaLanguage);
         }
         else if (JaxpVersion.getJaxpVersion() >= JaxpVersion.JAXP_10) {
             logger.debug("Creating JAXP 1.0 XmlValidator");
-            return Jaxp10ValidatorFactory.createValidator(schemaResource, schemaLanguage);
+            return Jaxp10ValidatorFactory.createValidator(schemaResources, schemaLanguage);
         }
         else {
             throw new IllegalStateException("Could not locate JAXP 1.0 or higher.");
