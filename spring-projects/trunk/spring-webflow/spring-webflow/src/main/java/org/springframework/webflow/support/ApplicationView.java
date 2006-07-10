@@ -91,6 +91,6 @@ public final class ApplicationView extends ViewSelection {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("viewName", viewName).append("model", model).toString();
+		return new ToStringCreator(this).append("viewName", viewName).append("modelKeys", model.keySet()).toString();
 	}
 }
