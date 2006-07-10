@@ -85,7 +85,7 @@ public class LocalConversationService implements ConversationService, Serializab
 	}
 
 	public Conversation beginConversation(ConversationParameters conversationParameters) {
-		Assert.notNull(conversationParameters, "newConversation must not be null");
+		Assert.notNull(conversationParameters, "New conversation parameters must not be null");
 		ConversationId conversationId = new SimpleConversationId(conversationIdGenerator.generateUid());
 		conversations.put(conversationId, createConversation(conversationParameters, conversationId));
 		conversationIds.add(conversationId);
@@ -118,7 +118,9 @@ public class LocalConversationService implements ConversationService, Serializab
 	}
 
 	private void endOldestConversation() {
-		getConversation((ConversationId)conversationIds.getFirst()).end();
+		Conversation oldest = getConversation((ConversationId)conversationIds.getFirst());
+		oldest.lock();
+		oldest.end();
 	}
 	
 	private ConversationLock getLock(ConversationId conversationId) {
@@ -161,6 +163,7 @@ public class LocalConversationService implements ConversationService, Serializab
 		if (!conversations.containsKey(conversationId)) {
 			throw new NoSuchConversationException(conversationId);
 		}
+		getConversationEntry(conversationId).getLock().unlock();
 		conversations.remove(conversationId);
 		conversationIds.remove(conversationId);
 	}
@@ -207,7 +210,11 @@ public class LocalConversationService implements ConversationService, Serializab
 		}
 
 		public void unlock() {
-			LocalConversationService.this.getLock(conversationId).unlock();
+			try {
+				LocalConversationService.this.getLock(conversationId).unlock();
+			} catch (NoSuchConversationException e) {
+				// ignore
+			}
 		}
 	}
 }
