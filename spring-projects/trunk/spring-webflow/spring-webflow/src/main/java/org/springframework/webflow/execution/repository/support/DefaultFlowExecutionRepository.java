@@ -51,6 +51,11 @@ import org.springframework.webflow.util.UidGenerator;
 public class DefaultFlowExecutionRepository extends AbstractConversationFlowExecutionRepository implements Serializable {
 
 	/**
+	 * The default number of conversations that can be active at one time within this service.  No max by default.
+	 */
+	private final static int DEFAULT_MAX_CONVERSATIONS = -1;
+	
+	/**
 	 * The flow execution entry attribute.
 	 */
 	private static final String FLOW_EXECUTION_ENTRY_ATTRIBUTE = "flowExecutionEntry";
@@ -65,7 +70,7 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 	 * @param repositoryServices the repository services holder
 	 */
 	public DefaultFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices) {
-		super(repositoryServices, new LocalConversationService());
+		super(repositoryServices, new LocalConversationService(DEFAULT_MAX_CONVERSATIONS));
 	}
 
 	/**
