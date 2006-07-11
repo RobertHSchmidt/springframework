@@ -8,6 +8,9 @@ import org.springframework.ws.soap.context.SoapMessageContext;
 import org.springframework.ws.soap.support.SoapMessageUtils;
 
 /**
+ * Simple, SOAP-specific implementation of the <code>EndpointExceptionResolver</code> that stores the exception's
+ * message as the fault code.
+ *
  * @author Arjen Poutsma
  */
 public class SimpleSoapExceptionResolver extends AbstractEndpointExceptionResolver {
