@@ -40,6 +40,9 @@ Package org.springframework.ws.transport.http
 Package org.springframework.xml
 * moved package to seperate jar file, since oxm now also depends on it
 
+Package org.springframework.xml.namespace
+* moved QNameEditor from spring-ws-core 
+
 Package org.springframework.xml.validation
 * improved validation schema loading (#SWS-46)
 
