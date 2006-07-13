@@ -18,13 +18,11 @@ package org.springframework.xml.transform;
 
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.util.XMLEventConsumer;
 import javax.xml.transform.sax.SAXResult;
-
-import org.xml.sax.ContentHandler;
 
 import org.springframework.xml.stream.StaxEventContentHandler;
 import org.springframework.xml.stream.StaxStreamContentHandler;
+import org.xml.sax.ContentHandler;
 
 /**
  * Implementation of the <code>Result</code> tagging interface for StAX writers. Can be constructed with a
@@ -41,7 +39,7 @@ import org.springframework.xml.stream.StaxStreamContentHandler;
  * <code>UnsupportedOperationException</code>s.
  *
  * @author Arjen Poutsma
- * @see XMLEventConsumer
+ * @see XMLEventWriter
  * @see XMLStreamWriter
  * @see javax.xml.transform.Transformer
  */
