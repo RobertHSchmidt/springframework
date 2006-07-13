@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamReader;
@@ -51,12 +50,6 @@ import org.jibx.runtime.impl.MarshallingContext;
 import org.jibx.runtime.impl.StAXReaderWrapper;
 import org.jibx.runtime.impl.StAXWriter;
 import org.jibx.runtime.impl.UnmarshallingContext;
-import org.w3c.dom.Node;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xml.sax.ext.LexicalHandler;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.oxm.AbstractMarshaller;
 import org.springframework.oxm.XmlMappingException;
@@ -64,6 +57,11 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.xml.stream.StaxEventContentHandler;
 import org.springframework.xml.stream.StaxEventXmlReader;
+import org.w3c.dom.Node;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xml.sax.ext.LexicalHandler;
 
 /**
  * Implementation of the <code>Marshaller</code> and <code>Unmarshaller</code> interfaces for JiBX.
@@ -104,7 +102,12 @@ public class JibxMarshaller extends AbstractMarshaller implements InitializingBe
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(targetClass, "targetClass is required");
         if (logger.isInfoEnabled()) {
-            logger.info("Using target class [" + targetClass + "] and bindingName [" + bindingName + "]");
+            if (StringUtils.hasLength(bindingName)) {
+                logger.info("Configured for target class [" + targetClass + "] using binding [" + bindingName + "]");
+            }
+            else {
+                logger.info("Configured for target class [" + targetClass + "]");
+            }
         }
         try {
             if (StringUtils.hasLength(bindingName)) {
