@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.propertyeditors;
+package org.springframework.xml.namespace;
 
 import java.beans.PropertyEditorSupport;
-
 import javax.xml.namespace.QName;
 
 import org.springframework.util.StringUtils;
-import org.springframework.xml.namespace.QNameUtils;
 
 /**
  * PropertyEditor for <code>javax.xml.namespace.QName</code>, to populate a property of type QName from a String value.

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.propertyeditors;
+package org.springframework.xml.namespace;
 
 import javax.xml.namespace.QName;
 
