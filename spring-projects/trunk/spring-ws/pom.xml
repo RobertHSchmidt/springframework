@@ -42,11 +42,9 @@
     </licenses>
     <scm>
         <connection>
-            scm:svn:https://svn.sourceforge.net/svnroot/springframework/spring-projects/trunk/spring-ws/
-        </connection>
+            scm:svn:https://svn.sourceforge.net/svnroot/springframework/spring-projects/trunk/spring-ws/</connection>
         <developerConnection>
-            scm:svn:https://svn.sourceforge.net/svnroot/springframework/spring-projects/trunk/spring-ws/
-        </developerConnection>
+            scm:svn:https://svn.sourceforge.net/svnroot/springframework/spring-projects/trunk/spring-ws/</developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/springframework/spring-projects/trunk/spring-ws/</url>
     </scm>
     <modules>
@@ -86,6 +84,11 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>2.0-beta-4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>2.0.1</version>
                 </plugin>
@@ -99,14 +102,10 @@
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>2.0</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>2.0-beta-4</version>
-                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
+            <!-- Building -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -123,6 +122,74 @@
                     <childDelegation>false</childDelegation>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clover-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>pre-site</phase>
+                        <goals>
+                            <goal>instrument</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- IDEs -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <downloadSources>true</downloadSources>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-idea-plugin</artifactId>
+                <version>2.0</version>
+                <configuration>
+                    <downloadSources>true</downloadSources>
+                    <downloadJavadocs>true</downloadJavadocs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <aggregate>true</aggregate>
+                    <breakiterator>true</breakiterator>
+                    <groups>
+                        <group>
+                            <title>Spring-WS</title>
+                            <packages>org.springframework.ws*</packages>
+                        </group>
+                        <group>
+                            <title>Spring-OXM</title>
+                            <packages>org.springframework.oxm*</packages>
+                        </group>
+                        <group>
+                            <title>Spring-XML</title>
+                            <packages>org.springframework.xml*</packages>
+                        </group>
+                    </groups>
+                    <excludePackageNames>org.springframework.ws.samples</excludePackageNames>
+                    <links>
+                        <link>http://java.sun.com/j2se/1.4.2/docs/api</link>
+                        <link>http://java.sun.com/j2ee/1.4/docs/api</link>
+                        <link>http://java.sun.com/webservices/docs/2.0/api</link>
+                        <link>http://java.sun.com/webservices/docs/2.0/xws-security/api/</link>
+                        <link>http://static.springframework.org/spring/docs/1.2.x/api</link>
+                        <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
+                        <link>http://xmlbeans.apache.org/docs/2.0.0/reference</link>
+                        <link>http://jibx.sourceforge.net/api</link>
+                        <link>http://ws.apache.org/commons/axiom/apidocs/</link>
+                        <link>http://dom4j.org/apidocs/</link>
+                        <link>http://jdom.org/docs/apidocs/</link>
+                        <link>http://www.xom.nu/apidocs/</link>
+                        <link>http://acegisecurity.org/multiproject/acegi-security/apidocs/</link>
+                    </links>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <reporting>
@@ -130,6 +197,48 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clover-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <aggregate>true</aggregate>
+                    <breakiterator>true</breakiterator>
+                    <groups>
+                        <group>
+                            <title>Spring-WS</title>
+                            <packages>org.springframework.ws*</packages>
+                        </group>
+                        <group>
+                            <title>Spring-OXM</title>
+                            <packages>org.springframework.oxm*</packages>
+                        </group>
+                        <group>
+                            <title>Spring-XML</title>
+                            <packages>org.springframework.xml*</packages>
+                        </group>
+                    </groups>
+                    <excludePackageNames>org.springframework.ws.samples</excludePackageNames>
+                    <links>
+                        <link>http://java.sun.com/j2se/1.4.2/docs/api</link>
+                        <link>http://java.sun.com/j2ee/1.4/docs/api</link>
+                        <link>http://java.sun.com/webservices/docs/2.0/api</link>
+                        <link>http://java.sun.com/webservices/docs/2.0/xws-security/api/</link>
+                        <link>http://static.springframework.org/spring/docs/1.2.x/api</link>
+                        <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
+                        <link>http://xmlbeans.apache.org/docs/2.0.0/reference</link>
+                        <link>http://jibx.sourceforge.net/api</link>
+                        <link>http://ws.apache.org/commons/axiom/apidocs/</link>
+                        <link>http://dom4j.org/apidocs/</link>
+                        <link>http://jdom.org/docs/apidocs/</link>
+                        <link>http://www.xom.nu/apidocs/</link>
+                        <link>http://acegisecurity.org/multiproject/acegi-security/apidocs/</link>
+                    </links>
+                </configuration>
             </plugin>
         </plugins>
     </reporting>
@@ -159,6 +268,11 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-ws-security</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-ws-samples</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- Spring dependencies -->
@@ -407,6 +521,7 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
