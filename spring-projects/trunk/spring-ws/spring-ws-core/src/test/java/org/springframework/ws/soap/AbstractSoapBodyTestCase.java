@@ -16,15 +16,11 @@
 
 package org.springframework.ws.soap;
 
-import java.util.Iterator;
 import java.util.Locale;
-
-import javax.xml.namespace.QName;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
 import org.custommonkey.xmlunit.XMLTestCase;
-
 import org.springframework.xml.transform.StringResult;
 import org.springframework.xml.transform.StringSource;
 
@@ -55,47 +51,11 @@ public abstract class AbstractSoapBodyTestCase extends XMLTestCase {
         assertFalse("body has fault", soapBody.hasFault());
     }
 
-    public void testFault() {
-        QName faultCode = new QName("namespace", "localPart", "prefix");
-        String faultString = "faultString";
-        SoapFault fault = soapBody.addFault(faultCode, faultString);
-        assertNotNull("Null returned", fault);
-        assertTrue("SoapBody has no fault", soapBody.hasFault());
-        assertNotNull("SoapBody has no fault", soapBody.getFault());
-        assertEquals("Invalid fault code", faultCode, fault.getFaultCode());
-        assertEquals("Invalid fault string", faultString, fault.getFaultString());
-        fault.setFaultRole("role");
-        assertEquals("Invalid fault role", "role", fault.getFaultRole());
-        fault.setFaultString("new faultString", Locale.ENGLISH);
-        assertEquals("Invalid fault string", "new faultString", fault.getFaultString());
-        assertEquals("Invalid fault string locale", Locale.ENGLISH, fault.getFaultStringLocale());
-        assertNotNull("Fault source is null", fault.getSource());
-    }
-
     public void testAddFaultWithExistingPayload() throws Exception {
-        QName faultCode = new QName("namespace", "localPart", "prefix");
         StringSource contents = new StringSource("<payload/>");
         transformer.transform(contents, soapBody.getPayloadResult());
-        soapBody.addFault(faultCode, "faultString");
+        soapBody.addMustUnderstandFault("faultString", Locale.ENGLISH);
         assertTrue("Body has no fault", soapBody.hasFault());
     }
-
-    public void testAddFaultWithDetail() throws Exception {
-        QName faultCode = new QName("namespace", "localPart", "prefix");
-        SoapFault fault = soapBody.addFault(faultCode, "Fault");
-        SoapFaultDetail detail = fault.addFaultDetail();
-        assertNotNull("Null returned", detail);
-        QName detailQName = new QName("namespace", "localPart", "prefix");
-        SoapFaultDetailElement detailElement = detail.addFaultDetailElement(detailQName);
-        assertNotNull("Null returned", detailElement);
-        assertEquals("Invalid QName on detail element", detailQName, detailElement.getName());
-        Iterator iterator = detail.getDetailEntries();
-        assertNotNull("Null returned", detail);
-        assertTrue("Iterator contains no elements", iterator.hasNext());
-        detailElement = (SoapFaultDetailElement) iterator.next();
-        assertNotNull("Null returned", detailElement);
-        assertEquals("Invalid QName on detail element", detailQName, detailElement.getName());
-    }
-
 
 }

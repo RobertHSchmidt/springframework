@@ -14,20 +14,28 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.soap.axiom;
+package org.springframework.ws.soap.soap11;
 
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.soap.SOAPFactory;
+import java.util.Locale;
 
-import org.springframework.ws.soap.SoapHeader;
-import org.springframework.ws.soap.soap12.AbstractSoap12HeaderTestCase;
+import org.springframework.ws.soap.SoapFault;
 
-public class AxiomSoapHeaderTest extends AbstractSoap12HeaderTestCase {
+/**
+ * Subinterface of <code>SoapFault</code> that exposes SOAP 1.1 functionality. Necessary because SOAP 1.1 differs from
+ * SOAP 1.2 with respect to SOAP Faults.
+ *
+ * @author Arjen Poutsma
+ */
+public interface Soap11Fault extends SoapFault {
 
-    protected SoapHeader createSoapHeader() throws Exception {
-        SOAPFactory axiomFactory = OMAbstractFactory.getSOAP12Factory();
-        AxiomSoapMessage axiomSoapMessage = new AxiomSoapMessage(axiomFactory);
-        return axiomSoapMessage.getSoapHeader();
-    }
+    /**
+     * Returns the fault string.
+     */
+    String getFaultString();
+
+    /**
+     * Returns the locale of the fault string.
+     */
+    Locale getFaultStringLocale();
 
 }

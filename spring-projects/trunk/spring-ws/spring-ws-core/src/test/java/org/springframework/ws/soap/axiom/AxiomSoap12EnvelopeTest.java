@@ -18,22 +18,14 @@ package org.springframework.ws.soap.axiom;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.soap.SOAPFactory;
+import org.springframework.ws.soap.SoapEnvelope;
+import org.springframework.ws.soap.soap12.AbstractSoap12EnvelopeTestCase;
 
-import org.springframework.ws.soap.SoapMessage;
-import org.springframework.ws.soap.soap12.AbstractSoap12MessageTestCase;
+public class AxiomSoap12EnvelopeTest extends AbstractSoap12EnvelopeTestCase {
 
-public class AxiomSoapMessageTest extends AbstractSoap12MessageTestCase {
-
-    protected SoapMessage createSoapMessage() throws Exception {
+    protected SoapEnvelope createSoapEnvelope() throws Exception {
         SOAPFactory axiomFactory = OMAbstractFactory.getSOAP12Factory();
-        return new AxiomSoapMessage(axiomFactory);
-    }
-
-    public void testAttachments() throws Exception {
-        // Attachment support not implemented yet
-    }
-
-    public void testWriteToTransportResponseAttachment() throws Exception {
-        // Attachment support not implemented yet
+        AxiomSoapMessage axiomSoapMessage = new AxiomSoapMessage(axiomFactory);
+        return axiomSoapMessage.getEnvelope();
     }
 }

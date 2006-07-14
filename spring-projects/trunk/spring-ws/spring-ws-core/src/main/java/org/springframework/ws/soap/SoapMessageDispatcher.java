@@ -19,7 +19,7 @@ package org.springframework.ws.soap;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
+import java.util.Locale;
 import javax.xml.namespace.QName;
 
 import org.springframework.util.ObjectUtils;
@@ -29,7 +29,7 @@ import org.springframework.ws.EndpointInvocationChain;
 import org.springframework.ws.MessageDispatcher;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.context.SoapMessageContext;
-import org.springframework.ws.soap.support.SoapMessageUtils;
+import org.springframework.ws.soap.soap12.Soap12Header;
 
 /**
  * SOAP-specific subclass of the <code>MessageDispatcher</code>. Adds functionality for adding actor roles to a endpoint
@@ -42,6 +42,33 @@ import org.springframework.ws.soap.support.SoapMessageUtils;
 public class SoapMessageDispatcher extends MessageDispatcher {
 
     /**
+     * Default message used when creating a SOAP MustUnderstand fault.
+     */
+    public static final String DEFAULT_MUST_UNDERSTAND_FAULT =
+            "One or more mandatory SOAP header blocks not understood";
+
+    private String mustUnderstandFault = DEFAULT_MUST_UNDERSTAND_FAULT;
+
+    private Locale mustUnderstandFaultLocale = Locale.ENGLISH;
+
+    /**
+     * Sets the message used for <code>MustUnderstand</code> fault. Default to <code>DEFAULT_MUST_UNDERSTAND_FAULT</code>.
+     *
+     * @see #DEFAULT_MUST_UNDERSTAND_FAULT
+     */
+    public void setMustUnderstandFault(String mustUnderstandFault) {
+        this.mustUnderstandFault = mustUnderstandFault;
+    }
+
+    /**
+     * Sets the locale of the message used for <code>MustUnderstand</code> fault. Default to
+     * <code>Locale.ENGLISH</code>.
+     */
+    public void setMustUnderstandFaultLocale(Locale mustUnderstandFaultLocale) {
+        this.mustUnderstandFaultLocale = mustUnderstandFaultLocale;
+    }
+
+    /**
      * Process the <code>MustUnderstand</code> headers in the incoming SOAP request message. Iterates over all SOAP
      * headers which should be understood, and determines whether these are supported. Generates a SOAP MustUnderstand
      * fault if a header is not understood.
@@ -51,7 +78,6 @@ public class SoapMessageDispatcher extends MessageDispatcher {
      * @return <code>true</code> if all necessary headers are understood; <code>false</code> otherwise
      * @see SoapEndpointInvocationChain#getRoles()
      * @see SoapHeader#examineMustUnderstandHeaderElements(String)
-     * @see SoapMessageUtils#addMustUnderstandFault(SoapMessage, javax.xml.namespace.QName[])
      */
     protected boolean handleRequest(EndpointInvocationChain mappedEndpoint, MessageContext messageContext) {
         if (mappedEndpoint instanceof SoapEndpointInvocationChain && messageContext instanceof SoapMessageContext) {
@@ -90,15 +116,13 @@ public class SoapMessageDispatcher extends MessageDispatcher {
      * If they are, returns <code>true</code>. If they are not, a SOAP fault is created, and false is returned.
      *
      * @see SoapEndpointInterceptor#understands(SoapHeaderElement)
-     * @see SoapMessageUtils#addMustUnderstandFault(SoapMessage, javax.xml.namespace.QName[])
      */
     private boolean handleRequestForRole(SoapEndpointInvocationChain mappedEndpoint,
                                          SoapMessageContext messageContext,
                                          String role) {
         SoapHeader requestHeader = messageContext.getSoapRequest().getSoapHeader();
         List notUnderstoodHeaderNames = new ArrayList();
-        Iterator iterator = requestHeader.examineMustUnderstandHeaderElements(role);
-        while (iterator.hasNext()) {
+        for (Iterator iterator = requestHeader.examineMustUnderstandHeaderElements(role); iterator.hasNext();) {
             SoapHeaderElement headerElement = (SoapHeaderElement) iterator.next();
             QName headerName = headerElement.getName();
             if (logger.isDebugEnabled()) {
@@ -108,7 +132,7 @@ public class SoapMessageDispatcher extends MessageDispatcher {
             for (int i = 0; i < mappedEndpoint.getInterceptors().length; i++) {
                 EndpointInterceptor interceptor = mappedEndpoint.getInterceptors()[i];
                 if (interceptor instanceof SoapEndpointInterceptor &&
-                        (((SoapEndpointInterceptor) interceptor).understands(headerElement))) {
+                        ((SoapEndpointInterceptor) interceptor).understands(headerElement)) {
                     understood = true;
                     break;
                 }
@@ -122,13 +146,20 @@ public class SoapMessageDispatcher extends MessageDispatcher {
         }
         else {
             if (logger.isWarnEnabled()) {
-                logger.warn(
-                        "Could not handle mustUnderstand headers: " + notUnderstoodHeaderNames + ". Returning fault");
+                logger.warn("Could not handle mustUnderstand headers: " +
+                        StringUtils.collectionToCommaDelimitedString(notUnderstoodHeaderNames) + ". Returning fault");
             }
-            SoapMessage response = messageContext.getSoapResponse();
-            SoapFault fault = SoapMessageUtils.addMustUnderstandFault(response,
-                    (QName[]) notUnderstoodHeaderNames.toArray(new QName[notUnderstoodHeaderNames.size()]));
-            fault.setFaultRole(role);
+            SoapBody responseBody = messageContext.getSoapResponse().getSoapBody();
+            SoapFault fault = responseBody.addMustUnderstandFault(mustUnderstandFault, mustUnderstandFaultLocale);
+            fault.setFaultActorOrRole(role);
+            SoapHeader header = messageContext.getSoapResponse().getSoapHeader();
+            if (header instanceof Soap12Header) {
+                Soap12Header soap12Header = (Soap12Header) header;
+                for (Iterator iterator = notUnderstoodHeaderNames.iterator(); iterator.hasNext();) {
+                    QName headerName = (QName) iterator.next();
+                    soap12Header.addNotUnderstoodHeaderElement(headerName);
+                }
+            }
             return false;
         }
     }

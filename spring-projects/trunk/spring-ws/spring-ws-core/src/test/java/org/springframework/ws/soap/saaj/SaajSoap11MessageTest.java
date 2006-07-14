@@ -26,7 +26,7 @@ import org.springframework.ws.soap.soap11.AbstractSoap11MessageTestCase;
 import org.springframework.xml.transform.StringResult;
 import org.springframework.xml.transform.StringSource;
 
-public class SaajSoapMessageTest extends AbstractSoap11MessageTestCase {
+public class SaajSoap11MessageTest extends AbstractSoap11MessageTestCase {
 
     private SOAPMessage saajMessage;
 

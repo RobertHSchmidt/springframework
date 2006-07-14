@@ -18,10 +18,9 @@ package org.springframework.xml.namespace;
 
 import javax.xml.namespace.QName;
 
-import org.w3c.dom.Node;
-
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.w3c.dom.Node;
 
 /**
  * Helper class for using <code>javax.xml.namespace.QName</code>.
@@ -30,6 +29,51 @@ import org.springframework.util.StringUtils;
  * @see javax.xml.namespace.QName
  */
 public abstract class QNameUtils {
+
+    private static boolean qNameHasPrefix;
+
+    static {
+        try {
+            QName.class.getDeclaredConstructor(new Class[]{String.class, String.class, String.class});
+            qNameHasPrefix = true;
+        }
+        catch (NoSuchMethodException e) {
+            qNameHasPrefix = false;
+        }
+    }
+
+    /**
+     * Creates a new <code>QName</code> with the given parameters. Sets the prefix if possible, i.e. if the
+     * <code>QName(String, String, String)</code> constructor can be found. If this constructor is not available (as is
+     * the case on older implementations of JAX-RPC), the prefix is ignored.
+     *
+     * @param namespaceUri namespace URI of the <code>QName</code>
+     * @param localPart    local part of the <code>QName</code>
+     * @param prefix       prefix of the <code>QName</code>. May be ignored.
+     * @return the created <code>QName</code>
+     * @see QName#QName(String, String, String)
+     */
+    public static QName createQName(String namespaceUri, String localPart, String prefix) {
+        if (qNameHasPrefix) {
+            return new QName(namespaceUri, localPart, prefix);
+        }
+        else {
+            return new QName(namespaceUri, localPart);
+        }
+    }
+
+    /**
+     * Returns the prefix of the given <code>QName</code>. Returns the prefix if available, i.e. if the
+     * <code>QName.getPrefix()</code> method can be found. If this method is not available (as is the case on older
+     * implementations of JAX-RPC), an empty string is returned.
+     *
+     * @param qName the <code>QName</code> to return the prefix from
+     * @return the prefix, if available, or an empty string
+     * @see javax.xml.namespace.QName#getPrefix()
+     */
+    public static String getPrefix(QName qName) {
+        return qNameHasPrefix ? qName.getPrefix() : "";
+    }
 
     /**
      * Validates the given String as a QName
@@ -59,7 +103,7 @@ public abstract class QNameUtils {
      */
     public static QName getQNameForNode(Node node) {
         if (node.getNamespaceURI() != null && node.getPrefix() != null && node.getLocalName() != null) {
-            return new QName(node.getNamespaceURI(), node.getLocalName(), node.getPrefix());
+            return createQName(node.getNamespaceURI(), node.getLocalName(), node.getPrefix());
         }
         else if (node.getNamespaceURI() != null && node.getLocalName() != null) {
             return new QName(node.getNamespaceURI(), node.getLocalName());
@@ -81,11 +125,12 @@ public abstract class QNameUtils {
      * @return the qualified name
      */
     public static String toQualifiedName(QName qName) {
-        if (!StringUtils.hasLength(qName.getPrefix())) {
+        String prefix = getPrefix(qName);
+        if (!StringUtils.hasLength(prefix)) {
             return qName.getLocalPart();
         }
         else {
-            return qName.getPrefix() + ":" + qName.getLocalPart();
+            return prefix + ":" + qName.getLocalPart();
         }
     }
 
@@ -103,7 +148,7 @@ public abstract class QNameUtils {
             return new QName(namespaceUri, qualifiedName);
         }
         else {
-            return new QName(namespaceUri, qualifiedName.substring(idx + 1), qualifiedName.substring(0, idx));
+            return createQName(namespaceUri, qualifiedName.substring(idx + 1), qualifiedName.substring(0, idx));
         }
     }
 
@@ -133,7 +178,7 @@ public abstract class QNameUtils {
                 return new QName(namespaceURI, qNameString.substring(endOfNamespaceURI + 1));
             }
             else {
-                return new QName(namespaceURI, qNameString.substring(prefixSeperator + 1),
+                return createQName(namespaceURI, qNameString.substring(prefixSeperator + 1),
                         qNameString.substring(endOfNamespaceURI + 1, prefixSeperator));
             }
         }

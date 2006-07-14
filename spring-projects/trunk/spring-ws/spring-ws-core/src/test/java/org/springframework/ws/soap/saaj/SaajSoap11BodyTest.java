@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.soap.axiom;
+package org.springframework.ws.soap.saaj;
 
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.soap.SOAPFactory;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPMessage;
 
-import org.springframework.ws.soap.SoapEnvelope;
-import org.springframework.ws.soap.soap12.AbstractSoap12EnvelopeTestCase;
+import org.springframework.ws.soap.SoapBody;
+import org.springframework.ws.soap.soap11.AbstractSoap11BodyTestCase;
 
-public class AxiomSoapEnvelopeTest extends AbstractSoap12EnvelopeTestCase {
+public class SaajSoap11BodyTest extends AbstractSoap11BodyTestCase {
 
-    protected SoapEnvelope createSoapEnvelope() throws Exception {
-        SOAPFactory axiomFactory = OMAbstractFactory.getSOAP12Factory();
-        AxiomSoapMessage axiomSoapMessage = new AxiomSoapMessage(axiomFactory);
-        return axiomSoapMessage.getEnvelope();
+    protected SoapBody createSoapBody() throws Exception {
+        MessageFactory messageFactory = MessageFactory.newInstance();
+        SOAPMessage saajMessage = messageFactory.createMessage();
+        SaajSoapMessage saajSoapMessage = new SaajSoapMessage(saajMessage);
+        return saajSoapMessage.getSoapBody();
     }
+
 }

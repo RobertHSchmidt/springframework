@@ -16,51 +16,26 @@
 
 package org.springframework.ws.soap.endpoint;
 
+import java.util.Locale;
 import java.util.Properties;
-
-import javax.xml.namespace.QName;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPConstants;
+import javax.xml.soap.SOAPMessage;
 
 import org.custommonkey.xmlunit.XMLTestCase;
-import org.easymock.MockControl;
-
-import org.springframework.ws.soap.SoapBody;
-import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.SoapMessageException;
 import org.springframework.ws.soap.SoapVersion;
-import org.springframework.ws.soap.context.SoapMessageContext;
+import org.springframework.ws.soap.saaj.SaajSoapMessageContext;
+import org.springframework.ws.soap.soap11.Soap11Fault;
+import org.springframework.ws.soap.soap12.Soap12Fault;
 
 public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
 
     private SoapFaultMappingExceptionResolver resolver;
 
-    private MockControl contextControl;
-
-    private SoapMessageContext contextMock;
-
-    private MockControl messageControl;
-
-    private SoapMessage messageMock;
-
-    private MockControl bodyControl;
-
-    private SoapBody bodyMock;
-
-    private MockControl faultControl;
-
-    private SoapFault faultMock;
-
     protected void setUp() throws Exception {
         resolver = new SoapFaultMappingExceptionResolver();
-        contextControl = MockControl.createControl(SoapMessageContext.class);
-        contextMock = (SoapMessageContext) contextControl.getMock();
-        messageControl = MockControl.createControl(SoapMessage.class);
-        messageMock = (SoapMessage) messageControl.getMock();
-        bodyControl = MockControl.createControl(SoapBody.class);
-        bodyMock = (SoapBody) bodyControl.getMock();
-        faultControl = MockControl.createControl(SoapFault.class);
-        faultMock = (SoapFault) faultControl.getMock();
-
     }
 
     public void testGetDepth() throws Exception {
@@ -71,77 +46,111 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
                 resolver.getDepth("IllegalArgumentException", new IllegalStateException()));
     }
 
-    public void testResolveExceptionSender() throws Exception {
+    public void testResolveExceptionClientSoap11() throws Exception {
         Properties mappings = new Properties();
-        mappings.setProperty(Exception.class.getName(), "RECEIVER,Receiver error");
-        mappings.setProperty(RuntimeException.class.getName(), "SENDER, Sender error");
+        mappings.setProperty(Exception.class.getName(), "SERVER, Server error");
+        mappings.setProperty(RuntimeException.class.getName(), "CLIENT, Client error");
         resolver.setExceptionMappings(mappings);
-        contextControl.expectAndReturn(contextMock.getSoapResponse(), messageMock);
-        messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
-        messageControl.expectAndReturn(messageMock.getVersion(), SoapVersion.SOAP_11);
-        bodyControl.expectAndReturn(bodyMock.addFault(SoapVersion.SOAP_11.getSenderFaultName(), "Sender error"),
-                faultMock);
 
-        replayMockControls();
+        MessageFactory messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
+        SOAPMessage message = messageFactory.createMessage();
+        SaajSoapMessageContext context = new SaajSoapMessageContext(message, messageFactory);
 
-        boolean result = resolver.resolveException(contextMock, null, new IllegalArgumentException("bla"));
+        boolean result = resolver.resolveException(context, null, new IllegalArgumentException("bla"));
         assertTrue("resolveException returns false", result);
-
-        verifyMockControls();
+        assertTrue("Context has no response", context.hasResponse());
+        SoapMessage response = context.getSoapResponse();
+        assertTrue("Resonse has no fault", response.getSoapBody().hasFault());
+        Soap11Fault fault = (Soap11Fault) response.getSoapBody().getFault();
+        assertEquals("Invalid fault code on fault", SoapVersion.SOAP_11.getSenderFaultName(), fault.getFaultCode());
+        assertEquals("Invalid fault string on fault", "Client error", fault.getFaultString());
+        assertNull("Detail on fault", fault.getFaultDetail());
     }
 
-    public void testResolveExceptionReceiver() throws Exception {
+    public void testResolveExceptionSenderSoap12() throws Exception {
         Properties mappings = new Properties();
-        mappings.setProperty(Exception.class.getName(), "SENDER,Sender error");
-        mappings.setProperty(RuntimeException.class.getName(), "RECEIVER, Receiver error, en");
+        mappings.setProperty(Exception.class.getName(), "RECEIVER, Receiver error, en");
+        mappings.setProperty(RuntimeException.class.getName(), "SENDER, Sender error, en");
         resolver.setExceptionMappings(mappings);
-        contextControl.expectAndReturn(contextMock.getSoapResponse(), messageMock);
-        messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
-        messageControl.expectAndReturn(messageMock.getVersion(), SoapVersion.SOAP_11);
-        bodyControl.expectAndReturn(bodyMock.addFault(SoapVersion.SOAP_11.getReceiverFaultName(), "Receiver error"),
-                faultMock);
 
-        replayMockControls();
+        MessageFactory messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        SOAPMessage message = messageFactory.createMessage();
+        SaajSoapMessageContext context = new SaajSoapMessageContext(message, messageFactory);
 
-        boolean result = resolver.resolveException(contextMock, null, new IllegalArgumentException("bla"));
+        boolean result = resolver.resolveException(context, null, new IllegalArgumentException("bla"));
         assertTrue("resolveException returns false", result);
+        assertTrue("Context has no response", context.hasResponse());
+        SoapMessage response = context.getSoapResponse();
+        assertTrue("Resonse has no fault", response.getSoapBody().hasFault());
+        Soap12Fault fault = (Soap12Fault) response.getSoapBody().getFault();
+        assertEquals("Invalid fault code on fault", SoapVersion.SOAP_12.getSenderFaultName(), fault.getFaultCode());
+        assertEquals("Invalid fault string on fault", "Sender error", fault.getFaultReasonText(Locale.ENGLISH));
+        assertNull("Detail on fault", fault.getFaultDetail());
+    }
 
-        verifyMockControls();
+    public void testResolveExceptionServerSoap11() throws Exception {
+        Properties mappings = new Properties();
+        mappings.setProperty(Exception.class.getName(), "CLIENT, Client error");
+        mappings.setProperty(RuntimeException.class.getName(), "SERVER, Server error");
+        resolver.setExceptionMappings(mappings);
+
+        MessageFactory messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
+        SOAPMessage message = messageFactory.createMessage();
+        SaajSoapMessageContext context = new SaajSoapMessageContext(message, messageFactory);
+
+        boolean result = resolver.resolveException(context, null, new IllegalArgumentException("bla"));
+        assertTrue("resolveException returns false", result);
+        assertTrue("Context has no response", context.hasResponse());
+        SoapMessage response = context.getSoapResponse();
+        assertTrue("Resonse has no fault", response.getSoapBody().hasFault());
+        Soap11Fault fault = (Soap11Fault) response.getSoapBody().getFault();
+        assertEquals("Invalid fault code on fault", SoapVersion.SOAP_11.getReceiverFaultName(), fault.getFaultCode());
+        assertEquals("Invalid fault string on fault", "Server error", fault.getFaultString());
+        assertNull("Detail on fault", fault.getFaultDetail());
+    }
+
+    public void testResolveExceptionReceiverSoap12() throws Exception {
+        Properties mappings = new Properties();
+        mappings.setProperty(Exception.class.getName(), "SENDER, Sender error");
+        mappings.setProperty(RuntimeException.class.getName(), "RECEIVER, Receiver error");
+        resolver.setExceptionMappings(mappings);
+
+        MessageFactory messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        SOAPMessage message = messageFactory.createMessage();
+        SaajSoapMessageContext context = new SaajSoapMessageContext(message, messageFactory);
+
+        boolean result = resolver.resolveException(context, null, new IllegalArgumentException("bla"));
+        assertTrue("resolveException returns false", result);
+        assertTrue("Context has no response", context.hasResponse());
+        SoapMessage response = context.getSoapResponse();
+        assertTrue("Resonse has no fault", response.getSoapBody().hasFault());
+        Soap12Fault fault = (Soap12Fault) response.getSoapBody().getFault();
+        assertEquals("Invalid fault code on fault", SoapVersion.SOAP_12.getReceiverFaultName(), fault.getFaultCode());
+        assertEquals("Invalid fault string on fault", "Receiver error", fault.getFaultReasonText(Locale.ENGLISH));
+        assertNull("Detail on fault", fault.getFaultDetail());
     }
 
     public void testResolveExceptionDefault() throws Exception {
         Properties mappings = new Properties();
-        mappings.setProperty(SoapMessageException.class.getName(), "RECEIVER,Receiver error");
+        mappings.setProperty(SoapMessageException.class.getName(), "SERVER,Server error");
         resolver.setExceptionMappings(mappings);
         SoapFaultDefinition defaultFault = new SoapFaultDefinition();
-        QName faultCode = new QName("namespace", "faultcode", "prefix");
-        defaultFault.setFaultCode(faultCode);
-        defaultFault.setFaultString("faultstring");
+        defaultFault.setFaultCode(SoapFaultDefinition.CLIENT);
+        defaultFault.setFaultStringOrReason("faultstring");
         resolver.setDefaultFault(defaultFault);
-        contextControl.expectAndReturn(contextMock.getSoapResponse(), messageMock);
-        messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
-        bodyControl.expectAndReturn(bodyMock.addFault(faultCode, "faultstring"), faultMock);
+        MessageFactory messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
+        SOAPMessage message = messageFactory.createMessage();
+        SaajSoapMessageContext context = new SaajSoapMessageContext(message, messageFactory);
 
-        replayMockControls();
-
-        boolean result = resolver.resolveException(contextMock, null, new IllegalArgumentException("bla"));
+        boolean result = resolver.resolveException(context, null, new IllegalArgumentException("bla"));
         assertTrue("resolveException returns false", result);
-
-        verifyMockControls();
-    }
-
-    private void replayMockControls() {
-        contextControl.replay();
-        messageControl.replay();
-        bodyControl.replay();
-        faultControl.replay();
-    }
-
-    private void verifyMockControls() {
-        contextControl.verify();
-        messageControl.verify();
-        bodyControl.verify();
-        faultControl.verify();
+        assertTrue("Context has no response", context.hasResponse());
+        SoapMessage response = context.getSoapResponse();
+        assertTrue("Resonse has no fault", response.getSoapBody().hasFault());
+        Soap11Fault fault = (Soap11Fault) response.getSoapBody().getFault();
+        assertEquals("Invalid fault code on fault", SoapVersion.SOAP_11.getSenderFaultName(), fault.getFaultCode());
+        assertEquals("Invalid fault string on fault", "faultstring", fault.getFaultString());
+        assertNull("Detail on fault", fault.getFaultDetail());
     }
 
 

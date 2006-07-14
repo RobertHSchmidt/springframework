@@ -19,7 +19,6 @@ package org.springframework.xml.stream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
@@ -28,12 +27,11 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.stream.util.XMLEventConsumer;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
-
 import org.springframework.util.StringUtils;
 import org.springframework.xml.namespace.QNameUtils;
 import org.springframework.xml.namespace.SimpleNamespaceContext;
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 /**
  * SAX <code>ContentHandler</code> that transforms callback calls to <code>XMLEvent</code>s and writes them to a
@@ -58,8 +56,8 @@ public class StaxEventContentHandler extends StaxContentHandler {
      * @param consumer the consumer to write events to
      */
     public StaxEventContentHandler(XMLEventConsumer consumer) {
-        this.eventFactory = XMLEventFactory.newInstance();
-        this.eventConsumer = consumer;
+        eventFactory = XMLEventFactory.newInstance();
+        eventConsumer = consumer;
     }
 
     /**
@@ -70,8 +68,8 @@ public class StaxEventContentHandler extends StaxContentHandler {
      * @param factory  the factory used to create events
      */
     public StaxEventContentHandler(XMLEventConsumer consumer, XMLEventFactory factory) {
-        this.eventFactory = factory;
-        this.eventConsumer = consumer;
+        eventFactory = factory;
+        eventConsumer = consumer;
     }
 
     public void setDocumentLocator(Locator locator) {
@@ -138,8 +136,7 @@ public class StaxEventContentHandler extends StaxContentHandler {
         List list = new ArrayList();
         for (int i = 0; i < attributes.getLength(); i++) {
             QName name = QNameUtils.toQName(attributes.getURI(i), attributes.getQName(i));
-            if (!(XMLConstants.XMLNS_ATTRIBUTE.equals(name.getLocalPart()) ||
-                    XMLConstants.XMLNS_ATTRIBUTE.equals(name.getPrefix()))) {
+            if (!("xmlns".equals(name.getLocalPart()) || "xmlns".equals(QNameUtils.getPrefix(name)))) {
                 list.add(eventFactory.createAttribute(name, attributes.getValue(i)));
             }
         }

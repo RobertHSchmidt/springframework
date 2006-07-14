@@ -17,6 +17,7 @@
 package org.springframework.ws.endpoint;
 
 import java.io.IOException;
+import java.util.Locale;
 import javax.xml.namespace.QName;
 import javax.xml.transform.TransformerException;
 
@@ -28,14 +29,14 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.ws.context.MessageContext;
+import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.SoapEndpointInterceptor;
 import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapFaultDetail;
 import org.springframework.ws.soap.SoapFaultDetailElement;
 import org.springframework.ws.soap.SoapHeaderElement;
-import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.context.SoapMessageContext;
-import org.springframework.ws.soap.support.SoapMessageUtils;
+import org.springframework.xml.namespace.QNameUtils;
 import org.springframework.xml.validation.XmlValidator;
 import org.springframework.xml.validation.XmlValidatorFactory;
 import org.xml.sax.SAXException;
@@ -61,21 +62,23 @@ public class PayloadValidatingInterceptor extends TransformerObjectSupport
         implements SoapEndpointInterceptor, InitializingBean {
 
     /**
-     * Default SOAP Fault string used when a validation errors occur on the request.
-     *
-     * @see #setValidationErrorFaultString(String)
-     */
-    public static final String DEFAULT_VALIDATION_ERROR_FAULT_STRING = "Validation error";
-
-    /**
      * Default SOAP Fault Detail name used when a validation errors occur on the request.
      *
-     * @see #setValidationErrorDetailElementName(javax.xml.namespace.QName)
+     * @see #setDetailElementName(javax.xml.namespace.QName)
      */
-    public static final QName DEFAULT_VALIDATION_ERROR_DETAIL_ELEMENT_NAME =
-            new QName("http://springframework.org/spring-ws", "ValidationError", "spring-ws");
+    public static final QName DEFAULT_DETAIL_ELEMENT_NAME =
+            QNameUtils.createQName("http://springframework.org/spring-ws", "ValidationError", "spring-ws");
+
+    /**
+     * Default SOAP Fault string used when a validation errors occur on the request.
+     *
+     * @see #setFaultStringOrReason(String)
+     */
+    public static final String DEFAULT_FAULTSTRING_OR_REASON = "Validation error";
 
     private static final Log logger = LogFactory.getLog(PayloadValidatingInterceptor.class);
+
+    private boolean addValidationErrorDetail = true;
 
     private String schemaLanguage = XmlValidatorFactory.SCHEMA_W3C_XML;
 
@@ -85,13 +88,13 @@ public class PayloadValidatingInterceptor extends TransformerObjectSupport
 
     private boolean validateResponse = false;
 
+    private QName detailElementName = DEFAULT_DETAIL_ELEMENT_NAME;
+
+    private String faultStringOrReason = DEFAULT_FAULTSTRING_OR_REASON;
+
+    private Locale faultStringOrReasonLocale = Locale.ENGLISH;
+
     private XmlValidator validator;
-
-    private String validationErrorFaultString = DEFAULT_VALIDATION_ERROR_FAULT_STRING;
-
-    private QName validationErrorDetailElementName = DEFAULT_VALIDATION_ERROR_DETAIL_ELEMENT_NAME;
-
-    private boolean addValidationErrorDetail = true;
 
     /**
      * Indicates whether a SOAP Fault detail element should be created when a validation error occurs. This detail
@@ -105,14 +108,7 @@ public class PayloadValidatingInterceptor extends TransformerObjectSupport
      * Sets the schema resource to use for validation.
      */
     public void setSchema(Resource schemaResource) {
-        this.schemaResources = new Resource[]{schemaResource};
-    }
-
-    /**
-     * Sets the schema resources to use for validation.
-     */
-    public void setSchemas(Resource[] schemaResources) {
-        this.schemaResources = schemaResources;
+        schemaResources = new Resource[]{schemaResource};
     }
 
     /**
@@ -123,6 +119,13 @@ public class PayloadValidatingInterceptor extends TransformerObjectSupport
      */
     public void setSchemaLanguage(String schemaLanguage) {
         this.schemaLanguage = schemaLanguage;
+    }
+
+    /**
+     * Sets the schema resources to use for validation.
+     */
+    public void setSchemas(Resource[] schemaResources) {
+        this.schemaResources = schemaResources;
     }
 
     /**
@@ -141,22 +144,31 @@ public class PayloadValidatingInterceptor extends TransformerObjectSupport
 
     /**
      * Sets the fault detail element name when validation errors occur on the request. Defaults to
-     * <code>DEFAULT_VALIDATION_ERROR_DETAIL_ELEMENT_NAME</code>.
+     * <code>DEFAULT_DETAIL_ELEMENT_NAME</code>.
      *
-     * @see #DEFAULT_VALIDATION_ERROR_DETAIL_ELEMENT_NAME
+     * @see #DEFAULT_DETAIL_ELEMENT_NAME
      */
-    public void setValidationErrorDetailElementName(QName validationErrorDetailElementName) {
-        this.validationErrorDetailElementName = validationErrorDetailElementName;
+    public void setDetailElementName(QName detailElementName) {
+        this.detailElementName = detailElementName;
     }
 
     /**
-     * Sets the fault string used when validation errors occur on the request. Defaults to
-     * <code>DEFAULT_VALIDATION_ERROR_FAULT_STRING</code>.
+     * Sets the <code>faultstring</code> or <code>Reason</code> used when validation errors occur on the request.
+     * Defaults to <code>DEFAULT_FAULTSTRING_OR_REASON</code>.
      *
-     * @see #DEFAULT_VALIDATION_ERROR_FAULT_STRING
+     * @see #DEFAULT_FAULTSTRING_OR_REASON
      */
-    public void setValidationErrorFaultString(String validationErrorFaultString) {
-        this.validationErrorFaultString = validationErrorFaultString;
+    public void setFaultStringOrReason(String faultStringOrReason) {
+        this.faultStringOrReason = faultStringOrReason;
+    }
+
+    /**
+     * Sets the fault reason locale used when validation errors occur on the request. Defaults to english.
+     *
+     * @see Locale#ENGLISH
+     */
+    public void setFaultStringOrReasonLocale(Locale faultStringOrReasonLocale) {
+        this.faultStringOrReasonLocale = faultStringOrReasonLocale;
     }
 
     /**
@@ -247,12 +259,12 @@ public class PayloadValidatingInterceptor extends TransformerObjectSupport
      */
     protected void createRequestValidationFault(SoapMessageContext context, SAXParseException[] errors)
             throws TransformerException {
-        SoapMessage response = context.getSoapResponse();
-        SoapFault fault = SoapMessageUtils.addSenderFault(response, validationErrorFaultString);
+        SoapBody body = context.getSoapResponse().getSoapBody();
+        SoapFault fault = body.addClientOrSenderFault(faultStringOrReason, faultStringOrReasonLocale);
         if (addValidationErrorDetail) {
             SoapFaultDetail detail = fault.addFaultDetail();
             for (int i = 0; i < errors.length; i++) {
-                SoapFaultDetailElement detailElement = detail.addFaultDetailElement(validationErrorDetailElementName);
+                SoapFaultDetailElement detailElement = detail.addFaultDetailElement(detailElementName);
                 detailElement.addText(errors[0].getMessage());
             }
         }

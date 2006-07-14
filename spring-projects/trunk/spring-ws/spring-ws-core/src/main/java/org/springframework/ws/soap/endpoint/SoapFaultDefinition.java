@@ -17,39 +17,51 @@
 package org.springframework.ws.soap.endpoint;
 
 import java.util.Locale;
-
 import javax.xml.namespace.QName;
 
 /**
- * Defines properties for a SOAP Fault.
+ * Defines properties for a SOAP Fault. Used by the <code>SoapFaultDefinitionEditor</code> and the
+ * <code>SoapFaultMappingExceptionResolver</code>.
  *
  * @author Arjen Poutsma
+ * @see SoapFaultDefinitionEditor
+ * @see SoapFaultMappingExceptionResolver
  */
 public class SoapFaultDefinition {
 
     /**
-     * Constant <code>QName</code> used to indicate that a <code>Client</code> or <code>Sender</code> fault must be
-     * created.
+     * Constant <code>QName</code> used to indicate that a <code>Client</code> fault must be created.
      *
-     * @see org.springframework.ws.soap.support.SoapMessageUtils#addSenderFault(org.springframework.ws.soap.SoapMessage,
-     *      String)
+     * @see org.springframework.ws.soap.SoapBody#addClientOrSenderFault(String, java.util.Locale)
+     */
+    public static final QName CLIENT = new QName("CLIENT");
+
+    /**
+     * Constant <code>QName</code> used to indicate that a <code>Receiver</code> fault must be created.
+     *
+     * @see org.springframework.ws.soap.SoapBody#addServerOrReceiverFault(String, java.util.Locale)
+     */
+    public static final QName RECEIVER = new QName("RECEIVER");
+
+    /**
+     * Constant <code>QName</code> used to indicate that a <code>Sender</code> fault must be created.
+     *
+     * @see org.springframework.ws.soap.SoapBody#addServerOrReceiverFault(String, java.util.Locale)
      */
     public static final QName SENDER = new QName("SENDER");
 
     /**
-     * Constant <code>QName</code> used to indicate that a <code>Server</code> or <code>Receiver</code> fault must be
-     * created.
+     * Constant <code>QName</code> used to indicate that a <code>Server</code>  fault must be created.
      *
-     * @see org.springframework.ws.soap.support.SoapMessageUtils#addReceiverFault(org.springframework.ws.soap.SoapMessage,
-     *      String)
+     * @see org.springframework.ws.soap.SoapBody#addClientOrSenderFault(String, java.util.Locale)
      */
-    public static final QName RECEIVER = new QName("RECEIVER");
+    public static final QName SERVER = new QName("SERVER");
 
     private QName faultCode;
 
-    private String faultString;
+    private String faultStringOrReason;
 
-    private Locale faultStringLocale = Locale.ENGLISH;
+    private Locale locale = Locale.ENGLISH;
 
     /**
      * Returns the fault code.
@@ -66,17 +78,17 @@ public class SoapFaultDefinition {
     }
 
     /**
-     * Returns the fault string.
+     * Returns the fault string or reason text.
      */
-    public String getFaultString() {
-        return faultString;
+    public String getFaultStringOrReason() {
+        return faultStringOrReason;
     }
 
     /**
-     * Sets the fault string.
+     * Sets the fault string or reason text.
      */
-    public void setFaultString(String faultString) {
-        this.faultString = faultString;
+    public void setFaultStringOrReason(String faultStringOrReason) {
+        this.faultStringOrReason = faultStringOrReason;
     }
 
     /**
@@ -84,8 +96,8 @@ public class SoapFaultDefinition {
      *
      * @see Locale#ENGLISH
      */
-    public Locale getFaultStringLocale() {
-        return faultStringLocale;
+    public Locale getLocale() {
+        return locale;
     }
 
     /**
@@ -93,7 +105,7 @@ public class SoapFaultDefinition {
      *
      * @see Locale#ENGLISH
      */
-    public void setFaultStringLocale(Locale faultStringLocale) {
-        this.faultStringLocale = faultStringLocale;
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 }

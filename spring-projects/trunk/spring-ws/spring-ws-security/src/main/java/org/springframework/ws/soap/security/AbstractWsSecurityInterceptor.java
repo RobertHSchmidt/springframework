@@ -16,6 +16,7 @@
 
 package org.springframework.ws.soap.security;
 
+import java.util.Locale;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.logging.Log;
@@ -25,8 +26,8 @@ import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapEndpointInterceptor;
 import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.context.SoapMessageContext;
-import org.springframework.ws.soap.support.SoapMessageUtils;
 
 /**
  * Interceptor base class for interceptors that handle WS-Security.
@@ -77,8 +78,8 @@ public abstract class AbstractWsSecurityInterceptor implements SoapEndpointInter
                 if (logger.isWarnEnabled()) {
                     logger.warn("Could not validate request: " + ex.getMessage());
                 }
-                SoapMessage response = soapMessageContext.getSoapResponse();
-                SoapMessageUtils.addSenderFault(response, ex.getMessage());
+                SoapBody response = soapMessageContext.getSoapResponse().getSoapBody();
+                response.addClientOrSenderFault(ex.getMessage(), Locale.ENGLISH);
                 return false;
             }
         }

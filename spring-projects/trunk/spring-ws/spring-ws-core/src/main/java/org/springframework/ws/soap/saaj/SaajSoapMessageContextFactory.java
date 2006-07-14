@@ -19,32 +19,79 @@ package org.springframework.ws.soap.saaj;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.StringUtils;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.context.MessageContextFactory;
 import org.springframework.ws.soap.SoapMessageCreationException;
+import org.springframework.ws.soap.saaj.support.SaajUtils;
 import org.springframework.ws.transport.TransportRequest;
 
 /**
  * SAAJ-specific implementation of the <code>MessageContextFactory</code> interface. Creates a
- * <code>SaajSoapMessageContext</code>.
+ * <code>SaajSoapMessageContext</code>. This factory will use SAAJ 1.3 when found, or fall back to SAAJ 1.2.
  *
  * @author Arjen Poutsma
  * @see SaajSoapMessageContext
  */
 public class SaajSoapMessageContextFactory implements MessageContextFactory, InitializingBean {
 
+    private static final Log logger = LogFactory.getLog(SaajSoapMessageContextFactory.class);
+
     private MessageFactory messageFactory;
 
-    public static final String CONTENT_TYPE_HEADER = "Content-Type";
+    private String messageFactoryProtocol;
 
-    public static final String CONTENT_LENGTH_HEADER = "Content-Length";
+    public void setMessageFactory(MessageFactory messageFactory) {
+        this.messageFactory = messageFactory;
+    }
+
+    /**
+     * Sets the protocol for the <code>MessageFactory</code>. Only used for SAAJ 1.3+, defaults to
+     * <code>SOAPConstants.DEFAULT_SOAP_PROTOCOL</code> (i.e. SOAP 1.1).
+     *
+     * @see MessageFactory#newInstance(String)
+     * @see SOAPConstants#DEFAULT_SOAP_PROTOCOL
+     * @see SOAPConstants#SOAP_1_1_PROTOCOL
+     * @see SOAPConstants#SOAP_1_2_PROTOCOL
+     * @see SOAPConstants#DYNAMIC_SOAP_PROTOCOL
+     */
+    public void setSoapProtocol(String messageFactoryProtocol) {
+        this.messageFactoryProtocol = messageFactoryProtocol;
+    }
+
+    public void afterPropertiesSet() throws Exception {
+        if (messageFactory == null) {
+            try {
+                if (SaajUtils.getSaajVersion() >= SaajUtils.SAAJ_13) {
+                    if (!StringUtils.hasLength(messageFactoryProtocol)) {
+                        messageFactoryProtocol = SOAPConstants.DEFAULT_SOAP_PROTOCOL;
+                    }
+                    logger.debug("Creating SAAJ 1.3 MessageFactory with " + messageFactoryProtocol);
+                    messageFactory = MessageFactory.newInstance(messageFactoryProtocol);
+                }
+                else if (SaajUtils.getSaajVersion() == SaajUtils.SAAJ_12) {
+                    logger.debug("Creating SAAJ 1.2 MessageFactory");
+                    messageFactory = MessageFactory.newInstance();
+                }
+                else {
+                    throw new IllegalStateException("SaajSoapMessageContextFactory requires SAAJ 1.2, which was not" +
+                            "found on the classpath");
+                }
+            }
+            catch (SOAPException ex) {
+                throw new SoapMessageCreationException("Could not create MessageFactory: " + ex.getMessage(), ex);
+            }
+        }
+    }
 
     public MessageContext createContext(TransportRequest transportRequest) throws IOException {
         MimeHeaders mimeHeaders = new MimeHeaders();
@@ -63,25 +110,9 @@ public class SaajSoapMessageContextFactory implements MessageContextFactory, Ini
             return new SaajSoapMessageContext(requestMessage, messageFactory);
         }
         catch (SOAPException ex) {
-            throw new SoapMessageCreationException(
-                    "Could not create message from HttpServletRequest: " + ex.getMessage(), ex);
-        }
-
-
-    }
-
-    public void setMessageFactory(MessageFactory messageFactory) {
-        this.messageFactory = messageFactory;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        if (this.messageFactory == null) {
-            try {
-                this.messageFactory = MessageFactory.newInstance();
-            }
-            catch (SOAPException ex) {
-                throw new SoapMessageCreationException("Could not create MessageFactory: " + ex.getMessage(), ex);
-            }
+            throw new SoapMessageCreationException("Could not create message from TransportRequest: " + ex.getMessage(),
+                    ex);
         }
     }
+
 }

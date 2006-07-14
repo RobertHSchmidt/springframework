@@ -57,8 +57,9 @@ public class QNameEditor extends PropertyEditorSupport {
         }
         else {
             QName qName = (QName) value;
-            if (StringUtils.hasLength(qName.getNamespaceURI()) && StringUtils.hasLength(qName.getPrefix())) {
-                return "{" + qName.getNamespaceURI() + "}" + qName.getPrefix() + ":" + qName.getLocalPart();
+            String prefix = QNameUtils.getPrefix(qName);
+            if (StringUtils.hasLength(qName.getNamespaceURI()) && StringUtils.hasLength(prefix)) {
+                return "{" + qName.getNamespaceURI() + "}" + prefix + ":" + qName.getLocalPart();
             }
             else if (StringUtils.hasLength(qName.getNamespaceURI())) {
                 return "{" + qName.getNamespaceURI() + "}" + qName.getLocalPart();

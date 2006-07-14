@@ -19,15 +19,15 @@ package org.springframework.ws.soap.saaj;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
 
-import org.springframework.ws.soap.SoapHeader;
-import org.springframework.ws.soap.soap11.AbstractSoap11HeaderTestCase;
+import org.springframework.ws.soap.SoapEnvelope;
+import org.springframework.ws.soap.soap11.AbstractSoap11EnvelopeTestCase;
 
-public class SaajSoapHeaderTest extends AbstractSoap11HeaderTestCase {
+public class SaajSoap11EnvelopeTest extends AbstractSoap11EnvelopeTestCase {
 
-    protected SoapHeader createSoapHeader() throws Exception {
+    protected SoapEnvelope createSoapEnvelope() throws Exception {
         MessageFactory messageFactory = MessageFactory.newInstance();
         SOAPMessage saajMessage = messageFactory.createMessage();
         SaajSoapMessage saajSoapMessage = new SaajSoapMessage(saajMessage);
-        return saajSoapMessage.getSoapHeader();
+        return saajSoapMessage.getEnvelope();
     }
 }

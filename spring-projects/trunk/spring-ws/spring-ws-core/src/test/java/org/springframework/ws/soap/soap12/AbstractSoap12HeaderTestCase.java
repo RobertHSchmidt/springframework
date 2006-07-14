@@ -19,6 +19,7 @@ package org.springframework.ws.soap.soap12;
 import javax.xml.namespace.QName;
 
 import org.springframework.ws.soap.AbstractSoapHeaderTestCase;
+import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapVersion;
 import org.springframework.xml.transform.StringResult;
 
@@ -34,6 +35,36 @@ public abstract class AbstractSoap12HeaderTestCase extends AbstractSoapHeaderTes
         transformer.transform(soapHeader.getSource(), result);
         assertXMLEqual("Invalid contents of header", "<Header xmlns='http://www.w3.org/2003/05/soap-envelope' />",
                 result.toString());
+    }
+
+    public void testAddNotUnderstood() throws Exception {
+        Soap12Header soap12Header = (Soap12Header) soapHeader;
+        QName headerName = new QName("http://www.springframework.org", "NotUnderstood", "spring-ws");
+        soap12Header.addNotUnderstoodHeaderElement(headerName);
+        StringResult result = new StringResult();
+        transformer.transform(soapHeader.getSource(), result);
+        assertXMLEqual("Invalid contents of header", "<Header xmlns='http://www.w3.org/2003/05/soap-envelope' >" +
+                "<NotUnderstood qname='spring-ws:NotUnderstood' xmlns:spring-ws='http://www.springframework.org' />" +
+                "</Header>", result.toString());
+    }
+
+    public void testAddUpgrade() throws Exception {
+        String[] supportedUris =
+                new String[]{"http://schemas.xmlsoap.org/soap/envelope/", "http://www.w3.org/2003/05/soap-envelope"};
+        Soap12Header soap12Header = (Soap12Header) soapHeader;
+        SoapHeaderElement header = soap12Header.addUpgradeHeaderElement(supportedUris);
+        StringResult result = new StringResult();
+        transformer.transform(soapHeader.getSource(), result);
+        assertEquals("Invalid name", header.getName(), new QName("http://www.w3.org/2003/05/soap-envelope", "Upgrade"));
+        // XMLUnit can't test this:
+/*
+        assertXMLEqual("Invalid contents of header", "<Header xmlns='http://www.w3.org/2003/05/soap-envelope' >" +
+                "<Upgrade>" +
+                "<SupportedEnvelope xmlns:ns0='http://schemas.xmlsoap.org/soap/envelope/' qname='ns0:Envelope'/>" +
+                "<SupportedEnvelope xmlns:ns1='http://www.w3.org/2003/05/soap-envelope' qname='ns1:Envelope'/>" +
+                "</Upgrade>" +
+                "</Header>", result.toString());
+*/
     }
 
 }

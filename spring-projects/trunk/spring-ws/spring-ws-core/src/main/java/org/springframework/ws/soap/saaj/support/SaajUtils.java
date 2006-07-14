@@ -18,17 +18,20 @@ package org.springframework.ws.soap.saaj.support;
 
 import java.io.IOException;
 import java.io.InputStream;
-
+import java.util.Iterator;
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.Name;
+import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
+import org.springframework.xml.namespace.QNameUtils;
+import org.w3c.dom.Element;
 
 /**
  * Collection of generic utility methods to work with SAAJ. Includes conversion from <code>Name</code>s to
@@ -40,9 +43,11 @@ import org.springframework.util.StringUtils;
  */
 public abstract class SaajUtils {
 
-    public static final int SAAJ_12 = 0;
+    public static final int SAAJ_11 = 0;
 
-    public static final int SAAJ_13 = 1;
+    public static final int SAAJ_12 = 1;
+
+    public static final int SAAJ_13 = 2;
 
     private static final String SAAJ_13_CLASS_NAME = "javax.xml.soap.SAAJMetaFactory";
 
@@ -54,7 +59,12 @@ public abstract class SaajUtils {
             saajVersion = SAAJ_13;
         }
         catch (ClassNotFoundException ex) {
-            // default to SAAJ 1.2
+            if (Element.class.isAssignableFrom(SOAPElement.class)) {
+                saajVersion = SAAJ_12;
+            }
+            else {
+                saajVersion = SAAJ_11;
+            }
         }
     }
 
@@ -71,21 +81,29 @@ public abstract class SaajUtils {
 
     /**
      * Converts a <code>javax.xml.namespace.QName</code> to a <code>javax.xml.soap.Name</code>. A
-     * <code>SOAPEnvelope</code> is required to create the name. The supplied name must be fully qualified, i.e.
-     * namespace, prefix, and local name must be specified.
+     * <code>SOAPEnvelope</code> is required to create the name.
      *
-     * @param qName    the <code>QName</code> to convert
-     * @param envelope a <code>SOAPEnvelope</code> necessary to create the <code>Name</code>
+     * @param qName          the <code>QName</code> to convert
+     * @param resolveElement a <code>SOAPElement</code> used to resolve namespaces to prefixes
+     * @param envelope       a <code>SOAPEnvelope</code> necessary to create the <code>Name</code>
      * @return the converted SAAJ Name
      * @throws SOAPException            if conversion is unsuccessful
      * @throws IllegalArgumentException if <code>qName</code> is not fully qualified
      */
-    public static Name toName(QName qName, SOAPEnvelope envelope) throws SOAPException {
-        if (StringUtils.hasLength(qName.getNamespaceURI()) && StringUtils.hasLength(qName.getPrefix())) {
-            return envelope.createName(qName.getLocalPart(), qName.getPrefix(), qName.getNamespaceURI());
+    public static Name toName(QName qName, SOAPElement resolveElement, SOAPEnvelope envelope) throws SOAPException {
+        String qNamePrefix = QNameUtils.getPrefix(qName);
+        if (StringUtils.hasLength(qName.getNamespaceURI()) && StringUtils.hasLength(qNamePrefix)) {
+            return envelope.createName(qName.getLocalPart(), qNamePrefix, qName.getNamespaceURI());
         }
         else if (StringUtils.hasLength(qName.getNamespaceURI())) {
-            throw new IllegalArgumentException("Supplied QName [" + qName + "] must have a prefix");
+            Iterator prefixes = resolveElement.getVisibleNamespacePrefixes();
+            while (prefixes.hasNext()) {
+                String prefix = (String) prefixes.next();
+                if (qName.getNamespaceURI().equals(resolveElement.getNamespaceURI(prefix))) {
+                    return envelope.createName(qName.getLocalPart(), prefix, qName.getNamespaceURI());
+                }
+            }
+            throw new IllegalArgumentException("Could not resolve namespace of QName [" + qName + "]");
         }
         else {
             return envelope.createName(qName.getLocalPart());
@@ -100,7 +118,7 @@ public abstract class SaajUtils {
      */
     public static QName toQName(Name name) {
         if (StringUtils.hasLength(name.getURI()) && StringUtils.hasLength(name.getPrefix())) {
-            return new QName(name.getURI(), name.getLocalName(), name.getPrefix());
+            return QNameUtils.createQName(name.getURI(), name.getLocalName(), name.getPrefix());
         }
         else if (StringUtils.hasLength(name.getURI())) {
             return new QName(name.getURI(), name.getLocalName());

@@ -17,26 +17,26 @@
 package org.springframework.ws.endpoint;
 
 import java.io.InputStream;
+import java.util.Locale;
 import javax.xml.XMLConstants;
 import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamSource;
 
 import junit.framework.TestCase;
-import org.easymock.MockControl;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.ws.mock.MockMessageContext;
 import org.springframework.ws.mock.MockWebServiceMessage;
-import org.springframework.ws.soap.SoapBody;
-import org.springframework.ws.soap.SoapFault;
-import org.springframework.ws.soap.SoapFaultDetail;
-import org.springframework.ws.soap.SoapFaultDetailElement;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.SoapVersion;
-import org.springframework.ws.soap.context.AbstractSoapMessageContext;
-import org.springframework.ws.soap.context.SoapMessageContext;
 import org.springframework.ws.soap.saaj.SaajSoapMessageContext;
 import org.springframework.ws.soap.saaj.support.SaajUtils;
+import org.springframework.ws.soap.soap11.Soap11Fault;
+import org.springframework.ws.soap.soap12.Soap12Fault;
 
 public class PayloadValidatingInterceptorTest extends TestCase {
 
@@ -56,89 +56,70 @@ public class PayloadValidatingInterceptorTest extends TestCase {
         messageContext = new MockMessageContext(request);
     }
 
-    public void testHandleInvalidRequest() throws Exception {
-        MockControl messageControl = MockControl.createControl(SoapMessage.class);
-        MockControl bodyControl = MockControl.createControl(SoapBody.class);
-        SoapBody bodyMock = (SoapBody) bodyControl.getMock();
-        MockControl faultControl = MockControl.createControl(SoapFault.class);
-        SoapFault faultMock = (SoapFault) faultControl.getMock();
-        MockControl faultDetailControl = MockControl.createControl(SoapFaultDetail.class);
-        SoapFaultDetail faultDetailMock = (SoapFaultDetail) faultDetailControl.getMock();
-        MockControl faultDetailElementControl = MockControl.createControl(SoapFaultDetailElement.class);
-        SoapFaultDetailElement faultDetailElementMock = (SoapFaultDetailElement) faultDetailElementControl.getMock();
+    public void testHandleInvalidRequestSoap11() throws Exception {
+        MessageFactory messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
+        SOAPMessage invalidMessage = messageFactory.createMessage();
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        InputStream inputStream = getClass().getResourceAsStream("invalidMessage.xml");
+        transformer.transform(new StreamSource(inputStream), new DOMResult(invalidMessage.getSOAPBody()));
+        SaajSoapMessageContext context = new SaajSoapMessageContext(invalidMessage, messageFactory);
 
-        final SoapMessage requestMock = (SoapMessage) messageControl.getMock();
-        final SoapMessage responseMock = (SoapMessage) messageControl.getMock();
-        SoapMessageContext soapMessageContext = new AbstractSoapMessageContext(requestMock) {
-
-            protected SoapMessage createSoapMessage() {
-                return responseMock;
-            }
-        };
-        InputStream is = getClass().getResourceAsStream("invalidMessage.xml");
-        messageControl.expectAndReturn(requestMock.getPayloadSource(), new StreamSource(is));
-        messageControl.expectAndReturn(responseMock.getSoapBody(), bodyMock);
-        messageControl.expectAndReturn(responseMock.getVersion(), SoapVersion.SOAP_11);
-        bodyControl.expectAndReturn(bodyMock.addFault(SoapVersion.SOAP_11.getSenderFaultName(),
-                PayloadValidatingInterceptor.DEFAULT_VALIDATION_ERROR_FAULT_STRING), faultMock);
-        faultControl.expectAndReturn(faultMock.addFaultDetail(), faultDetailMock);
-        faultDetailControl.expectAndReturn(faultDetailMock.addFaultDetailElement(
-                PayloadValidatingInterceptor.DEFAULT_VALIDATION_ERROR_DETAIL_ELEMENT_NAME), faultDetailElementMock, 3);
-        faultDetailElementMock.addText(null);
-        faultDetailElementControl.setMatcher(MockControl.ALWAYS_MATCHER);
-        faultDetailElementControl.setVoidCallable(3);
-
-        messageControl.replay();
-        bodyControl.replay();
-        faultControl.replay();
-        faultDetailControl.replay();
-        faultDetailElementControl.replay();
-
-        boolean result = interceptor.handleRequest(soapMessageContext, null);
+        boolean result = interceptor.handleRequest(context, null);
         assertFalse("Invalid response from interceptor", result);
+        assertTrue("Context has no response", context.hasResponse());
+        SoapMessage response = context.getSoapResponse();
+        assertTrue("Resonse has no fault", response.getSoapBody().hasFault());
+        Soap11Fault fault = (Soap11Fault) response.getSoapBody().getFault();
+        assertEquals("Invalid fault code on fault", SoapVersion.SOAP_11.getSenderFaultName(), fault.getFaultCode());
+        assertEquals("Invalid fault string on fault", PayloadValidatingInterceptor.DEFAULT_FAULTSTRING_OR_REASON,
+                fault.getFaultString());
+        assertNotNull("No Detail on fault", fault.getFaultDetail());
+    }
 
-        messageControl.verify();
-        bodyControl.verify();
-        faultControl.verify();
-        faultDetailControl.verify();
-        faultDetailElementControl.verify();
+    public void testHandleInvalidRequestSoap12() throws Exception {
+        MessageFactory messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        SOAPMessage invalidMessage = messageFactory.createMessage();
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        InputStream inputStream = getClass().getResourceAsStream("invalidMessage.xml");
+        transformer.transform(new StreamSource(inputStream), new DOMResult(invalidMessage.getSOAPBody()));
+        SaajSoapMessageContext context = new SaajSoapMessageContext(invalidMessage, messageFactory);
+
+        boolean result = interceptor.handleRequest(context, null);
+        assertFalse("Invalid response from interceptor", result);
+        assertTrue("Context has no response", context.hasResponse());
+        SoapMessage response = context.getSoapResponse();
+        assertTrue("Resonse has no fault", response.getSoapBody().hasFault());
+        Soap12Fault fault = (Soap12Fault) response.getSoapBody().getFault();
+        assertEquals("Invalid fault code on fault", SoapVersion.SOAP_12.getSenderFaultName(), fault.getFaultCode());
+        assertEquals("Invalid fault string on fault", PayloadValidatingInterceptor.DEFAULT_FAULTSTRING_OR_REASON,
+                fault.getFaultReasonText(Locale.ENGLISH));
+        assertNotNull("No Detail on fault", fault.getFaultDetail());
     }
 
     public void testHandleInvalidRequestOverridenProperties() throws Exception {
-        String faultString = "faultString";
-        interceptor.setValidationErrorFaultString(faultString);
+        String faultString = "fout";
+        Locale locale = new Locale("nl");
+        interceptor.setFaultStringOrReason(faultString);
+        interceptor.setFaultStringOrReasonLocale(locale);
         interceptor.setAddValidationErrorDetail(false);
-        MockControl messageControl = MockControl.createControl(SoapMessage.class);
-        MockControl bodyControl = MockControl.createControl(SoapBody.class);
-        SoapBody bodyMock = (SoapBody) bodyControl.getMock();
-        MockControl faultControl = MockControl.createControl(SoapFault.class);
-        SoapFault faultMock = (SoapFault) faultControl.getMock();
 
-        final SoapMessage requestMock = (SoapMessage) messageControl.getMock();
-        final SoapMessage responseMock = (SoapMessage) messageControl.getMock();
-        SoapMessageContext soapMessageContext = new AbstractSoapMessageContext(requestMock) {
+        MessageFactory messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
+        SOAPMessage invalidMessage = messageFactory.createMessage();
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        InputStream inputStream = getClass().getResourceAsStream("invalidMessage.xml");
+        transformer.transform(new StreamSource(inputStream), new DOMResult(invalidMessage.getSOAPBody()));
+        SaajSoapMessageContext context = new SaajSoapMessageContext(invalidMessage, messageFactory);
 
-            protected SoapMessage createSoapMessage() {
-                return responseMock;
-            }
-        };
-        InputStream is = getClass().getResourceAsStream("invalidMessage.xml");
-        messageControl.expectAndReturn(requestMock.getPayloadSource(), new StreamSource(is));
-        messageControl.expectAndReturn(responseMock.getSoapBody(), bodyMock);
-        messageControl.expectAndReturn(responseMock.getVersion(), SoapVersion.SOAP_11);
-        bodyControl
-                .expectAndReturn(bodyMock.addFault(SoapVersion.SOAP_11.getSenderFaultName(), faultString), faultMock);
-
-        messageControl.replay();
-        bodyControl.replay();
-        faultControl.replay();
-
-        boolean result = interceptor.handleRequest(soapMessageContext, null);
+        boolean result = interceptor.handleRequest(context, null);
         assertFalse("Invalid response from interceptor", result);
-
-        messageControl.verify();
-        bodyControl.verify();
-        faultControl.verify();
+        assertTrue("Context has no response", context.hasResponse());
+        SoapMessage response = context.getSoapResponse();
+        assertTrue("Resonse has no fault", response.getSoapBody().hasFault());
+        Soap11Fault fault = (Soap11Fault) response.getSoapBody().getFault();
+        assertEquals("Invalid fault code on fault", SoapVersion.SOAP_11.getSenderFaultName(), fault.getFaultCode());
+        assertEquals("Invalid fault string on fault", faultString, fault.getFaultString());
+        assertEquals("Invalid fault string locale on fault", locale, fault.getFaultStringLocale());
+        assertNull("Detail on fault", fault.getFaultDetail());
     }
 
     public void testHandleInvalidResponse() throws Exception {

@@ -16,15 +16,11 @@
 
 package org.springframework.ws.soap;
 
-import java.util.Locale;
-
 import javax.xml.namespace.QName;
 
 /**
  * Represents the <code>Fault</code> element in the body of a SOAP message. A faul consists of a fault code, string, and
  * role.
- * <p/>
- * Though this interface uses SOAP 1.2 terminology, the underlying implementations can be both SOAP 1.1 and 1.2 based.
  *
  * @author Arjen Poutsma
  */
@@ -38,40 +34,14 @@ public interface SoapFault extends SoapElement {
     QName getFaultCode();
 
     /**
-     * Returns the fault string.
-     *
-     * @return the fault string
+     * Returns the fault actor or role. For SOAP 1.1, this returns the actor. For SOAP 1.2, this returns the role.
      */
-    String getFaultString();
+    String getFaultActorOrRole();
 
     /**
-     * Sets the localized fault string.
-     *
-     * @param faultString the fault string
-     * @param locale      the locale of the fault string
+     * Sets the fault actor. For SOAP 1.1, this sets the actor. For SOAP 1.2, this sets the role.
      */
-    void setFaultString(String faultString, Locale locale);
-
-    /**
-     * Returns the locale of the fault string.
-     *
-     * @return the locale of the fault string
-     */
-    Locale getFaultStringLocale();
-
-    /**
-     * Returns the fault role.
-     *
-     * @return the fault actor.
-     */
-    String getFaultRole();
-
-    /**
-     * Sets the fault role.
-     *
-     * @param role the fault role
-     */
-    void setFaultRole(String role);
+    void setFaultActorOrRole(String faultActor);
 
     /**
      * Creates an optional <code>SoapFaultDetail</code> object and assigns it to this fault.

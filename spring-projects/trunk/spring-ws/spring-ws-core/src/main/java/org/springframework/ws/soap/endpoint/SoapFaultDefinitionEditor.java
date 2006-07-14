@@ -18,24 +18,24 @@ package org.springframework.ws.soap.endpoint;
 
 import java.beans.PropertyEditorSupport;
 import java.util.Locale;
-
 import javax.xml.namespace.QName;
 
 import org.springframework.beans.propertyeditors.LocaleEditor;
 import org.springframework.util.StringUtils;
-import org.springframework.ws.propertyeditors.QNameEditor;
+import org.springframework.xml.namespace.QNameEditor;
 
 /**
  * PropertyEditor for <code>SoapFaultDefinition</code> objects. Takes strings of form
  * <pre>
- * faultCode,faultString,faultStringLocale
+ * faultCode,faultString,locale
  * </pre>
- * where <code>faultCode</code> is the string representation of a <code>QName</code>, <code>faultString</code> is the
- * fault string, and <code>faultStringLocale</code> is the optional string representations for the fault string
- * language. By default, the language is set to English.
+ * where <code>faultCode</code> is the string representation of a <code>QName</code>, <code>faultStringOrReason</code>
+ * is the fault string, and <code>locale</code> is the optional string representations for the
+ * <code>faultStringOrReason</code>language. By default, the language is set to English.
  * <p/>
- * Instead of supplying a custom fault code, you can use the constants <code>RECEIVER</code> or <code>SENDER</code> to
- * indicate a <code>Server</code>/<code>Receiver</code> or <code>Client</code>/<code>Sender</code> fault respectivaly.
+ * Instead of supplying a custom fault code, you can use the constants <code>SERVER</code> or <code>RECEIVER</code>
+ * indicate a <code>Server</code>/<code>Receiver</code> fault, or or <code>CLIENT</code> or <code>SENDER</code>
+ * to<code>Client</code>/<code>Sender</code> fault respectivaly.
  * <p/>
  * For example:
  * <pre>
@@ -43,16 +43,15 @@ import org.springframework.ws.propertyeditors.QNameEditor;
  * </pre>
  * or
  * <pre>
- * SENDER,Client error
+ * CLIENT,Client error
  * </pre>
  *
  * @author Arjen Poutsma
  * @see javax.xml.namespace.QName#toString()
- * @see org.springframework.ws.propertyeditors.QNameEditor
+ * @see org.springframework.xml.namespace.QNameEditor
  * @see SoapFaultDefinition#RECEIVER
  * @see SoapFaultDefinition#SENDER
  * @see org.springframework.ws.soap.SoapFault#getFaultCode()
- * @see org.springframework.ws.soap.SoapFault#getFaultString()
  */
 public class SoapFaultDefinitionEditor extends PropertyEditorSupport {
 
@@ -76,11 +75,11 @@ public class SoapFaultDefinitionEditor extends PropertyEditorSupport {
             QNameEditor qNameEditor = new QNameEditor();
             qNameEditor.setAsText(tokens[FAULT_CODE_INDEX].trim());
             definition.setFaultCode((QName) qNameEditor.getValue());
-            definition.setFaultString(tokens[FAULT_STRING_INDEX].trim());
+            definition.setFaultStringOrReason(tokens[FAULT_STRING_INDEX].trim());
             if (tokens.length > 2) {
                 LocaleEditor localeEditor = new LocaleEditor();
                 localeEditor.setAsText(tokens[FAULT_STRING_LOCALE_INDEX].trim());
-                definition.setFaultStringLocale((Locale) localeEditor.getValue());
+                definition.setLocale((Locale) localeEditor.getValue());
             }
             setValue(definition);
         }
