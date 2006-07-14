@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>spring-ws</artifactId>
-        <groupId>org.springframework</groupId>
+        <groupId>org.springframework.ws</groupId>
         <version>1.0-m2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -29,30 +29,37 @@
                 <artifactId>maven-jetty-plugin</artifactId>
                 <version>6.0.0rc0</version>
             </plugin>
-        </plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <warName>${pom.artifactId}</warName>
+                </configuration>
+            </plugin>
+    </plugins>
     </build>
     <dependencies>
-        <!-- The following JEE dependencies can be removed if you're running the samples on a full-fledged application
+        <!-- The following JEE dependencies can be changed from 'runtime' to provided if you're running the samples on a full-fledged J2EE application
         server. They are required for running the samples on a Web container such as Tomcat -->
         <dependency>
             <groupId>javax.xml.soap</groupId>
             <artifactId>saaj-api</artifactId>
-            <scope>runtime</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <scope>runtime</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.activation</groupId>
             <artifactId>activation</artifactId>
-            <scope>runtime</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.messaging.saaj</groupId>
             <artifactId>saaj-impl</artifactId>
-            <scope>runtime</scope>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
