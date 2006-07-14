@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.soap.saaj;
+package org.springframework.ws.soap.axiom;
 
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPMessage;
+import org.springframework.ws.context.MessageContextFactory;
+import org.springframework.ws.soap.context.AbstractSoap11MessageContextFactoryTestCase;
 
-import org.springframework.ws.soap.SoapBody;
-import org.springframework.ws.soap.soap11.AbstractSoap11BodyTestCase;
+public class AxiomSoap11MessageContextFactoryTest extends AbstractSoap11MessageContextFactoryTestCase {
 
-public class SaajSoapBodyTest extends AbstractSoap11BodyTestCase {
-
-    protected SoapBody createSoapBody() throws Exception {
-        MessageFactory messageFactory = MessageFactory.newInstance();
-        SOAPMessage saajMessage = messageFactory.createMessage();
-        SaajSoapMessage saajSoapMessage = new SaajSoapMessage(saajMessage);
-        return saajSoapMessage.getSoapBody();
+    protected MessageContextFactory createSoapMessageContextFactory() {
+        return new AxiomSoapMessageContextFactory();
     }
 
+    public void testCreateMessageFromHttpServletRequest12WithAttachment() throws Exception {
+        // Axiom does not support SwA with SOAP 1.2
+    }
 }

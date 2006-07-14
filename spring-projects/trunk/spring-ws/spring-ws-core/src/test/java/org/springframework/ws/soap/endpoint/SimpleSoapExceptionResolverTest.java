@@ -16,13 +16,13 @@
 
 package org.springframework.ws.soap.endpoint;
 
+import java.util.Locale;
+
 import junit.framework.TestCase;
 import org.easymock.MockControl;
-
-import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.SoapMessage;
-import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.context.SoapMessageContext;
+import org.springframework.ws.soap.soap11.Soap11Body;
 
 public class SimpleSoapExceptionResolverTest extends TestCase {
 
@@ -38,7 +38,7 @@ public class SimpleSoapExceptionResolverTest extends TestCase {
 
     private MockControl bodyControl;
 
-    private SoapBody bodyMock;
+    private Soap11Body bodyMock;
 
     protected void setUp() throws Exception {
         exceptionResolver = new SimpleSoapExceptionResolver();
@@ -46,17 +46,16 @@ public class SimpleSoapExceptionResolverTest extends TestCase {
         contextMock = (SoapMessageContext) contextControl.getMock();
         messageControl = MockControl.createControl(SoapMessage.class);
         messageMock = (SoapMessage) messageControl.getMock();
-        bodyControl = MockControl.createControl(SoapBody.class);
-        bodyMock = (SoapBody) bodyControl.getMock();
+        bodyControl = MockControl.createControl(Soap11Body.class);
+        bodyControl.setDefaultMatcher(MockControl.ARRAY_MATCHER);
+        bodyMock = (Soap11Body) bodyControl.getMock();
     }
 
     public void testResolveExceptionInternal() throws Exception {
         Exception exception = new Exception("message");
         contextControl.expectAndReturn(contextMock.getSoapResponse(), messageMock);
         messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
-        messageControl.expectAndReturn(messageMock.getVersion(), SoapVersion.SOAP_11);
-        bodyControl.expectAndReturn(
-                bodyMock.addFault(SoapVersion.SOAP_11.getReceiverFaultName(), exception.getMessage()), null);
+        bodyControl.expectAndReturn(bodyMock.addServerOrReceiverFault(exception.getMessage(), Locale.ENGLISH), null);
         contextControl.replay();
         messageControl.replay();
         bodyControl.replay();

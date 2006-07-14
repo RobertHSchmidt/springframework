@@ -16,6 +16,8 @@
 
 package org.springframework.ws.soap.soap12;
 
+import java.util.Iterator;
+import java.util.Locale;
 import javax.xml.namespace.QName;
 
 import org.springframework.ws.soap.AbstractSoapBodyTestCase;
@@ -23,13 +25,9 @@ import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapFaultDetail;
 import org.springframework.ws.soap.SoapFaultDetailElement;
 import org.springframework.ws.soap.SoapVersion;
-import org.springframework.ws.soap.support.SoapMessageUtils;
 import org.springframework.xml.transform.StringResult;
 import org.springframework.xml.transform.StringSource;
 
-/**
- * @author Arjen Poutsma
- */
 public abstract class AbstractSoap12BodyTestCase extends AbstractSoapBodyTestCase {
 
     public void testGetName() throws Exception {
@@ -44,59 +42,50 @@ public abstract class AbstractSoap12BodyTestCase extends AbstractSoapBodyTestCas
                 result.toString());
     }
 
-    public void testAddMustUnderstandFaultSoap12() throws Exception {
-        SoapFault fault = soapBody.addFault(SoapVersion.SOAP_12.getMustUnderstandFaultName(),
-                SoapMessageUtils.DEFAULT_MUST_UNDERSTAND_FAULT_STRING);
-        assertEquals("Invalid fault code", SoapVersion.SOAP_12.getMustUnderstandFaultName(), fault.getFaultCode());
+    public void testAddMustUnderstandFault() throws Exception {
+        SoapFault fault = soapBody.addMustUnderstandFault("SOAP Must Understand Error", Locale.ENGLISH);
+        assertEquals("Invalid fault code", new QName("http://www.w3.org/2003/05/soap-envelope", "MustUnderstand"),
+                fault.getFaultCode());
         StringResult result = new StringResult();
         transformer.transform(fault.getSource(), result);
         assertXMLEqual("Invalid contents of body",
                 "<soapenv:Fault xmlns:soapenv='http://www.w3.org/2003/05/soap-envelope'>" +
-                        "<soapenv:Code><soapenv:Value>soapenv:MustUnderstand</soapenv:Value></soapenv:Code>" +
-                        "<soapenv:Reason><soapenv:Text>SOAP Must Understand Error</soapenv:Text></soapenv:Reason>" +
+                        "<soapenv:Code><soapenv:Value>" + soapBody.getName().getPrefix() +
+                        ":MustUnderstand</soapenv:Value></soapenv:Code>" +
+                        "<soapenv:Reason><soapenv:Text xml:lang='en'>SOAP Must Understand Error</soapenv:Text>" +
+                        "</soapenv:Reason></soapenv:Fault>", result.toString());
+    }
+
+    public void testAddSenderFault() throws Exception {
+        SoapFault fault = soapBody.addClientOrSenderFault("faultString", Locale.ENGLISH);
+        assertEquals("Invalid fault code", new QName("http://www.w3.org/2003/05/soap-envelope", "Sender"),
+                fault.getFaultCode());
+        StringResult result = new StringResult();
+        transformer.transform(fault.getSource(), result);
+        assertXMLEqual("Invalid contents of body",
+                "<soapenv:Fault xmlns:soapenv='http://www.w3.org/2003/05/soap-envelope'>" +
+                        "<soapenv:Code><soapenv:Value>" + soapBody.getName().getPrefix() +
+                        ":Sender</soapenv:Value></soapenv:Code>" +
+                        "<soapenv:Reason><soapenv:Text xml:lang='en'>faultString</soapenv:Text></soapenv:Reason>" +
                         "</soapenv:Fault>", result.toString());
     }
 
-    public void testAddSenderFaultSoap12() throws Exception {
-        SoapFault fault = soapBody.addFault(SoapVersion.SOAP_12.getSenderFaultName(), "faultString");
-        assertEquals("Invalid fault code", SoapVersion.SOAP_12.getSenderFaultName(), fault.getFaultCode());
+    public void testAddReceiverFault() throws Exception {
+        SoapFault fault = soapBody.addServerOrReceiverFault("faultString", Locale.ENGLISH);
+        assertEquals("Invalid fault code", new QName("http://www.w3.org/2003/05/soap-envelope", "Receiver"),
+                fault.getFaultCode());
         StringResult result = new StringResult();
         transformer.transform(fault.getSource(), result);
         assertXMLEqual("Invalid contents of body",
                 "<soapenv:Fault xmlns:soapenv='http://www.w3.org/2003/05/soap-envelope'>" +
-                        "<soapenv:Code><soapenv:Value>soapenv:Sender</soapenv:Value></soapenv:Code>" +
-                        "<soapenv:Reason><soapenv:Text>faultString</soapenv:Text></soapenv:Reason>" +
-                        "</soapenv:Fault>", result.toString());
-    }
-
-    public void testAddReceiverFaultSoap12() throws Exception {
-        SoapFault fault = soapBody.addFault(SoapVersion.SOAP_12.getReceiverFaultName(), "faultString");
-        assertEquals("Invalid fault code", SoapVersion.SOAP_12.getReceiverFaultName(), fault.getFaultCode());
-        StringResult result = new StringResult();
-        transformer.transform(fault.getSource(), result);
-        assertXMLEqual("Invalid contents of body",
-                "<soapenv:Fault xmlns:soapenv='http://www.w3.org/2003/05/soap-envelope'>" +
-                        "<soapenv:Code><soapenv:Value>soapenv:Receiver</soapenv:Value></soapenv:Code>" +
-                        "<soapenv:Reason><soapenv:Text>faultString</soapenv:Text></soapenv:Reason>" +
-                        "</soapenv:Fault>", result.toString());
-    }
-
-    public void testAddFaultSoap12() throws Exception {
-        QName faultCode = new QName("http://www.springframework.org", "fault", "spring");
-        SoapFault fault = soapBody.addFault(faultCode, "faultString");
-        StringResult result = new StringResult();
-        transformer.transform(fault.getSource(), result);
-        assertXMLEqual("Invalid contents of body",
-                "<soapenv:Fault xmlns:soapenv='http://www.w3.org/2003/05/soap-envelope'>" +
-                        "<soapenv:Code><soapenv:Value xmlns:spring='http://www.springframework.org'>" +
-                        "spring:fault</soapenv:Value></soapenv:Code>" +
-                        "<soapenv:Reason><soapenv:Text>faultString</soapenv:Text></soapenv:Reason>" +
+                        "<soapenv:Code><soapenv:Value>" + soapBody.getName().getPrefix() +
+                        ":Receiver</soapenv:Value></soapenv:Code>" +
+                        "<soapenv:Reason><soapenv:Text xml:lang='en'>faultString</soapenv:Text></soapenv:Reason>" +
                         "</soapenv:Fault>", result.toString());
     }
 
     public void testAddFaultWithDetail() throws Exception {
-        QName faultCode = new QName("http://www.springframework.org", "fault", "spring");
-        SoapFault fault = soapBody.addFault(faultCode, "faultString");
+        SoapFault fault = soapBody.addServerOrReceiverFault("faultString", Locale.ENGLISH);
         SoapFaultDetail detail = fault.addFaultDetail();
         SoapFaultDetailElement detailElement =
                 detail.addFaultDetailElement(new QName("namespace", "localPart", "prefix"));
@@ -106,11 +95,35 @@ public abstract class AbstractSoap12BodyTestCase extends AbstractSoapBodyTestCas
         transformer.transform(fault.getSource(), result);
         assertXMLEqual("Invalid source for body",
                 "<soapenv:Fault xmlns:soapenv='http://www.w3.org/2003/05/soap-envelope'>" +
-                        "<soapenv:Code><soapenv:Value xmlns:spring='http://www.springframework.org'>" +
-                        "spring:fault</soapenv:Value></soapenv:Code>" +
-                        "<soapenv:Reason><soapenv:Text>faultString</soapenv:Text></soapenv:Reason>" +
+                        "<soapenv:Code><soapenv:Value>" + soapBody.getName().getPrefix() + ":Receiver</soapenv:Value>" +
+                        "</soapenv:Code>" +
+                        "<soapenv:Reason><soapenv:Text xml:lang='en'>faultString</soapenv:Text></soapenv:Reason>" +
                         "<soapenv:Detail><prefix:localPart xmlns:prefix='namespace'><detailContents xmlns='namespace'/>" +
                         "</prefix:localPart></soapenv:Detail></soapenv:Fault>", result.toString());
+    }
+
+    public void testAddFaultWithSubcode() throws Exception {
+        Soap12Fault fault = (Soap12Fault) soapBody.addServerOrReceiverFault("faultString", Locale.ENGLISH);
+        QName subcode1 = new QName("http://www.springframework.org", "Subcode1", "spring-ws");
+        fault.addFaultSubcode(subcode1);
+        QName subcode2 = new QName("http://www.springframework.org", "Subcode2", "spring-ws");
+        fault.addFaultSubcode(subcode2);
+        Iterator iterator = fault.getFaultSubcodes();
+        assertTrue("No subcode found", iterator.hasNext());
+        assertEquals("Invalid subcode", subcode1, iterator.next());
+        assertTrue("No subcode found", iterator.hasNext());
+        assertEquals("Invalid subcode", subcode2, iterator.next());
+        assertFalse("Subcode found", iterator.hasNext());
+        StringResult result = new StringResult();
+        transformer.transform(fault.getSource(), result);
+        assertXMLEqual("Invalid source for body",
+                "<soapenv:Fault xmlns:soapenv='http://www.w3.org/2003/05/soap-envelope'>" +
+                        "<soapenv:Code><soapenv:Value>" + soapBody.getName().getPrefix() + ":Receiver</soapenv:Value>" +
+                        "<soapenv:Subcode><soapenv:Value xmlns:spring-ws='http://www.springframework.org'>spring-ws:Subcode1</soapenv:Value>" +
+                        "<soapenv:Subcode><soapenv:Value xmlns:spring-ws='http://www.springframework.org'>spring-ws:Subcode2</soapenv:Value>" +
+                        "</soapenv:Subcode></soapenv:Subcode></soapenv:Code>" +
+                        "<soapenv:Reason><soapenv:Text xml:lang='en'>faultString</soapenv:Text></soapenv:Reason>" +
+                        "</soapenv:Fault>", result.toString());
     }
 
 }

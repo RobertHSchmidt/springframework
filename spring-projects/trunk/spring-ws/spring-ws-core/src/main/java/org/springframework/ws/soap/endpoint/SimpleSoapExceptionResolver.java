@@ -1,11 +1,12 @@
 package org.springframework.ws.soap.endpoint;
 
+import java.util.Locale;
+
 import org.springframework.util.StringUtils;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.endpoint.AbstractEndpointExceptionResolver;
-import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.context.SoapMessageContext;
-import org.springframework.ws.soap.support.SoapMessageUtils;
 
 /**
  * Simple, SOAP-specific implementation of the <code>EndpointExceptionResolver</code> that stores the exception's
@@ -15,14 +16,23 @@ import org.springframework.ws.soap.support.SoapMessageUtils;
  */
 public class SimpleSoapExceptionResolver extends AbstractEndpointExceptionResolver {
 
+    private Locale locale = Locale.ENGLISH;
+
+    /**
+     * Sets the locale for the faultstring or reason of the SOAP Fault. Defaults to english.
+     */
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
+
     protected boolean resolveExceptionInternal(MessageContext messageContext, Object endpoint, Exception ex) {
         if (!(messageContext instanceof SoapMessageContext)) {
             throw new IllegalArgumentException("SimpleSoapExceptionResolver requires a SoapMessageContext");
         }
         String faultString = StringUtils.hasLength(ex.getMessage()) ? ex.getMessage() : ex.toString();
         SoapMessageContext soapContext = (SoapMessageContext) messageContext;
-        SoapMessage response = soapContext.getSoapResponse();
-        SoapMessageUtils.addReceiverFault(response, faultString);
+        SoapBody body = soapContext.getSoapResponse().getSoapBody();
+        body.addServerOrReceiverFault(faultString, locale);
         return true;
     }
 }

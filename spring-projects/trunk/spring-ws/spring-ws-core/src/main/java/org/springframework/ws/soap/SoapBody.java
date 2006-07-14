@@ -16,7 +16,7 @@
 
 package org.springframework.ws.soap;
 
-import javax.xml.namespace.QName;
+import java.util.Locale;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 
@@ -50,16 +50,51 @@ public interface SoapBody extends SoapElement {
     Result getPayloadResult();
 
     /**
-     * Adds a SOAP <code>Fault</code> to the body. The given fault code must be fully qualified (i.e. namespace, prefix,
-     * and local part must be present).
+     * Adds a <code>MustUnderstand</code> fault to the body. A <code>MustUnderstand</code> is returned when a SOAP
+     * header with a <code>MustUnderstand</code> attribute is not understood.
      * <p/>
      * Adding a fault removes the current content of the body.
      *
-     * @param faultCode the fully qualified fault code
-     * @return the added <code>SoapFault</code>
-     * @throws IllegalArgumentException if the fault code is not fully qualified
+     * @param faultStringOrReason the SOAP 1.1 fault string or SOAP 1.2 reason text
+     * @param locale              the language of faultStringOrReason. Optional for SOAP 1.1
+     * @return the created <code>SoapFault</code>
      */
-    SoapFault addFault(QName faultCode, String faultString);
+    SoapFault addMustUnderstandFault(String faultStringOrReason, Locale locale);
+
+    /**
+     * Adds a <code>Client</code>/<code>Sender</code> fault to the body. For SOAP 1.1, this adds a fault with a
+     * <code>Client</code> fault code. For SOAP 1.2, this adds a fault with a <code>Sender</code> code.
+     * <p/>
+     * Adding a fault removes the current content of the body.
+     *
+     * @param faultStringOrReason the SOAP 1.1 fault string or SOAP 1.2 reason text
+     * @param locale              the language of faultStringOrReason. Optional for SOAP 1.1
+     * @return the created <code>SoapFault</code>
+     */
+    SoapFault addClientOrSenderFault(String faultStringOrReason, Locale locale);
+
+    /**
+     * Adds a <code>Server</code>/<code>Receiver</code> fault to the body.For SOAP 1.1, this adds a fault with a
+     * <code>Server</code> fault code. For SOAP 1.2, this adds a fault with a <code>Receiver</code> code.
+     * <p/>
+     * Adding a fault removes the current content of the body.
+     *
+     * @param faultStringOrReason the SOAP 1.1 fault string or SOAP 1.2 reason text
+     * @param locale              the language of faultStringOrReason. Optional for SOAP 1.1
+     * @return the created <code>SoapFault</code>
+     */
+    SoapFault addServerOrReceiverFault(String faultStringOrReason, Locale locale);
+
+    /**
+     * Adds a <code>VersionMismatch</code> fault to the body.
+     * <p/>
+     * Adding a fault removes the current content of the body.
+     *
+     * @param faultStringOrReason the SOAP 1.1 fault string or SOAP 1.2 reason text
+     * @param locale              the language of faultStringOrReason. Optional for SOAP 1.1
+     * @return the created <code>SoapFault</code>
+     */
+    SoapFault addVersionMismatchFault(String faultStringOrReason, Locale locale);
 
     /**
      * Indicates whether this body has a <code>SoapFault</code>.

@@ -18,11 +18,10 @@ package org.springframework.ws.soap.axiom;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.soap.SOAPFactory;
-
 import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.soap12.AbstractSoap12BodyTestCase;
 
-public class AxiomSoapBodyTest extends AbstractSoap12BodyTestCase {
+public class AxiomSoap12BodyTest extends AbstractSoap12BodyTestCase {
 
     protected SoapBody createSoapBody() throws Exception {
         SOAPFactory axiomFactory = OMAbstractFactory.getSOAP12Factory();

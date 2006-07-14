@@ -32,37 +32,31 @@ public interface SoapVersion {
      *
      * @see <a href="http://www.w3.org/TR/2000/NOTE-SOAP-20000508/">SOAP 1.1 specification</a>
      */
-    public static final SoapVersion SOAP_11 = new SoapVersion() {
+    SoapVersion SOAP_11 = new SoapVersion() {
 
         private static final String ENVELOPE_NAMESPACE_URI = "http://schemas.xmlsoap.org/soap/envelope/";
-
-        private static final String DEFAULT_ENVELOPE_NAMESPACE_PREFIX = "soapenv";
 
         private static final String NEXT_ROLE_URI = "http://schemas.xmlsoap.org/soap/actor/next";
 
         private static final String CONTENT_TYPE = "text/xml";
 
-        private QName ENVELOPE_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Envelope", DEFAULT_ENVELOPE_NAMESPACE_PREFIX);
+        private QName ENVELOPE_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Envelope");
 
-        private QName HEADER_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Header", DEFAULT_ENVELOPE_NAMESPACE_PREFIX);
+        private QName HEADER_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Header");
 
-        private QName BODY_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Body", DEFAULT_ENVELOPE_NAMESPACE_PREFIX);
+        private QName BODY_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Body");
 
-        private QName FAULT_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Fault", DEFAULT_ENVELOPE_NAMESPACE_PREFIX);
+        private QName FAULT_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Fault");
 
-        private QName MUST_UNDERSTAND_ATTRIBUTE_NAME =
-                new QName(ENVELOPE_NAMESPACE_URI, "mustUnderstand", DEFAULT_ENVELOPE_NAMESPACE_PREFIX);
+        private QName MUST_UNDERSTAND_ATTRIBUTE_NAME = new QName(ENVELOPE_NAMESPACE_URI, "mustUnderstand");
 
-        private QName ACTOR_NAME = new QName(ENVELOPE_NAMESPACE_URI, "actor", DEFAULT_ENVELOPE_NAMESPACE_PREFIX);
+        private QName ACTOR_NAME = new QName(ENVELOPE_NAMESPACE_URI, "actor");
 
-        private QName CLIENT_FAULT_NAME =
-                new QName(ENVELOPE_NAMESPACE_URI, "Client", DEFAULT_ENVELOPE_NAMESPACE_PREFIX);
+        private QName CLIENT_FAULT_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Client");
 
-        private QName SERVER_FAULT_NAME =
-                new QName(ENVELOPE_NAMESPACE_URI, "Server", DEFAULT_ENVELOPE_NAMESPACE_PREFIX);
+        private QName SERVER_FAULT_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Server");
 
-        private QName MUST_UNDERSTAND_FAULT_NAME =
-                new QName(ENVELOPE_NAMESPACE_URI, "MustUnderstand", DEFAULT_ENVELOPE_NAMESPACE_PREFIX);
+        private QName MUST_UNDERSTAND_FAULT_NAME = new QName(ENVELOPE_NAMESPACE_URI, "MustUnderstand");
 
         public QName getBodyName() {
             return BODY_NAME;
@@ -74,10 +68,6 @@ public interface SoapVersion {
 
         public String getEnvelopeNamespaceUri() {
             return ENVELOPE_NAMESPACE_URI;
-        }
-
-        public String getDefaultEnvelopeNamespacePrefix() {
-            return DEFAULT_ENVELOPE_NAMESPACE_PREFIX;
         }
 
         public QName getFaultName() {
@@ -134,7 +124,7 @@ public interface SoapVersion {
      *
      * @see <a href="http://www.w3.org/TR/soap12-part0/">SOAP 1.2 specification</a>
      */
-    public static final SoapVersion SOAP_12 = new SoapVersion() {
+    SoapVersion SOAP_12 = new SoapVersion() {
 
         private static final String ENVELOPE_NAMESPACE_URI = "http://www.w3.org/2003/05/soap-envelope";
 
@@ -146,29 +136,23 @@ public interface SoapVersion {
 
         private static final String CONTENT_TYPE = "application/soap+xml";
 
-        private static final String DEFAULT_ENVELOPE_NAMESPACE_PREFIX = "soapenv";
+        private QName ENVELOPE_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Envelope");
 
-        private QName ENVELOPE_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Envelope", DEFAULT_ENVELOPE_NAMESPACE_PREFIX);
+        private QName HEADER_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Header");
 
-        private QName HEADER_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Header", DEFAULT_ENVELOPE_NAMESPACE_PREFIX);
+        private QName BODY_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Body");
 
-        private QName BODY_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Body", DEFAULT_ENVELOPE_NAMESPACE_PREFIX);
+        private QName FAULT_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Fault");
 
-        private QName FAULT_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Fault", DEFAULT_ENVELOPE_NAMESPACE_PREFIX);
+        private QName MUST_UNDERSTAND_ATTRIBUTE_NAME = new QName(ENVELOPE_NAMESPACE_URI, "mustUnderstand");
 
-        private QName MUST_UNDERSTAND_ATTRIBUTE_NAME =
-                new QName(ENVELOPE_NAMESPACE_URI, "mustUnderstand", DEFAULT_ENVELOPE_NAMESPACE_PREFIX);
+        private QName ROLE_NAME = new QName(ENVELOPE_NAMESPACE_URI, "role");
 
-        private QName ROLE_NAME = new QName(ENVELOPE_NAMESPACE_URI, "role", DEFAULT_ENVELOPE_NAMESPACE_PREFIX);
+        private QName SENDER_FAULT_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Sender");
 
-        private QName SENDER_FAULT_NAME =
-                new QName(ENVELOPE_NAMESPACE_URI, "Sender", DEFAULT_ENVELOPE_NAMESPACE_PREFIX);
+        private QName RECEIVER_FAULT_NAME = new QName(ENVELOPE_NAMESPACE_URI, "Receiver");
 
-        private QName RECEIVER_FAULT_NAME =
-                new QName(ENVELOPE_NAMESPACE_URI, "Receiver", DEFAULT_ENVELOPE_NAMESPACE_PREFIX);
-
-        private QName MUST_UNDERSTAND_FAULT_NAME =
-                new QName(ENVELOPE_NAMESPACE_URI, "MustUnderstand", DEFAULT_ENVELOPE_NAMESPACE_PREFIX);
+        private QName MUST_UNDERSTAND_FAULT_NAME = new QName(ENVELOPE_NAMESPACE_URI, "MustUnderstand");
 
         public QName getBodyName() {
             return BODY_NAME;
@@ -180,10 +164,6 @@ public interface SoapVersion {
 
         public String getEnvelopeNamespaceUri() {
             return ENVELOPE_NAMESPACE_URI;
-        }
-
-        public String getDefaultEnvelopeNamespacePrefix() {
-            return DEFAULT_ENVELOPE_NAMESPACE_PREFIX;
         }
 
         public QName getFaultName() {
@@ -245,11 +225,6 @@ public interface SoapVersion {
      * Returns the <code>Content-Type</code> MIME header for a SOAP message.
      */
     String getContentType();
-
-    /**
-     * Returns the default namespace prefix for the SOAP envelope namespace.
-     */
-    String getDefaultEnvelopeNamespacePrefix();
 
     /**
      * Returns the qualified name for a SOAP envelope.

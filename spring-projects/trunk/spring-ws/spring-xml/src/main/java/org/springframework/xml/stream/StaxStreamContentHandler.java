@@ -17,18 +17,15 @@
 package org.springframework.xml.stream;
 
 import java.util.Iterator;
-
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
-
 import org.springframework.util.StringUtils;
 import org.springframework.xml.namespace.QNameUtils;
 import org.springframework.xml.namespace.SimpleNamespaceContext;
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 /**
  * SAX <code>ContentHandler</code> that writes to a <code>XMLStreamWriter</code>.
@@ -82,10 +79,10 @@ public class StaxStreamContentHandler extends StaxContentHandler {
 
     protected void startElementInternal(QName name, Attributes attributes, SimpleNamespaceContext namespaceContext)
             throws XMLStreamException {
-        streamWriter.writeStartElement(name.getPrefix(), name.getLocalPart(), name.getNamespaceURI());
-        String defaultNamespaceUri = namespaceContext.getNamespaceURI(XMLConstants.DEFAULT_NS_PREFIX);
+        streamWriter.writeStartElement(QNameUtils.getPrefix(name), name.getLocalPart(), name.getNamespaceURI());
+        String defaultNamespaceUri = namespaceContext.getNamespaceURI("");
         if (StringUtils.hasLength(defaultNamespaceUri)) {
-            streamWriter.writeNamespace(XMLConstants.DEFAULT_NS_PREFIX, defaultNamespaceUri);
+            streamWriter.writeNamespace("", defaultNamespaceUri);
             streamWriter.setDefaultNamespace(defaultNamespaceUri);
         }
         for (Iterator iterator = namespaceContext.getBoundPrefixes(); iterator.hasNext();) {
@@ -95,9 +92,9 @@ public class StaxStreamContentHandler extends StaxContentHandler {
         }
         for (int i = 0; i < attributes.getLength(); i++) {
             QName attrName = QNameUtils.toQName(attributes.getURI(i), attributes.getQName(i));
-            if (!(XMLConstants.XMLNS_ATTRIBUTE.equals(attrName.getLocalPart()) ||
-                    XMLConstants.XMLNS_ATTRIBUTE.equals(attrName.getPrefix()))) {
-                streamWriter.writeAttribute(attrName.getPrefix(), attrName.getNamespaceURI(), attrName.getLocalPart(),
+            String attrPrefix = QNameUtils.getPrefix(attrName);
+            if (!("xmlns".equals(attrName.getLocalPart()) || "xmlns".equals(attrPrefix))) {
+                streamWriter.writeAttribute(attrPrefix, attrName.getNamespaceURI(), attrName.getLocalPart(),
                         attributes.getValue(i));
             }
         }

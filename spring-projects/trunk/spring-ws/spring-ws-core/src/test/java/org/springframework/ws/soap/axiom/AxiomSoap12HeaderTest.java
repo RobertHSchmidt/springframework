@@ -16,16 +16,17 @@
 
 package org.springframework.ws.soap.axiom;
 
-import org.springframework.ws.context.MessageContextFactory;
-import org.springframework.ws.soap.context.AbstractSoapMessageContextFactoryTestCase;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.soap.SOAPFactory;
+import org.springframework.ws.soap.SoapHeader;
+import org.springframework.ws.soap.soap12.AbstractSoap12HeaderTestCase;
 
-public class AxiomSoapMessageContextFactoryTest extends AbstractSoapMessageContextFactoryTestCase {
+public class AxiomSoap12HeaderTest extends AbstractSoap12HeaderTestCase {
 
-    protected MessageContextFactory createSoapMessageContextFactory() {
-        return new AxiomSoapMessageContextFactory();
+    protected SoapHeader createSoapHeader() throws Exception {
+        SOAPFactory axiomFactory = OMAbstractFactory.getSOAP12Factory();
+        AxiomSoapMessage axiomSoapMessage = new AxiomSoapMessage(axiomFactory);
+        return axiomSoapMessage.getSoapHeader();
     }
 
-    public void testCreateMessageFromHttpServletRequest12WithAttachment() throws Exception {
-        // Axiom does not support SwA with SOAP 1.2
-    }
 }

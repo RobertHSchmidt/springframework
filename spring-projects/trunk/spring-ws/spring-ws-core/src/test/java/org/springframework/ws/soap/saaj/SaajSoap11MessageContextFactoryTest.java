@@ -17,20 +17,12 @@
 package org.springframework.ws.soap.saaj;
 
 import org.springframework.ws.context.MessageContextFactory;
-import org.springframework.ws.soap.context.AbstractSoapMessageContextFactoryTestCase;
+import org.springframework.ws.soap.context.AbstractSoap11MessageContextFactoryTestCase;
 
-public class SaajSoapMessageContextFactoryTest extends AbstractSoapMessageContextFactoryTestCase {
+public class SaajSoap11MessageContextFactoryTest extends AbstractSoap11MessageContextFactoryTestCase {
 
     protected MessageContextFactory createSoapMessageContextFactory() {
         return new SaajSoapMessageContextFactory();
-    }
-
-    public void testCreateMessageFromHttpServletRequest12() throws Exception {
-        // SAAJ 1.2 does not support SOAP 1.2
-    }
-
-    public void testCreateMessageFromHttpServletRequest12WithAttachment() throws Exception {
-        // SAAJ 1.2 does not support SOAP 1.2
     }
 
 }

@@ -16,6 +16,7 @@
 
 package org.springframework.ws.soap.soap11;
 
+import java.util.Locale;
 import javax.xml.namespace.QName;
 
 import org.springframework.ws.soap.AbstractSoapBodyTestCase;
@@ -23,13 +24,9 @@ import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapFaultDetail;
 import org.springframework.ws.soap.SoapFaultDetailElement;
 import org.springframework.ws.soap.SoapVersion;
-import org.springframework.ws.soap.support.SoapMessageUtils;
 import org.springframework.xml.transform.StringResult;
 import org.springframework.xml.transform.StringSource;
 
-/**
- * @author Arjen Poutsma
- */
 public abstract class AbstractSoap11BodyTestCase extends AbstractSoapBodyTestCase {
 
     public void testGetName() throws Exception {
@@ -44,9 +41,8 @@ public abstract class AbstractSoap11BodyTestCase extends AbstractSoapBodyTestCas
                 result.toString());
     }
 
-    public void testAddMustUnderstandFaultSoap11() throws Exception {
-        SoapFault fault = soapBody.addFault(SoapVersion.SOAP_11.getMustUnderstandFaultName(),
-                SoapMessageUtils.DEFAULT_MUST_UNDERSTAND_FAULT_STRING);
+    public void testAddMustUnderstandFault() throws Exception {
+        SoapFault fault = soapBody.addMustUnderstandFault("SOAP Must Understand Error", null);
         assertEquals("Invalid fault code", new QName("http://schemas.xmlsoap.org/soap/envelope/", "MustUnderstand"),
                 fault.getFaultCode());
         StringResult result = new StringResult();
@@ -58,8 +54,8 @@ public abstract class AbstractSoap11BodyTestCase extends AbstractSoapBodyTestCas
                 result.toString());
     }
 
-    public void testAddSenderFaultSoap11() throws Exception {
-        SoapFault fault = soapBody.addFault(SoapVersion.SOAP_11.getSenderFaultName(), "faultString");
+    public void testAddClientFault() throws Exception {
+        SoapFault fault = soapBody.addClientOrSenderFault("faultString", null);
         assertEquals("Invalid fault code", new QName("http://schemas.xmlsoap.org/soap/envelope/", "Client"),
                 fault.getFaultCode());
         StringResult result = new StringResult();
@@ -70,8 +66,8 @@ public abstract class AbstractSoap11BodyTestCase extends AbstractSoapBodyTestCas
                         "</SOAP-ENV:Fault>", result.toString());
     }
 
-    public void testAddReceiverFaultSoap11() throws Exception {
-        SoapFault fault = soapBody.addFault(SoapVersion.SOAP_11.getReceiverFaultName(), "faultString");
+    public void testAddServerFault() throws Exception {
+        SoapFault fault = soapBody.addServerOrReceiverFault("faultString", null);
         assertEquals("Invalid fault code", new QName("http://schemas.xmlsoap.org/soap/envelope/", "Server"),
                 fault.getFaultCode());
         StringResult result = new StringResult();
@@ -82,19 +78,21 @@ public abstract class AbstractSoap11BodyTestCase extends AbstractSoapBodyTestCas
                         "</SOAP-ENV:Fault>", result.toString());
     }
 
-    public void testAddFaultSoap11() throws Exception {
+    public void testAddFault() throws Exception {
         QName faultCode = new QName("http://www.springframework.org", "fault", "spring");
-        SoapFault fault = soapBody.addFault(faultCode, "faultString");
+        Soap11Fault fault = ((Soap11Body) soapBody).addFault(faultCode, "faultString", Locale.ENGLISH);
         StringResult result = new StringResult();
         transformer.transform(fault.getSource(), result);
         assertXMLEqual("Invalid contents of body",
                 "<SOAP-ENV:Fault xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' " +
                         "xmlns:spring='http://www.springframework.org'>" + "<faultcode>spring:fault</faultcode>" +
-                        "<faultstring>faultString</faultstring>" + "</SOAP-ENV:Fault>", result.toString());
+                        "<faultstring xml:lang='en'>faultString</faultstring>" + "</SOAP-ENV:Fault>",
+                result.toString());
     }
 
     public void testAddFaultWithDetail() throws Exception {
-        SoapFault fault = soapBody.addFault(new QName("namespace", "localPart", "prefix"), "Fault");
+        SoapFault fault = ((Soap11Body) soapBody)
+                .addFault(new QName("namespace", "localPart", "prefix"), "Fault", null);
         SoapFaultDetail detail = fault.addFaultDetail();
         SoapFaultDetailElement detailElement =
                 detail.addFaultDetailElement(new QName("namespace", "localPart", "prefix"));
@@ -110,4 +108,18 @@ public abstract class AbstractSoap11BodyTestCase extends AbstractSoapBodyTestCas
                         "</prefix:localPart></detail></SOAP-ENV:Fault>", result.toString());
     }
 
+    public void testAddCustomFault() {
+        QName faultCode = new QName("namespace", "localPart", "prefix");
+        String faultString = "faultString";
+        Soap11Fault fault = ((Soap11Body) soapBody).addFault(faultCode, faultString, Locale.ENGLISH);
+        assertNotNull("Null returned", fault);
+        assertTrue("SoapBody has no fault", soapBody.hasFault());
+        assertNotNull("SoapBody has no fault", soapBody.getFault());
+        assertEquals("Invalid fault code", faultCode, fault.getFaultCode());
+        assertEquals("Invalid fault string", faultString, fault.getFaultString());
+        assertEquals("Invalid fault string locale", Locale.ENGLISH, fault.getFaultStringLocale());
+        assertNotNull("Fault source is null", fault.getSource());
+        fault.setFaultActorOrRole("actor");
+        assertEquals("Invalid fault actor", "actor", fault.getFaultActorOrRole());
+    }
 }
