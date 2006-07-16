@@ -16,10 +16,14 @@
 
 package org.springframework.ws.soap.axiom;
 
-import org.apache.axiom.soap.SOAPFactory;
+import java.io.IOException;
 
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPMessage;
+import org.springframework.util.Assert;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.context.AbstractSoapMessageContext;
+import org.springframework.ws.transport.TransportResponse;
 
 /**
  * AXIOM-specific implementation of the <code>SoapMessageContext</code> interface. Created by the
@@ -32,12 +36,44 @@ public class AxiomSoapMessageContext extends AbstractSoapMessageContext {
 
     private final SOAPFactory soapFactory;
 
+    /**
+     * Creates a new instance based on the given Axiom request message, and a SOAP factory.
+     *
+     * @param request     the request message
+     * @param soapFactory the SOAP factory used for creating a response
+     */
     public AxiomSoapMessageContext(AxiomSoapMessage request, SOAPFactory soapFactory) {
         super(request);
+        Assert.notNull(soapFactory, "No soapFactory given");
         this.soapFactory = soapFactory;
     }
 
     protected SoapMessage createSoapMessage() {
         return new AxiomSoapMessage(soapFactory);
+    }
+
+    /**
+     * Returns the request as an Axiom SOAP message.
+     */
+    public SOAPMessage getAxiomRequest() {
+        return ((AxiomSoapMessage) getSoapRequest()).getAxiomMessage();
+    }
+
+    /**
+     * Returns the response as an Axiom SOAP message.
+     */
+    public SOAPMessage getAxiomResponse() {
+        return ((AxiomSoapMessage) getSoapResponse()).getAxiomMessage();
+    }
+
+    public void sendResponse(TransportResponse transportResponse) throws IOException {
+        if (hasResponse()) {
+            AxiomSoapMessage response = (AxiomSoapMessage) getSoapResponse();
+            String contentType = response.getVersion().getContentType();
+            SOAPMessage axiomResponse = response.getAxiomMessage();
+            contentType += "; charset=\"" + axiomResponse.getCharsetEncoding() + "\"";
+            transportResponse.addHeader("Content-Type", contentType);
+            response.writeTo(transportResponse.getOutputStream());
+        }
     }
 }

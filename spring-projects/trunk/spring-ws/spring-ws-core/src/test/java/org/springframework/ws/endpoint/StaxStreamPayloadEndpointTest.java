@@ -25,7 +25,6 @@ import javax.xml.transform.TransformerFactory;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.soap.SOAPFactory;
-
 import org.springframework.ws.soap.axiom.AxiomSoapMessage;
 import org.springframework.ws.soap.axiom.AxiomSoapMessageContext;
 import org.springframework.xml.transform.StringResult;

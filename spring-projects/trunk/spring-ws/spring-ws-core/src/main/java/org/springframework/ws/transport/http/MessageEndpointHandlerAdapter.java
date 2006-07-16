@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.HandlerAdapter;
@@ -58,7 +57,7 @@ public class MessageEndpointHandlerAdapter implements HandlerAdapter, Initializi
                                HttpServletResponse httpServletResponse,
                                Object handler) throws Exception {
         if ("POST".equals(httpServletRequest.getMethod())) {
-            handlePost(httpServletRequest, ((MessageEndpoint) handler), httpServletResponse);
+            handlePost(httpServletRequest, (MessageEndpoint) handler, httpServletResponse);
             return null;
         }
         else {
@@ -68,7 +67,7 @@ public class MessageEndpointHandlerAdapter implements HandlerAdapter, Initializi
     }
 
     public boolean supports(Object handler) {
-        return (handler instanceof MessageEndpoint);
+        return handler instanceof MessageEndpoint;
     }
 
     public final void afterPropertiesSet() throws Exception {
@@ -79,8 +78,8 @@ public class MessageEndpointHandlerAdapter implements HandlerAdapter, Initializi
     private void handlePost(HttpServletRequest httpServletRequest,
                             MessageEndpoint endpoint,
                             HttpServletResponse httpServletResponse) throws Exception {
-        HttpTransportRequest transportRequest = new HttpTransportRequest(httpServletRequest);
-        MessageContext messageContext = messageContextFactory.createContext(transportRequest);
+        HttpTransportContext transportContext = new HttpTransportContext(httpServletRequest, httpServletResponse);
+        MessageContext messageContext = messageContextFactory.createContext(transportContext);
         try {
             endpoint.invoke(messageContext);
             if (!messageContext.hasResponse()) {
@@ -95,7 +94,7 @@ public class MessageEndpointHandlerAdapter implements HandlerAdapter, Initializi
                 else {
                     httpServletResponse.setStatus(HttpServletResponse.SC_OK);
                 }
-                webServiceResponse.writeTo(new HttpTransportResponse(httpServletResponse));
+                messageContext.sendResponse(new HttpTransportResponse(httpServletResponse));
             }
         }
         catch (NoEndpointFoundException ex) {

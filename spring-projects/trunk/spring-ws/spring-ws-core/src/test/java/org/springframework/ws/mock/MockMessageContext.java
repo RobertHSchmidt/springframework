@@ -16,8 +16,11 @@
 
 package org.springframework.ws.mock;
 
+import java.io.IOException;
+
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.context.AbstractMessageContext;
+import org.springframework.ws.transport.TransportResponse;
 
 /**
  * Mock implementation of the <code>MessageContext</code> interface.
@@ -25,6 +28,8 @@ import org.springframework.ws.context.AbstractMessageContext;
  * @author Arjen Poutsma
  */
 public class MockMessageContext extends AbstractMessageContext {
+
+    private TransportResponse transportResponse;
 
     public MockMessageContext() {
         super(new MockWebServiceMessage());
@@ -34,11 +39,20 @@ public class MockMessageContext extends AbstractMessageContext {
         super(request);
     }
 
+    public MockMessageContext(WebServiceMessage request, TransportResponse transportResponse) {
+        super(request);
+        this.transportResponse = transportResponse;
+    }
+
     public MockMessageContext(String content) {
         super(new MockWebServiceMessage(content));
     }
 
     protected WebServiceMessage createWebServiceMessage() {
         return new MockWebServiceMessage();
+    }
+
+    public void sendResponse(TransportResponse transportResponse) throws IOException {
+        getResponse().writeTo(this.transportResponse.getOutputStream());
     }
 }

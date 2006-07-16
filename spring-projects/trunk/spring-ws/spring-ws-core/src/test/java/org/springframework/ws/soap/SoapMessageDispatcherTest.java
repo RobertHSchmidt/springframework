@@ -108,9 +108,11 @@ public class SoapMessageDispatcherTest extends TestCase {
         SoapBody responseBody = context.getSoapResponse().getSoapBody();
         assertTrue("Response body has no fault", responseBody.hasFault());
         Soap11Fault fault = (Soap11Fault) responseBody.getFault();
-        assertEquals("Invalid fault code", new QName(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, "MustUnderstand"),
+        assertEquals("Invalid fault code",
+                new QName(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, "MustUnderstand"),
                 fault.getFaultCode());
-        assertEquals("Invalid fault string", SoapMessageDispatcher.DEFAULT_MUST_UNDERSTAND_FAULT,
+        assertEquals("Invalid fault string",
+                SoapMessageDispatcher.DEFAULT_MUST_UNDERSTAND_FAULT,
                 fault.getFaultString());
         assertEquals("Invalid fault string locale", Locale.ENGLISH, fault.getFaultStringLocale());
         assertEquals("Invalid fault actor", SOAPConstants.URI_SOAP_ACTOR_NEXT, fault.getFaultActorOrRole());
@@ -139,16 +141,19 @@ public class SoapMessageDispatcherTest extends TestCase {
         SoapBody responseBody = context.getSoapResponse().getSoapBody();
         assertTrue("Response body has no fault", responseBody.hasFault());
         Soap12Fault fault = (Soap12Fault) responseBody.getFault();
-        assertEquals("Invalid fault code", new QName(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE, "MustUnderstand"),
+        assertEquals("Invalid fault code",
+                new QName(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE, "MustUnderstand"),
                 fault.getFaultCode());
-        assertEquals("Invalid fault string", SoapMessageDispatcher.DEFAULT_MUST_UNDERSTAND_FAULT,
+        assertEquals("Invalid fault string",
+                SoapMessageDispatcher.DEFAULT_MUST_UNDERSTAND_FAULT,
                 fault.getFaultReasonText(Locale.ENGLISH));
         assertEquals("Invalid fault actor", SOAPConstants.URI_SOAP_1_2_ROLE_NEXT, fault.getFaultActorOrRole());
         SoapHeader responseHeader = context.getSoapResponse().getSoapHeader();
         Iterator iterator = responseHeader.examineAllHeaderElements();
         assertTrue("Response header has no elements", iterator.hasNext());
         SoapHeaderElement headerElement = (SoapHeaderElement) iterator.next();
-        assertEquals("No NotUnderstood header", new QName(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE, "NotUnderstood"),
+        assertEquals("No NotUnderstood header",
+                new QName(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE, "NotUnderstood"),
                 headerElement.getName());
         interceptorControl.verify();
         context.getSoapResponse().writeTo(System.out);
@@ -169,7 +174,8 @@ public class SoapMessageDispatcherTest extends TestCase {
         interceptorControl.replay();
 
         SoapEndpointInvocationChain chain = new SoapEndpointInvocationChain(new Object(),
-                new SoapEndpointInterceptor[]{interceptorMock}, new String[]{headerActor});
+                new SoapEndpointInterceptor[]{interceptorMock},
+                new String[]{headerActor});
 
         boolean result = dispatcher.handleRequest(chain, context);
         assertTrue("actor-specific header not understood", result);
@@ -191,7 +197,8 @@ public class SoapMessageDispatcherTest extends TestCase {
         interceptorControl.replay();
 
         SoapEndpointInvocationChain chain = new SoapEndpointInvocationChain(new Object(),
-                new SoapEndpointInterceptor[]{interceptorMock}, new String[]{headerRole});
+                new SoapEndpointInterceptor[]{interceptorMock},
+                new String[]{headerRole});
 
         boolean result = dispatcher.handleRequest(chain, context);
         assertTrue("role-specific header not understood", result);
@@ -206,7 +213,8 @@ public class SoapMessageDispatcherTest extends TestCase {
         interceptorControl.replay();
 
         SoapEndpointInvocationChain chain = new SoapEndpointInvocationChain(new Object(),
-                new SoapEndpointInterceptor[]{interceptorMock}, new String[]{"role"});
+                new SoapEndpointInterceptor[]{interceptorMock},
+                new String[]{"role"});
 
         boolean result = dispatcher.handleRequest(chain, context);
         assertTrue("Invalid result", result);
@@ -216,11 +224,11 @@ public class SoapMessageDispatcherTest extends TestCase {
     public void testGetRoles() throws Exception {
         String[] roles = dispatcher.getRoles(null, SoapVersion.SOAP_11);
         assertEquals("Invalid amount of roles", 1, roles.length);
-        assertEquals("Invalid role", SoapVersion.SOAP_11.getNextRoleUri(), roles[0]);
+        assertEquals("Invalid role", SoapVersion.SOAP_11.getNextActorOrRoleUri(), roles[0]);
         roles = dispatcher.getRoles(new String[]{"role"}, SoapVersion.SOAP_11);
         assertEquals("Invalid amount of roles", 2, roles.length);
         assertEquals("Invalid role", "role", roles[0]);
-        assertEquals("Invalid role", SoapVersion.SOAP_11.getNextRoleUri(), roles[1]);
+        assertEquals("Invalid role", SoapVersion.SOAP_11.getNextActorOrRoleUri(), roles[1]);
     }
 
 }

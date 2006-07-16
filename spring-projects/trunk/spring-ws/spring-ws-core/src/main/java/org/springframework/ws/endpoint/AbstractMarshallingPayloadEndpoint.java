@@ -18,7 +18,6 @@ package org.springframework.ws.endpoint;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
@@ -41,7 +40,7 @@ public abstract class AbstractMarshallingPayloadEndpoint implements MessageEndpo
 
     public final void invoke(MessageContext messageContext) throws Exception {
         WebServiceMessage request = messageContext.getRequest();
-        Object requestObject = this.unmarshaller.unmarshal(request.getPayloadSource());
+        Object requestObject = unmarshaller.unmarshal(request.getPayloadSource());
         if (logger.isDebugEnabled()) {
             logger.debug("Unmarshalled payload request to [" + requestObject + "]");
         }

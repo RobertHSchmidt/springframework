@@ -20,13 +20,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import junit.framework.TestCase;
 import org.easymock.MockControl;
-
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.support.RequestMethodNotSupportedException;
 import org.springframework.ws.NoEndpointFoundException;
 import org.springframework.ws.context.MessageContextFactory;
 import org.springframework.ws.endpoint.MessageEndpoint;
+import org.springframework.ws.mock.MockTransportContext;
 import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.context.SoapMessageContext;
@@ -102,7 +102,7 @@ public class MessageEndpointHandlerAdapterTest extends TestCase {
         httpRequest.setCharacterEncoding("UTF-8");
         endpointMock.invoke(null);
         endpointControl.setMatcher(MockControl.ALWAYS_MATCHER);
-        factoryMock.createContext(new HttpTransportRequest(httpRequest));
+        factoryMock.createContext(new MockTransportContext());
         factoryControl.setMatcher(MockControl.ALWAYS_MATCHER);
         factoryControl.setReturnValue(contextMock);
         contextControl.expectAndReturn(contextMock.hasResponse(), false);
@@ -123,15 +123,15 @@ public class MessageEndpointHandlerAdapterTest extends TestCase {
         httpRequest.setCharacterEncoding("UTF-8");
         endpointMock.invoke(null);
         endpointControl.setMatcher(MockControl.ALWAYS_MATCHER);
-        factoryMock.createContext(new HttpTransportRequest(httpRequest));
+        factoryMock.createContext(new MockTransportContext());
         factoryControl.setMatcher(MockControl.ALWAYS_MATCHER);
         factoryControl.setReturnValue(contextMock);
         contextControl.expectAndReturn(contextMock.hasResponse(), true);
         contextControl.expectAndReturn(contextMock.getResponse(), messageMock);
         messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
         bodyControl.expectAndReturn(bodyMock.hasFault(), false);
-        messageMock.writeTo(new HttpTransportResponse(httpResponse));
-        messageControl.setMatcher(MockControl.ALWAYS_MATCHER);
+        contextMock.sendResponse(new HttpTransportResponse(httpResponse));
+        contextControl.setMatcher(MockControl.ALWAYS_MATCHER);
 
         replayMockControls();
 
@@ -148,21 +148,22 @@ public class MessageEndpointHandlerAdapterTest extends TestCase {
         httpRequest.setCharacterEncoding("UTF-8");
         endpointMock.invoke(null);
         endpointControl.setMatcher(MockControl.ALWAYS_MATCHER);
-        factoryMock.createContext(new HttpTransportRequest(httpRequest));
+        factoryMock.createContext(new MockTransportContext());
         factoryControl.setMatcher(MockControl.ALWAYS_MATCHER);
         factoryControl.setReturnValue(contextMock);
         contextControl.expectAndReturn(contextMock.hasResponse(), true);
         contextControl.expectAndReturn(contextMock.getResponse(), messageMock);
         messageControl.expectAndReturn(messageMock.getSoapBody(), bodyMock);
         bodyControl.expectAndReturn(bodyMock.hasFault(), true);
-        messageMock.writeTo(new HttpTransportResponse(httpResponse));
-        messageControl.setMatcher(MockControl.ALWAYS_MATCHER);
+        contextMock.sendResponse(null);
+        contextControl.setMatcher(MockControl.ALWAYS_MATCHER);
 
         replayMockControls();
 
         adapter.handle(httpRequest, httpResponse, endpointMock);
 
-        assertEquals("Invalid status code on response", HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+        assertEquals("Invalid status code on response",
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                 httpResponse.getStatus());
         verifyMockControls();
     }
@@ -175,7 +176,7 @@ public class MessageEndpointHandlerAdapterTest extends TestCase {
         endpointMock.invoke(null);
         endpointControl.setMatcher(MockControl.ALWAYS_MATCHER);
         endpointControl.setThrowable(new NoEndpointFoundException(null));
-        factoryMock.createContext(new HttpTransportRequest(httpRequest));
+        factoryMock.createContext(new MockTransportContext());
         factoryControl.setMatcher(MockControl.ALWAYS_MATCHER);
         factoryControl.setReturnValue(contextMock);
 

@@ -39,12 +39,10 @@ public abstract class AbstractSoapBodyTestCase extends XMLTestCase {
     protected abstract SoapBody createSoapBody() throws Exception;
 
     public void testPayload() throws Exception {
-        String payload = "<payload/>";
+        String payload = "<payload xmlns='http://www.springframework.org' />";
         StringSource contents = new StringSource(payload);
         transformer.transform(contents, soapBody.getPayloadResult());
-        StringResult result = new StringResult();
-        transformer.transform(soapBody.getPayloadSource(), result);
-        assertXMLEqual("Invalid payload", payload, result.toString());
+        assertPayloadEqual(payload);
     }
 
     public void testNoFault() throws Exception {
@@ -52,10 +50,16 @@ public abstract class AbstractSoapBodyTestCase extends XMLTestCase {
     }
 
     public void testAddFaultWithExistingPayload() throws Exception {
-        StringSource contents = new StringSource("<payload/>");
+        StringSource contents = new StringSource("<payload xmlns='http://www.springframework.org' />");
         transformer.transform(contents, soapBody.getPayloadResult());
         soapBody.addMustUnderstandFault("faultString", Locale.ENGLISH);
         assertTrue("Body has no fault", soapBody.hasFault());
+    }
+
+    protected void assertPayloadEqual(String expectedPayload) throws Exception {
+        StringResult result = new StringResult();
+        transformer.transform(soapBody.getPayloadSource(), result);
+        assertXMLEqual("Invalid payload contents", expectedPayload, result.toString());
     }
 
 }

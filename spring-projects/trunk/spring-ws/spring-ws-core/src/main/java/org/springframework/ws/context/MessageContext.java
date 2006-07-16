@@ -16,12 +16,20 @@
 
 package org.springframework.ws.context;
 
+import java.io.IOException;
+
 import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.transport.TransportResponse;
 
 /**
- * Context holder for message requests. Contains both the message request as well as the response.
+ * Context holder for message requests. Contains both the message request as well as the response. Response message are
+ * usually lazily created
+ * <p/>
+ * <code>MessageContext</code> implementations are constructed using a <code>MessageContextFactory</code>, taking a
+ * <code>TransportContext</code> as a parameter.
  *
  * @author Arjen Poutsma
+ * @see MessageContextFactory#createContext(org.springframework.ws.transport.TransportContext)
  */
 public interface MessageContext {
 
@@ -33,7 +41,7 @@ public interface MessageContext {
     WebServiceMessage getRequest();
 
     /**
-     * Returns the response message. Creates a new response if no response was created.
+     * Returns the response message. Creates a new response if no response is present.
      *
      * @return the response message
      * @see #hasResponse()
@@ -46,6 +54,14 @@ public interface MessageContext {
      * @return <code>true</code> if this context has a response; <code>false</code> otherwise
      */
     boolean hasResponse();
+
+    /**
+     * Sends the response to the given transport response.
+     *
+     * @param transportResponse the transport used for sending
+     * @throws IOException if an I/O exception occurs
+     */
+    void sendResponse(TransportResponse transportResponse) throws IOException;
 
     /**
      * Sets the name and value of a property associated with the <code>MessageContext</code>. If the

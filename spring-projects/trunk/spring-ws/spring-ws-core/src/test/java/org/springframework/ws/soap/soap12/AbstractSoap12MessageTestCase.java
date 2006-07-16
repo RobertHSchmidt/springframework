@@ -19,9 +19,6 @@ package org.springframework.ws.soap.soap12;
 import java.io.ByteArrayOutputStream;
 
 import junit.framework.Assert;
-
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamSource;
 import org.springframework.ws.soap.AbstractSoapMessageTestCase;
 import org.springframework.ws.soap.SoapVersion;
 
@@ -38,24 +35,5 @@ public abstract class AbstractSoap12MessageTestCase extends AbstractSoapMessageT
                 new String(outputStream.toByteArray(), "UTF-8"));
     }
 
-    public void testWriteToTransportResponse() throws Exception {
-        MockTransportResponse response = new MockTransportResponse();
-        soapMessage.writeTo(response);
-        assertXMLEqual("<Envelope xmlns='http://www.w3.org/2003/05/soap-envelope'><Header/><Body/></Envelope>",
-                response.getContents());
-        assertTrue("Invalid Content-Type set",
-                response.getHeaders().getProperty("Content-Type").indexOf(SoapVersion.SOAP_12.getContentType()) != -1);
-    }
-
-    public void testWriteToTransportResponseAttachment() throws Exception {
-        InputStreamSource inputStreamSource = new ByteArrayResource("contents".getBytes("UTF-8"));
-        soapMessage.addAttachment(inputStreamSource, "text/plain");
-        MockTransportResponse response = new MockTransportResponse();
-        soapMessage.writeTo(response);
-        assertTrue("Invalid Content-Type set",
-                response.getHeaders().getProperty("Content-Type").indexOf("multipart/related") != -1);
-        assertTrue("Invalid Content-Type set",
-                response.getHeaders().getProperty("Content-Type").indexOf(SoapVersion.SOAP_12.getContentType()) != -1);
-    }
 
 }

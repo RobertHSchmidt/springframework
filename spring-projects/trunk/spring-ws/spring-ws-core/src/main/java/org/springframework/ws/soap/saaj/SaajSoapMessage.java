@@ -26,7 +26,6 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
@@ -42,7 +41,6 @@ import org.springframework.ws.soap.AttachmentException;
 import org.springframework.ws.soap.SoapEnvelope;
 import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.saaj.support.SaajUtils;
-import org.springframework.ws.transport.TransportResponse;
 
 /**
  * SAAJ-specific implementation of the <code>SoapMessage</code> interface. Accessed via the
@@ -103,22 +101,6 @@ public class SaajSoapMessage extends AbstractSoapMessage {
         }
         catch (SOAPException ex) {
             throw new SaajSoapMessageException("Could not write message to OutputStream: " + ex.getMessage(), ex);
-        }
-    }
-
-    public void writeTo(TransportResponse response) throws IOException {
-        try {
-            if (saajMessage.saveRequired()) {
-                saajMessage.saveChanges();
-            }
-            for (Iterator iterator = saajMessage.getMimeHeaders().getAllHeaders(); iterator.hasNext();) {
-                MimeHeader mimeHeader = (MimeHeader) iterator.next();
-                response.addHeader(mimeHeader.getName(), mimeHeader.getValue());
-            }
-            saajMessage.writeTo(response.getOutputStream());
-        }
-        catch (SOAPException ex) {
-            throw new SaajSoapMessageException("Could not write message to TransportResponse: " + ex.getMessage(), ex);
         }
     }
 

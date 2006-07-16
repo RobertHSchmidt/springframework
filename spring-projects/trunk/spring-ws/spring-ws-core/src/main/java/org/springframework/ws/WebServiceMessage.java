@@ -18,11 +18,8 @@ package org.springframework.ws;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
-
-import org.springframework.ws.transport.TransportResponse;
 
 /**
  * Represents a protocol agnostic XML message. Contains methods that provide access to the payload of the message.
@@ -57,11 +54,4 @@ public interface WebServiceMessage {
      */
     void writeTo(OutputStream outputStream) throws IOException;
 
-    /**
-     * Writes the entire message to the given transport response.
-     *
-     * @param response the response to write to
-     * @throws IOException if an I/O exception occurs
-     */
-    void writeTo(TransportResponse response) throws IOException;
 }

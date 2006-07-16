@@ -17,21 +17,14 @@
 package org.springframework.ws.soap;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
-import java.util.Properties;
-
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
 import org.custommonkey.xmlunit.XMLTestCase;
-
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.ws.transport.TransportResponse;
 import org.springframework.xml.transform.StringResult;
 import org.springframework.xml.transform.StringSource;
 
@@ -50,7 +43,7 @@ public abstract class AbstractSoapMessageTestCase extends XMLTestCase {
     protected abstract SoapMessage createSoapMessage() throws Exception;
 
     public void testPayload() throws Exception {
-        String payload = "<payload/>";
+        String payload = "<payload xmlns='http://www.springframework.org'/>";
         StringSource contents = new StringSource(payload);
         transformer.transform(contents, soapMessage.getPayloadResult());
         StringResult result = new StringResult();
@@ -73,38 +66,6 @@ public abstract class AbstractSoapMessageTestCase extends XMLTestCase {
         String result = new String(os.toByteArray(), "UTF-8");
         assertEquals("Invalid contents", contents, result);
         assertFalse("Attachment iterator has too many elements", iterator.hasNext());
-    }
-
-    public static class MockTransportResponse implements TransportResponse {
-
-        private Properties headers = new Properties();
-
-        private ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        public void addHeader(String name, String value) {
-            String currentValue = headers.getProperty(name);
-            if (currentValue != null) {
-                value = currentValue + "," + value;
-            }
-            headers.setProperty(name, value);
-        }
-
-        public Properties getHeaders() {
-            return headers;
-        }
-
-        public String getContents() {
-            try {
-                return new String(outputStream.toByteArray(), "UTF-8");
-            }
-            catch (UnsupportedEncodingException e) {
-                return "";
-            }
-        }
-
-        public OutputStream getOutputStream() throws IOException {
-            return outputStream;
-        }
     }
 
 
