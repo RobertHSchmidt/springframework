@@ -16,11 +16,12 @@
 
 package org.springframework.xml.xpath;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
+import org.springframework.util.Assert;
 import org.springframework.xml.JaxpVersion;
 
 /**
@@ -78,22 +79,7 @@ public abstract class XPathExpressionFactory {
      */
     public static XPathExpression createXPathExpression(String expression)
             throws IllegalStateException, XPathParseException {
-        if (JaxpVersion.getJaxpVersion() >= JaxpVersion.JAXP_13) {
-            logger.debug("Creating [javax.xml.xpath.XPathExpression]");
-            return Jaxp13XPathExpressionFactory.createXPathExpression(expression);
-        }
-        else if (jaxenAvailable) {
-            logger.debug("Creating [org.jaxen.XPath]");
-            return JaxenXPathExpressionFactory.createXPathExpression(expression);
-        }
-        else if (xalanXPathAvailable) {
-            logger.debug("Creating [org.apache.xpath.XPath]");
-            return XalanXPathExpressionFactory.createXPathExpression(expression);
-        }
-        else {
-            throw new IllegalStateException(
-                    "Could not create XPathExpression: could not locate JAXP 1.3, Resin, Xalan on the class path");
-        }
+        return createXPathExpression(expression, Collections.EMPTY_MAP);
     }
 
     /**
@@ -108,6 +94,7 @@ public abstract class XPathExpressionFactory {
      */
     public static XPathExpression createXPathExpression(String expression, Map namespaces)
             throws IllegalStateException, XPathParseException {
+        Assert.hasLength(expression, "expression is empty");
         if (JaxpVersion.getJaxpVersion() >= JaxpVersion.JAXP_13) {
             logger.debug("Creating [javax.xml.xpath.XPathExpression]");
             return Jaxp13XPathExpressionFactory.createXPathExpression(expression, namespaces);

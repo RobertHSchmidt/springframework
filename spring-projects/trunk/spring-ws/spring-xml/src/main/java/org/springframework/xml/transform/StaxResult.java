@@ -16,6 +16,7 @@
 
 package org.springframework.xml.transform;
 
+import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.sax.SAXResult;
@@ -66,6 +67,18 @@ public class StaxResult extends SAXResult {
      */
     public StaxResult(XMLEventWriter eventWriter) {
         super.setHandler(new StaxEventContentHandler(eventWriter));
+        this.eventWriter = eventWriter;
+    }
+
+    /**
+     * Constructs a new instance of the <code>StaxResult</code> with the specified <code>XMLEventWriter</code> and
+     * <code>XMLEventFactory</code>.
+     *
+     * @param eventWriter  the <code>XMLEventWriter</code> to write to
+     * @param eventFactory the <code>XMLEventFactory</code> to use for creating events
+     */
+    public StaxResult(XMLEventWriter eventWriter, XMLEventFactory eventFactory) {
+        super.setHandler(new StaxEventContentHandler(eventWriter, eventFactory));
         this.eventWriter = eventWriter;
     }
 

@@ -17,11 +17,9 @@
 package org.springframework.xml.transform;
 
 import java.io.StringWriter;
-
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -46,7 +44,9 @@ public class StaxResultTest extends XMLTestCase {
         StringWriter stringWriter = new StringWriter();
         XMLStreamWriter streamWriter = inputFactory.createXMLStreamWriter(stringWriter);
         Source source = new StringSource(XML);
-        Result result = new StaxResult(streamWriter);
+        StaxResult result = new StaxResult(streamWriter);
+        assertEquals("Invalid streamWriter returned", streamWriter, result.getXMLStreamWriter());
+        assertNull("EventWriter returned", result.getXMLEventWriter());
         transformer.transform(source, result);
         assertXMLEqual("Invalid result", XML, stringWriter.toString());
     }
@@ -55,7 +55,9 @@ public class StaxResultTest extends XMLTestCase {
         StringWriter stringWriter = new StringWriter();
         XMLEventWriter eventWriter = inputFactory.createXMLEventWriter(stringWriter);
         Source source = new StringSource(XML);
-        Result result = new StaxResult(eventWriter);
+        StaxResult result = new StaxResult(eventWriter);
+        assertEquals("Invalid eventWriter returned", eventWriter, result.getXMLEventWriter());
+        assertNull("StreamWriter returned", result.getXMLStreamWriter());
         transformer.transform(source, result);
         assertXMLEqual("Invalid result", XML, stringWriter.toString());
     }

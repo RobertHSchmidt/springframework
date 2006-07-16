@@ -83,6 +83,8 @@ public abstract class XmlValidatorFactory {
     public static XmlValidator createValidator(Resource[] schemaResources, String schemaLanguage) throws IOException {
         Assert.notEmpty(schemaResources, "No resources given");
         Assert.hasLength(schemaLanguage, "No schema language provided");
+        Assert.isTrue(SCHEMA_W3C_XML.equals(schemaLanguage) || SCHEMA_RELAX_NG.equals(schemaLanguage),
+                "Invalid schema language: " + schemaLanguage);
         for (int i = 0; i < schemaResources.length; i++) {
             Assert.isTrue(schemaResources[i].exists(), "schema [" + schemaResources + "] does not exist");
         }
