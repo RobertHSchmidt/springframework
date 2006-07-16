@@ -17,12 +17,10 @@
 package org.springframework.xml.transform;
 
 import java.io.StringReader;
-
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Result;
-import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
@@ -44,7 +42,9 @@ public class StaxSourceTest extends XMLTestCase {
 
     public void testStreamReaderSource() throws Exception {
         XMLStreamReader streamReader = inputFactory.createXMLStreamReader(new StringReader(XML));
-        Source source = new StaxSource(streamReader);
+        StaxSource source = new StaxSource(streamReader);
+        assertEquals("Invalid streamReader returned", streamReader, source.getXMLStreamReader());
+        assertNull("EventReader returned", source.getXMLEventReader());
         Result result = new StringResult();
         transformer.transform(source, result);
         assertXMLEqual("Invalid result", XML, result.toString());
@@ -52,7 +52,9 @@ public class StaxSourceTest extends XMLTestCase {
 
     public void testEventReaderSource() throws Exception {
         XMLEventReader eventReader = inputFactory.createXMLEventReader(new StringReader(XML));
-        Source source = new StaxSource(eventReader);
+        StaxSource source = new StaxSource(eventReader);
+        assertEquals("Invalid eventReader returned", eventReader, source.getXMLEventReader());
+        assertNull("StreamReader returned", source.getXMLStreamReader());
         Result result = new StringResult();
         transformer.transform(source, result);
         assertXMLEqual("Invalid result", XML, result.toString());

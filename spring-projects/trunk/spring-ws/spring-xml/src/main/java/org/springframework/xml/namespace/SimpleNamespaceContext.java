@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 
@@ -85,12 +84,23 @@ public class SimpleNamespaceContext implements NamespaceContext {
     }
 
     /**
+     * Binds the given namespace as default namespace.
+     *
+     * @param namespaceUri the namespace uri
+     */
+    public void bindDefaultNamespaceUri(String namespaceUri) {
+        bindNamespaceUri(XMLConstants.DEFAULT_NS_PREFIX, namespaceUri);
+    }
+
+    /**
      * Binds the given prefix to the given namespace.
      *
      * @param prefix       the namespace prefix
      * @param namespaceUri the namespace uri
      */
     public void bindNamespaceUri(String prefix, String namespaceUri) {
+        Assert.notNull(prefix, "No prefix given");
+        Assert.notNull(namespaceUri, "No namespaceUri given");
         if (XMLConstants.DEFAULT_NS_PREFIX.equals(prefix)) {
             defaultNamespaceUri = namespaceUri;
         }
