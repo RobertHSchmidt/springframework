@@ -16,7 +16,10 @@
 
 package org.springframework.ws.soap.saaj;
 
+import java.io.IOException;
+import java.util.Iterator;
 import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeader;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
@@ -24,6 +27,7 @@ import org.springframework.util.Assert;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.SoapMessageCreationException;
 import org.springframework.ws.soap.context.AbstractSoapMessageContext;
+import org.springframework.ws.transport.TransportResponse;
 
 /**
  * SAAJ-specific implementation of the <code>SoapMessageContext</code> interface. Created by the
@@ -74,6 +78,27 @@ public class SaajSoapMessageContext extends AbstractSoapMessageContext {
      */
     public void setSaajResponse(SOAPMessage response) {
         setResponse(new SaajSoapMessage(response));
+    }
+
+    public void sendResponse(TransportResponse transportResponse) throws IOException {
+        if (hasResponse()) {
+            SOAPMessage response = getSaajResponse();
+            try {
+                if (response.saveRequired()) {
+                    response.saveChanges();
+                }
+                for (Iterator iterator = response.getMimeHeaders().getAllHeaders(); iterator.hasNext();) {
+                    MimeHeader mimeHeader = (MimeHeader) iterator.next();
+                    transportResponse.addHeader(mimeHeader.getName(), mimeHeader.getValue());
+                }
+                response.writeTo(transportResponse.getOutputStream());
+            }
+            catch (SOAPException ex) {
+                throw new SaajSoapMessageException("Could not write message to TransportResponse: " + ex.getMessage(),
+                        ex);
+            }
+
+        }
     }
 
     protected SoapMessage createSoapMessage() {

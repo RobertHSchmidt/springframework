@@ -18,7 +18,6 @@ package org.springframework.ws.transport.http;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.ws.transport.TransportResponse;
@@ -41,6 +40,9 @@ public class HttpTransportResponse implements TransportResponse {
         this.response = response;
     }
 
+    /**
+     * Returns the wrapped <code>HttpServletResponse</code>.
+     */
     public HttpServletResponse getHttpServletResponse() {
         return response;
     }

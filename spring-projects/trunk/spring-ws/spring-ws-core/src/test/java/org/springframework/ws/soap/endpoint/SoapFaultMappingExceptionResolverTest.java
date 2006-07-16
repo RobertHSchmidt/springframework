@@ -40,9 +40,11 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
 
     public void testGetDepth() throws Exception {
         assertEquals("Invalid depth for Exception", 0, resolver.getDepth("java.lang.Exception", new Exception()));
-        assertEquals("Invalid depth for IllegalArgumentException", 2,
+        assertEquals("Invalid depth for IllegalArgumentException",
+                2,
                 resolver.getDepth("java.lang.Exception", new IllegalArgumentException()));
-        assertEquals("Invalid depth for IllegalStateException", -1,
+        assertEquals("Invalid depth for IllegalStateException",
+                -1,
                 resolver.getDepth("IllegalArgumentException", new IllegalStateException()));
     }
 
@@ -62,7 +64,9 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
         SoapMessage response = context.getSoapResponse();
         assertTrue("Resonse has no fault", response.getSoapBody().hasFault());
         Soap11Fault fault = (Soap11Fault) response.getSoapBody().getFault();
-        assertEquals("Invalid fault code on fault", SoapVersion.SOAP_11.getSenderFaultName(), fault.getFaultCode());
+        assertEquals("Invalid fault code on fault",
+                SoapVersion.SOAP_11.getClientOrSenderFaultName(),
+                fault.getFaultCode());
         assertEquals("Invalid fault string on fault", "Client error", fault.getFaultString());
         assertNull("Detail on fault", fault.getFaultDetail());
     }
@@ -83,7 +87,9 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
         SoapMessage response = context.getSoapResponse();
         assertTrue("Resonse has no fault", response.getSoapBody().hasFault());
         Soap12Fault fault = (Soap12Fault) response.getSoapBody().getFault();
-        assertEquals("Invalid fault code on fault", SoapVersion.SOAP_12.getSenderFaultName(), fault.getFaultCode());
+        assertEquals("Invalid fault code on fault",
+                SoapVersion.SOAP_12.getClientOrSenderFaultName(),
+                fault.getFaultCode());
         assertEquals("Invalid fault string on fault", "Sender error", fault.getFaultReasonText(Locale.ENGLISH));
         assertNull("Detail on fault", fault.getFaultDetail());
     }
@@ -104,7 +110,9 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
         SoapMessage response = context.getSoapResponse();
         assertTrue("Resonse has no fault", response.getSoapBody().hasFault());
         Soap11Fault fault = (Soap11Fault) response.getSoapBody().getFault();
-        assertEquals("Invalid fault code on fault", SoapVersion.SOAP_11.getReceiverFaultName(), fault.getFaultCode());
+        assertEquals("Invalid fault code on fault",
+                SoapVersion.SOAP_11.getServerOrReceiverFaultName(),
+                fault.getFaultCode());
         assertEquals("Invalid fault string on fault", "Server error", fault.getFaultString());
         assertNull("Detail on fault", fault.getFaultDetail());
     }
@@ -125,7 +133,9 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
         SoapMessage response = context.getSoapResponse();
         assertTrue("Resonse has no fault", response.getSoapBody().hasFault());
         Soap12Fault fault = (Soap12Fault) response.getSoapBody().getFault();
-        assertEquals("Invalid fault code on fault", SoapVersion.SOAP_12.getReceiverFaultName(), fault.getFaultCode());
+        assertEquals("Invalid fault code on fault",
+                SoapVersion.SOAP_12.getServerOrReceiverFaultName(),
+                fault.getFaultCode());
         assertEquals("Invalid fault string on fault", "Receiver error", fault.getFaultReasonText(Locale.ENGLISH));
         assertNull("Detail on fault", fault.getFaultDetail());
     }
@@ -148,7 +158,9 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
         SoapMessage response = context.getSoapResponse();
         assertTrue("Resonse has no fault", response.getSoapBody().hasFault());
         Soap11Fault fault = (Soap11Fault) response.getSoapBody().getFault();
-        assertEquals("Invalid fault code on fault", SoapVersion.SOAP_11.getSenderFaultName(), fault.getFaultCode());
+        assertEquals("Invalid fault code on fault",
+                SoapVersion.SOAP_11.getClientOrSenderFaultName(),
+                fault.getFaultCode());
         assertEquals("Invalid fault string on fault", "faultstring", fault.getFaultString());
         assertNull("Detail on fault", fault.getFaultDetail());
     }

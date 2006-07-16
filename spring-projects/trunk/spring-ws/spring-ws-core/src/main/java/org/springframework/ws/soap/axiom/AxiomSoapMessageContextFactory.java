@@ -19,7 +19,6 @@ package org.springframework.ws.soap.axiom;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
-
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -34,23 +33,25 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.context.MessageContextFactory;
 import org.springframework.ws.soap.SoapMessageCreationException;
+import org.springframework.ws.transport.TransportContext;
 import org.springframework.ws.transport.TransportRequest;
 
 /**
- * SAAJ-specific implementation of the <code>MessageContextFactory</code> interface. Creates a
+ * Axiom-specific implementation of the <code>MessageContextFactory</code> interface. Creates a
  * <code>AxiomSoapMessageContext</code>.
  * <p/>
- * Mostly copied from <code>org.apache.axis2.transport.http.HTTPTransportUtils</code> and
- * <code>org.apache.axis2.transport.TransportUtils</code>, since they are not part of the AXIOM distribution.
+ * Mostly derived from <code>org.apache.axis2.transport.http.HTTPTransportUtils</code> and
+ * <code>org.apache.axis2.transport.TransportUtils</code>, which we cannot use since they are not part of the Axiom
+ * distribution.
  *
  * @author Arjen Poutsma
  * @see AxiomSoapMessageContext
+ * @see org.apache.axiom;
  */
 public class AxiomSoapMessageContextFactory implements MessageContextFactory, InitializingBean {
 
@@ -70,7 +71,8 @@ public class AxiomSoapMessageContextFactory implements MessageContextFactory, In
         inputFactory = createXmlInputFactory();
     }
 
-    public MessageContext createContext(TransportRequest transportRequest) throws IOException {
+    public MessageContext createContext(TransportContext transportContext) throws IOException {
+        TransportRequest transportRequest = transportContext.getTransportRequest();
         Iterator iterator = transportRequest.getHeaders(CONTENT_TYPE_HEADER);
         Assert.isTrue(iterator.hasNext(), "No " + CONTENT_TYPE_HEADER + " header present of TransportRequest");
         String contentType = (String) iterator.next();
@@ -102,8 +104,10 @@ public class AxiomSoapMessageContextFactory implements MessageContextFactory, In
                                                            String soapAction) throws XMLStreamException {
         Attachments attachments = new Attachments(inputStream, contentType);
         if (attachments.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
-            return createSoapContext(attachments.getSOAPPartInputStream(), attachments.getSOAPPartContentType(),
-                    soapAction, attachments);
+            return createSoapContext(attachments.getSOAPPartInputStream(),
+                    attachments.getSOAPPartContentType(),
+                    soapAction,
+                    attachments);
         }
         else if (attachments.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)) {
             String soapPartContentType = attachments.getSOAPPartContentType();
@@ -196,16 +200,16 @@ public class AxiomSoapMessageContextFactory implements MessageContextFactory, In
         if (index == -1) {
             return DEFAULT_CHAR_SET_ENCODING;
         }
-        int indexOfEq = contentType.indexOf("=", index);
+        int idx = contentType.indexOf("=", index);
 
-        int indexOfSemiColon = contentType.indexOf(";", indexOfEq);
+        int indexOfSemiColon = contentType.indexOf(";", idx);
         String value;
 
         if (indexOfSemiColon > 0) {
-            value = (contentType.substring(indexOfEq + 1, indexOfSemiColon));
+            value = contentType.substring(idx + 1, indexOfSemiColon);
         }
         else {
-            value = (contentType.substring(indexOfEq + 1, contentType.length())).trim();
+            value = contentType.substring(idx + 1, contentType.length()).trim();
         }
         if (value.charAt(0) == '"' && value.charAt(value.length() - 1) == '"') {
             return value.substring(1, value.length() - 1);

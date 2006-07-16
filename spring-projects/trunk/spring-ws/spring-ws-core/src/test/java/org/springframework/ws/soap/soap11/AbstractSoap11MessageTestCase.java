@@ -19,15 +19,9 @@ package org.springframework.ws.soap.soap11;
 import java.io.ByteArrayOutputStream;
 
 import junit.framework.Assert;
-
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamSource;
 import org.springframework.ws.soap.AbstractSoapMessageTestCase;
 import org.springframework.ws.soap.SoapVersion;
 
-/**
- * @author Arjen Poutsma
- */
 public abstract class AbstractSoap11MessageTestCase extends AbstractSoapMessageTestCase {
 
     public void testGetVersion() throws Exception {
@@ -39,26 +33,6 @@ public abstract class AbstractSoap11MessageTestCase extends AbstractSoapMessageT
         soapMessage.writeTo(outputStream);
         assertXMLEqual("<Envelope xmlns='http://schemas.xmlsoap.org/soap/envelope/'><Header/><Body/></Envelope>",
                 new String(outputStream.toByteArray(), "UTF-8"));
-    }
-
-    public void testWriteToTransportResponse() throws Exception {
-        MockTransportResponse response = new MockTransportResponse();
-        soapMessage.writeTo(response);
-        assertXMLEqual("<Envelope xmlns='http://schemas.xmlsoap.org/soap/envelope/'><Header/><Body/></Envelope>",
-                response.getContents());
-        assertTrue("Invalid Content-Type set",
-                response.getHeaders().getProperty("Content-Type").indexOf(SoapVersion.SOAP_11.getContentType()) != -1);
-    }
-
-    public void testWriteToTransportResponseAttachment() throws Exception {
-        InputStreamSource inputStreamSource = new ByteArrayResource("contents".getBytes("UTF-8"));
-        soapMessage.addAttachment(inputStreamSource, "text/plain");
-        MockTransportResponse response = new MockTransportResponse();
-        soapMessage.writeTo(response);
-        assertTrue("Invalid Content-Type set",
-                response.getHeaders().getProperty("Content-Type").indexOf("multipart/related") != -1);
-        assertTrue("Invalid Content-Type set",
-                response.getHeaders().getProperty("Content-Type").indexOf(SoapVersion.SOAP_11.getContentType()) != -1);
     }
 
 }

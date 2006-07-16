@@ -17,13 +17,11 @@
 package org.springframework.ws.soap;
 
 import java.util.Iterator;
-
 import javax.xml.namespace.QName;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
 import org.custommonkey.xmlunit.XMLTestCase;
-
 import org.springframework.xml.transform.StringResult;
 import org.springframework.xml.transform.StringSource;
 
@@ -45,7 +43,17 @@ public abstract class AbstractSoapHeaderTestCase extends XMLTestCase {
         QName qName = new QName("http://www.springframework.org", "localName", "spring");
         SoapHeaderElement headerElement = soapHeader.addHeaderElement(qName);
         assertEquals("Invalid qName for element", qName, headerElement.getName());
-        headerElement.addAttribute(new QName("http://www.springframework.org", "attribute", "spring"), "value");
+        String payload = "<content xmlns='http://www.springframework.org'/>";
+        assertNotNull("No SoapHeaderElement returned", headerElement);
+        transformer.transform(new StringSource(payload), headerElement.getResult());
+        assertHeaderElementEqual(headerElement,
+                "<spring:localName xmlns:spring='http://www.springframework.org'><spring:content/></spring:localName>");
+    }
+
+    public void testExamineAllHeaderElement() throws Exception {
+        QName qName = new QName("http://www.springframework.org", "localName", "spring");
+        SoapHeaderElement headerElement = soapHeader.addHeaderElement(qName);
+        assertEquals("Invalid qName for element", qName, headerElement.getName());
         String payload = "<content xmlns='http://www.springframework.org'/>";
         assertNotNull("No SoapHeaderElement returned", headerElement);
         transformer.transform(new StringSource(payload), headerElement.getResult());
@@ -57,8 +65,8 @@ public abstract class AbstractSoapHeaderTestCase extends XMLTestCase {
         StringResult result = new StringResult();
         transformer.transform(headerElement.getSource(), result);
         assertXMLEqual("Invalid contents of header element",
-                "<spring:localName xmlns:spring='http://www.springframework.org' spring:attribute='value'>" +
-                        "<spring:content/></spring:localName>", result.toString());
+                "<spring:localName xmlns:spring='http://www.springframework.org'><spring:content/></spring:localName>",
+                result.toString());
         assertFalse("header element iterator has too many elements", iterator.hasNext());
     }
 
@@ -66,18 +74,27 @@ public abstract class AbstractSoapHeaderTestCase extends XMLTestCase {
         QName qName1 = new QName("http://www.springframework.org", "localName1", "spring");
         SoapHeaderElement headerElement1 = soapHeader.addHeaderElement(qName1);
         headerElement1.setMustUnderstand(true);
-        headerElement1.setRole("role1");
+        headerElement1.setActorOrRole("role1");
         QName qName2 = new QName("http://www.springframework.org", "localName2", "spring");
         SoapHeaderElement headerElement2 = soapHeader.addHeaderElement(qName2);
         headerElement2.setMustUnderstand(true);
-        headerElement2.setRole("role2");
+        headerElement2.setActorOrRole("role2");
         Iterator iterator = soapHeader.examineMustUnderstandHeaderElements("role1");
         assertNotNull("header element iterator is null", iterator);
         assertTrue("header element iterator has no elements", iterator.hasNext());
         SoapHeaderElement headerElement = (SoapHeaderElement) iterator.next();
         assertEquals("Invalid name on header element", qName1, headerElement.getName());
         assertTrue("MustUnderstand not set on header element", headerElement.getMustUnderstand());
-        assertEquals("Invalid role on header element", "role1", headerElement.getRole());
+        assertEquals("Invalid role on header element", "role1", headerElement.getActorOrRole());
         assertFalse("header element iterator has too many elements", iterator.hasNext());
     }
+
+    protected void assertHeaderElementEqual(SoapHeaderElement headerElement, String expected) throws Exception {
+        StringResult result = new StringResult();
+        transformer.transform(headerElement.getSource(), result);
+        assertXMLEqual("Invalid contents of header element",
+                "<spring:localName xmlns:spring='http://www.springframework.org'><spring:content/></spring:localName>",
+                result.toString());
+    }
+
 }

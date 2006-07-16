@@ -101,13 +101,13 @@ public class SoapMessageDispatcher extends MessageDispatcher {
      * Determines the roles for a specific SOAP invocation chain. Gets the roles specified on the chain, and adds the
      * SOAP-version specific 'next' role to it.
      *
-     * @see SoapVersion#getNextRoleUri()
+     * @see SoapVersion#getNextActorOrRoleUri()
      */
     protected String[] getRoles(String[] mappedRoles, SoapVersion version) {
         if (mappedRoles == null) {
             mappedRoles = new String[0];
         }
-        return StringUtils.addStringToArray(mappedRoles, version.getNextRoleUri());
+        return StringUtils.addStringToArray(mappedRoles, version.getNextActorOrRoleUri());
     }
 
     /**

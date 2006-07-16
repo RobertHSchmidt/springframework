@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
-
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -34,7 +33,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.ws.WebServiceMessage;
-import org.springframework.ws.transport.TransportResponse;
 import org.springframework.xml.transform.StringSource;
 
 /**
@@ -47,7 +45,7 @@ public class MockWebServiceMessage implements WebServiceMessage {
     private final StringBuffer content;
 
     public MockWebServiceMessage() {
-        this.content = new StringBuffer();
+        content = new StringBuffer();
     }
 
     public MockWebServiceMessage(Source source) throws TransformerException {
@@ -74,7 +72,7 @@ public class MockWebServiceMessage implements WebServiceMessage {
         try {
             is = inputStreamSource.getInputStream();
             Reader reader = new InputStreamReader(is, "UTF-8");
-            this.content.replace(0, this.content.length(), FileCopyUtils.copyToString(reader));
+            content.replace(0, content.length(), FileCopyUtils.copyToString(reader));
         }
         finally {
             if (is != null) {
@@ -98,10 +96,6 @@ public class MockWebServiceMessage implements WebServiceMessage {
     public void writeTo(OutputStream outputStream) throws IOException {
         PrintWriter writer = new PrintWriter(outputStream);
         writer.write(content.toString());
-    }
-
-    public void writeTo(TransportResponse response) throws IOException {
-        writeTo(response.getOutputStream());
     }
 
     private class StringBufferWriter extends Writer {
@@ -129,7 +123,7 @@ public class MockWebServiceMessage implements WebServiceMessage {
         }
 
         public void write(char cbuf[], int off, int len) {
-            if ((off < 0) || (off > cbuf.length) || (len < 0) || ((off + len) > cbuf.length) || ((off + len) < 0)) {
+            if (off < 0 || off > cbuf.length || len < 0 || off + len > cbuf.length || off + len < 0) {
                 throw new IndexOutOfBoundsException();
             }
             else if (len == 0) {

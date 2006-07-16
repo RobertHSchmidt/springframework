@@ -25,14 +25,15 @@ import org.springframework.xml.transform.StringResult;
 public abstract class AbstractSoap11EnvelopeTestCase extends AbstractSoapEnvelopeTestCase {
 
     public void testGetName() throws Exception {
-        assertEquals("Invalid qualified name", new QName(SoapVersion.SOAP_11.getEnvelopeNamespaceUri(), "Envelope"),
+        assertEquals("Invalid qualified name",
+                new QName(SoapVersion.SOAP_11.getEnvelopeNamespaceUri(), "Envelope"),
                 soapEnvelope.getName());
     }
 
-    public void testGetSource() throws Exception {
+    public void testGetContent() throws Exception {
         StringResult result = new StringResult();
         transformer.transform(soapEnvelope.getSource(), result);
-        assertXMLEqual("<Envelope xmlns='http://schemas.xmlsoap.org/soap/envelope/'><Header/>" + "<Body/></Envelope>",
+        assertXMLEqual("<Envelope xmlns='http://schemas.xmlsoap.org/soap/envelope/'><Header/><Body/></Envelope>",
                 result.toString());
     }
 

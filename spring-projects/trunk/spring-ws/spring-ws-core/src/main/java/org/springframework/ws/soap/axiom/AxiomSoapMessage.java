@@ -36,7 +36,6 @@ import org.springframework.core.io.InputStreamSource;
 import org.springframework.ws.soap.AbstractSoapMessage;
 import org.springframework.ws.soap.Attachment;
 import org.springframework.ws.soap.SoapEnvelope;
-import org.springframework.ws.transport.TransportResponse;
 
 /**
  * AXIOM-specific implementation of the <code>SoapMessage</code> interface. Accessed via the
@@ -147,13 +146,6 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
         catch (OMException ex) {
             throw new AxiomSoapMessageException("Could not write message to OutputStream: " + ex.getMessage(), ex);
         }
-    }
-
-    public void writeTo(TransportResponse response) throws IOException {
-        String contentType = getVersion().getContentType();
-        contentType += "; charset=\"" + axiomMessage.getCharsetEncoding() + "\"";
-        response.addHeader("Content-Type", contentType);
-        writeTo(response.getOutputStream());
     }
 
     /**

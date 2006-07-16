@@ -18,7 +18,7 @@ package org.springframework.ws.context;
 
 import java.io.IOException;
 
-import org.springframework.ws.transport.TransportRequest;
+import org.springframework.ws.transport.TransportContext;
 
 /**
  * The <code>MessageContextFactory</code> serves as factory for <code>MessageContext</code>s. Allows creation of
@@ -29,13 +29,17 @@ import org.springframework.ws.transport.TransportRequest;
 public interface MessageContextFactory {
 
     /**
-     * Creates a <code>MessageContext</code> based on the given transport request. Implementations use the request's
-     * input stream to create a request message, and possibly copy the request headers to the message.
+     * Creates a <code>MessageContext</code> based on the given transport context. Implementations use the context
+     * request's input stream to create a request message, and possibly copy the request headers to the message.
+     * <p/>
+     * Implementations are free to store the transport context for later reference. For instance, streaming
+     * implementations of <code>MessageContextFactory</code> might use the transport response to directly write a
+     * response message.
      *
-     * @param request the incoming request
+     * @param transportContext the transport context which contains the request
      * @return the created message context
      * @throws IOException if an I/O exception occurs
      */
-    MessageContext createContext(TransportRequest request) throws IOException;
+    MessageContext createContext(TransportContext transportContext) throws IOException;
 
 }

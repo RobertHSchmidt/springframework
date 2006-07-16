@@ -9,7 +9,7 @@ public class AxiomSoap12MessageContextFactoryTest extends AbstractSoap12MessageC
         return new AxiomSoapMessageContextFactory();
     }
 
-    public void testCreateMessageFromHttpServletRequestWithAttachment() throws Exception {
+    public void testCreateContextAttachments() throws Exception {
         // Axiom does not support SwA with SOAP 1.2
     }
 }

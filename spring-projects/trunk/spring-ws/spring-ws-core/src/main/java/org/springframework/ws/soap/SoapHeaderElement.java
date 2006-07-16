@@ -16,7 +16,6 @@
 
 package org.springframework.ws.soap;
 
-import javax.xml.namespace.QName;
 import javax.xml.transform.Result;
 
 /**
@@ -29,20 +28,20 @@ import javax.xml.transform.Result;
 public interface SoapHeaderElement extends SoapElement {
 
     /**
-     * Returns the role or actor for this header element. In a SOAP 1.1 compliant message, this will read the
+     * Returns the actor or role for this header element. In a SOAP 1.1 compliant message, this will read the
      * <code>actor</code> attribute; in SOAP 1.2, the <code>role</code> attribute.
      *
      * @return the role of the header
      */
-    String getRole() throws SoapHeaderException;
+    String getActorOrRole() throws SoapHeaderException;
 
     /**
-     * Sets the role or actor for this header element. In a SOAP 1.1 compliant message, this will result in an
-     * <code>actor</code> attribute being set; in SOAP 1.2, a <code>role</code> attribute.
+     * Sets the actor or role for this header element. In a SOAP 1.1 compliant message, this will result in an
+     * <code>actor</code> attribute being set; in SOAP 1.2, a <code>actorOrRole</code> attribute.
      *
-     * @param role the role value
+     * @param actorOrRole the actorOrRole value
      */
-    void setRole(String role) throws SoapHeaderException;
+    void setActorOrRole(String actorOrRole) throws SoapHeaderException;
 
     /**
      * Indicates whether the <code>mustUnderstand</code> attribute for this header element is set.
@@ -65,11 +64,4 @@ public interface SoapHeaderElement extends SoapElement {
      */
     Result getResult() throws SoapHeaderException;
 
-    /**
-     * Adds an attribute with the specified qualified name and value to this header element.
-     *
-     * @param name  the name of the attribute
-     * @param value the value of the attribute
-     */
-    void addAttribute(QName name, String value) throws SoapHeaderException;
 }

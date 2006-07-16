@@ -63,6 +63,10 @@ public class HttpTransportRequest implements TransportRequest {
         return new EnumerationIterator(request.getHeaderNames());
     }
 
+    /**
+     * Private static class that adapts a header enumeration provided by the HttpServletRequest and provides it as an
+     * iterator.
+     */
     private static class EnumerationIterator implements Iterator {
 
         private final Enumeration enumeration;

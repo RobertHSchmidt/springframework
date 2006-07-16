@@ -20,6 +20,7 @@ import java.util.Locale;
 import javax.xml.namespace.QName;
 
 import org.springframework.ws.soap.SoapBody;
+import org.springframework.ws.soap.SoapFaultException;
 
 /**
  * Subinterface of <code>SoapBody</code> that exposes SOAP 1.1 functionality. Necessary because SOAP 1.1 differs from
@@ -40,6 +41,6 @@ public interface Soap11Body extends SoapBody {
      * @return the added <faultCode>Soap11Fault</faultCode>
      * @throws IllegalArgumentException if the fault faultCode is not fully qualified
      */
-    Soap11Fault addFault(QName faultCode, String faultString, Locale faultStringLocale);
+    Soap11Fault addFault(QName faultCode, String faultString, Locale faultStringLocale) throws SoapFaultException;
 
 }

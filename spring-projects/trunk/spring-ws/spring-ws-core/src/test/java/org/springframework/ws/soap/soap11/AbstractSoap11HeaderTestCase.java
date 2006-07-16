@@ -25,14 +25,16 @@ import org.springframework.xml.transform.StringResult;
 public abstract class AbstractSoap11HeaderTestCase extends AbstractSoapHeaderTestCase {
 
     public void testGetName() throws Exception {
-        assertEquals("Invalid qualified name", new QName(SoapVersion.SOAP_11.getEnvelopeNamespaceUri(), "Header"),
+        assertEquals("Invalid qualified name",
+                new QName(SoapVersion.SOAP_11.getEnvelopeNamespaceUri(), "Header"),
                 soapHeader.getName());
     }
 
     public void testGetSource() throws Exception {
         StringResult result = new StringResult();
         transformer.transform(soapHeader.getSource(), result);
-        assertXMLEqual("Invalid contents of header", "<Header xmlns='http://schemas.xmlsoap.org/soap/envelope/' />",
+        assertXMLEqual("Invalid contents of header",
+                "<SOAP-ENV:Header xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' />",
                 result.toString());
     }
 

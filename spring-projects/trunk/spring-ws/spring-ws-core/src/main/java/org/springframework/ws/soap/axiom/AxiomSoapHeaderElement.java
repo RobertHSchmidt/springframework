@@ -62,11 +62,11 @@ class AxiomSoapHeaderElement implements SoapHeaderElement {
 
     }
 
-    public String getRole() {
+    public String getActorOrRole() {
         return axiomHeaderBlock.getRole();
     }
 
-    public void setRole(String role) {
+    public void setActorOrRole(String role) {
         axiomHeaderBlock.setRole(role);
     }
 

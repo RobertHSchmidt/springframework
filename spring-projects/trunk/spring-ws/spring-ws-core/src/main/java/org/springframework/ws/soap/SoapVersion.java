@@ -58,6 +58,8 @@ public interface SoapVersion {
 
         private QName MUST_UNDERSTAND_FAULT_NAME = new QName(ENVELOPE_NAMESPACE_URI, "MustUnderstand");
 
+        private QName VERSION_MISMATCH_FAULT_NAME = new QName(ENVELOPE_NAMESPACE_URI, "VersionMismatch");
+
         public QName getBodyName() {
             return BODY_NAME;
         }
@@ -78,15 +80,15 @@ public interface SoapVersion {
             return HEADER_NAME;
         }
 
-        public String getNextRoleUri() {
+        public String getNextActorOrRoleUri() {
             return NEXT_ROLE_URI;
         }
 
-        public String getNoneRoleUri() {
+        public String getNoneActorOrRoleUri() {
             return "";
         }
 
-        public QName getReceiverFaultName() {
+        public QName getServerOrReceiverFaultName() {
             return SERVER_FAULT_NAME;
         }
 
@@ -94,11 +96,11 @@ public interface SoapVersion {
             return "";
         }
 
-        public QName getRoleName() {
+        public QName getActorOrRoleName() {
             return ACTOR_NAME;
         }
 
-        public QName getSenderFaultName() {
+        public QName getClientOrSenderFaultName() {
             return CLIENT_FAULT_NAME;
         }
 
@@ -112,6 +114,10 @@ public interface SoapVersion {
 
         public QName getMustUnderstandFaultName() {
             return MUST_UNDERSTAND_FAULT_NAME;
+        }
+
+        public QName getVersionMismatchFaultName() {
+            return VERSION_MISMATCH_FAULT_NAME;
         }
 
         public String toString() {
@@ -154,6 +160,8 @@ public interface SoapVersion {
 
         private QName MUST_UNDERSTAND_FAULT_NAME = new QName(ENVELOPE_NAMESPACE_URI, "MustUnderstand");
 
+        private QName VERSION_MISMATCH_FAULT_NAME = new QName(ENVELOPE_NAMESPACE_URI, "VersionMismatch");
+
         public QName getBodyName() {
             return BODY_NAME;
         }
@@ -174,15 +182,15 @@ public interface SoapVersion {
             return HEADER_NAME;
         }
 
-        public String getNextRoleUri() {
+        public String getNextActorOrRoleUri() {
             return NEXT_ROLE_URI;
         }
 
-        public String getNoneRoleUri() {
+        public String getNoneActorOrRoleUri() {
             return NONE_ROLE_URI;
         }
 
-        public QName getReceiverFaultName() {
+        public QName getServerOrReceiverFaultName() {
             return RECEIVER_FAULT_NAME;
         }
 
@@ -190,11 +198,11 @@ public interface SoapVersion {
             return ULTIMATE_RECEIVER_ROLE_URI;
         }
 
-        public QName getRoleName() {
+        public QName getActorOrRoleName() {
             return ROLE_NAME;
         }
 
-        public QName getSenderFaultName() {
+        public QName getClientOrSenderFaultName() {
             return SENDER_FAULT_NAME;
         }
 
@@ -210,8 +218,12 @@ public interface SoapVersion {
             return MUST_UNDERSTAND_FAULT_NAME;
         }
 
+        public QName getVersionMismatchFaultName() {
+            return VERSION_MISMATCH_FAULT_NAME;
+        }
+
         public String toString() {
-            return "SOAP 1.1";
+            return "SOAP 1.2";
         }
 
     };
@@ -255,12 +267,12 @@ public interface SoapVersion {
      * Returns the URI indicating that a header element is intended for the next SOAP application that processes the
      * message.
      */
-    String getNextRoleUri();
+    String getNextActorOrRoleUri();
 
     /**
      * Returns the URI indicating that a header element should never be directly processed.
      */
-    String getNoneRoleUri();
+    String getNoneActorOrRoleUri();
 
     /**
      * Returns the qualified name of the <code>MustUnderstand</code> SOAP Fault value.
@@ -270,17 +282,22 @@ public interface SoapVersion {
     /**
      * Returns the qualified name of the Receiver/Server SOAP Fault value.
      */
-    QName getReceiverFaultName();
+    QName getServerOrReceiverFaultName();
+
+    /**
+     * Returns the qualified name of the <code>VersionMismatch</code> SOAP Fault value.
+     */
+    QName getVersionMismatchFaultName();
 
     /**
      * Returns the qualified name of the SOAP <code>actor</code>/<code>role</code> attribute.
      */
-    QName getRoleName();
+    QName getActorOrRoleName();
 
     /**
      * Returns the qualified name of the Sender/Client SOAP Fault value.
      */
-    QName getSenderFaultName();
+    QName getClientOrSenderFaultName();
 
     /**
      * Returns the URI indicating that a header element should only be processed by nodes acting as the ultimate

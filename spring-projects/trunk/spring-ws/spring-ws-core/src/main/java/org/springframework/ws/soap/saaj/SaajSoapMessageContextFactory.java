@@ -33,6 +33,7 @@ import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.context.MessageContextFactory;
 import org.springframework.ws.soap.SoapMessageCreationException;
 import org.springframework.ws.soap.saaj.support.SaajUtils;
+import org.springframework.ws.transport.TransportContext;
 import org.springframework.ws.transport.TransportRequest;
 
 /**
@@ -93,7 +94,8 @@ public class SaajSoapMessageContextFactory implements MessageContextFactory, Ini
         }
     }
 
-    public MessageContext createContext(TransportRequest transportRequest) throws IOException {
+    public MessageContext createContext(TransportContext transportContext) throws IOException {
+        TransportRequest transportRequest = transportContext.getTransportRequest();
         MimeHeaders mimeHeaders = new MimeHeaders();
         for (Iterator headerNames = transportRequest.getHeaderNames(); headerNames.hasNext();) {
             String headerName = (String) headerNames.next();

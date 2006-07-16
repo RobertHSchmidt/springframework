@@ -53,11 +53,11 @@ class Saaj12SoapHeaderElement implements SoapHeaderElement {
         return new DOMSource(saajHeaderElement);
     }
 
-    public String getRole() {
+    public String getActorOrRole() {
         return saajHeaderElement.getActor();
     }
 
-    public void setRole(String role) {
+    public void setActorOrRole(String role) {
         saajHeaderElement.setActor(role);
     }
 

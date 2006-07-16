@@ -19,32 +19,33 @@ package org.springframework.ws.soap.context;
 import java.util.Properties;
 
 import org.springframework.ws.context.MessageContext;
+import org.springframework.ws.mock.MockTransportContext;
 import org.springframework.ws.soap.Attachment;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.SoapVersion;
 
 public abstract class AbstractSoap11MessageContextFactoryTestCase extends AbstractSoapMessageContextFactoryTestCase {
 
-    public void testCreateMessageFromHttpServletRequest() throws Exception {
+    public void testCreateContextNoAttachment() throws Exception {
         Properties headers = new Properties();
         headers.setProperty("Content-Type", "text/xml");
         headers.setProperty("SOAPAction", "\"Some-URI\"");
-        MockTransportRequest request = new MockTransportRequest(headers, "soap11.xml");
+        MockTransportContext transportContext = createTransportContext(headers, "soap11.xml");
 
-        MessageContext messageContext = contextFactory.createContext(request);
+        MessageContext messageContext = contextFactory.createContext(transportContext);
         SoapMessage requestMessage = (SoapMessage) messageContext.getRequest();
         assertNotNull("Request null", requestMessage);
         assertEquals("Invalid soap version", SoapVersion.SOAP_11, requestMessage.getVersion());
         assertEquals("Invalid soap action", "\"Some-URI\"", requestMessage.getSoapAction());
     }
 
-    public void testCreateMessageFromHttpServletRequestWithAttachment() throws Exception {
+    public void testCreateContextAttachment() throws Exception {
         Properties headers = new Properties();
         headers.setProperty("Content-Type",
                 "multipart/related; type=\"text/xml\"; boundary=\"----=_Part_0_11416420.1149699787554\"");
-        MockTransportRequest request = new MockTransportRequest(headers, "soap11-attachment.bin");
+        MockTransportContext transportContext = createTransportContext(headers, "soap11-attachment.bin");
 
-        MessageContext messageContext = contextFactory.createContext(request);
+        MessageContext messageContext = contextFactory.createContext(transportContext);
         SoapMessage requestMessage = (SoapMessage) messageContext.getRequest();
         assertEquals("Invalid soap version", SoapVersion.SOAP_11, requestMessage.getVersion());
         Attachment attachment = requestMessage.getAttachment("interface21");
