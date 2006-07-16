@@ -39,27 +39,33 @@
     </plugins>
     </build>
     <dependencies>
-        <!-- The following JEE dependencies can be changed from 'runtime' to provided if you're running the samples on a full-fledged J2EE application
+        <!-- Loggin dependencies -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- The following JEE dependencies can be changed from 'runtime' to 'provided' if you're running the samples on a full-fledged J2EE application
         server. They are required for running the samples on a Web container such as Tomcat -->
         <dependency>
             <groupId>javax.xml.soap</groupId>
             <artifactId>saaj-api</artifactId>
-            <scope>provided</scope>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <scope>provided</scope>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>javax.activation</groupId>
             <artifactId>activation</artifactId>
-            <scope>provided</scope>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.messaging.saaj</groupId>
             <artifactId>saaj-impl</artifactId>
-            <scope>provided</scope>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 </project>

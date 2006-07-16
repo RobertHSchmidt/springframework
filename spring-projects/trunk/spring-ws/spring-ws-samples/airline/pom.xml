@@ -153,12 +153,6 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>3.1.11</version>
         </dependency>
-        <!-- Loggin dependencies -->
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <scope>runtime</scope>
-        </dependency>
         <!-- Various dependencies -->
         <dependency>
             <groupId>joda-time</groupId>
