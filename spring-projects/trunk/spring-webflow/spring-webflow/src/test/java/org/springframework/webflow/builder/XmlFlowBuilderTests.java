@@ -101,6 +101,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertEquals("view1", (String)((ApplicationViewSelector)viewState1.getViewSelector()).getViewName()
 				.evaluateAgainst(null, null));
 		assertEquals(1, viewState1.getTransitionSet().size());
+		assertEquals(1, viewState1.getActionList().size());
 		context.setLastEvent(createEvent("event1"));
 		assertTrue(viewState1.getTransitionSet().hasMatchingTransition(context));
 		transition = viewState1.getRequiredTransition(context);
