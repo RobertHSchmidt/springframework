@@ -33,6 +33,9 @@ import org.springframework.webflow.support.FlowRedirect;
  * new execution of the <code>booking</code> flow, assuming a context path of
  * <code>/springair</code> and a servlet mapping of <code>/reservation/*</code>.
  * <p>
+ * This also allows for URLS to resume flow execution in the format:
+ * <code>http://${host}/${context}/${servlet}/${flowId}?_flowExecutionKey=&lt;key&gt;</code>
+ * 
  * Note: this implementation only works with <code>ExternalContext</code>
  * implementations that return a valid
  * {@link ExternalContext#getRequestPathInfo()} such as the
@@ -55,11 +58,24 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 		String extractedFilename = WebUtils.extractFilenameFromUrlPath(requestPathInfo);
 		return StringUtils.hasText(extractedFilename) ? extractedFilename : super.extractFlowId(context);
 	}
+	
+	public boolean isFlowExecutionKeyPresent(ExternalContext context) {
+		return getRequestPathInfo(context).startsWith(getFlowExecutionKeyAttributeName()) || isFlowExecutionKeyPresent(context);
+	}
+
+	public String extractFlowExecutionKey(ExternalContext context) throws FlowExecutorArgumentExtractionException {
+		String requestPathInfo = getRequestPathInfo(context);
+		int index = requestPathInfo.indexOf(getFlowExecutionKeyParameterName() + PATH_SEPARATOR_CHARACTER);
+		if (index != -1) {
+			return requestPathInfo.substring(index + 1);
+		} else {
+			return super.extractFlowExecutionKey(context);
+		}
+	}
 
 	public String createFlowUrl(FlowRedirect flowRedirect, ExternalContext context) {
 		StringBuffer flowUrl = new StringBuffer();
-		flowUrl.append(context.getContextPath());
-		flowUrl.append(context.getDispatcherPath());
+		appendFlowControllerPath(flowUrl, context);
 		flowUrl.append(PATH_SEPARATOR_CHARACTER);
 		flowUrl.append(flowRedirect.getFlowId());
 		if (!flowRedirect.getInput().isEmpty()) {
@@ -72,12 +88,11 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 	public String createFlowExecutionUrl(String flowExecutionKey, FlowExecutionContext flowExecution,
 			ExternalContext context) {
 		StringBuffer flowExecutionUrl = new StringBuffer();
-		flowExecutionUrl.append(context.getContextPath());
-		flowExecutionUrl.append(context.getDispatcherPath());
+		appendFlowControllerPath(flowExecutionUrl, context);
 		flowExecutionUrl.append(PATH_SEPARATOR_CHARACTER);
-		flowExecutionUrl.append(flowExecution.getActiveSession().getFlow().getId());
-		flowExecutionUrl.append('?');
-		appendQueryParameter(getFlowExecutionKeyParameterName(), flowExecutionKey, flowExecutionUrl);
+		flowExecutionUrl.append(getFlowExecutionKeyParameterName());
+		flowExecutionUrl.append(PATH_SEPARATOR_CHARACTER);
+		flowExecutionUrl.append(flowExecutionKey);
 		return flowExecutionUrl.toString();
 	}
 	
