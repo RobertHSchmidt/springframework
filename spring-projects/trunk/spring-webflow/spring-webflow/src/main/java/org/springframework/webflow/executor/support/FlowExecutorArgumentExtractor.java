@@ -455,13 +455,12 @@ public class FlowExecutorArgumentExtractor {
 	 * a flow (starts a new conversation). Used to support the <i>restart flow</i>
 	 * and <i>redirect to flow</i> use cases.
 	 * @param flowRedirect the flow redirect view selection
-	 * @param externalContext the external context
+	 * @param context the external context
 	 * @return the relative flow URL path to redirect to
 	 */
-	public String createFlowUrl(FlowRedirect flowRedirect, ExternalContext externalContext) {
+	public String createFlowUrl(FlowRedirect flowRedirect, ExternalContext context) {
 		StringBuffer flowUrl = new StringBuffer();
-		flowUrl.append(externalContext.getContextPath());
-		flowUrl.append(externalContext.getDispatcherPath());
+		appendFlowControllerPath(flowUrl, context);
 		flowUrl.append('?');
 		appendQueryParameter(getFlowIdParameterName(), flowRedirect.getFlowId(), flowUrl);
 		if (!flowRedirect.getInput().isEmpty()) {
@@ -484,8 +483,7 @@ public class FlowExecutorArgumentExtractor {
 	public String createFlowExecutionUrl(String flowExecutionKey, FlowExecutionContext flowExecution,
 			ExternalContext context) {
 		StringBuffer flowExecutionUrl = new StringBuffer();
-		flowExecutionUrl.append(context.getContextPath());
-		flowExecutionUrl.append(context.getDispatcherPath());
+		appendFlowControllerPath(flowExecutionUrl, context);
 		flowExecutionUrl.append('?');
 		appendQueryParameter(getFlowExecutionKeyParameterName(), flowExecutionKey, flowExecutionUrl);
 		return flowExecutionUrl.toString();
@@ -544,6 +542,16 @@ public class FlowExecutorArgumentExtractor {
 	// internal helpers
 
 	/**
+	 * Append the URL path to the flow controller capable of accepting new requests.
+	 * @param url the url buffer
+	 * @param context the context of this request
+	 */
+	protected void appendFlowControllerPath(StringBuffer url, ExternalContext context) {
+		url.append(context.getContextPath());
+		url.append(context.getDispatcherPath());
+	}
+
+	/**
 	 * URL-encode the given input String with the given encoding scheme.
 	 * @param value the unencoded value
 	 * @return the encoded output String
@@ -600,5 +608,5 @@ public class FlowExecutorArgumentExtractor {
 		catch (UnsupportedEncodingException e) {
 			throw new IllegalArgumentException("Cannot encode URL " + input);
 		}
-	}
+	}	
 }

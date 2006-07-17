@@ -89,6 +89,15 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 		assertEquals("/app/flows.htm?_flowId=flow", url);
 	}
 
+	public void testCreateFlowUrlRequestPath() {
+		context.setContextPath("/app");
+		context.setDispatcherPath("/system");
+		context.setRequestPathInfo("/flows");
+		FlowRedirect flowRedirect = new FlowRedirect("flow", null);
+		String url = argumentExtractor.createFlowUrl(flowRedirect, context);
+		assertEquals("/app/system?_flowId=flow", url);
+	}
+
 	public void testCreateFlowUrlWithInput() {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows.htm");
@@ -108,6 +117,15 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 		assertEquals("/app/flows.htm?_flowExecutionKey=_c12345_k12345", url);
 	}
 
+	public void testCreateFlowExecutionUrlRequestPath() {
+		context.setContextPath("/app");
+		context.setDispatcherPath("/system");
+		context.setRequestPathInfo("/flows");
+		FlowExecutionContext flowExecution = new MockFlowExecutionContext();
+		String url = argumentExtractor.createFlowExecutionUrl(flowExecutionKey, flowExecution, context);
+		assertEquals("/app/system?_flowExecutionKey=_c12345_k12345", url);
+	}
+	
 	public void testCreateExternalUrlAbsolute() {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows.htm");
