@@ -18,6 +18,7 @@ package org.springframework.webflow;
 import junit.framework.TestCase;
 
 import org.springframework.binding.expression.support.StaticExpression;
+import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.support.ApplicationView;
@@ -57,6 +58,26 @@ public class ViewStateTests extends TestCase {
 		assertEquals(ViewSelection.NULL_VIEW, view);
 	}
 
+	public void testViewStateAction() {
+		Flow flow = new Flow("myFlow");
+		ViewState state = new ViewState(flow, "viewState");
+		TestAction action = new TestAction();
+		state.getActionList().add(action);
+		state.getTransitionSet().add(new Transition(on("submit"), to("finish")));
+		new EndState(flow, "finish");
+		FlowExecution flowExecution = new FlowExecutionImpl(flow);
+		assertFalse(action.isExecuted());
+
+		ViewSelection view = flowExecution.start(null, new MockExternalContext());
+		assertEquals("viewState", flowExecution.getActiveSession().getState().getId());
+		assertEquals(ViewSelection.NULL_VIEW, view);
+		assertTrue(action.isExecuted());
+		assertEquals(action.getExecutionCount(), 1);
+
+		view = flowExecution.refresh(new MockExternalContext());
+		assertEquals(action.getExecutionCount(), 2);
+	}
+	
 	protected static TransitionCriteria on(String event) {
 		return new EventIdTransitionCriteria(event);
 	}
