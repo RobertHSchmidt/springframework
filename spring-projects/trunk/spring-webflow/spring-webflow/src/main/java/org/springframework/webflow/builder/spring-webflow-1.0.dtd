@@ -374,7 +374,7 @@
 	A view state is a transitionable state. A view state transition is triggered by a
 	user input event.
 -->
-<!ELEMENT view-state ( attribute*, entry-actions?, transition*, exit-actions?, exception-handler* )>
+<!ELEMENT view-state ( attribute*, entry-actions?, action*, transition*, exit-actions?, exception-handler* )>
 
 <!--
 	The unique identifier of this view state; must be unique to this flow.
