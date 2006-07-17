@@ -22,7 +22,7 @@ import org.dom4j.Element;
 public class Dom4JPayloadEndpointTest extends AbstractPayloadEndpointTestCase {
 
     protected PayloadEndpoint createResponseEndpoint() {
-        return new AbstractDom4JPayloadEndpoint() {
+        return new AbstractDom4jPayloadEndpoint() {
 
             protected Element invokeInternal(Element requestElement, Document responseDocument) throws Exception {
                 assertNotNull("No requestElement passed", requestElement);
@@ -35,7 +35,7 @@ public class Dom4JPayloadEndpointTest extends AbstractPayloadEndpointTestCase {
     }
 
     protected PayloadEndpoint createNoResponseEndpoint() throws Exception {
-        return new AbstractDom4JPayloadEndpoint() {
+        return new AbstractDom4jPayloadEndpoint() {
 
             protected Element invokeInternal(Element requestElement, Document responseDocument) throws Exception {
                 return null;
