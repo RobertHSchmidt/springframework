@@ -1,10 +1,13 @@
 <%@ include file="includeTop.jsp" %>
 
 <div id="content">
-	<div id="insert"><img src="../images/webflow-logo.jpg"/></div>
+	<div id="insert">
+	    <img src="<c:url value='/images/webflow-logo.jpg'/>" alt="Web Flow Logo">
+	</div>
 	<h2>Your item list</h2>
 	<hr>
-	<form action="itemlist" method="post"/>
+    <!-- Tell webflow what executing flow we're participating in -->
+	<form action="${flowExecutionKey}" method="post"/>
 	<table>
 		<tr>
 			<td>
@@ -17,8 +20,6 @@
 		</tr>
 		<tr>
 			<td class="buttonBar">
-				<!-- Tell webflow what executing flow we're participating in -->
-				<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}"/>
 				<!-- Tell webflow what event happened -->
 				<input type="submit" name="_eventId_add" value="Add New Item">
 			</td>

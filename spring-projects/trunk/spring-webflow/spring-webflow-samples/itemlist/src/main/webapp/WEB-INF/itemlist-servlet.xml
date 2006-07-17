@@ -7,7 +7,7 @@
 		<property name="alwaysUseFullPath" value="true"/>
 		<property name="mappings">
 			<value>
-				/app/*=flowController
+				/app/**/**=flowController
 			</value>
 		</property>
 	</bean>
