@@ -76,7 +76,7 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 
 	public String createFlowUrl(FlowRedirect flowRedirect, ExternalContext context) {
 		StringBuffer flowUrl = new StringBuffer();
-		appendFlowControllerPath(flowUrl, context);
+		appendFlowExecutorPath(flowUrl, context);
 		flowUrl.append(PATH_SEPARATOR_CHARACTER);
 		flowUrl.append(flowRedirect.getFlowId());
 		if (!flowRedirect.getInput().isEmpty()) {
@@ -89,7 +89,7 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 	public String createFlowExecutionUrl(String flowExecutionKey, FlowExecutionContext flowExecution,
 			ExternalContext context) {
 		StringBuffer flowExecutionUrl = new StringBuffer();
-		appendFlowControllerPath(flowExecutionUrl, context);
+		appendFlowExecutorPath(flowExecutionUrl, context);
 		flowExecutionUrl.append(PATH_SEPARATOR_CHARACTER);
 		flowExecutionUrl.append(getFlowExecutionKeyParameterName());
 		flowExecutionUrl.append(PATH_SEPARATOR_CHARACTER);
