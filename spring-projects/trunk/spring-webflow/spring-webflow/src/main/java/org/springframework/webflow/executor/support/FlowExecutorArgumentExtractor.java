@@ -460,7 +460,7 @@ public class FlowExecutorArgumentExtractor {
 	 */
 	public String createFlowUrl(FlowRedirect flowRedirect, ExternalContext context) {
 		StringBuffer flowUrl = new StringBuffer();
-		appendFlowControllerPath(flowUrl, context);
+		appendFlowExecutorPath(flowUrl, context);
 		flowUrl.append('?');
 		appendQueryParameter(getFlowIdParameterName(), flowRedirect.getFlowId(), flowUrl);
 		if (!flowRedirect.getInput().isEmpty()) {
@@ -483,7 +483,7 @@ public class FlowExecutorArgumentExtractor {
 	public String createFlowExecutionUrl(String flowExecutionKey, FlowExecutionContext flowExecution,
 			ExternalContext context) {
 		StringBuffer flowExecutionUrl = new StringBuffer();
-		appendFlowControllerPath(flowExecutionUrl, context);
+		appendFlowExecutorPath(flowExecutionUrl, context);
 		flowExecutionUrl.append('?');
 		appendQueryParameter(getFlowExecutionKeyParameterName(), flowExecutionKey, flowExecutionUrl);
 		return flowExecutionUrl.toString();
@@ -542,11 +542,11 @@ public class FlowExecutorArgumentExtractor {
 	// internal helpers
 
 	/**
-	 * Append the URL path to the flow controller capable of accepting new requests.
+	 * Append the URL path to the flow executor capable of accepting new requests.
 	 * @param url the url buffer
 	 * @param context the context of this request
 	 */
-	protected void appendFlowControllerPath(StringBuffer url, ExternalContext context) {
+	protected void appendFlowExecutorPath(StringBuffer url, ExternalContext context) {
 		url.append(context.getContextPath());
 		url.append(context.getDispatcherPath());
 	}
