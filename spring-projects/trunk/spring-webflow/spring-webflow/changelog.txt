@@ -36,7 +36,9 @@ Package org.springframework.webflow.execution
 
 Package org.springframework.webflow.executor
 * Renamed 'redirectOnPause' property to 'alwaysRedirectOnPause' for clarity.
-
+* Changed RequestPathFlowExecutorArgumentExtractor to append '_flowExecutionKey' as path element instead of
+  request parameter for flow execution URLs.
+  
 Package org.springframework.webflow.support
 * Moved ImmutableFlowAttributeMapper to builder and made package-private.  Not a general support class.
 * Added the ability to invoke a list of actions before executing an exception handling transition.
