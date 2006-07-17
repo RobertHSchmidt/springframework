@@ -19,7 +19,7 @@ package org.springframework.ws.soap;
 import org.springframework.ws.WebServiceMessageException;
 
 /**
- * Base class for all web service message exceptions.
+ * Base class for all SOAP message exceptions.
  *
  * @author Arjen Poutsma
  */
