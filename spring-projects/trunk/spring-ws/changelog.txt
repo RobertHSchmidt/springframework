@@ -15,9 +15,11 @@ Package org.springframework.ws.endpoint
 * AbstractStaxPayloadEndpoint now use StaxSource corrently (#SWS-38)
 * made PayloadValidatingInterceptor more customizable (#SWS-43)
 * add schemas property to PayloadValidatingInterceptor (#SWS-44)
+* changed AbstractDom4JPayloadEndpoint to AbstractDom4jPayloadEndpoint, to follow Spring naming conventions (e.g. Log4jConfigurer)
 
 Package org.springframework.ws.context
 * changed contract of MessageContext.getResponse(): now creates a response if none has been created. Required because creating SOAP fault when a response was already set threw an exception
+* enabling support for direct writing to the TransportResponse
 
 Package org.springframework.ws.soap
 * improved content-type handling (#SWS-32)
@@ -39,7 +41,7 @@ Package org.springframework.ws.soap.soap12
 * moved SOAP 1.2 specifics to separate package and interfaces
 
 Package org.springframework.ws.transport
-* added TransportRequest & TransportResponse
+* added TransportContext, TransportRequest & TransportResponse
 
 Package org.springframework.ws.transport.http
 * removed J2EE 1.4 dependency (#SWS-31)
@@ -55,7 +57,7 @@ Package org.springframework.xml.namespace
 Package org.springframework.xml.validation
 * improved validation schema loading (#SWS-46)
 
-Changes in version 1.0-M1
+Changes in version 1.0-M1 (12-6-2006)
 -------------------------
 
 Package org.springframework.oxm.jaxb
@@ -95,7 +97,7 @@ Samples
 * Added SAAJ clients to Airline sample
 
 
-Changes in version 0.9.1 (06.04.2006)
+Changes in version 0.9.1 (6-4-2006)
 -------------------------------------
 
 Overall
@@ -121,6 +123,6 @@ Package org.springframework.xml
 
 
 
-Changes in version 0.9 (11.02.2006)
+Changes in version 0.9 (11-2-2006)
 -----------------------------------
 * First public preview release.

@@ -19,7 +19,7 @@ package org.springframework.ws.endpoint;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-public class Dom4JPayloadEndpointTest extends AbstractPayloadEndpointTestCase {
+public class Dom4jPayloadEndpointTest extends AbstractPayloadEndpointTestCase {
 
     protected PayloadEndpoint createResponseEndpoint() {
         return new AbstractDom4jPayloadEndpoint() {
