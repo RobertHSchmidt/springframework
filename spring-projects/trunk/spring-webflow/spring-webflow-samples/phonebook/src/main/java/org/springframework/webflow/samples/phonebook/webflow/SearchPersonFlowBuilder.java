@@ -47,9 +47,9 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 	public void buildStates() throws FlowBuilderException {
 		// view search criteria
 		MultiAction searchFormAction = createSearchFormAction();
-		addViewState("enterCriteria", new Action[] { invoke("setupForm", searchFormAction) },
-				viewSelector("searchCriteria"), new Transition[] { transition(on("search"), to("executeSearch"),
-						ifReturnedSuccess(invoke("bindAndValidate", searchFormAction))) }, null, null, null);
+		addViewState("enterCriteria", "searchCriteria", invoke("setupForm", searchFormAction),
+				new Transition[] { transition(on("search"), to("executeSearch"), ifReturnedSuccess(invoke(
+						"bindAndValidate", searchFormAction))) });
 
 		// execute query
 		addActionState("executeSearch", action("phonebook", method("search(${flowScope.searchCriteria})"),
