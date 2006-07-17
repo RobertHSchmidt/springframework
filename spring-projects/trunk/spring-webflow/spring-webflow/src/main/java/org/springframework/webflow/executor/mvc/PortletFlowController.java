@@ -81,10 +81,10 @@ import org.springframework.webflow.support.FlowRedirect;
  * @see org.springframework.webflow.executor.FlowExecutor
  * @see org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor
  * 
+ * @author Keith Donald
+ * @author Erwin Vervaet
  * @author J.Enrique Ruiz
  * @author César Ordiñana
- * @author Erwin Vervaet
- * @author Keith Donald
  */
 public class PortletFlowController extends AbstractController implements InitializingBean {
 
@@ -255,8 +255,9 @@ public class PortletFlowController extends AbstractController implements Initial
 		else if (responseInstruction.isFlowRedirect()) {
 			// set flow id render parameter to request that a new flow be
 			// launched within this portlet
-			String flowId = ((FlowRedirect)responseInstruction.getViewSelection()).getFlowId();
-			response.setRenderParameter(argumentExtractor.getFlowIdParameterName(), flowId);
+			FlowRedirect redirect = (FlowRedirect)responseInstruction.getViewSelection();
+			response.setRenderParameters(redirect.getInput());
+			response.setRenderParameter(argumentExtractor.getFlowIdParameterName(), redirect.getFlowId());
 		}
 		else if (responseInstruction.isExternalRedirect()) {
 			// issue the redirect to the external URL
