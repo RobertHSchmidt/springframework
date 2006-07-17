@@ -368,11 +368,12 @@
 
 <!--
 	Defines a view state, a state where an user (or other external actor) is expected to
-	interact with the flow.  When a view state is entered the flow execution "pauses"
-	and control goes to the user.
+	participate in the flow.  When a view state is entered the flow execution "pauses"
+	and control goes to the user.  The user can then "resume" the flow execution from the 
+	paused view-state by signaling an input event.
 
-	Once entered view states may be 'refreshed' by the user.  A refresh causes the response to be 
-	reissued, where control again goes to the user.
+	Once entered view states may be 'refreshed' by the user.  A refresh causes the view
+	to be reissued and control again goes to the user.
 	
 	A view state may be configured with one or more actions.  View actions are executed 
 	on entry and on refresh.
