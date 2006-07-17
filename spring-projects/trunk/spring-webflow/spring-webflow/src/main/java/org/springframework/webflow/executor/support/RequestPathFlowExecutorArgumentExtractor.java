@@ -60,7 +60,7 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 	}
 	
 	public boolean isFlowExecutionKeyPresent(ExternalContext context) {
-		return getRequestPathInfo(context).startsWith(getFlowExecutionKeyAttributeName()) || isFlowExecutionKeyPresent(context);
+		return getRequestPathInfo(context).startsWith(getFlowExecutionKeyParameterName()) || super.isFlowExecutionKeyPresent(context);
 	}
 
 	public String extractFlowExecutionKey(ExternalContext context) throws FlowExecutorArgumentExtractionException {
