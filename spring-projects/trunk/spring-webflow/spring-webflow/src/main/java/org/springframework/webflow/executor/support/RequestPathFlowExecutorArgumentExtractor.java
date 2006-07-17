@@ -60,14 +60,15 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 	}
 	
 	public boolean isFlowExecutionKeyPresent(ExternalContext context) {
-		return getRequestPathInfo(context).startsWith(getFlowExecutionKeyParameterName()) || super.isFlowExecutionKeyPresent(context);
+		String requestPathInfo = getRequestPathInfo(context);
+		return requestPathInfo.startsWith(PATH_SEPARATOR_CHARACTER + getFlowExecutionKeyParameterName()) || super.isFlowExecutionKeyPresent(context);
 	}
 
 	public String extractFlowExecutionKey(ExternalContext context) throws FlowExecutorArgumentExtractionException {
 		String requestPathInfo = getRequestPathInfo(context);
 		int index = requestPathInfo.indexOf(getFlowExecutionKeyParameterName() + PATH_SEPARATOR_CHARACTER);
 		if (index != -1) {
-			return requestPathInfo.substring(index + 1);
+			return requestPathInfo.substring(getFlowExecutionKeyParameterName().length() + 2);
 		} else {
 			return super.extractFlowExecutionKey(context);
 		}
