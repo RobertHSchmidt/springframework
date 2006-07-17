@@ -41,6 +41,11 @@ import org.springframework.util.Assert;
 public class ViewState extends TransitionableState {
 
 	/**
+	 * The list of actions to be executed when this state is entered.
+	 */
+	private ActionList actionList = new ActionList();
+
+	/**
 	 * The factory for the view selection to return when this state is entered.
 	 */
 	private ViewSelector viewSelector = NullViewSelector.INSTANCE;
@@ -73,6 +78,15 @@ public class ViewState extends TransitionableState {
 	}
 
 	/**
+	 * Returns the list of actions executable by this view state on entry and on
+	 * refresh. The returned list is mutable.
+	 * @return the state action list
+	 */
+	public ActionList getActionList() {
+		return actionList;
+	}
+
+	/**
 	 * Specialization of State's <code>doEnter</code> template method that
 	 * executes behaviour specific to this state type in polymorphic fashion.
 	 * <p>
@@ -86,19 +100,21 @@ public class ViewState extends TransitionableState {
 	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
 	protected ViewSelection doEnter(RequestControlContext context) throws FlowExecutionException {
+		actionList.execute(context);
 		return viewSelector.makeSelection(context);
 	}
 
 	/**
 	 * Request that the current view selection be reconstituted to support
-	 * reissuing the response. This is an idempotent operation that may be safely
-	 * called any number of times on a paused execution, used primarily to support
-	 * a flow execution redirect.
+	 * reissuing the response. This is an idempotent operation that may be
+	 * safely called any number of times on a paused execution, used primarily
+	 * to support a flow execution redirect.
 	 * @param context the request context
 	 * @return the view selection
 	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
 	public ViewSelection refresh(RequestContext context) throws FlowExecutionException {
+		actionList.execute(context);
 		return viewSelector.makeRefreshSelection(context);
 	}
 

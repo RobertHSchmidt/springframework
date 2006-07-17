@@ -10,6 +10,9 @@ General
 Package org.springframework.binding.mapping
 * Changed semantics for mapping of null values.  Source mapping expressions that evaluate to null now result in a 'no-op' 
   mapping operation or an error if the mapping is required.  Previously mapping of the null value was performed.
+
+Package org.springframework.webflow
+* Added 'actionList' property to ViewState, for executing behavior when the view state is entered *and* refreshed.
   
 Package org.springframework.webflow.builder
 * Added support for 'required' mappings.  A required mapping will report an error if its source expression evaluates to a null value.
@@ -21,6 +24,9 @@ Package org.springframework.webflow.builder
   constants in TextToViewSelector were also dropped.
 * Refactored ResultEventFactorySelector to be a static inner class of BeanInvokingActionFactory to highlight the fact that it
   is a helper strategy of this class.
+* Added support for 0..n <action/> elements within a <view-state/> element, for executing behavior
+  when the view state is entered *and* refreshed.
+* Added several AbstractFlowBuilder.addViewState convenience operations.
 
 Package org.springframework.webflow.execution
 * Fixed inconsistency in continuation id parsing within ClientContinuationFlowExecutionRepository.

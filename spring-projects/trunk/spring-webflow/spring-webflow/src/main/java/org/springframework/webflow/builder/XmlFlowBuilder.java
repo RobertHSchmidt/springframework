@@ -80,8 +80,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *      &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *      &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *       &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *       &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -602,8 +602,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private void parseAndAddViewState(Element element, Flow flow) {
 		getFlowArtifactFactory().createViewState(parseId(element), flow, parseEntryActions(element),
-				parseViewSelector(element, false), parseTransitions(element), parseExceptionHandlers(element),
-				parseExitActions(element), parseAttributes(element));
+				parseViewSelector(element, false), parseAnnotatedActions(element), parseTransitions(element),
+				parseExceptionHandlers(element), parseExitActions(element), parseAttributes(element));
 	}
 
 	private void parseAndAddDecisionState(Element element, Flow flow) {
@@ -868,7 +868,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			}
 			if (required) {
 				mapper.addMapping(new RequiredMapping(source, target, parseTypeConverter(mappingElement)));
-			} else {
+			}
+			else {
 				mapper.addMapping(new Mapping(source, target, parseTypeConverter(mappingElement)));
 			}
 		}
