@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -13,6 +14,31 @@
         <system>JIRA</system>
         <url>http://opensource2.atlassian.com/projects/spring/browse/SWS</url>
     </issueManagement>
+    <ciManagement>
+        <system>continuum</system>
+        <notifiers>
+            <notifier>
+                <type>mail</type>
+                <configuration>
+                    <address>arjenp@interface21.com</address>
+                </configuration>
+            </notifier>
+        </notifiers>
+    </ciManagement>
+    <distributionManagement>
+        <repository>
+            <id>static.springframework.org</id>
+            <url>
+                scp://static.springframework.org/var/www/domains/springframework.org/static/htdocs/maven2
+            </url>
+        </repository>
+        <snapshotRepository>
+            <id>static.springframework.org</id>
+            <url>
+                scp://static.springframework.org/var/www/domains/springframework.org/static/htdocs/maven2-snapshots
+            </url>
+        </snapshotRepository>
+    </distributionManagement>
     <inceptionYear>2005</inceptionYear>
     <developers>
         <developer>
@@ -100,6 +126,11 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
                     <version>2.0</version>
                 </plugin>
             </plugins>
@@ -275,6 +306,11 @@
                 <artifactId>spring-ws-samples</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.ws</groupId>
+                <artifactId>spring-ws-sandbox</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!-- Spring dependencies -->
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -410,6 +446,12 @@
                 <groupId>ws-commons</groupId>
                 <artifactId>axiom-impl</artifactId>
                 <version>1.0</version>
+            </dependency>
+            <!-- WSDL dependencies -->
+            <dependency>
+                <groupId>wsdl4j</groupId>
+                <artifactId>wsdl4j</artifactId>
+                <version>1.5.2</version>
             </dependency>
             <!-- WS-Security dependencies -->
             <dependency>
