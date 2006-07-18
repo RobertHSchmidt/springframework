@@ -24,7 +24,6 @@ import com.sun.xml.wss.impl.callback.PasswordCallback;
 import com.sun.xml.wss.impl.callback.PasswordValidationCallback;
 import com.sun.xml.wss.impl.callback.TimestampValidationCallback;
 import com.sun.xml.wss.impl.callback.UsernameCallback;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.ws.soap.security.xwss.callback.AbstractCallbackHandler;
 
@@ -52,8 +51,10 @@ public class XwssMessageInterceptorUsernameTokenTest extends XwssMessageIntercep
         SOAPMessage message = loadSaajMessage("empty-soap.xml");
         SOAPMessage result = interceptor.secureMessage(message);
         assertNotNull("No result returned", result);
-        assertXpathEvaluatesTo("Invalid Username", "Bert",
-                "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/wsse:UsernameToken/wsse:Username/text()", result);
+        assertXpathEvaluatesTo("Invalid Username",
+                "Bert",
+                "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/wsse:UsernameToken/wsse:Username/text()",
+                result);
         assertXpathExists("Password does not exist",
                 "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/wsse:UsernameToken/wsse:Password[@Type='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordDigest']",
                 result);
@@ -81,9 +82,12 @@ public class XwssMessageInterceptorUsernameTokenTest extends XwssMessageIntercep
         SOAPMessage message = loadSaajMessage("empty-soap.xml");
         SOAPMessage result = interceptor.secureMessage(message);
         assertNotNull("No result returned", result);
-        assertXpathEvaluatesTo("Invalid Username", "Bert",
-                "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/wsse:UsernameToken/wsse:Username/text()", result);
-        assertXpathEvaluatesTo("Invalid Password", "Ernie",
+        assertXpathEvaluatesTo("Invalid Username",
+                "Bert",
+                "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/wsse:UsernameToken/wsse:Username/text()",
+                result);
+        assertXpathEvaluatesTo("Invalid Password",
+                "Ernie",
                 "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security/wsse:UsernameToken/wsse:Password[@Type='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText']/text()",
                 result);
     }
@@ -119,7 +123,7 @@ public class XwssMessageInterceptorUsernameTokenTest extends XwssMessageIntercep
         };
         interceptor.setCallbackHandler(handler);
         interceptor.afterPropertiesSet();
-        SOAPMessage message = loadSaajMessage("userNameTokenPlainText-soap.xml");
+        SOAPMessage message = loadSaajMessage("usernameTokenPlainText-soap.xml");
         SOAPMessage result = interceptor.validateMessage(message);
         assertNotNull("No result returned", result);
         assertXpathNotExists("Security Header not removed", "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security", result);
@@ -157,7 +161,7 @@ public class XwssMessageInterceptorUsernameTokenTest extends XwssMessageIntercep
         };
         interceptor.setCallbackHandler(handler);
         interceptor.afterPropertiesSet();
-        SOAPMessage message = loadSaajMessage("userNameTokenDigest-soap.xml");
+        SOAPMessage message = loadSaajMessage("usernameTokenDigest-soap.xml");
         SOAPMessage result = interceptor.validateMessage(message);
         assertNotNull("No result returned", result);
         assertXpathNotExists("Security Header not removed", "/SOAP-ENV:Envelope/SOAP-ENV:Header/wsse:Security", result);

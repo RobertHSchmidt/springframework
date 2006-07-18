@@ -18,7 +18,6 @@ package org.springframework.ws.soap.security.xwss;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
@@ -52,7 +51,7 @@ public class IntegrationTest extends org.springframework.test.AbstractDependency
         InputStream is = null;
         try {
             is = getClass().getResourceAsStream(fileName);
-			assertNotNull("Could not load SAAJ message with name [" + fileName + "]", is);
+            assertNotNull("Could not load SAAJ message with name [" + fileName + "]", is);
             SOAPMessage saajMessage = messageFactory.createMessage(mimeHeaders, is);
             return new SaajSoapMessageContext(saajMessage, messageFactory);
         }
@@ -64,7 +63,7 @@ public class IntegrationTest extends org.springframework.test.AbstractDependency
     }
 
     public void testSecure() throws Exception {
-        SoapMessageContext context = loadSoapMessageContext("userNameTokenPlainText-soap.xml");
+        SoapMessageContext context = loadSoapMessageContext("usernameTokenPlainText-soap.xml");
         interceptor.handleRequest(context, null);
         SoapMessage result = context.getSoapRequest();
         assertNotNull(result);
