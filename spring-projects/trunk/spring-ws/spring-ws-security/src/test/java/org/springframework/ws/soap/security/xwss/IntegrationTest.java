@@ -52,6 +52,7 @@ public class IntegrationTest extends org.springframework.test.AbstractDependency
         InputStream is = null;
         try {
             is = getClass().getResourceAsStream(fileName);
+			assertNotNull("Could not load SAAJ message with name [" + fileName + "]");
             SOAPMessage saajMessage = messageFactory.createMessage(mimeHeaders, is);
             return new SaajSoapMessageContext(saajMessage, messageFactory);
         }
