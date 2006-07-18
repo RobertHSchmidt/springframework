@@ -766,7 +766,7 @@
 
     <mkdir dir="${ivy.distrib.dir}/jars" />
     <copy file="${target.lib.dir}/${project.name}.jar" tofile="${ivy.distrib.dir}/jars/${project.name}-${project.version}.jar" />
-    <copy file="${target.lib.dir}/${project.name}-src.zip" tofile="${ivy.distrib.dir}/jars/${project.name}-src-${project.version}.zip" />
+    <copy file="${target.lib.dir}/${project.name}-src.zip" tofile="${ivy.distrib.dir}/jars/${project.name}-src-${project.version}.zip" failonerror="no"/>
   </target>
   
   <target name="publish.do.publish" if="publish.needed">
