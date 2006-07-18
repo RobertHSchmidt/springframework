@@ -24,10 +24,10 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.xpath.XPath;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.YearMonthDay;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ws.endpoint.AbstractJDomPayloadEndpoint;
 import org.springframework.ws.samples.airline.domain.Airport;
@@ -116,12 +116,12 @@ public class BookFlightEndpoint extends AbstractJDomPayloadEndpoint implements I
     protected Element createFlightElement(Flight flight) {
         Element flightElement = new Element("flight", namespace);
         flightElement.addContent(new Element("number", namespace).setText(flight.getNumber()));
-        flightElement.addContent(
-                new Element("departureTime", namespace).setText(dateTimeFormatter.print(flight.getDepartureTime())));
+        flightElement.addContent(new Element("departureTime",
+                namespace).setText(dateTimeFormatter.print(flight.getDepartureTime())));
         flightElement.addContent(createAirportElement("from", flight.getFrom()));
         flightElement
-                .addContent(new Element("arrivalTime", namespace).setText(
-                        dateTimeFormatter.print(flight.getArrivalTime())));
+                .addContent(new Element("arrivalTime",
+                        namespace).setText(dateTimeFormatter.print(flight.getArrivalTime())));
         flightElement.addContent(createAirportElement("to", flight.getTo()));
         flightElement.addContent(createServiceClassElement(flight.getServiceClass()));
         return flightElement;
@@ -157,7 +157,7 @@ public class BookFlightEndpoint extends AbstractJDomPayloadEndpoint implements I
         departureTimeXPath.addNamespace(namespace);
         passengersXPath = XPath.newInstance("/tns:BookFlightRequest/tns:passengers/*");
         passengersXPath.addNamespace(namespace);
-        parser = ISODateTimeFormat.dateTimeParser();
+        parser = ISODateTimeFormat.dateTimeParser().withZone(DateTimeZone.UTC);
         dateTimeFormatter = ISODateTimeFormat.dateTimeNoMillis();
         dateFormatter = ISODateTimeFormat.date();
     }
