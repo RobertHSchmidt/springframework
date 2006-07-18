@@ -27,8 +27,8 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.YearMonthDay;
-
 import org.springframework.ws.samples.airline.domain.Airport;
 import org.springframework.ws.samples.airline.domain.Flight;
 import org.springframework.ws.samples.airline.domain.FrequentFlyer;
@@ -62,7 +62,7 @@ public class BookFlightEndpointTest extends XMLTestCase {
         endpoint.afterPropertiesSet();
         saxBuilder = new SAXBuilder();
         responseDocument = saxBuilder.build(getClass().getResourceAsStream("bookFlightResponse.xml"));
-        departure = new DateTime(2006, 1, 1, 0, 0, 0, 0);
+        departure = new DateTime(2006, 1, 1, 0, 0, 0, 0, DateTimeZone.UTC);
         DateTime arrival = new DateTime(2006, 2, 2, 0, 0, 0, 0);
         Flight flight = new Flight();
         flight.setNumber("EF1234");

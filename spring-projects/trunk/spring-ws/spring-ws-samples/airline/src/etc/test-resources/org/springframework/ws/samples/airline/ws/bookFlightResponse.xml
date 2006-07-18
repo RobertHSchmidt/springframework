@@ -10,7 +10,7 @@
     </passengers>
     <flight>
         <number>EF1234</number>
-        <departureTime>2006-01-01T00:00:00+01:00</departureTime>
+        <departureTime>2006-01-01T00:00:00Z</departureTime>
         <from>
             <code>ABC</code>
             <name>Airport</name>

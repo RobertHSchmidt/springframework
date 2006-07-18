@@ -16,17 +16,8 @@
 
 package org.springframework.ws.samples.airline.dao.hibernate;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.YearMonthDay;
-
-import org.springframework.test.AbstractTransactionalDataSourceSpringContextTests;
-import org.springframework.ws.samples.airline.domain.Airport;
-import org.springframework.ws.samples.airline.domain.Flight;
-import org.springframework.ws.samples.airline.domain.Passenger;
-import org.springframework.ws.samples.airline.domain.ServiceClass;
-import org.springframework.ws.samples.airline.domain.Ticket;
-
+/*
+TODO: renable when we have a database on the build server
 public class HibernateTicketDaoTest extends AbstractTransactionalDataSourceSpringContextTests {
 
     private HibernateTicketDao dao;
@@ -89,4 +80,4 @@ public class HibernateTicketDaoTest extends AbstractTransactionalDataSourceSprin
         assertEquals("Passenger not inserted", 1, endPassengerCount - startPassengerCount);
     }
 
-}
+}*/
