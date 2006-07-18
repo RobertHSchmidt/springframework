@@ -9,6 +9,7 @@
   to Ant's SCP documentation for more information.
   
   @author Alef Arendsen
+  @author Arjen Poutsma
   =======================================================================
 -->
 <project name="build-spring-webflow-continuous" default="snapshot" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
@@ -22,7 +23,6 @@
             - release.version     release version (set by build.xml)
             - target.release.dir  release directory (set by build.xml)
             - upload.tmp.dir      temporary directory to use when uploading
-            - label               build label (usually passed by CC)
             - upload.username     username to use when SCP'ing to server
             - upload.password     password to use when SCP'ing to server
             - upload.url          url to use when SCP'ing to server
@@ -36,20 +36,12 @@
             <format property="tstamp" pattern="yyyyMMdd"/>
         </tstamp>
         <move file="${target.release.dir}/${release.zip}"
-            tofile="${upload.tmp.dir}/spring-webflow-${release.version}-${label}-${tstamp}.zip"/>
+            tofile="${upload.tmp.dir}/spring-webflow-${release.version}-${tstamp}.zip"/>
     </target>
     
-    <target name="upload" depends="upload-log, upload-binaries"/>
+    <target name="upload" depends="upload-binaries"/>
 
     <!-- SCP needs an SSH library on the classpath (see Ant documentation for more info) -->
-    <target name="upload-log" depends="init, guard.upload.tmp.dir, guard.upload.log.dir, guard.upload.username, guard.upload.password, guard.upload.url">
-        <scp todir="${upload.username}@${upload.url}:${upload.log.dir}" password="${upload.password}">
-            <fileset dir="${upload.tmp.dir}">
-                <include name="*.html"/>
-            </fileset>
-        </scp>
-    </target>
-
     <target name="upload-binaries" depends="init, guard.upload.tmp.dir, guard.upload.binaries.dir, guard.upload.url, guard.upload.password, guard.upload.username">
         <scp todir="${upload.username}@${upload.url}:${upload.binaries.dir}" password="${upload.password}">
             <fileset dir="${upload.tmp.dir}">
@@ -58,28 +50,6 @@
         </scp>
         <delete quiet="true" dir="${upload.tmp.dir}"/>
     </target>
-    
-    <target name="email" depends="email-success, email-failure"/>
-    
-    <target name="email-failure" depends="guard.smtp.host">
-    	<mail mailhost="${smtp.host}" subject="Spring WebFlow ${label} FAILED" tolist="springframework-developer@lists.sourceforge.net" from="build@interface21.com">
-    		<message>Errors and a list of modifications can be found in the build log (http://static.springframework.org/spring-webflow/build/index.html).</message>
-    	</mail>
-    </target>
-    
-    <target name="email-success" depends="guard.smtp.host">
-    	<mail mailhost="${smtp.host}" subject="Spring WebFlow ${label} SUCCEEDED" tolist="springframework-developer@lists.sourceforge.net" from="build@interface21.com">
-    		<message>
-    			Snapshot has been uploaded to http://static.springframework.org/downloads/nightly/spring-webflow
-    			
-    			The list of modifications for this build can be found in the build log (http://static.springframework.org/spring-webflow/build/index.html).    			
-			</message>
-    	</mail>
-	</target>
-	
-	<target name="guard.smtp.host" unless="smtp.host">
-		<fail message="This target requires the smtp.host property to be set"/>
-	</target>
     
     <target name="guard.upload.tmp.dir" unless="upload.tmp.dir">
     	<fail message="This target requires the upload.tmp.dir property to be set"/>
