@@ -82,6 +82,7 @@ public abstract class XwssMessageInterceptorTestCase extends TestCase {
         InputStream is = null;
         try {
             is = getClass().getResourceAsStream(fileName);
+			assertNotNull("Could not load SAAJ message with name [" + fileName + "]", is);
             return messageFactory.createMessage(mimeHeaders, is);
         }
         finally {
