@@ -62,7 +62,7 @@ import org.springframework.webflow.support.FlowExecutionRedirect;
  * server-side session-based repository factory.</td>
  * </tr>
  * <tr>
- * <td>redirectOnPause</td>
+ * <td>alwaysRedirectOnPause</td>
  * <td>A flag indicating if this executor should force a redirect to an
  * {@link ApplicationView} after pausing an active flow execution.</td>
  * <td>false, indicating no special redirect action should be taken.</td>
