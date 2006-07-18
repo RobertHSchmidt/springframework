@@ -16,7 +16,7 @@
             <name>Airport</name>
             <city>City</city>
         </from>
-        <arrivalTime>2006-02-02T00:00:00+01:00</arrivalTime>
+        <arrivalTime>2006-02-02T00:00:00Z</arrivalTime>
         <to>
             <code>DEF</code>
             <name>Airport</name>

@@ -63,7 +63,7 @@ public class BookFlightEndpointTest extends XMLTestCase {
         saxBuilder = new SAXBuilder();
         responseDocument = saxBuilder.build(getClass().getResourceAsStream("bookFlightResponse.xml"));
         departure = new DateTime(2006, 1, 1, 0, 0, 0, 0, DateTimeZone.UTC);
-        DateTime arrival = new DateTime(2006, 2, 2, 0, 0, 0, 0);
+        DateTime arrival = new DateTime(2006, 2, 2, 0, 0, 0, 0, DateTimeZone.UTC);
         Flight flight = new Flight();
         flight.setNumber("EF1234");
         flight.setDepartureTime(departure);
