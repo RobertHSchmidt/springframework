@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.samples.phonebook.webflow;
 
-import org.springframework.webflow.Action;
 import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.Transition;
 import org.springframework.webflow.action.FormAction;
