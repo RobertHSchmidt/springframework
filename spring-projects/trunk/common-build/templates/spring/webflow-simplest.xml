@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
-	"http://www.springframework.org/dtd/spring-webflow.dtd">
+<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
+	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 	
-<webflow id="flowId" start-state="displayPage">
+<flow id="flowId" start-state="displayPage">
 
 	<view-state id="displayPage" view="page">
 		<transition on="submit" to="finish"/>
@@ -10,4 +10,4 @@
 
 	<end-state id="finish"/>
 	
-</webflow>
+</flow>
