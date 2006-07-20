@@ -5,11 +5,14 @@ import javax.faces.context.FacesContext;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
-import org.springframework.webflow.builder.FlowArtifactLookupException;
 import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepositoryFactory;
 
+/**
+ * Trivial helper utility class for SWF within a JSF environment.
+ * @author Keith Donald
+ */
 public class FlowFacesUtils {
 
 	/**
@@ -47,7 +50,7 @@ public class FlowFacesUtils {
 						+ "configure this PhaseListener with either a FlowLocator "
 						+ "(exposing a registry of flow definitions) or a custom FlowExecutionRepositoryFactory "
 						+ "(allowing more configuration options).";
-				throw new FlowArtifactLookupException(FLOW_LOCATOR_BEAN_NAME, FlowLocator.class, message, e);
+				throw new JsfFlowConfigurationException(message, e);
 			}
 		}
 	}
