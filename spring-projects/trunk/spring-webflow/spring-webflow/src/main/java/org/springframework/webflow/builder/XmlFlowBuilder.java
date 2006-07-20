@@ -80,8 +80,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *       &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *       &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -220,6 +220,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String END_ACTIONS_ELEMENT = "end-actions";
 
 	private static final String ENTRY_ACTIONS_ELEMENT = "entry-actions";
+
+	private static final String RENDER_ACTIONS_ELEMENT = "render-actions";
 
 	private static final String EXIT_ACTIONS_ELEMENT = "exit-actions";
 
@@ -602,7 +604,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private void parseAndAddViewState(Element element, Flow flow) {
 		getFlowArtifactFactory().createViewState(parseId(element), flow, parseEntryActions(element),
-				parseViewSelector(element, false), parseAnnotatedActions(element), parseTransitions(element),
+				parseViewSelector(element, false), parseRenderActions(element), parseTransitions(element),
 				parseExceptionHandlers(element), parseExitActions(element), parseAttributes(element));
 	}
 
@@ -639,6 +641,17 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 	}
 
+	private Action[] parseRenderActions(Element element) {
+		List entryElements = DomUtils.getChildElementsByTagName(element, RENDER_ACTIONS_ELEMENT);
+		if (!entryElements.isEmpty()) {
+			Element entryElement = (Element)entryElements.get(0);
+			return parseAnnotatedActions(entryElement);
+		}
+		else {
+			return null;
+		}
+	}
+	
 	private Action[] parseExitActions(Element element) {
 		List exitElements = DomUtils.getChildElementsByTagName(element, EXIT_ACTIONS_ELEMENT);
 		if (!exitElements.isEmpty()) {
