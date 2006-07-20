@@ -4,10 +4,11 @@
 
 <flow start-state="enterPriceAndItemCount">
 
-	<view-state id="enterPriceAndItemCount" view="priceAndItemCountForm">
-		<entry-actions>
-			<action bean="formAction" method="setupForm"/>
-		</entry-actions>
+	<start-actions>
+		<action bean="formAction" method="setupForm"/>
+	</start-actions>
+
+	<view-state id="enterPriceAndItemCount" view="redirect:priceAndItemCountForm">
 		<transition on="submit" to="enterCategory">
 			<action bean="formAction" method="bindAndValidate">
 				<attribute name="validatorMethod" value="validatePriceAndItemCount"/>
@@ -25,7 +26,7 @@
 		<if test="${conversationScope.sale.shipping}" then="enterShippingDetails" else="processSale"/>
 	</decision-state>
 
-	<view-state id="enterShippingDetails" view="shippingDetailsForm">
+	<view-state id="enterShippingDetails" view="redirect:shippingDetailsForm">
 		<transition on="submit" to="processSale">
 			<action bean="formAction" method="bind"/>
 		</transition>
@@ -36,7 +37,7 @@
 		<transition on="success" to="finish"/>
 	</action-state>
 	
-	<view-state id="showCostOverview" view="costOverview">
+	<view-state id="showCostOverview" view="redirect:costOverview">
 		<transition on="back" to="enterPriceAndItemCount"/>
 	</view-state>
 	
