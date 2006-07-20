@@ -57,7 +57,7 @@ public class ViewStateTests extends TestCase {
 		assertEquals(ViewSelection.NULL_VIEW, view);
 	}
 
-	public void testViewStateAction() {
+	public void testViewStateNotRenderableSelection() {
 		Flow flow = new Flow("myFlow");
 		ViewState state = new ViewState(flow, "viewState");
 		TestAction action = new TestAction();
@@ -70,11 +70,32 @@ public class ViewStateTests extends TestCase {
 		ViewSelection view = flowExecution.start(null, new MockExternalContext());
 		assertEquals("viewState", flowExecution.getActiveSession().getState().getId());
 		assertEquals(ViewSelection.NULL_VIEW, view);
+		assertFalse(action.isExecuted());
+		assertEquals(action.getExecutionCount(), 0);
+
+		view = flowExecution.refresh(new MockExternalContext());
+		assertEquals(action.getExecutionCount(), 1);
+	}
+
+	public void testViewStateRenderableSelection() {
+		Flow flow = new Flow("myFlow");
+		ViewState state = new ViewState(flow, "viewState");
+		state.setViewSelector(new ApplicationViewSelector(new StaticExpression("test")));
+		TestAction action = new TestAction();
+		state.getRenderActionList().add(action);
+		state.getTransitionSet().add(new Transition(on("submit"), to("finish")));
+		new EndState(flow, "finish");
+		FlowExecution flowExecution = new FlowExecutionImpl(flow);
+		assertFalse(action.isExecuted());
+
+		flowExecution.start(null, new MockExternalContext());
+		assertEquals("viewState", flowExecution.getActiveSession().getState().getId());
 		assertTrue(action.isExecuted());
 		assertEquals(action.getExecutionCount(), 1);
 
-		view = flowExecution.refresh(new MockExternalContext());
+		flowExecution.refresh(new MockExternalContext());
 		assertEquals(action.getExecutionCount(), 2);
+
 	}
 	
 	protected static TransitionCriteria on(String event) {
