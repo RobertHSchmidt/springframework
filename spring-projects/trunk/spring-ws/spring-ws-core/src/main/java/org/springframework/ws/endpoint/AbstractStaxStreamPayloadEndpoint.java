@@ -18,7 +18,6 @@ package org.springframework.ws.endpoint;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -32,6 +31,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.context.MessageContext;
+import org.springframework.xml.stream.XmlEventStreamReader;
 import org.springframework.xml.transform.StaxResult;
 import org.springframework.xml.transform.StaxSource;
 
@@ -57,6 +57,17 @@ public abstract class AbstractStaxStreamPayloadEndpoint extends AbstractStaxPayl
         XMLStreamReader streamReader = null;
         if (source instanceof StaxSource) {
             streamReader = ((StaxSource) source).getXMLStreamReader();
+            StaxSource staxSource = (StaxSource) source;
+            streamReader = staxSource.getXMLStreamReader();
+            if (streamReader == null && staxSource.getXMLEventReader() != null) {
+                try {
+                    streamReader = new XmlEventStreamReader(staxSource.getXMLEventReader());
+                }
+                catch (XMLStreamException ex) {
+                    // ignore
+                }
+            }
+
         }
         if (streamReader == null) {
             try {
