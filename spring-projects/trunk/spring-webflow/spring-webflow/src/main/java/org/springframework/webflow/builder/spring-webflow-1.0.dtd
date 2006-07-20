@@ -381,7 +381,7 @@
 	A view state is a transitionable state. A view state transition is triggered by a
 	user input event.
 -->
-<!ELEMENT view-state ( attribute*, entry-actions?, action*, transition*, exit-actions?, exception-handler* )>
+<!ELEMENT view-state ( attribute*, entry-actions?, render-actions?, transition*, exit-actions?, exception-handler* )>
 
 <!--
 	The unique identifier of this view state; must be unique to this flow.
@@ -435,6 +435,12 @@
 	Defines state entry logic to be executed. This logic will always execute when the state is entered.
 -->
 <!ELEMENT entry-actions ( action+ )>
+
+<!--
+	Defines view-state render logic to be executed. This logic will always execute when the state makes 
+	a view selection capable of rendering a response in the current request.
+-->
+<!ELEMENT render-actions ( action+ )>
 
 <!--
 	Defines state exit logic to be executed. This logic will always execute when the state is exited 
