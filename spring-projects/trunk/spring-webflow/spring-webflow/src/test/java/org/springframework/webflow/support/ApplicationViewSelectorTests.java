@@ -21,7 +21,7 @@ public class ApplicationViewSelectorTests extends TestCase {
 		context.getFlowScope().put("foo2", "bar");
 		context.getConversationScope().put("foo", "bar3");
 		context.getConversationScope().put("foo3", "bar");
-		ViewSelection selection = selector.makeSelection(context);
+		ViewSelection selection = selector.makeEntrySelection(context);
 		assertTrue(selection instanceof ApplicationView);
 		ApplicationView view = (ApplicationView)selection;
 		assertEquals("view", view.getViewName());
@@ -33,14 +33,14 @@ public class ApplicationViewSelectorTests extends TestCase {
 	public void testMakeNullSelection() {
 		ApplicationViewSelector selector = new ApplicationViewSelector(new StaticExpression(null));
 		MockRequestContext context = new MockRequestContext();
-		ViewSelection selection = selector.makeSelection(context);
+		ViewSelection selection = selector.makeEntrySelection(context);
 		assertTrue(selection == ViewSelection.NULL_VIEW);
 	}
 
 	public void testMakeNullSelectionEmptyString() {
 		ApplicationViewSelector selector = new ApplicationViewSelector(new StaticExpression(""));
 		MockRequestContext context = new MockRequestContext();
-		ViewSelection selection = selector.makeSelection(context);
+		ViewSelection selection = selector.makeEntrySelection(context);
 		assertTrue(selection == ViewSelection.NULL_VIEW);
 	}
 }

@@ -43,7 +43,7 @@ public class ViewState extends TransitionableState {
 	/**
 	 * The list of actions to be executed when this state is entered.
 	 */
-	private ActionList actionList = new ActionList();
+	private ActionList renderActionList = new ActionList();
 
 	/**
 	 * The factory for the view selection to return when this state is entered.
@@ -82,8 +82,8 @@ public class ViewState extends TransitionableState {
 	 * refresh. The returned list is mutable.
 	 * @return the state action list
 	 */
-	public ActionList getActionList() {
-		return actionList;
+	public ActionList getRenderActionList() {
+		return renderActionList;
 	}
 
 	/**
@@ -100,8 +100,10 @@ public class ViewState extends TransitionableState {
 	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
 	protected ViewSelection doEnter(RequestControlContext context) throws FlowExecutionException {
-		actionList.execute(context);
-		return viewSelector.makeSelection(context);
+		if (viewSelector.isEntrySelectionRenderable(context)) {
+			renderActionList.execute(context);
+		}
+		return viewSelector.makeEntrySelection(context);
 	}
 
 	/**
@@ -114,7 +116,7 @@ public class ViewState extends TransitionableState {
 	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
 	public ViewSelection refresh(RequestContext context) throws FlowExecutionException {
-		actionList.execute(context);
+		renderActionList.execute(context);
 		return viewSelector.makeRefreshSelection(context);
 	}
 

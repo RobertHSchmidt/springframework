@@ -91,7 +91,11 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 		return viewName;
 	}
 
-	public ViewSelection makeSelection(RequestContext context) {
+	public boolean isEntrySelectionRenderable(RequestContext context) {
+		return !redirect;
+	}
+	
+	public ViewSelection makeEntrySelection(RequestContext context) {
 		if (redirect) {
 			return FlowExecutionRedirect.INSTANCE;
 		}

@@ -36,17 +36,33 @@ package org.springframework.webflow;
  * @author Erwin Vervaet
  */
 public interface ViewSelector {
-	
+
 	/**
-	 * Make a new view selection for the given request context.
+	 * Will the primary selection returned by 'makeSelection' for the given
+	 * request context be renderable in this request?
+	 * 
+	 * "Renderable" view selections typically can have 'render-actions' execute
+	 * before they are created. An example would be an ApplicationView that
+	 * forwards to a view template like a JSP. "Non-renderable" view selections
+	 * are things like a flow execution redirect--no render actually occurs, but
+	 * only a redirect--rendering happens on the new redirect request.
+	 * 
 	 * @param context the current request context of the executing flow
-	 * @return the view selection
+	 * @return true if yes, false otherwise
 	 */
-	public ViewSelection makeSelection(RequestContext context);
-	
+	public boolean isEntrySelectionRenderable(RequestContext context);
+
 	/**
-	 * Reconstitute the view selection for the given request context 
-	 * to support a ViewState 'refresh' operation.
+	 * Make a new "entry" view selection for the given request context. Called
+	 * when a view-state, end-state, or other interactive state type is entered.
+	 * @param context the current request context of the executing flow
+	 * @return the entry view selection
+	 */
+	public ViewSelection makeEntrySelection(RequestContext context);
+
+	/**
+	 * Reconstitute a renderable view selection for the given request context to
+	 * support a ViewState 'refresh' operation.
 	 * @param context the current request context of the executing flow
 	 * @return the view selection
 	 */

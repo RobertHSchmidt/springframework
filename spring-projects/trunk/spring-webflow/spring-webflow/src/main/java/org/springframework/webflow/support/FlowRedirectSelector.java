@@ -51,11 +51,11 @@ public class FlowRedirectSelector implements ViewSelector {
 		this.expression = expression;
 	}
 
-	public ViewSelection makeRefreshSelection(RequestContext context) {
-		return makeSelection(context);
+	public boolean isEntrySelectionRenderable(RequestContext context) {
+		return true;
 	}
 
-	public ViewSelection makeSelection(RequestContext context) {
+	public ViewSelection makeEntrySelection(RequestContext context) {
 		String flowRedirect = (String)expression.evaluateAgainst(context, Collections.EMPTY_MAP);
 		if (flowRedirect == null) {
 			throw new IllegalStateException("Flow redirect expression evaluated to [null], the expression was " + expression);
@@ -89,5 +89,9 @@ public class FlowRedirectSelector implements ViewSelector {
 			flowId = context.getFlowExecutionContext().getFlow().getId();
 		}
 		return new FlowRedirect(flowId, input);
+	}
+
+	public ViewSelection makeRefreshSelection(RequestContext context) {
+		return makeEntrySelection(context);
 	}
 }

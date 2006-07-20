@@ -9,7 +9,7 @@ public class NullViewSelectionTests extends TestCase {
 	private MockRequestContext context = new MockRequestContext();
 	
 	public void testMakeSelection() {
-		assertEquals(ViewSelection.NULL_VIEW, NullViewSelector.INSTANCE.makeSelection(context));
+		assertEquals(ViewSelection.NULL_VIEW, NullViewSelector.INSTANCE.makeEntrySelection(context));
 	}
 
 	public void testMakeRefreshSelection() {

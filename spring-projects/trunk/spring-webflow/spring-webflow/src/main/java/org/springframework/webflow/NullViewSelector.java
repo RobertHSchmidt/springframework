@@ -35,12 +35,16 @@ public final class NullViewSelector implements ViewSelector, Serializable {
 	private NullViewSelector() {
 	}
 
-	public ViewSelection makeRefreshSelection(RequestContext context) {
-		return makeSelection(context);
+	public boolean isEntrySelectionRenderable(RequestContext context) {
+		return false;
 	}
-	
-	public ViewSelection makeSelection(RequestContext context) {
+
+	public ViewSelection makeEntrySelection(RequestContext context) {
 		return ViewSelection.NULL_VIEW;
+	}
+
+	public ViewSelection makeRefreshSelection(RequestContext context) {
+		return makeEntrySelection(context);
 	}
 
 	// resolve the singleton instance
