@@ -18,7 +18,6 @@ package org.springframework.webflow;
 import junit.framework.TestCase;
 
 import org.springframework.binding.expression.support.StaticExpression;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.impl.FlowExecutionImpl;
 import org.springframework.webflow.support.ApplicationView;
