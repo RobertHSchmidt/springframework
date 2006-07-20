@@ -34,10 +34,18 @@ import org.springframework.ws.endpoint.MessageEndpoint;
 import org.springframework.ws.soap.SoapMessage;
 
 /**
- * Adapter to use the <code>MessageEndpoint</code> interface with the generic <code>DispatcherServlet</code>.
+ * Adapter to use the <code>MessageEndpoint</code> interface with the generic <code>DispatcherServlet</code>. Requires a
+ * <code>MessageContextFactory</code>, which is used to convert the incoming <code>HttpServletRequest</code> into a
+ * <code>MessageContext</code>, and calls <code>MessageEndpoint.invoke()</code> with that context. If a response is
+ * created, that is sent via the <code>HttpServletResponse</code>.
+ * <p/>
+ * Note that the <code>MessageDispatcher</code> implements the <code>MessageEndpoint</code> interface, so this adapter
+ * can be used to dispatch messages further.
  *
  * @author Arjen Poutsma
  * @see org.springframework.ws.endpoint.MessageEndpoint
+ * @see MessageContextFactory
+ * @see org.springframework.ws.MessageDispatcher
  */
 public class MessageEndpointHandlerAdapter implements HandlerAdapter, InitializingBean {
 
