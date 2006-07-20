@@ -44,7 +44,9 @@
 	</action-state>
 	
   	<view-state id="viewState1" view="view1">
-		<action bean="action1"/>
+  		<render-actions>
+			<action bean="action1"/>
+		</render-actions>
 		<transition on="event1" to="subFlowState1"/>
 	</view-state>
 	
