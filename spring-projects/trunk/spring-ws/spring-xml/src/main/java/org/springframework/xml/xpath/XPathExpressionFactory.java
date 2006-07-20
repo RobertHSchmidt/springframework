@@ -62,7 +62,7 @@ public abstract class XPathExpressionFactory {
         try {
             Class.forName(XALAN_XPATH_CLASS_NAME);
             xalanXPathAvailable = true;
-            logger.info("Xalan XPath available");
+            logger.info("Xalan available");
         }
         catch (ClassNotFoundException ex) {
             xalanXPathAvailable = false;
