@@ -31,8 +31,6 @@ import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepositoryFactory;
-import org.springframework.webflow.support.ApplicationView;
-import org.springframework.webflow.support.FlowExecutionRedirect;
 
 /**
  * The default implementation of the central facade for <i>driving</i> the
@@ -60,12 +58,6 @@ import org.springframework.webflow.support.FlowExecutionRedirect;
  * create, save, and store managed flow executions driven by this executor.</td>
  * <td>A {@link DefaultFlowExecutionRepositoryFactory simple}, stateful
  * server-side session-based repository factory.</td>
- * </tr>
- * <tr>
- * <td>alwaysRedirectOnPause</td>
- * <td>A flag indicating if this executor should force a redirect to an
- * {@link ApplicationView} after pausing an active flow execution.</td>
- * <td>false, indicating no special redirect action should be taken.</td>
  * </tr>
  * <tr>
  * <td>inputMapper</td>
@@ -107,15 +99,6 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * repository factory that creates repositories within the user session map.
 	 */
 	private FlowExecutionRepositoryFactory repositoryFactory;
-
-	/**
-	 * A value that indicates if this executor should always redirect selected
-	 * application views after pausing an active flow execution.
-	 * <p>
-	 * This allows the user to participate in the current state of the flow
-	 * execution using a bookmarkable URL.
-	 */
-	private boolean alwaysRedirectOnPause;
 
 	/**
 	 * The service responsible for mapping attributes of an
@@ -162,25 +145,6 @@ public class FlowExecutorImpl implements FlowExecutor {
 	}
 
 	/**
-	 * Returns a value indicating if this executor should redirect after pausing
-	 * an active flow execution.
-	 */
-	public boolean isAlwaysRedirectOnPause() {
-		return alwaysRedirectOnPause;
-	}
-
-	/**
-	 * Sets the value that indicates if this executor should always redirect
-	 * after pausing an active flow execution.
-	 * <p>
-	 * Setting this to true allows the user to participate in the current
-	 * view-state of a conversation at a refreshable URL.
-	 */
-	public void setAlwaysRedirectOnPause(boolean alwaysRedirectOnPause) {
-		this.alwaysRedirectOnPause = alwaysRedirectOnPause;
-	}
-
-	/**
 	 * Set the service responsible for mapping attributes of an
 	 * {@link ExternalContext} to a new {@link FlowExecution} during the
 	 * {@link #launch(String, ExternalContext) launch flow} operation.
@@ -210,8 +174,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 			// execution still active => store it in the repository
 			FlowExecutionKey flowExecutionKey = repository.generateKey(flowExecution);
 			repository.putFlowExecution(flowExecutionKey, flowExecution);
-			return new ResponseInstruction(flowExecutionKey.toString(), flowExecution,
-					redirectOnPauseIfNecessary(selectedView));
+			return new ResponseInstruction(flowExecutionKey.toString(), flowExecution, selectedView);
 		}
 		else {
 			// execution already ended => just render the selected view
@@ -233,8 +196,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 				// execution still active => store it in the repository
 				repositoryKey = repository.getNextKey(flowExecution, repositoryKey);
 				repository.putFlowExecution(repositoryKey, flowExecution);
-				return new ResponseInstruction(repositoryKey.toString(), flowExecution,
-						redirectOnPauseIfNecessary(selectedView));
+				return new ResponseInstruction(repositoryKey.toString(), flowExecution, selectedView);
 			}
 			else {
 				// execution ended => remove it from the repository
@@ -289,22 +251,6 @@ public class FlowExecutorImpl implements FlowExecutor {
 		}
 		else {
 			return null;
-		}
-	}
-
-	/**
-	 * Factory method that post processes a view selection made as the result of
-	 * pausing an active flow execution. This implementation applies the
-	 * "redirectOnPause" behavior if necessary.
-	 * @param selectedView the view selected by the flow execution
-	 * @return the view to return to callers
-	 */
-	protected ViewSelection redirectOnPauseIfNecessary(ViewSelection selectedView) {
-		if (selectedView instanceof ApplicationView && alwaysRedirectOnPause) {
-			return FlowExecutionRedirect.INSTANCE;
-		}
-		else {
-			return selectedView;
 		}
 	}
 }
