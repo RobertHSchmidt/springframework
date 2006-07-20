@@ -16,7 +16,7 @@
 		</transition>
 	</view-state>
 
-	<view-state id="enterCategory" view="categoryForm">
+	<view-state id="enterCategory" view="redirect:categoryForm">
 		<transition on="submit" to="requiresShipping">
 			<action bean="formAction" method="bind"/>
 		</transition>
