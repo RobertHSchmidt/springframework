@@ -16,7 +16,7 @@ public class FlowRedirectSelectorTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		context.getRequestScope().put("flowIdVar", "foo");
 		context.getRequestScope().put("bar", "baz");
-		ViewSelection selection = selector.makeSelection(context);
+		ViewSelection selection = selector.makeEntrySelection(context);
 		assertTrue(selection instanceof FlowRedirect);
 		FlowRedirect redirect = (FlowRedirect)selection;
 		assertEquals("foo", redirect.getFlowId());
@@ -29,7 +29,7 @@ public class FlowRedirectSelectorTests extends TestCase {
 		FlowRedirectSelector selector = new FlowRedirectSelector(exp);
 		MockRequestContext context = new MockRequestContext();
 		try {
-			ViewSelection selection = selector.makeSelection(context);
+			ViewSelection selection = selector.makeEntrySelection(context);
 			assertTrue(selection instanceof FlowRedirect);
 		} catch (IllegalStateException e) {
 			

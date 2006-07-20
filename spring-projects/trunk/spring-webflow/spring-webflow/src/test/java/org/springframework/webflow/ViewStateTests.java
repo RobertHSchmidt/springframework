@@ -62,7 +62,7 @@ public class ViewStateTests extends TestCase {
 		Flow flow = new Flow("myFlow");
 		ViewState state = new ViewState(flow, "viewState");
 		TestAction action = new TestAction();
-		state.getActionList().add(action);
+		state.getRenderActionList().add(action);
 		state.getTransitionSet().add(new Transition(on("submit"), to("finish")));
 		new EndState(flow, "finish");
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);

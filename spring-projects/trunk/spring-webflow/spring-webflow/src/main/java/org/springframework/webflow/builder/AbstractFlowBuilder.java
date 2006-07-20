@@ -225,26 +225,26 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Adds a view state to the flow built by this builder.
 	 * @param stateId the state identifier
 	 * @param viewName the string-encoded view selector
-	 * @param action the action to execute on state entry and refresh; may be null
+	 * @param renderAction the action to execute on state entry and refresh; may be null
 	 * @param transition the sole transition (path) out of this state
 	 * @return the fully constructed view state instance
 	 */
-	protected State addViewState(String stateId, String viewName, Action action, Transition transition) {
+	protected State addViewState(String stateId, String viewName, Action renderAction, Transition transition) {
 		return getFlowArtifactFactory().createViewState(stateId, getFlow(), null, viewSelector(viewName),
-				new Action[] { action }, new Transition[] { transition }, null, null, null);
+				new Action[] { renderAction }, new Transition[] { transition }, null, null, null);
 	}
 
 	/**
 	 * Adds a view state to the flow built by this builder.
 	 * @param stateId the state identifier
 	 * @param viewName the string-encoded view selector
-	 * @param action the action to execute on state entry and refresh; may be null
+	 * @param renderAction the action to execute on state entry and refresh; may be null
 	 * @param transitions the transitions (paths) out of this state
 	 * @return the fully constructed view state instance
 	 */
-	protected State addViewState(String stateId, String viewName, Action action, Transition[] transitions) {
+	protected State addViewState(String stateId, String viewName, Action renderAction, Transition[] transitions) {
 		return getFlowArtifactFactory().createViewState(stateId, getFlow(), null, viewSelector(viewName),
-				new Action[] { action }, transitions, null, null, null);
+				new Action[] { renderAction }, transitions, null, null, null);
 	}
 
 	/**
@@ -253,7 +253,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param entryActions the actions to execute when the state is entered
 	 * @param viewSelector the view selector that will make the view selection
 	 * when the state is entered
-	 * @param actions any 'view actions' to execute on state entry and refresh; may be null
+	 * @param renderActions any 'view actions' to execute on state entry and refresh; may be null
 	 * @param transitions the transitions (path) out of this state
 	 * @param exceptionHandlers any exception handlers to attach to the state
 	 * @param exitActions the actions to execute when the state exits
@@ -262,9 +262,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the fully constructed view state instance
 	 */
 	protected State addViewState(String stateId, Action[] entryActions, ViewSelector viewSelector,
-			Action[] actions, Transition[] transitions, FlowExecutionExceptionHandler[] exceptionHandlers,
+			Action[] renderActions, Transition[] transitions, FlowExecutionExceptionHandler[] exceptionHandlers,
 			Action[] exitActions, AttributeCollection attributes) {
-		return getFlowArtifactFactory().createViewState(stateId, getFlow(), entryActions, viewSelector, actions,
+		return getFlowArtifactFactory().createViewState(stateId, getFlow(), entryActions, viewSelector, renderActions,
 				transitions, exceptionHandlers, exitActions, attributes);
 	}
 

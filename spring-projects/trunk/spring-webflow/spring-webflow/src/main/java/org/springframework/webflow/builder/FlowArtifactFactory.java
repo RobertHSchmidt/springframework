@@ -77,7 +77,7 @@ public class FlowArtifactFactory {
 	 * @param flow the flow that will own (contain) this state (required)
 	 * @param entryActions any state entry actions; may be null
 	 * @param viewSelector the state view selector strategy; may be null
-	 * @param actions any 'view actions' to execute on entry and refresh; may be null
+	 * @param renderActions any 'view actions' to execute on entry and refresh; may be null
 	 * @param transitions any transitions (paths) out of this state; may be null
 	 * @param exceptionHandlers any exception handlers; may be null
 	 * @param exitActions any state exit actions; may be null
@@ -88,13 +88,13 @@ public class FlowArtifactFactory {
 	 * state
 	 */
 	public State createViewState(String id, Flow flow, Action[] entryActions, ViewSelector viewSelector,
-			Action[] actions, Transition[] transitions, FlowExecutionExceptionHandler[] exceptionHandlers,
+			Action[] renderActions, Transition[] transitions, FlowExecutionExceptionHandler[] exceptionHandlers,
 			Action[] exitActions, AttributeCollection attributes) throws FlowArtifactLookupException {
 		ViewState viewState = new ViewState(flow, id);
 		if (viewSelector != null) {
 			viewState.setViewSelector(viewSelector);
 		}
-		viewState.getActionList().addAll(actions);
+		viewState.getRenderActionList().addAll(renderActions);
 		configureCommonProperties(viewState, entryActions, transitions, exceptionHandlers, exitActions, attributes);
 		return viewState;
 	}

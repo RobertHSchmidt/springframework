@@ -129,7 +129,7 @@ public class EndState extends State {
 		FlowSession activeSession = context.getFlowExecutionContext().getActiveSession();
 		if (activeSession.isRoot()) {
 			// entire flow execution is ending, return ending view if applicable
-			ViewSelection selectedView = viewSelector.makeSelection(context);
+			ViewSelection selectedView = viewSelector.makeEntrySelection(context);
 			context.endActiveFlowSession(createSessionOutput(context));
 			return selectedView;
 		}

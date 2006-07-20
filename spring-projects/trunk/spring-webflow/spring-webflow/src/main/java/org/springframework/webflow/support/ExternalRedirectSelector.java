@@ -66,15 +66,19 @@ public class ExternalRedirectSelector implements ViewSelector, Serializable {
 		return urlExpression;
 	}
 
-	public ViewSelection makeRefreshSelection(RequestContext context) {
-		return makeSelection(context);
+	public boolean isEntrySelectionRenderable(RequestContext context) {
+		return true;
 	}
-	
-	public ViewSelection makeSelection(RequestContext context) {
+
+	public ViewSelection makeEntrySelection(RequestContext context) {
 		String url = (String)urlExpression.evaluateAgainst(context, getEvaluationContext(context));
 		return new ExternalRedirect(url);
 	}
 
+	public ViewSelection makeRefreshSelection(RequestContext context) {
+		return makeEntrySelection(context);
+	}
+	
 	/**
 	 * Setup the expression evaluation context.
 	 */
