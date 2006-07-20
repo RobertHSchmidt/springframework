@@ -25,7 +25,6 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.Map;
-
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
@@ -44,6 +43,11 @@ import com.thoughtworks.xstream.io.xml.SaxWriter;
 import com.thoughtworks.xstream.io.xml.StaxReader;
 import com.thoughtworks.xstream.io.xml.StaxWriter;
 import com.thoughtworks.xstream.io.xml.XppReader;
+import org.springframework.beans.propertyeditors.ClassEditor;
+import org.springframework.oxm.AbstractMarshaller;
+import org.springframework.oxm.XmlMappingException;
+import org.springframework.xml.stream.StaxEventContentHandler;
+import org.springframework.xml.stream.XmlEventStreamReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -51,12 +55,6 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
-
-import org.springframework.beans.propertyeditors.ClassEditor;
-import org.springframework.oxm.AbstractMarshaller;
-import org.springframework.oxm.XmlMappingException;
-import org.springframework.xml.stream.StaxEventContentHandler;
-import org.springframework.xml.stream.StaxEventXmlReader;
 
 /**
  * Implementation of the <code>Marshaller</code> interface for XStream. By default, XStream does not require any further
@@ -92,7 +90,7 @@ public class XStreamMarshaller extends AbstractMarshaller {
      * @see #DEFAULT_ENCODING
      */
     public String getEncoding() {
-        return (encoding != null) ? encoding : DEFAULT_ENCODING;
+        return encoding != null ? encoding : DEFAULT_ENCODING;
     }
 
     /**
@@ -255,11 +253,11 @@ public class XStreamMarshaller extends AbstractMarshaller {
     }
 
     protected Object unmarshalXmlEventReader(XMLEventReader eventReader) throws XmlMappingException {
-        XMLReader reader = new StaxEventXmlReader(eventReader);
         try {
-            return unmarshalSaxReader(reader, new InputSource());
+            XMLStreamReader streamReader = new XmlEventStreamReader(eventReader);
+            return unmarshalXmlStreamReader(streamReader);
         }
-        catch (IOException ex) {
+        catch (XMLStreamException ex) {
             throw convertXStreamException(ex, false);
         }
     }
@@ -278,7 +276,6 @@ public class XStreamMarshaller extends AbstractMarshaller {
 
     protected Object unmarshalSaxReader(XMLReader xmlReader, InputSource inputSource)
             throws XmlMappingException, IOException {
-        throw new UnsupportedOperationException(
-                "XStreamMarshaller does not support unmarshalling using SAX XMLReaders");
+        throw new UnsupportedOperationException("XStreamMarshaller does not support unmarshalling using SAX XMLReaders");
     }
 }

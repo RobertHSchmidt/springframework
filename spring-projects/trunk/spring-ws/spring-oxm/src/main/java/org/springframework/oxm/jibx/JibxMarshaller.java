@@ -25,6 +25,7 @@ import java.io.Reader;
 import java.io.Writer;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Transformer;
@@ -56,7 +57,7 @@ import org.springframework.oxm.XmlMappingException;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.xml.stream.StaxEventContentHandler;
-import org.springframework.xml.stream.StaxEventXmlReader;
+import org.springframework.xml.stream.XmlEventStreamReader;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -197,6 +198,7 @@ public class JibxMarshaller extends AbstractMarshaller implements InitializingBe
     }
 
     protected void marshalXmlEventWriter(Object graph, XMLEventWriter eventWriter) {
+
         ContentHandler contentHandler = new StaxEventContentHandler(eventWriter);
         marshalSaxHandlers(graph, contentHandler, null);
     }
@@ -267,12 +269,12 @@ public class JibxMarshaller extends AbstractMarshaller implements InitializingBe
     }
 
     protected Object unmarshalXmlEventReader(XMLEventReader eventReader) {
-        XMLReader reader = new StaxEventXmlReader(eventReader);
         try {
-            return unmarshalSaxReader(reader, new InputSource());
+            XMLStreamReader streamReader = new XmlEventStreamReader(eventReader);
+            return unmarshalXmlStreamReader(streamReader);
         }
-        catch (IOException ex) {
-            throw convertJibxException(new JiBXException(ex.getMessage(), ex), false);
+        catch (XMLStreamException ex) {
+            throw new JibxSystemException(ex);
         }
     }
 
