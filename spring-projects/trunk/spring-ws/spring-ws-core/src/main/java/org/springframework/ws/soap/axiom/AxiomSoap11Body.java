@@ -29,6 +29,7 @@ import org.apache.axiom.soap.SOAPFaultReason;
 import org.apache.axiom.soap.SOAPFaultText;
 import org.apache.axiom.soap.SOAPFaultValue;
 import org.apache.axiom.soap.SOAPProcessingException;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.axiom.support.AxiomUtils;
@@ -68,6 +69,12 @@ class AxiomSoap11Body extends AxiomSoapBody implements Soap11Body {
     }
 
     public Soap11Fault addFault(QName code, String faultString, Locale locale) {
+        Assert.notNull(code, "No faultCode given");
+        Assert.hasLength(faultString, "faultString cannot be empty");
+        if (!StringUtils.hasLength(code.getNamespaceURI())) {
+            throw new IllegalArgumentException(
+                    "A fault code with namespace and local part must be specific for a custom fault code");
+        }
         try {
             detachAllBodyChildren();
             SOAPFault fault = axiomFactory.createSOAPFault(axiomBody);
