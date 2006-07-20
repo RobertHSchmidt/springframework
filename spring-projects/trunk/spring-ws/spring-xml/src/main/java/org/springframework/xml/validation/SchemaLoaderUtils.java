@@ -95,6 +95,5 @@ public abstract class SchemaLoaderUtils {
         catch (IOException e) {
             return null;
         }
-
     }
 }
