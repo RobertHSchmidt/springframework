@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>spring-ws</artifactId>
@@ -86,33 +85,18 @@
             <artifactId>xercesImpl</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- O/X Mapping dependencies -->
+        <!-- O/X Mapping dependencies --><!-- Castor -->
         <dependency>
             <groupId>castor</groupId>
             <artifactId>castor</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- JAXB -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>xmlbeans</groupId>
-            <artifactId>xbean</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.jibx</groupId>
-            <artifactId>jibx-run</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <!-- Test dependencies -->
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
@@ -137,6 +121,18 @@
             <version>20060615</version>
             <scope>test</scope>
         </dependency>
+        <!-- XMLBeans -->
+        <dependency>
+            <groupId>xmlbeans</groupId>
+            <artifactId>xbean</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- JiBX -->
+        <dependency>
+            <groupId>org.jibx</groupId>
+            <artifactId>jibx-run</artifactId>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>org.jibx</groupId>
             <artifactId>jibx-bind</artifactId>
@@ -148,6 +144,12 @@
             <artifactId>bcel</artifactId>
             <version>5.1</version>
             <scope>test</scope>
+        </dependency>
+        <!-- XStream -->
+        <dependency>
+            <groupId>xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>
