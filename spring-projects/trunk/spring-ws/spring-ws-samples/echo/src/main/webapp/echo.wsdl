@@ -4,7 +4,12 @@
                   xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                   targetNamespace="http://www.springframework.org/spring-ws/samples/echo">
 
-    <wsdl:import namespace="http://www.springframework.org/spring-ws/samples/echo" location="echo.xsd"/>
+    <wsdl:types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="http://www.springframework.org/spring-ws/samples/echo/schemas"
+                        schemaLocation="echo.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
 
     <wsdl:message name="echoRequest">
         <wsdl:part name="echoString" element="tns:echoRequest"/>
