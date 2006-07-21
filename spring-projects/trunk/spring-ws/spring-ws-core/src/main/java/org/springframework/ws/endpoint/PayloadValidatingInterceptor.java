@@ -28,13 +28,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.ws.EndpointInterceptor;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapBody;
-import org.springframework.ws.soap.SoapEndpointInterceptor;
 import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapFaultDetail;
 import org.springframework.ws.soap.SoapFaultDetailElement;
-import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.context.SoapMessageContext;
 import org.springframework.xml.namespace.QNameUtils;
 import org.springframework.xml.validation.XmlValidator;
@@ -59,7 +58,7 @@ import org.xml.sax.SAXParseException;
  * @see #setValidateResponse(boolean)
  */
 public class PayloadValidatingInterceptor extends TransformerObjectSupport
-        implements SoapEndpointInterceptor, InitializingBean {
+        implements EndpointInterceptor, InitializingBean {
 
     /**
      * Default SOAP Fault Detail name used when a validation errors occur on the request.
@@ -238,20 +237,6 @@ public class PayloadValidatingInterceptor extends TransformerObjectSupport
             logger.info("Validating using " + StringUtils.arrayToCommaDelimitedString(schemaResources));
         }
         validator = XmlValidatorFactory.createValidator(schemaResources, schemaLanguage);
-    }
-
-    /**
-     * Returns <code>true</code>, i.e. SOAP Faults are not validated.
-     */
-    public boolean handleFault(MessageContext messageContext, Object endpoint) throws Exception {
-        return true;
-    }
-
-    /**
-     * Returns <code>false</code>, i.e. all SOAP Headers are not understood.
-     */
-    public boolean understands(SoapHeaderElement header) {
-        return false;
     }
 
     /**

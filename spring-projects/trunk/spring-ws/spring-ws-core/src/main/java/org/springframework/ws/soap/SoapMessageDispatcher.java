@@ -188,13 +188,14 @@ public class SoapMessageDispatcher extends MessageDispatcher {
             boolean resume = true;
             for (int i = interceptorIndex; resume && i >= 0; i--) {
                 EndpointInterceptor interceptor = mappedEndpoint.getInterceptors()[i];
-                boolean isSoapEndpointInterceptor = interceptor instanceof SoapEndpointInterceptor;
-                if (!hasFault || !isSoapEndpointInterceptor) {
-                    resume = interceptor.handleResponse(messageContext, mappedEndpoint.getEndpoint());
+                if (hasFault) {
+                    if (interceptor instanceof SoapEndpointInterceptor) {
+                        SoapEndpointInterceptor soapEndpointInterceptor = (SoapEndpointInterceptor) interceptor;
+                        resume = soapEndpointInterceptor.handleFault(messageContext, mappedEndpoint.getEndpoint());
+                    }
                 }
-                else if (isSoapEndpointInterceptor) {
-                    resume = ((SoapEndpointInterceptor) interceptor)
-                            .handleFault(messageContext, mappedEndpoint.getEndpoint());
+                else {
+                    resume = interceptor.handleResponse(messageContext, mappedEndpoint.getEndpoint());
                 }
             }
         }
