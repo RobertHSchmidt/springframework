@@ -173,16 +173,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <tarLongFileMode>gnu</tarLongFileMode>
-                    <descriptors>
-                        <descriptor>src/assembly/release.xml</descriptor>
-                    </descriptors>
-                </configuration>
-            </plugin>
             <!-- IDEs -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
