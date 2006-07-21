@@ -8,8 +8,8 @@
         <mkdir dir="${bin.dir}"/>
         <javac srcdir="${src.dir}" destdir="${bin.dir}">
             <classpath>
-                <pathelement location="../../lib/global/saaj-api.jar"/>
-                <pathelement location="../../lib/global/xws-security.jar"/>
+                <pathelement location="lib/saaj-api.jar"/>
+                <pathelement location="lib/xws-security.jar"/>
             </classpath>
         </javac>
         <copy todir="${bin.dir}">
@@ -29,11 +29,11 @@
         <java classname="org.springframework.ws.samples.airline.client.saaj.GetFlights" fork="true" failonerror="true">
             <classpath>
                 <pathelement location="${bin.dir}"/>
-                <pathelement location="../../lib/global/saaj-api.jar"/>
-                <pathelement location="../../lib/global/saaj-impl.jar"/>
-                <pathelement location="../../lib/global/mail.jar"/>
-                <pathelement location="../../lib/global/activation.jar"/>
-                <pathelement location="../../lib/global/xercesImpl.jar"/>
+                <pathelement location="lib/saaj-api.jar"/>
+                <pathelement location="lib/saaj-impl.jar"/>
+                <pathelement location="lib/mail.jar"/>
+                <pathelement location="lib/activation.jar"/>
+                <pathelement location="lib/xercesImpl.jar"/>
             </classpath>
         </java>
     </target>
@@ -43,14 +43,14 @@
               failonerror="true">
             <classpath>
                 <pathelement location="${bin.dir}"/>
-                <pathelement location="../../lib/global/saaj-api.jar"/>
-                <pathelement location="../../lib/global/saaj-impl.jar"/>
-                <pathelement location="../../lib/global/mail.jar"/>
-                <pathelement location="../../lib/global/activation.jar"/>
-                <pathelement location="../../lib/global/xercesImpl.jar"/>
-                <pathelement location="../../lib/global/xws-security.jar"/>
-                <pathelement location="../../lib/global/xwmdig.jar"/>
-                <pathelement location="../../lib/global/xwssec.jar"/>
+                <pathelement location="lib/saaj-api.jar"/>
+                <pathelement location="lib/saaj-impl.jar"/>
+                <pathelement location="lib/mail.jar"/>
+                <pathelement location="lib/activation.jar"/>
+                <pathelement location="lib/xercesImpl.jar"/>
+                <pathelement location="lib/xws-security.jar"/>
+                <pathelement location="lib/xmldsig.jar"/>
+                <pathelement location="lib/xmlsec.jar"/>
             </classpath>
             <arg value="john"/>
             <arg value="changeme"/>
