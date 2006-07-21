@@ -17,6 +17,10 @@
             <lineEnding>dos</lineEnding>
         </fileSet>
         <fileSet>
+             <directory>target/docs/api</directory>
+             <outputDirectory>/docs/api</outputDirectory>
+           </fileSet>
+       <fileSet>
             <directory>../spring-ws-samples</directory>
             <outputDirectory>/samples</outputDirectory>
             <includes>
