@@ -29,14 +29,12 @@
         <repository>
             <id>static.springframework.org</id>
             <url>
-                scp://static.springframework.org/var/www/domains/springframework.org/static/htdocs/maven2
-            </url>
+                scp://static.springframework.org/var/www/domains/springframework.org/static/htdocs/maven2</url>
         </repository>
         <snapshotRepository>
             <id>static.springframework.org</id>
             <url>
-                scp://static.springframework.org/var/www/domains/springframework.org/static/htdocs/maven2-snapshots
-            </url>
+                scp://static.springframework.org/var/www/domains/springframework.org/static/htdocs/maven2-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
     <inceptionYear>2005</inceptionYear>
@@ -133,6 +131,11 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>2.0</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.1</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -164,6 +167,25 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <tarLongFileMode>gnu</tarLongFileMode>
+                    <descriptors>
+                        <descriptor>src/assembly/release.xml</descriptor>
+                    </descriptors>
+                </configuration>
+<!--
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+-->
             </plugin>
             <!-- IDEs -->
             <plugin>
@@ -304,11 +326,6 @@
             <dependency>
                 <groupId>org.springframework.ws</groupId>
                 <artifactId>spring-ws-samples</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.ws</groupId>
-                <artifactId>spring-ws-sandbox</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- Spring dependencies -->
