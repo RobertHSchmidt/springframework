@@ -25,7 +25,7 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>process-resources</phase>
+                        <phase>process-resources</phase> 
                         <goals>
                             <goal>run</goal>
                         </goals>
@@ -52,7 +52,7 @@
                     <execution>
                         <phase>package</phase>
                         <goals>
-                            <goal>directory</goal>
+                            <goal>assembly</goal>
                         </goals>
                     </execution>
                 </executions>
