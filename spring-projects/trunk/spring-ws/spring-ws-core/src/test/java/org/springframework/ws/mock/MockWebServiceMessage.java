@@ -28,11 +28,14 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.springframework.core.io.InputStreamSource;
+import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.ws.WebServiceMessage;
+import org.springframework.xml.sax.SaxUtils;
 import org.springframework.xml.transform.StringSource;
 
 /**
@@ -53,6 +56,10 @@ public class MockWebServiceMessage implements WebServiceMessage {
         Transformer transformer = transformerFactory.newTransformer();
         content = new StringBuffer();
         transformer.transform(source, getPayloadResult());
+    }
+
+    public MockWebServiceMessage(Resource resource) throws IOException, TransformerException {
+        this(new SAXSource(SaxUtils.createInputSource(resource)));
     }
 
     public MockWebServiceMessage(StringBuffer content) {
@@ -86,6 +93,7 @@ public class MockWebServiceMessage implements WebServiceMessage {
     }
 
     public Result getPayloadResult() {
+        content.setLength(0);
         return new StreamResult(new StringBufferWriter());
     }
 
