@@ -11,14 +11,6 @@
     <packaging>pom</packaging>
     <name>Spring-WS release (all modules + samples)</name>
     <description>Generates the public release assemblies of zip and tar.gz's.</description>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>static.springframework.org</id>
-            <url>
-                scp://static.springframework.org/var/www/domains/springframework.org/static/htdocs/downloads/nightly                
-            </url>
-        </snapshotRepository>
-    </distributionManagement>
     <build>
         <plugins>
             <plugin>
