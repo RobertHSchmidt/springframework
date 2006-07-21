@@ -16,19 +16,19 @@
           <group title="Spring-OXM" packages="org.springframework.oxm*"/>
           <group title="Spring-XML" packages="org.springframework.xml*"/>
           <arg value="-breakiterator"/>
-          <link href="http://java.sun.com/j2se/1.4.2/docs/api"/>
-          <link href="http://java.sun.com/j2ee/1.4/docs/api"/>
-          <link href="http://java.sun.com/webservices/docs/2.0/api"/>
-          <link href="http://java.sun.com/webservices/docs/2.0/xws-security/api/"/>
-          <link href="http://static.springframework.org/spring/docs/1.2.x/api"/>
-          <link href="http://jakarta.apache.org/commons/logging/apidocs/"/>
-          <link href="http://xmlbeans.apache.org/docs/2.0.0/reference"/>
-          <link href="http://jibx.sourceforge.net/api"/>
-          <link href="http://ws.apache.org/commons/axiom/apidocs/"/>
-          <link href="http://dom4j.org/apidocs/"/>
-          <link href="http://jdom.org/docs/apidocs/"/>
-          <link href="http://www.xom.nu/apidocs/"/>
-          <link href="http://acegisecurity.org/multiproject/acegi-security/apidocs/"/>
+          <link href="http://java.sun.com/j2se/1.4.2/docs/api"/> 
+          <link href="http://java.sun.com/j2ee/1.4/docs/api"/> 
+          <link href="http://java.sun.com/webservices/docs/2.0/api"/> 
+          <link href="http://java.sun.com/webservices/docs/2.0/xws-security/api/"/> 
+          <link href="http://static.springframework.org/spring/docs/1.2.x/api"/> 
+          <link href="http://jakarta.apache.org/commons/logging/apidocs/"/> 
+          <link href="http://xmlbeans.apache.org/docs/2.0.0/reference"/> 
+          <link href="http://jibx.sourceforge.net/api"/> 
+          <link href="http://ws.apache.org/commons/axiom/apidocs/"/> 
+          <link href="http://dom4j.org/apidocs/"/> 
+          <!-- <link href="http://jdom.org/docs/apidocs/"/>  -->
+          <link href="http://www.xom.nu/apidocs/"/> 
+          <link href="http://acegisecurity.org/multiproject/acegi-security/apidocs/"/> 
           <packageset dir="../spring-xml/src/main/java" />
           <packageset dir="../spring-oxm/src/main/java" />
           <packageset dir="../spring-oxm-tiger/src/main/java" />
