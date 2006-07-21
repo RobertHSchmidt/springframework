@@ -108,6 +108,11 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>2.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>2.0-beta-4</version>
                 </plugin>
@@ -177,15 +182,6 @@
                         <descriptor>src/assembly/release.xml</descriptor>
                     </descriptors>
                 </configuration>
-<!--
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
--->
             </plugin>
             <!-- IDEs -->
             <plugin>
