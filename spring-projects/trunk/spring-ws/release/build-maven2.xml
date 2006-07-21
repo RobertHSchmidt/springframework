@@ -1,7 +1,13 @@
 <?xml version="1.0"?>
 <project name="build-spring-ws" default="javadoc">
+    
+  <target name="home" unless="user.home">
+      <!-- For some reason, maven doesn't set the user.home property -->
+      <property environment="env"/>
+      <property name="user.home" value="${env.HOME}"/>
+  </target>
 
-  <target name="javadoc" description="Calls javadoc targets on each project">
+  <target name="javadoc" depends="home" description="Calls javadoc targets on each project">
       <javadoc destdir="${basedir}/target/docs/api" author="true" version="true" source="1.3"
           windowtitle="Spring Web Services API">
           <doctitle><![CDATA[<h1>Spring-Web Services 1-0 M2</h1>]]></doctitle>

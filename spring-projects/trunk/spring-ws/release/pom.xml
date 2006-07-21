@@ -31,7 +31,7 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <ant antfile="${basedir}/build-maven2.xml" inheritRefs="true">
+                                <ant antfile="${basedir}/build-maven2.xml">
                                     <target name="javadoc"/>
                                 </ant>
                             </tasks>
