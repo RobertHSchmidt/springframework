@@ -50,17 +50,28 @@ abstract class AxiomSoapBody implements SoapBody {
 
     protected final SOAPFactory axiomFactory;
 
-    protected AxiomSoapBody(SOAPBody axiomBody, SOAPFactory axiomFactory) {
+    private boolean payloadCaching;
+
+    protected AxiomSoapBody(SOAPBody axiomBody, SOAPFactory axiomFactory, boolean payloadCaching) {
         Assert.notNull(axiomBody, "No axiomBody given");
         Assert.notNull(axiomFactory, "No axiomFactory given");
         this.axiomBody = axiomBody;
         this.axiomFactory = axiomFactory;
+        this.payloadCaching = payloadCaching;
     }
 
     public Source getPayloadSource() {
         try {
             OMElement payloadElement = getPayloadElement();
-            return payloadElement != null ? new StaxSource(payloadElement.getXMLStreamReader()) : null;
+            if (payloadElement == null) {
+                return null;
+            }
+            else if (payloadCaching) {
+                return new StaxSource(payloadElement.getXMLStreamReader());
+            }
+            else {
+                return new StaxSource(payloadElement.getXMLStreamReaderWithoutCaching());
+            }
         }
         catch (OMException ex) {
             throw new AxiomSoapBodyException(ex);

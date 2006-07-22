@@ -27,11 +27,16 @@ class AxiomSoapEnvelope implements SoapEnvelope {
 
     private final SOAPFactory axiomFactory;
 
-    public AxiomSoapEnvelope(SOAPEnvelope axiomEnvelope, SOAPFactory axiomFactory) {
+    boolean payloadCaching;
+
+    private AxiomSoapBody body;
+
+    public AxiomSoapEnvelope(SOAPEnvelope axiomEnvelope, SOAPFactory axiomFactory, boolean payloadCaching) {
         Assert.notNull(axiomEnvelope, "No axiomEnvelope given");
         Assert.notNull(axiomFactory, "No axiomFactory given");
         this.axiomEnvelope = axiomEnvelope;
         this.axiomFactory = axiomFactory;
+        this.payloadCaching = payloadCaching;
     }
 
     public QName getName() {
@@ -72,21 +77,24 @@ class AxiomSoapEnvelope implements SoapEnvelope {
     }
 
     public SoapBody getBody() {
-        try {
-            SOAPBody axiomBody = axiomEnvelope.getBody();
-            String namespaceURI = axiomEnvelope.getNamespace().getName();
-            if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(namespaceURI)) {
-                return new AxiomSoap11Body(axiomBody, axiomFactory);
+        if (body == null) {
+            try {
+                SOAPBody axiomBody = axiomEnvelope.getBody();
+                String namespaceURI = axiomEnvelope.getNamespace().getName();
+                if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(namespaceURI)) {
+                    body = new AxiomSoap11Body(axiomBody, axiomFactory, payloadCaching);
+                }
+                else if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(namespaceURI)) {
+                    body = new AxiomSoap12Body(axiomBody, axiomFactory, payloadCaching);
+                }
+                else {
+                    throw new AxiomSoapEnvelopeException("Unknown SOAP namespace \"" + namespaceURI + "\"");
+                }
             }
-            else if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(namespaceURI)) {
-                return new AxiomSoap12Body(axiomBody, axiomFactory);
-            }
-            else {
-                throw new AxiomSoapEnvelopeException("Unknown SOAP namespace \"" + namespaceURI + "\"");
+            catch (OMException ex) {
+                throw new AxiomSoapBodyException(ex);
             }
         }
-        catch (OMException ex) {
-            throw new AxiomSoapBodyException(ex);
-        }
+        return body;
     }
 }

@@ -26,7 +26,6 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
@@ -135,8 +134,8 @@ public class MessageDispatcher extends ApplicationObjectSupport implements Messa
      */
     private void initEndpointMappings() {
         // Ensure we have at least one EndpointMapping, by registering a default if not others are found
-        if (this.endpointMappings == null) {
-            this.endpointMappings = getDefaultStrategies(EndpointMapping.class);
+        if (endpointMappings == null) {
+            endpointMappings = getDefaultStrategies(EndpointMapping.class);
             logger.info("No EndpointMapping found: using default");
         }
     }
@@ -145,9 +144,9 @@ public class MessageDispatcher extends ApplicationObjectSupport implements Messa
      * Initialize the <code>EndpointAdapters</code> used by this class.
      */
     private void initEndpointAdapters() {
-        if (this.endpointAdapters == null) {
+        if (endpointAdapters == null) {
             // Ensure we have at least some EndpointAdapters, by registereing a default if no others are found
-            this.endpointAdapters = getDefaultStrategies(EndpointAdapter.class);
+            endpointAdapters = getDefaultStrategies(EndpointAdapter.class);
             logger.info("No EndpointAdapters found: using default");
         }
     }
@@ -156,9 +155,9 @@ public class MessageDispatcher extends ApplicationObjectSupport implements Messa
      * Initialize the <code>EndpointExceptionResolvers</code> used in this class.
      */
     private void initEndpointExceptionResolvers() {
-        if (this.endpointExceptionResolvers == null) {
+        if (endpointExceptionResolvers == null) {
             // Ensure we have at least some EndpointExceptionResolvers, by registereing a default if no others are found
-            this.endpointAdapters = getDefaultStrategies(EndpointExceptionResolver.class);
+            endpointAdapters = getDefaultStrategies(EndpointExceptionResolver.class);
             logger.info("No EndpointExceptionResolver found: using default");
         }
     }
@@ -197,7 +196,8 @@ public class MessageDispatcher extends ApplicationObjectSupport implements Messa
         }
         catch (ClassNotFoundException ex) {
             throw new BeanInitializationException(
-                    "Could not find MessageDispatcher's default strategy class for interface [" + key + "]", ex);
+                    "Could not find MessageDispatcher's default strategy class for interface [" + key + "]",
+                    ex);
         }
     }
 
@@ -242,7 +242,7 @@ public class MessageDispatcher extends ApplicationObjectSupport implements Messa
                     }
                 }
             }
-            // Acutally invoke the handler
+            // Acutally invoke the endpoint
             EndpointAdapter endpointAdapter = getEndpointAdapter(mappedEndpoint.getEndpoint());
             endpointAdapter.invoke(messageContext, mappedEndpoint.getEndpoint());
 
@@ -257,7 +257,7 @@ public class MessageDispatcher extends ApplicationObjectSupport implements Messa
             throw ex;
         }
         catch (Exception ex) {
-            Object endpoint = (mappedEndpoint != null ? mappedEndpoint.getEndpoint() : null);
+            Object endpoint = mappedEndpoint != null ? mappedEndpoint.getEndpoint() : null;
             processEndpointException(messageContext, endpoint, ex);
             triggerHandleResponse(mappedEndpoint, interceptorIndex, messageContext);
         }

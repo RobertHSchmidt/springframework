@@ -16,17 +16,11 @@
 
 package org.springframework.ws.soap.saaj;
 
-import java.util.Iterator;
 import java.util.Locale;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPBodyElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.dom.DOMSource;
 
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -41,23 +35,10 @@ import org.springframework.xml.namespace.QNameUtils;
  *
  * @author Arjen Poutsma
  */
-class Saaj13Soap11Body implements Soap11Body {
-
-    private final SOAPBody saajBody;
+class Saaj13Soap11Body extends Saaj13SoapBody implements Soap11Body {
 
     Saaj13Soap11Body(SOAPBody saajBody) {
-        Assert.notNull(saajBody, "No saajBody given");
-        this.saajBody = saajBody;
-    }
-
-    public Source getPayloadSource() {
-        SOAPBodyElement payloadElement = getPayloadElement();
-        return payloadElement != null ? new DOMSource(payloadElement) : null;
-    }
-
-    public Result getPayloadResult() {
-        saajBody.removeContents();
-        return new DOMResult(saajBody);
+        super(saajBody);
     }
 
     public Soap11Fault addFault(QName faultCode, String faultString, Locale faultStringLocale) {
@@ -101,7 +82,8 @@ class Saaj13Soap11Body implements Soap11Body {
 
     private Soap11Fault addStandardFault(String localName, String faultString, Locale faultStringLocale) {
         try {
-            QName faultCode = QNameUtils.createQName(saajBody.getElementQName().getNamespaceURI(), localName,
+            QName faultCode = QNameUtils.createQName(saajBody.getElementQName().getNamespaceURI(),
+                    localName,
                     QNameUtils.getPrefix(saajBody.getElementQName()));
             saajBody.removeContents();
             SOAPFault saajFault = faultStringLocale == null ? saajBody.addFault(faultCode, faultString) :
@@ -113,36 +95,8 @@ class Saaj13Soap11Body implements Soap11Body {
         }
     }
 
-    public boolean hasFault() {
-        return saajBody.hasFault();
-    }
-
     public SoapFault getFault() {
         return new Saaj13Soap11Fault(saajBody.getFault());
-    }
-
-    public QName getName() {
-        return saajBody.getElementQName();
-    }
-
-    public Source getSource() {
-        return new DOMSource(saajBody);
-    }
-
-    /**
-     * Retrieves the payload of the wrapped SAAJ message as a single DOM element. The payload of a message is the
-     * contents of the SOAP body.
-     *
-     * @return the message payload, or <code>null</code> if none is set.
-     */
-    private SOAPBodyElement getPayloadElement() {
-        for (Iterator iterator = saajBody.getChildElements(); iterator.hasNext();) {
-            Object child = iterator.next();
-            if (child instanceof SOAPBodyElement) {
-                return (SOAPBodyElement) child;
-            }
-        }
-        return null;
     }
 
 }

@@ -30,7 +30,7 @@ public abstract class AbstractQNameEndpointMapping extends AbstractMapBasedSoapE
 
     protected final String getLookupKeyForMessage(WebServiceMessage message) throws Exception {
         QName qName = resolveQName(message);
-        return (qName != null) ? qName.toString() : null;
+        return qName != null ? qName.toString() : null;
     }
 
     /**

@@ -38,6 +38,10 @@ class Saaj12SoapEnvelope implements SoapEnvelope {
 
     private final SOAPEnvelope saajEnvelope;
 
+    private Saaj12SoapHeader header;
+
+    private Saaj12Soap11Body body;
+
     Saaj12SoapEnvelope(SOAPEnvelope saajEnvelope) {
         Assert.notNull(saajEnvelope, "No saajEnvelope given");
         this.saajEnvelope = saajEnvelope;
@@ -52,21 +56,27 @@ class Saaj12SoapEnvelope implements SoapEnvelope {
     }
 
     public SoapHeader getHeader() {
-        try {
-            return saajEnvelope.getHeader() != null ? new Saaj12SoapHeader(saajEnvelope.getHeader()) : null;
+        if (header != null) {
+            try {
+                header = saajEnvelope.getHeader() != null ? new Saaj12SoapHeader(saajEnvelope.getHeader()) : null;
+            }
+            catch (SOAPException ex) {
+                throw new SaajSoapHeaderException(ex);
+            }
         }
-        catch (SOAPException ex) {
-            throw new SaajSoapHeaderException(ex);
-        }
+        return header;
     }
 
     public SoapBody getBody() {
-        try {
-            return new Saaj12Soap11Body(saajEnvelope.getBody());
+        if (body == null) {
+            try {
+                body = new Saaj12Soap11Body(saajEnvelope.getBody());
+            }
+            catch (SOAPException ex) {
+                throw new SaajSoapBodyException(ex);
+            }
         }
-        catch (SOAPException ex) {
-            throw new SaajSoapBodyException(ex);
-        }
+        return body;
     }
 
 

@@ -17,11 +17,14 @@
 package org.springframework.ws.soap.axiom;
 
 import java.io.IOException;
+import javax.xml.stream.XMLStreamException;
 
+import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPMessage;
 import org.springframework.util.Assert;
 import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.context.AbstractSoapMessageContext;
 import org.springframework.ws.transport.TransportResponse;
 
@@ -67,13 +70,25 @@ public class AxiomSoapMessageContext extends AbstractSoapMessageContext {
     }
 
     public void sendResponse(TransportResponse transportResponse) throws IOException {
-        if (hasResponse()) {
-            AxiomSoapMessage response = (AxiomSoapMessage) getSoapResponse();
-            String contentType = response.getVersion().getContentType();
-            SOAPMessage axiomResponse = response.getAxiomMessage();
-            contentType += "; charset=\"" + axiomResponse.getCharsetEncoding() + "\"";
-            transportResponse.addHeader("Content-Type", contentType);
-            response.writeTo(transportResponse.getOutputStream());
+        try {
+            if (hasResponse()) {
+                AxiomSoapMessage response = (AxiomSoapMessage) getSoapResponse();
+                SOAPMessage axiomResponse = response.getAxiomMessage();
+                String charsetEncoding = axiomResponse.getCharsetEncoding();
+
+                OMOutputFormat format = new OMOutputFormat();
+                format.setCharSetEncoding(charsetEncoding);
+                format.setSOAP11(response.getVersion() == SoapVersion.SOAP_11);
+                String contentType = format.getContentType();
+                contentType += "; charset=\"" + charsetEncoding + "\"";
+
+                transportResponse.addHeader("Content-Type", contentType);
+                axiomResponse.serializeAndConsume(transportResponse.getOutputStream(), format);
+            }
+        }
+        catch (XMLStreamException ex) {
+            throw new AxiomSoapMessageException("Could not write message to OutputStream: " + ex.getMessage(), ex);
         }
     }
+
 }

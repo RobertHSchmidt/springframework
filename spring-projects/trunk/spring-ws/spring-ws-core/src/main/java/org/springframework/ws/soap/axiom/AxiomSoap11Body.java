@@ -44,8 +44,8 @@ import org.springframework.xml.namespace.QNameUtils;
  */
 class AxiomSoap11Body extends AxiomSoapBody implements Soap11Body {
 
-    AxiomSoap11Body(SOAPBody axiomBody, SOAPFactory axiomFactory) {
-        super(axiomBody, axiomFactory);
+    AxiomSoap11Body(SOAPBody axiomBody, SOAPFactory axiomFactory, boolean payloadCaching) {
+        super(axiomBody, axiomFactory, payloadCaching);
     }
 
     public SoapFault addMustUnderstandFault(String faultString, Locale locale) {

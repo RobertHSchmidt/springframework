@@ -26,6 +26,8 @@ import javax.xml.transform.Source;
  */
 public abstract class AbstractSoapMessage implements SoapMessage {
 
+    private SoapVersion version;
+
     /**
      * Returns <code>getEnvelope().getBody()</code>.
      */
@@ -55,17 +57,20 @@ public abstract class AbstractSoapMessage implements SoapMessage {
     }
 
     public SoapVersion getVersion() {
-        String envelopeNamespace = getEnvelope().getName().getNamespaceURI();
-        if (SoapVersion.SOAP_11.getEnvelopeNamespaceUri().equals(envelopeNamespace)) {
-            return SoapVersion.SOAP_11;
+        if (version == null) {
+            String envelopeNamespace = getEnvelope().getName().getNamespaceURI();
+            if (SoapVersion.SOAP_11.getEnvelopeNamespaceUri().equals(envelopeNamespace)) {
+                version = SoapVersion.SOAP_11;
+            }
+            else if (SoapVersion.SOAP_12.getEnvelopeNamespaceUri().equals(envelopeNamespace)) {
+                version = SoapVersion.SOAP_12;
+            }
+            else {
+                throw new IllegalStateException(
+                        "Unknown Envelope namespace uri '" + envelopeNamespace + "'. " + "Cannot deduce SoapVersion.");
+            }
         }
-        else if (SoapVersion.SOAP_12.getEnvelopeNamespaceUri().equals(envelopeNamespace)) {
-            return SoapVersion.SOAP_12;
-        }
-        else {
-            throw new IllegalStateException(
-                    "Unknown Envelope namespace uri '" + envelopeNamespace + "'. " + "Cannot deduce SoapVersion.");
-        }
+        return version;
     }
 
 }

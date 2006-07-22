@@ -23,7 +23,7 @@ import org.springframework.ws.endpoint.AbstractEndpointMapping;
 import org.springframework.ws.soap.SoapEndpointInvocationChain;
 
 /**
- * Abstract base class for SOAP <code>EndpointMapping</code> implementations. Adds support to SOAP actor roles, in
+ * Abstract base class for SOAP <code>EndpointMapping</code> implementations. Adds support to SOAP actors/roles, in
  * addition to the default endpoint, and endpoint interceptors offered by the base
  * <code>AbstractEndpointMapping</code>.
  * <p/>
@@ -69,6 +69,6 @@ public abstract class AbstractSoapEndpointMapping extends AbstractEndpointMappin
     protected EndpointInvocationChain createEndpointInvocationChain(WebServiceMessage request,
                                                                     Object endpoint,
                                                                     EndpointInterceptor[] interceptors) {
-        return new SoapEndpointInvocationChain(endpoint, interceptors, this.roles);
+        return new SoapEndpointInvocationChain(endpoint, interceptors, roles);
     }
 }
