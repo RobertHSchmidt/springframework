@@ -58,6 +58,10 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
 
     private final Attachments attachments;
 
+    private boolean payloadCaching;
+
+    private AxiomSoapEnvelope envelope;
+
     /**
      * Create a new, empty <code>AxiomSoapMessage</code>.
      *
@@ -69,23 +73,28 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
         axiomMessage = axiomFactory.createSOAPMessage(soapEnvelope, soapEnvelope.getBuilder());
         soapAction = null;
         attachments = null;
+        payloadCaching = true;
     }
 
     /**
      * Create a new <code>AxiomSoapMessage</code> based on the given AXIOM <code>SOAPMessage</code>.
      *
-     * @param soapMessage the AXIOM SOAPMessage
-     * @param soapFactory the AXIOM SOAPFactory
-     * @param soapAction  the value of SOAP Action header
+     * @param soapMessage    the AXIOM SOAPMessage
+     * @param soapFactory    the AXIOM SOAPFactory
+     * @param soapAction     the value of SOAP Action header
+     * @param attachments    the attachments
+     * @param payloadCaching whether the contents of the SOAP body should be cached or not
      */
     public AxiomSoapMessage(SOAPMessage soapMessage,
                             SOAPFactory soapFactory,
                             String soapAction,
-                            Attachments attachments) {
+                            Attachments attachments,
+                            boolean payloadCaching) {
         axiomMessage = soapMessage;
         axiomFactory = soapFactory;
         this.soapAction = soapAction;
         this.attachments = attachments;
+        this.payloadCaching = payloadCaching;
     }
 
     /**
@@ -96,12 +105,15 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
     }
 
     public SoapEnvelope getEnvelope() {
-        try {
-            return new AxiomSoapEnvelope(axiomMessage.getSOAPEnvelope(), axiomFactory);
+        if (envelope == null) {
+            try {
+                envelope = new AxiomSoapEnvelope(axiomMessage.getSOAPEnvelope(), axiomFactory, payloadCaching);
+            }
+            catch (SOAPProcessingException ex) {
+                throw new AxiomSoapEnvelopeException(ex);
+            }
         }
-        catch (SOAPProcessingException ex) {
-            throw new AxiomSoapEnvelopeException(ex);
-        }
+        return envelope;
     }
 
     public String getSoapAction() {

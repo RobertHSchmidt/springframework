@@ -21,10 +21,27 @@ import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.soap.endpoint.AbstractMapBasedSoapEndpointMapping;
 
 /**
- * Endpoint mapping that resolves the message Soap Action as endpoint key of the SOAP message.
+ * Implementation of the <code>EndpointMapping</code> interface to map from <code>SOAPAction</code> headers to endpoint
+ * beans. Supports both mapping to bean instances and mapping to bean names: the latter is required for prototype
+ * handlers.
+ * <p/>
+ * The <code>endpointMap</code> property is suitable for populating the endpoint map with bean references, e.g. via the
+ * map element in XML bean definitions.
+ * <p/>
+ * Mappings to bean names can be set via the <code>mappings</code> property, in a form accepted by the
+ * <code>java.util.Properties</code> class, like as follows:
+ * <pre>
+ * http://www.springframework.org/spring-ws/samples/airline/BookFlight=bookFlightEndpoint
+ * http://www.springframework.org/spring-ws/samples/airline/GetFlights=getFlightsEndpoint
+ * </pre>
+ * The syntax is SOAP_ACTION=ENDPOINT_BEAN_NAME.
+ * <p/>
+ * This endpoint mapping does not read from the request message, and therefore is more suitable for message contexts
+ * which directly read from the transport request (such as the <code>AxiomSoapMessageContextFactory</code> with the
+ * <code>payloadCaching</code> disabled).
  *
  * @author Arjen Poutsma
- * @see org.springframework.ws.soap.SoapMessage#getSoapAction()
+ * @see SoapMessage#getSoapAction()
  */
 public class SoapActionEndpointMapping extends AbstractMapBasedSoapEndpointMapping {
 

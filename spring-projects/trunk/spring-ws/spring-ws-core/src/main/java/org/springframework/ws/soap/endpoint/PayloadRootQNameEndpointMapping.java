@@ -18,22 +18,36 @@ package org.springframework.ws.soap.endpoint;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 
-import org.w3c.dom.Element;
-
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.xml.namespace.QNameUtils;
+import org.w3c.dom.Element;
 
 /**
- * Endpoint mapping that returns resolves the qualified name of the first element of the message payload.
+ * Implementation of the <code>EndpointMapping</code> interface to map from the qualified name of the request payload
+ * root element. Supports both mapping to bean instances and mapping to bean names: the latter is required for prototype
+ * handlers.
+ * <p/>
+ * The <code>endpointMap</code> property is suitable for populating the endpoint map with bean references, e.g. via the
+ * map element in XML bean definitions.
+ * <p/>
+ * Mappings to bean names can be set via the <code>mappings</code> property, in a form accepted by the
+ * <code>java.util.Properties</code> class, like as follows:
+ * <pre>
+ * {http://www.springframework.org/spring-ws/samples/airline/schemas}BookFlight=bookFlightEndpoint
+ * {http://www.springframework.org/spring-ws/samples/airline/schemas}GetFlights=getFlightsEndpoint
+ * </pre>
+ * The syntax is QNAME=ENDPOINT_BEAN_NAME. Qualified names are parsed using the syntax described in
+ * <code>QNameEditor</code>.
  *
  * @author Arjen Poutsma
+ * @see org.springframework.xml.namespace.QNameEditor
  */
-public class PayloadRootQNameEndpointMapping extends AbstractQNameEndpointMapping {
+public class PayloadRootQNameEndpointMapping extends AbstractQNameEndpointMapping implements InitializingBean {
 
     private static TransformerFactory transformerFactory;
 
@@ -43,17 +57,13 @@ public class PayloadRootQNameEndpointMapping extends AbstractQNameEndpointMappin
     }
 
     private Element getMessagePayloadElement(WebServiceMessage message) throws TransformerException {
-        Transformer transformer = createTransformer();
+        Transformer transformer = transformerFactory.newTransformer();
         DOMResult domResult = new DOMResult();
         transformer.transform(message.getPayloadSource(), domResult);
         return (Element) domResult.getNode().getFirstChild();
     }
 
-    private Transformer createTransformer() throws TransformerConfigurationException {
-        if (transformerFactory == null) {
-            transformerFactory = TransformerFactory.newInstance();
-        }
-        return transformerFactory.newTransformer();
+    public final void afterPropertiesSet() throws Exception {
+        transformerFactory = TransformerFactory.newInstance();
     }
-
 }

@@ -36,11 +36,11 @@ import org.springframework.ws.soap.SoapMessage;
 /**
  * Adapter to use the <code>MessageEndpoint</code> interface with the generic <code>DispatcherServlet</code>. Requires a
  * <code>MessageContextFactory</code>, which is used to convert the incoming <code>HttpServletRequest</code> into a
- * <code>MessageContext</code>, and calls <code>MessageEndpoint.invoke()</code> with that context. If a response is
+ * <code>MessageContext</code>, and passes that context to the mapped <code>MessageEndpoint</code>. If a response is
  * created, that is sent via the <code>HttpServletResponse</code>.
  * <p/>
- * Note that the <code>MessageDispatcher</code> implements the <code>MessageEndpoint</code> interface, so this adapter
- * can be used to dispatch messages further.
+ * Note that the <code>MessageDispatcher</code> implements the <code>MessageEndpoint</code> interface, enabling this
+ * adapter to function as a gateway to further message handling logic.
  *
  * @author Arjen Poutsma
  * @see org.springframework.ws.endpoint.MessageEndpoint
@@ -80,7 +80,7 @@ public class MessageEndpointHandlerAdapter implements HandlerAdapter, Initializi
 
     public final void afterPropertiesSet() throws Exception {
         Assert.notNull(messageContextFactory, "messageContextFactory is required");
-        MessageEndpointHandlerAdapter.logger.info("Using message context factory " + messageContextFactory);
+        logger.info("Using message context factory " + messageContextFactory);
     }
 
     private void handlePost(HttpServletRequest httpServletRequest,

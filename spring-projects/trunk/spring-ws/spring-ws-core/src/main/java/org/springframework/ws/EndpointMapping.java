@@ -23,13 +23,10 @@ package org.springframework.ws;
  * <code>PayloadRootQNameEndpointMapping</code> and <code>SoapActionEndpointMapping</code> are included.
  * <p/>
  * HandlerMapping implementations can support mapped interceptors but do not have to. A handler will always be wrapped
- * in a HandlerExecutionChain instance, optionally accompanied by some HandlerInterceptor instances. The
- * DispatcherServlet will first call each HandlerInterceptor's preHandle method in the given order, finally invoking the
- * handler itself if all preHandle methods have returned "true".
- * <p/>
- * The ability to parameterize this mapping is a powerful and unusual capability of this MVC framework. For example, it
- * is possible to write a custom mapping based on session state, cookie state or many other variables. No other MVC
- * framework seems to be equally flexible.
+ * in a <code>EndpointExecutionChain</code> instance, optionally accompanied by some <code>EndpointInterceptor</code>
+ * instances. The <code>MessageDispacher</code> will first call each <code>EndpointInterceptor</code>'s
+ * <code>handlerRequest</code> method in the given order, finally invoking the endpoint itself if all
+ * <code>handlerRequest</code> methods have returned <code>true</code>.
  *
  * @author Arjen Poutsma
  * @see org.springframework.ws.endpoint.AbstractEndpointMapping

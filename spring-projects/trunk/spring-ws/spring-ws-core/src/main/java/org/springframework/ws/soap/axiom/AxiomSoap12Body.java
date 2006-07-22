@@ -35,8 +35,8 @@ import org.springframework.ws.soap.soap12.Soap12Fault;
  */
 class AxiomSoap12Body extends AxiomSoapBody implements Soap12Body {
 
-    AxiomSoap12Body(SOAPBody axiomBody, SOAPFactory axiomFactory) {
-        super(axiomBody, axiomFactory);
+    AxiomSoap12Body(SOAPBody axiomBody, SOAPFactory axiomFactory, boolean payloadCaching) {
+        super(axiomBody, axiomFactory, payloadCaching);
     }
 
     public SoapFault addMustUnderstandFault(String reason, Locale locale) {

@@ -56,6 +56,8 @@ public class SaajSoapMessage extends AbstractSoapMessage {
 
     private final SOAPMessage saajMessage;
 
+    private SoapEnvelope envelope;
+
     /**
      * Create a new <code>SaajSoapMessage</code> based on the given SAAJ <code>SOAPMessage</code>.
      *
@@ -73,18 +75,21 @@ public class SaajSoapMessage extends AbstractSoapMessage {
     }
 
     public SoapEnvelope getEnvelope() {
-        try {
-            SOAPEnvelope saajEnvelope = saajMessage.getSOAPPart().getEnvelope();
-            if (SaajUtils.getSaajVersion() == SaajUtils.SAAJ_12) {
-                return new Saaj12SoapEnvelope(saajEnvelope);
+        if (envelope == null) {
+            try {
+                SOAPEnvelope saajEnvelope = saajMessage.getSOAPPart().getEnvelope();
+                if (SaajUtils.getSaajVersion() == SaajUtils.SAAJ_12) {
+                    envelope = new Saaj12SoapEnvelope(saajEnvelope);
+                }
+                else {
+                    envelope = new Saaj13SoapEnvelope(saajEnvelope);
+                }
             }
-            else {
-                return new Saaj13SoapEnvelope(saajEnvelope);
+            catch (SOAPException ex) {
+                throw new SaajSoapEnvelopeException(ex);
             }
         }
-        catch (SOAPException ex) {
-            throw new SaajSoapEnvelopeException(ex);
-        }
+        return envelope;
     }
 
     public String getSoapAction() {
