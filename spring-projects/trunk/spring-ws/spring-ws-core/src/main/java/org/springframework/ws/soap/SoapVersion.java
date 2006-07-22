@@ -19,7 +19,8 @@ package org.springframework.ws.soap;
 import javax.xml.namespace.QName;
 
 /**
- * Interface that defines a specific version. Contains properties for elements that make up a soap envelope.
+ * Interface that defines a specific version of the SOAP specification. Contains properties for elements that make up a
+ * soap envelope.
  *
  * @author Arjen Poutsma
  * @see #SOAP_11
