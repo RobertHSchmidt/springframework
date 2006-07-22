@@ -80,7 +80,7 @@ public abstract class AbstractEndpointMapping extends ApplicationObjectSupport i
     public final EndpointInvocationChain getEndpoint(WebServiceMessage request) throws Exception {
         Object endpoint = getEndpointInternal(request);
         if (endpoint == null) {
-            endpoint = this.defaultEndpoint;
+            endpoint = defaultEndpoint;
         }
         if (endpoint == null) {
             return null;
