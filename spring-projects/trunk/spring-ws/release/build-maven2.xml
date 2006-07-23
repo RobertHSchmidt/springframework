@@ -26,7 +26,7 @@
           <link href="http://jibx.sourceforge.net/api"/> 
           <link href="http://ws.apache.org/commons/axiom/apidocs/"/> 
           <link href="http://dom4j.org/apidocs/"/> 
-          <!-- <link href="http://jdom.org/docs/apidocs/"/>  -->
+          <link href="http://jdom.org/docs/apidocs/"/>
           <link href="http://www.xom.nu/apidocs/"/> 
           <link href="http://acegisecurity.org/multiproject/acegi-security/apidocs/"/> 
           <packageset dir="../spring-xml/src/main/java" />
@@ -54,7 +54,7 @@
                   <include name="javax/activation/**/*.jar"/>
                   <include name="javax/mail/**/*.jar"/>
                   <include name="ws-commons/**/*.jar"/>
-                  <include name="com/sun/xws-security/**/*.jar"/>
+                  <include name="com/sun/xml/wss/**/*.jar"/>
                   <!-- Spring -->
                   <include name="org/springframework/**/*.jar"/>
                   <include name="org/acegisecurity/**/*.jar"/>

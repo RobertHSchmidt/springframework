@@ -39,6 +39,7 @@
                 <exclude>**/target</exclude>
                 <exclude>**/*.iml</exclude>
                 <exclude>**/META-INF/*</exclude>
+                <exclude>**/*.log</exclude>
             </excludes>
         </fileSet>
         <fileSet>
@@ -52,6 +53,7 @@
                 <include>spring-ws-security/**/*</include>
             </includes>
             <excludes>
+                <exclude>**/docs/**</exclude>
                 <exclude>**/target/**</exclude>
                 <exclude>**/target</exclude>
                 <exclude>**/*.iml</exclude>
@@ -83,6 +85,7 @@
                 <include>org.springframework.ws:spring-ws-security</include>
             </includes>
         </dependencySet>
+        <!--
         <dependencySet>
             <outputDirectory>/samples</outputDirectory>
             <scope>runtime</scope>
@@ -91,5 +94,6 @@
                 <include>org.springframework.ws:airline</include>
             </includes>
         </dependencySet>
+    -->
     </dependencySets>
 </assembly>
