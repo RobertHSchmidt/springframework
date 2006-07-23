@@ -15,21 +15,30 @@ Package org.springframework.ws.endpoint
 * AbstractStaxPayloadEndpoint now use StaxSource corrently (#SWS-38)
 * made PayloadValidatingInterceptor more customizable (#SWS-43)
 * add schemas property to PayloadValidatingInterceptor (#SWS-44)
-* changed AbstractDom4JPayloadEndpoint to AbstractDom4jPayloadEndpoint, to follow Spring naming conventions (e.g. Log4jConfigurer)
+* changed AbstractDom4JPayloadEndpoint to AbstractDom4jPayloadEndpoint (lower case j), to follow Spring naming
+  conventions (e.g. Log4jConfigurer)
 
 Package org.springframework.ws.context
-* changed contract of MessageContext.getResponse(): now creates a response if none has been created. Required because creating SOAP fault when a response was already set threw an exception
+* changed contract of MessageContext.getResponse(): now creates a response if none has been created. Required because
+  creating SOAP fault when a response was already set threw an exception.
 * enabling support for direct writing to the TransportResponse
 
 Package org.springframework.ws.soap
 * improved content-type handling (#SWS-32)
 * moved SOAP 1.1 specfics to separate package and interfaces
 
+Package org.springframework.ws.soap.axiom
+* add support for SAAJ 1.3
+* added "payloadCaching" property to read the contents of SOAP bodies produced by the AxiomSoapMessageContextFactory in
+  a non-buffering, read-once fashion.
+* increased performance by keeping object references instead of creating new instances for every call
+
 Package org.springframework.ws.soap.endpoint
 * added SoapEnvelopeLoggingInterceptor, which logs the entire SoapEnvelope
 
 Package org.springframework.ws.soap.saaj
 * add support for SAAJ 1.3
+* increased performance by keeping object references instead of creating new instances for every call
 
 Package org.springframework.ws.soap.saaj.support
 * added SaajUtils.getVersion()
@@ -51,8 +60,8 @@ Package org.springframework.xml
 * moved package to seperate jar file, since oxm now also depends on it
 
 Package org.springframework.xml.namespace
-* moved QNameEditor from spring-ws-core 
-* removed dependency to prefix for QName
+* moved QNameEditor from spring-ws-core
+* removed prefix dependency from QName
 
 Package org.springframework.xml.validation
 * improved validation schema loading (#SWS-46)
