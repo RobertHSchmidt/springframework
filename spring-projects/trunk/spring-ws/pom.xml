@@ -76,8 +76,7 @@
         <module>spring-ws-core</module>
         <module>spring-ws-security</module>
         <module>spring-ws-samples</module>
-    <module>spring-ws-addressing</module>
-  </modules>
+    </modules>
     <profiles>
         <profile>
             <id>jdk1.5</id>
