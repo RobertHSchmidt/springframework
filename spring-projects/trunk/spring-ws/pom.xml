@@ -76,6 +76,7 @@
         <module>spring-ws-core</module>
         <module>spring-ws-security</module>
         <module>spring-ws-samples</module>
+        <module>release</module>
     </modules>
     <profiles>
         <profile>
