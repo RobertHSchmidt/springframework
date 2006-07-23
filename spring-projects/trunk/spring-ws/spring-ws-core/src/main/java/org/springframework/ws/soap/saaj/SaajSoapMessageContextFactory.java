@@ -76,11 +76,15 @@ public class SaajSoapMessageContextFactory implements MessageContextFactory, Ini
                     if (!StringUtils.hasLength(messageFactoryProtocol)) {
                         messageFactoryProtocol = SOAPConstants.DEFAULT_SOAP_PROTOCOL;
                     }
-                    logger.debug("Creating SAAJ 1.3 MessageFactory with " + messageFactoryProtocol);
+                    if (logger.isInfoEnabled()) {
+                        logger.info("Creating SAAJ 1.3 MessageFactory with " + messageFactoryProtocol);
+                    }
                     messageFactory = MessageFactory.newInstance(messageFactoryProtocol);
                 }
                 else if (SaajUtils.getSaajVersion() == SaajUtils.SAAJ_12) {
-                    logger.debug("Creating SAAJ 1.2 MessageFactory");
+                    if (logger.isInfoEnabled()) {
+                        logger.info("Creating SAAJ 1.2 MessageFactory");
+                    }
                     messageFactory = MessageFactory.newInstance();
                 }
                 else {
