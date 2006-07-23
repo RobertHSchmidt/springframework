@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>spring-ws-release</artifactId>
     <packaging>pom</packaging>
-    <name>Spring-WS release</name>
+    <name>Spring-WS Release</name>
     <description>Generates an aggregated zip that contains the full distribution of Spring-WS.</description>
     <build>
         <plugins>
