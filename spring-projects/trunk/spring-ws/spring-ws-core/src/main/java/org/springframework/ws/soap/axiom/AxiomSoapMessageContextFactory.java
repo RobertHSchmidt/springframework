@@ -49,10 +49,10 @@ import org.springframework.ws.transport.TransportRequest;
  * <code>AxiomSoapMessageContext</code>.
  * <p/>
  * To increase reading performance on the the SOAP request created by this message context factory, you can set the
- * <code>payloadCaching</code> property to <code>false</code> (default is <code>true</code>). Enabling this will read
- * the contents of the body directly from the <code>TransportRequest</code>. However, <strong>when this setting is
- * enabled, the payload can only be read once</strong>. This means that any endpoint mappings or interceptors which are
- * based on the message payload (such as the <code>PayloadRootQNameEndpointMapping</code>, the
+ * <code>payloadCaching</code> property to <code>false</code> (default is <code>true</code>). This this will read the
+ * contents of the body directly from the <code>TransportRequest</code>. However, <strong>when this setting is enabled,
+ * the payload can only be read once</strong>. This means that any endpoint mappings or interceptors which are based on
+ * the message payload (such as the <code>PayloadRootQNameEndpointMapping</code>, the
  * <code>PayloadValidatingInterceptor</code>, or the <code>PayloadLoggingInterceptor</code>) cannot be used. Instead,
  * use an endpoint mapping that does not consume the payload (i.e. the <code>SoapActionEndpointMapping</code>).
  * <p/>
