@@ -67,6 +67,9 @@ Package org.springframework.xml.namespace
 Package org.springframework.xml.validation
 * improved validation schema loading (#SWS-46)
 
+Samples
+* Added Ben Ethridge's Echo sample client
+
 Changes in version 1.0-M1 (12-6-2006)
 -------------------------
 
