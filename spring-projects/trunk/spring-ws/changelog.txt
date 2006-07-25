@@ -17,6 +17,7 @@ Package org.springframework.ws.endpoint
 * add schemas property to PayloadValidatingInterceptor (#SWS-44)
 * changed AbstractDom4JPayloadEndpoint to AbstractDom4jPayloadEndpoint (lower case j), to follow Spring naming
   conventions (e.g. Log4jConfigurer)
+* refactoring most of PayloadValidatingInterceptor into AbstractValidatingInterceptor
 
 Package org.springframework.ws.context
 * changed contract of MessageContext.getResponse(): now creates a response if none has been created. Required because
