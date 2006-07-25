@@ -14,16 +14,13 @@ XMLBeans, Castor, JiBX and XStream; and a Web service framework that resembles S
 
 2. RELEASE INFO
 
-Spring-WS requires J2SE 1.4 and J2EE 1.4 (for now).  J2SE 1.5 is required for building.
+Spring-WS requires J2SE 1.4 and J2EE 1.4 (for now).  These are not very strict requirements: J2SE 1.5 is required for building.
 
 Release contents:
 
 "." contains Spring-WS distribution units (jars and source zip archives), readme, and copyright
 "docs" contains the Spring-WS reference manual and API Javadocs
 "projects" contains all buildable projects, including sample applications
-"projects/build-spring-ws" contains the master build file used to build all projects
-"projects/common-build" contains the Ant 1.6 "common build system" used by all projects to compile/build/test
-"projects/repository" contains Spring-WS dependencies (dependent jars)
 "projects/spring-oxm" contains buildable Spring O/X Mapping sources, an internal library used by Spring-WS
 "projects/spring-ws-core" contains buildable Spring-WS core sources
 "projects/spring-ws-security" contains buildable Spring-WS security sources
