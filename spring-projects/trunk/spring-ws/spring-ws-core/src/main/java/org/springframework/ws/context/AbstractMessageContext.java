@@ -35,12 +35,13 @@ public abstract class AbstractMessageContext implements MessageContext {
     private WebServiceMessage response;
 
     /**
-     * Keys are Strings, values are Objects
+     * Keys are <code>Strings</code>, values are <code>Objects</code>. Lazily initalized by
+     * <code>getProperties()</code>.
      */
-    private Map properties = new HashMap();
+    private Map properties;
 
     protected AbstractMessageContext(WebServiceMessage request) {
-        Assert.notNull(request);
+        Assert.notNull(request, "No request given");
         this.request = request;
     }
 
@@ -64,7 +65,7 @@ public abstract class AbstractMessageContext implements MessageContext {
     }
 
     public final boolean hasResponse() {
-        return (response != null);
+        return response != null;
     }
 
     /**
@@ -75,24 +76,31 @@ public abstract class AbstractMessageContext implements MessageContext {
         this.response = response;
     }
 
+    private Map getProperties() {
+        if (properties == null) {
+            properties = new HashMap();
+        }
+        return properties;
+    }
+
     public boolean containsProperty(String name) {
-        return properties.containsKey(name);
+        return getProperties().containsKey(name);
     }
 
     public Object getProperty(String name) {
-        return properties.get(name);
+        return getProperties().get(name);
     }
 
     public String[] getPropertyNames() {
-        return (String[]) properties.keySet().toArray(new String[properties.size()]);
+        return (String[]) getProperties().keySet().toArray(new String[getProperties().size()]);
     }
 
     public void removeProperty(String name) {
-        properties.remove(name);
+        getProperties().remove(name);
     }
 
     public void setProperty(String name, Object value) {
-        properties.put(name, value);
+        getProperties().put(name, value);
     }
 
     /**

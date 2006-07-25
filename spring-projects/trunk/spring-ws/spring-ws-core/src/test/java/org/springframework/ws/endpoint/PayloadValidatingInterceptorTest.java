@@ -174,8 +174,8 @@ public class PayloadValidatingInterceptorTest extends TestCase {
     }
 
     public void testNonExistingSchema() throws Exception {
-        interceptor.setSchema(new ClassPathResource("invalid"));
         try {
+            interceptor.setSchema(new ClassPathResource("invalid"));
             interceptor.afterPropertiesSet();
             fail("IllegalArgumentException expected");
         }
