@@ -23,11 +23,7 @@ import org.springframework.ws.EndpointMapping;
 import org.springframework.ws.WebServiceMessage;
 
 /**
- * Abstract base class for EndpointMapping implementations. Supports a default endpoint, and endpoint interceptors, and
- * SOAP actor roles.
- * <p/>
- * By default, the SOAP actor role is set to the special 'next' role, identifying the next application processing a SOAP
- * request as the intended actor.
+ * Abstract base class for EndpointMapping implementations. Supports a default endpoint, and endpoint interceptors.
  *
  * @author Arjen Poutsma
  * @see #getEndpointInternal(org.springframework.ws.WebServiceMessage)
