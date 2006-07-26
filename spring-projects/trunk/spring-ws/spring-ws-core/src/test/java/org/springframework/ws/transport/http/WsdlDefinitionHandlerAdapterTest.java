@@ -17,6 +17,7 @@
 package org.springframework.ws.transport.http;
 
 import java.net.URL;
+import javax.servlet.ServletException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -24,7 +25,6 @@ import org.custommonkey.xmlunit.XMLTestCase;
 import org.easymock.MockControl;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.web.servlet.support.RequestMethodNotSupportedException;
 import org.springframework.ws.wsdl.WsdlDefinition;
 import org.springframework.xml.transform.StringSource;
 import org.w3c.dom.Document;
@@ -65,9 +65,9 @@ public class WsdlDefinitionHandlerAdapterTest extends XMLTestCase {
         definitionControl.replay();
         try {
             adapter.handle(request, response, definitionMock);
-            fail("RequestMethodNotSupportedException expected");
+            fail("ServletException expected");
         }
-        catch (RequestMethodNotSupportedException ex) {
+        catch (ServletException ex) {
             // expected
         }
         definitionControl.verify();

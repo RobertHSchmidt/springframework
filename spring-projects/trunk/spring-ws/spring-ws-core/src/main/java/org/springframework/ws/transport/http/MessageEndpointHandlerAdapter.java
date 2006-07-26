@@ -16,6 +16,7 @@
 
 package org.springframework.ws.transport.http;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,7 +26,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.support.RequestMethodNotSupportedException;
 import org.springframework.ws.NoEndpointFoundException;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.context.MessageContext;
@@ -69,8 +69,7 @@ public class MessageEndpointHandlerAdapter implements HandlerAdapter, Initializi
             return null;
         }
         else {
-            throw new RequestMethodNotSupportedException(
-                    "Request method '" + httpServletRequest.getMethod() + "' not supported");
+            throw new ServletException("Request method '" + httpServletRequest.getMethod() + "' not supported");
         }
     }
 
