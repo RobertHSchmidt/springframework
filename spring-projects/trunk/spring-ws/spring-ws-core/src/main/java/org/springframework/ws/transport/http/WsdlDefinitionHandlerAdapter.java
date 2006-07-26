@@ -19,6 +19,7 @@ package org.springframework.ws.transport.http;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Source;
@@ -33,7 +34,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.support.RequestMethodNotSupportedException;
 import org.springframework.ws.endpoint.TransformerObjectSupport;
 import org.springframework.ws.wsdl.WsdlDefinition;
 import org.springframework.xml.xpath.XPathExpression;
@@ -107,7 +107,7 @@ public class WsdlDefinitionHandlerAdapter extends TransformerObjectSupport imple
     public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         if (!"GET".equals(request.getMethod())) {
-            throw new RequestMethodNotSupportedException("Request method '" + request.getMethod() + "' not supported");
+            throw new ServletException("Request method '" + request.getMethod() + "' not supported");
         }
         response.setContentType(CONTENT_TYPE);
         Transformer transformer = createTransformer();

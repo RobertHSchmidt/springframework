@@ -16,13 +16,13 @@
 
 package org.springframework.ws.transport.http;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.web.servlet.support.RequestMethodNotSupportedException;
 import org.springframework.ws.NoEndpointFoundException;
 import org.springframework.ws.context.MessageContextFactory;
 import org.springframework.ws.endpoint.MessageEndpoint;
@@ -87,9 +87,9 @@ public class MessageEndpointHandlerAdapterTest extends TestCase {
         endpointControl.replay();
         try {
             adapter.handle(httpRequest, httpResponse, endpointMock);
-            fail("RequestMethodNotSupportedException expected");
+            fail("ServletException expected");
         }
-        catch (RequestMethodNotSupportedException ex) {
+        catch (ServletException ex) {
             // expected
         }
         endpointControl.verify();
