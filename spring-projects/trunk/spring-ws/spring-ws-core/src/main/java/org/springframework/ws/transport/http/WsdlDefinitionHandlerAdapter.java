@@ -48,20 +48,28 @@ import org.w3c.dom.Node;
  * <code>HttpServletResponse</code>.
  * <p/>
  * If the property <code>transformLocations</code> is set to <code>true</code>, this adapter will change
- * <code>location</code> attributes in the WSDL definition to reflect the URL of the incoming request.
+ * <code>location</code> attributes in the WSDL definition to reflect the URL of the incoming request. If the location
+ * field in the original WSDL is an absolute path, the scheme, hostname, and port will be changed. If the location is a
+ * relative path, the scheme, hostname, port, and context path will be prepended. This behavior can be customized by
+ * overriding the <code>transformLocation()</code> method.
  * <p/>
  * For instance, if the location attribute defined in the WSDL is <code>http://localhost:8080/context/services/myService</code>,
  * and the request URI for the WSDL is <code>http://example.com/context/myService.wsdl</code>, the location will be
  * changed to <code>http://example.com/context/services/myService</code>.
  * <p/>
- * By default, all <code>location</code> attributes found in the WSDL definition are changed, this behavior can be
- * customized by changing the <code>locationExpression</code> property, which is an XPath expression that should match
- * the attributes to change.
+ * If the location attribute defined in the WSDL is <code>/services/myService</code>, and the request URI for the WSDL
+ * is <code>http://example.com:8080/context/myService.wsdl</code>, the location will be changed to
+ * <code>http://example.com:8080/context/services/myService</code>.
+ * <p/>
+ * When <code>transformLocations</code> is enabled, all <code>location</code> attributes found in the WSDL definition
+ * are changed by default. This behavior can be customized by changing the <code>locationExpression</code> property,
+ * which is an XPath expression that matches the attributes to change.
  *
  * @author Arjen Poutsma
  * @see WsdlDefinition
  * @see #setTransformLocations(boolean)
  * @see #setLocationExpression(String)
+ * @see #transformLocation(String, javax.servlet.http.HttpServletRequest)
  */
 public class WsdlDefinitionHandlerAdapter extends TransformerObjectSupport implements HandlerAdapter, InitializingBean {
 
@@ -135,34 +143,56 @@ public class WsdlDefinitionHandlerAdapter extends TransformerObjectSupport imple
     }
 
     /**
-     * Transform the given location string to reflect the given request.
-     */
-    protected String transformLocation(String location, HttpServletRequest request) {
-        try {
-            URL oldLocation = new URL(location);
-            URL newLocation = new URL(request.getScheme(),
-                    request.getServerName(),
-                    request.getServerPort(),
-                    oldLocation.getFile());
-            return newLocation.toString();
-        }
-        catch (MalformedURLException e) {
-            return location;
-        }
-    }
-
-    /**
-     * Transforms all <code>location</code> attribute to reflect the server name given <code>HttpServletRequest</code>.
-     * The server-specific prefix of the location attributes in the source will be replaced by the full context path of
-     * the given <code>HttpServletRequest</code>.
+     * Transform the given location string to reflect the given request. If the given location is a full url, the
+     * scheme, server name, and port are changed. If it is a relative url, the scheme, server name, and port are
+     * prepended. Can be overridden in subclasses to change this behavior.
      * <p/>
      * For instance, if the location attribute defined in the WSDL is <code>http://localhost:8080/context/services/myService</code>,
      * and the request URI for the WSDL is <code>http://example.com:8080/context/myService.wsdl</code>, the location
      * will be changed to <code>http://example.com:8080/context/services/myService</code>.
      * <p/>
+     * If the location attribute defined in the WSDL is <code>/services/myService</code>, and the request URI for the
+     * WSDL is <code>http://example.com:8080/context/myService.wsdl</code>, the location will be changed to
+     * <code>http://example.com:8080/context/services/myService</code>.
+     * <p/>
+     * This method is only called when the <code>transformLocations</code> property is true.
+     */
+    protected String transformLocation(String location, HttpServletRequest request) {
+        try {
+            if (location.startsWith("/")) {
+                // a relative path, prepend the context path
+                URL newLocation = new URL(request.getScheme(),
+                        request.getServerName(),
+                        request.getServerPort(),
+                        request.getContextPath() + location);
+                return newLocation.toString();
+            }
+            else {
+                // a full url
+                URL oldLocation = new URL(location);
+                URL newLocation = new URL(request.getScheme(),
+                        request.getServerName(),
+                        request.getServerPort(),
+                        oldLocation.getFile());
+                return newLocation.toString();
+            }
+        }
+        catch (MalformedURLException e) {
+            return location;
+            // fall though to the default return value
+        }
+    }
+
+    /**
+     * Transforms all <code>location</code> attributes to reflect the server name given <code>HttpServletRequest</code>.
+     * Determines the suitable attributes by evaluating the defined XPath expression, and delegates to
+     * <code>transformLocation</code> to do the transformation for all attributes that match.
+     * <p/>
      * This method is only called when the <code>transformLocations</code> property is true.
      *
+     * @see #setLocationExpression(String)
      * @see #setTransformLocations(boolean)
+     * @see #transformLocation(String, javax.servlet.http.HttpServletRequest)
      */
     protected void transformLocations(Document definitionDocument, HttpServletRequest request) throws Exception {
         Node[] locationNodes = locationXPathExpression.evaluateAsNodes(definitionDocument);
