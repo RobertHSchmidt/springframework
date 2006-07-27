@@ -96,7 +96,7 @@ public class WsdlDefinitionHandlerAdapterTest extends XMLTestCase {
         definitionControl.verify();
     }
 
-    public void testTransformLocation() throws Exception {
+    public void testTransformLocationFullUrl() throws Exception {
         request.setScheme("http");
         request.setServerName("example.com");
         request.setServerPort(8080);
@@ -110,13 +110,40 @@ public class WsdlDefinitionHandlerAdapterTest extends XMLTestCase {
         assertEquals("Invalid result", new URL("http://example.com:8080/context/service"), new URL(result));
     }
 
-    public void testTransformLocationEmptyContext() throws Exception {
+    public void testTransformLocationEmptyContextFullUrl() throws Exception {
         request.setScheme("http");
         request.setServerName("example.com");
         request.setServerPort(8080);
         request.setContextPath("");
         request.setRequestURI("/service.wsdl");
         String oldLocation = "http://localhost:8080/service";
+
+        String result = adapter.transformLocation(oldLocation, request);
+        assertNotNull("No result", result);
+        assertEquals("Invalid result", new URL("http://example.com:8080/service"), new URL(result));
+    }
+
+    public void testTransformLocationRelativeUrl() throws Exception {
+        request.setScheme("http");
+        request.setServerName("example.com");
+        request.setServerPort(8080);
+        request.setContextPath("/context");
+        request.setPathInfo("/service.wsdl");
+        request.setRequestURI("/context/service.wsdl");
+        String oldLocation = "/service";
+
+        String result = adapter.transformLocation(oldLocation, request);
+        assertNotNull("No result", result);
+        assertEquals("Invalid result", new URL("http://example.com:8080/context/service"), new URL(result));
+    }
+
+    public void testTransformLocationEmptyContextRelativeUrl() throws Exception {
+        request.setScheme("http");
+        request.setServerName("example.com");
+        request.setServerPort(8080);
+        request.setContextPath("");
+        request.setRequestURI("/service.wsdl");
+        String oldLocation = "/service";
 
         String result = adapter.transformLocation(oldLocation, request);
         assertNotNull("No result", result);
