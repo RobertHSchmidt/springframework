@@ -5,8 +5,8 @@
 1. INTRODUCTION
 
 Features a web service on top of an airline reservation system, backed by a database. The web service works by using XML
-Marshalling techniques, and JDOM in combination with XPath queries to pull information from a message following the
-airline.xsd schema in src/webapp.
+Marshalling techniques (JAXB 1), and JDOM in combination with XPath queries to pull information from a message. All
+messages follow following the airline.xsd schema in src/webapp.
 
 A C# client is available in the client directory.
 
@@ -21,7 +21,7 @@ The Airline sample is a normal web application that connects to a database of yo
 3. Adjust the hibernate.properties in src/main/resources/org/springframework/ws/samples/airline/dao/hibernate
 4. run 'ant war' and deploy the war file generated in target/artifacts/war
 
-Note that both MySQL and PostgreSQL drivers are linked in using Ivy so you don't have
+Note that both MySQL and PostgreSQL drivers are linked in using Maven so you don't have
 include these in your server if you're using either one of those databases.
 
 3. RUNNING THE CLIENTS
