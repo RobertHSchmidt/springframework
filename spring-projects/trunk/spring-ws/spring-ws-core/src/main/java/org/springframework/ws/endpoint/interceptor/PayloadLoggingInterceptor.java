@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.endpoint;
+package org.springframework.ws.endpoint.interceptor;
 
 import javax.xml.transform.Source;
 
 import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.endpoint.AbstractLoggingInterceptor;
 
 /**
  * Simple <code>EndpointInterceptor</code> that logs the payload of request and response messages.  By default, both

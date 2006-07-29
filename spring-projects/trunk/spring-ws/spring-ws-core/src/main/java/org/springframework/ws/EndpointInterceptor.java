@@ -34,7 +34,7 @@ import org.springframework.ws.context.MessageContext;
  *
  * @author Arjen Poutsma
  * @see EndpointInvocationChain#getInterceptors()
- * @see org.springframework.ws.endpoint.EndpointInterceptorAdapter
+ * @see org.springframework.ws.endpoint.interceptor.EndpointInterceptorAdapter
  * @see org.springframework.ws.endpoint.AbstractEndpointMapping#setInterceptors(EndpointInterceptor[])
  */
 public interface EndpointInterceptor {

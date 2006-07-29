@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema"
-        elementFormDefault="qualified" attributeFormDefault="qualified"
-        targetNamespace="http://springws.cas.de"
-        xmlns:tns="http://springws.cas.de">
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="qualified"
+        targetNamespace="http://springws.cas.de" xmlns:tns="http://springws.cas.de">
 
     <complexType name="CasDataType">
         <sequence>

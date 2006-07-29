@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.endpoint;
+package org.springframework.ws.endpoint.interceptor;
 
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;

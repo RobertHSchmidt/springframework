@@ -19,10 +19,13 @@ Package org.springframework.ws.context
 Package org.springframework.ws.endpoint
 * improved endpoint test suite
 * AbstractStaxPayloadEndpoint now use StaxSource corrently (#SWS-38)
-* made PayloadValidatingInterceptor more customizable (#SWS-43)
-* add schemas property to PayloadValidatingInterceptor (#SWS-44)
 * changed AbstractDom4JPayloadEndpoint to AbstractDom4jPayloadEndpoint (lower case j), to follow Spring naming
   conventions (e.g. Log4jConfigurer)
+
+Package org.springframework.ws.endpoint.interceptor
+* moved interceptors to seperate package
+* made PayloadValidatingInterceptor more customizable (#SWS-43)
+* add schemas property to PayloadValidatingInterceptor (#SWS-44)
 * refactoring most of PayloadValidatingInterceptor into AbstractValidatingInterceptor
 
 Package org.springframework.ws.soap
