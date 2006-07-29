@@ -16,6 +16,7 @@
 
 package org.springframework.ws;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -47,6 +48,10 @@ import org.springframework.xml.transform.StaxResult;
 import org.springframework.xml.transform.StaxSource;
 import org.springframework.xml.transform.StringResult;
 import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 public abstract class AbstractWebServiceMessageTestCase extends XMLTestCase {
 
@@ -81,6 +86,7 @@ public abstract class AbstractWebServiceMessageTestCase extends XMLTestCase {
         DOMResult domResult = new DOMResult(resultDocument);
         transformer.transform(webServiceMessage.getPayloadSource(), domResult);
         assertXMLEqual(payloadDocument, resultDocument);
+        validateMessage();
     }
 
     public void testEventReaderPayload() throws Exception {
@@ -95,6 +101,7 @@ public abstract class AbstractWebServiceMessageTestCase extends XMLTestCase {
         transformer.transform(webServiceMessage.getPayloadSource(), staxResult);
         eventWriter.flush();
         assertXMLEqual(getExpectedString(), stringWriter.toString());
+        validateMessage();
     }
 
     public void testReaderPayload() throws Exception {
@@ -113,6 +120,7 @@ public abstract class AbstractWebServiceMessageTestCase extends XMLTestCase {
         StringResult stringResult = new StringResult();
         transformer.transform(webServiceMessage.getPayloadSource(), stringResult);
         assertXMLEqual(getExpectedString(), stringResult.toString());
+        validateMessage();
     }
 
     public void testStreamPayload() throws Exception {
@@ -124,6 +132,7 @@ public abstract class AbstractWebServiceMessageTestCase extends XMLTestCase {
         ByteArrayOutputStream expectedStream = new ByteArrayOutputStream();
         FileCopyUtils.copy(payload.getInputStream(), expectedStream);
         assertXMLEqual(expectedStream.toString("UTF-8"), resultStream.toString("UTF-8"));
+        validateMessage();
     }
 
     public void testStreamReaderPayload() throws Exception {
@@ -138,6 +147,16 @@ public abstract class AbstractWebServiceMessageTestCase extends XMLTestCase {
         transformer.transform(webServiceMessage.getPayloadSource(), staxResult);
         streamWriter.flush();
         assertXMLEqual(getExpectedString(), stringWriter.toString());
+        validateMessage();
+    }
+
+    private void validateMessage() throws Exception {
+        XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+        xmlReader.setContentHandler(new DefaultHandler());
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        webServiceMessage.writeTo(os);
+        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+        xmlReader.parse(new InputSource(is));
     }
 
     protected abstract WebServiceMessage createWebServiceMessage() throws Exception;
