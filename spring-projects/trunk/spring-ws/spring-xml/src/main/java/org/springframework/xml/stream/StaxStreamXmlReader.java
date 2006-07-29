@@ -21,11 +21,10 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.springframework.xml.namespace.QNameUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
-
-import org.springframework.xml.namespace.QNameUtils;
 
 /**
  * SAX <code>XMLReader</code> that reads from a StAX <code>XMLStreamReader</code>.  Reads from an
@@ -155,8 +154,10 @@ public class StaxStreamXmlReader extends StaxXmlReader {
             }
 
             QName qName = reader.getName();
-            getContentHandler().startElement(qName.getNamespaceURI(), qName.getLocalPart(),
-                    QNameUtils.toQualifiedName(qName), getAttributes());
+            getContentHandler().startElement(qName.getNamespaceURI(),
+                    qName.getLocalPart(),
+                    QNameUtils.toQualifiedName(qName),
+                    getAttributes());
         }
     }
 
@@ -168,8 +169,14 @@ public class StaxStreamXmlReader extends StaxXmlReader {
             if (namespace == null) {
                 namespace = "";
             }
-            attributes.addAttribute(namespace, reader.getAttributeLocalName(i),
-                    QNameUtils.toQualifiedName(reader.getAttributeName(i)), reader.getAttributeType(i),
+            String type = reader.getAttributeType(i);
+            if (type == null) {
+                type = "";
+            }
+            attributes.addAttribute(namespace,
+                    reader.getAttributeLocalName(i),
+                    QNameUtils.toQualifiedName(reader.getAttributeName(i)),
+                    type,
                     reader.getAttributeValue(i));
         }
 

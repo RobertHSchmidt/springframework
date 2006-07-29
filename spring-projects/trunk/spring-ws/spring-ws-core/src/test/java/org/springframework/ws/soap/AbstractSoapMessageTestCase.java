@@ -18,38 +18,23 @@ package org.springframework.ws.soap;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 
-import org.custommonkey.xmlunit.XMLTestCase;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.xml.transform.StringResult;
-import org.springframework.xml.transform.StringSource;
+import org.springframework.ws.AbstractWebServiceMessageTestCase;
+import org.springframework.ws.WebServiceMessage;
 
-public abstract class AbstractSoapMessageTestCase extends XMLTestCase {
+public abstract class AbstractSoapMessageTestCase extends AbstractWebServiceMessageTestCase {
 
     protected SoapMessage soapMessage;
 
-    protected Transformer transformer;
-
-    protected final void setUp() throws Exception {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        transformer = transformerFactory.newTransformer();
+    protected final WebServiceMessage createWebServiceMessage() throws Exception {
         soapMessage = createSoapMessage();
+        return soapMessage;
     }
 
     protected abstract SoapMessage createSoapMessage() throws Exception;
-
-    public void testPayload() throws Exception {
-        String payload = "<payload xmlns='http://www.springframework.org'/>";
-        StringSource contents = new StringSource(payload);
-        transformer.transform(contents, soapMessage.getPayloadResult());
-        StringResult result = new StringResult();
-        transformer.transform(soapMessage.getPayloadSource(), result);
-        assertXMLEqual("Invalid payload", payload, result.toString());
-    }
 
     public void testAttachments() throws Exception {
         String contents = "contents";
