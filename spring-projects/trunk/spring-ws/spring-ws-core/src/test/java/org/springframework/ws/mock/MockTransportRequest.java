@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Properties;
 
+import org.springframework.util.Assert;
 import org.springframework.ws.transport.TransportRequest;
 
 /**
@@ -42,6 +43,8 @@ public class MockTransportRequest implements TransportRequest {
     }
 
     public MockTransportRequest(Properties headers, byte[] contents) {
+        Assert.notNull(headers, "headers must not be null");
+        Assert.notNull(contents, "contents must not be null");
         this.headers = headers;
         this.contents = contents;
     }
@@ -57,5 +60,9 @@ public class MockTransportRequest implements TransportRequest {
 
     public InputStream getInputStream() throws IOException {
         return new ByteArrayInputStream(contents);
+    }
+
+    public void addHeader(String name, String value) {
+        headers.setProperty(name, value);
     }
 }

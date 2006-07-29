@@ -20,13 +20,13 @@ import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.ws.EndpointInterceptor;
 import org.springframework.ws.EndpointInvocationChain;
 import org.springframework.ws.EndpointMapping;
-import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.context.MessageContext;
 
 /**
  * Abstract base class for EndpointMapping implementations. Supports a default endpoint, and endpoint interceptors.
  *
  * @author Arjen Poutsma
- * @see #getEndpointInternal(org.springframework.ws.WebServiceMessage)
+ * @see #getEndpointInternal(org.springframework.ws.context.MessageContext)
  * @see org.springframework.ws.EndpointInterceptor
  */
 public abstract class AbstractEndpointMapping extends ApplicationObjectSupport implements EndpointMapping {
@@ -34,6 +34,15 @@ public abstract class AbstractEndpointMapping extends ApplicationObjectSupport i
     private Object defaultEndpoint;
 
     private EndpointInterceptor[] interceptors;
+
+    /**
+     * Returns the default endpoint for this endpoint mapping.
+     *
+     * @return the default endpoint mapping, or null if none
+     */
+    protected final Object getDefaultEndpoint() {
+        return defaultEndpoint;
+    }
 
     /**
      * Sets the default endpoint for this endpoint mapping. This endpoint will be returned if no specific mapping was
@@ -49,12 +58,12 @@ public abstract class AbstractEndpointMapping extends ApplicationObjectSupport i
     }
 
     /**
-     * Returns the default endpoint for this endpoint mapping.
+     * Returns the the endpoint interceptors to apply to all endpoints mapped by this endpoint mapping.
      *
-     * @return the default endpoint mapping, or null if none
+     * @return array of endpoint interceptors, or <code>null</code> if none
      */
-    protected final Object getDefaultEndpoint() {
-        return defaultEndpoint;
+    public EndpointInterceptor[] getInterceptors() {
+        return interceptors;
     }
 
     /**
@@ -67,14 +76,14 @@ public abstract class AbstractEndpointMapping extends ApplicationObjectSupport i
     }
 
     /**
-     * Look up an endpoint for the given request, falling back to the default endpoint if no specific one is found.
+     * Look up an endpoint for the given message context, falling back to the default endpoint if no specific one is
+     * found.
      *
-     * @param request current message request
      * @return the looked up endpoint instance, or the default endpoint
-     * @see #getEndpointInternal(org.springframework.ws.WebServiceMessage)
+     * @see #getEndpointInternal(org.springframework.ws.context.MessageContext)
      */
-    public final EndpointInvocationChain getEndpoint(WebServiceMessage request) throws Exception {
-        Object endpoint = getEndpointInternal(request);
+    public final EndpointInvocationChain getEndpoint(MessageContext messageContext) throws Exception {
+        Object endpoint = getEndpointInternal(messageContext);
         if (endpoint == null) {
             endpoint = defaultEndpoint;
         }
@@ -88,20 +97,19 @@ public abstract class AbstractEndpointMapping extends ApplicationObjectSupport i
                 return null;
             }
         }
-        return createEndpointInvocationChain(request, endpoint, interceptors);
+        return createEndpointInvocationChain(messageContext, endpoint, interceptors);
     }
 
     /**
-     * Creates a new <code>EndpointInvocationChain</code> based on the given request, endpoint, and interceptors.
-     * Default implementation creates a chain based on the set interceptors.
+     * Creates a new <code>EndpointInvocationChain</code> based on the given message context, endpoint, and
+     * interceptors. Default implementation creates a chain based on the set interceptors.
      *
-     * @param request      the current message request
      * @param endpoint     the endpoint
      * @param interceptors the endpoint interceptors
      * @return the created invocation chain
      * @see #setInterceptors(org.springframework.ws.EndpointInterceptor[])
      */
-    protected EndpointInvocationChain createEndpointInvocationChain(WebServiceMessage request,
+    protected EndpointInvocationChain createEndpointInvocationChain(MessageContext messageContext,
                                                                     Object endpoint,
                                                                     EndpointInterceptor[] interceptors) {
         return new EndpointInvocationChain(endpoint, interceptors);
@@ -131,10 +139,8 @@ public abstract class AbstractEndpointMapping extends ApplicationObjectSupport i
      * The returned endpoint can be a string, in which case it is resolved as a bean name. Also, it can take the form
      * <code>beanName#method</code>, in which case the method is resolved.
      *
-     * @param request current message request
      * @return the looked up endpoint instance, or null
      * @throws Exception if there is an error
      */
-    protected abstract Object getEndpointInternal(WebServiceMessage request) throws Exception;
-
+    protected abstract Object getEndpointInternal(MessageContext messageContext) throws Exception;
 }

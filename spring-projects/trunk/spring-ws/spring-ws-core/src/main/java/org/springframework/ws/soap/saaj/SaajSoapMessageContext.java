@@ -27,6 +27,7 @@ import org.springframework.util.Assert;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.SoapMessageCreationException;
 import org.springframework.ws.soap.context.AbstractSoapMessageContext;
+import org.springframework.ws.transport.TransportRequest;
 import org.springframework.ws.transport.TransportResponse;
 
 /**
@@ -43,11 +44,14 @@ public class SaajSoapMessageContext extends AbstractSoapMessageContext {
     /**
      * Creates a new instance based on the given SAAJ request message, and a message factory.
      *
-     * @param request        the request message
-     * @param messageFactory the message factory used for creating a response
+     * @param request          the request message
+     * @param transportRequest the transport request
+     * @param messageFactory   the message factory used for creating a response
      */
-    public SaajSoapMessageContext(SOAPMessage request, MessageFactory messageFactory) {
-        super(new SaajSoapMessage(request));
+    public SaajSoapMessageContext(SOAPMessage request,
+                                  TransportRequest transportRequest,
+                                  MessageFactory messageFactory) {
+        super(new SaajSoapMessage(request), transportRequest);
         Assert.notNull(messageFactory);
         this.messageFactory = messageFactory;
     }

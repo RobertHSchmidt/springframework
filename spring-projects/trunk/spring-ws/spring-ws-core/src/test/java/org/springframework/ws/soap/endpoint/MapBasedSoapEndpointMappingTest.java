@@ -21,9 +21,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import junit.framework.TestCase;
-
 import org.springframework.context.support.StaticApplicationContext;
-import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.context.MessageContext;
 
 /**
  * Test case for AbstractMapBasedSoapEndpointMapping.
@@ -113,7 +112,7 @@ public class MapBasedSoapEndpointMappingTest extends TestCase {
             return Arrays.binarySearch(validKeys, key) >= 0;
         }
 
-        protected String getLookupKeyForMessage(WebServiceMessage message) throws Exception {
+        protected String getLookupKeyForMessage(MessageContext messageContext) throws Exception {
             return key;
         }
     }

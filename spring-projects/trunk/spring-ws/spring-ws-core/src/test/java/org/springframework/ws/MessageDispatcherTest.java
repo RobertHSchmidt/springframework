@@ -23,7 +23,6 @@ import org.easymock.MockControl;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.mock.MockMessageContext;
-import org.springframework.ws.mock.MockWebServiceMessage;
 
 public class MessageDispatcherTest extends TestCase {
 
@@ -31,14 +30,11 @@ public class MessageDispatcherTest extends TestCase {
 
     private MockMessageContext messageContext;
 
-    private MockWebServiceMessage request;
-
     protected void setUp() throws Exception {
         dispatcher = new MessageDispatcher();
         dispatcher.setApplicationContext(new StaticApplicationContext());
         dispatcher.initApplicationContext();
-        request = new MockWebServiceMessage();
-        messageContext = new MockMessageContext(request);
+        messageContext = new MockMessageContext();
     }
 
     public void testGetEndpoint() throws Exception {
@@ -48,10 +44,10 @@ public class MessageDispatcherTest extends TestCase {
 
         EndpointInvocationChain chain = new EndpointInvocationChain(new Object());
 
-        mappingControl.expectAndReturn(mappingMock.getEndpoint(request), chain);
+        mappingControl.expectAndReturn(mappingMock.getEndpoint(messageContext), chain);
 
         mappingControl.replay();
-        EndpointInvocationChain result = dispatcher.getEndpoint(request);
+        EndpointInvocationChain result = dispatcher.getEndpoint(messageContext);
         mappingControl.verify();
         assertEquals("getEndpoint returns invalid EndpointInvocationChain", chain, result);
     }
@@ -155,7 +151,7 @@ public class MessageDispatcherTest extends TestCase {
         EndpointInvocationChain chain =
                 new EndpointInvocationChain(endpoint, new EndpointInterceptor[]{interceptorMock1, interceptorMock2});
 
-        mappingControl.expectAndReturn(mappingMock.getEndpoint(request), chain);
+        mappingControl.expectAndReturn(mappingMock.getEndpoint(messageContext), chain);
 
         mappingControl.replay();
         interceptorControl.replay();
@@ -187,7 +183,7 @@ public class MessageDispatcherTest extends TestCase {
 
         EndpointInvocationChain chain =
                 new EndpointInvocationChain(endpoint, new EndpointInterceptor[]{interceptorMock1, interceptorMock2});
-        mappingControl.expectAndReturn(mappingMock.getEndpoint(request), chain);
+        mappingControl.expectAndReturn(mappingMock.getEndpoint(messageContext), chain);
 
         interceptorControl.expectAndReturn(interceptorMock1.handleRequest(messageContext, endpoint), true);
         interceptorControl.expectAndReturn(interceptorMock2.handleRequest(messageContext, endpoint), true);
@@ -224,7 +220,7 @@ public class MessageDispatcherTest extends TestCase {
         EndpointInvocationChain chain =
                 new EndpointInvocationChain(endpoint, new EndpointInterceptor[]{interceptorMock1, interceptorMock2});
 
-        mappingControl.expectAndReturn(mappingMock.getEndpoint(request), chain);
+        mappingControl.expectAndReturn(mappingMock.getEndpoint(messageContext), chain);
 
         mappingControl.replay();
         interceptorControl.replay();
@@ -261,7 +257,7 @@ public class MessageDispatcherTest extends TestCase {
         EndpointInvocationChain chain =
                 new EndpointInvocationChain(endpoint, new EndpointInterceptor[]{interceptorMock1, interceptorMock2});
 
-        mappingControl.expectAndReturn(mappingMock.getEndpoint(request), chain);
+        mappingControl.expectAndReturn(mappingMock.getEndpoint(messageContext), chain);
 
         mappingControl.replay();
         interceptorControl.replay();

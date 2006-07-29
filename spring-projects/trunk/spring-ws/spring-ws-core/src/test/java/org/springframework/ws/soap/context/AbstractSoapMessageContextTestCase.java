@@ -20,7 +20,9 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+import org.springframework.ws.mock.MockTransportRequest;
 import org.springframework.ws.mock.MockTransportResponse;
+import org.springframework.ws.transport.TransportRequest;
 
 public abstract class AbstractSoapMessageContextTestCase extends XMLTestCase {
 
@@ -33,11 +35,12 @@ public abstract class AbstractSoapMessageContextTestCase extends XMLTestCase {
     protected final void setUp() throws Exception {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         transformer = transformerFactory.newTransformer();
+        TransportRequest transportRequest = new MockTransportRequest();
         transportResponse = new MockTransportResponse();
-        messageContext = createMessageContext();
+        messageContext = createMessageContext(transportRequest);
     }
 
-    protected abstract SoapMessageContext createMessageContext() throws Exception;
+    protected abstract SoapMessageContext createMessageContext(TransportRequest transportRequest) throws Exception;
 
 
 }

@@ -17,34 +17,36 @@
 package org.springframework.ws.soap;
 
 import junit.framework.TestCase;
-import org.easymock.MockControl;
+import org.springframework.ws.mock.MockMessageContext;
+import org.springframework.ws.mock.MockTransportContext;
+import org.springframework.ws.mock.MockTransportRequest;
+import org.springframework.ws.mock.MockWebServiceMessage;
 
 public class SoapActionEndpointMappingTest extends TestCase {
 
     private SoapActionEndpointMapping mapping;
 
-    private MockControl messageControl;
+    private MockTransportRequest request;
 
-    private SoapMessage messageMock;
+    private MockMessageContext context;
 
     protected void setUp() throws Exception {
-        messageControl = MockControl.createControl(SoapMessage.class);
-        messageMock = (SoapMessage) messageControl.getMock();
+        request = new MockTransportRequest();
+        MockTransportContext transportContext = new MockTransportContext(request);
+        context = new MockMessageContext(new MockWebServiceMessage(), transportContext);
         mapping = new SoapActionEndpointMapping();
     }
 
     public void testGetLookupKeyForMessage() throws Exception {
-        messageControl.expectAndReturn(messageMock.getSoapAction(), "SoapAction");
-        messageControl.replay();
-        assertEquals("Invalid lookup key", "SoapAction", mapping.getLookupKeyForMessage(messageMock));
-        messageControl.verify();
+        String soapAction = "http://springframework.org/spring-ws/SoapAction";
+        request.addHeader(SoapActionEndpointMapping.SOAP_ACTION_HEADER, soapAction);
+        assertEquals("Invalid lookup key", soapAction, mapping.getLookupKeyForMessage(context));
     }
 
     public void testGetLookupKeyForMessageQuoted() throws Exception {
-        messageControl.expectAndReturn(messageMock.getSoapAction(), "\"SoapAction\"");
-        messageControl.replay();
-        assertEquals("Invalid lookup key", "SoapAction", mapping.getLookupKeyForMessage(messageMock));
-        messageControl.verify();
+        String soapAction = "http://springframework.org/spring-ws/SoapAction";
+        request.addHeader(SoapActionEndpointMapping.SOAP_ACTION_HEADER, "\"" + soapAction + "\"");
+        assertEquals("Invalid lookup key", soapAction, mapping.getLookupKeyForMessage(context));
     }
 
     public void testValidateLookupKey() throws Exception {

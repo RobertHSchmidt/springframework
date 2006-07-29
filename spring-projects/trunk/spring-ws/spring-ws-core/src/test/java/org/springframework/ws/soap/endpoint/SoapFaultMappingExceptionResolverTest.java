@@ -23,6 +23,7 @@ import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPMessage;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+import org.springframework.ws.mock.MockTransportRequest;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.SoapMessageException;
 import org.springframework.ws.soap.SoapVersion;
@@ -56,7 +57,8 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
 
         MessageFactory messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
         SOAPMessage message = messageFactory.createMessage();
-        SaajSoapMessageContext context = new SaajSoapMessageContext(message, messageFactory);
+        SaajSoapMessageContext context =
+                new SaajSoapMessageContext(message, new MockTransportRequest(), messageFactory);
 
         boolean result = resolver.resolveException(context, null, new IllegalArgumentException("bla"));
         assertTrue("resolveException returns false", result);
@@ -79,7 +81,8 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
 
         MessageFactory messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         SOAPMessage message = messageFactory.createMessage();
-        SaajSoapMessageContext context = new SaajSoapMessageContext(message, messageFactory);
+        SaajSoapMessageContext context =
+                new SaajSoapMessageContext(message, new MockTransportRequest(), messageFactory);
 
         boolean result = resolver.resolveException(context, null, new IllegalArgumentException("bla"));
         assertTrue("resolveException returns false", result);
@@ -102,7 +105,8 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
 
         MessageFactory messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
         SOAPMessage message = messageFactory.createMessage();
-        SaajSoapMessageContext context = new SaajSoapMessageContext(message, messageFactory);
+        SaajSoapMessageContext context =
+                new SaajSoapMessageContext(message, new MockTransportRequest(), messageFactory);
 
         boolean result = resolver.resolveException(context, null, new IllegalArgumentException("bla"));
         assertTrue("resolveException returns false", result);
@@ -125,7 +129,8 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
 
         MessageFactory messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         SOAPMessage message = messageFactory.createMessage();
-        SaajSoapMessageContext context = new SaajSoapMessageContext(message, messageFactory);
+        SaajSoapMessageContext context =
+                new SaajSoapMessageContext(message, new MockTransportRequest(), messageFactory);
 
         boolean result = resolver.resolveException(context, null, new IllegalArgumentException("bla"));
         assertTrue("resolveException returns false", result);
@@ -150,7 +155,8 @@ public class SoapFaultMappingExceptionResolverTest extends XMLTestCase {
         resolver.setDefaultFault(defaultFault);
         MessageFactory messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
         SOAPMessage message = messageFactory.createMessage();
-        SaajSoapMessageContext context = new SaajSoapMessageContext(message, messageFactory);
+        SaajSoapMessageContext context =
+                new SaajSoapMessageContext(message, new MockTransportRequest(), messageFactory);
 
         boolean result = resolver.resolveException(context, null, new IllegalArgumentException("bla"));
         assertTrue("resolveException returns false", result);

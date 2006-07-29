@@ -19,6 +19,7 @@ package org.springframework.ws.soap.context;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.context.AbstractMessageContext;
 import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.transport.TransportRequest;
 
 /**
  * Abstract implementation of the <code>SoapMessageContext</code> interface. Implements base <code>MessageContext</code>
@@ -28,8 +29,8 @@ import org.springframework.ws.soap.SoapMessage;
  */
 public abstract class AbstractSoapMessageContext extends AbstractMessageContext implements SoapMessageContext {
 
-    protected AbstractSoapMessageContext(SoapMessage request) {
-        super(request);
+    protected AbstractSoapMessageContext(SoapMessage request, TransportRequest transportRequest) {
+        super(request, transportRequest);
     }
 
     public final SoapMessage getSoapResponse() {

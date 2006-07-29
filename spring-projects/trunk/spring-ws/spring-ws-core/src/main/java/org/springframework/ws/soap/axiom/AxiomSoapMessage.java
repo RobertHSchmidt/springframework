@@ -54,8 +54,6 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
 
     private final SOAPFactory axiomFactory;
 
-    private final String soapAction;
-
     private final Attachments attachments;
 
     private boolean payloadCaching;
@@ -71,7 +69,6 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
         SOAPEnvelope soapEnvelope = soapFactory.getDefaultEnvelope();
         axiomFactory = soapFactory;
         axiomMessage = axiomFactory.createSOAPMessage(soapEnvelope, soapEnvelope.getBuilder());
-        soapAction = null;
         attachments = null;
         payloadCaching = true;
     }
@@ -80,19 +77,12 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
      * Create a new <code>AxiomSoapMessage</code> based on the given AXIOM <code>SOAPMessage</code>.
      *
      * @param soapMessage    the AXIOM SOAPMessage
-     * @param soapFactory    the AXIOM SOAPFactory
-     * @param soapAction     the value of SOAP Action header
      * @param attachments    the attachments
      * @param payloadCaching whether the contents of the SOAP body should be cached or not
      */
-    public AxiomSoapMessage(SOAPMessage soapMessage,
-                            SOAPFactory soapFactory,
-                            String soapAction,
-                            Attachments attachments,
-                            boolean payloadCaching) {
+    public AxiomSoapMessage(SOAPMessage soapMessage, Attachments attachments, boolean payloadCaching) {
         axiomMessage = soapMessage;
-        axiomFactory = soapFactory;
-        this.soapAction = soapAction;
+        axiomFactory = (SOAPFactory) soapMessage.getSOAPEnvelope().getOMFactory();
         this.attachments = attachments;
         this.payloadCaching = payloadCaching;
     }
@@ -114,10 +104,6 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
             }
         }
         return envelope;
-    }
-
-    public String getSoapAction() {
-        return soapAction;
     }
 
     public Attachment getAttachment(String contentId) {

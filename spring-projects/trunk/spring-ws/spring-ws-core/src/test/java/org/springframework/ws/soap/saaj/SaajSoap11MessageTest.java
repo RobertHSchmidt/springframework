@@ -61,9 +61,4 @@ public class SaajSoap11MessageTest extends AbstractSoap11MessageTestCase {
         assertEquals("Invalid child node created", "child", saajMessage.getSOAPBody().getFirstChild().getLocalName());
     }
 
-    public void testGetSoapAction() throws Exception {
-        saajMessage.getMimeHeaders().addHeader("SOAPAction", "value");
-        assertEquals("Invalid mime header value", "value", soapMessage.getSoapAction());
-    }
-
 }

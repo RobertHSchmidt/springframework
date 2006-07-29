@@ -22,11 +22,12 @@ import javax.xml.soap.SOAPException;
 
 import org.springframework.ws.soap.context.AbstractSoap11MessageContextTestCase;
 import org.springframework.ws.soap.context.SoapMessageContext;
+import org.springframework.ws.transport.TransportRequest;
 
 public class SaajSoap11MessageContextTest extends AbstractSoap11MessageContextTestCase {
 
-    protected SoapMessageContext createMessageContext() throws SOAPException {
+    protected SoapMessageContext createMessageContext(TransportRequest transportRequest) throws SOAPException {
         MessageFactory messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
-        return new SaajSoapMessageContext(messageFactory.createMessage(), messageFactory);
+        return new SaajSoapMessageContext(messageFactory.createMessage(), transportRequest, messageFactory);
     }
 }

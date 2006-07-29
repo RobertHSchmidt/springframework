@@ -223,8 +223,8 @@ public class MessageDispatcher extends ApplicationObjectSupport implements Messa
         EndpointInvocationChain mappedEndpoint = null;
         int interceptorIndex = -1;
         try {
-            // Determine endpoint for the current request
-            mappedEndpoint = getEndpoint(messageContext.getRequest());
+            // Determine endpoint for the current context
+            mappedEndpoint = getEndpoint(messageContext);
             if (mappedEndpoint == null || mappedEndpoint.getEndpoint() == null) {
                 throw new NoEndpointFoundException(messageContext.getRequest());
             }
@@ -303,16 +303,15 @@ public class MessageDispatcher extends ApplicationObjectSupport implements Messa
     /**
      * Returns the endpoint for this request. All endpoint mappings are tried, in order.
      *
-     * @param request current request
      * @return the <code>EndpointInvocationChain</code>, or <code>null</code> if no endpoint could be found.
      */
-    protected EndpointInvocationChain getEndpoint(WebServiceMessage request) throws Exception {
+    protected EndpointInvocationChain getEndpoint(MessageContext messageContext) throws Exception {
         for (Iterator iterator = endpointMappings.iterator(); iterator.hasNext();) {
             EndpointMapping endpointMapping = (EndpointMapping) iterator.next();
             if (logger.isDebugEnabled()) {
                 logger.debug("Testing endpoint mapping [" + endpointMapping + "]");
             }
-            EndpointInvocationChain endpoint = endpointMapping.getEndpoint(request);
+            EndpointInvocationChain endpoint = endpointMapping.getEndpoint(messageContext);
             if (endpoint != null) {
                 return endpoint;
             }

@@ -24,14 +24,14 @@ import java.util.Properties;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.util.StringUtils;
-import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.context.MessageContext;
 
 /**
  * Abstract base class for endpoint mapping that are based on a <code>Map</code>. Provides mappings of application
  * context beans as well as a settable map.
  * <p/>
- * Subclasses determine the exact nature of the key in the enpoint map; this can be a qualified name, a SOAP Header, or
- * the result of a XPath validation.
+ * Subclasses determine the exact nature of the key in the enpoint map; this can be a qualified name, a SOAP Header, the
+ * result of a XPath validation. The values are always endpoint objects, or bean names of endpoint objects.
  *
  * @author Arjen Poutsma
  */
@@ -91,22 +91,20 @@ public abstract class AbstractMapBasedSoapEndpointMapping extends AbstractSoapEn
     protected abstract boolean validateLookupKey(String key);
 
     /**
-     * Returns the the endpoint keys for the given message. Multiple values are possible, and will be tried in order.
+     * Returns the the endpoint keys for the given message context.
      *
-     * @param message the message to resolve the keys from
      * @return the registration keys
      */
-    protected abstract String getLookupKeyForMessage(WebServiceMessage message) throws Exception;
+    protected abstract String getLookupKeyForMessage(MessageContext messageContext) throws Exception;
 
     /**
      * Lookup an endpoint for the given message. The extraction of the endpoint key is delegated to the concrete
      * subclass.
      *
-     * @param request the SOAP message request
      * @return the looked up endpoint, or <code>null</code>
      */
-    protected Object getEndpointInternal(WebServiceMessage request) throws Exception {
-        String key = getLookupKeyForMessage(request);
+    protected Object getEndpointInternal(MessageContext messageContext) throws Exception {
+        String key = getLookupKeyForMessage(messageContext);
         if (!StringUtils.hasLength(key)) {
             return null;
         }

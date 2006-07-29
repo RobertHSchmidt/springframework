@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.context.AbstractMessageContext;
+import org.springframework.ws.transport.TransportContext;
 import org.springframework.ws.transport.TransportResponse;
 
 /**
@@ -32,20 +33,20 @@ public class MockMessageContext extends AbstractMessageContext {
     private TransportResponse transportResponse;
 
     public MockMessageContext() {
-        super(new MockWebServiceMessage());
+        super(new MockWebServiceMessage(), new MockTransportRequest());
     }
 
     public MockMessageContext(MockWebServiceMessage request) {
-        super(request);
+        super(request, new MockTransportRequest());
     }
 
-    public MockMessageContext(WebServiceMessage request, TransportResponse transportResponse) {
-        super(request);
-        this.transportResponse = transportResponse;
+    public MockMessageContext(MockWebServiceMessage request, TransportContext transportContext) {
+        super(request, transportContext.getTransportRequest());
+        transportResponse = transportContext.getTransportResponse();
     }
 
     public MockMessageContext(String content) {
-        super(new MockWebServiceMessage(content));
+        super(new MockWebServiceMessage(content), new MockTransportRequest());
     }
 
     protected WebServiceMessage createWebServiceMessage() {
