@@ -21,6 +21,7 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.ws.EndpointInterceptor;
 import org.springframework.ws.EndpointInvocationChain;
 import org.springframework.ws.context.MessageContext;
+import org.springframework.ws.endpoint.interceptor.EndpointInterceptorAdapter;
 import org.springframework.ws.mock.MockMessageContext;
 
 public class EndpointMappingTest extends TestCase {

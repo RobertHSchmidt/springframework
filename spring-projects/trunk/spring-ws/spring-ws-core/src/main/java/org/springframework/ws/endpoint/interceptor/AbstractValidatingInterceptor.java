@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.endpoint;
+package org.springframework.ws.endpoint.interceptor;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -32,6 +32,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.ws.EndpointInterceptor;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.context.MessageContext;
+import org.springframework.ws.endpoint.TransformerObjectSupport;
 import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapFaultDetail;

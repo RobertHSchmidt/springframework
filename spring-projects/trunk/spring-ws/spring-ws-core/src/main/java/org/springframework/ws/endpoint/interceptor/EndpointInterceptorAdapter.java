@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.endpoint;
+package org.springframework.ws.endpoint.interceptor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Element;
-
 import org.springframework.ws.EndpointInterceptor;
 import org.springframework.ws.context.MessageContext;
+import org.w3c.dom.Element;
 
 /**
  * Default implementation of the <code>EndpointInterceptor</code> interface, for simplified implementation of

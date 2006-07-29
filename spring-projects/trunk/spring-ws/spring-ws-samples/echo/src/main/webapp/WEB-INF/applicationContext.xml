@@ -22,7 +22,7 @@
         </property>
     </bean>
 
-    <bean id="validatingInterceptor" class="org.springframework.ws.endpoint.PayloadValidatingInterceptor">
+    <bean id="validatingInterceptor" class="org.springframework.ws.endpoint.interceptor.PayloadValidatingInterceptor">
         <description>
             This interceptor validates both incoming and outgoing message contents according to the 'echo.xsd' XML
             Schema file.</description>
@@ -31,7 +31,7 @@
         <property name="validateResponse" value="true"/>
     </bean>
 
-    <bean id="loggingInterceptor" class="org.springframework.ws.endpoint.PayloadLoggingInterceptor">
+    <bean id="loggingInterceptor" class="org.springframework.ws.endpoint.interceptor.PayloadLoggingInterceptor">
         <description>
             This interceptor logs the message payload.</description>
     </bean>
