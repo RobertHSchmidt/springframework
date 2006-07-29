@@ -30,6 +30,7 @@ import javax.xml.transform.stream.StreamSource;
 import junit.framework.TestCase;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.ws.mock.MockMessageContext;
+import org.springframework.ws.mock.MockTransportRequest;
 import org.springframework.ws.mock.MockWebServiceMessage;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.SoapVersion;
@@ -62,7 +63,8 @@ public class PayloadValidatingInterceptorTest extends TestCase {
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         InputStream inputStream = getClass().getResourceAsStream("invalidMessage.xml");
         transformer.transform(new StreamSource(inputStream), new DOMResult(invalidMessage.getSOAPBody()));
-        SaajSoapMessageContext context = new SaajSoapMessageContext(invalidMessage, messageFactory);
+        SaajSoapMessageContext context =
+                new SaajSoapMessageContext(invalidMessage, new MockTransportRequest(), messageFactory);
 
         boolean result = interceptor.handleRequest(context, null);
         assertFalse("Invalid response from interceptor", result);
@@ -85,7 +87,8 @@ public class PayloadValidatingInterceptorTest extends TestCase {
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         InputStream inputStream = getClass().getResourceAsStream("invalidMessage.xml");
         transformer.transform(new StreamSource(inputStream), new DOMResult(invalidMessage.getSOAPBody()));
-        SaajSoapMessageContext context = new SaajSoapMessageContext(invalidMessage, messageFactory);
+        SaajSoapMessageContext context =
+                new SaajSoapMessageContext(invalidMessage, new MockTransportRequest(), messageFactory);
 
         boolean result = interceptor.handleRequest(context, null);
         assertFalse("Invalid response from interceptor", result);
@@ -114,7 +117,8 @@ public class PayloadValidatingInterceptorTest extends TestCase {
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         InputStream inputStream = getClass().getResourceAsStream("invalidMessage.xml");
         transformer.transform(new StreamSource(inputStream), new DOMResult(invalidMessage.getSOAPBody()));
-        SaajSoapMessageContext context = new SaajSoapMessageContext(invalidMessage, messageFactory);
+        SaajSoapMessageContext context =
+                new SaajSoapMessageContext(invalidMessage, new MockTransportRequest(), messageFactory);
 
         boolean result = interceptor.handleRequest(context, null);
         assertFalse("Invalid response from interceptor", result);
@@ -162,7 +166,8 @@ public class PayloadValidatingInterceptorTest extends TestCase {
             MessageFactory messageFactory = MessageFactory.newInstance();
             SOAPMessage saajMessage =
                     SaajUtils.loadMessage(new ClassPathResource("validSoapMessage.xml", getClass()), messageFactory);
-            SaajSoapMessageContext soapContext = new SaajSoapMessageContext(saajMessage, messageFactory);
+            SaajSoapMessageContext soapContext =
+                    new SaajSoapMessageContext(saajMessage, new MockTransportRequest(), messageFactory);
             boolean result = interceptor.handleRequest(soapContext, null);
             assertTrue("Invalid response from interceptor", result);
             assertFalse("Response set", soapContext.hasResponse());

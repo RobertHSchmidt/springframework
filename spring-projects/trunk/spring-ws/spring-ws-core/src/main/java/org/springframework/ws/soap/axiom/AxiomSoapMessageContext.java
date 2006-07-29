@@ -22,10 +22,10 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPMessage;
-import org.springframework.util.Assert;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.context.AbstractSoapMessageContext;
+import org.springframework.ws.transport.TransportRequest;
 import org.springframework.ws.transport.TransportResponse;
 
 /**
@@ -37,21 +37,17 @@ import org.springframework.ws.transport.TransportResponse;
  */
 public class AxiomSoapMessageContext extends AbstractSoapMessageContext {
 
-    private final SOAPFactory soapFactory;
-
     /**
      * Creates a new instance based on the given Axiom request message, and a SOAP factory.
      *
-     * @param request     the request message
-     * @param soapFactory the SOAP factory used for creating a response
+     * @param messageRequest the request message
      */
-    public AxiomSoapMessageContext(AxiomSoapMessage request, SOAPFactory soapFactory) {
-        super(request);
-        Assert.notNull(soapFactory, "No soapFactory given");
-        this.soapFactory = soapFactory;
+    public AxiomSoapMessageContext(AxiomSoapMessage messageRequest, TransportRequest transportRequest) {
+        super(messageRequest, transportRequest);
     }
 
     protected SoapMessage createSoapMessage() {
+        SOAPFactory soapFactory = (SOAPFactory) getAxiomRequest().getSOAPEnvelope().getOMFactory();
         return new AxiomSoapMessage(soapFactory);
     }
 

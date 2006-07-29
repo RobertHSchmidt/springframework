@@ -24,6 +24,7 @@ import javax.xml.transform.dom.DOMResult;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.context.MessageContext;
 import org.springframework.xml.namespace.QNameUtils;
 import org.w3c.dom.Element;
 
@@ -51,8 +52,8 @@ public class PayloadRootQNameEndpointMapping extends AbstractQNameEndpointMappin
 
     private static TransformerFactory transformerFactory;
 
-    protected QName resolveQName(WebServiceMessage message) throws TransformerException {
-        Element payloadElement = getMessagePayloadElement(message);
+    protected QName resolveQName(MessageContext messageContext) throws TransformerException {
+        Element payloadElement = getMessagePayloadElement(messageContext.getRequest());
         return QNameUtils.getQNameForNode(payloadElement);
     }
 

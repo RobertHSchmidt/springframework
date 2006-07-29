@@ -25,6 +25,7 @@ import javax.xml.transform.TransformerFactory;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.soap.SOAPFactory;
+import org.springframework.ws.mock.MockTransportRequest;
 import org.springframework.ws.soap.axiom.AxiomSoapMessage;
 import org.springframework.ws.soap.axiom.AxiomSoapMessageContext;
 import org.springframework.xml.transform.StringResult;
@@ -74,7 +75,7 @@ public class StaxStreamPayloadEndpointTest extends AbstractMessageEndpointTestCa
         SOAPFactory axiomFactory = OMAbstractFactory.getSOAP11Factory();
         AxiomSoapMessage request = new AxiomSoapMessage(axiomFactory);
         transformer.transform(new StringSource(REQUEST), request.getPayloadResult());
-        AxiomSoapMessageContext context = new AxiomSoapMessageContext(request, axiomFactory);
+        AxiomSoapMessageContext context = new AxiomSoapMessageContext(request, new MockTransportRequest());
 
         MessageEndpoint endpoint = createResponseEndpoint();
         endpoint.invoke(context);
@@ -89,7 +90,7 @@ public class StaxStreamPayloadEndpointTest extends AbstractMessageEndpointTestCa
         SOAPFactory axiomFactory = OMAbstractFactory.getSOAP11Factory();
         AxiomSoapMessage request = new AxiomSoapMessage(axiomFactory);
         transformer.transform(new StringSource(REQUEST), request.getPayloadResult());
-        AxiomSoapMessageContext context = new AxiomSoapMessageContext(request, axiomFactory);
+        AxiomSoapMessageContext context = new AxiomSoapMessageContext(request, new MockTransportRequest());
 
         MessageEndpoint endpoint = createNoResponseEndpoint();
         endpoint.invoke(context);

@@ -18,7 +18,7 @@ package org.springframework.ws.soap.endpoint;
 
 import javax.xml.namespace.QName;
 
-import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.context.MessageContext;
 import org.springframework.xml.namespace.QNameUtils;
 
 /**
@@ -28,18 +28,17 @@ import org.springframework.xml.namespace.QNameUtils;
  */
 public abstract class AbstractQNameEndpointMapping extends AbstractMapBasedSoapEndpointMapping {
 
-    protected final String getLookupKeyForMessage(WebServiceMessage message) throws Exception {
-        QName qName = resolveQName(message);
+    protected final String getLookupKeyForMessage(MessageContext messageContext) throws Exception {
+        QName qName = resolveQName(messageContext);
         return qName != null ? qName.toString() : null;
     }
 
     /**
      * Template method that resolves the qualified names from the given SOAP message.
      *
-     * @param message the SOAP message
      * @return an array of qualified names that serve as registration keys
      */
-    protected abstract QName resolveQName(WebServiceMessage message) throws Exception;
+    protected abstract QName resolveQName(MessageContext messageContext) throws Exception;
 
     protected boolean validateLookupKey(String key) {
         return QNameUtils.validateQName(key);

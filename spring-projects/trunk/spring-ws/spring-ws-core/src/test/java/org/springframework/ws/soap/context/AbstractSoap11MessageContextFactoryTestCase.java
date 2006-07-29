@@ -36,7 +36,6 @@ public abstract class AbstractSoap11MessageContextFactoryTestCase extends Abstra
         SoapMessage requestMessage = (SoapMessage) messageContext.getRequest();
         assertNotNull("Request null", requestMessage);
         assertEquals("Invalid soap version", SoapVersion.SOAP_11, requestMessage.getVersion());
-        assertEquals("Invalid soap action", "\"Some-URI\"", requestMessage.getSoapAction());
     }
 
     public void testCreateContextAttachment() throws Exception {

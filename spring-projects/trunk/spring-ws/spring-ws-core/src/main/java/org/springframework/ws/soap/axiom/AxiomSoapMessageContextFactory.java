@@ -72,8 +72,6 @@ public class AxiomSoapMessageContextFactory implements MessageContextFactory, In
 
     private static final String DEFAULT_CHAR_SET_ENCODING = "UTF-8";
 
-    private static final String SOAP_ACTION_HEADER = "SOAPAction";
-
     private static final String CONTENT_TYPE_HEADER = "Content-Type";
 
     private static final String MULTI_PART_RELATED_CONTENT_TYPE = "multipart/related";
@@ -110,19 +108,22 @@ public class AxiomSoapMessageContextFactory implements MessageContextFactory, In
         Assert.isTrue(iterator.hasNext(), "No " + CONTENT_TYPE_HEADER + " header present of TransportRequest");
         String contentType = (String) iterator.next();
         Assert.hasLength(contentType, "No " + CONTENT_TYPE_HEADER + " header present of TransportRequest");
-        iterator = transportRequest.getHeaders(SOAP_ACTION_HEADER);
-        String soapAction = "";
-        if (iterator.hasNext()) {
-            soapAction = (String) iterator.next();
-        }
         InputStream inputStream = transportRequest.getInputStream();
         try {
-            if (contentType.indexOf(MULTI_PART_RELATED_CONTENT_TYPE) != -1) {
-                return createMultiPartContext(inputStream, contentType, soapAction);
+            AxiomSoapMessage requestMessage;
+            if (contentType.indexOf(MULTI_PART_RELATED_CONTENT_TYPE) == -1) {
+                XMLStreamReader reader =
+                        inputFactory.createXMLStreamReader(inputStream, getCharSetEncoding(contentType));
+                SOAPFactory soapFactory = getSoapFactory(contentType);
+                StAXSOAPModelBuilder builder =
+                        new StAXSOAPModelBuilder(reader, soapFactory, soapFactory.getSoapVersionURI());
+                requestMessage = createAxiomSoapMessage(builder, null);
             }
             else {
-                return createSoapContext(inputStream, contentType, soapAction, null);
+                requestMessage = createMultiPartAxiomSoapMessage(inputStream, contentType);
             }
+            return new AxiomSoapMessageContext(requestMessage, transportRequest);
+
         }
         catch (XMLStreamException ex) {
             throw new SoapMessageCreationException("Could not create message: " + ex.getMessage(), ex);
@@ -132,93 +133,49 @@ public class AxiomSoapMessageContextFactory implements MessageContextFactory, In
         }
     }
 
-    private AxiomSoapMessageContext createMultiPartContext(InputStream inputStream,
-                                                           String contentType,
-                                                           String soapAction) throws XMLStreamException {
+    private AxiomSoapMessage createMultiPartAxiomSoapMessage(InputStream inputStream, String contentType)
+            throws XMLStreamException {
         Attachments attachments = new Attachments(inputStream, contentType);
-        if (attachments.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
-            return createSoapContext(attachments.getSOAPPartInputStream(),
-                    attachments.getSOAPPartContentType(),
-                    soapAction,
-                    attachments);
-        }
-        else if (attachments.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)) {
-            String soapPartContentType = attachments.getSOAPPartContentType();
-            XMLStreamReader reader = inputFactory
-                    .createXMLStreamReader(attachments.getSOAPPartInputStream(),
-                            getCharSetEncoding(soapPartContentType));
-            String soapEnvelopeNamespace;
-            SOAPFactory soapFactory;
-            if (soapPartContentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) != -1) {
-                soapEnvelopeNamespace = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-                soapFactory = new SOAP11Factory();
-            }
-            else if (soapPartContentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) != -1) {
-                soapEnvelopeNamespace = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-                soapFactory = new SOAP12Factory();
-            }
-            else {
-                throw new SoapMessageCreationException("Unknown content type '" + soapPartContentType + "'");
-            }
-            StAXSOAPModelBuilder builder = new MTOMStAXSOAPModelBuilder(reader, attachments, soapEnvelopeNamespace);
-            AxiomSoapMessage request = new AxiomSoapMessage(builder.getSoapMessage(),
-                    soapFactory,
-                    soapAction,
-                    attachments,
-                    payloadCaching);
-            return new AxiomSoapMessageContext(request, soapFactory);
-        }
-        else {
+        if (!(attachments.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE) ||
+                attachments.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE))) {
             throw new SoapMessageCreationException(
                     "Unknown attachment type: [" + attachments.getAttachmentSpecType() + "]");
         }
+        XMLStreamReader reader = inputFactory.createXMLStreamReader(attachments.getSOAPPartInputStream(),
+                getCharSetEncoding(attachments.getSOAPPartContentType()));
+        SOAPFactory soapFactory = getSoapFactory(attachments.getSOAPPartContentType());
+        StAXSOAPModelBuilder builder = null;
+        if (attachments.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
+            builder = new StAXSOAPModelBuilder(reader, soapFactory, soapFactory.getSoapVersionURI());
+        }
+        else if (attachments.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)) {
+            builder = new MTOMStAXSOAPModelBuilder(reader, attachments, soapFactory.getSoapVersionURI());
+        }
+        return new AxiomSoapMessage(builder.getSoapMessage(), attachments, payloadCaching);
     }
 
-    private AxiomSoapMessageContext createSoapContext(InputStream inputStream,
-                                                      String contentType,
-                                                      String soapAction,
-                                                      Attachments attachments) throws XMLStreamException {
-        if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) != -1) {
-            return createSoap12Context(inputStream, contentType, soapAction, attachments);
+    /**
+     * Creates a new <code>AxiomSoapMessage</code> based on the given parameters.
+     *
+     * @param modelBuilder the builder used to optain the Axiom SOAPMessage
+     * @param attachments  the attachments, can be <code>null</code>
+     * @return the created message
+     */
+    private AxiomSoapMessage createAxiomSoapMessage(StAXSOAPModelBuilder modelBuilder, Attachments attachments) {
+        SOAPMessage soapMessage = modelBuilder.getSoapMessage();
+        return new AxiomSoapMessage(soapMessage, attachments, payloadCaching);
+    }
+
+    private SOAPFactory getSoapFactory(String contentType) {
+        if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) != -1) {
+            return soap11Factory;
         }
-        else if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) != -1) {
-            return createSoap11Context(inputStream, contentType, soapAction, attachments);
+        else if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) != -1) {
+            return soap12Factory;
         }
         else {
             throw new SoapMessageCreationException("Unknown content type '" + contentType + "'");
         }
-    }
-
-    private AxiomSoapMessageContext createSoap11Context(InputStream inputStream,
-                                                        String contentType,
-                                                        String soapAction,
-                                                        Attachments attachments) throws XMLStreamException {
-        SOAPMessage soapMessage = buildSoapMessage(inputStream, contentType, soap11Factory);
-        return createSoapMessageContext(soapMessage, soapAction, attachments, soap11Factory);
-    }
-
-    private AxiomSoapMessageContext createSoap12Context(InputStream inputStream,
-                                                        String contentType,
-                                                        String soapAction,
-                                                        Attachments attachments) throws XMLStreamException {
-        SOAPMessage soapMessage = buildSoapMessage(inputStream, contentType, soap12Factory);
-        return createSoapMessageContext(soapMessage, soapAction, attachments, soap12Factory);
-    }
-
-    private SOAPMessage buildSoapMessage(InputStream inputStream, String contentType, SOAPFactory soapFactory)
-            throws XMLStreamException {
-        XMLStreamReader reader = inputFactory.createXMLStreamReader(inputStream, getCharSetEncoding(contentType));
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(reader, soapFactory, soapFactory.getSoapVersionURI());
-        return builder.getSoapMessage();
-    }
-
-    private AxiomSoapMessageContext createSoapMessageContext(SOAPMessage soapMessage,
-                                                             String soapAction,
-                                                             Attachments attachments,
-                                                             SOAPFactory soapFactory) {
-        AxiomSoapMessage request =
-                new AxiomSoapMessage(soapMessage, soapFactory, soapAction, attachments, payloadCaching);
-        return new AxiomSoapMessageContext(request, soapFactory);
     }
 
     /**

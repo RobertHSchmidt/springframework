@@ -16,8 +16,10 @@
 
 package org.springframework.ws.soap;
 
+import java.util.Iterator;
+
 import org.springframework.util.StringUtils;
-import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.endpoint.AbstractMapBasedSoapEndpointMapping;
 
 /**
@@ -41,16 +43,24 @@ import org.springframework.ws.soap.endpoint.AbstractMapBasedSoapEndpointMapping;
  * <code>payloadCaching</code> disabled).
  *
  * @author Arjen Poutsma
- * @see SoapMessage#getSoapAction()
  */
 public class SoapActionEndpointMapping extends AbstractMapBasedSoapEndpointMapping {
+
+    /**
+     * The name of the SOAPAction <code>TransportRequest</code> header.
+     */
+    public static final String SOAP_ACTION_HEADER = "SOAPAction";
 
     protected boolean validateLookupKey(String key) {
         return StringUtils.hasLength(key);
     }
 
-    protected String getLookupKeyForMessage(WebServiceMessage message) throws Exception {
-        String soapAction = ((SoapMessage) message).getSoapAction();
+    protected String getLookupKeyForMessage(MessageContext messageContext) throws Exception {
+        Iterator iterator = messageContext.getTransportRequest().getHeaders(SOAP_ACTION_HEADER);
+        String soapAction = "";
+        if (iterator.hasNext()) {
+            soapAction = (String) iterator.next();
+        }
         if (StringUtils.hasLength(soapAction) && soapAction.charAt(0) == '"' &&
                 soapAction.charAt(soapAction.length() - 1) == '"') {
             return soapAction.substring(1, soapAction.length() - 1);

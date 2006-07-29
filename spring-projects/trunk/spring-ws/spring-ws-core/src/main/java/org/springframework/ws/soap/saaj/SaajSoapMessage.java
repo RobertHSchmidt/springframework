@@ -34,7 +34,6 @@ import javax.xml.soap.SOAPMessage;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
 import org.springframework.ws.soap.AbstractSoapMessage;
 import org.springframework.ws.soap.Attachment;
 import org.springframework.ws.soap.AttachmentException;
@@ -51,8 +50,6 @@ import org.springframework.ws.soap.saaj.support.SaajUtils;
  * @see SaajSoapMessageContext
  */
 public class SaajSoapMessage extends AbstractSoapMessage {
-
-    private static final String SOAP_ACTION_HEADER = "SOAPAction";
 
     private final SOAPMessage saajMessage;
 
@@ -90,11 +87,6 @@ public class SaajSoapMessage extends AbstractSoapMessage {
             }
         }
         return envelope;
-    }
-
-    public String getSoapAction() {
-        String[] values = saajMessage.getMimeHeaders().getHeader(SOAP_ACTION_HEADER);
-        return ObjectUtils.isEmpty(values) ? null : values[0];
     }
 
     public void writeTo(OutputStream outputStream) throws IOException {

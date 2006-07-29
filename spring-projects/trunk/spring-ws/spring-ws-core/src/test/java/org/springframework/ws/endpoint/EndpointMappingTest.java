@@ -17,97 +17,95 @@
 package org.springframework.ws.endpoint;
 
 import junit.framework.TestCase;
-
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.ws.EndpointInterceptor;
 import org.springframework.ws.EndpointInvocationChain;
-import org.springframework.ws.WebServiceMessage;
-import org.springframework.ws.mock.MockWebServiceMessage;
+import org.springframework.ws.context.MessageContext;
+import org.springframework.ws.mock.MockMessageContext;
 
 public class EndpointMappingTest extends TestCase {
 
     public void testDefaultEndpoint() throws Exception {
-        final MockWebServiceMessage request = new MockWebServiceMessage();
+        final MockMessageContext context = new MockMessageContext();
         Object defaultEndpoint = new Object();
         AbstractEndpointMapping mapping = new AbstractEndpointMapping() {
-            protected Object getEndpointInternal(WebServiceMessage givenRequest) throws Exception {
-                assertEquals("Invalid request passed", request, givenRequest);
+            protected Object getEndpointInternal(MessageContext givenRequest) throws Exception {
+                assertEquals("Invalid request passed", context, givenRequest);
                 return null;
             }
         };
         mapping.setDefaultEndpoint(defaultEndpoint);
 
-        EndpointInvocationChain result = mapping.getEndpoint(request);
+        EndpointInvocationChain result = mapping.getEndpoint(context);
         assertNotNull("No EndpointInvocatioChain returned", result);
         assertEquals("Default Endpoint not returned", defaultEndpoint, result.getEndpoint());
     }
 
     public void testEndpoint() throws Exception {
-        final MockWebServiceMessage request = new MockWebServiceMessage();
+        final MockMessageContext context = new MockMessageContext();
         final Object endpoint = new Object();
         AbstractEndpointMapping mapping = new AbstractEndpointMapping() {
-            protected Object getEndpointInternal(WebServiceMessage givenRequest) throws Exception {
-                assertEquals("Invalid request passed", request, givenRequest);
+            protected Object getEndpointInternal(MessageContext givenRequest) throws Exception {
+                assertEquals("Invalid request passed", context, givenRequest);
                 return endpoint;
             }
         };
 
-        EndpointInvocationChain result = mapping.getEndpoint(request);
+        EndpointInvocationChain result = mapping.getEndpoint(context);
         assertNotNull("No EndpointInvocatioChain returned", result);
         assertEquals("Unexpected Endpoint returned", endpoint, result.getEndpoint());
     }
 
     public void testEndpointInterceptors() throws Exception {
-        final MockWebServiceMessage request = new MockWebServiceMessage();
+        final MockMessageContext context = new MockMessageContext();
         final Object endpoint = new Object();
         EndpointInterceptor interceptor = new EndpointInterceptorAdapter();
         AbstractEndpointMapping mapping = new AbstractEndpointMapping() {
-            protected Object getEndpointInternal(WebServiceMessage givenRequest) throws Exception {
-                assertEquals("Invalid request passed", request, givenRequest);
+            protected Object getEndpointInternal(MessageContext givenRequest) throws Exception {
+                assertEquals("Invalid request passed", context, givenRequest);
                 return endpoint;
             }
         };
         mapping.setInterceptors(new EndpointInterceptor[]{interceptor});
-        EndpointInvocationChain result = mapping.getEndpoint(request);
+        EndpointInvocationChain result = mapping.getEndpoint(context);
         assertEquals("Unexpected amount of EndpointInterceptors returned", 1, result.getInterceptors().length);
         assertEquals("Unexpected EndpointInterceptor returned", interceptor, result.getInterceptors()[0]);
     }
 
     public void testEndpointBeanName() throws Exception {
-        final MockWebServiceMessage request = new MockWebServiceMessage();
-
+        final MockMessageContext context = new MockMessageContext();
         StaticApplicationContext applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton("endpoint", Object.class);
 
         AbstractEndpointMapping mapping = new AbstractEndpointMapping() {
 
-            protected Object getEndpointInternal(WebServiceMessage message) throws Exception {
-                assertEquals("Invalid request", request, message);
+            protected Object getEndpointInternal(MessageContext message) throws Exception {
+                assertEquals("Invalid request", context, message);
                 return "endpoint";
             }
         };
         mapping.setApplicationContext(applicationContext);
 
-        EndpointInvocationChain result = mapping.getEndpoint(request);
+        EndpointInvocationChain result = mapping.getEndpoint(context);
         assertNotNull("No endpoint returned", result);
     }
 
     public void testEndpointInvalidBeanName() throws Exception {
-        final MockWebServiceMessage request = new MockWebServiceMessage();
+        final MockMessageContext context = new MockMessageContext();
 
         StaticApplicationContext applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton("endpoint", Object.class);
 
         AbstractEndpointMapping mapping = new AbstractEndpointMapping() {
 
-            protected Object getEndpointInternal(WebServiceMessage message) throws Exception {
-                assertEquals("Invalid request", request, message);
+            protected Object getEndpointInternal(MessageContext message) throws Exception {
+                assertEquals("Invalid request", context, message);
                 return "noSuchBean";
             }
         };
         mapping.setApplicationContext(applicationContext);
 
-        EndpointInvocationChain result = mapping.getEndpoint(request);
+        EndpointInvocationChain result = mapping.getEndpoint(context);
 
         assertNull("No endpoint returned", result);
     }

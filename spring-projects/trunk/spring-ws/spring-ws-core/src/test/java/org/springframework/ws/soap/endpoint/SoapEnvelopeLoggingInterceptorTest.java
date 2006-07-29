@@ -25,6 +25,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
+import org.springframework.ws.mock.MockTransportRequest;
 import org.springframework.ws.soap.saaj.SaajSoapMessageContext;
 
 public class SoapEnvelopeLoggingInterceptorTest extends TestCase {
@@ -42,7 +43,7 @@ public class SoapEnvelopeLoggingInterceptorTest extends TestCase {
         Logger.getRootLogger().setLevel(Level.DEBUG);
         MessageFactory messageFactory = MessageFactory.newInstance();
         SOAPMessage saajMessage = messageFactory.createMessage();
-        messageContext = new SaajSoapMessageContext(saajMessage, messageFactory);
+        messageContext = new SaajSoapMessageContext(saajMessage, new MockTransportRequest(), messageFactory);
         appender.reset();
     }
 

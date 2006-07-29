@@ -18,7 +18,7 @@ package org.springframework.ws.soap.endpoint;
 
 import org.springframework.ws.EndpointInterceptor;
 import org.springframework.ws.EndpointInvocationChain;
-import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.endpoint.AbstractEndpointMapping;
 import org.springframework.ws.soap.SoapEndpointInvocationChain;
 
@@ -26,9 +26,6 @@ import org.springframework.ws.soap.SoapEndpointInvocationChain;
  * Abstract base class for SOAP <code>EndpointMapping</code> implementations. Adds support to SOAP actors/roles, in
  * addition to the default endpoint, and endpoint interceptors offered by the base
  * <code>AbstractEndpointMapping</code>.
- * <p/>
- * By default, the SOAP actor role is set to the special 'next actor' role, identifying the next application processing
- * a SOAP request as the intended actor.
  *
  * @author Arjen Poutsma
  */
@@ -59,16 +56,15 @@ public abstract class AbstractSoapEndpointMapping extends AbstractEndpointMappin
      * Creates a new <code>SoapEndpointInvocationChain</code> based on the given endpoint, and the set interceptors, and
      * roles.
      *
-     * @param request      the current message request
      * @param endpoint     the endpoint
      * @param interceptors the endpoint interceptors
      * @return the created invocation chain
      * @see #setInterceptors(org.springframework.ws.EndpointInterceptor[])
      * @see #setRoles(String[])
      */
-    protected EndpointInvocationChain createEndpointInvocationChain(WebServiceMessage request,
-                                                                    Object endpoint,
-                                                                    EndpointInterceptor[] interceptors) {
+    protected final EndpointInvocationChain createEndpointInvocationChain(MessageContext messageContext,
+                                                                          Object endpoint,
+                                                                          EndpointInterceptor[] interceptors) {
         return new SoapEndpointInvocationChain(endpoint, interceptors, roles);
     }
 }

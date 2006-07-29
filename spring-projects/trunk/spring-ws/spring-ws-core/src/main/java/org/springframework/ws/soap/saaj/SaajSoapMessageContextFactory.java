@@ -113,7 +113,7 @@ public class SaajSoapMessageContextFactory implements MessageContextFactory, Ini
         }
         try {
             SOAPMessage requestMessage = messageFactory.createMessage(mimeHeaders, transportRequest.getInputStream());
-            return new SaajSoapMessageContext(requestMessage, messageFactory);
+            return new SaajSoapMessageContext(requestMessage, transportRequest, messageFactory);
         }
         catch (SOAPException ex) {
             throw new SoapMessageCreationException("Could not create message from TransportRequest: " + ex.getMessage(),

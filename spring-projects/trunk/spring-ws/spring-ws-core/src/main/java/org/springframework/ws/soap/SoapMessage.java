@@ -40,13 +40,6 @@ public interface SoapMessage extends WebServiceMessage {
     SoapEnvelope getEnvelope() throws SoapEnvelopeException;
 
     /**
-     * Get the SOAP Action for this messaage, or <code>null</code> if not present.
-     *
-     * @return the SOAP Action.
-     */
-    String getSoapAction();
-
-    /**
      * Returns the <code>SoapBody</code> associated with this <code>SoapMessage</code>. This is a convenience method for
      * <code>getEnvelope().getBody()</code>.
      *

@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.springframework.util.Assert;
 import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.transport.TransportRequest;
 
 /**
  * Abstract implementation of the <code>MessageContext</code> interface. Contains functionality to set and remove
@@ -34,15 +35,19 @@ public abstract class AbstractMessageContext implements MessageContext {
 
     private WebServiceMessage response;
 
+    private final TransportRequest transportRequest;
+
     /**
      * Keys are <code>Strings</code>, values are <code>Objects</code>. Lazily initalized by
      * <code>getProperties()</code>.
      */
     private Map properties;
 
-    protected AbstractMessageContext(WebServiceMessage request) {
+    protected AbstractMessageContext(WebServiceMessage request, TransportRequest transportRequest) {
         Assert.notNull(request, "No request given");
+        Assert.notNull(transportRequest, "No transport request given");
         this.request = request;
+        this.transportRequest = transportRequest;
     }
 
     public final WebServiceMessage getRequest() {
@@ -66,6 +71,10 @@ public abstract class AbstractMessageContext implements MessageContext {
 
     public final boolean hasResponse() {
         return response != null;
+    }
+
+    public final TransportRequest getTransportRequest() {
+        return transportRequest;
     }
 
     /**
