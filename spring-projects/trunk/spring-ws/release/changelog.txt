@@ -10,6 +10,12 @@ Package org.springframework.oxm
 Package org.springframework.oxm.xstream
 * added support for registering custom Converters (#SWS-34)
 
+Package org.springframework.ws.context
+* changed contract of MessageContext.getResponse(): now creates a response if none has been created. Required because
+  creating SOAP fault when a response was already set threw an exception.
+* enabling support for direct writing to the TransportResponse
+* MessageContext contains TransportRequest, for transport-based routing
+
 Package org.springframework.ws.endpoint
 * improved endpoint test suite
 * AbstractStaxPayloadEndpoint now use StaxSource corrently (#SWS-38)
@@ -19,14 +25,10 @@ Package org.springframework.ws.endpoint
   conventions (e.g. Log4jConfigurer)
 * refactoring most of PayloadValidatingInterceptor into AbstractValidatingInterceptor
 
-Package org.springframework.ws.context
-* changed contract of MessageContext.getResponse(): now creates a response if none has been created. Required because
-  creating SOAP fault when a response was already set threw an exception.
-* enabling support for direct writing to the TransportResponse
-
 Package org.springframework.ws.soap
 * improved content-type handling (#SWS-32)
 * moved SOAP 1.1 specfics to separate package and interfaces
+* SoapAction has been removed from SoapMessage, SoapActionEndpointMapping uses TransportRequest header
 
 Package org.springframework.ws.soap.axiom
 * add support for SAAJ 1.3
