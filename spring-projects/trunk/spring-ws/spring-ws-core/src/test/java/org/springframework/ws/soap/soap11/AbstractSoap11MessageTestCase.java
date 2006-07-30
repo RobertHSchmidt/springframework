@@ -19,10 +19,16 @@ package org.springframework.ws.soap.soap11;
 import java.io.ByteArrayOutputStream;
 
 import junit.framework.Assert;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.ws.soap.AbstractSoapMessageTestCase;
 import org.springframework.ws.soap.SoapVersion;
 
 public abstract class AbstractSoap11MessageTestCase extends AbstractSoapMessageTestCase {
+
+    protected final Resource[] getSoapSchemas() {
+        return new Resource[]{new ClassPathResource("soap11.xsd", AbstractSoap11MessageTestCase.class)};
+    }
 
     public void testGetVersion() throws Exception {
         Assert.assertEquals("Invalid SOAP version", SoapVersion.SOAP_11, soapMessage.getVersion());
@@ -34,5 +40,4 @@ public abstract class AbstractSoap11MessageTestCase extends AbstractSoapMessageT
         assertXMLEqual("<Envelope xmlns='http://schemas.xmlsoap.org/soap/envelope/'><Header/><Body/></Envelope>",
                 new String(outputStream.toByteArray(), "UTF-8"));
     }
-
 }
