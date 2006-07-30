@@ -17,7 +17,6 @@
 package org.springframework.ws.soap;
 
 import java.util.Iterator;
-
 import javax.xml.namespace.QName;
 
 /**
@@ -40,16 +39,16 @@ public interface SoapHeader extends SoapElement {
     SoapHeaderElement addHeaderElement(QName name) throws SoapHeaderException;
 
     /**
-     * Returns an <code>Iterator</code> over all the <code>SoapHeaderElement</code>s that have the specified role and
-     * that have a <code>MustUnderstand</code> attribute whose value is equivalent to <code>true</code>.
+     * Returns an <code>Iterator</code> over all the <code>SoapHeaderElement</code>s that have the specified actor or
+     * role and that have a <code>MustUnderstand</code> attribute whose value is equivalent to <code>true</code>.
      *
-     * @param role the role for which to search
-     * @return an iterator over all the header elements that contain the specified role and are marked as
+     * @param actorOrRole the actor (SOAP 1.1) or role (SOAP 1.2) for which to search
+     * @return an iterator over all the header elements that contain the specified actor/role and are marked as
      *         <code>MustUnderstand</code>
      * @throws SoapHeaderException if the headers cannot be returned
      * @see SoapHeaderElement
      */
-    Iterator examineMustUnderstandHeaderElements(String role) throws SoapHeaderException;
+    Iterator examineMustUnderstandHeaderElements(String actorOrRole) throws SoapHeaderException;
 
     /**
      * Returns an <code>Iterator</code> over all the <code>SoapHeaderElement</code>s in this header.
