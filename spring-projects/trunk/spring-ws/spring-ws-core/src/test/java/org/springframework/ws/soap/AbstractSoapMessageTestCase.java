@@ -21,9 +21,15 @@ import java.util.Iterator;
 
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamSource;
+import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.ws.AbstractWebServiceMessageTestCase;
 import org.springframework.ws.WebServiceMessage;
+import org.springframework.xml.transform.StringResult;
+import org.springframework.xml.validation.XmlValidator;
+import org.springframework.xml.validation.XmlValidatorFactory;
+import org.xml.sax.SAXParseException;
 
 public abstract class AbstractSoapMessageTestCase extends AbstractWebServiceMessageTestCase {
 
@@ -52,6 +58,25 @@ public abstract class AbstractSoapMessageTestCase extends AbstractWebServiceMess
         assertEquals("Invalid contents", contents, result);
         assertFalse("Attachment iterator has too many elements", iterator.hasNext());
     }
+
+    public void testWriteTo() throws Exception {
+        StringResult stringResult = new StringResult();
+        transformer.transform(soapMessage.getEnvelope().getSource(), stringResult);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        soapMessage.writeTo(os);
+        assertXMLEqual(stringResult.toString(), os.toString("UTF-8"));
+    }
+
+    public void testValidate() throws Exception {
+        XmlValidator validator =
+                XmlValidatorFactory.createValidator(getSoapSchemas(), XmlValidatorFactory.SCHEMA_W3C_XML);
+        SAXParseException[] errors = validator.validate(soapMessage.getEnvelope().getSource());
+        if (errors.length > 0) {
+            fail(StringUtils.arrayToCommaDelimitedString(errors));
+        }
+    }
+
+    protected abstract Resource[] getSoapSchemas();
 
 
 }
