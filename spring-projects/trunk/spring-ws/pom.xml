@@ -79,7 +79,6 @@
         <module>spring-oxm-tiger</module>
         <module>spring-ws-core</module>
         <module>spring-ws-security</module>
-        <module>spring-ws-samples</module>
         <module>release</module>
     </modules>
     <profiles>
@@ -90,6 +89,12 @@
             </activation>
             <modules>
                 <module>spring-oxm-tiger</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>samples</id>
+            <modules>
+                <module>spring-ws-samples</module>
             </modules>
         </profile>
     </profiles>
@@ -201,7 +206,6 @@
                     <childDelegation>false</childDelegation>
                 </configuration>
             </plugin>
-<!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clover-plugin</artifactId>
@@ -214,7 +218,6 @@
                     </execution>
                 </executions>
             </plugin>
--->
             <!-- IDEs -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -279,12 +282,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
             </plugin>
-<!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clover-plugin</artifactId>
             </plugin>
--->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jdepend-maven-plugin</artifactId>
