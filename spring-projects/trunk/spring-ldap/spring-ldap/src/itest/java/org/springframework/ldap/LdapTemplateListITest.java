@@ -21,7 +21,6 @@ import javax.naming.Name;
 import javax.naming.NameClassPair;
 
 import org.springframework.ldap.support.CountListResultCallbackHandler;
-import org.springframework.ldap.support.CountSearchResultCallbackHandler;
 import org.springframework.ldap.support.DistinguishedName;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
