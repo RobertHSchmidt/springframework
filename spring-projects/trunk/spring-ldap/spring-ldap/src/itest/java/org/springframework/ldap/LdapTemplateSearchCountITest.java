@@ -36,7 +36,7 @@ import org.springframework.ldap.support.DistinguishedName;
  * 
  * @author Mattias Arthursson
  */
-public class LdapTemplateSearchITest extends DDStepsSpringTestCase {
+public class LdapTemplateSearchCountITest extends DDStepsSpringTestCase {
 
     private static final boolean DONT_RETURN_OBJECTS = false;
 

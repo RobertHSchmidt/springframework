@@ -221,6 +221,54 @@ public interface LdapOperations {
             SearchResultCallbackHandler handler) throws DataAccessException;
 
     /**
+     * Search for all objects matching the supplied filter. Only search for the
+     * specified attributes. The Attributes in each SearchResult is supplied to
+     * the specified AttributesMapper.
+     * 
+     * @param base
+     *            The base DN where the search should begin.
+     * @param filter
+     *            the filter to use in the search.
+     * @param searchScope
+     *            the search scope to set in SearchControls.
+     * @param attrs
+     *            the attributes to return, null means returning all attributes.
+     * @param mapper
+     *            the AttributesMapper to use for translating each entry.
+     * @return a List containing all entries received from the AttributesMapper.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
+     */
+    public List search(Name base, String filter, int searchScope,
+            String[] attrs, AttributesMapper mapper) throws DataAccessException;
+
+    /**
+     * Search for all objects matching the supplied filter. Only search for the
+     * specified attributes. The Attributes in each SearchResult is supplied to
+     * the specified AttributesMapper.
+     * 
+     * @param base
+     *            The base DN where the search should begin.
+     * @param filter
+     *            the filter to use in the search.
+     * @param searchScope
+     *            the search scope to set in SearchControls.
+     * @param attrs
+     *            the attributes to return, null means returning all attributes.
+     * @param mapper
+     *            the AttributesMapper to use for translating each entry.
+     * @return a List containing all entries received from the AttributesMapper.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
+     */
+    public List search(String base, String filter, int searchScope,
+            String[] attrs, AttributesMapper mapper) throws DataAccessException;
+
+    /**
      * Search for all objects matching the supplied filter. The Attributes in
      * each SearchResult is supplied to the specified AttributesMapper.
      * 
@@ -301,6 +349,54 @@ public interface LdapOperations {
      */
     public List search(String base, String filter, AttributesMapper mapper)
             throws DataAccessException;
+
+    /**
+     * Search for all objects matching the supplied filter. The Object returned
+     * in each SearchResult is supplied to the specified ContextMapper. Only
+     * look for the supplied attributes.
+     * 
+     * @param base
+     *            The base DN where the search should begin.
+     * @param filter
+     *            the filter to use in the search.
+     * @param searchScope
+     *            the search scope to set in SearchControls.
+     * @param attrs
+     *            the attributes to return, null means all attributes.
+     * @param mapper
+     *            the ContextMapper to use for translating each entry.
+     * @return a List containing all entries received from the ContextMapper.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
+     */
+    public List search(Name base, String filter, int searchScope,
+            String[] attrs, ContextMapper mapper) throws DataAccessException;
+
+    /**
+     * Search for all objects matching the supplied filter. The Object returned
+     * in each SearchResult is supplied to the specified ContextMapper. Only
+     * look for the supplied attributes.
+     * 
+     * @param base
+     *            The base DN where the search should begin.
+     * @param filter
+     *            the filter to use in the search.
+     * @param searchScope
+     *            the search scope to set in SearchControls.
+     * @param attrs
+     *            the attributes to return, null means all attributes.
+     * @param mapper
+     *            the ContextMapper to use for translating each entry.
+     * @return a List containing all entries received from the ContextMapper.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
+     */
+    public List search(String base, String filter, int searchScope,
+            String[] attrs, ContextMapper mapper) throws DataAccessException;
 
     /**
      * Search for all objects matching the supplied filter. The Object returned
@@ -708,9 +804,12 @@ public interface LdapOperations {
      * with the old name become associated with the new name. Intermediate
      * contexts of the old name are not changed.
      * 
-     * @param oldDn the name of the existing binding; may not be empty
-     * @param newDn the name of the new binding; may not be empty
-     * @throws DataIntegrityViolationException if newDn is already bound
+     * @param oldDn
+     *            the name of the existing binding; may not be empty
+     * @param newDn
+     *            the name of the new binding; may not be empty
+     * @throws DataIntegrityViolationException
+     *             if newDn is already bound
      */
     public void rename(final Name oldDn, final Name newDn)
             throws DataAccessException;
@@ -719,9 +818,12 @@ public interface LdapOperations {
      * Binds a new name to the object bound to an old name, and unbinds the old
      * name. See {@link #rename(Name, Name)} for details.
      * 
-     * @param oldDn the name of the existing binding; may not be empty
-     * @param newDn the name of the new binding; may not be empty
-     * @throws DataIntegrityViolationException if newDn is already bound
+     * @param oldDn
+     *            the name of the existing binding; may not be empty
+     * @param newDn
+     *            the name of the new binding; may not be empty
+     * @throws DataIntegrityViolationException
+     *             if newDn is already bound
      */
     public void rename(final String oldDn, final String newDn)
             throws DataAccessException;

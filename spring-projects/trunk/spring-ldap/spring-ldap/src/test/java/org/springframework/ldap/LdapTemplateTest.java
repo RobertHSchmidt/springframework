@@ -48,6 +48,8 @@ import org.springframework.ldap.support.DistinguishedName;
 
 public class LdapTemplateTest extends TestCase {
 
+    private static final String DEFAULT_BASE_STRING = "o=example.com";
+
     private MockControl contextSourceControl;
 
     private ContextSource contextSourceMock;
@@ -253,7 +255,8 @@ public class LdapTemplateTest extends TestCase {
 
         replay();
 
-        tested.search("o=example.com", "(ou=somevalue)", 1, true, handlerMock);
+        tested.search(DEFAULT_BASE_STRING, "(ou=somevalue)", 1, true,
+                handlerMock);
 
         verify();
     }
@@ -262,7 +265,7 @@ public class LdapTemplateTest extends TestCase {
             SearchResult searchResult) throws NamingException {
         dirContextControl.setDefaultMatcher(new SearchControlsMatcher());
         dirContextControl.expectAndReturn(dirContextMock.search(
-                "o=example.com", "(ou=somevalue)", controls),
+                DEFAULT_BASE_STRING, "(ou=somevalue)", controls),
                 namingEnumerationMock);
 
         namingEnumerationControl.expectAndReturn(namingEnumerationMock
@@ -316,7 +319,7 @@ public class LdapTemplateTest extends TestCase {
 
         replay();
 
-        tested.search("o=example.com", "(ou=somevalue)", handlerMock);
+        tested.search(DEFAULT_BASE_STRING, "(ou=somevalue)", handlerMock);
 
         verify();
     }
@@ -387,6 +390,74 @@ public class LdapTemplateTest extends TestCase {
         verify();
     }
 
+    public void testSearch_AttributesMapper_ReturningAttrs()
+            throws NamingException {
+        expectGetReadOnlyContext();
+
+        String[] attrs = new String[0];
+        SearchControls controls = new SearchControls();
+        controls.setSearchScope(1);
+        controls.setReturningObjFlag(false);
+        controls.setReturningAttributes(attrs);
+
+        BasicAttributes expectedAttributes = new BasicAttributes();
+        SearchResult searchResult = new SearchResult("", null,
+                expectedAttributes);
+
+        setupSearchAndNamingEnumeration(controls, searchResult);
+
+        Object expectedResult = new Object();
+        attributesMapperControl.expectAndReturn(attributesMapperMock
+                .mapFromAttributes(expectedAttributes), expectedResult);
+
+        dirContextMock.close();
+
+        replay();
+
+        List list = tested.search(nameMock, "(ou=somevalue)", 1, attrs,
+                attributesMapperMock);
+
+        verify();
+
+        assertNotNull(list);
+        assertEquals(1, list.size());
+        assertSame(expectedResult, list.get(0));
+    }
+
+    public void testSearch_String_AttributesMapper_ReturningAttrs()
+            throws NamingException {
+        expectGetReadOnlyContext();
+
+        String[] attrs = new String[0];
+        SearchControls controls = new SearchControls();
+        controls.setSearchScope(1);
+        controls.setReturningObjFlag(false);
+        controls.setReturningAttributes(attrs);
+
+        BasicAttributes expectedAttributes = new BasicAttributes();
+        SearchResult searchResult = new SearchResult("", null,
+                expectedAttributes);
+
+        setupStringSearchAndNamingEnumeration(controls, searchResult);
+
+        Object expectedResult = new Object();
+        attributesMapperControl.expectAndReturn(attributesMapperMock
+                .mapFromAttributes(expectedAttributes), expectedResult);
+
+        dirContextMock.close();
+
+        replay();
+
+        List list = tested.search(DEFAULT_BASE_STRING, "(ou=somevalue)", 1,
+                attrs, attributesMapperMock);
+
+        verify();
+
+        assertNotNull(list);
+        assertEquals(1, list.size());
+        assertSame(expectedResult, list.get(0));
+    }
+
     public void testSearch_AttributesMapper() throws NamingException {
         expectGetReadOnlyContext();
 
@@ -439,7 +510,7 @@ public class LdapTemplateTest extends TestCase {
 
         replay();
 
-        List list = tested.search("o=example.com", "(ou=somevalue)", 1,
+        List list = tested.search(DEFAULT_BASE_STRING, "(ou=somevalue)", 1,
                 attributesMapperMock);
 
         verify();
@@ -502,7 +573,7 @@ public class LdapTemplateTest extends TestCase {
 
         replay();
 
-        List list = tested.search("o=example.com", "(ou=somevalue)",
+        List list = tested.search(DEFAULT_BASE_STRING, "(ou=somevalue)",
                 attributesMapperMock);
 
         verify();
@@ -543,6 +614,76 @@ public class LdapTemplateTest extends TestCase {
         assertSame(expectedResult, list.get(0));
     }
 
+    public void testSearch_ContextMapper_ReturningAttrs()
+            throws NamingException {
+        expectGetReadOnlyContext();
+
+        String[] attrs = new String[0];
+
+        SearchControls controls = new SearchControls();
+        controls.setSearchScope(1);
+        controls.setReturningObjFlag(true);
+        controls.setReturningAttributes(attrs);
+
+        Object expectedObject = new Object();
+        SearchResult searchResult = new SearchResult("", expectedObject,
+                new BasicAttributes());
+
+        setupSearchAndNamingEnumeration(controls, searchResult);
+
+        Object expectedResult = expectedObject;
+        contextMapperControl.expectAndReturn(contextMapperMock
+                .mapFromContext(expectedObject), expectedResult);
+
+        dirContextMock.close();
+
+        replay();
+
+        List list = tested.search(nameMock, "(ou=somevalue)", 1, attrs,
+                contextMapperMock);
+
+        verify();
+
+        assertNotNull(list);
+        assertEquals(1, list.size());
+        assertSame(expectedResult, list.get(0));
+    }
+
+    public void testSearch_String_ContextMapper_ReturningAttrs()
+            throws NamingException {
+        expectGetReadOnlyContext();
+
+        String[] attrs = new String[0];
+
+        SearchControls controls = new SearchControls();
+        controls.setSearchScope(1);
+        controls.setReturningObjFlag(true);
+        controls.setReturningAttributes(attrs);
+
+        Object expectedObject = new Object();
+        SearchResult searchResult = new SearchResult("", expectedObject,
+                new BasicAttributes());
+
+        setupStringSearchAndNamingEnumeration(controls, searchResult);
+
+        Object expectedResult = expectedObject;
+        contextMapperControl.expectAndReturn(contextMapperMock
+                .mapFromContext(expectedObject), expectedResult);
+
+        dirContextMock.close();
+
+        replay();
+
+        List list = tested.search(DEFAULT_BASE_STRING, "(ou=somevalue)", 1,
+                attrs, contextMapperMock);
+
+        verify();
+
+        assertNotNull(list);
+        assertEquals(1, list.size());
+        assertSame(expectedResult, list.get(0));
+    }
+
     public void testSearch_String_ContextMapper() throws NamingException {
         expectGetReadOnlyContext();
 
@@ -564,7 +705,7 @@ public class LdapTemplateTest extends TestCase {
 
         replay();
 
-        List list = tested.search("o=example.com", "(ou=somevalue)", 1,
+        List list = tested.search(DEFAULT_BASE_STRING, "(ou=somevalue)", 1,
                 contextMapperMock);
 
         verify();
@@ -627,7 +768,7 @@ public class LdapTemplateTest extends TestCase {
 
         replay();
 
-        List list = tested.search("o=example.com", "(ou=somevalue)",
+        List list = tested.search(DEFAULT_BASE_STRING, "(ou=somevalue)",
                 contextMapperMock);
 
         verify();
@@ -659,8 +800,8 @@ public class LdapTemplateTest extends TestCase {
 
         replay();
 
-        List list = tested.search("o=example.com", "(ou=somevalue)", controls,
-                contextMapperMock);
+        List list = tested.search(DEFAULT_BASE_STRING, "(ou=somevalue)",
+                controls, contextMapperMock);
 
         verify();
 
@@ -694,8 +835,8 @@ public class LdapTemplateTest extends TestCase {
 
         replay();
 
-        List list = tested.search("o=example.com", "(ou=somevalue)", controls,
-                contextMapperMock);
+        List list = tested.search(DEFAULT_BASE_STRING, "(ou=somevalue)",
+                controls, contextMapperMock);
 
         verify();
 
@@ -757,8 +898,8 @@ public class LdapTemplateTest extends TestCase {
 
         replay();
 
-        List list = tested.search("o=example.com", "(ou=somevalue)", controls,
-                attributesMapperMock);
+        List list = tested.search(DEFAULT_BASE_STRING, "(ou=somevalue)",
+                controls, attributesMapperMock);
 
         verify();
 
@@ -822,13 +963,13 @@ public class LdapTemplateTest extends TestCase {
 
         Object expected = new Object();
         dirContextControl.expectAndReturn(dirContextMock
-                .lookup("o=example.com"), expected);
+                .lookup(DEFAULT_BASE_STRING), expected);
 
         dirContextMock.close();
 
         replay();
 
-        Object actual = tested.lookup("o=example.com");
+        Object actual = tested.lookup(DEFAULT_BASE_STRING);
 
         verify();
 
@@ -884,7 +1025,7 @@ public class LdapTemplateTest extends TestCase {
 
         BasicAttributes expectedAttributes = new BasicAttributes();
         dirContextControl.expectAndReturn(dirContextMock
-                .getAttributes("o=example.com"), expectedAttributes);
+                .getAttributes(DEFAULT_BASE_STRING), expectedAttributes);
         dirContextMock.close();
 
         Object expected = new Object();
@@ -893,7 +1034,8 @@ public class LdapTemplateTest extends TestCase {
 
         replay();
 
-        Object actual = tested.lookup("o=example.com", attributesMapperMock);
+        Object actual = tested
+                .lookup(DEFAULT_BASE_STRING, attributesMapperMock);
 
         verify();
 
@@ -951,7 +1093,7 @@ public class LdapTemplateTest extends TestCase {
         Object transformed = new Object();
         Object expected = new Object();
         dirContextControl.expectAndReturn(dirContextMock
-                .lookup("o=example.com"), expected);
+                .lookup(DEFAULT_BASE_STRING), expected);
 
         dirContextMock.close();
 
@@ -960,7 +1102,7 @@ public class LdapTemplateTest extends TestCase {
 
         replay();
 
-        Object actual = tested.lookup("o=example.com", contextMapperMock);
+        Object actual = tested.lookup(DEFAULT_BASE_STRING, contextMapperMock);
 
         verify();
 
@@ -1009,13 +1151,13 @@ public class LdapTemplateTest extends TestCase {
         expectGetReadWriteContext();
 
         ModificationItem[] mods = new ModificationItem[0];
-        dirContextMock.modifyAttributes("o=example.com", mods);
+        dirContextMock.modifyAttributes(DEFAULT_BASE_STRING, mods);
 
         dirContextMock.close();
 
         replay();
 
-        tested.modifyAttributes("o=example.com", mods);
+        tested.modifyAttributes(DEFAULT_BASE_STRING, mods);
 
         verify();
     }
@@ -1066,13 +1208,13 @@ public class LdapTemplateTest extends TestCase {
 
         Object expectedObject = new Object();
         BasicAttributes expectedAttributes = new BasicAttributes();
-        dirContextMock
-                .bind("o=example.com", expectedObject, expectedAttributes);
+        dirContextMock.bind(DEFAULT_BASE_STRING, expectedObject,
+                expectedAttributes);
         dirContextMock.close();
 
         replay();
 
-        tested.bind("o=example.com", expectedObject, expectedAttributes);
+        tested.bind(DEFAULT_BASE_STRING, expectedObject, expectedAttributes);
 
         verify();
 
@@ -1119,11 +1261,11 @@ public class LdapTemplateTest extends TestCase {
     public void testUnbind_String() throws Exception {
         expectGetReadWriteContext();
 
-        dirContextMock.unbind("o=example.com");
+        dirContextMock.unbind(DEFAULT_BASE_STRING);
         dirContextMock.close();
         replay();
 
-        tested.unbind("o=example.com");
+        tested.unbind(DEFAULT_BASE_STRING);
 
         verify();
     }
@@ -1144,7 +1286,7 @@ public class LdapTemplateTest extends TestCase {
                 .hasMore(), false);
         namingEnumerationMock.close();
 
-        dirContextMock.listBindings(new DistinguishedName("o=example.com"));
+        dirContextMock.listBindings(new DistinguishedName(DEFAULT_BASE_STRING));
         dirContextControl.setReturnValue(namingEnumerationMock);
         dirContextMock.listBindings(new DistinguishedName(
                 "cn=Some name, o=example.com"));
@@ -1152,11 +1294,11 @@ public class LdapTemplateTest extends TestCase {
 
         dirContextMock.unbind(new DistinguishedName(
                 "cn=Some name, o=example.com"));
-        dirContextMock.unbind(new DistinguishedName("o=example.com"));
+        dirContextMock.unbind(new DistinguishedName(DEFAULT_BASE_STRING));
         dirContextMock.close();
         replay();
 
-        tested.unbind("o=example.com", true);
+        tested.unbind(DEFAULT_BASE_STRING, true);
 
         verify();
     }
@@ -1182,14 +1324,14 @@ public class LdapTemplateTest extends TestCase {
 
         Object expectedObject = new Object();
         BasicAttributes expectedAttributes = new BasicAttributes();
-        dirContextMock.rebind("o=example.com", expectedObject,
+        dirContextMock.rebind(DEFAULT_BASE_STRING, expectedObject,
                 expectedAttributes);
 
         dirContextMock.close();
 
         replay();
 
-        tested.rebind("o=example.com", expectedObject, expectedAttributes);
+        tested.rebind(DEFAULT_BASE_STRING, expectedObject, expectedAttributes);
 
         verify();
     }
@@ -1450,7 +1592,9 @@ public class LdapTemplateTest extends TestCase {
                         && s0.getReturningObjFlag() == s1.getReturningObjFlag()
                         && s0.getDerefLinkFlag() == s1.getDerefLinkFlag()
                         && s0.getCountLimit() == s1.getCountLimit()
-                        && s0.getTimeLimit() == s1.getTimeLimit();
+                        && s0.getTimeLimit() == s1.getTimeLimit()
+                        && s0.getReturningAttributes() == s1
+                                .getReturningAttributes();
             } else {
                 return super.argumentMatches(arg0, arg1);
             }
