@@ -15,10 +15,12 @@
  */
 package org.springframework.ldap;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.naming.Binding;
 import javax.naming.Name;
+import javax.naming.NameClassPair;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -436,6 +438,101 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
         AttributesMapperCallbackHandler handler = new AttributesMapperCallbackHandler(
                 mapper);
         search(base, filter, controls, handler);
+
+        return handler.getList();
+    }
+
+    /**
+     * Perform a list. This method handles all the plumbing; getting a readonly
+     * context; looping through the NamingEnumeration and closing the context
+     * and enumeration. The actual list is delegated to the
+     * {@link SearchExecutor} and each {@link NameClassPair} is passed to the
+     * CallbackHandler. Any encountered NamingException will be translated using
+     * the NamingExceptionTranslator.
+     * 
+     * @param se
+     *            the SearchExecutor to use for performing the actual list.
+     * @param handler
+     *            the ListResultCallbackHandler to which each found entry will
+     *            be passed.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
+     */
+    protected void list(SearchExecutor se, ListResultCallbackHandler handler) {
+        DirContext ctx = contextSource.getReadOnlyContext();
+
+        NamingEnumeration results = null;
+        try {
+            results = se.executeSearch(ctx);
+
+            while (results.hasMore()) {
+                NameClassPair listResult = (NameClassPair) results.next();
+                handler.handleListResult(listResult);
+            }
+        } catch (NameNotFoundException e) {
+            // The base context was not found, which basically means
+            // that the list did not return any results. Just clean up and
+            // exit.
+        } catch (PartialResultException e) {
+            // Workaround for AD servers not handling referrals correctly.
+            if (ignorePartialResultException) {
+                log.debug("PartialResultException encountered and ignored", e);
+            } else {
+                throw getExceptionTranslator().translate(e);
+            }
+        } catch (NamingException e) {
+            throw getExceptionTranslator().translate(e);
+        } finally {
+            closeContextAndNamingEnumeration(ctx, results);
+        }
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#list(javax.naming.Name,
+     *      org.springframework.ldap.ListResultCallbackHandler)
+     */
+    public void list(final Name base, ListResultCallbackHandler handler) {
+        SearchExecutor searchExecutor = new SearchExecutor() {
+            public NamingEnumeration executeSearch(DirContext ctx)
+                    throws NamingException {
+                return ctx.list(base);
+            }
+        };
+        list(searchExecutor, handler);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#list(java.lang.String,
+     *      org.springframework.ldap.ListResultCallbackHandler)
+     */
+    public void list(final String base, ListResultCallbackHandler handler) {
+        SearchExecutor searchExecutor = new SearchExecutor() {
+            public NamingEnumeration executeSearch(DirContext ctx)
+                    throws NamingException {
+                return ctx.list(base);
+            }
+        };
+        list(searchExecutor, handler);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#list(javax.naming.Name)
+     */
+    public List list(final Name base) {
+        CollectingListResultCallbackHandler handler = new CollectingListResultCallbackHandler();
+        list(base, handler);
+
+        return handler.getList();
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#list(java.lang.String)
+     */
+    public List list(final String base) {
+        CollectingListResultCallbackHandler handler = new CollectingListResultCallbackHandler();
+        list(base, handler);
 
         return handler.getList();
     }
@@ -891,6 +988,25 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
             log.info("The returnObjFlag of supplied SearchControls is not set"
                     + " but a ContextMapper is used - setting flag to true");
             controls.setReturningObjFlag(true);
+        }
+    }
+
+    /**
+     * A {@link ListResultCallbackHandler} that simply collects the given
+     * elements in a list.
+     * 
+     * @author Ulrik Sandberg
+     */
+    public static class CollectingListResultCallbackHandler implements
+            ListResultCallbackHandler {
+        private LinkedList list = new LinkedList();
+
+        public void handleListResult(NameClassPair nameClassPair) {
+            list.add(nameClassPair);
+        }
+
+        public LinkedList getList() {
+            return list;
         }
     }
 

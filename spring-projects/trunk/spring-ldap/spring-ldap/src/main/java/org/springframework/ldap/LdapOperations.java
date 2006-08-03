@@ -19,6 +19,7 @@ package org.springframework.ldap;
 import java.util.List;
 
 import javax.naming.Name;
+import javax.naming.NameClassPair;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
@@ -573,6 +574,54 @@ public interface LdapOperations {
      */
     public List search(Name base, String filter, SearchControls controls,
             AttributesMapper mapper);
+
+    /**
+     * Perform a non-recursive listing of the contexts bound to the given
+     * <code>base</code>. Each resulting NameClassPair is supplied to the
+     * specified ListResultCallbackHandler.
+     * 
+     * @param base
+     *            The base DN where the list should be performed.
+     * @param handler
+     *            the {@link ListResultCallbackHandler} to supply each
+     *            {@link NameClassPair} to.
+     */
+    public void list(Name base, ListResultCallbackHandler handler);
+
+    /**
+     * Perform a non-recursive listing of the contexts bound to the given
+     * <code>base</code>. Each resulting NameClassPair is supplied to the
+     * specified ListResultCallbackHandler.
+     * 
+     * @param base
+     *            The base DN where the list should be performed.
+     * @param handler
+     *            the {@link ListResultCallbackHandler} to supply each
+     *            {@link NameClassPair} to.
+     */
+    public void list(String base, ListResultCallbackHandler handler);
+
+    /**
+     * Perform a non-recursive listing of the contexts bound to the given
+     * <code>base</code>.
+     * 
+     * @param base
+     *            The base DN where the list should be performed.
+     * @return a List of {@link NameClassPair} objects containing all bindings
+     *         received from the list operation.
+     */
+    public List list(String base);
+
+    /**
+     * Perform a non-recursive listing of the contexts bound to the given
+     * <code>base</code>.
+     * 
+     * @param base
+     *            The base DN where the list should be performed.
+     * @return a List of {@link NameClassPair} objects containing all bindings
+     *         received from the list operation.
+     */
+    public List list(Name base);
 
     /**
      * Lookup the supplied DN and return the found object. <b>WARNING</b>: This
