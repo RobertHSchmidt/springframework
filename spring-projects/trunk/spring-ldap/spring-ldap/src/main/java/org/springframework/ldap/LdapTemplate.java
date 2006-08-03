@@ -29,7 +29,6 @@ import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
-
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,6 +67,8 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     private static final boolean DONT_RETURN_OBJ_FLAG = false;
 
     private static final boolean RETURN_OBJ_FLAG = true;
+
+    private static final String[] ALL_ATTRIBUTES = null;
 
     private ContextSource contextSource;
 
@@ -132,7 +133,7 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
             boolean returningObjFlag, SearchResultCallbackHandler handler) {
 
         search(base, filter, getDefaultSearchControls(searchScope,
-                returningObjFlag), handler);
+                returningObjFlag, ALL_ATTRIBUTES), handler);
     }
 
     /*
@@ -145,7 +146,7 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
             throws DataAccessException {
 
         search(base, filter, getDefaultSearchControls(searchScope,
-                returningObjFlag), handler);
+                returningObjFlag, ALL_ATTRIBUTES), handler);
     }
 
     /*
@@ -221,24 +222,52 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
 
     /*
      * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
-     *      java.lang.String, org.springframework.ldap.SearchResultCallbackHandler)
+     *      java.lang.String,
+     *      org.springframework.ldap.SearchResultCallbackHandler)
      */
     public void search(Name base, String filter,
             SearchResultCallbackHandler handler) throws DataAccessException {
 
         search(base, filter, getDefaultSearchControls(DEFAULT_SEARCH_SCOPE,
-                DONT_RETURN_OBJ_FLAG), handler);
+                DONT_RETURN_OBJ_FLAG, ALL_ATTRIBUTES), handler);
     }
 
     /*
      * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
-     *      java.lang.String, org.springframework.ldap.SearchResultCallbackHandler)
+     *      java.lang.String,
+     *      org.springframework.ldap.SearchResultCallbackHandler)
      */
     public void search(String base, String filter,
             SearchResultCallbackHandler handler) throws DataAccessException {
 
         search(base, filter, getDefaultSearchControls(DEFAULT_SEARCH_SCOPE,
-                DONT_RETURN_OBJ_FLAG), handler);
+                DONT_RETURN_OBJ_FLAG, ALL_ATTRIBUTES), handler);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
+     *      java.lang.String, int, java.lang.String[],
+     *      org.springframework.ldap.AttributesMapper)
+     */
+    public List search(Name base, String filter, int searchScope,
+            String[] attrs, AttributesMapper mapper) throws DataAccessException {
+        return search(base, filter, getDefaultSearchControls(searchScope,
+                DONT_RETURN_OBJ_FLAG, attrs), mapper);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
+     *      java.lang.String, int, java.lang.String[],
+     *      org.springframework.ldap.AttributesMapper)
+     */
+    public List search(String base, String filter, int searchScope,
+            String[] attrs, AttributesMapper mapper) throws DataAccessException {
+        return search(base, filter, getDefaultSearchControls(searchScope,
+                DONT_RETURN_OBJ_FLAG, attrs), mapper);
     }
 
     /*
@@ -248,8 +277,7 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     public List search(Name base, String filter, int searchScope,
             AttributesMapper mapper) {
 
-        return search(base, filter, getDefaultSearchControls(searchScope,
-                DONT_RETURN_OBJ_FLAG), mapper);
+        return search(base, filter, searchScope, ALL_ATTRIBUTES, mapper);
     }
 
     /*
@@ -259,8 +287,7 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     public List search(String base, String filter, int searchScope,
             AttributesMapper mapper) throws DataAccessException {
 
-        return search(base, filter, getDefaultSearchControls(searchScope,
-                DONT_RETURN_OBJ_FLAG), mapper);
+        return search(base, filter, searchScope, ALL_ATTRIBUTES, mapper);
     }
 
     /*
@@ -284,14 +311,41 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     }
 
     /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
+     *      java.lang.String, int, java.lang.String[],
+     *      org.springframework.ldap.ContextMapper)
+     */
+    public List search(Name base, String filter, int searchScope,
+            String[] attrs, ContextMapper mapper) throws DataAccessException {
+
+        return search(base, filter, getDefaultSearchControls(searchScope,
+                RETURN_OBJ_FLAG, attrs), mapper);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
+     *      java.lang.String, int, java.lang.String[],
+     *      org.springframework.ldap.ContextMapper)
+     */
+    public List search(String base, String filter, int searchScope,
+            String[] attrs, ContextMapper mapper) throws DataAccessException {
+
+        return search(base, filter, getDefaultSearchControls(searchScope,
+                RETURN_OBJ_FLAG, attrs), mapper);
+    }
+
+    /*
      * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
      *      java.lang.String, int, org.springframework.ldap.ContextMapper)
      */
     public List search(Name base, String filter, int searchScope,
             ContextMapper mapper) {
 
-        return search(base, filter, getDefaultSearchControls(searchScope,
-                RETURN_OBJ_FLAG), mapper);
+        return search(base, filter, searchScope, ALL_ATTRIBUTES, mapper);
     }
 
     /*
@@ -301,8 +355,7 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     public List search(String base, String filter, int searchScope,
             ContextMapper mapper) throws DataAccessException {
 
-        return search(base, filter, getDefaultSearchControls(searchScope,
-                RETURN_OBJ_FLAG), mapper);
+        return search(base, filter, searchScope, ALL_ATTRIBUTES, mapper);
     }
 
     /*
@@ -587,7 +640,8 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     }
 
     /*
-     * @see org.springframework.ldap.LdapOperations#unbind(java.lang.String, boolean)
+     * @see org.springframework.ldap.LdapOperations#unbind(java.lang.String,
+     *      boolean)
      */
     public void unbind(final String dn, boolean recursive)
             throws DataAccessException {
@@ -815,11 +869,12 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     }
 
     private SearchControls getDefaultSearchControls(int searchScope,
-            boolean returningObjFlag) {
+            boolean returningObjFlag, String[] attrs) {
 
         SearchControls controls = new SearchControls();
         controls.setSearchScope(searchScope);
         controls.setReturningObjFlag(returningObjFlag);
+        controls.setReturningAttributes(attrs);
         return controls;
     }
 
