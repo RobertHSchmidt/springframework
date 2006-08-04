@@ -138,6 +138,7 @@ public class DistinguishedNameTest extends TestCase {
         // a subclass with the same values as the original
         final Object subclassObject = new DistinguishedName(
                 "cn=john.doe, OU=Users,OU=Some company,C=SE") {
+            private static final long serialVersionUID = 1L;
         };
 
         new EqualsTester(originalObject, identicalObject, differentObject,
