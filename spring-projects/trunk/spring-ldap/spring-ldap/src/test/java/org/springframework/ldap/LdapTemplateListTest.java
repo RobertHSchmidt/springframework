@@ -59,7 +59,7 @@ public class LdapTemplateListTest extends TestCase {
 
     private MockControl handlerControl;
 
-    private ListResultCallbackHandler handlerMock;
+    private NameClassPairCallbackHandler handlerMock;
 
     private MockControl exceptionTranslatorControl;
 
@@ -90,8 +90,8 @@ public class LdapTemplateListTest extends TestCase {
 
         // Setup Handler mock
         handlerControl = MockControl
-                .createControl(ListResultCallbackHandler.class);
-        handlerMock = (ListResultCallbackHandler) handlerControl.getMock();
+                .createControl(NameClassPairCallbackHandler.class);
+        handlerMock = (NameClassPairCallbackHandler) handlerControl.getMock();
 
         exceptionTranslatorControl = MockControl
                 .createControl(NamingExceptionTranslator.class);
@@ -192,7 +192,7 @@ public class LdapTemplateListTest extends TestCase {
 
         assertNotNull(list);
         assertEquals(1, list.size());
-        assertSame(listResult, list.get(0));
+        assertSame(NAME, list.get(0));
     }
 
     public void testList_String() throws NamingException {
@@ -212,7 +212,7 @@ public class LdapTemplateListTest extends TestCase {
 
         assertNotNull(list);
         assertEquals(1, list.size());
-        assertSame(listResult, list.get(0));
+        assertSame(NAME, list.get(0));
     }
 
     public void testList_Name_CallbackHandler() throws NamingException {
@@ -222,7 +222,7 @@ public class LdapTemplateListTest extends TestCase {
 
         setupListAndNamingEnumeration(listResult);
 
-        handlerMock.handleListResult(listResult);
+        handlerMock.handleNameClassPair(listResult);
 
         dirContextMock.close();
 
@@ -240,7 +240,7 @@ public class LdapTemplateListTest extends TestCase {
 
         setupStringListAndNamingEnumeration(listResult);
 
-        handlerMock.handleListResult(listResult);
+        handlerMock.handleNameClassPair(listResult);
 
         dirContextMock.close();
 
@@ -283,7 +283,7 @@ public class LdapTemplateListTest extends TestCase {
         dirContextMock.close();
 
         tested.setIgnorePartialResultException(true);
-        
+
         replay();
 
         List list = tested.list(NAME);

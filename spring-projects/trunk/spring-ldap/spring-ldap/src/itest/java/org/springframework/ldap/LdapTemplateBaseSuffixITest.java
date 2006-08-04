@@ -19,7 +19,7 @@ package org.springframework.ldap;
 
 import org.springframework.ldap.EntryNotFoundException;
 import org.springframework.ldap.LdapTemplate;
-import org.springframework.ldap.support.CountSearchResultCallbackHandler;
+import org.springframework.ldap.support.CountNameClassPairCallbackHandler;
 import org.springframework.ldap.support.DirContextAdapter;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
@@ -56,7 +56,7 @@ public class LdapTemplateBaseSuffixITest extends
     }
     
     public void testSearch_Plain(){
-        CountSearchResultCallbackHandler handler = new CountSearchResultCallbackHandler();
+        CountNameClassPairCallbackHandler handler = new CountNameClassPairCallbackHandler();
 
         tested.search("", "(objectclass=person)", handler);
         assertEquals(5, handler.getNoOfRows());

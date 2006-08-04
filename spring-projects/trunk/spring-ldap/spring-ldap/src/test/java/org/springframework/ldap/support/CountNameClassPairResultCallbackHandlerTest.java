@@ -2,20 +2,20 @@ package org.springframework.ldap.support;
 
 import javax.naming.directory.SearchResult;
 
-import org.springframework.ldap.support.CountSearchResultCallbackHandler;
+import org.springframework.ldap.support.CountNameClassPairCallbackHandler;
 
 
 import junit.framework.TestCase;
 
-public class CountSearchResultCallbackHandlerTest extends TestCase {
+public class CountNameClassPairResultCallbackHandlerTest extends TestCase {
 
     
-    private CountSearchResultCallbackHandler tested;
+    private CountNameClassPairCallbackHandler tested;
 
     protected void setUp() throws Exception {
         super.setUp();
         
-        tested = new CountSearchResultCallbackHandler();
+        tested = new CountNameClassPairCallbackHandler();
     }
 
     protected void tearDown() throws Exception {
@@ -26,9 +26,9 @@ public class CountSearchResultCallbackHandlerTest extends TestCase {
 
     public void testHandleSearchResult() throws Exception {
         SearchResult dummy = new SearchResult(null, null, null);
-        tested.handleSearchResult(dummy);
-        tested.handleSearchResult(dummy);
-        tested.handleSearchResult(dummy);
+        tested.handleNameClassPair(dummy);
+        tested.handleNameClassPair(dummy);
+        tested.handleNameClassPair(dummy);
         
         assertEquals(3, tested.getNoOfRows());
     }

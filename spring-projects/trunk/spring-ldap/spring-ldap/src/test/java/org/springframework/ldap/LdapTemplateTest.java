@@ -35,15 +35,6 @@ import junit.framework.TestCase;
 
 import org.easymock.AbstractMatcher;
 import org.easymock.MockControl;
-import org.springframework.ldap.AttributesMapper;
-import org.springframework.ldap.ContextExecutor;
-import org.springframework.ldap.ContextMapper;
-import org.springframework.ldap.ContextSource;
-import org.springframework.ldap.EntryNotFoundException;
-import org.springframework.ldap.LdapTemplate;
-import org.springframework.ldap.NamingExceptionTranslator;
-import org.springframework.ldap.SearchExecutor;
-import org.springframework.ldap.SearchResultCallbackHandler;
 import org.springframework.ldap.support.DistinguishedName;
 
 public class LdapTemplateTest extends TestCase {
@@ -72,7 +63,7 @@ public class LdapTemplateTest extends TestCase {
 
     private MockControl handlerControl;
 
-    private SearchResultCallbackHandler handlerMock;
+    private NameClassPairCallbackHandler handlerMock;
 
     private MockControl contextMapperControl;
 
@@ -115,8 +106,8 @@ public class LdapTemplateTest extends TestCase {
 
         // Setup Handler mock
         handlerControl = MockControl
-                .createControl(SearchResultCallbackHandler.class);
-        handlerMock = (SearchResultCallbackHandler) handlerControl.getMock();
+                .createControl(NameClassPairCallbackHandler.class);
+        handlerMock = (NameClassPairCallbackHandler) handlerControl.getMock();
 
         contextMapperControl = MockControl.createControl(ContextMapper.class);
         contextMapperMock = (ContextMapper) contextMapperControl.getMock();
@@ -226,7 +217,7 @@ public class LdapTemplateTest extends TestCase {
 
         setupSearchAndNamingEnumeration(controls, searchResult);
 
-        handlerMock.handleSearchResult(searchResult);
+        handlerMock.handleNameClassPair(searchResult);
 
         dirContextMock.close();
 
@@ -249,7 +240,7 @@ public class LdapTemplateTest extends TestCase {
 
         setupStringSearchAndNamingEnumeration(controls, searchResult);
 
-        handlerMock.handleSearchResult(searchResult);
+        handlerMock.handleNameClassPair(searchResult);
 
         dirContextMock.close();
 
@@ -289,7 +280,7 @@ public class LdapTemplateTest extends TestCase {
 
         setupSearchAndNamingEnumeration(controls, searchResult);
 
-        handlerMock.handleSearchResult(searchResult);
+        handlerMock.handleNameClassPair(searchResult);
 
         dirContextMock.close();
 
@@ -313,7 +304,7 @@ public class LdapTemplateTest extends TestCase {
 
         setupStringSearchAndNamingEnumeration(controls, searchResult);
 
-        handlerMock.handleSearchResult(searchResult);
+        handlerMock.handleNameClassPair(searchResult);
 
         dirContextMock.close();
 
@@ -1459,7 +1450,7 @@ public class LdapTemplateTest extends TestCase {
                 .hasMore(), false);
         namingEnumerationMock.close();
 
-        handlerMock.handleSearchResult(searchResult);
+        handlerMock.handleNameClassPair(searchResult);
 
         dirContextMock.close();
 
