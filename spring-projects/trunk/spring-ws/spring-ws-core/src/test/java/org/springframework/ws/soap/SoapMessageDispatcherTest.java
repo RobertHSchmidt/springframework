@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 the original author or authors.
+ * Copyright 2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -227,15 +227,4 @@ public class SoapMessageDispatcherTest extends TestCase {
         assertTrue("Invalid result", result);
         interceptorControl.verify();
     }
-
-    public void testGetRoles() throws Exception {
-        String[] roles = dispatcher.getRoles(null, SoapVersion.SOAP_11);
-        assertEquals("Invalid amount of roles", 1, roles.length);
-        assertEquals("Invalid role", SoapVersion.SOAP_11.getNextActorOrRoleUri(), roles[0]);
-        roles = dispatcher.getRoles(new String[]{"role"}, SoapVersion.SOAP_11);
-        assertEquals("Invalid amount of roles", 2, roles.length);
-        assertEquals("Invalid role", "role", roles[0]);
-        assertEquals("Invalid role", SoapVersion.SOAP_11.getNextActorOrRoleUri(), roles[1]);
-    }
-
 }
