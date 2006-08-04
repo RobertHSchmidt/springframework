@@ -18,6 +18,7 @@ package org.springframework.ldap;
 
 import java.util.List;
 
+import javax.naming.Binding;
 import javax.naming.Name;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
@@ -152,13 +153,7 @@ public class LdapTemplateListTest extends TestCase {
         dirContextControl.expectAndReturn(dirContextMock.list(NAME),
                 namingEnumerationMock);
 
-        namingEnumerationControl.expectAndReturn(namingEnumerationMock
-                .hasMore(), true);
-        namingEnumerationControl.expectAndReturn(namingEnumerationMock.next(),
-                listResult);
-        namingEnumerationControl.expectAndReturn(namingEnumerationMock
-                .hasMore(), false);
-        namingEnumerationMock.close();
+        setupNamingEnumeration(listResult);
     }
 
     private void setupListAndNamingEnumeration(NameClassPair listResult)
@@ -166,6 +161,27 @@ public class LdapTemplateListTest extends TestCase {
         dirContextControl.expectAndReturn(dirContextMock.list(nameMock),
                 namingEnumerationMock);
 
+        setupNamingEnumeration(listResult);
+    }
+
+    private void setupStringListBindingsAndNamingEnumeration(NameClassPair listResult)
+            throws NamingException {
+        dirContextControl.expectAndReturn(dirContextMock.listBindings(NAME),
+                namingEnumerationMock);
+
+        setupNamingEnumeration(listResult);
+    }
+
+    private void setupListBindingsAndNamingEnumeration(NameClassPair listResult)
+            throws NamingException {
+        dirContextControl.expectAndReturn(dirContextMock.listBindings(nameMock),
+                namingEnumerationMock);
+
+        setupNamingEnumeration(listResult);
+    }
+
+    private void setupNamingEnumeration(NameClassPair listResult)
+            throws NamingException {
         namingEnumerationControl.expectAndReturn(namingEnumerationMock
                 .hasMore(), true);
         namingEnumerationControl.expectAndReturn(namingEnumerationMock.next(),
@@ -315,5 +331,47 @@ public class LdapTemplateListTest extends TestCase {
         }
 
         verify();
+    }
+
+    // Tests for listBindings
+
+    public void testListBindings_String() throws NamingException {
+        expectGetReadOnlyContext();
+
+        Binding listResult = new Binding(NAME, CLASS, null);
+
+        setupStringListBindingsAndNamingEnumeration(listResult);
+
+        dirContextMock.close();
+
+        replay();
+
+        List list = tested.listBindings(NAME);
+
+        verify();
+
+        assertNotNull(list);
+        assertEquals(1, list.size());
+        assertSame(NAME, list.get(0));
+    }
+
+    public void testListBindings_Name() throws NamingException {
+        expectGetReadOnlyContext();
+
+        Binding listResult = new Binding(NAME, CLASS, null);
+
+        setupListBindingsAndNamingEnumeration(listResult);
+
+        dirContextMock.close();
+
+        replay();
+
+        List list = tested.listBindings(nameMock);
+
+        verify();
+
+        assertNotNull(list);
+        assertEquals(1, list.size());
+        assertSame(NAME, list.get(0));
     }
 }

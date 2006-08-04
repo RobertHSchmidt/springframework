@@ -455,27 +455,27 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
 
         return handler.getList();
     }
+    
+    /*
+     * @see org.springframework.ldap.LdapOperations#list(java.lang.String,
+     *      org.springframework.ldap.ListResultCallbackHandler)
+     */
+    public void list(final String base, NameClassPairCallbackHandler handler) {
+        SearchExecutor searchExecutor = new SearchExecutor() {
+            public NamingEnumeration executeSearch(DirContext ctx)
+            throws NamingException {
+                return ctx.list(base);
+            }
+        };
+        
+        search(searchExecutor, handler);
+    }
 
     /*
      * @see org.springframework.ldap.LdapOperations#list(javax.naming.Name,
      *      org.springframework.ldap.ListResultCallbackHandler)
      */
     public void list(final Name base, NameClassPairCallbackHandler handler) {
-        SearchExecutor searchExecutor = new SearchExecutor() {
-            public NamingEnumeration executeSearch(DirContext ctx)
-                    throws NamingException {
-                return ctx.list(base);
-            }
-        };
-
-        search(searchExecutor, handler);
-    }
-
-    /*
-     * @see org.springframework.ldap.LdapOperations#list(java.lang.String,
-     *      org.springframework.ldap.ListResultCallbackHandler)
-     */
-    public void list(final String base, NameClassPairCallbackHandler handler) {
         SearchExecutor searchExecutor = new SearchExecutor() {
             public NamingEnumeration executeSearch(DirContext ctx)
                     throws NamingException {
@@ -524,6 +524,50 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
      */
     public List list(final String base) {
         return list(base, new DefaultNameClassPairMapper());
+    }
+
+    public void listBindings(final String base, NameClassPairCallbackHandler handler) {
+        SearchExecutor searchExecutor = new SearchExecutor() {
+            public NamingEnumeration executeSearch(DirContext ctx)
+            throws NamingException {
+                return ctx.listBindings(base);
+            }
+        };
+        
+        search(searchExecutor, handler);
+    }
+
+    public void listBindings(final Name base, NameClassPairCallbackHandler handler) {
+        SearchExecutor searchExecutor = new SearchExecutor() {
+            public NamingEnumeration executeSearch(DirContext ctx)
+                    throws NamingException {
+                return ctx.listBindings(base);
+            }
+        };
+
+        search(searchExecutor, handler);
+    }
+
+    public List listBindings(String base, NameClassPairMapper mapper) {
+        CollectingNameClassPairCallbackHandler handler = new MappingCollectingNameClassPairCallbackHandler(
+                mapper);
+        listBindings(base, handler);
+        return handler.getList();
+    }
+
+    public List listBindings(Name base, NameClassPairMapper mapper) {
+        CollectingNameClassPairCallbackHandler handler = new MappingCollectingNameClassPairCallbackHandler(
+                mapper);
+        listBindings(base, handler);
+        return handler.getList();
+    }
+
+    public List listBindings(final String base) {
+        return listBindings(base, new DefaultNameClassPairMapper());
+    }
+
+    public List listBindings(final Name base) {
+        return listBindings(base, new DefaultNameClassPairMapper());
     }
 
     /*
