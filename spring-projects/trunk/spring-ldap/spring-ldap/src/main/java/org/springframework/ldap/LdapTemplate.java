@@ -15,7 +15,6 @@
  */
 package org.springframework.ldap;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.naming.Binding;
@@ -129,10 +128,10 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     /*
      * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
      *      java.lang.String, int, boolean,
-     *      org.springframework.ldap.SearchResultCallbackHandler)
+     *      org.springframework.ldap.NameClassPairCallbackHandler)
      */
     public void search(Name base, String filter, int searchScope,
-            boolean returningObjFlag, SearchResultCallbackHandler handler) {
+            boolean returningObjFlag, NameClassPairCallbackHandler handler) {
 
         search(base, filter, getDefaultSearchControls(searchScope,
                 returningObjFlag, ALL_ATTRIBUTES), handler);
@@ -141,10 +140,10 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     /*
      * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
      *      java.lang.String, int, boolean,
-     *      org.springframework.ldap.SearchResultCallbackHandler)
+     *      org.springframework.ldap.NameClassPairCallbackHandler)
      */
     public void search(String base, String filter, int searchScope,
-            boolean returningObjFlag, SearchResultCallbackHandler handler)
+            boolean returningObjFlag, NameClassPairCallbackHandler handler)
             throws DataAccessException {
 
         search(base, filter, getDefaultSearchControls(searchScope,
@@ -154,10 +153,10 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     /*
      * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
      *      java.lang.String, javax.naming.directory.SearchControls,
-     *      org.springframework.ldap.SearchResultCallbackHandler)
+     *      org.springframework.ldap.NameClassPairCallbackHandler)
      */
     public void search(final Name base, final String filter,
-            final SearchControls controls, SearchResultCallbackHandler handler) {
+            final SearchControls controls, NameClassPairCallbackHandler handler) {
 
         // Create a SearchExecutor to perform the search.
         SearchExecutor se = new SearchExecutor() {
@@ -173,10 +172,10 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     /*
      * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
      *      java.lang.String, javax.naming.directory.SearchControls,
-     *      org.springframework.ldap.SearchResultCallbackHandler)
+     *      org.springframework.ldap.NameClassPairCallbackHandler)
      */
     public void search(final String base, final String filter,
-            final SearchControls controls, SearchResultCallbackHandler handler) {
+            final SearchControls controls, NameClassPairCallbackHandler handler) {
 
         // Create a SearchExecutor to perform the search.
         SearchExecutor se = new SearchExecutor() {
@@ -189,11 +188,26 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
         search(se, handler);
     }
 
-    /*
-     * @see org.springframework.ldap.LdapOperations#doSearch(org.springframework.ldap.LdapTemplate.SearchExecutor,
-     *      org.springframework.ldap.SearchResultCallbackHandler)
+    /**
+     * Perform a search operation, such as a search(), list() or listBindings().
+     * This method handles all the plumbing; getting a readonly context; looping
+     * through the NamingEnumeration and closing the context and enumeration.
+     * The actual list is delegated to the {@link SearchExecutor} and each
+     * {@link NameClassPair} (this might be a NameClassPair or a subclass
+     * thereof) is passed to the CallbackHandler. Any encountered
+     * NamingException will be translated using the NamingExceptionTranslator.
+     * 
+     * @param se
+     *            the SearchExecutor to use for performing the actual list.
+     * @param handler
+     *            the NameClassPairCallbackHandler to which each found entry
+     *            will be passed.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
      */
-    public void search(SearchExecutor se, SearchResultCallbackHandler handler) {
+    public void search(SearchExecutor se, NameClassPairCallbackHandler handler) {
         DirContext ctx = contextSource.getReadOnlyContext();
 
         NamingEnumeration results = null;
@@ -201,8 +215,8 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
             results = se.executeSearch(ctx);
 
             while (results.hasMore()) {
-                SearchResult searchResult = (SearchResult) results.next();
-                handler.handleSearchResult(searchResult);
+                NameClassPair result = (NameClassPair) results.next();
+                handler.handleNameClassPair(result);
             }
         } catch (NameNotFoundException e) {
             // The base context was not found, which basically means
@@ -225,10 +239,10 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     /*
      * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
      *      java.lang.String,
-     *      org.springframework.ldap.SearchResultCallbackHandler)
+     *      org.springframework.ldap.NameClassPairCallbackHandler)
      */
     public void search(Name base, String filter,
-            SearchResultCallbackHandler handler) throws DataAccessException {
+            NameClassPairCallbackHandler handler) throws DataAccessException {
 
         search(base, filter, getDefaultSearchControls(DEFAULT_SEARCH_SCOPE,
                 DONT_RETURN_OBJ_FLAG, ALL_ATTRIBUTES), handler);
@@ -237,10 +251,10 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     /*
      * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
      *      java.lang.String,
-     *      org.springframework.ldap.SearchResultCallbackHandler)
+     *      org.springframework.ldap.NameClassPairCallbackHandler)
      */
     public void search(String base, String filter,
-            SearchResultCallbackHandler handler) throws DataAccessException {
+            NameClassPairCallbackHandler handler) throws DataAccessException {
 
         search(base, filter, getDefaultSearchControls(DEFAULT_SEARCH_SCOPE,
                 DONT_RETURN_OBJ_FLAG, ALL_ATTRIBUTES), handler);
@@ -442,99 +456,74 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
         return handler.getList();
     }
 
-    /**
-     * Perform a list. This method handles all the plumbing; getting a readonly
-     * context; looping through the NamingEnumeration and closing the context
-     * and enumeration. The actual list is delegated to the
-     * {@link SearchExecutor} and each {@link NameClassPair} is passed to the
-     * CallbackHandler. Any encountered NamingException will be translated using
-     * the NamingExceptionTranslator.
-     * 
-     * @param se
-     *            the SearchExecutor to use for performing the actual list.
-     * @param handler
-     *            the ListResultCallbackHandler to which each found entry will
-     *            be passed.
-     * @throws DataAccessException
-     *             if any error occurs. Note that a NameNotFoundException will
-     *             be ignored. Instead this is interpreted that no entries were
-     *             found.
-     */
-    protected void list(SearchExecutor se, ListResultCallbackHandler handler) {
-        DirContext ctx = contextSource.getReadOnlyContext();
-
-        NamingEnumeration results = null;
-        try {
-            results = se.executeSearch(ctx);
-
-            while (results.hasMore()) {
-                NameClassPair listResult = (NameClassPair) results.next();
-                handler.handleListResult(listResult);
-            }
-        } catch (NameNotFoundException e) {
-            // The base context was not found, which basically means
-            // that the list did not return any results. Just clean up and
-            // exit.
-        } catch (PartialResultException e) {
-            // Workaround for AD servers not handling referrals correctly.
-            if (ignorePartialResultException) {
-                log.debug("PartialResultException encountered and ignored", e);
-            } else {
-                throw getExceptionTranslator().translate(e);
-            }
-        } catch (NamingException e) {
-            throw getExceptionTranslator().translate(e);
-        } finally {
-            closeContextAndNamingEnumeration(ctx, results);
-        }
-    }
-
     /*
      * @see org.springframework.ldap.LdapOperations#list(javax.naming.Name,
      *      org.springframework.ldap.ListResultCallbackHandler)
      */
-    public void list(final Name base, ListResultCallbackHandler handler) {
+    public void list(final Name base, NameClassPairCallbackHandler handler) {
         SearchExecutor searchExecutor = new SearchExecutor() {
             public NamingEnumeration executeSearch(DirContext ctx)
                     throws NamingException {
                 return ctx.list(base);
             }
         };
-        list(searchExecutor, handler);
+
+        search(searchExecutor, handler);
     }
 
     /*
      * @see org.springframework.ldap.LdapOperations#list(java.lang.String,
      *      org.springframework.ldap.ListResultCallbackHandler)
      */
-    public void list(final String base, ListResultCallbackHandler handler) {
+    public void list(final String base, NameClassPairCallbackHandler handler) {
         SearchExecutor searchExecutor = new SearchExecutor() {
             public NamingEnumeration executeSearch(DirContext ctx)
                     throws NamingException {
                 return ctx.list(base);
             }
         };
-        list(searchExecutor, handler);
+
+        search(searchExecutor, handler);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.ldap.LdapOperations#list(java.lang.String,
+     *      org.springframework.ldap.NameClassPairMapper)
+     */
+    public List list(String base, NameClassPairMapper mapper) {
+        CollectingNameClassPairCallbackHandler handler = new MappingCollectingNameClassPairCallbackHandler(
+                mapper);
+        list(base, handler);
+        return handler.getList();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.ldap.LdapOperations#list(javax.naming.Name,
+     *      org.springframework.ldap.NameClassPairMapper)
+     */
+    public List list(Name base, NameClassPairMapper mapper) {
+        CollectingNameClassPairCallbackHandler handler = new MappingCollectingNameClassPairCallbackHandler(
+                mapper);
+        list(base, handler);
+        return handler.getList();
     }
 
     /*
      * @see org.springframework.ldap.LdapOperations#list(javax.naming.Name)
      */
     public List list(final Name base) {
-        CollectingListResultCallbackHandler handler = new CollectingListResultCallbackHandler();
-        list(base, handler);
-
-        return handler.getList();
+        return list(base, new DefaultNameClassPairMapper());
     }
 
     /*
      * @see org.springframework.ldap.LdapOperations#list(java.lang.String)
      */
     public List list(final String base) {
-        CollectingListResultCallbackHandler handler = new CollectingListResultCallbackHandler();
-        list(base, handler);
-
-        return handler.getList();
+        return list(base, new DefaultNameClassPairMapper());
     }
 
     /*
@@ -992,27 +981,38 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     }
 
     /**
-     * A {@link ListResultCallbackHandler} that simply collects the given
-     * elements in a list.
+     * A {@link NameClassPairCallbackHandler} that simply collects the names of
+     * the found NameClassPairs elements in a list.
      * 
-     * @author Ulrik Sandberg
+     * @author Mattias Arthursson
      */
-    public static class CollectingListResultCallbackHandler implements
-            ListResultCallbackHandler {
-        private LinkedList list = new LinkedList();
+    public class MappingCollectingNameClassPairCallbackHandler extends
+            CollectingNameClassPairCallbackHandler {
 
-        public void handleListResult(NameClassPair nameClassPair) {
-            list.add(nameClassPair);
+        private NameClassPairMapper mapper;
+
+        public MappingCollectingNameClassPairCallbackHandler(
+                NameClassPairMapper mapper) {
+            this.mapper = mapper;
         }
 
-        public LinkedList getList() {
-            return list;
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.springframework.ldap.CollectingNameClassPairCallbackHandler#getObjectFromNameClassPair(javax.naming.NameClassPair)
+         */
+        public Object getObjectFromNameClassPair(NameClassPair nameClassPair) {
+            try {
+                return mapper.mapFromNameClassPair(nameClassPair);
+            } catch (NamingException e) {
+                throw getExceptionTranslator().translate(e);
+            }
         }
     }
 
     /**
-     * A CollectingSearchResultCallbackHandler to wrap an AttributesMapper. That
-     * is, the found objects are extracted from all SearchResults, and then
+     * A CollectingNameClassPairCallbackHandler to wrap an AttributesMapper.
+     * That is, the found objects are extracted from all SearchResults, and then
      * passed to the specified AttributesMapper for translation. This class
      * needs to be nested, since we want to be able to get hold of the exception
      * translator of this instance.
@@ -1021,14 +1021,23 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
      * @author Ulrik Sandberg
      */
     public class AttributesMapperCallbackHandler extends
-            CollectingSearchResultCallbackHandler {
+            CollectingNameClassPairCallbackHandler {
         private AttributesMapper mapper;
 
         public AttributesMapperCallbackHandler(AttributesMapper mapper) {
             this.mapper = mapper;
         }
 
-        protected Object getObjectFromResult(SearchResult searchResult) {
+        /**
+         * Cast the NameClassPair to a SearchResult and pass its attributes to
+         * the AttributesMapper.
+         * 
+         * @param nameClassPair
+         *            a SearchResult instance.
+         * @return the Object returned from the Mapper.
+         */
+        public Object getObjectFromNameClassPair(NameClassPair nameClassPair) {
+            SearchResult searchResult = (SearchResult) nameClassPair;
             Attributes attributes = searchResult.getAttributes();
             try {
                 return mapper.mapFromAttributes(attributes);
@@ -1039,21 +1048,30 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     }
 
     /**
-     * A CollectingSearchResultCallbackHandler to wrap a ContextMapper. That is,
-     * the found objects are extracted from all SearchResults, and then passed
-     * to the specified ContextMapper for translation.
+     * A CollectingNameClassPairCallbackHandler to wrap a ContextMapper. That
+     * is, the found objects are extracted from all SearchResults, and then
+     * passed to the specified ContextMapper for translation.
      * 
      * @author Mattias Arthursson
      */
     public class ContextMapperCallbackHandler extends
-            CollectingSearchResultCallbackHandler {
+            CollectingNameClassPairCallbackHandler {
         private ContextMapper mapper;
 
         public ContextMapperCallbackHandler(ContextMapper mapper) {
             this.mapper = mapper;
         }
 
-        protected Object getObjectFromResult(SearchResult searchResult) {
+        /**
+         * Cast the NameClassPair to a SearchResult and pass its attributes to
+         * the ContextMapper.
+         * 
+         * @param nameClassPair
+         *            a SearchResult instance.
+         * @return the Object returned from the Mapper.
+         */
+        public Object getObjectFromNameClassPair(NameClassPair nameClassPair) {
+            SearchResult searchResult = (SearchResult) nameClassPair;
             Object object = searchResult.getObject();
             if (object == null) {
                 throw new EntryNotFoundException(

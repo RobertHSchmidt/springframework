@@ -18,7 +18,7 @@ package org.springframework.ldap;
 
 import org.ddsteps.spring.DDStepsSpringTestCase;
 import org.springframework.ldap.LdapTemplate;
-import org.springframework.ldap.support.CountSearchResultCallbackHandler;
+import org.springframework.ldap.support.CountNameClassPairCallbackHandler;
 import org.springframework.ldap.support.DistinguishedName;
 
 /**
@@ -55,19 +55,19 @@ public class LdapTemplateSearchCountITest extends DDStepsSpringTestCase {
     }
 
     public void testSearch_Count() {
-        CountSearchResultCallbackHandler handler = new CountSearchResultCallbackHandler();
+        CountNameClassPairCallbackHandler handler = new CountNameClassPairCallbackHandler();
         tested.search(base, filter, handler);
         assertEquals(expectedResults, handler.getNoOfRows());
     }
 
     public void testSearch_Count_DN() {
-        CountSearchResultCallbackHandler handler = new CountSearchResultCallbackHandler();
+        CountNameClassPairCallbackHandler handler = new CountNameClassPairCallbackHandler();
         tested.search(new DistinguishedName(base), filter, handler);
         assertEquals(expectedResults, handler.getNoOfRows());
     }
 
     public void testSearch_Count_SearchScope() {
-        CountSearchResultCallbackHandler handler = new CountSearchResultCallbackHandler();
+        CountNameClassPairCallbackHandler handler = new CountNameClassPairCallbackHandler();
         tested.search(base, filter, searchScope, DONT_RETURN_OBJECTS, handler);
         assertEquals(expectedResults, handler.getNoOfRows());
     }

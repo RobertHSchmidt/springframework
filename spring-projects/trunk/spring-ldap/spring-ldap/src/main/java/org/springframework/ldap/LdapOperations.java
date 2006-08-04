@@ -48,14 +48,14 @@ public interface LdapOperations {
      * @param se
      *            the SearchExecutor to use for performing the actual search.
      * @param handler
-     *            the SearchResultCallbackHandler to which each found entry will
-     *            be passed.
+     *            the NameClassPairCallbackHandler to which each found entry
+     *            will be passed.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public void search(SearchExecutor se, SearchResultCallbackHandler handler)
+    public void search(SearchExecutor se, NameClassPairCallbackHandler handler)
             throws DataAccessException;
 
     /**
@@ -63,7 +63,7 @@ public interface LdapOperations {
      * This method handles the plumbing - getting a DirContext, translating any
      * exceptions and closing the context afterwards. This method is not
      * intended for searches; use
-     * {@link #search(SearchExecutor, SearchResultCallbackHandler)} or any of
+     * {@link #search(SearchExecutor, NameClassPairCallbackHandler)} or any of
      * the overloaded search methods for this.
      * 
      * @param ce
@@ -93,7 +93,7 @@ public interface LdapOperations {
 
     /**
      * Search for all objects matching the supplied filter. Each SearchResult is
-     * supplied to the specified SearchResultCallbackHandler. Use the specified
+     * supplied to the specified NameClassPairCallbackHandler. Use the specified
      * SearchControls in the search. Note that if you are using a ContextMapper,
      * the returningObjFlag needs to be set to true.
      * 
@@ -104,15 +104,15 @@ public interface LdapOperations {
      * @param controls
      *            the SearchControls to use in the search.
      * @param handler
-     *            the SearchResultCallbackHandler to supply the SearchResults
+     *            the NameClassPairCallbackHandler to supply the SearchResults
      *            to.
      */
     public void search(Name base, String filter, SearchControls controls,
-            SearchResultCallbackHandler handler);
+            NameClassPairCallbackHandler handler);
 
     /**
      * Search for all objects matching the supplied filter. Each SearchResult is
-     * supplied to the specified SearchResultCallbackHandler. Use the specified
+     * supplied to the specified NameClassPairCallbackHandler. Use the specified
      * SearchControls in the search. Note that if you are using a ContextMapper,
      * the returningObjFlag needs to be set to true.
      * 
@@ -123,15 +123,15 @@ public interface LdapOperations {
      * @param controls
      *            the SearchControls to use in the search.
      * @param handler
-     *            the SearchResultCallbackHandler to supply the SearchResults
+     *            the NameClassPairCallbackHandler to supply the SearchResults
      *            to.
      */
     public void search(String base, String filter, SearchControls controls,
-            SearchResultCallbackHandler handler);
+            NameClassPairCallbackHandler handler);
 
     /**
      * Search for all objects matching the supplied filter. Each SearchResult is
-     * supplied to the specified SearchResultCallbackHandler. Use the specified
+     * supplied to the specified NameClassPairCallbackHandler. Use the specified
      * search scope and return objects flag in search controls.
      * 
      * @param base
@@ -143,7 +143,7 @@ public interface LdapOperations {
      * @param returningObjFlag
      *            whether the bound object should be returned in search results.
      * @param handler
-     *            the SearchResultCallbackHandler to supply the SearchResults
+     *            the NameClassPairCallbackHandler to supply the SearchResults
      *            to.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -151,12 +151,12 @@ public interface LdapOperations {
      *             found.
      */
     public void search(Name base, String filter, int searchScope,
-            boolean returningObjFlag, SearchResultCallbackHandler handler)
+            boolean returningObjFlag, NameClassPairCallbackHandler handler)
             throws DataAccessException;
 
     /**
      * Search for all objects matching the supplied filter. Each SearchResult is
-     * supplied to the specified SearchResultCallbackHandler. Use the specified
+     * supplied to the specified NameClassPairCallbackHandler. Use the specified
      * search scope and return objects flag in search controls.
      * 
      * @param base
@@ -168,7 +168,7 @@ public interface LdapOperations {
      * @param returningObjFlag
      *            whether the bound object should be returned in search results.
      * @param handler
-     *            the SearchResultCallbackHandler to supply the SearchResults
+     *            the NameClassPairCallbackHandler to supply the SearchResults
      *            to.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -176,21 +176,21 @@ public interface LdapOperations {
      *             found.
      */
     public void search(String base, String filter, int searchScope,
-            boolean returningObjFlag, SearchResultCallbackHandler handler)
+            boolean returningObjFlag, NameClassPairCallbackHandler handler)
             throws DataAccessException;
 
     /**
      * Search for all objects matching the supplied filter. Each SearchResult is
-     * supplied to the specified SearchResultCallbackHandler. The default Search
-     * scope (SearchControls.SUBTREE_SCOPE) will be used and the returnObjects
-     * flag will be set to false.
+     * supplied to the specified NameClassPairCallbackHandler. The default
+     * Search scope (SearchControls.SUBTREE_SCOPE) will be used and the
+     * returnObjects flag will be set to false.
      * 
      * @param base
      *            The base DN where the search should begin.
      * @param filter
      *            the filter to use in the search.
      * @param handler
-     *            the SearchResultCallbackHandler to supply the SearchResults
+     *            the NameClassPairCallbackHandler to supply the SearchResults
      *            to.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -198,12 +198,12 @@ public interface LdapOperations {
      *             found.
      */
     public void search(Name base, String filter,
-            SearchResultCallbackHandler handler) throws DataAccessException;
+            NameClassPairCallbackHandler handler) throws DataAccessException;
 
     /**
      * Search for all objects matching the supplied filter. Each SearchResult is
-     * supplied to the specified SearchResultCallbackHandler. The default Search
-     * scope (SearchControls.SUBTREE_SCOPE) will be used and no the
+     * supplied to the specified NameClassPairCallbackHandler. The default
+     * Search scope (SearchControls.SUBTREE_SCOPE) will be used and no the
      * returnObjects will be set to false.
      * 
      * @param base
@@ -211,7 +211,7 @@ public interface LdapOperations {
      * @param filter
      *            the filter to use in the search.
      * @param handler
-     *            the SearchResultCallbackHandler to supply the SearchResults
+     *            the NameClassPairCallbackHandler to supply the SearchResults
      *            to.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -219,7 +219,7 @@ public interface LdapOperations {
      *             found.
      */
     public void search(String base, String filter,
-            SearchResultCallbackHandler handler) throws DataAccessException;
+            NameClassPairCallbackHandler handler) throws DataAccessException;
 
     /**
      * Search for all objects matching the supplied filter. Only search for the
@@ -583,10 +583,10 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the list should be performed.
      * @param handler
-     *            the {@link ListResultCallbackHandler} to supply each
+     *            the {@link NameClassPairCallbackHandler} to supply each
      *            {@link NameClassPair} to.
      */
-    public void list(Name base, ListResultCallbackHandler handler);
+    public void list(Name base, NameClassPairCallbackHandler handler);
 
     /**
      * Perform a non-recursive listing of the contexts bound to the given
@@ -596,10 +596,32 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the list should be performed.
      * @param handler
-     *            the {@link ListResultCallbackHandler} to supply each
+     *            the {@link NameClassPairCallbackHandler} to supply each
      *            {@link NameClassPair} to.
      */
-    public void list(String base, ListResultCallbackHandler handler);
+    public void list(String base, NameClassPairCallbackHandler handler);
+
+    /**
+     * Perform a non-recursive listing of the contexts bound to the given
+     * <code>base</code>. Pass all the found NameClassPair objects to the
+     * supplied Mapper and return all the returned values as a List.
+     * 
+     * @param base
+     *            The base DN where the list should be performed.
+     * @return a List containing the Objects returned from the Mapper.
+     */
+    public List list(String base, NameClassPairMapper mapper);
+
+    /**
+     * Perform a non-recursive listing of the contexts bound to the given
+     * <code>base</code>. Pass all the found NameClassPair objects to the
+     * supplied Mapper and return all the returned values as a List.
+     * 
+     * @param base
+     *            The base DN where the list should be performed.
+     * @return a List containing the Objects returned from the Mapper.
+     */
+    public List list(Name base, NameClassPairMapper mapper);
 
     /**
      * Perform a non-recursive listing of the contexts bound to the given
@@ -607,8 +629,8 @@ public interface LdapOperations {
      * 
      * @param base
      *            The base DN where the list should be performed.
-     * @return a List of {@link NameClassPair} objects containing all bindings
-     *         received from the list operation.
+     * @return a List containing the names of all the contexts bound to the
+     *         given <code> base.
      */
     public List list(String base);
 
@@ -618,8 +640,8 @@ public interface LdapOperations {
      * 
      * @param base
      *            The base DN where the list should be performed.
-     * @return a List of {@link NameClassPair} objects containing all bindings
-     *         received from the list operation.
+     * @return a List containing the names of all the contexts bound to the
+     *         given <code> base.
      */
     public List list(Name base);
 

@@ -18,9 +18,8 @@ package org.springframework.ldap;
 import java.util.List;
 
 import javax.naming.Name;
-import javax.naming.NameClassPair;
 
-import org.springframework.ldap.support.CountListResultCallbackHandler;
+import org.springframework.ldap.support.CountNameClassPairCallbackHandler;
 import org.springframework.ldap.support.DistinguishedName;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
@@ -45,33 +44,25 @@ public class LdapTemplateListITest extends
     public void testList() {
         List list = tested.list(BASE_STRING);
         assertEquals(2, list.size());
-        String className = "javax.naming.directory.DirContext";
-        assertNameClassPair((NameClassPair) list.get(0), "c=Sweden", className);
-        assertNameClassPair((NameClassPair) list.get(1), "c=Norway", className);
+        assertEquals("c=Sweden", list.get(0));
+        assertEquals("c=Norway", list.get(1));
     }
 
     public void testList_Name() {
         List list = tested.list(BASE_NAME);
         assertEquals(2, list.size());
-        String className = "javax.naming.directory.DirContext";
-        assertNameClassPair((NameClassPair) list.get(0), "c=Sweden", className);
-        assertNameClassPair((NameClassPair) list.get(1), "c=Norway", className);
-    }
-
-    private void assertNameClassPair(NameClassPair binding, String name,
-            String className) {
-        assertEquals(name, binding.getName());
-        assertEquals(className, binding.getClassName());
+        assertEquals("c=Sweden", list.get(0));
+        assertEquals("c=Norway", list.get(1));
     }
 
     public void testList_Handler() throws Exception {
-        CountListResultCallbackHandler handler = new CountListResultCallbackHandler();
+        CountNameClassPairCallbackHandler handler = new CountNameClassPairCallbackHandler();
         tested.list(BASE_STRING, handler);
         assertEquals(2, handler.getNoOfRows());
     }
 
     public void testList_Name_Handler() throws Exception {
-        CountListResultCallbackHandler handler = new CountListResultCallbackHandler();
+        CountNameClassPairCallbackHandler handler = new CountNameClassPairCallbackHandler();
         tested.list(BASE_NAME, handler);
         assertEquals(2, handler.getNoOfRows());
     }

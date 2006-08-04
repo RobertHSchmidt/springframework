@@ -17,15 +17,16 @@ package org.springframework.ldap.support;
 
 import javax.naming.NameClassPair;
 
-import org.springframework.ldap.ListResultCallbackHandler;
+import org.springframework.ldap.NameClassPairCallbackHandler;
 
 /**
- * A ListResultCallbackHandler for counting all returned entries.
+ * A NameClassPairCallbackHandler for counting all returned entries.
  * 
- * @author Ulrik Sandberg
+ * @author Mattias Arthursson
+ * 
  */
-public class CountListResultCallbackHandler implements
-        ListResultCallbackHandler {
+public class CountNameClassPairCallbackHandler implements
+        NameClassPairCallbackHandler {
 
     private int noOfRows = 0;
 
@@ -39,9 +40,12 @@ public class CountListResultCallbackHandler implements
     }
 
     /*
-     * @see org.springframework.ldap.ListResultCallbackHandler#handleListResult(javax.naming.NameClassPair)
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.ldap.SearchResultCallbackHandler#handleSearchResult(javax.naming.directory.SearchResult)
      */
-    public void handleListResult(NameClassPair nameClassPair) {
+    public void handleNameClassPair(NameClassPair nameClassPair) {
         noOfRows++;
     }
+
 }
