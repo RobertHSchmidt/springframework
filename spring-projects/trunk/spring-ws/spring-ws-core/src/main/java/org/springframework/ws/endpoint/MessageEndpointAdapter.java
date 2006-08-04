@@ -20,12 +20,15 @@ import org.springframework.ws.EndpointAdapter;
 import org.springframework.ws.context.MessageContext;
 
 /**
+ * Adapter to use a <code>MessageEndpoint</code> as the endpoint for a <code>EndpointInvocationChain</code>.
+ *
  * @author Arjen Poutsma
+ * @see org.springframework.ws.EndpointInvocationChain
  */
 public class MessageEndpointAdapter implements EndpointAdapter {
 
     public boolean supports(Object endpoint) {
-        return (endpoint instanceof MessageEndpoint);
+        return endpoint instanceof MessageEndpoint;
     }
 
     public void invoke(MessageContext messageContext, Object endpoint) throws Exception {

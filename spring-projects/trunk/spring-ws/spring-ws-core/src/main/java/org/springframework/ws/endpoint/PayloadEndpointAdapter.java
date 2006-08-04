@@ -33,7 +33,7 @@ import org.springframework.ws.context.MessageContext;
 public class PayloadEndpointAdapter extends TransformerObjectSupport implements EndpointAdapter {
 
     public boolean supports(Object endpoint) {
-        return (endpoint instanceof PayloadEndpoint);
+        return endpoint instanceof PayloadEndpoint;
     }
 
     public void invoke(MessageContext messageContext, Object endpoint) throws Exception {
