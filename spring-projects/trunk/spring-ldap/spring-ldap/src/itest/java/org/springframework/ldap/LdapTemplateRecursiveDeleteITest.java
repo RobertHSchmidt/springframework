@@ -18,10 +18,6 @@ package org.springframework.ldap;
 
 import javax.naming.Name;
 
-
-import org.springframework.ldap.ContextSource;
-import org.springframework.ldap.EntryNotFoundException;
-import org.springframework.ldap.LdapTemplate;
 import org.springframework.ldap.support.DirContextAdapter;
 import org.springframework.ldap.support.DistinguishedName;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
@@ -35,8 +31,6 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
  */
 public class LdapTemplateRecursiveDeleteITest extends
         AbstractDependencyInjectionSpringContextTests {
-    private ContextSource contextSource;
-
     private LdapTemplate tested;
 
     private static DistinguishedName DN = new DistinguishedName(
@@ -127,9 +121,5 @@ public class LdapTemplateRecursiveDeleteITest extends
 
     public void setTested(LdapTemplate tested) {
         this.tested = tested;
-    }
-
-    public void setContextSource(ContextSource contextSource) {
-        this.contextSource = contextSource;
     }
 }
