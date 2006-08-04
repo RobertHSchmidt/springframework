@@ -28,6 +28,10 @@ Package org.springframework.ws.endpoint.interceptor
 * add schemas property to PayloadValidatingInterceptor (#SWS-44)
 * refactoring most of PayloadValidatingInterceptor into AbstractValidatingInterceptor
 
+Package org.springframework.ws.endpoint.mapping
+* moved EndpointMappings to seperate package
+* removed SOAP-specific roles functionality
+
 Package org.springframework.ws.soap
 * improved content-type handling (#SWS-32)
 * moved SOAP 1.1 specfics to separate package and interfaces
@@ -39,8 +43,11 @@ Package org.springframework.ws.soap.axiom
   a non-buffering, read-once fashion.
 * increased performance by keeping object references instead of creating new instances for every call
 
-Package org.springframework.ws.soap.endpoint
+Package org.springframework.ws.soap.endpoint.interceptor
 * added SoapEnvelopeLoggingInterceptor, which logs the entire SoapEnvelope
+
+Package org.springframework.ws.soap.endpoint.interceptor
+* 
 
 Package org.springframework.ws.soap.saaj
 * add support for SAAJ 1.3
