@@ -67,6 +67,32 @@ public class LdapTemplateListITest extends
         assertEquals(2, handler.getNoOfRows());
     }
 
+    public void testListBindings() {
+        List list = tested.listBindings(BASE_STRING);
+        assertEquals(2, list.size());
+        assertEquals("c=Sweden", list.get(0));
+        assertEquals("c=Norway", list.get(1));
+    }
+
+    public void testListBindings_Name() {
+        List list = tested.listBindings(BASE_NAME);
+        assertEquals(2, list.size());
+        assertEquals("c=Sweden", list.get(0));
+        assertEquals("c=Norway", list.get(1));
+    }
+
+    public void testListBindings_Handler() throws Exception {
+        CountNameClassPairCallbackHandler handler = new CountNameClassPairCallbackHandler();
+        tested.listBindings(BASE_STRING, handler);
+        assertEquals(2, handler.getNoOfRows());
+    }
+
+    public void testListBindings_Name_Handler() throws Exception {
+        CountNameClassPairCallbackHandler handler = new CountNameClassPairCallbackHandler();
+        tested.listBindings(BASE_NAME, handler);
+        assertEquals(2, handler.getNoOfRows());
+    }
+
     public void setTested(LdapTemplate tested) {
         this.tested = tested;
     }
