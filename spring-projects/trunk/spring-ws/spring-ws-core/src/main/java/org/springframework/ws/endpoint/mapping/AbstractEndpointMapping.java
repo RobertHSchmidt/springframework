@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.endpoint;
+package org.springframework.ws.endpoint.mapping;
 
 import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.ws.EndpointInterceptor;
@@ -102,7 +102,8 @@ public abstract class AbstractEndpointMapping extends ApplicationObjectSupport i
 
     /**
      * Creates a new <code>EndpointInvocationChain</code> based on the given message context, endpoint, and
-     * interceptors. Default implementation creates a chain based on the set interceptors.
+     * interceptors. Default implementation creates a simple <code>EndpointInvocationChain</code> based on the set
+     * interceptors.
      *
      * @param endpoint     the endpoint
      * @param interceptors the endpoint interceptors

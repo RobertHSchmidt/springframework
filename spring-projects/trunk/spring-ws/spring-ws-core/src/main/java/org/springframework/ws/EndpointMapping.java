@@ -31,9 +31,9 @@ import org.springframework.ws.context.MessageContext;
  * <code>handlerRequest</code> methods have returned <code>true</code>.
  *
  * @author Arjen Poutsma
- * @see org.springframework.ws.endpoint.AbstractEndpointMapping
- * @see org.springframework.ws.soap.endpoint.PayloadRootQNameEndpointMapping
- * @see org.springframework.ws.soap.SoapActionEndpointMapping
+ * @see org.springframework.ws.endpoint.mapping.AbstractEndpointMapping
+ * @see org.springframework.ws.endpoint.mapping.PayloadRootQNameEndpointMapping
+ * @see org.springframework.ws.soap.endpoint.mapping.SoapActionEndpointMapping
  */
 public interface EndpointMapping {
 

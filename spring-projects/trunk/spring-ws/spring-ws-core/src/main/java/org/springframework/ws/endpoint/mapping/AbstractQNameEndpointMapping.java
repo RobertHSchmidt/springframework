@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.soap.endpoint;
+package org.springframework.ws.endpoint.mapping;
 
 import javax.xml.namespace.QName;
 
@@ -26,7 +26,7 @@ import org.springframework.xml.namespace.QNameUtils;
  *
  * @author Arjen Poutsma
  */
-public abstract class AbstractQNameEndpointMapping extends AbstractMapBasedSoapEndpointMapping {
+public abstract class AbstractQNameEndpointMapping extends AbstractMapBasedEndpointMapping {
 
     protected final String getLookupKeyForMessage(MessageContext messageContext) throws Exception {
         QName qName = resolveQName(messageContext);

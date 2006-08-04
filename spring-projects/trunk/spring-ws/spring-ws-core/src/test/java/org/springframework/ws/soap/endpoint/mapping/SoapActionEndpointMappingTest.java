@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.soap;
+package org.springframework.ws.soap.endpoint.mapping;
 
 import junit.framework.TestCase;
 import org.springframework.ws.mock.MockMessageContext;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.soap.endpoint;
+package org.springframework.ws.endpoint.mapping;
 
 import javax.xml.namespace.QName;
 
