@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.soap.endpoint;
+package org.springframework.ws.endpoint.mapping;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -25,7 +25,7 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.ws.context.MessageContext;
 
 /**
- * Test case for AbstractMapBasedSoapEndpointMapping.
+ * Test case for AbstractMapBasedEndpointMapping.
  */
 public class MapBasedSoapEndpointMappingTest extends TestCase {
 
@@ -93,7 +93,7 @@ public class MapBasedSoapEndpointMappingTest extends TestCase {
         assertNull("Endpoint returned", mapping.getEndpointInternal(null));
     }
 
-    private static class MyMapBasedEndpointMapping extends AbstractMapBasedSoapEndpointMapping {
+    private static class MyMapBasedEndpointMapping extends AbstractMapBasedEndpointMapping {
 
         private String key;
 

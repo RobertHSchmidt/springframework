@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.soap;
+package org.springframework.ws.soap.endpoint.mapping;
 
 import java.util.Iterator;
 
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.springframework.ws.EndpointInterceptor;
+import org.springframework.ws.EndpointInvocationChain;
 import org.springframework.ws.context.MessageContext;
-import org.springframework.ws.soap.endpoint.AbstractMapBasedSoapEndpointMapping;
+import org.springframework.ws.endpoint.mapping.AbstractMapBasedEndpointMapping;
+import org.springframework.ws.soap.SoapEndpointInvocationChain;
+import org.springframework.ws.soap.SoapEndpointMapping;
 
 /**
  * Implementation of the <code>EndpointMapping</code> interface to map from <code>SOAPAction</code> headers to endpoint
@@ -44,15 +49,39 @@ import org.springframework.ws.soap.endpoint.AbstractMapBasedSoapEndpointMapping;
  *
  * @author Arjen Poutsma
  */
-public class SoapActionEndpointMapping extends AbstractMapBasedSoapEndpointMapping {
+public class SoapActionEndpointMapping extends AbstractMapBasedEndpointMapping implements SoapEndpointMapping {
 
     /**
      * The name of the SOAPAction <code>TransportRequest</code> header.
      */
     public static final String SOAP_ACTION_HEADER = "SOAPAction";
 
-    protected boolean validateLookupKey(String key) {
-        return StringUtils.hasLength(key);
+    private String[] actorsOrRoles;
+
+    public final void setActorOrRole(String actorOrRole) {
+        Assert.notNull(actorOrRole, "actorOrRole must not be null");
+        actorsOrRoles = new String[]{actorOrRole};
+    }
+
+    public final void setActorsOrRoles(String[] actorsOrRoles) {
+        Assert.notEmpty(actorsOrRoles, "actorsOrRoles must not be empty");
+        this.actorsOrRoles = actorsOrRoles;
+    }
+
+    /**
+     * Creates a new <code>SoapEndpointInvocationChain</code> based on the given endpoint, and the set interceptors, and
+     * actors/roles.
+     *
+     * @param endpoint     the endpoint
+     * @param interceptors the endpoint interceptors
+     * @return the created invocation chain
+     * @see #setInterceptors(org.springframework.ws.EndpointInterceptor[])
+     * @see #setActorsOrRoles(String[])
+     */
+    protected final EndpointInvocationChain createEndpointInvocationChain(MessageContext messageContext,
+                                                                          Object endpoint,
+                                                                          EndpointInterceptor[] interceptors) {
+        return new SoapEndpointInvocationChain(endpoint, interceptors, actorsOrRoles);
     }
 
     protected String getLookupKeyForMessage(MessageContext messageContext) throws Exception {
@@ -68,5 +97,9 @@ public class SoapActionEndpointMapping extends AbstractMapBasedSoapEndpointMappi
         else {
             return soapAction;
         }
+    }
+
+    protected boolean validateLookupKey(String key) {
+        return StringUtils.hasLength(key);
     }
 }

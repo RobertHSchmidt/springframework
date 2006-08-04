@@ -76,20 +76,23 @@ public class SoapMessageDispatcher extends MessageDispatcher {
      * @param mappedEndpoint the mapped EndpointInvocationChain
      * @param messageContext the message context
      * @return <code>true</code> if all necessary headers are understood; <code>false</code> otherwise
-     * @see SoapEndpointInvocationChain#getRoles()
+     * @see SoapEndpointInvocationChain#getActorsOrRoles()
      * @see SoapHeader#examineMustUnderstandHeaderElements(String)
      */
     protected boolean handleRequest(EndpointInvocationChain mappedEndpoint, MessageContext messageContext) {
-        if (mappedEndpoint instanceof SoapEndpointInvocationChain && messageContext instanceof SoapMessageContext) {
-            SoapEndpointInvocationChain mappedSoapEndpoint = (SoapEndpointInvocationChain) mappedEndpoint;
+        if (messageContext instanceof SoapMessageContext) {
             SoapMessageContext soapContext = (SoapMessageContext) messageContext;
             if (soapContext.getSoapRequest().getSoapHeader() == null) {
                 // no headers to process
                 return true;
             }
-            String[] roles = getRoles(mappedSoapEndpoint.getRoles(), soapContext.getSoapRequest().getVersion());
+            String[] roles = getRoles(mappedEndpoint, soapContext.getSoapRequest().getVersion());
+            if (logger.isDebugEnabled()) {
+                logger.debug("Handling MustUnderstand headers for actors/roles [" +
+                        StringUtils.arrayToCommaDelimitedString(roles));
+            }
             for (int i = 0; i < roles.length; i++) {
-                if (!handleRequestForRole(mappedSoapEndpoint, soapContext, roles[i])) {
+                if (!handleRequestForRole(mappedEndpoint, soapContext, roles[i])) {
                     return false;
                 }
             }
@@ -103,7 +106,12 @@ public class SoapMessageDispatcher extends MessageDispatcher {
      *
      * @see SoapVersion#getNextActorOrRoleUri()
      */
-    protected String[] getRoles(String[] mappedRoles, SoapVersion version) {
+    protected String[] getRoles(EndpointInvocationChain mappedEndpoint, SoapVersion version) {
+        String[] mappedRoles = null;
+        if (mappedEndpoint instanceof SoapEndpointInvocationChain) {
+            SoapEndpointInvocationChain soapEndpoint = (SoapEndpointInvocationChain) mappedEndpoint;
+            mappedRoles = soapEndpoint.getActorsOrRoles();
+        }
         if (mappedRoles == null) {
             mappedRoles = new String[0];
         }
@@ -111,22 +119,24 @@ public class SoapMessageDispatcher extends MessageDispatcher {
     }
 
     /**
-     * Handles the request for a single SOAP role. Iterates over all <code>MustUnderstand</code> headers for a specific
-     * role, and determines whether these are understood by any of the registered <code>SoapEndpointInterceptor</code>.
-     * If they are, returns <code>true</code>. If they are not, a SOAP fault is created, and false is returned.
+     * Handles the request for a single SOAP actor/role. Iterates over all <code>MustUnderstand</code> headers for a
+     * specific SOAP 1.1 actor or SOAP 1.2 role, and determines whether these are understood by any of the registered
+     * <code>SoapEndpointInterceptor</code>. If they are, returns <code>true</code>. If they are not, a SOAP fault is
+     * created, and false is returned.
      *
      * @see SoapEndpointInterceptor#understands(SoapHeaderElement)
      */
-    private boolean handleRequestForRole(SoapEndpointInvocationChain mappedEndpoint,
+    private boolean handleRequestForRole(EndpointInvocationChain mappedEndpoint,
                                          SoapMessageContext messageContext,
-                                         String role) {
+                                         String actorOrRole) {
         SoapHeader requestHeader = messageContext.getSoapRequest().getSoapHeader();
         List notUnderstoodHeaderNames = new ArrayList();
-        for (Iterator iterator = requestHeader.examineMustUnderstandHeaderElements(role); iterator.hasNext();) {
+        for (Iterator iterator = requestHeader.examineMustUnderstandHeaderElements(actorOrRole); iterator.hasNext();) {
             SoapHeaderElement headerElement = (SoapHeaderElement) iterator.next();
             QName headerName = headerElement.getName();
             if (logger.isDebugEnabled()) {
-                logger.debug("Received mustUnderstand header with name: " + headerName);
+                logger.debug(
+                        "Received mustUnderstand header [" + headerName + "] for actor/role [" + actorOrRole + "]");
             }
             boolean understood = false;
             for (int i = 0; i < mappedEndpoint.getInterceptors().length; i++) {
@@ -151,7 +161,7 @@ public class SoapMessageDispatcher extends MessageDispatcher {
             }
             SoapBody responseBody = messageContext.getSoapResponse().getSoapBody();
             SoapFault fault = responseBody.addMustUnderstandFault(mustUnderstandFault, mustUnderstandFaultLocale);
-            fault.setFaultActorOrRole(role);
+            fault.setFaultActorOrRole(actorOrRole);
             SoapHeader header = messageContext.getSoapResponse().getSoapHeader();
             if (header instanceof Soap12Header) {
                 Soap12Header soap12Header = (Soap12Header) header;

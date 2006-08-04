@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.endpoint;
+package org.springframework.ws.endpoint.mapping;
 
 import junit.framework.TestCase;
 import org.springframework.context.support.StaticApplicationContext;

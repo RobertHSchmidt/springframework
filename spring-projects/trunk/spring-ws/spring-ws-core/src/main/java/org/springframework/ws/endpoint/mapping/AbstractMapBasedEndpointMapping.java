@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.soap.endpoint;
+package org.springframework.ws.endpoint.mapping;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,7 +35,7 @@ import org.springframework.ws.context.MessageContext;
  *
  * @author Arjen Poutsma
  */
-public abstract class AbstractMapBasedSoapEndpointMapping extends AbstractSoapEndpointMapping {
+public abstract class AbstractMapBasedEndpointMapping extends AbstractEndpointMapping {
 
     private boolean lazyInitEndpoints = false;
 

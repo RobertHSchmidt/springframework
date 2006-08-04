@@ -20,17 +20,20 @@ import org.springframework.ws.EndpointInterceptor;
 import org.springframework.ws.EndpointInvocationChain;
 
 /**
- * SOAP-specific subclass of the <code>EndpointInvocationChain</code>. Adds associated SOAP roles.
+ * SOAP-specific subclass of the <code>EndpointInvocationChain</code>. Adds associated actors (SOAP 1.1) or roles (SOAP
+ * 1.2). Used by the <code>SoapMessageDispatcher</code> to determine the MustUnderstand headers for particular
+ * endpoint.
  *
  * @author Arjen Poutsma
- * @see #getRoles()
+ * @see #getActorsOrRoles()
+ * @see SoapMessageDispatcher
  */
 public class SoapEndpointInvocationChain extends EndpointInvocationChain {
 
-    private String[] roles;
+    private String[] actorsOrRoles;
 
     /**
-     * Create new <code>SoapEndpointInvocationChain</code>. The actor roles is set to the default role.
+     * Create new <code>SoapEndpointInvocationChain</code>.
      *
      * @param endpoint the endpoint object to invoke
      */
@@ -51,22 +54,22 @@ public class SoapEndpointInvocationChain extends EndpointInvocationChain {
     /**
      * Create new <code>EndpointInvocationChain</code>.
      *
-     * @param endpoint     the endpoint object to invoke
-     * @param interceptors the array of interceptors to apply
-     * @param roles        the array of roles to set
+     * @param endpoint      the endpoint object to invoke
+     * @param interceptors  the array of interceptors to apply
+     * @param actorsOrRoles the array of actorsOrRoles to set
      */
-    public SoapEndpointInvocationChain(Object endpoint, EndpointInterceptor[] interceptors, String[] roles) {
+    public SoapEndpointInvocationChain(Object endpoint, EndpointInterceptor[] interceptors, String[] actorsOrRoles) {
         super(endpoint, interceptors);
-        this.roles = roles;
+        this.actorsOrRoles = actorsOrRoles;
     }
 
     /**
-     * Gets the SOAP actor roles associated with an invocation of this chain and its contained interceptors and
-     * endpoint.
+     * Gets the actors (SOAP 1.1) or roles (SOAP 1.2) associated with an invocation of this chain and its contained
+     * interceptors and endpoint.
      *
-     * @return a string array of URIs for SOAP actor roles
+     * @return a string array of URIs for SOAP actors/roles
      */
-    public String[] getRoles() {
-        return roles;
+    public String[] getActorsOrRoles() {
+        return actorsOrRoles;
     }
 }
