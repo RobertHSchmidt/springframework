@@ -18,6 +18,7 @@ package org.springframework.ldap;
 
 import java.util.List;
 
+import javax.naming.Binding;
 import javax.naming.Name;
 import javax.naming.NameClassPair;
 import javax.naming.directory.Attributes;
@@ -578,20 +579,7 @@ public interface LdapOperations {
     /**
      * Perform a non-recursive listing of the contexts bound to the given
      * <code>base</code>. Each resulting NameClassPair is supplied to the
-     * specified ListResultCallbackHandler.
-     * 
-     * @param base
-     *            The base DN where the list should be performed.
-     * @param handler
-     *            the {@link NameClassPairCallbackHandler} to supply each
-     *            {@link NameClassPair} to.
-     */
-    public void list(Name base, NameClassPairCallbackHandler handler);
-
-    /**
-     * Perform a non-recursive listing of the contexts bound to the given
-     * <code>base</code>. Each resulting NameClassPair is supplied to the
-     * specified ListResultCallbackHandler.
+     * specified NameClassPairCallbackHandler.
      * 
      * @param base
      *            The base DN where the list should be performed.
@@ -603,11 +591,28 @@ public interface LdapOperations {
 
     /**
      * Perform a non-recursive listing of the contexts bound to the given
-     * <code>base</code>. Pass all the found NameClassPair objects to the
-     * supplied Mapper and return all the returned values as a List.
+     * <code>base</code>. Each resulting NameClassPair is supplied to the
+     * specified NameClassPairCallbackHandler.
      * 
      * @param base
      *            The base DN where the list should be performed.
+     * @param handler
+     *            the {@link NameClassPairCallbackHandler} to supply each
+     *            {@link NameClassPair} to.
+     */
+    public void list(Name base, NameClassPairCallbackHandler handler);
+
+    /**
+     * Perform a non-recursive listing of the contexts bound to the given
+     * <code>base</code>. Pass all the found NameClassPair objects to the
+     * supplied NameClassPairMapper and return all the returned values as a
+     * List.
+     * 
+     * @param base
+     *            The base DN where the list should be performed.
+     * @param mapper
+     *            the {@link NameClassPairMapper} to supply each
+     *            {@link NameClassPair} to.
      * @return a List containing the Objects returned from the Mapper.
      */
     public List list(String base, NameClassPairMapper mapper);
@@ -615,10 +620,14 @@ public interface LdapOperations {
     /**
      * Perform a non-recursive listing of the contexts bound to the given
      * <code>base</code>. Pass all the found NameClassPair objects to the
-     * supplied Mapper and return all the returned values as a List.
+     * supplied NameClassPairMapper and return all the returned values as a
+     * List.
      * 
      * @param base
      *            The base DN where the list should be performed.
+     * @param mapper
+     *            the {@link NameClassPairMapper} to supply each
+     *            {@link NameClassPair} to.
      * @return a List containing the Objects returned from the Mapper.
      */
     public List list(Name base, NameClassPairMapper mapper);
@@ -644,6 +653,84 @@ public interface LdapOperations {
      *         given <code> base.
      */
     public List list(Name base);
+
+    /**
+     * Perform a non-recursive listing of the contexts bound to the given
+     * <code>base</code>. Each resulting Binding is supplied to the specified
+     * NameClassPairCallbackHandler.
+     * 
+     * @param base
+     *            The base DN where the list should be performed.
+     * @param handler
+     *            the {@link NameClassPairCallbackHandler} to supply each
+     *            {@link NameClassPair} to.
+     */
+    public void listBindings(final String base,
+            NameClassPairCallbackHandler handler);
+
+    /**
+     * Perform a non-recursive listing of the contexts bound to the given
+     * <code>base</code>. Each resulting Binding is supplied to the specified
+     * NameClassPairCallbackHandler.
+     * 
+     * @param base
+     *            The base DN where the list should be performed.
+     * @param handler
+     *            the {@link NameClassPairCallbackHandler} to supply each
+     *            {@link Binding} to.
+     */
+    public void listBindings(final Name base,
+            NameClassPairCallbackHandler handler);
+
+    /**
+     * Perform a non-recursive listing of the contexts bound to the given
+     * <code>base</code>. Pass all the found Binding objects to the supplied
+     * NameClassPairMapper and return all the returned values as a List.
+     * 
+     * @param base
+     *            The base DN where the list should be performed.
+     * @param mapper
+     *            the {@link NameClassPairMapper} to supply each {@link Binding}
+     *            to.
+     * @return a List containing the Objects returned from the Mapper.
+     */
+    public List listBindings(String base, NameClassPairMapper mapper);
+
+    /**
+     * Perform a non-recursive listing of the contexts bound to the given
+     * <code>base</code>. Pass all the found Binding objects to the supplied
+     * NameClassPairMapper and return all the returned values as a List.
+     * 
+     * @param base
+     *            The base DN where the list should be performed.
+     * @param mapper
+     *            the {@link NameClassPairMapper} to supply each {@link Binding}
+     *            to.
+     * @return a List containing the Objects returned from the Mapper.
+     */
+    public List listBindings(Name base, NameClassPairMapper mapper);
+
+    /**
+     * Perform a non-recursive listing of the contexts bound to the given
+     * <code>base</code>.
+     * 
+     * @param base
+     *            The base DN where the list should be performed.
+     * @return a List containing the names of all the contexts bound to the
+     *         given <code> base.
+     */
+    public List listBindings(final String base);
+
+    /**
+     * Perform a non-recursive listing of the contexts bound to the given
+     * <code>base</code>.
+     * 
+     * @param base
+     *            The base DN where the list should be performed.
+     * @return a List containing the names of all the contexts bound to the
+     *         given <code> base.
+     */
+    public List listBindings(final Name base);
 
     /**
      * Lookup the supplied DN and return the found object. <b>WARNING</b>: This
