@@ -595,6 +595,32 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     }
 
     /*
+     * @see org.springframework.ldap.LdapOperations#listBindings(java.lang.String,
+     *      org.springframework.ldap.ContextMapper)
+     */
+    public List listBindings(String base, ContextMapper mapper) {
+
+        ContextMapperCallbackHandler handler = new ContextMapperCallbackHandler(
+                mapper);
+        listBindings(base, handler);
+
+        return handler.getList();
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#listBindings(javax.naming.Name,
+     *      org.springframework.ldap.ContextMapper)
+     */
+    public List listBindings(Name base, ContextMapper mapper) {
+
+        ContextMapperCallbackHandler handler = new ContextMapperCallbackHandler(
+                mapper);
+        listBindings(base, handler);
+
+        return handler.getList();
+    }
+
+    /*
      * @see org.springframework.ldap.LdapOperations#executeReadOnly(org.springframework.ldap.ContextExecutor)
      */
     public Object executeReadOnly(ContextExecutor ce) {
@@ -875,7 +901,7 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
                 log.debug("Entry " + name + " deleted");
             }
         } catch (NamingException e) {
-            throw exceptionTranslator.translate(e);
+            throw getExceptionTranslator().translate(e);
         } finally {
             try {
                 enumeration.close();
@@ -1050,7 +1076,7 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
 
     /**
      * A {@link NameClassPairCallbackHandler} that simply collects the names of
-     * the found NameClassPairs elements in a list.
+     * the found NameClassPair elements in a list.
      * 
      * @author Mattias Arthursson
      */
@@ -1065,8 +1091,6 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
         }
 
         /*
-         * (non-Javadoc)
-         * 
          * @see org.springframework.ldap.CollectingNameClassPairCallbackHandler#getObjectFromNameClassPair(javax.naming.NameClassPair)
          */
         public Object getObjectFromNameClassPair(NameClassPair nameClassPair) {
@@ -1080,10 +1104,10 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
 
     /**
      * A CollectingNameClassPairCallbackHandler to wrap an AttributesMapper.
-     * That is, the found objects are extracted from all SearchResults, and then
-     * passed to the specified AttributesMapper for translation. This class
-     * needs to be nested, since we want to be able to get hold of the exception
-     * translator of this instance.
+     * That is, the found object is extracted from the {@link Attributes} of
+     * each {@link SearchResult}, and then passed to the specified
+     * AttributesMapper for translation. This class needs to be nested, since we
+     * want to be able to get hold of the exception translator of this instance.
      * 
      * @author Mattias Arthursson
      * @author Ulrik Sandberg
@@ -1117,10 +1141,11 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
 
     /**
      * A CollectingNameClassPairCallbackHandler to wrap a ContextMapper. That
-     * is, the found objects are extracted from all SearchResults, and then
+     * is, the found object is extracted from each {@link Binding}, and then
      * passed to the specified ContextMapper for translation.
      * 
      * @author Mattias Arthursson
+     * @author Ulrik Sandberg
      */
     public class ContextMapperCallbackHandler extends
             CollectingNameClassPairCallbackHandler {
@@ -1131,16 +1156,16 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
         }
 
         /**
-         * Cast the NameClassPair to a SearchResult and pass its attributes to
-         * the ContextMapper.
+         * Cast the NameClassPair to a {@link Binding} and pass its attributes
+         * to the ContextMapper.
          * 
          * @param nameClassPair
          *            a SearchResult instance.
          * @return the Object returned from the Mapper.
          */
         public Object getObjectFromNameClassPair(NameClassPair nameClassPair) {
-            SearchResult searchResult = (SearchResult) nameClassPair;
-            Object object = searchResult.getObject();
+            Binding binding = (Binding) nameClassPair;
+            Object object = binding.getObject();
             if (object == null) {
                 throw new EntryNotFoundException(
                         "SearchResult did not contain any object.");

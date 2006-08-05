@@ -33,12 +33,39 @@ public class LdapTemplateListITest extends
 
     private LdapTemplate tested;
 
+    private AttributeCheckContextMapper contextMapper;
+
     private static final String BASE_STRING = "dc=jayway,dc=se";
 
     private static final Name BASE_NAME = new DistinguishedName(BASE_STRING);
 
+    private static final String[] ALL_ATTRIBUTES = { "cn", "sn", "description",
+            "telephoneNumber" };
+
+    private static final String[] ALL_VALUES = { "Some Person", "Person",
+            "Sweden, Company2, Some Person", "Some Person Phone" };
+
     protected String[] getConfigLocations() {
         return new String[] { "/conf/ldapTemplateTestContext.xml" };
+    }
+
+    protected void onSetUp() throws Exception {
+        super.onSetUp();
+
+        contextMapper = new AttributeCheckContextMapper();
+    }
+
+    protected void onTearDown() throws Exception {
+        super.onTearDown();
+
+        contextMapper = null;
+    }
+
+    public void testListBindings_ContextMapper() {
+        contextMapper.setExpectedAttributes(ALL_ATTRIBUTES);
+        contextMapper.setExpectedValues(ALL_VALUES);
+        List list = tested.listBindings("ou=company2,c=Sweden," + BASE_STRING, contextMapper);
+        assertEquals(1, list.size());
     }
 
     public void testList() {

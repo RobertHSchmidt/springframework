@@ -16,20 +16,23 @@
 
 package org.springframework.ldap;
 
+import javax.naming.Binding;
 import javax.naming.Name;
+import javax.naming.directory.SearchResult;
 
 /**
  * Responsible for mapping from LDAP Contexts to beans.
  * 
- * @see org.springframework.ldap.LdapTemplate#search(Name, String, ContextMapper)
+ * @see org.springframework.ldap.LdapTemplate#search(Name, String,
+ *      ContextMapper)
  * 
  * @author Mattias Arthursson
  */
 public interface ContextMapper {
     /**
      * Map a single LDAP Context to an object. The supplied Object
-     * <code>ctx</code> is the object from a single <code>SearchResult</code>
-     * or a lookup operation.
+     * <code>ctx</code> is the object from a single {@link SearchResult},
+     * {@link Binding}, or a lookup operation.
      * 
      * @param ctx
      *            the context to map to an object.
