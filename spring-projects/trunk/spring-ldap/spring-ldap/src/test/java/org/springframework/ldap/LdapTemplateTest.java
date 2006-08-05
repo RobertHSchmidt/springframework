@@ -1277,15 +1277,55 @@ public class LdapTemplateTest extends TestCase {
                 .hasMore(), false);
         namingEnumerationMock.close();
 
-        dirContextMock.listBindings(new DistinguishedName(DEFAULT_BASE_STRING));
+        DistinguishedName listDn = new DistinguishedName(DEFAULT_BASE_STRING);
+        dirContextMock.listBindings(listDn);
         dirContextControl.setReturnValue(namingEnumerationMock);
-        dirContextMock.listBindings(new DistinguishedName(
-                "cn=Some name, o=example.com"));
+        DistinguishedName subListDn = new DistinguishedName(
+                "cn=Some name, o=example.com");
+        dirContextMock.listBindings(subListDn);
         dirContextControl.setReturnValue(namingEnumerationMock);
 
-        dirContextMock.unbind(new DistinguishedName(
-                "cn=Some name, o=example.com"));
-        dirContextMock.unbind(new DistinguishedName(DEFAULT_BASE_STRING));
+        dirContextMock.unbind(subListDn);
+        dirContextMock.unbind(listDn);
+        dirContextMock.close();
+        
+        // Caused by creating a DistinguishedName from a Name
+        nameControl.expectAndReturn(nameMock.size(), 1, 2);
+        nameControl.expectAndReturn(nameMock.get(0), "o=example.com");
+        
+        replay();
+
+        tested.unbind(nameMock, true);
+
+        verify();
+    }
+
+    public void testUnbindRecursive_String() throws Exception {
+        expectGetReadWriteContext();
+
+        namingEnumerationControl.expectAndReturn(namingEnumerationMock
+                .hasMore(), true);
+        Binding binding = new Binding("cn=Some name", null);
+        namingEnumerationControl.expectAndReturn(namingEnumerationMock.next(),
+                binding);
+        namingEnumerationControl.expectAndReturn(namingEnumerationMock
+                .hasMore(), false);
+        namingEnumerationMock.close();
+
+        namingEnumerationControl.expectAndReturn(namingEnumerationMock
+                .hasMore(), false);
+        namingEnumerationMock.close();
+
+        DistinguishedName listDn = new DistinguishedName(DEFAULT_BASE_STRING);
+        dirContextMock.listBindings(listDn);
+        dirContextControl.setReturnValue(namingEnumerationMock);
+        DistinguishedName subListDn = new DistinguishedName(
+                "cn=Some name, o=example.com");
+        dirContextMock.listBindings(subListDn);
+        dirContextControl.setReturnValue(namingEnumerationMock);
+
+        dirContextMock.unbind(subListDn);
+        dirContextMock.unbind(listDn);
         dirContextMock.close();
         replay();
 

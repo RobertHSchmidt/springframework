@@ -18,12 +18,8 @@ package org.springframework.ldap;
 import java.util.List;
 
 import javax.naming.Name;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 
-import org.springframework.ldap.support.DirContextAdapter;
 import org.springframework.ldap.support.DistinguishedName;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
@@ -178,94 +174,5 @@ public class LdapTemplateSearchResultITest extends
 
     public void setTested(LdapTemplate tested) {
         this.tested = tested;
-    }
-
-    /**
-     * Dummy AttributesMapper for testing purposes to check that the received
-     * Attributes are the expected ones.
-     * 
-     * @author Mattias Arthursson
-     */
-    private class AttributeCheckAttributesMapper implements AttributesMapper {
-        private String[] expectedAttributes = new String[0];
-
-        private String[] expectedValues = new String[0];;
-
-        private String[] absentAttributes = new String[0];;
-
-        public Object mapFromAttributes(Attributes attributes)
-                throws NamingException {
-            assertEquals("Values and attributes need to have the same length ",
-                    expectedAttributes.length, expectedValues.length);
-            for (int i = 0; i < expectedAttributes.length; i++) {
-                Attribute attribute = attributes.get(expectedAttributes[i]);
-                assertNotNull("Attribute " + expectedAttributes[i]
-                        + " was not present", attribute);
-                assertEquals(expectedValues[i], attribute.get());
-            }
-
-            for (int i = 0; i < absentAttributes.length; i++) {
-                assertNull(attributes.get(absentAttributes[i]));
-            }
-
-            return null;
-        }
-
-        public void setAbsentAttributes(String[] absentAttributes) {
-            this.absentAttributes = absentAttributes;
-        }
-
-        public void setExpectedAttributes(String[] expectedAttributes) {
-            this.expectedAttributes = expectedAttributes;
-        }
-
-        public void setExpectedValues(String[] expectedValues) {
-            this.expectedValues = expectedValues;
-        }
-    }
-
-    /**
-     * Dummy ContextMapper for testing purposes to check that the received
-     * Attributes are the expected ones.
-     * 
-     * @author Mattias Arthursson
-     */
-    private class AttributeCheckContextMapper implements ContextMapper {
-        private String[] expectedAttributes = new String[0];
-
-        private String[] expectedValues = new String[0];;
-
-        private String[] absentAttributes = new String[0];;
-
-        public Object mapFromContext(Object ctx) {
-            DirContextAdapter adapter = (DirContextAdapter) ctx;
-            assertEquals("Values and attributes need to have the same length ",
-                    expectedAttributes.length, expectedValues.length);
-            for (int i = 0; i < expectedAttributes.length; i++) {
-                String attributeValue = adapter
-                        .getStringAttribute(expectedAttributes[i]);
-                assertNotNull("Attribute " + expectedAttributes[i]
-                        + " was not present", attributeValue);
-                assertEquals(expectedValues[i], attributeValue);
-            }
-
-            for (int i = 0; i < absentAttributes.length; i++) {
-                assertNull(adapter.getStringAttribute(absentAttributes[i]));
-            }
-
-            return null;
-        }
-
-        public void setAbsentAttributes(String[] absentAttributes) {
-            this.absentAttributes = absentAttributes;
-        }
-
-        public void setExpectedAttributes(String[] expectedAttributes) {
-            this.expectedAttributes = expectedAttributes;
-        }
-
-        public void setExpectedValues(String[] expectedValues) {
-            this.expectedValues = expectedValues;
-        }
     }
 }

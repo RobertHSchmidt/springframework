@@ -62,6 +62,10 @@ public class LdapTemplateListTest extends TestCase {
 
     private NameClassPairCallbackHandler handlerMock;
 
+    private MockControl contextMapperControl;
+
+    private ContextMapper contextMapperMock;
+
     private MockControl exceptionTranslatorControl;
 
     private NamingExceptionTranslator exceptionTranslatorMock;
@@ -94,6 +98,9 @@ public class LdapTemplateListTest extends TestCase {
                 .createControl(NameClassPairCallbackHandler.class);
         handlerMock = (NameClassPairCallbackHandler) handlerControl.getMock();
 
+        contextMapperControl = MockControl.createControl(ContextMapper.class);
+        contextMapperMock = (ContextMapper) contextMapperControl.getMock();
+
         exceptionTranslatorControl = MockControl
                 .createControl(NamingExceptionTranslator.class);
         exceptionTranslatorMock = (NamingExceptionTranslator) exceptionTranslatorControl
@@ -121,6 +128,9 @@ public class LdapTemplateListTest extends TestCase {
         handlerControl = null;
         handlerMock = null;
 
+        contextMapperControl = null;
+        contextMapperMock = null;
+
         exceptionTranslatorControl = null;
         exceptionTranslatorMock = null;
     }
@@ -131,6 +141,7 @@ public class LdapTemplateListTest extends TestCase {
         namingEnumerationControl.replay();
         nameControl.replay();
         handlerControl.replay();
+        contextMapperControl.replay();
         exceptionTranslatorControl.replay();
     }
 
@@ -140,6 +151,7 @@ public class LdapTemplateListTest extends TestCase {
         namingEnumerationControl.verify();
         nameControl.verify();
         handlerControl.verify();
+        contextMapperControl.verify();
         exceptionTranslatorControl.verify();
     }
 
@@ -373,5 +385,55 @@ public class LdapTemplateListTest extends TestCase {
         assertNotNull(list);
         assertEquals(1, list.size());
         assertSame(NAME, list.get(0));
+    }
+
+    public void testListBindings_ContextMapper() throws NamingException {
+        expectGetReadOnlyContext();
+
+        Object expectedObject = new Object();
+        Binding listResult = new Binding("", expectedObject);
+
+        setupStringListBindingsAndNamingEnumeration(listResult);
+
+        Object expectedResult = expectedObject;
+        contextMapperControl.expectAndReturn(contextMapperMock
+                .mapFromContext(expectedObject), expectedResult);
+
+        dirContextMock.close();
+
+        replay();
+
+        List list = tested.listBindings(NAME, contextMapperMock);
+
+        verify();
+
+        assertNotNull(list);
+        assertEquals(1, list.size());
+        assertSame(expectedResult, list.get(0));
+    }
+
+    public void testListBindings_Name_ContextMapper() throws NamingException {
+        expectGetReadOnlyContext();
+
+        Object expectedObject = new Object();
+        Binding listResult = new Binding("", expectedObject);
+
+        setupListBindingsAndNamingEnumeration(listResult);
+
+        Object expectedResult = expectedObject;
+        contextMapperControl.expectAndReturn(contextMapperMock
+                .mapFromContext(expectedObject), expectedResult);
+
+        dirContextMock.close();
+
+        replay();
+
+        List list = tested.listBindings(nameMock, contextMapperMock);
+
+        verify();
+
+        assertNotNull(list);
+        assertEquals(1, list.size());
+        assertSame(expectedResult, list.get(0));
     }
 }

@@ -47,9 +47,9 @@ public interface LdapOperations {
      * NamingExceptionTranslator.
      * 
      * @param se
-     *            the SearchExecutor to use for performing the actual search.
+     *            The SearchExecutor to use for performing the actual search.
      * @param handler
-     *            the NameClassPairCallbackHandler to which each found entry
+     *            The NameClassPairCallbackHandler to which each found entry
      *            will be passed.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -68,7 +68,7 @@ public interface LdapOperations {
      * the overloaded search methods for this.
      * 
      * @param ce
-     *            the ContextExecutor to which the actual operation on the
+     *            The ContextExecutor to which the actual operation on the
      *            DirContext will be delegated.
      * @return the result from the ContextExecutor's operation.
      * @throws DataAccessException
@@ -83,7 +83,7 @@ public interface LdapOperations {
      * exceptions and closing the context afterwards.
      * 
      * @param ce
-     *            the ContextExecutor to which the actual operation on the
+     *            The ContextExecutor to which the actual operation on the
      *            DirContext will be delegated.
      * @return the result from the ContextExecutor's operation.
      * @throws DataAccessException
@@ -101,11 +101,11 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param controls
-     *            the SearchControls to use in the search.
+     *            The SearchControls to use in the search.
      * @param handler
-     *            the NameClassPairCallbackHandler to supply the SearchResults
+     *            The NameClassPairCallbackHandler to supply the SearchResults
      *            to.
      */
     public void search(Name base, String filter, SearchControls controls,
@@ -120,11 +120,11 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param controls
-     *            the SearchControls to use in the search.
+     *            The SearchControls to use in the search.
      * @param handler
-     *            the NameClassPairCallbackHandler to supply the SearchResults
+     *            The NameClassPairCallbackHandler to supply the SearchResults
      *            to.
      */
     public void search(String base, String filter, SearchControls controls,
@@ -138,13 +138,13 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param searchScope
-     *            the search scope to set in SearchControls.
+     *            The search scope to set in SearchControls.
      * @param returningObjFlag
      *            whether the bound object should be returned in search results.
      * @param handler
-     *            the NameClassPairCallbackHandler to supply the SearchResults
+     *            The NameClassPairCallbackHandler to supply the SearchResults
      *            to.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -163,13 +163,13 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param searchScope
-     *            the search scope to set in SearchControls.
+     *            The search scope to set in SearchControls.
      * @param returningObjFlag
      *            whether the bound object should be returned in search results.
      * @param handler
-     *            the NameClassPairCallbackHandler to supply the SearchResults
+     *            The NameClassPairCallbackHandler to supply the SearchResults
      *            to.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -189,9 +189,9 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param handler
-     *            the NameClassPairCallbackHandler to supply the SearchResults
+     *            The NameClassPairCallbackHandler to supply the SearchResults
      *            to.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -210,9 +210,9 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param handler
-     *            the NameClassPairCallbackHandler to supply the SearchResults
+     *            The NameClassPairCallbackHandler to supply the SearchResults
      *            to.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -230,13 +230,13 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param searchScope
-     *            the search scope to set in SearchControls.
+     *            The search scope to set in SearchControls.
      * @param attrs
-     *            the attributes to return, null means returning all attributes.
+     *            The attributes to return, null means returning all attributes.
      * @param mapper
-     *            the AttributesMapper to use for translating each entry.
+     *            The AttributesMapper to use for translating each entry.
      * @return a List containing all entries received from the AttributesMapper.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -254,13 +254,13 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param searchScope
-     *            the search scope to set in SearchControls.
+     *            The search scope to set in SearchControls.
      * @param attrs
-     *            the attributes to return, null means returning all attributes.
+     *            The attributes to return, null means returning all attributes.
      * @param mapper
-     *            the AttributesMapper to use for translating each entry.
+     *            The AttributesMapper to use for translating each entry.
      * @return a List containing all entries received from the AttributesMapper.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -277,11 +277,11 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param searchScope
-     *            the search scope to set in SearchControls.
+     *            The search scope to set in SearchControls.
      * @param mapper
-     *            the AttributesMapper to use for translating each entry.
+     *            The AttributesMapper to use for translating each entry.
      * @return a List containing all entries received from the AttributesMapper.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -298,11 +298,11 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param searchScope
-     *            the search scope to set in SearchControls.
+     *            The search scope to set in SearchControls.
      * @param mapper
-     *            the AttributesMapper to use for translating each entry.
+     *            The AttributesMapper to use for translating each entry.
      * @return a List containing all entries received from the AttributesMapper.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -320,9 +320,9 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param mapper
-     *            the AttributesMapper to use for translating each entry.
+     *            The AttributesMapper to use for translating each entry.
      * @return a List containing all entries received from the AttributesMapper.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -340,9 +340,9 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param mapper
-     *            the AttributesMapper to use for translating each entry.
+     *            The AttributesMapper to use for translating each entry.
      * @return a List containing all entries received from the AttributesMapper.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -360,13 +360,13 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param searchScope
-     *            the search scope to set in SearchControls.
+     *            The search scope to set in SearchControls.
      * @param attrs
-     *            the attributes to return, null means all attributes.
+     *            The attributes to return, null means all attributes.
      * @param mapper
-     *            the ContextMapper to use for translating each entry.
+     *            The ContextMapper to use for translating each entry.
      * @return a List containing all entries received from the ContextMapper.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -384,13 +384,13 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param searchScope
-     *            the search scope to set in SearchControls.
+     *            The search scope to set in SearchControls.
      * @param attrs
-     *            the attributes to return, null means all attributes.
+     *            The attributes to return, null means all attributes.
      * @param mapper
-     *            the ContextMapper to use for translating each entry.
+     *            The ContextMapper to use for translating each entry.
      * @return a List containing all entries received from the ContextMapper.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -407,11 +407,11 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param searchScope
-     *            the search scope to set in SearchControls.
+     *            The search scope to set in SearchControls.
      * @param mapper
-     *            the ContextMapper to use for translating each entry.
+     *            The ContextMapper to use for translating each entry.
      * @return a List containing all entries received from the ContextMapper.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -429,11 +429,11 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param searchScope
-     *            the search scope to set in SearchControls.
+     *            The search scope to set in SearchControls.
      * @param mapper
-     *            the ContextMapper to use for translating each entry.
+     *            The ContextMapper to use for translating each entry.
      * @return a List containing all entries received from the ContextMapper.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -451,9 +451,9 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param mapper
-     *            the ContextMapper to use for translating each entry.
+     *            The ContextMapper to use for translating each entry.
      * @return a List containing all entries received from the ContextMapper.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -471,9 +471,9 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param mapper
-     *            the ContextMapper to use for translating each entry.
+     *            The ContextMapper to use for translating each entry.
      * @return a List containing all entries received from the ContextMapper.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -490,14 +490,14 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param controls
-     *            the SearchControls to use in the search. If the returnObjFlag
+     *            The SearchControls to use in the search. If the returnObjFlag
      *            is not set in the SearchControls, this method will set it
      *            automatically, as this is required for the ContextMapper to
      *            work.
      * @param mapper
-     *            the ContextMapper to use for translating each entry.
+     *            The ContextMapper to use for translating each entry.
      * @return a List containing all entries received from the ContextMapper.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -514,14 +514,14 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param controls
-     *            the SearchControls to use in the search. If the returnObjFlag
+     *            The SearchControls to use in the search. If the returnObjFlag
      *            is not set in the SearchControls, this method will set it
      *            automatically, as this is required for the ContextMapper to
      *            work.
      * @param mapper
-     *            the ContextMapper to use for translating each entry.
+     *            The ContextMapper to use for translating each entry.
      * @return a List containing all entries received from the ContextMapper.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -538,11 +538,11 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param controls
-     *            the SearchControls to use in the search.
+     *            The SearchControls to use in the search.
      * @param mapper
-     *            the AttributesMapper to use for translating each entry.
+     *            The AttributesMapper to use for translating each entry.
      * @return a List containing all entries received from the ContextMapper.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -559,14 +559,14 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the search should begin.
      * @param filter
-     *            the filter to use in the search.
+     *            The filter to use in the search.
      * @param controls
-     *            the SearchControls to use in the search. If the returnObjFlag
+     *            The SearchControls to use in the search. If the returnObjFlag
      *            is not set in the SearchControls, this method will set it
      *            automatically, as this is required for the ContextMapper to
      *            work.
      * @param mapper
-     *            the AttributesMapper to use for translating each entry.
+     *            The AttributesMapper to use for translating each entry.
      * @return a List containing all entries received from the ContextMapper.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
@@ -584,8 +584,12 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the list should be performed.
      * @param handler
-     *            the {@link NameClassPairCallbackHandler} to supply each
+     *            The NameClassPairCallbackHandler to supply each
      *            {@link NameClassPair} to.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
      */
     public void list(String base, NameClassPairCallbackHandler handler);
 
@@ -597,8 +601,12 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the list should be performed.
      * @param handler
-     *            the {@link NameClassPairCallbackHandler} to supply each
+     *            The NameClassPairCallbackHandler to supply each
      *            {@link NameClassPair} to.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
      */
     public void list(Name base, NameClassPairCallbackHandler handler);
 
@@ -611,9 +619,13 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the list should be performed.
      * @param mapper
-     *            the {@link NameClassPairMapper} to supply each
-     *            {@link NameClassPair} to.
+     *            The NameClassPairMapper to supply each {@link NameClassPair}
+     *            to.
      * @return a List containing the Objects returned from the Mapper.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
      */
     public List list(String base, NameClassPairMapper mapper);
 
@@ -626,9 +638,13 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the list should be performed.
      * @param mapper
-     *            the {@link NameClassPairMapper} to supply each
-     *            {@link NameClassPair} to.
+     *            The NameClassPairMapper to supply each {@link NameClassPair}
+     *            to.
      * @return a List containing the Objects returned from the Mapper.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
      */
     public List list(Name base, NameClassPairMapper mapper);
 
@@ -638,8 +654,12 @@ public interface LdapOperations {
      * 
      * @param base
      *            The base DN where the list should be performed.
-     * @return a List containing the names of all the contexts bound to the
-     *         given <code> base.
+     * @return a List containing the names of all the contexts bound to
+     *         <code>base</code>.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
      */
     public List list(String base);
 
@@ -649,8 +669,12 @@ public interface LdapOperations {
      * 
      * @param base
      *            The base DN where the list should be performed.
-     * @return a List containing the names of all the contexts bound to the
-     *         given <code> base.
+     * @return a List containing the names of all the contexts bound to
+     *         <code>base</code>.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
      */
     public List list(Name base);
 
@@ -662,8 +686,12 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the list should be performed.
      * @param handler
-     *            the {@link NameClassPairCallbackHandler} to supply each
-     *            {@link NameClassPair} to.
+     *            The NameClassPairCallbackHandler to supply each
+     *            {@link Binding} to.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
      */
     public void listBindings(final String base,
             NameClassPairCallbackHandler handler);
@@ -676,8 +704,12 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the list should be performed.
      * @param handler
-     *            the {@link NameClassPairCallbackHandler} to supply each
+     *            The NameClassPairCallbackHandler to supply each
      *            {@link Binding} to.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
      */
     public void listBindings(final Name base,
             NameClassPairCallbackHandler handler);
@@ -690,9 +722,12 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the list should be performed.
      * @param mapper
-     *            the {@link NameClassPairMapper} to supply each {@link Binding}
-     *            to.
+     *            The NameClassPairMapper to supply each {@link Binding} to.
      * @return a List containing the Objects returned from the Mapper.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
      */
     public List listBindings(String base, NameClassPairMapper mapper);
 
@@ -704,9 +739,12 @@ public interface LdapOperations {
      * @param base
      *            The base DN where the list should be performed.
      * @param mapper
-     *            the {@link NameClassPairMapper} to supply each {@link Binding}
-     *            to.
+     *            The NameClassPairMapper to supply each {@link Binding} to.
      * @return a List containing the Objects returned from the Mapper.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
      */
     public List listBindings(Name base, NameClassPairMapper mapper);
 
@@ -716,8 +754,12 @@ public interface LdapOperations {
      * 
      * @param base
      *            The base DN where the list should be performed.
-     * @return a List containing the names of all the contexts bound to the
-     *         given <code> base.
+     * @return a List containing the names of all the contexts bound to
+     *         <code>base</code>.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
      */
     public List listBindings(final String base);
 
@@ -727,10 +769,48 @@ public interface LdapOperations {
      * 
      * @param base
      *            The base DN where the list should be performed.
-     * @return a List containing the names of all the contexts bound to the
-     *         given <code> base.
+     * @return a List containing the names of all the contexts bound to
+     *         <code>base</code>.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
      */
     public List listBindings(final Name base);
+
+    /**
+     * Perform a non-recursive listing of the contexts bound to the given
+     * <code>base</code>. The Object returned in each {@link Binding} is
+     * supplied to the specified ContextMapper.
+     * 
+     * @param base
+     *            The base DN where the list should be performed.
+     * @param mapper
+     *            The ContextMapper to use for mapping the found object.
+     * @return a List containing all entries received from the ContextMapper.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
+     */
+    public List listBindings(String base, ContextMapper mapper);
+
+    /**
+     * Perform a non-recursive listing of the contexts bound to the given
+     * <code>base</code>. The Object returned in each {@link Binding} is
+     * supplied to the specified ContextMapper.
+     * 
+     * @param base
+     *            The base DN where the list should be performed.
+     * @param mapper
+     *            The ContextMapper to use for mapping the found object.
+     * @return a List containing all entries received from the ContextMapper.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
+     */
+    public List listBindings(Name base, ContextMapper mapper);
 
     /**
      * Lookup the supplied DN and return the found object. <b>WARNING</b>: This
@@ -741,7 +821,7 @@ public interface LdapOperations {
      * after you finished working with it.
      * 
      * @param dn
-     *            the distinguished name of the object to find.
+     *            The distinguished name of the object to find.
      * @return the found object.
      * @throws DataAccessException
      *             if any error occurs.
@@ -757,7 +837,7 @@ public interface LdapOperations {
      * after you finished working with it.
      * 
      * @param dn
-     *            the distinguished name of the object to find.
+     *            The distinguished name of the object to find.
      * @return the found object.
      * @throws DataAccessException
      *             if any error occurs.
@@ -769,9 +849,9 @@ public interface LdapOperations {
      * automatically pass them to an AttributesMapper.
      * 
      * @param dn
-     *            the distinguished name to find.
+     *            The distinguished name to find.
      * @param mapper
-     *            the AttributesMapper to use for mapping the found object.
+     *            The AttributesMapper to use for mapping the found object.
      * @return the object returned from the mapper.
      * @throws DataAccessException
      *             if any error occurs.
@@ -784,9 +864,9 @@ public interface LdapOperations {
      * automatically pass them to an AttributesMapper.
      * 
      * @param dn
-     *            the distinguished name to find.
+     *            The distinguished name to find.
      * @param mapper
-     *            the AttributesMapper to use for mapping the found object.
+     *            The AttributesMapper to use for mapping the found object.
      * @return the object returned from the mapper.
      * @throws DataAccessException
      *             if any error occurs.
@@ -796,12 +876,12 @@ public interface LdapOperations {
 
     /**
      * Convenience method to lookup a specified DN and automatically pass the
-     * found objectt to a ContextMapper.
+     * found object to a ContextMapper.
      * 
      * @param dn
-     *            the distinguished name to find.
+     *            The distinguished name to find.
      * @param mapper
-     *            the ContextMapper to use for mapping the found object.
+     *            The ContextMapper to use for mapping the found object.
      * @return the object returned from the mapper.
      * @throws DataAccessException
      *             if any error occurs.
@@ -811,12 +891,12 @@ public interface LdapOperations {
 
     /**
      * Convenience method to lookup a specified DN and automatically pass the
-     * found objectt to a ContextMapper.
+     * found object to a ContextMapper.
      * 
      * @param dn
-     *            the distinguished name to find.
+     *            The distinguished name to find.
      * @param mapper
-     *            the ContextMapper to use for mapping the found object.
+     *            The ContextMapper to use for mapping the found object.
      * @return the object returned from the mapper.
      * @throws DataAccessException
      *             if any error occurs.
@@ -830,7 +910,7 @@ public interface LdapOperations {
      * @param dn
      *            The distinguished name of the node to modify.
      * @param mods
-     *            the modifications to perform.
+     *            The modifications to perform.
      * @throws DataAccessException
      *             if any error occurs.
      */
@@ -843,7 +923,7 @@ public interface LdapOperations {
      * @param dn
      *            The distinguished name of the node to modify.
      * @param mods
-     *            the modifications to perform.
+     *            The modifications to perform.
      * @throws DataAccessException
      *             if any error occurs.
      */
@@ -855,11 +935,11 @@ public interface LdapOperations {
      * dn.
      * 
      * @param dn
-     *            the distinguished name to bind the object and attributes to.
+     *            The distinguished name to bind the object and attributes to.
      * @param obj
-     *            the object to bind, may be null.
+     *            The object to bind, may be null.
      * @param attributes
-     *            the attributes to bind.
+     *            The attributes to bind.
      * @throws DataAccessException
      *             if any error occurs.
      */
@@ -871,11 +951,11 @@ public interface LdapOperations {
      * dn.
      * 
      * @param dn
-     *            the distinguished name to bind the object and attributes to.
+     *            The distinguished name to bind the object and attributes to.
      * @param obj
-     *            the object to bind, may be null.
+     *            The object to bind, may be null.
      * @param attributes
-     *            the attributes to bind.
+     *            The attributes to bind.
      * @throws DataAccessException
      *             if any error occurs.
      */
@@ -886,7 +966,7 @@ public interface LdapOperations {
      * Unbind the specified distinguished name.
      * 
      * @param dn
-     *            the distinguished name to unbind.
+     *            The distinguished name to unbind.
      * @throws DataAccessException
      *             if any error occurs.
      */
@@ -896,7 +976,7 @@ public interface LdapOperations {
      * Unbind the specified distinguished name.
      * 
      * @param dn
-     *            the distinguished name to unbind.
+     *            The distinguished name to unbind.
      * @throws DataAccessException
      *             if any error occurs.
      */
@@ -906,7 +986,7 @@ public interface LdapOperations {
      * Unbind the specified distinguished name.
      * 
      * @param dn
-     *            the distinguished name to unbind.
+     *            The distinguished name to unbind.
      * @param recursive
      *            whether to unbind all subcontexts as well.
      * @throws DataAccessException
@@ -918,7 +998,7 @@ public interface LdapOperations {
      * Unbind the specified distinguished name.
      * 
      * @param dn
-     *            the distinguished name to unbind.
+     *            The distinguished name to unbind.
      * @param recursive
      *            whether to unbind all subcontexts as well.
      * @throws DataAccessException
@@ -932,11 +1012,11 @@ public interface LdapOperations {
      * context already exists.
      * 
      * @param dn
-     *            the distinguished name to rebind.
+     *            The distinguished name to rebind.
      * @param obj
-     *            the object to bind to the DN.
+     *            The object to bind to the DN.
      * @param attributes
-     *            the attributes to bind.
+     *            The attributes to bind.
      */
     public void rebind(Name dn, Object obj, Attributes attributes)
             throws DataAccessException;
@@ -947,11 +1027,11 @@ public interface LdapOperations {
      * context already exists.
      * 
      * @param dn
-     *            the distinguished name to rebind.
+     *            The distinguished name to rebind.
      * @param obj
-     *            the object to bind to the DN.
+     *            The object to bind to the DN.
      * @param attributes
-     *            the attributes to bind.
+     *            The attributes to bind.
      */
     public void rebind(String dn, Object obj, Attributes attributes)
             throws DataAccessException;
@@ -963,9 +1043,9 @@ public interface LdapOperations {
      * contexts of the old name are not changed.
      * 
      * @param oldDn
-     *            the name of the existing binding; may not be empty
+     *            The name of the existing binding; may not be empty
      * @param newDn
-     *            the name of the new binding; may not be empty
+     *            The name of the new binding; may not be empty
      * @throws DataIntegrityViolationException
      *             if newDn is already bound
      */
@@ -977,9 +1057,9 @@ public interface LdapOperations {
      * name. See {@link #rename(Name, Name)} for details.
      * 
      * @param oldDn
-     *            the name of the existing binding; may not be empty
+     *            The name of the existing binding; may not be empty
      * @param newDn
-     *            the name of the new binding; may not be empty
+     *            The name of the new binding; may not be empty
      * @throws DataIntegrityViolationException
      *             if newDn is already bound
      */
