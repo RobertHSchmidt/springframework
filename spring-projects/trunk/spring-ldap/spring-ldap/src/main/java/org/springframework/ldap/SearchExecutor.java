@@ -28,7 +28,7 @@ import javax.naming.directory.DirContext;
  * </pre>
  * 
  * @see org.springframework.ldap.LdapTemplate#search(SearchExecutor,
- *      SearchResultCallbackHandler)
+ *      NameClassPairCallbackHandler)
  * 
  * @author Mattias Arthursson
  */
