@@ -21,7 +21,6 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 
-
 import org.springframework.ldap.support.LdapContextSource;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
@@ -48,8 +47,8 @@ public class LdapContextSourcelITest extends
             Hashtable environment = ctx.getEnvironment();
             assertTrue(environment
                     .containsKey(LdapContextSource.SUN_LDAP_POOLING_FLAG));
-            assertFalse(environment.containsKey(Context.SECURITY_PRINCIPAL));
-            assertFalse(environment.containsKey(Context.SECURITY_CREDENTIALS));
+            assertTrue(environment.containsKey(Context.SECURITY_PRINCIPAL));
+            assertTrue(environment.containsKey(Context.SECURITY_CREDENTIALS));
         } finally {
             // Always clean up.
             if (ctx != null) {

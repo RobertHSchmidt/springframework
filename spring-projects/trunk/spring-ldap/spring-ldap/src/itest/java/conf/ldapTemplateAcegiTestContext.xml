@@ -18,7 +18,6 @@
 			<bean
 				class="org.springframework.ldap.support.acegi.AcegiAuthenticationSource" />
 		</property>
-		<property name="authenticatedReadOnly" value="true" />
 		<property name="dirObjectFactory"
 			value="org.springframework.ldap.support.DefaultDirObjectFactory" />
 	</bean>
