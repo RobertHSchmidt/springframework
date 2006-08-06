@@ -109,6 +109,7 @@ public class LdapRdn {
     /**
      * @param rdn
      *            The ldap rdn to parse
+     * @throws BadLdapGrammarException if any error occurs parsing the rdn.
      */
     protected void parseLdap(String rdn) throws BadLdapGrammarException {
 

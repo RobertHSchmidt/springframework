@@ -22,8 +22,8 @@ import org.apache.commons.lang.Validate;
  * Decorator filter for NOT. (!<i>filter</i> )
  * 
  * <pre>
- *   Filter filter = new NotFilter(new EqualsFilter(&quot;cn&quot;, &quot;foo&quot;);
- *   System.out.println(filter.ecode());
+ *    Filter filter = new NotFilter(new EqualsFilter(&quot;cn&quot;, &quot;foo&quot;);
+ *    System.out.println(filter.ecode());
  * </pre>
  * 
  * would resut in: <code>(!(cn=foo))</code>
@@ -37,7 +37,10 @@ public class NotFilter extends AbstractFilter {
     static private final int HASH = "!".hashCode();
 
     /**
+     * Create a filter that negates the outcome of the given <code>filter</code>.
      * 
+     * @param filter
+     *            The filter that should be negated.
      */
     public NotFilter(Filter filter) {
         Validate.notNull(filter);
