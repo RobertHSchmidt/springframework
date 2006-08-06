@@ -145,6 +145,8 @@ public interface DirContextOperations extends DirContext,
     /**
      * Returns DN, for example <code>uid=some.user,ou=People,ou=EU</code>.
      * 
+     * @return The distinguished name of the current context.
+     * 
      * @see DirContextAdapter#getNameInNamespace()
      */
     public Name getDn();

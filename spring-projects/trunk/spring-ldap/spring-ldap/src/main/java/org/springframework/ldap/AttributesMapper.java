@@ -34,6 +34,7 @@ public interface AttributesMapper {
      * @param attributes
      *            attributes from a SearchResult.
      * @return an object built from the attributes.
+     * @throws NamingException if any error occurs mapping the attributes
      */
     public Object mapFromAttributes(Attributes attributes)
             throws NamingException;

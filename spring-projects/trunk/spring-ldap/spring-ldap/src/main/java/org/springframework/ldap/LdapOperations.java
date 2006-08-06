@@ -505,7 +505,7 @@ public interface LdapOperations {
      *             found.
      */
     public List search(String base, String filter, SearchControls controls,
-            ContextMapper mapper);
+            ContextMapper mapper) throws DataAccessException;
 
     /**
      * Search for all objects matching the supplied filter. The Object returned
@@ -529,7 +529,7 @@ public interface LdapOperations {
      *             found.
      */
     public List search(Name base, String filter, SearchControls controls,
-            ContextMapper mapper);
+            ContextMapper mapper) throws DataAccessException;
 
     /**
      * Search for all objects matching the supplied filter. The Object returned
@@ -550,7 +550,7 @@ public interface LdapOperations {
      *             found.
      */
     public List search(String base, String filter, SearchControls controls,
-            AttributesMapper mapper);
+            AttributesMapper mapper) throws DataAccessException;
 
     /**
      * Search for all objects matching the supplied filter. The Object returned
@@ -574,7 +574,7 @@ public interface LdapOperations {
      *             found.
      */
     public List search(Name base, String filter, SearchControls controls,
-            AttributesMapper mapper);
+            AttributesMapper mapper) throws DataAccessException;
 
     /**
      * Perform a non-recursive listing of the contexts bound to the given
@@ -591,7 +591,7 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public void list(String base, NameClassPairCallbackHandler handler);
+    public void list(String base, NameClassPairCallbackHandler handler) throws DataAccessException;
 
     /**
      * Perform a non-recursive listing of the contexts bound to the given
@@ -608,7 +608,7 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public void list(Name base, NameClassPairCallbackHandler handler);
+    public void list(Name base, NameClassPairCallbackHandler handler) throws DataAccessException;
 
     /**
      * Perform a non-recursive listing of the contexts bound to the given
@@ -627,7 +627,7 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public List list(String base, NameClassPairMapper mapper);
+    public List list(String base, NameClassPairMapper mapper) throws DataAccessException;
 
     /**
      * Perform a non-recursive listing of the contexts bound to the given
@@ -646,7 +646,7 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public List list(Name base, NameClassPairMapper mapper);
+    public List list(Name base, NameClassPairMapper mapper) throws DataAccessException;
 
     /**
      * Perform a non-recursive listing of the contexts bound to the given
@@ -661,7 +661,7 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public List list(String base);
+    public List list(String base) throws DataAccessException;
 
     /**
      * Perform a non-recursive listing of the contexts bound to the given
@@ -676,7 +676,7 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public List list(Name base);
+    public List list(Name base) throws DataAccessException;
 
     /**
      * Perform a non-recursive listing of the contexts bound to the given
@@ -694,7 +694,7 @@ public interface LdapOperations {
      *             found.
      */
     public void listBindings(final String base,
-            NameClassPairCallbackHandler handler);
+            NameClassPairCallbackHandler handler) throws DataAccessException;
 
     /**
      * Perform a non-recursive listing of the contexts bound to the given
@@ -712,7 +712,7 @@ public interface LdapOperations {
      *             found.
      */
     public void listBindings(final Name base,
-            NameClassPairCallbackHandler handler);
+            NameClassPairCallbackHandler handler) throws DataAccessException;
 
     /**
      * Perform a non-recursive listing of the contexts bound to the given
@@ -729,7 +729,7 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public List listBindings(String base, NameClassPairMapper mapper);
+    public List listBindings(String base, NameClassPairMapper mapper) throws DataAccessException;
 
     /**
      * Perform a non-recursive listing of the contexts bound to the given
@@ -746,7 +746,7 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public List listBindings(Name base, NameClassPairMapper mapper);
+    public List listBindings(Name base, NameClassPairMapper mapper) throws DataAccessException;
 
     /**
      * Perform a non-recursive listing of the contexts bound to the given
@@ -761,7 +761,7 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public List listBindings(final String base);
+    public List listBindings(final String base) throws DataAccessException;
 
     /**
      * Perform a non-recursive listing of the contexts bound to the given
@@ -776,7 +776,7 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public List listBindings(final Name base);
+    public List listBindings(final Name base) throws DataAccessException;
 
     /**
      * Perform a non-recursive listing of the contexts bound to the given
@@ -793,7 +793,7 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public List listBindings(String base, ContextMapper mapper);
+    public List listBindings(String base, ContextMapper mapper) throws DataAccessException;
 
     /**
      * Perform a non-recursive listing of the contexts bound to the given
@@ -810,7 +810,7 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public List listBindings(Name base, ContextMapper mapper);
+    public List listBindings(Name base, ContextMapper mapper) throws DataAccessException;
 
     /**
      * Lookup the supplied DN and return the found object. <b>WARNING</b>: This
@@ -1017,6 +1017,8 @@ public interface LdapOperations {
      *            The object to bind to the DN.
      * @param attributes
      *            The attributes to bind.
+     * @throws DataAccessException
+     *             if any error occurs.
      */
     public void rebind(Name dn, Object obj, Attributes attributes)
             throws DataAccessException;
@@ -1032,6 +1034,8 @@ public interface LdapOperations {
      *            The object to bind to the DN.
      * @param attributes
      *            The attributes to bind.
+     * @throws DataAccessException
+     *             if any error occurs.
      */
     public void rebind(String dn, Object obj, Attributes attributes)
             throws DataAccessException;
@@ -1048,6 +1052,8 @@ public interface LdapOperations {
      *            The name of the new binding; may not be empty
      * @throws DataIntegrityViolationException
      *             if newDn is already bound
+     * @throws DataAccessException
+     *             if any other error occurs.
      */
     public void rename(final Name oldDn, final Name newDn)
             throws DataAccessException;
@@ -1062,6 +1068,8 @@ public interface LdapOperations {
      *            The name of the new binding; may not be empty
      * @throws DataIntegrityViolationException
      *             if newDn is already bound
+     * @throws DataAccessException
+     *             if any other error occurs.
      */
     public void rename(final String oldDn, final String newDn)
             throws DataAccessException;
