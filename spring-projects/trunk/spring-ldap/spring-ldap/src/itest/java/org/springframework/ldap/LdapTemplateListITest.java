@@ -64,8 +64,27 @@ public class LdapTemplateListITest extends
     public void testListBindings_ContextMapper() {
         contextMapper.setExpectedAttributes(ALL_ATTRIBUTES);
         contextMapper.setExpectedValues(ALL_VALUES);
-        List list = tested.listBindings("ou=company2,c=Sweden," + BASE_STRING, contextMapper);
+        List list = tested.listBindings("ou=company2,c=Sweden," + BASE_STRING,
+                contextMapper);
         assertEquals(1, list.size());
+    }
+
+    public void testListBindings_ContextMapper_Name() {
+        contextMapper.setExpectedAttributes(ALL_ATTRIBUTES);
+        contextMapper.setExpectedValues(ALL_VALUES);
+        List list = tested.listBindings(new DistinguishedName(
+                "ou=company2,c=Sweden," + BASE_STRING), contextMapper);
+        assertEquals(1, list.size());
+    }
+
+    public void testListBindings_ContextMapper_MapToPersons() {
+        List list = tested.listBindings("ou=company1,c=Sweden," + BASE_STRING,
+                new PersonContextMapper());
+        assertEquals(3, list.size());
+        String personClass = "org.springframework.ldap.Person";
+        assertEquals(personClass, list.get(0).getClass().getName());
+        assertEquals(personClass, list.get(1).getClass().getName());
+        assertEquals(personClass, list.get(2).getClass().getName());
     }
 
     public void testList() {
