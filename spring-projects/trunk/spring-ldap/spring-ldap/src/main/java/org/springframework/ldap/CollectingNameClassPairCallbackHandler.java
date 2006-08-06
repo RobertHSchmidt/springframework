@@ -24,7 +24,6 @@ import javax.naming.NameClassPair;
  * A NameClassPairCallbackHandler to collect all results in an internal List.
  * 
  * @see org.springframework.ldap.LdapTemplate
- * @see org.springframework.ldap.LdapTemplate.CollectingListResultCallbackHandler
  * 
  * @author Mattias Arthursson
  */
