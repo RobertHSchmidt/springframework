@@ -25,6 +25,8 @@ import javax.naming.directory.SearchResult;
  * 
  * @see org.springframework.ldap.LdapTemplate#search(Name, String,
  *      ContextMapper)
+ * @see org.springframework.ldap.LdapTemplate#listBindings(Name, ContextMapper)
+ * @see org.springframework.ldap.LdapTemplate#lookup(Name, ContextMapper)
  * 
  * @author Mattias Arthursson
  */
