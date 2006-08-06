@@ -33,11 +33,11 @@ import org.springframework.ldap.ContextSource;
 import org.springframework.ldap.DefaultNamingExceptionTranslator;
 import org.springframework.ldap.NamingExceptionTranslator;
 
-
 /**
  * Abstract implementation of the ContextSource interface. By default, returns
- * an unauthenticated DirContext implementation for read-only purposes and an
- * authenticated one for read-write.
+ * an authenticated DirContext implementation for both read-only and read-write.
+ * To have an anonymous environment created for read-only operations, set the
+ * anonymousReadOnly property to <code>true</code>.
  * <p>
  * Implementing classes need to implement
  * {@link #getDirContextInstance(Hashtable)} to create a DirContext instance of
@@ -45,10 +45,7 @@ import org.springframework.ldap.NamingExceptionTranslator;
  * <p>
  * If an AuthenticationSource is set, this will be used for getting user name
  * and password for each new connection, otherwise a default one will be created
- * using the specified userName and password. To use an authenticated
- * environment for read-only access as well (which is commonly needed when
- * working against Active Directory) set authenticatedReadOnly to
- * <code>true</code>.
+ * using the specified userName and password.
  * <p>
  * <b>Note:</b> When using implementations of this class outside of a Spring
  * Context it is necessary to call {@link #afterPropertiesSet()} when all
@@ -68,7 +65,9 @@ public abstract class AbstractContextSource implements ContextSource,
 
     private static final Class DEFAULT_CONTEXT_FACTORY = com.sun.jndi.ldap.LdapCtxFactory.class;
 
-    private Class dirObjectFactory;
+    private static final Class DEFAULT_DIR_OBJECT_FACTORY = DefaultDirObjectFactory.class;
+
+    private Class dirObjectFactory = DEFAULT_DIR_OBJECT_FACTORY;
 
     private Class contextFactory = DEFAULT_CONTEXT_FACTORY;
 
@@ -82,8 +81,6 @@ public abstract class AbstractContextSource implements ContextSource,
 
     private boolean pooled = true;
 
-    private boolean authenticatedReadOnly = false;
-
     private Hashtable baseEnv = new Hashtable();
 
     private Hashtable anonymousEnv;
@@ -91,6 +88,8 @@ public abstract class AbstractContextSource implements ContextSource,
     private AuthenticationSource authenticationSource;
 
     private boolean cacheEnvironmentProperties = true;
+
+    private boolean anonymousReadOnly = false;
 
     private NamingExceptionTranslator exceptionTranslator = new DefaultNamingExceptionTranslator();
 
@@ -101,7 +100,7 @@ public abstract class AbstractContextSource implements ContextSource,
     private static final String JDK_142 = "1.4.2";
 
     public DirContext getReadOnlyContext() {
-        if (authenticatedReadOnly) {
+        if (!anonymousReadOnly) {
             return createContext(getAuthenticatedEnv());
         } else {
             return createContext(getAnonymousEnv());
@@ -217,9 +216,11 @@ public abstract class AbstractContextSource implements ContextSource,
     }
 
     /**
-     * Set the DirObjectFactory to use. Default is null - no DirObjectFactory is
-     * used. The specified class needs to be an implementation of
-     * javax.naming.spi.DirObjectFactory, e.g. {@link DefaultDirObjectFactory}.
+     * Set the DirObjectFactory to use. Default is
+     * {@link DefaultDirObjectFactory}. The specified class needs to be an
+     * implementation of javax.naming.spi.DirObjectFactory. <b>Note: </b>Setting
+     * this value to null may have cause connection leaks when using
+     * ContextMapper methods in LdapTemplate.
      * 
      * @param dirObjectFactory
      *            the DirObjectFactory to be used. Null means that no
@@ -373,16 +374,6 @@ public abstract class AbstractContextSource implements ContextSource,
         return env;
     }
 
-    /**
-     * Set to true if an authenticated environment should be created for
-     * read-only operations. Default is <code>false</code>.
-     * 
-     * @param authenticatedReadOnly
-     */
-    public void setAuthenticatedReadOnly(boolean authenticatedReadOnly) {
-        this.authenticatedReadOnly = authenticatedReadOnly;
-    }
-
     public void setAuthenticationSource(
             AuthenticationSource authenticationProvider) {
         this.authenticationSource = authenticationProvider;
@@ -402,6 +393,18 @@ public abstract class AbstractContextSource implements ContextSource,
      */
     public void setCacheEnvironmentProperties(boolean cacheEnvironmentProperties) {
         this.cacheEnvironmentProperties = cacheEnvironmentProperties;
+    }
+
+    /**
+     * Set whether an anonymous environment should be used for read-only
+     * operations. Default is <code>false</code>.
+     * 
+     * @param anonymousReadOnly
+     *            <code>true</code> if and anonymous environment should be
+     *            used for read-only operations, <code>false</code> otherwise.
+     */
+    public void setAnonymousReadOnly(boolean anonymousReadOnly) {
+        this.anonymousReadOnly = anonymousReadOnly;
     }
 
     /**
