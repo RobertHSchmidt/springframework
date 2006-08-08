@@ -15,14 +15,11 @@
  */
 package org.springframework.webflow.execution;
 
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowSession;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.State;
-import org.springframework.webflow.UnmodifiableAttributeMap;
-import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.collection.AttributeMap;
+import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.StateDefinition;
+import org.springframework.webflow.execution.internal.EnterStateVetoException;
 
 /**
  * Interface to be implemented by objects that wish to listen and respond to the
@@ -39,7 +36,7 @@ import org.springframework.webflow.ViewSelection;
  * perform auditing, or setup and tear down connections to a transactional
  * resource.
  * 
- * @see org.springframework.webflow.execution.FlowExecution
+ * @see FlowExecution
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -68,7 +65,7 @@ public interface FlowExecutionListener {
 	 * @param flow the flow for which a new session starting.
 	 * @param input a mutable input map to the starting flow session
 	 */
-	public void sessionStarting(RequestContext context, Flow flow, AttributeMap input);
+	public void sessionStarting(RequestContext context, FlowDefinition flow, MutableAttributeMap input);
 
 	/**
 	 * Called when a new flow execution session was started -- the start state
@@ -92,7 +89,7 @@ public interface FlowExecutionListener {
 	 * @param state the proposed state to transition to
 	 * @throws EnterStateVetoException when entering the state is now allowed
 	 */
-	public void stateEntering(RequestContext context, State state) throws EnterStateVetoException;
+	public void stateEntering(RequestContext context, StateDefinition state) throws EnterStateVetoException;
 
 	/**
 	 * Called when a state transitions, after the transition occured.
@@ -100,7 +97,7 @@ public interface FlowExecutionListener {
 	 * @param previousState <i>from</i> state of the transition
 	 * @param state <i>to</i> state of the transition
 	 */
-	public void stateEntered(RequestContext context, State previousState, State state);
+	public void stateEntered(RequestContext context, StateDefinition previousState, StateDefinition state);
 
 	/**
 	 * Called after a flow execution is successfully reactivated (but before
@@ -125,7 +122,7 @@ public interface FlowExecutionListener {
 	 * @param output the flow output produced by the ending session.
 	 * The map may be modified by this listener to affect the output returned.
 	 */
-	public void sessionEnding(RequestContext context, FlowSession session, AttributeMap output);
+	public void sessionEnding(RequestContext context, FlowSession session, MutableAttributeMap output);
 
 	/**
 	 * Called when a flow execution session ends. If the ended session was the
@@ -135,5 +132,5 @@ public interface FlowExecutionListener {
 	 * @param output final, unmodifiable output returned by the ended
 	 * session
 	 */
-	public void sessionEnded(RequestContext context, FlowSession session, UnmodifiableAttributeMap output);
+	public void sessionEnded(RequestContext context, FlowSession session, AttributeMap output);
 }

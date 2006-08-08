@@ -15,14 +15,11 @@
  */
 package org.springframework.webflow.execution;
 
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowSession;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.State;
-import org.springframework.webflow.UnmodifiableAttributeMap;
-import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.collection.AttributeMap;
+import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.StateDefinition;
+import org.springframework.webflow.execution.internal.EnterStateVetoException;
 
 /**
  * An abstract adapter class for listeners (observers) of flow execution
@@ -41,7 +38,7 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 	public void requestProcessed(RequestContext context) {
 	}
 
-	public void sessionStarting(RequestContext context, Flow flow, AttributeMap input) {
+	public void sessionStarting(RequestContext context, FlowDefinition flow, MutableAttributeMap input) {
 	}
 
 	public void sessionStarted(RequestContext context, FlowSession session) {
@@ -50,10 +47,10 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 	public void eventSignaled(RequestContext context, Event event) {
 	}
 
-	public void stateEntering(RequestContext context, State state) throws EnterStateVetoException {
+	public void stateEntering(RequestContext context, StateDefinition state) throws EnterStateVetoException {
 	}
 
-	public void stateEntered(RequestContext context, State previousState, State newState) {
+	public void stateEntered(RequestContext context, StateDefinition previousState, StateDefinition newState) {
 	}
 
 	public void resumed(RequestContext context) {
@@ -62,9 +59,9 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 	public void paused(RequestContext context, ViewSelection selectedView) {
 	}
 
-	public void sessionEnding(RequestContext context, FlowSession session, AttributeMap output) {
+	public void sessionEnding(RequestContext context, FlowSession session, MutableAttributeMap output) {
 	}
 
-	public void sessionEnded(RequestContext context, FlowSession session, UnmodifiableAttributeMap output) {
+	public void sessionEnded(RequestContext context, FlowSession session, AttributeMap output) {
 	}
 }
