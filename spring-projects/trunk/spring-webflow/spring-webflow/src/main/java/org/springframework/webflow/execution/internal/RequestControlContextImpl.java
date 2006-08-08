@@ -13,28 +13,33 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.springframework.webflow.execution.impl;
+package org.springframework.webflow.execution.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
-import org.springframework.webflow.AttributeCollection;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.CollectionUtils;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowExecutionContext;
-import org.springframework.webflow.FlowExecutionException;
-import org.springframework.webflow.FlowSession;
-import org.springframework.webflow.FlowSessionStatus;
-import org.springframework.webflow.ParameterMap;
-import org.springframework.webflow.RequestControlContext;
-import org.springframework.webflow.State;
-import org.springframework.webflow.Transition;
-import org.springframework.webflow.UnmodifiableAttributeMap;
-import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.collection.AttributeMap;
+import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.collection.ParameterMap;
+import org.springframework.webflow.collection.support.CollectionUtils;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.StateDefinition;
+import org.springframework.webflow.definition.TransitionDefinition;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.FlowExecutionContext;
+import org.springframework.webflow.execution.FlowExecutionException;
+import org.springframework.webflow.execution.FlowSession;
+import org.springframework.webflow.execution.FlowSessionStatus;
+import org.springframework.webflow.execution.ViewSelection;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.FlowExecutionListeners;
+import org.springframework.webflow.execution.internal.RequestControlContext;
+import org.springframework.webflow.execution.internal.State;
+import org.springframework.webflow.execution.internal.Transition;
+import org.springframework.webflow.execution.internal.TransitionableState;
 
 /**
  * Default request control context implementation used internally by the web
@@ -43,8 +48,8 @@ import org.springframework.webflow.ViewSelection;
  * three classes work together to form a complete flow execution implementation
  * based on a finite state machine.
  * 
- * @see org.springframework.webflow.execution.impl.FlowExecutionImpl
- * @see org.springframework.webflow.execution.impl.FlowSessionImpl
+ * @see org.springframework.webflow.execution.internal.machine.FlowExecutionImpl
+ * @see org.springframework.webflow.execution.internal.machine.FlowSessionImpl
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -61,7 +66,7 @@ class RequestControlContextImpl implements RequestControlContext {
 	/**
 	 * The request scope data map.
 	 */
-	private AttributeMap requestScope = new AttributeMap();
+	private LocalAttributeMap requestScope = new LocalAttributeMap();
 
 	/**
 	 * A source context for the caller who initiated this request.
@@ -81,7 +86,7 @@ class RequestControlContextImpl implements RequestControlContext {
 	/**
 	 * Holder for contextual execution properties.
 	 */
-	private UnmodifiableAttributeMap attributes;
+	private AttributeMap attributes;
 
 	/**
 	 * Create a new request context.
@@ -97,23 +102,23 @@ class RequestControlContextImpl implements RequestControlContext {
 
 	// implementing RequestContext
 
-	public Flow getActiveFlow() {
-		return flowExecution.getActiveSession().getFlow();
+	public FlowDefinition getActiveFlow() {
+		return flowExecution.getActiveSession().getDefinition();
 	}
 
-	public State getCurrentState() {
+	public StateDefinition getCurrentState() {
 		return flowExecution.getActiveSession().getState();
 	}
 
-	public AttributeMap getRequestScope() {
+	public MutableAttributeMap getRequestScope() {
 		return requestScope;
 	}
 
-	public AttributeMap getFlowScope() {
+	public MutableAttributeMap getFlowScope() {
 		return flowExecution.getActiveSession().getScope();
 	}
 
-	public AttributeMap getConversationScope() {
+	public MutableAttributeMap getConversationScope() {
 		return flowExecution.getConversationScope();
 	}
 
@@ -133,25 +138,25 @@ class RequestControlContextImpl implements RequestControlContext {
 		return lastEvent;
 	}
 
-	public Transition getLastTransition() {
+	public TransitionDefinition getLastTransition() {
 		return lastTransition;
 	}
 
-	public UnmodifiableAttributeMap getAttributes() {
+	public AttributeMap getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(AttributeCollection attributes) {
+	public void setAttributes(AttributeMap attributes) {
 		if (attributes == null) {
 			this.attributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
 		}
 		else {
-			this.attributes = attributes.unmodifiable();
+			this.attributes = attributes;
 		}
 	}
 
-	public UnmodifiableAttributeMap getModel() {
-		return getConversationScope().union(getFlowScope()).union(getRequestScope()).unmodifiable();
+	public AttributeMap getModel() {
+		return getConversationScope().union(getFlowScope()).union(getRequestScope());
 	}
 
 	// implementing RequestControlContext
@@ -165,28 +170,28 @@ class RequestControlContextImpl implements RequestControlContext {
 	}
 
 	public void setCurrentState(State state) {
-		flowExecution.getListeners().fireStateEntering(this, state);
-		State previousState = getCurrentState();
+		getExecutionListeners().fireStateEntering(this, state);
+		State previousState = getCurrentStateInternal();
 		flowExecution.setCurrentState(state);
 		if (previousState == null) {
-			flowExecution.getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
+			getActiveSession().setStatus(FlowSessionStatus.ACTIVE);
 		}
-		flowExecution.getListeners().fireStateEntered(this, previousState);
+		getExecutionListeners().fireStateEntered(this, previousState);
 	}
 
-	public ViewSelection start(Flow flow, AttributeMap input) throws FlowExecutionException {
+	public ViewSelection start(Flow flow, MutableAttributeMap input) throws FlowExecutionException {
 		if (input == null) {
 			// create a mutable map so entries can be added by listeners!
-			input = new AttributeMap();
+			input = new LocalAttributeMap();
 		}
 		if (logger.isDebugEnabled()) {
 			logger.debug("Activating new session for flow '" + flow.getId() + "' in state '"
 					+ flow.getStartState().getId() + "' with input " + input);
 		}
-		flowExecution.getListeners().fireSessionStarting(this, flow, input);
+		getExecutionListeners().fireSessionStarting(this, flow, input);
 		FlowSession session = flowExecution.activateSession(flow);
 		ViewSelection selectedView = flow.start(this, input);
-		flowExecution.getListeners().fireSessionStarted(this, session);
+		getExecutionListeners().fireSessionStarted(this, session);
 		return selectedView;
 	}
 
@@ -196,26 +201,51 @@ class RequestControlContextImpl implements RequestControlContext {
 					+ "' of flow '" + getActiveFlow().getId() + "'");
 		}
 		setLastEvent(event);
-		flowExecution.getListeners().fireEventSignaled(this, event);
-		ViewSelection selectedView = getActiveFlow().onEvent(this);
+		getExecutionListeners().fireEventSignaled(this, event);
+		ViewSelection selectedView = getActiveFlowInternal().onEvent(this);
 		return selectedView;
 	}
 
-	public FlowSession endActiveFlowSession(AttributeMap output) throws IllegalStateException {
+	public ViewSelection execute(Transition transition) {
+		State sourceState = getCurrentStateInternal();
+		if (!(sourceState instanceof TransitionableState)) {
+			throw new IllegalStateException("The source state '" + sourceState.getId()
+					+ "' to transition from must be transitionable!");
+		}		
+		return transition.execute((TransitionableState)sourceState, this);
+	}
+
+	public FlowSession endActiveFlowSession(MutableAttributeMap output) throws IllegalStateException {
 		FlowSession session = getFlowExecutionContext().getActiveSession();
-		flowExecution.getListeners().fireSessionEnding(this, session, output);
-		getActiveFlow().end(this, output);
+		getExecutionListeners().fireSessionEnding(this, session, output);
+		getActiveFlowInternal().end(this, output);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Ending active session " + session + "; exposed session output is " + output);
 		}
 		session = flowExecution.endActiveFlowSession();
-		flowExecution.getListeners().fireSessionEnded(this, session, output.unmodifiable());
+		getExecutionListeners().fireSessionEnded(this, session, output);
 		return session;
+	}
+
+	protected FlowExecutionListeners getExecutionListeners() {
+		return flowExecution.getListeners();
+	}
+
+	protected Flow getActiveFlowInternal() {
+		return getActiveSession().flow;
+	}
+
+	protected State getCurrentStateInternal() {
+		return getActiveSession().state;
+	}
+
+	protected FlowSessionImpl getActiveSession() {
+		return flowExecution.getActiveSessionInternal();
 	}
 
 	public String toString() {
 		return new ToStringCreator(this).append("externalContext", externalContext)
-				.append("requestScope", requestScope).append("executionProperties", attributes).append("flowExecution",
+				.append("requestScope", requestScope).append("attributes", attributes).append("flowExecution",
 						flowExecution).toString();
 	}
 }

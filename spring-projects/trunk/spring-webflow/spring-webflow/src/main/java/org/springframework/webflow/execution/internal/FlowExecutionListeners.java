@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.impl;
+package org.springframework.webflow.execution.internal;
 
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowSession;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.State;
-import org.springframework.webflow.UnmodifiableAttributeMap;
-import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.collection.AttributeMap;
+import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.StateDefinition;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionListener;
+import org.springframework.webflow.execution.FlowSession;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.ViewSelection;
 
 /**
  * A decorator that aids in publishing events to an array of
@@ -105,7 +105,7 @@ class FlowExecutionListeners {
 	 * Notify all interested listeners that a flow execution session is
 	 * starting.
 	 */
-	public void fireSessionStarting(RequestContext context, Flow flow, AttributeMap input) {
+	public void fireSessionStarting(RequestContext context, FlowDefinition flow, MutableAttributeMap input) {
 		for (int i = 0; i < listeners.length; i++) {
 			listeners[i].sessionStarting(context, flow, input);
 		}
@@ -135,7 +135,7 @@ class FlowExecutionListeners {
 	 * Notify all interested listeners that a state is being entered in the flow
 	 * execution.
 	 */
-	public void fireStateEntering(RequestContext context, State nextState) {
+	public void fireStateEntering(RequestContext context, StateDefinition nextState) {
 		for (int i = 0; i < listeners.length; i++) {
 			listeners[i].stateEntering(context, nextState);
 		}
@@ -145,7 +145,7 @@ class FlowExecutionListeners {
 	 * Notify all interested listeners that a state was entered in the flow
 	 * execution.
 	 */
-	public void fireStateEntered(RequestContext context, State previousState) {
+	public void fireStateEntered(RequestContext context, StateDefinition previousState) {
 		for (int i = 0; i < listeners.length; i++) {
 			listeners[i].stateEntered(context, previousState, context.getCurrentState());
 		}
@@ -175,7 +175,7 @@ class FlowExecutionListeners {
 	 * Notify all interested listeners that the active flow execution session is
 	 * ending.
 	 */
-	public void fireSessionEnding(RequestContext context, FlowSession session, AttributeMap output) {
+	public void fireSessionEnding(RequestContext context, FlowSession session, MutableAttributeMap output) {
 		for (int i = 0; i < listeners.length; i++) {
 			listeners[i].sessionEnding(context, session, output);
 		}
@@ -184,7 +184,7 @@ class FlowExecutionListeners {
 	/**
 	 * Notify all interested listeners that a flow execution session has ended.
 	 */
-	public void fireSessionEnded(RequestContext context, FlowSession session, UnmodifiableAttributeMap output) {
+	public void fireSessionEnded(RequestContext context, FlowSession session, AttributeMap output) {
 		for (int i = 0; i < listeners.length; i++) {
 			listeners[i].sessionEnded(context, session, output);
 		}
