@@ -19,9 +19,9 @@ import java.util.Iterator;
 
 import javax.portlet.PortletContext;
 
-import org.springframework.webflow.CollectionUtils;
-import org.springframework.webflow.SharedMap;
-import org.springframework.webflow.context.StringKeyedMapAdapter;
+import org.springframework.webflow.collection.support.CollectionUtils;
+import org.springframework.webflow.context.support.SharedMap;
+import org.springframework.webflow.context.support.StringKeyedMapAdapter;
 
 /**
  * Map backed by the Portlet context, for accessing application scoped

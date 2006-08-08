@@ -21,10 +21,13 @@ import javax.portlet.PortletResponse;
 import javax.portlet.PortletSession;
 
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.ParameterMap;
-import org.springframework.webflow.SharedAttributeMap;
+import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.collection.ParameterMap;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.collection.support.LocalParameterMap;
+import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.SharedAttributeMap;
+import org.springframework.webflow.context.support.LocalSharedAttributeMap;
 
 /**
  * Provides contextual information about a portlet environment that has
@@ -73,23 +76,23 @@ public class PortletExternalContext implements ExternalContext {
 	}
 
 	public ParameterMap getRequestParameterMap() {
-		return new ParameterMap(new PortletRequestParameterMap(request));
+		return new LocalParameterMap(new PortletRequestParameterMap(request));
 	}
 
-	public AttributeMap getRequestMap() {
-		return new AttributeMap(new PortletRequestMap(request));
+	public MutableAttributeMap getRequestMap() {
+		return new LocalAttributeMap(new PortletRequestMap(request));
 	}
 
 	public SharedAttributeMap getSessionMap() {
-		return new SharedAttributeMap(new PortletSessionMap(request, PortletSession.PORTLET_SCOPE));
+		return new LocalSharedAttributeMap(new PortletSessionMap(request, PortletSession.PORTLET_SCOPE));
 	}
 
 	public SharedAttributeMap getGlobalSessionMap() {
-		return new SharedAttributeMap(new PortletSessionMap(request, PortletSession.APPLICATION_SCOPE));
+		return new LocalSharedAttributeMap(new PortletSessionMap(request, PortletSession.APPLICATION_SCOPE));
 	}
 
 	public SharedAttributeMap getApplicationMap() {
-		return new SharedAttributeMap(new PortletContextMap(context));
+		return new LocalSharedAttributeMap(new PortletContextMap(context));
 	}
 
 	/**
