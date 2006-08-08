@@ -21,9 +21,9 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 
 import org.springframework.web.util.WebUtils;
-import org.springframework.webflow.CollectionUtils;
-import org.springframework.webflow.SharedMap;
-import org.springframework.webflow.context.StringKeyedMapAdapter;
+import org.springframework.webflow.collection.support.CollectionUtils;
+import org.springframework.webflow.context.support.SharedMap;
+import org.springframework.webflow.context.support.StringKeyedMapAdapter;
 
 /**
  * Map backed by the Portlet session, for accessing session scoped attributes in
