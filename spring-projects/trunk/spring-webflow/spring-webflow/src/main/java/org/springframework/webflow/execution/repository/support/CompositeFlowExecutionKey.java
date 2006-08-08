@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.conversation.ConversationId;
-import org.springframework.webflow.conversation.ConversationService;
+import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.continuation.FlowExecutionContinuation;
@@ -28,7 +28,7 @@ import org.springframework.webflow.execution.repository.continuation.FlowExecuti
  * A flow execution key consisting of two parts:
  * <ol>
  * <li>A conversationId, identifying an active conversation managed by a
- * {@link ConversationService}.
+ * {@link ConversationManager}.
  * <li>A continuationId, identifying a restorable
  * {@link FlowExecutionContinuation} within a continuation group governed by
  * that conversation.

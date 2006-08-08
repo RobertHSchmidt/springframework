@@ -25,8 +25,8 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationParameters;
-import org.springframework.webflow.conversation.ConversationService;
-import org.springframework.webflow.conversation.ConversationServiceException;
+import org.springframework.webflow.conversation.ConversationManager;
+import org.springframework.webflow.conversation.ConversationException;
 import org.springframework.webflow.conversation.NoSuchConversationException;
 import org.springframework.webflow.conversation.impl.SimpleConversationId;
 import org.springframework.webflow.core.collection.support.LocalAttributeMap;
@@ -84,7 +84,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	 * to function.
 	 */
 	public ClientContinuationFlowExecutionRepository(FlowExecutionFactory flowExecutionFactory) {
-		super(flowExecutionFactory, new NoOpConversationService());
+		super(flowExecutionFactory, new NoOpConversationManager());
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	 * to function.
 	 */
 	public ClientContinuationFlowExecutionRepository(FlowExecutionFactory flowExecutionFactory,
-			ConversationService conversationService) {
+			ConversationManager conversationService) {
 		super(flowExecutionFactory, conversationService);
 	}
 
@@ -186,14 +186,14 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	 * Conversation service that doesn't do anything - the default.
 	 * @author Keith Donald
 	 */
-	private static class NoOpConversationService implements ConversationService {
+	private static class NoOpConversationManager implements ConversationManager {
 
 		private static final ConversationId conversationId = new SimpleConversationId("1");
 
 		private static final NoOpConversation INSTANCE = new NoOpConversation();
 
 		public Conversation beginConversation(ConversationParameters conversationParameters)
-				throws ConversationServiceException {
+				throws ConversationException {
 			return INSTANCE;
 		}
 
@@ -201,7 +201,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 			return INSTANCE;
 		}
 
-		public ConversationId parseConversationId(String encodedId) throws ConversationServiceException {
+		public ConversationId parseConversationId(String encodedId) throws ConversationException {
 			return conversationId;
 		}
 

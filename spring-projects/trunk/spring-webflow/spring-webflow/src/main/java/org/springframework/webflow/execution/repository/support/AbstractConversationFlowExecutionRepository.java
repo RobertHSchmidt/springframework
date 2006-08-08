@@ -21,8 +21,8 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationParameters;
-import org.springframework.webflow.conversation.ConversationService;
-import org.springframework.webflow.conversation.ConversationServiceException;
+import org.springframework.webflow.conversation.ConversationManager;
+import org.springframework.webflow.conversation.ConversationException;
 import org.springframework.webflow.conversation.NoSuchConversationException;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
@@ -53,7 +53,7 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	 * The conversation service to delegate to for managing conversations
 	 * initiated by this repository.
 	 */
-	private ConversationService conversationService;
+	private ConversationManager conversationService;
 
 	/**
 	 * No-arg constructor to satisfy use with subclass implementations are that
@@ -69,7 +69,7 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	 * to function.
 	 */
 	public AbstractConversationFlowExecutionRepository(FlowExecutionFactory executionFactory,
-			ConversationService conversationService) {
+			ConversationManager conversationService) {
 		setFlowExecutionFactory(executionFactory);
 		setConversationService(conversationService);
 	}
@@ -77,7 +77,7 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	/**
 	 * Returns the configured conversation service.
 	 */
-	protected ConversationService getConversationService() {
+	protected ConversationManager getConversationService() {
 		return conversationService;
 	}
 
@@ -85,7 +85,7 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	 * Sets the conversationService reference.
 	 * @param conversationService the conversation service, may not be null.
 	 */
-	public void setConversationService(ConversationService conversationService) {
+	public void setConversationService(ConversationManager conversationService) {
 		Assert.notNull(conversationService, "The conversation service is required");
 		this.conversationService = conversationService;
 	}
@@ -126,7 +126,7 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 			ConversationId conversationId = conversationService.parseConversationId(keyParts[0]);
 			return new CompositeFlowExecutionKey(conversationId, parseContinuationId(keyParts[1]));
 		}
-		catch (ConversationServiceException e) {
+		catch (ConversationException e) {
 			throw new BadlyFormattedFlowExecutionKeyException(encodedKey, CompositeFlowExecutionKey.getFormat(), e);
 		}
 		catch (FlowExecutionRepositoryException e) {

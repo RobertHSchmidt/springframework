@@ -18,11 +18,11 @@ package org.springframework.webflow.conversation.impl;
 import java.io.Serializable;
 
 import org.springframework.webflow.conversation.ConversationId;
-import org.springframework.webflow.conversation.ConversationService;
+import org.springframework.webflow.conversation.ConversationManager;
 
 /**
  * An id that uniquely identifies a conversation managed by
- * {@link ConversationService}.
+ * {@link ConversationManager}.
  * <p>
  * This key consists of a unique string that is typically a GUID.
  * 
