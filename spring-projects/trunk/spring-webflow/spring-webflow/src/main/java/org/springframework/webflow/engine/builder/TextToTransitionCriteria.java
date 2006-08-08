@@ -22,8 +22,8 @@ import org.springframework.binding.util.MapAccessor;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.WildcardTransitionCriteria;
-import org.springframework.webflow.execution.internal.support.BooleanExpressionTransitionCriteria;
-import org.springframework.webflow.execution.internal.support.EventIdTransitionCriteria;
+import org.springframework.webflow.engine.support.BooleanExpressionTransitionCriteria;
+import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 
 /**
  * Converter that takes an encoded string representation and produces a
@@ -35,10 +35,10 @@ import org.springframework.webflow.execution.internal.support.EventIdTransitionC
  * everything ({@link org.springframework.webflow.engine.WildcardTransitionCriteria})
  * </li>
  * <li>"eventId" - will result in a TransitionCriteria object that matches
- * given event id ({@link org.springframework.webflow.execution.internal.support.EventIdTransitionCriteria})
+ * given event id ({@link org.springframework.webflow.engine.support.EventIdTransitionCriteria})
  * </li>
  * <li>"${...}" - will result in a TransitionCriteria object that evaluates
- * given condition, expressed as an expression ({@link org.springframework.webflow.execution.internal.support.BooleanExpressionTransitionCriteria})
+ * given condition, expressed as an expression ({@link org.springframework.webflow.engine.support.BooleanExpressionTransitionCriteria})
  * </li>
  * <li>"bean:&lt;id&gt;" - will result in usage of a custom TransitionCriteria
  * bean implementation.</li>

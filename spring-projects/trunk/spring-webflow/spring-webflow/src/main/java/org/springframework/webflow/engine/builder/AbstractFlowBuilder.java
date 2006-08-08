@@ -37,9 +37,9 @@ import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.ViewSelector;
+import org.springframework.webflow.engine.support.ActionTransitionCriteria;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.ScopeType;
-import org.springframework.webflow.execution.internal.support.ActionTransitionCriteria;
 import org.springframework.webflow.execution.support.EventFactorySupport;
 
 /**

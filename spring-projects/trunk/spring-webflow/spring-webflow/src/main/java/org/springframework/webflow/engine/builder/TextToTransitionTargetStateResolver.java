@@ -19,7 +19,7 @@ import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.util.MapAccessor;
 import org.springframework.webflow.engine.TargetStateResolver;
-import org.springframework.webflow.execution.internal.support.DefaultTargetStateResolver;
+import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 
 /**
  * Converter that takes an encoded string representation and produces a
@@ -28,7 +28,7 @@ import org.springframework.webflow.execution.internal.support.DefaultTargetState
  * This converter supports the following encoded forms:
  * <ul>
  * <li>"stateId" - will result in a TargetStateResolver that always resolves to
- * the same state, an instance of ({@link org.springframework.webflow.execution.internal.support.DefaultTargetStateResolver})
+ * the same state, an instance of ({@link org.springframework.webflow.engine.support.DefaultTargetStateResolver})
  * </li>
  * <li>"${...}" - will result in a TargetStateResolver object that evaluates
  * given condition, expressed as an expression.</li>
