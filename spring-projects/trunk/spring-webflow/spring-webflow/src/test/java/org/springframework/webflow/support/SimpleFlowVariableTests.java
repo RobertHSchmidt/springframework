@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.engine.support.SimpleFlowVariable;
 import org.springframework.webflow.execution.ScopeType;
-import org.springframework.webflow.execution.internal.support.SimpleFlowVariable;
 import org.springframework.webflow.test.engine.MockRequestContext;
 
 public class SimpleFlowVariableTests extends TestCase {

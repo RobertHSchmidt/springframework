@@ -5,8 +5,8 @@ import junit.framework.TestCase;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.support.StaticExpression;
+import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.execution.ViewSelection;
-import org.springframework.webflow.execution.internal.support.ApplicationViewSelector;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.test.engine.MockRequestContext;
 

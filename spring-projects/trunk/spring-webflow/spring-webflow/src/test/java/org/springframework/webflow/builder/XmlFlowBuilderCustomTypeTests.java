@@ -29,12 +29,12 @@ import org.springframework.webflow.engine.builder.BaseFlowServiceLocator;
 import org.springframework.webflow.engine.builder.FlowArtifactLookupException;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
+import org.springframework.webflow.engine.support.DefaultFlowAttributeMapper;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewSelection;
-import org.springframework.webflow.execution.internal.support.DefaultFlowAttributeMapper;
 
 /**
  * Test case for XML flow builder, testing pluggability of custom types.

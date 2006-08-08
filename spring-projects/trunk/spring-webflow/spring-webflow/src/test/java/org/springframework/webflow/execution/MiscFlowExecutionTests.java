@@ -13,7 +13,7 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
 import org.springframework.webflow.engine.machine.FlowExecutionImpl;
-import org.springframework.webflow.execution.internal.support.ApplicationViewSelector;
+import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.test.MockExternalContext;
 
