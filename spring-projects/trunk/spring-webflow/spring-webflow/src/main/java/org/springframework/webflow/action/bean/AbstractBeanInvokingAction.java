@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.action;
+package org.springframework.webflow.action.bean;
 
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.MethodInvoker;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.util.Assert;
-import org.springframework.webflow.Action;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Base class for actions that delegate to methods on beans (POJOs - Plain Old

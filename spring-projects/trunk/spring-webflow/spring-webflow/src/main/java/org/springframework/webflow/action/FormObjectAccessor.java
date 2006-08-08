@@ -17,8 +17,8 @@ package org.springframework.webflow.action;
 
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.ScopeType;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.ScopeType;
 
 /**
  * Convenience helper that encapsulates logic on how to retrieve and expose form
@@ -31,7 +31,7 @@ import org.springframework.webflow.ScopeType;
  * form object using this alias if there are multiple form objects available in
  * the flow execution request context!
  * 
- * @see org.springframework.webflow.RequestContext
+ * @see org.springframework.webflow.execution.RequestContext
  * @see org.springframework.validation.Errors
  * 
  * @author Keith Donald
@@ -176,7 +176,6 @@ public class FormObjectAccessor {
 			return errors;
 		}
 		return getCurrentFormErrors(ScopeType.CONVERSATION);
-
 	}
 
 	/**

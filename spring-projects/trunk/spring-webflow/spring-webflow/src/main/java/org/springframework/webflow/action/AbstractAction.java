@@ -20,12 +20,12 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.ClassUtils;
-import org.springframework.webflow.Action;
-import org.springframework.webflow.AttributeCollection;
-import org.springframework.webflow.CollectionUtils;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.support.EventFactorySupport;
+import org.springframework.webflow.collection.AttributeMap;
+import org.springframework.webflow.collection.support.CollectionUtils;
+import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.support.EventFactorySupport;
 
 /**
  * Base action that provides assistance commonly needed by action
@@ -179,7 +179,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * @param resultAttributes the event attributes
 	 * @return the action result event
 	 */
-	protected Event result(String eventId, AttributeCollection resultAttributes) {
+	protected Event result(String eventId, AttributeMap resultAttributes) {
 		return getEventFactorySupport().event(this, eventId, resultAttributes);
 	}
 

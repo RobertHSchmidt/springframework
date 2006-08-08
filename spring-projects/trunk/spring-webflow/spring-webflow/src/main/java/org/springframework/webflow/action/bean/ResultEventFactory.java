@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.action;
+package org.springframework.webflow.action.bean;
 
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * A strategy for creating an {@link Event} object from an arbitrary action
  * result object, such as a bean method return value.
  * 
- * @see org.springframework.webflow.action.AbstractBeanInvokingAction
+ * @see org.springframework.webflow.action.bean.AbstractBeanInvokingAction
  * 
  * @author Keith Donald
  */

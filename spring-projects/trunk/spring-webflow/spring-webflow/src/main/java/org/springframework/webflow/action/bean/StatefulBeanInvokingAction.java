@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.action;
+package org.springframework.webflow.action.bean;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.util.Assert;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.ScopeType;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.ScopeType;
 
 /**
  * Simple action that delegates to a bean that is managed in a stateful scope.
@@ -50,7 +50,7 @@ import org.springframework.webflow.ScopeType;
  * serializable fields separately from the bean itself when you mix transient
  * and serializable references within the same stateful object.
  * 
- * @see org.springframework.webflow.action.BeanStatePersister
+ * @see org.springframework.webflow.action.bean.BeanStatePersister
  * 
  * @author Erwin Vervaet
  * @author Keith Donald

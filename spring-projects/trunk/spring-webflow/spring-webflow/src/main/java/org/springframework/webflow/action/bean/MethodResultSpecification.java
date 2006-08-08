@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.action;
+package org.springframework.webflow.action.bean;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.ScopeType;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.ScopeType;
 
 /**
  * Specifies how a bean method result value should be exposed to an executing flow.
  * The return value is exposed as an attribute in a configured scope.
  * 
- * @see org.springframework.webflow.action.AbstractBeanInvokingAction
- * @see org.springframework.webflow.RequestContext
+ * @see org.springframework.webflow.action.bean.AbstractBeanInvokingAction
+ * @see org.springframework.webflow.execution.RequestContext
  * 
  * @author Keith Donald
  */

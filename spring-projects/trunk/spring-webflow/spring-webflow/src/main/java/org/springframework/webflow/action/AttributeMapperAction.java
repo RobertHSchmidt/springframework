@@ -19,8 +19,8 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.binding.mapping.AttributeMapper;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Action that executes an attribute mapper to map information in the request
@@ -34,7 +34,7 @@ import org.springframework.webflow.RequestContext;
  * is thrown. 
  * 
  * @see org.springframework.binding.mapping.AttributeMapper
- * @see org.springframework.webflow.RequestContext
+ * @see org.springframework.webflow.execution.RequestContext
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

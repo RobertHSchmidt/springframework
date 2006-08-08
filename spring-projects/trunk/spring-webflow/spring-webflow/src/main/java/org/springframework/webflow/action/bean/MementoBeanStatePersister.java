@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.action;
+package org.springframework.webflow.action.bean;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.ScopeType;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.ScopeType;
 
 /**
  * Manages bean state in a {@link Memento} stored in a {@link ScopeType}.
  * The beans persisted by this state persister are expected to be
- * {@link org.springframework.webflow.action.MementoOriginator} implementations.
+ * {@link org.springframework.webflow.action.bean.MementoOriginator} implementations.
  * 
- * @see org.springframework.webflow.action.MementoOriginator
+ * @see org.springframework.webflow.action.bean.MementoOriginator
  * 
  * @author Keith Donald
  */
