@@ -22,14 +22,14 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.portlet.PortletExternalContext;
-import org.springframework.webflow.engine.ActionExecutionException;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Action implementation that changes a PortletResponse mode. The action only
- * generates the {@link org.springframework.webflow.action.AbstractAction#success()}
- * event. All error cases result in an exception being thrown.
+ * generates the
+ * {@link org.springframework.webflow.action.AbstractAction#success()} event.
+ * All error cases result in an exception being thrown.
  * <p>
  * This class is usefull when you want to change the current PortletMode before
  * entering a specific state, e.g. it can be the first state in a subflow.
@@ -82,8 +82,8 @@ public class SetPortletModeAction extends AbstractAction {
 				+ ClassUtils.getShortName(this.getClass()) + "' can only work with 'PortletExternalContext': ");
 		PortletExternalContext portletContext = (PortletExternalContext)context.getExternalContext();
 		if (portletContext.getResponse() instanceof ActionResponse) {
-			PortletMode mode = (PortletMode)context.getAttributes().get(PORTLET_MODE_ATTRIBUTE,
-					PortletMode.class, getPortletMode());
+			PortletMode mode = (PortletMode)context.getAttributes().get(PORTLET_MODE_ATTRIBUTE, PortletMode.class,
+					getPortletMode());
 			((ActionResponse)portletContext.getResponse()).setPortletMode(mode);
 			return success();
 		}
@@ -91,9 +91,8 @@ public class SetPortletModeAction extends AbstractAction {
 			// portlet mode and the window state can be changed through
 			// ActionResponse only, if this is not the case, it means that this
 			// action has been invoked directly in a RenderRequest
-			throw new ActionExecutionException(
-					context.getActiveFlow().getId(), context.getCurrentState().getId(), this, context.getAttributes(),
-					"SetPortletModeAction can only work with ActionResponse -- make sure you are not invoking it in a RenderRequest", null);
+			throw new IllegalStateException(
+					"SetPortletModeAction can only be invoked within a Action request -- make sure you are not invoking it in a RenderRequest");
 		}
 	}
 }
