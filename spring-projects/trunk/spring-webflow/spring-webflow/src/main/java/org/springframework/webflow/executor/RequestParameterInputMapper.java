@@ -18,7 +18,7 @@ package org.springframework.webflow.executor;
 import java.util.Map;
 
 import org.springframework.binding.mapping.AttributeMapper;
-import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.collection.MutableAttributeMap;
 import org.springframework.webflow.context.ExternalContext;
 
 /**
@@ -36,7 +36,7 @@ public class RequestParameterInputMapper implements AttributeMapper {
 	
 	public void map(Object source, Object target, Map mappingContext) {
 		ExternalContext context = (ExternalContext)source;
-		LocalAttributeMap inputMap = (LocalAttributeMap)target;
+		MutableAttributeMap inputMap = (MutableAttributeMap)target;
 		inputMap.putAll(context.getRequestParameterMap().asAttributeMap());
 	}
 }

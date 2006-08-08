@@ -29,19 +29,14 @@ import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.engine.repository.DefaultFlowExecutionRepositoryFactory;
-import org.springframework.webflow.execution.FlowExecutionListener;
-import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowRedirect;
 import org.springframework.webflow.executor.FlowExecutor;
-import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 import org.springframework.webflow.executor.support.FlowRequestHandler;
 import org.springframework.webflow.executor.support.RequestPathFlowExecutorArgumentExtractor;
-import org.springframework.webflow.registry.FlowLocator;
 
 /**
  * Point of integration between Spring Web MVC and Spring Web Flow: a
@@ -64,26 +59,26 @@ import org.springframework.webflow.registry.FlowLocator;
  * {@link FlowExecutorArgumentExtractor#getFlowExecutionKeyParameterName()}
  * request parameter identifying the conversation to participate in.
  * <p>
- * See the <tt>flowLauncher</tt> sample application for examples of the various
- * strategies for launching and resuming flow executions.
+ * See the <tt>flowLauncher</tt> sample application for examples of the
+ * various strategies for launching and resuming flow executions.
  * <p>
  * Usage example:
  * 
  * <pre>
- *     &lt;!--
- *         Exposes flows for execution at a single request URL.
- *         The id of a flow to launch should be passed in by clients using
- *         the &quot;_flowId&quot; request parameter:
- *         e.g. /app.htm?_flowId=flow1
- *     --&gt;
- *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.FlowController&quot;&gt;
- *         &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
- *     &lt;/bean&gt;
- *                                                                                      
- *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *     &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *         &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
- *     &lt;/bean&gt;
+ *      &lt;!--
+ *          Exposes flows for execution at a single request URL.
+ *          The id of a flow to launch should be passed in by clients using
+ *          the &quot;_flowId&quot; request parameter:
+ *          e.g. /app.htm?_flowId=flow1
+ *      --&gt;
+ *      &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.FlowController&quot;&gt;
+ *          &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
+ *      &lt;/bean&gt;
+ *                                                                                       
+ *      &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *      &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *          &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
+ *      &lt;/bean&gt;
  * </pre>
  * 
  * <p>
@@ -116,7 +111,6 @@ public class FlowController extends AbstractController implements InitializingBe
 	/**
 	 * Create a new flow controller. Allows bean style usage.
 	 * @see #setFlowExecutor(FlowExecutor)
-	 * @see #setFlowLocator(FlowLocator)
 	 */
 	public FlowController() {
 		// set the cache seconds property to 0 so no pages are cached by default
@@ -133,33 +127,11 @@ public class FlowController extends AbstractController implements InitializingBe
 	}
 
 	/**
-	 * Sets the flow executor to use.
-	 * <p>
-	 * This setter allows for customization of the backing flow execution
-	 * strategy, which might involve configuration of a custom
-	 * {@link FlowExecutionRepositoryFactory} for managing the storage of flows
-	 * and/or one or more {@link FlowExecutionListener} objects for observing
-	 * the lifecycle of executing flows.
-	 * @param flowExecutor the fully configured flow executor to use 
+	 * Sets the flow executor to use; setting this property is required.
+	 * @param flowExecutor the fully configured flow executor to use
 	 */
 	public void setFlowExecutor(FlowExecutor flowExecutor) {
 		this.flowExecutor = flowExecutor;
-	}
-
-	/**
-	 * Sets the flow locator responsible for loading flow definitions when
-	 * requested for execution by clients.
-	 * <p>
-	 * This is a convenience setter that configures a default {@link FlowExecutorImpl}
-	 * with a simple {@link DefaultFlowExecutionRepositoryFactory} for managing
-	 * the storage of executing flows.
-	 * <p>
-	 * Don't use this together with {@link #setFlowExecutor(FlowExecutor)}.
-	 * @param flowLocator the locator responsible for loading flow definitions
-	 * when this controller is invoked
-	 */
-	public void setFlowLocator(FlowLocator flowLocator) {
-		this.flowExecutor = new FlowExecutorImpl(flowLocator);
 	}
 
 	/**
@@ -232,8 +204,8 @@ public class FlowController extends AbstractController implements InitializingBe
 		}
 		else if (response.isFlowExecutionRedirect()) {
 			// redirect to active flow execution URL
-			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(
-					response.getFlowExecutionKey(), response.getFlowExecutionContext(), context);
+			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(response.getFlowExecutionKey(), response
+					.getFlowExecutionContext(), context);
 			return new ModelAndView(new RedirectView(flowExecutionUrl));
 		}
 		else if (response.isExternalRedirect()) {

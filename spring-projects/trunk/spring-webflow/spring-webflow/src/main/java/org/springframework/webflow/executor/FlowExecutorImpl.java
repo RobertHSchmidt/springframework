@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.util.Assert;
 import org.springframework.webflow.FlowException;
+import org.springframework.webflow.collection.MutableAttributeMap;
 import org.springframework.webflow.collection.support.LocalAttributeMap;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.engine.repository.DefaultFlowExecutionRepositoryFactory;
@@ -30,7 +31,6 @@ import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
-import org.springframework.webflow.registry.FlowLocator;
 
 /**
  * The default implementation of the central facade for <i>driving</i> the
@@ -56,8 +56,7 @@ import org.springframework.webflow.registry.FlowLocator;
  * <td>repositoryFactory</td>
  * <td>The strategy for accessing flow execution repositories that are used to
  * create, save, and store managed flow executions driven by this executor.</td>
- * <td>A {@link DefaultFlowExecutionRepositoryFactory simple}, stateful
- * server-side session-based repository factory.</td>
+ * <td>None</td>
  * </tr>
  * <tr>
  * <td>inputMapper</td>
@@ -74,11 +73,8 @@ import org.springframework.webflow.registry.FlowLocator;
  * </table>
  * </p>
  * 
- * @see org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory
- * @see org.springframework.webflow.execution.repository.FlowExecutionRepository
- * @see org.springframework.webflow.execution.FlowExecution
- * @see org.springframework.webflow.execution.ViewSelection
- * @see org.springframework.webflow.execution.support.ApplicationView
+ * @see FlowExecutionRepositoryFactory
+ * @see AttributeMapper
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
@@ -114,16 +110,6 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * execution input attributes. May be null.
 	 */
 	private AttributeMapper inputMapper = new RequestParameterInputMapper();
-
-	/**
-	 * Create a new flow executor that configures use of the default repository
-	 * strategy ({@link DefaultFlowExecutionRepositoryFactory}) to drive the
-	 * the execution of flows loaded by the provided flow locator.
-	 * @param flowLocator the flow locator used to locate flow definitions
-	 */
-	public FlowExecutorImpl(FlowLocator flowLocator) {
-		this(new DefaultFlowExecutionRepositoryFactory(flowLocator));
-	}
 
 	/**
 	 * Create a new flow executor that uses the repository factory to access a
@@ -243,9 +229,9 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * @param context the external context
 	 * @return the input map, or null if no input
 	 */
-	protected LocalAttributeMap createInput(ExternalContext context) {
+	protected MutableAttributeMap createInput(ExternalContext context) {
 		if (inputMapper != null) {
-			LocalAttributeMap inputMap = new LocalAttributeMap();
+			MutableAttributeMap inputMap = new LocalAttributeMap();
 			inputMapper.map(context, inputMap, null);
 			return inputMap;
 		}
