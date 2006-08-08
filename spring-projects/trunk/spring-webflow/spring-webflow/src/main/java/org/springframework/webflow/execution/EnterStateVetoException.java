@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow.execution;
 
-
-
 /**
  * Exception thrown to veto the entering of a state of a flow. Typically thrown
  * by {@link FlowExecutionListener} objects that apply security or other runtime
