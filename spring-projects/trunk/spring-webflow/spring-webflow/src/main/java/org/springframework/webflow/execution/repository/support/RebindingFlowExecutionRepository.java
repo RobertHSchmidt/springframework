@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.execution.repository.support;
 
-import org.springframework.webflow.SharedMap;
+import org.springframework.webflow.context.SharedAttributeMap;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
@@ -31,57 +31,58 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryE
  */
 class RebindingFlowExecutionRepository implements FlowExecutionRepository {
 
-	private FlowExecutionRepository target;
+	private FlowExecutionRepository targetRepository;
 
-	private Object key;
+	private String repositoryAttributeName;
 
-	private SharedMap map;
+	private SharedAttributeMap repositoryMap;
 
-	public RebindingFlowExecutionRepository(FlowExecutionRepository target, Object key, SharedMap map) {
-		this.target = target;
-		this.key = key;
-		this.map = map;
+	public RebindingFlowExecutionRepository(FlowExecutionRepository targetRepository, String repositoryAttributeName,
+			SharedAttributeMap repositoryMap) {
+		this.targetRepository = targetRepository;
+		this.repositoryAttributeName = repositoryAttributeName;
+		this.repositoryMap = repositoryMap;
 	}
 
 	public FlowExecution createFlowExecution(String flowId) throws FlowExecutionRepositoryException {
-		return target.createFlowExecution(flowId);
+		return targetRepository.createFlowExecution(flowId);
 	}
 
 	public FlowExecutionKey generateKey(FlowExecution flowExecution) throws FlowExecutionRepositoryException {
-		return target.generateKey(flowExecution);
+		return targetRepository.generateKey(flowExecution);
 	}
 
 	public FlowExecutionKey getNextKey(FlowExecution flowExecution, FlowExecutionKey key)
 			throws FlowExecutionRepositoryException {
-		return target.getNextKey(flowExecution, key);
+		return targetRepository.getNextKey(flowExecution, key);
 	}
 
 	public FlowExecutionLock getLock(FlowExecutionKey key) throws FlowExecutionRepositoryException {
-		return target.getLock(key);
+		return targetRepository.getLock(key);
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException {
-		return target.getFlowExecution(key);
+		return targetRepository.getFlowExecution(key);
 	}
 
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution)
 			throws FlowExecutionRepositoryException {
-		target.putFlowExecution(key, flowExecution);
+		targetRepository.putFlowExecution(key, flowExecution);
 		rebind();
 	}
 
 	public void removeFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException {
-		target.removeFlowExecution(key);
+		targetRepository.removeFlowExecution(key);
 		rebind();
 	}
 
 	public FlowExecutionKey parseFlowExecutionKey(String encodedKey) {
-		return target.parseFlowExecutionKey(encodedKey);
+		return targetRepository.parseFlowExecutionKey(encodedKey);
 	}
 
 	private void rebind() {
-		synchronized (map.getMutex()) {
-			map.put(key, target);
+		synchronized (repositoryMap.getMutex()) {
+			repositoryMap.put(repositoryAttributeName, targetRepository);
 		}
 	}
 }

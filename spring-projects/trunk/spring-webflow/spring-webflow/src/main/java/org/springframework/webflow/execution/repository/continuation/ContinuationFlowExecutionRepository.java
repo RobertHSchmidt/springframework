@@ -18,14 +18,14 @@ package org.springframework.webflow.execution.repository.continuation;
 import java.io.Serializable;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.conversation.Conversation;
+import org.springframework.webflow.conversation.ConversationService;
+import org.springframework.webflow.conversation.impl.LocalConversationService;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException;
-import org.springframework.webflow.execution.repository.conversation.Conversation;
-import org.springframework.webflow.execution.repository.conversation.ConversationService;
-import org.springframework.webflow.execution.repository.conversation.impl.LocalConversationService;
 import org.springframework.webflow.execution.repository.support.AbstractConversationFlowExecutionRepository;
-import org.springframework.webflow.execution.repository.support.FlowExecutionRepositoryServices;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 
@@ -80,10 +80,11 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 		Serializable {
 
 	/**
-	 * The default number of conversations that can be active at one time within this service.  No max by default.
+	 * The default number of conversations that can be active at one time within
+	 * this service. No max by default.
 	 */
 	private final static int DEFAULT_MAX_CONVERSATIONS = -1;
-	
+
 	/**
 	 * The conversation "continuation group" attribute.
 	 */
@@ -109,17 +110,17 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	 * Creates a new continuation flow execution repository.
 	 * @param repositoryServices the repository services holder
 	 */
-	public ContinuationFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices) {
-		super(repositoryServices, new LocalConversationService(DEFAULT_MAX_CONVERSATIONS));
+	public ContinuationFlowExecutionRepository(FlowExecutionFactory flowExecutionFactory) {
+		super(flowExecutionFactory, new LocalConversationService(DEFAULT_MAX_CONVERSATIONS));
 	}
 
 	/**
 	 * Creates a new continuation flow execution repository.
 	 * @param repositoryServices the repository services holder
 	 */
-	public ContinuationFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices,
+	public ContinuationFlowExecutionRepository(FlowExecutionFactory flowExecutionFactory,
 			ConversationService conversationService) {
-		super(repositoryServices, conversationService);
+		super(flowExecutionFactory, conversationService);
 	}
 
 	/**
@@ -183,7 +184,8 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 		try {
 			FlowExecution flowExecution = continuation.unmarshal();
 			return rehydrate(flowExecution, key);
-		} catch (ContinuationUnmarshalException e) {
+		}
+		catch (ContinuationUnmarshalException e) {
 			throw new FlowExecutionRestorationFailureException(key, e);
 		}
 	}

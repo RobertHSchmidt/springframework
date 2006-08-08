@@ -15,8 +15,8 @@
  */
 package org.springframework.webflow.execution.repository.support;
 
-import org.springframework.webflow.execution.FlowLocator;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.registry.FlowLocator;
 
 /**
  * Convenient implementation that encapsulates the assembly of a default flow

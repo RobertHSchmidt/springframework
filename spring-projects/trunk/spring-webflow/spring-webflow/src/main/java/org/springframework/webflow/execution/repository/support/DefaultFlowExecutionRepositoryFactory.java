@@ -16,10 +16,11 @@
 package org.springframework.webflow.execution.repository.support;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
+import org.springframework.webflow.registry.FlowLocator;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 
@@ -29,7 +30,7 @@ import org.springframework.webflow.util.UidGenerator;
  * <p>
  * Specifically, <i>default</i> means this delegating repository factory:
  * <ul>
- * <li>Sets a {@link SharedMapFlowExecutionRepositoryFactory} to manage flow
+ * <li>Sets a {@link MapFlowExecutionRepositoryFactory} to manage flow
  * execution repository implementations statefully in the
  * {@link ExternalContext#getSessionMap()}, typically backed by the HTTP
  * session.
@@ -52,8 +53,7 @@ public class DefaultFlowExecutionRepositoryFactory extends DelegatingFlowExecuti
 	 */
 	public DefaultFlowExecutionRepositoryFactory(FlowLocator flowLocator) {
 		super(flowLocator);
-		setRepositoryFactory(new SharedMapFlowExecutionRepositoryFactory(
-				new DefaultFlowExecutionRepositoryCreator(this)));
+		setRepositoryFactory(new MapFlowExecutionRepositoryFactory(new DefaultFlowExecutionRepositoryCreator(this)));
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class DefaultFlowExecutionRepositoryFactory extends DelegatingFlowExecuti
 	 * factory.
 	 */
 	protected DefaultFlowExecutionRepositoryCreator getRepositoryCreator() {
-		SharedMapFlowExecutionRepositoryFactory factory = (SharedMapFlowExecutionRepositoryFactory)getRepositoryFactory();
+		MapFlowExecutionRepositoryFactory factory = (MapFlowExecutionRepositoryFactory)getRepositoryFactory();
 		return (DefaultFlowExecutionRepositoryCreator)factory.getRepositoryCreator();
 	}
 
@@ -102,8 +102,8 @@ public class DefaultFlowExecutionRepositoryFactory extends DelegatingFlowExecuti
 		 */
 		private boolean alwaysGenerateNewNextKey = true;
 
-		public DefaultFlowExecutionRepositoryCreator(FlowExecutionRepositoryServices repositoryServices) {
-			super(repositoryServices);
+		public DefaultFlowExecutionRepositoryCreator(FlowExecutionFactory flowExecutionFactory) {
+			super(flowExecutionFactory);
 		}
 
 		/**
@@ -127,7 +127,7 @@ public class DefaultFlowExecutionRepositoryFactory extends DelegatingFlowExecuti
 		}
 
 		public FlowExecutionRepository createRepository() {
-			DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(getRepositoryServices());
+			DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(getFlowExecutionFactory());
 			repository.setContinuationIdGenerator(continuationIdGenerator);
 			repository.setAlwaysGenerateNewNextKey(alwaysGenerateNewNextKey);
 			return repository;
@@ -135,7 +135,7 @@ public class DefaultFlowExecutionRepositoryFactory extends DelegatingFlowExecuti
 
 		public FlowExecutionRepository rehydrateRepository(FlowExecutionRepository repository) {
 			DefaultFlowExecutionRepository defaultRepository = (DefaultFlowExecutionRepository)repository;
-			defaultRepository.setRepositoryServices(getRepositoryServices());
+			defaultRepository.setFlowExecutionFactory(getFlowExecutionFactory());
 			defaultRepository.setContinuationIdGenerator(continuationIdGenerator);
 			return repository;
 		}

@@ -18,11 +18,11 @@ package org.springframework.webflow.execution.repository.support;
 import java.io.Serializable;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.conversation.ConversationId;
+import org.springframework.webflow.conversation.ConversationService;
 import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.continuation.FlowExecutionContinuation;
-import org.springframework.webflow.execution.repository.conversation.ConversationId;
-import org.springframework.webflow.execution.repository.conversation.ConversationService;
 
 /**
  * A flow execution key consisting of two parts:

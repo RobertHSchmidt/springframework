@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.execution.repository;
 
-import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.context.ExternalContext;
 
 /**
  * An abstract factory for obtaining a reference to a flow execution repository

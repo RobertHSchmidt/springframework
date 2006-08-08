@@ -18,20 +18,23 @@ package org.springframework.webflow.execution.repository.support;
 import java.io.Serializable;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.Flow;
+import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.conversation.Conversation;
+import org.springframework.webflow.conversation.ConversationId;
+import org.springframework.webflow.conversation.ConversationParameters;
+import org.springframework.webflow.conversation.ConversationService;
+import org.springframework.webflow.conversation.ConversationServiceException;
+import org.springframework.webflow.conversation.NoSuchConversationException;
+import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.factory.FlowExecutionFactory;
+import org.springframework.webflow.execution.internal.FlowExecutionImpl;
 import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
-import org.springframework.webflow.execution.repository.conversation.Conversation;
-import org.springframework.webflow.execution.repository.conversation.ConversationId;
-import org.springframework.webflow.execution.repository.conversation.ConversationParameters;
-import org.springframework.webflow.execution.repository.conversation.ConversationService;
-import org.springframework.webflow.execution.repository.conversation.ConversationServiceException;
-import org.springframework.webflow.execution.repository.conversation.NoSuchConversationException;
 
 /**
  * A convenient base for flow execution repository implementations that delegate
@@ -67,9 +70,9 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	 * @param repositoryServices the common services needed by this repository
 	 * to function.
 	 */
-	public AbstractConversationFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices,
+	public AbstractConversationFlowExecutionRepository(FlowExecutionFactory executionFactory,
 			ConversationService conversationService) {
-		setRepositoryServices(repositoryServices);
+		setFlowExecutionFactory(executionFactory);
 		setConversationService(conversationService);
 	}
 
@@ -134,7 +137,7 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	}
 
 	protected ConversationParameters createNewConversation(FlowExecution flowExecution) {
-		Flow flow = flowExecution.getFlow();
+		FlowDefinition flow = flowExecution.getFlowDefinition();
 		return new ConversationParameters(flow.getId(), flow.getCaption(), flow.getDescription());
 	}
 
@@ -185,11 +188,11 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 		return flowExecution;
 	}
 
-	protected AttributeMap getConversationScope(FlowExecutionKey key) {
-		return (AttributeMap)getConversation(key).getAttribute(SCOPE_ATTRIBUTE);
+	protected LocalAttributeMap getConversationScope(FlowExecutionKey key) {
+		return (LocalAttributeMap)getConversation(key).getAttribute(SCOPE_ATTRIBUTE);
 	}
 
-	protected void putConversationScope(FlowExecutionKey key, AttributeMap scope) {
+	protected void putConversationScope(FlowExecutionKey key, MutableAttributeMap scope) {
 		getConversation(key).putAttribute(SCOPE_ATTRIBUTE, scope);
 	}
 
@@ -207,4 +210,14 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	 * @return the parsed continuation id
 	 */
 	protected abstract Serializable parseContinuationId(String encodedId) throws FlowExecutionRepositoryException;
+
+	/**
+	 * Helper method to convert a flow execution to its implementation - needed by this repository 
+	 * to set privleged properties on the execution.
+	 * @param flowExecution the flow execution
+	 * @return its implementation produced by the factory
+	 */
+	protected FlowExecutionImpl asImpl(FlowExecution flowExecution) {
+		return (FlowExecutionImpl)flowExecution;
+	}
 }

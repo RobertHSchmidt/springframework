@@ -18,11 +18,12 @@ package org.springframework.webflow.execution.repository.support;
 import java.io.Serializable;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.conversation.ConversationService;
+import org.springframework.webflow.conversation.impl.LocalConversationService;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.PermissionDeniedFlowExecutionAccessException;
-import org.springframework.webflow.execution.repository.conversation.ConversationService;
-import org.springframework.webflow.execution.repository.conversation.impl.LocalConversationService;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 
@@ -69,17 +70,17 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 	 * Creates a new continuation flow execution repository.
 	 * @param repositoryServices the repository services holder
 	 */
-	public DefaultFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices) {
-		super(repositoryServices, new LocalConversationService(DEFAULT_MAX_CONVERSATIONS));
+	public DefaultFlowExecutionRepository(FlowExecutionFactory flowExecutionFactory) {
+		super(flowExecutionFactory, new LocalConversationService(DEFAULT_MAX_CONVERSATIONS));
 	}
 
 	/**
 	 * Creates a new continuation flow execution repository.
 	 * @param repositoryServices the repository services holder
 	 */
-	public DefaultFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices,
+	public DefaultFlowExecutionRepository(FlowExecutionFactory flowExecutionFactory,
 			ConversationService conversationService) {
-		super(repositoryServices, conversationService);
+		super(flowExecutionFactory, conversationService);
 	}
 
 	/**

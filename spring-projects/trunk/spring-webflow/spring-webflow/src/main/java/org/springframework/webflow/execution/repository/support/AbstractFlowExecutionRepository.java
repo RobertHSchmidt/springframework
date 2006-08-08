@@ -18,9 +18,8 @@ package org.springframework.webflow.execution.repository.support;
 import java.io.Serializable;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.Flow;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.impl.FlowExecutionImpl;
+import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
@@ -38,18 +37,18 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryE
 public abstract class AbstractFlowExecutionRepository implements FlowExecutionRepository, Serializable {
 
 	/**
-	 * A holder for the services needed by this repository.
+	 * A factory for flow executions created and managed by this repository.
 	 */
-	private transient FlowExecutionRepositoryServices repositoryServices;
+	private transient FlowExecutionFactory flowExecutionFactory;
 
 	/**
 	 * Flag to indicate whether or not a new flow execution key should always be
-	 * generated before each put call.  Default is true.
+	 * generated before each put call. Default is true.
 	 */
 	private boolean alwaysGenerateNewNextKey = true;
 
 	/**
-	 * No-arg constructor to satisfy use with subclass implementations are that
+	 * No-arg constructor to satisfy use with subclass implementations that are
 	 * serializable.
 	 */
 	protected AbstractFlowExecutionRepository() {
@@ -58,27 +57,27 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 
 	/**
 	 * Creates a new flow execution repository
-	 * @param repositoryServices the common services needed by this repository
+	 * @param flowExecutionFactory the common services needed by this repository
 	 * to function.
 	 */
-	public AbstractFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices) {
-		setRepositoryServices(repositoryServices);
+	public AbstractFlowExecutionRepository(FlowExecutionFactory flowExecutionFactory) {
+		setFlowExecutionFactory(flowExecutionFactory);
 	}
 
 	/**
 	 * Returns the holder for accessing common services needed by this
 	 * repository.
 	 */
-	protected FlowExecutionRepositoryServices getRepositoryServices() {
-		return repositoryServices;
+	protected FlowExecutionFactory getFlowExecutionFactory() {
+		return flowExecutionFactory;
 	}
 
 	/**
 	 * Sets the holder for accessing common services needed by this repository.
 	 */
-	public void setRepositoryServices(FlowExecutionRepositoryServices repositoryServices) {
-		Assert.notNull(repositoryServices, "The repository services instance is required");
-		this.repositoryServices = repositoryServices;
+	public void setFlowExecutionFactory(FlowExecutionFactory flowExecutionFactory) {
+		Assert.notNull(flowExecutionFactory, "The flow execution factory is required");
+		this.flowExecutionFactory = flowExecutionFactory;
 	}
 
 	/**
@@ -99,8 +98,7 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	}
 
 	public FlowExecution createFlowExecution(String flowId) {
-		Flow flow = repositoryServices.getFlowLocator().getFlow(flowId);
-		return new FlowExecutionImpl(flow, repositoryServices.getListenerLoader().getListeners(flow));
+		return flowExecutionFactory.createFlowExecution(flowId);
 	}
 
 	public abstract FlowExecutionKey generateKey(FlowExecution flowExecution) throws FlowExecutionRepositoryException;
@@ -111,19 +109,15 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 
 	public abstract FlowExecutionLock getLock(FlowExecutionKey key) throws FlowExecutionRepositoryException;
 
-	public abstract FlowExecutionKey getNextKey(FlowExecution flowExecution, FlowExecutionKey previousKey) throws FlowExecutionRepositoryException;
+	public abstract FlowExecutionKey getNextKey(FlowExecution flowExecution, FlowExecutionKey previousKey)
+			throws FlowExecutionRepositoryException;
 
-	public abstract void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) throws FlowExecutionRepositoryException;
+	public abstract void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution)
+			throws FlowExecutionRepositoryException;
 
 	public abstract void removeFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
 
 	protected FlowExecution rehydrate(FlowExecution flowExecution, FlowExecutionKey key) {
-		FlowExecutionImpl impl = asImpl(flowExecution);
-		impl.rehydrate(repositoryServices.getFlowLocator(), repositoryServices.getListenerLoader());
-		return flowExecution;
-	}
-
-	protected FlowExecutionImpl asImpl(FlowExecution flowExecution) {
-		return (FlowExecutionImpl)flowExecution;
+		return flowExecutionFactory.rehydrateFlowExecution(flowExecution);
 	}
 }
