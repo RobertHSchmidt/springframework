@@ -22,11 +22,8 @@ import java.util.TreeMap;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.builder.FlowBuilderException;
-import org.springframework.webflow.execution.FlowConstructionException;
-import org.springframework.webflow.execution.FlowLocatorException;
-import org.springframework.webflow.execution.NoSuchFlowDefinitionException;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.FlowDefinitionHolder;
 
 /**
  * A generic registry of one or more Flow definitions.
@@ -74,19 +71,19 @@ public class FlowRegistryImpl implements FlowRegistry {
 		return flowDefinitions.get(id) != null;
 	}
 
-	public Flow[] getFlows() {
-		Flow[] flows = new Flow[flowDefinitions.size()];
+	public FlowDefinition[] getFlows() {
+		FlowDefinition[] flows = new FlowDefinition[flowDefinitions.size()];
 		Iterator it = flowDefinitions.values().iterator();
 		int i = 0;
 		while (it.hasNext()) {
-			FlowHolder holder = (FlowHolder)it.next();
+			FlowDefinitionHolder holder = (FlowDefinitionHolder)it.next();
 			flows[i] = holder.getFlow();
 			i++;
 		}
 		return flows;
 	}
 
-	public void registerFlow(FlowHolder flowHolder) {
+	public void registerFlow(FlowDefinitionHolder flowHolder) {
 		Assert.notNull(flowHolder, "The flow definition holder to register is required");
 		index(flowHolder);
 	}
@@ -106,9 +103,9 @@ public class FlowRegistryImpl implements FlowRegistry {
 			while (it.hasNext()) {
 				Map.Entry entry = (Map.Entry)it.next();
 				String key = (String)entry.getKey();
-				FlowHolder holder = (FlowHolder)entry.getValue();
+				FlowDefinitionHolder holder = (FlowDefinitionHolder)entry.getValue();
 				holder.refresh();
-				if (!holder.getId().equals(key)) {
+				if (!holder.getFlowId().equals(key)) {
 					needsReindexing.add(new Indexed(key, holder));
 				}
 			}
@@ -128,9 +125,9 @@ public class FlowRegistryImpl implements FlowRegistry {
 		try {
 			// workaround for JMX
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-			FlowHolder holder = getFlowDefinitionHolder(flowId);
+			FlowDefinitionHolder holder = getFlowDefinitionHolder(flowId);
 			holder.refresh();
-			if (!holder.getId().equals(flowId)) {
+			if (!holder.getFlowId().equals(flowId)) {
 				reindex(holder, flowId);
 			}
 
@@ -140,18 +137,18 @@ public class FlowRegistryImpl implements FlowRegistry {
 		}
 	}
 
-	private void reindex(FlowHolder holder, String oldId) {
+	private void reindex(FlowDefinitionHolder holder, String oldId) {
 		flowDefinitions.remove(oldId);
 		index(holder);
 	}
 
-	private void index(FlowHolder holder) {
-		Assert.hasText(holder.getId(), "The flow holder to index must return a non-blank flow id");
-		flowDefinitions.put(holder.getId(), holder);
+	private void index(FlowDefinitionHolder holder) {
+		Assert.hasText(holder.getFlowId(), "The flow holder to index must return a non-blank flow id");
+		flowDefinitions.put(holder.getFlowId(), holder);
 	}
 
-	private FlowHolder getFlowDefinitionHolder(String id) {
-		FlowHolder flowHolder = (FlowHolder)flowDefinitions.get(id);
+	private FlowDefinitionHolder getFlowDefinitionHolder(String id) {
+		FlowDefinitionHolder flowHolder = (FlowDefinitionHolder)flowDefinitions.get(id);
 		if (flowHolder == null) {
 			throw new NoSuchFlowDefinitionException(id, getFlowIds());
 		}
@@ -160,7 +157,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 
 	// implementing FlowLocator
 
-	public Flow getFlow(String id) throws FlowLocatorException {
+	public FlowDefinition getFlow(String id) throws NoSuchFlowDefinitionException {
 		Assert.hasText(id,
 				"Unable to load a flow definition: no flow id was provided.  Please provide a valid flow identifier.");
 		try {
@@ -172,8 +169,6 @@ public class FlowRegistryImpl implements FlowRegistry {
 				return parent.getFlow(id);
 			}
 			throw e;
-		} catch (FlowBuilderException e) {
-			throw new FlowConstructionException(id, e);
 		}
 	}
 
@@ -185,9 +180,9 @@ public class FlowRegistryImpl implements FlowRegistry {
 	private static class Indexed {
 		private String key;
 
-		private FlowHolder holder;
+		private FlowDefinitionHolder holder;
 
-		public Indexed(String key, FlowHolder holder) {
+		public Indexed(String key, FlowDefinitionHolder holder) {
 			this.key = key;
 			this.holder = holder;
 		}

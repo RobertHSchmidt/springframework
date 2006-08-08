@@ -20,9 +20,8 @@ import java.io.Serializable;
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
-import org.springframework.webflow.AttributeCollection;
-import org.springframework.webflow.CollectionUtils;
-import org.springframework.webflow.UnmodifiableAttributeMap;
+import org.springframework.webflow.collection.AttributeMap;
+import org.springframework.webflow.collection.support.CollectionUtils;
 
 /**
  * A descriptor for a Flow to be assembled from a externalized resource.
@@ -39,7 +38,7 @@ public class ExternalizedFlowDefinition implements Serializable {
 	/**
 	 * Attributes that can be used to affect flow construction.
 	 */
-	private UnmodifiableAttributeMap attributes;
+	private AttributeMap attributes;
 
 	/**
 	 * The externalized flow resource location.
@@ -70,7 +69,7 @@ public class ExternalizedFlowDefinition implements Serializable {
 	 * @param id the flow id to be assigned
 	 * @param location the flow resource location.
 	 */
-	public ExternalizedFlowDefinition(String id, Resource location, AttributeCollection attributes) {
+	public ExternalizedFlowDefinition(String id, Resource location, AttributeMap attributes) {
 		init(id, location, attributes);
 	}
 
@@ -91,7 +90,7 @@ public class ExternalizedFlowDefinition implements Serializable {
 	/**
 	 * Returns arbitrary flow definition attributes.
 	 */
-	public UnmodifiableAttributeMap getAttributes() {
+	public AttributeMap getAttributes() {
 		return attributes;
 	}
 
@@ -107,13 +106,13 @@ public class ExternalizedFlowDefinition implements Serializable {
 		return id.hashCode() + location.hashCode();
 	}
 
-	private void init(String id, Resource location, AttributeCollection attributes) {
+	private void init(String id, Resource location, AttributeMap attributes) {
 		Assert.hasText(id, "The id of the externalized flow definition is required");
 		Assert.notNull(location, "The location of the externalized flow definition is required");
 		this.id = id;
 		this.location = location;
 		if (attributes != null) {
-			this.attributes = attributes.unmodifiable();
+			this.attributes = attributes;
 		}
 		else {
 			this.attributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
