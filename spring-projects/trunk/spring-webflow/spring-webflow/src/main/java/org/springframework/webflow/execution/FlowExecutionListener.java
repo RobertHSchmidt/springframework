@@ -19,7 +19,6 @@ import org.springframework.webflow.collection.AttributeMap;
 import org.springframework.webflow.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
-import org.springframework.webflow.execution.internal.EnterStateVetoException;
 
 /**
  * Interface to be implemented by objects that wish to listen and respond to the
