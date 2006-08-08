@@ -23,23 +23,21 @@ import junit.framework.TestCase;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowExecutionContext;
-import org.springframework.webflow.FlowExecutionException;
-import org.springframework.webflow.ParameterMap;
-import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.builder.FlowArtifactLookupException;
+import org.springframework.webflow.collection.ParameterMap;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionContext;
+import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionListener;
-import org.springframework.webflow.execution.impl.FlowExecutionImpl;
-import org.springframework.webflow.support.ApplicationView;
+import org.springframework.webflow.execution.ViewSelection;
+import org.springframework.webflow.execution.factory.FlowExecutionFactory;
+import org.springframework.webflow.execution.support.ApplicationView;
+import org.springframework.webflow.execution.support.ExternalRedirect;
+import org.springframework.webflow.execution.support.FlowExecutionRedirect;
+import org.springframework.webflow.execution.support.FlowRedirect;
 import org.springframework.webflow.support.DefaultExpressionParserFactory;
-import org.springframework.webflow.support.ExternalRedirect;
-import org.springframework.webflow.support.FlowExecutionRedirect;
-import org.springframework.webflow.support.FlowRedirect;
 
 /**
  * Base class for integration tests that verify a flow executes as expected.
@@ -52,7 +50,7 @@ import org.springframework.webflow.support.FlowRedirect;
  * <ul>
  * <li>That the flow execution starts as expected given a request from an
  * external context containing potential input attributes (see the
- * {@link #startFlow(AttributeMap, ExternalContext, FlowExecutionListener[])}
+ * {@link #startFlow(LocalAttributeMap, ExternalContext, FlowExecutionListener[])}
  * variants).
  * <li>That given the set of supported state transition criteria a state
  * executes the appropriate transition when a matching event is signaled (with
@@ -83,6 +81,12 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * The flow execution running the flow when the test is active (runtime
 	 * object).
 	 */
+	private FlowExecutionFactory flowExecutionFactory;
+
+	/**
+	 * The flow execution running the flow when the test is active (runtime
+	 * object).
+	 */
 	private FlowExecution flowExecution;
 
 	/**
@@ -97,18 +101,17 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * Convenience operation that starts the execution with:
 	 * <ul>
 	 * <li>no input attributes
-	 * <li>no attached flow execution listeners
 	 * <li>an empty {@link MockExternalContext} with no environmental request
 	 * parameters set.
 	 * </ul>
 	 * @return the view selection made as a result of starting the flow
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
-	 * @throws FlowExecutionException if an exception was thrown within a state of the
-	 * resumed flow execution during event processing
+	 * @throws FlowExecutionException if an exception was thrown within a state
+	 * of the resumed flow execution during event processing
 	 */
 	protected ViewSelection startFlow() throws FlowExecutionException {
-		return startFlow(null, new MockExternalContext(), null);
+		return startFlow(null, new MockExternalContext());
 	}
 
 	/**
@@ -118,7 +121,6 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * <ul>
 	 * <li>the specified input attributes, eligible for mapping by the root
 	 * flow
-	 * <li>no attached flow execution listeners
 	 * <li>an empty {@link MockExternalContext} with no environmental request
 	 * parameters set.
 	 * </ul>
@@ -126,29 +128,8 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
 	 */
-	protected ViewSelection startFlow(AttributeMap input) throws FlowExecutionException {
-		return startFlow(input, new MockExternalContext(), null);
-	}
-
-	/**
-	 * Start the flow execution to be tested.
-	 * <p>
-	 * Convenience operation that starts the execution with:
-	 * <ul>
-	 * <li>the specified input attributes, eligible for mapping by the root
-	 * flow
-	 * <li>the flow execution listener attached
-	 * <li>an empty {@link MockExternalContext} with no environmental request
-	 * parameters set.
-	 * </ul>
-	 * @return the view selection made as a result of starting the flow
-	 * (returned when the first interactive state (a view state or end state) is
-	 * entered)
-	 * @throws FlowExecutionException if an exception was thrown within a state of the
-	 * resumed flow execution during event processing
-	 */
-	protected ViewSelection startFlow(AttributeMap input, FlowExecutionListener listener) throws FlowExecutionException {
-		return startFlow(input, new MockExternalContext(), new FlowExecutionListener[] { listener });
+	protected ViewSelection startFlow(LocalAttributeMap input) throws FlowExecutionException {
+		return startFlow(input, new MockExternalContext());
 	}
 
 	/**
@@ -160,25 +141,20 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * for mapping by the root flow definition.
 	 * <li>an external context that provides the flow execution being tested
 	 * access to the calling environment for this request.
-	 * <li>an array of listeners that should observe the lifecycle of the flow
-	 * execution being tested (and make test assertions during that lifecycle).
 	 * </ol>
 	 * @param input the flow execution input attributes eligible for mapping by
 	 * the root flow.
 	 * @param context the external context providing information about the
 	 * caller's environment, used by the flow execution during the start
 	 * operation
-	 * @param listeners an array of listeners to attach to the flow execution
-	 * for this test scenario (may be null).
 	 * @return the view selection made as a result of starting the flow
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
-	 * @throws FlowExecutionException if an exception was thrown within a state of the
-	 * resumed flow execution during event processing
+	 * @throws FlowExecutionException if an exception was thrown within a state
+	 * of the resumed flow execution during event processing
 	 */
-	protected ViewSelection startFlow(AttributeMap input, ExternalContext context, FlowExecutionListener[] listeners)
-			throws FlowExecutionException {
-		flowExecution = createFlowExecution(listeners);
+	protected ViewSelection startFlow(LocalAttributeMap input, ExternalContext context) throws FlowExecutionException {
+		flowExecution = createFlowExecution();
 		return flowExecution.start(input, context);
 	}
 
@@ -188,25 +164,23 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * listeners.
 	 * @return the flow execution for this test
 	 */
-	protected FlowExecution createFlowExecution(FlowExecutionListener[] listeners) {
-		return new FlowExecutionImpl(getFlow(), listeners);
+	protected FlowExecution createFlowExecution() {
+		return flowExecutionFactory.createFlowExecution(getFlowId());
 	}
 
 	/**
-	 * Retrieve the flow definition whose execution is to be tested by this
-	 * test.
+	 * Retrieve the identifier of the flow definition whose execution is to be
+	 * tested by this test.
 	 * @return the definition of the flow whose execution will be tested
-	 * @throws FlowArtifactLookupException if the flow identified by flowId() could
-	 * not be resolved (if <code>this.flow</code> was null)
 	 */
-	protected abstract Flow getFlow() throws FlowArtifactLookupException;
+	protected abstract String getFlowId();
 
 	/**
 	 * Signal an occurence of an event in the current state of the flow
 	 * execution being tested.
 	 * @param eventId the event that occured
-	 * @throws FlowExecutionException if an exception was thrown within a state of the
-	 * resumed flow execution during event processing
+	 * @throws FlowExecutionException if an exception was thrown within a state
+	 * of the resumed flow execution during event processing
 	 */
 	protected ViewSelection signalEvent(String eventId) throws FlowExecutionException {
 		return signalEvent(eventId, new MockExternalContext());
@@ -218,8 +192,8 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param eventId the event that occured
 	 * @param requestParameters request parameters needed by the flow execution
 	 * to complete event processing
-	 * @throws FlowExecutionException if an exception was thrown within a state of the
-	 * resumed flow execution during event processing
+	 * @throws FlowExecutionException if an exception was thrown within a state
+	 * of the resumed flow execution during event processing
 	 */
 	protected ViewSelection signalEvent(String eventId, ParameterMap requestParameters) throws FlowExecutionException {
 		return signalEvent(eventId, new MockExternalContext(requestParameters));
@@ -244,13 +218,13 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * you have a few options:
 	 * <p>
 	 * First, you may implement standalone unit tests for your
-	 * {@link org.springframework.webflow.Action} implementations. There you can
-	 * verify that an Action executes its logic properly in isolation. When you
-	 * do this, you may mock or stub out services the Action implementation
-	 * needs that are expensive to initialize. You can also verify there that
-	 * the action puts everything in the flow or request scope it was expected
-	 * to (to meet its contract with the view it is prepping for display, for
-	 * example).
+	 * {@link org.springframework.webflow.execution.Action} implementations.
+	 * There you can verify that an Action executes its logic properly in
+	 * isolation. When you do this, you may mock or stub out services the Action
+	 * implementation needs that are expensive to initialize. You can also
+	 * verify there that the action puts everything in the flow or request scope
+	 * it was expected to (to meet its contract with the view it is prepping for
+	 * display, for example).
 	 * <p>
 	 * Second, you can attach one or more FlowExecutionListeners to the flow
 	 * execution at start time within your test code, which will allow you to
@@ -265,8 +239,8 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @return the view selection that was made, returned once control is
 	 * returned to the client (occurs when the flow enters a view state, or an
 	 * end state)
-	 * @throws FlowExecutionException if an exception was thrown within a state of the
-	 * resumed flow execution during event processing
+	 * @throws FlowExecutionException if an exception was thrown within a state
+	 * of the resumed flow execution during event processing
 	 */
 	protected ViewSelection signalEvent(String eventId, ExternalContext context) throws FlowExecutionException {
 		Assert.state(flowExecution != null, "The flow execution to test is [null]; "
@@ -280,8 +254,8 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * that may be safely called on an active but currently paused execution.
 	 * Used to simulate a browser flow execution redirect.
 	 * @return the current view selection for this flow execution
-	 * @throws FlowExecutionException if an exception was thrown within a state of the
-	 * resumed flow execution during event processing
+	 * @throws FlowExecutionException if an exception was thrown within a state
+	 * of the resumed flow execution during event processing
 	 */
 	protected ViewSelection refresh() throws FlowExecutionException {
 		return refresh(new MockExternalContext());
@@ -296,8 +270,8 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * caller's environment, used by the flow execution during the refresh
 	 * operation
 	 * @return the current view selection for this flow execution
-	 * @throws FlowExecutionException if an exception was thrown within a state of the
-	 * resumed flow execution during event processing
+	 * @throws FlowExecutionException if an exception was thrown within a state
+	 * of the resumed flow execution during event processing
 	 */
 	protected ViewSelection refresh(ExternalContext context) throws FlowExecutionException {
 		Assert.state(flowExecution != null,
@@ -324,7 +298,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @return the attribute value
 	 */
 	protected Object getConversationAttribute(String attributeName) {
-		return getFlowExecutionImpl().getConversationScope().get(attributeName);
+		return getFlowExecutionContext().getConversationScope().get(attributeName);
 	}
 
 	/**
@@ -336,7 +310,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @throws IllegalStateException if the attribute was not present.
 	 */
 	protected Object getRequiredConversationAttribute(String attributeName) throws IllegalStateException {
-		return getFlowExecutionImpl().getConversationScope().getRequired(attributeName);
+		return getFlowExecutionContext().getConversationScope().getRequired(attributeName);
 	}
 
 	/**
@@ -350,7 +324,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 */
 	protected Object getRequiredConversationAttribute(String attributeName, Class requiredType)
 			throws IllegalStateException {
-		return getFlowExecutionImpl().getConversationScope().getRequired(attributeName, requiredType);
+		return getFlowExecutionContext().getConversationScope().getRequired(attributeName, requiredType);
 	}
 
 	/**
@@ -393,9 +367,9 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * in the tested flow execution
 	 */
 	protected void assertActiveFlowEquals(String expectedActiveFlowId) {
-		assertEquals("The active flow id '" + getFlowExecutionContext().getActiveSession().getFlow()
+		assertEquals("The active flow id '" + getFlowExecutionContext().getActiveSession().getDefinition()
 				+ "' does not equal the expected active flow '" + expectedActiveFlowId + "'", expectedActiveFlowId,
-				getFlowExecutionContext().getActiveSession().getFlow().getId());
+				getFlowExecutionContext().getActiveSession().getDefinition().getId());
 	}
 
 	/**
@@ -545,11 +519,5 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 */
 	protected Object evaluateModelAttributeExpression(String attributeName, Map model) {
 		return expressionParser.parseExpression(attributeName).evaluateAgainst(model, null);
-	}
-
-	private FlowExecutionImpl getFlowExecutionImpl() {
-		FlowExecutionContext context = getFlowExecutionContext();
-		Assert.isInstanceOf(FlowExecutionImpl.class, context);
-		return (FlowExecutionImpl)context;
 	}
 }

@@ -15,18 +15,21 @@
  */
 package org.springframework.webflow.test;
 
-import org.springframework.webflow.AttributeCollection;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowExecutionContext;
-import org.springframework.webflow.FlowSession;
-import org.springframework.webflow.ParameterMap;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.State;
-import org.springframework.webflow.Transition;
-import org.springframework.webflow.UnmodifiableAttributeMap;
+import org.springframework.webflow.collection.AttributeMap;
+import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.collection.ParameterMap;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.collection.support.LocalParameterMap;
+import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.StateDefinition;
+import org.springframework.webflow.definition.TransitionDefinition;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.FlowExecutionContext;
+import org.springframework.webflow.execution.FlowSession;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.Transition;
 
 /**
  * Mock implementation of the <code>RequestContext</code> interface to
@@ -39,8 +42,8 @@ import org.springframework.webflow.UnmodifiableAttributeMap;
  * be consistent with the naming convention in the rest of the Spring framework
  * (e.g. MockHttpServletRequest, ...).
  * 
- * @see org.springframework.webflow.RequestContext
- * @see org.springframework.webflow.Action
+ * @see org.springframework.webflow.execution.RequestContext
+ * @see org.springframework.webflow.execution.Action
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -51,13 +54,13 @@ public class MockRequestContext implements RequestContext {
 
 	private ExternalContext externalContext = new MockExternalContext();
 
-	private AttributeMap requestScope = new AttributeMap();
+	private LocalAttributeMap requestScope = new LocalAttributeMap();
 
 	private Event lastEvent;
 
 	private Transition lastTransition;
 
-	private AttributeMap attributes = new AttributeMap();
+	private LocalAttributeMap attributes = new LocalAttributeMap();
 
 	/**
 	 * Creates a new mock request context with the following defaults:
@@ -94,29 +97,29 @@ public class MockRequestContext implements RequestContext {
 	 * <li>A mock external context with the provided parameters set.
 	 * </ul>
 	 */
-	public MockRequestContext(ParameterMap requestParameterMap) {
+	public MockRequestContext(LocalParameterMap requestParameterMap) {
 		externalContext = new MockExternalContext(requestParameterMap);
 	}
 
 	// implementing RequestContext
 
-	public Flow getActiveFlow() {
-		return getFlowExecutionContext().getActiveSession().getFlow();
+	public FlowDefinition getActiveFlow() {
+		return getFlowExecutionContext().getActiveSession().getDefinition();
 	}
 
-	public State getCurrentState() {
+	public StateDefinition getCurrentState() {
 		return getFlowExecutionContext().getActiveSession().getState();
 	}
 
-	public AttributeMap getRequestScope() {
+	public MutableAttributeMap getRequestScope() {
 		return requestScope;
 	}
 
-	public AttributeMap getFlowScope() {
+	public MutableAttributeMap getFlowScope() {
 		return getFlowExecutionContext().getActiveSession().getScope();
 	}
 
-	public AttributeMap getConversationScope() {
+	public MutableAttributeMap getConversationScope() {
 		return getMockFlowExecutionContext().getConversationScope();
 	}
 
@@ -136,20 +139,20 @@ public class MockRequestContext implements RequestContext {
 		return lastEvent;
 	}
 
-	public Transition getLastTransition() {
+	public TransitionDefinition getLastTransition() {
 		return lastTransition;
 	}
 
-	public UnmodifiableAttributeMap getAttributes() {
-		return attributes.unmodifiable();
+	public AttributeMap getAttributes() {
+		return attributes;
 	}
 
-	public void setAttributes(AttributeCollection attributes) {
+	public void setAttributes(AttributeMap attributes) {
 		this.attributes.replaceWith(attributes);
 	}
 
-	public UnmodifiableAttributeMap getModel() {
-		return getConversationScope().union(getFlowScope()).union(getRequestScope()).unmodifiable();
+	public AttributeMap getModel() {
+		return getConversationScope().union(getFlowScope()).union(getRequestScope());
 	}
 
 	/**
@@ -240,11 +243,11 @@ public class MockRequestContext implements RequestContext {
 	}
 	
 	/**
-	 * Returns the contained mutable context {@link AttributeMap} allowing setting of mock context 
+	 * Returns the contained mutable context {@link LocalAttributeMap} allowing setting of mock context 
 	 * attributes.
 	 * @return the attribute map
 	 */
-	public AttributeMap getAttributeMap() {
+	public LocalAttributeMap getAttributeMap() {
 		return attributes;
 	}
 }

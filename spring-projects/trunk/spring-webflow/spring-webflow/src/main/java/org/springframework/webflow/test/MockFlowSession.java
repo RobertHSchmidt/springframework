@@ -15,13 +15,16 @@
  */
 package org.springframework.webflow.test;
 
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowSession;
-import org.springframework.webflow.FlowSessionStatus;
-import org.springframework.webflow.ScopeType;
-import org.springframework.webflow.State;
-import org.springframework.webflow.ViewState;
+import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.StateDefinition;
+import org.springframework.webflow.execution.FlowSession;
+import org.springframework.webflow.execution.FlowSessionStatus;
+import org.springframework.webflow.execution.ScopeType;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.State;
+import org.springframework.webflow.execution.internal.ViewState;
 
 /**
  * Mock implementation of the <code>FlowSession</code> interface.
@@ -30,13 +33,13 @@ import org.springframework.webflow.ViewState;
  */
 public class MockFlowSession implements FlowSession {
 
-	private Flow flow;
+	Flow flow;
 
-	private State state;
+	State state;
 
 	private FlowSessionStatus status = FlowSessionStatus.CREATED;
 
-	private AttributeMap scope = new AttributeMap();
+	private LocalAttributeMap scope = new LocalAttributeMap();
 
 	private FlowSession parent;
 
@@ -63,20 +66,20 @@ public class MockFlowSession implements FlowSession {
 	 * Creates a new mock session in a created state for the specified flow
 	 * definition.
 	 */
-	public MockFlowSession(Flow flow, AttributeMap input) {
+	public MockFlowSession(Flow flow, MutableAttributeMap input) {
 		setFlow(flow);
 		scope.putAll(input);
 	}
 
-	public Flow getFlow() {
+	public FlowDefinition getDefinition() {
 		return flow;
 	}
 
-	public State getState() {
+	public StateDefinition getState() {
 		return state;
 	}
 
-	public AttributeMap getScope() {
+	public MutableAttributeMap getScope() {
 		return scope;
 	}
 
@@ -118,7 +121,7 @@ public class MockFlowSession implements FlowSession {
 	 * scope data of the ongoing flow execution. As such, the given scope should
 	 * be of type {@link ScopeType#FLOW}.
 	 */
-	public void setScope(AttributeMap scope) {
+	public void setScope(LocalAttributeMap scope) {
 		this.scope = scope;
 	}
 

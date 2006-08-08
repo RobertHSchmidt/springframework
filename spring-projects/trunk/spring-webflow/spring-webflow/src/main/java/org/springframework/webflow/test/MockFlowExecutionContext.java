@@ -15,11 +15,12 @@
  */
 package org.springframework.webflow.test;
 
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowExecutionContext;
-import org.springframework.webflow.FlowSession;
-import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.execution.FlowExecutionContext;
+import org.springframework.webflow.execution.FlowSession;
+import org.springframework.webflow.execution.internal.Flow;
 
 /**
  * A stub implementation of the flow execution context interface.
@@ -28,21 +29,19 @@ import org.springframework.webflow.ViewSelection;
  */
 public class MockFlowExecutionContext implements FlowExecutionContext {
 
-	private Flow flow;
+	private FlowDefinition flow;
 
 	private FlowSession activeSession;
 
-	private AttributeMap conversationScope = new AttributeMap();
+	private MutableAttributeMap conversationScope = new LocalAttributeMap();
 
-	private ViewSelection currentViewSelection;
-	
 	/**
 	 * Creates a new mock flow execution context--automatically installs a root
 	 * flow definition and active flow session.
 	 */
 	public MockFlowExecutionContext() {
 		activeSession = new MockFlowSession();
-		this.flow = activeSession.getFlow();
+		this.flow = activeSession.getDefinition();
 	}
 
 	/**
@@ -60,7 +59,7 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 
 	// implementing flow execution context
 
-	public Flow getFlow() {
+	public FlowDefinition getFlowDefinition() {
 		return flow;
 	}
 
@@ -75,7 +74,7 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 		return activeSession;
 	}
 
-	public AttributeMap getConversationScope() {
+	public MutableAttributeMap getConversationScope() {
 		return conversationScope;
 	}
 
@@ -96,7 +95,7 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 	/**
 	 * Sets flow execution (conversational) scope.
 	 */
-	public void setConversationScope(AttributeMap scope) {
+	public void setConversationScope(MutableAttributeMap scope) {
 		this.conversationScope = scope;
 	}
 
@@ -105,16 +104,5 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 	 */
 	public MockFlowSession getMockActiveSession() {
 		return (MockFlowSession)activeSession;
-	}
-
-	public ViewSelection getCurrentViewSelection() {
-		return currentViewSelection;
-	}
-
-	/**
-	 * Sets the current view selection.
-	 */
-	public void setCurrentViewSelection(ViewSelection currentViewSelection) {
-		this.currentViewSelection = currentViewSelection;
 	}
 }
