@@ -15,11 +15,9 @@
  */
 package org.springframework.webflow.execution;
 
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.FlowExecutionContext;
-import org.springframework.webflow.FlowExecutionException;
-import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.context.ExternalContext;
 
 /**
  * A <i>client instance</i> of an executing top-level flow. Represents a single
@@ -35,13 +33,13 @@ import org.springframework.webflow.ViewSelection;
  * creates an instance of an object implementing this interface, initializing it
  * with the requested Flow definition which becomes the execution's "root", or
  * top-level flow. After creation, the
- * {@link #start(AttributeMap, ExternalContext)} operation is called, which
+ * {@link #start(LocalAttributeMap, ExternalContext)} operation is called, which
  * causes the execution to activate a new session for its root flow definition.
  * That session is then pushed onto a stack and its definition becomes the
  * <i>active flow</i>. A local, internal
- * {@link org.springframework.webflow.RequestControlContext} object (which
- * extends ({@link org.springframework.webflow.RequestContext}) is then
- * created and the Flow's start {@link org.springframework.webflow.State} is
+ * {@link org.springframework.webflow.execution.internal.RequestControlContext} object (which
+ * extends ({@link org.springframework.webflow.execution.RequestContext}) is then
+ * created and the Flow's start {@link org.springframework.webflow.execution.internal.State} is
  * entered.
  * <p>
  * In a distributed environment such as HTTP, after a call into this object has
@@ -66,10 +64,10 @@ import org.springframework.webflow.ViewSelection;
  * 
  * @see org.springframework.webflow.executor.FlowExecutor
  * @see org.springframework.webflow.execution.repository.FlowExecutionRepository
- * @see org.springframework.webflow.Flow
- * @see org.springframework.webflow.State
- * @see org.springframework.webflow.FlowSession
- * @see org.springframework.webflow.RequestControlContext
+ * @see org.springframework.webflow.execution.internal.Flow
+ * @see org.springframework.webflow.execution.internal.State
+ * @see org.springframework.webflow.execution.FlowSession
+ * @see org.springframework.webflow.execution.internal.RequestControlContext
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -88,9 +86,9 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * participate in this flow execution)
 	 * @throws FlowExecutionException if an exception was thrown within a state
 	 * of the flow execution during request processing
-	 * @see FlowExecutionContext#getFlow()
+	 * @see FlowExecutionContext#getFlowDefinition()
 	 */
-	public ViewSelection start(AttributeMap input, ExternalContext context) throws FlowExecutionException;
+	public ViewSelection start(MutableAttributeMap input, ExternalContext context) throws FlowExecutionException;
 
 	/**
 	 * Signal an occurence of the specified user event in the current state of
