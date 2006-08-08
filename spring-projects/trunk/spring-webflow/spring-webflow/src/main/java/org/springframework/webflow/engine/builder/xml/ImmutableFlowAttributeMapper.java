@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.webflow.execution.internal.support.AbstractFlowAttributeMapper;
+import org.springframework.webflow.engine.support.AbstractFlowAttributeMapper;
 
 /**
  * Simple flow attribute mapper that holds an input and output mapper strategy.
