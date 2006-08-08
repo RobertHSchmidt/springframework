@@ -24,20 +24,20 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationParameters;
-import org.springframework.webflow.conversation.ConversationService;
+import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.conversation.NoSuchConversationException;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 
 /**
- * The default implementation of the {@link ConversationService}. This
+ * The default implementation of the {@link ConversationManager}. This
  * implementation maintains an internal state of all conversations that have
  * been begun.
  * 
  * @author Ben Hale
  * @author Keith Donald
  */
-public class LocalConversationService implements ConversationService, Serializable {
+public class LocalConversationManager implements ConversationManager, Serializable {
 
 	/**
 	 * The local conversation data store.
@@ -66,7 +66,7 @@ public class LocalConversationService implements ConversationService, Serializab
 	 * @param maxConversations the maximum number of conversations that can be 
 	 * active at once within this service.
 	 */
-	public LocalConversationService(int maxConversations) {
+	public LocalConversationManager(int maxConversations) {
 		this.maxConversations = maxConversations;
 	}
 	
@@ -190,28 +190,28 @@ public class LocalConversationService implements ConversationService, Serializab
 		}
 
 		public void lock() {
-			LocalConversationService.this.getLock(conversationId).lock();
+			LocalConversationManager.this.getLock(conversationId).lock();
 		}
 
 		public void end() {
-			LocalConversationService.this.end(conversationId);
+			LocalConversationManager.this.end(conversationId);
 		}
 
 		public Object getAttribute(Object name) {
-			return LocalConversationService.this.getAttribute(conversationId, name);
+			return LocalConversationManager.this.getAttribute(conversationId, name);
 		}
 
 		public void putAttribute(Object name, Object value) {
-			LocalConversationService.this.putAttribute(conversationId, name, value);
+			LocalConversationManager.this.putAttribute(conversationId, name, value);
 		}
 
 		public void removeAttribute(Object name) {
-			LocalConversationService.this.removeAttribute(conversationId, name);
+			LocalConversationManager.this.removeAttribute(conversationId, name);
 		}
 
 		public void unlock() {
 			try {
-				LocalConversationService.this.getLock(conversationId).unlock();
+				LocalConversationManager.this.getLock(conversationId).unlock();
 			} catch (NoSuchConversationException e) {
 				// ignore
 			}

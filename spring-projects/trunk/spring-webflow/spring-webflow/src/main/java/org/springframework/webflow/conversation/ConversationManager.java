@@ -21,15 +21,15 @@ package org.springframework.webflow.conversation;
  * 
  * @author Keith Donald
  */
-public interface ConversationService {
+public interface ConversationManager {
 
 	/**
 	 * Begin a new conversation.
 	 * @param conversationParameters the input needed
 	 * @return a service interface allowing access to the conversatio context
-	 * @throws ConversationServiceException an exception occured
+	 * @throws ConversationException an exception occured
 	 */
-	public Conversation beginConversation(ConversationParameters conversationParameters) throws ConversationServiceException;
+	public Conversation beginConversation(ConversationParameters conversationParameters) throws ConversationException;
 
 	/**
 	 * Get the conversation with the provided id.
@@ -37,14 +37,14 @@ public interface ConversationService {
 	 * @return the conversation
 	 * @throws NoSuchConversationException the id provided was invalid.
 	 */
-	public Conversation getConversation(ConversationId id) throws ConversationServiceException;
+	public Conversation getConversation(ConversationId id) throws ConversationException;
 
 	/**
 	 * Parse the string-encoded conversationId into its object form.
 	 * Essentially, the reverse of {@link ConversationId#toString()}.
 	 * @param encodedId the encoded id
 	 * @return the parsed conversation id
-	 * @throws ConversationServiceException an exception occured.
+	 * @throws ConversationException an exception occured.
 	 */
-	public ConversationId parseConversationId(String encodedId) throws ConversationServiceException;
+	public ConversationId parseConversationId(String encodedId) throws ConversationException;
 }

@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.engine.repository;
 
-import org.springframework.webflow.conversation.ConversationService;
+import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.execution.repository.continuation.ClientContinuationFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.continuation.FlowExecutionContinuationFactory;
 import org.springframework.webflow.execution.repository.support.SingletonFlowExecutionRepositoryFactory;
@@ -57,7 +57,7 @@ public class ClientContinuationFlowExecutionRepositoryFactory extends Delegating
 	 * Sets the conversation service reference.
 	 * @param conversationService the conversation service, may not be null.
 	 */
-	public void setConversationService(ConversationService conversationService) {
+	public void setConversationService(ConversationManager conversationService) {
 		getRepository().setConversationService(conversationService);
 	}
 

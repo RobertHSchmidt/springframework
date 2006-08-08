@@ -24,14 +24,14 @@ import org.springframework.core.NestedRuntimeException;
  * 
  * @author Keith Donald
  */
-public abstract class ConversationServiceException extends NestedRuntimeException {
+public abstract class ConversationException extends NestedRuntimeException {
 
 	/**
 	 * Creates a new flow execution repository exception explicitly noting the
 	 * repository that had the problem.
 	 * @param message the message
 	 */
-	public ConversationServiceException(String message) {
+	public ConversationException(String message) {
 		super(message);
 	}
 
@@ -41,7 +41,7 @@ public abstract class ConversationServiceException extends NestedRuntimeExceptio
 	 * @param message the message
 	 * @param cause the root cause of the problem
 	 */
-	public ConversationServiceException(String message, Throwable cause) {
+	public ConversationException(String message, Throwable cause) {
 		super(message, cause);
 	}
 }

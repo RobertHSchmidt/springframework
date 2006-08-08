@@ -19,8 +19,8 @@ import java.io.Serializable;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.conversation.Conversation;
-import org.springframework.webflow.conversation.ConversationService;
-import org.springframework.webflow.conversation.impl.LocalConversationService;
+import org.springframework.webflow.conversation.ConversationManager;
+import org.springframework.webflow.conversation.impl.LocalConversationManager;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
@@ -35,7 +35,7 @@ import org.springframework.webflow.util.UidGenerator;
  * view-state of a flow execution snapshotted at a point in time.
  * <p>
  * The set of active user conversations are managed by a
- * {@link ConversationService} implementation, which this repository delegates
+ * {@link ConversationManager} implementation, which this repository delegates
  * to.
  * <p>
  * This repository is responsible for:
@@ -111,7 +111,7 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	 * @param repositoryServices the repository services holder
 	 */
 	public ContinuationFlowExecutionRepository(FlowExecutionFactory flowExecutionFactory) {
-		super(flowExecutionFactory, new LocalConversationService(DEFAULT_MAX_CONVERSATIONS));
+		super(flowExecutionFactory, new LocalConversationManager(DEFAULT_MAX_CONVERSATIONS));
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	 * @param repositoryServices the repository services holder
 	 */
 	public ContinuationFlowExecutionRepository(FlowExecutionFactory flowExecutionFactory,
-			ConversationService conversationService) {
+			ConversationManager conversationService) {
 		super(flowExecutionFactory, conversationService);
 	}
 

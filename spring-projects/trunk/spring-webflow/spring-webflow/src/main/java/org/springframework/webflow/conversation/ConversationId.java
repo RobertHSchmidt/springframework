@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 /**
  * An id that uniquely identifies a conversation managed by
- * {@link ConversationService}.
+ * {@link ConversationManager}.
  * 
  * @author Ben Hale
  * @author Keith Donald

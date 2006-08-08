@@ -23,7 +23,7 @@ package org.springframework.webflow.conversation;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class NoSuchConversationException extends ConversationServiceException {
+public class NoSuchConversationException extends ConversationException {
 
 	/**
 	 * The unique conversation identifier that was invalid.
