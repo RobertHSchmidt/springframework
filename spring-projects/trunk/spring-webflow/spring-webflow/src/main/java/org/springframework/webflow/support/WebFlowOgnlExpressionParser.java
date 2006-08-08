@@ -22,7 +22,8 @@ import ognl.PropertyAccessor;
 
 import org.springframework.binding.expression.support.OgnlExpressionParser;
 import org.springframework.binding.util.MapAdaptable;
-import org.springframework.webflow.AttributeMap;
+import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
 
 /**
  * An extension of {@link OgnlExpressionParser} that registers web flow specific
@@ -37,7 +38,7 @@ public class WebFlowOgnlExpressionParser extends OgnlExpressionParser {
 	 */
 	public WebFlowOgnlExpressionParser() {
 		addPropertyAccessor(MapAdaptable.class, new MapAdaptablePropertyAccessor());
-		addPropertyAccessor(AttributeMap.class, new AttributeMapPropertyAccessor());
+		addPropertyAccessor(MutableAttributeMap.class, new AttributeMapPropertyAccessor());
 	}
 
 	/**
@@ -57,13 +58,13 @@ public class WebFlowOgnlExpressionParser extends OgnlExpressionParser {
 	}
 
 	/**
-	 * The {@link AttributeMap} property accessor.
+	 * The {@link LocalAttributeMap} property accessor.
 	 * 
 	 * @author Keith Donald
 	 */
 	private static class AttributeMapPropertyAccessor extends MapAdaptablePropertyAccessor {
 		public void setProperty(Map context, Object target, Object name, Object value) throws OgnlException {
-			((AttributeMap)target).put((String)name, value);
+			((MutableAttributeMap)target).put((String)name, value);
 		}
 	}
 }
