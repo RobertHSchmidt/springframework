@@ -1,5 +1,6 @@
 package org.springframework.webflow.engine;
 
+import org.springframework.webflow.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.factory.FlowExecutionFactory;
@@ -31,7 +32,7 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 		return new FlowExecutionImpl((Flow)flowLocator.getFlow(flowId), listenerLoader.getListeners(flow));
 	}
 
-	public FlowExecution rehydrateFlowExecution(FlowExecution flowExecution) {
+	public FlowExecution restoreState(FlowExecution flowExecution, MutableAttributeMap conversationScope) {
 		return flowExecution;
 	}
 }
