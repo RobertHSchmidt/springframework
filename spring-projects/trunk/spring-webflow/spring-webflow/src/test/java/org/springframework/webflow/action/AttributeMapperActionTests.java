@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.webflow.support.WebFlowOgnlExpressionParser;
-import org.springframework.webflow.test.MockRequestContext;
+import org.springframework.webflow.test.engine.MockRequestContext;
 
 /**
  * Unit test for the AttributeMapperAction.

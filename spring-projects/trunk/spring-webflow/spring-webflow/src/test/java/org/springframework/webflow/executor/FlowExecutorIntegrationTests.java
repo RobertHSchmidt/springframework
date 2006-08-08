@@ -6,7 +6,7 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.internal.NoMatchingTransitionException;
+import org.springframework.webflow.engine.NoMatchingTransitionException;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.registry.NoSuchFlowDefinitionException;

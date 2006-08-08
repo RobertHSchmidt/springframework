@@ -17,8 +17,8 @@ package org.springframework.webflow.execution;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.collection.support.LocalAttributeMap;
-import org.springframework.webflow.execution.internal.Flow;
-import org.springframework.webflow.execution.internal.State;
+import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.State;
 import org.springframework.webflow.support.UnmodifiableAttributeMap;
 
 /**

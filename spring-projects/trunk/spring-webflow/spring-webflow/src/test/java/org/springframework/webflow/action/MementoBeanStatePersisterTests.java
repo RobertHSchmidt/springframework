@@ -6,7 +6,7 @@ import org.springframework.webflow.action.bean.Memento;
 import org.springframework.webflow.action.bean.MementoBeanStatePersister;
 import org.springframework.webflow.action.bean.MementoOriginator;
 import org.springframework.webflow.execution.ScopeType;
-import org.springframework.webflow.test.MockRequestContext;
+import org.springframework.webflow.test.engine.MockRequestContext;
 
 public class MementoBeanStatePersisterTests extends TestCase {
 	private MementoBeanStatePersister persister = new MementoBeanStatePersister();

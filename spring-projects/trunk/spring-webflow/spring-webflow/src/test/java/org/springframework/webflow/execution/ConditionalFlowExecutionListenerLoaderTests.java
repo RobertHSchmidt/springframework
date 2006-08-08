@@ -2,10 +2,10 @@ package org.springframework.webflow.execution;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.factory.support.ConditionalFlowExecutionListenerLoader;
 import org.springframework.webflow.execution.factory.support.FlowExecutionListenerCriteria;
 import org.springframework.webflow.execution.factory.support.FlowExecutionListenerCriteriaFactory;
-import org.springframework.webflow.execution.internal.Flow;
 
 public class ConditionalFlowExecutionListenerLoaderTests extends TestCase {
 

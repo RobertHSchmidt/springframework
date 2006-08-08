@@ -7,7 +7,7 @@ import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.internal.support.FlowRedirectSelector;
 import org.springframework.webflow.execution.support.FlowRedirect;
-import org.springframework.webflow.test.MockRequestContext;
+import org.springframework.webflow.test.engine.MockRequestContext;
 
 public class FlowRedirectSelectorTests extends TestCase {
 	ExpressionParser parser = new DefaultExpressionParserFactory().getExpressionParser();

@@ -10,7 +10,7 @@ import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowRedirect;
 import org.springframework.webflow.test.MockExternalContext;
-import org.springframework.webflow.test.MockFlowExecutionContext;
+import org.springframework.webflow.test.engine.MockFlowExecutionContext;
 
 public class FlowExecutorArgumentExtractorTests extends TestCase {
 	private MockExternalContext context;

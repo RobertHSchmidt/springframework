@@ -27,7 +27,7 @@ import org.springframework.webflow.collection.support.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.support.WebFlowOgnlExpressionParser;
-import org.springframework.webflow.test.MockRequestContext;
+import org.springframework.webflow.test.engine.MockRequestContext;
 
 /**
  * Unit test for the bean factory bean invoking action.

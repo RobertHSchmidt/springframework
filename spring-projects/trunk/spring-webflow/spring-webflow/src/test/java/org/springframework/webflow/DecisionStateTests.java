@@ -17,15 +17,15 @@ package org.springframework.webflow;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.engine.DecisionState;
+import org.springframework.webflow.engine.EndState;
+import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.NoMatchingTransitionException;
+import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.internal.DecisionState;
-import org.springframework.webflow.execution.internal.EndState;
-import org.springframework.webflow.execution.internal.Flow;
-import org.springframework.webflow.execution.internal.NoMatchingTransitionException;
-import org.springframework.webflow.execution.internal.Transition;
 import org.springframework.webflow.execution.internal.support.DefaultTargetStateResolver;
 import org.springframework.webflow.execution.internal.support.EventIdTransitionCriteria;
-import org.springframework.webflow.test.MockRequestControlContext;
+import org.springframework.webflow.test.engine.MockRequestControlContext;
 
 /**
  * Tests that each of the Flow state types execute as expected when entered.

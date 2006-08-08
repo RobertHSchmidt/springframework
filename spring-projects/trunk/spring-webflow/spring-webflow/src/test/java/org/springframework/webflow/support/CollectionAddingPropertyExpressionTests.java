@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.webflow.test.MockRequestContext;
+import org.springframework.webflow.test.engine.MockRequestContext;
 
 public class CollectionAddingPropertyExpressionTests extends TestCase {
 	ExpressionParser parser = new DefaultExpressionParserFactory().getExpressionParser();
