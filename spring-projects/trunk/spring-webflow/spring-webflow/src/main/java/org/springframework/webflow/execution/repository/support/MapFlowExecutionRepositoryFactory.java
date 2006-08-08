@@ -16,9 +16,9 @@
 package org.springframework.webflow.execution.repository.support;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.SharedAttributeMap;
-import org.springframework.webflow.SharedMap;
+import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.SharedAttributeMap;
+import org.springframework.webflow.context.support.LocalSharedAttributeMap;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 
@@ -26,8 +26,8 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryF
  * Retrieves flow execution repositories from a shared, externally managed map.
  * <p>
  * The map access strategy is configurable by setting the
- * {@link #setSharedMapLocator(SharedMapLocator) sharedMapLocator} property. By
- * default the {@link SessionMapLocator} is used which pulls in the
+ * {@link #setRepositoryMapLocator(RepositoryMapLocator) sharedMapLocator}
+ * property. By default the {@link SessionRepositoryMapLocator} is used which pulls in the
  * {@link ExternalContext#getSessionMap()}, a shared map backed by a user's
  * HTTP session in a Servlet environment and a Portlet Session in a Portlet
  * environment.
@@ -38,11 +38,11 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryF
  * {@link FlowExecutionRepositoryCreator}, a creational strategy. The newly
  * created repository will then be placed in the shared map where it can be
  * accessed at a later point in time. Synchronization will occur on the mutex of
- * the {@link SharedAttributeMap} to ensure thread safety.
+ * the {@link LocalSharedAttributeMap} to ensure thread safety.
  * 
  * @author Keith Donald
  */
-public class SharedMapFlowExecutionRepositoryFactory implements FlowExecutionRepositoryFactory {
+public class MapFlowExecutionRepositoryFactory implements FlowExecutionRepositoryFactory {
 
 	/**
 	 * The creational strategy that will create FlowExecutionRepository
@@ -55,16 +55,16 @@ public class SharedMapFlowExecutionRepositoryFactory implements FlowExecutionRep
 	 * this storage implementation to access a FlowExecutionRepository by a
 	 * unique key.
 	 * <p>
-	 * The default is the {@link SessionMapLocator} which returns a map backed
+	 * The default is the {@link SessionRepositoryMapLocator} which returns a map backed
 	 * by the {@link ExternalContext#getSessionMap}.
 	 */
-	private SharedMapLocator sharedMapLocator = new SessionMapLocator();
+	private RepositoryMapLocator repositoryMapLocator = new SessionRepositoryMapLocator();
 
 	/**
 	 * Creates a new shared map repository factory.
 	 * @param repositoryCreator the repository creational strategy
 	 */
-	public SharedMapFlowExecutionRepositoryFactory(FlowExecutionRepositoryCreator repositoryCreator) {
+	public MapFlowExecutionRepositoryFactory(FlowExecutionRepositoryCreator repositoryCreator) {
 		Assert.notNull(repositoryCreator, "The repository creator is required");
 		this.repositoryCreator = repositoryCreator;
 	}
@@ -76,38 +76,40 @@ public class SharedMapFlowExecutionRepositoryFactory implements FlowExecutionRep
 	public FlowExecutionRepositoryCreator getRepositoryCreator() {
 		return repositoryCreator;
 	}
-	
+
 	/**
 	 * Returns the shared, external map locator.
 	 */
-	public SharedMapLocator getSharedMapLocator() {
-		return sharedMapLocator;
+	public RepositoryMapLocator getRepositoryMapLocator() {
+		return repositoryMapLocator;
 	}
 
 	/**
 	 * Sets the shared, external map locator.
 	 */
-	public void setSharedMapLocator(SharedMapLocator sharedMapLocator) {
-		Assert.notNull(sharedMapLocator, "The shared map locator is required");
-		this.sharedMapLocator = sharedMapLocator;
+	public void setRepositoryMapLocator(RepositoryMapLocator sharedMapLocator) {
+		Assert.notNull(sharedMapLocator, "The repository map locator is required");
+		this.repositoryMapLocator = sharedMapLocator;
 	}
 
 	public FlowExecutionRepository getRepository(ExternalContext context) {
-		SharedMap repositoryMap = sharedMapLocator.getMap(context);
+		SharedAttributeMap repositoryMap = repositoryMapLocator.getMap(context);
 		// synchronize on the shared map's mutex for thread safety
 		synchronized (repositoryMap.getMutex()) {
-			Object repositoryKey = getRepositoryKey();
-			FlowExecutionRepository repository = (FlowExecutionRepository)repositoryMap.get(repositoryKey);
+			String attributeName = getRepositoryAttributeName();
+			FlowExecutionRepository repository = (FlowExecutionRepository)repositoryMap.get(attributeName,
+					FlowExecutionRepository.class);
 			if (repository == null) {
 				repository = getRepositoryCreator().createRepository();
-				repositoryMap.put(repositoryKey, repository);
+				repositoryMap.put(attributeName, repository);
 			}
 			else {
 				getRepositoryCreator().rehydrateRepository(repository);
 			}
-			if (sharedMapLocator.requiresRebindOnChange()) {
-				return new RebindingFlowExecutionRepository(repository, repositoryKey, repositoryMap);
-			} else {
+			if (repositoryMapLocator.requiresRebindOnChange()) {
+				return new RebindingFlowExecutionRepository(repository, attributeName, repositoryMap);
+			}
+			else {
 				return repository;
 			}
 		}
@@ -116,7 +118,7 @@ public class SharedMapFlowExecutionRepositoryFactory implements FlowExecutionRep
 	/**
 	 * Returns the shared map repository attribute key.
 	 */
-	protected Object getRepositoryKey() {
+	protected String getRepositoryAttributeName() {
 		return getRepositoryCreator().getClass().getName();
 	}
 }

@@ -35,5 +35,4 @@ public abstract class FlowExecutionKey implements Serializable {
 	 * @see java.lang.Object#toString()
 	 */
 	public abstract String toString();
-
 }

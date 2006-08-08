@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.repository.conversation.impl;
+package org.springframework.webflow.execution.repository.support;
+
+import org.springframework.util.Assert;
+import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.SharedAttributeMap;
 
 /**
- * A normalized interface for conversation locks, used to obtain exclusive
- * access to a conversation.
+ * A {@link RepositoryMapLocator} that returns the external context session
+ * map.
  * @author Keith Donald
  */
-public interface ConversationLock {
-	
-	/**
-	 * Acquire the conversation lock. 
-	 */
-	public void lock();
+class SessionRepositoryMapLocator implements RepositoryMapLocator {
+	public SharedAttributeMap getMap(ExternalContext context) {
+		Assert.notNull(context, "The external context is required");
+		return context.getSessionMap();
+	}
 
-	/**
-	 * Release the conversation lock.
-	 */
-	public void unlock();
+	public boolean requiresRebindOnChange() {
+		return true;
+	}
 }

@@ -16,14 +16,14 @@
 package org.springframework.webflow.execution.repository.continuation;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.AbstractFlowExecutionRepositoryCreator;
 import org.springframework.webflow.execution.repository.support.DelegatingFlowExecutionRepositoryFactory;
-import org.springframework.webflow.execution.repository.support.FlowExecutionRepositoryServices;
-import org.springframework.webflow.execution.repository.support.SharedMapFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.support.MapFlowExecutionRepositoryFactory;
+import org.springframework.webflow.registry.FlowLocator;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 
@@ -34,7 +34,7 @@ import org.springframework.webflow.util.UidGenerator;
  * <p>
  * Specifically, this delegating repository factory:
  * <ul>
- * <li>Sets a {@link SharedMapFlowExecutionRepositoryFactory} to manage flow
+ * <li>Sets a {@link MapFlowExecutionRepositoryFactory} to manage flow
  * execution repository implementations statefully in the
  * {@link ExternalContext#getSessionMap()}, typically backed by the HTTP
  * session.
@@ -61,8 +61,7 @@ public class ContinuationFlowExecutionRepositoryFactory extends DelegatingFlowEx
 	 */
 	public ContinuationFlowExecutionRepositoryFactory(FlowLocator flowLocator) {
 		super(flowLocator);
-		setRepositoryFactory(new SharedMapFlowExecutionRepositoryFactory(
-				new ContinuationFlowExecutionRepositoryCreator(this)));
+		setRepositoryFactory(new MapFlowExecutionRepositoryFactory(new ContinuationFlowExecutionRepositoryCreator(this)));
 	}
 
 	/**
@@ -70,7 +69,7 @@ public class ContinuationFlowExecutionRepositoryFactory extends DelegatingFlowEx
 	 * factory.
 	 */
 	protected ContinuationFlowExecutionRepositoryCreator getRepositoryCreator() {
-		SharedMapFlowExecutionRepositoryFactory factory = (SharedMapFlowExecutionRepositoryFactory)getRepositoryFactory();
+		MapFlowExecutionRepositoryFactory factory = (MapFlowExecutionRepositoryFactory)getRepositoryFactory();
 		return (ContinuationFlowExecutionRepositoryCreator)factory.getRepositoryCreator();
 	}
 
@@ -89,7 +88,7 @@ public class ContinuationFlowExecutionRepositoryFactory extends DelegatingFlowEx
 	public void setContinuationIdGenerator(UidGenerator continuationIdGenerator) {
 		getRepositoryCreator().setContinuationIdGenerator(continuationIdGenerator);
 	}
-	
+
 	/**
 	 * Sets the maximum number of continuations allowed per conversation in this
 	 * repository.
@@ -97,7 +96,7 @@ public class ContinuationFlowExecutionRepositoryFactory extends DelegatingFlowEx
 	public void setMaxContinuations(int maxContinuations) {
 		getRepositoryCreator().setMaxContinuations(maxContinuations);
 	}
-	
+
 	private static class ContinuationFlowExecutionRepositoryCreator extends AbstractFlowExecutionRepositoryCreator {
 
 		/**
@@ -119,8 +118,8 @@ public class ContinuationFlowExecutionRepositoryFactory extends DelegatingFlowEx
 		 * Creates a new continuation repository creator.
 		 * @param repositoryServices the repository services holder
 		 */
-		public ContinuationFlowExecutionRepositoryCreator(FlowExecutionRepositoryServices repositoryServices) {
-			super(repositoryServices);
+		public ContinuationFlowExecutionRepositoryCreator(FlowExecutionFactory flowExecutionFactory) {
+			super(flowExecutionFactory);
 		}
 
 		/**
@@ -151,7 +150,7 @@ public class ContinuationFlowExecutionRepositoryFactory extends DelegatingFlowEx
 
 		public FlowExecutionRepository createRepository() {
 			ContinuationFlowExecutionRepository repository = new ContinuationFlowExecutionRepository(
-					getRepositoryServices());
+					getFlowExecutionFactory());
 			repository.setContinuationFactory(continuationFactory);
 			repository.setMaxContinuations(maxContinuations);
 			repository.setContinuationIdGenerator(continuationIdGenerator);
@@ -160,7 +159,7 @@ public class ContinuationFlowExecutionRepositoryFactory extends DelegatingFlowEx
 
 		public FlowExecutionRepository rehydrateRepository(FlowExecutionRepository repository) {
 			ContinuationFlowExecutionRepository impl = (ContinuationFlowExecutionRepository)repository;
-			impl.setRepositoryServices(getRepositoryServices());
+			impl.setFlowExecutionFactory(getFlowExecutionFactory());
 			impl.setContinuationFactory(continuationFactory);
 			impl.setContinuationIdGenerator(continuationIdGenerator);
 			return impl;

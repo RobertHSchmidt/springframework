@@ -15,9 +15,9 @@
  */
 package org.springframework.webflow.execution.repository.support;
 
+import org.springframework.webflow.conversation.Conversation;
+import org.springframework.webflow.conversation.ConversationService;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
-import org.springframework.webflow.execution.repository.conversation.Conversation;
-import org.springframework.webflow.execution.repository.conversation.ConversationService;
 
 /**
  * A flow execution lock that locks a conversation managed by a

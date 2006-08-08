@@ -15,10 +15,11 @@
  */
 package org.springframework.webflow.execution.repository.support;
 
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.execution.internal.FlowExecutionImplFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
+import org.springframework.webflow.registry.FlowLocator;
 
 /**
  * A base for decorators that encapsulate the construction and configuration of
@@ -32,7 +33,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryF
  * 
  * @author Keith Donald
  */
-public abstract class DelegatingFlowExecutionRepositoryFactory extends FlowExecutionRepositoryServices implements
+public abstract class DelegatingFlowExecutionRepositoryFactory extends FlowExecutionImplFactory implements
 		FlowExecutionRepositoryFactory {
 
 	/**

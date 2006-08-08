@@ -15,11 +15,10 @@
  */
 package org.springframework.webflow.execution.repository.continuation;
 
-import org.springframework.webflow.execution.FlowLocator;
-import org.springframework.webflow.execution.repository.conversation.ConversationService;
+import org.springframework.webflow.conversation.ConversationService;
 import org.springframework.webflow.execution.repository.support.DelegatingFlowExecutionRepositoryFactory;
-import org.springframework.webflow.execution.repository.support.FlowExecutionRepositoryServices;
 import org.springframework.webflow.execution.repository.support.SingletonFlowExecutionRepositoryFactory;
+import org.springframework.webflow.registry.FlowLocator;
 
 /**
  * A convenient implementation that encapsulates the assembly of a "client" flow

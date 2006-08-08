@@ -22,19 +22,19 @@ import java.io.Serializable;
 
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.util.Assert;
-import org.springframework.webflow.AttributeMap;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.conversation.Conversation;
+import org.springframework.webflow.conversation.ConversationId;
+import org.springframework.webflow.conversation.ConversationParameters;
+import org.springframework.webflow.conversation.ConversationService;
+import org.springframework.webflow.conversation.ConversationServiceException;
+import org.springframework.webflow.conversation.NoSuchConversationException;
+import org.springframework.webflow.conversation.impl.SimpleConversationId;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException;
-import org.springframework.webflow.execution.repository.conversation.Conversation;
-import org.springframework.webflow.execution.repository.conversation.ConversationId;
-import org.springframework.webflow.execution.repository.conversation.ConversationParameters;
-import org.springframework.webflow.execution.repository.conversation.ConversationService;
-import org.springframework.webflow.execution.repository.conversation.ConversationServiceException;
-import org.springframework.webflow.execution.repository.conversation.NoSuchConversationException;
-import org.springframework.webflow.execution.repository.conversation.impl.SimpleConversationId;
 import org.springframework.webflow.execution.repository.support.AbstractConversationFlowExecutionRepository;
-import org.springframework.webflow.execution.repository.support.FlowExecutionRepositoryServices;
 
 /**
  * Stores flow execution state client side, requiring no use of server-side
@@ -83,8 +83,8 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	 * @param repositoryServices the common services needed by this repository
 	 * to function.
 	 */
-	public ClientContinuationFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices) {
-		super(repositoryServices, new NoOpConversationService());
+	public ClientContinuationFlowExecutionRepository(FlowExecutionFactory flowExecutionFactory) {
+		super(flowExecutionFactory, new NoOpConversationService());
 	}
 
 	/**
@@ -92,9 +92,9 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	 * @param repositoryServices the common services needed by this repository
 	 * to function.
 	 */
-	public ClientContinuationFlowExecutionRepository(FlowExecutionRepositoryServices repositoryServices,
+	public ClientContinuationFlowExecutionRepository(FlowExecutionFactory flowExecutionFactory,
 			ConversationService conversationService) {
-		super(repositoryServices, conversationService);
+		super(flowExecutionFactory, conversationService);
 	}
 
 	/**
@@ -117,13 +117,14 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 		try {
 			FlowExecution flowExecution = continuation.unmarshal();
 			return rehydrate(flowExecution, key);
-		} catch (ContinuationUnmarshalException e) {
+		}
+		catch (ContinuationUnmarshalException e) {
 			throw new FlowExecutionRestorationFailureException(key, e);
 		}
 	}
 
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
-		putConversationScope(key, asImpl(flowExecution).getConversationScope());
+		putConversationScope(key, flowExecution.getConversationScope());
 	}
 
 	protected final Serializable generateContinuationId(FlowExecution flowExecution) {
@@ -180,7 +181,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 			ois.close();
 		}
 	}
-	
+
 	/**
 	 * Conversation service that doesn't do anything - the default.
 	 * @author Keith Donald
@@ -188,10 +189,11 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	private static class NoOpConversationService implements ConversationService {
 
 		private static final ConversationId conversationId = new SimpleConversationId("1");
-		
+
 		private static final NoOpConversation INSTANCE = new NoOpConversation();
-		
-		public Conversation beginConversation(ConversationParameters conversationParameters) throws ConversationServiceException {
+
+		public Conversation beginConversation(ConversationParameters conversationParameters)
+				throws ConversationServiceException {
 			return INSTANCE;
 		}
 
@@ -209,7 +211,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 			}
 
 			public Object getAttribute(Object name) {
-				return new AttributeMap();
+				return new LocalAttributeMap();
 			}
 
 			public ConversationId getId() {
@@ -226,7 +228,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 			}
 
 			public void unlock() {
-			}	
+			}
 		}
 	}
 }

@@ -16,6 +16,7 @@
 package org.springframework.webflow.execution.repository.support;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 
 /**
@@ -31,24 +32,24 @@ public abstract class AbstractFlowExecutionRepositoryCreator implements FlowExec
 	 * The holder for common services needed by all repositories created by this
 	 * creator.
 	 */
-	private FlowExecutionRepositoryServices repositoryServices;
+	private FlowExecutionFactory flowExecutionFactory;
 
 	/**
 	 * Creates a new flow execution repository creator
 	 * @param repositoryServices the holder for common services needed by all
 	 * repositories created by this creator.
 	 */
-	public AbstractFlowExecutionRepositoryCreator(FlowExecutionRepositoryServices repositoryServices) {
-		Assert.notNull(repositoryServices, "The repository services instance is required");
-		this.repositoryServices = repositoryServices;
+	public AbstractFlowExecutionRepositoryCreator(FlowExecutionFactory flowExecutionFactory) {
+		Assert.notNull(flowExecutionFactory, "The flow execution factory is required");
+		this.flowExecutionFactory = flowExecutionFactory;
 	}
 
 	/**
 	 * Returns the holder for common services needed by all repositories created
 	 * by this creator.
 	 */
-	protected FlowExecutionRepositoryServices getRepositoryServices() {
-		return repositoryServices;
+	protected FlowExecutionFactory getFlowExecutionFactory() {
+		return flowExecutionFactory;
 	}
 
 	public abstract FlowExecutionRepository createRepository();
