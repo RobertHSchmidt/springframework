@@ -15,7 +15,7 @@ import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.webflow.SimpleFlow;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.registry.FlowRegistryImpl;
-import org.springframework.webflow.registry.StaticFlowHolder;
+import org.springframework.webflow.registry.StaticFlowDefinitionHolder;
 
 public class FlowActionTests extends TestCase {
 	private FlowAction action;
@@ -23,7 +23,7 @@ public class FlowActionTests extends TestCase {
 	private FlowRegistryImpl registry = new FlowRegistryImpl();
 
 	public void setUp() {
-		registry.registerFlow(new StaticFlowHolder(new SimpleFlow()));
+		registry.registerFlow(new StaticFlowDefinitionHolder(new SimpleFlow()));
 		action = new FlowAction() {
 			protected WebApplicationContext initWebApplicationContext(ActionServlet actionServlet) throws IllegalStateException {
 				StaticWebApplicationContext context = new StaticWebApplicationContext();

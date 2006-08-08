@@ -3,11 +3,13 @@ package org.springframework.webflow.builder;
 import junit.framework.TestCase;
 
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.webflow.ActionState;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.ScopeType;
-import org.springframework.webflow.action.AbstractBeanInvokingAction;
-import org.springframework.webflow.action.MethodResultSpecification;
+import org.springframework.webflow.action.bean.AbstractBeanInvokingAction;
+import org.springframework.webflow.action.bean.MethodResultSpecification;
+import org.springframework.webflow.execution.ScopeType;
+import org.springframework.webflow.execution.internal.ActionState;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.builder.FlowAssembler;
+import org.springframework.webflow.execution.internal.builder.xml.XmlFlowBuilder;
 
 public class PojoActionXmlFlowBuilderTests extends TestCase {
 	private Flow flow;

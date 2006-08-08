@@ -2,15 +2,15 @@ package org.springframework.webflow.executor.support;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.EndState;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.Transition;
-import org.springframework.webflow.ViewState;
+import org.springframework.webflow.execution.internal.EndState;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.Transition;
+import org.springframework.webflow.execution.internal.ViewState;
+import org.springframework.webflow.execution.internal.support.DefaultTargetStateResolver;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.registry.FlowRegistryImpl;
-import org.springframework.webflow.registry.StaticFlowHolder;
-import org.springframework.webflow.support.DefaultTargetStateResolver;
+import org.springframework.webflow.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.test.MockExternalContext;
 
 public class FlowRequestHandlerTests extends TestCase {
@@ -25,7 +25,7 @@ public class FlowRequestHandlerTests extends TestCase {
 		ViewState view = new ViewState(flow, "view");
 		view.getTransitionSet().add(new Transition(new DefaultTargetStateResolver("end")));
 		new EndState(flow, "end");
-		registry.registerFlow(new StaticFlowHolder(flow));
+		registry.registerFlow(new StaticFlowDefinitionHolder(flow));
 		FlowExecutorImpl executor = new FlowExecutorImpl(registry);
 		handler = new FlowRequestHandler(executor);
 	}
@@ -35,7 +35,7 @@ public class FlowRequestHandlerTests extends TestCase {
 		ResponseInstruction response = handler.handleFlowRequest(context);
 		assertTrue(response.isNull());
 		assertTrue(response.getFlowExecutionContext().isActive());
-		assertEquals("flow", response.getFlowExecutionContext().getFlow().getId());
+		assertEquals("flow", response.getFlowExecutionContext().getFlowDefinition().getId());
 		assertEquals("view", response.getFlowExecutionContext().getActiveSession().getState().getId());
 	}
 
@@ -50,7 +50,7 @@ public class FlowRequestHandlerTests extends TestCase {
 
 		assertTrue(response.isNull());
 		assertTrue(!response.getFlowExecutionContext().isActive());
-		assertEquals("flow", response.getFlowExecutionContext().getFlow().getId());
+		assertEquals("flow", response.getFlowExecutionContext().getFlowDefinition().getId());
 
 	}
 
@@ -64,7 +64,7 @@ public class FlowRequestHandlerTests extends TestCase {
 
 		assertTrue(response.isNull());
 		assertTrue(response.getFlowExecutionContext().isActive());
-		assertEquals("flow", response.getFlowExecutionContext().getFlow().getId());
+		assertEquals("flow", response.getFlowExecutionContext().getFlowDefinition().getId());
 		assertEquals("view", response.getFlowExecutionContext().getActiveSession().getState().getId());
 	}
 }

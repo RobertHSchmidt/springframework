@@ -25,20 +25,22 @@ import org.springframework.beans.factory.HierarchicalBeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.webflow.ActionState;
-import org.springframework.webflow.AnnotatedAction;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.SubflowState;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.registry.DefaultFlowServiceLocator;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.internal.ActionState;
+import org.springframework.webflow.execution.internal.AnnotatedAction;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.SubflowState;
+import org.springframework.webflow.execution.internal.builder.FlowAssembler;
+import org.springframework.webflow.execution.internal.builder.registry.DefaultFlowServiceLocator;
+import org.springframework.webflow.execution.internal.builder.xml.XmlFlowBuilder;
 import org.springframework.webflow.registry.FlowRegistryImpl;
 
 /**
  * Test case for XML flow builder, testing flow nesting.
  * 
- * @see org.springframework.webflow.builder.XmlFlowBuilder
+ * @see org.springframework.webflow.execution.internal.builder.xml.XmlFlowBuilder
  * 
  * @author Erwin Vervaet
  */

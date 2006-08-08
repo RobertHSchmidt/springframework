@@ -16,14 +16,11 @@
 package org.springframework.webflow.execution;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowSession;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.State;
-import org.springframework.webflow.UnmodifiableAttributeMap;
-import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.execution.internal.EnterStateVetoException;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.State;
+import org.springframework.webflow.support.UnmodifiableAttributeMap;
 
 /**
  * Mock implementation of the <code>FlowExecutionListener</code> interface for
@@ -130,7 +127,7 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		requestInProcess = true;
 	}
 
-	public void sessionStarting(RequestContext context, Flow flow, AttributeMap input) throws EnterStateVetoException {
+	public void sessionStarting(RequestContext context, Flow flow, LocalAttributeMap input) throws EnterStateVetoException {
 		if (!context.getFlowExecutionContext().isActive()) {
 			Assert.state(!started, "The flow execution was already started");
 			flowNestingLevel = 0;
@@ -185,7 +182,7 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 	}
 
 	
-	public void sessionEnding(RequestContext context, FlowSession session, AttributeMap output) {
+	public void sessionEnding(RequestContext context, FlowSession session, LocalAttributeMap output) {
 		sessionEnding = true;
 	}
 

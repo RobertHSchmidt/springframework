@@ -5,12 +5,12 @@ package org.springframework.webflow.execution.repository;
 
 import java.util.HashMap;
 
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.SharedMap;
-import org.springframework.webflow.context.SharedMapDecorator;
-import org.springframework.webflow.execution.repository.support.SharedMapLocator;
+import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.support.SharedMap;
+import org.springframework.webflow.context.support.SharedMapDecorator;
+import org.springframework.webflow.execution.repository.support.RepositoryMapLocator;
 
-public class LocalMapLocator implements SharedMapLocator {
+public class LocalMapLocator implements RepositoryMapLocator {
 	public SharedMap source = new SharedMapDecorator(new HashMap());
 
 	public SharedMap getMap(ExternalContext context) {

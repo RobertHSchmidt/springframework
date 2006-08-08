@@ -2,7 +2,10 @@ package org.springframework.webflow.action;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.ScopeType;
+import org.springframework.webflow.action.bean.Memento;
+import org.springframework.webflow.action.bean.MementoBeanStatePersister;
+import org.springframework.webflow.action.bean.MementoOriginator;
+import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class MementoBeanStatePersisterTests extends TestCase {

@@ -18,10 +18,10 @@ package org.springframework.webflow.action;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
-import org.springframework.webflow.Action;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -54,7 +54,7 @@ public class CompositeActionTests extends TestCase {
 
 	public void testDoExecute() throws Exception {
 		MockRequestContext mockRequestContext = new MockRequestContext();
-		AttributeMap attributes = new AttributeMap();
+		LocalAttributeMap attributes = new LocalAttributeMap();
 		attributes.put("some key", "some value");
 		actionControl
 				.expectAndReturn(actionMock.execute(mockRequestContext), new Event(this, "some event", attributes));

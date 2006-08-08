@@ -2,8 +2,11 @@ package org.springframework.webflow;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.support.DefaultTargetStateResolver;
-import org.springframework.webflow.support.EventIdTransitionCriteria;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.Transition;
+import org.springframework.webflow.execution.internal.ViewState;
+import org.springframework.webflow.execution.internal.support.DefaultTargetStateResolver;
+import org.springframework.webflow.execution.internal.support.EventIdTransitionCriteria;
 import org.springframework.webflow.test.MockRequestControlContext;
 
 public class TransitionTests extends TestCase {

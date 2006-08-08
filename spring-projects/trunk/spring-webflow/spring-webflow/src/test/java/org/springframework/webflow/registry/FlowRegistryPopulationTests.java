@@ -9,14 +9,18 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.builder.AbstractFlowBuilder;
-import org.springframework.webflow.builder.BaseFlowServiceLocator;
-import org.springframework.webflow.builder.FlowAssembler;
-import org.springframework.webflow.builder.FlowBuilder;
-import org.springframework.webflow.builder.FlowBuilderException;
-import org.springframework.webflow.builder.FlowServiceLocator;
 import org.springframework.webflow.builder.SimpleFlowBuilder;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.builder.AbstractFlowBuilder;
+import org.springframework.webflow.execution.internal.builder.BaseFlowServiceLocator;
+import org.springframework.webflow.execution.internal.builder.FlowAssembler;
+import org.springframework.webflow.execution.internal.builder.FlowBuilder;
+import org.springframework.webflow.execution.internal.builder.FlowBuilderException;
+import org.springframework.webflow.execution.internal.builder.FlowServiceLocator;
+import org.springframework.webflow.execution.internal.builder.registry.DefaultFlowServiceLocator;
+import org.springframework.webflow.execution.internal.builder.registry.FlowRegistrarSupport;
+import org.springframework.webflow.execution.internal.builder.registry.FlowRegistryFactoryBean;
+import org.springframework.webflow.execution.internal.builder.registry.XmlFlowRegistrar;
 
 public class FlowRegistryPopulationTests extends TestCase {
 	public void testDefaultPopulation() {
@@ -36,8 +40,8 @@ public class FlowRegistryPopulationTests extends TestCase {
 		};
 		Flow flow2 = new FlowAssembler("flow2", builder2).assembleFlow();
 
-		registry.registerFlow(new StaticFlowHolder(flow1));
-		registry.registerFlow(new StaticFlowHolder(flow2));
+		registry.registerFlow(new StaticFlowDefinitionHolder(flow1));
+		registry.registerFlow(new StaticFlowDefinitionHolder(flow2));
 		assertEquals("Wrong registry definition count", 2, registry.getFlowCount());
 		registry.refresh();
 		assertEquals("Wrong registry definition count", 2, registry.getFlowCount());

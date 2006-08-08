@@ -3,9 +3,9 @@ package org.springframework.webflow.action;
 import junit.framework.TestCase;
 
 import org.springframework.beans.factory.BeanInitializationException;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class AbstractActionTests extends TestCase {
@@ -141,7 +141,7 @@ public class AbstractActionTests extends TestCase {
 	}
 
 	public void testCustomResultCollection() {
-		AttributeMap collection = new AttributeMap();
+		LocalAttributeMap collection = new LocalAttributeMap();
 		collection.put("result", "value");
 		Event event = action.result("custom", collection);
 		assertEquals("custom", event.getId());

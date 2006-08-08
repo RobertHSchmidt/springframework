@@ -11,7 +11,7 @@ import org.springframework.web.portlet.ModelAndView;
 import org.springframework.webflow.SimpleFlow;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.registry.FlowRegistryImpl;
-import org.springframework.webflow.registry.StaticFlowHolder;
+import org.springframework.webflow.registry.StaticFlowDefinitionHolder;
 
 public class PortletFlowControllerTests extends TestCase {
 	private PortletFlowController controller = new PortletFlowController();
@@ -19,7 +19,7 @@ public class PortletFlowControllerTests extends TestCase {
 	private FlowRegistryImpl registry = new FlowRegistryImpl();
 
 	public void setUp() {
-		registry.registerFlow(new StaticFlowHolder(new SimpleFlow()));
+		registry.registerFlow(new StaticFlowDefinitionHolder(new SimpleFlow()));
 		controller.setPortletContext(new MockPortletContext());
 		controller.setFlowExecutor(new FlowExecutorImpl(registry));
 	}

@@ -21,10 +21,10 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.ParameterMap;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.ScopeType;
+import org.springframework.webflow.collection.support.LocalParameterMap;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockParameterMap;
 import org.springframework.webflow.test.MockRequestContext;
@@ -110,13 +110,13 @@ public class FormActionTests extends TestCase {
 		assertNull(getFormObject(context).getProp());
 	}
 
-	protected ParameterMap parameters() {
+	protected LocalParameterMap parameters() {
 		MockParameterMap map = new MockParameterMap();
 		map.put("prop", "value");
 		return map;
 	}
 
-	protected ParameterMap blankParameters() {
+	protected LocalParameterMap blankParameters() {
 		MockParameterMap map = new MockParameterMap();
 		map.put("prop", "");
 		return map;

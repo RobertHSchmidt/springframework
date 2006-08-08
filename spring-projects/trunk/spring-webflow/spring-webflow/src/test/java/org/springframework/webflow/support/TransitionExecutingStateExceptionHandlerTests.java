@@ -3,19 +3,22 @@ package org.springframework.webflow.support;
 import junit.framework.TestCase;
 
 import org.springframework.binding.expression.support.StaticExpression;
-import org.springframework.webflow.EndState;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.RequestControlContext;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.FlowExecutionException;
-import org.springframework.webflow.TargetStateResolver;
-import org.springframework.webflow.Transition;
-import org.springframework.webflow.TransitionableState;
-import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.builder.MyCustomException;
+import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
-import org.springframework.webflow.execution.impl.FlowExecutionImpl;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.ViewSelection;
+import org.springframework.webflow.execution.internal.EndState;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.RequestControlContext;
+import org.springframework.webflow.execution.internal.TargetStateResolver;
+import org.springframework.webflow.execution.internal.Transition;
+import org.springframework.webflow.execution.internal.TransitionableState;
+import org.springframework.webflow.execution.internal.machine.FlowExecutionImpl;
+import org.springframework.webflow.execution.internal.support.ApplicationViewSelector;
+import org.springframework.webflow.execution.internal.support.DefaultTargetStateResolver;
+import org.springframework.webflow.execution.internal.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockExternalContext;
 
 public class TransitionExecutingStateExceptionHandlerTests extends TestCase {

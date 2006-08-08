@@ -1,9 +1,9 @@
 package org.springframework.webflow.builder;
 
-import org.springframework.webflow.RequestControlContext;
-import org.springframework.webflow.FlowExecutionException;
-import org.springframework.webflow.FlowExecutionExceptionHandler;
-import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.execution.FlowExecutionException;
+import org.springframework.webflow.execution.ViewSelection;
+import org.springframework.webflow.execution.internal.FlowExecutionExceptionHandler;
+import org.springframework.webflow.execution.internal.RequestControlContext;
 
 public class MyCustomStateExceptionHandler implements FlowExecutionExceptionHandler {
 

@@ -1,11 +1,16 @@
 package org.springframework.webflow;
 
-import org.springframework.webflow.support.ApplicationView;
+import org.springframework.webflow.execution.FlowExecutionException;
+import org.springframework.webflow.execution.ViewSelection;
+import org.springframework.webflow.execution.internal.FlowExecutionExceptionHandler;
+import org.springframework.webflow.execution.internal.FlowExecutionExceptionHandlerSet;
+import org.springframework.webflow.execution.internal.RequestControlContext;
+import org.springframework.webflow.execution.support.ApplicationView;
 
 import junit.framework.TestCase;
 
 /**
- * Unit tests for {@link org.springframework.webflow.FlowExecutionExceptionHandler} related code.
+ * Unit tests for {@link org.springframework.webflow.execution.internal.FlowExecutionExceptionHandler} related code.
  * 
  * @author Erwin Vervaet
  */

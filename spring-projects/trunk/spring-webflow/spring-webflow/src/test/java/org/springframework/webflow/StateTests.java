@@ -17,6 +17,11 @@ package org.springframework.webflow;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.execution.FlowExecutionException;
+import org.springframework.webflow.execution.ViewSelection;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.RequestControlContext;
+import org.springframework.webflow.execution.internal.State;
 import org.springframework.webflow.test.MockRequestControlContext;
 
 /**

@@ -5,10 +5,10 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.FlowExecutionContext;
 import org.springframework.webflow.execution.EventId;
-import org.springframework.webflow.support.ExternalRedirect;
-import org.springframework.webflow.support.FlowRedirect;
+import org.springframework.webflow.execution.FlowExecutionContext;
+import org.springframework.webflow.execution.support.ExternalRedirect;
+import org.springframework.webflow.execution.support.FlowRedirect;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 

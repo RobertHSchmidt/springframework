@@ -5,10 +5,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.webflow.collection.support.CollectionUtils;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.support.UnmodifiableAttributeMap;
+
+
 import junit.framework.TestCase;
 
 public class AttributeMapTests extends TestCase {
-	private AttributeMap attributeMap = new AttributeMap();
+	private LocalAttributeMap attributeMap = new LocalAttributeMap();
 
 	public void setUp() {
 		attributeMap.put("string", "A string");
@@ -298,11 +303,11 @@ public class AttributeMapTests extends TestCase {
 	}
 	
 	public void testUnion() {
-		AttributeMap one = new AttributeMap();
+		LocalAttributeMap one = new LocalAttributeMap();
 		one.put("foo", "bar");
 		one.put("bar", "baz");
 
-		AttributeMap two = new AttributeMap();
+		LocalAttributeMap two = new LocalAttributeMap();
 		two.put("cat", "coz");
 		two.put("bar", "boo");
 
@@ -314,10 +319,10 @@ public class AttributeMapTests extends TestCase {
 	}
 	
 	public void testEquality() {
-		AttributeMap map = new AttributeMap();
+		LocalAttributeMap map = new LocalAttributeMap();
 		map.put("foo", "bar");
 		
-		AttributeMap map2 = new AttributeMap();
+		LocalAttributeMap map2 = new LocalAttributeMap();
 		map2.put("foo", "bar");
 		
 		assertEquals(map, map2);

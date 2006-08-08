@@ -3,6 +3,8 @@ package org.springframework.webflow.support;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.webflow.execution.support.ApplicationView;
+
 import junit.framework.TestCase;
 
 public class ApplicationViewTests extends TestCase {
