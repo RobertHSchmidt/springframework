@@ -17,10 +17,10 @@ package org.springframework.webflow.executor.support;
 
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.FlowExecutionContext;
+import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.support.FlowRedirect;
+import org.springframework.webflow.execution.FlowExecutionContext;
+import org.springframework.webflow.execution.support.FlowRedirect;
 
 /**
  * Extracts flow executor arguments from the request path.

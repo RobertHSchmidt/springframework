@@ -31,17 +31,17 @@ import org.springframework.web.struts.ActionSupport;
 import org.springframework.web.struts.DelegatingActionProxy;
 import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.web.util.WebUtils;
-import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.action.FormObjectAccessor;
-import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.execution.support.ApplicationView;
+import org.springframework.webflow.execution.support.ExternalRedirect;
+import org.springframework.webflow.execution.support.FlowRedirect;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 import org.springframework.webflow.executor.support.FlowRequestHandler;
-import org.springframework.webflow.support.ApplicationView;
-import org.springframework.webflow.support.ExternalRedirect;
-import org.springframework.webflow.support.FlowRedirect;
+import org.springframework.webflow.registry.FlowLocator;
 
 /**
  * Point of integration between Struts and Spring Web Flow: a Struts Action that

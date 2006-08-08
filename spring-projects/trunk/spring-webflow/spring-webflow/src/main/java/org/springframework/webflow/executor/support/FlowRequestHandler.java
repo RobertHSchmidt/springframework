@@ -18,8 +18,8 @@ package org.springframework.webflow.executor.support;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
-import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
+import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.ResponseInstruction;
 

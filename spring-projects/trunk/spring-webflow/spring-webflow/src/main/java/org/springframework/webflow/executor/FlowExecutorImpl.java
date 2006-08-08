@@ -19,18 +19,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.util.Assert;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.ExternalContext;
 import org.springframework.webflow.FlowException;
-import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepositoryFactory;
+import org.springframework.webflow.registry.FlowLocator;
 
 /**
  * The default implementation of the central facade for <i>driving</i> the
@@ -77,8 +77,8 @@ import org.springframework.webflow.execution.repository.support.DefaultFlowExecu
  * @see org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory
  * @see org.springframework.webflow.execution.repository.FlowExecutionRepository
  * @see org.springframework.webflow.execution.FlowExecution
- * @see org.springframework.webflow.ViewSelection
- * @see org.springframework.webflow.support.ApplicationView
+ * @see org.springframework.webflow.execution.ViewSelection
+ * @see org.springframework.webflow.execution.support.ApplicationView
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
@@ -243,9 +243,9 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * @param context the external context
 	 * @return the input map, or null if no input
 	 */
-	protected AttributeMap createInput(ExternalContext context) {
+	protected LocalAttributeMap createInput(ExternalContext context) {
 		if (inputMapper != null) {
-			AttributeMap inputMap = new AttributeMap();
+			LocalAttributeMap inputMap = new LocalAttributeMap();
 			inputMapper.map(context, inputMap, null);
 			return inputMap;
 		}

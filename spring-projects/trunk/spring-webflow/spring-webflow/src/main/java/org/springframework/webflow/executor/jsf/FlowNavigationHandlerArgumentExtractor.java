@@ -1,7 +1,7 @@
 package org.springframework.webflow.executor.jsf;
 
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.ExternalContext;
+import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractionException;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 

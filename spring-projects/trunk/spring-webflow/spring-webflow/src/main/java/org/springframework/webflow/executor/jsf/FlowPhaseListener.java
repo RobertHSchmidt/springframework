@@ -28,18 +28,18 @@ import javax.faces.event.PhaseListener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.support.ApplicationView;
+import org.springframework.webflow.execution.support.ExternalRedirect;
+import org.springframework.webflow.execution.support.FlowExecutionRedirect;
+import org.springframework.webflow.execution.support.FlowRedirect;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
-import org.springframework.webflow.support.ApplicationView;
-import org.springframework.webflow.support.ExternalRedirect;
-import org.springframework.webflow.support.FlowExecutionRedirect;
-import org.springframework.webflow.support.FlowRedirect;
 
 /**
  * JSF phase listener that is responsible for managing a {@link FlowExecution}
@@ -198,7 +198,7 @@ public class FlowPhaseListener implements PhaseListener {
 	 * @param context the external context
 	 * @return the input map
 	 */
-	protected AttributeMap createInput(FlowExecution flowExecution, ExternalContext context) {
+	protected LocalAttributeMap createInput(FlowExecution flowExecution, ExternalContext context) {
 		return null;
 	}
 

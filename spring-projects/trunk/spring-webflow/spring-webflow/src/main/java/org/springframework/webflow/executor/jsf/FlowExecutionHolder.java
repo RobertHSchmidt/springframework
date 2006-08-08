@@ -18,8 +18,8 @@ package org.springframework.webflow.executor.jsf;
 import java.io.Serializable;
 
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 
 /**
