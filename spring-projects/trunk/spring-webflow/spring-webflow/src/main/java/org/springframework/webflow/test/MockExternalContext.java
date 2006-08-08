@@ -17,11 +17,14 @@ package org.springframework.webflow.test;
 
 import java.util.HashMap;
 
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.ParameterMap;
-import org.springframework.webflow.SharedAttributeMap;
-import org.springframework.webflow.context.SharedMapDecorator;
+import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.collection.ParameterMap;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.collection.support.LocalParameterMap;
+import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.SharedAttributeMap;
+import org.springframework.webflow.context.support.LocalSharedAttributeMap;
+import org.springframework.webflow.context.support.SharedMapDecorator;
 
 /**
  * Mock implementation of the <code>ExternalContext</code> interface.
@@ -38,11 +41,11 @@ public class MockExternalContext implements ExternalContext {
 
 	private ParameterMap requestParameterMap = new MockParameterMap();
 
-	private AttributeMap requestMap = new AttributeMap();
+	private MutableAttributeMap requestMap = new LocalAttributeMap();
 
-	private SharedAttributeMap sessionMap = new SharedAttributeMap(new SharedMapDecorator(new HashMap()));
+	private SharedAttributeMap sessionMap = new LocalSharedAttributeMap(new SharedMapDecorator(new HashMap()));
 
-	private SharedAttributeMap applicationMap = new SharedAttributeMap(new SharedMapDecorator(new HashMap()));
+	private SharedAttributeMap applicationMap = new LocalSharedAttributeMap(new SharedMapDecorator(new HashMap()));
 
 	/**
 	 * Creates a mock external context with an empty request parameter map.
@@ -78,7 +81,7 @@ public class MockExternalContext implements ExternalContext {
 		return requestParameterMap;
 	}
 
-	public AttributeMap getRequestMap() {
+	public MutableAttributeMap getRequestMap() {
 		return requestMap;
 	}
 
@@ -104,19 +107,19 @@ public class MockExternalContext implements ExternalContext {
 		this.requestPathInfo = requestPathInfo;
 	}
 
-	public void setRequestParameterMap(ParameterMap requestParameterMap) {
+	public void setRequestParameterMap(LocalParameterMap requestParameterMap) {
 		this.requestParameterMap = requestParameterMap;
 	}
 	
-	public void setRequestMap(AttributeMap requestMap) {
+	public void setRequestMap(LocalAttributeMap requestMap) {
 		this.requestMap = requestMap;
 	}
 
-	public void setSessionMap(SharedAttributeMap sessionMap) {
+	public void setSessionMap(LocalSharedAttributeMap sessionMap) {
 		this.sessionMap = sessionMap;
 	}
 
-	public void setApplicationMap(SharedAttributeMap applicationMap) {
+	public void setApplicationMap(LocalSharedAttributeMap applicationMap) {
 		this.applicationMap = applicationMap;
 	}
 

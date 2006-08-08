@@ -16,9 +16,9 @@
 package org.springframework.webflow.test;
 
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.builder.FlowBuilder;
-import org.springframework.webflow.builder.FlowServiceLocator;
-import org.springframework.webflow.builder.XmlFlowBuilder;
+import org.springframework.webflow.execution.internal.builder.FlowBuilder;
+import org.springframework.webflow.execution.internal.builder.FlowServiceLocator;
+import org.springframework.webflow.execution.internal.builder.xml.XmlFlowBuilder;
 
 /**
  * Base class for flow integration tests that verify a XML flow definition

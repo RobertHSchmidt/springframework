@@ -15,14 +15,16 @@
  */
 package org.springframework.webflow.test;
 
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowSession;
-import org.springframework.webflow.FlowSessionStatus;
-import org.springframework.webflow.RequestControlContext;
-import org.springframework.webflow.State;
-import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.FlowSession;
+import org.springframework.webflow.execution.FlowSessionStatus;
+import org.springframework.webflow.execution.ViewSelection;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.RequestControlContext;
+import org.springframework.webflow.execution.internal.State;
+import org.springframework.webflow.execution.internal.Transition;
+import org.springframework.webflow.execution.internal.TransitionableState;
 
 /**
  * Mock implementation of the <code>FlowControlContext</code> interface to
@@ -35,9 +37,9 @@ import org.springframework.webflow.ViewSelection;
  * to be consistent with the naming convention in the rest of the Spring
  * framework (e.g. MockHttpServletRequest, ...).
  * 
- * @see org.springframework.webflow.RequestContext
- * @see org.springframework.webflow.FlowSession
- * @see org.springframework.webflow.State
+ * @see org.springframework.webflow.execution.RequestContext
+ * @see org.springframework.webflow.execution.FlowSession
+ * @see org.springframework.webflow.execution.internal.State
  * 
  * @author Keith Donald
  */
@@ -51,7 +53,7 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 		super(rootFlow);
 	}
 	
-	public ViewSelection start(Flow flow, AttributeMap input) throws IllegalStateException {
+	public ViewSelection start(Flow flow, MutableAttributeMap input) throws IllegalStateException {
 		getMockFlowExecutionContext().setActiveSession(new MockFlowSession(flow, input));
 		getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.STARTING);
 		ViewSelection selectedView = flow.start(this, input);
@@ -60,13 +62,13 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 
 	public ViewSelection signalEvent(Event event) {
 		setLastEvent(event);
-		ViewSelection selectedView = getActiveFlow().onEvent(this);
+		ViewSelection selectedView = ((Flow)getActiveFlow()).onEvent(this);
 		return selectedView;
 	}
 
-	public FlowSession endActiveFlowSession(AttributeMap output) throws IllegalStateException {
+	public FlowSession endActiveFlowSession(MutableAttributeMap output) throws IllegalStateException {
 		MockFlowSession endingSession = getMockFlowExecutionContext().getMockActiveSession();
-		endingSession.getFlow().end(this, output);
+		endingSession.flow.end(this, output);
 		endingSession.setStatus(FlowSessionStatus.ENDED);
 		getMockFlowExecutionContext().setActiveSession(null);
 		return endingSession;
@@ -74,9 +76,13 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 
 	public void setCurrentState(State state) {
 		getMockFlowExecutionContext().getMockActiveSession().setState(state);
-		State previousState = getCurrentState();
+		State previousState = (State)getCurrentState();
 		if (previousState == null) {
 			getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.ACTIVE);
 		}
+	}
+
+	public ViewSelection execute(Transition transition) {
+		return transition.execute((TransitionableState)getCurrentState(), this);
 	}
 }

@@ -16,11 +16,11 @@
 package org.springframework.webflow.test;
 
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.builder.FlowArtifactLookupException;
-import org.springframework.webflow.builder.FlowAssembler;
-import org.springframework.webflow.builder.FlowBuilder;
-import org.springframework.webflow.builder.FlowServiceLocator;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.builder.FlowArtifactLookupException;
+import org.springframework.webflow.execution.internal.builder.FlowAssembler;
+import org.springframework.webflow.execution.internal.builder.FlowBuilder;
+import org.springframework.webflow.execution.internal.builder.FlowServiceLocator;
 import org.springframework.webflow.registry.ExternalizedFlowDefinition;
 
 /**
@@ -32,7 +32,7 @@ import org.springframework.webflow.registry.ExternalizedFlowDefinition;
 public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlowExecutionTests {
 
 	/**
-	 * The cached flow definition
+	 * The cached flow definition.
 	 */
 	private static Flow cachedFlowDefinition;
 
