@@ -16,6 +16,6 @@ public interface MapAdaptable {
 	 * taken so that the map contents (if calculated) be cached as appropriate.
 	 * @return the object's contents as a map.
 	 */
-	public Map getMap();
+	public Map asMap();
 
 }

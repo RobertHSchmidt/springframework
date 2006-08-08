@@ -47,7 +47,7 @@ public class MapAccessor implements MapAdaptable {
 	 * Returns the wrapped target map.
 	 * @return the map
 	 */
-	public Map getMap() {
+	public Map asMap() {
 		return Collections.unmodifiableMap(map);
 	}
 
@@ -412,7 +412,7 @@ public class MapAccessor implements MapAdaptable {
 	public void assertContainsKey(Object key) throws IllegalArgumentException {
 		if (!map.containsKey(key)) {
 			throw new IllegalArgumentException("Required attribute '" + key
-					+ "' is not present in map; attributes present are [" + getMap() + "]");
+					+ "' is not present in map; attributes present are [" + asMap() + "]");
 		}
 	}
 
