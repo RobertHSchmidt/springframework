@@ -15,8 +15,8 @@
  */
 package org.springframework.webflow.registry;
 
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.FlowDefinitionHolder;
 
 /**
  * A interface for registering Flow definitions. Extends the FlowRegistryMBean
@@ -27,7 +27,7 @@ import org.springframework.webflow.execution.FlowLocator;
  * Is a <code>FlowLocator</code>, allowing for execution of flow definitions
  * managed in this registry.
  * 
- * @see org.springframework.webflow.execution.FlowLocator
+ * @see org.springframework.webflow.registry.FlowLocator
  * @see org.springframework.webflow.executor.FlowExecutorImpl
  * 
  * @author Keith Donald
@@ -47,7 +47,7 @@ public interface FlowRegistry extends FlowRegistryMBean, FlowLocator {
 	 * Return an unmodifiable collection of the flow definitions registered in this registry.
 	 * @return the flow collection
 	 */
-	public Flow[] getFlows();
+	public FlowDefinition[] getFlows();
 	
 	/**
 	 * Register the flow definition in this registry. Registers a "holder", not
@@ -56,6 +56,6 @@ public interface FlowRegistry extends FlowRegistryMBean, FlowLocator {
 	 * underlying resource changes without redeploy.
 	 * @param flowHolder a holder holding the flow definition to register
 	 */
-	public void registerFlow(FlowHolder flowHolder);
+	public void registerFlow(FlowDefinitionHolder flowHolder);
 
 }
