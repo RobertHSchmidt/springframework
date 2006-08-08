@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.springframework.webflow.collection.support;
+package org.springframework.webflow.core.collection.support;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -21,7 +21,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
-import org.springframework.webflow.collection.AttributeMap;
+import org.springframework.webflow.core.collection.AttributeMap;
 
 /**
  * A utility class for working with attribute and parameter collections used by

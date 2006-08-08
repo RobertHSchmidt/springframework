@@ -16,7 +16,7 @@
 package org.springframework.webflow.execution;
 
 import org.springframework.core.enums.StaticLabeledEnum;
-import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 
 /**
  * The core scope types of Spring Web Flow.

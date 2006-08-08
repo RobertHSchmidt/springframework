@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.test.engine;
 
-import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.RequestControlContext;
 import org.springframework.webflow.engine.State;

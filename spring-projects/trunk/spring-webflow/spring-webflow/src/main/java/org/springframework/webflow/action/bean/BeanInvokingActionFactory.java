@@ -19,7 +19,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.ClassMethodKey;
 import org.springframework.binding.method.MethodSignature;
-import org.springframework.webflow.collection.AttributeMap;
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Action;
 
 /**

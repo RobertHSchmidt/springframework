@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.core.style.StylerUtils;
-import org.springframework.webflow.collection.support.CollectionUtils;
+import org.springframework.webflow.core.collection.support.CollectionUtils;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.ViewSelection;
 

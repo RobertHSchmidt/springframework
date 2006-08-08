@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.execution;
 
-import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
 

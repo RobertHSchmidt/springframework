@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.engine.builder;
 
-import org.springframework.webflow.FlowException;
+import org.springframework.webflow.core.FlowException;
 
 /**
  * Exception thrown to indicate a problem while building a flow.

@@ -15,9 +15,9 @@
  */
 package org.springframework.webflow.engine;
 
-import org.springframework.webflow.collection.AttributeMap;
-import org.springframework.webflow.collection.MutableAttributeMap;
-import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 import org.springframework.webflow.definition.Annotated;
 
 /**

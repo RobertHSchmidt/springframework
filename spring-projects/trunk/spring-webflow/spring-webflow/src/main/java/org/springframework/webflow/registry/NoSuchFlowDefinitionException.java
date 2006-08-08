@@ -16,7 +16,7 @@
 package org.springframework.webflow.registry;
 
 import org.springframework.core.style.StylerUtils;
-import org.springframework.webflow.FlowException;
+import org.springframework.webflow.core.FlowException;
 
 /**
  * Thrown when no flow definition was found during a lookup operation by a flow

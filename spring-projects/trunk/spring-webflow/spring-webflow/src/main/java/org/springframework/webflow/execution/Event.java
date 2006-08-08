@@ -18,7 +18,7 @@ package org.springframework.webflow.execution;
 import java.util.EventObject;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.collection.AttributeMap;
+import org.springframework.webflow.core.collection.AttributeMap;
 
 /**
  * Signals the occurrence of something an active flow execution should respond

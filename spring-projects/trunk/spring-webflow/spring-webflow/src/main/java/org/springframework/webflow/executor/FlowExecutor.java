@@ -15,8 +15,8 @@
  */
 package org.springframework.webflow.executor;
 
-import org.springframework.webflow.FlowException;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.core.FlowException;
 
 /**
  * The central facade or entry-point into the Spring Web Flow system. This

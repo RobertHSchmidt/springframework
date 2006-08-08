@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.executor.support;
 
-import org.springframework.webflow.FlowException;
+import org.springframework.webflow.core.FlowException;
 
 /**
  * A runtime exception thrown by a flow executor argument extractor when an

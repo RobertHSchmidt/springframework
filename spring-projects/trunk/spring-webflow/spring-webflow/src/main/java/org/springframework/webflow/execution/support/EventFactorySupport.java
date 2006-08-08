@@ -15,8 +15,8 @@
  */
 package org.springframework.webflow.execution.support;
 
-import org.springframework.webflow.collection.AttributeMap;
-import org.springframework.webflow.collection.support.CollectionUtils;
+import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.support.CollectionUtils;
 import org.springframework.webflow.execution.Event;
 
 /**

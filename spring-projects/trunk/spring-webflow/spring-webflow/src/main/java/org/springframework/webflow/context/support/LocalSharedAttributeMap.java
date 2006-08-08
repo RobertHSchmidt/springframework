@@ -15,8 +15,8 @@
  */
 package org.springframework.webflow.context.support;
 
-import org.springframework.webflow.collection.support.LocalAttributeMap;
 import org.springframework.webflow.context.SharedAttributeMap;
+import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 
 /**
  * An attribute map that exposes a mutex that application code can synchronize

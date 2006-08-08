@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.engine;
 
-import org.springframework.webflow.collection.AttributeMap;
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.FlowExecutionException;
 

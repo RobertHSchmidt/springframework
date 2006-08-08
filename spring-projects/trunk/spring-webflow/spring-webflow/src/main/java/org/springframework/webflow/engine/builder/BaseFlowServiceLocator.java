@@ -27,6 +27,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.webflow.action.bean.BeanInvokingActionFactory;
+import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
@@ -35,7 +36,6 @@ import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.support.DefaultExpressionParserFactory;
 
 /**
  * Base implementation that implements a minimal set of the
