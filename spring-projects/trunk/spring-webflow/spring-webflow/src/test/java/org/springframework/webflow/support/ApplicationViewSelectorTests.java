@@ -8,7 +8,7 @@ import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.internal.support.ApplicationViewSelector;
 import org.springframework.webflow.execution.support.ApplicationView;
-import org.springframework.webflow.test.MockRequestContext;
+import org.springframework.webflow.test.engine.MockRequestContext;
 
 public class ApplicationViewSelectorTests extends TestCase {
 	ExpressionParser parser = new DefaultExpressionParserFactory().getExpressionParser();

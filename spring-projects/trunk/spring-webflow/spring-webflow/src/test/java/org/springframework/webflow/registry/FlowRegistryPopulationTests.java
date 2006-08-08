@@ -10,17 +10,17 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.webflow.builder.SimpleFlowBuilder;
-import org.springframework.webflow.execution.internal.Flow;
-import org.springframework.webflow.execution.internal.builder.AbstractFlowBuilder;
-import org.springframework.webflow.execution.internal.builder.BaseFlowServiceLocator;
-import org.springframework.webflow.execution.internal.builder.FlowAssembler;
-import org.springframework.webflow.execution.internal.builder.FlowBuilder;
-import org.springframework.webflow.execution.internal.builder.FlowBuilderException;
-import org.springframework.webflow.execution.internal.builder.FlowServiceLocator;
-import org.springframework.webflow.execution.internal.builder.registry.DefaultFlowServiceLocator;
-import org.springframework.webflow.execution.internal.builder.registry.FlowRegistrarSupport;
-import org.springframework.webflow.execution.internal.builder.registry.FlowRegistryFactoryBean;
-import org.springframework.webflow.execution.internal.builder.registry.XmlFlowRegistrar;
+import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.builder.AbstractFlowBuilder;
+import org.springframework.webflow.engine.builder.BaseFlowServiceLocator;
+import org.springframework.webflow.engine.builder.FlowAssembler;
+import org.springframework.webflow.engine.builder.FlowBuilder;
+import org.springframework.webflow.engine.builder.FlowBuilderException;
+import org.springframework.webflow.engine.builder.FlowServiceLocator;
+import org.springframework.webflow.engine.builder.registry.DefaultFlowServiceLocator;
+import org.springframework.webflow.engine.builder.registry.FlowRegistrarSupport;
+import org.springframework.webflow.engine.builder.registry.FlowRegistryFactoryBean;
+import org.springframework.webflow.engine.builder.registry.XmlFlowRegistrar;
 
 public class FlowRegistryPopulationTests extends TestCase {
 	public void testDefaultPopulation() {

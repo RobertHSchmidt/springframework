@@ -2,9 +2,9 @@ package org.springframework.webflow;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.engine.NullViewSelector;
 import org.springframework.webflow.execution.ViewSelection;
-import org.springframework.webflow.execution.internal.NullViewSelector;
-import org.springframework.webflow.test.MockRequestContext;
+import org.springframework.webflow.test.engine.MockRequestContext;
 
 public class NullViewSelectionTests extends TestCase {
 

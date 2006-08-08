@@ -26,16 +26,16 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.webflow.action.TestMultiAction;
 import org.springframework.webflow.builder.MyCustomException;
 import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.engine.EndState;
+import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.NoMatchingTransitionException;
+import org.springframework.webflow.engine.State;
+import org.springframework.webflow.engine.TargetStateResolver;
+import org.springframework.webflow.engine.Transition;
+import org.springframework.webflow.engine.TransitionCriteria;
+import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionException;
-import org.springframework.webflow.execution.internal.EndState;
-import org.springframework.webflow.execution.internal.Flow;
-import org.springframework.webflow.execution.internal.NoMatchingTransitionException;
-import org.springframework.webflow.execution.internal.State;
-import org.springframework.webflow.execution.internal.TargetStateResolver;
-import org.springframework.webflow.execution.internal.Transition;
-import org.springframework.webflow.execution.internal.TransitionCriteria;
-import org.springframework.webflow.execution.internal.ViewState;
 import org.springframework.webflow.execution.internal.support.ApplicationViewSelector;
 import org.springframework.webflow.execution.internal.support.BeanFactoryFlowVariable;
 import org.springframework.webflow.execution.internal.support.DefaultTargetStateResolver;
@@ -44,7 +44,7 @@ import org.springframework.webflow.execution.internal.support.SimpleFlowVariable
 import org.springframework.webflow.execution.internal.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.support.DefaultExpressionParserFactory;
-import org.springframework.webflow.test.MockRequestControlContext;
+import org.springframework.webflow.test.engine.MockRequestControlContext;
 
 /**
  * Unit test for the Flow class.

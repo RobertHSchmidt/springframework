@@ -18,10 +18,10 @@ package org.springframework.webflow.action;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
+import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.internal.TransitionCriteria;
-import org.springframework.webflow.test.MockRequestContext;
+import org.springframework.webflow.test.engine.MockRequestContext;
 
 /**
  * Unit tests for the GuardedAction class.

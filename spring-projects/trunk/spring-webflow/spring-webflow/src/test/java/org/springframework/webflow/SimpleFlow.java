@@ -4,10 +4,10 @@
 package org.springframework.webflow;
 
 import org.springframework.binding.expression.support.StaticExpression;
-import org.springframework.webflow.execution.internal.EndState;
-import org.springframework.webflow.execution.internal.Flow;
-import org.springframework.webflow.execution.internal.Transition;
-import org.springframework.webflow.execution.internal.ViewState;
+import org.springframework.webflow.engine.EndState;
+import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.Transition;
+import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.internal.support.ApplicationViewSelector;
 import org.springframework.webflow.execution.internal.support.DefaultTargetStateResolver;
 import org.springframework.webflow.execution.internal.support.ExternalRedirectSelector;

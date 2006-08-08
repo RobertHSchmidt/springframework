@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.webflow.execution.internal.support.BeanFactoryFlowVariable;
-import org.springframework.webflow.test.MockRequestContext;
+import org.springframework.webflow.test.engine.MockRequestContext;
 
 public class BeanFactoryFlowVariableTests extends TestCase {
 	private MockRequestContext context = new MockRequestContext();

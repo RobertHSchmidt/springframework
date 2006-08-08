@@ -19,29 +19,29 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.engine.ActionState;
+import org.springframework.webflow.engine.AnnotatedAction;
+import org.springframework.webflow.engine.EndState;
+import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.FlowAttributeMapper;
+import org.springframework.webflow.engine.SubflowState;
+import org.springframework.webflow.engine.Transition;
+import org.springframework.webflow.engine.ViewState;
+import org.springframework.webflow.engine.builder.AbstractFlowBuilder;
+import org.springframework.webflow.engine.builder.BaseFlowBuilder;
+import org.springframework.webflow.engine.builder.BaseFlowServiceLocator;
+import org.springframework.webflow.engine.builder.FlowArtifactLookupException;
+import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.internal.ActionState;
-import org.springframework.webflow.execution.internal.AnnotatedAction;
-import org.springframework.webflow.execution.internal.EndState;
-import org.springframework.webflow.execution.internal.Flow;
-import org.springframework.webflow.execution.internal.FlowAttributeMapper;
-import org.springframework.webflow.execution.internal.SubflowState;
-import org.springframework.webflow.execution.internal.Transition;
-import org.springframework.webflow.execution.internal.ViewState;
-import org.springframework.webflow.execution.internal.builder.AbstractFlowBuilder;
-import org.springframework.webflow.execution.internal.builder.BaseFlowBuilder;
-import org.springframework.webflow.execution.internal.builder.BaseFlowServiceLocator;
-import org.springframework.webflow.execution.internal.builder.FlowArtifactLookupException;
-import org.springframework.webflow.execution.internal.builder.FlowAssembler;
 import org.springframework.webflow.support.UnmodifiableAttributeMap;
-import org.springframework.webflow.test.MockRequestContext;
+import org.springframework.webflow.test.engine.MockRequestContext;
 
 /**
  * Test Java based flow builder logic (subclasses of AbstractFlowBuilder).
  * 
- * @see org.springframework.webflow.execution.internal.builder.AbstractFlowBuilder
+ * @see org.springframework.webflow.engine.builder.AbstractFlowBuilder
  * 
  * @author Keith Donald
  * @author Rod Johnson

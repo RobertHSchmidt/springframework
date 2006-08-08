@@ -6,9 +6,9 @@ import junit.framework.TestCase;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.execution.internal.builder.FlowAssembler;
-import org.springframework.webflow.execution.internal.builder.RefreshableFlowDefinitionHolder;
-import org.springframework.webflow.execution.internal.builder.xml.XmlFlowBuilder;
+import org.springframework.webflow.engine.builder.FlowAssembler;
+import org.springframework.webflow.engine.builder.RefreshableFlowDefinitionHolder;
+import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
 
 public class RefreshableFlowHolderTests extends TestCase {
 

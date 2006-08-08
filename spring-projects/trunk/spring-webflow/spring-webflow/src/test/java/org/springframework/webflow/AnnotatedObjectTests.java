@@ -1,7 +1,7 @@
 package org.springframework.webflow;
 
-import org.springframework.webflow.execution.internal.AnnotatedObject;
-import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.engine.AnnotatedObject;
+import org.springframework.webflow.engine.Flow;
 
 import junit.framework.TestCase;
 

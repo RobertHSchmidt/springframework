@@ -20,16 +20,16 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.engine.ViewSelector;
+import org.springframework.webflow.engine.builder.BaseFlowServiceLocator;
+import org.springframework.webflow.engine.builder.TextToViewSelector;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.internal.ViewSelector;
-import org.springframework.webflow.execution.internal.builder.BaseFlowServiceLocator;
-import org.springframework.webflow.execution.internal.builder.TextToViewSelector;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 import org.springframework.webflow.execution.support.FlowRedirect;
-import org.springframework.webflow.test.MockRequestContext;
+import org.springframework.webflow.test.engine.MockRequestContext;
 
 /**
  * Test case for TextToViewDescriptorCreator.
