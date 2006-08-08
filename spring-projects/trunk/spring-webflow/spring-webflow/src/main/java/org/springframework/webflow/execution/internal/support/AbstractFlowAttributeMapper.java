@@ -23,8 +23,8 @@ import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.webflow.collection.AttributeMap;
 import org.springframework.webflow.collection.MutableAttributeMap;
 import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.internal.FlowAttributeMapper;
 
 /**
  * Convenient base class for attribute mapper implementations. Encapsulates

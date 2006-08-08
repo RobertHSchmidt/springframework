@@ -21,9 +21,9 @@ import java.util.Map;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.util.StringUtils;
+import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewSelection;
-import org.springframework.webflow.execution.internal.ViewSelector;
 import org.springframework.webflow.execution.support.FlowRedirect;
 
 /**

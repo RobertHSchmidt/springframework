@@ -17,8 +17,8 @@ package org.springframework.webflow.execution.support;
 
 import java.io.ObjectStreamException;
 
+import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.ViewSelection;
-import org.springframework.webflow.execution.internal.ViewState;
 
 /**
  * Concrete response type that requests a redirect to an <i>existing</i>,

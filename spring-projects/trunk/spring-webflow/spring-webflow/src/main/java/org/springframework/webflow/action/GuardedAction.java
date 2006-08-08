@@ -17,10 +17,10 @@ package org.springframework.webflow.action;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
+import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.internal.TransitionCriteria;
 
 /**
  * An action that will execute another action if a guard allows it to.
@@ -33,7 +33,7 @@ import org.springframework.webflow.execution.internal.TransitionCriteria;
  * {@link org.springframework.webflow.action.AbstractAction#doPreExecute(RequestContext)}
  * hook method in your own action implementation class.
  * 
- * @see org.springframework.webflow.execution.internal.TransitionCriteria
+ * @see org.springframework.webflow.engine.TransitionCriteria
  * 
  * @author Keith Donald
  */

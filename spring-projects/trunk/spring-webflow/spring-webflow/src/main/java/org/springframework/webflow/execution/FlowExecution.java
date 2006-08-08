@@ -37,9 +37,9 @@ import org.springframework.webflow.context.ExternalContext;
  * causes the execution to activate a new session for its root flow definition.
  * That session is then pushed onto a stack and its definition becomes the
  * <i>active flow</i>. A local, internal
- * {@link org.springframework.webflow.execution.internal.RequestControlContext} object (which
+ * {@link org.springframework.webflow.engine.RequestControlContext} object (which
  * extends ({@link org.springframework.webflow.execution.RequestContext}) is then
- * created and the Flow's start {@link org.springframework.webflow.execution.internal.State} is
+ * created and the Flow's start {@link org.springframework.webflow.engine.State} is
  * entered.
  * <p>
  * In a distributed environment such as HTTP, after a call into this object has
@@ -64,10 +64,10 @@ import org.springframework.webflow.context.ExternalContext;
  * 
  * @see org.springframework.webflow.executor.FlowExecutor
  * @see org.springframework.webflow.execution.repository.FlowExecutionRepository
- * @see org.springframework.webflow.execution.internal.Flow
- * @see org.springframework.webflow.execution.internal.State
+ * @see org.springframework.webflow.engine.Flow
+ * @see org.springframework.webflow.engine.State
  * @see org.springframework.webflow.execution.FlowSession
- * @see org.springframework.webflow.execution.internal.RequestControlContext
+ * @see org.springframework.webflow.engine.RequestControlContext
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
