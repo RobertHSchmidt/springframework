@@ -26,7 +26,11 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 	public FlowExecutionImplFactory(FlowLocator flowLocator) {
 		this.flowLocator = flowLocator;
 	}
-	
+		
+	public void setListenerLoader(FlowExecutionListenerLoader listenerLoader) {
+		this.listenerLoader = listenerLoader;
+	}
+
 	public FlowExecution createFlowExecution(String flowId) {
 		FlowDefinition flow = flowLocator.getFlow(flowId);
 		return new FlowExecutionImpl((Flow)flowLocator.getFlow(flowId), listenerLoader.getListeners(flow));

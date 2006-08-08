@@ -22,6 +22,7 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.FlowException;
 import org.springframework.webflow.collection.support.LocalAttributeMap;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.engine.repository.DefaultFlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.ViewSelection;
@@ -29,7 +30,6 @@ import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
-import org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepositoryFactory;
 import org.springframework.webflow.registry.FlowLocator;
 
 /**

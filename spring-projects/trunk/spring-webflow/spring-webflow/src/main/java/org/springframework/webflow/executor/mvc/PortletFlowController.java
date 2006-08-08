@@ -31,7 +31,7 @@ import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.mvc.AbstractController;
 import org.springframework.web.portlet.mvc.Controller;
 import org.springframework.webflow.context.portlet.PortletExternalContext;
-import org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepositoryFactory;
+import org.springframework.webflow.engine.repository.DefaultFlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowRedirect;

@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.repository.continuation;
+package org.springframework.webflow.engine.repository;
 
 import org.springframework.webflow.conversation.ConversationService;
-import org.springframework.webflow.execution.repository.support.DelegatingFlowExecutionRepositoryFactory;
+import org.springframework.webflow.execution.repository.continuation.ClientContinuationFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.continuation.FlowExecutionContinuationFactory;
 import org.springframework.webflow.execution.repository.support.SingletonFlowExecutionRepositoryFactory;
 import org.springframework.webflow.registry.FlowLocator;
 
