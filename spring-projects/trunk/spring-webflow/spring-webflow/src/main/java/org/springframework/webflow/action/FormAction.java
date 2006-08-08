@@ -28,9 +28,9 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.MessageCodesResolver;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.ScopeType;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.util.DispatchMethodInvoker;
 
 /**
@@ -211,7 +211,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * </tr>
  * <tr>
  * <td>formObjectScope</td>
- * <td>{@link org.springframework.webflow.ScopeType#FLOW flow}</td>
+ * <td>{@link org.springframework.webflow.execution.ScopeType#FLOW flow}</td>
  * <td>The scope in which the form object will be put. If put in flow scope the
  * object will be cached and reused over the life of the flow, preserving
  * previous values. Request scope will cause a new fresh form object instance to
@@ -219,7 +219,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * </tr>
  * <tr>
  * <td>formErrorsScope</td>
- * <td>{@link org.springframework.webflow.ScopeType#REQUEST request}</td>
+ * <td>{@link org.springframework.webflow.execution.ScopeType#REQUEST request}</td>
  * <td>The scope in which the form object errors instance will be put. If put
  * in flow scope the errors will be cached and reused over the life of the flow.
  * Request scope will cause a new errors instance to be created each request.</td>
@@ -268,7 +268,6 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 */
 	public static final String VALIDATOR_METHOD_ATTRIBUTE = "validatorMethod";
 	
-
 	/**
 	 * The name the form object should be exposed under. Default is
 	 * {@link #DEFAULT_FORM_OBJECT_NAME}.

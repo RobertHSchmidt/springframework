@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.action;
+package org.springframework.webflow.action.bean;
 
 import java.io.Serializable;
 
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.util.Assert;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Thin action proxy that delegates to a method on an arbitrary bean. The bean

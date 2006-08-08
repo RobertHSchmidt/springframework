@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.action;
+package org.springframework.webflow.action.bean;
 
 import org.springframework.core.JdkVersion;
 import org.springframework.core.enums.LabeledEnum;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.support.EventFactorySupport;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.support.EventFactorySupport;
 
 /**
  * Result object-to-event adapter interface that tries to do a 
@@ -33,13 +33,13 @@ import org.springframework.webflow.support.EventFactorySupport;
  * </tr>
  * <tr>
  * <td>null</td>
- * <td>{@link org.springframework.webflow.support.EventFactorySupport#getNullEventId()}</td>
+ * <td>{@link org.springframework.webflow.execution.support.EventFactorySupport#getNullEventId()}</td>
  * <td></td>
  * </tr>
  * <tr>
  * <td>{@link java.lang.Boolean} or boolean</td>
- * <td>{@link org.springframework.webflow.support.EventFactorySupport#getYesEventId()}/
- * {@link org.springframework.webflow.support.EventFactorySupport#getNoEventId()}</td>
+ * <td>{@link org.springframework.webflow.execution.support.EventFactorySupport#getYesEventId()}/
+ * {@link org.springframework.webflow.execution.support.EventFactorySupport#getNoEventId()}</td>
  * <td></td>
  * </tr>
  * <tr>
@@ -60,7 +60,7 @@ import org.springframework.webflow.support.EventFactorySupport;
  * <td></td>
  * </tr>
  * <tr>
- * <td>{@link org.springframework.webflow.Event}</td>
+ * <td>{@link org.springframework.webflow.execution.Event}</td>
  * <td>result object</td>
  * <td></td>
  * </tr>

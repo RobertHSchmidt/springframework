@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.action;
+package org.springframework.webflow.action.bean;
 
 import java.io.Serializable;
 
@@ -30,7 +30,7 @@ import java.io.Serializable;
  * mementos and not part of some other inheritence hierarchy. Mementos are
  * serializable snapshots of data.
  * 
- * @see org.springframework.webflow.action.MementoOriginator
+ * @see org.springframework.webflow.action.bean.MementoOriginator
  * 
  * @author Keith Donald
  */

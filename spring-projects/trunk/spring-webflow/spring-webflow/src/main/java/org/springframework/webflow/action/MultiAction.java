@@ -16,8 +16,8 @@
 package org.springframework.webflow.action;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.util.DispatchMethodInvoker;
 
 /**

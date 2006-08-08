@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.action;
+package org.springframework.webflow.action.bean;
 
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * A service for managing the saving and restoring of state associated with a
@@ -25,7 +25,7 @@ import org.springframework.webflow.RequestContext;
  * <i>bijection</i> where state is <i>injected</i> into a bean before
  * invocation and then <i>outjected</i> after invocation.
  * 
- * @see org.springframework.webflow.action.AbstractBeanInvokingAction
+ * @see org.springframework.webflow.action.bean.AbstractBeanInvokingAction
  * 
  * @author Keith Donald
  */

@@ -20,10 +20,10 @@ import java.util.List;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
-import org.springframework.webflow.Action;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * An action that will execute an ordered chain of other actions when executed.
@@ -39,6 +39,8 @@ import org.springframework.webflow.RequestContext;
  * @author Keith Donald
  */
 public class CompositeAction extends AbstractAction {
+
+	private static final String ACTION_RESULTS_ATTRIBUTE_NAME = "actionResults";
 
 	/**
 	 * The actions to execute.
@@ -87,7 +89,7 @@ public class CompositeAction extends AbstractAction {
 	public Event doExecute(RequestContext context) throws Exception {
 		Action[] actions = getActions();
 		String eventId = getEventFactorySupport().getSuccessEventId();
-		AttributeMap eventAttributes = new AttributeMap();
+		LocalAttributeMap eventAttributes = new LocalAttributeMap();
 		List actionResults = new ArrayList(actions.length);
 		for (int i = 0; i < actions.length; i++) {
 			Event result = actions[i].execute(context);
@@ -99,7 +101,7 @@ public class CompositeAction extends AbstractAction {
 				}
 			}
 		}
-		eventAttributes.put("actionResults", actionResults);
+		eventAttributes.put(ACTION_RESULTS_ATTRIBUTE_NAME, actionResults);
 		return new Event(this, eventId, eventAttributes);
 	}
 

@@ -15,18 +15,17 @@
  */
 package org.springframework.webflow.action;
 
-import org.springframework.webflow.AnnotatedAction;
-import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.MultiAction.MethodResolver;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Default method resolver used by the MultiAction class. It uses the
- * following algorithm to calculate a method name:
+ * Default method resolver used by the MultiAction class. It uses the following
+ * algorithm to calculate a method name:
  * <ol>
- * <li>If the currently executing action has a "method" property defined,
- * use the value as method name.</li>
- * <li>Else use the name of the current state of the flow execution as a
- * method name.</li>
+ * <li>If the currently executing action has a "method" property defined, use
+ * the value as method name.</li>
+ * <li>Else use the name of the current state of the flow execution as a method
+ * name.</li>
  * </ol>
  * 
  * @see org.springframework.webflow.action.MultiAction
@@ -34,17 +33,19 @@ import org.springframework.webflow.action.MultiAction.MethodResolver;
  * @author Erwin Vervaet
  */
 public class DefaultMultiActionMethodResolver implements MethodResolver {
-	
+
+	private static final String METHOD_ATTRIBUTE = "method";
+
 	public String resolveMethod(RequestContext context) {
-		String method = context.getAttributes().getString(AnnotatedAction.METHOD_ATTRIBUTE);
+		String method = context.getAttributes().getString(METHOD_ATTRIBUTE);
 		if (method == null) {
 			if (context.getCurrentState() != null) {
 				// default to the state id
 				method = context.getCurrentState().getId();
 			}
 			else {
-				throw new IllegalStateException("Unable to resolve action method; no '"
-						+ AnnotatedAction.METHOD_ATTRIBUTE + "' context attribute set");
+				throw new IllegalStateException("Unable to resolve action method; no '" + METHOD_ATTRIBUTE
+						+ "' context attribute set");
 			}
 		}
 		return method;
