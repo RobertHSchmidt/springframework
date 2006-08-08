@@ -1,7 +1,5 @@
 package org.springframework.webflow.execution;
 
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.MultiAction;
 
 public class InfiniteLoopTestAction extends MultiAction {

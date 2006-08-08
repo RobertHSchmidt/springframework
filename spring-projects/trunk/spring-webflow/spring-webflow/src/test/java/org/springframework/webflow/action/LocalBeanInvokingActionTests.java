@@ -21,9 +21,11 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.binding.method.Parameter;
 import org.springframework.binding.method.Parameters;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.ScopeType;
+import org.springframework.webflow.action.bean.LocalBeanInvokingAction;
+import org.springframework.webflow.action.bean.MethodResultSpecification;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.support.WebFlowOgnlExpressionParser;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -59,7 +61,7 @@ public class LocalBeanInvokingActionTests extends TestCase {
 	}
 
 	public void testExposeResultInScopes() throws Exception {
-		AttributeMap attributes = new AttributeMap();
+		LocalAttributeMap attributes = new LocalAttributeMap();
 		attributes.put("foo", "a string value");
 		attributes.put("bar", "12345");
 		context.setLastEvent(new Event(this, "submit", attributes));

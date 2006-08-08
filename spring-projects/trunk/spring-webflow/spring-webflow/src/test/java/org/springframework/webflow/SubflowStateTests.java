@@ -21,14 +21,24 @@ import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.webflow.action.AttributeMapperAction;
+import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.impl.FlowExecutionImpl;
-import org.springframework.webflow.support.ApplicationView;
-import org.springframework.webflow.support.ApplicationViewSelector;
+import org.springframework.webflow.execution.internal.ActionState;
+import org.springframework.webflow.execution.internal.EndState;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.SubflowState;
+import org.springframework.webflow.execution.internal.TargetStateResolver;
+import org.springframework.webflow.execution.internal.Transition;
+import org.springframework.webflow.execution.internal.TransitionCriteria;
+import org.springframework.webflow.execution.internal.ViewSelector;
+import org.springframework.webflow.execution.internal.ViewState;
+import org.springframework.webflow.execution.internal.machine.FlowExecutionImpl;
+import org.springframework.webflow.execution.internal.support.ApplicationViewSelector;
+import org.springframework.webflow.execution.internal.support.DefaultTargetStateResolver;
+import org.springframework.webflow.execution.internal.support.EventIdTransitionCriteria;
+import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.support.DefaultExpressionParserFactory;
-import org.springframework.webflow.support.DefaultTargetStateResolver;
-import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockParameterMap;
 
@@ -55,7 +65,7 @@ public class SubflowStateTests extends TestCase {
 
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		ApplicationView view = (ApplicationView)flowExecution.start(null, new MockExternalContext());
-		assertEquals("mySubFlow", flowExecution.getActiveSession().getFlow().getId());
+		assertEquals("mySubFlow", flowExecution.getActiveSession().getDefinition().getId());
 		assertEquals("subFlowViewState", flowExecution.getActiveSession().getState().getId());
 		assertEquals("mySubFlowViewName", view.getViewName());
 		view = (ApplicationView)flowExecution.signalEvent(new EventId("submit"), new MockExternalContext());
@@ -98,7 +108,7 @@ public class SubflowStateTests extends TestCase {
 		MockParameterMap input = new MockParameterMap();
 		input.put("parentInputAttribute", "attributeValue");
 		ApplicationView view = (ApplicationView)flowExecution.start(null, new MockExternalContext(input));
-		assertEquals("mySubFlow", flowExecution.getActiveSession().getFlow().getId());
+		assertEquals("mySubFlow", flowExecution.getActiveSession().getDefinition().getId());
 		assertEquals("subFlowViewState", flowExecution.getActiveSession().getState().getId());
 		assertEquals("mySubFlowViewName", view.getViewName());
 		assertEquals("attributeValue", flowExecution.getActiveSession().getScope().get("childInputAttribute"));

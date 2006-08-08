@@ -15,8 +15,8 @@
  */
 package org.springframework.webflow.action;
 
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Simple multi-action implementation used by the unit tests.

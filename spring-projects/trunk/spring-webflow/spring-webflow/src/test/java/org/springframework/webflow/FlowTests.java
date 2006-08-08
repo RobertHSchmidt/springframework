@@ -25,14 +25,25 @@ import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.webflow.action.TestMultiAction;
 import org.springframework.webflow.builder.MyCustomException;
-import org.springframework.webflow.support.ApplicationView;
-import org.springframework.webflow.support.ApplicationViewSelector;
-import org.springframework.webflow.support.BeanFactoryFlowVariable;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.FlowExecutionException;
+import org.springframework.webflow.execution.internal.EndState;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.NoMatchingTransitionException;
+import org.springframework.webflow.execution.internal.State;
+import org.springframework.webflow.execution.internal.TargetStateResolver;
+import org.springframework.webflow.execution.internal.Transition;
+import org.springframework.webflow.execution.internal.TransitionCriteria;
+import org.springframework.webflow.execution.internal.ViewState;
+import org.springframework.webflow.execution.internal.support.ApplicationViewSelector;
+import org.springframework.webflow.execution.internal.support.BeanFactoryFlowVariable;
+import org.springframework.webflow.execution.internal.support.DefaultTargetStateResolver;
+import org.springframework.webflow.execution.internal.support.EventIdTransitionCriteria;
+import org.springframework.webflow.execution.internal.support.SimpleFlowVariable;
+import org.springframework.webflow.execution.internal.support.TransitionExecutingStateExceptionHandler;
+import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.support.DefaultExpressionParserFactory;
-import org.springframework.webflow.support.DefaultTargetStateResolver;
-import org.springframework.webflow.support.EventIdTransitionCriteria;
-import org.springframework.webflow.support.SimpleFlowVariable;
-import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockRequestControlContext;
 
 /**
@@ -176,7 +187,7 @@ public class FlowTests extends TestCase {
 
 	public void testStart() {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
-		flow.start(context, new AttributeMap());
+		flow.start(context, new LocalAttributeMap());
 		assertEquals("Wrong start state", "myState1", context.getCurrentState().getId());
 	}
 
@@ -184,7 +195,7 @@ public class FlowTests extends TestCase {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		TestAction action = new TestAction();
 		flow.getStartActionList().add(action);
-		flow.start(context, new AttributeMap());
+		flow.start(context, new LocalAttributeMap());
 		assertEquals("Wrong start state", "myState1", context.getCurrentState().getId());
 		assertEquals(1, action.getExecutionCount());
 	}
@@ -195,7 +206,7 @@ public class FlowTests extends TestCase {
 		StaticApplicationContext beanFactory = new StaticApplicationContext();
 		beanFactory.registerPrototype("bean", ArrayList.class);
 		flow.addVariable(new BeanFactoryFlowVariable("var2", "bean", beanFactory));
-		flow.start(context, new AttributeMap());
+		flow.start(context, new LocalAttributeMap());
 		assertEquals(2, context.getFlowScope().size());
 		context.getFlowScope().getRequired("var1", ArrayList.class);	
 		context.getFlowScope().getRequired("var2", ArrayList.class);	
@@ -207,7 +218,7 @@ public class FlowTests extends TestCase {
 		attributeMapper.addMapping(mapping.source("attr").target("flowScope.attr").value());
 		flow.setInputMapper(attributeMapper);
 		MockRequestControlContext context = new MockRequestControlContext(flow);
-		AttributeMap sessionInput = new AttributeMap();
+		LocalAttributeMap sessionInput = new LocalAttributeMap();
 		sessionInput.put("attr", "foo");
 		flow.start(context, sessionInput); 
 		assertEquals("foo", context.getFlowScope().get("attr"));
@@ -219,7 +230,7 @@ public class FlowTests extends TestCase {
 		attributeMapper.addMapping(mapping.source("attr").target("flowScope.attr").value());
 		flow.setInputMapper(attributeMapper);
 		MockRequestControlContext context = new MockRequestControlContext(flow);
-		AttributeMap sessionInput = new AttributeMap();
+		LocalAttributeMap sessionInput = new LocalAttributeMap();
 		flow.start(context, sessionInput); 
 		assertFalse(context.getFlowScope().contains("attr"));
 	}
@@ -287,7 +298,7 @@ public class FlowTests extends TestCase {
 		TestAction action = new TestAction();
 		flow.getEndActionList().add(action);
 		MockRequestControlContext context = new MockRequestControlContext(flow);
-		AttributeMap sessionOutput = new AttributeMap();
+		LocalAttributeMap sessionOutput = new LocalAttributeMap();
 		flow.end(context, sessionOutput);
 		assertEquals(1, action.getExecutionCount());
 	}
@@ -299,7 +310,7 @@ public class FlowTests extends TestCase {
 		flow.setOutputMapper(attributeMapper);
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.getFlowScope().put("attr", "foo");
-		AttributeMap sessionOutput = new AttributeMap();
+		LocalAttributeMap sessionOutput = new LocalAttributeMap();
 		flow.end(context, sessionOutput); 
 		assertEquals("foo", sessionOutput.get("attr"));
 	}

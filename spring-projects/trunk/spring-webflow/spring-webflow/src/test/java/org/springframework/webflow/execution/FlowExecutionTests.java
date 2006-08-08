@@ -21,32 +21,30 @@ import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.webflow.ActionState;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.EndState;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.SubflowState;
-import org.springframework.webflow.TargetStateResolver;
 import org.springframework.webflow.TestAction;
-import org.springframework.webflow.Transition;
-import org.springframework.webflow.TransitionCriteria;
-import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.ViewState;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.builder.AbstractFlowBuilder;
-import org.springframework.webflow.builder.FlowAssembler;
-import org.springframework.webflow.builder.FlowBuilderException;
 import org.springframework.webflow.builder.TestFlowArtifactFactory;
-import org.springframework.webflow.builder.XmlFlowBuilder;
 import org.springframework.webflow.builder.XmlFlowBuilderTests;
-import org.springframework.webflow.execution.impl.FlowExecutionImpl;
-import org.springframework.webflow.support.ApplicationView;
-import org.springframework.webflow.support.ApplicationViewSelector;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.execution.internal.ActionState;
+import org.springframework.webflow.execution.internal.EndState;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.SubflowState;
+import org.springframework.webflow.execution.internal.TargetStateResolver;
+import org.springframework.webflow.execution.internal.Transition;
+import org.springframework.webflow.execution.internal.TransitionCriteria;
+import org.springframework.webflow.execution.internal.ViewSelector;
+import org.springframework.webflow.execution.internal.ViewState;
+import org.springframework.webflow.execution.internal.builder.AbstractFlowBuilder;
+import org.springframework.webflow.execution.internal.builder.FlowAssembler;
+import org.springframework.webflow.execution.internal.builder.FlowBuilderException;
+import org.springframework.webflow.execution.internal.builder.xml.XmlFlowBuilder;
+import org.springframework.webflow.execution.internal.machine.FlowExecutionImpl;
+import org.springframework.webflow.execution.internal.support.ApplicationViewSelector;
+import org.springframework.webflow.execution.internal.support.DefaultTargetStateResolver;
+import org.springframework.webflow.execution.internal.support.EventIdTransitionCriteria;
+import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.support.DefaultExpressionParserFactory;
-import org.springframework.webflow.support.DefaultTargetStateResolver;
-import org.springframework.webflow.support.EventIdTransitionCriteria;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
@@ -85,7 +83,7 @@ public class FlowExecutionTests extends TestCase {
 		MockFlowExecutionListener flowExecutionListener = new MockFlowExecutionListener();
 		FlowExecutionImpl flowExecution = new FlowExecutionImpl(flow,
 				new FlowExecutionListener[] { flowExecutionListener });
-		AttributeMap input = new AttributeMap();
+		LocalAttributeMap input = new LocalAttributeMap();
 		input.put("name", "value");
 		assertTrue(!flowExecutionListener.isStarted());
 		flowExecution.start(input, new MockExternalContext());
@@ -187,7 +185,7 @@ public class FlowExecutionTests extends TestCase {
 	public void testExtensiveFlowNavigationScenario2() {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
 				new TestFlowArtifactFactory());
-		AttributeMap attributes = new AttributeMap();
+		LocalAttributeMap attributes = new LocalAttributeMap();
 		attributes.put("scenario2", Boolean.TRUE);
 		FlowAssembler assembler = new FlowAssembler("testFlow1", attributes, builder);
 		assembler.assembleFlow();

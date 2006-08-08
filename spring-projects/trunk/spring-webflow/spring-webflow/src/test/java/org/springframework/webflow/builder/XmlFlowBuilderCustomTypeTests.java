@@ -18,24 +18,28 @@ package org.springframework.webflow.builder;
 import junit.framework.TestCase;
 
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.webflow.Action;
-import org.springframework.webflow.ActionState;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowAttributeMapper;
-import org.springframework.webflow.RequestControlContext;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.FlowExecutionException;
-import org.springframework.webflow.FlowExecutionExceptionHandler;
-import org.springframework.webflow.SubflowState;
-import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.support.DefaultFlowAttributeMapper;
+import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.FlowExecutionException;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.ViewSelection;
+import org.springframework.webflow.execution.internal.ActionState;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.FlowAttributeMapper;
+import org.springframework.webflow.execution.internal.FlowExecutionExceptionHandler;
+import org.springframework.webflow.execution.internal.RequestControlContext;
+import org.springframework.webflow.execution.internal.SubflowState;
+import org.springframework.webflow.execution.internal.builder.BaseFlowServiceLocator;
+import org.springframework.webflow.execution.internal.builder.FlowArtifactLookupException;
+import org.springframework.webflow.execution.internal.builder.FlowAssembler;
+import org.springframework.webflow.execution.internal.builder.xml.XmlFlowBuilder;
+import org.springframework.webflow.execution.internal.support.DefaultFlowAttributeMapper;
 
 /**
  * Test case for XML flow builder, testing pluggability of custom types.
  * 
- * @see org.springframework.webflow.builder.XmlFlowBuilder
+ * @see org.springframework.webflow.execution.internal.builder.xml.XmlFlowBuilder
  * 
  * @author Erwin Vervaet
  */

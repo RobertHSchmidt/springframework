@@ -5,8 +5,8 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.FlowExecutionContext;
-import org.springframework.webflow.support.FlowRedirect;
+import org.springframework.webflow.execution.FlowExecutionContext;
+import org.springframework.webflow.execution.support.FlowRedirect;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 

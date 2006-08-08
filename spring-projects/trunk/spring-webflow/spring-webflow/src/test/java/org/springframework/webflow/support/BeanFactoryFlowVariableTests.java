@@ -3,6 +3,7 @@ package org.springframework.webflow.support;
 import junit.framework.TestCase;
 
 import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.webflow.execution.internal.support.BeanFactoryFlowVariable;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class BeanFactoryFlowVariableTests extends TestCase {

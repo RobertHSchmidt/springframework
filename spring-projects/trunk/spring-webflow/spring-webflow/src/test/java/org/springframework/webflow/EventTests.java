@@ -15,6 +15,10 @@
  */
 package org.springframework.webflow;
 
+
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.execution.Event;
+
 import junit.framework.TestCase;
 
 /**
@@ -50,7 +54,7 @@ public class EventTests extends TestCase {
 	}
 	
 	public void testNewEventWithAttributes() {
-		AttributeMap attrs = new AttributeMap();
+		LocalAttributeMap attrs = new LocalAttributeMap();
 		attrs.put("name", "value");
 		Event event = new Event(this, "id", attrs);
 		assertTrue(!event.getAttributes().isEmpty());

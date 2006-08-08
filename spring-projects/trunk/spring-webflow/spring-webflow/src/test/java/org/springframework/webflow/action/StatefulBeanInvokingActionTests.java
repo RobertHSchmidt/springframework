@@ -4,7 +4,8 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.web.context.support.StaticWebApplicationContext;
-import org.springframework.webflow.ScopeType;
+import org.springframework.webflow.action.bean.StatefulBeanInvokingAction;
+import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class StatefulBeanInvokingActionTests extends TestCase {

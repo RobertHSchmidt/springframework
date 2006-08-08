@@ -26,22 +26,23 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.builder.FlowArtifactLookupException;
-import org.springframework.webflow.builder.FlowAssembler;
 import org.springframework.webflow.builder.TestFlowArtifactFactory;
-import org.springframework.webflow.builder.XmlFlowBuilder;
 import org.springframework.webflow.builder.XmlFlowBuilderTests;
 import org.springframework.webflow.execution.FlowExecutionListener;
-import org.springframework.webflow.execution.FlowExecutionListenerLoader;
-import org.springframework.webflow.execution.FlowLocator;
+import org.springframework.webflow.execution.factory.support.FlowExecutionListenerLoader;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.builder.FlowArtifactLookupException;
+import org.springframework.webflow.execution.internal.builder.FlowAssembler;
+import org.springframework.webflow.execution.internal.builder.xml.XmlFlowBuilder;
+import org.springframework.webflow.execution.internal.machine.FlowExecutionImpl;
+import org.springframework.webflow.registry.FlowLocator;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockParameterMap;
 
 /**
  * Test case for FlowExecutionStack.
  * 
- * @see org.springframework.webflow.execution.impl.FlowExecutionImpl
+ * @see org.springframework.webflow.execution.internal.machine.FlowExecutionImpl
  * 
  * @author Erwin Vervaet
  */
@@ -94,11 +95,11 @@ public class FlowExecutionImplTests extends TestCase {
 		if (flowExecution.isActive()) {
 			assertTrue(entriesCollectionsAreEqual(flowExecution.getActiveSession().getScope().getMap().entrySet(),
 					restoredFlowExecution.getActiveSession().getScope().getMap().entrySet()));
-			assertEquals(flowExecution.getActiveSession().getState().getId(), restoredFlowExecution.getActiveSession()
-					.getState().getId());
-			assertEquals(flowExecution.getActiveSession().getFlow().getId(), restoredFlowExecution.getActiveSession()
-					.getFlow().getId());
-			assertSame(flowExecution.getFlow(), restoredFlowExecution.getFlow());
+			assertEquals(flowExecution.getActiveSession().getState().getFlowId(), restoredFlowExecution.getActiveSession()
+					.getState().getFlowId());
+			assertEquals(flowExecution.getActiveSession().getDefinition().getFlowId(), restoredFlowExecution.getActiveSession()
+					.getDefinition().getFlowId());
+			assertSame(flowExecution.getFlowDefinition(), restoredFlowExecution.getFlowDefinition());
 		}
 		assertEquals(flowExecution.getListeners().size(), restoredFlowExecution.getListeners().size());
 	}

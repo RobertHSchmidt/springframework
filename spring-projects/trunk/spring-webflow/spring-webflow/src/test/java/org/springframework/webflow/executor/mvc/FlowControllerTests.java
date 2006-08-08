@@ -10,7 +10,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.webflow.SimpleFlow;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.registry.FlowRegistryImpl;
-import org.springframework.webflow.registry.StaticFlowHolder;
+import org.springframework.webflow.registry.StaticFlowDefinitionHolder;
 
 public class FlowControllerTests extends TestCase {
 	private FlowController controller = new FlowController();
@@ -18,7 +18,7 @@ public class FlowControllerTests extends TestCase {
 	private FlowRegistryImpl registry = new FlowRegistryImpl();
 
 	public void setUp() {
-		registry.registerFlow(new StaticFlowHolder(new SimpleFlow()));
+		registry.registerFlow(new StaticFlowDefinitionHolder(new SimpleFlow()));
 		controller.setServletContext(new MockServletContext());
 		controller.setFlowExecutor(new FlowExecutorImpl(registry));
 	}

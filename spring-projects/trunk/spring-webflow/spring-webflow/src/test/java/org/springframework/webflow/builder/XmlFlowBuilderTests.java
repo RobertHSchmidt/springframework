@@ -22,24 +22,27 @@ import junit.framework.TestCase;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.RequiredMapping;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.webflow.ActionState;
-import org.springframework.webflow.DecisionState;
-import org.springframework.webflow.EndState;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.SubflowState;
-import org.springframework.webflow.Transition;
-import org.springframework.webflow.ViewState;
-import org.springframework.webflow.action.LocalBeanInvokingAction;
-import org.springframework.webflow.support.ApplicationViewSelector;
-import org.springframework.webflow.support.DefaultTargetStateResolver;
-import org.springframework.webflow.support.TransitionExecutingStateExceptionHandler;
+import org.springframework.webflow.action.bean.LocalBeanInvokingAction;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.internal.ActionState;
+import org.springframework.webflow.execution.internal.DecisionState;
+import org.springframework.webflow.execution.internal.EndState;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.SubflowState;
+import org.springframework.webflow.execution.internal.Transition;
+import org.springframework.webflow.execution.internal.ViewState;
+import org.springframework.webflow.execution.internal.builder.FlowAssembler;
+import org.springframework.webflow.execution.internal.builder.xml.ImmutableFlowAttributeMapper;
+import org.springframework.webflow.execution.internal.builder.xml.XmlFlowBuilder;
+import org.springframework.webflow.execution.internal.support.ApplicationViewSelector;
+import org.springframework.webflow.execution.internal.support.DefaultTargetStateResolver;
+import org.springframework.webflow.execution.internal.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
  * Test case for XML flow builder.
  * 
- * @see org.springframework.webflow.builder.XmlFlowBuilder
+ * @see org.springframework.webflow.execution.internal.builder.xml.XmlFlowBuilder
  * 
  * @author Erwin Vervaet
  */

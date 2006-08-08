@@ -20,11 +20,12 @@ import junit.framework.TestCase;
 import org.springframework.binding.expression.support.OgnlExpressionParser;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.mapping.MappingBuilder;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.CollectionUtils;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.ScopeType;
 import org.springframework.webflow.action.FormAction;
+import org.springframework.webflow.collection.support.CollectionUtils;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.ScopeType;
+import org.springframework.webflow.execution.internal.support.DefaultFlowAttributeMapper;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -60,13 +61,13 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 
 		context.setActiveSession(parentSession);
 		context.getFlowScope().put("x", "xValue");
-		AttributeMap input = mapper.createFlowInput(context);
+		LocalAttributeMap input = mapper.createFlowInput(context);
 		assertEquals(1, input.size());
 		assertEquals("xValue", input.get("y"));
 
 		parentSession.getScope().clear();
 
-		AttributeMap subflowOutput = new AttributeMap();
+		LocalAttributeMap subflowOutput = new LocalAttributeMap();
 		subflowOutput.put("y", "xValue");
 		mapper.mapFlowOutput(subflowOutput.unmodifiable(), context);
 		assertEquals(1, parentSession.getScope().size());
@@ -87,7 +88,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		context.setActiveSession(parentSession);
 		context.getFlowScope().put("bean", bean);
 		context.getFlowScope().put("otherAttr", "otherValue");
-		AttributeMap input = mapper.createFlowInput(context);
+		LocalAttributeMap input = mapper.createFlowInput(context);
 		assertEquals(2, input.size());
 		assertEquals("value", input.get("attr"));
 		assertEquals("otherValue", ((TestBean)input.get("otherBean")).getProp());
@@ -95,7 +96,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		parentSession.getScope().clear();
 		bean.setProp("value");
 
-		AttributeMap subflowOutput = new AttributeMap();
+		LocalAttributeMap subflowOutput = new LocalAttributeMap();
 		subflowOutput.put("bean", bean);
 		subflowOutput.put("otherAttr", "otherValue");
 		mapper.mapFlowOutput(subflowOutput.unmodifiable(), context);
@@ -113,14 +114,14 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		context.setActiveSession(parentSession);
 		context.getRequestScope().put("a", "aValue");
 		context.getFlowScope().put("x", "xValue");
-		AttributeMap input = mapper.createFlowInput(context);
+		LocalAttributeMap input = mapper.createFlowInput(context);
 		assertEquals(2, input.size());
 		assertEquals("aValue", input.get("b"));
 		assertEquals("xValue", input.get("y"));
 
 		parentSession.getScope().clear();
 
-		AttributeMap subflowOutput = new AttributeMap();
+		LocalAttributeMap subflowOutput = new LocalAttributeMap();
 		subflowOutput.put("b", "aValue");
 		subflowOutput.put("y", "xValue");
 		mapper.mapFlowOutput(subflowOutput.unmodifiable(), context);
@@ -138,7 +139,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		parentSession.getScope().put("x", null);
 
 		context.setActiveSession(parentSession);
-		AttributeMap input = mapper.createFlowInput(context);
+		LocalAttributeMap input = mapper.createFlowInput(context);
 		assertEquals(0, input.size());
 		assertFalse(input.contains("y"));
 		assertFalse(input.contains("b"));
@@ -169,7 +170,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		assertNotNull(context.getFlowScope().get("command"));
 
 		mapper.addInputMapping(mapping.source("${flowScope.command}").target("command").value());
-		AttributeMap input = mapper.createFlowInput(context);
+		LocalAttributeMap input = mapper.createFlowInput(context);
 
 		assertEquals(1, input.size());
 		assertSame(parentSession.getScope().get("command"), input.get("command"));

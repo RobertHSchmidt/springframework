@@ -6,8 +6,9 @@ import junit.framework.TestCase;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.builder.FlowAssembler;
-import org.springframework.webflow.builder.XmlFlowBuilder;
+import org.springframework.webflow.execution.internal.builder.FlowAssembler;
+import org.springframework.webflow.execution.internal.builder.RefreshableFlowDefinitionHolder;
+import org.springframework.webflow.execution.internal.builder.xml.XmlFlowBuilder;
 
 public class RefreshableFlowHolderTests extends TestCase {
 
@@ -16,8 +17,8 @@ public class RefreshableFlowHolderTests extends TestCase {
 		Resource location = new FileSystemResource(new File(parent, "flow.xml"));
 		XmlFlowBuilder flowBuilder = new XmlFlowBuilder(location);
 		FlowAssembler assembler = new FlowAssembler("flow", flowBuilder);
-		RefreshableFlowHolder holder = new RefreshableFlowHolder(assembler);
-		assertEquals("flow", holder.getId());
+		RefreshableFlowDefinitionHolder holder = new RefreshableFlowDefinitionHolder(assembler);
+		assertEquals("flow", holder.getFlowId());
 		assertSame(flowBuilder, holder.getFlowBuilder());
 		assertEquals(0, holder.getLastModified());
 		assertTrue(!holder.isAssembled());
@@ -35,7 +36,7 @@ public class RefreshableFlowHolderTests extends TestCase {
 		Resource location = new FileSystemResource(new File(parent, "flow.xml"));
 		XmlFlowBuilder flowBuilder = new XmlFlowBuilder(location);
 		FlowAssembler assembler = new FlowAssembler("flow", flowBuilder);
-		RefreshableFlowHolder holder = new RefreshableFlowHolder(assembler);
+		RefreshableFlowDefinitionHolder holder = new RefreshableFlowDefinitionHolder(assembler);
 		holder.getFlow();
 		assertTrue(holder.isAssembled());
 		long lastModified = holder.getLastModified();

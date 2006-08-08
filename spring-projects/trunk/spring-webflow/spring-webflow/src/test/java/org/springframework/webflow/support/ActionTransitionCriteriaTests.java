@@ -18,8 +18,9 @@ package org.springframework.webflow.support;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
-import org.springframework.webflow.Action;
-import org.springframework.webflow.Event;
+import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.internal.support.ActionTransitionCriteria;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**

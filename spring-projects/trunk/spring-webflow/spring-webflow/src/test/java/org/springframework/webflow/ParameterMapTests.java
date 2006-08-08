@@ -7,9 +7,11 @@ import junit.framework.TestCase;
 
 import org.easymock.MockControl;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.webflow.collection.support.LocalParameterMap;
+import org.springframework.webflow.support.UnmodifiableAttributeMap;
 
 public class ParameterMapTests extends TestCase {
-	private ParameterMap parameterMap;
+	private LocalParameterMap parameterMap;
 
 	public void setUp() {
 		Map map = new HashMap();
@@ -20,7 +22,7 @@ public class ParameterMapTests extends TestCase {
 		map.put("emptyArray", new String[0]);
 		MockControl control = MockControl.createControl(MultipartFile.class);
 		map.put("multipartFile", control.getMock());
-		parameterMap = new ParameterMap(map);
+		parameterMap = new LocalParameterMap(map);
 	}
 
 	public void testSize() {
@@ -233,7 +235,7 @@ public class ParameterMapTests extends TestCase {
 	}
 	
 	public void testEquality() {
-		ParameterMap map1 = new ParameterMap(new HashMap(parameterMap.getMap()));
+		LocalParameterMap map1 = new LocalParameterMap(new HashMap(parameterMap.getMap()));
 		assertEquals(parameterMap, map1);
 	}
 

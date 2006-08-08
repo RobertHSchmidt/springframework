@@ -3,6 +3,9 @@ package org.springframework.webflow;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.internal.AnnotatedAction;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class AnnotedActionTests extends TestCase {

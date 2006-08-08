@@ -17,10 +17,19 @@ package org.springframework.webflow;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.impl.FlowExecutionImpl;
-import org.springframework.webflow.support.DefaultTargetStateResolver;
-import org.springframework.webflow.support.EventIdTransitionCriteria;
+import org.springframework.webflow.execution.internal.ActionState;
+import org.springframework.webflow.execution.internal.AnnotatedAction;
+import org.springframework.webflow.execution.internal.EndState;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.NoMatchingTransitionException;
+import org.springframework.webflow.execution.internal.TargetStateResolver;
+import org.springframework.webflow.execution.internal.Transition;
+import org.springframework.webflow.execution.internal.TransitionCriteria;
+import org.springframework.webflow.execution.internal.machine.FlowExecutionImpl;
+import org.springframework.webflow.execution.internal.support.DefaultTargetStateResolver;
+import org.springframework.webflow.execution.internal.support.EventIdTransitionCriteria;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**

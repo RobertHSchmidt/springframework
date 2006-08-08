@@ -4,12 +4,12 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.NoMatchingTransitionException;
+import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.NoSuchFlowDefinitionException;
+import org.springframework.webflow.execution.internal.NoMatchingTransitionException;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
-import org.springframework.webflow.support.ApplicationView;
+import org.springframework.webflow.execution.support.ApplicationView;
+import org.springframework.webflow.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.test.MockExternalContext;
 
 public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpringContextTests {

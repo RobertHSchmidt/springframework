@@ -3,17 +3,19 @@ package org.springframework.webflow.builder;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.core.enums.LabeledEnum;
-import org.springframework.webflow.Action;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.EndState;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.FlowAttributeMapper;
-import org.springframework.webflow.FlowSessionStatus;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.UnmodifiableAttributeMap;
 import org.springframework.webflow.action.MultiAction;
-import org.springframework.webflow.execution.NoSuchFlowDefinitionException;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.FlowSessionStatus;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.internal.EndState;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.FlowAttributeMapper;
+import org.springframework.webflow.execution.internal.builder.BaseFlowServiceLocator;
+import org.springframework.webflow.execution.internal.builder.FlowArtifactLookupException;
+import org.springframework.webflow.registry.NoSuchFlowDefinitionException;
+import org.springframework.webflow.support.UnmodifiableAttributeMap;
 
 /**
  * Flow service locator for the services needed by the testFlow (defined in
@@ -48,7 +50,7 @@ public class TestFlowArtifactFactory extends BaseFlowServiceLocator {
 
 	public class TestAction implements Action {
 		public Event execute(RequestContext context) throws Exception {
-			if (context.getFlowExecutionContext().getFlow().getAttributeMap().contains("scenario2")) {
+			if (context.getFlowExecutionContext().getFlowDefinition().getAttributeMap().contains("scenario2")) {
 				return new Event(this, "event2");
 			}
 			return new Event(this, "event1");
@@ -72,8 +74,8 @@ public class TestFlowArtifactFactory extends BaseFlowServiceLocator {
 	}
 	
 	public class TestAttributeMapper implements FlowAttributeMapper {
-		public AttributeMap createFlowInput(RequestContext context) {
-			return new AttributeMap();
+		public LocalAttributeMap createFlowInput(RequestContext context) {
+			return new LocalAttributeMap();
 		}
 
 		public void mapFlowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {

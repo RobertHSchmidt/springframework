@@ -18,9 +18,11 @@ package org.springframework.webflow.builder;
 import junit.framework.TestCase;
 
 import org.springframework.binding.convert.ConversionException;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.TransitionCriteria;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.internal.TransitionCriteria;
+import org.springframework.webflow.execution.internal.builder.BaseFlowServiceLocator;
+import org.springframework.webflow.execution.internal.builder.TextToTransitionCriteria;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**

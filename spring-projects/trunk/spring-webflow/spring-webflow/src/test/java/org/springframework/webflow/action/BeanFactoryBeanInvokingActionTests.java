@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.binding.method.MethodSignature;
+import org.springframework.webflow.action.bean.BeanFactoryBeanInvokingAction;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**

@@ -4,8 +4,9 @@ import javax.swing.text.html.FormSubmitEvent.MethodType;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.Event;
-import org.springframework.webflow.FlowSessionStatus;
+import org.springframework.webflow.action.bean.ResultObjectBasedEventFactory;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.FlowSessionStatus;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class ResultObjectEventFactoryTests extends TestCase {

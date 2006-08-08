@@ -4,9 +4,13 @@
 package org.springframework.webflow;
 
 import org.springframework.binding.expression.support.StaticExpression;
-import org.springframework.webflow.support.ApplicationViewSelector;
-import org.springframework.webflow.support.DefaultTargetStateResolver;
-import org.springframework.webflow.support.ExternalRedirectSelector;
+import org.springframework.webflow.execution.internal.EndState;
+import org.springframework.webflow.execution.internal.Flow;
+import org.springframework.webflow.execution.internal.Transition;
+import org.springframework.webflow.execution.internal.ViewState;
+import org.springframework.webflow.execution.internal.support.ApplicationViewSelector;
+import org.springframework.webflow.execution.internal.support.DefaultTargetStateResolver;
+import org.springframework.webflow.execution.internal.support.ExternalRedirectSelector;
 
 public class SimpleFlow extends Flow {
 	public SimpleFlow() {
