@@ -31,12 +31,10 @@ import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.mvc.AbstractController;
 import org.springframework.web.portlet.mvc.Controller;
 import org.springframework.webflow.context.portlet.PortletExternalContext;
-import org.springframework.webflow.engine.repository.DefaultFlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowRedirect;
 import org.springframework.webflow.executor.FlowExecutor;
-import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 import org.springframework.webflow.registry.FlowLocator;
@@ -130,27 +128,11 @@ public class PortletFlowController extends AbstractController implements Initial
 	}
 
 	/**
-	 * Configures the flow executor implementation to use.
+	 * Configures the flow executor implementation to use.  Required.
 	 * @param flowExecutor the fully configured flow executor
 	 */
 	public void setFlowExecutor(FlowExecutor flowExecutor) {
 		this.flowExecutor = flowExecutor;
-	}
-
-	/**
-	 * Sets the flow locator responsible for loading flow definitions when
-	 * requested for execution by clients.
-	 * <p>
-	 * This is a convenience setter that configures a {@link FlowExecutorImpl}
-	 * with a default {@link DefaultFlowExecutionRepositoryFactory} for managing
-	 * the storage of executing flows.
-	 * <p>
-	 * Don't use this together with {@link #setFlowExecutor(FlowExecutor)}.
-	 * @param flowLocator the locator responsible for loading flow definitions
-	 * when this controller is invoked
-	 */
-	public void setFlowLocator(FlowLocator flowLocator) {
-		flowExecutor = new FlowExecutorImpl(new DefaultFlowExecutionRepositoryFactory(flowLocator));
 	}
 
 	/**
