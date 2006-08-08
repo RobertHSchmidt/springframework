@@ -18,11 +18,14 @@ package org.springframework.webflow.executor.jsf;
 import javax.faces.context.FacesContext;
 
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.ParameterMap;
-import org.springframework.webflow.SharedAttributeMap;
-import org.springframework.webflow.context.SharedMapDecorator;
+import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.collection.ParameterMap;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.collection.support.LocalParameterMap;
+import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.SharedAttributeMap;
+import org.springframework.webflow.context.support.LocalSharedAttributeMap;
+import org.springframework.webflow.context.support.SharedMapDecorator;
 
 /**
  * Provides contextual information about a JSF environment that has interacted
@@ -70,7 +73,7 @@ public class JsfExternalContext implements ExternalContext {
 	public String getContextPath() {
 		return facesContext.getExternalContext().getRequestContextPath();
 	}
-	
+
 	public String getDispatcherPath() {
 		return facesContext.getExternalContext().getRequestServletPath();
 	}
@@ -80,19 +83,19 @@ public class JsfExternalContext implements ExternalContext {
 	}
 
 	public ParameterMap getRequestParameterMap() {
-		return new ParameterMap(facesContext.getExternalContext().getRequestParameterMap());
+		return new LocalParameterMap(facesContext.getExternalContext().getRequestParameterMap());
 	}
 
-	public AttributeMap getRequestMap() {
-		return new AttributeMap(facesContext.getExternalContext().getRequestMap());
+	public MutableAttributeMap getRequestMap() {
+		return new LocalAttributeMap(facesContext.getExternalContext().getRequestMap());
 	}
 
 	public SharedAttributeMap getSessionMap() {
-		return new SharedAttributeMap(new SessionSharedMap(facesContext));
+		return new LocalSharedAttributeMap(new SessionSharedMap(facesContext));
 	}
 
 	public SharedAttributeMap getApplicationMap() {
-		return new SharedAttributeMap(new ApplicationSharedMap(facesContext));
+		return new LocalSharedAttributeMap(new ApplicationSharedMap(facesContext));
 	}
 
 	/**
@@ -119,7 +122,7 @@ public class JsfExternalContext implements ExternalContext {
 	private static class SessionSharedMap extends SharedMapDecorator {
 
 		private FacesContext facesContext;
-		
+
 		public SessionSharedMap(FacesContext facesContext) {
 			super(facesContext.getExternalContext().getSessionMap());
 			this.facesContext = facesContext;
@@ -133,7 +136,7 @@ public class JsfExternalContext implements ExternalContext {
 	private static class ApplicationSharedMap extends SharedMapDecorator {
 
 		private FacesContext facesContext;
-		
+
 		public ApplicationSharedMap(FacesContext facesContext) {
 			super(facesContext.getExternalContext().getApplicationMap());
 			this.facesContext = facesContext;

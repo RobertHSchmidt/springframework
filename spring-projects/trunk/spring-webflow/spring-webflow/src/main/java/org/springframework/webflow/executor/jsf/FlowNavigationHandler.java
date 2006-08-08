@@ -21,11 +21,11 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.jsf.DecoratingNavigationHandler;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
@@ -42,7 +42,7 @@ import org.springframework.webflow.executor.support.FlowExecutorArgumentExtracto
  * <ul>
  * <li>If the specified logical outcome <strong>is</strong> of the form
  * <em>flowId:xxx</em>, look up the corresponding
- * {@link org.springframework.webflow.Flow} definition with that id and launch a
+ * {@link org.springframework.webflow.execution.internal.Flow} definition with that id and launch a
  * new flow execution in the starting state. Expose information to indicate that
  * this flow is in progress and render the starting {@link ViewSelection}.</li>
  * <li>If the specified logical outcome is <strong>not</strong> of the form
@@ -183,7 +183,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	 * @param context the external context
 	 * @return the input map
 	 */
-	protected AttributeMap createInput(FlowExecution flowExecution, ExternalContext context) {
+	protected LocalAttributeMap createInput(FlowExecution flowExecution, ExternalContext context) {
 		return null;
 	}
 }

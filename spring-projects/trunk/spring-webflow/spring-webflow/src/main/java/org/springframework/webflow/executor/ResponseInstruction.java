@@ -19,12 +19,12 @@ import java.io.Serializable;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
-import org.springframework.webflow.FlowExecutionContext;
-import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.support.ApplicationView;
-import org.springframework.webflow.support.ExternalRedirect;
-import org.springframework.webflow.support.FlowExecutionRedirect;
-import org.springframework.webflow.support.FlowRedirect;
+import org.springframework.webflow.execution.FlowExecutionContext;
+import org.springframework.webflow.execution.ViewSelection;
+import org.springframework.webflow.execution.support.ApplicationView;
+import org.springframework.webflow.execution.support.ExternalRedirect;
+import org.springframework.webflow.execution.support.FlowExecutionRedirect;
+import org.springframework.webflow.execution.support.FlowRedirect;
 
 /**
  * Immutable value object that provides clients with information about a
