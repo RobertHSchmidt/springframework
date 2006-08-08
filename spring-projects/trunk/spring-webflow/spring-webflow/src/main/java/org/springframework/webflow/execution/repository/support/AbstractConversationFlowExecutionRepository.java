@@ -19,7 +19,6 @@ import java.io.Serializable;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.collection.MutableAttributeMap;
-import org.springframework.webflow.collection.support.LocalAttributeMap;
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationParameters;
@@ -27,7 +26,6 @@ import org.springframework.webflow.conversation.ConversationService;
 import org.springframework.webflow.conversation.ConversationServiceException;
 import org.springframework.webflow.conversation.NoSuchConversationException;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.engine.FlowExecutionImpl;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
@@ -182,18 +180,16 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 		}
 	}
 
-	protected FlowExecution rehydrate(FlowExecution flowExecution, FlowExecutionKey key) {
-		flowExecution = super.rehydrate(flowExecution, key);
-		asImpl(flowExecution).setConversationScope(getConversationScope(key));
-		return flowExecution;
-	}
-
-	protected LocalAttributeMap getConversationScope(FlowExecutionKey key) {
-		return (LocalAttributeMap)getConversation(key).getAttribute(SCOPE_ATTRIBUTE);
+	protected MutableAttributeMap getConversationScope(FlowExecutionKey key) {
+		return (MutableAttributeMap)getConversation(key).getAttribute(SCOPE_ATTRIBUTE);
 	}
 
 	protected void putConversationScope(FlowExecutionKey key, MutableAttributeMap scope) {
 		getConversation(key).putAttribute(SCOPE_ATTRIBUTE, scope);
+	}
+
+	protected FlowExecution restoreState(FlowExecution flowExecution, FlowExecutionKey key) {
+		return getFlowExecutionFactory().restoreState(flowExecution, getConversationScope(key));
 	}
 
 	/**
@@ -210,14 +206,4 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	 * @return the parsed continuation id
 	 */
 	protected abstract Serializable parseContinuationId(String encodedId) throws FlowExecutionRepositoryException;
-
-	/**
-	 * Helper method to convert a flow execution to its implementation - needed by this repository 
-	 * to set privleged properties on the execution.
-	 * @param flowExecution the flow execution
-	 * @return its implementation produced by the factory
-	 */
-	protected FlowExecutionImpl asImpl(FlowExecution flowExecution) {
-		return (FlowExecutionImpl)flowExecution;
-	}
 }

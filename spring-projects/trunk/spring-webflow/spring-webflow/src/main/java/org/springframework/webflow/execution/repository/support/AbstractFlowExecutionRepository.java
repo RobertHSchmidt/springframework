@@ -116,8 +116,4 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 			throws FlowExecutionRepositoryException;
 
 	public abstract void removeFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
-
-	protected FlowExecution rehydrate(FlowExecution flowExecution, FlowExecutionKey key) {
-		return flowExecutionFactory.rehydrateFlowExecution(flowExecution);
-	}
 }

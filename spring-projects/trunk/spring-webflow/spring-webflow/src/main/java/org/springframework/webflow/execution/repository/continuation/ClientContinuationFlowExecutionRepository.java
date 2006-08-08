@@ -116,7 +116,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 		FlowExecutionContinuation continuation = decode((String)getContinuationId(key));
 		try {
 			FlowExecution flowExecution = continuation.unmarshal();
-			return rehydrate(flowExecution, key);
+			return restoreState(flowExecution, key);
 		}
 		catch (ContinuationUnmarshalException e) {
 			throw new FlowExecutionRestorationFailureException(key, e);

@@ -183,7 +183,7 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 		FlowExecutionContinuation continuation = getContinuation(key);
 		try {
 			FlowExecution flowExecution = continuation.unmarshal();
-			return rehydrate(flowExecution, key);
+			return restoreState(flowExecution, key);
 		}
 		catch (ContinuationUnmarshalException e) {
 			throw new FlowExecutionRestorationFailureException(key, e);
@@ -194,7 +194,7 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 		FlowExecutionContinuationGroup continuationGroup = getContinuationGroup(key);
 		FlowExecutionContinuation continuation = continuationFactory.createContinuation(flowExecution);
 		continuationGroup.add(getContinuationId(key), continuation);
-		putConversationScope(key, asImpl(flowExecution).getConversationScope());
+		putConversationScope(key, flowExecution.getConversationScope());
 	}
 
 	/**
