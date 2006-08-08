@@ -26,11 +26,11 @@ import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.machine.FlowExecutionImpl;
+import org.springframework.webflow.engine.support.ApplicationViewSelector;
+import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
+import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.ViewSelection;
-import org.springframework.webflow.execution.internal.support.ApplicationViewSelector;
-import org.springframework.webflow.execution.internal.support.DefaultTargetStateResolver;
-import org.springframework.webflow.execution.internal.support.EventIdTransitionCriteria;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.test.MockExternalContext;
 

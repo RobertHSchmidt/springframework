@@ -23,9 +23,9 @@ import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.webflow.action.FormAction;
 import org.springframework.webflow.collection.support.CollectionUtils;
 import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.engine.support.DefaultFlowAttributeMapper;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.ScopeType;
-import org.springframework.webflow.execution.internal.support.DefaultFlowAttributeMapper;
 import org.springframework.webflow.test.engine.MockFlowSession;
 import org.springframework.webflow.test.engine.MockRequestContext;
 

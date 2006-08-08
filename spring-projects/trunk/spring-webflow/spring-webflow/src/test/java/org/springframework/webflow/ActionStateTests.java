@@ -26,10 +26,10 @@ import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.machine.FlowExecutionImpl;
+import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
+import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.internal.support.DefaultTargetStateResolver;
-import org.springframework.webflow.execution.internal.support.EventIdTransitionCriteria;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
