@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine;
+package org.springframework.webflow.engine.impl;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -29,6 +29,10 @@ import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.RequestControlContext;
+import org.springframework.webflow.engine.State;
+import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
