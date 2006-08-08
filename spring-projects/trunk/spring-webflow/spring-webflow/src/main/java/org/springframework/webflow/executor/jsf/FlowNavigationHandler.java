@@ -42,7 +42,7 @@ import org.springframework.webflow.executor.support.FlowExecutorArgumentExtracto
  * <ul>
  * <li>If the specified logical outcome <strong>is</strong> of the form
  * <em>flowId:xxx</em>, look up the corresponding
- * {@link org.springframework.webflow.execution.internal.Flow} definition with that id and launch a
+ * {@link org.springframework.webflow.engine.Flow} definition with that id and launch a
  * new flow execution in the starting state. Expose information to indicate that
  * this flow is in progress and render the starting {@link ViewSelection}.</li>
  * <li>If the specified logical outcome is <strong>not</strong> of the form

@@ -22,9 +22,9 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.portlet.PortletExternalContext;
+import org.springframework.webflow.engine.ActionExecutionException;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.internal.ActionExecutionException;
 
 /**
  * Action implementation that changes a PortletResponse mode. The action only

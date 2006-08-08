@@ -26,8 +26,8 @@ import org.springframework.webflow.FlowException;
  * behalf of a client. They signal that an execution problem occured: e.g.
  * action execution failed or no transition matched the current request context.
  * 
- * @see org.springframework.webflow.execution.internal.Flow
- * @see org.springframework.webflow.execution.internal.State
+ * @see org.springframework.webflow.engine.Flow
+ * @see org.springframework.webflow.engine.State
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

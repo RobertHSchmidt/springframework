@@ -24,17 +24,17 @@ import org.springframework.core.JdkVersion;
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
+import org.springframework.webflow.engine.ActionList;
+import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
+import org.springframework.webflow.engine.RequestControlContext;
+import org.springframework.webflow.engine.TargetStateResolver;
+import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.ViewSelection;
-import org.springframework.webflow.execution.internal.ActionList;
-import org.springframework.webflow.execution.internal.FlowExecutionExceptionHandler;
-import org.springframework.webflow.execution.internal.RequestControlContext;
-import org.springframework.webflow.execution.internal.TargetStateResolver;
-import org.springframework.webflow.execution.internal.Transition;
 
 /**
  * A flow state exception handler that maps the occurence of a specific type of
- * exception to a transition to a new {@link org.springframework.webflow.execution.internal.State}.
+ * exception to a transition to a new {@link org.springframework.webflow.engine.State}.
  * 
  * @author Keith Donald
  */

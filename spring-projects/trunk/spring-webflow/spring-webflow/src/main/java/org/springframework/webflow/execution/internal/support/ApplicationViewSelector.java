@@ -22,9 +22,9 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewSelection;
-import org.springframework.webflow.execution.internal.ViewSelector;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 

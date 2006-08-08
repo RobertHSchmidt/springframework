@@ -20,8 +20,8 @@ import java.util.Map;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.util.Assert;
+import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.internal.TransitionCriteria;
 
 /**
  * Transition criteria that tests the value of an expression. The

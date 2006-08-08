@@ -18,8 +18,8 @@ package org.springframework.webflow.execution.internal.support;
 import java.io.Serializable;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.internal.TransitionCriteria;
 
 /**
  * Transition criteria that negates the result of the evaluation of

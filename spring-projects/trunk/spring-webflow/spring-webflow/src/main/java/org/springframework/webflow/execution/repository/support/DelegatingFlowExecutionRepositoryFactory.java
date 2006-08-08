@@ -16,7 +16,7 @@
 package org.springframework.webflow.execution.repository.support;
 
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.execution.internal.FlowExecutionImplFactory;
+import org.springframework.webflow.engine.FlowExecutionImplFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.registry.FlowLocator;

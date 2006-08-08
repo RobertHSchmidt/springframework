@@ -16,11 +16,11 @@
 package org.springframework.webflow.execution.internal.support;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.engine.ActionExecutor;
+import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.internal.ActionExecutor;
-import org.springframework.webflow.execution.internal.TransitionCriteria;
 
 /**
  * A transition criteria that will execute an action when tested and return
@@ -30,7 +30,7 @@ import org.springframework.webflow.execution.internal.TransitionCriteria;
  * This effectively adapts an <code>Action</code> to a <code>TransitionCriteria</code>.
  * 
  * @see org.springframework.webflow.execution.Action
- * @see org.springframework.webflow.execution.internal.TransitionCriteria
+ * @see org.springframework.webflow.engine.TransitionCriteria
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

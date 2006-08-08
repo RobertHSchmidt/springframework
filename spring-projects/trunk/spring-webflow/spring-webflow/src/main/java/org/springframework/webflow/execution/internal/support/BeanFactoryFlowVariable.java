@@ -18,9 +18,9 @@ package org.springframework.webflow.execution.internal.support;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ScopeType;
-import org.springframework.webflow.execution.internal.FlowVariable;
 
 /**
  * A concrete flow variable subclass that obtains variable values from a Spring

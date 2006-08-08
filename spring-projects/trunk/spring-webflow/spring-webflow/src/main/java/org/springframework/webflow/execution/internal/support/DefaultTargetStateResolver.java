@@ -18,11 +18,11 @@ package org.springframework.webflow.execution.internal.support;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.util.Assert;
+import org.springframework.webflow.engine.State;
+import org.springframework.webflow.engine.TargetStateResolver;
+import org.springframework.webflow.engine.Transition;
+import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.internal.State;
-import org.springframework.webflow.execution.internal.TargetStateResolver;
-import org.springframework.webflow.execution.internal.Transition;
-import org.springframework.webflow.execution.internal.TransitionableState;
 
 /**
  * A transition target state resolver that always resolves to the same target

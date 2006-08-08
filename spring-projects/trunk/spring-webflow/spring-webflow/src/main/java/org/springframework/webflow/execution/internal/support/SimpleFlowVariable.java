@@ -19,9 +19,9 @@ import java.lang.reflect.Modifier;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
+import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ScopeType;
-import org.springframework.webflow.execution.internal.FlowVariable;
 
 /**
  * A trivial concrete flow variable subclass that creates new variable values

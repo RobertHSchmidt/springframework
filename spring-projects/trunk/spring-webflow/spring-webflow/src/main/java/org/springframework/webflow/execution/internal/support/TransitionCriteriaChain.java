@@ -20,10 +20,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.webflow.engine.AnnotatedAction;
+import org.springframework.webflow.engine.TransitionCriteria;
+import org.springframework.webflow.engine.WildcardTransitionCriteria;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.internal.AnnotatedAction;
-import org.springframework.webflow.execution.internal.TransitionCriteria;
-import org.springframework.webflow.execution.internal.WildcardTransitionCriteria;
 
 /**
  * An ordered chain of <code>TransitionCriteria</code>. Iterates over each element
