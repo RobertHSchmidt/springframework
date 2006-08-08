@@ -20,10 +20,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.ExternalContext;
-import org.springframework.webflow.ParameterMap;
-import org.springframework.webflow.SharedAttributeMap;
+import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.collection.ParameterMap;
+import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.collection.support.LocalParameterMap;
+import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.SharedAttributeMap;
+import org.springframework.webflow.context.support.LocalSharedAttributeMap;
 
 /**
  * Provides contextual information about an HTTP Servlet environment that has
@@ -74,19 +77,19 @@ public class ServletExternalContext implements ExternalContext {
 	}
 
 	public ParameterMap getRequestParameterMap() {
-		return new ParameterMap(new HttpServletRequestParameterMap(request));
+		return new LocalParameterMap(new HttpServletRequestParameterMap(request));
 	}
 
-	public AttributeMap getRequestMap() {
-		return new AttributeMap(new HttpServletRequestMap(request));
+	public MutableAttributeMap getRequestMap() {
+		return new LocalAttributeMap(new HttpServletRequestMap(request));
 	}
 
 	public SharedAttributeMap getSessionMap() {
-		return new SharedAttributeMap(new HttpSessionMap(request));
+		return new LocalSharedAttributeMap(new HttpSessionMap(request));
 	}
 
 	public SharedAttributeMap getApplicationMap() {
-		return new SharedAttributeMap(new HttpServletContextMap(context));
+		return new LocalSharedAttributeMap(new HttpServletContextMap(context));
 	}
 
 	/**
