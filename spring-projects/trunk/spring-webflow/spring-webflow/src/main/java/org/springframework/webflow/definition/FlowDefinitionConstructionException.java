@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.definition;
 
-import org.springframework.webflow.FlowException;
+import org.springframework.webflow.core.FlowException;
 
 /**
  * Thrown when a flow definition was found during a lookup operation

@@ -23,9 +23,10 @@ import junit.framework.TestCase;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
-import org.springframework.webflow.collection.ParameterMap;
-import org.springframework.webflow.collection.support.LocalAttributeMap;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.core.DefaultExpressionParserFactory;
+import org.springframework.webflow.core.collection.ParameterMap;
+import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionContext;
@@ -37,7 +38,6 @@ import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 import org.springframework.webflow.execution.support.FlowRedirect;
-import org.springframework.webflow.support.DefaultExpressionParserFactory;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**

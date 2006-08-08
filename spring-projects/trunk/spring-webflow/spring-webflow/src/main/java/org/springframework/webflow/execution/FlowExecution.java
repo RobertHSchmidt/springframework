@@ -15,9 +15,9 @@
  */
 package org.springframework.webflow.execution;
 
-import org.springframework.webflow.collection.MutableAttributeMap;
-import org.springframework.webflow.collection.support.LocalAttributeMap;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 
 /**
  * A <i>client instance</i> of an executing top-level flow. Represents a single

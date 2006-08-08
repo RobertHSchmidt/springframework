@@ -15,8 +15,8 @@
  */
 package org.springframework.webflow.context;
 
-import org.springframework.webflow.collection.MutableAttributeMap;
-import org.springframework.webflow.collection.ParameterMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.core.collection.ParameterMap;
 
 /**
  * A facade that provides access to an external system that has interacted with

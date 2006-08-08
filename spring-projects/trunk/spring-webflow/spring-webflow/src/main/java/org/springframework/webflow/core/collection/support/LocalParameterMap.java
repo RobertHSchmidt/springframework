@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.springframework.webflow.collection.support;
+package org.springframework.webflow.core.collection.support;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -31,8 +31,8 @@ import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.binding.util.MapAccessor;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
-import org.springframework.webflow.collection.AttributeMap;
-import org.springframework.webflow.collection.ParameterMap;
+import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.ParameterMap;
 
 /**
  * A base class for map decorators who manage the storage of immutable

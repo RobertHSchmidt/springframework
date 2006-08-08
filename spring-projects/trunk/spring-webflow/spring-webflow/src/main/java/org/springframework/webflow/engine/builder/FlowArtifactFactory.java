@@ -16,7 +16,7 @@
 package org.springframework.webflow.engine.builder;
 
 import org.springframework.binding.mapping.AttributeMapper;
-import org.springframework.webflow.collection.AttributeMap;
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.EndState;

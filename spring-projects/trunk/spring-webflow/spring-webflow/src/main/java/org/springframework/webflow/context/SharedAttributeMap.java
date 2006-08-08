@@ -1,6 +1,6 @@
 package org.springframework.webflow.context;
 
-import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 
 /**
  * An interface to be implemented by mutable attributes maps accessed by

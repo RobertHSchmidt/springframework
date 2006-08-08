@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.engine.builder;
 
-import org.springframework.webflow.collection.AttributeMap;
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.engine.Flow;
 
 /**

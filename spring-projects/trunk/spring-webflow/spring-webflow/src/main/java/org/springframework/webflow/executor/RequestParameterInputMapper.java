@@ -18,8 +18,8 @@ package org.springframework.webflow.executor;
 import java.util.Map;
 
 import org.springframework.binding.mapping.AttributeMapper;
-import org.springframework.webflow.collection.MutableAttributeMap;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 
 /**
  * Simple attribute mapper implementation that puts all entries in the

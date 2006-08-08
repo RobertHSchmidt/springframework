@@ -15,10 +15,10 @@
  */
 package org.springframework.webflow.execution;
 
-import org.springframework.webflow.collection.AttributeMap;
-import org.springframework.webflow.collection.MutableAttributeMap;
-import org.springframework.webflow.collection.ParameterMap;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.definition.TransitionDefinition;

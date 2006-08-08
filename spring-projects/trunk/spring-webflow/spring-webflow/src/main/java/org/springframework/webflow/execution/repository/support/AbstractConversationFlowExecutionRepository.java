@@ -18,13 +18,13 @@ package org.springframework.webflow.execution.repository.support;
 import java.io.Serializable;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.collection.MutableAttributeMap;
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationParameters;
 import org.springframework.webflow.conversation.ConversationService;
 import org.springframework.webflow.conversation.ConversationServiceException;
 import org.springframework.webflow.conversation.NoSuchConversationException;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.factory.FlowExecutionFactory;

@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.definition;
 
-import org.springframework.webflow.collection.AttributeMap;
+import org.springframework.webflow.core.collection.AttributeMap;
 
 /**
  * An interface to be implemented by objects that are annotated with attributes

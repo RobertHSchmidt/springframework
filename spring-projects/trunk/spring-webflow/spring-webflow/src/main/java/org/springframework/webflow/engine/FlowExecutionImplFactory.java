@@ -1,6 +1,6 @@
 package org.springframework.webflow.engine;
 
-import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.factory.FlowExecutionFactory;

@@ -1,4 +1,4 @@
-package org.springframework.webflow.collection;
+package org.springframework.webflow.core.collection;
 
 import java.util.Collection;
 

@@ -13,15 +13,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.springframework.webflow.collection.support;
+package org.springframework.webflow.core.collection.support;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.collection.AttributeMap;
-import org.springframework.webflow.collection.MutableAttributeMap;
+import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 
 /**
  * A generic, mutable attribute map with string keys.

@@ -19,8 +19,8 @@ import java.util.Iterator;
 
 import javax.portlet.PortletRequest;
 
-import org.springframework.webflow.collection.support.CollectionUtils;
 import org.springframework.webflow.context.support.StringKeyedMapAdapter;
+import org.springframework.webflow.core.collection.support.CollectionUtils;
 
 /**
  * Map backed by the Portlet request, for accessing request scoped attributes.

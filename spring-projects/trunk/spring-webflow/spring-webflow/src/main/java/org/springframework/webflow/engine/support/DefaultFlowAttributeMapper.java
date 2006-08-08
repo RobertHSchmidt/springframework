@@ -26,8 +26,8 @@ import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.execution.support.FlowScopeExpression;
-import org.springframework.webflow.support.DefaultExpressionParserFactory;
 
 /**
  * Generic flow attribute mapper implementation that allows mappings to be

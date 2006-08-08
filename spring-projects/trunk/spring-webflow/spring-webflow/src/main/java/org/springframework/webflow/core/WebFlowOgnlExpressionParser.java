@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.support;
+package org.springframework.webflow.core;
 
 import java.util.Map;
 
@@ -22,8 +22,8 @@ import ognl.PropertyAccessor;
 
 import org.springframework.binding.expression.support.OgnlExpressionParser;
 import org.springframework.binding.util.MapAdaptable;
-import org.springframework.webflow.collection.MutableAttributeMap;
-import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 
 /**
  * An extension of {@link OgnlExpressionParser} that registers web flow specific
@@ -31,7 +31,7 @@ import org.springframework.webflow.collection.support.LocalAttributeMap;
  * 
  * @author Keith Donald
  */
-public class WebFlowOgnlExpressionParser extends OgnlExpressionParser {
+class WebFlowOgnlExpressionParser extends OgnlExpressionParser {
 
 	/**
 	 * Creates a webflow-specific ognl expression parser.

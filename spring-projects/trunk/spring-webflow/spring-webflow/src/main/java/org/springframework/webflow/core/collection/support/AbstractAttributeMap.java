@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.springframework.webflow.collection.support;
+package org.springframework.webflow.core.collection.support;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.springframework.binding.util.MapAccessor;
 import org.springframework.core.style.StylerUtils;
-import org.springframework.webflow.collection.AttributeMap;
+import org.springframework.webflow.core.collection.AttributeMap;
 
 /**
  * A base class for map decorators who manage the storage of String-keyed

@@ -20,8 +20,8 @@ import java.io.Serializable;
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
-import org.springframework.webflow.collection.AttributeMap;
-import org.springframework.webflow.collection.support.CollectionUtils;
+import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.support.CollectionUtils;
 
 /**
  * A descriptor for a Flow to be assembled from a externalized resource.

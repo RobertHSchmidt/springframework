@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.support;
+package org.springframework.webflow.core;
 
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.support.OgnlExpressionParser;

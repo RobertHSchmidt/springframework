@@ -21,13 +21,13 @@ import javax.portlet.PortletResponse;
 import javax.portlet.PortletSession;
 
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.webflow.collection.MutableAttributeMap;
-import org.springframework.webflow.collection.ParameterMap;
-import org.springframework.webflow.collection.support.LocalAttributeMap;
-import org.springframework.webflow.collection.support.LocalParameterMap;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.SharedAttributeMap;
 import org.springframework.webflow.context.support.LocalSharedAttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.core.collection.ParameterMap;
+import org.springframework.webflow.core.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.collection.support.LocalParameterMap;
 
 /**
  * Provides contextual information about a portlet environment that has

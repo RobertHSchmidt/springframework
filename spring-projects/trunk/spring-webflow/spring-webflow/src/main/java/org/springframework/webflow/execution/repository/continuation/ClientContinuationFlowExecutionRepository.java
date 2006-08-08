@@ -22,7 +22,6 @@ import java.io.Serializable;
 
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.util.Assert;
-import org.springframework.webflow.collection.support.LocalAttributeMap;
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationParameters;
@@ -30,6 +29,7 @@ import org.springframework.webflow.conversation.ConversationService;
 import org.springframework.webflow.conversation.ConversationServiceException;
 import org.springframework.webflow.conversation.NoSuchConversationException;
 import org.springframework.webflow.conversation.impl.SimpleConversationId;
+import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;

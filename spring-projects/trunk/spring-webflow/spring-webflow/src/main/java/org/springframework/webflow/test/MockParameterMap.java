@@ -17,7 +17,7 @@ package org.springframework.webflow.test;
 
 import java.util.HashMap;
 
-import org.springframework.webflow.collection.support.LocalParameterMap;
+import org.springframework.webflow.core.collection.support.LocalParameterMap;
 
 /**
  * A extension of parameter map that allows for mutation of parameters. Useful

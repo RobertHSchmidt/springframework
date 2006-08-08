@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.execution;
 
-import org.springframework.webflow.FlowException;
+import org.springframework.webflow.core.FlowException;
 
 /**
  * Base class for exceptions that occur within a flow while it is executing. Can

@@ -1,4 +1,4 @@
-package org.springframework.webflow.collection;
+package org.springframework.webflow.core.collection;
 
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.util.MapAdaptable;

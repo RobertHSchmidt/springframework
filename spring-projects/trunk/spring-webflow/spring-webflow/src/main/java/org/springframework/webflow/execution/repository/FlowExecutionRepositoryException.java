@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.execution.repository;
 
-import org.springframework.webflow.FlowException;
+import org.springframework.webflow.core.FlowException;
 
 /**
  * The root of the {@link FlowExecutionRepository} exception hierarchy.

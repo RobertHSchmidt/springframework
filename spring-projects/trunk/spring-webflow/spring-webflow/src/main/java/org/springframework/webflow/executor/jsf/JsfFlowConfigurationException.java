@@ -1,6 +1,6 @@
 package org.springframework.webflow.executor.jsf;
 
-import org.springframework.webflow.FlowException;
+import org.springframework.webflow.core.FlowException;
 
 /**
  * Thrown when there is a configuration error with SWF within a JSF environment.
