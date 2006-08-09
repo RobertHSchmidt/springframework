@@ -31,9 +31,8 @@ public interface FlowDefinition extends Annotated {
 	public String getId();
 
 	/**
-	 * Returns the set of this flow's states.
-	 * @return the state definitions of this flow.
+	 * Return this flow's starting point.
+	 * @return the start state
 	 */
-	public StateDefinition[] getStates();
-
+	public StateDefinition getStartState();	
 }
