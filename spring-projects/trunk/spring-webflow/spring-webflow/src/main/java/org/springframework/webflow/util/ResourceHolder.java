@@ -16,7 +16,6 @@
 package org.springframework.webflow.util;
 
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.engine.builder.FlowBuilder;
 
 /**
  * Simple interface for all objects (typically flow builders) that hold on to a
