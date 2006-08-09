@@ -59,7 +59,7 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	/**
 	 * Set only on deserialization so this object can be fully reconstructed.
 	 */
-	private String flowId;
+	String flowId;
 
 	/**
 	 * The current state of this flow session.
@@ -69,7 +69,7 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	/**
 	 * Set only on deserialization so this object can be fully reconstructed.
 	 */
-	private String stateId;
+	String stateId;
 
 	/**
 	 * The session status; may be CREATED, STARTING, ACTIVE, PAUSED, SUSPENDED,
