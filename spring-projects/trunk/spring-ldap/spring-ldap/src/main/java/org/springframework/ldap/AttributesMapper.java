@@ -21,9 +21,21 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 
 /**
- * Responsible for mapping from LDAP Attributes to beans.
+ * An interface used by LdapTemplate for mapping LDAP Attributes to beans.
+ * Implementions of this interface perform the actual work of extracting
+ * results, but need not worry about exception handling. NamingExceptions will
+ * be caught and handled correctly by the LdapTemplate class.
+ * <p>
+ * Typically used in LdapTemplate's search methods. AttributeMapper objects are
+ * typically stateless and thus reusable; they are ideal for implementing
+ * attribute-mapping logic in one place.
+ * <p>
+ * Alternatively, consider using a {@link ContextMapper} in stead.
  * 
- * @see org.springframework.ldap.LdapTemplate#search(Name, String, AttributesMapper)
+ * @see org.springframework.ldap.LdapTemplate#search(Name, String,
+ *      AttributesMapper)
+ * @see ContextMapper
+ * 
  * @author Mattias Arthursson
  */
 public interface AttributesMapper {
