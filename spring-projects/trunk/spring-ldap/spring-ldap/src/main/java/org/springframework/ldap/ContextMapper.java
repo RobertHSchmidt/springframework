@@ -20,13 +20,30 @@ import javax.naming.Binding;
 import javax.naming.Name;
 import javax.naming.directory.SearchResult;
 
+import org.springframework.ldap.support.DefaultDirObjectFactory;
+import org.springframework.ldap.support.DirContextAdapter;
+
 /**
- * Responsible for mapping from LDAP Contexts to beans.
+ * An interface used by LdapTemplate to map LDAP Contexts to beans. Responsible
+ * for mapping from LDAP Contexts to beans. When a DirObjectFactory is set on
+ * the ContextSource, the objects returned from <code>search</code> and
+ * <code>listBindings</code> operations are automatically transformed to
+ * DirContext objects (when using the {@link DefaultDirObjectFactory}, you get
+ * a {@link DirContextAdapter} object). This object will then be passed to the
+ * ContextMapper implementation for transformation to the desired bean.
+ * <p>
+ * ContextMapper implementations are typically stateless and thus reusable; they
+ * are ideal for implementing mapping logic in one place.
+ * <p>
+ * Alternatively, consider using an {@link AttributesMapper} in stead.
  * 
  * @see org.springframework.ldap.LdapTemplate#search(Name, String,
  *      ContextMapper)
  * @see org.springframework.ldap.LdapTemplate#listBindings(Name, ContextMapper)
- * @see org.springframework.ldap.LdapTemplate#lookup(Name, ContextMapper)
+. * @see org.springframework.ldap.LdapTemplate#lookup(Name, ContextMapper)
+ * @see AttributesMapper
+ * @see DefaultDirObjectFactory
+ * @see DirContextAdapter
  * 
  * @author Mattias Arthursson
  */

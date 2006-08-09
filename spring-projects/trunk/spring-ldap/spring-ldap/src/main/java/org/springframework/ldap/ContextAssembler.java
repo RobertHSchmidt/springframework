@@ -17,8 +17,9 @@
 package org.springframework.ldap;
 
 /**
- * Responsible for assembling to and from context. Useful if we have assembler
- * classes responsible for mapping to and from a specific entry.
+ * Helper interface to be used by Dao implementations for assembling to and from
+ * context. Useful if we have assembler classes responsible for mapping to and
+ * from a specific entry.
  * 
  * @author Mattias Arthursson
  */

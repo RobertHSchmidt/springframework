@@ -1075,8 +1075,8 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     }
 
     /**
-     * A {@link NameClassPairCallbackHandler} that simply collects the names of
-     * the found NameClassPair elements in a list.
+     * A {@link NameClassPairCallbackHandler} that passes the NameClassPairs
+     * found to a NameClassPairMapper and collects the results in a list.
      * 
      * @author Mattias Arthursson
      */
