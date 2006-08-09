@@ -32,7 +32,6 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 import org.springframework.webflow.engine.State;
-import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.execution.Action;
@@ -121,7 +120,8 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	}
 
 	public Flow getSubflow(String id) throws FlowArtifactLookupException {
-		throw new FlowArtifactLookupException(id, Flow.class, "Subflow lookup is not supported by this artifact factory");
+		throw new FlowArtifactLookupException(id, Flow.class,
+				"Subflow lookup is not supported by this artifact factory");
 	}
 
 	public Action getAction(String id) throws FlowArtifactLookupException {
@@ -142,10 +142,6 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 
 	public ViewSelector getViewSelector(String id) throws FlowArtifactLookupException {
 		return (ViewSelector)getBean(id, ViewSelector.class);
-	}
-
-	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactLookupException {
-		return (TargetStateResolver)getBean(id, TargetStateResolver.class);
 	}
 
 	public FlowExecutionExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
@@ -224,7 +220,8 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 
 	/**
 	 * Setup a conversion service used by this flow service locator.
-	 * @param parent the parent of the conversion service that will be created; optional
+	 * @param parent the parent of the conversion service that will be created;
+	 * optional
 	 * @return the newly created conversion service
 	 */
 	protected ConversionService createConversionService(ConversionService parent) {
@@ -247,7 +244,6 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	protected void addWebFlowConverters(GenericConversionService conversionService) {
 		conversionService.addConverter(new TextToTransitionCriteria(this));
 		conversionService.addConverter(new TextToViewSelector(this));
-		conversionService.addConverter(new TextToTransitionTargetStateResolver(this));
 		conversionService.addConverter(new TextToExpression(getExpressionParser()));
 		conversionService.addConverter(new TextToMethodSignature(conversionService));
 	}

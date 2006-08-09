@@ -78,7 +78,7 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 		while (it.hasNext()) {
 			FlowSessionImpl session = (FlowSessionImpl)it.next();
 			session.flow = (Flow)locator.getFlow(session.flowId);
-			session.state = flow.getRequiredState(session.stateId);
+			session.state = flow.getStateInternal(session.stateId);
 		}
 		impl.listeners = new FlowExecutionListeners(listenerLoader.getListeners(flow));
 		impl.conversationScope = conversationScope;

@@ -300,7 +300,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	private ViewSelection tryStateHandlers(FlowExecutionException exception, RequestControlContext context) {
 		ViewSelection selectedView = null;
 		if (exception.getStateId() != null) {
-			selectedView = getActiveFlow().getRequiredState(exception.getStateId()).handleException(exception, context);
+			selectedView = getActiveFlow().getStateInternal(exception.getStateId()).handleException(exception, context);
 			if (selectedView != null) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("State '" + exception.getStateId() + "' handled exception");

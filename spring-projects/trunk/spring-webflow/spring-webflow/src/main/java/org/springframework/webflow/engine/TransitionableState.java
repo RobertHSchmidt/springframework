@@ -57,8 +57,10 @@ public abstract class TransitionableState extends State implements Transitionabl
 		super(flow, id);
 	}
 
+	// implementing TranstionableStateDefinition
+	
 	public TransitionDefinition[] getTransitions() {
-		throw new UnsupportedOperationException();
+		return getTransitionSet().toArray();
 	}
 
 	/**

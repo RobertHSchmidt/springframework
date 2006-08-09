@@ -25,7 +25,6 @@ import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.SubflowState;
-import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.TransitionableState;
@@ -77,7 +76,8 @@ public class FlowArtifactFactory {
 	 * @param flow the flow that will own (contain) this state (required)
 	 * @param entryActions any state entry actions; may be null
 	 * @param viewSelector the state view selector strategy; may be null
-	 * @param renderActions any 'view actions' to execute on entry and refresh; may be null
+	 * @param renderActions any 'view actions' to execute on entry and refresh;
+	 * may be null
 	 * @param transitions any transitions (paths) out of this state; may be null
 	 * @param exceptionHandlers any exception handlers; may be null
 	 * @param exitActions any state exit actions; may be null
@@ -207,8 +207,8 @@ public class FlowArtifactFactory {
 	 * state
 	 */
 	public State createEndState(String id, Flow flow, Action[] entryActions, ViewSelector viewSelector,
-			AttributeMapper outputMapper, FlowExecutionExceptionHandler[] exceptionHandlers,
-			AttributeMap attributes) throws FlowArtifactLookupException {
+			AttributeMapper outputMapper, FlowExecutionExceptionHandler[] exceptionHandlers, AttributeMap attributes)
+			throws FlowArtifactLookupException {
 		EndState endState = new EndState(flow, id);
 		if (viewSelector != null) {
 			endState.setViewSelector(viewSelector);
@@ -237,9 +237,9 @@ public class FlowArtifactFactory {
 	 * @throws FlowArtifactLookupException an exception occured creating the
 	 * transition
 	 */
-	public Transition createTransition(TransitionCriteria matchingCriteria, TransitionCriteria executionCriteria,
-			TargetStateResolver targetStateResolver, AttributeMap attributes) throws FlowArtifactLookupException {
-		Transition transition = new Transition(targetStateResolver);
+	public Transition createTransition(String targetStateId, TransitionCriteria matchingCriteria,
+			TransitionCriteria executionCriteria, AttributeMap attributes) throws FlowArtifactLookupException {
+		Transition transition = new Transition(targetStateId);
 		if (matchingCriteria != null) {
 			transition.setMatchingCriteria(matchingCriteria);
 		}
