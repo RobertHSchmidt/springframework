@@ -96,6 +96,12 @@ public abstract class State extends AnnotatedObject implements StateDefinition {
 		setFlow(flow);
 	}
 
+	// implementing state definition
+	
+	public String getId() {
+		return id;
+	}
+	
 	/**
 	 * Returns the owning flow.
 	 */
@@ -113,13 +119,6 @@ public abstract class State extends AnnotatedObject implements StateDefinition {
 		Assert.notNull(flow, "The owning flow is required");
 		this.flow = flow;
 		flow.add(this);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.springframework.webflow.IState#getId()
-	 */
-	public String getId() {
-		return id;
 	}
 
 	/**

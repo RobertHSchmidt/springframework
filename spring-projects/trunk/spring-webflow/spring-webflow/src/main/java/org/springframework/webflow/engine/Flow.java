@@ -190,11 +190,18 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 		setId(id);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.webflow.IFlow#getId()
-	 */
+	// implementing flow definition
+	
 	public String getId() {
 		return id;
+	}
+
+	public StateDefinition getStartState() {
+		if (startState == null) {
+			throw new IllegalStateException("No start state has been set for this flow ('" + getId()
+					+ "') -- flow builder configuration error?");
+		}
+		return startState;
 	}
 
 	/**
@@ -237,27 +244,6 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	 */
 	public int getStateCount() {
 		return states.size();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.springframework.webflow.IFlow#getStates()
-	 */
-	public StateDefinition[] getStates() {
-		return (StateDefinition[])states.toArray(new State[states.size()]);
-	}
-
-	/**
-	 * Return the start state, throwing an exception if it has not yet been
-	 * marked.
-	 * @return the start state
-	 * @throws IllegalStateException when no start state has been marked
-	 */
-	public State getStartState() throws IllegalStateException {
-		if (startState == null) {
-			throw new IllegalStateException("No start state has been set for this flow ('" + getId()
-					+ "') -- flow builder configuration error?");
-		}
-		return startState;
 	}
 
 	/**
