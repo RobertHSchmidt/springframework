@@ -76,30 +76,30 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * The execution's root flow; the top level flow that acts as the starting
 	 * point for this flow execution.
 	 */
-	private transient Flow flow;
+	transient Flow flow;
 
 	/**
 	 * A data structure for attributes shared by all flow sessions.
 	 */
-	private transient LocalAttributeMap conversationScope = new LocalAttributeMap();
+	transient MutableAttributeMap conversationScope = new LocalAttributeMap();
 
 	/**
 	 * The stack of active, currently executing flow sessions. As subflows are
 	 * spawned, they are pushed onto the stack. As they end, they are popped off
 	 * the stack.
 	 */
-	private LinkedList flowSessions = new LinkedList();
+	LinkedList flowSessions = new LinkedList();
 
 	/**
 	 * A thread-safe listener list, holding listeners monitoring the lifecycle
 	 * of this flow execution.
 	 */
-	private transient FlowExecutionListeners listeners;
+	transient FlowExecutionListeners listeners;
 
 	/**
 	 * Set only on deserialization so this object can be fully reconstructed.
 	 */
-	private String flowId;
+	String flowId;
 
 	/**
 	 * Default constructor required for externalizable serialization. Should NOT
@@ -439,14 +439,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			out.writeObject(flowId);
 		}
 		out.writeObject(flowSessions);
-	}
-
-	/**
-	 * Sets the attributes shared by all sessions.
-	 * @param scope the data shared by all sessions.
-	 */
-	public void setConversationScope(LocalAttributeMap scope) {
-		this.conversationScope = scope;
 	}
 
 	public String toString() {
