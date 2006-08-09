@@ -78,8 +78,8 @@ import org.springframework.webflow.execution.ViewSelection;
  * of this flow's executions.
  * <p>
  * Instances of this class are typically built by
- * {@link org.springframework.webflow.engine.builder.FlowBuilder} implementations but
- * may also be directly subclassed.
+ * {@link org.springframework.webflow.engine.builder.FlowBuilder}
+ * implementations but may also be directly subclassed.
  * <p>
  * This class and the rest of the Spring Web Flow (SWF) core have been designed
  * with minimal dependencies on other libraries. Spring Web Flow is usable in a
@@ -191,7 +191,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	}
 
 	// implementing flow definition
-	
+
 	public String getId() {
 		return id;
 	}
@@ -202,6 +202,10 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 					+ "') -- flow builder configuration error?");
 		}
 		return startState;
+	}
+
+	public StateDefinition getState(String stateId) {
+		return getStateInternal(stateId);
 	}
 
 	/**
@@ -255,7 +259,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	 * provided
 	 */
 	public void setStartState(String stateId) throws IllegalArgumentException {
-		setStartState(getRequiredState(stateId));
+		setStartState(getStateInternal(stateId));
 	}
 
 	/**
@@ -282,12 +286,22 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	}
 
 	/**
-	 * Return the state with the provided id, returning <code>null</code> if
-	 * no state exists with that id.
-	 * @param stateId the state id
-	 * @return the state with that id, or null if none exists
+	 * Return the <code>TransitionableState</code> with given
+	 * <code>stateId</code>, or <code>null</code> when not found.
+	 * @param stateId id of the state to look up
+	 * @return the transitionable state, or null when not found
+	 * @throws ClassCastException when the identified state is not
+	 * transitionable
 	 */
-	public State getState(String stateId) {
+	public TransitionableState getTransitionableState(String stateId) throws ClassCastException {
+		State state = getStateInternal(stateId);
+		if (state != null && !(state instanceof TransitionableState)) {
+			throw new ClassCastException("The state '" + stateId + "' of flow '" + getId() + "' must be transitionable");
+		}
+		return (TransitionableState)state;
+	}
+
+	public State getStateInternal(String stateId) {
 		if (!StringUtils.hasText(stateId)) {
 			throw new IllegalArgumentException("The specified stateId is invalid: state identifiers must be non-blank");
 		}
@@ -298,60 +312,8 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 				return state;
 			}
 		}
-		return null;
-	}
-
-	/**
-	 * Return the state with the provided id, throwing a exception if no state
-	 * exists with that id.
-	 * @param stateId the state id
-	 * @return the state with that id
-	 * @throws IllegalArgumentException when no state exists with that id
-	 */
-	public State getRequiredState(String stateId) throws IllegalArgumentException {
-		State state = getState(stateId);
-		if (state == null) {
-			throw new IllegalArgumentException("Cannot find state with id '" + stateId + "' in flow '" + getId()
-					+ "' -- " + "Known state ids are '" + getStateIds() + "'");
-		}
-		return state;
-	}
-
-	/**
-	 * Return the <code>TransitionableState</code> with given
-	 * <code>stateId</code>, or <code>null</code> when not found.
-	 * @param stateId id of the state to look up
-	 * @return the transitionable state, or null when not found
-	 * @throws ClassCastException when the identified state is not
-	 * transitionable
-	 */
-	public TransitionableState getTransitionableState(String stateId) throws ClassCastException {
-		State state = getState(stateId);
-		if (state != null && !(state instanceof TransitionableState)) {
-			throw new ClassCastException("The state '" + stateId + "' of flow '" + getId() + "' must be transitionable");
-		}
-		return (TransitionableState)state;
-	}
-
-	/**
-	 * Return the <code>TransitionableState</code> with given
-	 * <code>stateId</code>, throwing an exception if not found or not of the
-	 * expected type.
-	 * @param stateId id of the state to look up
-	 * @return the transitionable state
-	 * @throws ClassCastException when the identified state is not
-	 * transitionable
-	 * @throws IllegalArgumentException when no transitionable state exists by
-	 * this id
-	 */
-	public TransitionableState getRequiredTransitionableState(String stateId) throws ClassCastException,
-			IllegalArgumentException {
-		TransitionableState state = getTransitionableState(stateId);
-		if (state == null) {
-			throw new IllegalArgumentException("Cannot find state with id '" + stateId + "' in flow '" + getId()
-					+ "' -- " + "Known state ids are '" + getStateIds() + "'");
-		}
-		return state;
+		throw new IllegalArgumentException("Cannot find state with id '" + stateId + "' in flow '" + getId() + "' -- "
+				+ "Known state ids are '" + getStateIds() + "'");
 	}
 
 	/**

@@ -25,7 +25,6 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 import org.springframework.webflow.engine.State;
-import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.ViewSelector;
@@ -118,14 +117,6 @@ public interface FlowServiceLocator {
 	 * @throws FlowArtifactLookupException when no such handler is found
 	 */
 	public FlowExecutionExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException;
-
-	/**
-	 * Returns the transition target state resolver with the specified id.
-	 * @param id the target state resolver id
-	 * @return the target state resolver
-	 * @throws FlowArtifactLookupException when no such resolver is found
-	 */
-	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactLookupException;
 
 	/**
 	 * Returns the factory for core flow artifacts such as Flow and State.

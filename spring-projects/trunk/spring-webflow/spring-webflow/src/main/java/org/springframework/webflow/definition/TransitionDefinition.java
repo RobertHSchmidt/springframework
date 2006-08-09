@@ -31,18 +31,8 @@ public interface TransitionDefinition extends Annotated {
 	public String getId();
 
 	/**
-	 * Is this transition's target state dynamic? A dynamic transition's target
-	 * state is not known in advance, it is calculated at runtime. A static
-	 * transition always goes to the same target state when executed.
-	 * @return true if dynamic, false otherwise
-	 */
-	public boolean isTargetStateDynamic();
-
-	/**
 	 * Returns the target state of this transition.
 	 * @return the target state
-	 * @throws IllegalStateException if this transition's target state is
-	 * dynamic and thus this operation could not be completed
 	 */
-	public StateDefinition getTargetState() throws IllegalStateException;
+	public String getTargetStateId();
 }

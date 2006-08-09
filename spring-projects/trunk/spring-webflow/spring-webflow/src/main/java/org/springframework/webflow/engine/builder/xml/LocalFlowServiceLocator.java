@@ -26,7 +26,6 @@ import org.springframework.webflow.action.bean.BeanInvokingActionFactory;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
-import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.engine.builder.FlowArtifactFactory;
@@ -38,7 +37,8 @@ import org.springframework.webflow.execution.Action;
  * Searches flow-local registries first before querying the global, externally
  * managed flow service locator.
  * <p>
- * Internal helper class of the {@link org.springframework.webflow.engine.builder.xml.XmlFlowBuilder}.
+ * Internal helper class of the
+ * {@link org.springframework.webflow.engine.builder.xml.XmlFlowBuilder}.
  * Package private to highlight it's non-public nature.
  * 
  * @see org.springframework.webflow.engine.builder.xml.XmlFlowBuilder
@@ -142,15 +142,6 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		}
 	}
 
-	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactLookupException {
-		if (containsBean(id)) {
-			return (TargetStateResolver)getBean(id, TargetStateResolver.class);
-		}
-		else {
-			return parent.getTargetStateResolver(id);
-		}
-	}
-
 	public FlowArtifactFactory getFlowArtifactFactory() {
 		return parent.getFlowArtifactFactory();
 	}
@@ -190,7 +181,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 			pop();
 		}
 	}
-	
+
 	/**
 	 * Returns the top registry on the stack
 	 */

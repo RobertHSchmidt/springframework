@@ -57,7 +57,6 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 import org.springframework.webflow.engine.FlowVariable;
-import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.ViewSelector;
@@ -86,8 +85,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *        &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *        &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -682,12 +681,11 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private Transition parseTransition(Element element) {
+		String targetStateId = element.getAttribute(TO_ATTRIBUTE);
 		TransitionCriteria matchingCriteria = (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(
 				element.getAttribute(ON_ATTRIBUTE));
 		TransitionCriteria executionCriteria = TransitionCriteriaChain.criteriaChainFor(parseAnnotatedActions(element));
-		TargetStateResolver targetStateResolver = (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(
-				element.getAttribute(TO_ATTRIBUTE));
-		return getFlowArtifactFactory().createTransition(matchingCriteria, executionCriteria, targetStateResolver,
+		return getFlowArtifactFactory().createTransition(targetStateId, matchingCriteria, executionCriteria,
 				parseAttributes(element));
 	}
 
@@ -827,17 +825,15 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private Transition parseThen(Element element) {
+		String targetStateId = element.getAttribute(THEN_ATTRIBUTE);
 		TransitionCriteria matchingCriteria = (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(
 				element.getAttribute(TEST_ATTRIBUTE));
-		TargetStateResolver targetStateResolver = (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(
-				element.getAttribute(THEN_ATTRIBUTE));
-		return getFlowArtifactFactory().createTransition(matchingCriteria, null, targetStateResolver, null);
+		return getFlowArtifactFactory().createTransition(targetStateId, matchingCriteria, null, null);
 	}
 
 	private Transition parseElse(Element element) {
-		TargetStateResolver targetStateResolver = (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(
-				element.getAttribute(ELSE_ATTRIBUTE));
-		return getFlowArtifactFactory().createTransition(null, null, targetStateResolver, null);
+		String targetStateId = element.getAttribute(ELSE_ATTRIBUTE);
+		return getFlowArtifactFactory().createTransition(targetStateId, null, null, null);
 	}
 
 	private FlowAttributeMapper parseFlowAttributeMapper(Element element) {
@@ -950,8 +946,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private FlowExecutionExceptionHandler parseTransitionExecutingExceptionHandler(Element element) {
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
 		Class exceptionClass = (Class)fromStringTo(Class.class).execute(element.getAttribute(ON_EXCEPTION_ATTRIBUTE));
-		handler.add(exceptionClass, (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(
-				element.getAttribute(TO_ATTRIBUTE)));
+		handler.add(exceptionClass, element.getAttribute(TO_ATTRIBUTE));
 		handler.getActionList().addAll(parseAnnotatedActions(element));
 		return handler;
 	}

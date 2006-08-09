@@ -35,4 +35,12 @@ public interface FlowDefinition extends Annotated {
 	 * @return the start state
 	 */
 	public StateDefinition getStartState();	
+	
+	/**
+	 * Returns the state definition with the specified id.
+	 * @param id the state id
+	 * @return the state definition
+	 * @throws IllegalArgumentException if a state with this id does not exist
+	 */
+	public StateDefinition getState(String id) throws IllegalArgumentException;
 }

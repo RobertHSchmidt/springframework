@@ -19,7 +19,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
-import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.definition.TransitionDefinition;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionException;
@@ -48,15 +47,10 @@ import org.springframework.webflow.execution.ViewSelection;
  * transition will <i>roll back</i> and reenter its source state. If the
  * execution criteria test succeeds this transition will execute and take the
  * flow to the transition's target state.
- * <p>
- * The target state of this transition is typically specified at configuration
- * time using the target state id. If the target state of this transition needs
- * to be calculated in a dynamic fashion at runtime, set a custom
- * {@link TargetStateResolver}
  * 
- * @see TransitionableState
  * @see TransitionCriteria
- * @see TargetStateResolver
+ * @see TransitionableState
+ * @see Flow
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -81,10 +75,9 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	private TransitionCriteria executionCriteria = WildcardTransitionCriteria.INSTANCE;
 
 	/**
-	 * The resolver responsible for calculating the target state of this
-	 * transition.
+	 * The target state of the transition.
 	 */
-	private TargetStateResolver targetStateResolver;
+	private String targetStateId;
 
 	/**
 	 * Create a new transition that always matches and always executes,
@@ -95,34 +88,18 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	 * @see #setMatchingCriteria(TransitionCriteria)
 	 * @see #setExecutionCriteria(TransitionCriteria)
 	 */
-	public Transition(TargetStateResolver targetStateResolver) {
-		setTargetStateResolver(targetStateResolver);
+	public Transition(String targetStateId) {
+		Assert.hasText(targetStateId, "The target state id is required");
 	}
 
-	/**
-	 * Create a new transition that matches on the specified criteria,
-	 * transitioning to the target state calculated by the provided
-	 * targetStateResolver.
-	 * @param matchingCriteria the criteria that matches this transition
-	 * @param targetStateResolver the resolver of the target state of this
-	 * transition
-	 * @see #setExecutionCriteria(TransitionCriteria)
-	 */
-	public Transition(TransitionCriteria matchingCriteria, TargetStateResolver targetStateResolver) {
-		setMatchingCriteria(matchingCriteria);
-		setTargetStateResolver(targetStateResolver);
-	}
+	// implementing transition definition
 
 	public String getId() {
-		return null;
+		return matchingCriteria.toString();
 	}
 
-	public StateDefinition getTargetState() throws IllegalStateException {
-		return null;
-	}
-
-	public boolean isTargetStateDynamic() {
-		return false;
+	public String getTargetStateId() {
+		return targetStateId;
 	}
 
 	/**
@@ -130,7 +107,7 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	 * matches as eligible for execution.
 	 * @return the transition matching criteria
 	 */
-	public TransitionCriteria getMatchingCriteria() {
+	protected TransitionCriteria getMatchingCriteria() {
 		return matchingCriteria;
 	}
 
@@ -149,7 +126,7 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	 * matched, should complete execution or should <i>roll back</i>.
 	 * @return the transition execution criteria
 	 */
-	public TransitionCriteria getExecutionCriteria() {
+	protected TransitionCriteria getExecutionCriteria() {
 		return executionCriteria;
 	}
 
@@ -159,24 +136,8 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	 * @param executionCriteria the transition execution criteria
 	 */
 	public void setExecutionCriteria(TransitionCriteria executionCriteria) {
+		Assert.notNull(executionCriteria, "The execution criteria is required");
 		this.executionCriteria = executionCriteria;
-	}
-
-	/**
-	 * Returns this transition's target state resolver.
-	 */
-	public TargetStateResolver getTargetStateResolver() {
-		return targetStateResolver;
-	}
-
-	/**
-	 * Set this transition's target state resolver, to calculate what state to
-	 * transition to when this transition is executed.
-	 * @param targetStateResolver the target state resolver
-	 */
-	public void setTargetStateResolver(TargetStateResolver targetStateResolver) {
-		Assert.notNull(targetStateResolver, "The target state resolver is required");
-		this.targetStateResolver = targetStateResolver;
 	}
 
 	/**
@@ -186,27 +147,7 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	 * @return true if this transition should execute, false otherwise
 	 */
 	public boolean matches(RequestContext context) {
-		return getMatchingCriteria().test(context);
-	}
-
-	/**
-	 * Checks if this transition can complete its execution or should be rolled
-	 * back, given the state of the flow execution request context.
-	 * @param context the flow execution request context
-	 * @return true if this transition can complete execution, false if it
-	 * should roll back
-	 */
-	public boolean canExecute(RequestContext context) {
-		return getExecutionCriteria() != null ? getExecutionCriteria().test(context) : true;
-	}
-
-	/**
-	 * Returns the target state of this transition, possibly taking the request
-	 * context into account.
-	 * @param context the flow execution request context
-	 */
-	protected State getTargetState(TransitionableState sourceState, RequestContext context) {
-		return getTargetStateResolver().resolveTargetState(this, sourceState, context);
+		return matchingCriteria.test(context);
 	}
 
 	/**
@@ -232,7 +173,7 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 					logger.debug("Executing " + this);
 				}
 			}
-			State targetState = getTargetState(sourceState, context);
+			State targetState = (State)context.getActiveFlow().getState(targetStateId);
 			context.setLastTransition(this);
 			// enter the target state (note: any exceptions are propagated)
 			selectedView = targetState.enter(context);
@@ -260,9 +201,18 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 		return selectedView;
 	}
 
+	/**
+	 * Checks if this transition can complete its execution or should be rolled
+	 * back, given the state of the flow execution request context.
+	 * @param context the flow execution request context
+	 * @return true if this transition can complete execution, false if it
+	 * should roll back
+	 */
+	protected boolean canExecute(RequestContext context) {
+		return executionCriteria.test(context);
+	}
+
 	public String toString() {
-		return new ToStringCreator(this).append("matchingCriteria", getMatchingCriteria()).append("executionCriteria",
-				getExecutionCriteria()).append("targetStateResolver", getTargetStateResolver()).append("attributes",
-				getAttributeMap()).toString();
+		return new ToStringCreator(this).append("on", getMatchingCriteria()).append("to", targetStateId).toString();
 	}
 }

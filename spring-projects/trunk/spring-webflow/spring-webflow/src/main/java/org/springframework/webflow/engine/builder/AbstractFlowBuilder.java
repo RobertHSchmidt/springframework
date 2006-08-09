@@ -33,7 +33,6 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 import org.springframework.webflow.engine.State;
-import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.ViewSelector;
@@ -53,20 +52,20 @@ import org.springframework.webflow.execution.support.EventFactorySupport;
  * 
  * <pre>
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
- *     public void buildStates() {
- *         // get customer information
- * 		   addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;), transition(on(success()), to(&quot;displayDetails&quot;)));
+ * 	public void buildStates() {
+ * 		// get customer information
+ * 		addActionState(&quot;getDetails&quot;, action(&quot;customerAction&quot;), transition(on(success()), to(&quot;displayDetails&quot;)));
  * 
- * 		   // view customer information               
- * 		   addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;, transition(on(submit()), to(&quot;bindAndValidate&quot;)));
+ * 		// view customer information               
+ * 		addViewState(&quot;displayDetails&quot;, &quot;customerDetails&quot;, transition(on(submit()), to(&quot;bindAndValidate&quot;)));
  * 
- * 		   // bind and validate customer information updates 
- * 		   addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;), new Transition[] {
- * 		       transition(on(error()), to(&quot;displayDetails&quot;)), transition(on(success()), to(&quot;finish&quot;)) });
+ * 		// bind and validate customer information updates 
+ * 		addActionState(&quot;bindAndValidate&quot;, action(&quot;customerAction&quot;), new Transition[] {
+ * 				transition(on(error()), to(&quot;displayDetails&quot;)), transition(on(success()), to(&quot;finish&quot;)) });
  * 
- * 		   // finish
- * 		   addEndState(&quot;finish&quot;);
- *     }
+ * 		// finish
+ * 		addEndState(&quot;finish&quot;);
+ * 	}
  * }
  * </pre>
  * 
@@ -206,8 +205,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the fully constructed view state instance
 	 */
 	protected State addViewState(String stateId, String viewName, Transition transition) {
-		return getFlowArtifactFactory().createViewState(stateId, getFlow(), null, viewSelector(viewName),
-				null, new Transition[] { transition }, null, null, null);
+		return getFlowArtifactFactory().createViewState(stateId, getFlow(), null, viewSelector(viewName), null,
+				new Transition[] { transition }, null, null, null);
 	}
 
 	/**
@@ -226,7 +225,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Adds a view state to the flow built by this builder.
 	 * @param stateId the state identifier
 	 * @param viewName the string-encoded view selector
-	 * @param renderAction the action to execute on state entry and refresh; may be null
+	 * @param renderAction the action to execute on state entry and refresh; may
+	 * be null
 	 * @param transition the sole transition (path) out of this state
 	 * @return the fully constructed view state instance
 	 */
@@ -239,7 +239,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Adds a view state to the flow built by this builder.
 	 * @param stateId the state identifier
 	 * @param viewName the string-encoded view selector
-	 * @param renderAction the action to execute on state entry and refresh; may be null
+	 * @param renderAction the action to execute on state entry and refresh; may
+	 * be null
 	 * @param transitions the transitions (paths) out of this state
 	 * @return the fully constructed view state instance
 	 */
@@ -254,7 +255,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param entryActions the actions to execute when the state is entered
 	 * @param viewSelector the view selector that will make the view selection
 	 * when the state is entered
-	 * @param renderActions any 'view actions' to execute on state entry and refresh; may be null
+	 * @param renderActions any 'view actions' to execute on state entry and
+	 * refresh; may be null
 	 * @param transitions the transitions (path) out of this state
 	 * @param exceptionHandlers any exception handlers to attach to the state
 	 * @param exitActions the actions to execute when the state exits
@@ -352,11 +354,11 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * target state on a "false" decision
 	 * @return the fully constructed decision state instance
 	 */
-	protected State addDecisionState(String stateId, TransitionCriteria decisionCriteria,
-			TargetStateResolver trueStateResolver, TargetStateResolver falseStateResolver) {
-		Transition thenTransition = getFlowArtifactFactory().createTransition(decisionCriteria, null,
-				trueStateResolver, null);
-		Transition elseTransition = getFlowArtifactFactory().createTransition(null, null, falseStateResolver, null);
+	protected State addDecisionState(String stateId, TransitionCriteria decisionCriteria, String trueTargetState,
+			String falseTargetState) {
+		Transition thenTransition = getFlowArtifactFactory().createTransition(trueTargetState, decisionCriteria, null,
+				null);
+		Transition elseTransition = getFlowArtifactFactory().createTransition(falseTargetState, null, null, null);
 		return getFlowArtifactFactory().createDecisionState(stateId, getFlow(), null,
 				new Transition[] { thenTransition, elseTransition }, null, null, null);
 	}
@@ -482,8 +484,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the fully constructed end state instance
 	 */
 	protected State addEndState(String stateId, Action[] entryActions, ViewSelector viewSelector,
-			AttributeMapper outputMapper, FlowExecutionExceptionHandler[] exceptionHandlers,
-			AttributeMap attributes) {
+			AttributeMapper outputMapper, FlowExecutionExceptionHandler[] exceptionHandlers, AttributeMap attributes) {
 		return getFlowArtifactFactory().createEndState(stateId, getFlow(), entryActions, viewSelector, outputMapper,
 				exceptionHandlers, attributes);
 	}
@@ -574,13 +575,13 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Encoded Method signature format: Method without arguments:
 	 * 
 	 * <pre>
-	 *      ${methodName}
+	 *        ${methodName}
 	 * </pre>
 	 * 
 	 * Method with arguments:
 	 * 
 	 * <pre>
-	 *      ${methodName}(${arg1}, ${arg2}, ${arg n})
+	 *        ${methodName}(${arg1}, ${arg2}, ${arg n})
 	 * </pre>
 	 * 
 	 * @param method the encoded method signature
@@ -682,8 +683,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * simply the targetStateId
 	 * @return the target state resolver
 	 */
-	protected TargetStateResolver to(String targetStateExpression) {
-		return (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(targetStateExpression);
+	protected String to(String targetStateId) {
+		return targetStateId;
 	}
 
 	/**
@@ -694,8 +695,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * of the transition
 	 * @return the transition
 	 */
-	protected Transition transition(TransitionCriteria matchingCriteria, TargetStateResolver targetStateResolver) {
-		return getFlowArtifactFactory().createTransition(matchingCriteria, null, targetStateResolver, null);
+	protected Transition transition(TransitionCriteria matchingCriteria, String targetStateId) {
+		return getFlowArtifactFactory().createTransition(targetStateId, matchingCriteria, null, null);
 	}
 
 	/**
@@ -708,24 +709,26 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * transition is allowed to execute
 	 * @return the transition
 	 */
-	protected Transition transition(TransitionCriteria matchingCriteria, TargetStateResolver targetStateResolver,
+	protected Transition transition(TransitionCriteria matchingCriteria, String targetStateId,
 			TransitionCriteria executionCriteria) {
-		return getFlowArtifactFactory()
-				.createTransition(matchingCriteria, executionCriteria, targetStateResolver, null);
+		return getFlowArtifactFactory().createTransition(targetStateId, matchingCriteria, executionCriteria, null);
 	}
 
 	/**
 	 * Creates a new transition.
-	 * @param matchingCriteria
-	 * @param executionCriteria
-	 * @param targetStateResolver
-	 * @param attributes
+	 * @param matchingCriteria the criteria that determines when the transition
+	 * matches
+	 * @param targetStateResolver the resolver that calculates the target state
+	 * of the transition
+	 * @param executionCriteria the criteria that determines if a matched
+	 * transition is allowed to execute
+	 * @param attributes transition attributes
 	 * @return the transition
 	 */
-	protected Transition transition(TransitionCriteria matchingCriteria, TargetStateResolver targetStateResolver,
+	protected Transition transition(TransitionCriteria matchingCriteria, String targetStateId,
 			TransitionCriteria executionCriteria, AttributeMap attributes) {
-		return getFlowArtifactFactory().createTransition(matchingCriteria, executionCriteria, targetStateResolver,
-				attributes);
+		return getFlowArtifactFactory()
+				.createTransition(targetStateId, matchingCriteria, executionCriteria, attributes);
 	}
 
 	/**
