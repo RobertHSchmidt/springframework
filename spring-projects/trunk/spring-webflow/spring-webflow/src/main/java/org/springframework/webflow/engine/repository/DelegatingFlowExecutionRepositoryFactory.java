@@ -33,7 +33,7 @@ import org.springframework.webflow.registry.FlowLocator;
  * 
  * @author Keith Donald
  */
-public abstract class DelegatingFlowExecutionRepositoryFactory extends FlowExecutionImplFactory implements
+abstract class DelegatingFlowExecutionRepositoryFactory extends FlowExecutionImplFactory implements
 		FlowExecutionRepositoryFactory {
 
 	/**
@@ -65,10 +65,6 @@ public abstract class DelegatingFlowExecutionRepositoryFactory extends FlowExecu
 		this.repositoryFactory = repositoryFactory;
 	}
 
-	/*
-	 * Simply delegates to the wrapped repository factory.
-	 * @see org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory#getRepository(org.springframework.webflow.ExternalContext)
-	 */
 	public FlowExecutionRepository getRepository(ExternalContext context) {
 		return repositoryFactory.getRepository(context);
 	}
