@@ -13,14 +13,14 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.webflow.SimpleFlow;
-import org.springframework.webflow.definition.registry.FlowRegistryImpl;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 
 public class FlowActionTests extends TestCase {
 	private FlowAction action;
 
-	private FlowRegistryImpl registry = new FlowRegistryImpl();
+	private FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
 
 	public void setUp() {
 		registry.registerFlow(new StaticFlowDefinitionHolder(new SimpleFlow()));

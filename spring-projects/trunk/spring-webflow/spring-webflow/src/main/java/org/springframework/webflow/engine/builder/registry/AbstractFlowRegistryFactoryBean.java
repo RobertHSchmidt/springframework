@@ -25,7 +25,7 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.action.bean.BeanInvokingActionFactory;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.definition.registry.FlowRegistryImpl;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.builder.FlowArtifactFactory;
@@ -46,7 +46,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	/**
 	 * The registry to register Flow definitions in.
 	 */
-	private FlowRegistryImpl flowRegistry = new FlowRegistryImpl();
+	private FlowDefinitionRegistryImpl flowRegistry = new FlowDefinitionRegistryImpl();
 
 	/**
 	 * The locator of services needed by the Flows built for inclusion in the

@@ -16,7 +16,7 @@
 package org.springframework.webflow.engine.repository;
 
 import org.springframework.webflow.conversation.ConversationManager;
-import org.springframework.webflow.definition.registry.FlowLocator;
+import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.execution.repository.continuation.ClientContinuationFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.continuation.FlowExecutionContinuationFactory;
 import org.springframework.webflow.execution.repository.support.SingletonFlowExecutionRepositoryFactory;
@@ -47,7 +47,7 @@ public class ClientContinuationFlowExecutionRepositoryFactory extends Delegating
 	 * @param flowLocator the locator for loading flow definitions for which
 	 * flow executions are created from
 	 */
-	public ClientContinuationFlowExecutionRepositoryFactory(FlowLocator flowLocator) {
+	public ClientContinuationFlowExecutionRepositoryFactory(FlowDefinitionLocator flowLocator) {
 		super(flowLocator);
 		setRepositoryFactory(new SingletonFlowExecutionRepositoryFactory(new ClientContinuationFlowExecutionRepository(
 				this)));

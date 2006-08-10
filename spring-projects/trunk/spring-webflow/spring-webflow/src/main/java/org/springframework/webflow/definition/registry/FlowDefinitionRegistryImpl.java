@@ -36,7 +36,7 @@ import org.springframework.webflow.definition.FlowDefinitionHolder;
  * 
  * @author Keith Donald
  */
-public class FlowRegistryImpl implements FlowRegistry {
+public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 
 	/**
 	 * The map of loaded Flow definitions maintained in this registry.
@@ -46,7 +46,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 	/**
 	 * An optional parent flow registry.
 	 */
-	private FlowRegistry parent;
+	private FlowDefinitionRegistry parent;
 
 	/**
 	 * Sets this registry's parent registry. When asked by a client to locate a
@@ -54,7 +54,7 @@ public class FlowRegistryImpl implements FlowRegistry {
 	 * fullfill the lookup request.
 	 * @param parent the parent flow registry, may be null
 	 */
-	public void setParent(FlowRegistry parent) {
+	public void setParent(FlowDefinitionRegistry parent) {
 		this.parent = parent;
 	}
 

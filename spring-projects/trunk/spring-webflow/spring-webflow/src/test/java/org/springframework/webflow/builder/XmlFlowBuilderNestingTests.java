@@ -26,7 +26,7 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.definition.registry.FlowRegistryImpl;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.AnnotatedAction;
 import org.springframework.webflow.engine.Flow;
@@ -58,7 +58,7 @@ public class XmlFlowBuilderNestingTests extends TestCase {
 		this.parentBeanFactory = parentContext.getBeanFactory();
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow2.xml", getClass()));
 		builder
-				.setFlowServiceLocator(new DefaultFlowServiceLocator(new FlowRegistryImpl(), parentBeanFactory));
+				.setFlowServiceLocator(new DefaultFlowServiceLocator(new FlowDefinitionRegistryImpl(), parentBeanFactory));
 		new FlowAssembler("testFlow2", builder).assembleFlow();
 		this.flow = builder.getFlow();
 		this.testService = (TestService)parentContext.getBean("testService");

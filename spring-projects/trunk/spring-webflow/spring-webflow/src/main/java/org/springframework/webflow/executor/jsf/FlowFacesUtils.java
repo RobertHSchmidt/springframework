@@ -5,7 +5,7 @@ import javax.faces.context.FacesContext;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
-import org.springframework.webflow.definition.registry.FlowLocator;
+import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.engine.repository.DefaultFlowExecutionRepositoryFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 
@@ -22,7 +22,7 @@ public class FlowFacesUtils {
 	private static final String REPOSITORY_FACTORY_BEAN_NAME = "flowExecutionRepositoryFactory";
 
 	/**
-	 * The service name of the default {@link FlowLocator} implementation
+	 * The service name of the default {@link FlowDefinitionLocator} implementation
 	 * exported in the Spring Web Application Context.
 	 */
 	private static final String FLOW_LOCATOR_BEAN_NAME = "flowLocator";
@@ -41,7 +41,7 @@ public class FlowFacesUtils {
 		}
 		else {
 			try {
-				FlowLocator flowLocator = (FlowLocator)ac.getBean(FLOW_LOCATOR_BEAN_NAME, FlowLocator.class);
+				FlowDefinitionLocator flowLocator = (FlowDefinitionLocator)ac.getBean(FLOW_LOCATOR_BEAN_NAME, FlowDefinitionLocator.class);
 				return new DefaultFlowExecutionRepositoryFactory(flowLocator);
 			}
 			catch (NoSuchBeanDefinitionException e) {

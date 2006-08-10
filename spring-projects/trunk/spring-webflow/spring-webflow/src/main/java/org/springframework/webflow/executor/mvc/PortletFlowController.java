@@ -31,7 +31,7 @@ import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.mvc.AbstractController;
 import org.springframework.web.portlet.mvc.Controller;
 import org.springframework.webflow.context.portlet.PortletExternalContext;
-import org.springframework.webflow.definition.registry.FlowLocator;
+import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowRedirect;
@@ -107,7 +107,7 @@ public class PortletFlowController extends AbstractController implements Initial
 	/**
 	 * Create a new portlet flow controller. Allows for bean style usage.
 	 * @see #setFlowExecutor(FlowExecutor)
-	 * @see #setFlowLocator(FlowLocator)
+	 * @see #setFlowLocator(FlowDefinitionLocator)
 	 */
 	public PortletFlowController() {
 		// set the cache seconds property to 0 so no pages are cached by default

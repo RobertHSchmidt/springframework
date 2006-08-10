@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.engine.repository;
 
-import org.springframework.webflow.definition.registry.FlowLocator;
+import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 
 /**
@@ -38,7 +38,7 @@ public class SingleKeyFlowExecutionRepositoryFactory extends DefaultFlowExecutio
 	 * @param flowLocator the locator for loading flow definitions for which
 	 * flow executions are created from
 	 */
-	public SingleKeyFlowExecutionRepositoryFactory(FlowLocator flowLocator) {
+	public SingleKeyFlowExecutionRepositoryFactory(FlowDefinitionLocator flowLocator) {
 		super(flowLocator);
 		setAlwaysGenerateNewNextKey(false);
 	}

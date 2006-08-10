@@ -12,7 +12,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.webflow.builder.SimpleFlowBuilder;
 import org.springframework.webflow.definition.registry.ExternalizedFlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.definition.registry.FlowRegistryImpl;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.AbstractFlowBuilder;
@@ -28,7 +28,7 @@ import org.springframework.webflow.engine.builder.registry.XmlFlowRegistrar;
 
 public class FlowRegistryPopulationTests extends TestCase {
 	public void testDefaultPopulation() {
-		FlowRegistryImpl registry = new FlowRegistryImpl();
+		FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
 		FlowServiceLocator factory = new BaseFlowServiceLocator();
 		FlowBuilder builder1 = new AbstractFlowBuilder(factory) {
 			public void buildStates() throws FlowBuilderException {
@@ -52,7 +52,7 @@ public class FlowRegistryPopulationTests extends TestCase {
 	}
 
 	public void testXmlPopulationWithRecursion() {
-		FlowRegistryImpl registry = new FlowRegistryImpl();
+		FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
 		FlowServiceLocator flowArtifactFactory = new DefaultFlowServiceLocator(registry,
 				new DefaultListableBeanFactory());
 		File parent = new File("src/test/java/org/springframework/webflow/registry");
