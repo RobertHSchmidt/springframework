@@ -360,11 +360,10 @@
 <!--
 	The id of the target state of this transition.
 	
-	The value of this attribute may be a static state identifier (e.g. to="displayForm")
-	or an expression to be evaluated at runtime against the request context
-	(e.g. to="${flowScope.previousViewState}").
+	The value of this attribute is a static state identifier (e.g. to="displayForm").
+	The state id must exist in this document.
 -->
-<!ATTLIST transition to CDATA #REQUIRED>
+<!ATTLIST transition to IDREF #REQUIRED>
 
 <!--
 	Defines a view state, a state where an user (or other external actor) is expected to
