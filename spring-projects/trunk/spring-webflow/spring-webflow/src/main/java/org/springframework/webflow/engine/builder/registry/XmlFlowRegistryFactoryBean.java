@@ -39,9 +39,9 @@ import org.xml.sax.EntityResolver;
  * in the registry created by this factory bean.
  * <p>
  * This class is also <code>BeanFactoryAware</code> and when used with Spring
- * will automatically create a configured {@link DefaultFlowServiceLocator}
- * for loading Flow artifacts like Actions from the Spring bean factory during
- * the Flow registration process.
+ * will automatically create a configured {@link DefaultFlowServiceLocator} for
+ * loading Flow artifacts like Actions from the Spring bean factory during the
+ * Flow registration process.
  * <p>
  * This class is also <code>ResourceLoaderAware</code>; when an instance is
  * created by a Spring BeanFactory the factory will automatically configure the
@@ -51,7 +51,7 @@ import org.xml.sax.EntityResolver;
  * Usage example:
  * 
  * <pre>
- *     &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *     &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.engine.builder.registry.XmlFlowRegistryFactoryBean&quot;&gt;
  *         &lt;property name=&quot;flowLocations&quot;&gt; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt; 
  *     &lt;/bean&gt;
  * </pre>
@@ -97,7 +97,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * For example:
 	 * 
 	 * <pre>
-	 *     &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+	 *     &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.engine.builder.registry.XmlFlowRegistryFactoryBean&quot;&gt;
 	 *         &lt;property name=&quot;flowLocations&quot;&gt; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt; 
 	 *     &lt;/bean&gt;
 	 * </pre>
@@ -105,8 +105,8 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * Another example:
 	 * 
 	 * <pre>
-	 *    &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.registry.XmlFlowRegistryFactoryBean&quot;&gt;
-	 *        &lt;property name=&quot;flowLocations&quot;&gt; value=&quot;classpath*:/example/flows/*-flow.xml&quot;/&gt; 
+	 *    &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.engine.builder.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+	 *          &lt;property name=&quot;flowLocations&quot;&gt; value=&quot;classpath*:/example/flows/*-flow.xml&quot;/&gt; 
 	 *    &lt;/bean&gt;
 	 * </pre>
 	 * 
@@ -136,7 +136,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * For example:
 	 * 
 	 * <pre>
-	 *     &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+	 *     &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.engine.builder.registry.XmlFlowRegistryFactoryBean&quot;&gt;
 	 *         &lt;property name=&quot;flowDefinitions&quot;&gt;
 	 *             &lt;value&gt;
 	 *                 searchFlow=/WEB-INF/flows/search.xml
@@ -148,21 +148,22 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * 
 	 * The flow id key and resource value is required. Flow attributes (e.g.
 	 * attr1) are optional.
-	 * @param flowDefinitions the flow definition, defined within a properties map
+	 * @param flowDefinitions the flow definition, defined within a properties
+	 * map
 	 */
 	public void setFlowDefinitions(Properties flowDefinitions) {
 		this.flowDefinitions = flowDefinitions;
 	}
 
 	/**
-	 * Sets whether or not the flow builder used to build the flow definitions in this 
-	 * registry should perform build-time validation.
+	 * Sets whether or not the flow builder used to build the flow definitions
+	 * in this registry should perform build-time validation.
 	 * @param builderValidating the validating flag
 	 */
 	public void setBuilderValidating(boolean builderValidating) {
 		getFlowRegistrar().setBuilderValidating(builderValidating);
 	}
-	
+
 	/**
 	 * Sets the entity resolver to use during Xml flow definition building.
 	 * @param entityResolver the entity resolver
@@ -170,7 +171,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	public void setEntityResolver(EntityResolver entityResolver) {
 		getFlowRegistrar().setEntityResolver(entityResolver);
 	}
-	
+
 	protected void doPopulate(FlowRegistry registry) {
 		addFlowDefinitionsFromPropertiesIfNecessary();
 		getFlowRegistrar().registerFlows(registry, getFlowServiceLocator());
@@ -188,7 +189,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 				flows.add(new ExternalizedFlowDefinition(flowId, resource));
 			}
 			getFlowRegistrar().addFlowDefinitions(
-					(ExternalizedFlowDefinition[])flows.toArray(new ExternalizedFlowDefinition[0]));
+					(ExternalizedFlowDefinition[])flows.toArray(new ExternalizedFlowDefinition[flows.size()]));
 			flowDefinitions = null;
 		}
 	}
