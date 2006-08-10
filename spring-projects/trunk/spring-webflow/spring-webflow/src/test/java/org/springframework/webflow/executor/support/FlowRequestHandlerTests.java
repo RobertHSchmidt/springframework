@@ -2,7 +2,7 @@ package org.springframework.webflow.executor.support;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.definition.registry.FlowRegistryImpl;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
@@ -20,7 +20,7 @@ public class FlowRequestHandlerTests extends TestCase {
 	private MockExternalContext context = new MockExternalContext();
 
 	protected void setUp() throws Exception {
-		FlowRegistryImpl registry = new FlowRegistryImpl();
+		FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
 		Flow flow = new Flow("flow");
 		ViewState view = new ViewState(flow, "view");
 		view.getTransitionSet().add(new Transition(new DefaultTargetStateResolver("end")));

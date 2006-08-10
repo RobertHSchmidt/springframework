@@ -17,7 +17,7 @@ package org.springframework.webflow.engine.repository;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.definition.registry.FlowLocator;
+import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
@@ -61,7 +61,7 @@ public class ContinuationFlowExecutionRepositoryFactory extends DelegatingFlowEx
 	 * @param flowLocator the locator for loading flow definitions for which
 	 * flow executions are created from
 	 */
-	public ContinuationFlowExecutionRepositoryFactory(FlowLocator flowLocator) {
+	public ContinuationFlowExecutionRepositoryFactory(FlowDefinitionLocator flowLocator) {
 		super(flowLocator);
 		setRepositoryFactory(new MapFlowExecutionRepositoryFactory(new ContinuationFlowExecutionRepositoryCreator(this)));
 	}

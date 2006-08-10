@@ -24,7 +24,7 @@ import org.springframework.webflow.core.FlowException;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.registry.FlowLocator;
+import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.ViewSelection;
@@ -89,7 +89,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	/**
 	 * A locator to access flow definitions registered in a central registry.
 	 */
-	private FlowLocator flowLocator;
+	private FlowDefinitionLocator flowLocator;
 
 	/**
 	 * An abstract factory for creating a new flow execution for a definition.
@@ -123,7 +123,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * this executor.
 	 * @param repositoryFactory the repository factory
 	 */
-	public FlowExecutorImpl(FlowLocator flowLocator, FlowExecutionFactory flowExecutionFactory,
+	public FlowExecutorImpl(FlowDefinitionLocator flowLocator, FlowExecutionFactory flowExecutionFactory,
 			FlowExecutionRepositoryFactory repositoryFactory) {
 		Assert.notNull(flowLocator, "The flow locator for loading flow definitions is required");
 		Assert.notNull(flowExecutionFactory, "The execution factory for creating new flow executions is required");

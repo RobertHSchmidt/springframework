@@ -9,14 +9,14 @@ import org.springframework.mock.web.portlet.MockRenderRequest;
 import org.springframework.mock.web.portlet.MockRenderResponse;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.webflow.SimpleFlow;
-import org.springframework.webflow.definition.registry.FlowRegistryImpl;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 
 public class PortletFlowControllerTests extends TestCase {
 	private PortletFlowController controller = new PortletFlowController();
 
-	private FlowRegistryImpl registry = new FlowRegistryImpl();
+	private FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
 
 	public void setUp() {
 		registry.registerFlow(new StaticFlowDefinitionHolder(new SimpleFlow()));

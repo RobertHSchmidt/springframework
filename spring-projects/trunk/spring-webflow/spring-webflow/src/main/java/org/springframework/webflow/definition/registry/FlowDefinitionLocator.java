@@ -27,7 +27,7 @@ import org.springframework.webflow.definition.FlowDefinition;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public interface FlowLocator {
+public interface FlowDefinitionLocator {
 
 	/**
 	 * Lookup the flow definition with the specified <code>id</code>.

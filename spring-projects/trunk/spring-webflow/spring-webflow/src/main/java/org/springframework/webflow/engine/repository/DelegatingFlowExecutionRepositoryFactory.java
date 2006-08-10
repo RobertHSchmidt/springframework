@@ -16,7 +16,7 @@
 package org.springframework.webflow.engine.repository;
 
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.definition.registry.FlowLocator;
+import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
@@ -46,7 +46,7 @@ abstract class DelegatingFlowExecutionRepositoryFactory extends FlowExecutionImp
 	 * @param flowLocator the low locator service to be used by repositories
 	 * created by this factory
 	 */
-	protected DelegatingFlowExecutionRepositoryFactory(FlowLocator flowLocator) {
+	protected DelegatingFlowExecutionRepositoryFactory(FlowDefinitionLocator flowLocator) {
 		super(flowLocator);
 	}
 

@@ -50,7 +50,7 @@ package org.springframework.webflow.definition.registry;
  * runtime.
  * @author Keith Donald
  */
-public interface FlowRegistryMBean {
+public interface FlowDefinitionRegistryMBean {
 
 	/**
 	 * Returns the names of the flow definitions registered in this registry.
