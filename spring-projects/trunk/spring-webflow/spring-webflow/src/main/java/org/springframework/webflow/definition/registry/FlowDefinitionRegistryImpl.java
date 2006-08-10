@@ -157,7 +157,7 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 
 	// implementing FlowLocator
 
-	public FlowDefinition getFlow(String id) throws NoSuchFlowDefinitionException {
+	public FlowDefinition getFlowDefinition(String id) throws NoSuchFlowDefinitionException {
 		Assert.hasText(id,
 				"Unable to load a flow definition: no flow id was provided.  Please provide a valid flow identifier.");
 		try {
@@ -166,7 +166,7 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 		catch (NoSuchFlowDefinitionException e) {
 			if (parent != null) {
 				// try parent
-				return parent.getFlow(id);
+				return parent.getFlowDefinition(id);
 			}
 			throw e;
 		}
