@@ -13,9 +13,9 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.web.struts.SpringBindingActionForm;
 import org.springframework.webflow.SimpleFlow;
+import org.springframework.webflow.definition.registry.FlowRegistryImpl;
+import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.executor.FlowExecutorImpl;
-import org.springframework.webflow.registry.FlowRegistryImpl;
-import org.springframework.webflow.registry.StaticFlowDefinitionHolder;
 
 public class FlowActionTests extends TestCase {
 	private FlowAction action;

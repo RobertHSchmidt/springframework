@@ -13,41 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.registry;
+package org.springframework.webflow.definition.registry;
 
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowDefinitionHolder;
 
 /**
- * A simple flow holder that just holds a static singleton reference to a flow
- * definition.
+ * A runtime service locator interface for retrieving flow definitions by
+ * <code>id</code>.
+ * <p>
+ * Flow locators are needed at by flow execution managers at runtime to retrieve
+ * fully-configured Flow definitions to support launching new flow executions.
  * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
-public class StaticFlowDefinitionHolder implements FlowDefinitionHolder {
-	
-	/**
-	 * The held flow. 
-	 */
-	private FlowDefinition flow;
+public interface FlowLocator {
 
 	/**
-	 * Creates the static flow holder
-	 * @param flow the flow to hold
+	 * Lookup the flow definition with the specified <code>id</code>.
+	 * @param id the flow definition id
+	 * @return the flow definition
+	 * @throws FlowLocatorException when a problem occured accessing the flow
+	 * definition with the provided identifier
 	 */
-	public StaticFlowDefinitionHolder(FlowDefinition flow) {
-		this.flow = flow;
-	}
-
-	public FlowDefinition getFlow() {
-		return flow;
-	}
-
-	public String getFlowId() {
-		return flow.getId();
-	}
-
-	public void refresh() {
-		// nothing to do
-	}
+	public FlowDefinition getFlow(String id) throws NoSuchFlowDefinitionException;
 }

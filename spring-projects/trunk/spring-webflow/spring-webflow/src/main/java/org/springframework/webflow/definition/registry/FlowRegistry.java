@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.registry;
+package org.springframework.webflow.definition.registry;
 
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.FlowDefinitionHolder;
@@ -27,7 +27,7 @@ import org.springframework.webflow.definition.FlowDefinitionHolder;
  * Is a <code>FlowLocator</code>, allowing for execution of flow definitions
  * managed in this registry.
  * 
- * @see org.springframework.webflow.registry.FlowLocator
+ * @see org.springframework.webflow.definition.registry.FlowLocator
  * @see org.springframework.webflow.executor.FlowExecutorImpl
  * 
  * @author Keith Donald

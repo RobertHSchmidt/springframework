@@ -19,9 +19,7 @@ import java.io.Serializable;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.conversation.ConversationManager;
-import org.springframework.webflow.conversation.impl.LocalConversationManager;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.PermissionDeniedFlowExecutionAccessException;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
@@ -52,12 +50,6 @@ import org.springframework.webflow.util.UidGenerator;
 public class DefaultFlowExecutionRepository extends AbstractConversationFlowExecutionRepository implements Serializable {
 
 	/**
-	 * The default number of conversations that can be active at one time within
-	 * this service. No max by default.
-	 */
-	private final static int DEFAULT_MAX_CONVERSATIONS = -1;
-
-	/**
 	 * The flow execution entry attribute.
 	 */
 	private static final String FLOW_EXECUTION_ENTRY_ATTRIBUTE = "flowExecutionEntry";
@@ -66,23 +58,6 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 	 * The uid generation strategy to use.
 	 */
 	private transient UidGenerator continuationIdGenerator = new RandomGuidUidGenerator();
-
-	/**
-	 * Creates a new continuation flow execution repository.
-	 * @param repositoryServices the repository services holder
-	 */
-	public DefaultFlowExecutionRepository(FlowExecutionFactory flowExecutionFactory) {
-		super(flowExecutionFactory, new LocalConversationManager(DEFAULT_MAX_CONVERSATIONS));
-	}
-
-	/**
-	 * Creates a new continuation flow execution repository.
-	 * @param repositoryServices the repository services holder
-	 */
-	public DefaultFlowExecutionRepository(FlowExecutionFactory flowExecutionFactory,
-			ConversationManager conversationService) {
-		super(flowExecutionFactory, conversationService);
-	}
 
 	/**
 	 * Returns the uid generation strategy used to generate continuation
@@ -102,8 +77,12 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
-		FlowExecution flowExecution = accessFlowExecution(key);
-		return restoreState(flowExecution, key);
+		try {
+			return getEntry(key).access(getContinuationId(key));
+		}
+		catch (InvalidContinuationIdException e) {
+			throw new PermissionDeniedFlowExecutionAccessException(key, e);
+		}
 	}
 
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
@@ -129,15 +108,6 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 					+ "possible programmer error--do not call get before calling put");
 		}
 		return entry;
-	}
-
-	private FlowExecution accessFlowExecution(FlowExecutionKey key) {
-		try {
-			return getEntry(key).access(getContinuationId(key));
-		}
-		catch (InvalidContinuationIdException e) {
-			throw new PermissionDeniedFlowExecutionAccessException(key, e);
-		}
 	}
 
 	private void putEntry(FlowExecutionKey key, FlowExecutionEntry entry) {

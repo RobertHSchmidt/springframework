@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.springframework.webflow.registry.FlowRegistry;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 
 /**
  * A factory bean that produces a populated flow registry using a configured
@@ -70,7 +70,7 @@ public class FlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean {
 		this.flowRegistrars = Arrays.asList(flowRegistrars);
 	}
 
-	protected void doPopulate(FlowRegistry registry) {
+	protected void doPopulate(FlowDefinitionRegistry registry) {
 		if (flowRegistrars != null) {
 			Iterator it = flowRegistrars.iterator();
 			while (it.hasNext()) {

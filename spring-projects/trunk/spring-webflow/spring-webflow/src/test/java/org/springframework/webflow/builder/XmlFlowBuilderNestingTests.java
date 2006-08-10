@@ -26,6 +26,7 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.definition.registry.FlowRegistryImpl;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.AnnotatedAction;
 import org.springframework.webflow.engine.Flow;
@@ -35,7 +36,6 @@ import org.springframework.webflow.engine.builder.registry.DefaultFlowServiceLoc
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.registry.FlowRegistryImpl;
 
 /**
  * Test case for XML flow builder, testing flow nesting.

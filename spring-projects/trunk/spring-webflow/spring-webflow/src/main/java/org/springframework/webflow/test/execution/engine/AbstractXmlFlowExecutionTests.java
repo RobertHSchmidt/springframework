@@ -55,7 +55,7 @@ import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
  * @author Keith Donald
  */
 public abstract class AbstractXmlFlowExecutionTests extends AbstractExternalizedFlowExecutionTests {
-	protected FlowBuilder createFlowBuilder(Resource resource, FlowServiceLocator flowArtifactFactory) {
-		return new XmlFlowBuilder(resource, flowArtifactFactory);
+	protected FlowBuilder createFlowBuilder(Resource resource, FlowServiceLocator flowServiceLocator) {
+		return new XmlFlowBuilder(resource, flowServiceLocator);
 	}
 }

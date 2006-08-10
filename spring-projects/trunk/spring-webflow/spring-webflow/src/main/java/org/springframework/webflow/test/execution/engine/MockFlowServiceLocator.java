@@ -2,10 +2,10 @@ package org.springframework.webflow.test.execution.engine;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
+import org.springframework.webflow.definition.registry.FlowRegistryImpl;
+import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.registry.DefaultFlowServiceLocator;
-import org.springframework.webflow.registry.FlowRegistryImpl;
-import org.springframework.webflow.registry.StaticFlowDefinitionHolder;
 
 /**
  * A stub flow service locator implementation suitable for a test environment.

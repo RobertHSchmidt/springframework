@@ -79,25 +79,6 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	private FlowExecutionContinuationFactory continuationFactory = new SerializedFlowExecutionContinuationFactory();
 
 	/**
-	 * Creates a new client flow execution repository.
-	 * @param repositoryServices the common services needed by this repository
-	 * to function.
-	 */
-	public ClientContinuationFlowExecutionRepository(FlowExecutionFactory flowExecutionFactory) {
-		super(flowExecutionFactory, new NoOpConversationManager());
-	}
-
-	/**
-	 * Creates a new client flow execution repository.
-	 * @param repositoryServices the common services needed by this repository
-	 * to function.
-	 */
-	public ClientContinuationFlowExecutionRepository(FlowExecutionFactory flowExecutionFactory,
-			ConversationManager conversationService) {
-		super(flowExecutionFactory, conversationService);
-	}
-
-	/**
 	 * Returns the continuation factory in use by this repository.
 	 */
 	public FlowExecutionContinuationFactory getContinuationFactory() {
@@ -115,8 +96,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
 		FlowExecutionContinuation continuation = decode((String)getContinuationId(key));
 		try {
-			FlowExecution flowExecution = continuation.unmarshal();
-			return restoreState(flowExecution, key);
+			return continuation.unmarshal();
 		}
 		catch (ContinuationUnmarshalException e) {
 			throw new FlowExecutionRestorationFailureException(key, e);

@@ -24,17 +24,17 @@ import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.action.bean.BeanInvokingActionFactory;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.definition.registry.FlowRegistryImpl;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.builder.FlowArtifactFactory;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.registry.FlowRegistry;
-import org.springframework.webflow.registry.FlowRegistryImpl;
 
 /**
  * A base class for factory beans that create populated Flow Registries.
- * Subclasses should override the {@link #doPopulate(FlowRegistry)} to perform
+ * Subclasses should override the {@link #doPopulate(FlowDefinitionRegistry)} to perform
  * the registry population logic, typically delegating to a
  * {@link FlowRegistrar} strategy.
  * 
@@ -95,7 +95,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	 * request to locate a Flow definition.
 	 * @param parent the parent flow definition registry
 	 */
-	public void setParent(FlowRegistry parent) {
+	public void setParent(FlowDefinitionRegistry parent) {
 		flowRegistry.setParent(parent);
 	}
 
@@ -140,7 +140,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	}
 
 	public Class getObjectType() {
-		return FlowRegistry.class;
+		return FlowDefinitionRegistry.class;
 	}
 
 	public boolean isSingleton() {
@@ -194,7 +194,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	/**
 	 * Populates and returns the configured flow definition registry.
 	 */
-	public FlowRegistry populateFlowRegistry() {
+	public FlowDefinitionRegistry populateFlowRegistry() {
 		doPopulate(getFlowRegistry());
 		return getFlowRegistry();
 	}
@@ -203,7 +203,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	 * Template method subclasses must override to perform registry population.
 	 * @param registry the flow definition registry
 	 */
-	protected abstract void doPopulate(FlowRegistry registry);
+	protected abstract void doPopulate(FlowDefinitionRegistry registry);
 
 	/**
 	 * Returns the strategy for locating dependent artifacts when a Flow is
@@ -216,7 +216,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	/**
 	 * Returns the flow registry constructed by the factory bean.
 	 */
-	protected FlowRegistry getFlowRegistry() {
+	protected FlowDefinitionRegistry getFlowRegistry() {
 		return flowRegistry;
 	}
 

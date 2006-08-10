@@ -17,10 +17,12 @@ package org.springframework.webflow.execution.factory.support;
 
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.FlowExecutionListener;
+import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 
 /**
  * A strategy interface for loading the set of FlowExecutionListener's that
- * should apply to executions of a given flow definition.
+ * should apply to executions of a given flow definition.  Typically used by
+ * a {@link FlowExecutionFactory} as part of execution creation.
  * 
  * @author Keith Donald
  */

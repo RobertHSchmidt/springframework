@@ -17,13 +17,13 @@ package org.springframework.webflow.engine.repository;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.definition.registry.FlowLocator;
 import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.AbstractFlowExecutionRepositoryCreator;
 import org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.MapFlowExecutionRepositoryFactory;
-import org.springframework.webflow.registry.FlowLocator;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 

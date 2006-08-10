@@ -2,6 +2,8 @@ package org.springframework.webflow.executor.support;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.definition.registry.FlowRegistryImpl;
+import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.Transition;
@@ -9,8 +11,6 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
-import org.springframework.webflow.registry.FlowRegistryImpl;
-import org.springframework.webflow.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.test.MockExternalContext;
 
 public class FlowRequestHandlerTests extends TestCase {
