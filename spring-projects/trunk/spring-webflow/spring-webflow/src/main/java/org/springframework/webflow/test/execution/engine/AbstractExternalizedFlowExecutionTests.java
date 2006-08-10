@@ -16,15 +16,8 @@
 package org.springframework.webflow.test.execution.engine;
 
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.core.collection.MutableAttributeMap;
-import org.springframework.webflow.definition.registry.ExternalizedFlowDefinition;
-import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
-import org.springframework.webflow.engine.impl.FlowExecutionImpl;
-import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.test.execution.AbstractFlowExecutionTests;
 
@@ -37,61 +30,7 @@ import org.springframework.webflow.test.execution.AbstractFlowExecutionTests;
 public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlowExecutionTests {
 
 	protected final FlowExecutionFactory createFlowExecutionFactory() {
-		return new FlowExecutionFactoryImpl();
-	}
-
-	protected final String getFlowId() {
-		return getFlowDefinition().getId();
-	}
-
-	/**
-	 * A simple flow execution factory that delegates to subclass template
-	 * methods to obtain Flow definition information to create FlowExecutions
-	 * with optional execution listeners attached.
-	 * @author Keith Donald
-	 */
-	protected class FlowExecutionFactoryImpl implements FlowExecutionFactory {
-
-		/**
-		 * The listeners to attach.
-		 */
-		private FlowExecutionListener[] listeners;
-
-		/**
-		 * Creates a new flow execution factory.
-		 */
-		public FlowExecutionFactoryImpl() {
-		}
-
-		/**
-		 * Creates a new flow execution factory that will attach the listener to
-		 * newly created flow executions.
-		 * @param listener the execution listener
-		 */
-		public FlowExecutionFactoryImpl(FlowExecutionListener listener) {
-			this(new FlowExecutionListener[] { listener });
-		}
-
-		/**
-		 * Creates a new flow execution factory that will attach the listener
-		 * list to newly created flow executions.
-		 * @param listeners the execution listener list
-		 */
-		public FlowExecutionFactoryImpl(FlowExecutionListener[] listeners) {
-			this.listeners = listeners;
-		}
-
-		public FlowExecution createFlowExecution(String flowId) {
-			ExternalizedFlowDefinition definition = getFlowDefinition();
-			FlowServiceLocator serviceLocator = createFlowServiceLocator();
-			FlowBuilder builder = createFlowBuilder(definition.getLocation(), serviceLocator);
-			Flow flow = new FlowAssembler(definition.getId(), definition.getAttributes(), builder).assembleFlow();
-			return new FlowExecutionImpl(flow, listeners);
-		}
-
-		public FlowExecution restoreState(FlowExecution flowExecution, MutableAttributeMap conversationScope) {
-			return flowExecution;
-		}
+		return new MockFlowExecutionFactory();
 	}
 
 	/**
@@ -128,10 +67,4 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 */
 	protected abstract FlowBuilder createFlowBuilder(Resource resource, FlowServiceLocator flowServiceLocator);
 
-	/**
-	 * Returns the definition of the externalized flow needed by this flow
-	 * execution test: subclasses must override.
-	 * @return the externalize flow definition to test
-	 */
-	protected abstract ExternalizedFlowDefinition getFlowDefinition();
 }
