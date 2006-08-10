@@ -1,10 +1,20 @@
 package org.springframework.webflow.execution.factory;
 
-import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.FlowExecution;
 
+/**
+ * An abstract factory for creating flow exections.  A flow execution represents a 
+ * runtime, top-level instance of a flow definition.
+ * 
+ * @author Keith Donald
+ */
 public interface FlowExecutionFactory {
-	public FlowExecution createFlowExecution(String flowId);
-
-	public FlowExecution restoreState(FlowExecution flowExecution, MutableAttributeMap conversationScope);
+	
+	/**
+	 * Create a new flow execution product for the definition.
+	 * @param flowDefinition the flow definition
+	 * @return the new flow execution, fully initialized and awaiting to be started.
+	 */
+	public FlowExecution createFlowExecution(FlowDefinition flowDefinition);
 }

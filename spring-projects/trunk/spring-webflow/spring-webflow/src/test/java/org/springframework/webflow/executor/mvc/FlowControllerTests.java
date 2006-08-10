@@ -8,9 +8,9 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.webflow.SimpleFlow;
+import org.springframework.webflow.definition.registry.FlowRegistryImpl;
+import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.executor.FlowExecutorImpl;
-import org.springframework.webflow.registry.FlowRegistryImpl;
-import org.springframework.webflow.registry.StaticFlowDefinitionHolder;
 
 public class FlowControllerTests extends TestCase {
 	private FlowController controller = new FlowController();

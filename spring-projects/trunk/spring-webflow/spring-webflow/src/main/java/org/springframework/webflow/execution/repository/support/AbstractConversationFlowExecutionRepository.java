@@ -24,15 +24,18 @@ import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.conversation.ConversationParameters;
 import org.springframework.webflow.conversation.NoSuchConversationException;
+import org.springframework.webflow.conversation.impl.LocalConversationManager;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
+import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
+
+import com.sun.corba.se.spi.protocol.LocalClientRequestDispatcher;
 
 /**
  * A convenient base for flow execution repository implementations that delegate
@@ -41,8 +44,13 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
  * 
  * @author Keith Donald
  */
-public abstract class AbstractConversationFlowExecutionRepository extends AbstractFlowExecutionRepository implements
-		Serializable {
+public abstract class AbstractConversationFlowExecutionRepository implements FlowExecutionRepository {
+
+	/**
+	 * Flag to indicate whether or not a new flow execution key should always be
+	 * generated before each put call. Default is true.
+	 */
+	private boolean alwaysGenerateNewNextKey = true;
 
 	/**
 	 * The conversation "scope" attribute.
@@ -53,45 +61,51 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	 * The conversation service to delegate to for managing conversations
 	 * initiated by this repository.
 	 */
-	private ConversationManager conversationService;
+	private ConversationManager conversationManager;
 
 	/**
 	 * No-arg constructor to satisfy use with subclass implementations are that
 	 * serializable.
 	 */
 	protected AbstractConversationFlowExecutionRepository() {
-
+		conversationManager = new LocalConversationManager(-1);
 	}
 
 	/**
-	 * Creates a new flow execution repository
-	 * @param repositoryServices the common services needed by this repository
-	 * to function.
+	 * Returns the configured generate new next key flag.
 	 */
-	public AbstractConversationFlowExecutionRepository(FlowExecutionFactory executionFactory,
-			ConversationManager conversationService) {
-		setFlowExecutionFactory(executionFactory);
-		setConversationService(conversationService);
+	protected boolean isAlwaysGenerateNewNextKey() {
+		return alwaysGenerateNewNextKey;
+	}
+
+	/**
+	 * Sets a flag indicating if a new {@link FlowExecutionKey} should always be
+	 * generated before each put call. By setting this to false a FlowExecution
+	 * can remain identified by the same key throughout its life.
+	 * @param alwaysGenerateNewNextKey the generate flag
+	 */
+	public void setAlwaysGenerateNewNextKey(boolean alwaysGenerateNewNextKey) {
+		this.alwaysGenerateNewNextKey = alwaysGenerateNewNextKey;
 	}
 
 	/**
 	 * Returns the configured conversation service.
 	 */
-	protected ConversationManager getConversationService() {
-		return conversationService;
+	protected ConversationManager getConversationManager() {
+		return conversationManager;
 	}
 
 	/**
 	 * Sets the conversationService reference.
-	 * @param conversationService the conversation service, may not be null.
+	 * @param conversationManager the conversation service, may not be null.
 	 */
-	public void setConversationService(ConversationManager conversationService) {
-		Assert.notNull(conversationService, "The conversation service is required");
-		this.conversationService = conversationService;
+	public void setConversationManager(ConversationManager conversationManager) {
+		Assert.notNull(conversationManager, "The conversation manager is required");
+		this.conversationManager = conversationManager;
 	}
 
 	public FlowExecutionKey generateKey(FlowExecution flowExecution) {
-		Conversation conversation = conversationService.beginConversation(createNewConversation(flowExecution));
+		Conversation conversation = conversationManager.beginConversation(createNewConversation(flowExecution));
 		onBegin(conversation);
 		return new CompositeFlowExecutionKey(conversation.getId(), generateContinuationId(flowExecution));
 	}
@@ -123,13 +137,10 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 		Assert.hasText(encodedKey, "The string encoded flow execution key is required");
 		String[] keyParts = CompositeFlowExecutionKey.keyParts(encodedKey);
 		try {
-			ConversationId conversationId = conversationService.parseConversationId(keyParts[0]);
+			ConversationId conversationId = conversationManager.parseConversationId(keyParts[0]);
 			return new CompositeFlowExecutionKey(conversationId, parseContinuationId(keyParts[1]));
 		}
 		catch (ConversationException e) {
-			throw new BadlyFormattedFlowExecutionKeyException(encodedKey, CompositeFlowExecutionKey.getFormat(), e);
-		}
-		catch (FlowExecutionRepositoryException e) {
 			throw new BadlyFormattedFlowExecutionKeyException(encodedKey, CompositeFlowExecutionKey.getFormat(), e);
 		}
 	}
@@ -173,7 +184,7 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	 */
 	protected Conversation getConversation(FlowExecutionKey key) {
 		try {
-			return getConversationService().getConversation(getConversationId(key));
+			return getConversationManager().getConversation(getConversationId(key));
 		}
 		catch (NoSuchConversationException e) {
 			throw new NoSuchFlowExecutionException(key, e);
@@ -188,9 +199,9 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 		getConversation(key).putAttribute(SCOPE_ATTRIBUTE, scope);
 	}
 
-	protected FlowExecution restoreState(FlowExecution flowExecution, FlowExecutionKey key) {
-		return getFlowExecutionFactory().restoreState(flowExecution, getConversationScope(key));
-	}
+	public abstract FlowExecution getFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
+
+	public abstract void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) throws FlowExecutionRepositoryException;
 
 	/**
 	 * Template method used to generate a new continuation id for this flow
@@ -206,4 +217,5 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	 * @return the parsed continuation id
 	 */
 	protected abstract Serializable parseContinuationId(String encodedId) throws FlowExecutionRepositoryException;
+
 }

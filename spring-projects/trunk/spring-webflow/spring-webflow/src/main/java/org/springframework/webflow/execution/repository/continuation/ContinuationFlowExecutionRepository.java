@@ -20,12 +20,11 @@ import java.io.Serializable;
 import org.springframework.util.Assert;
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationManager;
-import org.springframework.webflow.conversation.impl.LocalConversationManager;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException;
 import org.springframework.webflow.execution.repository.support.AbstractConversationFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 
@@ -80,12 +79,6 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 		Serializable {
 
 	/**
-	 * The default number of conversations that can be active at one time within
-	 * this service. No max by default.
-	 */
-	private final static int DEFAULT_MAX_CONVERSATIONS = -1;
-
-	/**
 	 * The conversation "continuation group" attribute.
 	 */
 	private static final String CONTINUATION_GROUP_ATTRIBUTE = "continuationGroup";
@@ -105,23 +98,6 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	 * The maximum number of continuations that can be active per conversation.
 	 */
 	private int maxContinuations;
-
-	/**
-	 * Creates a new continuation flow execution repository.
-	 * @param repositoryServices the repository services holder
-	 */
-	public ContinuationFlowExecutionRepository(FlowExecutionFactory flowExecutionFactory) {
-		super(flowExecutionFactory, new LocalConversationManager(DEFAULT_MAX_CONVERSATIONS));
-	}
-
-	/**
-	 * Creates a new continuation flow execution repository.
-	 * @param repositoryServices the repository services holder
-	 */
-	public ContinuationFlowExecutionRepository(FlowExecutionFactory flowExecutionFactory,
-			ConversationManager conversationService) {
-		super(flowExecutionFactory, conversationService);
-	}
 
 	/**
 	 * Returns the continuation factory that encapsulates the construction of
@@ -182,8 +158,7 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
 		FlowExecutionContinuation continuation = getContinuation(key);
 		try {
-			FlowExecution flowExecution = continuation.unmarshal();
-			return restoreState(flowExecution, key);
+			return continuation.unmarshal();
 		}
 		catch (ContinuationUnmarshalException e) {
 			throw new FlowExecutionRestorationFailureException(key, e);

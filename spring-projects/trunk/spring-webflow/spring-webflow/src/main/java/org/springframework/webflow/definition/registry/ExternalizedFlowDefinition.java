@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.registry;
+package org.springframework.webflow.definition.registry;
 
 import java.io.Serializable;
 

@@ -17,19 +17,19 @@ package org.springframework.webflow.engine.builder.registry;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.util.Assert;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.BaseFlowServiceLocator;
 import org.springframework.webflow.engine.builder.FlowArtifactLookupException;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
-import org.springframework.webflow.registry.FlowRegistry;
-import org.springframework.webflow.registry.NoSuchFlowDefinitionException;
 
 /**
  * The default flow service locator implementation that obtains subflow
- * definitions from a dedicated {@link FlowRegistry} and obtains the remaining
+ * definitions from a dedicated {@link FlowDefinitionRegistry} and obtains the remaining
  * services from a generic Spring {@link BeanFactory}.
  * 
- * @see FlowRegistry
+ * @see FlowDefinitionRegistry
  * @see FlowServiceLocator#getSubflow(String)
  * 
  * @author Keith Donald
@@ -39,7 +39,7 @@ public class DefaultFlowServiceLocator extends BaseFlowServiceLocator {
 	/**
 	 * The registry for locating subflows.
 	 */
-	private FlowRegistry subflowRegistry;
+	private FlowDefinitionRegistry subflowRegistry;
 
 	/**
 	 * The Spring bean factory that manages configured flow artifacts.
@@ -52,7 +52,7 @@ public class DefaultFlowServiceLocator extends BaseFlowServiceLocator {
 	 * @param subflowRegistry The registry for loading subflows
 	 * @param beanFactory The spring bean factory
 	 */
-	public DefaultFlowServiceLocator(FlowRegistry subflowRegistry, BeanFactory beanFactory) {
+	public DefaultFlowServiceLocator(FlowDefinitionRegistry subflowRegistry, BeanFactory beanFactory) {
 		Assert.notNull(subflowRegistry, "The subflow registry is required");
 		Assert.notNull(beanFactory, "The bean factory is required");
 		this.subflowRegistry = subflowRegistry;
@@ -68,7 +68,7 @@ public class DefaultFlowServiceLocator extends BaseFlowServiceLocator {
 	 * subflow definitions.
 	 * @return the flow registry
 	 */
-	public FlowRegistry getSubflowRegistry() {
+	public FlowDefinitionRegistry getSubflowRegistry() {
 		return subflowRegistry;
 	}
 

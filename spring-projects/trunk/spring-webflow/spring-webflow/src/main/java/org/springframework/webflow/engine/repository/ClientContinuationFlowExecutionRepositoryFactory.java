@@ -16,10 +16,10 @@
 package org.springframework.webflow.engine.repository;
 
 import org.springframework.webflow.conversation.ConversationManager;
+import org.springframework.webflow.definition.registry.FlowLocator;
 import org.springframework.webflow.execution.repository.continuation.ClientContinuationFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.continuation.FlowExecutionContinuationFactory;
 import org.springframework.webflow.execution.repository.support.SingletonFlowExecutionRepositoryFactory;
-import org.springframework.webflow.registry.FlowLocator;
 
 /**
  * A convenient implementation that encapsulates the assembly of a "client" flow
@@ -58,7 +58,7 @@ public class ClientContinuationFlowExecutionRepositoryFactory extends Delegating
 	 * @param conversationService the conversation service, may not be null.
 	 */
 	public void setConversationService(ConversationManager conversationService) {
-		getRepository().setConversationService(conversationService);
+		getRepository().setConversationManager(conversationService);
 	}
 
 	/**

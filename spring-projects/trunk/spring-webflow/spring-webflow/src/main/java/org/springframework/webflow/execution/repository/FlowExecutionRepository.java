@@ -34,21 +34,6 @@ import org.springframework.webflow.execution.FlowExecution;
 public interface FlowExecutionRepository {
 
 	/**
-	 * Create a new flow execution persistable by this repository.
-	 * <p>
-	 * The returned flow execution captures the state of a new flow instance
-	 * before it has been started. The execution is eligible for persistence by
-	 * this repository if it still active after startup request processing.
-	 * @param flowId the flow definition identifier defining the blueprint for a
-	 * conversation
-	 * @return the flow execution representing the state of a launched flow that
-	 * has not yet been started
-	 * @throws FlowExecutionRepositoryException a problem occured creating the
-	 * flow execution
-	 */
-	public FlowExecution createFlowExecution(String flowId) throws FlowExecutionRepositoryException;
-
-	/**
 	 * Generate a unique flow execution key to be used as the persistent
 	 * identifier of the flow execution. This method should be called after a
 	 * new flow execution is started and remains active; thus needing to be

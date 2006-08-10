@@ -23,10 +23,12 @@ import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.FlowException;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.support.LocalAttributeMap;
-import org.springframework.webflow.engine.repository.DefaultFlowExecutionRepositoryFactory;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.registry.FlowLocator;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.ViewSelection;
+import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
@@ -82,17 +84,21 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryF
  */
 public class FlowExecutorImpl implements FlowExecutor {
 
-	/**
-	 * Logger, usable by subclasses.
-	 */
-	protected final Log logger = LogFactory.getLog(getClass());
+	private static final Log logger = LogFactory.getLog(FlowExecutorImpl.class);
 
 	/**
-	 * The flow execution repository factory, for obtaining repository instances
-	 * to create, save, and restore flow executions.
-	 * <p>
-	 * The default value is the {@link DefaultFlowExecutionRepositoryFactory}
-	 * repository factory that creates repositories within the user session map.
+	 * A locator to access flow definitions registered in a central registry.
+	 */
+	private FlowLocator flowLocator;
+
+	/**
+	 * An abstract factory for creating a new flow execution for a definition.
+	 */
+	private FlowExecutionFactory flowExecutionFactory;
+
+	/**
+	 * An abstract factory to obtain repositories to save, update, and load
+	 * existing flow executions to/from a persistent store.
 	 */
 	private FlowExecutionRepositoryFactory repositoryFactory;
 
@@ -117,17 +123,15 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * this executor.
 	 * @param repositoryFactory the repository factory
 	 */
-	public FlowExecutorImpl(FlowExecutionRepositoryFactory repositoryFactory) {
+	public FlowExecutorImpl(FlowLocator flowLocator, FlowExecutionFactory flowExecutionFactory,
+			FlowExecutionRepositoryFactory repositoryFactory) {
+		Assert.notNull(flowLocator, "The flow locator for loading flow definitions is required");
+		Assert.notNull(flowExecutionFactory, "The execution factory for creating new flow executions is required");
 		Assert.notNull(repositoryFactory,
-				"The repository factory for creating, saving, and restoring flow executions is required");
+				"The repository factory for saving and restoring flow executions is required");
+		this.flowLocator = flowLocator;
+		this.flowExecutionFactory = flowExecutionFactory;
 		this.repositoryFactory = repositoryFactory;
-	}
-
-	/**
-	 * Returns the configured flow execution repository factory.
-	 */
-	public FlowExecutionRepositoryFactory getRepositoryFactory() {
-		return repositoryFactory;
 	}
 
 	/**
@@ -143,18 +147,10 @@ public class FlowExecutorImpl implements FlowExecutor {
 		this.inputMapper = inputMapper;
 	}
 
-	/**
-	 * Returns the service responsible for mapping attributes of an
-	 * {@link ExternalContext} to a new {@link FlowExecution} during the
-	 * {@link #launch(String, ExternalContext) launch flow} operation.
-	 */
-	public AttributeMapper getInputMapper() {
-		return inputMapper;
-	}
-
 	public ResponseInstruction launch(String flowId, ExternalContext context) throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
-		FlowExecution flowExecution = repository.createFlowExecution(flowId);
+		FlowDefinition flowDefinition = flowLocator.getFlow(flowId);
+		FlowExecution flowExecution = flowExecutionFactory.createFlowExecution(flowDefinition);
 		ViewSelection selectedView = flowExecution.start(createInput(context), context);
 		if (flowExecution.isActive()) {
 			// execution still active => store it in the repository

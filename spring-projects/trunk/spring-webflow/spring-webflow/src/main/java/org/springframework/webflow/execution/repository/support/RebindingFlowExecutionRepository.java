@@ -44,10 +44,6 @@ class RebindingFlowExecutionRepository implements FlowExecutionRepository {
 		this.repositoryMap = repositoryMap;
 	}
 
-	public FlowExecution createFlowExecution(String flowId) throws FlowExecutionRepositoryException {
-		return targetRepository.createFlowExecution(flowId);
-	}
-
 	public FlowExecutionKey generateKey(FlowExecution flowExecution) throws FlowExecutionRepositoryException {
 		return targetRepository.generateKey(flowExecution);
 	}

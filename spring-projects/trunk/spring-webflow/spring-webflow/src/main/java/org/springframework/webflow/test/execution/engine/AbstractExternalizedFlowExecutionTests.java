@@ -16,12 +16,16 @@
 package org.springframework.webflow.test.execution.engine;
 
 import org.springframework.core.io.Resource;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.definition.registry.ExternalizedFlowDefinition;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.builder.FlowArtifactLookupException;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
-import org.springframework.webflow.registry.ExternalizedFlowDefinition;
+import org.springframework.webflow.engine.impl.FlowExecutionImpl;
+import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionListener;
+import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.test.execution.AbstractFlowExecutionTests;
 
 /**
@@ -32,45 +36,62 @@ import org.springframework.webflow.test.execution.AbstractFlowExecutionTests;
  */
 public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlowExecutionTests {
 
-	/**
-	 * The cached flow definition.
-	 */
-	private static Flow cachedFlowDefinition;
+	protected final FlowExecutionFactory createFlowExecutionFactory() {
+		return new FlowExecutionFactoryImpl();
+	}
 
-	/**
-	 * The flag indicating if the the flow definition built from an externalized
-	 * resource as part of this test should be cached.
-	 */
-	private boolean cacheFlowDefinition;
-
-	/**
-	 * Returns if flow definition caching is turned on.
-	 */
-	public boolean isCacheFlowDefinition() {
-		return cacheFlowDefinition;
+	protected final String getFlowId() {
+		return getFlowDefinition().getId();
 	}
 
 	/**
-	 * Sets the flag indicating if the the flow definition built from an
-	 * externalized resource as part of this test should be cached.
+	 * A simple flow execution factory that delegates to subclass template
+	 * methods to obtain Flow definition information to create FlowExecutions
+	 * with optional execution listeners attached.
+	 * @author Keith Donald
 	 */
-	public void setCacheFlowDefinition(boolean cacheFlowDefinition) {
-		this.cacheFlowDefinition = cacheFlowDefinition;
-	}
+	protected class FlowExecutionFactoryImpl implements FlowExecutionFactory {
 
-	protected Flow getFlow() throws FlowArtifactLookupException {
-		if (isCacheFlowDefinition() && cachedFlowDefinition != null) {
-			return cachedFlowDefinition;
+		/**
+		 * The listeners to attach.
+		 */
+		private FlowExecutionListener[] listeners;
+
+		/**
+		 * Creates a new flow execution factory.
+		 */
+		public FlowExecutionFactoryImpl() {
 		}
-		FlowServiceLocator flowServiceLocator = createFlowServiceLocator();
-		ExternalizedFlowDefinition flowDefinition = getFlowDefinition();
-		FlowBuilder builder = createFlowBuilder(flowDefinition.getLocation(), flowServiceLocator);
-		new FlowAssembler(flowDefinition.getId(), flowDefinition.getAttributes(), builder).assembleFlow();
-		Flow flow = builder.getFlow();
-		if (isCacheFlowDefinition()) {
-			cachedFlowDefinition = flow;
+
+		/**
+		 * Creates a new flow execution factory that will attach the listener to
+		 * newly created flow executions.
+		 * @param listener the execution listener
+		 */
+		public FlowExecutionFactoryImpl(FlowExecutionListener listener) {
+			this(new FlowExecutionListener[] { listener });
 		}
-		return flow;
+
+		/**
+		 * Creates a new flow execution factory that will attach the listener
+		 * list to newly created flow executions.
+		 * @param listeners the execution listener list
+		 */
+		public FlowExecutionFactoryImpl(FlowExecutionListener[] listeners) {
+			this.listeners = listeners;
+		}
+
+		public FlowExecution createFlowExecution(String flowId) {
+			ExternalizedFlowDefinition definition = getFlowDefinition();
+			FlowServiceLocator serviceLocator = createFlowServiceLocator();
+			FlowBuilder builder = createFlowBuilder(definition.getLocation(), serviceLocator);
+			Flow flow = new FlowAssembler(definition.getId(), definition.getAttributes(), builder).assembleFlow();
+			return new FlowExecutionImpl(flow, listeners);
+		}
+
+		public FlowExecution restoreState(FlowExecution flowExecution, MutableAttributeMap conversationScope) {
+			return flowExecution;
+		}
 	}
 
 	/**
@@ -84,7 +105,18 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * @return the flow artifact factory
 	 */
 	protected FlowServiceLocator createFlowServiceLocator() {
-		return new MockFlowServiceLocator();
+		MockFlowServiceLocator serviceLocator = new MockFlowServiceLocator();
+		registerMockServices(serviceLocator);
+		return serviceLocator;
+	}
+
+	/**
+	 * Template method called by {@link #createFlowServiceLocator()} to ease the
+	 * registration of mock implementations of services needed to test the flow
+	 * execution. Subclasses may override.
+	 * @param serviceLocator the mock service locator
+	 */
+	protected void registerMockServices(MockFlowServiceLocator serviceLocator) {
 	}
 
 	/**

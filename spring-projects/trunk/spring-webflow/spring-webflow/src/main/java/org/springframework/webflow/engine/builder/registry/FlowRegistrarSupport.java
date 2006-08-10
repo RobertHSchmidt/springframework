@@ -20,13 +20,13 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinitionHolder;
+import org.springframework.webflow.definition.registry.ExternalizedFlowDefinition;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.engine.builder.RefreshableFlowDefinitionHolder;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
-import org.springframework.webflow.registry.ExternalizedFlowDefinition;
-import org.springframework.webflow.registry.FlowRegistry;
 
 /**
  * An abstract support class that provides some assistance implementing Flow
@@ -49,7 +49,7 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	 * @param flowBuilder the flow builder to use to construct the flow once
 	 * registered
 	 */
-	protected void registerFlow(String flowId, FlowRegistry registry, FlowBuilder flowBuilder) {
+	protected void registerFlow(String flowId, FlowDefinitionRegistry registry, FlowBuilder flowBuilder) {
 		registerFlow(flowId, registry, flowBuilder, null);
 	}
 
@@ -62,7 +62,7 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	 * registered
 	 * @param attributes assigned flow construction attributes
 	 */
-	protected void registerFlow(String flowId, FlowRegistry registry, FlowBuilder flowBuilder,
+	protected void registerFlow(String flowId, FlowDefinitionRegistry registry, FlowBuilder flowBuilder,
 			AttributeMap attributes) {
 		registry.registerFlow(createFlowHolder(new FlowAssembler(flowId, attributes, flowBuilder)));
 	}
@@ -76,7 +76,7 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	 * @param flowBuilder the builder that will be used to build the flow stored
 	 * in the registry
 	 */
-	protected void registerFlow(ExternalizedFlowDefinition flowDefinition, FlowRegistry registry,
+	protected void registerFlow(ExternalizedFlowDefinition flowDefinition, FlowDefinitionRegistry registry,
 			FlowBuilder flowBuilder) {
 		registerFlow(flowDefinition.getId(), registry, flowBuilder, flowDefinition.getAttributes());
 	}
@@ -90,7 +90,7 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	 * to wire in externally managed flow services needed by a Flow during the
 	 * build process
 	 */
-	protected void registerXmlFlow(Resource location, FlowRegistry registry, FlowServiceLocator flowServiceLocator) {
+	protected void registerXmlFlow(Resource location, FlowDefinitionRegistry registry, FlowServiceLocator flowServiceLocator) {
 		registerXmlFlow(new ExternalizedFlowDefinition(location), registry, flowServiceLocator);
 	}
 
@@ -104,7 +104,7 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	 * to wire in externally managed flow services needed by a Flow during the
 	 * build process
 	 */
-	protected void registerXmlFlow(ExternalizedFlowDefinition flowDefinition, FlowRegistry registry,
+	protected void registerXmlFlow(ExternalizedFlowDefinition flowDefinition, FlowDefinitionRegistry registry,
 			FlowServiceLocator flowServiceLocator) {
 		registerFlow(flowDefinition, registry, new XmlFlowBuilder(flowDefinition.getLocation(), flowServiceLocator));
 	}
@@ -119,6 +119,6 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 		return new RefreshableFlowDefinitionHolder(assembler);
 	}
 
-	public abstract void registerFlows(FlowRegistry registry, FlowServiceLocator flowServiceLocator);
+	public abstract void registerFlows(FlowDefinitionRegistry registry, FlowServiceLocator flowServiceLocator);
 
 }

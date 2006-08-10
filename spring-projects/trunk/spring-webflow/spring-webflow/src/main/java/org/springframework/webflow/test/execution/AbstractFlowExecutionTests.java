@@ -25,8 +25,10 @@ import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.core.collection.support.LocalAttributeMap;
+import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionContext;
@@ -85,16 +87,26 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	private FlowExecutionFactory flowExecutionFactory;
 
 	/**
+	 * The expression parser for parsing evaluatable model attribute
+	 * expressions.
+	 */
+	private ExpressionParser expressionParser = new DefaultExpressionParserFactory().getExpressionParser();
+
+	/**
 	 * The flow execution running the flow when the test is active (runtime
 	 * object).
 	 */
 	private FlowExecution flowExecution;
 
 	/**
-	 * The expression parser for parsing evaluatable model attribute
-	 * expressions.
+	 * Sets the factory that will create the flow execution to test. Subclasses
+	 * may call this before starting a flow execution to customize the flow
+	 * execution creation process.
+	 * @param flowExecutionFactory the flow execution factory
 	 */
-	private ExpressionParser expressionParser = new DefaultExpressionParserFactory().getExpressionParser();
+	protected void setFlowExecutionFactory(FlowExecutionFactory flowExecutionFactory) {
+		this.flowExecutionFactory = flowExecutionFactory;
+	}
 
 	/**
 	 * Start the flow execution to be tested.
@@ -129,7 +141,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
 	 */
-	protected ViewSelection startFlow(LocalAttributeMap input) throws FlowExecutionException {
+	protected ViewSelection startFlow(MutableAttributeMap input) throws FlowExecutionException {
 		return startFlow(input, new MockExternalContext());
 	}
 
@@ -154,27 +166,13 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @throws FlowExecutionException if an exception was thrown within a state
 	 * of the resumed flow execution during event processing
 	 */
-	protected ViewSelection startFlow(LocalAttributeMap input, ExternalContext context) throws FlowExecutionException {
-		flowExecution = createFlowExecution();
+	protected ViewSelection startFlow(MutableAttributeMap input, ExternalContext context) throws FlowExecutionException {
+		if (flowExecutionFactory != null) {
+			flowExecutionFactory = createFlowExecutionFactory();
+		}
+		flowExecution = flowExecutionFactory.createFlowExecution(getFlowDefinition());
 		return flowExecution.start(input, context);
 	}
-
-	/**
-	 * Create the flow execution tested by this test. Subclasses may override to
-	 * customize the execution implementation, for example, to attach additional
-	 * listeners.
-	 * @return the flow execution for this test
-	 */
-	protected FlowExecution createFlowExecution() {
-		return flowExecutionFactory.createFlowExecution(getFlowId());
-	}
-
-	/**
-	 * Retrieve the identifier of the flow definition whose execution is to be
-	 * tested by this test.
-	 * @return the definition of the flow whose execution will be tested
-	 */
-	protected abstract String getFlowId();
 
 	/**
 	 * Signal an occurence of an event in the current state of the flow
@@ -518,7 +516,19 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param model the model map
 	 * @return the attribute expression value
 	 */
-	protected Object evaluateModelAttributeExpression(String attributeName, Map model) {
+	private Object evaluateModelAttributeExpression(String attributeName, Map model) {
 		return expressionParser.parseExpression(attributeName).evaluateAgainst(model, null);
 	}
+
+	/**
+	 * Abstract factory method to create the flow execution factory.
+	 * @return the flow execution factory
+	 */
+	protected abstract FlowExecutionFactory createFlowExecutionFactory();
+
+	/**
+	 * Returns the id of the flow definition to test.
+	 * @return the flow id
+	 */
+	protected abstract FlowDefinition getFlowDefinition();
 }

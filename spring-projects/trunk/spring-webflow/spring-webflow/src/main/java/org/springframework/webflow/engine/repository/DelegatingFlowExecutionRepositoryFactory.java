@@ -16,10 +16,10 @@
 package org.springframework.webflow.engine.repository;
 
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.definition.registry.FlowLocator;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
-import org.springframework.webflow.registry.FlowLocator;
 
 /**
  * A base for decorators that encapsulate the construction and configuration of

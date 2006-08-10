@@ -22,10 +22,10 @@ import java.util.Set;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.webflow.definition.registry.ExternalizedFlowDefinition;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
-import org.springframework.webflow.registry.ExternalizedFlowDefinition;
-import org.springframework.webflow.registry.FlowRegistry;
 
 /**
  * A flow registrar that populates a flow registry from flow definitions defined
@@ -46,11 +46,11 @@ import org.springframework.webflow.registry.FlowRegistry;
  * <p>
  * For full control over the assignment of flow identifiers and flow properties,
  * configure formal
- * {@link org.springframework.webflow.registry.ExternalizedFlowDefinition}
+ * {@link org.springframework.webflow.definition.registry.ExternalizedFlowDefinition}
  * instances using the <code>flowDefinitions</code> property.
  * 
- * @see org.springframework.webflow.registry.ExternalizedFlowDefinition
- * @see org.springframework.webflow.registry.FlowRegistry
+ * @see org.springframework.webflow.definition.registry.ExternalizedFlowDefinition
+ * @see org.springframework.webflow.definition.registry.FlowDefinitionRegistry
  * @see org.springframework.webflow.engine.builder.FlowServiceLocator
  * @see org.springframework.webflow.engine.builder.FlowBuilder
  * 
@@ -148,7 +148,7 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 		return this.flowDefinitions.addAll(Arrays.asList(flowDefinitions));
 	}
 
-	public void registerFlows(FlowRegistry registry, FlowServiceLocator flowServiceLocator) {
+	public void registerFlows(FlowDefinitionRegistry registry, FlowServiceLocator flowServiceLocator) {
 		processFlowLocations(registry, flowServiceLocator);
 		processFlowDefinitions(registry, flowServiceLocator);
 	}
@@ -158,7 +158,7 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 * @param registry the registry
 	 * @param flowServiceLocator the flow artifactFactory
 	 */
-	private void processFlowLocations(FlowRegistry registry, FlowServiceLocator flowServiceLocator) {
+	private void processFlowLocations(FlowDefinitionRegistry registry, FlowServiceLocator flowServiceLocator) {
 		Iterator it = flowLocations.iterator();
 		while (it.hasNext()) {
 			Resource location = (Resource)it.next();
@@ -175,7 +175,7 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 * @param registry the registry
 	 * @param flowServiceLocator the flow artifactFactory
 	 */
-	private void processFlowDefinitions(FlowRegistry registry, FlowServiceLocator flowServiceLocator) {
+	private void processFlowDefinitions(FlowDefinitionRegistry registry, FlowServiceLocator flowServiceLocator) {
 		Iterator it = flowDefinitions.iterator();
 		while (it.hasNext()) {
 			ExternalizedFlowDefinition definition = (ExternalizedFlowDefinition)it.next();

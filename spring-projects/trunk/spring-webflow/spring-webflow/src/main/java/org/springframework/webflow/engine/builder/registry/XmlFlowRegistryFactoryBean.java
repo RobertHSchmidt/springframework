@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.registry.ExternalizedFlowDefinition;
-import org.springframework.webflow.registry.FlowRegistry;
+import org.springframework.webflow.definition.registry.ExternalizedFlowDefinition;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.xml.sax.EntityResolver;
 
 /**
@@ -172,7 +172,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 		getFlowRegistrar().setEntityResolver(entityResolver);
 	}
 
-	protected void doPopulate(FlowRegistry registry) {
+	protected void doPopulate(FlowDefinitionRegistry registry) {
 		addFlowDefinitionsFromPropertiesIfNecessary();
 		getFlowRegistrar().registerFlows(registry, getFlowServiceLocator());
 	}

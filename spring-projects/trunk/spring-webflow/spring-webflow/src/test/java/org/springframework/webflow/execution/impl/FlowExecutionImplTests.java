@@ -28,6 +28,7 @@ import junit.framework.TestCase;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.builder.TestFlowArtifactFactory;
 import org.springframework.webflow.builder.XmlFlowBuilderTests;
+import org.springframework.webflow.definition.registry.FlowLocator;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowArtifactLookupException;
 import org.springframework.webflow.engine.builder.FlowAssembler;
@@ -35,7 +36,6 @@ import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
 import org.springframework.webflow.engine.machine.FlowExecutionImpl;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.factory.support.FlowExecutionListenerLoader;
-import org.springframework.webflow.registry.FlowLocator;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockParameterMap;
 
