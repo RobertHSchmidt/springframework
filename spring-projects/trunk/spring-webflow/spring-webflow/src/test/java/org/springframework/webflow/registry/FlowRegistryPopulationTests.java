@@ -91,8 +91,8 @@ public class FlowRegistryPopulationTests extends TestCase {
 		reader.loadBeanDefinitions(new ClassPathResource("applicationContext.xml", getClass()));
 		FlowDefinitionRegistry registry = (FlowDefinitionRegistry)ac.getBean("flowRegistry3");
 		assertEquals("Wrong registry definition count", 2, registry.getFlowCount());
-		registry.getFlow("flow1");
-		registry.getFlow("flow2");
+		registry.getFlowDefinition("flow1");
+		registry.getFlowDefinition("flow2");
 	}
 
 	public void testCustomFlowRegistryServicesWithParentRegistry() {
@@ -101,10 +101,10 @@ public class FlowRegistryPopulationTests extends TestCase {
 		reader.loadBeanDefinitions(new ClassPathResource("applicationContext.xml", getClass()));
 		FlowDefinitionRegistry registry = (FlowDefinitionRegistry)ac.getBean("flowRegistry4");
 		assertEquals("Wrong registry definition count", 7, registry.getFlowCount());
-		registry.getFlow("flow1");
-		registry.getFlow("flow2");
-		registry.getFlow("flow5");
-		registry.getFlow("flow6");
+		registry.getFlowDefinition("flow1");
+		registry.getFlowDefinition("flow2");
+		registry.getFlowDefinition("flow5");
+		registry.getFlowDefinition("flow6");
 	}
 	
 	public static class MyFlowRegistrar extends FlowRegistrarSupport {
