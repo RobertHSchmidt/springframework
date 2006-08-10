@@ -4,6 +4,11 @@ import java.util.Collection;
 
 import org.springframework.binding.util.MapAdaptable;
 
+/**
+ * An immutable interface for accessing attributes in a backing map with string keys.
+ * 
+ * @author Keith Donald
+ */
 public interface AttributeMap extends MapAdaptable {
 
 	/**
@@ -314,7 +319,13 @@ public interface AttributeMap extends MapAdaptable {
 	 * present but is not a boolean
 	 */
 	public Boolean getRequiredBoolean(String attributeName) throws IllegalArgumentException;
-	
+
+	/**
+	 * Returns a new attribute map containing the union of this map with the
+	 * provided map.
+	 * @param attributes the map to combine with this map
+	 * @return a new, combined map
+	 */
 	public AttributeMap union(AttributeMap attributes);
 
 }
