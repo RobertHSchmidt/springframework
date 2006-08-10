@@ -3,6 +3,12 @@ package org.springframework.webflow.core.collection;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.util.MapAdaptable;
 
+/**
+ * An interface for accessing parameters in a backing map. Parameters are
+ * immutable and have string keys and string values.
+ * 
+ * @author Keith Donald
+ */
 public interface ParameterMap extends MapAdaptable {
 
 	/**

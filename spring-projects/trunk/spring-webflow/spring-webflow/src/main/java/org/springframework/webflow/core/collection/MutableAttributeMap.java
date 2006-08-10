@@ -1,5 +1,11 @@
 package org.springframework.webflow.core.collection;
 
+/**
+ * An interface for accessing and modifying attributes in a backing map with
+ * string keys.
+ * 
+ * @author Keith Donald
+ */
 public interface MutableAttributeMap extends AttributeMap {
 
 	/**
