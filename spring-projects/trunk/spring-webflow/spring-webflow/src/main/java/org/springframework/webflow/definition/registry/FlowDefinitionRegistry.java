@@ -32,7 +32,7 @@ import org.springframework.webflow.definition.FlowDefinitionHolder;
  * 
  * @author Keith Donald
  */
-public interface FlowDefinitionRegistry extends FlowDefinitionRegistryMBean, FlowDefinitionLocator {
+public interface FlowDefinitionRegistry extends FlowDefinitionLocator, FlowDefinitionRegistryMBean {
 
 	/**
 	 * Queries this registry to determine if a specific flow is contained within

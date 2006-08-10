@@ -35,8 +35,6 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
-import com.sun.corba.se.spi.protocol.LocalClientRequestDispatcher;
-
 /**
  * A convenient base for flow execution repository implementations that delegate
  * to a conversation service for managing conversations that govern the
