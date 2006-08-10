@@ -15,8 +15,6 @@
  */
 package org.springframework.webflow.executor;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
@@ -84,8 +82,6 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryF
  */
 public class FlowExecutorImpl implements FlowExecutor {
 
-	private static final Log logger = LogFactory.getLog(FlowExecutorImpl.class);
-
 	/**
 	 * A locator to access flow definitions registered in a central registry.
 	 */
@@ -125,7 +121,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 */
 	public FlowExecutorImpl(FlowDefinitionLocator flowLocator, FlowExecutionFactory flowExecutionFactory,
 			FlowExecutionRepositoryFactory repositoryFactory) {
-		Assert.notNull(flowLocator, "The flow locator for loading flow definitions is required");
+		Assert.notNull(flowLocator, "The locator for accessing flow definitions is required");
 		Assert.notNull(flowExecutionFactory, "The execution factory for creating new flow executions is required");
 		Assert.notNull(repositoryFactory,
 				"The repository factory for saving and restoring flow executions is required");

@@ -31,7 +31,6 @@ import org.springframework.webflow.conversation.NoSuchConversationException;
 import org.springframework.webflow.conversation.impl.SimpleConversationId;
 import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException;
 import org.springframework.webflow.execution.repository.support.AbstractConversationFlowExecutionRepository;
