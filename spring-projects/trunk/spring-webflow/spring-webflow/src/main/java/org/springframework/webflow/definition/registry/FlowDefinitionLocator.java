@@ -36,5 +36,5 @@ public interface FlowDefinitionLocator {
 	 * @throws FlowLocatorException when a problem occured accessing the flow
 	 * definition with the provided identifier
 	 */
-	public FlowDefinition getFlowDefinition(String id) throws NoSuchFlowDefinitionException;
+	public FlowDefinition getFlow(String id) throws NoSuchFlowDefinitionException;
 }

@@ -18,16 +18,16 @@ public class RefreshableFlowHolderTests extends TestCase {
 		XmlFlowBuilder flowBuilder = new XmlFlowBuilder(location);
 		FlowAssembler assembler = new FlowAssembler("flow", flowBuilder);
 		RefreshableFlowDefinitionHolder holder = new RefreshableFlowDefinitionHolder(assembler);
-		assertEquals("flow", holder.getFlowId());
+		assertEquals("flow", holder.getFlowDefinitionId());
 		assertSame(flowBuilder, holder.getFlowBuilder());
 		assertEquals(0, holder.getLastModified());
 		assertTrue(!holder.isAssembled());
-		holder.getFlow();
+		holder.getFlowDefinition();
 		assertTrue(holder.isAssembled());
 		long lastModified = holder.getLastModified();
 		assertTrue(lastModified != -1);
 		assertTrue(lastModified > 0);
-		holder.getFlow();
+		holder.getFlowDefinition();
 		assertEquals(lastModified, holder.getLastModified());
 	}
 
@@ -37,10 +37,10 @@ public class RefreshableFlowHolderTests extends TestCase {
 		XmlFlowBuilder flowBuilder = new XmlFlowBuilder(location);
 		FlowAssembler assembler = new FlowAssembler("flow", flowBuilder);
 		RefreshableFlowDefinitionHolder holder = new RefreshableFlowDefinitionHolder(assembler);
-		holder.getFlow();
+		holder.getFlowDefinition();
 		assertTrue(holder.isAssembled());
 		long lastModified = holder.getLastModified();
-		holder.getFlow();
+		holder.getFlowDefinition();
 		assertEquals(lastModified, holder.getLastModified());
 	}
 }

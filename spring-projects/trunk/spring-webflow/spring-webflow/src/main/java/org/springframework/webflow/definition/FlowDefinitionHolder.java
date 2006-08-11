@@ -28,13 +28,13 @@ public interface FlowDefinitionHolder {
 	 * the Flow without triggering full Flow definition assembly (which may be
 	 * an expensive operation).
 	 */
-	public String getFlowId();
+	public String getFlowDefinitionId();
 
 	/**
 	 * Returns the Flow definition held by this holder. Calling this method the
 	 * first time may trigger Flow assembly.
 	 */
-	public FlowDefinition getFlow() throws FlowDefinitionConstructionException;
+	public FlowDefinition getFlowDefinition() throws FlowDefinitionConstructionException;
 
 	/**
 	 * Refresh the Flow definition held by this holder. Calling this method

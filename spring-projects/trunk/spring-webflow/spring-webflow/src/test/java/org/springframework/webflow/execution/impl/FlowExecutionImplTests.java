@@ -59,7 +59,7 @@ public class FlowExecutionImplTests extends TestCase {
 		assembler.assembleFlow();
 		final Flow flow = builder.getFlow();
 		flowLocator = new FlowDefinitionLocator() {
-			public Flow getFlowDefinition(String flowId) throws FlowArtifactLookupException {
+			public Flow getFlow(String flowId) throws FlowArtifactLookupException {
 				if (flow.getId().equals(flowId)) {
 					return flow;
 				}
@@ -95,10 +95,10 @@ public class FlowExecutionImplTests extends TestCase {
 		if (flowExecution.isActive()) {
 			assertTrue(entriesCollectionsAreEqual(flowExecution.getActiveSession().getScope().getMap().entrySet(),
 					restoredFlowExecution.getActiveSession().getScope().getMap().entrySet()));
-			assertEquals(flowExecution.getActiveSession().getState().getFlowId(), restoredFlowExecution.getActiveSession()
-					.getState().getFlowId());
-			assertEquals(flowExecution.getActiveSession().getDefinition().getFlowId(), restoredFlowExecution.getActiveSession()
-					.getDefinition().getFlowId());
+			assertEquals(flowExecution.getActiveSession().getState().getFlowDefinitionId(), restoredFlowExecution.getActiveSession()
+					.getState().getFlowDefinitionId());
+			assertEquals(flowExecution.getActiveSession().getFlowDefinition().getFlowDefinitionId(), restoredFlowExecution.getActiveSession()
+					.getFlowDefinition().getFlowDefinitionId());
 			assertSame(flowExecution.getFlowDefinition(), restoredFlowExecution.getFlowDefinition());
 		}
 		assertEquals(flowExecution.getListeners().size(), restoredFlowExecution.getListeners().size());

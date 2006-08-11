@@ -39,11 +39,11 @@ public class StaticFlowDefinitionHolder implements FlowDefinitionHolder {
 		this.flow = flow;
 	}
 
-	public FlowDefinition getFlow() {
+	public FlowDefinition getFlowDefinition() {
 		return flow;
 	}
 
-	public String getFlowId() {
+	public String getFlowDefinitionId() {
 		return flow.getId();
 	}
 

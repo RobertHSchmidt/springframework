@@ -65,7 +65,7 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 		this.assembler = assembler;
 	}
 
-	public String getFlowId() {
+	public String getFlowDefinitionId() {
 		return assembler.getFlowId();
 	}
 
@@ -76,7 +76,7 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 		return assembler.getFlowBuilder();
 	}
 
-	public synchronized FlowDefinition getFlow() throws FlowDefinitionConstructionException {
+	public synchronized FlowDefinition getFlowDefinition() throws FlowDefinitionConstructionException {
 		if (assembling) {
 			// must return early assembly result
 			return getFlowBuilder().getFlow();
