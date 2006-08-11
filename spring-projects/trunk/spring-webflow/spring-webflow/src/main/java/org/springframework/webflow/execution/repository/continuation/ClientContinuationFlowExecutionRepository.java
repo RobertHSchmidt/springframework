@@ -15,9 +15,6 @@
  */
 package org.springframework.webflow.execution.repository.continuation;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 import org.apache.commons.codec.binary.Base64;
@@ -140,25 +137,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	 */
 	protected FlowExecutionContinuation decode(String encodedContinuation) {
 		byte[] bytes = Base64.decodeBase64(encodedContinuation.getBytes());
-		try {
-			return deserializeContinuation(bytes);
-		}
-		catch (IOException e) {
-			throw new ContinuationUnmarshalException("This should not happen", e);
-		}
-		catch (ClassNotFoundException e) {
-			throw new ContinuationUnmarshalException("This should not happen", e);
-		}
-	}
-
-	private FlowExecutionContinuation deserializeContinuation(byte[] bytes) throws IOException, ClassNotFoundException {
-		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
-		try {
-			return (FlowExecutionContinuation)ois.readObject();
-		}
-		finally {
-			ois.close();
-		}
+		return continuationFactory.createContinuation(bytes);
 	}
 
 	/**
