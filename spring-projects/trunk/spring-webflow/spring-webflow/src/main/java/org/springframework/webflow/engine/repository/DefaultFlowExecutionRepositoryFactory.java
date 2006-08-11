@@ -136,7 +136,7 @@ public class DefaultFlowExecutionRepositoryFactory extends DelegatingFlowExecuti
 			return repository;
 		}
 
-		public FlowExecutionRepository rehydrateRepository(FlowExecutionRepository repository) {
+		public FlowExecutionRepository restoreState(FlowExecutionRepository repository) {
 			DefaultFlowExecutionRepository defaultRepository = (DefaultFlowExecutionRepository)repository;
 			defaultRepository.setFlowExecutionFactory(getFlowExecutionFactory());
 			defaultRepository.setContinuationIdGenerator(continuationIdGenerator);

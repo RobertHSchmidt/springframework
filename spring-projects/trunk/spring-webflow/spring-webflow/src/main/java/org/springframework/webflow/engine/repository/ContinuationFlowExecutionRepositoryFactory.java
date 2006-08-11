@@ -159,7 +159,7 @@ public class ContinuationFlowExecutionRepositoryFactory extends DelegatingFlowEx
 			return repository;
 		}
 
-		public FlowExecutionRepository rehydrateRepository(FlowExecutionRepository repository) {
+		public FlowExecutionRepository restoreState(FlowExecutionRepository repository) {
 			ContinuationFlowExecutionRepository impl = (ContinuationFlowExecutionRepository)repository;
 			impl.setFlowExecutionFactory(getFlowExecutionFactory());
 			impl.setContinuationFactory(continuationFactory);

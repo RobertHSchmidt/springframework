@@ -54,5 +54,5 @@ public abstract class AbstractFlowExecutionRepositoryCreator implements FlowExec
 
 	public abstract FlowExecutionRepository createRepository();
 
-	public abstract FlowExecutionRepository rehydrateRepository(FlowExecutionRepository repository);
+	public abstract FlowExecutionRepository restoreState(FlowExecutionRepository repository);
 }

@@ -41,5 +41,5 @@ public interface FlowExecutionRepositoryCreator {
 	 * @param repository the potentially deserialized repository
 	 * @return the rehydrated repository
 	 */
-	public FlowExecutionRepository rehydrateRepository(FlowExecutionRepository repository);
+	public FlowExecutionRepository restoreState(FlowExecutionRepository repository);
 }
