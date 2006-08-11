@@ -72,12 +72,7 @@ import org.springframework.webflow.executor.support.RequestPathFlowExecutorArgum
  *          e.g. /app.htm?_flowId=flow1
  *      --&gt;
  *      &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.FlowController&quot;&gt;
- *          &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
- *      &lt;/bean&gt;
- *                                                                                       
- *      &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *      &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *          &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
+ *          &lt;property name=&quot;flowExecutor&quot; ref=&quot;flowExecutor&quot;/&gt;
  *      &lt;/bean&gt;
  * </pre>
  * 
