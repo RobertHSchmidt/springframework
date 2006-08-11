@@ -77,7 +77,7 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 		int i = 0;
 		while (it.hasNext()) {
 			FlowDefinitionHolder holder = (FlowDefinitionHolder)it.next();
-			flows[i] = holder.getFlow();
+			flows[i] = holder.getFlowDefinition();
 			i++;
 		}
 		return flows;
@@ -105,7 +105,7 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 				String key = (String)entry.getKey();
 				FlowDefinitionHolder holder = (FlowDefinitionHolder)entry.getValue();
 				holder.refresh();
-				if (!holder.getFlowId().equals(key)) {
+				if (!holder.getFlowDefinitionId().equals(key)) {
 					needsReindexing.add(new Indexed(key, holder));
 				}
 			}
@@ -127,7 +127,7 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 			FlowDefinitionHolder holder = getFlowDefinitionHolder(flowId);
 			holder.refresh();
-			if (!holder.getFlowId().equals(flowId)) {
+			if (!holder.getFlowDefinitionId().equals(flowId)) {
 				reindex(holder, flowId);
 			}
 
@@ -143,8 +143,8 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 	}
 
 	private void index(FlowDefinitionHolder holder) {
-		Assert.hasText(holder.getFlowId(), "The flow holder to index must return a non-blank flow id");
-		flowDefinitions.put(holder.getFlowId(), holder);
+		Assert.hasText(holder.getFlowDefinitionId(), "The flow holder to index must return a non-blank flow id");
+		flowDefinitions.put(holder.getFlowDefinitionId(), holder);
 	}
 
 	private FlowDefinitionHolder getFlowDefinitionHolder(String id) {
@@ -157,16 +157,16 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 
 	// implementing FlowLocator
 
-	public FlowDefinition getFlowDefinition(String id) throws NoSuchFlowDefinitionException {
+	public FlowDefinition getFlow(String id) throws NoSuchFlowDefinitionException {
 		Assert.hasText(id,
 				"Unable to load a flow definition: no flow id was provided.  Please provide a valid flow identifier.");
 		try {
-			return getFlowDefinitionHolder(id).getFlow();
+			return getFlowDefinitionHolder(id).getFlowDefinition();
 		}
 		catch (NoSuchFlowDefinitionException e) {
 			if (parent != null) {
 				// try parent
-				return parent.getFlowDefinition(id);
+				return parent.getFlow(id);
 			}
 			throw e;
 		}
