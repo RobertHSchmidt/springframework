@@ -143,8 +143,8 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * 
  * <pre>
  *     public Event setupReferenceData(RequestContext context) throws Exception {
- *         Scope requestScope = context.getRequestScope();
- * 	       requestScope.setAttribute(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
+ *         MutableAttributeMap requestScope = context.getRequestScope();
+ * 	       requestScope.put(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
  * 	       return success();
  *     }
  * </pre>

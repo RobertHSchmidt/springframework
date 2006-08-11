@@ -29,10 +29,10 @@ import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
  * <pre>
  * public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
  * 
- * 	   protected ExternalizedFlowDefinition getFlowDefinition() {
+ * 	   protected FlowDefinitionResource getFlowDefinitionResource() {
  * 	       File flowDir = new File(&quot;src/webapp/WEB-INF&quot;);
  * 	       Resource resource = return new FileSystemResource(new File(flowDir, &quot;search-flow.xml&quot;));
- * 		   return new ExternalizedFlowDefinition("searchFlow", resource);
+ * 		   return new FlowDefinitionResource("searchFlow", resource);
  * 	   }
  * 
  *     public void testStartFlow() {
