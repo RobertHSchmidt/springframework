@@ -19,7 +19,7 @@ public class PortletFlowControllerTests extends TestCase {
 	private FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
 
 	public void setUp() {
-		registry.registerFlow(new StaticFlowDefinitionHolder(new SimpleFlow()));
+		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(new SimpleFlow()));
 		controller.setPortletContext(new MockPortletContext());
 		controller.setFlowExecutor(new FlowExecutorImpl(registry));
 	}
