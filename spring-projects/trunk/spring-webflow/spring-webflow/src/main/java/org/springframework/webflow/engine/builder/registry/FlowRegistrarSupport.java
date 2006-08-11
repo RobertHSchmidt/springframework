@@ -20,7 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinitionHolder;
-import org.springframework.webflow.definition.registry.ExternalizedFlowDefinition;
+import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
@@ -76,7 +76,7 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	 * @param flowBuilder the builder that will be used to build the flow stored
 	 * in the registry
 	 */
-	protected void registerFlow(ExternalizedFlowDefinition flowDefinition, FlowDefinitionRegistry registry,
+	protected void registerFlow(FlowDefinitionResource flowDefinition, FlowDefinitionRegistry registry,
 			FlowBuilder flowBuilder) {
 		registerFlow(flowDefinition.getId(), registry, flowBuilder, flowDefinition.getAttributes());
 	}
@@ -91,7 +91,7 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	 * build process
 	 */
 	protected void registerXmlFlow(Resource location, FlowDefinitionRegistry registry, FlowServiceLocator flowServiceLocator) {
-		registerXmlFlow(new ExternalizedFlowDefinition(location), registry, flowServiceLocator);
+		registerXmlFlow(new FlowDefinitionResource(location), registry, flowServiceLocator);
 	}
 
 	/**
@@ -104,7 +104,7 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	 * to wire in externally managed flow services needed by a Flow during the
 	 * build process
 	 */
-	protected void registerXmlFlow(ExternalizedFlowDefinition flowDefinition, FlowDefinitionRegistry registry,
+	protected void registerXmlFlow(FlowDefinitionResource flowDefinition, FlowDefinitionRegistry registry,
 			FlowServiceLocator flowServiceLocator) {
 		registerFlow(flowDefinition, registry, new XmlFlowBuilder(flowDefinition.getLocation(), flowServiceLocator));
 	}

@@ -28,7 +28,7 @@ import org.springframework.webflow.core.collection.support.CollectionUtils;
  * Describes exactly one externalized flow definition resource.
  * @author Keith Donald
  */
-public class ExternalizedFlowDefinition implements Serializable {
+public class FlowDefinitionResource implements Serializable {
 
 	/**
 	 * The identifier to assign to the flow.
@@ -50,7 +50,7 @@ public class ExternalizedFlowDefinition implements Serializable {
 	 * the same name as the externalized resource's filename.
 	 * @param location the flow resource location.
 	 */
-	public ExternalizedFlowDefinition(Resource location) {
+	public FlowDefinitionResource(Resource location) {
 		Assert.notNull(location, "The location of the externalized flow definition is required");
 		init(stripExtension(location.getFilename()), location, null);
 	}
@@ -60,7 +60,7 @@ public class ExternalizedFlowDefinition implements Serializable {
 	 * @param id the flow id to be assigned
 	 * @param location the flow resource location.
 	 */
-	public ExternalizedFlowDefinition(String id, Resource location) {
+	public FlowDefinitionResource(String id, Resource location) {
 		init(id, location, null);
 	}
 
@@ -69,7 +69,7 @@ public class ExternalizedFlowDefinition implements Serializable {
 	 * @param id the flow id to be assigned
 	 * @param location the flow resource location.
 	 */
-	public ExternalizedFlowDefinition(String id, Resource location, AttributeMap attributes) {
+	public FlowDefinitionResource(String id, Resource location, AttributeMap attributes) {
 		init(id, location, attributes);
 	}
 
@@ -95,10 +95,10 @@ public class ExternalizedFlowDefinition implements Serializable {
 	}
 
 	public boolean equals(Object o) {
-		if (!(o instanceof ExternalizedFlowDefinition)) {
+		if (!(o instanceof FlowDefinitionResource)) {
 			return false;
 		}
-		ExternalizedFlowDefinition other = (ExternalizedFlowDefinition)o;
+		FlowDefinitionResource other = (FlowDefinitionResource)o;
 		return id.equals(other.id) && location.equals(other.location);
 	}
 
