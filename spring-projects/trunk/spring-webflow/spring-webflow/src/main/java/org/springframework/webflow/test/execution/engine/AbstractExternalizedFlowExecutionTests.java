@@ -16,6 +16,10 @@
 package org.springframework.webflow.test.execution.engine;
 
 import org.springframework.core.io.Resource;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.registry.FlowDefinitionResource;
+import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.execution.factory.FlowExecutionFactory;
@@ -28,6 +32,47 @@ import org.springframework.webflow.test.execution.AbstractFlowExecutionTests;
  * @author Keith Donald
  */
 public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlowExecutionTests {
+
+	/**
+	 * The cached flow definition.
+	 */
+	private static FlowDefinition cachedFlowDefinition;
+
+	/**
+	 * The flag indicating if the the flow definition built from an externalized
+	 * resource as part of this test should be cached.
+	 */
+	private boolean cacheFlowDefinition;
+
+	/**
+	 * Returns if flow definition caching is turned on.
+	 */
+	public boolean isCacheFlowDefinition() {
+		return cacheFlowDefinition;
+	}
+
+	/**
+	 * Sets the flag indicating if the the flow definition built from an
+	 * externalized resource as part of this test should be cached.
+	 */
+	public void setCacheFlowDefinition(boolean cacheFlowDefinition) {
+		this.cacheFlowDefinition = cacheFlowDefinition;
+	}
+
+	protected final FlowDefinition getFlowDefinition() {
+		if (isCacheFlowDefinition() && cachedFlowDefinition != null) {
+			return cachedFlowDefinition;
+		}
+		FlowServiceLocator flowServiceLocator = createFlowServiceLocator();
+		FlowDefinitionResource resource = getFlowDefinitionResource();
+		FlowBuilder builder = createFlowBuilder(resource.getLocation(), flowServiceLocator);
+		new FlowAssembler(resource.getId(), resource.getAttributes(), builder).assembleFlow();
+		Flow flow = builder.getFlow();
+		if (isCacheFlowDefinition()) {
+			cachedFlowDefinition = flow;
+		}
+		return flow;
+	}
 
 	protected final FlowExecutionFactory createFlowExecutionFactory() {
 		return new MockFlowExecutionFactory();
@@ -59,11 +104,18 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	}
 
 	/**
-	 * Create the builder that will build the flow whose execution will be
-	 * tested.
+	 * Returns the pointer to the resource that houses the definition of the
+	 * flow to be tested. Subclasses must implemented.
+	 * @return the flow definition resource
+	 */
+	protected abstract FlowDefinitionResource getFlowDefinitionResource();
+	
+	/**
+	 * Factory method to create the builder that will build the flow whose execution will be
+	 * tested.  Subclasses must override.
 	 * @param resource the externalized flow definition resource location
-	 * @param flowServiceLocator the flow artifact factory
-	 * @return the flow builder
+	 * @param flowServiceLocator the flow service locator
+	 * @return the flow builder that will build the flow to be tested
 	 */
 	protected abstract FlowBuilder createFlowBuilder(Resource resource, FlowServiceLocator flowServiceLocator);
 
