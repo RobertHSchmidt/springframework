@@ -58,20 +58,20 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 		this.parent = parent;
 	}
 
-	public String[] getFlowIds() {
+	public String[] getFlowDefinitionIds() {
 		return (String[])flowDefinitions.keySet().toArray(new String[flowDefinitions.size()]);
 	}
 
-	public int getFlowCount() {
+	public int getFlowDefinitionCount() {
 		return flowDefinitions.size();
 	}
 
-	public boolean containsFlow(String id) {
+	public boolean containsFlowDefinition(String id) {
 		Assert.hasText(id, "The flow id is required");
 		return flowDefinitions.get(id) != null;
 	}
 
-	public FlowDefinition[] getFlows() {
+	public FlowDefinition[] getFlowDefinitions() {
 		FlowDefinition[] flows = new FlowDefinition[flowDefinitions.size()];
 		Iterator it = flowDefinitions.values().iterator();
 		int i = 0;
@@ -83,7 +83,7 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 		return flows;
 	}
 
-	public void registerFlow(FlowDefinitionHolder flowHolder) {
+	public void registerFlowDefinition(FlowDefinitionHolder flowHolder) {
 		Assert.notNull(flowHolder, "The flow definition holder to register is required");
 		index(flowHolder);
 	}
@@ -150,7 +150,7 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 	private FlowDefinitionHolder getFlowDefinitionHolder(String id) {
 		FlowDefinitionHolder flowHolder = (FlowDefinitionHolder)flowDefinitions.get(id);
 		if (flowHolder == null) {
-			throw new NoSuchFlowDefinitionException(id, getFlowIds());
+			throw new NoSuchFlowDefinitionException(id, getFlowDefinitionIds());
 		}
 		return flowHolder;
 	}

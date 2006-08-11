@@ -64,7 +64,7 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 	 */
 	protected void registerFlow(String flowId, FlowDefinitionRegistry registry, FlowBuilder flowBuilder,
 			AttributeMap attributes) {
-		registry.registerFlow(createFlowHolder(new FlowAssembler(flowId, attributes, flowBuilder)));
+		registry.registerFlowDefinition(createFlowHolder(new FlowAssembler(flowId, attributes, flowBuilder)));
 	}
 
 	/**

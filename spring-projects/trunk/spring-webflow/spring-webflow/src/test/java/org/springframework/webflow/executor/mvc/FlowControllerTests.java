@@ -18,7 +18,7 @@ public class FlowControllerTests extends TestCase {
 	private FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
 
 	public void setUp() {
-		registry.registerFlow(new StaticFlowDefinitionHolder(new SimpleFlow()));
+		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(new SimpleFlow()));
 		controller.setServletContext(new MockServletContext());
 		controller.setFlowExecutor(new FlowExecutorImpl(registry));
 	}

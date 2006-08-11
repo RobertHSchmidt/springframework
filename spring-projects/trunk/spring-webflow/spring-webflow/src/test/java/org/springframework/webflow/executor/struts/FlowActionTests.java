@@ -23,7 +23,7 @@ public class FlowActionTests extends TestCase {
 	private FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
 
 	public void setUp() {
-		registry.registerFlow(new StaticFlowDefinitionHolder(new SimpleFlow()));
+		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(new SimpleFlow()));
 		action = new FlowAction() {
 			protected WebApplicationContext initWebApplicationContext(ActionServlet actionServlet) throws IllegalStateException {
 				StaticWebApplicationContext context = new StaticWebApplicationContext();

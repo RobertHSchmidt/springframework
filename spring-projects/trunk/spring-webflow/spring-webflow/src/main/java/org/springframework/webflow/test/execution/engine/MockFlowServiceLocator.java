@@ -38,7 +38,7 @@ public class MockFlowServiceLocator extends DefaultFlowServiceLocator {
 	 * @param subflow the subflow
 	 */
 	public void registerSubflow(Flow subflow) {
-		getSubflowRegistry().registerFlow(new StaticFlowDefinitionHolder(subflow));
+		getSubflowRegistry().registerFlowDefinition(new StaticFlowDefinitionHolder(subflow));
 	}
 
 	/**

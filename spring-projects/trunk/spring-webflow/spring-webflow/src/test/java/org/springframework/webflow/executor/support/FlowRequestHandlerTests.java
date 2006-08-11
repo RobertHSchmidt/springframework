@@ -25,7 +25,7 @@ public class FlowRequestHandlerTests extends TestCase {
 		ViewState view = new ViewState(flow, "view");
 		view.getTransitionSet().add(new Transition(new DefaultTargetStateResolver("end")));
 		new EndState(flow, "end");
-		registry.registerFlow(new StaticFlowDefinitionHolder(flow));
+		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(flow));
 		FlowExecutorImpl executor = new FlowExecutorImpl(registry);
 		handler = new FlowRequestHandler(executor);
 	}
