@@ -19,16 +19,13 @@ import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.FlowException;
 
 /**
- * The central facade or entry-point into the Spring Web Flow system. This
- * interface defines a coarse-grained system boundary suitable for invocation by
- * most clients.
+ * The central facade and entry-point service interface into the Spring Web Flow
+ * system. This interface defines a coarse-grained system boundary suitable for
+ * invocation by most clients.
  * <p>
  * Implementations of this interface abstract away much of the internal
  * complexity of the web flow execution subsystem, which consists of launching
  * and resuming managed flow executions from repositories.
- * 
- * @see org.springframework.webflow.execution.FlowExecution
- * @see org.springframework.webflow.execution.repository.FlowExecutionRepository
  * 
  * @author Keith Donald
  */
@@ -65,7 +62,8 @@ public interface FlowExecutor {
 	/**
 	 * Returns the current response instruction for the flow execution. This is
 	 * a logical refresh operation that allows the "current response" to be
-	 * re-issued. This operation does not affect the state of the flow execution.
+	 * re-issued. This operation does not affect the state of the flow
+	 * execution.
 	 * @param flowExecutionKey the identifying key of a paused flow execution
 	 * that is waiting to resume on the ocurrence of a user event
 	 * @param context the external context representing the state of a request
