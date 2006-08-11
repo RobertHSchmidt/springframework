@@ -24,7 +24,8 @@ import org.springframework.webflow.execution.factory.support.FlowExecutionListen
 import org.springframework.webflow.execution.factory.support.StaticFlowExecutionListenerLoader;
 
 /**
- * A factory for the default flow execution implementation.
+ * A factory for the {@link FlowExecutionImpl default flow execution}
+ * implementation.
  * 
  * @author Keith Donald
  */
@@ -34,18 +35,37 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 	 * The strategy for loading listeners that should observe executions of a
 	 * flow definition. The default simply loads an empty static listener list.
 	 */
-	private FlowExecutionListenerLoader listenerLoader = new StaticFlowExecutionListenerLoader();
+	private FlowExecutionListenerLoader listenerLoader;
+
+	/**
+	 * Creates a new {@link FlowExecutionImpl} factory that returns new flow
+	 * executions with no listeners attached.
+	 */
+	public FlowExecutionImplFactory() {
+		this(new StaticFlowExecutionListenerLoader());
+	}
+
+	/**
+	 * Creates a new {@link FlowExecutionImpl} factory; the listener loader is
+	 * used to determine the specified listeners to attach to the new flow
+	 * executions.
+	 * @param listenerLoader the flow execution listener loader
+	 */
+	public FlowExecutionImplFactory(FlowExecutionListenerLoader listenerLoader) {
+		setListenerLoader(listenerLoader);
+	}
 
 	/**
 	 * Sets the strategy for loading listeners that should observe executions of
 	 * a flow definition.
 	 */
-	public void setListenerLoader(FlowExecutionListenerLoader listenerLoader) {
+	private void setListenerLoader(FlowExecutionListenerLoader listenerLoader) {
 		Assert.notNull(listenerLoader, "The listener loader is required");
 		this.listenerLoader = listenerLoader;
 	}
 
 	public FlowExecution createFlowExecution(FlowDefinition flowDefinition) {
+		Assert.isInstanceOf(Flow.class, flowDefinition, "Flow definition is of wrong type: ");
 		return new FlowExecutionImpl((Flow)flowDefinition, listenerLoader.getListeners(flowDefinition));
 	}
 }
