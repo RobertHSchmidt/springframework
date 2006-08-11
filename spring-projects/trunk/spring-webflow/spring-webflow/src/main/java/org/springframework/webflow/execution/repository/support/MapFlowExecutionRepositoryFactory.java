@@ -104,7 +104,7 @@ public class MapFlowExecutionRepositoryFactory implements FlowExecutionRepositor
 				repositoryMap.put(attributeName, repository);
 			}
 			else {
-				getRepositoryCreator().rehydrateRepository(repository);
+				getRepositoryCreator().restoreState(repository);
 			}
 			if (repositoryMapLocator.requiresRebindOnChange()) {
 				return new RebindingFlowExecutionRepository(repository, attributeName, repositoryMap);

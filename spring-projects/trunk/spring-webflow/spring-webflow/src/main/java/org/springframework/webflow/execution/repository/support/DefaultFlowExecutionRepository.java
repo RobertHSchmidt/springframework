@@ -16,9 +16,17 @@
 package org.springframework.webflow.execution.repository.support;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
+import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.builder.FlowArtifactLookupException;
+import org.springframework.webflow.engine.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.factory.support.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.PermissionDeniedFlowExecutionAccessException;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
