@@ -23,14 +23,8 @@ import org.springframework.webflow.execution.Event;
  * A convenience support class assisting in the creation of event objects.
  * <p>
  * This class can be used as a simple utility class when you need to create
- * common event objects. The {@link org.springframework.webflow.action.AbstractAction}
- * uses it in this way. Alternatively you could extend it as a base support class
- * when creating custom event factories. The
- * {@link org.springframework.webflow.action.bean.ResultEventFactory} implementations
- * use it like this. 
- * 
- * @see org.springframework.webflow.action.AbstractAction
- * @see org.springframework.webflow.action.bean.ResultEventFactory
+ * common event objects.  Alternatively you could extend it as a base support class
+ * when creating custom event factories.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
