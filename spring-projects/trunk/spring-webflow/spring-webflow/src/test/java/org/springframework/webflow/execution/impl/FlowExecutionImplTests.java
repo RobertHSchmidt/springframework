@@ -59,7 +59,7 @@ public class FlowExecutionImplTests extends TestCase {
 		assembler.assembleFlow();
 		final Flow flow = builder.getFlow();
 		flowLocator = new FlowDefinitionLocator() {
-			public Flow getFlow(String flowId) throws FlowArtifactLookupException {
+			public Flow getFlowDefinition(String flowId) throws FlowArtifactLookupException {
 				if (flow.getId().equals(flowId)) {
 					return flow;
 				}

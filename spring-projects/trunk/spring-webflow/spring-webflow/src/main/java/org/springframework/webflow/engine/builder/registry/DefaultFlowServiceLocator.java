@@ -74,7 +74,7 @@ public class DefaultFlowServiceLocator extends BaseFlowServiceLocator {
 
 	public Flow getSubflow(String id) throws FlowArtifactLookupException {
 		try {
-			return (Flow)subflowRegistry.getFlow(id);
+			return (Flow)subflowRegistry.getFlowDefinition(id);
 		}
 		catch (NoSuchFlowDefinitionException e) {
 			throw new FlowArtifactLookupException(id, Flow.class, "Could not locate subflow definition with id '" + id

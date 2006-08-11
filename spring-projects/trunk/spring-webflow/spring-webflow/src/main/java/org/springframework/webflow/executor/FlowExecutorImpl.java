@@ -73,6 +73,8 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryF
  * </table>
  * </p>
  * 
+ * @see FlowDefinitionLocator
+ * @see FlowExecutionFactory
  * @see FlowExecutionRepositoryFactory
  * @see AttributeMapper
  * 
@@ -85,7 +87,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	/**
 	 * A locator to access flow definitions registered in a central registry.
 	 */
-	private FlowDefinitionLocator flowLocator;
+	private FlowDefinitionLocator flowDefinitionLocator;
 
 	/**
 	 * An abstract factory for creating a new flow execution for a definition.
@@ -93,7 +95,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	private FlowExecutionFactory flowExecutionFactory;
 
 	/**
-	 * An abstract factory to obtain repositories to save, update, and load
+	 * An abstract factory to obtain repositories that save, update, and load
 	 * existing flow executions to/from a persistent store.
 	 */
 	private FlowExecutionRepositoryFactory repositoryFactory;
@@ -114,18 +116,17 @@ public class FlowExecutorImpl implements FlowExecutor {
 	private AttributeMapper inputMapper = new RequestParameterInputMapper();
 
 	/**
-	 * Create a new flow executor that uses the repository factory to access a
-	 * repository to create, save, and restore managed flow executions driven by
-	 * this executor.
-	 * @param repositoryFactory the repository factory
+	 * Create a new flow executor.
+	 * @param flowDefinitionLocator the locator for accessing flow definitions to execute
+	 * @param flowExecutionFactory the factory for creating executions of flow definitions
+	 * @param repositoryFactory the factory for creating repositories to persist paused flow executions
 	 */
-	public FlowExecutorImpl(FlowDefinitionLocator flowLocator, FlowExecutionFactory flowExecutionFactory,
+	public FlowExecutorImpl(FlowDefinitionLocator flowDefinitionLocator, FlowExecutionFactory flowExecutionFactory,
 			FlowExecutionRepositoryFactory repositoryFactory) {
-		Assert.notNull(flowLocator, "The locator for accessing flow definitions is required");
+		Assert.notNull(flowDefinitionLocator, "The locator for accessing flow definitions is required");
 		Assert.notNull(flowExecutionFactory, "The execution factory for creating new flow executions is required");
-		Assert.notNull(repositoryFactory,
-				"The repository factory for saving and restoring flow executions is required");
-		this.flowLocator = flowLocator;
+		Assert.notNull(repositoryFactory, "The repository factory for persisting flow executions is required");
+		this.flowDefinitionLocator = flowDefinitionLocator;
 		this.flowExecutionFactory = flowExecutionFactory;
 		this.repositoryFactory = repositoryFactory;
 	}
@@ -145,7 +146,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 
 	public ResponseInstruction launch(String flowId, ExternalContext context) throws FlowException {
 		FlowExecutionRepository repository = getRepository(context);
-		FlowDefinition flowDefinition = flowLocator.getFlow(flowId);
+		FlowDefinition flowDefinition = flowDefinitionLocator.getFlowDefinition(flowId);
 		FlowExecution flowExecution = flowExecutionFactory.createFlowExecution(flowDefinition);
 		ViewSelection selectedView = flowExecution.start(createInput(context), context);
 		if (flowExecution.isActive()) {
@@ -196,8 +197,6 @@ public class FlowExecutorImpl implements FlowExecutor {
 		try {
 			FlowExecution flowExecution = repository.getFlowExecution(repositoryKey);
 			ViewSelection selectedView = flowExecution.refresh(context);
-			// note that we're not calling redirectOnPauseIfNecessary since this
-			// is already a refresh!
 			return new ResponseInstruction(repositoryKey.toString(), flowExecution, selectedView);
 		}
 		finally {
