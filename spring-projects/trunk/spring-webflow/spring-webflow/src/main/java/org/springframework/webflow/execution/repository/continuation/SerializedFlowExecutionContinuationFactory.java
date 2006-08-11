@@ -15,11 +15,9 @@
  */
 package org.springframework.webflow.execution.repository.continuation;
 
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectOutputStream;
-import java.util.zip.GZIPOutputStream;
+import java.io.ObjectInputStream;
 
 import org.springframework.webflow.execution.FlowExecution;
 
@@ -51,46 +49,24 @@ public class SerializedFlowExecutionContinuationFactory implements FlowExecution
 	}
 
 	public FlowExecutionContinuation createContinuation(FlowExecution flowExecution) throws ContinuationCreationException {
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream(384);
-			ObjectOutputStream oos = new ObjectOutputStream(baos);
-			try {
-				oos.writeObject(flowExecution);
-				oos.flush();
-				byte[] data = baos.toByteArray();
-				if (compress) {
-					data = compress(data);
-				}
-				return new SerializedFlowExecutionContinuation(data, compress);
-			}
-			finally {
-				oos.close();
-			}
-		}
-		catch (NotSerializableException e) {
-			throw new ContinuationCreationException(flowExecution,
-					"Could not serialize flow execution; make sure all objects stored in flow scope are serializable",
-					e);
-		}
-		catch (IOException e) {
-			throw new ContinuationCreationException(flowExecution,
-					"IOException thrown serializing flow execution -- this should not happen!", e);
-		}
+	    return new SerializedFlowExecutionContinuation(flowExecution, compress);      
 	}
 	
-	/**
-	 * Internal helper method to compress given data using GZIP compression.
-	 */
-	private byte[] compress(byte[] dataToCompress) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		GZIPOutputStream gzipos = new GZIPOutputStream(baos);
-		try {
-			gzipos.write(dataToCompress);
-			gzipos.flush();
-		}
-		finally {
-			gzipos.close();
-		}
-		return baos.toByteArray();
-	}
+    public FlowExecutionContinuation createContinuation(byte[] bytes) throws ContinuationUnmarshalException {
+        try {
+            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
+            try {
+                return (FlowExecutionContinuation)ois.readObject();
+            }
+            finally {
+                ois.close();
+            }
+        }
+        catch (IOException e) {
+            throw new ContinuationUnmarshalException("This should not happen", e);
+        }
+        catch (ClassNotFoundException e) {
+            throw new ContinuationUnmarshalException("This should not happen", e);
+        }
+    }    
 }
