@@ -150,7 +150,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 		ViewSelection selectedView = flowExecution.start(createInput(context), context);
 		if (flowExecution.isActive()) {
 			// execution still active => store it in the repository
-			FlowExecutionRepository repository = getRepository(context);
+			FlowExecutionRepository repository = repositoryFactory.getRepository(context);
 			FlowExecutionKey flowExecutionKey = repository.generateKey(flowExecution);
 			repository.putFlowExecution(flowExecutionKey, flowExecution);
 			return new ResponseInstruction(flowExecutionKey.toString(), flowExecution, selectedView);
@@ -163,7 +163,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 
 	public ResponseInstruction signalEvent(String eventId, String flowExecutionKey, ExternalContext context)
 			throws FlowException {
-		FlowExecutionRepository repository = getRepository(context);
+		FlowExecutionRepository repository = repositoryFactory.getRepository(context);
 		FlowExecutionKey repositoryKey = repository.parseFlowExecutionKey(flowExecutionKey);
 		FlowExecutionLock lock = repository.getLock(repositoryKey);
 		// make sure we're the only one manipulating the flow execution
@@ -189,7 +189,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	}
 
 	public ResponseInstruction refresh(String flowExecutionKey, ExternalContext context) throws FlowException {
-		FlowExecutionRepository repository = getRepository(context);
+		FlowExecutionRepository repository = repositoryFactory.getRepository(context);
 		FlowExecutionKey repositoryKey = repository.parseFlowExecutionKey(flowExecutionKey);
 		FlowExecutionLock lock = repository.getLock(repositoryKey);
 		// make sure we're the only one manipulating the flow execution
@@ -205,14 +205,6 @@ public class FlowExecutorImpl implements FlowExecutor {
 	}
 
 	// helper methods
-
-	/**
-	 * Returns the repository retrieved by the configured
-	 * {@link FlowExecutionRepositoryFactory}.
-	 */
-	protected FlowExecutionRepository getRepository(ExternalContext context) {
-		return repositoryFactory.getRepository(context);
-	}
 
 	/**
 	 * Factory method that creates the input attribute map for a newly created
