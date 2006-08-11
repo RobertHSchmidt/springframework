@@ -31,7 +31,7 @@ import org.springframework.webflow.core.collection.support.CollectionUtils;
 public class FlowDefinitionResource implements Serializable {
 
 	/**
-	 * The identifier to assign to the flow.
+	 * The identifier to assign to the flow definition.
 	 */
 	private String id;
 
@@ -41,7 +41,7 @@ public class FlowDefinitionResource implements Serializable {
 	private AttributeMap attributes;
 
 	/**
-	 * The externalized flow resource location.
+	 * The externalized location of the flow definition resource.
 	 */
 	private Resource location;
 
