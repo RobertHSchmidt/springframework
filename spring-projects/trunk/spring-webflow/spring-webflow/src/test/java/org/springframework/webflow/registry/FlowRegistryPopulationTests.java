@@ -10,7 +10,7 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.webflow.builder.SimpleFlowBuilder;
-import org.springframework.webflow.definition.registry.ExternalizedFlowDefinition;
+import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
@@ -59,7 +59,7 @@ public class FlowRegistryPopulationTests extends TestCase {
 		XmlFlowRegistrar registrar = new XmlFlowRegistrar();
 		registrar.addFlowLocation(new FileSystemResource(new File(parent, "flow1.xml")));
 		registrar.addFlowLocation(new FileSystemResource(new File(parent, "flow2.xml")));
-		registrar.addFlowDefinition(new ExternalizedFlowDefinition("flow3", new FileSystemResource(new File(parent,
+		registrar.addFlowDefinition(new FlowDefinitionResource("flow3", new FileSystemResource(new File(parent,
 				"flow2.xml"))));
 		registrar.registerFlows(registry, flowArtifactFactory);
 		assertEquals("Wrong registry definition count", 3, registry.getFlowCount());

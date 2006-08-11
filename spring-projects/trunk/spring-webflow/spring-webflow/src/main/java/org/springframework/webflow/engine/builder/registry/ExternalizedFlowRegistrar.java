@@ -22,7 +22,7 @@ import java.util.Set;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.webflow.definition.registry.ExternalizedFlowDefinition;
+import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
@@ -46,10 +46,10 @@ import org.springframework.webflow.engine.builder.FlowServiceLocator;
  * <p>
  * For full control over the assignment of flow identifiers and flow properties,
  * configure formal
- * {@link org.springframework.webflow.definition.registry.ExternalizedFlowDefinition}
+ * {@link org.springframework.webflow.definition.registry.FlowDefinitionResource}
  * instances using the <code>flowDefinitions</code> property.
  * 
- * @see org.springframework.webflow.definition.registry.ExternalizedFlowDefinition
+ * @see org.springframework.webflow.definition.registry.FlowDefinitionResource
  * @see org.springframework.webflow.definition.registry.FlowDefinitionRegistry
  * @see org.springframework.webflow.engine.builder.FlowServiceLocator
  * @see org.springframework.webflow.engine.builder.FlowBuilder
@@ -65,7 +65,7 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 
 	/**
 	 * A set of formal externalized flow definitions to load.
-	 * @see {@link ExternalizedFlowDefinition}
+	 * @see {@link FlowDefinitionResource}
 	 */
 	private Set flowDefinitions = new HashSet();
 
@@ -90,7 +90,7 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 * the set of properties applied to the externalized flow resource.
 	 * @param flowDefinitions the externalized flow definition specification
 	 */
-	public void setFlowDefinitions(ExternalizedFlowDefinition[] flowDefinitions) {
+	public void setFlowDefinitions(FlowDefinitionResource[] flowDefinitions) {
 		this.flowDefinitions = new HashSet(Arrays.asList(flowDefinitions));
 	}
 
@@ -129,7 +129,7 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 * the set of properties applied to the externalized flow resource.
 	 * @param flowDefinition the definition
 	 */
-	public boolean addFlowDefinition(ExternalizedFlowDefinition flowDefinition) {
+	public boolean addFlowDefinition(FlowDefinitionResource flowDefinition) {
 		return flowDefinitions.add(flowDefinition);
 	}
 
@@ -141,7 +141,7 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 * the set of properties applied to the externalized flow resource.
 	 * @param flowDefinitions the definitions
 	 */
-	public boolean addFlowDefinitions(ExternalizedFlowDefinition[] flowDefinitions) {
+	public boolean addFlowDefinitions(FlowDefinitionResource[] flowDefinitions) {
 		if (flowDefinitions == null) {
 			return false;
 		}
@@ -163,7 +163,7 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 		while (it.hasNext()) {
 			Resource location = (Resource)it.next();
 			if (isFlowDefinition(location)) {
-				ExternalizedFlowDefinition definition = createFlowDefinition(location);
+				FlowDefinitionResource definition = createFlowDefinition(location);
 				FlowBuilder builder = createFlowBuilder(definition.getLocation(), flowServiceLocator);
 				registerFlow(definition, registry, builder);
 			}
@@ -178,7 +178,7 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	private void processFlowDefinitions(FlowDefinitionRegistry registry, FlowServiceLocator flowServiceLocator) {
 		Iterator it = flowDefinitions.iterator();
 		while (it.hasNext()) {
-			ExternalizedFlowDefinition definition = (ExternalizedFlowDefinition)it.next();
+			FlowDefinitionResource definition = (FlowDefinitionResource)it.next();
 			FlowBuilder builder = createFlowBuilder(definition.getLocation(), flowServiceLocator);
 			registerFlow(definition, registry, builder);
 		}
@@ -200,8 +200,8 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 * @param location the location of the resource
 	 * @return the externalized flow definition pointer
 	 */
-	protected ExternalizedFlowDefinition createFlowDefinition(Resource location) {
-		return new ExternalizedFlowDefinition(location);
+	protected FlowDefinitionResource createFlowDefinition(Resource location) {
+		return new FlowDefinitionResource(location);
 	}
 
 	/**
