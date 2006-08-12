@@ -17,6 +17,11 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 
 	private FlowExecutionListenerLoader listenerLoader;
 
+	public FlowExecutionImplStateRestorer(FlowDefinitionLocator flowLocator, FlowExecutionListenerLoader listenerLoader) {
+		this.flowLocator = flowLocator;
+		this.listenerLoader = listenerLoader;
+	}
+
 	public FlowExecution restoreState(FlowExecution flowExecution, MutableAttributeMap conversationScope) {
 		FlowExecutionImpl impl = (FlowExecutionImpl)flowExecution;
 		Flow flow = (Flow)flowLocator.getFlowDefinition(impl.flowId);

@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 
 import org.easymock.MockControl;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.webflow.collection.support.LocalParameterMap;
+import org.springframework.webflow.core.collection.support.LocalParameterMap;
 import org.springframework.webflow.support.UnmodifiableAttributeMap;
 
 public class ParameterMapTests extends TestCase {

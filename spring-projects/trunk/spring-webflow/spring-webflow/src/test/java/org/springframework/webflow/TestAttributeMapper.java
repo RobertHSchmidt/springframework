@@ -1,6 +1,6 @@
 package org.springframework.webflow;
 
-import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.support.UnmodifiableAttributeMap;

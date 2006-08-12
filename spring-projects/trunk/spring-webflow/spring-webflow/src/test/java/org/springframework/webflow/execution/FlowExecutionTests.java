@@ -25,7 +25,8 @@ import org.springframework.webflow.TestAction;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.builder.TestFlowArtifactFactory;
 import org.springframework.webflow.builder.XmlFlowBuilderTests;
-import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.DefaultExpressionParserFactory;
+import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
@@ -44,7 +45,6 @@ import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.execution.support.ApplicationView;
-import org.springframework.webflow.support.DefaultExpressionParserFactory;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**

@@ -23,10 +23,10 @@ import org.springframework.binding.method.Parameter;
 import org.springframework.binding.method.Parameters;
 import org.springframework.webflow.action.bean.LocalBeanInvokingAction;
 import org.springframework.webflow.action.bean.MethodResultSpecification;
-import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.WebFlowOgnlExpressionParser;
+import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.ScopeType;
-import org.springframework.webflow.support.WebFlowOgnlExpressionParser;
 import org.springframework.webflow.test.engine.MockRequestContext;
 
 /**

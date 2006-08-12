@@ -6,7 +6,7 @@ import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.binding.mapping.RequiredMappingException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.ViewState;
