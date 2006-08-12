@@ -18,6 +18,7 @@ package org.springframework.webflow.executor;
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.support.ExternalContextHolder;
 import org.springframework.webflow.core.FlowException;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.support.LocalAttributeMap;
@@ -87,18 +88,18 @@ public class FlowExecutorImpl implements FlowExecutor {
 	/**
 	 * A locator to access flow definitions registered in a central registry.
 	 */
-	private FlowDefinitionLocator flowDefinitionLocator;
+	private FlowDefinitionLocator definitionLocator;
 
 	/**
 	 * An abstract factory for creating a new flow execution for a definition.
 	 */
-	private FlowExecutionFactory flowExecutionFactory;
+	private FlowExecutionFactory executionFactory;
 
 	/**
 	 * An abstract factory to obtain repositories that save, update, and load
 	 * existing flow executions to/from a persistent store.
 	 */
-	private FlowExecutionRepositoryFactory repositoryFactory;
+	private FlowExecutionRepository executionRepository;
 
 	/**
 	 * The service responsible for mapping attributes of an
@@ -117,18 +118,21 @@ public class FlowExecutorImpl implements FlowExecutor {
 
 	/**
 	 * Create a new flow executor.
-	 * @param flowDefinitionLocator the locator for accessing flow definitions to execute
-	 * @param flowExecutionFactory the factory for creating executions of flow definitions
-	 * @param repositoryFactory the factory for creating repositories to persist paused flow executions
+	 * @param definitionLocator the locator for accessing flow definitions to
+	 * execute
+	 * @param excutionFactory the factory for creating executions of flow
+	 * definitions
+	 * @param repositoryFactory the factory for creating repositories to persist
+	 * paused flow executions
 	 */
-	public FlowExecutorImpl(FlowDefinitionLocator flowDefinitionLocator, FlowExecutionFactory flowExecutionFactory,
-			FlowExecutionRepositoryFactory repositoryFactory) {
-		Assert.notNull(flowDefinitionLocator, "The locator for accessing flow definitions is required");
-		Assert.notNull(flowExecutionFactory, "The execution factory for creating new flow executions is required");
-		Assert.notNull(repositoryFactory, "The repository factory for persisting flow executions is required");
-		this.flowDefinitionLocator = flowDefinitionLocator;
-		this.flowExecutionFactory = flowExecutionFactory;
-		this.repositoryFactory = repositoryFactory;
+	public FlowExecutorImpl(FlowDefinitionLocator definitionLocator, FlowExecutionFactory excutionFactory,
+			FlowExecutionRepository executionRepository) {
+		Assert.notNull(definitionLocator, "The locator for accessing flow definitions is required");
+		Assert.notNull(excutionFactory, "The execution factory for creating new flow executions is required");
+		Assert.notNull(executionRepository, "The repository for persisting flow executions is required");
+		this.definitionLocator = definitionLocator;
+		this.executionFactory = excutionFactory;
+		this.executionRepository = executionRepository;
 	}
 
 	/**
@@ -145,62 +149,77 @@ public class FlowExecutorImpl implements FlowExecutor {
 	}
 
 	public ResponseInstruction launch(String flowId, ExternalContext context) throws FlowException {
-		FlowDefinition flowDefinition = flowDefinitionLocator.getFlowDefinition(flowId);
-		FlowExecution flowExecution = flowExecutionFactory.createFlowExecution(flowDefinition);
-		ViewSelection selectedView = flowExecution.start(createInput(context), context);
-		if (flowExecution.isActive()) {
-			// execution still active => store it in the repository
-			FlowExecutionRepository repository = repositoryFactory.getRepository(context);
-			FlowExecutionKey flowExecutionKey = repository.generateKey(flowExecution);
-			repository.putFlowExecution(flowExecutionKey, flowExecution);
-			return new ResponseInstruction(flowExecutionKey.toString(), flowExecution, selectedView);
+		ExternalContextHolder.setExternalContext(context);
+		try {
+			FlowDefinition flowDefinition = definitionLocator.getFlowDefinition(flowId);
+			FlowExecution flowExecution = executionFactory.createFlowExecution(flowDefinition);
+			ViewSelection selectedView = flowExecution.start(createInput(context), context);
+			if (flowExecution.isActive()) {
+				// execution still active => store it in the repository
+				FlowExecutionKey key = executionRepository.generateKey(flowExecution);
+				executionRepository.putFlowExecution(key, flowExecution);
+				return new ResponseInstruction(key.toString(), flowExecution, selectedView);
+			}
+			else {
+				// execution already ended => just render the selected view
+				return new ResponseInstruction(flowExecution, selectedView);
+			}
 		}
-		else {
-			// execution already ended => just render the selected view
-			return new ResponseInstruction(flowExecution, selectedView);
+		finally {
+			ExternalContextHolder.setExternalContext(null);
 		}
 	}
 
 	public ResponseInstruction signalEvent(String eventId, String flowExecutionKey, ExternalContext context)
 			throws FlowException {
-		FlowExecutionRepository repository = repositoryFactory.getRepository(context);
-		FlowExecutionKey repositoryKey = repository.parseFlowExecutionKey(flowExecutionKey);
-		FlowExecutionLock lock = repository.getLock(repositoryKey);
-		// make sure we're the only one manipulating the flow execution
-		lock.lock();
+		ExternalContextHolder.setExternalContext(context);
 		try {
-			FlowExecution flowExecution = repository.getFlowExecution(repositoryKey);
-			ViewSelection selectedView = flowExecution.signalEvent(new EventId(eventId), context);
-			if (flowExecution.isActive()) {
-				// execution still active => store it in the repository
-				repositoryKey = repository.getNextKey(flowExecution, repositoryKey);
-				repository.putFlowExecution(repositoryKey, flowExecution);
-				return new ResponseInstruction(repositoryKey.toString(), flowExecution, selectedView);
+			FlowExecutionKey key = executionRepository.parseFlowExecutionKey(flowExecutionKey);
+			FlowExecutionLock lock = executionRepository.getLock(key);
+			// make sure we're the only one manipulating the flow execution
+			lock.lock();
+			try {
+				FlowExecution flowExecution = executionRepository.getFlowExecution(key);
+				ViewSelection selectedView = flowExecution.signalEvent(new EventId(eventId), context);
+				if (flowExecution.isActive()) {
+					// execution still active => store it in the repository
+					key = executionRepository.getNextKey(flowExecution, key);
+					executionRepository.putFlowExecution(key, flowExecution);
+					return new ResponseInstruction(key.toString(), flowExecution, selectedView);
+				}
+				else {
+					// execution ended => remove it from the repository
+					executionRepository.removeFlowExecution(key);
+					return new ResponseInstruction(flowExecution, selectedView);
+				}
 			}
-			else {
-				// execution ended => remove it from the repository
-				repository.removeFlowExecution(repositoryKey);
-				return new ResponseInstruction(flowExecution, selectedView);
+			finally {
+				lock.unlock();
 			}
 		}
 		finally {
-			lock.unlock();
+			ExternalContextHolder.setExternalContext(null);
 		}
 	}
 
 	public ResponseInstruction refresh(String flowExecutionKey, ExternalContext context) throws FlowException {
-		FlowExecutionRepository repository = repositoryFactory.getRepository(context);
-		FlowExecutionKey repositoryKey = repository.parseFlowExecutionKey(flowExecutionKey);
-		FlowExecutionLock lock = repository.getLock(repositoryKey);
-		// make sure we're the only one manipulating the flow execution
-		lock.lock();
+		ExternalContextHolder.setExternalContext(context);
 		try {
-			FlowExecution flowExecution = repository.getFlowExecution(repositoryKey);
-			ViewSelection selectedView = flowExecution.refresh(context);
-			return new ResponseInstruction(repositoryKey.toString(), flowExecution, selectedView);
+			FlowExecutionKey key = executionRepository.parseFlowExecutionKey(flowExecutionKey);
+			FlowExecutionLock lock = executionRepository.getLock(key);
+			// make sure we're the only one manipulating the flow execution
+			lock.lock();
+			try {
+				FlowExecution flowExecution = executionRepository.getFlowExecution(key);
+				ViewSelection selectedView = flowExecution.refresh(context);
+				return new ResponseInstruction(key.toString(), flowExecution, selectedView);
+			}
+			finally {
+				lock.unlock();
+			}
 		}
 		finally {
-			lock.unlock();
+			ExternalContextHolder.setExternalContext(null);
 		}
 	}
 
