@@ -26,7 +26,7 @@ import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.conversation.ConversationParameters;
 import org.springframework.webflow.conversation.NoSuchConversationException;
 import org.springframework.webflow.conversation.impl.SimpleConversationId;
-import org.springframework.webflow.core.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.collection.support.CollectionUtils;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException;
@@ -188,7 +188,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 			}
 
 			public Object getAttribute(Object name) {
-				return new LocalAttributeMap();
+				return CollectionUtils.EMPTY_ATTRIBUTE_MAP;
 			}
 
 			public ConversationId getId() {
