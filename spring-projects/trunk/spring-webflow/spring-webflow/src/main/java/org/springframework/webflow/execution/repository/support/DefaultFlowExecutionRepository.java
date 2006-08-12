@@ -58,7 +58,7 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 	 * The strategy for restoring transient flow execution state after access
 	 * (if necessary).
 	 */
-	private FlowExecutionStateRestorer executionStateRestorer;
+	private transient FlowExecutionStateRestorer executionStateRestorer;
 
 	/**
 	 * The uid generation strategy to use.

@@ -93,7 +93,7 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	 * The strategy for restoring transient flow execution state after
 	 * unmarshaling.
 	 */
-	private FlowExecutionStateRestorer executionStateRestorer;
+	private transient FlowExecutionStateRestorer executionStateRestorer;
 
 	/**
 	 * The uid generation strategy to use.
