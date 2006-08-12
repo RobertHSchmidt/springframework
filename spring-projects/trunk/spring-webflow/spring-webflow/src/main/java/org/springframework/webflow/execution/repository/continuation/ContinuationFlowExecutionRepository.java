@@ -75,8 +75,7 @@ import org.springframework.webflow.util.UidGenerator;
  * 
  * @author Keith Donald
  */
-public class ContinuationFlowExecutionRepository extends AbstractConversationFlowExecutionRepository implements
-		Serializable {
+public class ContinuationFlowExecutionRepository extends AbstractConversationFlowExecutionRepository {
 
 	/**
 	 * The conversation "continuation group" attribute.
@@ -87,18 +86,18 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	 * The continuation factory that will be used to create new continuations to
 	 * be added to active conversations.
 	 */
-	private transient FlowExecutionContinuationFactory continuationFactory = new SerializedFlowExecutionContinuationFactory();
+	private FlowExecutionContinuationFactory continuationFactory = new SerializedFlowExecutionContinuationFactory();
 
 	/**
 	 * The strategy for restoring transient flow execution state after
 	 * unmarshaling.
 	 */
-	private transient FlowExecutionStateRestorer executionStateRestorer;
+	private FlowExecutionStateRestorer executionStateRestorer;
 
 	/**
 	 * The uid generation strategy to use.
 	 */
-	private transient UidGenerator continuationIdGenerator = new RandomGuidUidGenerator();
+	private UidGenerator continuationIdGenerator = new RandomGuidUidGenerator();
 
 	/**
 	 * The maximum number of continuations that can be active per conversation.

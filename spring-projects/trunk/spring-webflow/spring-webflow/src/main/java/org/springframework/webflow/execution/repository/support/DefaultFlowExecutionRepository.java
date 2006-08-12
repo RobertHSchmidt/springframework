@@ -47,7 +47,7 @@ import org.springframework.webflow.util.UidGenerator;
  * 
  * @author Keith Donald
  */
-public class DefaultFlowExecutionRepository extends AbstractConversationFlowExecutionRepository implements Serializable {
+public class DefaultFlowExecutionRepository extends AbstractConversationFlowExecutionRepository {
 
 	/**
 	 * The flow execution entry attribute.
@@ -58,12 +58,12 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 	 * The strategy for restoring transient flow execution state after access
 	 * (if necessary).
 	 */
-	private transient FlowExecutionStateRestorer executionStateRestorer;
+	private FlowExecutionStateRestorer executionStateRestorer;
 
 	/**
 	 * The uid generation strategy to use.
 	 */
-	private transient UidGenerator continuationIdGenerator = new RandomGuidUidGenerator();
+	private UidGenerator continuationIdGenerator = new RandomGuidUidGenerator();
 
 	public DefaultFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer) {
 		setExecutionStateRestorer(executionStateRestorer);
