@@ -105,7 +105,7 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 	 * Sets the conversationService reference.
 	 * @param conversationManager the conversation service, may not be null.
 	 */
-	public void setConversationManager(ConversationManager conversationManager) {
+	protected void setConversationManager(ConversationManager conversationManager) {
 		Assert.notNull(conversationManager, "The conversation manager is required");
 		this.conversationManager = conversationManager;
 	}

@@ -24,6 +24,7 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException;
 import org.springframework.webflow.execution.repository.support.AbstractConversationFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 
@@ -89,6 +90,12 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	private transient FlowExecutionContinuationFactory continuationFactory = new SerializedFlowExecutionContinuationFactory();
 
 	/**
+	 * The strategy for restoring transient flow execution state after
+	 * unmarshaling.
+	 */
+	private FlowExecutionStateRestorer executionStateRestorer;
+
+	/**
 	 * The uid generation strategy to use.
 	 */
 	private transient UidGenerator continuationIdGenerator = new RandomGuidUidGenerator();
@@ -97,6 +104,21 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	 * The maximum number of continuations that can be active per conversation.
 	 */
 	private int maxContinuations;
+
+	public ContinuationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer) {
+		setExecutionStateRestorer(executionStateRestorer);
+	}
+
+	public ContinuationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer,
+			ConversationManager conversationManager) {
+		super(conversationManager);
+		setExecutionStateRestorer(executionStateRestorer);
+	}
+
+	protected void setExecutionStateRestorer(FlowExecutionStateRestorer executionStateRestorer) {
+		Assert.notNull(executionStateRestorer, "The flow execution state restorer is required");
+		this.executionStateRestorer = executionStateRestorer;
+	}
 
 	/**
 	 * Returns the continuation factory that encapsulates the construction of
@@ -157,7 +179,8 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
 		FlowExecutionContinuation continuation = getContinuation(key);
 		try {
-			return continuation.unmarshal();
+			FlowExecution execution = continuation.unmarshal();
+			return executionStateRestorer.restoreState(execution, getConversationScope(key));
 		}
 		catch (ContinuationUnmarshalException e) {
 			throw new FlowExecutionRestorationFailureException(key, e);

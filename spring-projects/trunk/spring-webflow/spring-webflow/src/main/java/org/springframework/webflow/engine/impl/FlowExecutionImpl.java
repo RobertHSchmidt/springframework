@@ -441,6 +441,10 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		out.writeObject(flowSessions);
 	}
 
+	public boolean isStateRestored() {
+		return flow != null;
+	}
+
 	public String toString() {
 		if (!isActive()) {
 			return "[Inactive " + getCaption() + "]";

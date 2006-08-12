@@ -24,6 +24,9 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 
 	public FlowExecution restoreState(FlowExecution flowExecution, MutableAttributeMap conversationScope) {
 		FlowExecutionImpl impl = (FlowExecutionImpl)flowExecution;
+		if (impl.isStateRestored()) {
+			return impl;
+		}
 		Flow flow = (Flow)flowLocator.getFlowDefinition(impl.flowId);
 		Iterator it = impl.flowSessions.iterator();
 		FlowSessionFlowDefinitionLocator locator = new FlowSessionFlowDefinitionLocator(flow, flowLocator);
