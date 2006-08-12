@@ -66,9 +66,17 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 	 * serializable.
 	 */
 	protected AbstractConversationFlowExecutionRepository() {
-		conversationManager = new LocalConversationManager(-1);
+		this(new LocalConversationManager(-1));
 	}
 
+	/**
+	 * No-arg constructor to satisfy use with subclass implementations are that
+	 * serializable.
+	 */
+	protected AbstractConversationFlowExecutionRepository(ConversationManager conversationManager) {
+		Assert.notNull(conversationManager, "The conversation manager is required");
+		this.conversationManager = conversationManager;
+	}
 	/**
 	 * Returns the configured generate new next key flag.
 	 */

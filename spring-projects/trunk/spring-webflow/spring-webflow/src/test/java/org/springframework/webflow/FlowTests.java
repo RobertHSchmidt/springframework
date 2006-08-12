@@ -25,7 +25,8 @@ import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.webflow.action.TestMultiAction;
 import org.springframework.webflow.builder.MyCustomException;
-import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.DefaultExpressionParserFactory;
+import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.NoMatchingTransitionException;
@@ -43,7 +44,6 @@ import org.springframework.webflow.engine.support.TransitionExecutingStateExcept
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.support.ApplicationView;
-import org.springframework.webflow.support.DefaultExpressionParserFactory;
 import org.springframework.webflow.test.engine.MockRequestControlContext;
 
 /**
@@ -77,7 +77,7 @@ public class FlowTests extends TestCase {
 		assertTrue(flow.containsState("myState2"));
 		State state = flow.getRequiredState("myState1");
 		assertEquals("Wrong flow:", "myFlow", state.getFlow().getId());
-		assertEquals("Wrong state:", "myState1", flow.getRequiredState("myState1").getId());
+		assertEquals("Wrong state:", "myState1", flow.getRequiredState("myState1").getFlowDefinitionId());
 		assertEquals("Wrong state:", "myState2", flow.getState("myState2").getId());
 	}
 
@@ -142,7 +142,7 @@ public class FlowTests extends TestCase {
 
 	public void testGetTransitionableState() {
 		assertEquals("Wrong state:", "myState1", flow.getTransitionableState("myState1").getId());
-		assertEquals("Wrong state:", "myState1", flow.getRequiredTransitionableState("myState1").getId());
+		assertEquals("Wrong state:", "myState1", flow.getRequiredTransitionableState("myState1").getFlowDefinitionId());
 	}
 
 	public void testGetStateNoSuchTransitionableState() {

@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
+import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.engine.support.FlowRedirectSelector;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.FlowRedirect;

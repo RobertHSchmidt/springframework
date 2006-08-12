@@ -18,7 +18,7 @@ package org.springframework.webflow.action;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
-import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;

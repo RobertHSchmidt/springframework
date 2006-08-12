@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.webflow.collection.support.CollectionUtils;
-import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.collection.support.CollectionUtils;
+import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 import org.springframework.webflow.support.UnmodifiableAttributeMap;
 
 

@@ -4,7 +4,8 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.core.enums.LabeledEnum;
 import org.springframework.webflow.action.MultiAction;
-import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.collection.support.LocalAttributeMap;
+import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;
@@ -14,7 +15,6 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowSessionStatus;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.support.UnmodifiableAttributeMap;
 
 /**

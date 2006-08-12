@@ -20,7 +20,8 @@ import junit.framework.TestCase;
 import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.MappingBuilder;
-import org.springframework.webflow.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.DefaultExpressionParserFactory;
+import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TargetStateResolver;
@@ -37,7 +38,6 @@ import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.ApplicationView;
-import org.springframework.webflow.support.DefaultExpressionParserFactory;
 import org.springframework.webflow.support.UnmodifiableAttributeMap;
 import org.springframework.webflow.test.MockExternalContext;
 
