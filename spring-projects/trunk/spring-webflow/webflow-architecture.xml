@@ -645,7 +645,7 @@
         </void> 
         <void property="includePackagePatternsCollection"> 
          <void method="add"> 
-          <string>org.springframework.webflow.registry</string> 
+          <string>org.springframework.webflow.definition.registry</string> 
          </void> 
         </void> 
        </object> 
