@@ -42,7 +42,7 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
  * 
  * @author Keith Donald
  */
-public abstract class AbstractConversationFlowExecutionRepository implements FlowExecutionRepository, Serializable {
+public abstract class AbstractConversationFlowExecutionRepository implements FlowExecutionRepository {
 
 	/**
 	 * Flag to indicate whether or not a new flow execution key should always be

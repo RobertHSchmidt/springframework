@@ -31,7 +31,6 @@ import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
-import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 
 /**
  * The default implementation of the central facade for <i>driving</i> the
@@ -76,7 +75,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryF
  * 
  * @see FlowDefinitionLocator
  * @see FlowExecutionFactory
- * @see FlowExecutionRepositoryFactory
+ * @see FlowExecutionRepository
  * @see AttributeMapper
  * 
  * @author Erwin Vervaet
