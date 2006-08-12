@@ -18,6 +18,7 @@ package org.springframework.webflow.execution.repository.support;
 import java.io.Serializable;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.PermissionDeniedFlowExecutionAccessException;
@@ -54,9 +55,30 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 	private static final String FLOW_EXECUTION_ENTRY_ATTRIBUTE = "flowExecutionEntry";
 
 	/**
+	 * The strategy for restoring transient flow execution state after access
+	 * (if necessary).
+	 */
+	private FlowExecutionStateRestorer executionStateRestorer;
+
+	/**
 	 * The uid generation strategy to use.
 	 */
 	private transient UidGenerator continuationIdGenerator = new RandomGuidUidGenerator();
+
+	public DefaultFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer) {
+		setExecutionStateRestorer(executionStateRestorer);
+	}
+
+	public DefaultFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer,
+			ConversationManager conversationManager) {
+		super(conversationManager);
+		setExecutionStateRestorer(executionStateRestorer);
+	}
+
+	protected void setExecutionStateRestorer(FlowExecutionStateRestorer executionStateRestorer) {
+		Assert.notNull(executionStateRestorer, "The flow execution state restorer is required");
+		this.executionStateRestorer = executionStateRestorer;
+	}
 
 	/**
 	 * Returns the uid generation strategy used to generate continuation
@@ -77,7 +99,8 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
 		try {
-			return getEntry(key).access(getContinuationId(key));
+			FlowExecution execution = getEntry(key).access(getContinuationId(key));
+			return executionStateRestorer.restoreState(execution, getConversationScope(key));
 		}
 		catch (InvalidContinuationIdException e) {
 			throw new PermissionDeniedFlowExecutionAccessException(key, e);

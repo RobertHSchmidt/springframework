@@ -31,6 +31,7 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException;
 import org.springframework.webflow.execution.repository.support.AbstractConversationFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
 
 /**
  * Stores flow execution state client side, requiring no use of server-side
@@ -75,9 +76,26 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	private FlowExecutionContinuationFactory continuationFactory = new SerializedFlowExecutionContinuationFactory();
 
 	/**
+	 * The strategy for restoring transient flow execution state after
+	 * unmarshaling.
+	 */
+	private FlowExecutionStateRestorer executionStateRestorer;
+
+	public ClientContinuationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer) {
+		this(executionStateRestorer, new NoOpConversationManager());
+	}
+
+	public ClientContinuationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer,
+			ConversationManager conversationManager) {
+		super(conversationManager);
+		Assert.notNull(executionStateRestorer, "The flow execution state restorer is required");
+		this.executionStateRestorer = executionStateRestorer;
+	}
+
+	/**
 	 * Returns the continuation factory in use by this repository.
 	 */
-	public FlowExecutionContinuationFactory getContinuationFactory() {
+	protected FlowExecutionContinuationFactory getContinuationFactory() {
 		return continuationFactory;
 	}
 
@@ -92,7 +110,8 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
 		FlowExecutionContinuation continuation = decode((String)getContinuationId(key));
 		try {
-			return continuation.unmarshal();
+			FlowExecution execution = continuation.unmarshal();
+			return executionStateRestorer.restoreState(execution, getConversationScope(key));
 		}
 		catch (ContinuationUnmarshalException e) {
 			throw new FlowExecutionRestorationFailureException(key, e);
