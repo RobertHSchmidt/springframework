@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.repository.support;
+package org.springframework.webflow.context.support;
 
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.SharedAttributeMap;
@@ -34,7 +34,7 @@ import org.springframework.webflow.context.SharedAttributeMap;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public interface RepositoryMapLocator {
+public interface SharedAttributeMapLocator {
 
 	/**
 	 * Returns a mutable attribute map providing access to an underlying
