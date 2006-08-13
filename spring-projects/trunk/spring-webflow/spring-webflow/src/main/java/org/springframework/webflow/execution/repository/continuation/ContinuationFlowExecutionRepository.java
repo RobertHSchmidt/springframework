@@ -108,12 +108,6 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 		setExecutionStateRestorer(executionStateRestorer);
 	}
 
-	public ContinuationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer,
-			ConversationManager conversationManager) {
-		super(conversationManager);
-		setExecutionStateRestorer(executionStateRestorer);
-	}
-
 	protected void setExecutionStateRestorer(FlowExecutionStateRestorer executionStateRestorer) {
 		Assert.notNull(executionStateRestorer, "The flow execution state restorer is required");
 		this.executionStateRestorer = executionStateRestorer;
