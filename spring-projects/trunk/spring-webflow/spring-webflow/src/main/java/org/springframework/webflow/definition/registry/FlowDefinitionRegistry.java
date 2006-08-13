@@ -21,14 +21,13 @@ import org.springframework.webflow.definition.FlowDefinitionHolder;
 /**
  * A interface for registering Flow definitions. Extends the FlowRegistryMBean
  * management interface exposing monitoring and management operations. Extends
- * FlowLocator for accessing registered Flow definitions for execution at
+ * FlowDefinitionLocator for accessing registered Flow definitions for execution at
  * runtime.
  * <p>
  * Is a <code>FlowDefinitionLocator</code>, allowing for execution of flow definitions
  * managed in this registry.
  * 
- * @see org.springframework.webflow.definition.registry.FlowDefinitionLocator
- * @see org.springframework.webflow.executor.FlowExecutorImpl
+ * @see FlowDefinitionLocator
  * 
  * @author Keith Donald
  */
