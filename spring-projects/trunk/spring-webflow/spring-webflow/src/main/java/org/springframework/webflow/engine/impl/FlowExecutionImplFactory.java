@@ -15,11 +15,13 @@
  */
 package org.springframework.webflow.engine.impl;
 
+import org.springframework.beans.factory.config.SetFactoryBean;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.factory.support.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.factory.support.StaticFlowExecutionListenerLoader;
@@ -36,7 +38,7 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 	 * The strategy for loading listeners that should observe executions of a
 	 * flow definition. The default simply loads an empty static listener list.
 	 */
-	private FlowExecutionListenerLoader listenerLoader;
+	private FlowExecutionListenerLoader executionListenerLoader = new StaticFlowExecutionListenerLoader();
 
 	/**
 	 * System execution attributes that may influence flow execution behavior.
@@ -44,20 +46,12 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 	private AttributeMap executionAttributes;
 
 	/**
-	 * Creates a new {@link FlowExecutionImpl} factory that returns new flow
-	 * executions with no listeners attached.
-	 */
-	public FlowExecutionImplFactory() {
-		setListenerLoader(new StaticFlowExecutionListenerLoader());
-	}
-
-	/**
 	 * Sets the strategy for loading listeners that should observe executions of
 	 * a flow definition.
 	 */
-	public void setListenerLoader(FlowExecutionListenerLoader listenerLoader) {
-		Assert.notNull(listenerLoader, "The listener loader is required");
-		this.listenerLoader = listenerLoader;
+	public void setExecutionListenerLoader(FlowExecutionListenerLoader executionListenerLoader) {
+		Assert.notNull(executionListenerLoader, "The listener loader is required");
+		this.executionListenerLoader = executionListenerLoader;
 	}
 
 	/**
@@ -71,7 +65,11 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 
 	public FlowExecution createFlowExecution(FlowDefinition flowDefinition) {
 		Assert.isInstanceOf(Flow.class, flowDefinition, "Flow definition is of wrong type: ");
-		return new FlowExecutionImpl((Flow)flowDefinition, listenerLoader.getListeners(flowDefinition),
+		return new FlowExecutionImpl((Flow)flowDefinition, executionListenerLoader.getListeners(flowDefinition),
 				executionAttributes);
+	}
+
+	public void setExecutionListener(FlowExecutionListener executionListener) {
+		setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(executionListener));
 	}
 }

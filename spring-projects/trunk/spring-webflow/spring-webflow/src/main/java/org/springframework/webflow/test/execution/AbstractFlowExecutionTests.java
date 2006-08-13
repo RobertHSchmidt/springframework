@@ -94,6 +94,18 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * object).
 	 */
 	private FlowExecution flowExecution;
+	
+	/**
+	 * Gets the factory that will create the flow execution to test.  This method will 
+	 * create the factory if it is not already set.
+	 * @return the flow execution factory;
+	 */
+	protected FlowExecutionFactory getFlowExecutionFactory() {
+		if (flowExecutionFactory == null) {
+			flowExecutionFactory = createFlowExecutionFactory();
+		}
+		return flowExecutionFactory;
+	}
 
 	/**
 	 * Sets the factory that will create the flow execution to test. Subclasses
@@ -164,10 +176,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * of the resumed flow execution during event processing
 	 */
 	protected ViewSelection startFlow(MutableAttributeMap input, ExternalContext context) throws FlowExecutionException {
-		if (flowExecutionFactory != null) {
-			flowExecutionFactory = createFlowExecutionFactory();
-		}
-		flowExecution = flowExecutionFactory.createFlowExecution(getFlowDefinition());
+		flowExecution = getFlowExecutionFactory().createFlowExecution(getFlowDefinition());
 		return flowExecution.start(input, context);
 	}
 
