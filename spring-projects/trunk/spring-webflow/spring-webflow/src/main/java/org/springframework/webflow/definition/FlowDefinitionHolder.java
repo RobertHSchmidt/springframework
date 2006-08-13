@@ -32,7 +32,7 @@ public interface FlowDefinitionHolder {
 
 	/**
 	 * Returns the Flow definition held by this holder. Calling this method the
-	 * first time may trigger Flow assembly.
+	 * first time may trigger Flow assembly (which may be expensive).
 	 */
 	public FlowDefinition getFlowDefinition() throws FlowDefinitionConstructionException;
 
