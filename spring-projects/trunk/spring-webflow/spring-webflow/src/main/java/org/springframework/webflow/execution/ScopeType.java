@@ -19,9 +19,9 @@ import org.springframework.core.enums.StaticLabeledEnum;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 
 /**
- * The core scope types of Spring Web Flow.
+ * An enumeration of the core scope types of Spring Web Flow.
  * <p>
- * Defines a type of "bucket" (or map) for storing custom user attributes within
+ * A "scope" defines a data structure for storing custom user attributes within
  * a flow execution. Different scope types have different semantics in terms of
  * how long attributes placed in those scope maps remain valid.
  * 
@@ -78,10 +78,11 @@ public abstract class ScopeType extends StaticLabeledEnum {
 	}
 
 	/**
-	 * Returns the mutable attribute map for this scope type for an executing
-	 * flow execution request.
-	 * @param context a flow execution request context
-	 * @return the scope map, allowing for attributes to be accessed and set
+	 * Accessor that returns the mutable attribute map for this scope type for a
+	 * given flow execution request.
+	 * @param context the context representing an executing request
+	 * @return the scope map of this type for that request, allowing attributes
+	 * to be accessed and set
 	 */
 	public abstract MutableAttributeMap getScope(RequestContext context);
 }

@@ -67,5 +67,4 @@ public class FlowSessionStatus extends StaticLabeledEnum {
 	private FlowSessionStatus(int code, String label) {
 		super(code, label);
 	}
-
 }

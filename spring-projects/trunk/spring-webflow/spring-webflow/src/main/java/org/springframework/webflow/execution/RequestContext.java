@@ -24,9 +24,10 @@ import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.definition.TransitionDefinition;
 
 /**
- * A context for an request into a flow execution. Allows execution artifacts to
- * access contextual information about the request, as well as the
- * {@link #getFlowExecutionContext() ongoing flow execution}.
+ * A context for a single request to manipulate a flow execution. Allows
+ * execution artifacts to access contextual information about the executing
+ * request, as well as the governing
+ * {@link #getFlowExecutionContext() active flow execution}.
  * <p>
  * The term <i>request</i> is used to describe a single call (thread) into the
  * flow system by an external actor to manipulate exactly one flow execution.
@@ -145,7 +146,8 @@ public interface RequestContext {
 	public ExternalContext getExternalContext();
 
 	/**
-	 * Returns additional contextual information about the executing flow.
+	 * Returns contextual information about the flow execution itself.
+	 * Information in this context typically spans more than one request.
 	 * @return the flow execution context
 	 */
 	public FlowExecutionContext getFlowExecutionContext();
