@@ -31,26 +31,36 @@ import org.springframework.webflow.execution.FlowExecutionListener;
 public final class StaticFlowExecutionListenerLoader implements FlowExecutionListenerLoader {
 
 	/**
-	 * The listener array to return when {@link #getListeners(FlowDefinition)} is invoked. 
+	 * The listener array to return when {@link #getListeners(FlowDefinition)}
+	 * is invoked.
 	 */
 	private final FlowExecutionListener[] listeners;
 
 	/**
-	 * Creates a new listener loader that returns an empty listener array on
-	 * each invocation.
+	 * Creates a new flow execution listener loader that returns an empty
+	 * listener array on each invocation.
 	 */
 	public StaticFlowExecutionListenerLoader() {
 		this(new FlowExecutionListener[0]);
 	}
 
 	/**
-	 * Creates a new listener loader that returns the provided listener array on
-	 * each invocation. Clients should not attempt to modify the passed in array
-	 * as no deep copy is made.
+	 * Creates a new flow execution listener loader that returns the provided
+	 * listener on each invocation.
+	 * @param listeners the listener
+	 */
+	public StaticFlowExecutionListenerLoader(FlowExecutionListener listener) {
+		this(new FlowExecutionListener[] { listener });
+	}
+
+	/**
+	 * Creates a new flow execution listener loader that returns the provided
+	 * listener array on each invocation. Clients should not attempt to modify
+	 * the passed in array as no deep copy is made.
 	 * @param listeners the listener array.
 	 */
 	public StaticFlowExecutionListenerLoader(FlowExecutionListener[] listeners) {
-		Assert.notNull(listeners, "The listener array is required");
+		Assert.notNull(listeners, "The flow execution listener array is required");
 		this.listeners = listeners;
 	}
 

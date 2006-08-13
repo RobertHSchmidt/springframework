@@ -2,6 +2,7 @@ package org.springframework.webflow.engine.impl;
 
 import java.util.Iterator;
 
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
@@ -10,15 +11,25 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.factory.support.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
 
+/**
+ * Restores the transient state of deserialized {@link FlowExecutionImpl}
+ * objects.
+ * 
+ * @author Keith Donald
+ */
 public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestorer {
 
 	private FlowDefinitionLocator flowLocator;
 
 	private FlowExecutionListenerLoader listenerLoader;
 
-	public FlowExecutionImplStateRestorer(FlowDefinitionLocator flowLocator, FlowExecutionListenerLoader listenerLoader) {
+	private AttributeMap attributes;
+
+	public FlowExecutionImplStateRestorer(FlowDefinitionLocator flowLocator,
+			FlowExecutionListenerLoader listenerLoader, AttributeMap attributes) {
 		this.flowLocator = flowLocator;
 		this.listenerLoader = listenerLoader;
+		this.attributes = attributes;
 	}
 
 	public FlowExecution restoreState(FlowExecution flowExecution, MutableAttributeMap conversationScope) {
@@ -36,6 +47,7 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 		}
 		impl.listeners = new FlowExecutionListeners(listenerLoader.getListeners(flow));
 		impl.conversationScope = conversationScope;
+		impl.attributes = attributes;
 		return flowExecution;
 	}
 

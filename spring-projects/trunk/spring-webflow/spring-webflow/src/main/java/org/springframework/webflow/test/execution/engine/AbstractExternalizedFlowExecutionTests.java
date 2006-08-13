@@ -16,12 +16,14 @@
 package org.springframework.webflow.test.execution.engine;
 
 import org.springframework.core.io.Resource;
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
+import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.test.execution.AbstractFlowExecutionTests;
@@ -66,8 +68,18 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * listener that does test assertions during the execution of the flow.
 	 * @param listener the listener to attach
 	 */
-	protected void setFlowExecutionListener(FlowExecutionListener listener) {
-		setFlowExecutionFactory(new MockFlowExecutionFactory(listener));
+	protected void setFlowExecutionListener(FlowExecutionListener executionListener) {
+		getFlowExecutionImplFactory().setExecutionListener(executionListener);
+	}
+
+	/**
+	 * Set the attributes to be associated with the flow execution the next time
+	 * one is {{@link #startFlow() started} by this test. Useful for attaching
+	 * attributes that influence flow system behavior.
+	 * @param listener the listener to attach
+	 */
+	protected void setFlowExecutionAttributes(AttributeMap executionAttributes) {
+		getFlowExecutionImplFactory().setExecutionAttributes(executionAttributes);
 	}
 
 	protected final FlowDefinition getFlowDefinition() {
@@ -86,7 +98,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	}
 
 	protected final FlowExecutionFactory createFlowExecutionFactory() {
-		return new MockFlowExecutionFactory();
+		return new FlowExecutionImplFactory();
 	}
 
 	/**
@@ -114,6 +126,10 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	protected void registerMockServices(MockFlowServiceLocator serviceLocator) {
 	}
 
+	private FlowExecutionImplFactory getFlowExecutionImplFactory() {
+		return (FlowExecutionImplFactory)getFlowExecutionImplFactory();
+	}
+	
 	/**
 	 * Returns the pointer to the resource that houses the definition of the
 	 * flow to be tested. Subclasses must implemented.
