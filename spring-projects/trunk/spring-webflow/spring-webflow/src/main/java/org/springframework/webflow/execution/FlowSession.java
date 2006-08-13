@@ -25,10 +25,10 @@ import org.springframework.webflow.definition.StateDefinition;
  * <p>
  * This object maintains all instance state including session status within
  * exactly one governing FlowExecution, as well as the current flow state. This
- * object also acts as the local "flow scope" data model. Data in "flow scope"
- * lives for the life of this object and is cleaned up automatically when this
- * object is destroyed. Destruction happens when this session enters an end
- * state.
+ * object also acts as the local "flow scope" data model. Data in
+ * {@link #getScope() flow scope} lives for the life of this object and is
+ * cleaned up automatically when this object is destroyed. Destruction happens
+ * when this session enters an end state.
  * <p>
  * A flow session will go through several status changes during its lifecycle.
  * Initially it will be {@link FlowSessionStatus#CREATED} when a new execution
@@ -58,7 +58,9 @@ import org.springframework.webflow.definition.StateDefinition;
  * just uses the familiar "session" naming convention to denote a stateful
  * object.
  * 
- * @see org.springframework.webflow.execution.FlowSessionStatus
+ * @see FlowDefinition
+ * @see StateDefinition
+ * @see FlowSessionStatus
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

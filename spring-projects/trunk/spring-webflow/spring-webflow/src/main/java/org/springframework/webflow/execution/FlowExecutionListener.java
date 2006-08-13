@@ -22,11 +22,11 @@ import org.springframework.webflow.definition.StateDefinition;
 
 /**
  * Interface to be implemented by objects that wish to listen and respond to the
- * lifecycle of one or more <code>FlowExecution</code> objects.
+ * lifecycle {@link FlowExecuton flow executions}.
  * <p>
  * An 'observer' that is very aspect like, allowing you to insert 'cross
- * cutting' behavior at well-defined points within one or more flow execution
- * lifecycles.
+ * cutting' behavior at well-defined points within one or more well-defined flow
+ * execution lifecycles.
  * <p>
  * For example, one custom listener my apply security checks at the flow
  * execution level, preventing a flow from starting or a state from entering if
@@ -35,7 +35,12 @@ import org.springframework.webflow.definition.StateDefinition;
  * perform auditing, or setup and tear down connections to a transactional
  * resource.
  * 
+ * @see FlowDefinition
+ * @see StateDefinition
  * @see FlowExecution
+ * @see RequestContext
+ * @see Event
+ * @see ViewSelecion
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -44,7 +49,7 @@ public interface FlowExecutionListener {
 
 	/**
 	 * Called when any client request is submitted to manipulate this flow
-	 * execution.
+	 * execution. This call happens before request processing.
 	 * @param context the source of the event, with a 'sourceEvent' property for
 	 * access to the request event
 	 */
@@ -58,24 +63,25 @@ public interface FlowExecutionListener {
 	public void requestProcessed(RequestContext context);
 
 	/**
-	 * Called immediately after a start event is signaled, indicating a new session 
-	 * of the flow is starting but has not yet entered its start state.
+	 * Called immediately after a start event is signaled, indicating a new
+	 * session of the flow is starting but has not yet entered its start state.
+	 * An exception may be thrown from this method to veto the start operation.
 	 * @param context the source of the event
-	 * @param flow the flow for which a new session starting.
+	 * @param flowDefinition the flow for which a new session starting.
 	 * @param input a mutable input map to the starting flow session
 	 */
-	public void sessionStarting(RequestContext context, FlowDefinition flow, MutableAttributeMap input);
+	public void sessionStarting(RequestContext context, FlowDefinition flowDefinition, MutableAttributeMap input);
 
 	/**
-	 * Called when a new flow execution session was started -- the start state
+	 * Called when a new flow session has started. At this point the start state
 	 * has been entered.
 	 * @param context the source of the event
 	 */
 	public void sessionStarted(RequestContext context, FlowSession session);
 
 	/**
-	 * Called when an event is signaled in the current state, but prior to any state
-	 * transition.
+	 * Called when an event is signaled in the current state, but prior to any
+	 * state transition.
 	 * @param context the source of the event
 	 * @param event the event that occured
 	 */
@@ -99,13 +105,6 @@ public interface FlowExecutionListener {
 	public void stateEntered(RequestContext context, StateDefinition previousState, StateDefinition state);
 
 	/**
-	 * Called after a flow execution is successfully reactivated (but before
-	 * event processing).
-	 * @param context the source of the event
-	 */
-	public void resumed(RequestContext context);
-
-	/**
 	 * Called when a flow execution is paused, for instance when it is waiting
 	 * for user input (after event processing).
 	 * @param context the source of the event
@@ -114,12 +113,19 @@ public interface FlowExecutionListener {
 	public void paused(RequestContext context, ViewSelection selectedView);
 
 	/**
-	 * Called when the active flow execution session has been asked to end but 
+	 * Called after a flow execution is successfully reactivated after pause
+	 * (but before event processing).
+	 * @param context the source of the event
+	 */
+	public void resumed(RequestContext context);
+	
+	/**
+	 * Called when the active flow execution session has been asked to end but
 	 * before it has ended.
 	 * @param context the source of the event
 	 * @param session the current active session that is ending
-	 * @param output the flow output produced by the ending session.
-	 * The map may be modified by this listener to affect the output returned.
+	 * @param output the flow output produced by the ending session. The map may
+	 * be modified by this listener to affect the output returned.
 	 */
 	public void sessionEnding(RequestContext context, FlowSession session, MutableAttributeMap output);
 
@@ -128,8 +134,7 @@ public interface FlowExecutionListener {
 	 * root session of the flow execution, the entire flow execution also ends.
 	 * @param context the source of the event
 	 * @param session ending flow session
-	 * @param output final, unmodifiable output returned by the ended
-	 * session
+	 * @param output final, unmodifiable output returned by the ended session
 	 */
 	public void sessionEnded(RequestContext context, FlowSession session, AttributeMap output);
 }
