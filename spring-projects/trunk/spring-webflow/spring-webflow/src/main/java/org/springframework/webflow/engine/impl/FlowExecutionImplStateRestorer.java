@@ -19,15 +19,30 @@ import org.springframework.webflow.execution.repository.support.FlowExecutionSta
  */
 public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestorer {
 
-	private FlowDefinitionLocator flowLocator;
+	/**
+	 * Used to restore the flow execution's flow definition.
+	 */
+	private FlowDefinitionLocator definitionLocator;
 
+	/**
+	 * Used to restore the flow execution's listeners.
+	 */
 	private FlowExecutionListenerLoader listenerLoader;
 
+	/**
+	 * Used to restore the flow execution's system attributes.
+	 */
 	private AttributeMap attributes;
 
-	public FlowExecutionImplStateRestorer(FlowDefinitionLocator flowLocator,
+	/**
+	 * Creates a new execution transient state restorer.
+	 * @param definitionLocator the flow definition locator
+	 * @param listenerLoader the flow execution listener loader
+	 * @param attributes the flow execution system attributes
+	 */
+	public FlowExecutionImplStateRestorer(FlowDefinitionLocator definitionLocator,
 			FlowExecutionListenerLoader listenerLoader, AttributeMap attributes) {
-		this.flowLocator = flowLocator;
+		this.definitionLocator = definitionLocator;
 		this.listenerLoader = listenerLoader;
 		this.attributes = attributes;
 	}
@@ -37,9 +52,9 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 		if (impl.isStateRestored()) {
 			return impl;
 		}
-		Flow flow = (Flow)flowLocator.getFlowDefinition(impl.flowId);
+		Flow flow = (Flow)definitionLocator.getFlowDefinition(impl.flowId);
 		Iterator it = impl.flowSessions.iterator();
-		FlowSessionFlowDefinitionLocator locator = new FlowSessionFlowDefinitionLocator(flow, flowLocator);
+		FlowSessionFlowDefinitionLocator locator = new FlowSessionFlowDefinitionLocator(flow, definitionLocator);
 		while (it.hasNext()) {
 			FlowSessionImpl session = (FlowSessionImpl)it.next();
 			session.flow = (Flow)locator.getFlowDefinition(session.flowId);
