@@ -119,18 +119,18 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * Create a new flow executor.
 	 * @param definitionLocator the locator for accessing flow definitions to
 	 * execute
-	 * @param excutionFactory the factory for creating executions of flow
+	 * @param executionFactory the factory for creating executions of flow
 	 * definitions
 	 * @param repositoryFactory the factory for creating repositories to persist
 	 * paused flow executions
 	 */
-	public FlowExecutorImpl(FlowDefinitionLocator definitionLocator, FlowExecutionFactory excutionFactory,
+	public FlowExecutorImpl(FlowDefinitionLocator definitionLocator, FlowExecutionFactory executionFactory,
 			FlowExecutionRepository executionRepository) {
 		Assert.notNull(definitionLocator, "The locator for accessing flow definitions is required");
-		Assert.notNull(excutionFactory, "The execution factory for creating new flow executions is required");
+		Assert.notNull(executionFactory, "The execution factory for creating new flow executions is required");
 		Assert.notNull(executionRepository, "The repository for persisting flow executions is required");
 		this.definitionLocator = definitionLocator;
-		this.executionFactory = excutionFactory;
+		this.executionFactory = executionFactory;
 		this.executionRepository = executionRepository;
 	}
 
