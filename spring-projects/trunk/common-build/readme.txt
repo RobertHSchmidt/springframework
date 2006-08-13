@@ -1,6 +1,7 @@
-Contained in this directory is the Spring Jumpstart common build system.
+Contained in this directory is the Spring Jumpstart common build system used 
+to build all Spring projects.
 
-It is ant 1.6 based and uses Ivy for dependency management.
+This generic build system is ant 1.6 based and also requires Ivy 1.3 or > for dependency management.
 
 Projects are expected to import master build files contained within 
 this directory as needed for the build targets they require.
