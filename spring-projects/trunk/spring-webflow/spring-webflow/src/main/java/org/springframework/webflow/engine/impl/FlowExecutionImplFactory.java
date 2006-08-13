@@ -16,6 +16,7 @@
 package org.springframework.webflow.engine.impl;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecution;
@@ -38,34 +39,39 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 	private FlowExecutionListenerLoader listenerLoader;
 
 	/**
+	 * System execution attributes that may influence flow execution behavior.
+	 */
+	private AttributeMap executionAttributes;
+
+	/**
 	 * Creates a new {@link FlowExecutionImpl} factory that returns new flow
 	 * executions with no listeners attached.
 	 */
 	public FlowExecutionImplFactory() {
-		this(new StaticFlowExecutionListenerLoader());
-	}
-
-	/**
-	 * Creates a new {@link FlowExecutionImpl} factory; the listener loader is
-	 * used to determine the specified listeners to attach to the new flow
-	 * executions.
-	 * @param listenerLoader the flow execution listener loader
-	 */
-	public FlowExecutionImplFactory(FlowExecutionListenerLoader listenerLoader) {
-		setListenerLoader(listenerLoader);
+		setListenerLoader(new StaticFlowExecutionListenerLoader());
 	}
 
 	/**
 	 * Sets the strategy for loading listeners that should observe executions of
 	 * a flow definition.
 	 */
-	private void setListenerLoader(FlowExecutionListenerLoader listenerLoader) {
+	public void setListenerLoader(FlowExecutionListenerLoader listenerLoader) {
 		Assert.notNull(listenerLoader, "The listener loader is required");
 		this.listenerLoader = listenerLoader;
 	}
 
+	/**
+	 * Sets the attributes to apply to flow executions created by this factory.
+	 * Execution attributes may affect flow execution behavior.
+	 * @param executionAttributes flow execution system attributes
+	 */
+	public void setExecutionAttributes(AttributeMap executionAttributes) {
+		this.executionAttributes = executionAttributes;
+	}
+
 	public FlowExecution createFlowExecution(FlowDefinition flowDefinition) {
 		Assert.isInstanceOf(Flow.class, flowDefinition, "Flow definition is of wrong type: ");
-		return new FlowExecutionImpl((Flow)flowDefinition, listenerLoader.getListeners(flowDefinition), null);
+		return new FlowExecutionImpl((Flow)flowDefinition, listenerLoader.getListeners(flowDefinition),
+				executionAttributes);
 	}
 }
