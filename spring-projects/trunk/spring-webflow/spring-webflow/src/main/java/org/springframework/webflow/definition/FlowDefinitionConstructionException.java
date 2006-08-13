@@ -26,6 +26,9 @@ import org.springframework.webflow.core.FlowException;
  */
 public abstract class FlowDefinitionConstructionException extends FlowException {
 	
+	/**
+	 * The id of the flow that could not be constructed.
+	 */
 	private String flowId;
 	
 	/**
@@ -37,6 +40,10 @@ public abstract class FlowDefinitionConstructionException extends FlowException 
 		super("An exception occured constructing the flow with id '" + flowId + "'", cause);
 	}
 	
+	/**
+	 * Returns the id of the flow definition that could not be constructed.
+	 * @return the flow id
+	 */
 	public String getFlowId() {
 		return flowId;
 	}
