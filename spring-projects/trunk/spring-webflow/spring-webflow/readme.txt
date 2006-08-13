@@ -1,4 +1,4 @@
-SPRING WEB FLOW 1.0 RC3 (June 2006)
+SPRING WEB FLOW 1.0 RC4 (August 2006)
 -------------------------------
 http://www.springframework.org/webflow
 http://forum.springframework.org
@@ -44,12 +44,12 @@ The following distinct jar files are included in the distribution. This list
 specifies the respective contents and third-party dependencies. Libraries in [brackets] are
 optional, i.e. just necessary for certain functionality.
 
-* spring-webflow-1.0-rc3.jar
+* spring-webflow-1.0-rc4.jar
 - Contents: The Spring Web Flow system
 - Dependencies: Commons Logging, spring-beans, spring-core, spring-context, spring-web, spring-binding,
                 [Log4J, Commons Codec, OGNL, spring-webmvc, spring-mock, JUnit, Servlet API, Portlet API, JMX, Struts, JSF]
               
-* spring-binding-1.0-rc3.jar
+* spring-binding-1.0-rc4.jar
 - Contents: The Spring Data Binding framework, an internal library used by SWF
 - Dependencies: Commons Logging, spring-beans, spring-core, spring-context
                 [Log4J]
@@ -63,7 +63,8 @@ features of Spring Web Flow.
 
 *** A great way to get started is to review and run the sample applications, supplimenting with
 reference manual material as needed.  To build deployable .war files for all samples, simply 
-access the "build-spring-webflow" directory and execute the "dist" target. ***
+access the projects/spring-webflow/build-spring-webflow directory and execute the "dist" target.
+See the readme.txt in that directory for more additional information.  ***
 
 More information on deploying SWF sample applications can be found at:
 	projects/spring-webflow/spring-webflow-samples/readme.txt
