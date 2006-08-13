@@ -22,11 +22,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.jsf.DecoratingNavigationHandler;
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.core.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.ViewSelection;
-import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 
 /**
@@ -73,13 +72,6 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
-	 * The flow execution repository factoring, for obtaining repository
-	 * instances to save paused executions that require user input and load
-	 * resuming executions that will process user events.
-	 */
-	private FlowExecutionRepositoryFactory repositoryFactory;
-
-	/**
 	 * A helper for extracting parameters needed by this flow navigation
 	 * handler.
 	 */
@@ -100,20 +92,6 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	 */
 	public FlowNavigationHandler(NavigationHandler originalNavigationHandler) {
 		super(originalNavigationHandler);
-	}
-
-	/**
-	 * Returns the repository factory used by this navigation handler.
-	 */
-	public FlowExecutionRepositoryFactory getRepositoryFactory() {
-		return repositoryFactory;
-	}
-
-	/**
-	 * Sets the repository factory used by this navigation handler.
-	 */
-	public void setRepositoryFactory(FlowExecutionRepositoryFactory repositoryFactory) {
-		this.repositoryFactory = repositoryFactory;
 	}
 
 	/**
@@ -166,23 +144,13 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 	}
 
 	/**
-	 * Returns the repository instance to be used by this phase listener.
-	 */
-	protected FlowExecutionRepository getRepository(JsfExternalContext context) {
-		if (repositoryFactory == null) {
-			repositoryFactory = FlowFacesUtils.getRepositoryFactory(context.getFacesContext());
-		}
-		return repositoryFactory.getRepository(context);
-	}
-
-	/**
 	 * Factory method that creates the input attribute map for a newly created
 	 * {@link FlowExecution}. TODO - add support for input mappings here
 	 * @param flowExecution the new flow execution (yet to be started)
 	 * @param context the external context
 	 * @return the input map
 	 */
-	protected LocalAttributeMap createInput(FlowExecution flowExecution, ExternalContext context) {
+	protected MutableAttributeMap createInput(FlowExecution flowExecution, ExternalContext context) {
 		return null;
 	}
 }
