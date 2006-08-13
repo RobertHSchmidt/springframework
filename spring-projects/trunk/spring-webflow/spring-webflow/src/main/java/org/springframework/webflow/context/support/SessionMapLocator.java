@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.repository.support;
+package org.springframework.webflow.context.support;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.SharedAttributeMap;
 
 /**
- * A {@link RepositoryMapLocator} that returns the external context session
+ * A {@link SharedAttributeMapLocator} that returns the external context session
  * map.
  * @author Keith Donald
  */
-class SessionRepositoryMapLocator implements RepositoryMapLocator {
+class SessionMapLocator implements SharedAttributeMapLocator {
 	public SharedAttributeMap getMap(ExternalContext context) {
 		Assert.notNull(context, "The external context is required");
 		return context.getSessionMap();
