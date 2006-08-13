@@ -26,10 +26,10 @@ import org.springframework.webflow.context.support.StringKeyedMapAdapter;
 import org.springframework.webflow.core.collection.support.CollectionUtils;
 
 /**
- * Map backed by the Portlet session, for accessing session scoped attributes in
- * a Portlet environment.
+ * Shared map backed by the Portlet session, for accessing session scoped
+ * attributes in a Portlet environment.
  * 
- * Supports setting 
+ * Supports setting
  * 
  * @author Keith Donald
  */
@@ -41,10 +41,11 @@ public class PortletSessionMap extends StringKeyedMapAdapter implements SharedMa
 	private PortletRequest request;
 
 	/**
-	 * The scope to access in the session, either APPLICATION (global) or PORTLET. 
+	 * The scope to access in the session, either APPLICATION (global) or
+	 * PORTLET.
 	 */
 	private int scope;
-	
+
 	/**
 	 * Create a new map wrapping the session associated with given request.
 	 */
@@ -79,7 +80,8 @@ public class PortletSessionMap extends StringKeyedMapAdapter implements SharedMa
 
 	protected Iterator getAttributeNames() {
 		PortletSession session = getSession();
-		return session == null ? CollectionUtils.EMPTY_ITERATOR : CollectionUtils.iterator(session.getAttributeNames(scope)); 
+		return session == null ? CollectionUtils.EMPTY_ITERATOR : CollectionUtils.iterator(session
+				.getAttributeNames(scope));
 	}
 
 	public Object getMutex() {

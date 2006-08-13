@@ -30,7 +30,7 @@ import org.springframework.webflow.core.collection.support.LocalParameterMap;
 
 /**
  * Provides contextual information about an HTTP Servlet environment that has
- * interacted with SWF.
+ * interacted with Spring Web Flow.
  * 
  * @author Keith Donald
  */
@@ -67,7 +67,7 @@ public class ServletExternalContext implements ExternalContext {
 	public String getContextPath() {
 		return request.getContextPath();
 	}
-	
+
 	public String getDispatcherPath() {
 		return request.getServletPath();
 	}

@@ -24,13 +24,13 @@ import org.springframework.webflow.context.SharedAttributeMap;
  * map.
  * @author Keith Donald
  */
-class SessionMapLocator implements SharedAttributeMapLocator {
+public class SessionMapLocator implements SharedAttributeMapLocator {
 	public SharedAttributeMap getMap(ExternalContext context) {
 		Assert.notNull(context, "The external context is required");
 		return context.getSessionMap();
 	}
 
-	public boolean requiresRebindOnChange() {
+	public boolean attributesRequireRebindingOnChange() {
 		return true;
 	}
 }

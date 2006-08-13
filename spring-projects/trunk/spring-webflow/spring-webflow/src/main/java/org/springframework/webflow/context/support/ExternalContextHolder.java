@@ -18,17 +18,18 @@ package org.springframework.webflow.context.support;
 import org.springframework.webflow.context.ExternalContext;
 
 /**
- * Simple holder class that associates a ExternalContext instance with the
- * current thread. The LocaleContext will be inherited by any child threads
- * spawned by the current thread.
+ * Simple holder class that associates a {@link ExternalContext} instance with
+ * the current thread. The ExternalContext will be inherited by any child
+ * threads spawned by the current thread.
  * <p>
  * Used as a central holder for the current ExternalContext in Spring Web Flow,
- * wherever necessary.
+ * wherever necessary. Often used by artifacts needing access to the current
+ * application session.
  * 
  * @author Keith Donald
  * @see ExternalContext
  */
-public class ExternalContextHolder {
+public final class ExternalContextHolder {
 
 	private static ThreadLocal externalContextHolder = new InheritableThreadLocal();
 
@@ -48,9 +49,9 @@ public class ExternalContextHolder {
 	public static ExternalContext getExternalContext() {
 		return (ExternalContext)externalContextHolder.get();
 	}
-	
+
 	// not instantiable
 	private ExternalContextHolder() {
-		
+
 	}
 }
