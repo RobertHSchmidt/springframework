@@ -24,8 +24,10 @@ import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.support.CollectionUtils;
 
 /**
- * A descriptor for a Flow to be assembled from a externalized resource.
- * Describes exactly one externalized flow definition resource.
+ * A pointer to an externalized flow definition resource. Adds assigned
+ * identification information about the resource including the flow id and
+ * attributes.
+ * 
  * @author Keith Donald
  */
 public class FlowDefinitionResource implements Serializable {
