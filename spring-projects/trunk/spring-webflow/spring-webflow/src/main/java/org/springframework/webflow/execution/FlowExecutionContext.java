@@ -15,23 +15,29 @@
  */
 package org.springframework.webflow.execution;
 
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 
 /**
  * Provides contextual information about a flow execution. A flow execution is
- * an instance of a flow definition. An object implementing this interface is
- * also traversable from a request context (see
- * {@link org.springframework.webflow.execution.RequestContext#getFlowExecutionContext()}).
+ * an runnable instance of a {@link FlowDefinition}. In other words, it is the
+ * central Spring Web Flow construct for carrying out a conversation with a
+ * client. This is immutable interface provides access to runtime information
+ * about the conversation, such as it's {@link #isActive() status} and
+ * {@link #getActiveSession() current state}.
  * <p>
- * This is an immutable interface for accessing information about exactly one
- * flow execution--an instance of a {@link FlowDefinition flow definition}.
+ * An object implementing this interface is also traversable from a execution
+ * request context (see
+ * {@link org.springframework.webflow.execution.RequestContext#getFlowExecutionContext()}).
  * <p>
  * This interface provides information that may span more than one request in a
  * thread safe manner. The {@link RequestContext} interface defines a <i>request
  * specific</i> control interface for manipulating exactly one flow execution
  * locally from exactly one request.
  * 
+ * @see FlowDefinition
+ * @see FlowSession
  * @see RequestContext
  * 
  * @author Keith Donald
@@ -61,11 +67,6 @@ public interface FlowExecutionContext {
 	public boolean isActive();
 
 	/**
-	 * @return
-	 */
-	public MutableAttributeMap getConversationScope();
-	
-	/**
 	 * Returns the active flow session of this flow execution. The active flow
 	 * session is the currently executing session--it may be the "root flow"
 	 * session, or it may be a subflow session if this flow execution has
@@ -76,4 +77,18 @@ public interface FlowExecutionContext {
 	 */
 	public FlowSession getActiveSession() throws IllegalStateException;
 
+	/**
+	 * Returns a mutable map for data held in "conversation scope". Conversation
+	 * scope is a data structure that exists for the life of this flow execution
+	 * and is accessible to all flow sessions.
+	 * @return conversation scope
+	 */
+	public MutableAttributeMap getConversationScope();
+
+	/**
+	 * Returns runtime execution attributes that may influence the behavior of
+	 * definitional artifacts, such as States and Actions.
+	 * @return execution attributes
+	 */
+	public AttributeMap getAttributes();
 }
