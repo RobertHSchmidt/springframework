@@ -73,9 +73,9 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	}
 
 	/**
-	 * Set the attributes to be associated with the flow execution the next time
-	 * one is {{@link #startFlow() started} by this test. Useful for attaching
-	 * attributes that influence flow system behavior.
+	 * Sets system attributes to be associated with the flow execution the next
+	 * time one is {{@link #startFlow() started} by this test. Useful for
+	 * attaching attributes that influence flow system behavior.
 	 * @param listener the listener to attach
 	 */
 	protected void setFlowExecutionAttributes(AttributeMap executionAttributes) {
@@ -129,7 +129,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	private FlowExecutionImplFactory getFlowExecutionImplFactory() {
 		return (FlowExecutionImplFactory)getFlowExecutionImplFactory();
 	}
-	
+
 	/**
 	 * Returns the pointer to the resource that houses the definition of the
 	 * flow to be tested. Subclasses must implemented.
