@@ -19,8 +19,8 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
 
 /**
- * A facade that provides access to an external system that has interacted with
- * Spring Web Flow.
+ * A facade that provides normalized access to an external system that has
+ * interacted with Spring Web Flow.
  * <p>
  * This context object provides a normalized interface for internal web flow
  * artifacts to use to reason on and manipulate the state of an external actor
