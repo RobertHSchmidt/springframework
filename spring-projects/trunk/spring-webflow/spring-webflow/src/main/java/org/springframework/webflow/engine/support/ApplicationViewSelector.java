@@ -37,9 +37,8 @@ import org.springframework.webflow.execution.support.FlowExecutionRedirect;
  * view during rendering. This is typically the union of attributes in request,
  * flow, and conversation scope.
  * <p>
- * This selector also supports setting a <i>redirect</i> flag that can be
- * used to trigger a redirect to the {@link ApplicationView} at a bookmarkable
- * URL.
+ * This selector also supports setting a <i>redirect</i> flag that can be used
+ * to trigger a redirect to the {@link ApplicationView} at a bookmarkable URL.
  * 
  * @see org.springframework.webflow.execution.support.ApplicationView
  * @see org.springframework.webflow.execution.support.FlowExecutionRedirect
@@ -49,6 +48,8 @@ import org.springframework.webflow.execution.support.FlowExecutionRedirect;
  * @author Erwin Vervaet
  */
 public class ApplicationViewSelector implements ViewSelector, Serializable {
+
+	private static final String ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE = "alwaysRedirectOnPause";
 
 	/**
 	 * The view name to render.
@@ -77,8 +78,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	 * Creates a application view selector that will make application view
 	 * selections requesting that the specified view be rendered.
 	 * @param viewName the view name expression
-	 * @param redirect indicates if a redirect to the view should be
-	 * initiated
+	 * @param redirect indicates if a redirect to the view should be initiated
 	 */
 	public ApplicationViewSelector(Expression viewName, boolean redirect) {
 		Assert.notNull(viewName, "The view name expression is required");
@@ -96,14 +96,19 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	public boolean isEntrySelectionRenderable(RequestContext context) {
 		return !redirect;
 	}
-	
+
 	public ViewSelection makeEntrySelection(RequestContext context) {
-		if (redirect) {
+		if (redirect || alwaysRedirectOnPause(context)) {
 			return FlowExecutionRedirect.INSTANCE;
 		}
 		else {
 			return makeRefreshSelection(context);
 		}
+	}
+
+	private boolean alwaysRedirectOnPause(RequestContext context) {
+		return ((Boolean)context.getFlowExecutionContext().getAttributes().getBoolean(
+				ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE, Boolean.FALSE)).booleanValue();
 	}
 
 	public ViewSelection makeRefreshSelection(RequestContext context) {
@@ -132,7 +137,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	protected ApplicationView createApplicationView(String viewName, RequestContext context) {
 		return new ApplicationView(viewName, context.getModel().getMap());
 	}
-	
+
 	public String toString() {
 		return new ToStringCreator(this).append("viewName", viewName).append("redirect", redirect).toString();
 	}
