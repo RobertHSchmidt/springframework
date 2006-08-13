@@ -243,7 +243,7 @@ public interface ParameterMap extends MapAdaptable {
 	public Boolean getRequiredBoolean(String parameterName) throws IllegalArgumentException, ConversionException;
 
 	/**
-	 * Adapts this parameter map to an {@link UnmodifiableAttributeMap}.
+	 * Adapts this parameter map to an {@link AttributeMap}.
 	 * @return the underlying map as a unmodifiable attribute map.
 	 */
 	public AttributeMap asAttributeMap();
