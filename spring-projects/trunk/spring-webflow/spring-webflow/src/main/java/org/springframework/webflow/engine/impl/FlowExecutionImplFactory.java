@@ -66,6 +66,6 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 
 	public FlowExecution createFlowExecution(FlowDefinition flowDefinition) {
 		Assert.isInstanceOf(Flow.class, flowDefinition, "Flow definition is of wrong type: ");
-		return new FlowExecutionImpl((Flow)flowDefinition, listenerLoader.getListeners(flowDefinition));
+		return new FlowExecutionImpl((Flow)flowDefinition, listenerLoader.getListeners(flowDefinition), null);
 	}
 }

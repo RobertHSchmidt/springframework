@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.test.engine;
 
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
@@ -34,6 +35,8 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 	private FlowSession activeSession;
 
 	private MutableAttributeMap conversationScope = new LocalAttributeMap();
+
+	private MutableAttributeMap attributes = new LocalAttributeMap();
 
 	/**
 	 * Creates a new mock flow execution context--automatically installs a root
@@ -77,6 +80,10 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 	public MutableAttributeMap getConversationScope() {
 		return conversationScope;
 	}
+	
+	public AttributeMap getAttributes() {
+		return attributes;
+	}
 
 	/**
 	 * Sets the top-level flow definition.
@@ -104,5 +111,22 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 	 */
 	public MockFlowSession getMockActiveSession() {
 		return (MockFlowSession)activeSession;
+	}
+
+	/**
+	 * Returns the execution attribute map.
+	 * @return the execution attribute map
+	 */
+	public MutableAttributeMap getMockAttributeMap() {
+		return attributes;
+	}
+	
+	/**
+	 * Puts a execution attribute into the context.
+	 * @param attributeName the attribute name
+	 * @param attributeValue the attribute value
+	 */
+	public void putAttribute(String attributeName, Object attributeValue) {
+		attributes.put(attributeName, attributeValue);
 	}
 }
