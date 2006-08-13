@@ -22,6 +22,7 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
+import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.test.execution.AbstractFlowExecutionTests;
 
@@ -47,7 +48,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	/**
 	 * Returns if flow definition caching is turned on.
 	 */
-	public boolean isCacheFlowDefinition() {
+	protected boolean isCacheFlowDefinition() {
 		return cacheFlowDefinition;
 	}
 
@@ -55,8 +56,18 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * Sets the flag indicating if the the flow definition built from an
 	 * externalized resource as part of this test should be cached.
 	 */
-	public void setCacheFlowDefinition(boolean cacheFlowDefinition) {
+	protected void setCacheFlowDefinition(boolean cacheFlowDefinition) {
 		this.cacheFlowDefinition = cacheFlowDefinition;
+	}
+
+	/**
+	 * Set the listener to be attached to the flow execution the next time one
+	 * is {{@link #startFlow() started} by this test. Useful for attaching a
+	 * listener that does test assertions during the execution of the flow.
+	 * @param listener the listener to attach
+	 */
+	protected void setFlowExecutionListener(FlowExecutionListener listener) {
+		setFlowExecutionFactory(new MockFlowExecutionFactory(listener));
 	}
 
 	protected final FlowDefinition getFlowDefinition() {
@@ -109,10 +120,10 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * @return the flow definition resource
 	 */
 	protected abstract FlowDefinitionResource getFlowDefinitionResource();
-	
+
 	/**
-	 * Factory method to create the builder that will build the flow whose execution will be
-	 * tested.  Subclasses must override.
+	 * Factory method to create the builder that will build the flow whose
+	 * execution will be tested. Subclasses must override.
 	 * @param resource the externalized flow definition resource location
 	 * @param flowServiceLocator the flow service locator
 	 * @return the flow builder that will build the flow to be tested
