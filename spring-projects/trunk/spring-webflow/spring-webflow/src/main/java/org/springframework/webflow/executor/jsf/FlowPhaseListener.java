@@ -73,13 +73,6 @@ public class FlowPhaseListener implements PhaseListener {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
-	 * The flow execution repository factoring, for obtaining repository
-	 * instances to save paused executions that require user input and load
-	 * resuming executions that will process user events.
-	 */
-	private FlowExecutionRepositoryFactory repositoryFactory;
-
-	/**
 	 * A helper for extracting arguments needed by this flow executor.
 	 */
 	private FlowExecutorArgumentExtractor argumentExtractor = new FlowExecutorArgumentExtractor();
@@ -88,20 +81,6 @@ public class FlowPhaseListener implements PhaseListener {
 	 * Resolves selected Web Flow view names to JSF view ids.
 	 */
 	private ViewIdMapper viewIdMapper = new DefaultViewIdMapper();
-
-	/**
-	 * Returns the repository factory used by this phase listener.
-	 */
-	public FlowExecutionRepositoryFactory getRepositoryFactory() {
-		return repositoryFactory;
-	}
-
-	/**
-	 * Set the repository factory used by this phase listener.
-	 */
-	public void setRepositoryFactory(FlowExecutionRepositoryFactory repositoryFactory) {
-		this.repositoryFactory = repositoryFactory;
-	}
 
 	/**
 	 * Returns the argument extractor used by this phase listener.
@@ -306,16 +285,6 @@ public class FlowPhaseListener implements PhaseListener {
 				repository.removeFlowExecution(holder.getFlowExecutionKey());
 			}
 		}
-	}
-
-	/**
-	 * Returns the repository instance to be used by this phase listener.
-	 */
-	protected FlowExecutionRepository getRepository(JsfExternalContext context) {
-		if (repositoryFactory == null) {
-			repositoryFactory = FlowFacesUtils.getRepositoryFactory(context.getFacesContext());
-		}
-		return repositoryFactory.getRepository(context);
 	}
 
 	/**
