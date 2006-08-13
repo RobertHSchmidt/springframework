@@ -45,15 +45,15 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
 public abstract class AbstractConversationFlowExecutionRepository implements FlowExecutionRepository {
 
 	/**
+	 * The conversation "scope" attribute.
+	 */
+	private static final String SCOPE_ATTRIBUTE = "scope";
+	
+	/**
 	 * Flag to indicate whether or not a new flow execution key should always be
 	 * generated before each put call. Default is true.
 	 */
 	private boolean alwaysGenerateNewNextKey = true;
-
-	/**
-	 * The conversation "scope" attribute.
-	 */
-	private static final String SCOPE_ATTRIBUTE = "scope";
 
 	/**
 	 * The conversation service to delegate to for managing conversations
@@ -62,21 +62,12 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 	private ConversationManager conversationManager;
 
 	/**
-	 * No-arg constructor to satisfy use with subclass implementations are that
-	 * serializable.
+	 * Creates a new flow execution repository.
 	 */
 	protected AbstractConversationFlowExecutionRepository() {
-		this(new LocalConversationManager(-1));
+		setConversationManager(new LocalConversationManager(-1));
 	}
 
-	/**
-	 * No-arg constructor to satisfy use with subclass implementations are that
-	 * serializable.
-	 */
-	protected AbstractConversationFlowExecutionRepository(ConversationManager conversationManager) {
-		Assert.notNull(conversationManager, "The conversation manager is required");
-		this.conversationManager = conversationManager;
-	}
 	/**
 	 * Returns the configured generate new next key flag.
 	 */
@@ -105,7 +96,7 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 	 * Sets the conversationService reference.
 	 * @param conversationManager the conversation service, may not be null.
 	 */
-	protected void setConversationManager(ConversationManager conversationManager) {
+	public void setConversationManager(ConversationManager conversationManager) {
 		Assert.notNull(conversationManager, "The conversation manager is required");
 		this.conversationManager = conversationManager;
 	}
