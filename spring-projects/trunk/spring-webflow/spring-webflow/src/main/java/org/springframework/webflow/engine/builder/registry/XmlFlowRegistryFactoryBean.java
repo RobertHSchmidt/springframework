@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.xml.sax.EntityResolver;
 
 /**

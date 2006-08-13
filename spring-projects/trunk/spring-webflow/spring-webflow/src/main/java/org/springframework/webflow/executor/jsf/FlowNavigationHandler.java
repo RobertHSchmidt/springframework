@@ -27,7 +27,6 @@ import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
-import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 
 /**
