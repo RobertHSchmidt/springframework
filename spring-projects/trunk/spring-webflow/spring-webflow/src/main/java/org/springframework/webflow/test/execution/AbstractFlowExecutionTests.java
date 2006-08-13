@@ -27,13 +27,11 @@ import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
-import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowExecutionException;
-import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 import org.springframework.webflow.execution.support.ApplicationView;
@@ -53,8 +51,7 @@ import org.springframework.webflow.test.MockExternalContext;
  * <ul>
  * <li>That the flow execution starts as expected given a request from an
  * external context containing potential input attributes (see the
- * {@link #startFlow(LocalAttributeMap, ExternalContext, FlowExecutionListener[])}
- * variants).
+ * {@link #startFlow(MutableAttributeMap, ExternalContext} variants).
  * <li>That given the set of supported state transition criteria a state
  * executes the appropriate transition when a matching event is signaled (with
  * potential input request parameters, see the
