@@ -31,7 +31,7 @@ import org.springframework.webflow.core.collection.support.LocalParameterMap;
 
 /**
  * Provides contextual information about a portlet environment that has
- * interacted with SWF.
+ * called into Spring Web Flow.
  * 
  * @author Keith Donald
  */

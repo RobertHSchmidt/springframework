@@ -17,7 +17,7 @@ public class LocalMapLocator implements SharedAttributeMapLocator {
 		return source;
 	}
 
-	public boolean requiresRebindOnChange() {
+	public boolean attributesRequireRebindingOnChange() {
 		return false;
 	}
 }

@@ -26,7 +26,7 @@ import org.springframework.webflow.context.support.StringKeyedMapAdapter;
 import org.springframework.webflow.core.collection.support.CollectionUtils;
 
 /**
- * Map backed by the Servlet HTTP session, for accessing session scoped
+ * A Shared Map backed by the Servlet HTTP session, for accessing session scoped
  * attributes.
  * 
  * @author Keith Donald
