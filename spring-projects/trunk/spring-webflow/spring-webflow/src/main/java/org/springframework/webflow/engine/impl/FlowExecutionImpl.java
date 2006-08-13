@@ -26,7 +26,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.core.collection.support.CollectionUtils;
 import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.Flow;
@@ -79,11 +81,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	transient Flow flow;
 
 	/**
-	 * A data structure for attributes shared by all flow sessions.
-	 */
-	transient MutableAttributeMap conversationScope = new LocalAttributeMap();
-
-	/**
 	 * The stack of active, currently executing flow sessions. As subflows are
 	 * spawned, they are pushed onto the stack. As they end, they are popped off
 	 * the stack.
@@ -96,6 +93,16 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 */
 	transient FlowExecutionListeners listeners;
 
+	/**
+	 * A data structure for attributes shared by all flow sessions.
+	 */
+	transient MutableAttributeMap conversationScope = new LocalAttributeMap();
+
+	/**
+	 * A data structure for runtime system execution attributes.
+	 */
+	transient AttributeMap attributes;
+	
 	/**
 	 * Set only on deserialization so this object can be fully reconstructed.
 	 */
@@ -115,7 +122,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * @param flow the root flow of this flow execution
 	 */
 	public FlowExecutionImpl(Flow flow) {
-		this(flow, new FlowExecutionListener[0]);
+		this(flow, new FlowExecutionListener[0], null);
 	}
 
 	/**
@@ -123,11 +130,13 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * @param flow the root flow of this flow execution
 	 * @param listeners the listeners interested in flow execution lifecycle
 	 * events
+	 * @param attributes flow execution system attributes
 	 */
-	public FlowExecutionImpl(Flow flow, FlowExecutionListener[] listeners) {
+	public FlowExecutionImpl(Flow flow, FlowExecutionListener[] listeners, AttributeMap attributes) {
 		Assert.notNull(flow, "The root flow definition is required");
 		this.flow = flow;
 		this.listeners = new FlowExecutionListeners(listeners);
+		this.attributes = (attributes != null ? attributes : CollectionUtils.EMPTY_ATTRIBUTE_MAP);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Created new execution of flow '" + flow.getId() + "'");
 		}
@@ -154,6 +163,10 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	public MutableAttributeMap getConversationScope() {
 		assertActive();
 		return conversationScope;
+	}
+
+	public AttributeMap getAttributes() {
+		return attributes;
 	}
 
 	// methods implementing FlowExecution
