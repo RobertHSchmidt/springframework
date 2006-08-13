@@ -6,8 +6,6 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
-import org.springframework.webflow.engine.repository.DefaultFlowExecutionRepositoryFactory;
-import org.springframework.webflow.execution.repository.FlowExecutionRepositoryFactory;
 
 /**
  * Trivial helper utility class for SWF within a JSF environment.
