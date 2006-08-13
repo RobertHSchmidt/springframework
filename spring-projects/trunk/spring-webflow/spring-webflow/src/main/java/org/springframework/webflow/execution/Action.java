@@ -15,12 +15,12 @@
  */
 package org.springframework.webflow.execution;
 
-
 /**
  * A command that executes a behavior and returns a logical execution result a
- * calling flow can respond to. Actions typically delegate down to the
- * application (or service) layer to perform business operations. They often
- * prepare views with dynamic or calculated model data to support response
+ * calling flow execution can respond to.
+ * <p>
+ * Actions typically delegate down to the application (or service) layer to
+ * perform business operations. They often retrieve data to support response
  * rendering. They act as a bridge between a SWF web-tier and your middle-tier
  * business logic layer.
  * <p>
@@ -37,11 +37,12 @@ package org.springframework.webflow.execution;
  * Spring's externalized configuration and dependency injection capabilities
  * (which is a form of Inversion of Control [IoC]). Actions may also be stateful
  * prototypes, storing conversational state as instance variables (see
- * {@link org.springframework.webflow.action.bean.StatefulBeanInvokingAction} and
- * {@link org.springframework.webflow.action.bean.AbstractBeanInvokingAction} for
- * more information). Action instance definitions may also be locally scoped to
- * a specific flow definition (see use of the "import" element of the root XML
- * flow definition element.)
+ * {@link org.springframework.webflow.action.bean.StatefulBeanInvokingAction}
+ * and
+ * {@link org.springframework.webflow.action.bean.AbstractBeanInvokingAction}
+ * for more information). Action instance definitions may also be locally scoped
+ * to a specific flow definition (see use of the "import" element of the root
+ * XML flow definition element.)
  * <p>
  * Note: Actions are directly instantiatable for use in a standalone test
  * environment and can be parameterized with mocks or stubs, as they are simple
@@ -73,34 +74,36 @@ public interface Action {
 	 * Execute this action. Action execution will occur in the context of a
 	 * request associated with an active flow execution.
 	 * <p>
-	 * Action execution is typically triggered in a production environment by a
-	 * state of an active flow execution for a specific flow definition. The
+	 * Action invocation is typically triggered in a production environment by a
+	 * state within a flow carrying out the execution of a flow definition. The
 	 * result of action execution, a logical outcome event, can be used as
 	 * grounds for a transition out of the calling state.
 	 * <p>
-	 * Note: The <code>RequestContext</code> argument to this method provides
-	 * access to data about the active flow execution in the context of the
-	 * currently executing thread. Among other things, this allows this action
-	 * to access model data set by other actions, as well as set its own
-	 * attributes it wishes to expose in a given scope.
+	 * Note: The {@link RequestContext} argument to this method provides access
+	 * to data about the active flow execution in the context of the currently
+	 * executing thread. Among other things, this allows this action to access
+	 * {@link RequestContext#getRequestScope() data} set by other actions, as
+	 * well as set its own attributes it wishes to expose in a given scope.
 	 * <p>
-	 * All attributes set in "flow scope" by Actions will exist for the life of
-	 * the flow session and will be cleaned up automatically when the flow
-	 * session ends. All attributes set in "request scope" exist for the life of
-	 * the currently executing request only.
+	 * All attributes set in {#link
+	 * {@link RequestContext#getFlowScope() flow scope} by Actions will exist
+	 * for the life of the flow session and will be cleaned up automatically
+	 * when the flow session ends. All attributes set in
+	 * {@link RequestContext#getRequestScope() request scope} exist for the life
+	 * of the currently executing request only.
 	 * <p>
-	 * All attributes present in any scope are automatically exposed in the
-	 * model for access by a view when a <code>ViewState</code> or other
-	 * "interactive" state type is entered.
+	 * All attributes present in any scope are typically exposed in the model
+	 * for access by a view when an "interactive" state type such as a view state 
+	 * is entered.
 	 * <p>
-	 * Note: the flow scope should NOT be used as a general purpose cache, but
+	 * Note: flow scope should NOT be used as a general purpose cache, but
 	 * rather as a context for data needed locally by other states of the flow
 	 * this action participates in. For example, it would be inappropriate to
 	 * stuff large collections of objects (like those returned to support a
 	 * search results view) into flow scope. Instead, put such result
 	 * collections in request scope, and ensure you execute this action again
 	 * each time you wish to view those results. 2nd level caches managed
-	 * outside of SWF are much more general cache solutions.
+	 * outside of SWF are more general cache solutions.
 	 * <p>
 	 * Note: as flow scoped attributes are eligible for serialization they
 	 * should be <code>Serializable</code>.
