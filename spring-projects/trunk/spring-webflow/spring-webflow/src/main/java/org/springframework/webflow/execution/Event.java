@@ -19,6 +19,7 @@ import java.util.EventObject;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.support.CollectionUtils;
 
 /**
  * Signals the occurrence of something an active flow execution should respond
@@ -58,6 +59,15 @@ public final class Event extends EventObject {
 	private final AttributeMap attributes;
 
 	/**
+	 * Create a new event with the specified <code>id</code> and no payload.
+	 * @param source the source of the event
+	 * @param id the event identifier
+	 */
+	public Event(Object source, String id) {
+		this(source, id, null);
+	}
+
+	/**
 	 * Create a new event with the specified <code>id</code> and payload
 	 * attributes.
 	 * @param source the source of the event
@@ -68,7 +78,7 @@ public final class Event extends EventObject {
 		super(source);
 		Assert.hasText(id, "The event id is required: please set this event's id to a non-blank string identifier");
 		this.id = id;
-		this.attributes = attributes;
+		this.attributes = (attributes != null ? attributes : CollectionUtils.EMPTY_ATTRIBUTE_MAP);
 	}
 
 	/**

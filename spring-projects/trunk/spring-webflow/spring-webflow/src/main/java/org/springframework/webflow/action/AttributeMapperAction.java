@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.binding.mapping.AttributeMapper;
+import org.springframework.util.Assert;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -52,14 +53,13 @@ public class AttributeMapperAction extends AbstractAction {
 	 * @param attributeMapper the mapper
 	 */
 	public AttributeMapperAction(AttributeMapper attributeMapper) {
+		Assert.notNull(attributeMapper, "The attribute mapper is required");
 		this.attributeMapper = attributeMapper;
 	}
 
 	protected Event doExecute(RequestContext context) throws Exception {
-		if (attributeMapper != null) {
-			// map attributes from the request context to the request context
-			attributeMapper.map(context, context, getMappingContext(context));
-		}
+		// map attributes from the request context to the request context
+		attributeMapper.map(context, context, getMappingContext(context));
 		return success();
 	}
 
