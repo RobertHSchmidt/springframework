@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.test.execution.engine;
+package org.springframework.webflow.test.execution;
 
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.engine.builder.FlowBuilder;

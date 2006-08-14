@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.test.execution.engine;
+package org.springframework.webflow.test.execution;
 
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.core.collection.AttributeMap;
@@ -26,7 +26,6 @@ import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.factory.FlowExecutionFactory;
-import org.springframework.webflow.test.execution.AbstractFlowExecutionTests;
 
 /**
  * Base class for flow integration tests that verify an externalized flow
