@@ -34,7 +34,7 @@ public class MultiActionTests extends TestCase {
 
 	public void testDispatchWithCurrentStateId() throws Exception {
 		MockFlowSession session = context.getMockFlowExecutionContext().getMockActiveSession();
-		session.setState(new ViewState(session.getFlow(), "increment"));
+		session.setState(new ViewState(session.getDefinitionInternal(), "increment"));
 		action.execute(context);
 		assertEquals(1, action.counter);
 	}
