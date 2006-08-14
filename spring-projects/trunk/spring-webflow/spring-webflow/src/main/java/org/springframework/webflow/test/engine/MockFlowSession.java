@@ -24,7 +24,6 @@ import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.FlowSessionStatus;
-import org.springframework.webflow.execution.ScopeType;
 
 /**
  * Mock implementation of the <code>FlowSession</code> interface.
@@ -33,13 +32,13 @@ import org.springframework.webflow.execution.ScopeType;
  */
 public class MockFlowSession implements FlowSession {
 
-	private Flow flow;
+	private Flow definition;
 
 	private State state;
 
 	private FlowSessionStatus status = FlowSessionStatus.CREATED;
 
-	private LocalAttributeMap scope = new LocalAttributeMap();
+	private MutableAttributeMap scope = new LocalAttributeMap();
 
 	private FlowSession parent;
 
@@ -48,8 +47,8 @@ public class MockFlowSession implements FlowSession {
 	 * the 'active flow' in state "mockState". This session marks itself active.
 	 */
 	public MockFlowSession() {
-		setFlow(new Flow("mockFlow"));
-		State state = new ViewState(flow, "mockState");
+		setDefinition(new Flow("mockFlow"));
+		State state = new ViewState(definition, "mockState");
 		setStatus(FlowSessionStatus.ACTIVE);
 		setState(state);
 	}
@@ -59,7 +58,7 @@ public class MockFlowSession implements FlowSession {
 	 * definition.
 	 */
 	public MockFlowSession(Flow flow) {
-		setFlow(flow);
+		setDefinition(flow);
 	}
 
 	/**
@@ -67,12 +66,12 @@ public class MockFlowSession implements FlowSession {
 	 * definition.
 	 */
 	public MockFlowSession(Flow flow, MutableAttributeMap input) {
-		setFlow(flow);
+		setDefinition(flow);
 		scope.putAll(input);
 	}
 
 	public FlowDefinition getDefinition() {
-		return flow;
+		return definition;
 	}
 
 	public StateDefinition getState() {
@@ -98,15 +97,15 @@ public class MockFlowSession implements FlowSession {
 	/**
 	 * Returns the flow definition of this session.
 	 */
-	public Flow getFlow() {
-		return flow;
+	public Flow getDefinitionInternal() {
+		return definition;
 	}
 	
 	/**
 	 * Set the flow associated with this flow session.
 	 */
-	public void setFlow(Flow flow) {
-		this.flow = flow;
+	public void setDefinition(Flow flow) {
+		this.definition = flow;
 	}
 
 	/**
@@ -132,10 +131,9 @@ public class MockFlowSession implements FlowSession {
 
 	/**
 	 * Set the scope data maintained by this flow session. This will be the flow
-	 * scope data of the ongoing flow execution. As such, the given scope should
-	 * be of type {@link ScopeType#FLOW}.
+	 * scope data of the ongoing flow execution.
 	 */
-	public void setScope(LocalAttributeMap scope) {
+	public void setScope(MutableAttributeMap scope) {
 		this.scope = scope;
 	}
 
