@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.engine.impl;
 
-import org.springframework.beans.factory.config.SetFactoryBean;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
