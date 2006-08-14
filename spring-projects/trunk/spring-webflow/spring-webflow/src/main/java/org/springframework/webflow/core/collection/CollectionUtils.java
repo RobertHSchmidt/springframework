@@ -36,6 +36,9 @@ public class CollectionUtils {
 	 */
 	public static final EmptyIterator EMPTY_ITERATOR = new EmptyIterator();
 
+	/**
+	 * The shared, singleton empty attribute map instance.
+	 */
 	public static final AttributeMap EMPTY_ATTRIBUTE_MAP = new LocalAttributeMap(Collections.EMPTY_MAP);
 
 	/**
@@ -44,6 +47,50 @@ public class CollectionUtils {
 	private CollectionUtils() {
 	}
 
+	/**
+	 * Factory method that adapts an enumeration to an iterator.
+	 * @param enumeration the enumeration
+	 * @return the iterator
+	 */
+	public static Iterator toIterator(Enumeration enumeration) {
+		return new EnumerationIterator(enumeration);
+	}
+
+	/**
+	 * Factory method that returns a unmodifiable attribute map with a single
+	 * entry.
+	 * @param attributeName the attribute name
+	 * @param attributeValue the attribute value
+	 * @return the unmodifiable map with a single element
+	 */
+	public static AttributeMap singleEntryMap(String attributeName, Object attributeValue) {
+		return new LocalAttributeMap(attributeName, attributeValue);
+	}
+
+	/**
+	 * Add all given objects to given target list. No duplicates will be added.
+	 * The contains() method of the given target list will be used to determine
+	 * whether or not an object is already in the list.
+	 * @param target the collection to which to objects will be added
+	 * @param objects the objects to add
+	 * @return whether or not the target collection changed
+	 */
+	public static boolean addAllNoDuplicates(List target, Object[] objects) {
+		if (objects == null || objects.length == 0) {
+			return false;
+		}
+		else {
+			boolean changed = false;
+			for (int i = 0; i < objects.length; i++) {
+				if (!target.contains(objects[i])) {
+					target.add(objects[i]);
+					changed = true;
+				}
+			}
+			return changed;
+		}
+	}
+	
 	/**
 	 * Iterator iterating over no elements (hasNext() always returns false).
 	 */
@@ -86,51 +133,6 @@ public class CollectionUtils {
 
 		public void remove() throws UnsupportedOperationException {
 			throw new UnsupportedOperationException("Not supported");
-		}
-
-	}
-
-	/**
-	 * Factory method that adapts an enumeration to an iterator.
-	 * @param enumeration the enumeration
-	 * @return the iterator
-	 */
-	public static Iterator iterator(Enumeration enumeration) {
-		return new EnumerationIterator(enumeration);
-	}
-
-	/**
-	 * Factory method that returns a unmodifiable attribute map with a single
-	 * entry.
-	 * @param attributeName the attribute name
-	 * @param attributeValue the attribute value
-	 * @return the unmodifiable map with a single element
-	 */
-	public static AttributeMap singleEntryMap(String attributeName, Object attributeValue) {
-		return new LocalAttributeMap(attributeName, attributeValue);
-	}
-
-	/**
-	 * Add all given objects to given target list. No duplicates will be added.
-	 * The contains() method of the given target list will be used to determine
-	 * whether or not an object is already in the list.
-	 * @param target the collection to which to objects will be added
-	 * @param objects the objects to add
-	 * @return whether or not the target collection changed
-	 */
-	public static boolean addAllNoDuplicates(List target, Object[] objects) {
-		if (objects == null || objects.length == 0) {
-			return false;
-		}
-		else {
-			boolean changed = false;
-			for (int i = 0; i < objects.length; i++) {
-				if (!target.contains(objects[i])) {
-					target.add(objects[i]);
-					changed = true;
-				}
-			}
-			return changed;
 		}
 	}
 }

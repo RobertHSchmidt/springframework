@@ -78,7 +78,7 @@ public class HttpServletRequestParameterMap extends StringKeyedMapAdapter {
 			return new MultiPartIterator(multipartRequest.getFileMap().keySet().iterator(), parameterNames);
 		}
 		else {
-			return CollectionUtils.iterator(parameterNames);
+			return CollectionUtils.toIterator(parameterNames);
 		}
 	}
 

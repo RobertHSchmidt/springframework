@@ -56,7 +56,7 @@ public class HttpServletContextMap extends StringKeyedMapAdapter implements Shar
 	}
 
 	protected Iterator getAttributeNames() {
-		return CollectionUtils.iterator(context.getAttributeNames());
+		return CollectionUtils.toIterator(context.getAttributeNames());
 	}
 
 	public Object getMutex() {
