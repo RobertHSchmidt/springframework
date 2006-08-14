@@ -55,6 +55,6 @@ public class HttpServletRequestMap extends StringKeyedMapAdapter {
 	}
 
 	protected Iterator getAttributeNames() {
-		return CollectionUtils.iterator(request.getAttributeNames());
+		return CollectionUtils.toIterator(request.getAttributeNames());
 	}
 }

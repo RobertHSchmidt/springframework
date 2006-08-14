@@ -80,7 +80,7 @@ public class PortletSessionMap extends StringKeyedMapAdapter implements SharedMa
 
 	protected Iterator getAttributeNames() {
 		PortletSession session = getSession();
-		return session == null ? CollectionUtils.EMPTY_ITERATOR : CollectionUtils.iterator(session
+		return session == null ? CollectionUtils.EMPTY_ITERATOR : CollectionUtils.toIterator(session
 				.getAttributeNames(scope));
 	}
 

@@ -71,7 +71,7 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 
 	protected Iterator getAttributeNames() {
 		HttpSession session = getSession();
-		return session == null ? CollectionUtils.EMPTY_ITERATOR : CollectionUtils.iterator(session.getAttributeNames());
+		return session == null ? CollectionUtils.EMPTY_ITERATOR : CollectionUtils.toIterator(session.getAttributeNames());
 	}
 
 	public Object getMutex() {

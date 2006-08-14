@@ -62,6 +62,6 @@ public class PortletRequestParameterMap extends StringKeyedMapAdapter {
 	}
 
 	protected Iterator getAttributeNames() {
-		return CollectionUtils.iterator(request.getParameterNames());
+		return CollectionUtils.toIterator(request.getParameterNames());
 	}
 }
