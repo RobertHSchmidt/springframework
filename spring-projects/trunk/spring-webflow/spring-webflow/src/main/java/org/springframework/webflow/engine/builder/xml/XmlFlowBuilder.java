@@ -51,7 +51,7 @@ import org.springframework.webflow.action.bean.BeanInvokingActionFactory;
 import org.springframework.webflow.action.bean.MethodResultSpecification;
 import org.springframework.webflow.core.CollectionAddingPropertyExpression;
 import org.springframework.webflow.core.collection.AttributeMap;
-import org.springframework.webflow.core.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.engine.AnnotatedAction;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;

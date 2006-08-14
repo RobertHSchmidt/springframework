@@ -22,8 +22,8 @@ import ognl.PropertyAccessor;
 
 import org.springframework.binding.expression.support.OgnlExpressionParser;
 import org.springframework.binding.util.MapAdaptable;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
-import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 
 /**
  * An extension of {@link OgnlExpressionParser} that registers web flow specific

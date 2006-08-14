@@ -17,10 +17,10 @@ package org.springframework.webflow.test.engine;
 
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.core.collection.LocalParameterMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
-import org.springframework.webflow.core.collection.support.LocalAttributeMap;
-import org.springframework.webflow.core.collection.support.LocalParameterMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.definition.TransitionDefinition;

@@ -15,8 +15,8 @@
  */
 package org.springframework.webflow.test.engine;
 
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
-import org.springframework.webflow.core.collection.support.LocalAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.engine.Flow;
@@ -33,9 +33,9 @@ import org.springframework.webflow.execution.ScopeType;
  */
 public class MockFlowSession implements FlowSession {
 
-	private Flow flow;
+	Flow flow;
 
-	private State state;
+	State state;
 
 	private FlowSessionStatus status = FlowSessionStatus.CREATED;
 

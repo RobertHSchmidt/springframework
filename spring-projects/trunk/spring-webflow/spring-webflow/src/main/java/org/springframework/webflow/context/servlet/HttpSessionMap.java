@@ -23,7 +23,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.context.support.SharedMap;
 import org.springframework.webflow.context.support.StringKeyedMapAdapter;
-import org.springframework.webflow.core.collection.support.CollectionUtils;
+import org.springframework.webflow.core.collection.CollectionUtils;
 
 /**
  * A Shared Map backed by the Servlet HTTP session, for accessing session scoped

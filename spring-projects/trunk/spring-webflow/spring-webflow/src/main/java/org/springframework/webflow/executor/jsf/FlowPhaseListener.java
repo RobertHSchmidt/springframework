@@ -29,7 +29,7 @@ import javax.faces.event.PhaseListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.core.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;

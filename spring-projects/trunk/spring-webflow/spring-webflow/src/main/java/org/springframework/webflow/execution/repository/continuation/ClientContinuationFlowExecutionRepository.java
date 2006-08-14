@@ -26,7 +26,7 @@ import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.conversation.ConversationParameters;
 import org.springframework.webflow.conversation.NoSuchConversationException;
 import org.springframework.webflow.conversation.impl.SimpleConversationId;
-import org.springframework.webflow.core.collection.support.CollectionUtils;
+import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException;
