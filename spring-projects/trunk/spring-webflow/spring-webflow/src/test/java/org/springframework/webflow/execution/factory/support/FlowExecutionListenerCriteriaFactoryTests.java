@@ -1,4 +1,4 @@
-package org.springframework.webflow.execution;
+package org.springframework.webflow.execution.factory.support;
 
 import junit.framework.TestCase;
 

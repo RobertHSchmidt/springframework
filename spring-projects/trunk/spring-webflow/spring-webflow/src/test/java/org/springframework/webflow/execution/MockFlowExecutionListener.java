@@ -19,7 +19,7 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
-import org.springframework.webflow.support.UnmodifiableAttributeMap;
+import org.springframework.webflow.engine.support.UnmodifiableAttributeMap;
 
 /**
  * Mock implementation of the <code>FlowExecutionListener</code> interface for
