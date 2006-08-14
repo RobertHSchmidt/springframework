@@ -18,7 +18,7 @@ package org.springframework.webflow.action;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
-import org.springframework.webflow.core.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -84,21 +84,18 @@ public class CompositeActionTests extends TestCase {
 		actionControl.verify();
 		assertEquals("Expecting success since no check is performed if null result,", "success", result.getId());
 	}
-	
+
 	public void testMultipleActions() throws Exception {
-		CompositeAction ca = new CompositeAction(new Action[] {
-				new Action() {
-					public Event execute(RequestContext context) throws Exception {
-						return new Event(this, "foo");
-					}
-				},
-				new Action() {
-					public Event execute(RequestContext context) throws Exception {
-						return new Event(this, "bar");
-					}
-				}
-		});
-		assertEquals("Result of last executed action should be returned",
-				"bar", ca.execute(new MockRequestContext()).getId());
+		CompositeAction ca = new CompositeAction(new Action[] { new Action() {
+			public Event execute(RequestContext context) throws Exception {
+				return new Event(this, "foo");
+			}
+		}, new Action() {
+			public Event execute(RequestContext context) throws Exception {
+				return new Event(this, "bar");
+			}
+		} });
+		assertEquals("Result of last executed action should be returned", "bar", ca.execute(new MockRequestContext())
+				.getId());
 	}
 }

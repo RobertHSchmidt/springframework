@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.action;
+package org.springframework.webflow.action.bean;
 
 import junit.framework.TestCase;
 
@@ -21,10 +21,8 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.binding.method.Parameter;
 import org.springframework.binding.method.Parameters;
-import org.springframework.webflow.action.bean.LocalBeanInvokingAction;
-import org.springframework.webflow.action.bean.MethodResultSpecification;
-import org.springframework.webflow.core.WebFlowOgnlExpressionParser;
-import org.springframework.webflow.core.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.DefaultExpressionParserFactory;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.test.engine.MockRequestContext;
@@ -82,6 +80,6 @@ public class LocalBeanInvokingActionTests extends TestCase {
 	}
 
 	private Expression expression(String string) {
-		return new WebFlowOgnlExpressionParser().parseExpression(string);
+		return new DefaultExpressionParserFactory().getExpressionParser().parseExpression(string);
 	}
 }

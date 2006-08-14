@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.MappingBuilder;
-import org.springframework.webflow.core.WebFlowOgnlExpressionParser;
+import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.test.engine.MockRequestContext;
 
 /**
@@ -31,10 +31,13 @@ import org.springframework.webflow.test.engine.MockRequestContext;
  */
 public class AttributeMapperActionTests extends TestCase {
 
+	private MappingBuilder mappingBuilder = new MappingBuilder(new DefaultExpressionParserFactory()
+			.getExpressionParser());
+
 	public void testMapping() throws Exception {
 		DefaultAttributeMapper mapper = new DefaultAttributeMapper();
-		mapper.addMapping(new MappingBuilder(new WebFlowOgnlExpressionParser()).source(
-				"${externalContext.requestParameterMap.foo}").target("${flowScope.bar}").value());
+		mapper.addMapping(mappingBuilder.source("${externalContext.requestParameterMap.foo}")
+				.target("${flowScope.bar}").value());
 		AttributeMapperAction action = new AttributeMapperAction(mapper);
 
 		MockRequestContext context = new MockRequestContext();
@@ -46,5 +49,15 @@ public class AttributeMapperActionTests extends TestCase {
 
 		assertEquals(1, context.getFlowScope().size());
 		assertEquals("value", context.getFlowScope().get("bar"));
+	}
+	
+	public void testNullIllegalArgument() {
+		try {
+			AttributeMapperAction action = new AttributeMapperAction(null);
+			fail("Should've thrown illegal argument");
+		}
+		catch (IllegalArgumentException e) {
+			
+		}
 	}
 }

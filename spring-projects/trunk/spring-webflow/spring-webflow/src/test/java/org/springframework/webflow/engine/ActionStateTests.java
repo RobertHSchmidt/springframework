@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow;
+package org.springframework.webflow.engine;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.engine.ActionState;
-import org.springframework.webflow.engine.AnnotatedAction;
-import org.springframework.webflow.engine.EndState;
-import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.NoMatchingTransitionException;
-import org.springframework.webflow.engine.TargetStateResolver;
-import org.springframework.webflow.engine.Transition;
-import org.springframework.webflow.engine.TransitionCriteria;
-import org.springframework.webflow.engine.machine.FlowExecutionImpl;
-import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
+import org.springframework.webflow.TestAction;
+import org.springframework.webflow.engine.impl.FlowExecutionImpl;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.FlowExecution;
@@ -114,7 +106,7 @@ public class ActionStateTests extends TestCase {
 		return new EventIdTransitionCriteria(event);
 	}
 
-	protected TargetStateResolver to(String stateId) {
-		return new DefaultTargetStateResolver(stateId);
+	protected String to(String stateId) {
+		return stateId;
 	}
 }

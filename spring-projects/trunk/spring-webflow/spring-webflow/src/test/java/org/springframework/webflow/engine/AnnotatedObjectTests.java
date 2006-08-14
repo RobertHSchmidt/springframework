@@ -1,4 +1,4 @@
-package org.springframework.webflow;
+package org.springframework.webflow.engine;
 
 import org.springframework.webflow.engine.AnnotatedObject;
 import org.springframework.webflow.engine.Flow;

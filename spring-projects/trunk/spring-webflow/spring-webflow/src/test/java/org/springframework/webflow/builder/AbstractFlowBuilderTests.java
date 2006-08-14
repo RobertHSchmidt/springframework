@@ -18,7 +18,7 @@ package org.springframework.webflow.builder;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.action.MultiAction;
-import org.springframework.webflow.core.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.AnnotatedAction;
 import org.springframework.webflow.engine.EndState;
