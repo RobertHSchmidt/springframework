@@ -33,6 +33,12 @@ public interface MutableAttributeMap extends AttributeMap {
 	public Object remove(String attributeName);
 
 	/**
+	 * Remove all attributes in this map.
+	 * @return this, to support call chaining
+	 */
+	public MutableAttributeMap clear();
+
+	/**
 	 * Replace the contents of this attribute map with the contents of the
 	 * provided collection.
 	 * @param attributes the attribute collection

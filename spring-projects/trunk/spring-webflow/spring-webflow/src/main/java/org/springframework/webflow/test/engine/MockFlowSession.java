@@ -33,9 +33,9 @@ import org.springframework.webflow.execution.ScopeType;
  */
 public class MockFlowSession implements FlowSession {
 
-	Flow flow;
+	private Flow flow;
 
-	State state;
+	private State state;
 
 	private FlowSessionStatus status = FlowSessionStatus.CREATED;
 
@@ -95,6 +95,13 @@ public class MockFlowSession implements FlowSession {
 		return parent == null;
 	}
 
+	/**
+	 * Returns the flow definition of this session.
+	 */
+	public Flow getFlow() {
+		return flow;
+	}
+	
 	/**
 	 * Set the flow associated with this flow session.
 	 */
