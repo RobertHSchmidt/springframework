@@ -13,21 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow;
+package org.springframework.webflow.engine;
 
 import junit.framework.TestCase;
 
 import org.springframework.binding.expression.support.StaticExpression;
-import org.springframework.webflow.engine.EndState;
-import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.TargetStateResolver;
-import org.springframework.webflow.engine.Transition;
-import org.springframework.webflow.engine.TransitionCriteria;
-import org.springframework.webflow.engine.ViewSelector;
-import org.springframework.webflow.engine.ViewState;
-import org.springframework.webflow.engine.machine.FlowExecutionImpl;
+import org.springframework.webflow.TestAction;
+import org.springframework.webflow.engine.impl.FlowExecutionImpl;
 import org.springframework.webflow.engine.support.ApplicationViewSelector;
-import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.ViewSelection;
@@ -68,6 +61,7 @@ public class ViewStateTests extends TestCase {
 	public void testViewStateNotRenderableSelection() {
 		Flow flow = new Flow("myFlow");
 		ViewState state = new ViewState(flow, "viewState");
+		state.setViewSelector(new ApplicationViewSelector(new StaticExpression("myView"), true));
 		TestAction action = new TestAction();
 		state.getRenderActionList().add(action);
 		state.getTransitionSet().add(new Transition(on("submit"), to("finish")));
@@ -77,7 +71,6 @@ public class ViewStateTests extends TestCase {
 
 		ViewSelection view = flowExecution.start(null, new MockExternalContext());
 		assertEquals("viewState", flowExecution.getActiveSession().getState().getId());
-		assertEquals(ViewSelection.NULL_VIEW, view);
 		assertFalse(action.isExecuted());
 		assertEquals(action.getExecutionCount(), 0);
 
@@ -105,13 +98,13 @@ public class ViewStateTests extends TestCase {
 		assertEquals(action.getExecutionCount(), 2);
 
 	}
-	
+
 	protected static TransitionCriteria on(String event) {
 		return new EventIdTransitionCriteria(event);
 	}
 
-	protected static TargetStateResolver to(String stateId) {
-		return new DefaultTargetStateResolver(stateId);
+	protected static String to(String stateId) {
+		return stateId;
 	}
 
 	public static ViewSelector view(String viewName) {

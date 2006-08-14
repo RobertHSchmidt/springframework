@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow;
+package org.springframework.webflow.engine;
 
 import junit.framework.TestCase;
 
@@ -22,18 +22,8 @@ import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.webflow.action.AttributeMapperAction;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
-import org.springframework.webflow.engine.ActionState;
-import org.springframework.webflow.engine.EndState;
-import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.SubflowState;
-import org.springframework.webflow.engine.TargetStateResolver;
-import org.springframework.webflow.engine.Transition;
-import org.springframework.webflow.engine.TransitionCriteria;
-import org.springframework.webflow.engine.ViewSelector;
-import org.springframework.webflow.engine.ViewState;
-import org.springframework.webflow.engine.machine.FlowExecutionImpl;
+import org.springframework.webflow.engine.impl.FlowExecutionImpl;
 import org.springframework.webflow.engine.support.ApplicationViewSelector;
-import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.EventId;
@@ -86,13 +76,12 @@ public class SubflowStateTests extends TestCase {
 		DefaultAttributeMapper outputMapper = new DefaultAttributeMapper();
 		outputMapper.addMapping(mapping.source("flowScope.childInputAttribute").target("childInputAttribute").value());
 		state2.setOutputMapper(outputMapper);
-		
+
 		Flow flow = new Flow("myFlow");
 		ActionState mapperState = new ActionState(flow, "mapperState");
 		DefaultAttributeMapper mapper = new DefaultAttributeMapper();
-		mapper.addMapping(mapping.source(
-				"externalContext.requestParameterMap.parentInputAttribute").target("flowScope.parentInputAttribute")
-				.value());
+		mapper.addMapping(mapping.source("externalContext.requestParameterMap.parentInputAttribute").target(
+				"flowScope.parentInputAttribute").value());
 		Action mapperAction = new AttributeMapperAction(mapper);
 		mapperState.getActionList().add(mapperAction);
 		mapperState.getTransitionSet().add(new Transition(on("success"), to("subFlowState")));
@@ -122,8 +111,8 @@ public class SubflowStateTests extends TestCase {
 		return new EventIdTransitionCriteria(event);
 	}
 
-	protected TargetStateResolver to(String stateId) {
-		return new DefaultTargetStateResolver(stateId);
+	protected String to(String stateId) {
+		return stateId;
 	}
 
 	protected ViewSelector view(String viewName) {

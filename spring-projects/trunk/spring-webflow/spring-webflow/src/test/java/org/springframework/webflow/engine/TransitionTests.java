@@ -1,18 +1,15 @@
-package org.springframework.webflow;
+package org.springframework.webflow.engine;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.Transition;
-import org.springframework.webflow.engine.ViewState;
-import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
+import org.springframework.webflow.TestAction;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.test.engine.MockRequestControlContext;
 
 public class TransitionTests extends TestCase {
 
 	public void testSimpleTransition() {
-		Transition t = new Transition(new DefaultTargetStateResolver("target"));
+		Transition t = new Transition("target");
 		Flow flow = new Flow("flow");
 		ViewState source = new ViewState(flow, "source");
 		TestAction action = new TestAction();
@@ -28,13 +25,13 @@ public class TransitionTests extends TestCase {
 	}
 
 	public void testTransitionCriteriaDoesNotMatch() {
-		Transition t = new Transition(new EventIdTransitionCriteria("bogus"), new DefaultTargetStateResolver("target"));
+		Transition t = new Transition(new EventIdTransitionCriteria("bogus"), "target");
 		MockRequestControlContext context = new MockRequestControlContext(new Flow("flow"));
 		assertFalse(t.matches(context));
 	}
 
 	public void testTransitionCannotExecute() {
-		Transition t = new Transition(new DefaultTargetStateResolver("target"));
+		Transition t = new Transition("target");
 		t.setExecutionCriteria(new EventIdTransitionCriteria("bogus"));
 		Flow flow = new Flow("flow");
 		ViewState source = new ViewState(flow, "source");

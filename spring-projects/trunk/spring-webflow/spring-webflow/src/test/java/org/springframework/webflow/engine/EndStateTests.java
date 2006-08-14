@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow;
+package org.springframework.webflow.engine;
 
 import junit.framework.TestCase;
 
@@ -21,15 +21,10 @@ import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
-import org.springframework.webflow.core.collection.support.LocalAttributeMap;
-import org.springframework.webflow.engine.EndState;
-import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.TargetStateResolver;
-import org.springframework.webflow.engine.TransitionCriteria;
-import org.springframework.webflow.engine.ViewSelector;
-import org.springframework.webflow.engine.machine.FlowExecutionImpl;
+import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.engine.impl.FlowExecutionImpl;
 import org.springframework.webflow.engine.support.ApplicationViewSelector;
-import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
@@ -38,7 +33,6 @@ import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.ApplicationView;
-import org.springframework.webflow.support.UnmodifiableAttributeMap;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
@@ -48,7 +42,7 @@ import org.springframework.webflow.test.MockExternalContext;
  */
 public class EndStateTests extends TestCase {
 
-	public void testEndState() {
+	public void testEndStateTerminateFlow() {
 		Flow flow = new Flow("myFlow");
 		EndState state = new EndState(flow, "finish");
 		state.setViewSelector(view("myViewName"));
@@ -58,26 +52,26 @@ public class EndStateTests extends TestCase {
 		assertEquals("myViewName", view.getViewName());
 	}
 
-	public void testEndStateOutput() {
+	public void testEndStateTerminateFlowWithOutput() {
 		Flow flow = new Flow("myFlow");
 		DefaultAttributeMapper inputMapper = new DefaultAttributeMapper();
 		MappingBuilder mapping = new MappingBuilder(new DefaultExpressionParserFactory().getExpressionParser());
 		inputMapper.addMapping(mapping.source("attr1").target("flowScope.attr1").value());
 		flow.setInputMapper(inputMapper);
-		
+
 		EndState state = new EndState(flow, "finish");
 		DefaultAttributeMapper outputMapper = new DefaultAttributeMapper();
 		outputMapper.addMapping(mapping.source("flowScope.attr1").target("attr1").value());
 		outputMapper.addMapping(mapping.source("flowScope.attr2").target("attr2").value());
 		state.setOutputMapper(outputMapper);
-		
+
 		FlowExecutionListener outputVerifier = new FlowExecutionListenerAdapter() {
-			public void sessionEnded(RequestContext context, FlowSession session, UnmodifiableAttributeMap output) {
+			public void sessionEnded(RequestContext context, FlowSession session, AttributeMap output) {
 				assertEquals("value1", output.get("attr1"));
 				assertNull(output.get("attr2"));
 			}
 		};
-		FlowExecution flowExecution = new FlowExecutionImpl(flow, new FlowExecutionListener[] { outputVerifier });
+		FlowExecution flowExecution = new FlowExecutionImpl(flow, new FlowExecutionListener[] { outputVerifier }, null);
 		LocalAttributeMap input = new LocalAttributeMap();
 		input.put("attr1", "value1");
 		ViewSelection view = flowExecution.start(input, new MockExternalContext());
@@ -89,8 +83,8 @@ public class EndStateTests extends TestCase {
 		return new EventIdTransitionCriteria(event);
 	}
 
-	protected static TargetStateResolver to(String stateId) {
-		return new DefaultTargetStateResolver(stateId);
+	protected static String to(String stateId) {
+		return stateId;
 	}
 
 	public static ViewSelector view(String viewName) {

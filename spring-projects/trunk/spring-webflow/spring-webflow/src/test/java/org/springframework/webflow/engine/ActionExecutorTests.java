@@ -1,7 +1,8 @@
-package org.springframework.webflow;
+package org.springframework.webflow.engine;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.TestAction;
 import org.springframework.webflow.engine.ActionExecutionException;
 import org.springframework.webflow.engine.ActionExecutor;
 import org.springframework.webflow.engine.Flow;

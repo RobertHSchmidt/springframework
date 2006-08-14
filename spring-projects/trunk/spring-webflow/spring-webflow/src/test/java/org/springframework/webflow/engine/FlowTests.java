@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow;
+package org.springframework.webflow.engine;
 
 import java.util.ArrayList;
 
@@ -23,21 +23,13 @@ import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.webflow.TestAction;
 import org.springframework.webflow.action.TestMultiAction;
 import org.springframework.webflow.builder.MyCustomException;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
-import org.springframework.webflow.core.collection.support.LocalAttributeMap;
-import org.springframework.webflow.engine.EndState;
-import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.NoMatchingTransitionException;
-import org.springframework.webflow.engine.State;
-import org.springframework.webflow.engine.TargetStateResolver;
-import org.springframework.webflow.engine.Transition;
-import org.springframework.webflow.engine.TransitionCriteria;
-import org.springframework.webflow.engine.ViewState;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.engine.support.BeanFactoryFlowVariable;
-import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.engine.support.SimpleFlowVariable;
 import org.springframework.webflow.engine.support.TransitionExecutingStateExceptionHandler;
@@ -72,12 +64,11 @@ public class FlowTests extends TestCase {
 		new EndState(flow, "myState2");
 		assertEquals("Wrong start state:", "myState1", flow.getStartState().getId());
 		assertEquals("State count wrong:", 2, flow.getStateCount());
-		assertEquals("State count wrong:", 2, flow.getStates().length);
 		assertTrue(flow.containsState("myState1"));
 		assertTrue(flow.containsState("myState2"));
-		State state = flow.getRequiredState("myState1");
+		State state = flow.getStateInternal("myState1");
 		assertEquals("Wrong flow:", "myFlow", state.getFlow().getId());
-		assertEquals("Wrong state:", "myState1", flow.getRequiredState("myState1").getFlowDefinitionId());
+		assertEquals("Wrong state:", "myState1", flow.getState("myState1").getId());
 		assertEquals("Wrong state:", "myState2", flow.getState("myState2").getId());
 	}
 
@@ -99,8 +90,9 @@ public class FlowTests extends TestCase {
 		try {
 			flow.add(state);
 			fail("Should have failed");
-		} catch (IllegalArgumentException e) {
-			
+		}
+		catch (IllegalArgumentException e) {
+
 		}
 		assertEquals("State count wrong:", 1, flow.getStateCount());
 	}
@@ -130,9 +122,8 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testGetStateNoSuchState() {
-		assertNull("Not null", flow.getState("myState3"));
 		try {
-			flow.getRequiredState("myState3");
+			flow.getState("myState3");
 			fail("Returned a state that doesn't exist");
 		}
 		catch (IllegalArgumentException e) {
@@ -142,19 +133,19 @@ public class FlowTests extends TestCase {
 
 	public void testGetTransitionableState() {
 		assertEquals("Wrong state:", "myState1", flow.getTransitionableState("myState1").getId());
-		assertEquals("Wrong state:", "myState1", flow.getRequiredTransitionableState("myState1").getFlowDefinitionId());
+		assertEquals("Wrong state:", "myState1", flow.getState("myState1").getId());
 	}
 
 	public void testGetStateNoSuchTransitionableState() {
 		try {
-			flow.getRequiredTransitionableState("myState2");
+			flow.getTransitionableState("myState2");
 			fail("End states aren't transtionable");
 		}
 		catch (ClassCastException e) {
 			// expected
 		}
 		try {
-			flow.getRequiredTransitionableState("doesNotExist");
+			flow.getTransitionableState("doesNotExist");
 		}
 		catch (IllegalArgumentException e) {
 			// expected
@@ -180,7 +171,7 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testAddGlobalTransition() {
-		Transition t = new Transition(new DefaultTargetStateResolver("myState2"));
+		Transition t = new Transition("myState2");
 		flow.getGlobalTransitionSet().add(t);
 		assertSame(t, flow.getGlobalTransitionSet().toArray()[1]);
 	}
@@ -208,8 +199,8 @@ public class FlowTests extends TestCase {
 		flow.addVariable(new BeanFactoryFlowVariable("var2", "bean", beanFactory));
 		flow.start(context, new LocalAttributeMap());
 		assertEquals(2, context.getFlowScope().size());
-		context.getFlowScope().getRequired("var1", ArrayList.class);	
-		context.getFlowScope().getRequired("var2", ArrayList.class);	
+		context.getFlowScope().getRequired("var1", ArrayList.class);
+		context.getFlowScope().getRequired("var2", ArrayList.class);
 	}
 
 	public void testStartWithMapper() {
@@ -220,7 +211,7 @@ public class FlowTests extends TestCase {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		LocalAttributeMap sessionInput = new LocalAttributeMap();
 		sessionInput.put("attr", "foo");
-		flow.start(context, sessionInput); 
+		flow.start(context, sessionInput);
 		assertEquals("foo", context.getFlowScope().get("attr"));
 	}
 
@@ -231,37 +222,39 @@ public class FlowTests extends TestCase {
 		flow.setInputMapper(attributeMapper);
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		LocalAttributeMap sessionInput = new LocalAttributeMap();
-		flow.start(context, sessionInput); 
+		flow.start(context, sessionInput);
 		assertFalse(context.getFlowScope().contains("attr"));
 	}
-	
+
 	public void testOnEventNullCurrentState() {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		Event event = new Event(this, "foo");
 		try {
 			context.setLastEvent(event);
 			flow.onEvent(context);
-		} catch (IllegalStateException e) {
-			
+		}
+		catch (IllegalStateException e) {
+
 		}
 	}
 
 	public void testOnEventInvalidCurrentState() {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
-		context.setCurrentState(flow.getState("myState2"));
+		context.setCurrentState(flow.getStateInternal("myState2"));
 		Event event = new Event(this, "submit");
 		context.setLastEvent(event);
 		try {
 			context.setLastEvent(event);
 			flow.onEvent(context);
-		} catch (IllegalStateException e) {
-			
+		}
+		catch (IllegalStateException e) {
+
 		}
 	}
 
 	public void testOnEvent() {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
-		context.setCurrentState(flow.getState("myState1"));
+		context.setCurrentState(flow.getStateInternal("myState1"));
 		Event event = new Event(this, "submit");
 		context.setLastEvent(event);
 		assertTrue(context.getFlowExecutionContext().isActive());
@@ -272,7 +265,7 @@ public class FlowTests extends TestCase {
 
 	public void testOnEventGlobalTransition() {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
-		context.setCurrentState(flow.getState("myState1"));
+		context.setCurrentState(flow.getStateInternal("myState1"));
 		Event event = new Event(this, "globalEvent");
 		context.setLastEvent(event);
 		assertTrue(context.getFlowExecutionContext().isActive());
@@ -283,14 +276,15 @@ public class FlowTests extends TestCase {
 
 	public void testOnEventNoTransition() {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
-		context.setCurrentState(flow.getState("myState1"));
+		context.setCurrentState(flow.getStateInternal("myState1"));
 		Event event = new Event(this, "bogus");
 		context.setLastEvent(event);
 		try {
 			context.setLastEvent(event);
 			flow.onEvent(context);
-		} catch (NoMatchingTransitionException e) {
-			
+		}
+		catch (NoMatchingTransitionException e) {
+
 		}
 	}
 
@@ -302,8 +296,8 @@ public class FlowTests extends TestCase {
 		flow.end(context, sessionOutput);
 		assertEquals(1, action.getExecutionCount());
 	}
-	
-	public void testEndWithMapper() {
+
+	public void testEndWithOutputMapper() {
 		DefaultAttributeMapper attributeMapper = new DefaultAttributeMapper();
 		MappingBuilder mapping = new MappingBuilder(new DefaultExpressionParserFactory().getExpressionParser());
 		attributeMapper.addMapping(mapping.source("flowScope.attr").target("attr").value());
@@ -311,16 +305,17 @@ public class FlowTests extends TestCase {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.getFlowScope().put("attr", "foo");
 		LocalAttributeMap sessionOutput = new LocalAttributeMap();
-		flow.end(context, sessionOutput); 
+		flow.end(context, sessionOutput);
 		assertEquals("foo", sessionOutput.get("attr"));
 	}
 
 	public void testHandleStateException() {
-		flow.getExceptionHandlerSet().add(new TransitionExecutingStateExceptionHandler()
-				.add(MyCustomException.class, "myState2"));
+		flow.getExceptionHandlerSet().add(
+				new TransitionExecutingStateExceptionHandler().add(MyCustomException.class, "myState2"));
 		MockRequestControlContext context = new MockRequestControlContext(flow);
-		context.setCurrentState(flow.getRequiredState("myState1"));
-		FlowExecutionException e = new FlowExecutionException(flow.getId(), flow.getStartState().getId(), "Oops!", new MyCustomException());
+		context.setCurrentState(flow.getStateInternal("myState1"));
+		FlowExecutionException e = new FlowExecutionException(flow.getId(), flow.getStartState().getId(), "Oops!",
+				new MyCustomException());
 		ApplicationView selectedView = (ApplicationView)flow.handleException(e, context);
 		assertFalse(context.getFlowExecutionContext().isActive());
 		assertNotNull("Should not have been null", selectedView);
@@ -329,7 +324,8 @@ public class FlowTests extends TestCase {
 
 	public void testHandleStateExceptionNoMatch() {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
-		FlowExecutionException e = new FlowExecutionException(flow.getId(), flow.getStartState().getId(), "Oops!", new MyCustomException());
+		FlowExecutionException e = new FlowExecutionException(flow.getId(), flow.getStartState().getId(), "Oops!",
+				new MyCustomException());
 		try {
 			flow.handleException(e, context);
 		}
@@ -341,8 +337,8 @@ public class FlowTests extends TestCase {
 	public static TransitionCriteria on(String eventId) {
 		return new EventIdTransitionCriteria(eventId);
 	}
-	
-	public static TargetStateResolver to(String stateId) {
-		return new DefaultTargetStateResolver(stateId);
+
+	public static String to(String stateId) {
+		return stateId;
 	}
 }

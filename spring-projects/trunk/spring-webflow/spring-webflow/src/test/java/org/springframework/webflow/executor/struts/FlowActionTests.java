@@ -12,9 +12,9 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.web.struts.SpringBindingActionForm;
-import org.springframework.webflow.SimpleFlow;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
+import org.springframework.webflow.engine.SimpleFlow;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 
 public class FlowActionTests extends TestCase {
