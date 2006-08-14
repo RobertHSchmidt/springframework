@@ -1,4 +1,4 @@
-package org.springframework.webflow.test.execution.engine;
+package org.springframework.webflow.test.execution;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
