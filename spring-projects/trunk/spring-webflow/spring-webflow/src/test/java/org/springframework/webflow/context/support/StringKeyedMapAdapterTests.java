@@ -1,17 +1,36 @@
-package org.springframework.webflow.context;
+package org.springframework.webflow.context.support;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.webflow.context.support.SharedMapDecorator;
+import org.springframework.webflow.context.support.StringKeyedMapAdapter;
 
 import junit.framework.TestCase;
 
-public class SharedMapDecoratorTests extends TestCase {
+public class StringKeyedMapAdapterTests extends TestCase {
+	private Map contents = new HashMap();
 
-	private SharedMapDecorator map = new SharedMapDecorator(new HashMap());
+	private StringKeyedMapAdapter map = new StringKeyedMapAdapter() {
+
+		protected Object getAttribute(String key) {
+			return contents.get(key);
+		}
+
+		protected Iterator getAttributeNames() {
+			return contents.keySet().iterator();
+		}
+
+		protected void removeAttribute(String key) {
+			contents.remove(key);
+		}
+
+		protected void setAttribute(String key, Object value) {
+			contents.put(key, value);
+		}
+	};
 
 	public void testGetPutRemove() {
 		assertTrue(map.size() == 0);

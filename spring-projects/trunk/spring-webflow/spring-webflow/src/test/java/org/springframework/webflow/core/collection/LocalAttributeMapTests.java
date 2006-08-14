@@ -7,7 +7,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.TestBean;
 
 public class LocalAttributeMapTests extends TestCase {
 	private LocalAttributeMap attributeMap = new LocalAttributeMap();

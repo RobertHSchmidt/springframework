@@ -1,4 +1,4 @@
-package org.springframework.webflow;
+package org.springframework.webflow.core.collection;
 
 import java.io.Serializable;
 
