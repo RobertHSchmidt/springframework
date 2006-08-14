@@ -18,8 +18,8 @@ package org.springframework.binding.method;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -50,9 +50,10 @@ public class ClassMethodKey implements Serializable {
 	private transient Method method;
 
 	/**
-	 * Create a new named argument definition.
-	 * 
-	 * @param name the name
+	 * Create a new class method key.
+	 * @param type the class the method is a member of
+	 * @param methodName the method name
+	 * @param parameterTypes the method parameter types
 	 */
 	public ClassMethodKey(Class type, String methodName, Class[] parameterTypes) {
 		this.type = type;
@@ -108,7 +109,7 @@ public class ClassMethodKey implements Serializable {
 						Class candidateType = candidateParameterTypes[j];
 						Class parameterType = parameterTypes[j];
 						if (parameterType != null) {
-							if (BeanUtils.isAssignable(candidateType, parameterType)) {
+							if (ClassUtils.isAssignable(candidateType, parameterType)) {
 								numberOfCorrectArguments++;
 							}
 						}
@@ -170,7 +171,7 @@ public class ClassMethodKey implements Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("type", type).append("methodName", methodName).append("parameterTypes",
+		return new ToStringCreator(this).append("class", type).append("methodName", methodName).append("parameterTypes",
 				parameterTypes).toString();
 	}
 }
