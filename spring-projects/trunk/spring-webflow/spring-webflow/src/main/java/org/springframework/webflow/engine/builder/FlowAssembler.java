@@ -17,7 +17,7 @@ package org.springframework.webflow.engine.builder;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
-import org.springframework.webflow.core.collection.support.CollectionUtils;
+import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.engine.Flow;
 
 /**

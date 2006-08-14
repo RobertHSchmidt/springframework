@@ -27,7 +27,7 @@ import org.springframework.webflow.action.bean.AbstractBeanInvokingAction;
 import org.springframework.webflow.action.bean.BeanInvokingActionFactory;
 import org.springframework.webflow.action.bean.MethodResultSpecification;
 import org.springframework.webflow.core.collection.AttributeMap;
-import org.springframework.webflow.core.collection.support.CollectionUtils;
+import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.engine.AnnotatedAction;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;

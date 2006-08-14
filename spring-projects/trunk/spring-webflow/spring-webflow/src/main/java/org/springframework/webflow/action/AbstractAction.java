@@ -21,7 +21,7 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.ClassUtils;
 import org.springframework.webflow.core.collection.AttributeMap;
-import org.springframework.webflow.core.collection.support.CollectionUtils;
+import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;

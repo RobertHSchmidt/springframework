@@ -21,7 +21,7 @@ import javax.portlet.PortletContext;
 
 import org.springframework.webflow.context.support.SharedMap;
 import org.springframework.webflow.context.support.StringKeyedMapAdapter;
-import org.springframework.webflow.core.collection.support.CollectionUtils;
+import org.springframework.webflow.core.collection.CollectionUtils;
 
 /**
  * A shared map backed by the Portlet context, for accessing application scoped

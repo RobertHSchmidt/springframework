@@ -20,7 +20,7 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.webflow.context.support.StringKeyedMapAdapter;
-import org.springframework.webflow.core.collection.support.CollectionUtils;
+import org.springframework.webflow.core.collection.CollectionUtils;
 
 /**
  * Map backed by the Servlet HTTP request attribute map, for accessing request

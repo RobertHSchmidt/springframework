@@ -18,7 +18,7 @@ package org.springframework.webflow.engine;
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
-import org.springframework.webflow.core.collection.support.LocalAttributeMap;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowSession;

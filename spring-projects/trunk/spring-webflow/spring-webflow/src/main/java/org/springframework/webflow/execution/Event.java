@@ -19,7 +19,7 @@ import java.util.EventObject;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
-import org.springframework.webflow.core.collection.support.CollectionUtils;
+import org.springframework.webflow.core.collection.CollectionUtils;
 
 /**
  * Signals the occurrence of something an active flow execution should respond

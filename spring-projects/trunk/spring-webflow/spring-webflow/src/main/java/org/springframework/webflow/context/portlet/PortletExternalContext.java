@@ -24,10 +24,10 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.SharedAttributeMap;
 import org.springframework.webflow.context.support.LocalSharedAttributeMap;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.core.collection.LocalParameterMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
-import org.springframework.webflow.core.collection.support.LocalAttributeMap;
-import org.springframework.webflow.core.collection.support.LocalParameterMap;
 
 /**
  * Provides contextual information about a portlet environment that has
