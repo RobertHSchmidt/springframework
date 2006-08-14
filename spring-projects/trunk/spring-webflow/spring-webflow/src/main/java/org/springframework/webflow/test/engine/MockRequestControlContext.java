@@ -68,7 +68,7 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 
 	public FlowSession endActiveFlowSession(MutableAttributeMap output) throws IllegalStateException {
 		MockFlowSession endingSession = getMockFlowExecutionContext().getMockActiveSession();
-		endingSession.flow.end(this, output);
+		endingSession.getFlow().end(this, output);
 		endingSession.setStatus(FlowSessionStatus.ENDED);
 		getMockFlowExecutionContext().setActiveSession(null);
 		return endingSession;
