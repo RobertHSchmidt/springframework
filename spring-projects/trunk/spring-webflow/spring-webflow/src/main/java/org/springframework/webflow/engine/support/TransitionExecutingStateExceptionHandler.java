@@ -72,7 +72,8 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 	 * statement
 	 */
 	public TransitionExecutingStateExceptionHandler add(Class exceptionClass, String targetStateId) {
-		return add(exceptionClass, targetStateId);
+		exceptionTargetStateResolverMappings.put(exceptionClass, targetStateId);
+		return this;
 	}
 
 	public ActionList getActionList() {

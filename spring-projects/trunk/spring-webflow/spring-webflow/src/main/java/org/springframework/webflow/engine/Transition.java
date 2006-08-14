@@ -66,7 +66,7 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	 * The criteria that determine whether or not this transition matches as
 	 * eligible for execution when an event occurs in the sourceState.
 	 */
-	private TransitionCriteria matchingCriteria = WildcardTransitionCriteria.INSTANCE;
+	private TransitionCriteria matchingCriteria;
 
 	/**
 	 * The criteria that determine whether or not this transition, once matched,
@@ -81,15 +81,26 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 
 	/**
 	 * Create a new transition that always matches and always executes,
-	 * transitioning to the target state calculated by the provided
-	 * targetStateResolver.
-	 * @param targetStateResolver the resolver of the target state of this
-	 * transition
+	 * transitioning to the target state calculated by the provided on
+	 * execution.
+	 * @param targetStateId the target state of the transition
 	 * @see #setMatchingCriteria(TransitionCriteria)
 	 * @see #setExecutionCriteria(TransitionCriteria)
 	 */
 	public Transition(String targetStateId) {
+		this(WildcardTransitionCriteria.INSTANCE, targetStateId);
+	}
+
+	/**
+	 * Create a new transition that matches on the given criteria and
+	 * transitions to the target state provided on execution.
+	 * @param targetStateId the target state of the transition
+	 * @see #setExecutionCriteria(TransitionCriteria)
+	 */
+	public Transition(TransitionCriteria matchingCriteria, String targetStateId) {
 		Assert.hasText(targetStateId, "The target state id is required");
+		this.targetStateId = targetStateId;
+		setMatchingCriteria(matchingCriteria);
 	}
 
 	// implementing transition definition

@@ -313,7 +313,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 			}
 		}
 		throw new IllegalArgumentException("Cannot find state with id '" + stateId + "' in flow '" + getId() + "' -- "
-				+ "Known state ids are '" + getStateIds() + "'");
+				+ "Known state ids are '" + StylerUtils.style(getStateIds()) + "'");
 	}
 
 	/**
