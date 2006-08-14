@@ -110,6 +110,13 @@ public class MockFlowSession implements FlowSession {
 	}
 
 	/**
+	 * Returns the current state of this session.
+	 */
+	public State getStateInternal() {
+		return state;
+	}
+
+	/**
 	 * Set the currently active state.
 	 */
 	public void setState(State state) {
