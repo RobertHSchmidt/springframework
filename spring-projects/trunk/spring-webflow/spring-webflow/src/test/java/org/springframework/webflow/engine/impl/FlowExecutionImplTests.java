@@ -38,10 +38,14 @@ import org.springframework.webflow.engine.builder.FlowBuilderException;
 import org.springframework.webflow.engine.builder.TestFlowArtifactFactory;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilderTests;
-import org.springframework.webflow.engine.impl.FlowExecutionImpl;
 import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.EventId;
+import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.MockFlowExecutionListener;
+import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.TestAction;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.test.MockExternalContext;
@@ -52,7 +56,7 @@ import org.springframework.webflow.test.MockExternalContext;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowExecutionTests extends TestCase {
+public class FlowExecutionImplTests extends TestCase {
 
 	public void testFlowExecutionListener() {
 		Flow flow = new Flow("myFlow");

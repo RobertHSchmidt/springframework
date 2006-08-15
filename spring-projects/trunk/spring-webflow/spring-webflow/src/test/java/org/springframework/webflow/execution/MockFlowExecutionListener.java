@@ -16,11 +16,11 @@
 package org.springframework.webflow.execution;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.engine.State;
+import org.springframework.webflow.definition.StateDefinition;
 
-import com.sun.org.apache.xerces.internal.dom.AttributeMap;
 
 /**
  * Mock implementation of the <code>FlowExecutionListener</code> interface for
@@ -161,11 +161,11 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		eventsSignaled++;
 	}
 
-	public void stateEntering(RequestContext context, State state) throws EnterStateVetoException {
+	public void stateEntering(RequestContext context, StateDefinition state) throws EnterStateVetoException {
 		stateEntering = true;
 	}
 
-	public void stateEntered(RequestContext context, State newState, State previousState) {
+	public void stateEntered(RequestContext context, StateDefinition newState, StateDefinition previousState) {
 		Assert.state(stateEntering, "State should've entering...");
 		stateEntering = false;
 		stateTransitions++;
@@ -181,16 +181,16 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		paused = false;
 	}
 
-	
 	public void sessionEnding(RequestContext context, FlowSession session, MutableAttributeMap output) {
 		sessionEnding = true;
 	}
 
-	public void sessionEnded(RequestContext context, FlowSession endedSession, AttributeMap sessionOutput) {
+	
+	public void sessionEnded(RequestContext context, FlowSession session, AttributeMap output) {
 		assertStarted();
 		Assert.state(sessionEnding, "Should have been ending");
 		sessionEnding = false;
-		if (endedSession.isRoot()) {
+		if (session.isRoot()) {
 			Assert.state(flowNestingLevel == 0, "The flow execution should have ended");
 			started = false;
 			executing = false;
