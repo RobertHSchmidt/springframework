@@ -2,10 +2,10 @@ package org.springframework.webflow.execution.factory.support;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.execution.factory.support.ConditionalFlowExecutionListenerLoader;
-import org.springframework.webflow.execution.factory.support.FlowExecutionListenerCriteria;
-import org.springframework.webflow.execution.factory.support.FlowExecutionListenerCriteriaFactory;
+import org.springframework.webflow.execution.FlowExecutionListener;
+import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 
 public class ConditionalFlowExecutionListenerLoaderTests extends TestCase {
 
@@ -43,7 +43,7 @@ public class ConditionalFlowExecutionListenerLoaderTests extends TestCase {
 		assertFalse(loader.containsListener(l2));
 		final Flow theFlow = new Flow("foo");
 		loader.addListener(l2, new FlowExecutionListenerCriteria() {
-			public boolean appliesTo(Flow flow) {
+			public boolean appliesTo(FlowDefinition flow) {
 				assertSame(theFlow, flow);
 				return false;
 			}
@@ -76,4 +76,14 @@ public class ConditionalFlowExecutionListenerLoaderTests extends TestCase {
 		assertSame(l2, listeners[1]);
 	}
 
+	public void testNullFlowDefinition() {
+		try {
+			loader.getListeners(null);
+			fail("Should have failed");
+		}
+		catch (IllegalArgumentException e) {
+
+		}
+
+	}
 }
