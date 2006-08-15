@@ -53,6 +53,7 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 			return impl;
 		}
 		Flow flow = (Flow)definitionLocator.getFlowDefinition(impl.flowId);
+		impl.flow = flow;
 		Iterator it = impl.flowSessions.iterator();
 		FlowSessionFlowDefinitionLocator locator = new FlowSessionFlowDefinitionLocator(flow, definitionLocator);
 		while (it.hasNext()) {
