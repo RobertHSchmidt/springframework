@@ -1,0 +1,20 @@
+package org.springframework.webflow.engine.support;
+
+import junit.framework.TestCase;
+
+import org.springframework.webflow.engine.NullViewSelector;
+import org.springframework.webflow.execution.ViewSelection;
+import org.springframework.webflow.test.engine.MockRequestContext;
+
+public class NullViewSelectionTests extends TestCase {
+
+	private MockRequestContext context = new MockRequestContext();
+	
+	public void testMakeSelection() {
+		assertEquals(ViewSelection.NULL_VIEW, NullViewSelector.INSTANCE.makeEntrySelection(context));
+	}
+
+	public void testMakeRefreshSelection() {
+		assertEquals(ViewSelection.NULL_VIEW, NullViewSelector.INSTANCE.makeRefreshSelection(context));
+	}
+}
