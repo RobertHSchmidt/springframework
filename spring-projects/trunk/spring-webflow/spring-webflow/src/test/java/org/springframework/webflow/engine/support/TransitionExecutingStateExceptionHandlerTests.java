@@ -3,12 +3,12 @@ package org.springframework.webflow.engine.support;
 import junit.framework.TestCase;
 
 import org.springframework.binding.expression.support.StaticExpression;
+import org.springframework.webflow.MyCustomException;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.RequestControlContext;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionableState;
-import org.springframework.webflow.engine.builder.MyCustomException;
 import org.springframework.webflow.engine.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionListener;

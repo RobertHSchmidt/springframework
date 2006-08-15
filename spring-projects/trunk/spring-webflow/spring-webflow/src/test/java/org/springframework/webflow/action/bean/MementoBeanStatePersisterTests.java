@@ -2,6 +2,7 @@ package org.springframework.webflow.action.bean;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.TestBean;
 import org.springframework.webflow.action.bean.Memento;
 import org.springframework.webflow.action.bean.MementoBeanStatePersister;
 import org.springframework.webflow.action.bean.MementoOriginator;

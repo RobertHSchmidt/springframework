@@ -3,15 +3,15 @@ package org.springframework.webflow.engine.builder;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.core.enums.LabeledEnum;
+import org.springframework.webflow.MyCustomException;
 import org.springframework.webflow.action.MultiAction;
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;
-import org.springframework.webflow.engine.builder.BaseFlowServiceLocator;
-import org.springframework.webflow.engine.builder.FlowArtifactLookupException;
-import org.springframework.webflow.engine.support.UnmodifiableAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowSessionStatus;
@@ -50,7 +50,7 @@ public class TestFlowArtifactFactory extends BaseFlowServiceLocator {
 
 	public class TestAction implements Action {
 		public Event execute(RequestContext context) throws Exception {
-			if (context.getFlowExecutionContext().getFlowDefinition().getAttributeMap().contains("scenario2")) {
+			if (context.getFlowExecutionContext().getFlowDefinition().getAttributes().contains("scenario2")) {
 				return new Event(this, "event2");
 			}
 			return new Event(this, "event1");
@@ -74,11 +74,11 @@ public class TestFlowArtifactFactory extends BaseFlowServiceLocator {
 	}
 	
 	public class TestAttributeMapper implements FlowAttributeMapper {
-		public LocalAttributeMap createFlowInput(RequestContext context) {
+		public MutableAttributeMap createFlowInput(RequestContext context) {
 			return new LocalAttributeMap();
 		}
 
-		public void mapFlowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {
+		public void mapFlowOutput(AttributeMap subflowOutput, RequestContext context) {
 		}
 	}
 

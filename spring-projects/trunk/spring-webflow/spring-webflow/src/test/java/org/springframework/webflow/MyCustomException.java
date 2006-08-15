@@ -1,4 +1,4 @@
-package org.springframework.webflow.engine.builder;
+package org.springframework.webflow;
 
 public class MyCustomException extends Exception {
 
