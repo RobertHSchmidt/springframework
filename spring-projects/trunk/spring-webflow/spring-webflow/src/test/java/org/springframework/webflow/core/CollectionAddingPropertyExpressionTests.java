@@ -1,4 +1,4 @@
-package org.springframework.webflow.engine.support;
+package org.springframework.webflow.core;
 
 import java.util.ArrayList;
 import java.util.List;
