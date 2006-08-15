@@ -67,10 +67,10 @@ public interface FlowExecutionListener {
 	 * session of the flow is starting but has not yet entered its start state.
 	 * An exception may be thrown from this method to veto the start operation.
 	 * @param context the source of the event
-	 * @param flowDefinition the flow for which a new session starting.
+	 * @param definition the flow for which a new session starting.
 	 * @param input a mutable input map to the starting flow session
 	 */
-	public void sessionStarting(RequestContext context, FlowDefinition flowDefinition, MutableAttributeMap input);
+	public void sessionStarting(RequestContext context, FlowDefinition definition, MutableAttributeMap input);
 
 	/**
 	 * Called when a new flow session has started. At this point the start state
@@ -118,7 +118,7 @@ public interface FlowExecutionListener {
 	 * @param context the source of the event
 	 */
 	public void resumed(RequestContext context);
-	
+
 	/**
 	 * Called when the active flow execution session has been asked to end but
 	 * before it has ended.
