@@ -23,7 +23,7 @@ import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.webflow.action.FormAction;
 import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
-import org.springframework.webflow.engine.support.DefaultFlowAttributeMapper;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.test.engine.MockFlowSession;
@@ -61,15 +61,15 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 
 		context.setActiveSession(parentSession);
 		context.getFlowScope().put("x", "xValue");
-		LocalAttributeMap input = mapper.createFlowInput(context);
+		MutableAttributeMap input = mapper.createFlowInput(context);
 		assertEquals(1, input.size());
 		assertEquals("xValue", input.get("y"));
 
 		parentSession.getScope().clear();
 
-		LocalAttributeMap subflowOutput = new LocalAttributeMap();
+		MutableAttributeMap subflowOutput = new LocalAttributeMap();
 		subflowOutput.put("y", "xValue");
-		mapper.mapFlowOutput(subflowOutput.unmodifiable(), context);
+		mapper.mapFlowOutput(subflowOutput, context);
 		assertEquals(1, parentSession.getScope().size());
 		assertEquals("xValue", parentSession.getScope().get("y"));
 	}
@@ -88,7 +88,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		context.setActiveSession(parentSession);
 		context.getFlowScope().put("bean", bean);
 		context.getFlowScope().put("otherAttr", "otherValue");
-		LocalAttributeMap input = mapper.createFlowInput(context);
+		MutableAttributeMap input = mapper.createFlowInput(context);
 		assertEquals(2, input.size());
 		assertEquals("value", input.get("attr"));
 		assertEquals("otherValue", ((TestBean)input.get("otherBean")).getProp());
@@ -96,10 +96,10 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		parentSession.getScope().clear();
 		bean.setProp("value");
 
-		LocalAttributeMap subflowOutput = new LocalAttributeMap();
+		MutableAttributeMap subflowOutput = new LocalAttributeMap();
 		subflowOutput.put("bean", bean);
 		subflowOutput.put("otherAttr", "otherValue");
-		mapper.mapFlowOutput(subflowOutput.unmodifiable(), context);
+		mapper.mapFlowOutput(subflowOutput, context);
 		assertEquals(2, parentSession.getScope().size());
 		assertEquals("value", parentSession.getScope().get("attr"));
 		assertEquals("otherValue", ((TestBean)parentSession.getScope().get("otherBean")).getProp());
@@ -114,17 +114,17 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		context.setActiveSession(parentSession);
 		context.getRequestScope().put("a", "aValue");
 		context.getFlowScope().put("x", "xValue");
-		LocalAttributeMap input = mapper.createFlowInput(context);
+		MutableAttributeMap input = mapper.createFlowInput(context);
 		assertEquals(2, input.size());
 		assertEquals("aValue", input.get("b"));
 		assertEquals("xValue", input.get("y"));
 
 		parentSession.getScope().clear();
 
-		LocalAttributeMap subflowOutput = new LocalAttributeMap();
+		MutableAttributeMap subflowOutput = new LocalAttributeMap();
 		subflowOutput.put("b", "aValue");
 		subflowOutput.put("y", "xValue");
-		mapper.mapFlowOutput(subflowOutput.unmodifiable(), context);
+		mapper.mapFlowOutput(subflowOutput, context);
 		assertEquals(2, parentSession.getScope().size());
 		assertEquals("aValue", parentSession.getScope().get("c"));
 		assertEquals("xValue", parentSession.getScope().get("z"));
@@ -139,7 +139,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		parentSession.getScope().put("x", null);
 
 		context.setActiveSession(parentSession);
-		LocalAttributeMap input = mapper.createFlowInput(context);
+		MutableAttributeMap input = mapper.createFlowInput(context);
 		assertEquals(0, input.size());
 		assertFalse(input.contains("y"));
 		assertFalse(input.contains("b"));
@@ -170,7 +170,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		assertNotNull(context.getFlowScope().get("command"));
 
 		mapper.addInputMapping(mapping.source("${flowScope.command}").target("command").value());
-		LocalAttributeMap input = mapper.createFlowInput(context);
+		MutableAttributeMap input = mapper.createFlowInput(context);
 
 		assertEquals(1, input.size());
 		assertSame(parentSession.getScope().get("command"), input.get("command"));
