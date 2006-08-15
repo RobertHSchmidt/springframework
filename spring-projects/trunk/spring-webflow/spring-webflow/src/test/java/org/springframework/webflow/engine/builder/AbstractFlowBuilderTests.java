@@ -18,7 +18,9 @@ package org.springframework.webflow.engine.builder;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.action.MultiAction;
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.AnnotatedAction;
 import org.springframework.webflow.engine.EndState;
@@ -27,12 +29,6 @@ import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.ViewState;
-import org.springframework.webflow.engine.builder.AbstractFlowBuilder;
-import org.springframework.webflow.engine.builder.BaseFlowBuilder;
-import org.springframework.webflow.engine.builder.BaseFlowServiceLocator;
-import org.springframework.webflow.engine.builder.FlowArtifactLookupException;
-import org.springframework.webflow.engine.builder.FlowAssembler;
-import org.springframework.webflow.engine.support.UnmodifiableAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -156,13 +152,13 @@ public class AbstractFlowBuilderTests extends TestCase {
 	}
 
 	public static class PersonIdMapper implements FlowAttributeMapper {
-		public LocalAttributeMap createFlowInput(RequestContext context) {
+		public MutableAttributeMap createFlowInput(RequestContext context) {
 			LocalAttributeMap inputMap = new LocalAttributeMap();
 			inputMap.put("personId", context.getFlowScope().get("personId"));
 			return inputMap;
 		}
 
-		public void mapFlowOutput(UnmodifiableAttributeMap subflowOutput, RequestContext context) {
+		public void mapFlowOutput(AttributeMap subflowOutput, RequestContext context) {
 		}
 	}
 

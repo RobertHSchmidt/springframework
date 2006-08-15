@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.builder;
+package org.springframework.webflow.engine.builder.xml;
 
 import java.math.BigDecimal;
 
@@ -31,10 +31,8 @@ import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.FlowAssembler;
-import org.springframework.webflow.engine.builder.xml.ImmutableFlowAttributeMapper;
-import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
+import org.springframework.webflow.engine.builder.TestFlowArtifactFactory;
 import org.springframework.webflow.engine.support.ApplicationViewSelector;
-import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.engine.MockRequestContext;
@@ -188,7 +186,7 @@ public class XmlFlowBuilderTests extends TestCase {
 	}
 
 	protected String getTargetStateId(Transition transition) {
-		return ((DefaultTargetStateResolver)transition.getTargetStateResolver()).getTargetStateId().toString();
+		return transition.getTargetStateId();
 	}
 
 }

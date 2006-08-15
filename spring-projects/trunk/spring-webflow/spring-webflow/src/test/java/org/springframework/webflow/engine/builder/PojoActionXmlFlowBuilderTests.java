@@ -9,6 +9,7 @@ import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
+import org.springframework.webflow.engine.builder.xml.XmlFlowBuilderTests;
 import org.springframework.webflow.execution.ScopeType;
 
 public class PojoActionXmlFlowBuilderTests extends TestCase {
@@ -22,16 +23,16 @@ public class PojoActionXmlFlowBuilderTests extends TestCase {
 	}
 
 	public void testActionStateConfiguration() {
-		ActionState as1 = (ActionState)flow.getRequiredState("actionState1");
+		ActionState as1 = (ActionState)flow.getState("actionState1");
 		AbstractBeanInvokingAction targetAction = (AbstractBeanInvokingAction)as1.getActionList().getAnnotated(0)
 				.getTargetAction();
 		assertEquals(ScopeType.REQUEST, ((MethodResultSpecification)targetAction.getMethodResultSpecification()).getResultScope());
 
-		ActionState as2 = (ActionState)flow.getRequiredState("actionState2");
+		ActionState as2 = (ActionState)flow.getState("actionState2");
 		targetAction = (AbstractBeanInvokingAction)as2.getActionList().getAnnotated(0).getTargetAction();
 		assertEquals(ScopeType.FLOW, ((MethodResultSpecification)targetAction.getMethodResultSpecification()).getResultScope());
 
-		ActionState as3 = (ActionState)flow.getRequiredState("actionState3");
+		ActionState as3 = (ActionState)flow.getState("actionState3");
 		targetAction = (AbstractBeanInvokingAction)as3.getActionList().getAnnotated(0).getTargetAction();
 		assertEquals(ScopeType.CONVERSATION, ((MethodResultSpecification)targetAction.getMethodResultSpecification()).getResultScope());
 	}
