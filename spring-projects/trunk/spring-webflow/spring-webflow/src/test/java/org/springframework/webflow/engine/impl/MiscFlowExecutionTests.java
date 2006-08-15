@@ -1,4 +1,4 @@
-package org.springframework.webflow.execution;
+package org.springframework.webflow.engine.impl;
 
 import junit.framework.TestCase;
 
@@ -12,8 +12,10 @@ import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
-import org.springframework.webflow.engine.machine.FlowExecutionImpl;
 import org.springframework.webflow.engine.support.ApplicationViewSelector;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.test.MockExternalContext;
 
