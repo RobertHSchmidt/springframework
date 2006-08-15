@@ -8,7 +8,8 @@ import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.ViewState;
-import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
+import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
+import org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepository;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.test.MockExternalContext;
@@ -23,10 +24,11 @@ public class FlowRequestHandlerTests extends TestCase {
 		FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
 		Flow flow = new Flow("flow");
 		ViewState view = new ViewState(flow, "view");
-		view.getTransitionSet().add(new Transition(new DefaultTargetStateResolver("end")));
+		view.getTransitionSet().add(new Transition("end"));
 		new EndState(flow, "end");
 		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(flow));
-		FlowExecutorImpl executor = new FlowExecutorImpl(registry);
+		FlowExecutorImpl executor = new FlowExecutorImpl(registry, new FlowExecutionImplFactory(),
+				new DefaultFlowExecutionRepository(null));
 		handler = new FlowRequestHandler(executor);
 	}
 
