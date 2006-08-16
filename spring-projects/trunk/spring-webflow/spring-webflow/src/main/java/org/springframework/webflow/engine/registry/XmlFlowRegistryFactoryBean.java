@@ -71,9 +71,9 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	private Properties flowDefinitions;
 
 	/**
-	 * Returns the configured externalized flow registrar.
+	 * Returns the configured externalized XML flow registrar.
 	 */
-	protected XmlFlowRegistrar getFlowRegistrar() {
+	protected XmlFlowRegistrar getXmlFlowRegistrar() {
 		return flowRegistrar;
 	}
 
@@ -106,7 +106,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * @param locations the resource locations
 	 */
 	public void setFlowLocations(Resource[] locations) {
-		getFlowRegistrar().setLocations(locations);
+		getXmlFlowRegistrar().setLocations(locations);
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * @param builderValidating the validating flag
 	 */
 	public void setBuilderValidating(boolean builderValidating) {
-		getFlowRegistrar().setBuilderValidating(builderValidating);
+		getXmlFlowRegistrar().setBuilderValidating(builderValidating);
 	}
 
 	/**
@@ -160,7 +160,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * @param entityResolver the entity resolver
 	 */
 	public void setEntityResolver(EntityResolver entityResolver) {
-		getFlowRegistrar().setEntityResolver(entityResolver);
+		getXmlFlowRegistrar().setEntityResolver(entityResolver);
 	}
 
 	protected void initRegistryFactoryBean() {
@@ -169,7 +169,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 
 	protected void doPopulate(FlowDefinitionRegistry registry) {
 		addFlowDefinitionsFromPropertiesIfNecessary();
-		getFlowRegistrar().registerFlowDefinitions(registry);
+		getXmlFlowRegistrar().registerFlowDefinitions(registry);
 	}
 
 	private void addFlowDefinitionsFromPropertiesIfNecessary() {
@@ -183,7 +183,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 				Resource resource = getFlowServiceLocator().getResourceLoader().getResource(location);
 				flows.add(new FlowDefinitionResource(flowId, resource));
 			}
-			getFlowRegistrar().addResource(
+			getXmlFlowRegistrar().addResource(
 					(FlowDefinitionResource[])flows.toArray(new FlowDefinitionResource[flows.size()]));
 			flowDefinitions = null;
 		}
