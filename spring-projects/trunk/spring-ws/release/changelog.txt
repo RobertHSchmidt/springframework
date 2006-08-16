@@ -21,6 +21,7 @@ Package org.springframework.ws.endpoint
 * AbstractStaxPayloadEndpoint now use StaxSource corrently (#SWS-38)
 * changed AbstractDom4JPayloadEndpoint to AbstractDom4jPayloadEndpoint (lower case j), to follow Spring naming
   conventions (e.g. Log4jConfigurer)
+* added getters on AbstractMarshallingPayloadEndpoint 
 
 Package org.springframework.ws.endpoint.interceptor
 * moved interceptors to seperate package
@@ -47,7 +48,7 @@ Package org.springframework.ws.soap.endpoint.interceptor
 * added SoapEnvelopeLoggingInterceptor, which logs the entire SoapEnvelope
 
 Package org.springframework.ws.soap.endpoint.interceptor
-* 
+*
 
 Package org.springframework.ws.soap.saaj
 * add support for SAAJ 1.3
