@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.builder.registry;
+package org.springframework.webflow.engine.registry;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -68,7 +68,7 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 * @see {@link FlowDefinitionResource}
 	 */
 	private Set flowDefinitions = new HashSet();
-
+	
 	/**
 	 * Sets the locations (file paths) pointing to externalized flow
 	 * definitions.
@@ -127,7 +127,7 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 * <p>
 	 * Use this method when you want full control over the assigned flow id and
 	 * the set of properties applied to the externalized flow resource.
-	 * @param flowDefinition the definition
+	 * @param flowDefinition the definition the definition resource
 	 */
 	public boolean addFlowDefinition(FlowDefinitionResource flowDefinition) {
 		return flowDefinitions.add(flowDefinition);
@@ -139,18 +139,18 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 * <p>
 	 * Use this method when you want full control over the assigned flow id and
 	 * the set of properties applied to the externalized flow resource.
-	 * @param flowDefinitions the definitions
+	 * @param flowDefinition the definitions
 	 */
-	public boolean addFlowDefinitions(FlowDefinitionResource[] flowDefinitions) {
-		if (flowDefinitions == null) {
+	public boolean addFlowDefinitions(FlowDefinitionResource[] flowDefinition) {
+		if (flowDefinition == null) {
 			return false;
 		}
-		return this.flowDefinitions.addAll(Arrays.asList(flowDefinitions));
+		return this.flowDefinitions.addAll(Arrays.asList(flowDefinition));
 	}
 
-	public void registerFlows(FlowDefinitionRegistry registry, FlowServiceLocator flowServiceLocator) {
-		processFlowLocations(registry, flowServiceLocator);
-		processFlowDefinitions(registry, flowServiceLocator);
+	public void registerFlows(FlowDefinitionRegistry registry) {
+		registerFlowLocations(registry);
+		registerFlowDefinitions(registry);
 	}
 
 	/**
@@ -158,14 +158,14 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 * @param registry the registry
 	 * @param flowServiceLocator the flow artifactFactory
 	 */
-	private void processFlowLocations(FlowDefinitionRegistry registry, FlowServiceLocator flowServiceLocator) {
+	private void registerFlowLocations(FlowDefinitionRegistry registry) {
 		Iterator it = flowLocations.iterator();
 		while (it.hasNext()) {
 			Resource location = (Resource)it.next();
-			if (isFlowDefinition(location)) {
-				FlowDefinitionResource definition = createFlowDefinition(location);
-				FlowBuilder builder = createFlowBuilder(definition.getLocation(), flowServiceLocator);
-				registerFlow(definition, registry, builder);
+			if (isFlowDefinitionResource(location)) {
+				FlowDefinitionResource resource = createFlowDefinitionResource(location);
+				FlowBuilder builder = createFlowBuilder(resource.getLocation());
+				registerFlow(resource, registry, builder);
 			}
 		}
 	}
@@ -175,15 +175,29 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 * @param registry the registry
 	 * @param flowServiceLocator the flow artifactFactory
 	 */
-	private void processFlowDefinitions(FlowDefinitionRegistry registry, FlowServiceLocator flowServiceLocator) {
+	private void registerFlowDefinitions(FlowDefinitionRegistry registry) {
 		Iterator it = flowDefinitions.iterator();
 		while (it.hasNext()) {
-			FlowDefinitionResource definition = (FlowDefinitionResource)it.next();
-			FlowBuilder builder = createFlowBuilder(definition.getLocation(), flowServiceLocator);
-			registerFlow(definition, registry, builder);
+			FlowDefinitionResource resource = (FlowDefinitionResource)it.next();
+			FlowBuilder builder = createFlowBuilder(resource.getLocation());
+			registerFlow(resource, registry, builder);
 		}
 	}
 
+	/**
+	 * Helper method to register the flow built from an externalized resource in
+	 * the registry.
+	 * @param resource representation of the externalized flow definition
+	 * resource
+	 * @param registry the flow registry to register the flow in
+	 * @param flowBuilder the builder that will be used to build the flow stored
+	 * in the registry
+	 */
+	protected final void registerFlow(FlowDefinitionResource resource, FlowDefinitionRegistry registry,
+			FlowBuilder flowBuilder) {
+		registerFlow(resource.getId(), registry, flowBuilder, resource.getAttributes());
+	}
+	
 	/**
 	 * Template method that calculates if the given file resource is actually a
 	 * flow definition resource. Resources that aren't flow definitions will be
@@ -191,7 +205,7 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 * @param file the file
 	 * @return true if yes, false otherwise
 	 */
-	protected boolean isFlowDefinition(Resource resource) {
+	protected boolean isFlowDefinitionResource(Resource resource) {
 		return true;
 	}
 
@@ -200,10 +214,10 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 * @param location the location of the resource
 	 * @return the externalized flow definition pointer
 	 */
-	protected FlowDefinitionResource createFlowDefinition(Resource location) {
+	protected FlowDefinitionResource createFlowDefinitionResource(Resource location) {
 		return new FlowDefinitionResource(location);
 	}
-
+	
 	/**
 	 * Factory method that returns a new externalized flow builder that will
 	 * construct the registered Flow. Subclasses must override.
@@ -211,7 +225,7 @@ public abstract class ExternalizedFlowRegistrar extends FlowRegistrarSupport {
 	 * @param flowServiceLocator the flow artifact factory
 	 * @return the flow builder
 	 */
-	protected abstract FlowBuilder createFlowBuilder(Resource location, FlowServiceLocator flowServiceLocator);
+	protected abstract FlowBuilder createFlowBuilder(Resource location);
 
 	public String toString() {
 		return new ToStringCreator(this).append("flowLocations", flowLocations).append("flowDefinitions",

@@ -164,10 +164,7 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 		return conversionService;
 	}
 
-	public ResourceLoader getResourceLoader() throws UnsupportedOperationException {
-		if (resourceLoader == null) {
-			throw new UnsupportedOperationException("Resource loading is not supported by this service locator");
-		}
+	public ResourceLoader getResourceLoader() {
 		return resourceLoader;
 	}
 

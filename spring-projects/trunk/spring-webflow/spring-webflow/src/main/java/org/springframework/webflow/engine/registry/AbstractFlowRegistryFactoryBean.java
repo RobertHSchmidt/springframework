@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.builder.registry;
+package org.springframework.webflow.engine.registry;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -149,6 +149,11 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 
 	public void afterPropertiesSet() {
 		flowServiceLocator = createFlowServiceLocator();
+		initRegistryFactoryBean();
+	}
+	
+	protected void initRegistryFactoryBean() {
+		
 	}
 
 	/**
@@ -218,53 +223,5 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	 */
 	protected FlowDefinitionRegistry getFlowRegistry() {
 		return flowRegistry;
-	}
-
-	/**
-	 * Returns the configured factory encapsulating the creation of central Flow
-	 * artifacts such as {@link Flow flows} and {@link State states}.
-	 */
-	protected FlowArtifactFactory getFlowArtifactFactory() {
-		return flowArtifactFactory;
-	}
-
-	/**
-	 * Returns the configured factory for creating bean invoking actions,
-	 * actions that adapt methods on objects to the {@link Action} interface.
-	 */
-	protected BeanInvokingActionFactory getBeanInvokingActionFactory() {
-		return beanInvokingActionFactory;
-	}
-
-	/**
-	 * Returns the configured expression parser responsible for parsing
-	 * expression strings into evaluatable expression objects.
-	 */
-	protected ExpressionParser getExpressionParser() {
-		return expressionParser;
-	}
-
-	/**
-	 * Returns the configured conversion service to use to convert between
-	 * types; typically from string to a rich object type.
-	 */
-	protected ConversionService getConversionService() {
-		return conversionService;
-	}
-
-	/**
-	 * Returns the configured resource loader used to access file-based
-	 * resources.
-	 */
-	protected ResourceLoader getResourceLoader() {
-		return resourceLoader;
-	}
-
-	/**
-	 * Returns the configured bean factory used to access other
-	 * externally-managed flow artifacts and services.
-	 */
-	protected BeanFactory getBeanFactory() {
-		return beanFactory;
 	}
 }

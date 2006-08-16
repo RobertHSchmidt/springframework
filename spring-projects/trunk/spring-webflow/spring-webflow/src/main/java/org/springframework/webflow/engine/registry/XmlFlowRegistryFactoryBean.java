@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.builder.registry;
+package org.springframework.webflow.engine.registry;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -63,21 +63,12 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	/**
 	 * The flow registrar that will perform the definition registrations.
 	 */
-	private XmlFlowRegistrar flowRegistrar = createFlowRegistrar();
+	private XmlFlowRegistrar flowRegistrar = new XmlFlowRegistrar();
 
 	/**
 	 * Temporary holder for flow definitions configured using a property map.
 	 */
 	private Properties flowDefinitions;
-
-	/**
-	 * Factory method that returns a new externalized flow registrar. Subclasses
-	 * may override.
-	 * @return the flow registrar to use
-	 */
-	protected XmlFlowRegistrar createFlowRegistrar() {
-		return new XmlFlowRegistrar();
-	}
 
 	/**
 	 * Returns the configured externalized flow registrar.
@@ -172,9 +163,13 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 		getFlowRegistrar().setEntityResolver(entityResolver);
 	}
 
+	protected void initRegistryFactoryBean() {
+		flowRegistrar.setFlowServiceLocator(getFlowServiceLocator());
+	}
+
 	protected void doPopulate(FlowDefinitionRegistry registry) {
 		addFlowDefinitionsFromPropertiesIfNecessary();
-		getFlowRegistrar().registerFlows(registry, getFlowServiceLocator());
+		getFlowRegistrar().registerFlows(registry);
 	}
 
 	private void addFlowDefinitionsFromPropertiesIfNecessary() {

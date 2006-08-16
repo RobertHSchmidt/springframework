@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.builder.registry;
+package org.springframework.webflow.engine.registry;
 
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
@@ -56,5 +56,5 @@ public interface FlowRegistrar {
 	 * @param flowServiceLocator the service locator for accessing externally managed flow 
 	 * artifacts, typically used by flow builders that build flow definitions
 	 */
-	public void registerFlows(FlowDefinitionRegistry registry, FlowServiceLocator flowServiceLocator);
+	public void registerFlows(FlowDefinitionRegistry registry);
 }

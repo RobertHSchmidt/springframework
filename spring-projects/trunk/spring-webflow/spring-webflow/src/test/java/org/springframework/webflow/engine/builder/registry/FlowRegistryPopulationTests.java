@@ -21,10 +21,10 @@ import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.engine.builder.SimpleFlowBuilder;
-import org.springframework.webflow.engine.builder.registry.DefaultFlowServiceLocator;
-import org.springframework.webflow.engine.builder.registry.FlowRegistrarSupport;
-import org.springframework.webflow.engine.builder.registry.FlowRegistryFactoryBean;
-import org.springframework.webflow.engine.builder.registry.XmlFlowRegistrar;
+import org.springframework.webflow.engine.registry.DefaultFlowServiceLocator;
+import org.springframework.webflow.engine.registry.FlowRegistrarSupport;
+import org.springframework.webflow.engine.registry.FlowRegistryFactoryBean;
+import org.springframework.webflow.engine.registry.XmlFlowRegistrar;
 
 public class FlowRegistryPopulationTests extends TestCase {
 	public void testDefaultPopulation() {
