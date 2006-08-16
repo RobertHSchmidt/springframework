@@ -49,8 +49,8 @@ import org.xml.sax.EntityResolver;
  *           new DefaultFlowServiceLocator(registry, beanFactory);
  *       XmlFlowRegistrar registrar = new XmlFlowRegistrar(flowServiceLocator);
  *       File parent = new File(&quot;src/webapp/WEB-INF&quot;);
- *       registrar.addFlowLocation(new FileSystemResource(new File(parent, &quot;flow1.xml&quot;));
- *       registrar.addFlowLocation(new FileSystemResource(new File(parent, &quot;flow2.xml&quot;));
+ *       registrar.addLocation(new FileSystemResource(new File(parent, &quot;flow1.xml&quot;));
+ *       registrar.addLocation(new FileSystemResource(new File(parent, &quot;flow2.xml&quot;));
  *       registrar.registerFlows(registry);
  * </pre>
  * 
