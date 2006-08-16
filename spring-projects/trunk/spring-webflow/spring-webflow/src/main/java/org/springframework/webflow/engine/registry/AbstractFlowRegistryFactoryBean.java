@@ -24,9 +24,9 @@ import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.action.bean.BeanInvokingActionFactory;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistrar;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
-import org.springframework.webflow.definition.registry.FlowDefinitionRegistrar;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.builder.FlowArtifactFactory;
@@ -35,8 +35,8 @@ import org.springframework.webflow.execution.Action;
 
 /**
  * A base class for factory beans that create populated Flow Registries.
- * Subclasses should override the {@link #doPopulate(FlowDefinitionRegistry)} to perform
- * the registry population logic, typically delegating to a
+ * Subclasses should override the {@link #doPopulate(FlowDefinitionRegistry)} to
+ * perform the registry population logic, typically delegating to a
  * {@link FlowDefinitionRegistrar} strategy.
  * 
  * @author Keith Donald
@@ -152,9 +152,13 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 		flowServiceLocator = createFlowServiceLocator();
 		initRegistryFactoryBean();
 	}
-	
+
+	/**
+	 * Called after properties set, subclasses may override to do custom
+	 * initialization.
+	 */
 	protected void initRegistryFactoryBean() {
-		
+
 	}
 
 	/**
