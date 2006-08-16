@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.registry;
+package org.springframework.webflow.definition.registry;
 
-import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
+import org.springframework.webflow.engine.registry.FlowRegistrarSupport;
+import org.springframework.webflow.engine.registry.XmlFlowRegistrar;
 
 /**
  * A strategy to use to populate a flow registry with one or more flow
