@@ -219,7 +219,7 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	 * Returns the strategy for locating dependent artifacts when a Flow is
 	 * being built.
 	 */
-	public FlowServiceLocator getFlowServiceLocator() {
+	protected FlowServiceLocator getFlowServiceLocator() {
 		return flowServiceLocator;
 	}
 

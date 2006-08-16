@@ -70,11 +70,11 @@ public abstract class ExternalizedFlowDefinitionRegistrar implements FlowDefinit
 	 * <p>
 	 * Flows registered from this set will be automatically assigned an id based
 	 * on the filename of the flow resource.
-	 * @param flowLocations the resource locations
+	 * @param locations the resource locations
 	 * @see #getFlowId(Resource)
 	 */
-	public void setLocations(Resource[] flowLocations) {
-		this.locations = new HashSet(Arrays.asList(flowLocations));
+	public void setLocations(Resource[] locations) {
+		this.locations = new HashSet(Arrays.asList(locations));
 	}
 
 	/**
@@ -83,10 +83,10 @@ public abstract class ExternalizedFlowDefinitionRegistrar implements FlowDefinit
 	 * <p>
 	 * Use this method when you want full control over the assigned flow id and
 	 * the set of properties applied to the externalized flow resource.
-	 * @param flowDefinitions the externalized flow definition specification
+	 * @param resources the externalized flow definition specification
 	 */
-	public void setResources(FlowDefinitionResource[] flowDefinitions) {
-		this.resources = new HashSet(Arrays.asList(flowDefinitions));
+	public void setResources(FlowDefinitionResource[] resources) {
+		this.resources = new HashSet(Arrays.asList(resources));
 	}
 
 	/**
