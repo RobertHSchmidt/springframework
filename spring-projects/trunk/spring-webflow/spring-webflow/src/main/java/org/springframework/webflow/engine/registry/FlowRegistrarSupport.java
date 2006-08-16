@@ -17,17 +17,13 @@ package org.springframework.webflow.engine.registry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.core.io.Resource;
-import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinitionHolder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.definition.registry.FlowDefinitionResource;
+import org.springframework.webflow.definition.registry.FlowRegistrar;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
-import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.engine.builder.RefreshableFlowDefinitionHolder;
-import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
 
 /**
  * An abstract support class that provides some assistance implementing Flow

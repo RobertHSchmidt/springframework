@@ -26,6 +26,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.action.bean.BeanInvokingActionFactory;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
+import org.springframework.webflow.definition.registry.FlowRegistrar;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.builder.FlowArtifactFactory;

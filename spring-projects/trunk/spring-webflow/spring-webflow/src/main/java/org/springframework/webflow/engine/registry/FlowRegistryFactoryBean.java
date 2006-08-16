@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.definition.registry.FlowRegistrar;
 
 /**
  * A factory bean that produces a populated flow registry using a configured
