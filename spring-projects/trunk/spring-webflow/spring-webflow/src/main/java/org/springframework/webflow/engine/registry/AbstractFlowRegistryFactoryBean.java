@@ -26,7 +26,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.action.bean.BeanInvokingActionFactory;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
-import org.springframework.webflow.definition.registry.FlowRegistrar;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistrar;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.builder.FlowArtifactFactory;
@@ -37,7 +37,7 @@ import org.springframework.webflow.execution.Action;
  * A base class for factory beans that create populated Flow Registries.
  * Subclasses should override the {@link #doPopulate(FlowDefinitionRegistry)} to perform
  * the registry population logic, typically delegating to a
- * {@link FlowRegistrar} strategy.
+ * {@link FlowDefinitionRegistrar} strategy.
  * 
  * @author Keith Donald
  */

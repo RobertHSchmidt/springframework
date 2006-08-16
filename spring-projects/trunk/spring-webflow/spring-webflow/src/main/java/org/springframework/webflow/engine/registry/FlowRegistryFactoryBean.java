@@ -21,11 +21,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.definition.registry.FlowRegistrar;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistrar;
 
 /**
  * A factory bean that produces a populated flow registry using a configured
- * list of {@link FlowRegistrar} objects.
+ * list of {@link FlowDefinitionRegistrar} objects.
  * <p>
  * This class is also <code>BeanFactoryAware</code> and when used with Spring
  * will automatically create a configured
@@ -59,7 +59,7 @@ public class FlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean {
 	 * driven by a single registrar.
 	 * @param flowRegistrar the flow registrar
 	 */
-	public void setFlowRegistrar(FlowRegistrar flowRegistrar) {
+	public void setFlowRegistrar(FlowDefinitionRegistrar flowRegistrar) {
 		flowRegistrars = Collections.singletonList(flowRegistrar);
 	}
 
@@ -67,7 +67,7 @@ public class FlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean {
 	 * Sets the list of flow registrars that will register flow definitions.
 	 * @param flowRegistrars the flow registrars
 	 */
-	public void setFlowRegistrars(FlowRegistrar[] flowRegistrars) {
+	public void setFlowRegistrars(FlowDefinitionRegistrar[] flowRegistrars) {
 		this.flowRegistrars = Arrays.asList(flowRegistrars);
 	}
 
@@ -75,8 +75,8 @@ public class FlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean {
 		if (flowRegistrars != null) {
 			Iterator it = flowRegistrars.iterator();
 			while (it.hasNext()) {
-				FlowRegistrar registrar = (FlowRegistrar)it.next();
-				registrar.registerFlows(registry);
+				FlowDefinitionRegistrar registrar = (FlowDefinitionRegistrar)it.next();
+				registrar.registerFlowDefinitions(registry);
 			}
 		}
 	}

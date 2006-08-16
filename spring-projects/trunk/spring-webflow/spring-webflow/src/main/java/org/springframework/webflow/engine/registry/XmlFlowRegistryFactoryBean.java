@@ -106,7 +106,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 	 * @param locations the resource locations
 	 */
 	public void setFlowLocations(Resource[] locations) {
-		getFlowRegistrar().setFlowLocations(locations);
+		getFlowRegistrar().setLocations(locations);
 	}
 
 	/**
@@ -169,7 +169,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 
 	protected void doPopulate(FlowDefinitionRegistry registry) {
 		addFlowDefinitionsFromPropertiesIfNecessary();
-		getFlowRegistrar().registerFlows(registry);
+		getFlowRegistrar().registerFlowDefinitions(registry);
 	}
 
 	private void addFlowDefinitionsFromPropertiesIfNecessary() {
@@ -183,7 +183,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 				Resource resource = getFlowServiceLocator().getResourceLoader().getResource(location);
 				flows.add(new FlowDefinitionResource(flowId, resource));
 			}
-			getFlowRegistrar().addFlowDefinitions(
+			getFlowRegistrar().addResource(
 					(FlowDefinitionResource[])flows.toArray(new FlowDefinitionResource[flows.size()]));
 			flowDefinitions = null;
 		}
