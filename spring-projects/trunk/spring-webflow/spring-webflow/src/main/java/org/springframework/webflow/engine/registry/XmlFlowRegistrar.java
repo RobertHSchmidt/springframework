@@ -17,8 +17,13 @@ package org.springframework.webflow.engine.registry;
 
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
+import org.springframework.webflow.definition.FlowDefinitionHolder;
+import org.springframework.webflow.definition.registry.ExternalizedFlowDefinitionRegistrar;
+import org.springframework.webflow.definition.registry.FlowDefinitionResource;
+import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
+import org.springframework.webflow.engine.builder.RefreshableFlowDefinitionHolder;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
 import org.xml.sax.EntityResolver;
 
@@ -38,20 +43,20 @@ import org.xml.sax.EntityResolver;
  * </p>
  * 
  * <pre>
- *      BeanFactory beanFactory = ...
- *      FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
- *      FlowServiceLocator flowServiceLocator =
- *          new DefaultFlowServiceLocator(registry, beanFactory);
- *      XmlFlowRegistrar registrar = new XmlFlowRegistrar(flowServiceLocator);
- *      File parent = new File(&quot;src/webapp/WEB-INF&quot;);
- *      registrar.addFlowLocation(new FileSystemResource(new File(parent, &quot;flow1.xml&quot;));
- *      registrar.addFlowLocation(new FileSystemResource(new File(parent, &quot;flow2.xml&quot;));
- *      registrar.registerFlows(registry);
+ *       BeanFactory beanFactory = ...
+ *       FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
+ *       FlowServiceLocator flowServiceLocator =
+ *           new DefaultFlowServiceLocator(registry, beanFactory);
+ *       XmlFlowRegistrar registrar = new XmlFlowRegistrar(flowServiceLocator);
+ *       File parent = new File(&quot;src/webapp/WEB-INF&quot;);
+ *       registrar.addFlowLocation(new FileSystemResource(new File(parent, &quot;flow1.xml&quot;));
+ *       registrar.addFlowLocation(new FileSystemResource(new File(parent, &quot;flow2.xml&quot;));
+ *       registrar.registerFlows(registry);
  * </pre>
  * 
  * @author Keith Donald
  */
-public class XmlFlowRegistrar extends ExternalizedFlowRegistrar {
+public class XmlFlowRegistrar extends ExternalizedFlowDefinitionRegistrar {
 
 	/**
 	 * The xml file suffix constant.
@@ -111,6 +116,12 @@ public class XmlFlowRegistrar extends ExternalizedFlowRegistrar {
 
 	protected boolean isFlowDefinitionResource(Resource resource) {
 		return resource.getFilename().endsWith(XML_SUFFIX);
+	}
+
+	protected FlowDefinitionHolder createFlowDefinitionHolder(FlowDefinitionResource resource) {
+		FlowBuilder builder = createFlowBuilder(resource.getLocation());
+		FlowAssembler assembler = new FlowAssembler(resource.getId(), resource.getAttributes(), builder);
+		return new RefreshableFlowDefinitionHolder(assembler);
 	}
 
 	protected FlowBuilder createFlowBuilder(Resource location) {

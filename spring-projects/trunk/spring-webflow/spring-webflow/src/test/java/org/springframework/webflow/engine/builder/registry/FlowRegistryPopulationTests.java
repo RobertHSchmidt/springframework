@@ -57,9 +57,9 @@ public class FlowRegistryPopulationTests extends TestCase {
 				new DefaultListableBeanFactory());
 		File parent = new File("src/test/java/org/springframework/webflow/registry");
 		XmlFlowRegistrar registrar = new XmlFlowRegistrar();
-		registrar.addFlowLocation(new FileSystemResource(new File(parent, "flow1.xml")));
-		registrar.addFlowLocation(new FileSystemResource(new File(parent, "flow2.xml")));
-		registrar.addFlowDefinition(new FlowDefinitionResource("flow3", new FileSystemResource(new File(parent,
+		registrar.addLocation(new FileSystemResource(new File(parent, "flow1.xml")));
+		registrar.addLocation(new FileSystemResource(new File(parent, "flow2.xml")));
+		registrar.addResource(new FlowDefinitionResource("flow3", new FileSystemResource(new File(parent,
 				"flow2.xml"))));
 		registrar.registerFlows(registry, flowArtifactFactory);
 		assertEquals("Wrong registry definition count", 3, registry.getFlowDefinitionCount());

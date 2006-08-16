@@ -15,10 +15,6 @@
  */
 package org.springframework.webflow.definition.registry;
 
-import org.springframework.webflow.engine.builder.FlowServiceLocator;
-import org.springframework.webflow.engine.registry.FlowRegistrarSupport;
-import org.springframework.webflow.engine.registry.XmlFlowRegistrar;
-
 /**
  * A strategy to use to populate a flow registry with one or more flow
  * definitions.
@@ -30,10 +26,10 @@ import org.springframework.webflow.engine.registry.XmlFlowRegistrar;
  * The typical usage pattern is as follows:
  * <ol>
  * <li>Create a new (initially empty) flow registry.
- * <li>Create a flow artifact factory that will create flow artifacts during the flow
- * registration process.
+ * <li>Create a flow artifact factory that will create flow artifacts during
+ * the flow registration process.
  * <li>Use any number of flow registrars to populate the registry by calling
- * {@link #registerFlows(FlowDefinitionRegistry, FlowServiceLocator)}.
+ * {@link #registerFlowDefinitions(FlowDefinitionRegistry)}.
  * </ol>
  * </p>
  * <p>
@@ -41,21 +37,21 @@ import org.springframework.webflow.engine.registry.XmlFlowRegistrar;
  * inspired by Spring's GenericApplicationContext, which can use any number of
  * BeanDefinitionReaders to drive context population.
  * <p>
+ * 
  * @see FlowDefinitionRegistry
- * @see FlowServiceLocator
- * @see FlowRegistrarSupport
- * @see XmlFlowRegistrar
+ * @see FlowDefinitionResource
  * 
  * @author Keith Donald
  */
-public interface FlowRegistrar {
+public interface FlowDefinitionRegistrar {
 
 	/**
 	 * Register flow definition resources managed by this registrar in the
 	 * registry provided.
 	 * @param registry the registry to register flow definitions in
-	 * @param flowServiceLocator the service locator for accessing externally managed flow 
-	 * artifacts, typically used by flow builders that build flow definitions
+	 * @param flowServiceLocator the service locator for accessing externally
+	 * managed flow artifacts, typically used by flow builders that build flow
+	 * definitions
 	 */
-	public void registerFlows(FlowDefinitionRegistry registry);
+	public void registerFlowDefinitions(FlowDefinitionRegistry registry);
 }

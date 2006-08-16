@@ -20,7 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinitionHolder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.definition.registry.FlowRegistrar;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistrar;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.RefreshableFlowDefinitionHolder;
@@ -31,7 +31,7 @@ import org.springframework.webflow.engine.builder.RefreshableFlowDefinitionHolde
  * in a flow registry.
  * @author Keith Donald
  */
-public abstract class FlowRegistrarSupport implements FlowRegistrar {
+public abstract class FlowRegistrarSupport implements FlowDefinitionRegistrar {
 
 	/**
 	 * Logger, for subclasses.
@@ -74,6 +74,6 @@ public abstract class FlowRegistrarSupport implements FlowRegistrar {
 		return new RefreshableFlowDefinitionHolder(assembler);
 	}
 
-	public abstract void registerFlows(FlowDefinitionRegistry registry);
+	public abstract void registerFlowDefinitions(FlowDefinitionRegistry registry);
 
 }
