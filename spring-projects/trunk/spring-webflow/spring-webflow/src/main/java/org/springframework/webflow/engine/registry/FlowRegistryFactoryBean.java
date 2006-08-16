@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.builder.registry;
+package org.springframework.webflow.engine.registry;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -75,7 +75,7 @@ public class FlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean {
 			Iterator it = flowRegistrars.iterator();
 			while (it.hasNext()) {
 				FlowRegistrar registrar = (FlowRegistrar)it.next();
-				registrar.registerFlows(registry, getFlowServiceLocator());
+				registrar.registerFlows(registry);
 			}
 		}
 	}

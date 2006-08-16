@@ -29,7 +29,7 @@ public class ClientContinuationFlowExecutionRepositoryTests extends TestCase {
 	protected void setUp() throws Exception {
 	}
 
-	public void testPlacehoder() {
+	public void testPlaceholder() {
 
 	}
 }

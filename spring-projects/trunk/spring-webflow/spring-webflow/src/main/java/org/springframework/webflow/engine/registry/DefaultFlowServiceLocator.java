@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.builder.registry;
+package org.springframework.webflow.engine.registry;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.util.Assert;
@@ -26,8 +26,8 @@ import org.springframework.webflow.engine.builder.FlowServiceLocator;
 
 /**
  * The default flow service locator implementation that obtains subflow
- * definitions from a dedicated {@link FlowDefinitionRegistry} and obtains the remaining
- * services from a generic Spring {@link BeanFactory}.
+ * definitions from a dedicated {@link FlowDefinitionRegistry} and obtains the
+ * remaining services from a generic Spring {@link BeanFactory}.
  * 
  * @see FlowDefinitionRegistry
  * @see FlowServiceLocator#getSubflow(String)
@@ -54,24 +54,13 @@ public class DefaultFlowServiceLocator extends BaseFlowServiceLocator {
 	 */
 	public DefaultFlowServiceLocator(FlowDefinitionRegistry subflowRegistry, BeanFactory beanFactory) {
 		Assert.notNull(subflowRegistry, "The subflow registry is required");
-		Assert.notNull(beanFactory, "The bean factory is required");
+		Assert.notNull(subflowRegistry, "The beanFactory is required");
 		this.subflowRegistry = subflowRegistry;
 		this.beanFactory = beanFactory;
 	}
 
-	protected void setBeanFactory(BeanFactory beanFactory) {
-		this.beanFactory = beanFactory;
-	}
-
-	/**
-	 * Returns the flow registry used by this flow artifact factory to manage
-	 * subflow definitions.
-	 * @return the flow registry
-	 */
-	public FlowDefinitionRegistry getSubflowRegistry() {
-		return subflowRegistry;
-	}
-
+	// implementing FlowServiceLocator
+	
 	public Flow getSubflow(String id) throws FlowArtifactLookupException {
 		try {
 			return (Flow)subflowRegistry.getFlowDefinition(id);

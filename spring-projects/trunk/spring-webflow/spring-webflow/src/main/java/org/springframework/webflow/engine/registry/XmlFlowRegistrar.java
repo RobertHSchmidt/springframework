@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.builder.registry;
+package org.springframework.webflow.engine.registry;
 
 import org.springframework.core.io.Resource;
+import org.springframework.util.Assert;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
@@ -37,15 +38,15 @@ import org.xml.sax.EntityResolver;
  * </p>
  * 
  * <pre>
- *     BeanFactory beanFactory = ...
- *     FlowRegistryImpl registry = new FlowRegistryImpl();
- *     FlowServiceLocator flowServiceLocator =
- *         new DefaultFlowServiceLocator(registry, beanFactory);
- *     XmlFlowRegistrar registrar = new XmlFlowRegistrar();
- *     File parent = new File(&quot;src/webapp/WEB-INF&quot;);
- *     registrar.addFlowLocation(new FileSystemResource(new File(parent, &quot;flow1.xml&quot;));
- *     registrar.addFlowLocation(new FileSystemResource(new File(parent, &quot;flow2.xml&quot;));
- *     registrar.registerFlows(locations, flowServiceLocator);
+ *      BeanFactory beanFactory = ...
+ *      FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
+ *      FlowServiceLocator flowServiceLocator =
+ *          new DefaultFlowServiceLocator(registry, beanFactory);
+ *      XmlFlowRegistrar registrar = new XmlFlowRegistrar(flowServiceLocator);
+ *      File parent = new File(&quot;src/webapp/WEB-INF&quot;);
+ *      registrar.addFlowLocation(new FileSystemResource(new File(parent, &quot;flow1.xml&quot;));
+ *      registrar.addFlowLocation(new FileSystemResource(new File(parent, &quot;flow2.xml&quot;));
+ *      registrar.registerFlows(registry);
  * </pre>
  * 
  * @author Keith Donald
@@ -58,6 +59,12 @@ public class XmlFlowRegistrar extends ExternalizedFlowRegistrar {
 	private static final String XML_SUFFIX = ".xml";
 
 	/**
+	 * The locator of services needed by the Flows built for inclusion in the
+	 * registry.
+	 */
+	private FlowServiceLocator flowServiceLocator;
+
+	/**
 	 * A flag indicating whether or not the flow builder used to build the flow
 	 * definitions in this registry should perform build-time validation.
 	 */
@@ -67,6 +74,23 @@ public class XmlFlowRegistrar extends ExternalizedFlowRegistrar {
 	 * The entity resolver to use during Xml flow definition building.
 	 */
 	private EntityResolver entityResolver;
+
+	protected XmlFlowRegistrar() {
+
+	}
+
+	public XmlFlowRegistrar(FlowServiceLocator flowServiceLocator) {
+		setFlowServiceLocator(flowServiceLocator);
+	}
+
+	protected void setFlowServiceLocator(FlowServiceLocator flowServiceLocator) {
+		Assert.notNull(flowServiceLocator, "The flow service locator is required");
+		this.flowServiceLocator = flowServiceLocator;
+	}
+
+	protected FlowServiceLocator getFlowServiceLocator() {
+		return flowServiceLocator;
+	}
 
 	/**
 	 * Sets whether or not the flow builder used to build the flow definitions
@@ -85,12 +109,12 @@ public class XmlFlowRegistrar extends ExternalizedFlowRegistrar {
 		this.entityResolver = entityResolver;
 	}
 
-	protected boolean isFlowDefinition(Resource resource) {
+	protected boolean isFlowDefinitionResource(Resource resource) {
 		return resource.getFilename().endsWith(XML_SUFFIX);
 	}
 
-	protected FlowBuilder createFlowBuilder(Resource location, FlowServiceLocator flowServiceLocator) {
-		XmlFlowBuilder builder = new XmlFlowBuilder(location, flowServiceLocator);
+	protected FlowBuilder createFlowBuilder(Resource location) {
+		XmlFlowBuilder builder = new XmlFlowBuilder(location, getFlowServiceLocator());
 		builder.setValidating(builderValidating);
 		if (entityResolver != null) {
 			builder.setEntityResolver(entityResolver);
