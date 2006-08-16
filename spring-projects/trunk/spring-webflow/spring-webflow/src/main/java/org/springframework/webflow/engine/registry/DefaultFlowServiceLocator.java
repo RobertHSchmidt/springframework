@@ -74,4 +74,8 @@ public class DefaultFlowServiceLocator extends BaseFlowServiceLocator {
 	public BeanFactory getBeanFactory() {
 		return beanFactory;
 	}
+
+	protected FlowDefinitionRegistry getSubflowRegistry() {
+		return subflowRegistry;
+	}	
 }
