@@ -1,4 +1,4 @@
-package org.springframework.webflow.engine.builder.registry;
+package org.springframework.webflow.engine.registry;
 
 import java.io.File;
 
