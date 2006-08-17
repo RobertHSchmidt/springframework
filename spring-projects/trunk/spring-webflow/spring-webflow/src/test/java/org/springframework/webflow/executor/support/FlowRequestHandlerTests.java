@@ -38,7 +38,7 @@ public class FlowRequestHandlerTests extends TestCase {
 		ResponseInstruction response = handler.handleFlowRequest(context);
 		assertTrue(response.isNull());
 		assertTrue(response.getFlowExecutionContext().isActive());
-		assertEquals("flow", response.getFlowExecutionContext().getFlowDefinition().getId());
+		assertEquals("flow", response.getFlowExecutionContext().getDefinition().getId());
 		assertEquals("view", response.getFlowExecutionContext().getActiveSession().getState().getId());
 	}
 
@@ -53,7 +53,7 @@ public class FlowRequestHandlerTests extends TestCase {
 
 		assertTrue(response.isNull());
 		assertTrue(!response.getFlowExecutionContext().isActive());
-		assertEquals("flow", response.getFlowExecutionContext().getFlowDefinition().getId());
+		assertEquals("flow", response.getFlowExecutionContext().getDefinition().getId());
 
 	}
 
@@ -67,7 +67,7 @@ public class FlowRequestHandlerTests extends TestCase {
 
 		assertTrue(response.isNull());
 		assertTrue(response.getFlowExecutionContext().isActive());
-		assertEquals("flow", response.getFlowExecutionContext().getFlowDefinition().getId());
+		assertEquals("flow", response.getFlowExecutionContext().getDefinition().getId());
 		assertEquals("view", response.getFlowExecutionContext().getActiveSession().getState().getId());
 	}
 }

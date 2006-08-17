@@ -3,15 +3,23 @@
 	"http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-	<bean id="flowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl">
+
+	<bean id="executor" class="org.springframework.webflow.executor.FlowExecutorImpl">
+		<constructor-arg ref="registry"/>
+		<constructor-arg ref="factory"/>
 		<constructor-arg ref="repository"/>
 	</bean>
 	
-	<bean id="repositoryFactory" class="org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepositoryFactory">
-		<constructor-arg ref="flowRegistry"/>
+	<bean id="factory" class="org.springframework.webflow.engine.impl.FlowExecutionImplFactory"/>
+
+	<bean id="stateRestorer" class="org.springframework.webflow.engine.impl.FlowExecutionImplStateRestorer">
+		<constructor-arg>
+			<ref bean="registry"/>
+		</constructor-arg>
 	</bean>
-	
-	<bean id="flowRegistry" class="org.springframework.webflow.engine.registry.XmlFlowRegistryFactoryBean">
+
+	<bean id="registry" class="org.springframework.webflow.engine.builder.xml.XmlFlowRegistryFactoryBean">
 		<property name="flowLocations" value="classpath:org/springframework/webflow/executor/flow.xml"/>
 	</bean>
+	
 </beans>

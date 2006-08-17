@@ -86,7 +86,7 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * suitable response to the caller
 	 * @throws FlowExecutionException if an exception was thrown within a state
 	 * of the flow execution during request processing
-	 * @see FlowExecutionContext#getFlowDefinition()
+	 * @see FlowExecutionContext#getDefinition()
 	 */
 	public ViewSelection start(MutableAttributeMap input, ExternalContext context) throws FlowExecutionException;
 

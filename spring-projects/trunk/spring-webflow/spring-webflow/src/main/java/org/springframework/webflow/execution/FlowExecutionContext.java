@@ -53,7 +53,7 @@ public interface FlowExecutionContext {
 	 * example, if subflows have been spawned).
 	 * @return the root flow definition
 	 */
-	public FlowDefinition getFlowDefinition();
+	public FlowDefinition getDefinition();
 
 	/**
 	 * Is the flow execution active?

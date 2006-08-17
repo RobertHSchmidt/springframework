@@ -143,7 +143,7 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 	}
 
 	protected ConversationParameters createNewConversation(FlowExecution flowExecution) {
-		FlowDefinition flow = flowExecution.getFlowDefinition();
+		FlowDefinition flow = flowExecution.getDefinition();
 		return new ConversationParameters(flow.getId(), flow.getCaption(), flow.getDescription());
 	}
 

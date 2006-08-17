@@ -130,7 +130,7 @@ public class FlowExecutionImplStateRestorerTests extends TestCase {
 					.getState().getId());
 			assertEquals(flowExecution.getActiveSession().getDefinition().getId(), restoredFlowExecution
 					.getActiveSession().getDefinition().getId());
-			assertSame(flowExecution.getFlowDefinition(), restoredFlowExecution.getFlowDefinition());
+			assertSame(flowExecution.getDefinition(), restoredFlowExecution.getDefinition());
 		}
 		assertEquals(flowExecution.getListeners().size(), restoredFlowExecution.getListeners().size());
 		assertEquals(flowExecution.conversationScope, restoredFlowExecution.conversationScope);

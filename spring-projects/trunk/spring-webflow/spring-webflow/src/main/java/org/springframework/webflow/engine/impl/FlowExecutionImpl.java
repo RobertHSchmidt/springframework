@@ -85,7 +85,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * spawned, they are pushed onto the stack. As they end, they are popped off
 	 * the stack.
 	 */
-	LinkedList flowSessions = new LinkedList();
+	LinkedList flowSessions;
 
 	/**
 	 * A thread-safe listener list, holding listeners monitoring the lifecycle
@@ -96,7 +96,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	/**
 	 * A data structure for attributes shared by all flow sessions.
 	 */
-	transient MutableAttributeMap conversationScope = new LocalAttributeMap();
+	transient MutableAttributeMap conversationScope;
 
 	/**
 	 * A data structure for runtime system execution attributes.
@@ -113,7 +113,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * be called programmatically.
 	 */
 	public FlowExecutionImpl() {
-
 	}
 
 	/**
@@ -135,8 +134,10 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	public FlowExecutionImpl(Flow flow, FlowExecutionListener[] listeners, AttributeMap attributes) {
 		Assert.notNull(flow, "The root flow definition is required");
 		this.flow = flow;
+		this.flowSessions = new LinkedList();
 		this.listeners = new FlowExecutionListeners(listeners);
 		this.attributes = (attributes != null ? attributes : CollectionUtils.EMPTY_ATTRIBUTE_MAP);
+		this.conversationScope = new LocalAttributeMap();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Created new execution of flow '" + flow.getId() + "'");
 		}
@@ -148,7 +149,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	// implementing FlowExecutionContext
 
-	public FlowDefinition getFlowDefinition() {
+	public FlowDefinition getDefinition() {
 		return flow;
 	}
 
@@ -445,8 +446,8 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	public void writeExternal(ObjectOutput out) throws IOException {
-		if (getFlowDefinition() != null) {
-			out.writeObject(getFlowDefinition().getId());
+		if (getDefinition() != null) {
+			out.writeObject(getDefinition().getId());
 		}
 		else {
 			out.writeObject(flowId);

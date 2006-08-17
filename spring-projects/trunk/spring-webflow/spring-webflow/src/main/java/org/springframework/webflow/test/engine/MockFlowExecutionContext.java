@@ -62,7 +62,7 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 
 	// implementing flow execution context
 
-	public FlowDefinition getFlowDefinition() {
+	public FlowDefinition getDefinition() {
 		return flow;
 	}
 

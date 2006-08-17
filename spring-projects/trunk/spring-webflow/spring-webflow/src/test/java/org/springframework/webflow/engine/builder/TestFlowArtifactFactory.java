@@ -50,7 +50,7 @@ public class TestFlowArtifactFactory extends BaseFlowServiceLocator {
 
 	public class TestAction implements Action {
 		public Event execute(RequestContext context) throws Exception {
-			if (context.getFlowExecutionContext().getFlowDefinition().getAttributes().contains("scenario2")) {
+			if (context.getFlowExecutionContext().getDefinition().getAttributes().contains("scenario2")) {
 				return new Event(this, "event2");
 			}
 			return new Event(this, "event1");

@@ -21,7 +21,7 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 	}
 
 	protected String[] getConfigLocations() {
-		return new String[] { "org/springframework/webflow/executor/context.xml" };
+		return new String[] { "org/springframework/webflow/executor/context.xml", "org/springframework/webflow/executor/repository-simple.xml" };
 	}
 
 	public void testConfigurationOk() {
