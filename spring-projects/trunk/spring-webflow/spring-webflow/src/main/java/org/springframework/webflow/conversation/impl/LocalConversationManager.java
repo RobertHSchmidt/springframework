@@ -163,7 +163,12 @@ public class LocalConversationManager implements ConversationManager, Serializab
 		if (!conversations.containsKey(conversationId)) {
 			throw new NoSuchConversationException(conversationId);
 		}
-		getConversationEntry(conversationId).getLock().unlock();
+		ConversationLock lock = getConversationEntry(conversationId).getLock();
+		try {
+			lock.unlock();
+		} catch (Exception e) {
+			
+		}
 		conversations.remove(conversationId);
 		conversationIds.remove(conversationId);
 	}

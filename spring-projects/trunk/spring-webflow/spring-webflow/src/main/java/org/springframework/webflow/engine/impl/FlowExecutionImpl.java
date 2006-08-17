@@ -162,7 +162,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	public MutableAttributeMap getConversationScope() {
-		assertActive();
 		return conversationScope;
 	}
 
