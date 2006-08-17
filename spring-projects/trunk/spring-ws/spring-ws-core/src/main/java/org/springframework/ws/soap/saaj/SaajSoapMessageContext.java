@@ -20,10 +20,12 @@ import java.io.IOException;
 import java.util.Iterator;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeader;
+import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.SoapMessageCreationException;
 import org.springframework.ws.soap.context.AbstractSoapMessageContext;
@@ -91,7 +93,15 @@ public class SaajSoapMessageContext extends AbstractSoapMessageContext {
                 if (response.saveRequired()) {
                     response.saveChanges();
                 }
-                for (Iterator iterator = response.getMimeHeaders().getAllHeaders(); iterator.hasNext();) {
+                // some SAAJ implementations (Axis 1) do not have a Content-Type header by default
+                MimeHeaders headers = response.getMimeHeaders();
+                if (ObjectUtils.isEmpty(headers.getHeader("Content-Type"))) {
+                    headers.addHeader("Content-Type", getSoapResponse().getVersion().getContentType());
+                    if (response.saveRequired()) {
+                        response.saveChanges();
+                    }
+                }
+                for (Iterator iterator = headers.getAllHeaders(); iterator.hasNext();) {
                     MimeHeader mimeHeader = (MimeHeader) iterator.next();
                     transportResponse.addHeader(mimeHeader.getName(), mimeHeader.getValue());
                 }
