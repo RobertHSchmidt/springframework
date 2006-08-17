@@ -11,17 +11,24 @@ import org.springframework.web.portlet.ModelAndView;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.engine.SimpleFlow;
+import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
+import org.springframework.webflow.engine.impl.FlowExecutionImplStateRestorer;
+import org.springframework.webflow.execution.repository.FlowExecutionRepository;
+import org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepository;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 
 public class PortletFlowControllerTests extends TestCase {
 	private PortletFlowController controller = new PortletFlowController();
 
-	private FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
-
 	public void setUp() {
-		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(new SimpleFlow()));
 		controller.setPortletContext(new MockPortletContext());
-		controller.setFlowExecutor(new FlowExecutorImpl(registry));
+		
+		FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
+		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(new SimpleFlow()));
+		FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
+		FlowExecutionRepository repository = new DefaultFlowExecutionRepository(new FlowExecutionImplStateRestorer(
+				registry));
+		controller.setFlowExecutor(new FlowExecutorImpl(registry, factory, repository));
 	}
 
 	public void testLaunch() throws Exception {

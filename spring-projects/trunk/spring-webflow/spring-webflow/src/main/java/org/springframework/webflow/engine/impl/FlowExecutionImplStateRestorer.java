@@ -2,6 +2,7 @@ package org.springframework.webflow.engine.impl;
 
 import java.util.Iterator;
 
+import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
@@ -37,11 +38,20 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 	/**
 	 * Creates a new execution transient state restorer.
 	 * @param definitionLocator the flow definition locator
+	 */
+	public FlowExecutionImplStateRestorer(FlowDefinitionLocator definitionLocator) {
+		this(definitionLocator, null, null);
+	}
+
+	/**
+	 * Creates a new execution transient state restorer.
+	 * @param definitionLocator the flow definition locator
 	 * @param listenerLoader the flow execution listener loader
 	 * @param attributes the flow execution system attributes
 	 */
 	public FlowExecutionImplStateRestorer(FlowDefinitionLocator definitionLocator,
 			FlowExecutionListenerLoader listenerLoader, AttributeMap attributes) {
+		Assert.notNull(definitionLocator, "The flow definition locator is required");
 		this.definitionLocator = definitionLocator;
 		this.listenerLoader = listenerLoader;
 		this.attributes = attributes;
@@ -61,7 +71,9 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 			session.flow = (Flow)locator.getFlowDefinition(session.flowId);
 			session.state = flow.getStateInternal(session.stateId);
 		}
-		impl.listeners = new FlowExecutionListeners(listenerLoader.getListeners(flow));
+		if (listenerLoader != null) {
+			impl.listeners = new FlowExecutionListeners(listenerLoader.getListeners(flow));
+		}
 		impl.conversationScope = conversationScope;
 		impl.attributes = attributes;
 		return flowExecution;
