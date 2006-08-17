@@ -54,7 +54,7 @@ public class XmlFlowBuilderNestingTests extends TestCase {
 
 	protected void setUp() throws Exception {
 		ClassPathXmlApplicationContext parentContext = new ClassPathXmlApplicationContext(
-				"/org/springframework/webflow/builder/testFlow2ParentContext.xml");
+				"/org/springframework/webflow/engine/builder/xml/testFlow2ParentContext.xml");
 		this.parentBeanFactory = parentContext.getBeanFactory();
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow2.xml", getClass()));
 		builder
