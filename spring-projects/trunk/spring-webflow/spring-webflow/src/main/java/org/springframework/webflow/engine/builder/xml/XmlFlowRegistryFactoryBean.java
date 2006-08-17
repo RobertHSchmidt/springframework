@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.registry;
+package org.springframework.webflow.engine.builder.xml;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,6 +24,8 @@ import java.util.Properties;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.definition.registry.FlowDefinitionResource;
+import org.springframework.webflow.engine.builder.AbstractFlowBuildingFlowRegistryFactoryBean;
+import org.springframework.webflow.engine.builder.DefaultFlowServiceLocator;
 import org.xml.sax.EntityResolver;
 
 /**

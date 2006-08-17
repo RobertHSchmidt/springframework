@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.registry;
+package org.springframework.webflow.engine.builder;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.util.Assert;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.builder.BaseFlowServiceLocator;
-import org.springframework.webflow.engine.builder.FlowArtifactLookupException;
-import org.springframework.webflow.engine.builder.FlowServiceLocator;
 
 /**
  * The default flow service locator implementation that obtains subflow
