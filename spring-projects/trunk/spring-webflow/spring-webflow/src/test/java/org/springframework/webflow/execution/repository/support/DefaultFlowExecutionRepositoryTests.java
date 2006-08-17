@@ -10,7 +10,7 @@ import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.engine.impl.FlowExecutionImplStateRestorer;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
-import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
+import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 import org.springframework.webflow.execution.repository.PermissionDeniedFlowExecutionAccessException;
 
@@ -85,5 +85,23 @@ public class DefaultFlowExecutionRepositoryTests extends TestCase {
 		} catch (NoSuchFlowExecutionException e) {
 			
 		}
+	}
+	
+	public void testLock() {
+		testPutExecution();
+		FlowExecutionLock lock = repository.getLock(key);
+		lock.lock();
+		repository.getFlowExecution(key);
+		lock.unlock();
+	}
+
+	public void testLockLock() {
+		testPutExecution();
+		FlowExecutionLock lock = repository.getLock(key);
+		lock.lock();
+		lock.lock();
+		repository.getFlowExecution(key);
+		lock.unlock();
+		lock.unlock();
 	}
 }
