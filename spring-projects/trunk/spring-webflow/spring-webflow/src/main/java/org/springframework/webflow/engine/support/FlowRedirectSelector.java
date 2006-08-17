@@ -87,7 +87,7 @@ public class FlowRedirectSelector implements ViewSelector {
 		}
 		if (!StringUtils.hasText(flowId)) {
 			// equivalent to restart
-			flowId = context.getFlowExecutionContext().getFlowDefinition().getId();
+			flowId = context.getFlowExecutionContext().getDefinition().getId();
 		}
 		return new FlowRedirect(flowId, input);
 	}

@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
@@ -71,11 +72,20 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 			session.flow = (Flow)locator.getFlowDefinition(session.flowId);
 			session.state = flow.getStateInternal(session.stateId);
 		}
-		if (listenerLoader != null) {
-			impl.listeners = new FlowExecutionListeners(listenerLoader.getListeners(flow));
+		if (conversationScope == null) {
+			conversationScope = new LocalAttributeMap();
 		}
 		impl.conversationScope = conversationScope;
-		impl.attributes = attributes;
+		if (listenerLoader != null) {
+			impl.listeners = new FlowExecutionListeners(listenerLoader.getListeners(flow));
+		} else {
+			impl.listeners = new FlowExecutionListeners();
+		}
+		if (attributes != null) {
+			impl.attributes = attributes;
+		} else {
+			impl.attributes = new LocalAttributeMap();
+		}
 		return flowExecution;
 	}
 
