@@ -2,17 +2,15 @@ package org.springframework.webflow.execution.support;
 
 import junit.framework.TestCase;
 
-/**
- * Unit tests for the ContinuationFlowExecutionRepository class.
- * 
- * @author Ulrik Sandberg
- */
 public class ExternalRedirectTests extends TestCase {
 
+	private ExternalRedirect redirect;
+	
 	protected void setUp() throws Exception {
 	}
 
-	public void testPlaceholder() {
-
+	public void testStaticExpression() {
+		redirect = new ExternalRedirect("my/url");
+		assertEquals("my/url", redirect.getUrl());
 	}
 }
