@@ -58,7 +58,7 @@ import org.xml.sax.EntityResolver;
  * 
  * @author Keith Donald
  */
-public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean {
+public class XmlFlowRegistryFactoryBean extends AbstractFlowBuildingFlowRegistryFactoryBean {
 
 	/**
 	 * The flow registrar that will perform the definition registrations.
@@ -163,7 +163,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean 
 		getXmlFlowRegistrar().setEntityResolver(entityResolver);
 	}
 
-	protected void initRegistryFactoryBean() {
+	protected void init() {
 		flowRegistrar.setFlowServiceLocator(getFlowServiceLocator());
 	}
 
