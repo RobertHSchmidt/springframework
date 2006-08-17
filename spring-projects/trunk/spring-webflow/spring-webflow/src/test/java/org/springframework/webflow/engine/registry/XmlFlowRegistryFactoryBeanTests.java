@@ -6,6 +6,7 @@ import junit.framework.TestCase;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.xml.XmlFlowRegistryFactoryBean;
 
 public class XmlFlowRegistryFactoryBeanTests extends TestCase {
 	private XmlFlowRegistryFactoryBean factoryBean = new XmlFlowRegistryFactoryBean();

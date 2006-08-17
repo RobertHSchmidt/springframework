@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.registry;
+package org.springframework.webflow.engine.builder;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -28,8 +28,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistrar;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
-import org.springframework.webflow.engine.builder.FlowArtifactFactory;
-import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.execution.Action;
 
 /**
