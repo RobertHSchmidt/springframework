@@ -10,17 +10,24 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.engine.SimpleFlow;
+import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
+import org.springframework.webflow.engine.impl.FlowExecutionImplStateRestorer;
+import org.springframework.webflow.execution.repository.FlowExecutionRepository;
+import org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepository;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 
 public class FlowControllerTests extends TestCase {
 	private FlowController controller = new FlowController();
 
-	private FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
-
 	public void setUp() {
-		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(new SimpleFlow()));
 		controller.setServletContext(new MockServletContext());
-		controller.setFlowExecutor(new FlowExecutorImpl(registry));
+
+		FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
+		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(new SimpleFlow()));
+		FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
+		FlowExecutionRepository repository = new DefaultFlowExecutionRepository(new FlowExecutionImplStateRestorer(
+				registry));
+		controller.setFlowExecutor(new FlowExecutorImpl(registry, factory, repository));
 	}
 
 	public void testLaunch() throws Exception {
