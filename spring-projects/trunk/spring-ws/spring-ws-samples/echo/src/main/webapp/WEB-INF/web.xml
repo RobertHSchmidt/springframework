@@ -38,10 +38,20 @@
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
     </servlet>
 
-    <!-- We map all request to the springws servlet. -->
+    <!-- We map all service request to the springws servlet. -->
     <servlet-mapping>
         <servlet-name>springws</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/services</url-pattern>
     </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>springws</servlet-name>
+        <url-pattern>*.wsdl</url-pattern>
+    </servlet-mapping>
+
+    <mime-mapping>
+        <extension>xsd</extension>
+        <mime-type>text/xml</mime-type>
+    </mime-mapping>
 
 </web-app>
