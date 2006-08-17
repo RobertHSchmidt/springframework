@@ -26,24 +26,24 @@ import org.springframework.webflow.definition.FlowDefinition;
 public class StaticFlowDefinitionHolder implements FlowDefinitionHolder {
 	
 	/**
-	 * The held flow. 
+	 * The held flow definition. 
 	 */
-	private FlowDefinition flow;
+	private FlowDefinition flowDefinition;
 
 	/**
 	 * Creates the static flow holder
-	 * @param flow the flow to hold
+	 * @param flowDefinition the flow to hold
 	 */
-	public StaticFlowDefinitionHolder(FlowDefinition flow) {
-		this.flow = flow;
+	public StaticFlowDefinitionHolder(FlowDefinition flowDefinition) {
+		this.flowDefinition = flowDefinition;
 	}
 
 	public String getFlowDefinitionId() {
-		return flow.getId();
+		return flowDefinition.getId();
 	}
 	
 	public FlowDefinition getFlowDefinition() {
-		return flow;
+		return flowDefinition;
 	}
 
 	public void refresh() {
