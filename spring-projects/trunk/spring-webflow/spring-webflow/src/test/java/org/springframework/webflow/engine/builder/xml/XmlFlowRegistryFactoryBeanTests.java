@@ -22,7 +22,7 @@ public class XmlFlowRegistryFactoryBeanTests extends TestCase {
 
 	public void testCreateFromDefinitions() throws Exception {
 		Properties properties = new Properties();
-		properties.put("foo", "classpath:/org/springframework/webflow/engine/registry/flow.xml");
+		properties.put("foo", "classpath:/org/springframework/webflow/engine/builder/xml/flow.xml");
 		factoryBean.setFlowDefinitions(properties);
 		factoryBean.afterPropertiesSet();
 		FlowDefinitionRegistry registry = (FlowDefinitionRegistry)factoryBean.getObject();

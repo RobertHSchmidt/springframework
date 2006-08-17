@@ -32,7 +32,6 @@ public class FlowActionTests extends TestCase {
 				return context;
 			}
 		};
-		action.setServlet(new ActionServlet());
 		
 		FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
 		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(new SimpleFlow()));
@@ -40,6 +39,8 @@ public class FlowActionTests extends TestCase {
 		FlowExecutionRepository repository = new DefaultFlowExecutionRepository(new FlowExecutionImplStateRestorer(
 				registry));
 		action.setFlowExecutor(new FlowExecutorImpl(registry, factory, repository));		
+
+		action.setServlet(new ActionServlet());
 	}
 
 	public void testLaunch() throws Exception {
