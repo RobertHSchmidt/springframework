@@ -1,10 +1,11 @@
-package org.springframework.webflow.execution.factory.support;
+package org.springframework.webflow.execution.factory;
 
 import junit.framework.TestCase;
 
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
+import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
 
 public class StaticFlowExecutionListenerLoaderTests extends TestCase {
 

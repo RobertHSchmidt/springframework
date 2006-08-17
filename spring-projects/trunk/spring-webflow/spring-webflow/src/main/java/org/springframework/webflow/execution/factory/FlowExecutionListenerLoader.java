@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.factory.support;
+package org.springframework.webflow.execution.factory;
 
 import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.execution.FlowExecutionFactory;
 import org.springframework.webflow.execution.FlowExecutionListener;
-import org.springframework.webflow.execution.factory.FlowExecutionFactory;
 
 /**
  * A strategy interface for loading the set of FlowExecutionListener's that
