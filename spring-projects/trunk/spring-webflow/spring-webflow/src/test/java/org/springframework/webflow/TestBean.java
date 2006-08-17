@@ -6,11 +6,11 @@ package org.springframework.webflow;
 import java.io.Serializable;
 
 public class TestBean implements Serializable {
-	String datum1 = "";
+	public String datum1 = "";
 
-	int datum2;
+	public int datum2;
 
-	boolean executed;
+	public boolean executed;
 
 	public void execute() {
 		this.executed = true;
