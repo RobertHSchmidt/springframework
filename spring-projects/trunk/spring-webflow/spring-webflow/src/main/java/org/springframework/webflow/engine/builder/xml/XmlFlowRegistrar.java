@@ -17,8 +17,8 @@ package org.springframework.webflow.engine.builder.xml;
 
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
-import org.springframework.webflow.definition.FlowDefinitionHolder;
 import org.springframework.webflow.definition.registry.ExternalizedFlowDefinitionRegistrar;
+import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
 import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
