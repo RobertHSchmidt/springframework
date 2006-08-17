@@ -17,16 +17,15 @@ package org.springframework.webflow.engine.registry;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.action.bean.BeanInvokingActionFactory;
+import org.springframework.webflow.definition.registry.AbstractFlowDefinitionRegistryFactoryBean;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistrar;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.builder.FlowArtifactFactory;
@@ -41,13 +40,8 @@ import org.springframework.webflow.execution.Action;
  * 
  * @author Keith Donald
  */
-public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, BeanFactoryAware, ResourceLoaderAware,
-		InitializingBean {
-
-	/**
-	 * The registry to register Flow definitions in.
-	 */
-	private FlowDefinitionRegistryImpl flowRegistry = new FlowDefinitionRegistryImpl();
+public abstract class AbstractFlowBuildingFlowRegistryFactoryBean extends AbstractFlowDefinitionRegistryFactoryBean implements
+		BeanFactoryAware, ResourceLoaderAware, InitializingBean {
 
 	/**
 	 * The locator of services needed by the Flows built for inclusion in the
@@ -89,18 +83,6 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	private BeanFactory beanFactory;
 
 	/**
-	 * Sets the parent registry of the registry constructed by this factory
-	 * bean.
-	 * <p>
-	 * A child registry will delegate to its parent if it cannot fulfill a
-	 * request to locate a Flow definition.
-	 * @param parent the parent flow definition registry
-	 */
-	public void setParent(FlowDefinitionRegistry parent) {
-		flowRegistry.setParent(parent);
-	}
-
-	/**
 	 * Sets the factory encapsulating the creation of central Flow artifacts
 	 * such as {@link Flow flows} and {@link State states}.
 	 */
@@ -140,24 +122,16 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 		this.beanFactory = beanFactory;
 	}
 
-	public Class getObjectType() {
-		return FlowDefinitionRegistry.class;
-	}
-
-	public boolean isSingleton() {
-		return true;
-	}
-
 	public void afterPropertiesSet() {
 		flowServiceLocator = createFlowServiceLocator();
-		initRegistryFactoryBean();
+		init();
 	}
 
 	/**
 	 * Called after properties set, subclasses may override to do custom
 	 * initialization.
 	 */
-	protected void initRegistryFactoryBean() {
+	protected void init() {
 
 	}
 
@@ -194,26 +168,8 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	 * @return the default service locator
 	 */
 	protected DefaultFlowServiceLocator newDefaultFlowServiceLocator() {
-		return new DefaultFlowServiceLocator(flowRegistry, beanFactory);
+		return new DefaultFlowServiceLocator(getFlowRegistry(), beanFactory);
 	}
-
-	public Object getObject() throws Exception {
-		return populateFlowRegistry();
-	}
-
-	/**
-	 * Populates and returns the configured flow definition registry.
-	 */
-	public FlowDefinitionRegistry populateFlowRegistry() {
-		doPopulate(getFlowRegistry());
-		return getFlowRegistry();
-	}
-
-	/**
-	 * Template method subclasses must override to perform registry population.
-	 * @param registry the flow definition registry
-	 */
-	protected abstract void doPopulate(FlowDefinitionRegistry registry);
 
 	/**
 	 * Returns the strategy for locating dependent artifacts when a Flow is
@@ -222,11 +178,6 @@ public abstract class AbstractFlowRegistryFactoryBean implements FactoryBean, Be
 	protected FlowServiceLocator getFlowServiceLocator() {
 		return flowServiceLocator;
 	}
-
-	/**
-	 * Returns the flow registry constructed by the factory bean.
-	 */
-	protected FlowDefinitionRegistry getFlowRegistry() {
-		return flowRegistry;
-	}
+	
+	protected abstract void doPopulate(FlowDefinitionRegistry registry);
 }

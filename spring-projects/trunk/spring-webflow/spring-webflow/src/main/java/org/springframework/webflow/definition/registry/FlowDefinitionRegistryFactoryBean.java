@@ -13,30 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.registry;
+package org.springframework.webflow.definition.registry;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.definition.registry.FlowDefinitionRegistrar;
+import org.springframework.util.Assert;
 
 /**
- * A factory bean that produces a populated flow registry using a configured
- * list of {@link FlowDefinitionRegistrar} objects.
- * <p>
- * This class is also <code>BeanFactoryAware</code> and when used with Spring
- * will automatically create a configured
- * {@link DefaultFlowServiceLocator} for loading Flow artifacts like
- * Actions from the Spring bean factory during the Flow registration process.
- * <p>
- * Usage example:
- * 
  * <pre>
  *     &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.registry.FlowRegistryFactoryBean&quot;&gt;
- *         &lt;property name=&quot;flowRegistrars&quot;&gt;
+ *         &lt;property name=&quot;registrars&quot;&gt;
  *             &lt;list&gt;
  *                 &lt;bean class=&quot;example.MyFlowRegistrar&quot;/&gt;
  *             &lt;/list&gt;
@@ -46,12 +35,12 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistrar;
  * 
  * @author Keith Donald
  */
-public class FlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean {
+public class FlowDefinitionRegistryFactoryBean extends AbstractFlowDefinitionRegistryFactoryBean {
 
 	/**
 	 * The flow registrars that will perform the definition registrations.
 	 */
-	private List flowRegistrars;
+	private List registrars;
 
 	/**
 	 * Sets the list of flow registrars to contain only the single flow
@@ -59,21 +48,23 @@ public class FlowRegistryFactoryBean extends AbstractFlowRegistryFactoryBean {
 	 * driven by a single registrar.
 	 * @param flowRegistrar the flow registrar
 	 */
-	public void setFlowRegistrar(FlowDefinitionRegistrar flowRegistrar) {
-		flowRegistrars = Collections.singletonList(flowRegistrar);
+	public void setRegistrar(FlowDefinitionRegistrar registrar) {
+		Assert.notNull(registrar, "The flow definition registrar is required");
+		registrars = Collections.singletonList(registrar);
 	}
 
 	/**
 	 * Sets the list of flow registrars that will register flow definitions.
-	 * @param flowRegistrars the flow registrars
+	 * @param registrars the flow registrars
 	 */
-	public void setFlowRegistrars(FlowDefinitionRegistrar[] flowRegistrars) {
-		this.flowRegistrars = Arrays.asList(flowRegistrars);
+	public void setRegistrars(FlowDefinitionRegistrar[] registrars) {
+		Assert.notNull(registrars, "The flow definition registrars is required");
+		this.registrars = Arrays.asList(registrars);
 	}
 
 	protected void doPopulate(FlowDefinitionRegistry registry) {
-		if (flowRegistrars != null) {
-			Iterator it = flowRegistrars.iterator();
+		if (registrars != null) {
+			Iterator it = registrars.iterator();
 			while (it.hasNext()) {
 				FlowDefinitionRegistrar registrar = (FlowDefinitionRegistrar)it.next();
 				registrar.registerFlowDefinitions(registry);

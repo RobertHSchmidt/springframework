@@ -9,6 +9,7 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistryFactoryBean;
 import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
@@ -23,8 +24,6 @@ import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.engine.builder.SimpleFlowBuilder;
 import org.springframework.webflow.engine.registry.DefaultFlowServiceLocator;
 import org.springframework.webflow.engine.registry.FlowRegistrarSupport;
-import org.springframework.webflow.engine.registry.FlowRegistryFactoryBean;
-import org.springframework.webflow.engine.registry.XmlFlowRegistrar;
 
 public class FlowRegistryPopulationTests extends TestCase {
 	public void testDefaultPopulation() {
@@ -69,8 +68,8 @@ public class FlowRegistryPopulationTests extends TestCase {
 
 	public void testFlowRegistryFactoryBean() throws Exception {
 		GenericApplicationContext beanFactory = new GenericApplicationContext();
-		FlowRegistryFactoryBean factoryBean = new FlowRegistryFactoryBean();
-		factoryBean.setFlowRegistrar(new MyFlowRegistrar());
+		FlowDefinitionRegistryFactoryBean factoryBean = new FlowDefinitionRegistryFactoryBean();
+		factoryBean.setRegistrar(new MyFlowRegistrar());
 		factoryBean.setBeanFactory(beanFactory);
 		factoryBean.afterPropertiesSet();
 		FlowDefinitionRegistry registry = factoryBean.populateFlowRegistry();
