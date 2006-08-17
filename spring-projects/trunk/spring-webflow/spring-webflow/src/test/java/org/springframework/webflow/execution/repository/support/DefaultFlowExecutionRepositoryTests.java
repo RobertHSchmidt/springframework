@@ -14,11 +14,6 @@ import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 import org.springframework.webflow.execution.repository.PermissionDeniedFlowExecutionAccessException;
 
-/**
- * Unit tests for the ContinuationFlowExecutionRepository class.
- * 
- * @author Ulrik Sandberg
- */
 public class DefaultFlowExecutionRepositoryTests extends TestCase {
 
 	private DefaultFlowExecutionRepository repository;
