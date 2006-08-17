@@ -9,8 +9,6 @@ import junit.framework.TestCase;
  */
 public class ContinuationFlowExecutionRepositoryTests extends TestCase {
 
-	private ContinuationFlowExecutionRepository tested;
-
 	protected void setUp() throws Exception {
 	}
 
