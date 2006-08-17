@@ -23,7 +23,6 @@ import java.util.TreeMap;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowDefinitionHolder;
 
 /**
  * A generic registry of one or more Flow definitions.

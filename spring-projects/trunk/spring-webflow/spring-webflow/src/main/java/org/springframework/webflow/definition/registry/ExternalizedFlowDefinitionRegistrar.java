@@ -22,7 +22,6 @@ import java.util.Set;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.webflow.definition.FlowDefinitionHolder;
 
 /**
  * A flow registrar that populates a flow registry from flow definitions defined

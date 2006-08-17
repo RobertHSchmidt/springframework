@@ -16,7 +16,6 @@
 package org.springframework.webflow.definition.registry;
 
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowDefinitionHolder;
 
 /**
  * A interface for registering Flow definitions. Extends the FlowRegistryMBean

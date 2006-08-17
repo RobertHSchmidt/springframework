@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.definition;
+package org.springframework.webflow.definition.registry;
+
+import org.springframework.webflow.definition.FlowDefinition;
 
 /**
  * A holder holding a reference to a Flow definition. Provides a layer of

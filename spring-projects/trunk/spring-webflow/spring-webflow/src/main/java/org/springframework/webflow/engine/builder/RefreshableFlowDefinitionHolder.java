@@ -19,8 +19,8 @@ import java.io.IOException;
 
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowDefinitionConstructionException;
-import org.springframework.webflow.definition.FlowDefinitionHolder;
+import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
+import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.util.ResourceHolder;
 
