@@ -84,7 +84,7 @@ public class SetPortletModeActionTest extends TestCase {
 			tested.doExecute(mockRequestContext);
 			fail("ActionExecutionException expected");
 		}
-		catch (ActionExecutionException expected) {
+		catch (IllegalStateException e) {
 			// expected
 		}
 	}
