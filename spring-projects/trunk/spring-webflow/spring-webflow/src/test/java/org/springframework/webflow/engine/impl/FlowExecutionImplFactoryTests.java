@@ -11,7 +11,7 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.factory.support.StaticFlowExecutionListenerLoader;
+import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
 import org.springframework.webflow.test.MockExternalContext;
 
 public class FlowExecutionImplFactoryTests extends TestCase {

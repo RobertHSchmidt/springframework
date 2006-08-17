@@ -1,7 +1,6 @@
-package org.springframework.webflow.execution.factory;
+package org.springframework.webflow.execution;
 
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.execution.FlowExecution;
 
 /**
  * An abstract factory for creating flow exections. A flow execution represents

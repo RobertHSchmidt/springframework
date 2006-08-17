@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.factory.support;
+package org.springframework.webflow.execution.factory;
 
 import java.util.Iterator;
 import java.util.Set;
