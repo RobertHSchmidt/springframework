@@ -20,7 +20,7 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
  * 
  * @author Keith Donald
  */
-public class DefaultFlowExecutorFactory implements FlowExecutorFactory, FactoryBean {
+public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean {
 
 	/**
 	 * The locator the executor will use to access flow definitions registered
@@ -44,7 +44,7 @@ public class DefaultFlowExecutorFactory implements FlowExecutorFactory, FactoryB
 	 * @param definitionLocator The locator the executor will use to access flow
 	 * definitions registered in a central registry.
 	 */
-	public DefaultFlowExecutorFactory(FlowDefinitionLocator definitionLocator) {
+	public FlowExecutorFactoryBean(FlowDefinitionLocator definitionLocator) {
 		Assert.notNull(definitionLocator, "The flow definition locator is required");
 		this.definitionLocator = definitionLocator;
 		this.executionStateRestorer = new FlowExecutionImplStateRestorer(definitionLocator);
