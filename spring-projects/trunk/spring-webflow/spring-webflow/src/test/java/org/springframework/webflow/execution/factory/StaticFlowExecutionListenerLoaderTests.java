@@ -5,11 +5,10 @@ import junit.framework.TestCase;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
-import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
 
 public class StaticFlowExecutionListenerLoaderTests extends TestCase {
 
-	private StaticFlowExecutionListenerLoader loader = new StaticFlowExecutionListenerLoader();
+	private FlowExecutionListenerLoader loader = StaticFlowExecutionListenerLoader.EMPTY_INSTANCE;
 
 	protected void setUp() throws Exception {
 	}
