@@ -17,6 +17,7 @@ package org.springframework.webflow.engine.impl;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecution;
@@ -37,16 +38,17 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 	 * The strategy for loading listeners that should observe executions of a
 	 * flow definition. The default simply loads an empty static listener list.
 	 */
-	private FlowExecutionListenerLoader executionListenerLoader = new StaticFlowExecutionListenerLoader();
+	private FlowExecutionListenerLoader executionListenerLoader = StaticFlowExecutionListenerLoader.EMPTY_INSTANCE;
 
 	/**
 	 * System execution attributes that may influence flow execution behavior.
 	 */
-	private AttributeMap executionAttributes;
+	private AttributeMap executionAttributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
 
 	/**
 	 * Sets the strategy for loading listeners that should observe executions of
-	 * a flow definition.
+	 * a flow definition. Allows full control over what listeners should apply
+	 * for executions of a flow definition.
 	 */
 	public void setExecutionListenerLoader(FlowExecutionListenerLoader executionListenerLoader) {
 		Assert.notNull(executionListenerLoader, "The listener loader is required");
@@ -62,13 +64,27 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 		this.executionAttributes = executionAttributes;
 	}
 
+	/**
+	 * Convenience setter for setting a single listener that always applys to
+	 * flow executions created by this factory.
+	 * @param executionListener the flow execution listener
+	 */
+	public void setExecutionListener(FlowExecutionListener executionListener) {
+		setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(executionListener));
+	}
+
+	/**
+	 * Convenience setter for setting a list of listeners that always apply to
+	 * flow executions created by this factory.
+	 * @param executionListeners the flow execution listeners
+	 */
+	public void setExecutionListeners(FlowExecutionListener[] executionListeners) {
+		setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(executionListeners));
+	}
+
 	public FlowExecution createFlowExecution(FlowDefinition flowDefinition) {
 		Assert.isInstanceOf(Flow.class, flowDefinition, "Flow definition is of wrong type: ");
 		return new FlowExecutionImpl((Flow)flowDefinition, executionListenerLoader.getListeners(flowDefinition),
 				executionAttributes);
-	}
-
-	public void setExecutionListener(FlowExecutionListener executionListener) {
-		setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(executionListener));
 	}
 }

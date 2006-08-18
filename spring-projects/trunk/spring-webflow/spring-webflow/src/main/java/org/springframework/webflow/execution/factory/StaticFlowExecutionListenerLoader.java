@@ -31,6 +31,11 @@ import org.springframework.webflow.execution.FlowExecutionListener;
 public final class StaticFlowExecutionListenerLoader implements FlowExecutionListenerLoader {
 
 	/**
+	 * A shared listener loader instance that returns am empty listener array on each invocation.
+	 */
+	public static final FlowExecutionListenerLoader EMPTY_INSTANCE = new StaticFlowExecutionListenerLoader();
+	
+	/**
 	 * The listener array to return when {@link #getListeners(FlowDefinition)}
 	 * is invoked.
 	 */
@@ -40,7 +45,7 @@ public final class StaticFlowExecutionListenerLoader implements FlowExecutionLis
 	 * Creates a new flow execution listener loader that returns an empty
 	 * listener array on each invocation.
 	 */
-	public StaticFlowExecutionListenerLoader() {
+	private StaticFlowExecutionListenerLoader() {
 		this(new FlowExecutionListener[0]);
 	}
 
