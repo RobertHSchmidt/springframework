@@ -2,10 +2,11 @@ package org.springframework.webflow.executor.jsf;
 
 import javax.faces.context.FacesContext;
 
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
+import org.springframework.webflow.execution.FlowExecutionFactory;
+import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 
 /**
  * Trivial helper utility class for SWF within a JSF environment.
@@ -13,43 +14,25 @@ import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
  */
 public class FlowFacesUtils {
 
-	/**
-	 * The service name of the default {@link FlowExecutionRepositoryFactory}
-	 * implementation exported in the Spring Web Application Context.
-	 */
-	private static final String REPOSITORY_FACTORY_BEAN_NAME = "flowExecutionRepositoryFactory";
+	private static final String REPOSITORY_BEAN_NAME = "flowExecutionRepository";
 
-	/**
-	 * The service name of the default {@link FlowDefinitionLocator} implementation
-	 * exported in the Spring Web Application Context.
-	 */
-	private static final String FLOW_LOCATOR_BEAN_NAME = "flowLocator";
+	private static final String FLOW_DEFINITION_LOCATOR_BEAN_NAME = "flowDefinitionLocator";
 
-	/**
-	 * Lookup the flow locator service by querying the application context for a
-	 * bean with name {@link #FLOW_LOCATOR_BEAN_NAME}.
-	 * @param context the faces context
-	 * @return the flow locator
-	 */
-	public static FlowExecutionRepositoryFactory getRepositoryFactory(FacesContext context) {
+	private static final String FLOW_EXECUTION_FACTORY_BEAN_NAME = "flowExecutionFactory";
+
+	public static FlowExecutionRepository getExecutionRepository(FacesContext context) {
 		ApplicationContext ac = FacesContextUtils.getRequiredWebApplicationContext(context);
-		if (ac.containsBean(REPOSITORY_FACTORY_BEAN_NAME)) {
-			return (FlowExecutionRepositoryFactory)ac.getBean(REPOSITORY_FACTORY_BEAN_NAME,
-					FlowExecutionRepositoryFactory.class);
-		}
-		else {
-			try {
-				FlowDefinitionLocator flowLocator = (FlowDefinitionLocator)ac.getBean(FLOW_LOCATOR_BEAN_NAME, FlowDefinitionLocator.class);
-				return new DefaultFlowExecutionRepositoryFactory(flowLocator);
-			}
-			catch (NoSuchBeanDefinitionException e) {
-				String message = "No '" + FLOW_LOCATOR_BEAN_NAME + "' or '" + REPOSITORY_FACTORY_BEAN_NAME
-						+ "' bean definition could be found; to use Spring Web Flow with JSF you must "
-						+ "configure this PhaseListener with either a FlowLocator "
-						+ "(exposing a registry of flow definitions) or a custom FlowExecutionRepositoryFactory "
-						+ "(allowing more configuration options).";
-				throw new JsfFlowConfigurationException(message, e);
-			}
-		}
+		return (FlowExecutionRepository)ac.getBean(REPOSITORY_BEAN_NAME, FlowExecutionRepository.class);
 	}
+
+	public static FlowExecutionFactory getExecutionFactory(FacesContext context) {
+		ApplicationContext ac = FacesContextUtils.getRequiredWebApplicationContext(context);
+		return (FlowExecutionFactory)ac.getBean(FLOW_EXECUTION_FACTORY_BEAN_NAME, FlowExecutionFactory.class);
+	}
+
+	public static FlowDefinitionLocator getDefinitionLocator(FacesContext context) {
+		ApplicationContext ac = FacesContextUtils.getRequiredWebApplicationContext(context);
+		return (FlowDefinitionLocator)ac.getBean(FLOW_DEFINITION_LOCATOR_BEAN_NAME, FlowDefinitionLocator.class);
+	}
+
 }

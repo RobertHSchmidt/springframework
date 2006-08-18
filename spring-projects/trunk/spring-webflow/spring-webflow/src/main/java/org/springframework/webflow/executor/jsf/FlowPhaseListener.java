@@ -30,7 +30,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionFactory;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
@@ -156,8 +159,8 @@ public class FlowPhaseListener implements PhaseListener {
 			// launch a new flow execution (this could happen as part of a flow
 			// redirect)
 			String flowId = argumentExtractor.extractFlowId(context);
-			FlowExecutionRepository repository = getRepository(context);
-			FlowExecution flowExecution = repository.createFlowExecution(flowId);
+			FlowDefinition flowDefinition = getLocator(context).getFlowDefinition(flowId);
+			FlowExecution flowExecution = getFactory(context).createFlowExecution(flowDefinition);
 			FlowExecutionHolder holder = new FlowExecutionHolder(flowExecution);
 			FlowExecutionHolderUtils.setFlowExecutionHolder(holder, facesContext);
 			ViewSelection selectedView = flowExecution.start(createInput(flowExecution, context), context);
@@ -327,5 +330,17 @@ public class FlowPhaseListener implements PhaseListener {
 		public String mapViewId(String viewName) {
 			return viewName;
 		}
+	}
+
+	private FlowDefinitionLocator getLocator(JsfExternalContext context) {
+		return FlowFacesUtils.getDefinitionLocator(context.getFacesContext());
+	}
+	
+	private FlowExecutionFactory getFactory(JsfExternalContext context) {
+		return FlowFacesUtils.getExecutionFactory(context.getFacesContext());
+	}
+	
+	private FlowExecutionRepository getRepository(JsfExternalContext context) {
+		return FlowFacesUtils.getExecutionRepository(context.getFacesContext());
 	}
 }
