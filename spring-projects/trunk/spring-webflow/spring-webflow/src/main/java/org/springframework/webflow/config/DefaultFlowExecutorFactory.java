@@ -1,5 +1,6 @@
 package org.springframework.webflow.config;
 
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
@@ -19,7 +20,7 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
  * 
  * @author Keith Donald
  */
-public class DefaultFlowExecutorFactory implements FlowExecutorFactory {
+public class DefaultFlowExecutorFactory implements FlowExecutorFactory, FactoryBean {
 
 	/**
 	 * The locator the executor will use to access flow definitions registered
@@ -57,7 +58,7 @@ public class DefaultFlowExecutorFactory implements FlowExecutorFactory {
 	 */
 	public void setExecutionAttributes(AttributeMap executionAttributes) {
 		this.executionFactory.setExecutionAttributes(executionAttributes);
-		this.executionStateRestorer.setAttributes(executionAttributes);
+		this.executionStateRestorer.setExecutionAttributes(executionAttributes);
 	}
 
 	/**
@@ -66,8 +67,8 @@ public class DefaultFlowExecutorFactory implements FlowExecutorFactory {
 	 * @param executionListener the flow execution listener
 	 */
 	public void setExecutionListener(FlowExecutionListener executionListener) {
-		executionFactory.setExecutionListener(executionListener);
-		executionStateRestorer.setListener(executionListener);
+		executionFactory.setLExecutionistener(executionListener);
+		executionStateRestorer.setExecutionListener(executionListener);
 	}
 
 	/**
@@ -77,7 +78,7 @@ public class DefaultFlowExecutorFactory implements FlowExecutorFactory {
 	 */
 	public void setExecutionListeners(FlowExecutionListener[] executionListeners) {
 		executionFactory.setExecutionListeners(executionListeners);
-		executionStateRestorer.setListeners(executionListeners);
+		executionStateRestorer.setExecutionListeners(executionListeners);
 	}
 
 	/**
@@ -88,14 +89,18 @@ public class DefaultFlowExecutorFactory implements FlowExecutorFactory {
 	 */
 	public void setExecutionListenerLoader(FlowExecutionListenerLoader executionListenerLoader) {
 		executionFactory.setExecutionListenerLoader(executionListenerLoader);
-		executionStateRestorer.setListenerLoader(executionListenerLoader);
+		executionStateRestorer.setExecutionListenerLoader(executionListenerLoader);
 	}
 
+	// implementing FlowExecutorFactory
+	
 	public FlowExecutor createFlowExecutor() {
 		return new FlowExecutorImpl(definitionLocator, executionFactory,
 				createExecutionRepository(executionStateRestorer));
 	}
 
+	// Template methods
+	
 	/**
 	 * Factory method for creating the flow execution repository for saving and
 	 * loading executing flows. Subclasses may override to customize the
@@ -105,5 +110,19 @@ public class DefaultFlowExecutorFactory implements FlowExecutorFactory {
 	 */
 	protected FlowExecutionRepository createExecutionRepository(FlowExecutionStateRestorer executionStateRestorer) {
 		return new DefaultFlowExecutionRepository(executionStateRestorer);
+	}
+	
+	// implementing FactoryBean
+	
+	public Class getObjectType() {
+		return FlowExecutor.class;
+	}
+
+	public boolean isSingleton() {
+		return true;
+	}
+
+	public Object getObject() throws Exception {
+		return createFlowExecutor();
 	}
 }

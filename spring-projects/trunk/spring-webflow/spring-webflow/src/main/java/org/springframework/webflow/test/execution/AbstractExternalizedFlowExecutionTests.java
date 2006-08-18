@@ -68,7 +68,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * @param listener the listener to attach
 	 */
 	protected void setFlowExecutionListener(FlowExecutionListener executionListener) {
-		getFlowExecutionImplFactory().setExecutionListener(executionListener);
+		getFlowExecutionImplFactory().setLExecutionistener(executionListener);
 	}
 
 	/**
