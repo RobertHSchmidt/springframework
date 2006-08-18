@@ -23,9 +23,13 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.web.jsf.DecoratingNavigationHandler;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionFactory;
 import org.springframework.webflow.execution.ViewSelection;
+import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 
 /**
@@ -129,7 +133,8 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 			if (argumentExtractor.isFlowIdPresent(context)) {
 				// a flow execution launch has been requested, start it
 				String flowId = argumentExtractor.extractFlowId(context);
-				FlowExecution flowExecution = getRepository(context).createFlowExecution(flowId);
+				FlowDefinition flowDefinition = getLocator(context).getFlowDefinition(flowId);
+				FlowExecution flowExecution = getFactory(context).createFlowExecution(flowDefinition);
 				FlowExecutionHolder holder = new FlowExecutionHolder(flowExecution);
 				FlowExecutionHolderUtils.setFlowExecutionHolder(holder, facesContext);
 				ViewSelection selectedView = flowExecution.start(createInput(flowExecution, context), context);
@@ -141,6 +146,18 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 				originalNavigationHandler.handleNavigation(facesContext, fromAction, outcome);
 			}
 		}
+	}
+
+	private FlowDefinitionLocator getLocator(JsfExternalContext context) {
+		return FlowFacesUtils.getDefinitionLocator(context.getFacesContext());
+	}
+	
+	private FlowExecutionFactory getFactory(JsfExternalContext context) {
+		return FlowFacesUtils.getExecutionFactory(context.getFacesContext());
+	}
+	
+	private FlowExecutionRepository getRepository(JsfExternalContext context) {
+		return FlowFacesUtils.getExecutionRepository(context.getFacesContext());
 	}
 
 	/**
