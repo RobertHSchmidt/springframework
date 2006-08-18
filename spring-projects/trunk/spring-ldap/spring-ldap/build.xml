@@ -18,6 +18,7 @@
 	<property name="ldap.password" value="secret" />
 	
 	<import file="${common.build.dir}/common-targets.xml" />
+	<import file="${common.build.dir}/doc-targets.xml" />
 	<import file="${common.build.dir}/clover-targets.xml" />
 
 	<target name="iutest.ldap.setup">
