@@ -2,6 +2,13 @@ LDAPTEMPLATE CHANGELOG
 ======================
 http://ldaptemplate.sourceforge.net
 
+Changes in version 1.0.3 (not yet released)
+-------------------------------------------
+* Added search methods to LdapTemplate for specifying return attributes.
+
+* Added list and listBindings methods to LdapTemplate.
+
+
 Changes in version 1.0.2 (26.6.2006)
 ------------------------------------
 * Added methods in LdapTemplate to unbind recursively.
