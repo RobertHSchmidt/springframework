@@ -87,7 +87,9 @@ public class FlowExecutionImplStateRestorerTests extends TestCase {
 			}
 		};
 		
-		stateRestorer = new FlowExecutionImplStateRestorer(flowLocator, listenerLoader, attributes);
+		stateRestorer = new FlowExecutionImplStateRestorer(flowLocator);
+		stateRestorer.setListenerLoader(listenerLoader);
+		stateRestorer.setAttributes(attributes);
 
 	}
 

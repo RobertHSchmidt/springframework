@@ -32,12 +32,12 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 	/**
 	 * Used to restore the flow execution's listeners.
 	 */
-	private FlowExecutionListenerLoader executionListenerLoader = StaticFlowExecutionListenerLoader.EMPTY_INSTANCE;
+	private FlowExecutionListenerLoader listenerLoader = StaticFlowExecutionListenerLoader.EMPTY_INSTANCE;
 
 	/**
 	 * Used to restore the flow execution's system attributes.
 	 */
-	private AttributeMap executionAttributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
+	private AttributeMap attributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
 
 	/**
 	 * Creates a new execution transient state restorer.
@@ -54,9 +54,9 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 	 * a flow definition. Allows full control over what listeners should apply
 	 * for executions of a flow definition.
 	 */
-	public void setExecutionListenerLoader(FlowExecutionListenerLoader executionListenerLoader) {
+	public void setListenerLoader(FlowExecutionListenerLoader executionListenerLoader) {
 		Assert.notNull(executionListenerLoader, "The listener loader is required");
-		this.executionListenerLoader = executionListenerLoader;
+		this.listenerLoader = executionListenerLoader;
 	}
 
 	/**
@@ -64,8 +64,8 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 	 * Execution attributes may affect flow execution behavior.
 	 * @param executionAttributes flow execution system attributes
 	 */
-	public void setExecutionAttributes(AttributeMap executionAttributes) {
-		this.executionAttributes = executionAttributes;
+	public void setAttributes(AttributeMap executionAttributes) {
+		this.attributes = executionAttributes;
 	}
 
 	/**
@@ -73,8 +73,8 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 	 * flow executions created by this factory.
 	 * @param executionListener the flow execution listener
 	 */
-	public void setExecutionListener(FlowExecutionListener executionListener) {
-		setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(executionListener));
+	public void setListener(FlowExecutionListener executionListener) {
+		setListenerLoader(new StaticFlowExecutionListenerLoader(executionListener));
 	}
 
 	/**
@@ -82,8 +82,8 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 	 * flow executions created by this factory.
 	 * @param executionListener the flow execution listeners
 	 */
-	public void setExecutionListeners(FlowExecutionListener[] executionListeners) {
-		setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(executionListeners));
+	public void setListeners(FlowExecutionListener[] executionListeners) {
+		setListenerLoader(new StaticFlowExecutionListenerLoader(executionListeners));
 	}
 
 	public FlowExecution restoreState(FlowExecution flowExecution, MutableAttributeMap conversationScope) {
@@ -104,8 +104,8 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 			conversationScope = new LocalAttributeMap();
 		}
 		impl.conversationScope = conversationScope;
-		impl.listeners = new FlowExecutionListeners(executionListenerLoader.getListeners(flow));
-		impl.attributes = executionAttributes;
+		impl.listeners = new FlowExecutionListeners(listenerLoader.getListeners(flow));
+		impl.attributes = attributes;
 		return flowExecution;
 	}
 

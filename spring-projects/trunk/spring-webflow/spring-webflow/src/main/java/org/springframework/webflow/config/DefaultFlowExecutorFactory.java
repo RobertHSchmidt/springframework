@@ -57,7 +57,7 @@ public class DefaultFlowExecutorFactory implements FlowExecutorFactory {
 	 */
 	public void setExecutionAttributes(AttributeMap executionAttributes) {
 		this.executionFactory.setExecutionAttributes(executionAttributes);
-		this.executionStateRestorer.setExecutionAttributes(executionAttributes);
+		this.executionStateRestorer.setAttributes(executionAttributes);
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class DefaultFlowExecutorFactory implements FlowExecutorFactory {
 	 */
 	public void setExecutionListener(FlowExecutionListener executionListener) {
 		executionFactory.setExecutionListener(executionListener);
-		executionStateRestorer.setExecutionListener(executionListener);
+		executionStateRestorer.setListener(executionListener);
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class DefaultFlowExecutorFactory implements FlowExecutorFactory {
 	 */
 	public void setExecutionListeners(FlowExecutionListener[] executionListeners) {
 		executionFactory.setExecutionListeners(executionListeners);
-		executionStateRestorer.setExecutionListeners(executionListeners);
+		executionStateRestorer.setListeners(executionListeners);
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class DefaultFlowExecutorFactory implements FlowExecutorFactory {
 	 */
 	public void setExecutionListenerLoader(FlowExecutionListenerLoader executionListenerLoader) {
 		executionFactory.setExecutionListenerLoader(executionListenerLoader);
-		executionStateRestorer.setExecutionListenerLoader(executionListenerLoader);
+		executionStateRestorer.setListenerLoader(executionListenerLoader);
 	}
 
 	public FlowExecutor createFlowExecutor() {
