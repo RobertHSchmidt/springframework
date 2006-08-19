@@ -4,25 +4,23 @@ import java.io.File;
 
 import org.easymock.MockControl;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.webflow.builder.FlowServiceLocator;
-import org.springframework.webflow.registry.ExternalizedFlowDefinition;
-import org.springframework.webflow.support.ApplicationView;
-import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
-import org.springframework.webflow.test.MockFlowServiceLocator;
+import org.springframework.webflow.definition.registry.FlowDefinitionResource;
+import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.test.MockParameterMap;
+import org.springframework.webflow.test.execution.AbstractXmlFlowExecutionTests;
+import org.springframework.webflow.test.execution.MockFlowServiceLocator;
 
 public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
+
+	private File flowDir = new File("src/main/webapp/WEB-INF");
 
 	private MockControl saleProcessorControl;
 
 	private SaleProcessor saleProcessor;
 
 	@Override
-	protected ExternalizedFlowDefinition getFlowDefinition() {
-		File flowDir = new File("src/main/webapp/WEB-INF");
-		Resource resource = new FileSystemResource(new File(flowDir, "sellitem.xml"));
-		return new ExternalizedFlowDefinition("search", resource);
+	protected FlowDefinitionResource getFlowDefinitionResource() {
+		return new FlowDefinitionResource(new FileSystemResource(new File(flowDir, "sellitem.xml")));
 	}
 
 	public void testStartFlow() {
@@ -74,11 +72,13 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 	}
 
 	@Override
-	protected FlowServiceLocator createFlowServiceLocator() {
+	protected void registerMockServices(MockFlowServiceLocator serviceLocator) {
 		saleProcessorControl = MockControl.createControl(SaleProcessor.class);
 		saleProcessor = (SaleProcessor)saleProcessorControl.getMock();
-		MockFlowServiceLocator flowServiceLocator = new MockFlowServiceLocator();
-		flowServiceLocator.registerBean("saleProcessor", saleProcessor);
-		return flowServiceLocator;
+		serviceLocator.registerBean("saleProcessor", saleProcessor);
+
+		FlowDefinitionResource shipping = new FlowDefinitionResource(new FileSystemResource(new File(flowDir,
+				"shipping-flow.xml")));
+		serviceLocator.registerSubflow(createFlow(shipping, serviceLocator));
 	}
 }

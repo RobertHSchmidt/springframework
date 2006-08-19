@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
+	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
+
+<flow start-state="enterShippingDetails">
+
+	<view-state id="enterShippingDetails" view="shippingDetailsForm">
+		<transition on="submit" to="finish">
+			<action bean="formAction" method="bind"/>
+		</transition>
+	</view-state>
+	
+	<end-state id="finish"/>
+	
+	<import resource="sellitem-beans.xml"/>
+	
+</flow>

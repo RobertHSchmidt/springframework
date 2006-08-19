@@ -3,15 +3,15 @@ package org.springframework.webflow.samples.sellitem;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.State;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.execution.EnterStateVetoException;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
+import org.springframework.webflow.execution.RequestContext;
 
 public class SellItemFlowExecutionListener extends FlowExecutionListenerAdapter {
-	public void stateEntering(RequestContext context, State nextState) throws EnterStateVetoException {
-		String role = nextState.getAttributeMap().getString("role");
+	public void stateEntering(RequestContext context, StateDefinition nextState) throws EnterStateVetoException {
+		String role = nextState.getAttributes().getString("role");
 		if (StringUtils.hasText(role)) {
 			HttpServletRequest request = ((ServletExternalContext)context.getExternalContext()).getRequest();
 			if (!request.isUserInRole(role)) {
