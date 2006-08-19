@@ -28,7 +28,7 @@ import org.springframework.webflow.executor.FlowExecutor;
  * 
  * @author Ben Hale
  */
-public class SwfNamespaceHandlerTests extends TestCase {
+public class FlowNamespaceHandlerTests extends TestCase {
 
 	private DefaultListableBeanFactory beanFactory;
 
@@ -58,5 +58,4 @@ public class SwfNamespaceHandlerTests extends TestCase {
 		FlowExecutor flowExecutor = (FlowExecutor)this.beanFactory.getBean("defaultExecutor");
 		assertNotNull("Incorrect FlowExecutor creation", flowExecutor);
 	}
-
 }

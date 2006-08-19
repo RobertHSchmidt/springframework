@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
-<xsd:schema xmlns="http://www.springframework.org/schema/swf"
+<xsd:schema xmlns="http://www.springframework.org/schema/flow"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:beans="http://www.springframework.org/schema/beans"
-	targetNamespace="http://www.springframework.org/schema/swf"
+	targetNamespace="http://www.springframework.org/schema/flow"
 	elementFormDefault="qualified" attributeFormDefault="unqualified">
 
 	<xsd:import namespace="http://www.springframework.org/schema/beans"
@@ -14,11 +14,9 @@
 			<xsd:complexContent>
 				<xsd:extension base="beans:identifiedType">
 					<xsd:sequence>
-						<xsd:element name="location" minOccurs="1"
-							maxOccurs="unbounded">
+						<xsd:element name="location" minOccurs="1" maxOccurs="unbounded">
 							<xsd:complexType>
-								<xsd:attribute name="path"
-									type="xsd:string" use="required" />
+								<xsd:attribute name="path" type="xsd:string" use="required" />
 							</xsd:complexType>
 						</xsd:element>
 					</xsd:sequence>
@@ -32,18 +30,14 @@
 			<xsd:complexContent>
 				<xsd:extension base="beans:identifiedType">
 					<xsd:sequence>
-						<xsd:element name="listener" minOccurs="0"
-							maxOccurs="unbounded">
+						<xsd:element name="listener" minOccurs="0" maxOccurs="unbounded">
 							<xsd:complexType>
-								<xsd:attribute name="ref"
-									type="xsd:string" use="required" />
-								<xsd:attribute name="criteria"
-									type="xsd:string" default="*" />
+								<xsd:attribute name="ref" type="xsd:string" use="required" />
+								<xsd:attribute name="criteria" type="xsd:string" default="*" />
 							</xsd:complexType>
 						</xsd:element>
 					</xsd:sequence>
-					<xsd:attribute name="repositoryType"
-						default="default">
+					<xsd:attribute name="repositoryType" default="default">
 						<xsd:simpleType>
 							<xsd:restriction base="xsd:string">
 								<xsd:enumeration value="default" />
@@ -52,8 +46,7 @@
 							</xsd:restriction>
 						</xsd:simpleType>
 					</xsd:attribute>
-					<xsd:attribute name="registry-ref" type="xsd:string"
-						use="required" />
+					<xsd:attribute name="registry-ref" type="xsd:string" use="required" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>

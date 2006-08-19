@@ -20,7 +20,7 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 
 /**
- * <code>NamespaceHandler</code> for the <code>swf</code> namespace.
+ * <code>NamespaceHandler</code> for the <code>flow</code> namespace.
  * 
  * <p>
  * Provides {@link BeanDefinitionParser}s for the <code>&lt;executor&gt;</code>
@@ -38,11 +38,11 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
  * in-line definition of listener criteria.
  * 
  * <pre class="code">
- *     &lt;swf:executor id=&quot;registry&quot; repository=&quot;continuation&quot; registry-ref=&quot;registry&quot;&gt;
- *         &lt;swf:listener ref=&quot;listener1&quot; /&gt;
- *         &lt;swf:listener ref=&quot;listener2&quot; ref=&quot;*&quot; /&gt;
- *         &lt;swf:listener ref=&quot;listener3&quot; ref=&quot;flow1, flow2, flow3&quot; /&gt;
- *     &lt;/swf:executor&gt;
+ *     &lt;flow:executor id=&quot;registry&quot; repositoryType=&quot;continuation&quot; registry-ref=&quot;registry&quot;&gt;
+ *         &lt;flow:listener ref=&quot;listener1&quot; /&gt;
+ *         &lt;flow:listener ref=&quot;listener2&quot; ref=&quot;*&quot; /&gt;
+ *         &lt;flow:listener ref=&quot;listener3&quot; ref=&quot;flow1, flow2, flow3&quot; /&gt;
+ *     &lt;/flow:executor&gt;
  * </pre>
  * 
  * Using the <code>registry</code> tag you can configure an
@@ -51,15 +51,15 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
  * tag supports in-line flow definition locations.
  * 
  * <pre class="code">
- *     &lt;swf:registry id=&quot;registry&quot;&gt;
- *         &lt;swf:location path=&quot;/path/to/flow.xml&quot; /&gt;
- *         &lt;swf:location path=&quot;/path/with/wildcards/*-flow.xml&quot; /&gt;
- *     &lt;/swf:registry&gt;
+ *     &lt;flow:registry id=&quot;registry&quot;&gt;
+ *         &lt;flow:location path=&quot;/path/to/flow.xml&quot; /&gt;
+ *         &lt;flow:location path=&quot;/path/with/wildcards/*-flow.xml&quot; /&gt;
+ *     &lt;/flow:registry&gt;
  * </pre>
  * 
  * @author Ben Hale
  */
-public class SwfNamespaceHandler extends NamespaceHandlerSupport {
+public class FlowNamespaceHandler extends NamespaceHandlerSupport {
 	public void init() {
 		registerBeanDefinitionParser("executor", new ExecutorBeanDefinitionParser());
 		registerBeanDefinitionParser("registry", new RegistryBeanDefinitionParser());
