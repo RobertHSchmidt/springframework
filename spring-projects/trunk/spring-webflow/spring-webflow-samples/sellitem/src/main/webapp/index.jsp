@@ -7,7 +7,7 @@
 		
 		<DIV align="left">
 			<P>
-				<A href="pos.htm?_flowId=sellitem">Sell Item</A>
+				<A href="pos.htm?_flowId=sellitem-flow">Sell Item</A>
 			</P>
 			
 			<P>
