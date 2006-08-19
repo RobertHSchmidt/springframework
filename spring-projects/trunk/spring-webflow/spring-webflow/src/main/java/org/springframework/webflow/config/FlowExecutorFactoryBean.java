@@ -9,6 +9,8 @@ import org.springframework.webflow.engine.impl.FlowExecutionImplStateRestorer;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.factory.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
+import org.springframework.webflow.execution.repository.continuation.ClientContinuationFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
 import org.springframework.webflow.executor.FlowExecutor;
@@ -38,6 +40,12 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	 * state.
 	 */
 	private FlowExecutionImplStateRestorer executionStateRestorer;
+
+	/**
+	 * The type of execution repository to configure with executors created by
+	 * this factory.
+	 */
+	private RepositoryType repositoryType = RepositoryType.DEFAULT;
 
 	/**
 	 * Creates a new {@link FlowExecutor flow executor} factory.
@@ -92,15 +100,24 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 		executionStateRestorer.setExecutionListenerLoader(executionListenerLoader);
 	}
 
+	/**
+	 * Sets the type of flow execution repository that should be configured for
+	 * the Flow executors created by this factory.
+	 * @param repositoryType the flow execution repository type
+	 */
+	public void setRepositoryType(RepositoryType repositoryType) {
+		this.repositoryType = repositoryType;
+	}
+
 	// implementing FlowExecutorFactory
-	
+
 	public FlowExecutor createFlowExecutor() {
 		return new FlowExecutorImpl(definitionLocator, executionFactory,
 				createExecutionRepository(executionStateRestorer));
 	}
 
 	// Template methods
-	
+
 	/**
 	 * Factory method for creating the flow execution repository for saving and
 	 * loading executing flows. Subclasses may override to customize the
@@ -109,11 +126,27 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	 * @return the flow execution repository
 	 */
 	protected FlowExecutionRepository createExecutionRepository(FlowExecutionStateRestorer executionStateRestorer) {
-		return new DefaultFlowExecutionRepository(executionStateRestorer);
+		if (repositoryType == RepositoryType.DEFAULT) {
+			return new DefaultFlowExecutionRepository(executionStateRestorer);
+		}
+		else if (repositoryType == RepositoryType.CONTINUATION) {
+			return new ContinuationFlowExecutionRepository(executionStateRestorer);
+		}
+		else if (repositoryType == RepositoryType.CLIENT) {
+			return new ClientContinuationFlowExecutionRepository(executionStateRestorer);
+		}
+		else {
+			throw new IllegalStateException("Cannot create execution repository - unsupported repository type "
+					+ repositoryType);
+		}
 	}
-	
+
+	protected RepositoryType getRepositoryType() {
+		return repositoryType;
+	}
+
 	// implementing FactoryBean
-	
+
 	public Class getObjectType() {
 		return FlowExecutor.class;
 	}
