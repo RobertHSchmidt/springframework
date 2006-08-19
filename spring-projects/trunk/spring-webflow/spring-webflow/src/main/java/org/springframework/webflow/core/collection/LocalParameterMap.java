@@ -98,8 +98,8 @@ public class LocalParameterMap implements ParameterMap, Serializable {
 		return parameters.hashCode();
 	}
 
-	public Map getMap() {
-		return parameterAccessor.getMap();
+	public Map asMap() {
+		return parameterAccessor.asMap();
 	}
 
 	public boolean isEmpty() {

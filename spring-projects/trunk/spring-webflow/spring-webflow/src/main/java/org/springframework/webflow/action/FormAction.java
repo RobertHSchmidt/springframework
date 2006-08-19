@@ -627,7 +627,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 				logger.debug("(Any field is allowed)");
 			}
 		}
-		binder.bind(new MutablePropertyValues(context.getRequestParameters().getMap()));
+		binder.bind(new MutablePropertyValues(context.getRequestParameters().asMap()));
 		if (logger.isDebugEnabled()) {
 			logger.debug("Binding completed for form object with name '" + binder.getObjectName()
 					+ "', post-bind formObject toString = " + binder.getTarget());

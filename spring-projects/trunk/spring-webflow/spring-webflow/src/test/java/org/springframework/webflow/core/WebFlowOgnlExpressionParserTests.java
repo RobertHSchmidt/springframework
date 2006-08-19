@@ -23,7 +23,7 @@ public class WebFlowOgnlExpressionParserTests extends TestCase {
 
 	public void testEvalMapAdaptable() {
 		MapAdaptable adaptable = new MapAdaptable() {
-			public Map getMap() {
+			public Map asMap() {
 				HashMap map = new HashMap();
 				map.put("size", new Integer(0));
 				return map;
