@@ -126,8 +126,8 @@ public class FlowExecutionImplStateRestorerTests extends TestCase {
 
 		assertEquals(flowExecution.isActive(), restoredFlowExecution.isActive());
 		if (flowExecution.isActive()) {
-			assertEquals(flowExecution.getActiveSession().getScope().getMap(), restoredFlowExecution.getActiveSession()
-					.getScope().getMap());
+			assertEquals(flowExecution.getActiveSession().getScope().asMap(), restoredFlowExecution.getActiveSession()
+					.getScope().asMap());
 			assertEquals(flowExecution.getActiveSession().getState().getId(), restoredFlowExecution.getActiveSession()
 					.getState().getId());
 			assertEquals(flowExecution.getActiveSession().getDefinition().getId(), restoredFlowExecution

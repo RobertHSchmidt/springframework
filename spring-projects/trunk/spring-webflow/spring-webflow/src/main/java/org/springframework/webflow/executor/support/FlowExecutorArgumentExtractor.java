@@ -318,7 +318,7 @@ public class FlowExecutorArgumentExtractor {
 		}
 		// if no value yet, try to get it as a name_value=xyz parameter
 		String prefix = logicalParameterName + getParameterValueDelimiter();
-		Iterator paramNames = parameters.getMap().keySet().iterator();
+		Iterator paramNames = parameters.asMap().keySet().iterator();
 		while (paramNames.hasNext()) {
 			String paramName = (String)paramNames.next();
 			if (paramName.startsWith(prefix)) {

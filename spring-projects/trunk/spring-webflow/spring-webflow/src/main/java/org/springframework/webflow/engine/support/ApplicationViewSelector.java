@@ -135,7 +135,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	 * @return the application view
 	 */
 	protected ApplicationView createApplicationView(String viewName, RequestContext context) {
-		return new ApplicationView(viewName, context.getModel().getMap());
+		return new ApplicationView(viewName, context.getModel().asMap());
 	}
 
 	public String toString() {

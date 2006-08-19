@@ -77,8 +77,8 @@ public class LocalAttributeMap implements MutableAttributeMap, Serializable {
 
 	// implementing attribute map
 
-	public Map getMap() {
-		return attributeAccessor.getMap();
+	public Map asMap() {
+		return attributeAccessor.asMap();
 	}
 
 	public int size() {
@@ -213,7 +213,7 @@ public class LocalAttributeMap implements MutableAttributeMap, Serializable {
 		else {
 			Map map = createTargetMap();
 			map.putAll(getMapInternal());
-			map.putAll(attributes.getMap());
+			map.putAll(attributes.asMap());
 			return new LocalAttributeMap(map);
 		}
 	}
@@ -228,7 +228,7 @@ public class LocalAttributeMap implements MutableAttributeMap, Serializable {
 		if (attributes == null) {
 			return this;
 		}
-		getMapInternal().putAll(attributes.getMap());
+		getMapInternal().putAll(attributes.asMap());
 		return this;
 	}
 

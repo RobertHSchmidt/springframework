@@ -48,7 +48,7 @@ class WebFlowOgnlExpressionParser extends OgnlExpressionParser {
 	 */
 	private static class MapAdaptablePropertyAccessor implements PropertyAccessor {
 		public Object getProperty(Map context, Object target, Object name) throws OgnlException {
-			return ((MapAdaptable)target).getMap().get(name);
+			return ((MapAdaptable)target).asMap().get(name);
 		}
 
 		public void setProperty(Map context, Object target, Object name, Object value) throws OgnlException {
