@@ -8,7 +8,7 @@
 		<action bean="formAction" method="setupForm"/>
 	</start-actions>
 
-	<view-state id="enterPriceAndItemCount" view="redirect:priceAndItemCountForm">
+	<view-state id="enterPriceAndItemCount" view="priceAndItemCountForm">
 		<transition on="submit" to="enterCategory">
 			<action bean="formAction" method="bindAndValidate">
 				<attribute name="validatorMethod" value="validatePriceAndItemCount"/>
@@ -16,7 +16,7 @@
 		</transition>
 	</view-state>
 
-	<view-state id="enterCategory" view="redirect:categoryForm">
+	<view-state id="enterCategory" view="categoryForm">
 		<transition on="submit" to="requiresShipping">
 			<action bean="formAction" method="bind"/>
 		</transition>
@@ -26,18 +26,16 @@
 		<if test="${conversationScope.sale.shipping}" then="enterShippingDetails" else="processSale"/>
 	</decision-state>
 
-	<view-state id="enterShippingDetails" view="redirect:shippingDetailsForm">
-		<transition on="submit" to="processSale">
-			<action bean="formAction" method="bind"/>
-		</transition>
-	</view-state>
-
+	<subflow-state id="enterShippingDetails" flow="shipping-flow">
+		<transition on="finish" to="processSale"/>
+	</subflow-state>
+	
 	<action-state id="processSale">
-		<action bean="saleProcessor" method="process(${conversationScope.sale})"/>
+		<action bean="saleProcessor" method="process(${conversationScope.sale})" />
 		<transition on="success" to="finish"/>
 	</action-state>
 	
-	<view-state id="showCostOverview" view="redirect:costOverview">
+	<view-state id="showCostOverview" view="costOverview">
 		<transition on="back" to="enterPriceAndItemCount"/>
 	</view-state>
 	
