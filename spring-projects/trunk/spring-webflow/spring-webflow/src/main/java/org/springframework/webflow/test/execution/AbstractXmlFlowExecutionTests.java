@@ -28,12 +28,11 @@ import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
  * 
  * <pre>
  * public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
- * 
- * 	   protected FlowDefinitionResource getFlowDefinitionResource() {
- * 	       File flowDir = new File(&quot;src/webapp/WEB-INF&quot;);
- * 	       Resource resource = return new FileSystemResource(new File(flowDir, &quot;search-flow.xml&quot;));
- * 		   return new FlowDefinitionResource("searchFlow", resource);
- * 	   }
+ *     protected FlowDefinitionResource getFlowDefinitionResource() {
+ *         File flowDir = new File(&quot;src/webapp/WEB-INF&quot;);
+ *  	   Resource resource = return new FileSystemResource(new File(flowDir, &quot;search-flow.xml&quot;));
+ *  	   return new FlowDefinitionResource(&quot;searchFlow&quot;, resource);
+ *     }
  * 
  *     public void testStartFlow() {
  * 	       startFlow();
@@ -41,10 +40,10 @@ import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
  * 	   }
  * 
  * 	   public void testDisplayCriteriaSubmitSuccess() {
- * 	       startFlow();
- *         MockParameterMap parameters = new MockParameterMap();
- *         parameters.put("firstName", "Keith");
- *         parameters.put("lastName", "Donald");
+ * 		   startFlow();
+ * 		   MockParameterMap parameters = new MockParameterMap();
+ * 		   parameters.put(&quot;firstName&quot;, &quot;Keith&quot;);
+ * 		   parameters.put(&quot;lastName&quot;, &quot;Donald&quot;);
  * 		   ViewSelection view = signalEvent(&quot;search&quot;, parameters);
  * 		   assertCurrentStateEquals(&quot;displaySearchResults&quot;);
  * 		   assertModelAttributeCollectionSize(1, &quot;results&quot;, view);
