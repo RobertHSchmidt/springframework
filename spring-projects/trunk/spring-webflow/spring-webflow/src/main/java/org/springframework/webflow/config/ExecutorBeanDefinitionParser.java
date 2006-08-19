@@ -105,7 +105,7 @@ public class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 	 * @return The name of the registry
 	 */
 	private String getRepositoryType(Element element) {
-		return StringUtils.capitalize(element.getAttribute(REPOSITORY_TYPE));
+		return element.getAttribute(REPOSITORY_TYPE).toUpperCase();
 	}
 
 	/**
