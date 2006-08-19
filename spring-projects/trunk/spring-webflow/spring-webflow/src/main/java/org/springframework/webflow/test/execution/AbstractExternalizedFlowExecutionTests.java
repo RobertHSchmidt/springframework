@@ -86,10 +86,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 			return cachedFlowDefinition;
 		}
 		FlowServiceLocator flowServiceLocator = createFlowServiceLocator();
-		FlowDefinitionResource resource = getFlowDefinitionResource();
-		FlowBuilder builder = createFlowBuilder(resource.getLocation(), flowServiceLocator);
-		new FlowAssembler(resource.getId(), resource.getAttributes(), builder).assembleFlow();
-		Flow flow = builder.getFlow();
+		Flow flow = createFlow(getFlowDefinitionResource(), flowServiceLocator);
 		if (isCacheFlowDefinition()) {
 			cachedFlowDefinition = flow;
 		}
@@ -125,6 +122,17 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	protected void registerMockServices(MockFlowServiceLocator serviceLocator) {
 	}
 
+	/**
+	 * Factory method to assemble another flow definition from a resource.
+	 * @param resource the flow definition resource
+	 * @return the built flow definition, ready for execution
+	 */
+	protected final Flow createFlow(FlowDefinitionResource resource, FlowServiceLocator serviceLocator) {
+		FlowBuilder builder = createFlowBuilder(resource.getLocation(), serviceLocator);
+		FlowAssembler assembler = new FlowAssembler(resource.getId(), resource.getAttributes(), builder);
+		return assembler.assembleFlow();
+	}
+
 	private FlowExecutionImplFactory getFlowExecutionImplFactory() {
 		return (FlowExecutionImplFactory)getFlowExecutionImplFactory();
 	}
@@ -143,6 +151,6 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * @param flowServiceLocator the flow service locator
 	 * @return the flow builder that will build the flow to be tested
 	 */
-	protected abstract FlowBuilder createFlowBuilder(Resource resource, FlowServiceLocator flowServiceLocator);
+	protected abstract FlowBuilder createFlowBuilder(Resource resource, FlowServiceLocator serviceLocator);
 
 }
