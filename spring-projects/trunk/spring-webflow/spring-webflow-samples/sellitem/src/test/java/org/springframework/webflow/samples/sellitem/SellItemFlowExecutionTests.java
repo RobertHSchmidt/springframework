@@ -12,7 +12,7 @@ import org.springframework.webflow.test.execution.MockFlowServiceLocator;
 
 public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
-	private File flowDir = new File("src/main/webapp/WEB-INF");
+	private File flowDir = new File("src/main/webapp/WEB-INF/flows");
 
 	private MockControl saleProcessorControl;
 
@@ -20,7 +20,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	@Override
 	protected FlowDefinitionResource getFlowDefinitionResource() {
-		return new FlowDefinitionResource(new FileSystemResource(new File(flowDir, "sellitem.xml")));
+		return new FlowDefinitionResource(new FileSystemResource(new File(flowDir, "sellitem-flow.xml")));
 	}
 
 	public void testStartFlow() {
