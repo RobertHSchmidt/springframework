@@ -1,1 +1,1 @@
-http\://www.springframework.org/schema/flow=org.springframework.webflow.config.FlowNamespaceHandler
+http\://www.springframework.org/schema/webflow=org.springframework.webflow.config.FlowNamespaceHandler

@@ -35,7 +35,7 @@ import org.springframework.webflow.execution.factory.StaticFlowExecutionListener
 import org.w3c.dom.Element;
 
 /**
- * {@link BeanDefinitionParser} for the <code>&lt;swf:executor&gt;</code> tag.
+ * {@link BeanDefinitionParser} for the <code>&lt;flow:executor&gt;</code> tag.
  * 
  * @author Ben Hale
  */
