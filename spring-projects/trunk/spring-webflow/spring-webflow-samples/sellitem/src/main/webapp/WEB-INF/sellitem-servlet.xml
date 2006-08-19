@@ -1,11 +1,11 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:flow="http://www.springframework.org/schema/flow"
+	xmlns:flow="http://www.springframework.org/schema/webflow"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/flow
-       http://www.springframework.org/schema/flow/spring-webflow.xsd">
+       http://www.springframework.org/schema/webflow
+       http://www.springframework.org/schema/webflow/spring-webflow-config-1.0.xsd">
 
 	<!--
 		A general purpose controller for the entire "Point of Sale (POS)" application, 
