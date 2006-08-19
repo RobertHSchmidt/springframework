@@ -100,7 +100,7 @@ public class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 	}
 
 	/**
-	 * Returns the name of the registry detailed in the bean definition
+	 * Returns the name of the repository type enum field detailed in the bean definition
 	 * @param element The element to extract the registry name from
 	 * @return The name of the registry
 	 */
