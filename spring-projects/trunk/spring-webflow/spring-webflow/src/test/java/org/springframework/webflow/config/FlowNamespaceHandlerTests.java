@@ -36,7 +36,7 @@ public class FlowNamespaceHandlerTests extends TestCase {
 		super.setUp();
 		this.beanFactory = new DefaultListableBeanFactory();
 		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(this.beanFactory);
-		reader.loadBeanDefinitions(new ClassPathResource("org/springframework/webflow/config/testSwfNamespace.xml"));
+		reader.loadBeanDefinitions(new ClassPathResource("org/springframework/webflow/config/testFlowNamespace.xml"));
 	}
 
 	public void testRegistryWithPath() {
@@ -51,7 +51,7 @@ public class FlowNamespaceHandlerTests extends TestCase {
 
 	public void testRegistryWithPathWithWildcards() {
 		FlowDefinitionRegistry registry = (FlowDefinitionRegistry)this.beanFactory.getBean("withPathWithWildcards");
-		assertEquals("Incorrect number of flows loaded", 7, registry.getFlowDefinitionCount());
+		assertEquals("Incorrect number of flows loaded", 0, registry.getFlowDefinitionCount());
 	}
 
 	public void testExecutorCreation() {

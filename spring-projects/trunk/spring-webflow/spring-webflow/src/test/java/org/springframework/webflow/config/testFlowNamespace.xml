@@ -27,8 +27,7 @@
 		<flow:listener ref="listener1" />
 	</flow:executor>
 
-	<flow:executor id="clientExecutor"
-		registry-ref="withPathWithWildcards" repositoryType="client">
+	<flow:executor id="clientExecutor" registry-ref="withPathWithWildcards" repositoryType="client">
 		<flow:listener ref="listener1" criteria="flow1" />
 		<flow:listener ref="listener2" criteria="flow1, flow2, flow3" />
 	</flow:executor>
