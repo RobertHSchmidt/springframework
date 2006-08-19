@@ -444,6 +444,571 @@
      <void property="allowedAfferentsCollection"> 
       <void method="add"> 
        <object id="LayerNode3" class="com.hello2morrow.sonar.core.architecturedescription.LayerNode"> 
+        <void property="allowedAfferentsCollection"> 
+         <void method="add"> 
+          <object id="LayerNode4" class="com.hello2morrow.sonar.core.architecturedescription.LayerNode"> 
+           <void property="allowedEfferentsCollection"> 
+            <void method="add"> 
+             <object idref="LayerNode3"/> 
+            </void> 
+            <void method="add"> 
+             <object id="LayerNode5" class="com.hello2morrow.sonar.core.architecturedescription.LayerNode"> 
+              <void property="allowedAfferentsCollection"> 
+               <void method="add"> 
+                <object id="LayerNode6" class="com.hello2morrow.sonar.core.architecturedescription.LayerNode"> 
+                 <void property="allowedEfferentsCollection"> 
+                  <void method="add"> 
+                   <object idref="LayerNode2"/> 
+                  </void> 
+                  <void method="add"> 
+                   <object idref="LayerNode5"/> 
+                  </void> 
+                 </void> 
+                 <void property="childrenCollection"> 
+                  <void method="add"> 
+                   <object id="SubsystemNode0" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
+                    <void property="disallowedEfferentsCollection"> 
+                     <void method="add"> 
+                      <object id="NamedSubsystemInterfaceNode0" class="com.hello2morrow.sonar.core.architecturedescription.NamedSubsystemInterfaceNode"> 
+                       <void property="disallowedAfferentsCollection"> 
+                        <void method="add"> 
+                         <object id="SubsystemNode1" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
+                          <void property="disallowedEfferentsCollection"> 
+                           <void method="add"> 
+                            <object idref="NamedSubsystemInterfaceNode0"/> 
+                           </void> 
+                           <void method="add"> 
+                            <object id="NamedSubsystemInterfaceNode1" class="com.hello2morrow.sonar.core.architecturedescription.NamedSubsystemInterfaceNode"> 
+                             <void property="disallowedAfferentsCollection"> 
+                              <void method="add"> 
+                               <object id="SubsystemNode2" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
+                                <void property="disallowedEfferentsCollection"> 
+                                 <void method="add"> 
+                                  <object idref="NamedSubsystemInterfaceNode0"/> 
+                                 </void> 
+                                 <void method="add"> 
+                                  <object idref="NamedSubsystemInterfaceNode1"/> 
+                                 </void> 
+                                 <void method="add"> 
+                                  <object id="NamedSubsystemInterfaceNode2" class="com.hello2morrow.sonar.core.architecturedescription.NamedSubsystemInterfaceNode"> 
+                                   <void property="disallowedAfferentsCollection"> 
+                                    <void method="add"> 
+                                     <object idref="SubsystemNode1"/> 
+                                    </void> 
+                                    <void method="add"> 
+                                     <object id="SubsystemNode3" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
+                                      <void property="disallowedEfferentsCollection"> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode0"/> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode1"/> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode2"/> 
+                                       </void> 
+                                      </void> 
+                                      <void property="fullyQualifiedName"> 
+                                       <string>Flow Engine Implementation::Flow Builder</string> 
+                                      </void> 
+                                      <void property="includePackagePatternsCollection"> 
+                                       <void method="add"> 
+                                        <string>org.springframework.webflow.engine.builder</string> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <string>org.springframework.webflow.engine.builder.**</string> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <string>org.springframework.webflow.engine.registry</string> 
+                                       </void> 
+                                      </void> 
+                                     </object> 
+                                    </void> 
+                                    <void method="add"> 
+                                     <object idref="SubsystemNode2"/> 
+                                    </void> 
+                                    <void method="add"> 
+                                     <object id="SubsystemNode4" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
+                                      <void property="disallowedEfferentsCollection"> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode0"/> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode1"/> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode2"/> 
+                                       </void> 
+                                      </void> 
+                                      <void property="fullyQualifiedName"> 
+                                       <string>Flow Execution::Utilities</string> 
+                                      </void> 
+                                      <void property="includePackagePatternsCollection"> 
+                                       <void method="add"> 
+                                        <string>org.springframework.webflow.util</string> 
+                                       </void> 
+                                      </void> 
+                                     </object> 
+                                    </void> 
+                                    <void method="add"> 
+                                     <object id="SubsystemNode5" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
+                                      <void property="disallowedEfferentsCollection"> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode0"/> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode1"/> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode2"/> 
+                                       </void> 
+                                      </void> 
+                                      <void property="fullyQualifiedName"> 
+                                       <string>Flow Execution::Flow Definition Registry</string> 
+                                      </void> 
+                                      <void property="includePackagePatternsCollection"> 
+                                       <void method="add"> 
+                                        <string>org.springframework.webflow.definition.registry</string> 
+                                       </void> 
+                                      </void> 
+                                     </object> 
+                                    </void> 
+                                    <void method="add"> 
+                                     <object id="SubsystemNode6" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
+                                      <void property="disallowedEfferentsCollection"> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode0"/> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode1"/> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode2"/> 
+                                       </void> 
+                                      </void> 
+                                      <void property="fullyQualifiedName"> 
+                                       <string>Flow Execution::Core</string> 
+                                      </void> 
+                                      <void property="includePackagePatternsCollection"> 
+                                       <void method="add"> 
+                                        <string>org.springframework.webflow.core</string> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <string>org.springframework.webflow.core.**</string> 
+                                       </void> 
+                                      </void> 
+                                     </object> 
+                                    </void> 
+                                    <void method="add"> 
+                                     <object id="SubsystemNode7" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
+                                      <void property="disallowedEfferentsCollection"> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode0"/> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode1"/> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode2"/> 
+                                       </void> 
+                                      </void> 
+                                      <void property="fullyQualifiedName"> 
+                                       <string>Flow Execution::Conversation Management</string> 
+                                      </void> 
+                                      <void property="includePackagePatternsCollection"> 
+                                       <void method="add"> 
+                                        <string>org.springframework.webflow.conversation.**</string> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <string>org.springframework.webflow.conversation</string> 
+                                       </void> 
+                                      </void> 
+                                     </object> 
+                                    </void> 
+                                    <void method="add"> 
+                                     <object id="SubsystemNode8" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
+                                      <void property="disallowedEfferentsCollection"> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode1"/> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode2"/> 
+                                       </void> 
+                                      </void> 
+                                      <void property="fullyQualifiedName"> 
+                                       <string>Flow Execution::Action Implementation</string> 
+                                      </void> 
+                                      <void property="includePackagePatternsCollection"> 
+                                       <void method="add"> 
+                                        <string>org.springframework.webflow.action</string> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <string>org.springframework.webflow.action.**</string> 
+                                       </void> 
+                                      </void> 
+                                     </object> 
+                                    </void> 
+                                    <void method="add"> 
+                                     <object id="SubsystemNode9" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
+                                      <void property="disallowedEfferentsCollection"> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode0"/> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode1"/> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode2"/> 
+                                       </void> 
+                                      </void> 
+                                      <void property="fullyQualifiedName"> 
+                                       <string>Flow Execution::Flow Execution</string> 
+                                      </void> 
+                                      <void property="includePackagePatternsCollection"> 
+                                       <void method="add"> 
+                                        <string>org.springframework.webflow.execution</string> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <string>org.springframework.webflow.execution.support</string> 
+                                       </void> 
+                                      </void> 
+                                     </object> 
+                                    </void> 
+                                    <void method="add"> 
+                                     <object id="SubsystemNode10" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
+                                      <void property="disallowedEfferentsCollection"> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode0"/> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode1"/> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode2"/> 
+                                       </void> 
+                                      </void> 
+                                      <void property="fullyQualifiedName"> 
+                                       <string>Flow Execution::Flow Execution Factory</string> 
+                                      </void> 
+                                      <void property="includePackagePatternsCollection"> 
+                                       <void method="add"> 
+                                        <string>org.springframework.webflow.execution.factory</string> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <string>org.springframework.webflow.execution.factory.**</string> 
+                                       </void> 
+                                      </void> 
+                                     </object> 
+                                    </void> 
+                                    <void method="add"> 
+                                     <object id="SubsystemNode11" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
+                                      <void property="disallowedEfferentsCollection"> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode0"/> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode1"/> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <object idref="NamedSubsystemInterfaceNode2"/> 
+                                       </void> 
+                                      </void> 
+                                      <void property="fullyQualifiedName"> 
+                                       <string>Flow Execution::Flow Execution Repository</string> 
+                                      </void> 
+                                      <void property="includePackagePatternsCollection"> 
+                                       <void method="add"> 
+                                        <string>org.springframework.webflow.execution.repository</string> 
+                                       </void> 
+                                       <void method="add"> 
+                                        <string>org.springframework.webflow.execution.repository.**</string> 
+                                       </void> 
+                                      </void> 
+                                     </object> 
+                                    </void> 
+                                   </void> 
+                                   <void property="fullyQualifiedName"> 
+                                    <string>Flow Execution::External Context::Support</string> 
+                                   </void> 
+                                   <void property="includePatternsCollection"> 
+                                    <void method="add"> 
+                                     <string>org.springframework.webflow.context.support.**</string> 
+                                    </void> 
+                                   </void> 
+                                  </object> 
+                                 </void> 
+                                </void> 
+                                <void property="fullyQualifiedName"> 
+                                 <string>Flow Execution::Flow Definition</string> 
+                                </void> 
+                                <void property="includePackagePatternsCollection"> 
+                                 <void method="add"> 
+                                  <string>org.springframework.webflow</string> 
+                                 </void> 
+                                 <void method="add"> 
+                                  <string>org.springframework.webflow.definition</string> 
+                                 </void> 
+                                </void> 
+                               </object> 
+                              </void> 
+                              <void method="add"> 
+                               <object idref="SubsystemNode4"/> 
+                              </void> 
+                              <void method="add"> 
+                               <object idref="SubsystemNode5"/> 
+                              </void> 
+                              <void method="add"> 
+                               <object idref="SubsystemNode6"/> 
+                              </void> 
+                              <void method="add"> 
+                               <object idref="SubsystemNode7"/> 
+                              </void> 
+                              <void method="add"> 
+                               <object idref="SubsystemNode8"/> 
+                              </void> 
+                              <void method="add"> 
+                               <object idref="SubsystemNode9"/> 
+                              </void> 
+                              <void method="add"> 
+                               <object idref="SubsystemNode10"/> 
+                              </void> 
+                              <void method="add"> 
+                               <object idref="SubsystemNode11"/> 
+                              </void> 
+                              <void method="add"> 
+                               <object idref="SubsystemNode1"/> 
+                              </void> 
+                              <void method="add"> 
+                               <object idref="SubsystemNode3"/> 
+                              </void> 
+                              <void method="add"> 
+                               <object id="SubsystemNode12" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
+                                <void property="disallowedEfferentsCollection"> 
+                                 <void method="add"> 
+                                  <object idref="NamedSubsystemInterfaceNode0"/> 
+                                 </void> 
+                                 <void method="add"> 
+                                  <object idref="NamedSubsystemInterfaceNode1"/> 
+                                 </void> 
+                                </void> 
+                                <void property="fullyQualifiedName"> 
+                                 <string>Flow Executor::Core Executor Elements</string> 
+                                </void> 
+                                <void property="includePackagePatternsCollection"> 
+                                 <void method="add"> 
+                                  <string>org.springframework.webflow.executor</string> 
+                                 </void> 
+                                 <void method="add"> 
+                                  <string>org.springframework.webflow.executor.support</string> 
+                                 </void> 
+                                </void> 
+                               </object> 
+                              </void> 
+                              <void method="add"> 
+                               <object id="SubsystemNode13" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
+                                <void property="disallowedEfferentsCollection"> 
+                                 <void method="add"> 
+                                  <object idref="NamedSubsystemInterfaceNode0"/> 
+                                 </void> 
+                                 <void method="add"> 
+                                  <object idref="NamedSubsystemInterfaceNode1"/> 
+                                 </void> 
+                                </void> 
+                                <void property="fullyQualifiedName"> 
+                                 <string>Flow Executor::JSF</string> 
+                                </void> 
+                                <void property="includePackagePatternsCollection"> 
+                                 <void method="add"> 
+                                  <string>org.springframework.webflow.executor.jsf</string> 
+                                 </void> 
+                                </void> 
+                               </object> 
+                              </void> 
+                              <void method="add"> 
+                               <object idref="SubsystemNode0"/> 
+                              </void> 
+                             </void> 
+                             <void property="fullyQualifiedName"> 
+                              <string>Flow Execution::External Context::Servlet</string> 
+                             </void> 
+                             <void property="includePatternsCollection"> 
+                              <void method="add"> 
+                               <string>org.springframework.webflow.context.servlet.ServletExternalContext</string> 
+                              </void> 
+                             </void> 
+                            </object> 
+                           </void> 
+                           <void method="add"> 
+                            <object idref="NamedSubsystemInterfaceNode2"/> 
+                           </void> 
+                          </void> 
+                          <void property="fullyQualifiedName"> 
+                           <string>Flow Engine Implementation::Engine Implementation</string> 
+                          </void> 
+                          <void property="includePackagePatternsCollection"> 
+                           <void method="add"> 
+                            <string>org.springframework.webflow.engine</string> 
+                           </void> 
+                           <void method="add"> 
+                            <string>org.springframework.webflow.engine.support</string> 
+                           </void> 
+                           <void method="add"> 
+                            <string>org.springframework.webflow.engine.impl</string> 
+                           </void> 
+                          </void> 
+                         </object> 
+                        </void> 
+                        <void method="add"> 
+                         <object idref="SubsystemNode3"/> 
+                        </void> 
+                        <void method="add"> 
+                         <object idref="SubsystemNode2"/> 
+                        </void> 
+                        <void method="add"> 
+                         <object idref="SubsystemNode4"/> 
+                        </void> 
+                        <void method="add"> 
+                         <object idref="SubsystemNode5"/> 
+                        </void> 
+                        <void method="add"> 
+                         <object idref="SubsystemNode6"/> 
+                        </void> 
+                        <void method="add"> 
+                         <object idref="SubsystemNode7"/> 
+                        </void> 
+                        <void method="add"> 
+                         <object idref="SubsystemNode9"/> 
+                        </void> 
+                        <void method="add"> 
+                         <object idref="SubsystemNode10"/> 
+                        </void> 
+                        <void method="add"> 
+                         <object idref="SubsystemNode11"/> 
+                        </void> 
+                        <void method="add"> 
+                         <object idref="SubsystemNode12"/> 
+                        </void> 
+                        <void method="add"> 
+                         <object id="SubsystemNode14" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
+                          <void property="disallowedEfferentsCollection"> 
+                           <void method="add"> 
+                            <object idref="NamedSubsystemInterfaceNode0"/> 
+                           </void> 
+                          </void> 
+                          <void property="fullyQualifiedName"> 
+                           <string>Flow Executor::Struts</string> 
+                          </void> 
+                          <void property="includePackagePatternsCollection"> 
+                           <void method="add"> 
+                            <string>org.springframework.webflow.executor.struts</string> 
+                           </void> 
+                          </void> 
+                         </object> 
+                        </void> 
+                        <void method="add"> 
+                         <object idref="SubsystemNode13"/> 
+                        </void> 
+                        <void method="add"> 
+                         <object idref="SubsystemNode0"/> 
+                        </void> 
+                       </void> 
+                       <void property="fullyQualifiedName"> 
+                        <string>Flow Execution::External Context::Portlet</string> 
+                       </void> 
+                       <void property="includePatternsCollection"> 
+                        <void method="add"> 
+                         <string>org.springframework.webflow.context.portlet.PortletExternalContext</string> 
+                        </void> 
+                       </void> 
+                      </object> 
+                     </void> 
+                     <void method="add"> 
+                      <object idref="NamedSubsystemInterfaceNode1"/> 
+                     </void> 
+                    </void> 
+                    <void property="fullyQualifiedName"> 
+                     <string>Flow Test Support::Test Support</string> 
+                    </void> 
+                    <void property="includePackagePatternsCollection"> 
+                     <void method="add"> 
+                      <string>org.springframework.webflow.test</string> 
+                     </void> 
+                     <void method="add"> 
+                      <string>org.springframework.webflow.test.**</string> 
+                     </void> 
+                    </void> 
+                   </object> 
+                  </void> 
+                 </void> 
+                 <void property="fullyQualifiedName"> 
+                  <string>Flow Test Support</string> 
+                 </void> 
+                 <void property="x"> 
+                  <int>327</int> 
+                 </void> 
+                 <void property="y"> 
+                  <int>236</int> 
+                 </void> 
+                </object> 
+               </void> 
+               <void method="add"> 
+                <object idref="LayerNode4"/> 
+               </void> 
+              </void> 
+              <void property="allowedEfferentsCollection"> 
+               <void method="add"> 
+                <object idref="LayerNode2"/> 
+               </void> 
+              </void> 
+              <void property="childrenCollection"> 
+               <void method="add"> 
+                <object idref="SubsystemNode1"/> 
+               </void> 
+               <void method="add"> 
+                <object idref="SubsystemNode3"/> 
+               </void> 
+              </void> 
+              <void property="fullyQualifiedName"> 
+               <string>Flow Engine Implementation</string> 
+              </void> 
+              <void property="x"> 
+               <int>298</int> 
+              </void> 
+              <void property="y"> 
+               <int>108</int> 
+              </void> 
+             </object> 
+            </void> 
+            <void method="add"> 
+             <object idref="LayerNode2"/> 
+            </void> 
+           </void> 
+           <void property="childrenCollection"> 
+            <void method="add"> 
+             <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
+              <void property="fullyQualifiedName"> 
+               <string>Engine Configuration::Config</string> 
+              </void> 
+              <void property="includePackagePatternsCollection"> 
+               <void method="add"> 
+                <string>org.springframework.webflow.config</string> 
+               </void> 
+              </void> 
+             </object> 
+            </void> 
+           </void> 
+           <void property="fullyQualifiedName"> 
+            <string>Engine Configuration</string> 
+           </void> 
+           <void property="x"> 
+            <int>148</int> 
+           </void> 
+           <void property="y"> 
+            <int>14</int> 
+           </void> 
+          </object> 
+         </void> 
+        </void> 
         <void property="allowedEfferentsCollection"> 
          <void method="add"> 
           <object idref="LayerNode2"/> 
@@ -451,475 +1016,7 @@
         </void> 
         <void property="childrenCollection"> 
          <void method="add"> 
-          <object id="SubsystemNode0" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
-           <void property="disallowedEfferentsCollection"> 
-            <void method="add"> 
-             <object id="NamedSubsystemInterfaceNode0" class="com.hello2morrow.sonar.core.architecturedescription.NamedSubsystemInterfaceNode"> 
-              <void property="disallowedAfferentsCollection"> 
-               <void method="add"> 
-                <object id="SubsystemNode1" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
-                 <void property="disallowedEfferentsCollection"> 
-                  <void method="add"> 
-                   <object idref="NamedSubsystemInterfaceNode0"/> 
-                  </void> 
-                  <void method="add"> 
-                   <object id="NamedSubsystemInterfaceNode1" class="com.hello2morrow.sonar.core.architecturedescription.NamedSubsystemInterfaceNode"> 
-                    <void property="disallowedAfferentsCollection"> 
-                     <void method="add"> 
-                      <object id="SubsystemNode2" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
-                       <void property="disallowedEfferentsCollection"> 
-                        <void method="add"> 
-                         <object idref="NamedSubsystemInterfaceNode0"/> 
-                        </void> 
-                        <void method="add"> 
-                         <object idref="NamedSubsystemInterfaceNode1"/> 
-                        </void> 
-                        <void method="add"> 
-                         <object id="NamedSubsystemInterfaceNode2" class="com.hello2morrow.sonar.core.architecturedescription.NamedSubsystemInterfaceNode"> 
-                          <void property="disallowedAfferentsCollection"> 
-                           <void method="add"> 
-                            <object idref="SubsystemNode1"/> 
-                           </void> 
-                           <void method="add"> 
-                            <object id="SubsystemNode3" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
-                             <void property="disallowedEfferentsCollection"> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode0"/> 
-                              </void> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode1"/> 
-                              </void> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode2"/> 
-                              </void> 
-                             </void> 
-                             <void property="fullyQualifiedName"> 
-                              <string>Flow Engine Implementation::Flow Builder</string> 
-                             </void> 
-                             <void property="includePackagePatternsCollection"> 
-                              <void method="add"> 
-                               <string>org.springframework.webflow.engine.builder</string> 
-                              </void> 
-                              <void method="add"> 
-                               <string>org.springframework.webflow.engine.builder.**</string> 
-                              </void> 
-                             </void> 
-                            </object> 
-                           </void> 
-                           <void method="add"> 
-                            <object idref="SubsystemNode2"/> 
-                           </void> 
-                           <void method="add"> 
-                            <object id="SubsystemNode4" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
-                             <void property="disallowedEfferentsCollection"> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode0"/> 
-                              </void> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode1"/> 
-                              </void> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode2"/> 
-                              </void> 
-                             </void> 
-                             <void property="fullyQualifiedName"> 
-                              <string>Flow Execution::Utilities</string> 
-                             </void> 
-                             <void property="includePackagePatternsCollection"> 
-                              <void method="add"> 
-                               <string>org.springframework.webflow.util</string> 
-                              </void> 
-                             </void> 
-                            </object> 
-                           </void> 
-                           <void method="add"> 
-                            <object id="SubsystemNode5" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
-                             <void property="disallowedEfferentsCollection"> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode0"/> 
-                              </void> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode1"/> 
-                              </void> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode2"/> 
-                              </void> 
-                             </void> 
-                             <void property="fullyQualifiedName"> 
-                              <string>Flow Execution::Flow Definition Registry</string> 
-                             </void> 
-                             <void property="includePackagePatternsCollection"> 
-                              <void method="add"> 
-                               <string>org.springframework.webflow.definition.registry</string> 
-                              </void> 
-                             </void> 
-                            </object> 
-                           </void> 
-                           <void method="add"> 
-                            <object id="SubsystemNode6" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
-                             <void property="disallowedEfferentsCollection"> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode0"/> 
-                              </void> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode1"/> 
-                              </void> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode2"/> 
-                              </void> 
-                             </void> 
-                             <void property="fullyQualifiedName"> 
-                              <string>Flow Execution::Core</string> 
-                             </void> 
-                             <void property="includePackagePatternsCollection"> 
-                              <void method="add"> 
-                               <string>org.springframework.webflow.core</string> 
-                              </void> 
-                              <void method="add"> 
-                               <string>org.springframework.webflow.core.**</string> 
-                              </void> 
-                             </void> 
-                            </object> 
-                           </void> 
-                           <void method="add"> 
-                            <object id="SubsystemNode7" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
-                             <void property="disallowedEfferentsCollection"> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode0"/> 
-                              </void> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode1"/> 
-                              </void> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode2"/> 
-                              </void> 
-                             </void> 
-                             <void property="fullyQualifiedName"> 
-                              <string>Flow Execution::Conversation Management</string> 
-                             </void> 
-                             <void property="includePackagePatternsCollection"> 
-                              <void method="add"> 
-                               <string>org.springframework.webflow.conversation.**</string> 
-                              </void> 
-                              <void method="add"> 
-                               <string>org.springframework.webflow.conversation</string> 
-                              </void> 
-                             </void> 
-                            </object> 
-                           </void> 
-                           <void method="add"> 
-                            <object id="SubsystemNode8" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
-                             <void property="disallowedEfferentsCollection"> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode1"/> 
-                              </void> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode2"/> 
-                              </void> 
-                             </void> 
-                             <void property="fullyQualifiedName"> 
-                              <string>Flow Execution::Action Implementation</string> 
-                             </void> 
-                             <void property="includePackagePatternsCollection"> 
-                              <void method="add"> 
-                               <string>org.springframework.webflow.action</string> 
-                              </void> 
-                              <void method="add"> 
-                               <string>org.springframework.webflow.action.**</string> 
-                              </void> 
-                             </void> 
-                            </object> 
-                           </void> 
-                           <void method="add"> 
-                            <object id="SubsystemNode9" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
-                             <void property="disallowedEfferentsCollection"> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode0"/> 
-                              </void> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode1"/> 
-                              </void> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode2"/> 
-                              </void> 
-                             </void> 
-                             <void property="fullyQualifiedName"> 
-                              <string>Flow Execution::Flow Execution</string> 
-                             </void> 
-                             <void property="includePackagePatternsCollection"> 
-                              <void method="add"> 
-                               <string>org.springframework.webflow.execution</string> 
-                              </void> 
-                              <void method="add"> 
-                               <string>org.springframework.webflow.execution.support</string> 
-                              </void> 
-                             </void> 
-                            </object> 
-                           </void> 
-                           <void method="add"> 
-                            <object id="SubsystemNode10" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
-                             <void property="disallowedEfferentsCollection"> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode0"/> 
-                              </void> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode1"/> 
-                              </void> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode2"/> 
-                              </void> 
-                             </void> 
-                             <void property="fullyQualifiedName"> 
-                              <string>Flow Execution::Flow Execution Factory</string> 
-                             </void> 
-                             <void property="includePackagePatternsCollection"> 
-                              <void method="add"> 
-                               <string>org.springframework.webflow.execution.factory</string> 
-                              </void> 
-                              <void method="add"> 
-                               <string>org.springframework.webflow.execution.factory.**</string> 
-                              </void> 
-                             </void> 
-                            </object> 
-                           </void> 
-                           <void method="add"> 
-                            <object id="SubsystemNode11" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
-                             <void property="disallowedEfferentsCollection"> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode0"/> 
-                              </void> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode1"/> 
-                              </void> 
-                              <void method="add"> 
-                               <object idref="NamedSubsystemInterfaceNode2"/> 
-                              </void> 
-                             </void> 
-                             <void property="fullyQualifiedName"> 
-                              <string>Flow Execution::Flow Execution Repository</string> 
-                             </void> 
-                             <void property="includePackagePatternsCollection"> 
-                              <void method="add"> 
-                               <string>org.springframework.webflow.execution.repository</string> 
-                              </void> 
-                              <void method="add"> 
-                               <string>org.springframework.webflow.execution.repository.**</string> 
-                              </void> 
-                             </void> 
-                            </object> 
-                           </void> 
-                          </void> 
-                          <void property="fullyQualifiedName"> 
-                           <string>Flow Execution::External Context::Support</string> 
-                          </void> 
-                          <void property="includePatternsCollection"> 
-                           <void method="add"> 
-                            <string>org.springframework.webflow.context.support.**</string> 
-                           </void> 
-                          </void> 
-                         </object> 
-                        </void> 
-                       </void> 
-                       <void property="fullyQualifiedName"> 
-                        <string>Flow Execution::Flow Definition</string> 
-                       </void> 
-                       <void property="includePackagePatternsCollection"> 
-                        <void method="add"> 
-                         <string>org.springframework.webflow</string> 
-                        </void> 
-                        <void method="add"> 
-                         <string>org.springframework.webflow.definition</string> 
-                        </void> 
-                       </void> 
-                      </object> 
-                     </void> 
-                     <void method="add"> 
-                      <object idref="SubsystemNode4"/> 
-                     </void> 
-                     <void method="add"> 
-                      <object idref="SubsystemNode5"/> 
-                     </void> 
-                     <void method="add"> 
-                      <object idref="SubsystemNode6"/> 
-                     </void> 
-                     <void method="add"> 
-                      <object idref="SubsystemNode7"/> 
-                     </void> 
-                     <void method="add"> 
-                      <object idref="SubsystemNode8"/> 
-                     </void> 
-                     <void method="add"> 
-                      <object idref="SubsystemNode9"/> 
-                     </void> 
-                     <void method="add"> 
-                      <object idref="SubsystemNode10"/> 
-                     </void> 
-                     <void method="add"> 
-                      <object idref="SubsystemNode11"/> 
-                     </void> 
-                     <void method="add"> 
-                      <object idref="SubsystemNode1"/> 
-                     </void> 
-                     <void method="add"> 
-                      <object idref="SubsystemNode3"/> 
-                     </void> 
-                     <void method="add"> 
-                      <object idref="SubsystemNode0"/> 
-                     </void> 
-                     <void method="add"> 
-                      <object id="SubsystemNode12" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
-                       <void property="disallowedEfferentsCollection"> 
-                        <void method="add"> 
-                         <object idref="NamedSubsystemInterfaceNode0"/> 
-                        </void> 
-                        <void method="add"> 
-                         <object idref="NamedSubsystemInterfaceNode1"/> 
-                        </void> 
-                       </void> 
-                       <void property="fullyQualifiedName"> 
-                        <string>Flow Executor::JSF</string> 
-                       </void> 
-                       <void property="includePackagePatternsCollection"> 
-                        <void method="add"> 
-                         <string>org.springframework.webflow.executor.jsf</string> 
-                        </void> 
-                       </void> 
-                      </object> 
-                     </void> 
-                     <void method="add"> 
-                      <object id="SubsystemNode13" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
-                       <void property="disallowedEfferentsCollection"> 
-                        <void method="add"> 
-                         <object idref="NamedSubsystemInterfaceNode0"/> 
-                        </void> 
-                        <void method="add"> 
-                         <object idref="NamedSubsystemInterfaceNode1"/> 
-                        </void> 
-                       </void> 
-                       <void property="fullyQualifiedName"> 
-                        <string>Flow Test Support::Test Support</string> 
-                       </void> 
-                       <void property="includePackagePatternsCollection"> 
-                        <void method="add"> 
-                         <string>org.springframework.webflow.test</string> 
-                        </void> 
-                        <void method="add"> 
-                         <string>org.springframework.webflow.test.**</string> 
-                        </void> 
-                       </void> 
-                      </object> 
-                     </void> 
-                    </void> 
-                    <void property="fullyQualifiedName"> 
-                     <string>Flow Execution::External Context::Servlet</string> 
-                    </void> 
-                    <void property="includePatternsCollection"> 
-                     <void method="add"> 
-                      <string>org.springframework.webflow.context.servlet.ServletExternalContext</string> 
-                     </void> 
-                    </void> 
-                   </object> 
-                  </void> 
-                  <void method="add"> 
-                   <object idref="NamedSubsystemInterfaceNode2"/> 
-                  </void> 
-                 </void> 
-                 <void property="fullyQualifiedName"> 
-                  <string>Flow Engine Implementation::Engine Implementation</string> 
-                 </void> 
-                 <void property="includePackagePatternsCollection"> 
-                  <void method="add"> 
-                   <string>org.springframework.webflow.engine</string> 
-                  </void> 
-                  <void method="add"> 
-                   <string>org.springframework.webflow.engine.support</string> 
-                  </void> 
-                  <void method="add"> 
-                   <string>org.springframework.webflow.engine.impl</string> 
-                  </void> 
-                 </void> 
-                </object> 
-               </void> 
-               <void method="add"> 
-                <object idref="SubsystemNode3"/> 
-               </void> 
-               <void method="add"> 
-                <object idref="SubsystemNode2"/> 
-               </void> 
-               <void method="add"> 
-                <object idref="SubsystemNode4"/> 
-               </void> 
-               <void method="add"> 
-                <object idref="SubsystemNode5"/> 
-               </void> 
-               <void method="add"> 
-                <object idref="SubsystemNode6"/> 
-               </void> 
-               <void method="add"> 
-                <object idref="SubsystemNode7"/> 
-               </void> 
-               <void method="add"> 
-                <object idref="SubsystemNode9"/> 
-               </void> 
-               <void method="add"> 
-                <object idref="SubsystemNode10"/> 
-               </void> 
-               <void method="add"> 
-                <object idref="SubsystemNode11"/> 
-               </void> 
-               <void method="add"> 
-                <object idref="SubsystemNode0"/> 
-               </void> 
-               <void method="add"> 
-                <object id="SubsystemNode14" class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
-                 <void property="disallowedEfferentsCollection"> 
-                  <void method="add"> 
-                   <object idref="NamedSubsystemInterfaceNode0"/> 
-                  </void> 
-                 </void> 
-                 <void property="fullyQualifiedName"> 
-                  <string>Flow Executor::Struts</string> 
-                 </void> 
-                 <void property="includePackagePatternsCollection"> 
-                  <void method="add"> 
-                   <string>org.springframework.webflow.executor.struts</string> 
-                  </void> 
-                 </void> 
-                </object> 
-               </void> 
-               <void method="add"> 
-                <object idref="SubsystemNode12"/> 
-               </void> 
-               <void method="add"> 
-                <object idref="SubsystemNode13"/> 
-               </void> 
-              </void> 
-              <void property="fullyQualifiedName"> 
-               <string>Flow Execution::External Context::Portlet</string> 
-              </void> 
-              <void property="includePatternsCollection"> 
-               <void method="add"> 
-                <string>org.springframework.webflow.context.portlet.PortletExternalContext</string> 
-               </void> 
-              </void> 
-             </object> 
-            </void> 
-            <void method="add"> 
-             <object idref="NamedSubsystemInterfaceNode1"/> 
-            </void> 
-           </void> 
-           <void property="fullyQualifiedName"> 
-            <string>Flow Executor::Core Executor Elements</string> 
-           </void> 
-           <void property="includePackagePatternsCollection"> 
-            <void method="add"> 
-             <string>org.springframework.webflow.executor</string> 
-            </void> 
-            <void method="add"> 
-             <string>org.springframework.webflow.executor.support</string> 
-            </void> 
-           </void> 
-          </object> 
+          <object idref="SubsystemNode12"/> 
          </void> 
          <void method="add"> 
           <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
@@ -937,76 +1034,28 @@
           <object idref="SubsystemNode14"/> 
          </void> 
          <void method="add"> 
-          <object idref="SubsystemNode12"/> 
+          <object idref="SubsystemNode13"/> 
          </void> 
         </void> 
         <void property="fullyQualifiedName"> 
          <string>Flow Executor</string> 
         </void> 
         <void property="x"> 
-         <int>15</int> 
+         <int>12</int> 
         </void> 
         <void property="y"> 
-         <int>68</int> 
-        </void> 
-       </object> 
-      </void> 
-      <void method="add"> 
-       <object id="LayerNode4" class="com.hello2morrow.sonar.core.architecturedescription.LayerNode"> 
-        <void property="allowedAfferentsCollection"> 
-         <void method="add"> 
-          <object id="LayerNode5" class="com.hello2morrow.sonar.core.architecturedescription.LayerNode"> 
-           <void property="allowedEfferentsCollection"> 
-            <void method="add"> 
-             <object idref="LayerNode2"/> 
-            </void> 
-            <void method="add"> 
-             <object idref="LayerNode4"/> 
-            </void> 
-           </void> 
-           <void property="childrenCollection"> 
-            <void method="add"> 
-             <object idref="SubsystemNode13"/> 
-            </void> 
-           </void> 
-           <void property="fullyQualifiedName"> 
-            <string>Flow Test Support</string> 
-           </void> 
-           <void property="x"> 
-            <int>487</int> 
-           </void> 
-           <void property="y"> 
-            <int>70</int> 
-           </void> 
-          </object> 
-         </void> 
-        </void> 
-        <void property="allowedEfferentsCollection"> 
-         <void method="add"> 
-          <object idref="LayerNode2"/> 
-         </void> 
-        </void> 
-        <void property="childrenCollection"> 
-         <void method="add"> 
-          <object idref="SubsystemNode1"/> 
-         </void> 
-         <void method="add"> 
-          <object idref="SubsystemNode3"/> 
-         </void> 
-        </void> 
-        <void property="fullyQualifiedName"> 
-         <string>Flow Engine Implementation</string> 
-        </void> 
-        <void property="x"> 
-         <int>201</int> 
-        </void> 
-        <void property="y"> 
-         <int>70</int> 
+         <int>108</int> 
         </void> 
        </object> 
       </void> 
       <void method="add"> 
        <object idref="LayerNode5"/> 
+      </void> 
+      <void method="add"> 
+       <object idref="LayerNode6"/> 
+      </void> 
+      <void method="add"> 
+       <object idref="LayerNode4"/> 
       </void> 
      </void> 
      <void property="childrenCollection"> 
@@ -1083,10 +1132,10 @@
       <boolean>false</boolean> 
      </void> 
      <void property="x"> 
-      <int>227</int> 
+      <int>154</int> 
      </void> 
      <void property="y"> 
-      <int>228</int> 
+      <int>236</int> 
      </void> 
     </object> 
    </void> 
@@ -1095,6 +1144,9 @@
    </void> 
    <void method="add"> 
     <object idref="LayerNode1"/> 
+   </void> 
+   <void method="add"> 
+    <object idref="LayerNode6"/> 
    </void> 
    <void method="add"> 
     <object idref="LayerNode5"/> 
