@@ -98,7 +98,7 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 		while (it.hasNext()) {
 			FlowSessionImpl session = (FlowSessionImpl)it.next();
 			session.flow = (Flow)locator.getFlowDefinition(session.flowId);
-			session.state = flow.getStateInternal(session.stateId);
+			session.state = session.flow.getStateInternal(session.stateId);
 		}
 		if (conversationScope == null) {
 			conversationScope = new LocalAttributeMap();
