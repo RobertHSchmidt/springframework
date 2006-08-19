@@ -215,12 +215,12 @@ public class LocalParameterMapTests extends TestCase {
 	}
 
 	public void testEquality() {
-		LocalParameterMap map1 = new LocalParameterMap(new HashMap(parameterMap.getMap()));
+		LocalParameterMap map1 = new LocalParameterMap(new HashMap(parameterMap.asMap()));
 		assertEquals(parameterMap, map1);
 	}
 
 	public void testAsAttributeMap() {
 		AttributeMap map = parameterMap.asAttributeMap();
-		assertEquals(map.asMap(), parameterMap.getMap());
+		assertEquals(map.asMap(), parameterMap.asMap());
 	}
 }
