@@ -4,7 +4,7 @@
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:beans="http://www.springframework.org/schema/beans"
 	targetNamespace="http://www.springframework.org/schema/webflow"
-	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
 
 	<xsd:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans.xsd" />
 
