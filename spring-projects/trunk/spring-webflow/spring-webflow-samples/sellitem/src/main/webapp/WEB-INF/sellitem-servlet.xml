@@ -17,23 +17,17 @@
 	</bean>
 
 	<!-- Launches new flow executions and resumes existing executions. -->	
-	<flow:executor id="flowExecutor" registry-ref="registry" repositoryType="continuation"/>
+	<flow:executor id="flowExecutor" registry-ref="registry" repositoryType="continuation">
+		<flow:listener ref="listener" criteria="sellitem-flow"/>
+	</flow:executor>
 	
 	<!-- Creates the registry of flow definitions for this application -->
 	<flow:registry>
 		<flow:location path="/WEB-INF/flows/**-flow.xml"/>
 	</flow:registry>
 
-	<bean id="formAction" class="org.springframework.webflow.action.FormAction">
-		<property name="formObjectName" value="sale"/>
-		<property name="formObjectClass" value="org.springframework.webflow.samples.sellitem.Sale"/>
-		<property name="formObjectScope" value="CONVERSATION"/>
-		<property name="formErrorsScope" value="CONVERSATION"/>
-		<property name="validator">
-			<bean class="org.springframework.webflow.samples.sellitem.SaleValidator"/>
-		</property>
-	</bean>
-		
+	<bean id="listener" class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>
+	
 	<!-- Maps flow view-state view names to JSP templates -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/"/>
