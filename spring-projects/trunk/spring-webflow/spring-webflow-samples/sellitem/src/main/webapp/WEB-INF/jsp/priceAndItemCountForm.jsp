@@ -5,29 +5,14 @@
 	<h2>Enter price and item count</h2>
 	<hr>
 	<table>
-		<form name="priceAndItemCountForm" method="post">
-		<spring:nestedPath path="sale">
+		<form:form commandName="sale" method="post">
 		<tr>
 			<td>Price:</td>
-			<td>
-				<spring:bind path="price">
-					<input type="text" name="${status.expression}" value="${status.value}">
-					<c:if test="${status.error}">
-						<div class="error">${status.errorMessage}</div>
-					</c:if>
-				</spring:bind>
-			</td>
+			<td><form:input path="price" /></td><td><form:errors path="price" /></td>
 		</tr>		
 		<tr>
 			<td>Item count:</td>
-			<td>
-				<spring:bind path="itemCount">
-					<input type="text" name="${status.expression}" value="${status.value}">
-					<c:if test="${status.error}">
-						<div class="error">${status.errorMessage}</div>
-					</c:if>
-				</spring:bind>
-			</td>
+			<td><form:input path="itemCount" /></td><td><form:errors path="itemCount" /></td>
 		</tr>
 		<tr>
 			<td colspan="2" class="buttonBar">
@@ -36,8 +21,7 @@
 				<input type="submit" class="button" name="_eventId_preview" value="Preview Sale">
 			</td>
 		</tr>
-		</spring:nestedPath>
-		</form>
+		</form:form>
 	</table>
 </div>
 
