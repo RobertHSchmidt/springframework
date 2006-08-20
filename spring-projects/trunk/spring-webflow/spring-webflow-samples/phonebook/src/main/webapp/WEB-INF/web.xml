@@ -37,7 +37,7 @@
 			<param-name>contextConfigLocation</param-name>
 			<param-value>
 				/WEB-INF/dispatcher-servlet.xml
-				/WEB-INF/webflow.xml
+				/WEB-INF/webflow-config.xml
 			</param-value>
 		</init-param>
 	</servlet>
