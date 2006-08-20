@@ -6,6 +6,7 @@
 <!ENTITY overview SYSTEM "overview.xml">
 <!ENTITY basic SYSTEM "basic.xml">
 <!ENTITY dirobjectfactory SYSTEM "dirobjectfactory.xml">
+<!ENTITY executors SYSTEM "executors.xml">
 ]>
 
 
@@ -42,5 +43,6 @@
 	&overview;
 	&basic;
 	&dirobjectfactory;
+	&executors;
 	
 </book>
