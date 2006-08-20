@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="authentication">
+  <title>Authentication</title>
+
+  <sect1 id="custom-authentication">
+    <title>Custom Authentication Using Acegi</title>
+
+    <para>The user name (i.e. user DN) and password used for creating an
+    authenticated <literal>Context</literal> are static by default - the ones
+    set on the <literal>ContextSource</literal> on startup will be used
+    throughout the lifetime of the <literal>ContextSource</literal>. There are
+    however several cases in which this is not the desired behaviour. A common
+    scenario is that the principal and credentials of the current user should
+    be used when executing LDAP operations for that user. The default
+    behaviour can be modified by supplying a custom
+    <literal>AuthenticationSource</literal> implementation to the
+    <literal>ContextSource</literal> on startup, instead of explicitly
+    specifying the <literal>userName</literal> and
+    <literal>password</literal>. The <literal>AuthenticationSource</literal>
+    will be queried by the <literal>ContextSource</literal> for principal and
+    credentials each time an authenticated <literal>Context</literal> is to be
+    created.</para>
+
+    <para>To use the authentication information of the currently logged in
+    user using <ulink url="http://acegisecurity.org/">Acegi Security</ulink>,
+    use the <literal>AcegiAuthenticationSource</literal>:</para>
+
+    <example>
+      <title>The Spring bean definition for an
+      AcegiAuthenticationSource</title>
+
+      <programlisting>&lt;beans&gt;
+   ...
+   &lt;bean id="contextSource" class="org.springframework.ldap.support.LdapContextSource"&gt;
+      &lt;property name="url" value="ldap://localhost:389" /&gt;
+      &lt;property name="base" value="dc=example,dc=com" /&gt;
+      &lt;property name="acegiAuthenticationSource" ref="authenticationSource" /&gt;
+   &lt;/bean&gt;
+
+   &lt;bean id="acegiAuthenticationSource"
+      class="org.springframework.ldap.support.acegi.AcegiAuthenticationSource" /&gt;
+   ...
+&lt;/beans&gt;</programlisting>
+    </example>
+
+    <note>
+      <para>We don't specify any <literal>userName</literal> or
+      <literal>password</literal> to our <literal>ContextSource</literal> when
+      using an <literal>AuthenticationSource</literal> - these properties are
+      needed only when the default behaviour is used.</para>
+    </note>
+  </sect1>
+
+  <sect1>
+    <title>Default Authentication</title>
+
+    <para>When using <literal>AcegiAuthenticationSource</literal>,
+    authenticated contexts will only be possible to create once the user is
+    logged in using Acegi. To use default authentication information when no
+    user is logged in, use the
+    <literal>DefaultValuesAuthenticationSourceDecorator</literal>:</para>
+
+    <example>
+      <title>Configuring a DefaultValuesAuthenticationSourceDecorator</title>
+
+      <programlisting>&lt;beans&gt;
+   ...
+   &lt;bean id="contextSource" class="org.springframework.ldap.support.LdapContextSource"&gt;
+      &lt;property name="url" value="ldap://localhost:389" /&gt;
+      &lt;property name="base" value="dc=example,dc=com" /&gt;
+      &lt;property name="authenticationSource" ref="authenticationSource" /&gt;
+   &lt;/bean&gt;
+
+   &lt;bean id="authenticationSource"
+      class="org.springframework.ldap.support.DefaultValuesAuthenticationSourceDecorator"&gt;
+      &lt;property name="target" ref="acegiAuthenticationSource" /&gt;
+      &lt;property name="defaultUser" value="cn=myDefaultUser" /&gt;
+      &lt;property name="defaultPassword" value="pass" /&gt;
+   &lt;/bean&gt;
+
+   &lt;bean id="acegiAuthenticationSource"
+      class="org.springframework.ldap.support.acegi.AcegiAuthenticationSource" /&gt;
+   ...
+&lt;/beans&gt;</programlisting>
+    </example>
+  </sect1>
+</chapter>
