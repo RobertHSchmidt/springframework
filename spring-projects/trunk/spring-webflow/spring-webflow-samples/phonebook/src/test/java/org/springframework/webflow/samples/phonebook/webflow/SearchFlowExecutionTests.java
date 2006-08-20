@@ -21,17 +21,17 @@ import java.util.Map;
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.AttributeMap;
-import org.springframework.webflow.EndState;
-import org.springframework.webflow.Flow;
-import org.springframework.webflow.builder.FlowServiceLocator;
-import org.springframework.webflow.registry.ExternalizedFlowDefinition;
+import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.definition.registry.FlowDefinitionResource;
+import org.springframework.webflow.engine.EndState;
+import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.builder.FlowServiceLocator;
+import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.samples.phonebook.domain.ArrayListPhoneBook;
 import org.springframework.webflow.samples.phonebook.domain.PhoneBook;
-import org.springframework.webflow.support.ApplicationView;
-import org.springframework.webflow.test.AbstractXmlFlowExecutionTests;
-import org.springframework.webflow.test.MockFlowServiceLocator;
 import org.springframework.webflow.test.MockParameterMap;
+import org.springframework.webflow.test.execution.AbstractXmlFlowExecutionTests;
+import org.springframework.webflow.test.execution.MockFlowServiceLocator;
 
 public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
@@ -81,10 +81,10 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 	 */
 	private PhoneBook phonebook = new ArrayListPhoneBook();
 
-	protected ExternalizedFlowDefinition getFlowDefinition() {
+	protected FlowDefinitionResource getFlowDefinitionResource() {
 		File flowDir = new File("src/main/webapp/WEB-INF/flows");
 		Resource resource = new FileSystemResource(new File(flowDir, "search-flow.xml"));
-		return new ExternalizedFlowDefinition(resource);
+		return new FlowDefinitionResource(resource);
 	}
 
 	protected FlowServiceLocator createFlowServiceLocator() {

@@ -15,16 +15,16 @@
  */
 package org.springframework.webflow.samples.phonebook.webflow;
 
-import org.springframework.webflow.ScopeType;
-import org.springframework.webflow.Transition;
 import org.springframework.webflow.action.FormAction;
 import org.springframework.webflow.action.MultiAction;
-import org.springframework.webflow.builder.AbstractFlowBuilder;
-import org.springframework.webflow.builder.FlowBuilderException;
-import org.springframework.webflow.builder.FlowServiceLocator;
+import org.springframework.webflow.engine.Transition;
+import org.springframework.webflow.engine.builder.AbstractFlowBuilder;
+import org.springframework.webflow.engine.builder.FlowBuilderException;
+import org.springframework.webflow.engine.builder.FlowServiceLocator;
+import org.springframework.webflow.engine.support.DefaultFlowAttributeMapper;
+import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.samples.phonebook.domain.SearchCriteria;
 import org.springframework.webflow.samples.phonebook.domain.SearchCriteriaValidator;
-import org.springframework.webflow.support.DefaultFlowAttributeMapper;
 
 /**
  * Java-based flow builder that searches for people in the phonebook. The flow
