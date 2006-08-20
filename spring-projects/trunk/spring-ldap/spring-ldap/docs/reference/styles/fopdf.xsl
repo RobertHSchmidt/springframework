@@ -12,7 +12,7 @@
 
 <!DOCTYPE xsl:stylesheet [
     <!ENTITY db_xsl_path        "../lib/docbook-xsl/">
-    <!ENTITY admon_gfx_path     "../images/admons/">
+    <!ENTITY admon_gfx_path     "images/admons/">
     <!ENTITY copyright "&#xA9;">
 ]>
 
