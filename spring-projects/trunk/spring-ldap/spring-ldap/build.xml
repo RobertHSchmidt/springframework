@@ -11,17 +11,16 @@
 	<property name="project.title" value="LDAP Template" />
 	<property name="project.package" value="org.springframework.ldap" />
 
-	<property name="src.java.iutest.dir" location="${src.dir}/iutest" />
-	
 	<property name="ldap.server" value="127.0.0.1" />
 	<property name="ldap.user" value="&quot;cn=Manager,dc=jayway,dc=se&quot;" />
 	<property name="ldap.password" value="secret" />
 	
-	<import file="${common.build.dir}/common-targets.xml" />
+	<!-- Cannot import common-targets since itest-targets already does -->
+	<import file="${basedir}/itest-targets.xml" />
 	<import file="${common.build.dir}/doc-targets.xml" />
 	<import file="${common.build.dir}/clover-targets.xml" />
 
-	<target name="iutest.ldap.setup">
+	<target name="itest.ldap.setup">
 		<exec executable="ldapadd">
 			<arg value="-x"/>
 			<arg value="-h"/>
@@ -31,13 +30,13 @@
 			<arg value="-w"/>
 			<arg value="${ldap.password}"/>
 			<arg value="-f"/>
-			<arg value="${src.java.iutest.dir}/setup_data.ldif"/>
+			<arg value="${src.java.itest.dir}/setup_data.ldif"/>
 		</exec>
 	</target>
 
-	<target name="iutest.ldap.teardown" depends="iutest.ldap.teardown.1, iutest.ldap.teardown.2"/>
+	<target name="itest.ldap.teardown" depends="itest.ldap.teardown.1, itest.ldap.teardown.2"/>
 	
-	<target name="iutest.ldap.teardown.1">
+	<target name="itest.ldap.teardown.1">
 		<exec executable="ldapdelete" failonerror="false">
 			<arg value="-x"/>
 			<arg value="-h"/>
@@ -51,7 +50,7 @@
 		</exec>
 	</target>
 
-	<target name="iutest.ldap.teardown.2">
+	<target name="itest.ldap.teardown.2">
 		<exec executable="ldapdelete" failonerror="false">
 			<arg value="-x"/>
 			<arg value="-h"/>
