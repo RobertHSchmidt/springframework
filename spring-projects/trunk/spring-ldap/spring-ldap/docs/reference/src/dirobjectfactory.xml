@@ -199,17 +199,18 @@ public class PersonDaoImpl implements PersonDao {
 }</programlisting>
       </example>
     </sect2>
+  </sect1>
 
-    <sect2>
-      <title>A Complete PersonDao Class</title>
+  <sect1>
+    <title>A Complete PersonDao Class</title>
 
-      <para>To illustrate the power of LdapTemplate, here is a complete Person
-      DAO implementation for LDAP in just 68 lines:</para>
+    <para>To illustrate the power of LdapTemplate, here is a complete Person
+    DAO implementation for LDAP in just 68 lines:</para>
 
-      <example>
-        <title>A complete PersonDao class</title>
+    <example>
+      <title>A complete PersonDao class</title>
 
-        <programlisting>package com.example.dao;
+      <programlisting>package com.example.dao;
 
 import java.util.List;
 
@@ -292,7 +293,6 @@ public class PersonDaoImpl implements PersonDao {
       }
    }
 }</programlisting>
-      </example>
-    </sect2>
+    </example>
   </sect1>
 </chapter>
