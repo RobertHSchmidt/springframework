@@ -4,7 +4,7 @@
 	<div id="insert">
 		<img src="images/webflow-logo.jpg"/>
 	</div>
-	<form action="phonebook.htm" method="post">
+	<form:form commandName="searchCriteria" method="post">
 	<table>
 		<tr>
 			<td>Search Criteria</td>
@@ -21,25 +21,18 @@
 			</td>
 		</tr>
 		</spring:hasBindErrors>
-		
-		<spring:nestedPath path="searchCriteria">
-		
-		<spring:bind path="firstName">
 		<tr>
 			<td>First Name</td>
 			<td>
-				<input type="text" name="${status.expression}" value="${status.value}">
+				<form:input path="firstName" />
 			</td>
 		</tr>
-		</spring:bind>		
-		<spring:bind path="lastName">
 		<TR>
 			<td>Last Name</td>
 			<td>
-				<input type="text" name="${status.expression}" value="${status.value}">
+				<form:input path="lastName" />
 			</td>
 		</TR>
-		</spring:bind>
 		<tr>
 			<td colspan="2">
 				<hr>
@@ -55,7 +48,7 @@
 		</spring:nestedPath>
 		
 	</table>
-	</form>
+	</form:form>
 </div>
 
 <%@ include file="includeBottom.jsp" %>
