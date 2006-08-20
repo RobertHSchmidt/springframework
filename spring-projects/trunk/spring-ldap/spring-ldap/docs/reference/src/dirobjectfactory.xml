@@ -37,7 +37,8 @@
       &lt;property name="base" value="dc=example,dc=com" /&gt;
       &lt;property name="userName" value="cn=Manager" /&gt;
       &lt;property name="password" value="secret" /&gt;
-      &lt;property name="dirObjectFactory" value="net.sf.ldaptemplate.support.DefaultDirObjectFactory"&gt;
+      &lt;property name="dirObjectFactory"
+         value="net.sf.ldaptemplate.support.DefaultDirObjectFactory" /&gt;
    &lt;/bean&gt;
 &lt;/beans&gt;</programlisting>
     </example>
@@ -63,7 +64,7 @@
 
 public class PersonDaoImpl implements PersonDao {
    ...
-<emphasis role="bold">   private static class PersonContextMapper implements ContextMapper {
+   <emphasis role="bold">private static class PersonContextMapper implements ContextMapper {
       public Object mapFromContext(Object ctx) {
          DirContextAdapter context = (DirContextAdapter)ctx;
          Person p = new Person();
@@ -72,8 +73,8 @@ public class PersonDaoImpl implements PersonDao {
          p.setDescription(context.getStringAttribute("description"));
          return p;
       }
-   }
-</emphasis>
+   }</emphasis>
+
    public Person findByPrimaryKey(
       String name, String company, String country) {
       Name dn = buildDn(name, company, country);
@@ -112,11 +113,11 @@ public class PersonDaoImpl implements PersonDao {
       Name dn = buildDn(p);
       DirContextAdapter context = new DirContextAdapter(dn);
 
-<emphasis>      context.setAttributeValues("objectclass", new String[] {"top", "person"});
+      <emphasis>context.setAttributeValues("objectclass", new String[] {"top", "person"});
       context.setAttributeValue("cn", p.getFullname());
       context.setAttributeValue("sn", p.getLastname());
-      context.setAttributeValue("description", p.getDescription());
-</emphasis>
+      context.setAttributeValue("description", p.getDescription());</emphasis>
+
       ldapTemplate.bind(dn, context, null);
    }
 }</programlisting>
@@ -152,11 +153,11 @@ public class PersonDaoImpl implements PersonDao {
       Name dn = buildDn(p);
       DirContextAdapter context = (DirContextAdapter)ldapTemplate.lookup(dn);
 
-<emphasis>      context.setAttributeValues("objectclass", new String[] {"top", "person"});
+      <emphasis>context.setAttributeValues("objectclass", new String[] {"top", "person"});
       context.setAttributeValue("cn", p.getFullname());
       context.setAttributeValue("sn", p.getLastname());
-      context.setAttributeValue("description", p.getDescription());
-</emphasis>
+      context.setAttributeValue("description", p.getDescription());</emphasis>
+
       ldapTemplate.modifyAttributes(dn, context.getModificationItems());
    }
 }</programlisting>
@@ -204,7 +205,7 @@ public class PersonDaoImpl implements PersonDao {
   <sect1>
     <title>A Complete PersonDao Class</title>
 
-    <para>To illustrate the power of LdapTemplate, here is a complete Person
+    <para>To illustrate the power of Spring LDAP, here is a complete Person
     DAO implementation for LDAP in just 68 lines:</para>
 
     <example>
