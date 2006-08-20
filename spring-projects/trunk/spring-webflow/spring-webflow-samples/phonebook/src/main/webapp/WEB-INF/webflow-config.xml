@@ -8,9 +8,7 @@
        http://www.springframework.org/schema/webflow/spring-webflow-config-1.0.xsd">
 
 	<!-- Launches new flow executions and resumes existing executions. -->	
-	<flow:executor id="flowExecutor" registry-ref="registry" repositoryType="continuation">
-		<flow:listener ref="listener" criteria="sellitem-flow"/>
-	</flow:executor>
+	<flow:executor id="flowExecutor" registry-ref="registry" repositoryType="continuation"/>
 	
 	<!-- Creates the registry of flow definitions for this application -->
 	<flow:registry id="registry">
