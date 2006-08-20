@@ -17,7 +17,7 @@
 		<spring:hasBindErrors name="searchCriteria">
 		<tr>
 			<td colspan="2">
-				<div class="error">Please provide valid search criteria!</div>
+				<div class="error">Please provide valid search criteria</div>
 			</td>
 		</tr>
 		</spring:hasBindErrors>
@@ -43,10 +43,7 @@
 				<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">
 				<input type="submit" class="button" name="_eventId_search" value="Search">
 			</td>
-		</tr>
-		
-		</spring:nestedPath>
-		
+		</tr>		
 	</table>
 	</form:form>
 </div>
