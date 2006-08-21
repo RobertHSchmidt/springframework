@@ -184,7 +184,7 @@ public class PersonDaoImpl implements PersonDao {
     together with Acegi Security entails use of the
     <literal>org.acegisecurity</literal> package.</para>
 
-    <sect2 id="webflow">
+    <sect2 id="ldap">
       <title>org.springframework.ldap</title>
 
       <para>The <emphasis>ldap</emphasis> package contains the central
@@ -200,7 +200,7 @@ public class PersonDaoImpl implements PersonDao {
       </itemizedlist>
     </sect2>
 
-    <sect2 id="webflow.action">
+    <sect2 id="ldap.support">
       <title>org.springframework.ldap.support</title>
 
       <para>The <emphasis>support</emphasis> package contains supporting
@@ -214,7 +214,7 @@ public class PersonDaoImpl implements PersonDao {
       </itemizedlist>
     </sect2>
 
-    <sect2 id="webflow.builder">
+    <sect2 id="ldap.support.acegi">
       <title>org.springframework.ldap.support.acegi</title>
 
       <para>The <emphasis>support.acegi</emphasis> package contains an
@@ -229,7 +229,7 @@ public class PersonDaoImpl implements PersonDao {
       </itemizedlist>
     </sect2>
 
-    <sect2 id="webflow.execution">
+    <sect2 id="ldap.support.filter">
       <title>org.springframework.ldap.support.filter</title>
 
       <para>The <emphasis>support.filter</emphasis> package contains the
