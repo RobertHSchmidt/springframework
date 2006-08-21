@@ -353,7 +353,7 @@ public class PersonDaoImpl implements PersonDao {
 
     <para>It is recommended that you review the Spring LDAP sample
     applications included in the release distribution for best-practice
-    illustrations of the features of this framework. A description of each
+    illustrations of the features of this library. A description of each
     sample is provided below:</para>
 
     <para><orderedlist>
