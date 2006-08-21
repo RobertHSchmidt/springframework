@@ -10,7 +10,7 @@
     to automatically create objects from found contexts. One of the reasons
     why it is seldom used is that you will need an implementation of
     <literal>DirObjectFactory</literal> that creates instances of a meaningful
-    implementation of <literal>DirContext</literal>. The Spring LDAP framework
+    implementation of <literal>DirContext</literal>. The Spring LDAP library
     provides the missing pieces: a default implementation of
     <literal>DirContext</literal> called <literal>DirContextAdapter</literal>,
     and a corresponding implementation of <literal>DirObjectFactory</literal>
@@ -19,40 +19,13 @@
     <literal>DirContextAdapter</literal> can be a very powerful tool.</para>
   </sect1>
 
-  <sect1 id="executor">
-    <title>Configuration</title>
-
-    <para>First of all, we need to register the
-    <literal>DefaultDirObjectFactory</literal> with the
-    <literal>ContextSource</literal>. This is done using the
-    <literal>dirObjectFactory</literal> property:</para>
-
-    <example>
-      <title>Configuring ContextSource with a DefaultDirObjectFactory</title>
-
-      <programlisting>&lt;beans&gt;
-   ...
-   &lt;bean id="contextSource" class="net.sf.ldaptemplate.support.LdapContextSource"&gt;
-      &lt;property name="url" value="ldap://localhost:389" /&gt;
-      &lt;property name="base" value="dc=example,dc=com" /&gt;
-      &lt;property name="userName" value="cn=Manager" /&gt;
-      &lt;property name="password" value="secret" /&gt;
-      &lt;property name="dirObjectFactory"
-         value="net.sf.ldaptemplate.support.DefaultDirObjectFactory" /&gt;
-   &lt;/bean&gt;
-&lt;/beans&gt;</programlisting>
-    </example>
-
-    <para>Actually, if no <literal>dirObjectFactory</literal> is specified,
-    the default is <literal>DefaultDirObjectFactory</literal>. Nevertheless,
-    we prefer to be explicit here.</para>
-  </sect1>
-
   <sect1>
     <title>Search and Lookup Using ContextMapper</title>
 
-    <para>Now, whenever a context is found in the LDAP tree, its
-    <literal>Attributes</literal> will be used to construct a
+    <para>The <literal>DefaultDirObjectFactory</literal> is registered with
+    the <literal>ContextSource</literal> by defaultm which means that whenever
+    a context is found in the LDAP tree, its <literal>Attributes</literal> and
+    Distinguished Name (DN) will be used to construct a
     <literal>DirContextAdapter</literal>. This enables us to use a
     <literal>ContextMapper</literal> instead of an
     <literal>AttributesMapper</literal> to transform found values:</para>
@@ -295,5 +268,19 @@ public class PersonDaoImpl implements PersonDao {
    }
 }</programlisting>
     </example>
+
+    <note>
+      <para>In several cases the Distinguished Name (DN) of an object is
+      constructed using properties of the object. E.g. in the above example,
+      the country, company and full name of the <literal>Person</literal> are
+      used in the DN, which means that updating any of these properties will
+      actually require moving the entry in the LDAP tree using the
+      <literal>rename()</literal> operation in addition to updating the
+      <literal>Attribute</literal> values. Since this is highly implementation
+      specific this is something you'll need to keep track of yourself -
+      either by disallowing the user to change these properties or performing
+      the <literal>rename()</literal> operation in your
+      <literal>update()</literal> method if needed.</para>
+    </note>
   </sect1>
 </chapter>
