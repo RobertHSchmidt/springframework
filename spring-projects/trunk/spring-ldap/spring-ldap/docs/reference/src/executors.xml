@@ -84,7 +84,7 @@ public class PersonDaoImpl implements PersonDao {
     </note>
   </sect1>
 
-  <sect1>
+  <sect1 id="executors-others">
     <title>Implementing Other Custom Context Methods</title>
 
     <para>In the same manner as for custom <literal>search</literal> methods,

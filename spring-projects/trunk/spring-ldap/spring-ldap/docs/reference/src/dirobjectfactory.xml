@@ -2,7 +2,7 @@
 <chapter id="dirobjectfactory">
   <title>DirObjectFactory and DirContextAdapter</title>
 
-  <sect1 id="executor-intro">
+  <sect1 id="dirobjectfactory-intro">
     <title>Introduction</title>
 
     <para>A little-known--and probably underestimated--feature of the Java
@@ -23,7 +23,7 @@
     <title>Search and Lookup Using ContextMapper</title>
 
     <para>The <literal>DefaultDirObjectFactory</literal> is registered with
-    the <literal>ContextSource</literal> by defaultm which means that whenever
+    the <literal>ContextSource</literal> by default, which means that whenever
     a context is found in the LDAP tree, its <literal>Attributes</literal> and
     Distinguished Name (DN) will be used to construct a
     <literal>DirContextAdapter</literal>. This enables us to use a
