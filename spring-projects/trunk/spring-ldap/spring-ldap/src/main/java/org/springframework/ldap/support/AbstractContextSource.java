@@ -242,7 +242,7 @@ public abstract class AbstractContextSource implements ContextSource,
                     "At least one server url must be set");
         }
 
-        if (base != null && getJdkVersion().compareTo(JDK_142) <= 0) {
+        if (base != null && getJdkVersion().compareTo(JDK_142) < 0) {
             throw new IllegalArgumentException(
                     "Base path is not supported for JDK versions < 1.4.2");
         }
