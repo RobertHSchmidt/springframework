@@ -7,7 +7,7 @@
 <!ENTITY basic SYSTEM "basic.xml">
 <!ENTITY dirobjectfactory SYSTEM "dirobjectfactory.xml">
 <!ENTITY executors SYSTEM "executors.xml">
-<!ENTITY authentication SYSTEM "authentication.xml">
+<!ENTITY configuration SYSTEM "configuration.xml">
 ]>
 
 
@@ -45,6 +45,6 @@
 	&basic;
 	&dirobjectfactory;
 	&executors;
-	&authentication;
+	&configuration;
 	
 </book>
