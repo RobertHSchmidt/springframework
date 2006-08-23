@@ -323,6 +323,8 @@
 -->
 <!ATTLIST argument value ID #REQUIRED>
 
+
+
 <!--
 	The name of the attribute that will expose the return value of the invoked bean method.
 	
@@ -337,6 +339,11 @@
         
     ... exposes the return value of the 'placeOrder(Order)' method in the default scope 
     under the attribute name 'orderConfirmation'.
+-->
+<!ELEMENT result EMPTY>
+
+<!--
+	The name of the attribute to bind this result to
 -->
 <!ATTLIST result name CDATA #IMPLIED>
 
