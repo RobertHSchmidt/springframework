@@ -291,7 +291,7 @@
 
         <action bean="orderClerk">
         	<bean-method name="placeOrder">
-	            <argument value="flowScope.order"/>
+	            <argument expression="flowScope.order"/>
     	        <result name="orderConfirmation"/>
     	    </bean-method>
    	    </action>
@@ -311,17 +311,17 @@
     Examples:
     
    	A flow scope argument:
-        <argument value="flowScope.order"/> (passes in the value of the 'order' attribute in flow scope)
+        <argument expression="flowScope.order"/> (passes in the value of the 'order' attribute in flow scope)
 
     A constant argument:
-        <argument value="'a constant'"/> (passes in the 'a constant' literal)
+        <argument expression="'a constant'"/> (passes in the 'a constant' literal)
 -->
 <!ELEMENT argument EMPTY>
 
 <!--
     The value expression for this bean method argument.
 -->
-<!ATTLIST argument value ID #REQUIRED>
+<!ATTLIST argument expression CDATA #REQUIRED>
 
 <!--
 	The name of the attribute that will expose the return value of the invoked bean method.
@@ -330,7 +330,7 @@
 	
         <action bean="orderClerk">
         	<bean-method name="placeOrder">
-	            <argument value="flowScope.order"/>
+	            <argument expression="flowScope.order"/>
     	        <result name="orderConfirmation"/>
     	    </bean-method>
    	    </action>
@@ -343,7 +343,7 @@
 <!--
 	The name of the attribute to bind this result to
 -->
-<!ATTLIST result name CDATA #IMPLIED>
+<!ATTLIST result name CDATA #REQUIRED>
 
 <!--
 	The scope of the attribute that will expose the return value of the invoked bean method.
@@ -352,7 +352,7 @@
 	
         <action bean="bookingAgent">
             <bean-method name="suggestItineraries">
-                <argument value="flowScope.trip"/>
+                <argument expression="flowScope.trip"/>
                 <result name="itineraries" scope="flow"/>
             </bean-method>
         </action>
