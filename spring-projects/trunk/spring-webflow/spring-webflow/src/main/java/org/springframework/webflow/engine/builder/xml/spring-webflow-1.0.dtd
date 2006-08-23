@@ -277,7 +277,7 @@
 
 <!--
 	The specification for the method to invoke on this action, whose implementation is 
-	expected to be an arbitrary bean (or "POJO"--Plain Old Java Object).
+	expected to be an arbitrary bean (or "POJO": Plain Old Java Object).
 	
 	Use this element when the logic to invoke is encapsulated within an object with
 	no dependency on Spring Web Flow.  This element can be used to invoke *any* public
@@ -322,8 +322,6 @@
     The value expression for this bean method argument.
 -->
 <!ATTLIST argument value ID #REQUIRED>
-
-
 
 <!--
 	The name of the attribute that will expose the return value of the invoked bean method.
