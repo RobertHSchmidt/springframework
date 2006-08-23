@@ -26,7 +26,7 @@
 			<flow:attribute name="test1" type="java.lang.Integer" value="1" />
 		</flow:execution-attributes>
 	</flow:executor>
- 
+
 	<flow:executor id="continuationExecutor" registry-ref="withPathWithWildcards" repositoryType="continuation">
 		<flow:listeners>
 			<flow:listener ref="listener1" />

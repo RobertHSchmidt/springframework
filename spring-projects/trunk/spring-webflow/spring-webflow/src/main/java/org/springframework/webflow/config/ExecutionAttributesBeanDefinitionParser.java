@@ -24,7 +24,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.util.xml.DomUtils;
-import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.w3c.dom.Element;
 
 public class ExecutionAttributesBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
@@ -38,7 +38,7 @@ public class ExecutionAttributesBeanDefinitionParser extends AbstractSingleBeanD
 	private static final String VALUE = "value";
 
 	protected Class getBeanClass(Element element) {
-		return AttributeMap.class;
+		return LocalAttributeMap.class;
 	}
 
 	protected void doParse(Element element, BeanDefinitionBuilder definitionBuilder) {
