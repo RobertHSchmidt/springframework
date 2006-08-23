@@ -238,10 +238,22 @@
 <!ATTLIST action bean CDATA #REQUIRED>
 
 <!--
-	An optional name qualifier for this action. When specified this action will
-	qualify execution result event ids by this name. For example, if this action is
-	named "placeOrder" and signals a "success" result event after execution, the
-	fully qualified result event the flow can respond to would be "placeOrder.success".
+	An optional name qualifier for this bean action. When specified this action will
+	qualify execution result event identifiers by this name.  For example, if this
+	action is named "placeOrder" and signals a "success" result event after execution,
+	the fully qualified result event the flow can respond to would be "placeOrder.success".
+	
+	This can be used to execute actions in an ordered chain, where the flow responds 
+	to the the last action result in the chain:
+	
+	<action-state id="setupForm">
+	    <action name="loadFormObject" bean="formAction" method="setupForm"/>
+	    <action name="loadReferenceData" bean="formAction" method="loadReferenceData"/>
+	    <transition on="loadReferenceData.success" to="displayForm">
+	</action-state>
+	
+	... will execute 'setupForm' followed by 'loadRefenceData', then transition the flow to
+	the 'displayForm' state on a successful 'loadReferenceData' invocation.
 	
 	An action with a name is often referred to as a "named action".
 -->
@@ -314,6 +326,28 @@
 	This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
 -->
 <!ATTLIST bean-action bean CDATA #REQUIRED>
+
+<!--
+	An optional name qualifier for this bean action. When specified this action will
+	qualify execution result event identifiers by this name.  For example, if this action
+	is named "placeOrder" and signals a "success" result event after execution, the
+	fully qualified result event the flow can respond to would be "placeOrder.success".
+	
+	This can be used to execute actions in an ordered chain, where the flow responds 
+	to the the last action result in the chain:
+	
+	<action-state id="setupForm">
+	    <action name="loadFormObject" bean="formAction" method="setupForm"/>
+	    <action name="loadReferenceData" bean="formAction" method="loadReferenceData"/>
+	    <transition on="loadReferenceData.success" to="displayForm">
+	</action-state>
+	
+	... will execute 'setupForm' followed by 'loadRefenceData', then transition the flow to
+	the 'displayForm' state on a successful 'loadReferenceData' invocation.
+	
+	An action with a name is often referred to as a "named action".
+-->
+<!ATTLIST bean-action name CDATA #IMPLIED>
 
 <!--
 	The name of the method to invoke on this bean.
