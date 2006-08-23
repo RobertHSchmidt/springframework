@@ -224,7 +224,7 @@
 	
 	An action may be annotated with attributes that can be used to affect the action's execution.
 -->
-<!ELEMENT action ( attribute* )>
+<!ELEMENT action ( bean-method?, attribute* )>
 
 <!--
 	The identifier of the action implementation to execute, typically the id of a bean
@@ -233,8 +233,8 @@
 	If the referenced bean implements the org.springframework.webflow.Action interface
 	directly, it is retrieved from the factory and used as is.  If the referenced bean is
 	a POJO that does not implement this interface, the method on the POJO referenced by the
-	'method' attribute is adapted to the Action interface automatically.  See the
-	'method' attribute for more information.
+	'bean-method' element is adapted to the Action interface automatically.  See the
+	'bean-method' element for more information.
 	
 	This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
 -->
@@ -251,53 +251,108 @@
 <!ATTLIST action name CDATA #IMPLIED>
 
 <!--
-	The name of the target method to invoke to execute this action.  The value
-	of this attribute is a method binding expression that evaluates to a method 
-	on the referenced action bean.
+	The name of the method to invoke on this action.
 	
-	If this action bean extends org.springframework.webflow.action.MultiAction,
-	the expression is simply an action execution method name.
+	Use this attribute when the action is a "multi action" extending
+	    org.springframework.webflow.action.MultiAction.
+	    
+	The attribute value should be method name to invoke on the multi-action instance.
+	The method's implementation must have the following signature:
+	    public Event <methodName>(RequestContext context);
 
-    For example:
+    As an example:
         <action bean="formAction" method="setupForm"/>
     
-    The actual signature of this method must be of the form:
-	    public Event <method>(RequestContext) throws Exception { ... }
-	    
-	If this action is an abritrary bean (POJO), the expression can 
-	match any public method on the bean's implementation. In this case the
-	expression format is as follows: <method>(${arg 1}, ..., ${arg n}) where any 
-	${arg n} expressions are evaluated against the flow execution
-	org.springframework.webflow.RequestContext.
-
-	For example:
-        <action bean="orderClerk" method="placeOrder(${flowScope.order})"/>
+    ... might invoke:
+        
+        public class FormAction {
+            ...
+            public Event setupForm(RequestContext context) {
+                ...
+                return success();
+            }
+        }
 -->
 <!ATTLIST action method CDATA #IMPLIED>
 
 <!--
-	The name of the attribute that will expose the return value of the target action method.
-	Used in conjunction with the 'method' and 'result-scope' attributes.
-	Only directly applicable when this action invokes a method on a bean (POJO)
-	that returns a value.
+	The specification for the method to invoke on this action, whose implementation is 
+	expected to be an arbitrary bean (or "POJO"--Plain Old Java Object).
+	
+	Use this element when the logic to invoke is encapsulated within an object with
+	no dependency on Spring Web Flow.  This element can be used to invoke *any* public
+	method on the bean's implementation.
 
+	If the target method accepts arguments they may be specified in order by using the 
+	'argument' sub-element.  If the target method returns a value it may be exposed to the flow 
+	using the 'result' sub-element.
+	
 	For example:
-        <action bean="orderClerk" method="placeOrder(${flowScope.order})" result-name="orderConfirmation"/>
-        
-    ... exposes the 'placeOrder(Order)' method return value in request scope 
-    under the attribute name 'orderConfirmation'.
+
+        <action bean="orderClerk">
+        	<bean-method name="placeOrder">
+	            <argument value="flowScope.order"/>
+    	        <result name="orderConfirmation"/>
+    	    </bean-method>
+   	    </action>
+
+    The above example instructs this flow to invoke the "placeOrder" method on the "orderClerk" bean,
+    passing the value of "flowScope.order" as the method argument.  After method invocation the
+    method return value is exposed in the default scope under the name "orderConfirmation".
 -->
-<!ATTLIST action result-name CDATA #IMPLIED>
+<!ELEMENT bean-method ( argument*, result? )>
 
 <!--
-	The scope of the attribute that will expose the return value of the target action method.
-	Used in conjunction with the 'result-name' attribute, and only directly applicable
-	when this action invokes a method on a bean (POJO) that returns a value.
+    An argument expression for this bean method.  The expression is evaluated against
+    this flow's request context to resolve the argument value.
+    
+    Typically used to pass a value from a flow scope type into this bean method as an argument.
+    
+    Examples:
+    
+   	A flow scope argument:
+        <argument value="flowScope.order"/> (passes in the value of the 'order' attribute in flow scope)
+
+    A constant argument:
+        <argument value="'a constant'"/> (passes in the 'a constant' literal)
+-->
+<!ELEMENT argument EMPTY>
+
+<!--
+    The value expression for this bean method argument.
+-->
+<!ATTLIST argument value ID #REQUIRED>
+
+<!--
+	The name of the attribute that will expose the return value of the invoked bean method.
+	
+	For example:
+	
+        <action bean="orderClerk">
+        	<bean-method name="placeOrder">
+	            <argument value="flowScope.order"/>
+    	        <result name="orderConfirmation"/>
+    	    </bean-method>
+   	    </action>
+        
+    ... exposes the return value of the 'placeOrder(Order)' method in the default scope 
+    under the attribute name 'orderConfirmation'.
+-->
+<!ATTLIST result name CDATA #IMPLIED>
+
+<!--
+	The scope of the attribute that will expose the return value of the invoked bean method.
 
 	For example:
-        <action bean="bookingAgent" method="suggestItineraries(${flowScope.trip})" result-name="itineraries" result-scope="flow"/>
+	
+        <action bean="bookingAgent">
+            <bean-method name="suggestItineraries">
+                <argument value="flowScope.trip"/>
+                <result name="itineraries" scope="flow"/>
+            </bean-method>
+        </action>
 
-    ... exposes the 'suggestItineraries(Trip)' method return value in flow scope 
+    ... exposes the return value of the 'suggestItineraries(Trip)' method in flow scope 
     under the attribute name 'itineraries'.
 
     The available scope types are:
@@ -315,7 +370,7 @@
 	      
     The default value if not specified is request scope.     
 -->
-<!ATTLIST action result-scope (request | flow | conversation | default) "default">
+<!ATTLIST result scope (request | flow | conversation | default) "default">
 
 <!--
 	Defines a transition from one state to another.

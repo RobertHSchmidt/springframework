@@ -38,11 +38,11 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
  * in-line definition of listener criteria.
  * 
  * <pre class="code">
- *     &lt;flow:executor id=&quot;registry&quot; repositoryType=&quot;continuation&quot; registry-ref=&quot;registry&quot;&gt;
- *         &lt;flow:listener ref=&quot;listener1&quot; /&gt;
- *         &lt;flow:listener ref=&quot;listener2&quot; ref=&quot;*&quot; /&gt;
- *         &lt;flow:listener ref=&quot;listener3&quot; ref=&quot;flow1, flow2, flow3&quot; /&gt;
- *     &lt;/flow:executor&gt;
+ *      &lt;flow:executor id=&quot;registry&quot; repositoryType=&quot;continuation&quot; registry-ref=&quot;registry&quot;&gt;
+ *          &lt;flow:listener ref=&quot;listener1&quot; /&gt;
+ *          &lt;flow:listener ref=&quot;listener2&quot; ref=&quot;*&quot; /&gt;
+ *          &lt;flow:listener ref=&quot;listener3&quot; ref=&quot;flow1, flow2, flow3&quot; /&gt;
+ *      &lt;/flow:executor&gt;
  * </pre>
  * 
  * Using the <code>registry</code> tag you can configure an
@@ -51,17 +51,19 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
  * tag supports in-line flow definition locations.
  * 
  * <pre class="code">
- *     &lt;flow:registry id=&quot;registry&quot;&gt;
- *         &lt;flow:location path=&quot;/path/to/flow.xml&quot; /&gt;
- *         &lt;flow:location path=&quot;/path/with/wildcards/*-flow.xml&quot; /&gt;
- *     &lt;/flow:registry&gt;
+ *      &lt;flow:registry id=&quot;registry&quot;&gt;
+ *          &lt;flow:location path=&quot;/path/to/flow.xml&quot; /&gt;
+ *          &lt;flow:location path=&quot;/path/with/wildcards/*-flow.xml&quot; /&gt;
+ *      &lt;/flow:registry&gt;
  * </pre>
  * 
  * @author Ben Hale
  */
 public class FlowNamespaceHandler extends NamespaceHandlerSupport {
 	public void init() {
+		registerBeanDefinitionParser("execution-attributes", new ExecutionAttributesBeanDefinitionParser());
 		registerBeanDefinitionParser("executor", new ExecutorBeanDefinitionParser());
+		registerBeanDefinitionParser("listeners", new ListenersBeanDefinitionParser());
 		registerBeanDefinitionParser("registry", new RegistryBeanDefinitionParser());
 	}
 }

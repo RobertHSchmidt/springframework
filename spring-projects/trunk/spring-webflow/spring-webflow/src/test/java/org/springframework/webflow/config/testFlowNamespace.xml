@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:flow="http://www.springframework.org/schema/webflow"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans
@@ -21,15 +20,24 @@
 		<flow:location path="classpath*:org/springframework/webflow/engine/builder/registry/flows/**/flow*.xml" />
 	</flow:registry>
 
-	<flow:executor id="defaultExecutor" registry-ref="withPathWithWildcards" />
-
+	<flow:executor id="defaultExecutor" registry-ref="withPathWithWildcards">
+		<flow:execution-attributes>
+			<flow:attribute name="test" type="java.lang.String" value="test" />
+			<flow:attribute name="test1" type="java.lang.Integer" value="1" />
+		</flow:execution-attributes>
+	</flow:executor>
+ 
 	<flow:executor id="continuationExecutor" registry-ref="withPathWithWildcards" repositoryType="continuation">
-		<flow:listener ref="listener1" />
+		<flow:listeners>
+			<flow:listener ref="listener1" />
+		</flow:listeners>
 	</flow:executor>
 
 	<flow:executor id="clientExecutor" registry-ref="withPathWithWildcards" repositoryType="client">
-		<flow:listener ref="listener1" criteria="flow1" />
-		<flow:listener ref="listener2" criteria="flow1, flow2, flow3" />
+		<flow:listeners>
+			<flow:listener ref="listener1" criteria="flow1" />
+			<flow:listener ref="listener2" criteria="flow1, flow2, flow3" />
+		</flow:listeners>
 	</flow:executor>
 
 	<bean id="listener1" class="org.springframework.webflow.config.TestFlowExecutionListener" />

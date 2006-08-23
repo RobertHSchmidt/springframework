@@ -21,7 +21,10 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.springframework.util.Assert;
+import org.springframework.webflow.context.support.ExternalContextHolder;
 import org.springframework.webflow.conversation.Conversation;
+import org.springframework.webflow.conversation.ConversationAccessException;
+import org.springframework.webflow.conversation.ConversationException;
 import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.conversation.ConversationParameters;
@@ -39,6 +42,8 @@ import org.springframework.webflow.util.UidGenerator;
  */
 public class LocalConversationManager implements ConversationManager, Serializable {
 
+	private static final String USER_CONVERSATION_CONTEXT = "userConversationContext";
+
 	/**
 	 * The local conversation data store.
 	 */
@@ -46,8 +51,8 @@ public class LocalConversationManager implements ConversationManager, Serializab
 
 	/**
 	 * An ordered list of conversation ids. Each conversation id represents an
-	 * pointer to an actiove conversation in the map.  The first element is the oldest 
-	 * conversation and the last is the youngest. 
+	 * pointer to an actiove conversation in the map. The first element is the
+	 * oldest conversation and the last is the youngest.
 	 */
 	private LinkedList conversationIds = new LinkedList();
 
@@ -55,7 +60,7 @@ public class LocalConversationManager implements ConversationManager, Serializab
 	 * The maximum number of active conversations allowed.
 	 */
 	private int maxConversations;
-	
+
 	/**
 	 * The uid generation strategy to use.
 	 */
@@ -63,13 +68,13 @@ public class LocalConversationManager implements ConversationManager, Serializab
 
 	/**
 	 * Creates a new local conversation service.
-	 * @param maxConversations the maximum number of conversations that can be 
+	 * @param maxConversations the maximum number of conversations that can be
 	 * active at once within this service.
 	 */
 	public LocalConversationManager(int maxConversations) {
 		this.maxConversations = maxConversations;
 	}
-	
+
 	/**
 	 * Returns the configured generator for simple conversation ids.
 	 */
@@ -89,11 +94,12 @@ public class LocalConversationManager implements ConversationManager, Serializab
 		ConversationId conversationId = new SimpleConversationId(conversationIdGenerator.generateUid());
 		conversations.put(conversationId, createConversation(conversationParameters, conversationId));
 		conversationIds.add(conversationId);
+		getUserContext().add(conversationId);
 		// end the oldest conversation if them maximium number of
 		// conversations has been exceeded
 		if (maxExceeded()) {
 			endOldestConversation();
-		}		
+		}
 		return getConversation(conversationId);
 	}
 
@@ -101,11 +107,22 @@ public class LocalConversationManager implements ConversationManager, Serializab
 		if (!conversations.containsKey(id)) {
 			throw new NoSuchConversationException(id);
 		}
+		if (!getUserContext().contains(id)) {
+			throw new ConversationAccessException(id);
+		}
+
 		return new ConversationProxy(id);
 	}
 
 	public ConversationId parseConversationId(String conversationId) {
 		return new SimpleConversationId(conversationIdGenerator.parseUid(conversationId));
+	}
+
+	void expireConversation(ConversationId id) throws ConversationException {
+		if (!conversations.containsKey(id)) {
+			throw new NoSuchConversationException(id);
+		}
+		end(id);
 	}
 
 	private ConversationEntry createConversation(ConversationParameters newConversation, ConversationId conversationId) {
@@ -118,11 +135,12 @@ public class LocalConversationManager implements ConversationManager, Serializab
 	}
 
 	private void endOldestConversation() {
-		Conversation oldest = getConversation((ConversationId)conversationIds.getFirst());
+		ConversationId conversationId = (ConversationId)conversationIds.getFirst();
+		Conversation oldest = getConversation(conversationId);
 		oldest.lock();
 		oldest.end();
 	}
-	
+
 	private ConversationLock getLock(ConversationId conversationId) {
 		Assert.notNull(conversationId, "conversationId must not be null");
 		if (!conversations.containsKey(conversationId)) {
@@ -166,15 +184,32 @@ public class LocalConversationManager implements ConversationManager, Serializab
 		ConversationLock lock = getConversationEntry(conversationId).getLock();
 		try {
 			lock.unlock();
-		} catch (Exception e) {
-			
+		}
+		catch (Exception e) {
+
 		}
 		conversations.remove(conversationId);
 		conversationIds.remove(conversationId);
+		getUserContext().remove(conversationId);
 	}
 
 	private ConversationEntry getConversationEntry(ConversationId conversationId) {
 		return ((ConversationEntry)conversations.get(conversationId));
+	}
+
+	private UserConversationContext getUserContext() {
+		UserConversationContext context = (UserConversationContext)ExternalContextHolder.getExternalContext()
+				.getSessionMap().get(USER_CONVERSATION_CONTEXT);
+		if (context == null) {
+			context = createUserContext();
+		}
+		return context;
+	}
+
+	private UserConversationContext createUserContext() {
+		UserConversationContext context = new UserConversationContext(this);
+		ExternalContextHolder.getExternalContext().getSessionMap().put(USER_CONVERSATION_CONTEXT, context);
+		return context;
 	}
 
 	/**
@@ -217,9 +252,11 @@ public class LocalConversationManager implements ConversationManager, Serializab
 		public void unlock() {
 			try {
 				LocalConversationManager.this.getLock(conversationId).unlock();
-			} catch (NoSuchConversationException e) {
+			}
+			catch (NoSuchConversationException e) {
 				// ignore
 			}
 		}
 	}
+
 }
