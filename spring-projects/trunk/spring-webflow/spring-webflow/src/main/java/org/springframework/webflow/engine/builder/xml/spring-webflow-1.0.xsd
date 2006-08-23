@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns="http://www.springframework.org/schema/webflow" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.springframework.org/schema/webflow" version="1.0">
+
+	<!-- Base types -->
+	<xsd:complexType name="identifiedType" abstract="true">
+		<xsd:attribute name="id" type="xsd:ID" />
+	</xsd:complexType>
+
+	<xsd:simpleType name="scopeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="request" />
+			<xsd:enumeration value="flow" />
+			<xsd:enumeration value="conversation" />
+			<xsd:enumeration value="default" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<!-- Top level element -->
+	<xsd:element name="flow">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="attribute" minOccurs="0" maxOccurs="unbounded" />
+				<xsd:element ref="var" minOccurs="0" maxOccurs="unbounded" />
+				<xsd:element ref="input-mapper" minOccurs="0" />
+				<xsd:element ref="start-actions" minOccurs="0" />
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element ref="action-state" />
+					<xsd:element ref="view-state" />
+					<xsd:element ref="decision-state" />
+					<xsd:element ref="subflow-state" />
+					<xsd:element ref="end-state" />
+				</xsd:choice>
+				<xsd:element ref="global-transitions" minOccurs="0" />
+				<xsd:element ref="end-actions" minOccurs="0" />
+				<xsd:element ref="output-mapper" minOccurs="0" maxOccurs="unbounded" />
+				<xsd:element ref="exception-handler" minOccurs="0" maxOccurs="unbounded" />
+				<xsd:element ref="import" minOccurs="0" maxOccurs="unbounded" />
+				<xsd:element ref="inline-flow" minOccurs="0" maxOccurs="unbounded" />
+			</xsd:sequence>
+			<xsd:attribute name="start-state" type="xsd:IDREF" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<!-- Sub elements -->
+	<xsd:element name="input-mapper">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="mapping" maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="mapping">
+		<xsd:complexType>
+			<xsd:attribute name="source" type="xsd:string" use="required" />
+			<xsd:attribute name="target" type="xsd:string" />
+			<xsd:attribute name="target-collection" type="xsd:string" />
+			<xsd:attribute name="from" type="xsd:string" />
+			<xsd:attribute name="to" type="xsd:string" />
+			<xsd:attribute name="required" type="xsd:boolean" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="attribute">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="value" minOccurs="0" />
+			</xsd:sequence>
+			<xsd:attribute name="name" type="xsd:string" use="required" />
+			<xsd:attribute name="type" type="xsd:string" />
+			<xsd:attribute name="value" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="value">
+		<xsd:complexType>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded" />
+			<xsd:attribute name="type" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="var">
+		<xsd:complexType>
+			<xsd:attribute name="name" type="xsd:string" use="required" />
+			<xsd:attribute name="scope" type="scopeType" default="default" />
+			<xsd:attribute name="class" type="xsd:string" />
+			<xsd:attribute name="bean" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="start-actions">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="action" maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="action-state">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="identifiedType">
+					<xsd:sequence>
+						<xsd:element ref="attribute" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:element ref="entry-actions" minOccurs="0" />
+						<xsd:element ref="action" maxOccurs="unbounded" />
+						<xsd:element ref="transition" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:element ref="exit-actions" minOccurs="0" />
+						<xsd:element ref="exception-handler" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="action">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="bean-method" minOccurs="0" />
+				<xsd:element ref="attribute" minOccurs="0" maxOccurs="unbounded" />
+			</xsd:sequence>
+			<xsd:attribute name="bean" type="xsd:string" />
+			<xsd:attribute name="name" type="xsd:string" />
+			<xsd:attribute name="method" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="bean-method">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="argument" minOccurs="0" maxOccurs="unbounded" />
+				<xsd:element ref="result" minOccurs="0" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="argument">
+		<xsd:complexType>
+			<xsd:attribute name="value" type="xsd:ID" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="result">
+		<xsd:complexType>
+			<xsd:attribute name="name" type="xsd:string" />
+			<xsd:attribute name="scope" type="scopeType" default="default" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="transition">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="attribute" minOccurs="0" maxOccurs="unbounded" />
+				<xsd:element ref="action" minOccurs="0" maxOccurs="unbounded" />
+			</xsd:sequence>
+			<xsd:attribute name="on" type="xsd:string" />
+			<xsd:attribute name="on-exception" type="xsd:string" />
+			<xsd:attribute name="to" type="xsd:IDREF" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="view-state">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="identifiedType">
+					<xsd:sequence>
+						<xsd:element ref="attribute" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:element ref="entry-actions" minOccurs="0" />
+						<xsd:element ref="render-actions" minOccurs="0" />
+						<xsd:element ref="transition" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:element ref="exit-actions" minOccurs="0" />
+						<xsd:element ref="exception-handler" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+					<xsd:attribute name="view" type="xsd:string" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="entry-actions">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="action" maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="render-actions">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="action" maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="exit-actions">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="action" maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="decision-state">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="identifiedType">
+					<xsd:sequence>
+						<xsd:element ref="attribute" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:element ref="entry-actions" minOccurs="0" />
+						<xsd:element ref="if" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:element ref="exit-actions" minOccurs="0" />
+						<xsd:element ref="exception-handler" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="if">
+		<xsd:complexType>
+			<xsd:attribute name="test" type="xsd:string" use="required" />
+			<xsd:attribute name="then" type="xsd:string" use="required" />
+			<xsd:attribute name="else" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="subflow-state">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="identifiedType">
+					<xsd:sequence>
+						<xsd:element ref="attribute" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:element ref="entry-actions" minOccurs="0" />
+						<xsd:element ref="attribute-mapper" minOccurs="0" />
+						<xsd:element ref="transition" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:element ref="exit-actions" minOccurs="0" />
+						<xsd:element ref="exception-handler" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+					<xsd:attribute name="flow" type="xsd:string" use="required" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="attribute-mapper">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="input-mapper" minOccurs="0" />
+				<xsd:element ref="output-mapper" minOccurs="0" />
+			</xsd:sequence>
+			<xsd:attribute name="bean" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="end-state">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="identifiedType">
+					<xsd:sequence>
+						<xsd:element ref="attribute" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:element ref="entry-actions" minOccurs="0" />
+						<xsd:element ref="output-mapper" minOccurs="0" />
+						<xsd:element ref="exception-handler" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+					<xsd:attribute name="view" type="xsd:string" />
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="global-transitions">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="transition" maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="end-actions">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="action" maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="output-mapper">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="mapping" maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="exception-handler">
+		<xsd:complexType>
+			<xsd:attribute name="bean" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="import">
+		<xsd:complexType>
+			<xsd:attribute name="resource" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="inline-flow">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="identifiedType">
+					<xsd:sequence>
+						<xsd:element ref="flow" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>
