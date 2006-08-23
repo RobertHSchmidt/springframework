@@ -4,17 +4,23 @@
 
 <flow start-state="actionState1">
 	<action-state id="actionState1">
-		<action bean="pojoAction" method="enumMethod" result-name="result1" result-scope="request"/>
+		<bean-action bean="pojoAction" method="enumMethod">
+			<method-result name="result1" scope="request"/>
+		</bean-action>
 		<transition on="success" to="actionState2"/>
 	</action-state>
 
 	<action-state id="actionState2">
-		<action bean="pojoAction" method="enumMethod" result-name="result2" result-scope="flow"/>
+		<bean-action bean="pojoAction" method="enumMethod">
+			<method-result name="result2" scope="flow"/>		
+		</bean-action>
 		<transition on="success" to="actionState3"/>
 	</action-state>
 
 	<action-state id="actionState3">
-		<action bean="pojoAction" method="enumMethod" result-name="result3" result-scope="conversation"/>
+		<bean-action bean="pojoAction" method="enumMethod">
+			<method-result name="result3" scope="conversation"/>
+		</bean-action>
 		<transition on="success" to="pause"/>
 	</action-state>
 	
