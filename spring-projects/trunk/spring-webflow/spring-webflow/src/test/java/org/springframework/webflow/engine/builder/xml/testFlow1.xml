@@ -97,13 +97,13 @@
  	</decision-state>
 
  	<action-state id="actionState4">
- 		<action bean="pojoAction" method="booleanMethod"/>
+ 		<bean-action bean="pojoAction" method="booleanMethod"/>
 		<transition on="yes" to="actionState5"/>
 		<transition on="no" to="endState2"/>
  	</action-state>
 
  	<action-state id="actionState5">
- 		<action bean="pojoAction" method="enumMethod"/>
+ 		<bean-action bean="pojoAction" method="enumMethod"/>
 		<transition on="created" to="endState1"/>
 		<transition on="starting" to="endState2"/>
  	</action-state>

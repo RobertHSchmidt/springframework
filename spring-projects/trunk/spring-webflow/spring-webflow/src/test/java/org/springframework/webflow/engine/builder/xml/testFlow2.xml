@@ -5,7 +5,8 @@
 <flow start-state="actionState1">
 
 	<action-state id="actionState1">
-		<action bean="action1"/> <!-- defined in flow-local bean factory -->
+   	    <!-- defined in flow-local bean factory -->
+		<action bean="action1"/>
 		<transition on="success" to="subFlowState1"/>
 	</action-state>
 
@@ -21,8 +22,10 @@
 		<flow start-state="subActionState1">
 			
 			<action-state id="subActionState1">
-				<action bean="action1"/> <!-- defined in parent flow-local bean factory -->
-				<action name="foo" bean="subAction1"/> <!-- defined in flow-local bean factory -->
+                <!-- defined in parent flow-local bean factory -->			
+				<action bean="action1"/>
+                <!-- defined in flow-local bean factory -->				
+				<action name="foo" bean="subAction1"/>
 				<transition on="foo.success" to="end"/>
 			</action-state>
 			
