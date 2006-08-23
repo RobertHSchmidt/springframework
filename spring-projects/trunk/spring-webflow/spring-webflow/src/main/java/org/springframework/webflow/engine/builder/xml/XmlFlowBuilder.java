@@ -42,6 +42,8 @@ import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.mapping.RequiredMapping;
 import org.springframework.binding.method.MethodSignature;
+import org.springframework.binding.method.Parameter;
+import org.springframework.binding.method.Parameters;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -85,8 +87,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *        &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *        &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *      &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *      &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -152,9 +154,13 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private static final String METHOD_ATTRIBUTE = "method";
 
-	private static final String RESULT_NAME_ATTRIBUTE = "result-name";
+	private static final String BEAN_METHOD_ELEMENT = "bean-method";
 
-	private static final String RESULT_SCOPE_ATTRIBUTE = "result-scope";
+	private static final String ARGUMENT_ELEMENT = "argument";
+
+	private static final String EXPRESSION_ATTRIBUTE = "expression";
+
+	private static final String RESULT_ELEMENT = "result";
 
 	private static final String DEFAULT_VALUE = "default";
 
@@ -734,28 +740,45 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private Action parseBeanInvokingAction(String beanId, Element element) {
-		Assert.isTrue(element.hasAttribute(METHOD_ATTRIBUTE),
-				"The method attribute is required for bean invoking actions");
-		MethodSignature methodSignature = (MethodSignature)fromStringTo(MethodSignature.class).execute(
-				element.getAttribute(METHOD_ATTRIBUTE));
-		String resultName = null;
-		if (element.hasAttribute(RESULT_NAME_ATTRIBUTE)) {
-			resultName = element.getAttribute(RESULT_NAME_ATTRIBUTE);
-		}
-		ScopeType resultScope = null;
-		if (element.hasAttribute(RESULT_SCOPE_ATTRIBUTE)
-				&& !element.getAttribute(RESULT_SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
-			resultScope = (ScopeType)fromStringTo(ScopeType.class)
-					.execute(element.getAttribute(RESULT_SCOPE_ATTRIBUTE));
-		}
-		MethodResultSpecification resultSpecification = null;
-		if (resultName != null) {
-			resultSpecification = new MethodResultSpecification(resultName, (resultScope != null ? resultScope
-					: ScopeType.REQUEST));
-		}
+		List beanMethods = DomUtils.getChildElementsByTagName(element, BEAN_METHOD_ELEMENT);
+		Assert.isTrue(!beanMethods.isEmpty(), "The bean-method tag is required for bean-invoking actions");
+		Element beanMethod = (Element)beanMethods.get(0);
+		Parameters parameters = parseMethodParameters(beanMethod);
+		MethodSignature methodSignature = new MethodSignature(beanMethod.getAttribute(NAME_ATTRIBUTE), parameters);
+		MethodResultSpecification resultSpecification = parseMethodResultSpecification(beanMethod);
 		return getBeanInvokingActionFactory().createBeanInvokingAction(beanId,
 				getLocalFlowServiceLocator().getBeanFactory(), methodSignature, resultSpecification,
 				getLocalFlowServiceLocator().getConversionService(), null);
+	}
+
+	private Parameters parseMethodParameters(Element element) {
+		List arguments = DomUtils.getChildElementsByTagName(element, ARGUMENT_ELEMENT);
+		if (arguments.isEmpty()) {
+			return Parameters.NONE;
+		}
+		Parameters parameters = new Parameters();
+		Iterator it = arguments.iterator();
+		ExpressionParser parser = getLocalFlowServiceLocator().getExpressionParser();
+		while (it.hasNext()) {
+			Element argumentElement = (Element)it.next();
+			Expression name = parser.parseExpression(argumentElement.getAttribute(EXPRESSION_ATTRIBUTE));
+			parameters.add(new Parameter(null, name));
+		}
+		return parameters;
+	}
+
+	private MethodResultSpecification parseMethodResultSpecification(Element element) {
+		List results = DomUtils.getChildElementsByTagName(element, RESULT_ELEMENT);
+		if (results.isEmpty()) {
+			return null;
+		}
+		Element result = (Element)results.get(0);
+		String resultName = result.getAttribute(NAME_ATTRIBUTE);
+		ScopeType resultScope = null;
+		if (element.hasAttribute(SCOPE_ATTRIBUTE) && !element.getAttribute(SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
+			resultScope = (ScopeType)fromStringTo(ScopeType.class).execute(element.getAttribute(SCOPE_ATTRIBUTE));
+		}
+		return new MethodResultSpecification(resultName, (resultScope != null ? resultScope : ScopeType.REQUEST));
 	}
 
 	private BeanInvokingActionFactory getBeanInvokingActionFactory() {
