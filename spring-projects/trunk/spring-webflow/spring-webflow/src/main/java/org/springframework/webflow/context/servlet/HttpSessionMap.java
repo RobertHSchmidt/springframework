@@ -19,11 +19,16 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionBindingListener;
 
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.context.support.SharedMap;
 import org.springframework.webflow.context.support.StringKeyedMapAdapter;
 import org.springframework.webflow.core.collection.CollectionUtils;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.core.collection.AttributeMapBindingEvent;
+import org.springframework.webflow.core.collection.AttributeMapBindingListener;
 
 /**
  * A Shared Map backed by the Servlet HTTP session, for accessing session scoped
@@ -59,7 +64,13 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 	}
 
 	protected void setAttribute(String key, Object value) {
-		request.getSession(true).setAttribute(key, value);
+		HttpSession session = getSession();
+		if (value instanceof AttributeMapBindingListener) {
+			session.setAttribute(key, new HttpSessionMapBindingListener((AttributeMapBindingListener)value));
+		}
+		else {
+			session.setAttribute(key, value);
+		}
 	}
 
 	protected void removeAttribute(String key) {
@@ -71,12 +82,34 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 
 	protected Iterator getAttributeNames() {
 		HttpSession session = getSession();
-		return session == null ? CollectionUtils.EMPTY_ITERATOR : CollectionUtils.toIterator(session.getAttributeNames());
+		return session == null ? CollectionUtils.EMPTY_ITERATOR : CollectionUtils.toIterator(session
+				.getAttributeNames());
 	}
 
 	public Object getMutex() {
 		HttpSession session = request.getSession(true);
 		Object mutex = session.getAttribute(WebUtils.SESSION_MUTEX_ATTRIBUTE);
 		return mutex != null ? mutex : session;
+	}
+
+	private class HttpSessionMapBindingListener implements HttpSessionBindingListener {
+		private AttributeMapBindingListener listener;
+
+		public HttpSessionMapBindingListener(AttributeMapBindingListener listner) {
+			this.listener = listner;
+		}
+
+		public void valueBound(HttpSessionBindingEvent event) {
+			listener.valueBound(getContextBindingEvent(event));
+		}
+
+		public void valueUnbound(HttpSessionBindingEvent event) {
+			listener.valueUnbound(getContextBindingEvent(event));
+		}
+
+		private AttributeMapBindingEvent getContextBindingEvent(HttpSessionBindingEvent event) {
+			return new AttributeMapBindingEvent(new LocalAttributeMap(HttpSessionMap.this), event.getName(), listener);
+		}
+
 	}
 }
