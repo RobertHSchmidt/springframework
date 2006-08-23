@@ -33,13 +33,13 @@
 
 	A flow may be annotated with attributes that define custom characteristics that
 	can be used to affect flow execution.
+
+	A flow can instantiate a set of application variables when started.  It may
+	be configured to handle exceptions thrown by its states during execution.
 	
 	A flow may map input provided by callers that start it, and return output 
 	to callers that end it.  In addition, a flow may execute custom behavior
 	at start time and end time.
-	
-	A flow can instantiate a set of application variables when started.  It may
-	be configured to handle exceptions thrown by its states during execution.
 	
 	A flow may define transitions shared by all states.
 	
@@ -343,10 +343,10 @@
     Examples:
     
    	A flow scope argument:
-        <argument expression="flowScope.order"/> (passes in the value of the 'order' attribute in flow scope)
+      <argument expression="flowScope.order"/> (passes in the value of the 'order' attribute in flow scope)
 
     A constant argument:
-        <argument expression="'a constant'"/> (passes in the 'a constant' literal)
+      <argument expression="'a constant'"/> (passes in the 'a constant' literal)
 -->
 <!ELEMENT argument EMPTY>
 
