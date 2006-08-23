@@ -741,7 +741,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private Action parseBeanInvokingAction(String beanId, Element element) {
 		List beanMethods = DomUtils.getChildElementsByTagName(element, BEAN_METHOD_ELEMENT);
-		Assert.isTrue(!beanMethods.isEmpty(), "The bean-method tag is required for bean-invoking actions");
+		Assert.isTrue(!beanMethods.isEmpty(), "The bean-method element is required for bean-invoking actions");
 		Element beanMethod = (Element)beanMethods.get(0);
 		Parameters parameters = parseMethodParameters(beanMethod);
 		MethodSignature methodSignature = new MethodSignature(beanMethod.getAttribute(NAME_ATTRIBUTE), parameters);
@@ -752,12 +752,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private Parameters parseMethodParameters(Element element) {
-		List arguments = DomUtils.getChildElementsByTagName(element, ARGUMENT_ELEMENT);
-		if (arguments.isEmpty()) {
+		List argumentElements = DomUtils.getChildElementsByTagName(element, ARGUMENT_ELEMENT);
+		if (argumentElements.isEmpty()) {
 			return Parameters.NONE;
 		}
 		Parameters parameters = new Parameters();
-		Iterator it = arguments.iterator();
+		Iterator it = argumentElements.iterator();
 		ExpressionParser parser = getLocalFlowServiceLocator().getExpressionParser();
 		while (it.hasNext()) {
 			Element argumentElement = (Element)it.next();
