@@ -14,16 +14,18 @@
 			<xsd:complexContent>
 				<xsd:extension base="beans:identifiedType">
 					<xsd:sequence>
-						<xsd:element name="location" type="locationType" maxOccurs="unbounded" />
+						<xsd:element ref="location" maxOccurs="unbounded" />
 					</xsd:sequence>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:complexType name="locationType">
-		<xsd:attribute name="path" type="xsd:string" use="required" />
-	</xsd:complexType>
+	<xsd:element name="location">
+		<xsd:complexType>
+			<xsd:attribute name="path" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
 
 	<!-- Executor Type -->
 	<xsd:element name="executor">
@@ -31,8 +33,8 @@
 			<xsd:complexContent>
 				<xsd:extension base="beans:identifiedType">
 					<xsd:sequence>
-						<xsd:element name="execution-attributes" type="executionAttributesType" minOccurs="0" />
-						<xsd:element name="listeners" type="listenersType" minOccurs="0" />
+						<xsd:element ref="execution-attributes" minOccurs="0" />
+						<xsd:element ref="listeners" minOccurs="0" />
 					</xsd:sequence>
 					<xsd:attribute name="repositoryType" default="default">
 						<xsd:simpleType>
@@ -49,27 +51,35 @@
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:complexType name="listenersType">
-		<xsd:sequence>
-			<xsd:element name="listener" type="listenerType" maxOccurs="unbounded" />
-		</xsd:sequence>
-	</xsd:complexType>
+	<xsd:element name="listeners">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="listener" maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
 
-	<xsd:complexType name="listenerType">
-		<xsd:attribute name="ref" type="xsd:string" use="required" />
-		<xsd:attribute name="criteria" type="xsd:string" default="*" />
-	</xsd:complexType>
+	<xsd:element name="listener">
+		<xsd:complexType>
+			<xsd:attribute name="ref" type="xsd:string" use="required" />
+			<xsd:attribute name="criteria" type="xsd:string" default="*" />
+		</xsd:complexType>
+	</xsd:element>
 
-	<xsd:complexType name="executionAttributesType">
-		<xsd:sequence>
-			<xsd:element name="attribute" type="attributeType" maxOccurs="unbounded" />
-		</xsd:sequence>
-	</xsd:complexType>
+	<xsd:element name="execution-attributes">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="attribute" maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
 
-	<xsd:complexType name="attributeType">
-		<xsd:attribute name="name" type="xsd:string" use="required" />
-		<xsd:attribute name="type" type="xsd:string" use="required" />
-		<xsd:attribute name="value" type="xsd:string" use="required" />
-	</xsd:complexType>
+	<xsd:element name="attribute">
+		<xsd:complexType>
+			<xsd:attribute name="name" type="xsd:string" use="required" />
+			<xsd:attribute name="type" type="xsd:string" use="required" />
+			<xsd:attribute name="value" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
 
 </xsd:schema>
