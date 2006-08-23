@@ -198,7 +198,7 @@
 <!--
 	Defines flow startup logic to execute. This logic will always execute when this flow is started.
 -->
-<!ELEMENT start-actions ( action+ )>
+<!ELEMENT start-actions ( action | bean-action )+>
 
 <!--
 	Defines an action state, a state where one or more actions are executed.
@@ -206,7 +206,7 @@
 	An action state is a transitionable state.  A transition out of this state 
 	is driven by the result of action execution (e.g. success, error).
 -->
-<!ELEMENT action-state ( attribute*, entry-actions?, action+, transition*, exit-actions?, exception-handler* )>
+<!ELEMENT action-state ( attribute*, entry-actions?, (action | bean-action)+, transition*, exit-actions?, exception-handler* )>
 
 <!--
 	The unique identifier of this action state; must be unique to this flow.
@@ -214,31 +214,28 @@
 <!ATTLIST action-state id ID #REQUIRED>
 
 <!--
-	Defines a single action to be executed. An action is a command object that executes
-	arbitrary behavior.
+	Defines a single action to be executed. An action is a Webflow-specific 
+	command object that executes arbitrary behavior.
 	
 	The action referenced by this element must implement the org.springframework.webflow.Action 
-	interface.  If the referenced action is a POJO that does not implement the Action interface
-	directly, Spring Web Flow will automatically adapt a method on that POJO to the Action contract.
-	See this element's 'method' attribute for more information.
+	interface.  The action may be a MultiAction and if so the 'method' attribute can be used to 
+	specify the target method to invoke.
 	
 	An action may be annotated with attributes that can be used to affect the action's execution.
 -->
-<!ELEMENT action ( bean-method?, attribute* )>
+<!ELEMENT action ( attribute* )>
 
 <!--
 	The identifier of the action implementation to execute, typically the id of a bean
 	registered in a Spring BeanFactory.
 	
-	If the referenced bean implements the org.springframework.webflow.Action interface
-	directly, it is retrieved from the factory and used as is.  If the referenced bean is
-	a POJO that does not implement this interface, the method on the POJO referenced by the
-	'bean-method' element is adapted to the Action interface automatically.  See the
-	'bean-method' element for more information.
+	If the referenced bean implements the org.springframework.webflow.Action interface it is
+	retrieved from the factory and used as is.  If the bean is not an Action an
+	exception is thrown.
 	
 	This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
 -->
-<!ATTLIST action bean CDATA #IMPLIED>
+<!ATTLIST action bean CDATA #REQUIRED>
 
 <!--
 	An optional name qualifier for this action. When specified this action will
@@ -276,41 +273,67 @@
 <!ATTLIST action method CDATA #IMPLIED>
 
 <!--
-	The specification for the method to invoke on this action, whose implementation is 
-	expected to be an arbitrary bean (or "POJO": Plain Old Java Object).
+	Defines a single method on a bean to execute as an action.
+	
+	The bean to invoke is typically an arbitrary "POJO" (Plain Old Java Object) with no
+	dependency on Spring Web Flow.
 	
 	Use this element when the logic to invoke is encapsulated within an object with
 	no dependency on Spring Web Flow.  This element can be used to invoke *any* public
-	method on the bean's implementation.
+	method on any bean.
 
 	If the target method accepts arguments they may be specified in order by using the 
-	'argument' sub-element.  If the target method returns a value it may be exposed to the flow 
-	using the 'result' sub-element.
+	'method-arguments' sub-element.
+	
+	If the target method returns a value that value may be exposed to the flow using
+	the 'method-result' sub-element.
 	
 	For example:
 
-        <action bean="orderClerk">
-        	<bean-method name="placeOrder">
-	            <argument expression="flowScope.order"/>
-    	        <result name="orderConfirmation"/>
-    	    </bean-method>
-   	    </action>
+       	<bean-action bean="orderClerk" method="placeOrder">
+            <method-arguments>
+                <argument expression="flowScope.order"/>
+            </method-arguments>
+   	        <method-result name="orderConfirmation"/>
+   	    </bean-action>
 
     The above example instructs this flow to invoke the "placeOrder" method on the "orderClerk" bean,
     passing the value of "flowScope.order" as the method argument.  After method invocation the
     method return value is exposed in the default scope under the name "orderConfirmation".
 -->
-<!ELEMENT bean-method ( argument*, result? )>
+<!ELEMENT bean-action ( method-arguments?, method-result?, attribute* )>
 
 <!--
-    The value expression for this bean method argument.
+	The identifier of the the bean to invoke, typically a singleton bean instance registered in
+	the Spring BeanFactory.  
+
+    It is expected the referenced bean be a simple POJO that does not implement the Spring Web Flow 
+    Action interface.   The method to invoke, specified using the 'method' attribute,
+    will be adapted to the Action interface automatically.
+    
+	This is similar to the <ref bean="myBean"/> notation of the Spring beans DTD.
 -->
-<!ATTLIST bean-method name CDATA #REQUIRED>
+<!ATTLIST bean-action bean CDATA #REQUIRED>
 
 <!--
-    The value expression for this bean method argument.
+	The name of the method to invoke on this bean.
+	
+	If the method has parameters the arguments to those parameters should be specified using
+	the 'method-arguments' element.
+	
+	If the method returns a value that should be exposed to this flow,
+	the 'method-result' element should be specified.
 -->
-<!ATTLIST argument expression CDATA #REQUIRED>
+<!ATTLIST bean-action method CDATA #REQUIRED>
+
+<!--
+	Defines the expressions used to resolve the arguments to the bean-action method to invoke.
+	Use this when the target method declares one or more parameters.
+	
+	The order of the argument expression list is significant.
+-->
+<!ELEMENT method-arguments ( argument+ )>
+
 <!--
     An argument expression for this bean method.  The expression is evaluated against
     this flow's request context to resolve the argument value.
@@ -337,35 +360,35 @@
 	
 	For example:
 	
-        <action bean="orderClerk">
-        	<bean-method name="placeOrder">
-	            <argument expression="flowScope.order"/>
-    	        <result name="orderConfirmation"/>
-    	    </bean-method>
-   	    </action>
+       	<bean-action bean="orderClerk" method="placeOrder">
+            <method-arguments>
+                <argument expression="flowScope.order"/>
+            </method-arguments>
+   	        <method-result name="orderConfirmation"/>
+   	    </bean-action>
         
     ... exposes the return value of the 'placeOrder(Order)' method in the default scope 
     under the attribute name 'orderConfirmation'.
 -->
-<!ELEMENT result EMPTY>
+<!ELEMENT method-result EMPTY>
 
 <!--
 	The name of the attribute to bind this result to
 -->
-<!ATTLIST result name CDATA #REQUIRED>
+<!ATTLIST method-result name CDATA #REQUIRED>
 
 <!--
 	The scope of the attribute that will expose the return value of the invoked bean method.
 
 	For example:
-	
-        <action bean="bookingAgent">
-            <bean-method name="suggestItineraries">
-                <argument expression="flowScope.trip"/>
-                <result name="itineraries" scope="flow"/>
-            </bean-method>
-        </action>
 
+       	<bean-action bean="orderClerk" method="suggestItineraries">
+            <method-arguments>
+                <argument expression="flowScope.trip"/>
+            </method-arguments>
+   	        <method-result name="itineraries" scope="flow"/>
+   	    </bean-action>
+   	    	
     ... exposes the return value of the 'suggestItineraries(Trip)' method in flow scope 
     under the attribute name 'itineraries'.
 
@@ -384,7 +407,7 @@
 	      
     The default value if not specified is request scope.     
 -->
-<!ATTLIST result scope (request | flow | conversation | default) "default">
+<!ATTLIST method-result scope (request | flow | conversation | default) "default">
 
 <!--
 	Defines a transition from one state to another.
@@ -502,19 +525,19 @@
 <!--
 	Defines state entry logic to be executed. This logic will always execute when the state is entered.
 -->
-<!ELEMENT entry-actions ( action+ )>
+<!ELEMENT entry-actions ( action | bean-action )+>
 
 <!--
 	Defines view-state render logic to be executed. This logic will always execute when the state makes 
 	a view selection capable of rendering a response in the current request.
 -->
-<!ELEMENT render-actions ( action+ )>
+<!ELEMENT render-actions ( action | bean-action )+>
 
 <!--
 	Defines state exit logic to be executed. This logic will always execute when the state is exited 
 	regardless of what transition is executed.
 -->
-<!ELEMENT exit-actions ( action+ )>
+<!ELEMENT exit-actions ( action | bean-action )+>
 
 <!--
 	Defines a decision state, a state that evaluates one or more expressions or method 
@@ -708,7 +731,7 @@
 <!--
 	Defines flow ending logic to be executed. This logic will always execute when this flow is ended.
 -->
-<!ELEMENT end-actions ( action+ )>
+<!ELEMENT end-actions ( action | bean-action )+>
 
 <!--
 	The mapper that will map flow output attributes.
