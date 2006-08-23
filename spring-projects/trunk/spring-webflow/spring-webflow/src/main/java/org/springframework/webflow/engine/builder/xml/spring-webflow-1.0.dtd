@@ -303,6 +303,15 @@
 <!ELEMENT bean-method ( argument*, result? )>
 
 <!--
+    The value expression for this bean method argument.
+-->
+<!ATTLIST bean-method name CDATA #REQUIRED>
+
+<!--
+    The value expression for this bean method argument.
+-->
+<!ATTLIST argument expression CDATA #REQUIRED>
+<!--
     An argument expression for this bean method.  The expression is evaluated against
     this flow's request context to resolve the argument value.
     
