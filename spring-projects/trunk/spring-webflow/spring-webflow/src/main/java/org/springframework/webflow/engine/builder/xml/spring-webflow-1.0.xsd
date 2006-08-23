@@ -75,7 +75,7 @@
 	</xsd:element>
 
 	<xsd:element name="value">
-		<xsd:complexType>
+		<xsd:complexType mixed="true">
 			<xsd:choice minOccurs="0" maxOccurs="unbounded" />
 			<xsd:attribute name="type" type="xsd:string" />
 		</xsd:complexType>
