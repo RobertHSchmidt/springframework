@@ -87,8 +87,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *      &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *      &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -154,13 +154,13 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private static final String METHOD_ATTRIBUTE = "method";
 
-	private static final String BEAN_METHOD_ELEMENT = "bean-method";
+	private static final String BEAN_ACTION_ELEMENT = "bean-action";
 
-	private static final String ARGUMENT_ELEMENT = "argument";
+	private static final String METHOD_ARGUMENTS_ELEMENT = "method-arguments";
 
 	private static final String EXPRESSION_ATTRIBUTE = "expression";
 
-	private static final String RESULT_ELEMENT = "result";
+	private static final String METHOD_RESULT_ELEMENT = "method-result";
 
 	private static final String DEFAULT_VALUE = "default";
 
@@ -708,10 +708,15 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private AnnotatedAction[] parseAnnotatedActions(Element element) {
 		List actions = new LinkedList();
+		// parse standard actions
 		List actionElements = DomUtils.getChildElementsByTagName(element, ACTION_ELEMENT);
-		Iterator it = actionElements.iterator();
-		while (it.hasNext()) {
+		for (Iterator it = actionElements.iterator(); it.hasNext();) {
 			actions.add(parseAnnotatedAction((Element)it.next()));
+		}
+		// parse bean invoking actions
+		List beanActionElements = DomUtils.getChildElementsByTagName(element, BEAN_ACTION_ELEMENT);
+		for (Iterator it = beanActionElements.iterator(); it.hasNext();) {
+			actions.add(parseAnnotatedBeanInvokingAction((Element)it.next()));
 		}
 		return (AnnotatedAction[])actions.toArray(new AnnotatedAction[actions.size()]);
 	}
@@ -721,8 +726,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		if (element.hasAttribute(NAME_ATTRIBUTE)) {
 			annotated.setName(element.getAttribute(NAME_ATTRIBUTE));
 		}
-		if (element.hasAttribute(METHOD_ATTRIBUTE)
-				&& getLocalFlowServiceLocator().isAction(element.getAttribute(BEAN_ATTRIBUTE))) {
+		if (element.hasAttribute(METHOD_ATTRIBUTE)) {
 			annotated.setMethod(element.getAttribute(METHOD_ATTRIBUTE));
 		}
 		annotated.getAttributeMap().putAll(parseAttributes(element));
@@ -731,33 +735,36 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private Action parseAction(Element element) {
 		String actionId = element.getAttribute(BEAN_ATTRIBUTE);
-		if (getLocalFlowServiceLocator().isAction(actionId)) {
-			return getLocalFlowServiceLocator().getAction(actionId);
-		}
-		else {
-			return parseBeanInvokingAction(actionId, element);
-		}
+		return getLocalFlowServiceLocator().getAction(actionId);
 	}
 
-	private Action parseBeanInvokingAction(String beanId, Element element) {
-		List beanMethods = DomUtils.getChildElementsByTagName(element, BEAN_METHOD_ELEMENT);
-		Assert.isTrue(!beanMethods.isEmpty(), "The bean-method element is required for bean-invoking actions");
-		Element beanMethod = (Element)beanMethods.get(0);
-		Parameters parameters = parseMethodParameters(beanMethod);
-		MethodSignature methodSignature = new MethodSignature(beanMethod.getAttribute(NAME_ATTRIBUTE), parameters);
-		MethodResultSpecification resultSpecification = parseMethodResultSpecification(beanMethod);
+	private AnnotatedAction parseAnnotatedBeanInvokingAction(Element element) {
+		AnnotatedAction annotated = new AnnotatedAction(parseBeanInvokingAction(element));
+		if (element.hasAttribute(NAME_ATTRIBUTE)) {
+			annotated.setName(element.getAttribute(NAME_ATTRIBUTE));
+		}
+		annotated.getAttributeMap().putAll(parseAttributes(element));
+		return annotated;
+	}
+	
+	private Action parseBeanInvokingAction(Element element) {
+		String beanId = element.getAttribute(BEAN_ATTRIBUTE);
+		String methodName = element.getAttribute(METHOD_ATTRIBUTE);
+		Parameters parameters = parseMethodParameters(element);
+		MethodSignature methodSignature = new MethodSignature(methodName, parameters);
+		MethodResultSpecification resultSpecification = parseMethodResultSpecification(element);
 		return getBeanInvokingActionFactory().createBeanInvokingAction(beanId,
 				getLocalFlowServiceLocator().getBeanFactory(), methodSignature, resultSpecification,
 				getLocalFlowServiceLocator().getConversionService(), null);
 	}
 
 	private Parameters parseMethodParameters(Element element) {
-		List argumentElements = DomUtils.getChildElementsByTagName(element, ARGUMENT_ELEMENT);
-		if (argumentElements.isEmpty()) {
+		List argumentsElement = DomUtils.getChildElementsByTagName(element, METHOD_ARGUMENTS_ELEMENT);
+		if (argumentsElement.isEmpty()) {
 			return Parameters.NONE;
 		}
 		Parameters parameters = new Parameters();
-		Iterator it = argumentElements.iterator();
+		Iterator it = argumentsElement.iterator();
 		ExpressionParser parser = getLocalFlowServiceLocator().getExpressionParser();
 		while (it.hasNext()) {
 			Element argumentElement = (Element)it.next();
@@ -768,7 +775,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private MethodResultSpecification parseMethodResultSpecification(Element element) {
-		List results = DomUtils.getChildElementsByTagName(element, RESULT_ELEMENT);
+		List results = DomUtils.getChildElementsByTagName(element, METHOD_RESULT_ELEMENT);
 		if (results.isEmpty()) {
 			return null;
 		}
