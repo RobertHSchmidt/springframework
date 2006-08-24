@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
-	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
-	
-<flow start-state="getDetails">
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
 
     <input-mapper>
     	<mapping source="id" target="flowScope.id"/>
     </input-mapper>
-    
+
+	<start-state idref="getDetails"/>
+  
 	<action-state id="getDetails">
 		<action bean="phonebook" method="getPerson(${flowScope.id})" result-name="person"/>
 		<transition on="success" to="displayDetails"/>
