@@ -72,6 +72,7 @@ use as subflows, referred to as 'inline flows'.
 				<xsd:element ref="var" minOccurs="0" maxOccurs="unbounded" />
 				<xsd:element ref="input-mapper" minOccurs="0" />
 				<xsd:element ref="start-actions" minOccurs="0" />
+				<xsd:element ref="start-state" />
 				<xsd:choice maxOccurs="unbounded">
 					<xsd:element ref="action-state" />
 					<xsd:element ref="view-state" />
@@ -86,7 +87,20 @@ use as subflows, referred to as 'inline flows'.
 				<xsd:element ref="import" minOccurs="0" maxOccurs="unbounded" />
 				<xsd:element ref="inline-flow" minOccurs="0" maxOccurs="unbounded" />
 			</xsd:sequence>
-			<xsd:attribute name="start-state" type="xsd:IDREF" use="required">
+		</xsd:complexType>
+	</xsd:element>
+
+	<!-- Sub elements -->
+	<xsd:element name="start-state">
+		<xsd:annotation>
+			<xsd:documentation>
+				<![CDATA[
+Identifies the start state of this flow.  The start state is the point where flow execution begins.
+]]>
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="id" type="xsd:IDREF" use="required">
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
@@ -98,7 +112,6 @@ The identifier of the start state of this flow.  The start state is the point wh
 		</xsd:complexType>
 	</xsd:element>
 
-	<!-- Sub elements -->
 	<xsd:element name="input-mapper">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -649,7 +662,20 @@ under the attribute name 'orderConfirmation'.
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-The name of the attribute to bind this result to
+The name of the attribute that will expose the return value of the target bean-action method.
+Used in conjunction with the 'scope' attribute.
+
+For example:
+
+	<bean-action bean="orderClerk" method="placeOrder">
+		<method-arguments>
+			<argument expression="flowScope.order"/>
+		</method-arguments>
+		<method-result name="orderConfirmation"/>
+	</bean-action>
+        
+... exposes the 'placeOrder(Order)' method return value in request scope 
+under the attribute name 'orderConfirmation'.
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
