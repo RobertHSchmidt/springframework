@@ -2,7 +2,7 @@
 <flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
 
-	<start-state id="actionState1" />
+	<start-state idref="actionState1" />
 
 	<action-state id="actionState1">
 		<!-- defined in flow-local bean factory -->
@@ -21,7 +21,7 @@
 	<inline-flow id="subFlow1">
 		<flow>
 
-			<start-state id="subActionState1" />
+			<start-state idref="subActionState1" />
 
 			<action-state id="subActionState1">
 				<!-- defined in parent flow-local bean factory -->

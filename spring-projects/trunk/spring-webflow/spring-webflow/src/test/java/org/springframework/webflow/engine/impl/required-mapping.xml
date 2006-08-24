@@ -6,7 +6,7 @@
 		<mapping source="id" target="flowScope.id" from="string" to="long" required="true" />
 	</input-mapper>
 
-	<start-state id="displayCustomer" />
+	<start-state idref="displayCustomer" />
 
 	<end-state id="displayCustomer" view="customer" />
 </flow>
