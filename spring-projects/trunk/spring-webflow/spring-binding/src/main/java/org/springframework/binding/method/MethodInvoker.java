@@ -72,18 +72,18 @@ public class MethodInvoker {
 	public Object invoke(MethodSignature signature, Object bean, Object parameterValueSource)
 			throws MethodInvocationException {
 		Parameters parameters = signature.getParameters();
-		Object[] parameterValues = new Object[parameters.size()];
+		Object[] arguments = new Object[parameters.size()];
 		for (int i = 0; i < parameters.size(); i++) {
 			Parameter parameter = (Parameter)parameters.getParameter(i);
-			Object parameterValue = parameter.getName().evaluateAgainst(parameterValueSource, Collections.EMPTY_MAP);
-			parameterValues[i] = applyTypeConversion(parameterValue, parameter.getType());
+			Object argument = parameter.getName().evaluateAgainst(parameterValueSource, Collections.EMPTY_MAP);
+			arguments[i] = applyTypeConversion(argument, parameter.getType());
 		}
 		Class[] parameterTypes = parameters.getTypesArray();
 		for (int i = 0; i < parameterTypes.length; i++) {
 			if (parameterTypes[i] == null) {
-				Object parameterValue = parameterValues[i];
-				if (parameterValue != null) {
-					parameterTypes[i] = parameterValue.getClass();
+				Object argument = arguments[i];
+				if (argument != null) {
+					parameterTypes[i] = argument.getClass();
 				}
 			}
 		}
@@ -92,17 +92,17 @@ public class MethodInvoker {
 			Method method = (Method)methodCache.get(key);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Invoking method with signature [" + key + "] with arguments "
-						+ StylerUtils.style(parameterValues) + " on bean [" + bean + "]");
+						+ StylerUtils.style(arguments) + " on bean [" + bean + "]");
 
 			}
-			Object returnValue = method.invoke(bean, parameterValues);
+			Object returnValue = method.invoke(bean, arguments);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Invoked method with signature [" + key + "]' returned value [" + returnValue + "]");
 			}
 			return returnValue;
 		}
 		catch (Exception e) {
-			throw new MethodInvocationException(key, parameterValues, e);
+			throw new MethodInvocationException(key, arguments, e);
 		}
 	}
 
