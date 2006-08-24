@@ -11,7 +11,7 @@
 			<xsd:annotation>
 				<xsd:documentation>
 					<![CDATA[
-The unique identifier of this action state; must be unique to this flow.
+The unique identifier of this state; must be unique to this flow.
 ]]>
 				</xsd:documentation>
 			</xsd:annotation>
