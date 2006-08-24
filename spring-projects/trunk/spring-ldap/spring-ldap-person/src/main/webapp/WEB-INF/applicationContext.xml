@@ -35,7 +35,7 @@
 		-->
 	</bean>
 	
-	<bean id="acegiAuthenticationSource" class="org.springframework.ldap.support.acegi.AcegiAuthenticationSource" />
+	<bean id="acegiAuthenticationSource" class="org.springframework.ldap.support.authentication.AcegiAuthenticationSource" />
 	
 	<bean id="ldapOperations" class="org.springframework.ldap.LdapTemplate">
 		<constructor-arg ref="contextSource" />
