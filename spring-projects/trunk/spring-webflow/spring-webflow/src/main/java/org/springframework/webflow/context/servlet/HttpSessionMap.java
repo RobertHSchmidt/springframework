@@ -72,7 +72,7 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 	}
 
 	protected void setAttribute(String key, Object value) {
-		HttpSession session = getSession();
+		HttpSession session = request.getSession(true);
 		if (value instanceof AttributeMapBindingListener) {
 			session.setAttribute(key, new HttpSessionMapBindingListener((AttributeMapBindingListener)value));
 		}
@@ -118,6 +118,5 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 		private AttributeMapBindingEvent getContextBindingEvent(HttpSessionBindingEvent event) {
 			return new AttributeMapBindingEvent(new LocalAttributeMap(HttpSessionMap.this), event.getName(), listener);
 		}
-
 	}
 }
