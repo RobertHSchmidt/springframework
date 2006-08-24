@@ -14,7 +14,7 @@
 		<action bean="action1" />
 	</start-actions>
 
-	<start-state id="actionState1" />
+	<start-state idref="actionState1" />
 
 	<action-state id="actionState1">
 		<attribute name="propBoolean" value="true" type="boolean" />
@@ -132,7 +132,7 @@
 			<start-actions>
 				<action bean="action1" />
 			</start-actions>
-			<start-state id="end" />
+			<start-state idref="end" />
 			<end-state id="end">
 				<output-mapper>
 					<mapping source="flowScope.name" target="name" />

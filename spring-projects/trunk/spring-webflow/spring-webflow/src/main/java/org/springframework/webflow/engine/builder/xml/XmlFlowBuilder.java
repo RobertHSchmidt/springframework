@@ -141,6 +141,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	// recognized XML elements and attributes
 
 	private static final String ID_ATTRIBUTE = "id";
+	
+	private static final String IDREF_ATTRIBUTE = "idref";
 
 	private static final String BEAN_ATTRIBUTE = "bean";
 
@@ -764,7 +766,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		Element startStateElement = DomUtils.getChildElementByTagName(element, START_STATE_ELEMENT);
 
 		if (startStateElement != null) {
-			return startStateElement.getAttribute(ID_ATTRIBUTE);
+			return startStateElement.getAttribute(IDREF_ATTRIBUTE);
 		}
 		else {
 			return element.getAttribute(START_STATE_ATTRIBUTE);

@@ -100,7 +100,7 @@ Identifies the start state of this flow.  The start state is the point where flo
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:attribute name="id" type="xsd:IDREF" use="required">
+			<xsd:attribute name="idref" type="xsd:IDREF" use="required">
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
