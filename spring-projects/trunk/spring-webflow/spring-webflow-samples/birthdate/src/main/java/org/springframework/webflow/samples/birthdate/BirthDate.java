@@ -25,9 +25,9 @@ public class BirthDate implements Serializable {
 	private Date date;
 
 	private boolean sendCard;
-	
+
 	private String emailAddress;
-	
+
 	public String getName() {
 		return name;
 	}
