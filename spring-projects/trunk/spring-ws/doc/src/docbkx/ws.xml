@@ -118,7 +118,7 @@
                 to a
                 sender side SOAP Fault with a fault string "Invalid request".
                 If any other exception occurs, it will return the default fault: a server side fault with fault string
-                "Invalid request".
+                "Server error".
                 Refer to the Javadoc of
                 <classname>SoapFaultDefinitionEditor</classname>
                 to read more about the exact
