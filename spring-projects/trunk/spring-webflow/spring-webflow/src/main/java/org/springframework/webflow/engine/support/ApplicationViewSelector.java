@@ -23,6 +23,7 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.engine.ViewSelector;
+import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.ApplicationView;
@@ -98,17 +99,12 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	}
 
 	public ViewSelection makeEntrySelection(RequestContext context) {
-		if (redirect || alwaysRedirectOnPause(context)) {
+		if (shouldRedirect(context)) {
 			return FlowExecutionRedirect.INSTANCE;
 		}
 		else {
 			return makeRefreshSelection(context);
 		}
-	}
-
-	private boolean alwaysRedirectOnPause(RequestContext context) {
-		return ((Boolean)context.getFlowExecutionContext().getAttributes().getBoolean(
-				ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE, Boolean.FALSE)).booleanValue();
 	}
 
 	public ViewSelection makeRefreshSelection(RequestContext context) {
@@ -138,6 +134,15 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 		return new ApplicationView(viewName, context.getModel().asMap());
 	}
 
+	private boolean shouldRedirect(RequestContext context) {
+		return context.getCurrentState() instanceof ViewState && (redirect || alwaysRedirectOnPause(context));
+	}
+
+	private boolean alwaysRedirectOnPause(RequestContext context) {
+		return ((Boolean)context.getFlowExecutionContext().getAttributes().getBoolean(
+				ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE, Boolean.FALSE)).booleanValue();
+	}
+	
 	public String toString() {
 		return new ToStringCreator(this).append("viewName", viewName).append("redirect", redirect).toString();
 	}
