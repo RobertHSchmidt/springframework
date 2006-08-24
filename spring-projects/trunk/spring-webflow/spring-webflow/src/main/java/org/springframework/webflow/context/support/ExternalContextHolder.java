@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.context.support;
 
+import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
 
 /**
@@ -47,6 +48,7 @@ public final class ExternalContextHolder {
 	 * @return the current LocaleContext, or <code>null</code> if none
 	 */
 	public static ExternalContext getExternalContext() {
+		Assert.state(externalContextHolder.get() != null, "No external context is bound to this thread");
 		return (ExternalContext)externalContextHolder.get();
 	}
 
