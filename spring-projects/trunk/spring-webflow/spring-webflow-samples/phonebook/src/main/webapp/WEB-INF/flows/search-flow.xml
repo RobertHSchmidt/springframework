@@ -14,7 +14,12 @@
 	</view-state>
 
 	<action-state id="executeSearch">
-		<action bean="phonebook" method="search(${flowScope.searchCriteria})" result-name="results"/>
+		<bean-action bean="phonebook" method="search">
+			<method-arguments>
+				<argument expression="flowScope.searchCriteria"/>			
+			</method-arguments>
+			<method-result name="results"/>
+		</bean-action>
 		<transition on="success" to="displayResults"/>
 	</action-state>	
 	
