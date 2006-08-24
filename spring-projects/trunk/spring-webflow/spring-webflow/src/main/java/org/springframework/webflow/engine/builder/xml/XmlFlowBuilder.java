@@ -162,6 +162,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private static final String EXPRESSION_ATTRIBUTE = "expression";
 
+	private static final String PARAMETER_TYPE_ATTRIBUTE = "parameter-type";
+
 	private static final String METHOD_RESULT_ELEMENT = "method-result";
 
 	private static final String DEFAULT_VALUE = "default";
@@ -773,8 +775,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			Element argumentElement = (Element)it.next();
 			Expression name = parser.parseExpression(argumentElement.getAttribute(EXPRESSION_ATTRIBUTE));
 			Class type = null;
-			if (argumentElement.hasAttribute(TYPE_ATTRIBUTE)) {
-				type = (Class)fromStringTo(Class.class).execute(argumentElement.getAttribute(TYPE_ATTRIBUTE));
+			if (argumentElement.hasAttribute(PARAMETER_TYPE_ATTRIBUTE)) {
+				type = (Class)fromStringTo(Class.class).execute(argumentElement.getAttribute(PARAMETER_TYPE_ATTRIBUTE));
 			}
 			parameters.add(new Parameter(type, name));
 		}
