@@ -5,7 +5,6 @@
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-
 	<!-- 
 	  Exposes web flows for execution at a single request URL.
 	  The id of a flow to launch should be passed in by clients using
