@@ -15,6 +15,9 @@
  */
 package org.springframework.webflow.test.execution;
 
+import java.io.File;
+
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
@@ -153,4 +156,33 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 */
 	protected abstract FlowBuilder createFlowBuilder(Resource resource, FlowServiceLocator serviceLocator);
 
+	/**
+	 * Convenient factory method that creates a {@link FlowDefinitionResource} from a file path.
+	 * Typically called by subclasses overriding {@link #getFlowDefinitionResource()}.
+	 * @param filePath the full path to the externalized flow definition file
+	 * @return the flow definition resource
+	 */
+	protected FlowDefinitionResource createFlowDefinitionResource(String filePath) {
+		return createFlowDefinitionResource(new File(filePath));
+	}
+
+	/**
+	 * Convenient factory method that creates a {@link FlowDefinitionResource} from a file.
+	 * Typically called by subclasses overriding {@link #getFlowDefinitionResource()}.
+	 * @param fileDirectory the directory containing the file
+	 * @param fileName the short file name
+	 * @return the flow definition resource pointing to the file
+	 */
+	protected FlowDefinitionResource createFlowDefinitionResource(String fileDirectory, String fileName) {
+		return createFlowDefinitionResource(new File(fileDirectory, fileName));
+	}
+	
+	/**
+	 * Convenient factory method that creates a {@link FlowDefinitionResource} from a file.
+	 * @param file the file
+	 * @return the flow definition resource
+	 */
+	protected FlowDefinitionResource createFlowDefinitionResource(File file) {
+		return new FlowDefinitionResource(new FileSystemResource(file));
+	}
 }
