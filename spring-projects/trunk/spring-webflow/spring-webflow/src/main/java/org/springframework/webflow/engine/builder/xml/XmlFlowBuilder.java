@@ -87,8 +87,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *       &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *       &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *        &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *        &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -772,7 +772,11 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		while (it.hasNext()) {
 			Element argumentElement = (Element)it.next();
 			Expression name = parser.parseExpression(argumentElement.getAttribute(EXPRESSION_ATTRIBUTE));
-			parameters.add(new Parameter(null, name));
+			Class type = null;
+			if (argumentElement.hasAttribute(TYPE_ATTRIBUTE)) {
+				type = (Class)fromStringTo(Class.class).execute(argumentElement.getAttribute(TYPE_ATTRIBUTE));
+			}
+			parameters.add(new Parameter(type, name));
 		}
 		return parameters;
 	}
