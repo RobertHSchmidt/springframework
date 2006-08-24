@@ -217,7 +217,7 @@ evaluates to null an error will be reported.
 		<xsd:annotation>
 			<xsd:documentation>
 				<![CDATA[
-An attribute for the containing element.
+An attribute describing this element.
 
 Attributes are simple strings or typed values that allow you to annotate an element with metadata.
 For example:
