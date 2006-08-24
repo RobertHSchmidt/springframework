@@ -1,7 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
 <xsd:schema xmlns="http://www.springframework.org/schema/webflow" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	targetNamespace="http://www.springframework.org/schema/webflow" version="1.0">
+
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
 
 	<!-- Base types -->
 	<xsd:complexType name="identifiedType" abstract="true">
@@ -16,6 +18,13 @@
 			<xsd:enumeration value="default" />
 		</xsd:restriction>
 	</xsd:simpleType>
+
+	<xsd:group name="actionTypes">
+		<xsd:choice>
+			<xsd:element ref="action" />
+			<xsd:element ref="bean-action" />
+		</xsd:choice>
+	</xsd:group>
 
 	<!-- Top level element -->
 	<xsd:element name="flow">
@@ -92,9 +101,7 @@
 
 	<xsd:element name="start-actions">
 		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element ref="action" maxOccurs="unbounded" />
-			</xsd:sequence>
+			<xsd:group ref="actionTypes" maxOccurs="unbounded" />
 		</xsd:complexType>
 	</xsd:element>
 
@@ -105,7 +112,7 @@
 					<xsd:sequence>
 						<xsd:element ref="attribute" minOccurs="0" maxOccurs="unbounded" />
 						<xsd:element ref="entry-actions" minOccurs="0" />
-						<xsd:element ref="action" maxOccurs="unbounded" />
+						<xsd:group ref="actionTypes" maxOccurs="unbounded" />
 						<xsd:element ref="transition" minOccurs="0" maxOccurs="unbounded" />
 						<xsd:element ref="exit-actions" minOccurs="0" />
 						<xsd:element ref="exception-handler" minOccurs="0" maxOccurs="unbounded" />
@@ -118,33 +125,45 @@
 	<xsd:element name="action">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="bean-method" minOccurs="0" />
 				<xsd:element ref="attribute" minOccurs="0" maxOccurs="unbounded" />
 			</xsd:sequence>
-			<xsd:attribute name="bean" type="xsd:string" />
+			<xsd:attribute name="bean" type="xsd:string" use="required" />
 			<xsd:attribute name="name" type="xsd:string" />
 			<xsd:attribute name="method" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:element name="bean-method">
+	<xsd:element name="bean-action">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="argument" minOccurs="0" maxOccurs="unbounded" />
-				<xsd:element ref="result" minOccurs="0" />
+				<xsd:element ref="method-arguments" minOccurs="0" />
+				<xsd:element ref="method-result" minOccurs="0" />
+				<xsd:element ref="attribute" minOccurs="0" maxOccurs="unbounded" />
+			</xsd:sequence>
+			<xsd:attribute name="bean" type="xsd:string" use="required" />
+			<xsd:attribute name="name" type="xsd:string" use="required" />
+			<xsd:attribute name="method" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="method-arguments">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="argument" maxOccurs="unbounded" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
 
 	<xsd:element name="argument">
 		<xsd:complexType>
-			<xsd:attribute name="value" type="xsd:ID" use="required" />
+			<xsd:attribute name="expression" type="xsd:string" use="required" />
+			<xsd:attribute name="parameter-type" type="xsd:string" />
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:element name="result">
+	<xsd:element name="method-result">
 		<xsd:complexType>
-			<xsd:attribute name="name" type="xsd:string" />
+			<xsd:attribute name="name" type="xsd:string" use="required" />
 			<xsd:attribute name="scope" type="scopeType" default="default" />
 		</xsd:complexType>
 	</xsd:element>
@@ -153,11 +172,11 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref="attribute" minOccurs="0" maxOccurs="unbounded" />
-				<xsd:element ref="action" minOccurs="0" maxOccurs="unbounded" />
+				<xsd:group ref="actionTypes" maxOccurs="unbounded" />
 			</xsd:sequence>
 			<xsd:attribute name="on" type="xsd:string" />
 			<xsd:attribute name="on-exception" type="xsd:string" />
-			<xsd:attribute name="to" type="xsd:IDREF" />
+			<xsd:attribute name="to" type="xsd:IDREF" use="required" />
 		</xsd:complexType>
 	</xsd:element>
 
@@ -182,7 +201,7 @@
 	<xsd:element name="entry-actions">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="action" maxOccurs="unbounded" />
+				<xsd:group ref="actionTypes" maxOccurs="unbounded" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -190,7 +209,7 @@
 	<xsd:element name="render-actions">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="action" maxOccurs="unbounded" />
+				<xsd:group ref="actionTypes" maxOccurs="unbounded" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -198,7 +217,7 @@
 	<xsd:element name="exit-actions">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="action" maxOccurs="unbounded" />
+				<xsd:group ref="actionTypes" maxOccurs="unbounded" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -282,7 +301,7 @@
 	<xsd:element name="end-actions">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="action" maxOccurs="unbounded" />
+				<xsd:group ref="actionTypes" maxOccurs="unbounded" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
