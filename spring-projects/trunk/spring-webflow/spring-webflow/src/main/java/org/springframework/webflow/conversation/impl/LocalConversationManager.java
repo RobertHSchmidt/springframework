@@ -110,7 +110,6 @@ public class LocalConversationManager implements ConversationManager, Serializab
 		if (!getUserContext().contains(id)) {
 			throw new ConversationAccessException(id);
 		}
-
 		return new ConversationProxy(id);
 	}
 
