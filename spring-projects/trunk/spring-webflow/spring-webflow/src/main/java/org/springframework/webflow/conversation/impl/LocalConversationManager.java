@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.springframework.util.Assert;
+import org.springframework.webflow.context.SharedAttributeMap;
 import org.springframework.webflow.context.support.ExternalContextHolder;
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationAccessException;
@@ -90,7 +90,6 @@ public class LocalConversationManager implements ConversationManager, Serializab
 	}
 
 	public Conversation beginConversation(ConversationParameters conversationParameters) {
-		Assert.notNull(conversationParameters, "New conversation parameters must not be null");
 		ConversationId conversationId = new SimpleConversationId(conversationIdGenerator.generateUid());
 		conversations.put(conversationId, createConversation(conversationParameters, conversationId));
 		conversationIds.add(conversationId);
@@ -141,7 +140,6 @@ public class LocalConversationManager implements ConversationManager, Serializab
 	}
 
 	private ConversationLock getLock(ConversationId conversationId) {
-		Assert.notNull(conversationId, "conversationId must not be null");
 		if (!conversations.containsKey(conversationId)) {
 			throw new NoSuchConversationException(conversationId);
 		}
@@ -149,8 +147,6 @@ public class LocalConversationManager implements ConversationManager, Serializab
 	}
 
 	private Object getAttribute(ConversationId conversationId, Object name) {
-		Assert.notNull(conversationId, "conversationId must not be null");
-		Assert.notNull(name, "name must not be null");
 		if (!conversations.containsKey(conversationId)) {
 			throw new NoSuchConversationException(conversationId);
 		}
@@ -158,8 +154,6 @@ public class LocalConversationManager implements ConversationManager, Serializab
 	}
 
 	private Object putAttribute(ConversationId conversationId, Object name, Object value) {
-		Assert.notNull(conversationId, "conversationId must not be null");
-		Assert.notNull(name, "name must not be null");
 		if (!conversations.containsKey(conversationId)) {
 			throw new NoSuchConversationException(conversationId);
 		}
@@ -167,8 +161,6 @@ public class LocalConversationManager implements ConversationManager, Serializab
 	}
 
 	private Object removeAttribute(ConversationId conversationId, Object name) {
-		Assert.notNull(conversationId, "conversationId must not be null");
-		Assert.notNull(name, "name must not be null");
 		if (!conversations.containsKey(conversationId)) {
 			throw new NoSuchConversationException(conversationId);
 		}
@@ -176,7 +168,6 @@ public class LocalConversationManager implements ConversationManager, Serializab
 	}
 
 	private void end(ConversationId conversationId) {
-		Assert.notNull(conversationId, "conversationId must not be null");
 		if (!conversations.containsKey(conversationId)) {
 			throw new NoSuchConversationException(conversationId);
 		}
@@ -197,12 +188,14 @@ public class LocalConversationManager implements ConversationManager, Serializab
 	}
 
 	private UserConversationContext getUserContext() {
-		UserConversationContext context = (UserConversationContext)ExternalContextHolder.getExternalContext()
-				.getSessionMap().get(USER_CONVERSATION_CONTEXT);
-		if (context == null) {
-			context = createUserContext();
+		SharedAttributeMap session = ExternalContextHolder.getExternalContext().getSessionMap();
+		synchronized (session.getMutex()) {
+			UserConversationContext context = (UserConversationContext)session.get(USER_CONVERSATION_CONTEXT);
+			if (context == null) {
+				context = createUserContext();
+			}
+			return context;
 		}
-		return context;
 	}
 
 	private UserConversationContext createUserContext() {
@@ -257,5 +250,4 @@ public class LocalConversationManager implements ConversationManager, Serializab
 			}
 		}
 	}
-
 }
