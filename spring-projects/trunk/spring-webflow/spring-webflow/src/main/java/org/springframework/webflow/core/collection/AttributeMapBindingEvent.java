@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.core.collection;
 
+import java.util.EventObject;
+
 /**
  * Holder for information about the binding or unbinding event in an
  * <code>AttributeMap</code>.
@@ -22,37 +24,31 @@ package org.springframework.webflow.core.collection;
  * @author Ben Hale
  * @see AttributeMap
  */
-public class AttributeMapBindingEvent {
+public class AttributeMapBindingEvent extends EventObject {
 
-	private AttributeMap source;
+	private String attributeName;
 
-	private String key;
-
-	private Object value;
+	private Object attributeValue;
 
 	/**
 	 * Creates an event for map binding that contains information about the
 	 * event
 	 * @param source The source map that this attribute was bound in
-	 * @param key The name that this attribute was bound with
-	 * @param value The attribute
+	 * @param attributeName The name that this attribute was bound with
+	 * @param attributeValue The attribute
 	 */
-	public AttributeMapBindingEvent(AttributeMap source, String key, Object value) {
+	public AttributeMapBindingEvent(AttributeMap source, String attributeName, Object attributeValue) {
+		super(source);
 		this.source = source;
-		this.key = key;
-		this.value = value;
+		this.attributeName = attributeName;
+		this.attributeValue = attributeValue;
 	}
 
-	public AttributeMap getSource() {
-		return source;
+	public String getAttributeName() {
+		return attributeName;
 	}
 
-	public String getKey() {
-		return key;
+	public Object getAttributeValue() {
+		return attributeValue;
 	}
-
-	public Object getValue() {
-		return value;
-	}
-
 }

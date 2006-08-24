@@ -36,5 +36,4 @@ public interface AttributeMapBindingListener {
 	 * @param event information about the unbinding event
 	 */
 	void valueUnbound(AttributeMapBindingEvent event);
-
 }
