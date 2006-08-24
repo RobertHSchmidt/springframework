@@ -21,9 +21,9 @@
 		<flow:execution-attributes>
 			<flow:attribute name="alwaysRedirectOnPause" type="boolean" value="true"/>
 		</flow:execution-attributes>
-		<flow:listeners>
+		<flow:execution-listeners>
 			<flow:listener ref="listener" criteria="sellitem-flow"/>
-		</flow:listeners>
+		</flow:execution-listeners>
 	</flow:executor>
 	
 	<!-- Creates the registry of flow definitions for this application -->
