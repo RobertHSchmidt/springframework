@@ -116,29 +116,6 @@ public class LocalConversationManager implements ConversationManager, Serializab
 		return new SimpleConversationId(conversationIdGenerator.parseUid(conversationId));
 	}
 
-	void expireConversation(ConversationId id) throws ConversationException {
-		if (!conversations.containsKey(id)) {
-			throw new NoSuchConversationException(id);
-		}
-		end(id);
-	}
-
-	private ConversationEntry createConversation(ConversationParameters newConversation, ConversationId conversationId) {
-		return new ConversationEntry(conversationId, newConversation.getName(), newConversation.getCaption(),
-				newConversation.getDescription());
-	}
-
-	private boolean maxExceeded() {
-		return maxConversations > 0 && conversationIds.size() > maxConversations;
-	}
-
-	private void endOldestConversation() {
-		ConversationId conversationId = (ConversationId)conversationIds.getFirst();
-		Conversation oldest = getConversation(conversationId);
-		oldest.lock();
-		oldest.end();
-	}
-
 	private ConversationLock getLock(ConversationId conversationId) {
 		if (!conversations.containsKey(conversationId)) {
 			throw new NoSuchConversationException(conversationId);
@@ -183,6 +160,18 @@ public class LocalConversationManager implements ConversationManager, Serializab
 		getUserContext().remove(conversationId);
 	}
 
+	void expireConversation(ConversationId id) throws ConversationException {
+		if (!conversations.containsKey(id)) {
+			throw new NoSuchConversationException(id);
+		}
+		end(id);
+	}
+
+	private ConversationEntry createConversation(ConversationParameters newConversation, ConversationId conversationId) {
+		return new ConversationEntry(conversationId, newConversation.getName(), newConversation.getCaption(),
+				newConversation.getDescription());
+	}
+
 	private ConversationEntry getConversationEntry(ConversationId conversationId) {
 		return ((ConversationEntry)conversations.get(conversationId));
 	}
@@ -202,6 +191,17 @@ public class LocalConversationManager implements ConversationManager, Serializab
 		UserConversationContext context = new UserConversationContext(this);
 		ExternalContextHolder.getExternalContext().getSessionMap().put(USER_CONVERSATION_CONTEXT, context);
 		return context;
+	}
+
+	private boolean maxExceeded() {
+		return maxConversations > 0 && conversationIds.size() > maxConversations;
+	}
+
+	private void endOldestConversation() {
+		ConversationId conversationId = (ConversationId)conversationIds.getFirst();
+		Conversation oldest = getConversation(conversationId);
+		oldest.lock();
+		oldest.end();
 	}
 
 	/**
