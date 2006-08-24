@@ -413,7 +413,20 @@
 <!ELEMENT method-result EMPTY>
 
 <!--
-	The name of the attribute to bind this result to
+	The name of the attribute that will expose the return value of the target bean-action method.
+	Used in conjunction with the 'scope' attribute.
+
+	For example:
+
+		<bean-action bean="orderClerk" method="placeOrder">
+			<method-arguments>
+				<argument expression="flowScope.order"/>
+			</method-arguments>
+			<method-result name="orderConfirmation"/>
+		</bean-action>
+        
+	... exposes the 'placeOrder(Order)' method return value in request scope 
+	under the attribute name 'orderConfirmation'.
 -->
 <!ATTLIST method-result name CDATA #REQUIRED>
 
