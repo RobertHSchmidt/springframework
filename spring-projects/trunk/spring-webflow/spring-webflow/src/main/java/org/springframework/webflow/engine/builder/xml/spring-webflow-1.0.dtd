@@ -390,6 +390,12 @@
 <!ATTLIST argument expression CDATA #REQUIRED>
 
 <!--
+    The method parameter type.  Optional.  If specified and the argument value does not equal the 
+    parameter type, a type conversion will be attempted.
+-->
+<!ATTLIST argument type CDATA #IMPLIED>
+
+<!--
 	The name of the attribute that will expose the return value of the invoked bean method.
 	
 	For example:

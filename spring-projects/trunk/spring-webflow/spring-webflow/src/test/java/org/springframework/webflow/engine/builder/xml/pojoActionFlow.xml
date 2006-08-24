@@ -46,7 +46,7 @@
 	<action-state id="actionState6">
 		<bean-action bean="pojoAction" method="methodWithArgumentTypeConversion">
 			<method-arguments>
-				<argument expression="'Created'"/>
+				<argument type="org.springframework.webflow.execution.FlowSessionStatus" expression="'Created'"/>
 			</method-arguments>
 		</bean-action>
 		<transition on="success" to="pause"/>
