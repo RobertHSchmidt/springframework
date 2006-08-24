@@ -18,7 +18,12 @@
 
 	<!-- Launches new flow executions and resumes existing executions. -->	
 	<flow:executor id="flowExecutor" registry-ref="registry" repositoryType="continuation">
-		<flow:listener ref="listener" criteria="sellitem-flow"/>
+		<flow:execution-attributes>
+			<flow:attribute name="alwaysRedirectOnPause" type="boolean" value="true"/>
+		</flow:execution-attributes>
+		<flow:listeners>
+			<flow:listener ref="listener" criteria="sellitem-flow"/>
+		</flow:listeners>
 	</flow:executor>
 	
 	<!-- Creates the registry of flow definitions for this application -->
