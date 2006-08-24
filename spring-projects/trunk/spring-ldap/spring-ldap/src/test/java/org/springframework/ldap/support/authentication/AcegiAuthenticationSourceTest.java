@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.ldap.support.acegi;
+package org.springframework.ldap.support.authentication;
 
 import junit.framework.TestCase;
 
@@ -25,7 +25,7 @@ import org.acegisecurity.context.SecurityContextHolder;
 import org.acegisecurity.userdetails.User;
 import org.acegisecurity.userdetails.ldap.LdapUserDetails;
 import org.easymock.MockControl;
-import org.springframework.ldap.support.acegi.AcegiAuthenticationSource;
+import org.springframework.ldap.support.authentication.AcegiAuthenticationSource;
 
 public class AcegiAuthenticationSourceTest extends TestCase {
 

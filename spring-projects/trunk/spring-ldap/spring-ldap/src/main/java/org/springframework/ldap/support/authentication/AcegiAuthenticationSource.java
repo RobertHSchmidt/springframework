@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.ldap.support.acegi;
+package org.springframework.ldap.support.authentication;
 
 import org.acegisecurity.Authentication;
 import org.acegisecurity.context.SecurityContextHolder;

@@ -16,7 +16,7 @@
 
 		<property name="authenticationSource">
 			<bean
-				class="org.springframework.ldap.support.acegi.AcegiAuthenticationSource" />
+				class="org.springframework.ldap.support.authentication.AcegiAuthenticationSource" />
 		</property>
 		<property name="dirObjectFactory"
 			value="org.springframework.ldap.support.DefaultDirObjectFactory" />
