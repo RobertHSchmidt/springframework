@@ -60,7 +60,15 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 
 	protected Object getAttribute(String key) {
 		HttpSession session = getSession();
-		return (session == null) ? null : session.getAttribute(key);
+		if (session == null) {
+			return null;
+		}
+		Object value = session.getAttribute(key);
+		if (value instanceof HttpSessionMapBindingListener) {
+			return ((HttpSessionMapBindingListener)value).listener;
+		} else {
+			return value;
+		}
 	}
 
 	protected void setAttribute(String key, Object value) {
