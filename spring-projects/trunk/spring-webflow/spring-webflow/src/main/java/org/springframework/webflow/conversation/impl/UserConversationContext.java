@@ -63,5 +63,4 @@ public class UserConversationContext implements AttributeMapBindingListener {
 			conversationManager.expireConversation((ConversationId)i.next());
 		}
 	}
-
 }
