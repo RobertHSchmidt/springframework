@@ -1,56 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<preface id="preface">
-	<title>Preface</title>
-	<para>
-	    Web services development is a complicated affair. There is SOAP, there is REST. There is SOAP 1.1, and there is
-        SOAP 1.2. There is rpc/encoded, and there is document/literal. There is WS-Addressing, WS-Security, WS-Policy,
-        and various other Web service specifications. Implementing Web services using abstractions that magically turn
-        Java into XML, but turn out to be leaky abstractions makes it even harder. Spring Web Services provides a
-        solution for building interoperable Web services, while making it clear what XML is received and sent across the
-        wire. Spring-WS provides a powerful <link linkend="ws">message dispatching framework</link>, various <link
-        linkend="oxm">XML marshalling</link> techniques that can be used outside a Web service environment, and a <link
-        linkend="security">WS-Security</link> solution that integrates with your existing application security 
-        solution.
-    </para>
-	<para>
-        This document provides a reference guide to Spring-WS's features. Since this document is still a
-        work-in-progress, if you have any requests or comments, please post them on the support forums at <ulink
-        url="http://forum.springframework.org/forumdisplay.php?f=39"/>.
-    </para>
-	<para>
-        Before we go on, a few words of gratitude are due to Christian Bauer (of the <ulink
-        url="http://www.hibernate.org/">Hibernate</ulink> team), who prepared and adapted the DocBook-XSL software in
-        order to be able to create Hibernate's reference guide, thus also allowing us to create this one.
-    </para>
-</preface>
 <chapter id="introduction">
     <title>Introduction</title>
-    
+
     <section>
         <title>Overview</title>
         <para>
             Spring-WS consists of three separate modules. This chapter discusses each of the modules in turn.
         </para>
         <para>
-            The <link linkend="ws">Core</link> package is the central part of the Web services functionality. It 
-            provides the central <classname>WebServiceMessage</classname> and <classname>SoapMessage</classname> 
-            interfaces, the powerful message dispatching, and the various support classes for implementing Web service 
+            The <link linkend="ws">Core</link> package is the central part of the Web services functionality. It
+            provides the central <classname>WebServiceMessage</classname> and <classname>SoapMessage</classname>
+            interfaces, the powerful message dispatching, and the various support classes for implementing Web service
             endpoints.
         </para>
         <para>
             The <link linkend="security">Security</link> package provides a WS-Security implementation that integrates
-            with the core Web service package. It allows you to add principal tokens, sign, and decrypt and encrypt SOAP 
-            messages. Addtionally, it allows you to leverage your existing Acegi security implementation for 
+            with the core Web service package. It allows you to add principal tokens, sign, and decrypt and encrypt SOAP
+            messages. Addtionally, it allows you to leverage your existing Acegi security implementation for
             authentication and authorization.
         </para>
         <para>
-            The <link linkend="oxm">OXM</link> package provides integration for popular XML marshalling APIs, including 
+            The <link linkend="oxm">OXM</link> package provides integration for popular XML marshalling APIs, including
             JAXB 1 and 2. Using the OXM package means that you benefit from a unified exception hierarchy, and can wire
             up your favorite XML marshalling technology easily.
         </para>
     </section>
-    
-    
+
+
     <section>
         <title>Why Spring Web Services?</title>
         <para>
@@ -69,12 +45,12 @@
             <para>
                 Public Web services provide a separate interface to your application. They are often used by clients
                 that are outside of your reach. When developing a public Web service, you should really think about the
-                interface you are providing: it is probably going to be around for a while, and you cannot change it 
-                that often. As such, it is a good idea to place the Web service in a separate layer, thus hiding the 
+                interface you are providing: it is probably going to be around for a while, and you cannot change it
+                that often. As such, it is a good idea to place the Web service in a separate layer, thus hiding the
                 inner workings of the application. As a result, you can change the Web service and the rest of the
                 appliciation seperately.
-            </para>                
-        </section>        
+            </para>
+        </section>
         <section>
             <title>Spring-WS makes Web Services First Class Citizens of the Architecture</title>
             <para>
@@ -82,7 +58,7 @@
                 in the application architecture, mostly because existing Java business interfaces are exposed as SOAP
                 services. One could say that they are "SOAPified". Spring-WS provides a MVC-like framework for
                 developing a Web service application layer, just like you would develop a layer especially for a Web
-                user interface using Spring-MVC. Spring-WS also provides useful integration points with you existing 
+                user interface using Spring-MVC. Spring-WS also provides useful integration points with you existing
                 Spring application architecture, such as the Acegi integration.
             </para>
         </section>
@@ -93,7 +69,7 @@
                 Web Services just another, XML-based remoting protocol. Such remoting frameworks can be used with
                 relative ease: on the server-side, one simply implements a specific interface such as
                 <classname>java.rmi.Remote</classname>, and on the client side, a dynamic proxy is used.
-                Unfortunately, because of this simplicity, remoting architectures have some issues: 
+                Unfortunately, because of this simplicity, remoting architectures have some issues:
                 <itemizedlist>
                     <listitem>
                         <para>
