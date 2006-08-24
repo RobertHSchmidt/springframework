@@ -573,13 +573,6 @@ public class Application {
                     different <varname>targetClass</varname>es.
                 </para>
             </note>
-            <caution>
-                <para>
-                    Note that the <classname>JibxMarshaller</classname> only operates on streams, and not on DOM nodes,
-                    nor SAX handlers. More specifically, it only unmarshals from <classname>StreamSource</classname>s
-                    and <classname>SAXSource</classname> s, and only marshals to <classname>StreamResult</classname>s.
-                </para>
-            </caution>
         </section>
     </section>
     <section id="oxm-xstream">
