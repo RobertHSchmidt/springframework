@@ -85,18 +85,19 @@ import org.xml.sax.SAXException;
 
 /**
  * Flow builder that builds flows as defined in an XML document object model
- * (DOM) element. The element is supposed to be read from an XML file that uses
- * the following doctype:
+ * (DOM) element. The element is typically read from an XML file that adheres 
+ * to the following format:
  * 
  * <pre>
- *              &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *              &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+ *  &lt;flow xmlns=&quot;http://www.springframework.org/schema/webflow&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+ *        xsi:schemaLocation=&quot;http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd&quot;&gt;
  * </pre>
  * 
  * <p>
  * Consult the <a
- * href="http://www.springframework.org/dtd/spring-webflow-1.0.dtd">web flow DTD</a>
- * for more information on the XML flow definition format.
+ * href="http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">webflow XML schema</a>
+ * for more information on the XML-based flow definition format.
  * <p>
  * This builder will setup a flow-local bean factory for the flow being
  * constructed. That flow-local bean factory will be populated with XML bean
@@ -141,7 +142,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	// recognized XML elements and attributes
 
 	private static final String ID_ATTRIBUTE = "id";
-	
+
 	private static final String IDREF_ATTRIBUTE = "idref";
 
 	private static final String BEAN_ATTRIBUTE = "bean";
@@ -457,7 +458,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		InputStream is = null;
 		try {
 			is = getLocation().getInputStream();
-
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setValidating(isValidating());
 			if (isXsdValidated(getLocation().getInputStream())) {
@@ -498,7 +498,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				if (inComment || !StringUtils.hasText(content)) {
 					continue;
 				}
-
 				if (hasOpeningTag(content)) {
 					isXsdValidated = true;
 					break;
@@ -551,7 +550,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 */
 	private int startComment(String line) {
 		return commentToken(line, START_COMMENT, true);
-
 	}
 
 	private int endComment(String line) {
