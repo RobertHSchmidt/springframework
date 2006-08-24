@@ -73,7 +73,7 @@ an execution repository.
 				<xsd:extension base="beans:identifiedType">
 					<xsd:sequence>
 						<xsd:element ref="execution-attributes" minOccurs="0" />
-						<xsd:element ref="listeners" minOccurs="0" />
+						<xsd:element ref="execution-listeners" minOccurs="0" />
 					</xsd:sequence>
 					<xsd:attribute name="repositoryType" default="default">
 						<xsd:simpleType>
@@ -90,7 +90,7 @@ an execution repository.
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:element name="listeners">
+	<xsd:element name="execution-listeners">
 		<xsd:annotation>
 			<xsd:documentation>
 				<![CDATA[

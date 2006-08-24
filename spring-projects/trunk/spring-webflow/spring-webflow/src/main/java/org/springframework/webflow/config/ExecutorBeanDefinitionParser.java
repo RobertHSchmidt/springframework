@@ -38,7 +38,7 @@ public class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	private static final String EXECUTION_LISTENER_LOADER = "executionListenerLoader";
 
-	private static final String LISTENERS = "listeners";
+	private static final String EXECUTION_LISTENERS = "execution-listeners";
 
 	private static final String REGISTRY_REF = "registry-ref";
 
@@ -88,7 +88,7 @@ public class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	private void addExecutionListenerLoader(Element element, ParserContext parserContext,
 			BeanDefinitionBuilder definitionBuilder) {
-		Element listenersElement = DomUtils.getChildElementByTagName(element, LISTENERS);
+		Element listenersElement = DomUtils.getChildElementByTagName(element, EXECUTION_LISTENERS);
 		if (listenersElement != null) {
 			definitionBuilder.addPropertyValue(EXECUTION_LISTENER_LOADER, parserContext.getDelegate()
 					.parseCustomElement(listenersElement, true));
