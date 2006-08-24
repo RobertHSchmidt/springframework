@@ -31,7 +31,6 @@ import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.FlowAssembler;
-import org.springframework.webflow.engine.builder.TestFlowArtifactFactory;
 import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.engine.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.execution.Event;
@@ -52,7 +51,7 @@ public class XmlFlowBuilderTests extends TestCase {
 
 	protected void setUp() throws Exception {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
-				new TestFlowArtifactFactory());
+				new TestFlowServiceLocator());
 		new FlowAssembler("testFlow1", builder).assembleFlow();
 		flow = builder.getFlow();
 		context = new MockRequestContext();

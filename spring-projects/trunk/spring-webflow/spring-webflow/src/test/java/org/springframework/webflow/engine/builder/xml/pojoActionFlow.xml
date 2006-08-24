@@ -3,23 +3,51 @@
 	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 
 <flow start-state="actionState1">
+
 	<action-state id="actionState1">
 		<bean-action bean="pojoAction" method="enumMethod">
 			<method-result name="result1" scope="request"/>
 		</bean-action>
-		<transition on="success" to="actionState2"/>
+		<transition on="created" to="actionState2"/>
 	</action-state>
 
 	<action-state id="actionState2">
 		<bean-action bean="pojoAction" method="enumMethod">
 			<method-result name="result2" scope="flow"/>		
 		</bean-action>
-		<transition on="success" to="actionState3"/>
+		<transition on="created" to="actionState3"/>
 	</action-state>
 
 	<action-state id="actionState3">
 		<bean-action bean="pojoAction" method="enumMethod">
 			<method-result name="result3" scope="conversation"/>
+		</bean-action>
+		<transition on="created" to="actionState4"/>
+	</action-state>
+
+	<action-state id="actionState4">
+		<bean-action bean="pojoAction" method="methodWithVariableArgument">
+			<method-arguments>
+				<argument expression="flowScope.result2"/>
+			</method-arguments>
+		</bean-action>
+		<transition on="success" to="actionState5"/>
+	</action-state>
+
+	<action-state id="actionState5">
+		<bean-action bean="pojoAction" method="methodWithConstantArgument">
+			<method-arguments>
+				<argument expression="'A constant'"/>
+			</method-arguments>
+		</bean-action>
+		<transition on="success" to="actionState6"/>
+	</action-state>
+
+	<action-state id="actionState6">
+		<bean-action bean="pojoAction" method="methodWithArgumentTypeConversion">
+			<method-arguments>
+				<argument expression="'Created'"/>
+			</method-arguments>
 		</bean-action>
 		<transition on="success" to="pause"/>
 	</action-state>
