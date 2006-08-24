@@ -5,11 +5,16 @@
 <flow start-state="enterGuess">
 	
 	<view-state id="enterGuess" view="higherlower.enterGuess">
-		<transition on="submit" to="guess"/>
+		<transition on="submit" to="makeGuess"/>
 	</view-state>
 	
-	<action-state id="guess">
-		<action bean="game" method="makeGuess(int ${requestParameters.guess})" result-name="guessResult"/>
+	<action-state id="makeGuess">
+		<bean-action bean="game" method="makeGuess">
+			<method-arguments>
+				<argument expression="requestParameters.guess" parameter-type="int"/>
+			</method-arguments>
+			<method-result name="guessResult"/>
+		</bean-action>
 		<transition on="correct" to="showAnswer"/>
 		<transition on="*" to="enterGuess"/>
 	</action-state>
