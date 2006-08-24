@@ -1,7 +1,8 @@
-package org.springframework.ldap.support;
+package org.springframework.ldap.support.authentication;
 
 import org.easymock.MockControl;
 import org.springframework.ldap.AuthenticationSource;
+import org.springframework.ldap.support.authentication.DefaultValuesAuthenticationSourceDecorator;
 
 import junit.framework.TestCase;
 

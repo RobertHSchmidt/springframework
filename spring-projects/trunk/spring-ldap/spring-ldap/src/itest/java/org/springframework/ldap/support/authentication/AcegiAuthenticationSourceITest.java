@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.ldap.support.acegi;
+package org.springframework.ldap.support.authentication;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.acegisecurity.providers.ldap.LdapAuthenticationProvider;
 import org.springframework.ldap.AttributesMapper;
 import org.springframework.ldap.LdapTemplate;
-import org.springframework.ldap.support.acegi.AcegiAuthenticationSource;
+import org.springframework.ldap.support.authentication.AcegiAuthenticationSource;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
 public class AcegiAuthenticationSourceITest extends

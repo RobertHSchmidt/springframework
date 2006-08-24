@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.springframework.ldap.support;
+package org.springframework.ldap.support.authentication;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ldap.AuthenticationSource;
-import org.springframework.ldap.support.acegi.AcegiAuthenticationSource;
 
 /**
  * Decorator on AuthenticationSource to have default authentication information
