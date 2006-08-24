@@ -56,7 +56,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 	public void testSubmitShippingDetailsForm() {
 		testSubmitCategoryFormWithShipping();
 
-		saleProcessor.process((Sale)getRequiredConversationAttribute("sale", Sale.class));
+		saleProcessor.process((Sale)getRequiredFlowAttribute("sale", Sale.class));
 		saleProcessorControl.replay();
 
 		MockParameterMap parameters = new MockParameterMap();

@@ -23,17 +23,22 @@
 	</view-state>
 
 	<decision-state id="requiresShipping">
-		<if test="${conversationScope.sale.shipping}" then="enterShippingDetails" else="processSale"/>
+		<if test="${flowScope.sale.shipping}" then="enterShippingDetails" else="processSale"/>
 	</decision-state>
 
 	<subflow-state id="enterShippingDetails" flow="shipping-flow">
+		<attribute-mapper>
+			<input-mapper>
+				<mapping source="flowScope.sale" target="sale"/>
+			</input-mapper>
+		</attribute-mapper>
 		<transition on="finish" to="processSale"/>
 	</subflow-state>
 	
 	<action-state id="processSale">
 		<bean-action bean="saleProcessor" method="process">
 			<method-arguments>
-				<argument expression="conversationScope.sale"/>
+				<argument expression="flowScope.sale"/>
 			</method-arguments>
 		</bean-action>
 		<transition on="success" to="finish"/>
@@ -46,11 +51,6 @@
 	<end-state id="finish" view="costOverview"/>
 
 	<end-state id="error" view="error"/>
-
-	<!-- could support a nav menu, on header button bar -->
-	<global-transitions>
-		<transition on="preview" to="showCostOverview"/>
-	</global-transitions>
 
 	<import resource="sellitem-beans.xml"/>
 	
