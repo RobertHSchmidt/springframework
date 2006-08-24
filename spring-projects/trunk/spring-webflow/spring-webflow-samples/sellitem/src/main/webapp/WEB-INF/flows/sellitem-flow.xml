@@ -31,7 +31,11 @@
 	</subflow-state>
 	
 	<action-state id="processSale">
-		<action bean="saleProcessor" method="process(${conversationScope.sale})" />
+		<bean-action bean="saleProcessor" method="process">
+			<method-arguments>
+				<argument expression="conversationScope.sale"/>
+			</method-arguments>
+		</bean-action>
 		<transition on="success" to="finish"/>
 	</action-state>
 	
