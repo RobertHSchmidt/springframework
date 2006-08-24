@@ -1,9 +1,6 @@
 package org.springframework.webflow.samples.sellitem;
 
-import java.io.File;
-
 import org.easymock.MockControl;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.test.MockParameterMap;
@@ -12,7 +9,7 @@ import org.springframework.webflow.test.execution.MockFlowServiceLocator;
 
 public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
-	private File flowDir = new File("src/main/webapp/WEB-INF/flows");
+	private String flowDir = "src/main/webapp/WEB-INF/flows";
 
 	private MockControl saleProcessorControl;
 
@@ -20,7 +17,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	@Override
 	protected FlowDefinitionResource getFlowDefinitionResource() {
-		return new FlowDefinitionResource(new FileSystemResource(new File(flowDir, "sellitem-flow.xml")));
+		return createFlowDefinitionResource(flowDir, "sellitem-flow.xml");
 	}
 
 	public void testStartFlow() {
@@ -77,8 +74,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		saleProcessor = (SaleProcessor)saleProcessorControl.getMock();
 		serviceLocator.registerBean("saleProcessor", saleProcessor);
 
-		FlowDefinitionResource shipping = new FlowDefinitionResource(new FileSystemResource(new File(flowDir,
-				"shipping-flow.xml")));
+		FlowDefinitionResource shipping = createFlowDefinitionResource(flowDir, "shipping-flow.xml");
 		serviceLocator.registerSubflow(createFlow(shipping, serviceLocator));
 	}
 }
