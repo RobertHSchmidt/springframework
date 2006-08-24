@@ -11,7 +11,7 @@
 	<action-state id="guess">
 		<bean-action bean="game" method="makeGuess">
 			<method-arguments>
-				<argument expression="requestParameters.guess" parameter-type="int"/>
+				<argument expression="requestParameters.guess" parameter-type="java.lang.String"/>
 			</method-arguments>
 			<method-result name="guessResult"/>
 		</bean-action>
