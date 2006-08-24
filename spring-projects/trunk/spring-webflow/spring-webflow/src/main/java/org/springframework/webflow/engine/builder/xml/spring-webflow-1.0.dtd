@@ -456,7 +456,7 @@
 	A transitions may be annotated with attributes and may specify one or more
 	actions to execute before executing.
 -->
-<!ELEMENT transition ( attribute*, action* )>
+<!ELEMENT transition ( attribute*, (action | bean-action)* )>
 
 <!--
 	The criteria that guards this transition's execution, typically reasoning on the
