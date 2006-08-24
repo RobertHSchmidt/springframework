@@ -26,7 +26,7 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
-public class ListenersBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+public class ExecutionListenersBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
 	private static final String LISTENER = "listener";
 

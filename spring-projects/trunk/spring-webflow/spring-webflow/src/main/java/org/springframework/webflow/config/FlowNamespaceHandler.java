@@ -62,8 +62,8 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
 public class FlowNamespaceHandler extends NamespaceHandlerSupport {
 	public void init() {
 		registerBeanDefinitionParser("execution-attributes", new ExecutionAttributesBeanDefinitionParser());
+		registerBeanDefinitionParser("execution-listeners", new ExecutionListenersBeanDefinitionParser());
 		registerBeanDefinitionParser("executor", new ExecutorBeanDefinitionParser());
-		registerBeanDefinitionParser("listeners", new ListenersBeanDefinitionParser());
 		registerBeanDefinitionParser("registry", new RegistryBeanDefinitionParser());
 	}
 }
