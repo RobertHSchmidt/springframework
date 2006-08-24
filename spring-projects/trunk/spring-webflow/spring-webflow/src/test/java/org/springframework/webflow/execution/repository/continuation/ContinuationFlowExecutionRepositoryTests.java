@@ -2,6 +2,7 @@ package org.springframework.webflow.execution.repository.continuation;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.context.support.ExternalContextHolder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
@@ -12,8 +13,8 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
-import org.springframework.webflow.execution.repository.PermissionDeniedFlowExecutionAccessException;
 import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
+import org.springframework.webflow.test.MockExternalContext;
 
 public class ContinuationFlowExecutionRepositoryTests extends TestCase {
 
@@ -29,6 +30,7 @@ public class ContinuationFlowExecutionRepositoryTests extends TestCase {
 		execution = new FlowExecutionImplFactory().createFlowExecution(registry.getFlowDefinition("simpleFlow"));
 		FlowExecutionStateRestorer stateRestorer = new FlowExecutionImplStateRestorer(registry);
 		repository = new ContinuationFlowExecutionRepository(stateRestorer);
+		ExternalContextHolder.setExternalContext(new MockExternalContext());
 	}
 
 	public void testPutExecution() {
