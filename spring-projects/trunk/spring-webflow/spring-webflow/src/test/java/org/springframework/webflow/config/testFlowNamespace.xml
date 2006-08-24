@@ -28,16 +28,16 @@
 	</flow:executor>
 
 	<flow:executor id="continuationExecutor" registry-ref="withPathWithWildcards" repositoryType="continuation">
-		<flow:listeners>
+		<flow:execution-listeners>
 			<flow:listener ref="listener1" />
-		</flow:listeners>
+		</flow:execution-listeners>
 	</flow:executor>
 
 	<flow:executor id="clientExecutor" registry-ref="withPathWithWildcards" repositoryType="client">
-		<flow:listeners>
+		<flow:execution-listeners>
 			<flow:listener ref="listener1" criteria="flow1" />
 			<flow:listener ref="listener2" criteria="flow1, flow2, flow3" />
-		</flow:listeners>
+		</flow:execution-listeners>
 	</flow:executor>
 
 	<bean id="listener1" class="org.springframework.webflow.config.TestFlowExecutionListener" />
