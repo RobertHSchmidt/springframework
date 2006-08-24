@@ -30,7 +30,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowAssembler;
-import org.springframework.webflow.engine.builder.TestFlowArtifactFactory;
+import org.springframework.webflow.engine.builder.xml.TestFlowServiceLocator;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilderTests;
 import org.springframework.webflow.execution.FlowExecutionListener;
@@ -56,7 +56,7 @@ public class FlowExecutionImplStateRestorerTests extends TestCase {
 
 	protected void setUp() throws Exception {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
-				new TestFlowArtifactFactory());
+				new TestFlowServiceLocator());
 		FlowAssembler assembler = new FlowAssembler("testFlow", builder);
 		assembler.assembleFlow();
 		final Flow flow = builder.getFlow();

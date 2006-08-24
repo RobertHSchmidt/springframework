@@ -87,8 +87,8 @@ import org.xml.sax.SAXException;
  * the following doctype:
  * 
  * <pre>
- *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *       &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *       &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -157,6 +157,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String BEAN_ACTION_ELEMENT = "bean-action";
 
 	private static final String METHOD_ARGUMENTS_ELEMENT = "method-arguments";
+
+	private static final String ARGUMENT_ELEMENT = "argument";
 
 	private static final String EXPRESSION_ATTRIBUTE = "expression";
 
@@ -746,7 +748,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		annotated.getAttributeMap().putAll(parseAttributes(element));
 		return annotated;
 	}
-	
+
 	private Action parseBeanInvokingAction(Element element) {
 		String beanId = element.getAttribute(BEAN_ATTRIBUTE);
 		String methodName = element.getAttribute(METHOD_ATTRIBUTE);
@@ -759,13 +761,14 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private Parameters parseMethodParameters(Element element) {
-		List argumentsElement = DomUtils.getChildElementsByTagName(element, METHOD_ARGUMENTS_ELEMENT);
-		if (argumentsElement.isEmpty()) {
+		List methodArgumentsElements = DomUtils.getChildElementsByTagName(element, METHOD_ARGUMENTS_ELEMENT);
+		if (methodArgumentsElements.isEmpty()) {
 			return Parameters.NONE;
 		}
-		Parameters parameters = new Parameters();
-		Iterator it = argumentsElement.iterator();
 		ExpressionParser parser = getLocalFlowServiceLocator().getExpressionParser();
+		Element methodArgumentsElement = (Element)methodArgumentsElements.get(0);
+		Parameters parameters = new Parameters();
+		Iterator it = DomUtils.getChildElementsByTagName(methodArgumentsElement, ARGUMENT_ELEMENT).iterator();
 		while (it.hasNext()) {
 			Element argumentElement = (Element)it.next();
 			Expression name = parser.parseExpression(argumentElement.getAttribute(EXPRESSION_ATTRIBUTE));
@@ -775,15 +778,16 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private MethodResultSpecification parseMethodResultSpecification(Element element) {
-		List results = DomUtils.getChildElementsByTagName(element, METHOD_RESULT_ELEMENT);
-		if (results.isEmpty()) {
+		List resultsElements = DomUtils.getChildElementsByTagName(element, METHOD_RESULT_ELEMENT);
+		if (resultsElements.isEmpty()) {
 			return null;
 		}
-		Element result = (Element)results.get(0);
-		String resultName = result.getAttribute(NAME_ATTRIBUTE);
+		Element resultElement = (Element)resultsElements.get(0);
+		String resultName = resultElement.getAttribute(NAME_ATTRIBUTE);
 		ScopeType resultScope = null;
-		if (element.hasAttribute(SCOPE_ATTRIBUTE) && !element.getAttribute(SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
-			resultScope = (ScopeType)fromStringTo(ScopeType.class).execute(element.getAttribute(SCOPE_ATTRIBUTE));
+		if (resultElement.hasAttribute(SCOPE_ATTRIBUTE)
+				&& !resultElement.getAttribute(SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
+			resultScope = (ScopeType)fromStringTo(ScopeType.class).execute(resultElement.getAttribute(SCOPE_ATTRIBUTE));
 		}
 		return new MethodResultSpecification(resultName, (resultScope != null ? resultScope : ScopeType.REQUEST));
 	}
