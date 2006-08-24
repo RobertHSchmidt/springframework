@@ -24,30 +24,42 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * EntityResolver implementation for the Spring Web Flow 1.0 DTD, to load the
- * DTD from the classpath. The implementation is similar to that of the
+ * EntityResolver implementation for the Spring Web Flow 1.0 DTD and XML Schema,
+ * to load the DTD or XSD from the classpath. The implementation is similar to
+ * that of the
  * <code>org.springframework.beans.factory.xml.BeansDtdResolver</code>.
  * <p>
  * The doctype of the DTD expected to be resolved:
  * 
  * <pre>
- *     &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
- *     &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ *       &lt;!DOCTYPE flow PUBLIC &quot;-//SPRING//DTD WEBFLOW 1.0//EN&quot;
+ *       &quot;http://www.springframework.org/dtd/spring-webflow-1.0.dtd&quot;&gt;
+ * </pre>
+ *  + *
+ * <p>
+ * The xmlns of the XSD expected to be resolved:
+ * 
+ * <pre>
+ *       &lt;flow xmlns=&quot;http://www.springframework.org/schema/webflow&quot;
+ *           xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+ *           xsi:schemaLocation=&quot;http://www.springframework.org/schema/webflow
+ *           http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd&quot;&gt;
  * </pre>
  * 
  * @see org.springframework.webflow.engine.builder.xml.XmlFlowBuilder
  * 
  * @author Erwin Vervaet
+ * @author Ben Hale
  */
-public class WebFlowDtdResolver implements EntityResolver {
+public class WebFlowEntityResolver implements EntityResolver {
 
 	private static final String WEBFLOW_ELEMENT = "spring-webflow-1.0";
 
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
 		if (systemId != null && systemId.indexOf(WEBFLOW_ELEMENT) > systemId.lastIndexOf("/")) {
-			String dtdFilename = systemId.substring(systemId.indexOf(WEBFLOW_ELEMENT));
+			String filename = systemId.substring(systemId.indexOf(WEBFLOW_ELEMENT));
 			try {
-				Resource resource = new ClassPathResource(dtdFilename, getClass());
+				Resource resource = new ClassPathResource(filename, getClass());
 				InputSource source = new InputSource(resource.getInputStream());
 				source.setPublicId(publicId);
 				source.setSystemId(systemId);
