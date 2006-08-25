@@ -16,7 +16,6 @@
 		</evaluate-action>
 		<transition on="correct" to="showAnswer"/>
 		<transition on="*" to="enterGuess"/>
-		<transition on-exception="java.lang.NumberFormatException" to="enterGuess"/>
 	</action-state>
 	
 	<end-state id="showAnswer" view="mastermind.showAnswer"/>
