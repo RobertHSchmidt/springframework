@@ -1,4 +1,4 @@
-package org.springframework.webflow.action.bean;
+package org.springframework.webflow.action;
 
 import javax.swing.text.html.FormSubmitEvent.MethodType;
 
