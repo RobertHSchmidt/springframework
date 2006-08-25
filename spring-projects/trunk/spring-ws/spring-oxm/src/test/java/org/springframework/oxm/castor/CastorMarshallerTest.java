@@ -18,11 +18,10 @@ package org.springframework.oxm.castor;
 import javax.xml.transform.sax.SAXResult;
 
 import org.easymock.MockControl;
-import org.xml.sax.ContentHandler;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.oxm.AbstractMarshallerTestCase;
 import org.springframework.oxm.Marshaller;
+import org.xml.sax.ContentHandler;
 
 public class CastorMarshallerTest extends AbstractMarshallerTestCase {
 
@@ -65,11 +64,6 @@ public class CastorMarshallerTest extends AbstractMarshallerTestCase {
         SAXResult result = new SAXResult(handlerMock);
         marshaller.marshal(flights, result);
         handlerControl.verify();
-    }
-
-    public void testMarshalDOMResult() throws Exception {
-        // Unfortunately, Castor creates illegal DOM Documents, which makes it fail this test
-        // Hence the override here
     }
 
 }
