@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
-	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
-	
-<flow start-state="enterCriteria">
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
+
+	<start-state idref="enterCriteria"/>
 
 	<view-state id="enterCriteria" view="searchCriteria">
 		<entry-actions>
@@ -14,7 +14,12 @@
 	</view-state>
 
 	<action-state id="executeSearch">
-		<action bean="phonebook" method="search(${flowScope.searchCriteria})" result-name="results"/>
+		<bean-action bean="phonebook" method="search">
+			<method-arguments>
+				<argument expression="flowScope.searchCriteria"/>			
+			</method-arguments>
+			<method-result name="results"/>
+		</bean-action>
 		<transition on="success" to="displayResults"/>
 	</action-state>	
 	

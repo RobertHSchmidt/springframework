@@ -1,17 +1,31 @@
 package org.springframework.webflow.samples.phonebook.webflow;
 
-import org.springframework.webflow.builder.FlowServiceLocator;
-import org.springframework.webflow.registry.FlowRegistrarSupport;
-import org.springframework.webflow.registry.FlowRegistry;
+import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistrar;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
+import org.springframework.webflow.engine.builder.FlowAssembler;
+import org.springframework.webflow.engine.builder.FlowBuilder;
+import org.springframework.webflow.engine.builder.FlowServiceLocator;
 
 /**
  * Demonstrates how to register flows programatically.
  * 
  * @author Keith Donald
  */
-public class PhonebookFlowRegistrar extends FlowRegistrarSupport {
-	public void registerFlows(FlowRegistry registry, FlowServiceLocator flowServiceLocator) {
-		registerFlow("search-flow", registry, new SearchPersonFlowBuilder(flowServiceLocator));
-		registerFlow("detail-flow", registry, new PersonDetailFlowBuilder(flowServiceLocator));
+public class PhonebookFlowRegistrar implements FlowDefinitionRegistrar {
+	private FlowServiceLocator serviceLocator;
+
+	public PhonebookFlowRegistrar(FlowServiceLocator serviceLocator) {
+		this.serviceLocator = serviceLocator;
+	}
+
+	public void registerFlowDefinitions(FlowDefinitionRegistry registry) {
+		registry.registerFlowDefinition(assemble("search-flow", new SearchPersonFlowBuilder(serviceLocator)));
+		registry.registerFlowDefinition(assemble("detail-flow", new PersonDetailFlowBuilder(serviceLocator)));
+	}
+
+	private FlowDefinitionHolder assemble(String flowId, FlowBuilder flowBuilder) {
+		return new StaticFlowDefinitionHolder(new FlowAssembler(flowId, flowBuilder).assembleFlow());
 	}
 }
