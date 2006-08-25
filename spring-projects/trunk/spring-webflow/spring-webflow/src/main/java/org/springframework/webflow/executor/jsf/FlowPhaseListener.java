@@ -29,6 +29,7 @@ import javax.faces.event.PhaseListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.support.ExternalContextHolder;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
@@ -119,23 +120,31 @@ public class FlowPhaseListener implements PhaseListener {
 
 	public void beforePhase(PhaseEvent event) {
 		if (event.getPhaseId() == PhaseId.RESTORE_VIEW) {
+			ExternalContextHolder.setExternalContext(new JsfExternalContext(event.getFacesContext()));
 			restoreFlowExecution(event.getFacesContext());
 		}
 		else if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
 			if (FlowExecutionHolderUtils.isFlowExecutionRestored(event.getFacesContext())) {
-				JsfExternalContext context = new JsfExternalContext(event.getFacesContext());
-				prepareResponse(context, FlowExecutionHolderUtils.getFlowExecutionHolder(event.getFacesContext()));
+				prepareResponse(getCurrentContext(), FlowExecutionHolderUtils.getFlowExecutionHolder(event
+						.getFacesContext()));
 			}
 		}
 	}
 
 	public void afterPhase(PhaseEvent event) {
 		if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
-			if (FlowExecutionHolderUtils.isFlowExecutionChanged(event.getFacesContext())) {
-				JsfExternalContext context = new JsfExternalContext(event.getFacesContext());
-				saveFlowExecution(context, FlowExecutionHolderUtils.getFlowExecutionHolder(event.getFacesContext()));
+			try {
+				if (FlowExecutionHolderUtils.isFlowExecutionChanged(event.getFacesContext())) {
+					saveFlowExecution(getCurrentContext(), FlowExecutionHolderUtils.getFlowExecutionHolder(event.getFacesContext()));
+				}
+			} finally {
+				ExternalContextHolder.setExternalContext(null);
 			}
 		}
+	}
+
+	private JsfExternalContext getCurrentContext() {
+		return (JsfExternalContext)ExternalContextHolder.getExternalContext();
 	}
 
 	protected void restoreFlowExecution(FacesContext facesContext) {
@@ -335,11 +344,11 @@ public class FlowPhaseListener implements PhaseListener {
 	private FlowDefinitionLocator getLocator(JsfExternalContext context) {
 		return FlowFacesUtils.getDefinitionLocator(context.getFacesContext());
 	}
-	
+
 	private FlowExecutionFactory getFactory(JsfExternalContext context) {
 		return FlowFacesUtils.getExecutionFactory(context.getFacesContext());
 	}
-	
+
 	private FlowExecutionRepository getRepository(JsfExternalContext context) {
 		return FlowFacesUtils.getExecutionRepository(context.getFacesContext());
 	}
