@@ -214,10 +214,10 @@ public class PersonDaoImpl implements PersonDao {
       </itemizedlist>
     </sect2>
 
-    <sect2 id="ldap.support.acegi">
-      <title>org.springframework.ldap.support.acegi</title>
+    <sect2 id="ldap.support.authentication">
+      <title>org.springframework.ldap.support.authentication</title>
 
-      <para>The <emphasis>support.acegi</emphasis> package contains an
+      <para>The <emphasis>support.authentication</emphasis> package contains an
       implementation of the AuthenticationSource interface that can be used
       with <ulink url="http://www.acegisecurity.org/">Acegi
       Security</ulink>.</para>
