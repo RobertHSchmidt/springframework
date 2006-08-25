@@ -781,7 +781,7 @@ scope under the name "question".
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-The name of the attribute that will expose the return value of the target evaluated expression.
+The name of the attribute that will expose the result of expression evaluation.
 Used in conjunction with the 'scope' attribute.
 
 For example:
@@ -801,24 +801,22 @@ scope under the name "question".
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-The scope of the attribute that will expose the return value of the invoked bean method.
+The scope of the attribute that will expose the result of expression evaluation.
 
 For example:
 
-	<bean-action bean="orderClerk" method="suggestItineraries">
-		<method-arguments>
-			<argument expression="flowScope.trip"/>
-		</method-arguments>
-		<method-result name="itineraries" scope="flow"/>
-	</bean-action>
+	<evaluate-action expression="flowScope.interview.nextQuestion()">
+	    <evaluation-result name="question" scope="flow"/>
+	</evaluate-action>
 
-... exposes the return value of the 'suggestItineraries(Trip)' method in flow scope 
-under the attribute name 'itineraries'.
+The above example instructs this flow to invoke the "nextQuestion" method on the "interview" bean
+in flow scope.  After method invocation the method return value is exposed in flow scope
+under the name "question".
 
 The available scope types are:
 
 1. request
-	- The result goes out of scope when the call into the flow that invoked this method completes.
+	- The result goes out of scope when the call into the flow that evaluated this expression completes.
 2. flow
 	- The result goes out of scope when the flow session ends.  For example, if a
 	  flow spawns another flow as a subflow and that subflow invokes a method that 
