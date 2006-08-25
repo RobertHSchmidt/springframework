@@ -15,10 +15,8 @@
  */
 package org.springframework.webflow.engine.builder.xml;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -89,9 +87,9 @@ import org.xml.sax.SAXException;
  * to the following format:
  * 
  * <pre>
- *  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
- *  &lt;flow xmlns=&quot;http://www.springframework.org/schema/webflow&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
- *        xsi:schemaLocation=&quot;http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd&quot;&gt;
+ *     &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+ *     &lt;flow xmlns=&quot;http://www.springframework.org/schema/webflow&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+ *         xsi:schemaLocation=&quot;http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -148,8 +146,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String BEAN_ATTRIBUTE = "bean";
 
 	private static final String FLOW_ELEMENT = "flow";
-
-	private static final String START_STATE_ATTRIBUTE = "start-state";
 
 	private static final String START_STATE_ELEMENT = "start-state";
 
@@ -264,28 +260,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * JAXP attribute value indicating the XSD schema language.
 	 */
 	private static final String XSD_SCHEMA_LANGUAGE = "http://www.w3.org/2001/XMLSchema";
-
-	/**
-	 * The token in a XML document that declares the DTD to use for validation
-	 * and thus that DTD validation is being used.
-	 */
-	private static final String DOCTYPE = "DOCTYPE";
-
-	/**
-	 * The token that indicates the start of an XML comment.
-	 */
-	private static final String START_COMMENT = "<!--";
-
-	/**
-	 * The token that indicates the end of an XML comment.
-	 */
-	private static final String END_COMMENT = "-->";
-
-	/**
-	 * Indicates whether or not the current parse position is inside an XML
-	 * comment.
-	 */
-	private boolean inComment;
 
 	/**
 	 * The resource from which the document element being parsed was read. Used
@@ -460,10 +434,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			is = getLocation().getInputStream();
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setValidating(isValidating());
-			if (isXsdValidated(getLocation().getInputStream())) {
-				factory.setNamespaceAware(true);
-				factory.setAttribute(SCHEMA_LANGUAGE_ATTRIBUTE, XSD_SCHEMA_LANGUAGE);
-			}
+			factory.setNamespaceAware(true);
+			factory.setAttribute(SCHEMA_LANGUAGE_ATTRIBUTE, XSD_SCHEMA_LANGUAGE);
 			DocumentBuilder docBuilder = factory.newDocumentBuilder();
 			docBuilder.setErrorHandler(new SimpleSaxErrorHandler(logger));
 			docBuilder.setEntityResolver(getEntityResolver());
@@ -479,116 +451,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Detects the validation mode for the XML document in the supplied
-	 * {@link InputStream}. Note that the supplied {@link InputStream} is
-	 * closed by this method before returning.
-	 * @throws IOException
-	 */
-	private boolean isXsdValidated(InputStream inputStream) throws IOException {
-		// Peek into the file to look for DOCTYPE.
-		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-		try {
-			boolean isXsdValidated = false;
-			String content;
-			while ((content = reader.readLine()) != null) {
-				content = consumeCommentTokens(content);
-				if (inComment || !StringUtils.hasText(content)) {
-					continue;
-				}
-				if (hasOpeningTag(content)) {
-					isXsdValidated = true;
-					break;
-				}
-				else if (hasDoctype(content)) {
-					// End of meaningful data
-					break;
-				}
-			}
-			return isXsdValidated;
-		}
-		finally {
-			reader.close();
-		}
-	}
-
-	/**
-	 * Consumes all the leading comment data in the given String and returns the
-	 * remaining content, which may be empty since the supplied content might be
-	 * all comment data. For our purposes it is only important to strip leading
-	 * comment content on a line since the first piece of non comment content
-	 * will be either the DOCTYPE declaration or the root element of the
-	 * document.
-	 */
-	private String consumeCommentTokens(String line) {
-		if (line.indexOf(START_COMMENT) == -1 && line.indexOf(END_COMMENT) == -1) {
-			return line;
-		}
-
-		while ((line = consume(line)) != null) {
-			if (!inComment && !line.trim().startsWith(START_COMMENT)) {
-				return line;
-			}
-		}
-		return line;
-	}
-
-	/**
-	 * Consume the next comment token, update the
-	 * {@link #isInComment in comment flag} and return the remaining content.
-	 */
-	private String consume(String line) {
-		int index = (inComment ? endComment(line) : startComment(line));
-		return (index == -1 ? null : line.substring(index));
-	}
-
-	/**
-	 * Try to consume the {@link #START_COMMENT} token.
-	 * @see #commentToken(String, String, boolean)
-	 */
-	private int startComment(String line) {
-		return commentToken(line, START_COMMENT, true);
-	}
-
-	private int endComment(String line) {
-		return commentToken(line, END_COMMENT, false);
-	}
-
-	/**
-	 * Try to consume the supplied token against the supplied content and update
-	 * the in comment parse state to the supplied value. Returns the index into
-	 * the content which is after the token or -1 if the token is not found.
-	 */
-	private int commentToken(String line, String token, boolean inCommentIfPresent) {
-		int index = line.indexOf(token);
-		if (index > -1) {
-			inComment = inCommentIfPresent;
-		}
-		return (index == -1 ? index : index + token.length());
-	}
-
-	/**
-	 * Does the content contain the the DTD DOCTYPE declaration?
-	 */
-	private boolean hasDoctype(String content) {
-		return content.indexOf(DOCTYPE) > -1;
-	}
-
-	/**
-	 * Does the supplied content contain an XML opening tag. If the parse state
-	 * is currently in an XML comment then this method always returns false. It
-	 * is expected that all comment tokens will have consumed for the supplied
-	 * content before passing the remainder to this method.
-	 */
-	private boolean hasOpeningTag(String content) {
-		if (inComment) {
-			return false;
-		}
-		int openTagIndex = content.indexOf('<');
-		return (openTagIndex > -1 && content.length() > openTagIndex && Character.isLetter(content
-				.charAt(openTagIndex + 1)));
 	}
 
 	private Flow parseFlow(String id, AttributeMap attributes, Element flowElement) {
@@ -762,13 +624,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private String getStartStateId(Element element) {
 		Element startStateElement = DomUtils.getChildElementByTagName(element, START_STATE_ELEMENT);
-
-		if (startStateElement != null) {
-			return startStateElement.getAttribute(IDREF_ATTRIBUTE);
-		}
-		else {
-			return element.getAttribute(START_STATE_ATTRIBUTE);
-		}
+		return startStateElement.getAttribute(IDREF_ATTRIBUTE);
 	}
 
 	private void parseAndAddActionState(Element element, Flow flow) {
