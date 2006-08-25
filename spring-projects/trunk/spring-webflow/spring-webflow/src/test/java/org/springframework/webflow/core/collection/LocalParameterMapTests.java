@@ -214,6 +214,16 @@ public class LocalParameterMapTests extends TestCase {
 		assertEquals(Boolean.TRUE, value);
 	}
 
+	public void testGetMultipart() {
+		MultipartFile file = parameterMap.getMultipartFile("multipartFile");
+		assertNotNull(file);
+	}
+
+	public void testGetRequiredMultipart() {
+		MultipartFile file = parameterMap.getRequiredMultipartFile("multipartFile");
+		assertNotNull(file);
+	}
+	
 	public void testEquality() {
 		LocalParameterMap map1 = new LocalParameterMap(new HashMap(parameterMap.asMap()));
 		assertEquals(parameterMap, map1);
