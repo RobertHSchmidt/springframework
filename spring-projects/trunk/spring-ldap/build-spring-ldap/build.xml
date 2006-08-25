@@ -33,9 +33,9 @@
           <filename name="spring-ldap-article/**"/>
         </or>
         <and>
-          <filename name="*/*/target/**" negate="true"/>
-          <filename name="*/*/build.properties" negate="true"/>
-          <filename name="*/*/lib/**" negate="true"/>
+          <filename name="*/target/**" negate="true"/>
+          <filename name="*/build.properties" negate="true"/>
+          <filename name="*/lib/**" negate="true"/>
         </and>
         <and>
           <filename name="*/*/*/target/**" negate="true"/>
