@@ -18,7 +18,7 @@
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
-			classpath:org/springframework/webflow/samples/phonebook/domain/services.xml
+			classpath:org/springframework/webflow/samples/phonebook/domain/services-config.xml
 		</param-value>
 	</context-param>
 	
@@ -36,8 +36,8 @@
 		<init-param>
 			<param-name>contextConfigLocation</param-name>
 			<param-value>
-				/WEB-INF/dispatcher-servlet.xml
-				/WEB-INF/webflow-config.xml
+				/WEB-INF/phonebook-servlet-config.xml
+				/WEB-INF/phonebook-webflow-config.xml
 			</param-value>
 		</init-param>
 	</servlet>
