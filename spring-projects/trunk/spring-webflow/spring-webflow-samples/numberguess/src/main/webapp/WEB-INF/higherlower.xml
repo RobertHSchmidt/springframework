@@ -2,6 +2,8 @@
 <flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
 
+	<var name="game" class="org.springframework.webflow.samples.numberguess.HigherLowerGame"/>
+	
 	<start-state idref="enterGuess"/>
 	
 	<view-state id="enterGuess" view="higherlower.enterGuess">
@@ -9,18 +11,13 @@
 	</view-state>
 	
 	<action-state id="makeGuess">
-		<bean-action bean="game" method="makeGuess">
-			<method-arguments>
-				<argument expression="requestParameters.guess" parameter-type="int"/>
-			</method-arguments>
-			<method-result name="guessResult"/>
-		</bean-action>
+		<evaluate-action expression="flowScope.game.makeGuess(requestParameters.id)">
+			<evaluation-result name="guessResult"/>
+		</evaluate-action>
 		<transition on="correct" to="showAnswer"/>
 		<transition on="*" to="enterGuess"/>
 	</action-state>
 	
 	<end-state id="showAnswer" view="higherlower.showAnswer"/>
-
-	<import resource="higherlower-beans.xml"/>
 
 </flow>

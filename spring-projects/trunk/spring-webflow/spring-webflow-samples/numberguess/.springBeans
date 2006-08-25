@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
+	<configExtensions>
+		<configExtension>xml</configExtension>
+	</configExtensions>
 	<configs>
-		<config>src/main/webapp/WEB-INF/mastermind-beans.xml</config>
 		<config>src/main/webapp/WEB-INF/dispatcher-servlet.xml</config>
-		<config>src/main/webapp/WEB-INF/higherlower-beans.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -12,7 +13,6 @@
 			<incomplete>false</incomplete>
 			<configs>
 				<config>src/main/webapp/WEB-INF/dispatcher-servlet.xml</config>
-				<config>src/main/webapp/WEB-INF/mastermind-beans.xml</config>
 			</configs>
 		</configSet>
 		<configSet>
@@ -21,7 +21,6 @@
 			<incomplete>false</incomplete>
 			<configs>
 				<config>src/main/webapp/WEB-INF/dispatcher-servlet.xml</config>
-				<config>src/main/webapp/WEB-INF/higherlower-beans.xml</config>
 			</configs>
 		</configSet>
 	</configSets>

@@ -2,19 +2,18 @@
 <flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
 
+	<var name="game" class="org.springframework.webflow.samples.numberguess.MastermindGame"/>
+
 	<start-state idref="enterGuess"/>
 	
 	<view-state id="enterGuess" view="mastermind.enterGuess">
 		<transition on="submit" to="guess"/>
 	</view-state>
 	
-	<action-state id="guess">
-		<bean-action bean="game" method="makeGuess">
-			<method-arguments>
-				<argument expression="requestParameters.guess" parameter-type="java.lang.String"/>
-			</method-arguments>
-			<method-result name="guessResult"/>
-		</bean-action>
+	<action-state id="makeGuess">
+		<evaluate-action expression="flowScope.game.makeGuess(requestParameters.id)">
+			<evaluation-result name="guessResult"/>
+		</evaluate-action>
 		<transition on="correct" to="showAnswer"/>
 		<transition on="*" to="enterGuess"/>
 	</action-state>
