@@ -42,34 +42,30 @@ public class FlowFacesUtils {
 		}
 	}
 
-	public static FlowExecutionRepository getExecutionRepository(FacesContext context) {
+	public synchronized static FlowExecutionRepository getExecutionRepository(FacesContext context) {
 		ApplicationContext ac = FacesContextUtils.getRequiredWebApplicationContext(context);
 		if (ac.containsBean(REPOSITORY_BEAN_NAME)) {
 			return (FlowExecutionRepository)ac.getBean(REPOSITORY_BEAN_NAME, FlowExecutionRepository.class);
 		}
 		else {
-			synchronized (defaultRepository) {
-				if (defaultRepository == null) {
-					defaultRepository = new DefaultFlowExecutionRepository(new FlowExecutionImplStateRestorer(
-							getDefinitionLocator(context)));
-				}
-				return defaultRepository;
+			if (defaultRepository == null) {
+				defaultRepository = new DefaultFlowExecutionRepository(new FlowExecutionImplStateRestorer(
+						getDefinitionLocator(context)));
 			}
+			return defaultRepository;
 		}
 	}
 
-	public static FlowExecutionFactory getExecutionFactory(FacesContext context) {
+	public synchronized static FlowExecutionFactory getExecutionFactory(FacesContext context) {
 		ApplicationContext ac = FacesContextUtils.getRequiredWebApplicationContext(context);
 		if (ac.containsBean(FACTORY_BEAN_NAME)) {
 			return (FlowExecutionFactory)ac.getBean(FACTORY_BEAN_NAME, FlowExecutionFactory.class);
 		}
 		else {
-			synchronized (defaultFactory) {
-				if (defaultFactory == null) {
-					defaultFactory = new FlowExecutionImplFactory();
-				}
-				return defaultFactory;
+			if (defaultFactory == null) {
+				defaultFactory = new FlowExecutionImplFactory();
 			}
+			return defaultFactory;
 		}
 	}
 }
