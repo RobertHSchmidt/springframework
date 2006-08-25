@@ -26,7 +26,7 @@
 
 		<spring:bind path="packageWeight">
 			<label>Package weight</label>
-			<input type="text" name="${status.expression}" value="<c:if test="${status.value >= 0}">${status.value}</c:if>">
+			<input type="text" name="${status.expression}" value="${status.value}">
 			<c:if test="${status.error}">
 				<span class="error">${status.errorMessage}</span>
 			</c:if>
