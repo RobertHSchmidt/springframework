@@ -1,40 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
-	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
+<!-- 
+	This simple flow demonstrates the use of the FormAction: a multi-action.
+	Notice how all the actions use the same "formAction" bean, which groups
+	all action methods executed by this flow into single class.
+-->
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
 
-<flow start-state="displayItemlist">
-	<var name="list" class="java.util.ArrayList"/>
+	<var name="list" class="java.util.ArrayList" />
+
+	<start-state idref="displayItemlist" />
 
 	<view-state id="displayItemlist" view="itemlist">
-		<transition on="add" to="addItem"/>
+		<transition on="add" to="addItem" />
 	</view-state>
 
 	<subflow-state id="addItem" flow="item">
 		<attribute-mapper>
 			<output-mapper>
-				<mapping source="item" target-collection="flowScope.list"/>
+				<mapping source="item" target-collection="flowScope.list" />
 			</output-mapper>
 		</attribute-mapper>
-		<transition on="finish" to="displayItemlist"/>
+		<transition on="finish" to="displayItemlist" />
 	</subflow-state>
-	
+
 	<inline-flow id="item">
 		<flow start-state="displayItem">
 			<view-state id="displayItem" view="item">
-				<transition on="submit" to="mapItem"/>
+				<transition on="submit" to="mapItem" />
 			</view-state>
-			
+
 			<action-state id="mapItem">
-				<action bean="mapItemAction"/>
-				<transition on="success" to="finish"/>
+				<action bean="mapItemAction" />
+				<transition on="success" to="finish" />
 			</action-state>
-			
+
 			<end-state id="finish">
 				<output-mapper>
-					 <mapping source="flowScope.item" target="item"/>
+					<mapping source="flowScope.item" target="item" />
 				</output-mapper>
 			</end-state>
 		</flow>
 	</inline-flow>
-	
+
 </flow>

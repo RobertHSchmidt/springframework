@@ -17,9 +17,9 @@ package org.springframework.webflow.samples.itemlist;
 
 import java.util.Collection;
 
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 public class AddItemAction extends AbstractAction {
 	protected Event doExecute(RequestContext context) throws Exception {
@@ -28,14 +28,14 @@ public class AddItemAction extends AbstractAction {
 		if (data != null && data.length() > 0) {
 			list.add(data);
 		}
-		
+
 		try {
 			// add a bit of artificial think time
 			Thread.sleep(2000);
 		}
 		catch (InterruptedException e) {
-		}		
-		
+		}
+
 		return success();
 	}
 }
