@@ -27,7 +27,7 @@ public class SaleProcessorIntegrationTests extends AbstractTransactionalDataSour
 
 	@Override
 	protected String[] getConfigLocations() {
-		return new String[] { "classpath:org/springframework/webflow/samples/sellitem/applicationContext.xml" };
+		return new String[] { "classpath:org/springframework/webflow/samples/sellitem/services-config.xml" };
 	}
 
 	public void testProcessSale() {
