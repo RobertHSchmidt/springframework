@@ -1,9 +1,9 @@
 package org.springframework.webflow.samples.fileupload;
 
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 public class FileUploadAction extends AbstractAction {
 	protected Event doExecute(RequestContext context) throws Exception {
