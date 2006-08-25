@@ -27,7 +27,9 @@ import javax.naming.NamingException;
 public interface NameClassPairMapper {
     /**
      * Map NameClassPair to an Object. The supplied NameClassPair is one of the
-     * results from a search operation (search, list or listBindings).
+     * results from a search operation (search, list or listBindings). Depending
+     * on which search operation is being performed, the NameClassPair might be
+     * a SearchResult, Binding or NameClassPair.
      * 
      * @param nameClassPair
      *            NameClassPair from a search operation.

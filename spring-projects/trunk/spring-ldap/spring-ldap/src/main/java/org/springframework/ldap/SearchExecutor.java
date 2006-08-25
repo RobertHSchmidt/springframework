@@ -24,7 +24,11 @@ import javax.naming.directory.DirContext;
  * implementation of executeSearch would be something like:
  * 
  * <pre>
- * return ctx.search(dn, filter, searchControls);
+ * SearchExecutor executor = new SearchExecutor(){
+ *   public NamingEnumeration executeSearch(DirContext ctx) throws NamingException{
+ *     return ctx.search(dn, filter, searchControls);
+ *   }
+ * }
  * </pre>
  * 
  * @see org.springframework.ldap.LdapTemplate#search(SearchExecutor,

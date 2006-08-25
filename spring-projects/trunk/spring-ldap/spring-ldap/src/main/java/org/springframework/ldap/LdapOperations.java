@@ -30,7 +30,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 /**
  * Interface that specifies a basic set of LDAP operations. Implemented by
- * LdapTemplate. Useful option to enhance testability.
+ * LdapTemplate, but it might be a useful option to use this interface in order
+ * to enhance testability.
  * 
  * @author Mattias Arthursson
  * @author Ulrik Sandberg
@@ -42,9 +43,9 @@ public interface LdapOperations {
      * with suitable argments. This method handles all the plumbing; getting a
      * readonly context; looping through the NamingEnumeration and closing the
      * context and enumeration. The actual search is delegated to the
-     * SearchExecutor and each SearchResult is passed to the CallbackHandler.
-     * Any encountered NamingException will be translated using the
-     * NamingExceptionTranslator.
+     * SearchExecutor and each found SearchResult is passed to the
+     * CallbackHandler. Any encountered NamingException will be translated using
+     * the NamingExceptionTranslator.
      * 
      * @param se
      *            The SearchExecutor to use for performing the actual search.
@@ -53,7 +54,7 @@ public interface LdapOperations {
      *            will be passed.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
-     *             be ignored. Instead this is interpreted that no entries were
+     *             be ignored. Instead this is interpreted as no entries being
      *             found.
      */
     public void search(SearchExecutor se, NameClassPairCallbackHandler handler)
@@ -62,7 +63,7 @@ public interface LdapOperations {
     /**
      * Perform an operation (or series of operations) on a read-only context.
      * This method handles the plumbing - getting a DirContext, translating any
-     * exceptions and closing the context afterwards. This method is not
+     * Exceptions and closing the context afterwards. This method is not
      * intended for searches; use
      * {@link #search(SearchExecutor, NameClassPairCallbackHandler)} or any of
      * the overloaded search methods for this.
@@ -94,9 +95,10 @@ public interface LdapOperations {
 
     /**
      * Search for all objects matching the supplied filter. Each SearchResult is
-     * supplied to the specified NameClassPairCallbackHandler. Use the specified
-     * SearchControls in the search. Note that if you are using a ContextMapper,
-     * the returningObjFlag needs to be set to true.
+     * supplied to the specified NameClassPairCallbackHandler. The SearchScope
+     * specified in the supplied SearchControls will be used in the search. Note
+     * that if you are using a ContextMapper, the returningObjFlag needs to be
+     * set to true in the SearchControls.
      * 
      * @param base
      *            The base DN where the search should begin.
@@ -112,10 +114,9 @@ public interface LdapOperations {
             NameClassPairCallbackHandler handler);
 
     /**
-     * Search for all objects matching the supplied filter. Each SearchResult is
-     * supplied to the specified NameClassPairCallbackHandler. Use the specified
-     * SearchControls in the search. Note that if you are using a ContextMapper,
-     * the returningObjFlag needs to be set to true.
+     * Search for all objects matching the supplied filter. See
+     * {@link #search(Name, String, SearchControls, NameClassPairCallbackHandler)}
+     * for details.
      * 
      * @param base
      *            The base DN where the search should begin.
@@ -133,7 +134,7 @@ public interface LdapOperations {
     /**
      * Search for all objects matching the supplied filter. Each SearchResult is
      * supplied to the specified NameClassPairCallbackHandler. Use the specified
-     * search scope and return objects flag in search controls.
+     * values for search scope and return objects flag.
      * 
      * @param base
      *            The base DN where the search should begin.
@@ -142,7 +143,8 @@ public interface LdapOperations {
      * @param searchScope
      *            The search scope to set in SearchControls.
      * @param returningObjFlag
-     *            whether the bound object should be returned in search results.
+     *            Whether the bound object should be returned in search results.
+     *            Must be set to <code>true</code> if a ContextMapper is used.
      * @param handler
      *            The NameClassPairCallbackHandler to supply the SearchResults
      *            to.
@@ -423,8 +425,7 @@ public interface LdapOperations {
 
     /**
      * Search for all objects matching the supplied filter. The Object returned
-     * in each SearchResult is supplied to the specified ContextMapper. The
-     * default search scope (SearchControls.SUBTREE_SCOPE) will be used.
+     * in each SearchResult is supplied to the specified ContextMapper.
      * 
      * @param base
      *            The base DN where the search should begin.
@@ -561,10 +562,7 @@ public interface LdapOperations {
      * @param filter
      *            The filter to use in the search.
      * @param controls
-     *            The SearchControls to use in the search. If the returnObjFlag
-     *            is not set in the SearchControls, this method will set it
-     *            automatically, as this is required for the ContextMapper to
-     *            work.
+     *            The SearchControls to use in the search.
      * @param mapper
      *            The AttributesMapper to use for translating each entry.
      * @return a List containing all entries received from the ContextMapper.
@@ -577,7 +575,7 @@ public interface LdapOperations {
             AttributesMapper mapper) throws DataAccessException;
 
     /**
-     * Perform a non-recursive listing of the contexts bound to the given
+     * Perform a non-recursive listing of the children of the given
      * <code>base</code>. Each resulting NameClassPair is supplied to the
      * specified NameClassPairCallbackHandler.
      * 
@@ -591,10 +589,11 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public void list(String base, NameClassPairCallbackHandler handler) throws DataAccessException;
+    public void list(String base, NameClassPairCallbackHandler handler)
+            throws DataAccessException;
 
     /**
-     * Perform a non-recursive listing of the contexts bound to the given
+     * Perform a non-recursive listing of the children of the given
      * <code>base</code>. Each resulting NameClassPair is supplied to the
      * specified NameClassPairCallbackHandler.
      * 
@@ -608,10 +607,11 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public void list(Name base, NameClassPairCallbackHandler handler) throws DataAccessException;
+    public void list(Name base, NameClassPairCallbackHandler handler)
+            throws DataAccessException;
 
     /**
-     * Perform a non-recursive listing of the contexts bound to the given
+     * Perform a non-recursive listing of the children of the given
      * <code>base</code>. Pass all the found NameClassPair objects to the
      * supplied NameClassPairMapper and return all the returned values as a
      * List.
@@ -627,10 +627,11 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public List list(String base, NameClassPairMapper mapper) throws DataAccessException;
+    public List list(String base, NameClassPairMapper mapper)
+            throws DataAccessException;
 
     /**
-     * Perform a non-recursive listing of the contexts bound to the given
+     * Perform a non-recursive listing of the children of the given
      * <code>base</code>. Pass all the found NameClassPair objects to the
      * supplied NameClassPairMapper and return all the returned values as a
      * List.
@@ -646,10 +647,11 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public List list(Name base, NameClassPairMapper mapper) throws DataAccessException;
+    public List list(Name base, NameClassPairMapper mapper)
+            throws DataAccessException;
 
     /**
-     * Perform a non-recursive listing of the contexts bound to the given
+     * Perform a non-recursive listing of the children of the given
      * <code>base</code>.
      * 
      * @param base
@@ -679,7 +681,7 @@ public interface LdapOperations {
     public List list(Name base) throws DataAccessException;
 
     /**
-     * Perform a non-recursive listing of the contexts bound to the given
+     * Perform a non-recursive listing of the children of the given
      * <code>base</code>. Each resulting Binding is supplied to the specified
      * NameClassPairCallbackHandler.
      * 
@@ -697,7 +699,7 @@ public interface LdapOperations {
             NameClassPairCallbackHandler handler) throws DataAccessException;
 
     /**
-     * Perform a non-recursive listing of the contexts bound to the given
+     * Perform a non-recursive listing of the children of the given
      * <code>base</code>. Each resulting Binding is supplied to the specified
      * NameClassPairCallbackHandler.
      * 
@@ -715,7 +717,7 @@ public interface LdapOperations {
             NameClassPairCallbackHandler handler) throws DataAccessException;
 
     /**
-     * Perform a non-recursive listing of the contexts bound to the given
+     * Perform a non-recursive listing of the children of the given
      * <code>base</code>. Pass all the found Binding objects to the supplied
      * NameClassPairMapper and return all the returned values as a List.
      * 
@@ -729,10 +731,11 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public List listBindings(String base, NameClassPairMapper mapper) throws DataAccessException;
+    public List listBindings(String base, NameClassPairMapper mapper)
+            throws DataAccessException;
 
     /**
-     * Perform a non-recursive listing of the contexts bound to the given
+     * Perform a non-recursive listing of the children of the given
      * <code>base</code>. Pass all the found Binding objects to the supplied
      * NameClassPairMapper and return all the returned values as a List.
      * 
@@ -746,10 +749,11 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public List listBindings(Name base, NameClassPairMapper mapper) throws DataAccessException;
+    public List listBindings(Name base, NameClassPairMapper mapper)
+            throws DataAccessException;
 
     /**
-     * Perform a non-recursive listing of the contexts bound to the given
+     * Perform a non-recursive listing of children of the given
      * <code>base</code>.
      * 
      * @param base
@@ -764,7 +768,7 @@ public interface LdapOperations {
     public List listBindings(final String base) throws DataAccessException;
 
     /**
-     * Perform a non-recursive listing of the contexts bound to the given
+     * Perform a non-recursive listing of the children of the given
      * <code>base</code>.
      * 
      * @param base
@@ -779,7 +783,7 @@ public interface LdapOperations {
     public List listBindings(final Name base) throws DataAccessException;
 
     /**
-     * Perform a non-recursive listing of the contexts bound to the given
+     * Perform a non-recursive listing of the children of the given
      * <code>base</code>. The Object returned in each {@link Binding} is
      * supplied to the specified ContextMapper.
      * 
@@ -793,10 +797,11 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public List listBindings(String base, ContextMapper mapper) throws DataAccessException;
+    public List listBindings(String base, ContextMapper mapper)
+            throws DataAccessException;
 
     /**
-     * Perform a non-recursive listing of the contexts bound to the given
+     * Perform a non-recursive listing of the children of the given
      * <code>base</code>. The Object returned in each {@link Binding} is
      * supplied to the specified ContextMapper.
      * 
@@ -810,7 +815,8 @@ public interface LdapOperations {
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public List listBindings(Name base, ContextMapper mapper) throws DataAccessException;
+    public List listBindings(Name base, ContextMapper mapper)
+            throws DataAccessException;
 
     /**
      * Lookup the supplied DN and return the found object. <b>WARNING</b>: This
@@ -905,7 +911,7 @@ public interface LdapOperations {
             throws DataAccessException;
 
     /**
-     * Modify the distinguished name dn with the supplied ModificationItems.
+     * Modify an entry in the LDAP tree using the supplied ModificationItems.
      * 
      * @param dn
      *            The distinguished name of the node to modify.
@@ -918,7 +924,7 @@ public interface LdapOperations {
             throws DataAccessException;
 
     /**
-     * Modify the distinguished name dn with the supplied ModificationItems.
+     * Modify an entry in the LDAP tree using the supplied ModificationItems.
      * 
      * @param dn
      *            The distinguished name of the node to modify.
@@ -931,15 +937,18 @@ public interface LdapOperations {
             throws DataAccessException;
 
     /**
-     * Bind the supplied object together with the attributes to the specified
-     * dn.
+     * Create an entry in the LDAP tree. The attributes used to create the entry
+     * are either retrieved from the <code>obj</code> parameter or the
+     * <code>attributes</code> parameter (or both). One of these parameters
+     * may be null but not both.
      * 
      * @param dn
      *            The distinguished name to bind the object and attributes to.
      * @param obj
-     *            The object to bind, may be null.
+     *            The object to bind, may be null. Typically a DirContext
+     *            implementation.
      * @param attributes
-     *            The attributes to bind.
+     *            The attributes to bind, may be null.
      * @throws DataAccessException
      *             if any error occurs.
      */
@@ -947,15 +956,18 @@ public interface LdapOperations {
             throws DataAccessException;
 
     /**
-     * Bind the supplied object together with the attributes to the specified
-     * dn.
+     * Create an entry in the LDAP tree. The attributes used to create the entry
+     * are either retrieved from the <code>obj</code> parameter or the
+     * <code>attributes</code> parameter (or both). One of these parameters
+     * may be null but not both.
      * 
      * @param dn
      *            The distinguished name to bind the object and attributes to.
      * @param obj
-     *            The object to bind, may be null.
+     *            The object to bind, may be null. Typically a DirContext
+     *            implementation.
      * @param attributes
-     *            The attributes to bind.
+     *            The attributes to bind, may be null.
      * @throws DataAccessException
      *             if any error occurs.
      */
@@ -963,17 +975,21 @@ public interface LdapOperations {
             throws DataAccessException;
 
     /**
-     * Unbind the specified distinguished name.
+     * Remove an entry from the LDAP tree. The entry must not have any children -
+     * if you suspect that the entry might have descendants, use
+     * {@link #unbind(Name, boolean)} in stead.
      * 
      * @param dn
-     *            The distinguished name to unbind.
+     *            The distinguished name of the entry to remove.
      * @throws DataAccessException
      *             if any error occurs.
      */
     public void unbind(Name dn) throws DataAccessException;
 
     /**
-     * Unbind the specified distinguished name.
+     * Remove an entry from the LDAP tree. The entry must not have any children -
+     * if you suspect that the entry might have descendants, use
+     * {@link #unbind(Name, boolean)} in stead.
      * 
      * @param dn
      *            The distinguished name to unbind.
@@ -983,40 +999,49 @@ public interface LdapOperations {
     public void unbind(String dn) throws DataAccessException;
 
     /**
-     * Unbind the specified distinguished name.
+     * Remove an entry from the LDAP tree, optionally removing all descendants
+     * in the process.
      * 
      * @param dn
      *            The distinguished name to unbind.
      * @param recursive
-     *            whether to unbind all subcontexts as well.
+     *            Whether to unbind all subcontexts as well. If this parameter
+     *            is <code>false</code> and the entry has children, the
+     *            operation will fail.
      * @throws DataAccessException
      *             if any error occurs.
      */
     public void unbind(Name dn, boolean recursive) throws DataAccessException;
 
     /**
-     * Unbind the specified distinguished name.
+     * Remove an entry from the LDAP tree, optionally removing all descendants
+     * in the process.
      * 
      * @param dn
      *            The distinguished name to unbind.
      * @param recursive
-     *            whether to unbind all subcontexts as well.
+     *            Whether to unbind all subcontexts as well. If this parameter
+     *            is <code>false</code> and the entry has children, the
+     *            operation will fail.
      * @throws DataAccessException
      *             if any error occurs.
      */
     public void unbind(String dn, boolean recursive) throws DataAccessException;
 
     /**
-     * Rebind the name to the object along with the specified attributes,
-     * overwriting any previous values. This method assumes that the specified
-     * context already exists.
+     * Remove an entry and replace it with a new one. The attributes used to
+     * create the entry are either retrieved from the <code>obj</code>
+     * parameter or the <code>attributes</code> parameter (or both). One of
+     * these parameters may be null but not both. This method assumes that the
+     * specified context already exists - if not it will fail.
      * 
      * @param dn
      *            The distinguished name to rebind.
      * @param obj
-     *            The object to bind to the DN.
+     *            The object to bind to the DN, may be null. Typically a
+     *            DirContext implementation.
      * @param attributes
-     *            The attributes to bind.
+     *            The attributes to bind, may be null.
      * @throws DataAccessException
      *             if any error occurs.
      */
@@ -1024,16 +1049,19 @@ public interface LdapOperations {
             throws DataAccessException;
 
     /**
-     * Rebind the name to the object along with the specified attributes,
-     * overwriting any previous values. This method assumes that the specified
-     * context already exists.
+     * Remove an entry and replace it with a new one. The attributes used to
+     * create the entry are either retrieved from the <code>obj</code>
+     * parameter or the <code>attributes</code> parameter (or both). One of
+     * these parameters may be null but not both. This method assumes that the
+     * specified context already exists - if not it will fail.
      * 
      * @param dn
      *            The distinguished name to rebind.
      * @param obj
-     *            The object to bind to the DN.
+     *            The object to bind to the DN, may be null. Typically a
+     *            DirContext implementation.
      * @param attributes
-     *            The attributes to bind.
+     *            The attributes to bind, may be null.
      * @throws DataAccessException
      *             if any error occurs.
      */
@@ -1041,15 +1069,14 @@ public interface LdapOperations {
             throws DataAccessException;
 
     /**
-     * Binds a new name to the object bound to an old name, and unbinds the old
-     * name. Both names are relative to this context. Any attributes associated
-     * with the old name become associated with the new name. Intermediate
-     * contexts of the old name are not changed.
+     * Move an entry in the LDAP tree to a new location.
      * 
      * @param oldDn
-     *            The name of the existing binding; may not be empty
+     *            The distinguished name of the entry to move; may not be null
+     *            or empty.
      * @param newDn
-     *            The name of the new binding; may not be empty
+     *            The distinguished name where the entry should be moved; may
+     *            not be null or empty.
      * @throws DataIntegrityViolationException
      *             if newDn is already bound
      * @throws DataAccessException
@@ -1059,13 +1086,14 @@ public interface LdapOperations {
             throws DataAccessException;
 
     /**
-     * Binds a new name to the object bound to an old name, and unbinds the old
-     * name. See {@link #rename(Name, Name)} for details.
+     * Move an entry in the LDAP tree to a new location.
      * 
      * @param oldDn
-     *            The name of the existing binding; may not be empty
+     *            The distinguished name of the entry to move; may not be null
+     *            or empty.
      * @param newDn
-     *            The name of the new binding; may not be empty
+     *            The distinguished name where the entry should be moved; may
+     *            not be null or empty.
      * @throws DataIntegrityViolationException
      *             if newDn is already bound
      * @throws DataAccessException

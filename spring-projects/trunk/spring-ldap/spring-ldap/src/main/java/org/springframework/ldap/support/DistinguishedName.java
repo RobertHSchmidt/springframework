@@ -35,8 +35,7 @@ import org.springframework.ldap.BadLdapGrammarException;
 /**
  * Default implementation of a Name corresponding to an LDAP path. A
  * DistinguishedName implementation is included in JDK1.5 (LdapName), but not in
- * prior releases, and this implementation is intended if a prior implementation
- * is used.
+ * prior releases.
  * 
  * An DistinguishedName is particularly useful when building or modifying an
  * Ldap path dynamically, as escaping will be taken care of.
@@ -46,7 +45,7 @@ import org.springframework.ldap.BadLdapGrammarException;
  * 
  * The path: uid=adam.skogman, ou=People, ou=EU Name[0]: ou=EU Name[1]:
  * ou=People Name[2]: uid=adam.skogman
- * 
+ * <p>
  * Useful for parsing and building LDAP paths.
  * 
  * <pre>

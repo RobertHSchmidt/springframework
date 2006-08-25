@@ -21,10 +21,14 @@ import javax.naming.directory.DirContext;
 /**
  * Interface for delegating an actual operation to be performed on an
  * DirContext. For searches, use {@link org.springframework.ldap.SearchExecutor} in
- * stead. A typical implementation would look like:
+ * stead. A typical usage of this interface could be e.g.:
  * 
  * <pre>
- * return ctx.lookup(dn);
+ * ContextExecutor executor = new ContextExecutor(){
+ *   public Object executeWithContext(DirContext ctx) throws NamingException{
+ *     return ctx.lookup(dn);
+ *   }
+ * };
  * </pre>
  * 
  * @see org.springframework.ldap.LdapTemplate#executeReadOnly(ContextExecutor)
