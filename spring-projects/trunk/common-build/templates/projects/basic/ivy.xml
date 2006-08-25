@@ -18,21 +18,21 @@
 
     <dependencies defaultconf="global->default">
     	<!-- global (compile, test, runtime) dependencies -->
-	    <dependency org="apache" name="commons-logging" rev="1.0.4"/>
-    	<dependency org="apache" name="log4j" rev="1.2.9"/>
-        <dependency org="springframework" name="springframework" rev="2.0-m3">
-            <artifact name="spring" type="jar"/>
-        </dependency>
+	    <dependency org="apache" name="commons-logging" rev="1.1"/>
+    	<dependency org="apache" name="log4j" rev="1.2.13"/>
+		<dependency	org="org.springframework" name="spring-beans" rev="2.0-rc3"/>
+		<dependency	org="org.springframework" name="spring-core" rev="2.0-rc3"/>
+		<dependency	org="org.springframework" name="spring-context"	rev="2.0-rc3"/>
 
 		<!-- build time only dependencies -->
         
         <!-- test time only dependencies -->
         <dependency org="easymock" name="easymock" rev="1.1" conf="test->default"/>
-        <dependency org="cenqua" name="clover" rev="1.3.8" conf="test->default">
+        <dependency org="cenqua" name="clover" rev="1.3.12" conf="test->default">
             <artifact name="clover" type="jar"/>
             <artifact name="cenquatasks" type="jar"/>
         </dependency>
         <dependency org="junit" name="junit" rev="3.8.1" conf="test->default"/>
-        <dependency org="springframework" name="spring-mock" rev="1.2.5" conf="test->default"/>
+        <dependency org="springframework" name="spring-mock" rev="2.0-rc3" conf="test->default"/>
     </dependencies>
 </ivy-module>
