@@ -18,14 +18,15 @@ package org.springframework.ldap.support.filter;
 
 
 /**
- * A filter for equals. E.g.
+ * A filter for 'equals'. The following code:
  * 
  * <pre>
  * EqualsFilter filter = new EqualsFilter(&quot;cn&quot;, &quot;Some CN&quot;);
  * System.out.println(filter.ecode());
  * </pre>
  * 
- * would resut in: <code>(cn=Some CN)</code>
+ * would result in:
+ * <pre>(cn=Some CN)</pre>
  * 
  * @author Adam Skogman
  */
@@ -40,15 +41,17 @@ public class EqualsFilter extends CompareFilter {
     /**
      * Convenience constructor for int values.
      * 
-     * @param attribute
-     * @param value
+     * @param attribute Name of attribute in filter.
+     * @param value The value of the attribute in the filter.
      */
     public EqualsFilter(String attribute, int value) {
         super(attribute, value);
     }
 
+    /*
+     * @see org.springframework.ldap.support.filter.CompareFilter#getCompareString()
+     */
     protected String getCompareString() {
         return EQUALS_SIGN;
     }
-
 }

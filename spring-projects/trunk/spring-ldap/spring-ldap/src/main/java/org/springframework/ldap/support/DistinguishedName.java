@@ -166,7 +166,7 @@ public class DistinguishedName implements Name {
     }
 
     /**
-     * Builds a complete LDAP path, ldap encoded, useful as a DN
+     * Builds a complete LDAP path, ldap encoded, useful as a DN.
      * 
      * Always uses lowercase, always separates with ", " i.e. comma and a space.
      * 
