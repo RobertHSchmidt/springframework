@@ -4,19 +4,17 @@
 		<configExtension>xml</configExtension>
 	</configExtensions>
 	<configs>
-		<config>src/main/webapp/WEB-INF/dispatcher-servlet.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
-			<name>mastermind</name>
+			<name>higherlower</name>
 			<allowBeanDefinitionOverriding>false</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
-				<config>src/main/webapp/WEB-INF/dispatcher-servlet.xml</config>
 			</configs>
 		</configSet>
 		<configSet>
-			<name>higherlower</name>
+			<name>mastermind</name>
 			<allowBeanDefinitionOverriding>false</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
