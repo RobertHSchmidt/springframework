@@ -19,12 +19,12 @@ package org.springframework.ldap.support.filter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.ldap.support.LdapEncoder;
 
 /**
- * This filter takes a automatically converts all whitespace to * wildcards.
+ * This filter automatically converts all whitespace to wildcards (*). The
+ * following code:
  * 
  * <pre>
  * WhitespaceWildcardsFilter filter = new WhitespaceWildcardsFilter(&quot;cn&quot;,
@@ -32,7 +32,7 @@ import org.springframework.ldap.support.LdapEncoder;
  * System.out.println(filter.ecode());
  * </pre>
  * 
- * would resut in: <code>(cn=*Some*CN*)</code>
+ * would result in: <code>(cn=*Some*CN*)</code>
  * 
  * @author Adam Skogman
  * @author Mattias Arthursson

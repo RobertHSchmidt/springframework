@@ -113,8 +113,8 @@ public abstract class AbstractContextSource implements ContextSource,
 
     /**
      * Default implementation of setting the environment up to be authenticated.
-     * Override in subclass if necessary, e.g. for Active Directory
-     * connectivity.
+     * Override in subclass if necessary. This is needed for Active Directory
+     * connectivity, for example.
      * 
      * @param env
      *            the environment to modify.
