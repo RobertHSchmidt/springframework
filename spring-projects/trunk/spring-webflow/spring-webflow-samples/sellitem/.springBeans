@@ -4,8 +4,6 @@
 		<configExtension>xml</configExtension>
 	</configExtensions>
 	<configs>
-		<config>src/main/java/org/springframework/webflow/samples/sellitem/applicationContext.xml</config>
-		<config>src/main/webapp/WEB-INF/sellitem-servlet.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -13,8 +11,6 @@
 			<allowBeanDefinitionOverriding>false</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
-				<config>src/main/java/org/springframework/webflow/samples/sellitem/applicationContext.xml</config>
-				<config>src/main/webapp/WEB-INF/sellitem-servlet.xml</config>
 			</configs>
 		</configSet>
 		<configSet>

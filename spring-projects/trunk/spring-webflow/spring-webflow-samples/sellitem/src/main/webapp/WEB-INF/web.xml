@@ -15,6 +15,13 @@
 		<param-value>/WEB-INF/classes/log4j.properties</param-value>
 	</context-param>
 
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			classpath:org/springframework/webflow/samples/sellitem/services-config.xml
+		</param-value>
+	</context-param>
+	
 	<listener>
 		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
 	</listener>
@@ -25,8 +32,8 @@
 		<init-param>
 			<param-name>contextConfigLocation</param-name>
 			<param-value>
-				/WEB-INF/sellitem-servlet.xml
-				classpath:org/springframework/webflow/samples/sellitem/applicationContext.xml
+				/WEB-INF/sellitem-servlet-config.xml
+				/WEB-INF/sellitem-webflow-config.xml
 			</param-value>
 		</init-param>
 	</servlet>
