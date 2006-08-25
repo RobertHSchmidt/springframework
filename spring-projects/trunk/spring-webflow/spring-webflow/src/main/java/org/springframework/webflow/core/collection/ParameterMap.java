@@ -2,6 +2,7 @@ package org.springframework.webflow.core.collection;
 
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.util.MapAdaptable;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * An interface for accessing parameters in a backing map. Parameters are
@@ -241,6 +242,22 @@ public interface ParameterMap extends MapAdaptable {
 	 * @throws ConversionException when the value could not be converted
 	 */
 	public Boolean getRequiredBoolean(String parameterName) throws IllegalArgumentException, ConversionException;
+
+	/**
+	 * Get a multi-part file parameter value, returning <code>null</code> if
+	 * no value is found.
+	 * @param parameterName the parameter name
+	 * @return the multipart file
+	 */
+	public MultipartFile getMultipartFile(String parameterName);
+
+	/**
+	 * Get the value of a required multipart file parameter.
+	 * @param parameterName the name of the parameter
+	 * @return the parameter value
+	 * @throws IllegalArgumentException when the parameter is not found
+	 */
+	public MultipartFile getRequiredMultipartFile(String parameterName);
 
 	/**
 	 * Adapts this parameter map to an {@link AttributeMap}.
