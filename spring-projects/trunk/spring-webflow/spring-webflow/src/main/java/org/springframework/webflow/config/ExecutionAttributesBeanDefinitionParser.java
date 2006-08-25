@@ -37,22 +37,36 @@ public class ExecutionAttributesBeanDefinitionParser extends AbstractSingleBeanD
 
 	private static final String VALUE = "value";
 
+	private static final String ALWAYS_REDIRECT_ON_PAUSE = "alwaysRedirectOnPause";
+
 	protected Class getBeanClass(Element element) {
 		return LocalAttributeMap.class;
 	}
 
 	protected void doParse(Element element, BeanDefinitionBuilder definitionBuilder) {
 		List attributeElements = DomUtils.getChildElementsByTagName(element, ATTRIBUTE);
-		definitionBuilder.addConstructorArg(buildAttributeMap(attributeElements));
+		Map attributeMap = new ManagedMap(attributeElements.size());
+		addAttributes(attributeMap, attributeElements);
+		addSpecialAttributes(attributeMap, element);
+		definitionBuilder.addConstructorArg(attributeMap);
 	}
 
-	private Map buildAttributeMap(List attributeElements) {
-		Map attributeMap = new ManagedMap(attributeElements.size());
+	private void addAttributes(Map attributeMap, List attributeElements) {
 		for (Iterator i = attributeElements.iterator(); i.hasNext();) {
 			Element attributeElement = (Element)i.next();
 			attributeMap.put(attributeElement.getAttribute(NAME), new TypedStringValue(attributeElement
 					.getAttribute(VALUE), attributeElement.getAttribute(TYPE)));
 		}
-		return attributeMap;
 	}
+
+	private void addSpecialAttributes(Map attributeMap, Element element) {
+		if (DomUtils.getChildElementByTagName(element, ALWAYS_REDIRECT_ON_PAUSE) != null) {
+			addAlwaysRedirectOnPauseAttribute(attributeMap);
+		}
+	}
+
+	private void addAlwaysRedirectOnPauseAttribute(Map attributeMap) {
+		attributeMap.put(ALWAYS_REDIRECT_ON_PAUSE, Boolean.TRUE);
+	}
+
 }
