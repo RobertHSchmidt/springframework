@@ -2,7 +2,6 @@ package org.springframework.webflow.engine.builder.xml;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
-import org.springframework.util.Assert;
 import org.springframework.webflow.MyCustomException;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.core.collection.AttributeMap;
@@ -16,7 +15,6 @@ import org.springframework.webflow.engine.builder.BaseFlowServiceLocator;
 import org.springframework.webflow.engine.builder.FlowArtifactLookupException;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.FlowSessionStatus;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -62,28 +60,6 @@ public class TestFlowServiceLocator extends BaseFlowServiceLocator {
 	public class TestMultiAction extends MultiAction {
 		public Event actionMethod(RequestContext context) throws Exception {
 			throw new MyCustomException("Oops!");
-		}
-	}
-
-	public class TestPojo {
-		public boolean booleanMethod() {
-			return true;
-		}
-
-		public FlowSessionStatus enumMethod() {
-			return FlowSessionStatus.CREATED;
-		}
-		
-		public void methodWithVariableArgument(FlowSessionStatus status) {
-			Assert.isTrue(status == FlowSessionStatus.CREATED);
-		}
-
-		public void methodWithConstantArgument(String constant) {
-			Assert.isTrue(constant.equals("A constant"));
-		}
-
-		public void methodWithArgumentTypeConversion(FlowSessionStatus status) {
-			Assert.isTrue(status == FlowSessionStatus.CREATED);
 		}
 	}
 
