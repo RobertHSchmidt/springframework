@@ -156,10 +156,6 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 		return FlowFacesUtils.getExecutionFactory(context.getFacesContext());
 	}
 	
-	private FlowExecutionRepository getRepository(JsfExternalContext context) {
-		return FlowFacesUtils.getExecutionRepository(context.getFacesContext());
-	}
-
 	/**
 	 * Factory method that creates the input attribute map for a newly created
 	 * {@link FlowExecution}. TODO - add support for input mappings here
