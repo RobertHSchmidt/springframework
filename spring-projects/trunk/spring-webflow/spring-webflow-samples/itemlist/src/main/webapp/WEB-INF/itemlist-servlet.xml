@@ -28,13 +28,13 @@
 	</bean>
 
 	<!-- Launches new flow executions and resumes existing executions. -->
-	<flow:executor id="flowExecutor" registry-ref="registry" repositoryType="continuation">
+	<flow:executor id="flowExecutor" registry-ref="flowRegistry" repositoryType="continuation">
 		<flow:execution-attributes>
 			<flow:attribute name="alwaysRedirectOnPause" type="boolean" value="true" />
 		</flow:execution-attributes>
 	</flow:executor>
 
-	<flow:registry id="registry">
+	<flow:registry id="flowRegistry">
 		<flow:location path="/WEB-INF/itemlist.xml" />
 		<flow:location path="/WEB-INF/itemlist-alternate.xml" />
 	</flow:registry>
