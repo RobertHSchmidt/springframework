@@ -31,6 +31,7 @@ The unique identifier of this state; must be unique to this flow.
 		<xsd:choice>
 			<xsd:element ref="action" />
 			<xsd:element ref="bean-action" />
+			<xsd:element ref="expression-action" />
 		</xsd:choice>
 	</xsd:group>
 
@@ -712,6 +713,27 @@ The available scope types are:
 	  execution ends.
 
 The default value if not specified is request scope.     
+]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="evaluate-action">
+		<xsd:annotation>
+			<xsd:documentation>
+				<![CDATA[
+TODO: DOCUMENT ME
+]]>
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="expression" type="xsd:string" use="required">
+				<xsd:annotation>
+					<xsd:documentation>
+						<![CDATA[
+TODO: DOCUMENT ME
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
