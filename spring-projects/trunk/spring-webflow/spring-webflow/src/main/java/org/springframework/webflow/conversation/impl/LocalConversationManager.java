@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.context.SharedAttributeMap;
 import org.springframework.webflow.context.support.ExternalContextHolder;
 import org.springframework.webflow.conversation.Conversation;
@@ -157,7 +158,6 @@ public class LocalConversationManager implements ConversationManager, Serializab
 		}
 		conversations.remove(conversationId);
 		conversationIds.remove(conversationId);
-		getUserContext().remove(conversationId);
 	}
 
 	void expireConversation(ConversationId id) throws ConversationException {
@@ -198,7 +198,7 @@ public class LocalConversationManager implements ConversationManager, Serializab
 	}
 
 	private void endOldestConversation() {
-		ConversationId conversationId = (ConversationId)conversationIds.getFirst();
+		ConversationId conversationId = getUserContext().getFirst();
 		Conversation oldest = getConversation(conversationId);
 		oldest.lock();
 		oldest.end();
@@ -227,6 +227,7 @@ public class LocalConversationManager implements ConversationManager, Serializab
 
 		public void end() {
 			LocalConversationManager.this.end(conversationId);
+			getUserContext().remove(conversationId);
 		}
 
 		public Object getAttribute(Object name) {
@@ -249,5 +250,21 @@ public class LocalConversationManager implements ConversationManager, Serializab
 				// ignore
 			}
 		}
+
+		public String toString() {
+			return new ToStringCreator(this).append("id", conversationId).toString();
+		}
+
+		public boolean equals(Object o) {
+			if (!(o instanceof ConversationProxy)) {
+				return false;
+			}
+			return conversationId.equals(((ConversationProxy)o).conversationId);
+		}
+
+		public int hashCode() {
+			return conversationId.hashCode();
+		}
+
 	}
 }
