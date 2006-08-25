@@ -35,9 +35,9 @@ import org.springframework.ldap.NamingExceptionTranslator;
 
 /**
  * Abstract implementation of the ContextSource interface. By default, returns
- * an authenticated DirContext implementation for both read-only and read-write.
- * To have an anonymous environment created for read-only operations, set the
- * anonymousReadOnly property to <code>true</code>.
+ * an authenticated DirContext implementation for both read-only and read-write
+ * operations. To have an anonymous environment created for read-only
+ * operations, set the anonymousReadOnly property to <code>true</code>.
  * <p>
  * Implementing classes need to implement
  * {@link #getDirContextInstance(Hashtable)} to create a DirContext instance of

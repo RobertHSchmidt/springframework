@@ -31,19 +31,19 @@ import org.springframework.dao.DataAccessException;
 public interface ContextSource {
 
     /**
-     * Gets a read only LDAP context. You are only gaurrantied that you can read
-     * from the context, but it is not enforced.
+     * Gets a read-only DirContext. The returned DirContext must be possible to
+     * perform read-only operations on.
      * 
-     * @return An DirContext, never null.
+     * @return A DirContext instance, never null.
      * @throws DataAccessException
      *             if some error occurs creating an DirContext.
      */
     public DirContext getReadOnlyContext() throws DataAccessException;
 
     /**
-     * Gets a read-write LDAP context.
+     * Gets a read-write DirContext.
      * 
-     * @return an DirContext, never null.
+     * @return A DirContext instance, never null.
      * @throws DataAccessException
      *             if some error occurs creating an DirContext.
      */

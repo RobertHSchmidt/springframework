@@ -28,9 +28,7 @@ import javax.naming.directory.ModificationItem;
 public interface AttributeModificationsAware {
 
     /**
-     * Creates an array of which attributes have been changed or added. Note:
-     * Does not create a modification item if one attribute has been removed. If
-     * not in update mode, it will always return an empty array.
+     * Creates an array of which attributes have been changed or added or removed.
      * 
      * @return an array of modification items
      */

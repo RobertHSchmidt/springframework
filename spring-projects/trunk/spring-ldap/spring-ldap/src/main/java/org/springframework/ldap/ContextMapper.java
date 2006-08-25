@@ -37,10 +37,10 @@ import org.springframework.ldap.support.DirContextAdapter;
  * <p>
  * Alternatively, consider using an {@link AttributesMapper} in stead.
  * 
- * @see org.springframework.ldap.LdapTemplate#search(Name, String,
+ * @see LdapTemplate#search(Name, String,
  *      ContextMapper)
- * @see org.springframework.ldap.LdapTemplate#listBindings(Name, ContextMapper)
-. * @see org.springframework.ldap.LdapTemplate#lookup(Name, ContextMapper)
+ * @see LdapTemplate#listBindings(Name, ContextMapper)
+ * @see LdapTemplate#lookup(Name, ContextMapper)
  * @see AttributesMapper
  * @see DefaultDirObjectFactory
  * @see DirContextAdapter
