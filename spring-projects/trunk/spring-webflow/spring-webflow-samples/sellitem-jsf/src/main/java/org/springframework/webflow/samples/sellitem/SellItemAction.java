@@ -1,8 +1,8 @@
 package org.springframework.webflow.samples.sellitem;
 
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 public class SellItemAction extends AbstractAction {
 
