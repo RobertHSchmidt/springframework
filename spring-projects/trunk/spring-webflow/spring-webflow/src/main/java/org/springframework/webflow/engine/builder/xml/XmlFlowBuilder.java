@@ -51,8 +51,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.springframework.util.xml.SimpleSaxErrorHandler;
+import org.springframework.webflow.action.ActionResultExposer;
 import org.springframework.webflow.action.bean.BeanInvokingActionFactory;
-import org.springframework.webflow.action.bean.MethodResultSpecification;
 import org.springframework.webflow.core.CollectionAddingPropertyExpression;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -916,9 +916,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		String methodName = element.getAttribute(METHOD_ATTRIBUTE);
 		Parameters parameters = parseMethodParameters(element);
 		MethodSignature methodSignature = new MethodSignature(methodName, parameters);
-		MethodResultSpecification resultSpecification = parseMethodResultSpecification(element);
+		ActionResultExposer resultExposer = parseActionResultExposer(element);
 		return getBeanInvokingActionFactory().createBeanInvokingAction(beanId,
-				getLocalFlowServiceLocator().getBeanFactory(), methodSignature, resultSpecification,
+				getLocalFlowServiceLocator().getBeanFactory(), methodSignature, resultExposer,
 				getLocalFlowServiceLocator().getConversionService(), null);
 	}
 
@@ -943,7 +943,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		return parameters;
 	}
 
-	private MethodResultSpecification parseMethodResultSpecification(Element element) {
+	private ActionResultExposer parseActionResultExposer(Element element) {
 		List resultsElements = DomUtils.getChildElementsByTagName(element, METHOD_RESULT_ELEMENT);
 		if (resultsElements.isEmpty()) {
 			return null;
@@ -955,7 +955,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				&& !resultElement.getAttribute(SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
 			resultScope = (ScopeType)fromStringTo(ScopeType.class).execute(resultElement.getAttribute(SCOPE_ATTRIBUTE));
 		}
-		return new MethodResultSpecification(resultName, (resultScope != null ? resultScope : ScopeType.REQUEST));
+		return new ActionResultExposer(resultName, (resultScope != null ? resultScope : ScopeType.REQUEST));
 	}
 
 	private BeanInvokingActionFactory getBeanInvokingActionFactory() {

@@ -2,7 +2,7 @@ package org.springframework.webflow.action.bean;
 
 import junit.framework.TestCase;
 
-import org.springframework.webflow.action.bean.SuccessEventFactory;
+import org.springframework.webflow.action.SuccessEventFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.engine.MockRequestContext;
 

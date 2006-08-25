@@ -13,21 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.action.bean;
+package org.springframework.webflow.action;
 
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.support.EventFactorySupport;
 
 /**
- * Default implementation of the resultObject-to-event adapter interface.
- * Always returns the "success" event.
+ * A strategy for creating an {@link Event} object from an arbitrary action
+ * result object, such as a bean method return value.
+ * 
+ * @see org.springframework.webflow.action.bean.AbstractBeanInvokingAction
  * 
  * @author Keith Donald
  */
-public class SuccessEventFactory extends EventFactorySupport implements ResultEventFactory {
-	
-	public Event createResultEvent(Object source, Object resultObject, RequestContext context) {
-		return success(source, resultObject);
-	}
+public interface ResultEventFactory {
+
+	/**
+	 * Create an event instance from the result object.
+	 * @param source the source of the event
+	 * @param resultObject the result object, typically the return value of a
+	 * invoked method
+	 * @param context a flow execution request context
+	 * @return the event
+	 */
+	public Event createResultEvent(Object source, Object resultObject, RequestContext context);
 }

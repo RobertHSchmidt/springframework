@@ -22,6 +22,7 @@ import org.springframework.binding.method.MethodSignature;
 import org.springframework.binding.method.Parameter;
 import org.springframework.binding.method.Parameters;
 import org.springframework.webflow.TestBean;
+import org.springframework.webflow.action.ActionResultExposer;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -68,13 +69,13 @@ public class LocalBeanInvokingActionTests extends TestCase {
 				new Parameter(String.class, expression("lastEvent.attributes.foo")),
 				new Parameter(Integer.class, expression("lastEvent.attributes.bar")) }));
 		action = new LocalBeanInvokingAction(method, bean);
-		action.setMethodResultSpecification(new MethodResultSpecification("foo", ScopeType.REQUEST));
+		action.setMethodResultExposer(new ActionResultExposer("foo", ScopeType.REQUEST));
 		testInvokeBean();
 		assertEquals(new Integer(12345), context.getRequestScope().get("foo"));
 
 		context.getRequestScope().clear();
 
-		action.setMethodResultSpecification(new MethodResultSpecification("foo", ScopeType.FLOW));
+		action.setMethodResultExposer(new ActionResultExposer("foo", ScopeType.FLOW));
 		testInvokeBean();
 		assertEquals(new Integer(12345), context.getFlowScope().get("foo"));
 		assertNull(context.getRequestScope().get("foo"));
