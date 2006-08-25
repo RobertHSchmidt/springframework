@@ -14,7 +14,7 @@
 		<DIV align="left">
 			<P>
 				<h:form>
-				    <h:commandLink value="Sell Item" action="flowId:sellitem"/>
+				    <h:commandLink value="Sell Item" action="flowId:sellitem-flow"/>
 				</h:form>
 			</P>
 			
