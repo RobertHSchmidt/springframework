@@ -11,7 +11,7 @@
 	</view-state>
 	
 	<action-state id="makeGuess">
-		<evaluate-action expression="flowScope.game.makeGuess(requestParameters.id)">
+		<evaluate-action expression="flowScope.game.makeGuess(requestParameters.guess)">
 			<evaluation-result name="guessResult"/>
 		</evaluate-action>
 		<transition on="correct" to="showAnswer"/>
