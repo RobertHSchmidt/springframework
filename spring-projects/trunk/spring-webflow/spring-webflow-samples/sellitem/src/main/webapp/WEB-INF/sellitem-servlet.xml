@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:flow="http://www.springframework.org/schema/webflow"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans
@@ -14,30 +13,30 @@
 		in using the "_flowId" request parameter: e.g. /pos.htm?_flowId=sellItem
 	-->
 	<bean name="/pos.htm" class="org.springframework.webflow.executor.mvc.FlowController">
-		<property name="flowExecutor" ref="flowExecutor"/>
+		<property name="flowExecutor" ref="flowExecutor" />
 	</bean>
 
-	<!-- Launches new flow executions and resumes existing executions. -->	
+	<!-- Launches new flow executions and resumes existing executions. -->
 	<flow:executor id="flowExecutor" registry-ref="flowRegistry" repositoryType="continuation">
 		<flow:execution-attributes>
-			<flow:attribute name="alwaysRedirectOnPause" type="boolean" value="true"/>
+			<flow:alwaysRedirectOnPause />
 		</flow:execution-attributes>
 		<flow:execution-listeners>
-			<flow:listener ref="listener" criteria="sellitem-flow"/>
+			<flow:listener ref="listener" criteria="sellitem-flow" />
 		</flow:execution-listeners>
 	</flow:executor>
-	
+
 	<!-- Creates the registry of flow definitions for this application -->
 	<flow:registry id="flowRegistry">
-		<flow:location path="/WEB-INF/flows/**-flow.xml"/>
+		<flow:location path="/WEB-INF/flows/**-flow.xml" />
 	</flow:registry>
 
-	<bean id="listener" class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/>
-	
+	<bean id="listener" class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener" />
+
 	<!-- Maps flow view-state view names to JSP templates -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/WEB-INF/jsp/"/>
-		<property name="suffix" value=".jsp"/>
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
 	</bean>
 
 </beans>
