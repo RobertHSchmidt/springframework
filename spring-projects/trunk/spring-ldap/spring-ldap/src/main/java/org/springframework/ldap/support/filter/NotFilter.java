@@ -19,14 +19,16 @@ package org.springframework.ldap.support.filter;
 import org.apache.commons.lang.Validate;
 
 /**
- * Decorator filter for NOT. (!<i>filter</i> )
+ * A filter for 'not'. The following code:
  * 
  * <pre>
- *    Filter filter = new NotFilter(new EqualsFilter(&quot;cn&quot;, &quot;foo&quot;);
- *    System.out.println(filter.ecode());
+ * Filter filter = new NotFilter(new EqualsFilter(&quot;cn&quot;, &quot;foo&quot;);
+ * System.out.println(filter.ecode());
  * </pre>
  * 
- * would resut in: <code>(!(cn=foo))</code>
+ * would result in:
+ * 
+ * <pre>(!(cn=foo))</pre>
  * 
  * @author Adam Skogman
  */

@@ -72,8 +72,8 @@ public abstract class CompareFilter extends AbstractFilter {
         this.encodedValue = LdapEncoder.filterEncode(this.value);
     }
 
-    /**
-     * @see org.springframework.ldap.support.filter.Filter#encode(java.lang.StringBuffer)
+    /*
+     * @see org.springframework.ldap.support.filter.AbstractFilter#encode(java.lang.StringBuffer)
      */
     public StringBuffer encode(StringBuffer buff) {
         buff.append('(');
@@ -84,7 +84,7 @@ public abstract class CompareFilter extends AbstractFilter {
     }
 
     /**
-     * Compares key and value before encoding
+     * Compares key and value before encoding.
      * 
      * @see org.springframework.ldap.support.filter.Filter#equals(java.lang.Object)
      */
@@ -101,7 +101,7 @@ public abstract class CompareFilter extends AbstractFilter {
     }
 
     /**
-     * hash attribute and value
+     * Calculate the hash code for the attribute and the value.
      * 
      * @see org.springframework.ldap.support.filter.Filter#hashCode()
      */
@@ -114,11 +114,11 @@ public abstract class CompareFilter extends AbstractFilter {
 
     /**
      * Implement this method in subclass to return a String representing the
-     * operator, e.g. the Equals sign, &quot;=&quot;.
+     * operator. The {@link EqualsFilter#getCompareString()} would for example
+     * return an equals sign, &quot;=&quot;.
      * 
      * @return the String to use as operator in the comparison for the specific
      *         subclass.
      */
     protected abstract String getCompareString();
-
 }
