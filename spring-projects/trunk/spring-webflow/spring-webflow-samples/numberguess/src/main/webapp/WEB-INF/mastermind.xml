@@ -7,7 +7,7 @@
 	<start-state idref="enterGuess"/>
 	
 	<view-state id="enterGuess" view="mastermind.enterGuess">
-		<transition on="submit" to="guess"/>
+		<transition on="submit" to="makeGuess"/>
 	</view-state>
 	
 	<action-state id="makeGuess">
