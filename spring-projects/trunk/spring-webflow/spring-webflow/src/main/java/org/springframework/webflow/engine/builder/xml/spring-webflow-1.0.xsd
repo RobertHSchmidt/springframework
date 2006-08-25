@@ -744,7 +744,7 @@ scope under the name "question".
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="evaluation-result" />
+				<xsd:element ref="evaluation-result" minOccurs="0"/>
 			</xsd:sequence>
 			<xsd:attribute name="expression" type="xsd:string" use="required">
 				<xsd:annotation>
