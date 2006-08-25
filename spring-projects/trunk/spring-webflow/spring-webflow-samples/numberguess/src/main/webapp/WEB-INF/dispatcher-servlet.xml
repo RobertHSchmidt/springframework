@@ -19,10 +19,10 @@
 	</bean>
 
 	<!-- Launches new flow executions and resumes existing executions. -->	
-	<flow:executor id="flowExecutor" registry-ref="registry"/>
+	<flow:executor id="flowExecutor" registry-ref="flowRegistry"/>
 	
 	<!-- Creates the registry of flow definitions for this application -->
-	<flow:registry id="registry">
+	<flow:registry id="flowRegistry">
 		<flow:location path="/WEB-INF/higherlower.xml"/>
 		<flow:location path="/WEB-INF/mastermind.xml"/>
 	</flow:registry>
