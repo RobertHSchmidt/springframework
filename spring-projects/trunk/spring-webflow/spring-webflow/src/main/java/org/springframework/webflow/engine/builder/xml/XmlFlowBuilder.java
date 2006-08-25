@@ -50,6 +50,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.springframework.util.xml.SimpleSaxErrorHandler;
 import org.springframework.webflow.action.ActionResultExposer;
+import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.bean.BeanInvokingActionFactory;
 import org.springframework.webflow.core.CollectionAddingPropertyExpression;
 import org.springframework.webflow.core.collection.AttributeMap;
@@ -83,19 +84,19 @@ import org.xml.sax.SAXException;
 
 /**
  * Flow builder that builds flows as defined in an XML document object model
- * (DOM) element. The element is typically read from an XML file that adheres 
- * to the following format:
+ * (DOM) element. The element is typically read from an XML file that adheres to
+ * the following format:
  * 
  * <pre>
- *     &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
- *     &lt;flow xmlns=&quot;http://www.springframework.org/schema/webflow&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
- *         xsi:schemaLocation=&quot;http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd&quot;&gt;
+ *      &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+ *      &lt;flow xmlns=&quot;http://www.springframework.org/schema/webflow&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+ *          xsi:schemaLocation=&quot;http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd&quot;&gt;
  * </pre>
  * 
  * <p>
  * Consult the <a
- * href="http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">webflow XML schema</a>
- * for more information on the XML-based flow definition format.
+ * href="http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">webflow
+ * XML schema</a> for more information on the XML-based flow definition format.
  * <p>
  * This builder will setup a flow-local bean factory for the flow being
  * constructed. That flow-local bean factory will be populated with XML bean
@@ -168,6 +169,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String PARAMETER_TYPE_ATTRIBUTE = "parameter-type";
 
 	private static final String METHOD_RESULT_ELEMENT = "method-result";
+
+	private static final String EVALUATE_ACTION_ELEMENT = "evaluate-action";
+
+	private static final String EVALUATION_RESULT_ELEMENT = "evaluation-result";
 
 	private static final String DEFAULT_VALUE = "default";
 
@@ -738,18 +743,20 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		for (Iterator it = beanActionElements.iterator(); it.hasNext();) {
 			actions.add(parseAnnotatedBeanInvokingAction((Element)it.next()));
 		}
+		// parse evaluate actions
+		List evaluateActionElements = DomUtils.getChildElementsByTagName(element, EVALUATE_ACTION_ELEMENT);
+		for (Iterator it = evaluateActionElements.iterator(); it.hasNext();) {
+			actions.add(parseAnnotatedEvaluateAction((Element)it.next()));
+		}
 		return (AnnotatedAction[])actions.toArray(new AnnotatedAction[actions.size()]);
 	}
 
 	private AnnotatedAction parseAnnotatedAction(Element element) {
 		AnnotatedAction annotated = new AnnotatedAction(parseAction(element));
-		if (element.hasAttribute(NAME_ATTRIBUTE)) {
-			annotated.setName(element.getAttribute(NAME_ATTRIBUTE));
-		}
+		parseCommonProperties(element, annotated);
 		if (element.hasAttribute(METHOD_ATTRIBUTE)) {
 			annotated.setMethod(element.getAttribute(METHOD_ATTRIBUTE));
 		}
-		annotated.getAttributeMap().putAll(parseAttributes(element));
 		return annotated;
 	}
 
@@ -758,8 +765,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		return getLocalFlowServiceLocator().getAction(actionId);
 	}
 
-	private AnnotatedAction parseAnnotatedBeanInvokingAction(Element element) {
-		AnnotatedAction annotated = new AnnotatedAction(parseBeanInvokingAction(element));
+	private AnnotatedAction parseCommonProperties(Element element, AnnotatedAction annotated) {
 		if (element.hasAttribute(NAME_ATTRIBUTE)) {
 			annotated.setName(element.getAttribute(NAME_ATTRIBUTE));
 		}
@@ -767,12 +773,17 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		return annotated;
 	}
 
+	private AnnotatedAction parseAnnotatedBeanInvokingAction(Element element) {
+		AnnotatedAction annotated = new AnnotatedAction(parseBeanInvokingAction(element));
+		return parseCommonProperties(element, annotated);
+	}
+
 	private Action parseBeanInvokingAction(Element element) {
 		String beanId = element.getAttribute(BEAN_ATTRIBUTE);
 		String methodName = element.getAttribute(METHOD_ATTRIBUTE);
 		Parameters parameters = parseMethodParameters(element);
 		MethodSignature methodSignature = new MethodSignature(methodName, parameters);
-		ActionResultExposer resultExposer = parseActionResultExposer(element);
+		ActionResultExposer resultExposer = parseMethodResultExposer(element);
 		return getBeanInvokingActionFactory().createBeanInvokingAction(beanId,
 				getLocalFlowServiceLocator().getBeanFactory(), methodSignature, resultExposer,
 				getLocalFlowServiceLocator().getConversionService(), null);
@@ -799,21 +810,45 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		return parameters;
 	}
 
-	private ActionResultExposer parseActionResultExposer(Element element) {
+	private ActionResultExposer parseMethodResultExposer(Element element) {
 		List resultsElements = DomUtils.getChildElementsByTagName(element, METHOD_RESULT_ELEMENT);
 		if (resultsElements.isEmpty()) {
 			return null;
 		}
 		Element resultElement = (Element)resultsElements.get(0);
-		String resultName = resultElement.getAttribute(NAME_ATTRIBUTE);
+		return parseActionResultExposer(resultElement);
+	}
+	
+	private ActionResultExposer parseActionResultExposer(Element element) {
+		String resultName = element.getAttribute(NAME_ATTRIBUTE);
 		ScopeType resultScope = null;
-		if (resultElement.hasAttribute(SCOPE_ATTRIBUTE)
-				&& !resultElement.getAttribute(SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
-			resultScope = (ScopeType)fromStringTo(ScopeType.class).execute(resultElement.getAttribute(SCOPE_ATTRIBUTE));
+		if (element.hasAttribute(SCOPE_ATTRIBUTE)
+				&& !element.getAttribute(SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
+			resultScope = (ScopeType)fromStringTo(ScopeType.class).execute(element.getAttribute(SCOPE_ATTRIBUTE));
 		}
 		return new ActionResultExposer(resultName, (resultScope != null ? resultScope : ScopeType.REQUEST));
 	}
 
+	private AnnotatedAction parseAnnotatedEvaluateAction(Element element) {
+		AnnotatedAction annotated = new AnnotatedAction(parseEvaluateAction(element));
+		return parseCommonProperties(element, annotated);
+	}
+
+	private Action parseEvaluateAction(Element element) {
+		String expressionString = element.getAttribute(EXPRESSION_ATTRIBUTE);
+		Expression expression = getFlowServiceLocator().getExpressionParser().parseExpression(expressionString);
+		return new EvaluateAction(expression, parseEvaluationResultExposer(element));
+	}
+
+	private ActionResultExposer parseEvaluationResultExposer(Element element) {
+		List resultsElements = DomUtils.getChildElementsByTagName(element, EVALUATION_RESULT_ELEMENT);
+		if (resultsElements.isEmpty()) {
+			return null;
+		}
+		Element resultElement = (Element)resultsElements.get(0);
+		return parseActionResultExposer(resultElement);
+	}
+	
 	private BeanInvokingActionFactory getBeanInvokingActionFactory() {
 		return getFlowServiceLocator().getBeanInvokingActionFactory();
 	}
