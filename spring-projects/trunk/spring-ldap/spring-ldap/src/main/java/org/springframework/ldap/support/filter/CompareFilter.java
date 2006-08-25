@@ -16,13 +16,12 @@
 
 package org.springframework.ldap.support.filter;
 
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.springframework.ldap.support.LdapEncoder;
 
 /**
- * Abstract superclass for filters to compare values, e.g. EqualsFilter.
+ * Abstract superclass for filters to compare values.
  * 
  * @author Mattias Arthursson
  */

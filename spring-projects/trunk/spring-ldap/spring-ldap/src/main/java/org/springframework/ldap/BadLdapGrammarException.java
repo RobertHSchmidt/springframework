@@ -20,10 +20,9 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
 /**
  * Thrown to indicate that an invalid value has been supplied to an LDAP
- * operation. This could be e.g. an invalid filter or dn.
+ * operation. This could be an invalid filter or dn.
  * 
  * @author Mattias Arthursson
- * 
  */
 public class BadLdapGrammarException extends
         InvalidDataAccessResourceUsageException {
