@@ -15,9 +15,8 @@
  */
 package org.springframework.webflow.conversation.impl;
 
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.LinkedList;
 
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.conversation.ConversationId;
@@ -34,7 +33,7 @@ import org.springframework.webflow.core.collection.AttributeMapBindingListener;
  */
 public class UserConversationContext implements AttributeMapBindingListener {
 
-	private Set conversationIds = new HashSet();
+	private LinkedList conversationIds = new LinkedList();
 
 	private LocalConversationManager conversationManager;
 
@@ -48,6 +47,10 @@ public class UserConversationContext implements AttributeMapBindingListener {
 
 	public synchronized boolean contains(ConversationId conversationId) {
 		return conversationIds.contains(conversationId);
+	}
+
+	public synchronized ConversationId getFirst() {
+		return (ConversationId)conversationIds.getFirst();
 	}
 
 	public synchronized boolean remove(ConversationId conversationId) {
