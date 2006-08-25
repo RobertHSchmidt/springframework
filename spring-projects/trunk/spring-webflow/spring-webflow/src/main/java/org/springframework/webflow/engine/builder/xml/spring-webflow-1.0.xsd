@@ -724,7 +724,21 @@ The default value if not specified is request scope.
 		<xsd:annotation>
 			<xsd:documentation>
 				<![CDATA[
-TODO: DOCUMENT ME
+Defines an arbitrary expression against the flow request context to evaluate as an action.
+
+Use this element when the logic to invoke is encapsulated within an object inside 
+the flow request context.  This element can be used to invoke *any* public method on
+a flow-managed bean.
+
+For example:
+
+	<evaluate-action expression="flowScope.interview.nextQuestion()">
+	    <evaluation-result name="question"/>
+	</evaluate-action>
+
+The above example instructs this flow to invoke the "nextQuestion" method on the "interview" bean
+in flow scope.  After method invocation the method return value is exposed in the default
+scope under the name "question".
 ]]>
 			</xsd:documentation>
 		</xsd:annotation>
@@ -733,7 +747,7 @@ TODO: DOCUMENT ME
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-TODO: DOCUMENT ME
+The expression to evaluate when this action is invoked.
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
