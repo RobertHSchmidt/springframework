@@ -6,4 +6,5 @@
        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<bean id="phonebook" class="org.springframework.webflow.samples.phonebook.domain.ArrayListPhoneBook"/>
+	
 </beans>
