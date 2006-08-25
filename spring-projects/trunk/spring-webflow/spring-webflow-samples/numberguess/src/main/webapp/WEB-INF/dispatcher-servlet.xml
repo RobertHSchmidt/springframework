@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:flow="http://www.springframework.org/schema/webflow"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans
@@ -9,28 +8,32 @@
        http://www.springframework.org/schema/webflow/spring-webflow-config-1.0.xsd">
 
 	<!-- 
-	  Exposes web flows for execution at a single request URL.
-	  The id of a flow to launch should be passed in by clients using
-	  the "_flowId" request parameter:
-	      e.g. /play.htm?_flowId=mastermind
+		Exposes web flows for execution at a single request URL.
+		The id of a flow to launch should be passed in by clients using
+		the "_flowId" request parameter:
+		e.g. /play.htm?_flowId=mastermind
 	-->
 	<bean name="/play.htm" class="org.springframework.webflow.executor.mvc.FlowController">
-		<property name="flowExecutor" ref="flowExecutor"/>
+		<property name="flowExecutor" ref="flowExecutor" />
 	</bean>
 
-	<!-- Launches new flow executions and resumes existing executions. -->	
-	<flow:executor id="flowExecutor" registry-ref="flowRegistry"/>
-	
+	<!-- Launches new flow executions and resumes existing executions. -->
+	<flow:executor id="flowExecutor" registry-ref="flowRegistry">
+		<flow:execution-attributes>
+			<flow:alwaysRedirectOnPause />
+		</flow:execution-attributes>
+	</flow:executor>
+
 	<!-- Creates the registry of flow definitions for this application -->
 	<flow:registry id="flowRegistry">
-		<flow:location path="/WEB-INF/higherlower.xml"/>
-		<flow:location path="/WEB-INF/mastermind.xml"/>
+		<flow:location path="/WEB-INF/higherlower.xml" />
+		<flow:location path="/WEB-INF/mastermind.xml" />
 	</flow:registry>
 
 	<!-- Resolves flow view names to .jsp templates -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/WEB-INF/jsp/"/>
-		<property name="suffix" value=".jsp"/>
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
 	</bean>
 
 </beans>
