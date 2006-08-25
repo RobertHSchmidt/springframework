@@ -30,7 +30,7 @@
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
-			<!-- Context config files go here, space delimited -->
+			<!-- Service layer config files go here, space delimited -->
 		</param-value>
 	</context-param>
 
@@ -60,6 +60,10 @@
 	<servlet>
 		<servlet-name>@PROJECT_NAME@</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/dispatcher-servlet-config.xml</param-value>
+		</init-param>
 	</servlet>
 	
 	<servlet-mapping>
