@@ -58,7 +58,7 @@ public class LocalConversationManager implements ConversationManager, Serializab
 	private LinkedList conversationIds = new LinkedList();
 
 	/**
-	 * The maximum number of active conversations allowed.
+	 * The maximum number of active conversations allowed in a session.
 	 */
 	private int maxConversations;
 
@@ -70,7 +70,7 @@ public class LocalConversationManager implements ConversationManager, Serializab
 	/**
 	 * Creates a new local conversation service.
 	 * @param maxConversations the maximum number of conversations that can be
-	 * active at once within this service.
+	 * active at once within this session.
 	 */
 	public LocalConversationManager(int maxConversations) {
 		this.maxConversations = maxConversations;
@@ -194,7 +194,7 @@ public class LocalConversationManager implements ConversationManager, Serializab
 	}
 
 	private boolean maxExceeded() {
-		return maxConversations > 0 && conversationIds.size() > maxConversations;
+		return maxConversations > 0 && getUserContext().size() > maxConversations;
 	}
 
 	private void endOldestConversation() {

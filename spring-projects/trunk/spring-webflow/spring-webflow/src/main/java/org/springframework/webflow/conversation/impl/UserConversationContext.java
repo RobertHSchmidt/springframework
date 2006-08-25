@@ -57,6 +57,10 @@ public class UserConversationContext implements AttributeMapBindingListener {
 		return conversationIds.remove(conversationId);
 	}
 
+	public synchronized int size() {
+		return conversationIds.size();
+	}
+
 	public void valueBound(AttributeMapBindingEvent event) {
 		// ignore
 	}
