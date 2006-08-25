@@ -15,7 +15,8 @@
 		<init-param>
 			<name>contextConfigLocation</name>
 			<value>
-				/WEB-INF/dispatcher-portlet.xml /WEB-INF/webflow-config.xml
+				/WEB-INF/phonebook-portlet-config.xml
+				/WEB-INF/phonebook-webflow-config.xml
 			</value>
 		</init-param>
 
