@@ -78,7 +78,7 @@
    &lt;/bean&gt;
 
    &lt;bean id="acegiAuthenticationSource"
-      class="org.springframework.ldap.support.acegi.AcegiAuthenticationSource" /&gt;
+      class="org.springframework.ldap.support.authentication.AcegiAuthenticationSource" /&gt;
    ...
 &lt;/beans&gt;</programlisting>
         </example>
@@ -128,7 +128,7 @@
    &lt;/bean&gt;
 
    &lt;bean id="acegiAuthenticationSource"
-      class="org.springframework.ldap.support.acegi.AcegiAuthenticationSource" /&gt;
+      class="org.springframework.ldap.support.authentication.AcegiAuthenticationSource" /&gt;
    ...
 &lt;/beans&gt;</programlisting>
         </example>
