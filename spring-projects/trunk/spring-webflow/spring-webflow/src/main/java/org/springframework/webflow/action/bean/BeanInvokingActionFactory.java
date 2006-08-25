@@ -15,10 +15,14 @@
  */
 package org.springframework.webflow.action.bean;
 
+import java.lang.reflect.Method;
+
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.method.ClassMethodKey;
 import org.springframework.binding.method.MethodSignature;
+import org.springframework.webflow.action.ActionResultExposer;
+import org.springframework.webflow.action.ResultEventFactorySelector;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Action;
 
@@ -69,23 +73,24 @@ public class BeanInvokingActionFactory {
 	 * @param beanFactory the bean factory where the bean is managed
 	 * @param methodSignature the method to invoke on the bean when the action
 	 * is executed (required)
-	 * @param resultSpecification the specification for what to do with the
-	 * method return value; may be null
-	 * @param conversionService the conversion service to be used to convert method
-	 * parameters
+	 * @param resultExposer the specification for what to do with the method
+	 * return value; may be null
+	 * @param conversionService the conversion service to be used to convert
+	 * method parameters
 	 * @param attributes attributes that may be used to affect the bean invoking
 	 * action's construction
 	 * @return the fully configured bean invoking action instance
 	 */
 	public Action createBeanInvokingAction(String beanId, BeanFactory beanFactory, MethodSignature methodSignature,
-			MethodResultSpecification resultSpecification, ConversionService conversionService, AttributeMap attributes) {
+			ActionResultExposer resultExposer, ConversionService conversionService, AttributeMap attributes) {
 		if (!beanFactory.isSingleton(beanId)) {
-			return createStatefulAction(beanId, beanFactory, methodSignature, resultSpecification, conversionService,	attributes);
+			return createStatefulAction(beanId, beanFactory, methodSignature, resultExposer, conversionService,
+					attributes);
 		}
 		else {
 			Object bean = beanFactory.getBean(beanId);
 			LocalBeanInvokingAction action = new LocalBeanInvokingAction(methodSignature, bean);
-			configureCommonProperties(action, methodSignature, resultSpecification, bean.getClass(), conversionService);
+			configureCommonProperties(action, methodSignature, resultExposer, bean.getClass(), conversionService);
 			return action;
 		}
 	}
@@ -98,17 +103,18 @@ public class BeanInvokingActionFactory {
 	 * is executed (required)
 	 * @param resultSpecification the specification for what to do with the
 	 * method return value; may be null
-	 * @param conversionService the conversion service to be used to convert method
-	 * parameters
+	 * @param conversionService the conversion service to be used to convert
+	 * method parameters
 	 * @param attributes attributes that may be used to affect the bean invoking
 	 * action's construction
 	 * @return the fully configured bean invoking action instance
 	 */
 	protected Action createStatefulAction(String beanId, BeanFactory beanFactory, MethodSignature methodSignature,
-			MethodResultSpecification resultSpecification, ConversionService conversionService, AttributeMap attributes) {
+			ActionResultExposer resultSpecification, ConversionService conversionService, AttributeMap attributes) {
 		Class beanClass = beanFactory.getType(beanId);
 		if (MementoOriginator.class.isAssignableFrom(beanClass)) {
-			BeanFactoryBeanInvokingAction action = new BeanFactoryBeanInvokingAction(methodSignature, beanId, beanFactory);
+			BeanFactoryBeanInvokingAction action = new BeanFactoryBeanInvokingAction(methodSignature, beanId,
+					beanFactory);
 			action.setBeanStatePersister(new MementoBeanStatePersister());
 			configureCommonProperties(action, methodSignature, resultSpecification, beanClass, conversionService);
 			return action;
@@ -119,54 +125,18 @@ public class BeanInvokingActionFactory {
 			return action;
 		}
 	}
-	
+
 	// internal helpers
 
 	/**
 	 * Configure common properties of given bean invoking action.
 	 */
 	private void configureCommonProperties(AbstractBeanInvokingAction action, MethodSignature methodSignature,
-			MethodResultSpecification resultSpecification, Class beanClass, ConversionService conversionService) {
-		action.setMethodResultSpecification(resultSpecification);
-		action.setResultEventFactory(resultEventFactorySelector.forMethod(methodSignature, beanClass));
+			ActionResultExposer resultSpecification, Class beanClass, ConversionService conversionService) {
+		action.setMethodResultExposer(resultSpecification);
+		Method method = new ClassMethodKey(beanClass, methodSignature.getMethodName(), methodSignature.getParameters()
+				.getTypesArray()).getMethod();
+		action.setResultEventFactory(resultEventFactorySelector.forMethod(method));
 		action.setConversionService(conversionService);
-	}
-	
-	/**
-	 * Helper strategy that selects the {@link ResultEventFactory} to use for each
-	 * {@link AbstractBeanInvokingAction bean invoking action} that is constructed
-	 * by a {@link org.springframework.webflow.action.bean.BeanInvokingActionFactory}.
-	 * 
-	 * @author Keith Donald
-	 */
-	public static class ResultEventFactorySelector {
-
-		/**
-		 * The event factory instance for mapping a return value to a success event.
-		 */
-		private SuccessEventFactory successEventFactory = new SuccessEventFactory();
-
-		/**
-		 * The event factory instance for mapping a result object to an event, using
-		 * the type of the result object as the mapping criteria.
-		 */
-		private ResultObjectBasedEventFactory resultObjectBasedEventFactory = new ResultObjectBasedEventFactory();
-
-		/**
-		 * Select the appropriate result event factory for attempts to invoke the
-		 * method on the specified bean class.
-		 * @param signature the method signature
-		 * @param beanClass the bean class
-		 * @return the result event factory
-		 */
-		public ResultEventFactory forMethod(MethodSignature signature, Class beanClass) {
-			ClassMethodKey key = new ClassMethodKey(beanClass, signature.getMethodName(), signature.getParameters().getTypesArray());
-			if (resultObjectBasedEventFactory.isMappedValueType(key.getMethod().getReturnType())) {
-				return resultObjectBasedEventFactory;
-			}
-			else {
-				return successEventFactory;
-			}
-		}
 	}
 }

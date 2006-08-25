@@ -22,10 +22,10 @@ import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.binding.method.MethodSignature;
+import org.springframework.webflow.action.ActionResultExposer;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.action.bean.AbstractBeanInvokingAction;
 import org.springframework.webflow.action.bean.BeanInvokingActionFactory;
-import org.springframework.webflow.action.bean.MethodResultSpecification;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.engine.AnnotatedAction;
@@ -561,7 +561,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the adapted bean invoking action
 	 * @throws FlowArtifactLookupException the action could not be resolved
 	 */
-	protected Action action(String id, MethodSignature methodSignature, MethodResultSpecification resultSpecification)
+	protected Action action(String id, MethodSignature methodSignature, ActionResultExposer resultSpecification)
 			throws FlowArtifactLookupException {
 		return getBeanInvokingActionFactory().createBeanInvokingAction(id, getFlowServiceLocator().getBeanFactory(),
 				methodSignature, resultSpecification, getFlowServiceLocator().getConversionService(), null);
@@ -586,7 +586,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * 
 	 * @param method the encoded method signature
 	 * @return the method signature
-	 * @see #action(String, MethodSignature, MethodResultSpecification)
+	 * @see #action(String, MethodSignature, ActionResultExposer)
 	 */
 	protected MethodSignature method(String method) {
 		return (MethodSignature)fromStringTo(MethodSignature.class).execute(method);
@@ -594,29 +594,29 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 
 	/**
 	 * Factory method for a {@link MethodSignature method signature}
-	 * {@link MethodResultSpecification result specification}. A result
+	 * {@link ActionResultExposer result specification}. A result
 	 * specification is used to expose a return value of a POJO invoked as part
 	 * of a {@link AbstractBeanInvokingAction bean invoking action}.
 	 * @param resultName the result name
 	 * @return the result specification
-	 * @see #action(String, MethodSignature, MethodResultSpecification)
+	 * @see #action(String, MethodSignature, ActionResultExposer)
 	 */
-	protected MethodResultSpecification result(String resultName) {
+	protected ActionResultExposer result(String resultName) {
 		return result(resultName, null);
 	}
 
 	/**
 	 * Factory method for a {@link MethodSignature method signature}
-	 * {@link MethodResultSpecification result specification}. A result
+	 * {@link ActionResultExposer result specification}. A result
 	 * specification is used to expose a return value of a POJO invoked as part
 	 * of a {@link AbstractBeanInvokingAction bean invoking action}.
 	 * @param resultName the result name attribute
 	 * @param resultScope the scope of the result
 	 * @return the result specification
-	 * @see #action(String, MethodSignature, MethodResultSpecification)
+	 * @see #action(String, MethodSignature, ActionResultExposer)
 	 */
-	protected MethodResultSpecification result(String resultName, ScopeType resultScope) {
-		return new MethodResultSpecification(resultName, resultScope);
+	protected ActionResultExposer result(String resultName, ScopeType resultScope) {
+		return new ActionResultExposer(resultName, resultScope);
 	}
 
 	/**

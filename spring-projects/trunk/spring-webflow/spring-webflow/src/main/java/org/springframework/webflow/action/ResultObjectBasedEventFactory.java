@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.action.bean;
+package org.springframework.webflow.action;
 
 import org.springframework.core.JdkVersion;
 import org.springframework.core.enums.LabeledEnum;

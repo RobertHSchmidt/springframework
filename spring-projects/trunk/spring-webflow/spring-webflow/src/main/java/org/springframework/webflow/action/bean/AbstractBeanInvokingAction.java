@@ -20,17 +20,20 @@ import org.springframework.binding.method.MethodInvoker;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.util.Assert;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.action.ActionResultExposer;
+import org.springframework.webflow.action.ResultEventFactory;
+import org.springframework.webflow.action.SuccessEventFactory;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Base class for actions that delegate to methods on beans (POJOs - Plain Old
- * Java Objects). Acts as an adapter that adapts an {@link Object} method
- * to the Spring Web Flow {@link Action} contract.
+ * Java Objects). Acts as an adapter that adapts an {@link Object} method to the
+ * Spring Web Flow {@link Action} contract.
  * <p>
- * Subclasses are required to implement the {@link #getBean(RequestContext)} method,
- * returning the bean on which a method should be invoked.
+ * Subclasses are required to implement the {@link #getBean(RequestContext)}
+ * method, returning the bean on which a method should be invoked.
  * 
  * @author Keith Donald
  */
@@ -53,7 +56,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * The specification (configuration) for how bean method return values
 	 * should be exposed to an executing flow that invokes this action.
 	 */
-	private MethodResultSpecification methodResultSpecification;
+	private ActionResultExposer methodResultExposer;
 
 	/**
 	 * The strategy that adapts bean method return values to Event objects.
@@ -85,21 +88,20 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	}
 
 	/**
-	 * Returns the specification (configuration) for how bean method return
-	 * values should be exposed to an executing flow that invokes this action.
+	 * Returns the configuration for how bean method return values should be
+	 * exposed to an executing flow that invokes this action.
 	 */
-	public MethodResultSpecification getMethodResultSpecification() {
-		return methodResultSpecification;
+	public ActionResultExposer getMethodResultExposer() {
+		return methodResultExposer;
 	}
 
 	/**
-	 * Sets the specification (configuration) for how bean method return values
-	 * should be exposed to an executing flow that invokes this action.
-	 * This is optional. By default the bean method return values do net get
-	 * exposed to the executing flow.
+	 * Configures how bean method return values should be exposed to an
+	 * executing flow that invokes this action. This is optional. By default the
+	 * bean method return values do not get exposed to the executing flow.
 	 */
-	public void setMethodResultSpecification(MethodResultSpecification resultSpecification) {
-		this.methodResultSpecification = resultSpecification;
+	public void setMethodResultExposer(ActionResultExposer methodResultExposer) {
+		this.methodResultExposer = methodResultExposer;
 	}
 
 	/**
@@ -110,9 +112,9 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	}
 
 	/**
-	 * Set the bean return value-&gt;event adaption strategy. Defaults
-	 * to {@link SuccessEventFactory}, so all bean method return values
-	 * will be interpreted as "success".
+	 * Set the bean return value-&gt;event adaption strategy. Defaults to
+	 * {@link SuccessEventFactory}, so all bean method return values will be
+	 * interpreted as "success".
 	 */
 	public void setResultEventFactory(ResultEventFactory resultEventFactory) {
 		this.resultEventFactory = resultEventFactory;
@@ -126,8 +128,8 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	}
 
 	/**
-	 * Set the bean state management strategy. Defaults to no bean
-	 * state persistence.
+	 * Set the bean state management strategy. Defaults to no bean state
+	 * persistence.
 	 */
 	public void setBeanStatePersister(BeanStatePersister beanStatePersister) {
 		this.beanStatePersister = beanStatePersister;
@@ -140,7 +142,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	public void setConversionService(ConversionService conversionService) {
 		methodInvoker.setConversionService(conversionService);
 	}
-	
+
 	/**
 	 * Returns the bean method invoker helper.
 	 */
@@ -151,13 +153,13 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	protected Event doExecute(RequestContext context) throws Exception {
 		Object bean = getBeanStatePersister().restoreState(getBean(context), context);
 		Object returnValue = getMethodInvoker().invoke(methodSignature, bean, context);
-		if (methodResultSpecification != null) {
-			methodResultSpecification.exposeResult(returnValue, context);
+		if (methodResultExposer != null) {
+			methodResultExposer.exposeResult(returnValue, context);
 		}
 		getBeanStatePersister().saveState(bean, context);
 		return getResultEventFactory().createResultEvent(bean, returnValue, context);
 	}
-	
+
 	// subclassing hooks
 
 	/**
@@ -168,7 +170,6 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 * @throws Exception when the bean cannot be retreived
 	 */
 	protected abstract Object getBean(RequestContext context) throws Exception;
-	
 
 	/**
 	 * State persister that doesn't take any action - default, private
