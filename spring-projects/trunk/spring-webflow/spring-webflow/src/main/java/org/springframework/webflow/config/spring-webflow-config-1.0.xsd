@@ -24,7 +24,7 @@ would index those definitions by "orderitem-flow" and "shipping-flow" by default
 A flow registry is used by a flow executor at runtime to launch new executions of flow definitions.
 ]]>
 			</xsd:documentation>
-		</xsd:annotation>	
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="beans:identifiedType">
@@ -50,7 +50,7 @@ Individual paths such as:
 	/WEB-INF/flows/**/*-flow.xml
 ]]>
 			</xsd:documentation>
-		</xsd:annotation>	
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:attribute name="path" type="xsd:string" use="required" />
 		</xsd:complexType>
@@ -67,7 +67,7 @@ A flow execution that spans more than one request is said to have 'paused' and i
 an execution repository.
 ]]>
 			</xsd:documentation>
-		</xsd:annotation>	
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="beans:identifiedType">
@@ -97,7 +97,7 @@ an execution repository.
 The listeners eligible for observing the lifecycle of executions launched by this executor.
 ]]>
 			</xsd:documentation>
-		</xsd:annotation>		
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref="listener" maxOccurs="unbounded" />
@@ -113,7 +113,7 @@ Deploys a single flow execution listener that will observe the execution lifecyc
 flow definitions.  The flow definitions this listener applies to may be restricted by specifying criteria.
 ]]>
 			</xsd:documentation>
-		</xsd:annotation>	
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:attribute name="ref" type="xsd:string" use="required" />
 			<xsd:attribute name="criteria" type="xsd:string" default="*" />
@@ -128,12 +128,25 @@ System attributes to associate with new flow executions launched by this executo
 These attributes may influence execution behavior.
 ]]>
 			</xsd:documentation>
-		</xsd:annotation>	
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="attribute" maxOccurs="unbounded" />
+				<xsd:element ref="alwaysRedirectOnPause" minOccurs="0" />
+				<xsd:element ref="attribute" minOccurs="0" maxOccurs="unbounded" />
 			</xsd:sequence>
 		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="alwaysRedirectOnPause">
+		<xsd:annotation>
+			<xsd:documentation>
+				<![CDATA[
+A convienence attribute for the 'alwaysRedirectOnPause' attribute.  Will automatically set
+the attribute to true.
+]]>
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType />
 	</xsd:element>
 
 	<xsd:element name="attribute">
@@ -144,7 +157,7 @@ A single attribute describing an element.  Attributes have string keys and objec
 An attribute's type may be specified using the 'type' attribute.
 ]]>
 			</xsd:documentation>
-		</xsd:annotation>	
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:attribute name="name" type="xsd:string" use="required" />
 			<xsd:attribute name="type" type="xsd:string" use="required" />
