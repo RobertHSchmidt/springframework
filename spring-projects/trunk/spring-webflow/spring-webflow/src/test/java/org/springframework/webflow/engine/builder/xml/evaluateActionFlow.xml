@@ -10,9 +10,14 @@
 		<evaluate-action expression="flowScope.bean.enumMethod()">
 			<evaluation-result name="sessionStatus" scope="flow"/>
 		</evaluate-action>
-		<transition on="created" to="pause" />
+		<transition on="created" to="actionState2" />
 	</action-state>
 
+	<action-state id="actionState2">
+		<evaluate-action expression="flowScope.sessionStatus.hashCode()"/>
+		<transition on="success" to="pause" />
+	</action-state>
+	
 	<view-state id="pause">
 		<transition on="resume" to="end" />
 	</view-state>
