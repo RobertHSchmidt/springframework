@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:flow="http://www.springframework.org/schema/webflow"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/webflow
+       http://www.springframework.org/schema/webflow/spring-webflow-config-1.0.xsd">
 
 	<!-- 
 	  Exposes web flows for execution at a single request URL.
@@ -10,13 +14,16 @@
 	      e.g. /admin.htm?_flowId=fileupload
 	-->
 	<bean name="/admin.htm" class="org.springframework.webflow.executor.mvc.FlowController">
-		<property name="flowLocator" ref="flowRegistry"/>
+		<property name="flowExecutor" ref="flowExecutor"/>
 	</bean>
 
+	<!-- Launches new flow executions and resumes existing executions. -->
+	<flow:executor id="flowExecutor" registry-ref="flowRegistry"/>
+
 	<!-- Creates the registry of flow definitions for this application -->
-	<bean id="flowRegistry" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
-		<property name="flowLocations" value="/WEB-INF/fileupload.xml"/>
-	</bean>
+	<flow:registry id="flowRegistry">
+		<flow:location path="/WEB-INF/fileupload.xml"/>
+	</flow:registry>
 	
 	<!-- 
 	    Support for multipart requests using commons file upload
