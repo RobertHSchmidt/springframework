@@ -4,7 +4,6 @@
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-
 	<bean id="saleProcessor" parent="transactionProxy">
 		<property name="target">
 			<bean class="org.springframework.webflow.samples.sellitem.JdbcSaleProcessor" autowire="byType"/>
