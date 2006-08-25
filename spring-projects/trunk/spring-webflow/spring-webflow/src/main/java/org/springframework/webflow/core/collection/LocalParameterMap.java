@@ -31,6 +31,7 @@ import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.binding.util.MapAccessor;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * A base class for map decorators who manage the storage of immutable
@@ -245,6 +246,14 @@ public class LocalParameterMap implements ParameterMap, Serializable {
 
 	public Boolean getRequiredBoolean(String parameterName) throws IllegalArgumentException, ConversionException {
 		return (Boolean)getRequired(parameterName, Boolean.class);
+	}
+
+	public MultipartFile getMultipartFile(String parameterName) {
+		return (MultipartFile)parameterAccessor.get(parameterName, MultipartFile.class);
+	}
+
+	public MultipartFile getRequiredMultipartFile(String parameterName) throws IllegalArgumentException {
+		return (MultipartFile)parameterAccessor.getRequired(parameterName, MultipartFile.class);
 	}
 
 	public AttributeMap asAttributeMap() {
