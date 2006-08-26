@@ -22,7 +22,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 public class FileUploadAction extends AbstractAction {
 	protected Event doExecute(RequestContext context) throws Exception {
-		MultipartFile file = context.getRequestParameters().getMultipartFile("file");
+		MultipartFile file = context.getRequestParameters().getRequiredMultipartFile("file");
 		context.getRequestScope().put("file", file.getBytes());
 		return success();
 	}
