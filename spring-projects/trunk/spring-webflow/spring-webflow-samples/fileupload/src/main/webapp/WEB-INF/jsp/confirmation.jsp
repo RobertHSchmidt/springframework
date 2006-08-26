@@ -5,7 +5,7 @@
 	<HEAD>
 	</HEAD>
 	<BODY>
-		<FORM name="submitForm" action="admin.htm">
+		<FORM name="submitForm" action="admin.htm" method="post">
 			<INPUT type="hidden" name="_flowExecutionKey" value="<%= request.getAttribute("flowExecutionKey") %>">
 			<INPUT type="hidden" name="_eventId" value="back">
 		</FORM>
