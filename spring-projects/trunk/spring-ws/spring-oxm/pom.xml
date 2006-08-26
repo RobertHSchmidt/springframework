@@ -85,7 +85,8 @@
             <artifactId>xercesImpl</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- O/X Mapping dependencies --><!-- Castor -->
+        <!-- O/X Mapping dependencies -->
+        <!-- Castor -->
         <dependency>
             <groupId>castor</groupId>
             <artifactId>castor</artifactId>
