@@ -33,8 +33,8 @@ import org.springframework.core.style.ToStringCreator;
  * knowledge about a particular kind of definition format by implementing the
  * abstract template methods in this class.
  * <p>
- * By default, when configuring the <code>flowLocations</code> property, flow
- * definition registered by this registrar will be assigned a registry
+ * By default, when configuring the {@link #setLocations(Resource[]) locations}
+ * property, flow definitions at those locations will be assigned a registry
  * identifier equal to the filename of the underlying definition resource, minus
  * the filename extension. For example, a XML-based flow definition defined in
  * the file "flow1.xml" will be identified as "flow1" when registered in a
@@ -43,7 +43,7 @@ import org.springframework.core.style.ToStringCreator;
  * For full control over the assignment of flow identifiers and flow properties,
  * configure formal
  * {@link org.springframework.webflow.definition.registry.FlowDefinitionResource}
- * instances using the <code>flowDefinitions</code> property.
+ * instances using the {@link #setResources(FlowDefinitionResource[] resources)} property.
  * 
  * @see org.springframework.webflow.definition.registry.FlowDefinitionResource
  * @see org.springframework.webflow.definition.registry.FlowDefinitionRegistry
@@ -70,7 +70,6 @@ public abstract class ExternalizedFlowDefinitionRegistrar implements FlowDefinit
 	 * Flows registered from this set will be automatically assigned an id based
 	 * on the filename of the flow resource.
 	 * @param locations the resource locations
-	 * @see #getFlowId(Resource)
 	 */
 	public void setLocations(Resource[] locations) {
 		this.locations = new HashSet(Arrays.asList(locations));
@@ -94,7 +93,6 @@ public abstract class ExternalizedFlowDefinitionRegistrar implements FlowDefinit
 	 * The flow registered from this location will automatically assigned an id
 	 * based on the filename of the flow resource.
 	 * @param location the definition location
-	 * @see #getFlowId(Resource)
 	 */
 	public boolean addLocation(Resource location) {
 		return locations.add(location);
@@ -106,7 +104,6 @@ public abstract class ExternalizedFlowDefinitionRegistrar implements FlowDefinit
 	 * The flow registered from this location will automatically assigned an id
 	 * based on the filename of the flow resource.
 	 * @param locations the definition locations
-	 * @see #getFlowId(Resource)
 	 */
 	public boolean addLocations(Resource[] locations) {
 		if (locations == null) {
@@ -187,12 +184,14 @@ public abstract class ExternalizedFlowDefinitionRegistrar implements FlowDefinit
 		registry.registerFlowDefinition(createFlowDefinitionHolder(resource));
 	}
 
+	// subclassing hooks
+	
 	/**
 	 * Template method that calculates if the given file resource is actually a
 	 * flow definition resource. Resources that aren't flow definitions will be
 	 * ignored. Subclasses may override; this implementation simply returns
 	 * true.
-	 * @param file the file
+	 * @param resource the underlying resource
 	 * @return true if yes, false otherwise
 	 */
 	protected boolean isFlowDefinitionResource(Resource resource) {

@@ -16,18 +16,19 @@
 package org.springframework.webflow.definition.registry;
 
 /**
+ * <p>
  * A strategy to use to populate a flow registry with one or more flow
  * definitions.
+ * </p>
  * <p>
  * Flow registrars encapsulate the knowledge about the source of a set of flow
- * definition resources, and the behavior necessary to add those resources to a
+ * definition resources and the behavior necessary to add those resources to a
  * flow registry.
+ * </p>
  * <p>
  * The typical usage pattern is as follows:
  * <ol>
  * <li>Create a new (initially empty) flow registry.
- * <li>Create a flow artifact factory that will create flow artifacts during
- * the flow registration process.
  * <li>Use any number of flow registrars to populate the registry by calling
  * {@link #registerFlowDefinitions(FlowDefinitionRegistry)}.
  * </ol>
@@ -36,8 +37,7 @@ package org.springframework.webflow.definition.registry;
  * This design where various FlowRegistrars populate a generic FlowRegistry was
  * inspired by Spring's GenericApplicationContext, which can use any number of
  * BeanDefinitionReaders to drive context population.
- * <p>
- * 
+ * </p>
  * @see FlowDefinitionRegistry
  * @see FlowDefinitionResource
  * 

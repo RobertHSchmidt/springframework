@@ -25,13 +25,17 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.definition.FlowDefinition;
 
 /**
- * A generic registry of one or more Flow definitions.
+ * <p>
+ * A generic registry implementing for housing one or more Flow definitions.
+ * </p>
  * <p>
  * This registry may be refreshed at runtime to "hot reload" refreshable Flow
  * definitions.
+ * </p>
  * <p>
  * This registry be configured with a "parent" flow registry to provide a hook
  * into a larger flow definition registry hierarchy.
+ * </p>
  * 
  * @author Keith Donald
  */
@@ -154,7 +158,7 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 		return flowHolder;
 	}
 
-	// implementing FlowLocator
+	// implementing FlowDefinitionLocator
 
 	public FlowDefinition getFlowDefinition(String id) throws NoSuchFlowDefinitionException {
 		Assert.hasText(id,
