@@ -8,7 +8,7 @@
 	<property file="${common.build.dir}/project.properties" />
 	<property file="${user.home}/build.properties" />
 
-	<property name="project.title" value="LDAP Template" />
+	<property name="project.title" value="Spring LDAP" />
 	<property name="project.package" value="org.springframework.ldap" />
 
 	<property name="ldap.server" value="127.0.0.1" />
@@ -19,49 +19,5 @@
 	<import file="${basedir}/itest-targets.xml" />
 	<import file="${common.build.dir}/doc-targets.xml" />
 	<import file="${common.build.dir}/clover-targets.xml" />
-
-	<target name="itest.ldap.setup">
-		<exec executable="ldapadd">
-			<arg value="-x"/>
-			<arg value="-h"/>
-			<arg value="${ldap.server}"/>
-			<arg value="-D"/>
-			<arg value="${ldap.user}"/>
-			<arg value="-w"/>
-			<arg value="${ldap.password}"/>
-			<arg value="-f"/>
-			<arg value="${src.java.itest.dir}/setup_data.ldif"/>
-		</exec>
-	</target>
-
-	<target name="itest.ldap.teardown" depends="itest.ldap.teardown.1, itest.ldap.teardown.2"/>
-	
-	<target name="itest.ldap.teardown.1">
-		<exec executable="ldapdelete" failonerror="false">
-			<arg value="-x"/>
-			<arg value="-h"/>
-			<arg value="${ldap.server}"/>
-			<arg value="-D"/>
-			<arg value="${ldap.user}"/>
-			<arg value="-w"/>
-			<arg value="${ldap.password}"/>
-			<arg value="-r"/>
-			<arg value="&quot;c=Sweden,dc=jayway,dc=se&quot;"/>
-		</exec>
-	</target>
-
-	<target name="itest.ldap.teardown.2">
-		<exec executable="ldapdelete" failonerror="false">
-			<arg value="-x"/>
-			<arg value="-h"/>
-			<arg value="${ldap.server}"/>
-			<arg value="-D"/>
-			<arg value="${ldap.user}"/>
-			<arg value="-w"/>
-			<arg value="${ldap.password}"/>
-			<arg value="-r"/>
-			<arg value="&quot;c=Norway,dc=jayway,dc=se&quot;"/>
-		</exec>
-	</target>
 
 </project>
