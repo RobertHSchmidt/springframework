@@ -53,7 +53,7 @@ public class ResultEventFactorySelector {
 
 	/**
 	 * Select the appropriate result event factory for the given result.
-	 * @param the result
+	 * @param result the result
 	 * @return the result event factory
 	 */
 	public ResultEventFactory forResult(Object result) {

@@ -20,7 +20,8 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * A strategy for creating an {@link Event} object from an arbitrary action
- * result object, such as a bean method return value.
+ * result object such as an expression evaluation result or bean method return
+ * value.
  * 
  * @author Keith Donald
  */
