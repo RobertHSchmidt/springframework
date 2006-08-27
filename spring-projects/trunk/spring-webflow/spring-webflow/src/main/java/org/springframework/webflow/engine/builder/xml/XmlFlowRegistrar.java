@@ -41,7 +41,7 @@ import org.xml.sax.EntityResolver;
  * Programmatic usage example:
  * </p>
  * 
- * <pre>
+ * <pre class="code">
  *       BeanFactory beanFactory = ...
  *       FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
  *       FlowServiceLocator flowServiceLocator =
@@ -79,19 +79,34 @@ public class XmlFlowRegistrar extends ExternalizedFlowDefinitionRegistrar {
 	 */
 	private EntityResolver entityResolver;
 
+	/**
+	 * Creates a new xml flow registrar.  Protected constructor - if used, make sure 
+	 * the required {@link #flowServiceLocator} reference is set.
+	 */
 	protected XmlFlowRegistrar() {
 
 	}
 
+	/**
+	 * Creates a new xml flow registrar.
+	 * @param flowServiceLocator the locator needed to support flow definition assembly.
+	 */
 	public XmlFlowRegistrar(FlowServiceLocator flowServiceLocator) {
 		setFlowServiceLocator(flowServiceLocator);
 	}
 
+	/**
+	 * Sets the flow service locator.
+	 * @param flowServiceLocator the flow service locator, may not be null
+	 */
 	protected void setFlowServiceLocator(FlowServiceLocator flowServiceLocator) {
 		Assert.notNull(flowServiceLocator, "The flow service locator is required");
 		this.flowServiceLocator = flowServiceLocator;
 	}
 
+	/**
+	 * Returns the flow service locator.
+	 */
 	protected FlowServiceLocator getFlowServiceLocator() {
 		return flowServiceLocator;
 	}
