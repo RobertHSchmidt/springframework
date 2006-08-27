@@ -166,7 +166,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 
 		action.execute(context);
 
-		assertEquals(2, context.getFlowScope().size());
+		assertEquals(4, context.getFlowScope().size());
 		assertNotNull(context.getFlowScope().get("command"));
 
 		mapper.addInputMapping(mapping.source("${flowScope.command}").target("command").value());
@@ -182,7 +182,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 
 		action.execute(context);
 
-		assertEquals(2, context.getFlowScope().size());
+		assertEquals(4, context.getFlowScope().size());
 		assertSame(parentSession.getScope().get("command"), context.getFlowScope().get("command"));
 	}
 
