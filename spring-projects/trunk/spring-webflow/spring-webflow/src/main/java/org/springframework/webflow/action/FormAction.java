@@ -144,8 +144,8 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <pre>
  *     public Event setupReferenceData(RequestContext context) throws Exception {
  *         MutableAttributeMap requestScope = context.getRequestScope();
- * 	       requestScope.put(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
- * 	       return success();
+ *         requestScope.put(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
+ *         return success();
  *     }
  * </pre>
  * 
@@ -219,7 +219,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * </tr>
  * <tr>
  * <td>formErrorsScope</td>
- * <td>{@link org.springframework.webflow.execution.ScopeType#REQUEST request}</td>
+ * <td>{@link org.springframework.webflow.execution.ScopeType#FLOW request}</td>
  * <td>The scope in which the form object errors instance will be put. If put
  * in flow scope the errors will be cached and reused over the life of the flow.
  * Request scope will cause a new errors instance to be created each request.</td>
@@ -287,9 +287,9 @@ public class FormAction extends MultiAction implements InitializingBean {
 
 	/**
 	 * The scope in which the form object errors holder should be exposed.
-	 * Default is {@link ScopeType#REQUEST}.
+	 * Default is {@link ScopeType#FLOW}.
 	 */
-	private ScopeType formErrorsScope = ScopeType.REQUEST;
+	private ScopeType formErrorsScope = ScopeType.FLOW;
 
 	/**
 	 * A centralized service for property editor registration, for applying type
