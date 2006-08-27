@@ -28,6 +28,8 @@ spring-ldap
 General
 =======
 
+* Update changelog with changes, including upgraded libraries
+
 * Synchronize and commit changes, including .* files
 
 * Run clean-all from build-spring-ldap
