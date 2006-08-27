@@ -21,18 +21,25 @@ import java.util.List;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
+ * <p>
  * An action that will execute an ordered chain of other actions when executed.
+ * </p>
+ * <p>
  * The event id of the last not-null result returned by the executed actions
  * will be used as the result event id of the composite action. Lacking that,
- * the action will return the "success" event. The resulting event will have an
- * "actionResults" event attribute with a List of all events returned
- * by the executed action, including the null events. This allows you to relate
- * an executed action and its result event by their index in the list.
+ * the action will return the "success" event.
+ * </p>
+ * <p>
+ * The resulting composite Oevent will have an "actionResults" event attribute
+ * with a List of all events returned by the executed action, including the null
+ * events. This allows you to relate an executed action and its result event by
+ * their index in the list.
  * <p>
  * This is the classic GoF composite design pattern.
  * 
@@ -77,10 +84,9 @@ public class CompositeAction extends AbstractAction {
 	}
 
 	/**
-	 * Sets the stop on error flag. This determines whether or not
-	 * execution should stop with the first action that returns an error event.
-	 * In the error case, the composite action will also return
-	 * the "error" event.
+	 * Sets the stop on error flag. This determines whether or not execution
+	 * should stop with the first action that returns an error event. In the
+	 * error case, the composite action will also return the "error" event.
 	 */
 	public void setStopOnError(boolean stopOnError) {
 		this.stopOnError = stopOnError;
@@ -89,7 +95,7 @@ public class CompositeAction extends AbstractAction {
 	public Event doExecute(RequestContext context) throws Exception {
 		Action[] actions = getActions();
 		String eventId = getEventFactorySupport().getSuccessEventId();
-		LocalAttributeMap eventAttributes = new LocalAttributeMap();
+		MutableAttributeMap eventAttributes = new LocalAttributeMap();
 		List actionResults = new ArrayList(actions.length);
 		for (int i = 0; i < actions.length; i++) {
 			Event result = actions[i].execute(context);
@@ -106,7 +112,7 @@ public class CompositeAction extends AbstractAction {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("actions", getActions())
-			.append("stopOnError", isStopOnError()).toString();
+		return new ToStringCreator(this).append("actions", getActions()).append("stopOnError", isStopOnError())
+				.toString();
 	}
 }

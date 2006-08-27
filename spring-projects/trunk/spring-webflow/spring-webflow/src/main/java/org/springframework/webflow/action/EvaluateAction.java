@@ -23,10 +23,16 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
+ * <p>
  * An action that evaluates an expression and optionally exposes its result.
- * 
+ * </p>
+ * <p>
+ * Delegates to a helper {@link ResultEventFactorySelector} strategy to determine how 
+ * to map the evaluation result to an action outcome {@link Event}.
+ * </p>
  * @see Expression
  * @see ActionResultExposer
+ * @see ResultEventFactorySelector
  * 
  * @author Keith Donald
  */

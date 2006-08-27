@@ -40,7 +40,7 @@ public class ActionResultExposer implements Serializable {
 
 	/**
 	 * The scope of the attribute indexing the return value of the invoked bean
-	 * method. Default is {@link ScopeType#REQUEST).
+	 * method.
 	 */
 	private ScopeType resultScope;
 
