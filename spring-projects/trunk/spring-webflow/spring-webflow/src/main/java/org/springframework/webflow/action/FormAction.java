@@ -219,7 +219,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * </tr>
  * <tr>
  * <td>formErrorsScope</td>
- * <td>{@link org.springframework.webflow.execution.ScopeType#FLOW request}</td>
+ * <td>{@link org.springframework.webflow.execution.ScopeType#FLOW flow}</td>
  * <td>The scope in which the form object errors instance will be put. If put
  * in flow scope the errors will be cached and reused over the life of the flow.
  * Request scope will cause a new errors instance to be created each request.</td>
@@ -245,6 +245,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * </table>
  * 
  * @see org.springframework.beans.PropertyEditorRegistrar
+ * @see ScopeType
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
