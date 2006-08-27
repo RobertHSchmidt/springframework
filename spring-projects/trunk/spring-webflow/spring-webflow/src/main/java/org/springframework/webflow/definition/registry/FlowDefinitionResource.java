@@ -70,6 +70,7 @@ public class FlowDefinitionResource implements Serializable {
 	 * Creates a new externalized flow definition.
 	 * @param id the flow id to be assigned
 	 * @param location the flow resource location.
+	 * @param attributes flow definition attributes to be assigned.
 	 */
 	public FlowDefinitionResource(String id, Resource location, AttributeMap attributes) {
 		init(id, location, attributes);

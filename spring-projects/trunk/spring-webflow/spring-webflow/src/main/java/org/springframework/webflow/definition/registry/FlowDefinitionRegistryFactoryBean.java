@@ -23,16 +23,26 @@ import java.util.List;
 import org.springframework.util.Assert;
 
 /**
- * <pre>
- *     &lt;bean id=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.registry.FlowRegistryFactoryBean&quot;&gt;
- *         &lt;property name=&quot;registrars&quot;&gt;
- *             &lt;list&gt;
- *                 &lt;bean class=&quot;example.MyFlowRegistrar&quot;/&gt;
- *             &lt;/list&gt;
- *         &lt;/property&gt;
- *     &lt;/bean&gt;
+ * <p>
+ * A factory bean that creates a flow registry populated from a set of
+ * {@link #setRegistrars(FlowDefinitionRegistrar[]) flow registrars}.
+ * </p>
+ * <p>
+ * Use this when you have your own custom registrars that should each get a chance 
+ * to register flow definitions.
+ * </p>
+ * <p>
+ * Usage example:
+ * <pre class="code">
+ *      &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.registry.FlowRegistryFactoryBean&quot;&gt;
+ *          &lt;property name=&quot;registrars&quot;&gt;
+ *              &lt;list&gt;
+ *                  &lt;bean class=&quot;example.MyFlowRegistrar&quot;/&gt;
+ *              &lt;/list&gt;
+ *          &lt;/property&gt;
+ *      &lt;/bean&gt;
  * </pre>
- * 
+ * </p>
  * @author Keith Donald
  */
 public class FlowDefinitionRegistryFactoryBean extends AbstractFlowDefinitionRegistryFactoryBean {
@@ -46,7 +56,7 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFlowDefinitionReg
 	 * Sets the list of flow registrars to contain only the single flow
 	 * registrar provided. Convenience setter for when registry population is
 	 * driven by a single registrar.
-	 * @param flowRegistrar the flow registrar
+	 * @param registrar the flow definition registrar
 	 */
 	public void setRegistrar(FlowDefinitionRegistrar registrar) {
 		Assert.notNull(registrar, "The flow definition registrar is required");
@@ -55,7 +65,7 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFlowDefinitionReg
 
 	/**
 	 * Sets the list of flow registrars that will register flow definitions.
-	 * @param registrars the flow registrars
+	 * @param registrars the flow definition registrars
 	 */
 	public void setRegistrars(FlowDefinitionRegistrar[] registrars) {
 		Assert.notNull(registrars, "The flow definition registrars is required");

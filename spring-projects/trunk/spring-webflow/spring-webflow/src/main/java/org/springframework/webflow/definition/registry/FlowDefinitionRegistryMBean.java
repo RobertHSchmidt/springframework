@@ -16,37 +16,38 @@
 package org.springframework.webflow.definition.registry;
 
 /**
+ * <p>
  * A management interface for managing Flow definition registries at runtime.
  * Provides the ability to query the size and state of the registry, as well as
  * refresh registered Flow definitions at runtime.
+ * </p>
  * <p>
  * Flow registries that implement this interface may be exposed for management
  * over the JMX protocol. The following is an example of using Spring's JMX
  * <code>MBeanExporter</code> to export a flow registry to an MBeanServer:
- * 
- * <pre>
- *  	&lt;!-- Creates the registry of flow definitions for this application --&gt;
- *  	&lt;bean name=&quot;flowLocator&quot; class=&quot;org.springframework.webflow.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *  		&lt;property name=&quot;definitionLocations&quot; value=&quot;/WEB-INF/flow1.xml&quot;/&gt;
- *  	&lt;/bean&gt;
+ * <pre class="code">
+ *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
+ *     &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *         &lt;property name=&quot;locations&quot; value=&quot;/WEB-INF/flow1.xml&quot;/&gt;
+ *     &lt;/bean&gt;
  *  
- *  	&lt;!-- Automatically exports the created flowRegistry as an MBean --&gt;
- *  	&lt;bean id=&quot;mbeanExporter&quot; class=&quot;org.springframework.jmx.export.MBeanExporter&quot;&gt;
- *  		&lt;property name=&quot;beans&quot;&gt;
- *  			&lt;map&gt;
- *  				&lt;entry key=&quot;spring-webflow:name=flowRegistry&quot; value-ref=&quot;flowLocator&quot;/&gt;
- *  			&lt;/map&gt;
- *  		&lt;/property&gt;
- *  		&lt;property name=&quot;assembler&quot;&gt;
- *  			&lt;bean class=&quot;org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler&quot;&gt;
- *  				&lt;property name=&quot;managedInterfaces&quot; value=&quot;org.springframework.webflow.config.registry.FlowRegistryMBean&quot;/&gt;
- *  			&lt;/bean&gt;
- *  		&lt;/property&gt;
- *  	&lt;/bean&gt;
+ *     &lt;!-- Automatically exports the created flowRegistry as an MBean --&gt;
+ *     &lt;bean id=&quot;mbeanExporter&quot; class=&quot;org.springframework.jmx.export.MBeanExporter&quot;&gt;
+ *         &lt;property name=&quot;beans&quot;&gt;
+ *             &lt;map&gt;
+ *                 &lt;entry key=&quot;spring-webflow:name=flowRegistry&quot; value-ref=&quot;flowRegistry&quot;/&gt;
+ *             &lt;/map&gt;
+ *         &lt;/property&gt;
+ *         &lt;property name=&quot;assembler&quot;&gt;
+ *             &lt;bean class=&quot;org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler&quot;&gt;
+ *                 &lt;property name=&quot;managedInterfaces&quot; value=&quot;org.springframework.webflow.registry.FlowRegistryMBean&quot;/&gt;
+ *             &lt;/bean&gt;
+ *         &lt;/property&gt;
+ *     &lt;/bean&gt;
  * </pre>
- * 
  * With the above configuration, you may then use any JMX client (such as Sun's
  * jConsole which ships with JDK 1.5) to refresh flow definitions at runtime.
+ * </p>
  * @author Keith Donald
  */
 public interface FlowDefinitionRegistryMBean {

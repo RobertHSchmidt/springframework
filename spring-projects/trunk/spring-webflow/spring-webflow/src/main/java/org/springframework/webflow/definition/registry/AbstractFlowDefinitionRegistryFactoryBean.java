@@ -21,7 +21,7 @@ import org.springframework.beans.factory.FactoryBean;
  * A base class for factory beans that create populated Flow Registries.
  * Subclasses should override the {@link #doPopulate(FlowDefinitionRegistry)} to
  * perform the registry population logic, typically delegating to a
- * {@link FlowDefinitionRegistrar} strategy.
+ * {@link FlowDefinitionRegistrar} strategy to perform the population.
  * 
  * @author Keith Donald
  */
@@ -44,6 +44,8 @@ public abstract class AbstractFlowDefinitionRegistryFactoryBean implements Facto
 		flowRegistry.setParent(parent);
 	}
 
+	// implementing factory bean
+	
 	public Class getObjectType() {
 		return FlowDefinitionRegistry.class;
 	}
@@ -59,11 +61,13 @@ public abstract class AbstractFlowDefinitionRegistryFactoryBean implements Facto
 	/**
 	 * Populates and returns the configured flow definition registry.
 	 */
-	public FlowDefinitionRegistry populateFlowRegistry() {
+	public final FlowDefinitionRegistry populateFlowRegistry() {
 		doPopulate(getFlowRegistry());
 		return getFlowRegistry();
 	}
 
+	// subclassing hooks
+	
 	/**
 	 * Template method subclasses must override to perform registry population.
 	 * @param registry the flow definition registry

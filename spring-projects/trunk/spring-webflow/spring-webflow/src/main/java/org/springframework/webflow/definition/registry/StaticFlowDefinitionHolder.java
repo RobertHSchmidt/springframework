@@ -18,17 +18,17 @@ package org.springframework.webflow.definition.registry;
 import org.springframework.webflow.definition.FlowDefinition;
 
 /**
- * A simple flow holder that just holds a static singleton reference to a flow
- * definition.
+ * A simple flow definition holder that just holds a constant singleton
+ * reference to a flow definition.
  * 
  * @author Keith Donald
  */
-public class StaticFlowDefinitionHolder implements FlowDefinitionHolder {
-	
+public final class StaticFlowDefinitionHolder implements FlowDefinitionHolder {
+
 	/**
-	 * The held flow definition. 
+	 * The held flow definition.
 	 */
-	private FlowDefinition flowDefinition;
+	private final FlowDefinition flowDefinition;
 
 	/**
 	 * Creates the static flow holder
@@ -41,7 +41,7 @@ public class StaticFlowDefinitionHolder implements FlowDefinitionHolder {
 	public String getFlowDefinitionId() {
 		return flowDefinition.getId();
 	}
-	
+
 	public FlowDefinition getFlowDefinition() {
 		return flowDefinition;
 	}
