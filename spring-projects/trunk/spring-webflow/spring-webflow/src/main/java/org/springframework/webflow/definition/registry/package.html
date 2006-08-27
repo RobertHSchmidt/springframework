@@ -1,19 +1,25 @@
 <html>
 <body>
 <p>
-The Flow Registry subsystem, for managing registries of refreshable flow definitions.
+The Flow Registry subsystem for managing registries of flow definitions.
 </p>
 <p>
-You can construct a generic, initially empty FlowRegistry, and then populate it
-with Flow definitions using a FlowRegistrar as follows:
-<pre>
-    BeanFactory beanFactory = ...
-    FlowRegistryImpl registry = new FlowRegistryImpl();
-    FlowArtifactFactory flowArtifactFactory = new FlowRegistryFlowArtifactFactory(registry, beanFactory);
-    XmlFlowRegistrar registrar = new XmlFlowRegistrar();
-    registrar.addFlowLocation(new FileSystemResource("WEB-INF/flowA.xml");
-	registrar.addFlowLocation(new FileSystemResource("WEB-INF/flowB.xml");
-    registrar.registerFlowDefinitions(registry, flowArtifactFactory);
+You can construct a generic, initially empty FlowRegistry, populate it
+with Flow definitions using a FlowRegistrar, then lookup flow definitions by id.
+For example:
+<pre class="code">
+    // create registry
+    FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
+
+    // populate registry
+    ExternalizedFlowDefinitionRegistrar registrar = ..
+    registrar.addLocation(...);
+    registrar.addLocation(...);
+    registrar.registerFlows(registry);
+
+    // use registry
+    FlowDefinition flow = registry.getFlow("myFlow");
+
 </pre>
 </p>
 </body>
