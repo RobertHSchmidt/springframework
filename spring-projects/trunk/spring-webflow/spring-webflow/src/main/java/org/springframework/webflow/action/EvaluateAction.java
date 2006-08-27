@@ -24,6 +24,10 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * An action that evaluates an expression and optionally exposes its result.
+ * 
+ * @see Expression
+ * @see ActionResultExposer
+ * 
  * @author Keith Donald
  */
 public class EvaluateAction extends AbstractAction {
@@ -72,6 +76,11 @@ public class EvaluateAction extends AbstractAction {
 		return resultEventFactorySelector.forResult(result).createResultEvent(this, result, context);
 	}
 
+	/**
+	 * Template method subclasses may override to customize the expressin evaluation context.
+	 * @param context the request context
+	 * @return the evaluation context
+	 */
 	protected Map getEvaluationContext(RequestContext context) {
 		return null;
 	}

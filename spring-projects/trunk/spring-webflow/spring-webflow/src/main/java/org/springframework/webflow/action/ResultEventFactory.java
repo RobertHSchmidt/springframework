@@ -22,8 +22,6 @@ import org.springframework.webflow.execution.RequestContext;
  * A strategy for creating an {@link Event} object from an arbitrary action
  * result object, such as a bean method return value.
  * 
- * @see org.springframework.webflow.action.bean.AbstractBeanInvokingAction
- * 
  * @author Keith Donald
  */
 public interface ResultEventFactory {
