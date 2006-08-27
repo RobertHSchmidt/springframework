@@ -49,7 +49,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  *     public Event search(RequestContext context) throws Exception;
  * </pre>
  * 
- * Alternatively you may explictly specify the method name:
+ * Alternatively (and typically recommended), you may explictly specify the method name:
  * 
  * <pre>
  *     &lt;action-state id=&quot;search&quot;&gt;

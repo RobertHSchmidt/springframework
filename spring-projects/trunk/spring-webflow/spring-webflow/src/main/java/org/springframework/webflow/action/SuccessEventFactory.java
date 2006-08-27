@@ -26,7 +26,6 @@ import org.springframework.webflow.execution.support.EventFactorySupport;
  * @author Keith Donald
  */
 public class SuccessEventFactory extends EventFactorySupport implements ResultEventFactory {
-	
 	public Event createResultEvent(Object source, Object resultObject, RequestContext context) {
 		return success(source, resultObject);
 	}
