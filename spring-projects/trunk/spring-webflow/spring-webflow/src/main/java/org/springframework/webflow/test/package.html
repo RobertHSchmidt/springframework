@@ -3,14 +3,12 @@
 <p>
 Support for testing flows and their associated artifacts.
 </p>
-
 <p>
-When you want to unit test an actual web flow, the {@link org.springframework.webflow.test.AbstractFlowExecutionTests}
-class provides a convenient base class you can subclass.
+When you want to unit test one of your flows the {@link org.springframework.webflow.test.execution.AbstractFlowExecutionTests}
+and associated subclasses class provide a base you can extend.
 </p>
-
 <p>
-When testing custom action implementations, the {@link org.springframework.webflow.test.MockRequestContext}
+When unit testing flow artifacts such as actions in isolation, the {@link org.springframework.webflow.test.engine.MockRequestContext}
 if of particular interest.
 </p>
 </body>
