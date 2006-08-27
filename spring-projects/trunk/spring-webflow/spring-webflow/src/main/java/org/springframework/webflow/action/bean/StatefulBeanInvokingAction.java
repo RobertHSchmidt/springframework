@@ -33,16 +33,6 @@ import org.springframework.webflow.execution.ScopeType;
  * {@link #getBeanScope() scope}. Subsequent requests to invoke this action
  * will pull the cached bean instance from the scope.
  * <p>
- * Example:
- * 
- * <pre>
- *     &lt;action-state id=&quot;executeMethod&quot;&gt;
- *         &lt;action bean=&quot;myAction&quot; method=&quot;myActionMethod&quot;&gt;
- *             &lt;attribute name=&quot;stateful&quot; value=&quot;true&quot;/&gt;
- *         &lt;/action&gt;
- *     &lt;/action-state&gt;
- * </pre>
- * 
  * Note: this action is not ideal for cases when the target bean manages
  * transient references. This is because the bean instance is placed <i>directly</i>
  * into a scope eligible for serialization between requests. Consider a
