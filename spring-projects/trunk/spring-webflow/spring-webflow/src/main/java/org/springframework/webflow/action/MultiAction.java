@@ -53,7 +53,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * 
  * <pre>
  *     &lt;action-state id=&quot;search&quot;&gt;
- *         &lt;action bean=&quot;searchAction&amp;quot method=&quot;executeSearch&quot;/&gt;
+ *         &lt;action bean=&quot;searchAction&amp;quot; method=&quot;executeSearch&quot;/&gt;
  *         &lt;transition on=&quot;success&quot; to=&quot;results&quot;/&gt;
  *     &lt;/action-state&gt;
  * </pre>
