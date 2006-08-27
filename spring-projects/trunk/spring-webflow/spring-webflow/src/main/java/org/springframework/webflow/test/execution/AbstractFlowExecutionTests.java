@@ -51,7 +51,7 @@ import org.springframework.webflow.test.MockExternalContext;
  * <ul>
  * <li>That the flow execution starts as expected given a request from an
  * external context containing potential input attributes (see the
- * {@link #startFlow(MutableAttributeMap, ExternalContext} variants).
+ * {@link #startFlow(MutableAttributeMap, ExternalContext) variants).
  * <li>That given the set of supported state transition criteria a state
  * executes the appropriate transition when a matching event is signaled (with
  * potential input request parameters, see the
