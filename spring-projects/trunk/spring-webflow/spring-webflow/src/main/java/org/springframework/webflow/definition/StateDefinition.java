@@ -27,6 +27,12 @@ package org.springframework.webflow.definition;
 public interface StateDefinition extends Annotated {
 
 	/**
+	 * Returns the flow definition this state belongs to.
+	 * @return the owning flow definition
+	 */
+	public FlowDefinition getOwner();
+	
+	/**
 	 * Returns this state's identifier, locally unique to is containing flow
 	 * definition.
 	 * @return the state identifier
