@@ -20,9 +20,10 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ScopeType;
 
 /**
- * Manages bean state in a {@link Memento} stored in a {@link ScopeType}.
- * The beans persisted by this state persister are expected to be
- * {@link org.springframework.webflow.action.bean.MementoOriginator} implementations.
+ * Manages bean state in a {@link Memento} stored in a {@link ScopeType}. The
+ * beans persisted by this state persister are expected to be
+ * {@link org.springframework.webflow.action.bean.MementoOriginator}
+ * implementations.
  * 
  * @see org.springframework.webflow.action.bean.MementoOriginator
  * 
@@ -30,8 +31,8 @@ import org.springframework.webflow.execution.ScopeType;
  */
 public class MementoBeanStatePersister implements BeanStatePersister {
 
-	private static final String BEAN_CONTEXT_ATTRIBUTE = "bean";
-	
+	private static final String BEAN_ATTRIBUTE = "bean";
+
 	/**
 	 * The scope to expose the bean memento in. Default is
 	 * {@link ScopeType#FLOW}.
@@ -54,9 +55,7 @@ public class MementoBeanStatePersister implements BeanStatePersister {
 
 	public void saveState(Object bean, RequestContext context) {
 		assertIsMementoOriginator(bean);
-		getScope().getScope(context).put(
-				getAttributeName(context),
-				((MementoOriginator)bean).createMemento());
+		getScope().getScope(context).put(getAttributeName(context), ((MementoOriginator)bean).createMemento());
 	}
 
 	public Object restoreState(Object bean, RequestContext context) {
@@ -65,7 +64,7 @@ public class MementoBeanStatePersister implements BeanStatePersister {
 		((MementoOriginator)bean).setMemento(memento);
 		return bean;
 	}
-	
+
 	/**
 	 * Make sure given bean is a {@link MementoOriginator}.
 	 */
@@ -78,6 +77,6 @@ public class MementoBeanStatePersister implements BeanStatePersister {
 	 * Return the attribute name of the memento in the context.
 	 */
 	protected String getAttributeName(RequestContext context) {
-		return "memento." + context.getAttributes().getRequiredString(BEAN_CONTEXT_ATTRIBUTE);
+		return "memento." + context.getAttributes().getRequiredString(BEAN_ATTRIBUTE);
 	}
 }

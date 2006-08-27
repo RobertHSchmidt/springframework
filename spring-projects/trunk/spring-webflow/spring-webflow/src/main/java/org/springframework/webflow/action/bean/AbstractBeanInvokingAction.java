@@ -35,6 +35,10 @@ import org.springframework.webflow.execution.RequestContext;
  * Subclasses are required to implement the {@link #getBean(RequestContext)}
  * method, returning the bean on which a method should be invoked.
  * 
+ * @see MethodSignature
+ * @see ActionResultExposer
+ * @see ResultEventFactory
+ * 
  * @author Keith Donald
  */
 public abstract class AbstractBeanInvokingAction extends AbstractAction {
