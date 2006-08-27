@@ -11,7 +11,7 @@ The LdapTemplate class encapsulates all the plumbing work involved in traditiona
 programming, such as creating, looping through NamingEnumerations, handling Exceptions
 and cleaning up resources. This leaves the programmer to handle the important stuff - 
 where to find data (DNs and Filters) and what do do with it (map to and from domain 
-objects, bind, modify, unbind, etc.), in the same way that JdbcTemplate releives the 
+objects, bind, modify, unbind, etc.), in the same way that JdbcTemplate relieves the 
 programmer of all but the actual SQL and how the data maps to the domain model.
 
 In addition to this, Spring-LDAP provides Exception translation from NamingExceptions
