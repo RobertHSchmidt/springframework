@@ -19,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
+import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.ViewSelection;
@@ -97,15 +98,21 @@ public abstract class State extends AnnotatedObject implements StateDefinition {
 	}
 
 	// implementing state definition
+
+	public FlowDefinition getOwner() {
+		return flow;
+	}
 	
 	public String getId() {
 		return id;
 	}
 	
+	// implementation specific
+	
 	/**
 	 * Returns the owning flow.
 	 */
-	public Flow getFlow() {
+	protected Flow getFlow() {
 		return flow;
 	}
 
