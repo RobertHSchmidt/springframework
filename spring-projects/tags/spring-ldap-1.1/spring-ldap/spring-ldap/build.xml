@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<project name="spring-ldap" default="dist">
+
+	<property file="build.properties" />
+	<property file="project.properties" />
+	<property file="${common.build.dir}/build.properties" />
+	<property file="${common.build.dir}/project.properties" />
+	<property file="${user.home}/build.properties" />
+
+	<property name="project.title" value="Spring LDAP" />
+	<property name="project.package" value="org.springframework.ldap" />
+
+	<property name="ldap.server" value="127.0.0.1" />
+	<property name="ldap.user" value="&quot;cn=Manager,dc=jayway,dc=se&quot;" />
+	<property name="ldap.password" value="secret" />
+	
+	<!-- Cannot import common-targets since itest-targets already does -->
+	<import file="${basedir}/itest-targets.xml" />
+	<import file="${common.build.dir}/doc-targets.xml" />
+	<import file="${common.build.dir}/clover-targets.xml" />
+
+</project>
