@@ -36,21 +36,21 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 	public void testTransitionExecutorHandlesExceptionExactMatch() {
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
 		handler.add(MyCustomException.class, "state");
-		FlowExecutionException e = new FlowExecutionException(state.getFlow().getId(), state.getId(), "Oops",
+		FlowExecutionException e = new FlowExecutionException(state.getOwner().getId(), state.getId(), "Oops",
 				new MyCustomException());
 		assertTrue("Doesn't handle state exception", handler.handles(e));
 
-		e = new FlowExecutionException(state.getFlow().getId(), state.getId(), "Oops", new Exception());
+		e = new FlowExecutionException(state.getOwner().getId(), state.getId(), "Oops", new Exception());
 		assertFalse("Shouldn't handle exception", handler.handles(e));
 	}
 
 	public void testTransitionExecutorHandlesExceptionSuperclassMatch() {
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
 		handler.add(Exception.class, "state");
-		FlowExecutionException e = new FlowExecutionException(state.getFlow().getId(), state.getId(), "Oops",
+		FlowExecutionException e = new FlowExecutionException(state.getOwner().getId(), state.getId(), "Oops",
 				new MyCustomException());
 		assertTrue("Doesn't handle state exception", handler.handles(e));
-		e = new FlowExecutionException(state.getFlow().getId(), state.getId(), "Oops", new RuntimeException());
+		e = new FlowExecutionException(state.getOwner().getId(), state.getId(), "Oops", new RuntimeException());
 		assertTrue("Doesn't handle state exception", handler.handles(e));
 	}
 
