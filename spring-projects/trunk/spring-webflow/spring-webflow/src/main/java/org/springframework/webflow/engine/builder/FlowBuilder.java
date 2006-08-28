@@ -23,7 +23,7 @@ import org.springframework.webflow.engine.Flow;
  * flow consists of the following steps:
  * <ol>
  * <li> Initialize this builder, creating the initial flow definition, by
- * calling {@link #init(String, AttributeCollection)}.
+ * calling {@link #init(String, AttributeMap)}.
  * <li> Call {@link #buildVariables()} to create any variables of the flow and
  * add them to the flow definition.
  * <li> Call {@link #buildInputMapper()} to create and set the input mapper for
