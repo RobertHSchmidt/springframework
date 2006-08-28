@@ -23,14 +23,14 @@ import org.springframework.webflow.execution.ViewSelection;
 /**
  * Concrete response type that requests a redirect to an <i>existing</i>,
  * active Spring Web Flow execution at a unique SWF-specific <i>flow execution
- * URL</i>. This enables the triggering of redirect after post semantics from
+ * URL</i>. This enables the triggering of post+redirect+get semantics from
  * within an <i>active</i> flow execution.
  * <p>
  * Once the redirect response is issued a new request is initiated by the
  * browser targeted at the flow execution URL. The URL is stabally refreshable
  * (and bookmarkable) while the conversation remains active, safely triggering a
- * {@link ViewState#refresh(org.springframework.webflow.RequestContext)} on each
- * access.
+ * {@link ViewState#refresh(org.springframework.webflow.execution.RequestContext)}
+ * on each access.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

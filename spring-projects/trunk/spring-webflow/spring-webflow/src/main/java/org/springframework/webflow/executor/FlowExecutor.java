@@ -20,8 +20,9 @@ import org.springframework.webflow.core.FlowException;
 
 /**
  * The central facade and entry-point service interface into the Spring Web Flow
- * system. This interface defines a coarse-grained system boundary suitable for
- * invocation by most clients.
+ * system for <i>driving the executions of flow definitions</i>. This interface
+ * defines a coarse-grained system boundary suitable for invocation by most
+ * clients.
  * <p>
  * Implementations of this interface abstract away much of the internal
  * complexity of the web flow execution subsystem, which consists of launching

@@ -53,9 +53,18 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
  * <td><b>default</b></td>
  * </tr>
  * <tr>
- * <td>repositoryFactory</td>
- * <td>The strategy for accessing flow execution repositories that are used to
- * create, save, and store managed flow executions driven by this executor.</td>
+ * <td>definitionLocator</td>
+ * <td>The service locator responsible for loading flow definitions to execute.</td>
+ * <td>None</td>
+ * </tr>
+ * <tr>
+ * <td>executionFactory</td>
+ * <td>The factory responsible for creating new flow executions.</td>
+ * <td>None</td>
+ * </tr>
+ * <tr>
+ * <td>executionRepository</td>
+ * <td>The repository responsible for managing flow execution persistence.</td>
  * <td>None</td>
  * </tr>
  * <tr>
@@ -66,7 +75,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
  * passed to the FlowExecution, exposing extern context attributes as input to
  * the flow during startup.</td>
  * <td>A
- * {@link org.springframework.webflow.executor.RequestParameterInputMapper},
+ * {@link org.springframework.webflow.executor.RequestParameterInputMapper request parameter mapper},
  * which exposes all request parameters in to the flow execution for input
  * mapping.</td>
  * </tr>
@@ -90,13 +99,13 @@ public class FlowExecutorImpl implements FlowExecutor {
 	private FlowDefinitionLocator definitionLocator;
 
 	/**
-	 * An abstract factory for creating a new flow execution for a definition.
+	 * An abstract factory for creating a new execution of a flow definition.
 	 */
 	private FlowExecutionFactory executionFactory;
 
 	/**
-	 * An abstract factory to obtain repositories that save, update, and load
-	 * existing flow executions to/from a persistent store.
+	 * An repository used to save, update, and load existing flow executions
+	 * to/from a persistent store.
 	 */
 	private FlowExecutionRepository executionRepository;
 
@@ -121,8 +130,8 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * execute
 	 * @param executionFactory the factory for creating executions of flow
 	 * definitions
-	 * @param repositoryFactory the factory for creating repositories to persist
-	 * paused flow executions
+	 * @param executionRepository the repository for persisting paused flow
+	 * executions
 	 */
 	public FlowExecutorImpl(FlowDefinitionLocator definitionLocator, FlowExecutionFactory executionFactory,
 			FlowExecutionRepository executionRepository) {
@@ -148,6 +157,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	}
 
 	public ResponseInstruction launch(String flowId, ExternalContext context) throws FlowException {
+		// expose external context as a thread-bound service
 		ExternalContextHolder.setExternalContext(context);
 		try {
 			FlowDefinition flowDefinition = definitionLocator.getFlowDefinition(flowId);
@@ -171,6 +181,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 
 	public ResponseInstruction signalEvent(String eventId, String flowExecutionKey, ExternalContext context)
 			throws FlowException {
+		// expose external context as a thread-bound service
 		ExternalContextHolder.setExternalContext(context);
 		try {
 			FlowExecutionKey key = executionRepository.parseFlowExecutionKey(flowExecutionKey);
@@ -202,9 +213,11 @@ public class FlowExecutorImpl implements FlowExecutor {
 	}
 
 	public ResponseInstruction refresh(String flowExecutionKey, ExternalContext context) throws FlowException {
+		// expose external context as a thread-bound service
 		ExternalContextHolder.setExternalContext(context);
 		try {
 			FlowExecutionKey key = executionRepository.parseFlowExecutionKey(flowExecutionKey);
+			// do we need to lock here?
 			FlowExecutionLock lock = executionRepository.getLock(key);
 			// make sure we're the only one manipulating the flow execution
 			lock.lock();

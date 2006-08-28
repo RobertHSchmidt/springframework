@@ -22,20 +22,14 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewSelection;
 
 /**
- * A view state is a state in which a physical view resource should be rendered
- * to the user, for example, for soliciting form input.
  * <p>
- * To accomplish this, a <code>ViewState</code> returns a
- * {@link ViewSelection}, which contains the logical name of a view template to
- * render and all supporting model data needed to render it correctly. It is
- * expected that some sort of view resolver will map this view selection to a
- * renderable resource template (like a JSP file).
+ * A view state is a state in which a respose to be issued to the user, for
+ * example, for soliciting form input.
+ * </p>
  * <p>
- * A view state can also be a <i>marker</i> state with no associated view. In
- * this case it just returns control back to the client. Marker states may be
- * used for situations where an action or custom state type has already
- * generated the response.
- * 
+ * To accomplish this, a <code>ViewState</code> makes a {@link ViewSelection},
+ * which contains the necessary information to issue a suitable response.
+ * </p>
  * @see org.springframework.webflow.engine.ViewSelector
  * 
  * @author Keith Donald
@@ -91,15 +85,14 @@ public class ViewState extends TransitionableState {
 
 	/**
 	 * Specialization of State's <code>doEnter</code> template method that
-	 * executes behaviour specific to this state type in polymorphic fashion.
+	 * executes behavior specific to this state type in polymorphic fashion.
 	 * <p>
-	 * Returns a view selection pointing callers to a logical view resource to
-	 * be displayed. The view selection also contains a model map needed when
-	 * the view is rendered, for populating dynamic content.
+	 * Returns a view selection indicating a response to issue. The view
+	 * selection typically contains all the data necessary to issue the
+	 * response.
 	 * @param context the control context for the currently executing flow, used
 	 * by this state to manipulate the flow execution
-	 * @return a view selection containing model and view information needed to
-	 * render the results of the state execution
+	 * @return a view selection serving as a response instruction
 	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
 	protected ViewSelection doEnter(RequestControlContext context) throws FlowExecutionException {
