@@ -1,9 +1,24 @@
+/*
+ * Copyright 2002-2006 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.springframework.webflow.config;
 
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.util.Assert;
 import org.springframework.webflow.conversation.ConversationManager;
-import org.springframework.webflow.conversation.impl.LocalConversationManager;
+import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
@@ -20,8 +35,11 @@ import org.springframework.webflow.executor.FlowExecutorFactory;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 
 /**
- * The default flow executor factory implementation.
- * 
+ * <p>
+ * The default flow executor factory implementation. Encapsulates the
+ * construction and assembly of a {@link FlowExecutor}, including the provision
+ * of its {@link FlowExecutionRepository} strategy.
+ * </p>
  * @author Keith Donald
  */
 public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean {
@@ -44,10 +62,13 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	private FlowExecutionImplStateRestorer executionStateRestorer;
 
 	/**
-	 
-	 * The conversation manager to be used by the flow execution repository.
+	 * The conversation manager to be used by the flow execution repository to
+	 * begin and end new conversations driven by Spring Web Flow.
+	 * <p>
+	 * The default value is {@link SessionBindingConversationManager} which
+	 * manages conversational state in the session map.
 	 */
-	private ConversationManager conversationManager = new LocalConversationManager();
+	private ConversationManager conversationManager = new SessionBindingConversationManager();
 
 	/**
 	 * The type of execution repository to configure with executors created by
@@ -56,7 +77,8 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	private RepositoryType repositoryType = RepositoryType.DEFAULT;
 
 	/**
-	 * Whether statistics gathering should be enabled for this flow executor.
+	 * Whether statistics gathering should be enabled for the flow execution
+	 * system.
 	 */
 	private boolean statisticsEnabled = false;
 
@@ -114,15 +136,10 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	}
 
 	/**
-	 * Sets the strategy for managing conversations in a flow repository.
-	 */
-	public void setConversationManager(ConversationManager conversationManager) {
-		this.conversationManager = conversationManager;
-	}
-
-	/**
 	 * Sets the type of flow execution repository that should be configured for
-	 * the Flow executors created by this factory.
+	 * the flow executors created by this factory. This factory encapsulates the
+	 * construction of the repository implementation corresponding to the
+	 * provided type.
 	 * @param repositoryType the flow execution repository type
 	 */
 	public void setRepositoryType(RepositoryType repositoryType) {
@@ -130,7 +147,20 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	}
 
 	/**
-	 * Sets whether statistics gathering should be enabled for this flow executor.
+	 * Sets the strategy for managing conversations that should be configured
+	 * for flow executors created by this factory.
+	 * <p>
+	 * The conversation manager is used by the flow execution repository
+	 * subsystem to begin and end new conversations that store execution state.
+	 */
+	public void setConversationManager(ConversationManager conversationManager) {
+		this.conversationManager = conversationManager;
+	}
+
+	/**
+	 * Sets whether statistics gathering should be enabled for the flow
+	 * execution system.
+	 * @param statisticsEnabled true if yes, false otherwise
 	 */
 	public void setStatisticsEnabled(boolean statisticsEnabled) {
 		this.statisticsEnabled = statisticsEnabled;
