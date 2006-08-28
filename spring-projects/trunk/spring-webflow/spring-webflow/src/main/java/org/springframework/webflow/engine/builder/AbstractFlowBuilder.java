@@ -18,11 +18,13 @@ package org.springframework.webflow.engine.builder;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.binding.expression.Expression;
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.webflow.action.ActionResultExposer;
+import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.action.bean.AbstractBeanInvokingAction;
 import org.springframework.webflow.action.bean.BeanInvokingActionFactory;
@@ -50,7 +52,7 @@ import org.springframework.webflow.execution.support.EventFactorySupport;
  * flow roughly equivalent to the work flow statically implemented in Spring
  * MVC's simple form controller:
  * 
- * <pre>
+ * <pre class="code">
  * public class CustomerDetailFlowBuilder extends AbstractFlowBuilder {
  * 	public void buildStates() {
  * 		// get customer information
@@ -354,8 +356,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected State addDecisionState(String stateId, TransitionCriteria decisionCriteria, String trueStateId,
 			String falseStateId) {
-		Transition thenTransition = getFlowArtifactFactory().createTransition(trueStateId, decisionCriteria, null,
-				null);
+		Transition thenTransition = getFlowArtifactFactory()
+				.createTransition(trueStateId, decisionCriteria, null, null);
 		Transition elseTransition = getFlowArtifactFactory().createTransition(falseStateId, null, null, null);
 		return getFlowArtifactFactory().createDecisionState(stateId, getFlow(), null,
 				new Transition[] { thenTransition, elseTransition }, null, null, null);
@@ -539,30 +541,60 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Creates a bean invoking action that invokes the method identified by the
 	 * signature on the bean associated with the action identifier.
-	 * @param id the action id identifying a arbitrary
+	 * @param beanId the id identifying an arbitrary
 	 * <code>java.lang.Object</code> to be used as an action
 	 * @param methodSignature the signature of the method to invoke on the POJO
 	 * @return the adapted bean invoking action
 	 * @throws FlowArtifactLookupException the action could not be resolved
 	 */
-	protected Action action(String id, MethodSignature methodSignature) throws FlowArtifactLookupException {
-		return getBeanInvokingActionFactory().createBeanInvokingAction(id, getFlowServiceLocator().getBeanFactory(),
-				methodSignature, null, getFlowServiceLocator().getConversionService(), null);
+	protected Action action(String beanId, MethodSignature methodSignature) throws FlowArtifactLookupException {
+		return getBeanInvokingActionFactory().createBeanInvokingAction(beanId,
+				getFlowServiceLocator().getBeanFactory(), methodSignature, null,
+				getFlowServiceLocator().getConversionService(), null);
 	}
 
 	/**
 	 * Creates a bean invoking action that invokes the method identified by the
 	 * signature on the bean associated with the action identifier.
-	 * @param id the action id identifying a arbitrary
+	 * @param beanId the id identifying an arbitrary
 	 * <code>java.lang.Object</code> to be used as an action
 	 * @param methodSignature the signature of the method to invoke on the POJO
 	 * @return the adapted bean invoking action
 	 * @throws FlowArtifactLookupException the action could not be resolved
 	 */
-	protected Action action(String id, MethodSignature methodSignature, ActionResultExposer resultExposer)
+	protected Action action(String beanId, MethodSignature methodSignature, ActionResultExposer resultExposer)
 			throws FlowArtifactLookupException {
-		return getBeanInvokingActionFactory().createBeanInvokingAction(id, getFlowServiceLocator().getBeanFactory(),
-				methodSignature, resultExposer, getFlowServiceLocator().getConversionService(), null);
+		return getBeanInvokingActionFactory().createBeanInvokingAction(beanId,
+				getFlowServiceLocator().getBeanFactory(), methodSignature, resultExposer,
+				getFlowServiceLocator().getConversionService(), null);
+	}
+
+	/**
+	 * Creates an evaluate action that evaluates the expression when executed.
+	 * @param expression the expression to evaluate
+	 */
+	protected Action action(Expression expression) {
+		return action(expression, null);
+	}
+
+	/**
+	 * Creates an evaluate action that evaluates the expression when executed.
+	 * @param expression the expression to evaluate
+	 * @param resultExposer the evaluation result exposer
+	 */
+	protected Action action(Expression expression, ActionResultExposer resultExposer) {
+		return new EvaluateAction(expression, resultExposer);
+	}
+
+	/**
+	 * Parses the expression string into a evaluatable {@link Expression}
+	 * object.
+	 * @param expressionString the expression string, e.g.
+	 * flowScope.order.number
+	 * @return the evaluatable expression
+	 */
+	protected Expression expression(String expressionString) {
+		return getFlowServiceLocator().getExpressionParser().parseExpression(expressionString);
 	}
 
 	/**
@@ -575,13 +607,13 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Method without arguments:
 	 * 
 	 * <pre>
-	 *     ${methodName}
+	 *       ${methodName}
 	 * </pre>
 	 * 
 	 * Method with arguments:
 	 * 
 	 * <pre>
-	 *     ${methodName}(${arg1}, ${arg2}, ${arg n})
+	 *       ${methodName}(${arg1}, ${arg2}, ${arg n})
 	 * </pre>
 	 * 
 	 * @param method the encoded method signature
@@ -593,10 +625,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Factory method for a {@link MethodSignature method signature}
-	 * {@link ActionResultExposer result specification}. A result
-	 * specification is used to expose a return value of a POJO invoked as part
-	 * of a {@link AbstractBeanInvokingAction bean invoking action}.
+	 * Factory method for a {@link ActionResultExposer result exposer}. A
+	 * result exposer is used to expose a action result such as a method return
+	 * value or expression evaluation result to the calling flow.
 	 * @param resultName the result name
 	 * @return the result specification
 	 * @see #action(String, MethodSignature, ActionResultExposer)
@@ -606,10 +637,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Factory method for a {@link MethodSignature method signature}
-	 * {@link ActionResultExposer result specification}. A result
-	 * specification is used to expose a return value of a POJO invoked as part
-	 * of a {@link AbstractBeanInvokingAction bean invoking action}.
+	 * Factory method for a {@link ActionResultExposer result exposer}. A
+	 * result exposer is used to expose a action result such as a method return
+	 * value or expression evaluation result to the calling flow.
 	 * @param resultName the result name attribute
 	 * @param resultScope the scope of the result
 	 * @return the result specification
