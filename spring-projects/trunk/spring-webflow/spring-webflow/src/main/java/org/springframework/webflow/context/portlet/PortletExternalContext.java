@@ -30,7 +30,7 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
 
 /**
- * Provides contextual information about a portlet environment that has
+ * Provides contextual information about a JSR 168 portlet environment that has
  * called into Spring Web Flow.
  * 
  * @author Keith Donald

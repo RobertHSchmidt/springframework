@@ -25,7 +25,7 @@ import org.springframework.webflow.context.support.StringKeyedMapAdapter;
 import org.springframework.webflow.core.collection.CollectionUtils;
 
 /**
- * Map backed by the Servlet HTTP request parameter map, for accessing request
+ * Map backed by the Servlet HTTP request parameter map for accessing request
  * parameters. Also provides support for multi-part requests, providing
  * transparent access to the request "fileMap" as a request parameter entry.
  * 

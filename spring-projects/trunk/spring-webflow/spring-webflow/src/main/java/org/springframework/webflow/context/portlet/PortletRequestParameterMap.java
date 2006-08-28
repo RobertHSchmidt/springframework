@@ -23,7 +23,7 @@ import org.springframework.webflow.context.support.StringKeyedMapAdapter;
 import org.springframework.webflow.core.collection.CollectionUtils;
 
 /**
- * Map backed by the Portlet request parameter map, for accessing request local
+ * Map backed by the Portlet request parameter map for accessing request local
  * portlet parameters.
  * 
  * @author Keith Donald
