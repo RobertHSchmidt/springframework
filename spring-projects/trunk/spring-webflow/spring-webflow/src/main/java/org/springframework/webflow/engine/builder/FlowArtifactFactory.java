@@ -225,12 +225,11 @@ public class FlowArtifactFactory {
 	 * flow to another. This method is an atomic operation that returns a fully
 	 * initialized transition. It encapsulates the selection of the transition
 	 * implementation as well as the transition assembly.
+	 * @param targetStateId the target state of the transition (required)
 	 * @param matchingCriteria the criteria that matches the transition; may be
 	 * null
 	 * @param executionCriteria the criteria that governs execution of the
 	 * transition after match; may be null
-	 * @param targetStateResolver the resolver for calculating the target state
-	 * of the transition (required)
 	 * @param attributes attributes to assign to the transition, which may also
 	 * be used to affect transition construction; may be null
 	 * @return the fully initialized transition instance

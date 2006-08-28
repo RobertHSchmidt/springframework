@@ -25,7 +25,7 @@ import org.springframework.webflow.engine.Flow;
  * Abstract base implementation of a flow builder defining common functionality
  * needed by most concrete flow builder implementations. This class implements
  * all optional parts of the FlowBuilder process as no-op methods. Subclasses
- * are only required to implement {@link #init(String, AttributeCollection)} and
+ * are only required to implement {@link #init(String, AttributeMap)} and
  * {@link #buildStates()}.
  * 
  * @see org.springframework.webflow.engine.builder.FlowServiceLocator
