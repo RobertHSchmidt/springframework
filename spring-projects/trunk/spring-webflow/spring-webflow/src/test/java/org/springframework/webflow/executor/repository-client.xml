@@ -4,14 +4,9 @@
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="repository"
-		class="org.springframework.webflow.execution.repository.continuation.ClientContinuationFlowExecutionRepository">
+	<bean id="repository" class="org.springframework.webflow.execution.repository.continuation.ClientContinuationFlowExecutionRepository">
 		<constructor-arg ref="stateRestorer" />
-		<constructor-arg>
-			<bean class="org.springframework.webflow.conversation.impl.LocalConversationManager">
-				<constructor-arg value="-1" />
-			</bean>
-		</constructor-arg>
+		<constructor-arg ref="conversationManager"/>
 	</bean>
 
 </beans>
