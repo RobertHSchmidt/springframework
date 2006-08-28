@@ -42,9 +42,9 @@ public class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	private static final String REGISTRY_REF = "registry-ref";
 
-	private static final String REPOSITORY_TYPE = "repositoryType";
+	private static final String REPOSITORY_TYPE = "repository-type";
 
-	private static final String STATISTICS_ENABLED = "statisticsEnabled";
+	private static final String STATISTICS_ENABLED = "statistics-enabled";
 
 	protected BeanDefinition parseInternal(Element element, ParserContext parserContext) {
 		BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder
