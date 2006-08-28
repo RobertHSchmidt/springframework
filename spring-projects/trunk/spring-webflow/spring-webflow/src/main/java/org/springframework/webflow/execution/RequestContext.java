@@ -24,19 +24,20 @@ import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.definition.TransitionDefinition;
 
 /**
- * A context for a single request to manipulate a flow execution. Allows
- * execution artifacts to access contextual information about the executing
- * request, as well as the governing
+ * A context for a single request to manipulate a flow execution. Allows Web
+ * Flow users to access contextual information about the executing request, as
+ * well as the governing
  * {@link #getFlowExecutionContext() active flow execution}.
  * <p>
  * The term <i>request</i> is used to describe a single call (thread) into the
  * flow system by an external actor to manipulate exactly one flow execution.
  * <p>
  * A new instance of this object is typically created when one of the core
- * operations supported by a flow execution is invoked, either <i>start</i> to
- * launch the flow execution, <i>signalEvent</i> to resume the flow execution,
- * or <i>refresh</i> to reconstitute the flow execution's last view selection
- * for purposes of reissuing a user response.
+ * operations supported by a flow execution is invoked, either
+ * <code>start</code> to launch the flow execution, <code>signalEvent</code>
+ * to resume the flow execution, or <code>refresh</code> to reconstitute the
+ * flow execution's last view selection for purposes of reissuing a user
+ * response.
  * <p>
  * Once created this context object is passed around throughout flow execution
  * request processing where it may be accessed and reasoned upon by SWF-internal
@@ -108,7 +109,7 @@ public interface RequestContext {
 	/**
 	 * Returns a mutable accessor for accessing and/or setting attributes in
 	 * conversation scope. <b>Conversation scoped attributes exist for the life
-	 * of the executing flow and are shared accross all flow sessions.</b>
+	 * of the executing flow and are shared across all flow sessions.</b>
 	 * @return the conversation scope
 	 */
 	public MutableAttributeMap getConversationScope();
@@ -182,9 +183,9 @@ public interface RequestContext {
 	public void setAttributes(AttributeMap attributes);
 
 	/**
-	 * Returns the data model for this context, suitable for exposing to clients
-	 * (mostly web views). Typically the model will contain the union of the
-	 * data available in all scopes.
+	 * Returns the data model capturing the state of this context, suitable for
+	 * exposing to clients (mostly web views). Typically the model will contain
+	 * the union of the data available in all scopes.
 	 * @return the model that can be exposed to a client view for rendering
 	 * purposes
 	 */
