@@ -34,21 +34,25 @@ import org.springframework.webflow.execution.repository.support.AbstractConversa
 import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
 
 /**
+ * <p>
  * Stores flow execution state client side, requiring no use of server-side
  * state.
+ * </p>
  * <p>
  * More specifically, instead of putting {@link FlowExecution} objects in a
  * server-side store this repository <i>encodes</i> them directly into the
- * <code>continuationId</code> of a generated
- * {@link CompositeFlowExecutionKey}. When asked to load a flow execution by
- * its key this repository decodes the serialized <code>continuationId</code>,
- * restoring the {@link FlowExecution} object at the state it was when encoded.
+ * <code>continuationId</code> of the generated {@link FlowExecutionKey}.
+ * When asked to load a flow execution by its key this repository decodes the
+ * serialized <code>continuationId</code>, restoring the
+ * {@link FlowExecution} object at the state it was when encoded.
+ * </p>
  * <p>
  * Note: currently this repository implementation does not by default support
  * <i>conversation invalidation after completion</i>, which enables automatic
  * prevention of duplicate submission after a conversation is completed. Support
  * for this requires tracking active conversations using a conversation service
  * backed by some centralized storage medium like a database table.
+ * </p>
  * <p>
  * Warning: storing state (a flow execution continuation) on the client entails
  * a certain security risk. This implementation does not provide a secure way of
@@ -56,14 +60,15 @@ import org.springframework.webflow.execution.repository.support.FlowExecutionSta
  * continuation and get access to possible sensitive data stored in the flow
  * execution. If you need more security and still want to store continuations on
  * the client, subclass this class and override the methods
- * {@link #encode(FlowExecution))} and {@link #decode(String)}, implementing
+ * {@link #encode(FlowExecution)} and {@link #decode(String)}, implementing
  * them with a secure encoding/decoding algorithm, e.g. based on public/private
  * key encryption.
+ * </p>
  * <p>
- * This class depends on the Jakarta Commons Codec library to do BASE64
- * encoding. Commons code must be available in the classpath when using this
- * implementation.
- * 
+ * This class depends on the <code>Jakarta Commons Codec</code> library to do
+ * <code>BASE64</code> encoding. Codec code must be available in the classpath
+ * when using this implementation.
+ * </p>
  * @author Keith Donald
  * @author Erwin Vervaet
  */
@@ -81,6 +86,19 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	 */
 	private FlowExecutionStateRestorer executionStateRestorer;
 
+	/**
+	 * Creates a new client continuation repository.  Uses a 'no op' conversation manager by default.
+	 * @param executionStateRestorer the transient flow execution state restorer.
+	 */
+	public ClientContinuationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer) {
+		this(executionStateRestorer, new NoOpConversationManager());
+	}
+	
+	/**
+	 * Creates a new client continuation repository.
+	 * @param executionStateRestorer the transient flow execution state restorer.
+	 * @param conversationManager the conversation manager for managing centralized conversational state
+	 */
 	public ClientContinuationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer,
 			ConversationManager conversationManager) {
 		super(conversationManager);
@@ -145,8 +163,9 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	 * flow execution object.
 	 * <p>
 	 * Subclasses can override this to change the decoding algorithm. This class
-	 * just does a BASE64 decoding and then deserializes the flow execution.
-	 * @param data the encode flow execution data
+	 * just does a <code>BASE64</code> decoding and then deserializes the flow
+	 * execution.
+	 * @param encodedContinuation the encode flow execution data
 	 * @return the decoded flow execution instance
 	 */
 	protected FlowExecutionContinuation decode(String encodedContinuation) {
