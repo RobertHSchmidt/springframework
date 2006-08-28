@@ -21,26 +21,35 @@ import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
 
 /**
- * A instance of a flow definition that can carry out definition execution on
- * behalf of a single client. Typically used to support the orchestration of a
- * web conversation.
+ * <p>
+ * A top-level instance of a flow definition that carries out definition
+ * execution on behalf of a single client. Typically used to support the
+ * orchestration of a web conversation.
+ * </p>
  * <p>
  * This is the central facade interface for manipulating one runtime execution
  * of a flow definition. Implementations of this interface are the finite state
  * machine that is the heart of Spring Web Flow.
  * <p>
- * Typically, when a client wants to launch a flow execution at runtime, she
- * passes in the id of the appropriate {@link FlowDefinition definining flow} to
- * a coordinating {@link org.springframework.webflow.executor.FlowExecutor}.
- * This coordinator then creates an instance of an object implementing this
- * interface, and initializes it with the requested Flow definition which
- * becomes the execution's "root", or top-level flow. After creation, the
+ * Typically, when a client wants to launch a flow execution at production time,
+ * she passes the id of the governing {@link FlowDefinition flow definition} to
+ * a coordinating
+ * {@link org.springframework.webflow.executor.FlowExecutor#launch(String, ExternalContext) flow executor}.
+ * This coordinator then typically uses a
+ * {@link FlowExecutionFactory flow execution factory} to create an object
+ * implementing this interface, initializing it with the requested Flow
+ * definition which becomes the execution's "root" or top-level flow.
+ * </p>
+ * <p>
+ * After execution creation, the
  * {@link #start(MutableAttributeMap, ExternalContext) start} operation is
- * called, which causes this execution to activate a new session for its root
- * flow definition. That session is then pushed onto a stack and its definition
- * becomes the <i>active flow</i>. An execution ({@link org.springframework.webflow.execution.RequestContext request context})
- * is then created and the Flow's
- * {@link org.springframework.webflow.engine.State start state} is then entered.
+ * called, which causes this execution to activate a new
+ * {@link FlowSession session} for its root flow definition. That session is
+ * then said to become the <i>active flow</i>. An execution
+ * {@link RequestContext request context} is then created, the Flow's
+ * {@link FlowDefinition#getStartState() start state} is then entered, and the
+ * request is processed.
+ * </p>
  * <p>
  * In a distributed environment such as HTTP, after a call into this object has
  * completed and control returns to the caller, this execution object (if still
@@ -48,20 +57,23 @@ import org.springframework.webflow.definition.StateDefinition;
  * ends. For example it might be saved out to the HttpSession, a Database, or a
  * client-side hidden form field for later restoration and manipulation. This
  * execution persistence is the responsibility of the
- * {@link org.springframework.webflow.execution.repository.FlowExecutionRepository Flow Execution Repository}
+ * {@link org.springframework.webflow.execution.repository.FlowExecutionRepository flow execution repository}
  * subsystem.
  * <p>
  * Subsequent requests from the client to manipuate this flow execution trigger
  * restoration of this object, followed by an invocation of the
  * {@link #signalEvent(EventId, ExternalContext) signal event} operation. The
- * signalEvent operation tells this execution what action the user took from
- * within the the current state; for example, the user may have pressed pressed
- * the "submit" button, or pressed "cancel". After the user event is processed,
- * control again goes back to the caller and if this execution is still active,
- * it is saved out to the repository. This continues until a client event causes
- * this flow execution to end (by the root flow reaching an EndState). At that
- * time, this object is removed from the repository and discarded.
- * 
+ * signalEvent operation resumes this execution by indicating what action the
+ * user took from within the the current state; for example, the user may have
+ * pressed pressed the "submit" button, or pressed "cancel". After the user
+ * event is processed, control again goes back to the caller and if this
+ * execution is still active, it is again saved out to the repository.
+ * </p>
+ * <p>
+ * This process continues until a client event causes this flow execution to end
+ * (by the root flow reaching an end state). At that time this object is no
+ * longer active, and is removed from the repository and discarded.
+ * </p>
  * @see FlowDefinition
  * @see StateDefinition
  * @see FlowSession
@@ -76,8 +88,8 @@ public interface FlowExecution extends FlowExecutionContext {
 
 	/**
 	 * Start this flow execution, transitioning it to the root flow's start
-	 * state and returning the starting view selection needed to issue a
-	 * suitable response. Typically called by a flow executor on behalf of a
+	 * state and returning the starting view selection needed to issue an
+	 * initial user response. Typically called by a flow executor on behalf of a
 	 * browser client, but also from test code.
 	 * @param input input attributes to pass to the flow, which the flow may
 	 * choose to map into its scope
