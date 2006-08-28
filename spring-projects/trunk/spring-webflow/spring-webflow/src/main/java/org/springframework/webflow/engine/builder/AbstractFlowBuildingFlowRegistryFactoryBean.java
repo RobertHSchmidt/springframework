@@ -31,11 +31,15 @@ import org.springframework.webflow.engine.State;
 import org.springframework.webflow.execution.Action;
 
 /**
- * A base class for factory beans that create populated Flow Registries.
+ * <p>
+ * A base class for factory beans that created populated registries 
+ * of flow definitions built using a {@link FlowBuilder}.
+ * </p>
+ * <p>
  * Subclasses should override the {@link #doPopulate(FlowDefinitionRegistry)} to
  * perform the registry population logic, typically delegating to a
  * {@link FlowDefinitionRegistrar} strategy.
- * 
+ * </p>
  * @author Keith Donald
  */
 public abstract class AbstractFlowBuildingFlowRegistryFactoryBean extends AbstractFlowDefinitionRegistryFactoryBean implements
