@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
  * 
  * @author Ben Hale
  */
-public class RegistryBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+class RegistryBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
 	private static final String FLOW_LOCATIONS = "flowLocations";
 

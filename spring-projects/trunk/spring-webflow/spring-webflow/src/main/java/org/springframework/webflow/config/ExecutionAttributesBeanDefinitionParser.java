@@ -27,7 +27,7 @@ import org.springframework.util.xml.DomUtils;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.w3c.dom.Element;
 
-public class ExecutionAttributesBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+class ExecutionAttributesBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
 	private static final String ATTRIBUTE = "attribute";
 
