@@ -52,7 +52,7 @@ public final class StaticFlowExecutionListenerLoader implements FlowExecutionLis
 	/**
 	 * Creates a new flow execution listener loader that returns the provided
 	 * listener on each invocation.
-	 * @param listeners the listener
+	 * @param listener the listener
 	 */
 	public StaticFlowExecutionListenerLoader(FlowExecutionListener listener) {
 		this(new FlowExecutionListener[] { listener });
