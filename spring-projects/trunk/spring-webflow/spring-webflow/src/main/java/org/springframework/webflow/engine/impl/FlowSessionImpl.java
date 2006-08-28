@@ -41,9 +41,6 @@ import org.springframework.webflow.execution.FlowSessionStatus;
  * The three classes work together to form a complete flow execution
  * implementation.
  * 
- * @see org.springframework.webflow.engine.machine.FlowExecutionImpl
- * @see org.springframework.webflow.engine.machine.RequestControlContextImpl
- * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
