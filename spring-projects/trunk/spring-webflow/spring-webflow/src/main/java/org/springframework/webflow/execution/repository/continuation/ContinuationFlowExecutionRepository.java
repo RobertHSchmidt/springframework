@@ -104,7 +104,8 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	 */
 	private int maxContinuations;
 
-	public ContinuationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer, ConversationManager conversationManager) {
+	public ContinuationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer,
+			ConversationManager conversationManager) {
 		super(conversationManager);
 		setExecutionStateRestorer(executionStateRestorer);
 	}
