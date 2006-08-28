@@ -34,13 +34,13 @@ import org.springframework.util.Assert;
  * <p>
  * Usage example:
  * <pre class="code">
- *      &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.registry.FlowRegistryFactoryBean&quot;&gt;
- *          &lt;property name=&quot;registrars&quot;&gt;
- *              &lt;list&gt;
- *                  &lt;bean class=&quot;example.MyFlowRegistrar&quot;/&gt;
- *              &lt;/list&gt;
- *          &lt;/property&gt;
- *      &lt;/bean&gt;
+ *     &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.registry.FlowRegistryFactoryBean&quot;&gt;
+ *         &lt;property name=&quot;registrars&quot;&gt;
+ *             &lt;list&gt;
+ *                 &lt;bean class=&quot;example.MyFlowRegistrar&quot;/&gt;
+ *             &lt;/list&gt;
+ *         &lt;/property&gt;
+ *     &lt;/bean&gt;
  * </pre>
  * </p>
  * @author Keith Donald
