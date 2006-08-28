@@ -66,7 +66,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 
 	/**
 	 * Set the listener to be attached to the flow execution the next time one
-	 * is {{@link #startFlow() started} by this test. Useful for attaching a
+	 * is {@link #startFlow() started} by this test. Useful for attaching a
 	 * listener that does test assertions during the execution of the flow.
 	 * @param executionListener the listener to attach
 	 */
@@ -76,7 +76,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 
 	/**
 	 * Sets system attributes to be associated with the flow execution the next
-	 * time one is {{@link #startFlow() started} by this test. Useful for
+	 * time one is {@link #startFlow() started} by this test. Useful for
 	 * assigning attributes that influence flow execution behavior.
 	 * @param executionAttributes the system attributes to assign
 	 */
