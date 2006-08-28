@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.engine;
 
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionContext;
@@ -31,8 +30,9 @@ import org.springframework.webflow.execution.ViewSelection;
  * <p>
  * This interface acts as a facade for core definition constructs such as the
  * central <code>Flow</code> and <code>State</code> classes, abstracting
- * away details about the runtime <i>execution</i> subsystem defined in the
- * {@link org.springframework.webflow.execution execution} package.
+ * away details about the runtime execution machine defined in the
+ * {@link org.springframework.webflow.engine.impl execution engine implementation}
+ * package.
  * <p>
  * Note this type is not the same as the {@link FlowExecutionContext}. Objects
  * of this type are <i>request specific</i>: they provide a control interface
@@ -89,9 +89,9 @@ public interface RequestControlContext extends RequestContext {
 	 * <code>null</code>, e.g. empty)
 	 * @return the selected starting view, which returns control to the client
 	 * and requests that a view be rendered with model data
-	 * @throws FlowExecutionException if an exception was thrown within a state of the
-	 * flow during execution of this start operation
-	 * @see Flow#start(RequestControlContext, LocalAttributeMap)
+	 * @throws FlowExecutionException if an exception was thrown within a state
+	 * of the flow during execution of this start operation
+	 * @see Flow#start(RequestControlContext, MutableAttributeMap)
 	 */
 	public ViewSelection start(Flow flow, MutableAttributeMap input) throws FlowExecutionException;
 
@@ -104,8 +104,8 @@ public interface RequestControlContext extends RequestContext {
 	 * @param event the event that occured
 	 * @return the next selected view, which returns control to the client and
 	 * requests that a view be rendered with model data
-	 * @throws FlowExecutionException if an exception was thrown within a state of the
-	 * flow during execution of this signalEvent operation
+	 * @throws FlowExecutionException if an exception was thrown within a state
+	 * of the flow during execution of this signalEvent operation
 	 * @see Flow#onEvent(RequestControlContext)
 	 */
 	public ViewSelection signalEvent(Event event) throws FlowExecutionException;
@@ -115,17 +115,17 @@ public interface RequestControlContext extends RequestContext {
 	 * should be called by clients that terminate flows, such as end states. The
 	 * <code>end()</code> method of the flow involved in the flow execution
 	 * will be called.
-	 * @param output output produced by the session that is eligible for
-	 * mapping by a resuming parent flow.
+	 * @param output output produced by the session that is eligible for mapping
+	 * by a resuming parent flow.
 	 * @return the ended session
 	 * @throws IllegalStateException when the flow execution is not active
-	 * @see Flow#end(RequestControlContext, LocalAttributeMap)
+	 * @see Flow#end(RequestControlContext, MutableAttributeMap)
 	 */
 	public FlowSession endActiveFlowSession(MutableAttributeMap output) throws IllegalStateException;
 
 	/**
-	 * Execute this transition out of the current source state.  Allows for privileged execution of 
-	 * an arbitrary transition.
+	 * Execute this transition out of the current source state. Allows for
+	 * privileged execution of an arbitrary transition.
 	 * @param transition the transition
 	 * @return a new view selection
 	 */
