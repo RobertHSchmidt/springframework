@@ -26,7 +26,7 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewSelection;
 
 /**
- * A decorator that aids in publishing events to an array of
+ * A helper that aids in publishing events to an array of
  * <code>FlowExecutionListener</code> objects.
  * 
  * @see org.springframework.webflow.execution.FlowExecutionListener
@@ -152,8 +152,7 @@ class FlowExecutionListeners {
 	}
 
 	/**
-	 * Notify all interested listeners that a flow session was activated in the
-	 * flow execution.
+	 * Notify all interested listeners that the flow execution was resumed.
 	 */
 	public void fireResumed(RequestContext context) {
 		for (int i = 0; i < listeners.length; i++) {
