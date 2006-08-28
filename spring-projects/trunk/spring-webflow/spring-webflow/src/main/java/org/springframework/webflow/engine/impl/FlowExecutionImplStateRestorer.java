@@ -80,7 +80,7 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 	/**
 	 * Convenience setter for setting a list of listeners that always apply to
 	 * flow executions created by this factory.
-	 * @param executionListener the flow execution listeners
+	 * @param executionListeners the flow execution listeners
 	 */
 	public void setExecutionListeners(FlowExecutionListener[] executionListeners) {
 		setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(executionListeners));

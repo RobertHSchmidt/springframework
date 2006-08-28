@@ -45,27 +45,24 @@ import org.springframework.webflow.execution.FlowSessionStatus;
 import org.springframework.webflow.execution.ViewSelection;
 
 /**
+ * <p>
  * Default implementation of FlowExecution that uses a stack-based data
- * structure to manage
- * {@link org.springframework.webflow.execution.FlowSession flow sessions}. This class is
- * closely coupled with <code>FlowSessionImpl</code> and
- * <code>FlowControlContextImpl</code>. The three classes work together to
+ * structure to manage spawned flow sessions. This class is closely coupled with
+ * package-private <code>FlowSessionImpl</code> and
+ * <code>RequestControlContextImpl</code>. The three classes work together to
  * form a complete flow execution implementation based on a finite state
  * machine.
+ * </p>
  * <p>
  * This implementation of FlowExecution is serializable so it can be safely
  * stored in an HTTP session or other persistent store such as a file, database,
- * or client-side form field.
- * <p>
- * Note: this implementation synchronizes the signalEvent Flow execution entry
- * point. It is locked on a per client basis for this flow execution.
- * Synchronization prevents a client from being able to signal other events
- * before previously signaled ones have processed in-full, preventing possible
- * race conditions.
+ * or client-side form field. Once deserialized, the
+ * {@link FlowExecutionImplStateRestorer} strategy is expected to be used to
+ * restore the execution to a usable state.
+ * </p>
  * 
- * @see org.springframework.webflow.execution.FlowSession
- * @see org.springframework.webflow.engine.machine.FlowSessionImpl
- * @see org.springframework.webflow.engine.machine.RequestControlContextImpl
+ * @see FlowExecutionImplFactory
+ * @see FlowExecutionImplStateRestorer
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -77,6 +74,9 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	/**
 	 * The execution's root flow; the top level flow that acts as the starting
 	 * point for this flow execution.
+	 * <p>
+	 * Transient and package private to support restoration by the
+	 * {@link FlowExecutionImplStateRestorer}.
 	 */
 	transient Flow flow;
 
@@ -84,27 +84,40 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * The stack of active, currently executing flow sessions. As subflows are
 	 * spawned, they are pushed onto the stack. As they end, they are popped off
 	 * the stack.
+	 * <p>
+	 * Package private to support restoration by the
+	 * {@link FlowExecutionImplStateRestorer}.
 	 */
 	LinkedList flowSessions;
 
 	/**
 	 * A thread-safe listener list, holding listeners monitoring the lifecycle
 	 * of this flow execution.
+	 * <p>
+	 * Transient and package private to support restoration by the
+	 * {@link FlowExecutionImplStateRestorer}.
 	 */
 	transient FlowExecutionListeners listeners;
 
 	/**
 	 * A data structure for attributes shared by all flow sessions.
+	 * <p>
+	 * Transient and package private to support restoration by the
+	 * {@link FlowExecutionImplStateRestorer}.
 	 */
 	transient MutableAttributeMap conversationScope;
 
 	/**
 	 * A data structure for runtime system execution attributes.
+	 * <p>
+	 * Transient and package private to support restoration by the
+	 * {@link FlowExecutionImplStateRestorer}.
 	 */
 	transient AttributeMap attributes;
-	
+
 	/**
-	 * Set only on deserialization so this object can be fully reconstructed.
+	 * Set only on deserialization so the {@link #flow} field can be restored by
+	 * the {@link FlowExecutionImplStateRestorer}.
 	 */
 	String flowId;
 
@@ -171,7 +184,8 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	// methods implementing FlowExecution
 
-	public ViewSelection start(MutableAttributeMap input, ExternalContext externalContext) throws FlowExecutionException {
+	public ViewSelection start(MutableAttributeMap input, ExternalContext externalContext)
+			throws FlowExecutionException {
 		Assert.state(!isActive(),
 				"This flow is already executing -- you cannot call 'start(ExternalContext)' more than once");
 		RequestControlContext context = createControlContext(externalContext);
