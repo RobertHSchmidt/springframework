@@ -68,7 +68,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * Set the listener to be attached to the flow execution the next time one
 	 * is {{@link #startFlow() started} by this test. Useful for attaching a
 	 * listener that does test assertions during the execution of the flow.
-	 * @param listener the listener to attach
+	 * @param executionListener the listener to attach
 	 */
 	protected void setFlowExecutionListener(FlowExecutionListener executionListener) {
 		getFlowExecutionImplFactory().setLExecutionistener(executionListener);
@@ -77,8 +77,8 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	/**
 	 * Sets system attributes to be associated with the flow execution the next
 	 * time one is {{@link #startFlow() started} by this test. Useful for
-	 * attaching attributes that influence flow system behavior.
-	 * @param listener the listener to attach
+	 * assigning attributes that influence flow execution behavior.
+	 * @param executionAttributes the system attributes to assign
 	 */
 	protected void setFlowExecutionAttributes(AttributeMap executionAttributes) {
 		getFlowExecutionImplFactory().setExecutionAttributes(executionAttributes);
@@ -141,8 +141,18 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	}
 
 	/**
+	 * <p>
 	 * Returns the pointer to the resource that houses the definition of the
-	 * flow to be tested. Subclasses must implemented.
+	 * flow to be tested. Subclasses must implement.
+	 * </p>
+	 * <p>
+	 * Example usage:
+	 * <pre class="code">
+	 *     protected FlowDefinitionResource getFlowDefinitionResource() {
+	 *         return createFlowDefinitionResource("/WEB-INF/flows/order-flow.xml");
+	 *     }
+	 * </pre>
+	 * </p>
 	 * @return the flow definition resource
 	 */
 	protected abstract FlowDefinitionResource getFlowDefinitionResource();
@@ -151,7 +161,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * Factory method to create the builder that will build the flow whose
 	 * execution will be tested. Subclasses must override.
 	 * @param resource the externalized flow definition resource location
-	 * @param flowServiceLocator the flow service locator
+	 * @param serviceLocator the flow service locator
 	 * @return the flow builder that will build the flow to be tested
 	 */
 	protected abstract FlowBuilder createFlowBuilder(Resource resource, FlowServiceLocator serviceLocator);
