@@ -34,7 +34,7 @@ public interface FlowExecutionContinuationFactory {
 
 	/**
 	 * Creates a new flow execution continuation from the provided byte array.
-	 * @param flowExecution the flow execution byte array
+	 * @param bytes the flow execution byte array
 	 * @return the continuation
 	 */
 	public FlowExecutionContinuation createContinuation(byte[] bytes) throws ContinuationCreationException;

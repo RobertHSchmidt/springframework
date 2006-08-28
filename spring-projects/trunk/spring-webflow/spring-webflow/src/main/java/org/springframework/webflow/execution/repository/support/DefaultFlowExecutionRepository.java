@@ -33,8 +33,8 @@ import org.springframework.webflow.util.UidGenerator;
  * duplicate submission in conjunction with browser navigational buttons (such
  * as the back button). Specifically, if you attempt to "go back" and resubmit,
  * the continuation id stored on the page in your browser history will <b>not</b>
- * match the continuation id of the {@link FlowExecutionEntry} object and access
- * to the conversation will be disallowed. This is because the
+ * match the continuation id of the flow execution entry and access to the
+ * conversation will be disallowed. This is because the
  * <code>continuationId</code> changes on each request to consistently prevent
  * the possibility of duplicate submission.
  * <p>
@@ -65,7 +65,8 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 	 */
 	private UidGenerator continuationIdGenerator = new RandomGuidUidGenerator();
 
-	public DefaultFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer, ConversationManager conversationManager) {
+	public DefaultFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer,
+			ConversationManager conversationManager) {
 		super(conversationManager);
 		setExecutionStateRestorer(executionStateRestorer);
 	}
