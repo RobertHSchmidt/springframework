@@ -27,7 +27,6 @@ import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
@@ -44,7 +43,7 @@ import org.springframework.webflow.execution.ViewSelection;
  * <p>
  * A simple Flow definition could do nothing more than execute an action and
  * display a view all in one request. A more elaborate Flow definition may be
- * long-lived and execute accross a series of requests, invoking many possible
+ * long-lived and execute across a series of requests, invoking many possible
  * paths, actions, and subflows.
  * <p>
  * Especially in Intranet applications there are often "controlled navigations"
@@ -93,9 +92,9 @@ import org.springframework.webflow.execution.ViewSelection;
  * Note: flows are singleton definition objects so they should be thread-safe.
  * You can think a flow definition as analagous somewhat to a Java class,
  * defining all the behavior of an application module. The core behaviors
- * {@link #start(RequestControlContext, LocalAttributeMap) start},
+ * {@link #start(RequestControlContext, MutableAttributeMap) start},
  * {@link #onEvent(RequestControlContext) on event}, and
- * {@link #end(RequestControlContext, LocalAttributeMap) end} each accept a
+ * {@link #end(RequestControlContext, MutableAttributeMap) end} each accept a
  * {@link RequestContext request context} that allows for this flow to access
  * execution state in a thread safe manner. A flow execution is what models a
  * running instance of this flow definition, somewhat analgous to a java object
@@ -334,7 +333,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 
 	/**
 	 * Adds a flow variable.
-	 * @param variable the var
+	 * @param variable the variable
 	 */
 	public void addVariable(FlowVariable variable) {
 		variables.add(variable);
@@ -342,7 +341,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 
 	/**
 	 * Adds the flow variables.
-	 * @param variables the vars
+	 * @param variables the variables
 	 */
 	public void addVariables(FlowVariable[] variables) {
 		if (variables == null) {

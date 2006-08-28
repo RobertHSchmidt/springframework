@@ -38,10 +38,6 @@ import org.springframework.webflow.execution.ViewSelection;
  * configuration information. The ability to plugin custom state types that
  * execute different behaviour polymorphically is the classic GoF state pattern.
  * <p>
- * Why is this class abstract and not an interface? A specific design choice. It
- * is expected that specializations of this base class be "States" and not part
- * of some other inheritance hierarchy.
- * <p>
  * Equality: Two states are equal if they have the same id and are part of the same flow.
  * 
  * @see org.springframework.webflow.engine.TransitionableState
