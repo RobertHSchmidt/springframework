@@ -19,31 +19,30 @@ import org.springframework.core.NestedRuntimeException;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
- * Root exception hierarchy for exceptions that occur during FlowExecution
- * serialization into storage.
+ * Thrown when a continuation snapshot could not be taken of flow execution
+ * state.
  * 
  * @author Keith Donald
  */
 public class ContinuationCreationException extends NestedRuntimeException {
 
 	/**
-	 * The flow execution that could not be serialized.
+	 * The flow execution that could not be snapshotted.
 	 */
 	private FlowExecution flowExecution;
 
 	/**
-	 * Creates a new serialization exception.
-	 * @param continuationId the continuation id
+	 * Creates a new continuation creation exception.
 	 * @param flowExecution the flow execution
 	 * @param message a descriptive message
-	 * @param cause
+	 * @param cause the cause
 	 */
 	public ContinuationCreationException(FlowExecution flowExecution, String message, Throwable cause) {
 		super(message, cause);
 	}
 
 	/**
-	 * Returns the flow execution that could not be serialized.
+	 * Returns the flow execution that could not be snapshooted.
 	 */
 	public FlowExecution getFlowExecution() {
 		return flowExecution;
