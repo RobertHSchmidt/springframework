@@ -21,9 +21,8 @@ import org.springframework.core.NestedRuntimeException;
 
 /**
  * Thrown when no flow execution continuation exists within a continuation
- * group. with the provided id This might occur if the continuation was expired
- * or was explictly invalidated but a client's browser page cache still
- * references it.
+ * group. This might occur if the continuation was expired or was explictly
+ * invalidated but a client's browser page cache still references it.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
