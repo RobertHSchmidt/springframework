@@ -24,7 +24,7 @@ import org.springframework.webflow.context.support.StringKeyedMapAdapter;
 import org.springframework.webflow.core.collection.CollectionUtils;
 
 /**
- * A shared map backed by the Portlet context, for accessing application scoped
+ * A shared map backed by the Portlet context for accessing application scoped
  * attributes.
  * 
  * @author Keith Donald

@@ -19,7 +19,7 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 
 /**
  * An interface to be implemented by mutable attributes maps accessed by
- * multiple threads and in needed of mutex synchronization.
+ * multiple threads that need to be synchronized.
  * 
  * @author Keith Donald
  */

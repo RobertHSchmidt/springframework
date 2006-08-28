@@ -19,19 +19,22 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
 
 /**
+ * <p>
  * A facade that provides normalized access to an external system that has
  * interacted with Spring Web Flow.
+ * </p>
  * <p>
  * This context object provides a normalized interface for internal web flow
  * artifacts to use to reason on and manipulate the state of an external actor
  * calling into SWF to execute flows. It represents the context about a single,
  * <i>external</i> client request to manipulate a flow execution.
+ * </p>
  * <p>
  * The design of this interface was inspired by JSF's own ExternalContext
  * abstraction and shares the same name for consistency. If a particular
  * external client type does not support all methods defined by this interface,
- * they can just be implemented as returning an empty map or null.
- * 
+ * they can just be implemented as returning an empty map or <code>null</code>.
+ * </p>
  * @author Keith Donald
  */
 public interface ExternalContext {
