@@ -37,7 +37,7 @@ import org.springframework.webflow.execution.FlowSessionStatus;
 /**
  * Implementation of the FlowSession interfaced used internally by the
  * <code>FlowExecutionImpl</code>. This class is closely coupled with
- * <code>FlowExecutionImpl</code> and <code>FlowControlContextImpl</code>.
+ * <code>FlowExecutionImpl</code> and <code>RequestControlContextImpl</code>.
  * The three classes work together to form a complete flow execution
  * implementation.
  * 
@@ -53,21 +53,29 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 
 	/**
 	 * The flow definition (a singleton).
+	 * <p>
+	 * Transient and package private to support restoration by the
+	 * {@link FlowExecutionImplStateRestorer}.
 	 */
 	transient Flow flow;
 
 	/**
-	 * Set only on deserialization so this object can be fully reconstructed.
+	 * Set only on deserialization so the {@link #flow} field can be restored
+	 * by the {@link FlowExecutionImplStateRestorer}.
 	 */
 	String flowId;
 
 	/**
 	 * The current state of this flow session.
+	 * <p>
+	 * Transient and package private to support restoration by the
+	 * {@link FlowExecutionImplStateRestorer}.
 	 */
 	transient State state;
 
 	/**
-	 * Set only on deserialization so this object can be fully reconstructed.
+	 * Set only on deserialization so the {@link #state} field can be restored
+	 * by the {@link FlowExecutionImplStateRestorer}.
 	 */
 	String stateId;
 
@@ -110,7 +118,7 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	}
 
 	// implementing FlowSession
-	
+
 	public FlowDefinition getDefinition() {
 		return flow;
 	}
@@ -136,7 +144,7 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	}
 
 	// helpers
-	
+
 	/**
 	 * Set the current state of this flow session.
 	 * @param state the state that is currently active in this flow session
