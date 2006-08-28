@@ -40,6 +40,13 @@ public class SessionBindingConversationManager extends AbstractConversationManag
 
 	/**
 	 * Creates a new session binding conversation service.
+	 */
+	public SessionBindingConversationManager() {
+		this(-1);
+	}
+
+	/**
+	 * Creates a new session binding conversation service.
 	 * @param maxConversations the maximum number of conversations that can be
 	 * active at once within this session.
 	 */
@@ -110,5 +117,4 @@ public class SessionBindingConversationManager extends AbstractConversationManag
 	private boolean maxExceeded() {
 		return maxConversations > 0 && getConversations().size() > maxConversations;
 	}
-
 }

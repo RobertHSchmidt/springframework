@@ -61,6 +61,13 @@ public class LocalConversationManager extends AbstractConversationManager implem
 
 	/**
 	 * Creates a new local conversation service.
+	 */
+	public LocalConversationManager() {
+		this(-1);
+	}
+	
+	/**
+	 * Creates a new local conversation service.
 	 * @param maxConversations the maximum number of conversations that can be
 	 * active at once within this session.
 	 */
@@ -135,7 +142,6 @@ public class LocalConversationManager extends AbstractConversationManager implem
 	}
 
 	private class LocalConversationProxy extends ConversationProxy {
-
 		public LocalConversationProxy(ConversationId id) {
 			super(id);
 		}
@@ -144,6 +150,5 @@ public class LocalConversationManager extends AbstractConversationManager implem
 			super.end();
 			getUserContext().remove(getId());
 		}
-
 	}
 }

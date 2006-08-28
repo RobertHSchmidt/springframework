@@ -7,11 +7,7 @@
 	<bean id="repository"
 		class="org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepository">
 		<constructor-arg ref="stateRestorer" />
-		<constructor-arg>
-			<bean class="org.springframework.webflow.conversation.impl.LocalConversationManager">
-				<constructor-arg value="-1" />
-			</bean>
-		</constructor-arg>
+		<constructor-arg ref="conversationManager"/>
 	</bean>
 
 </beans>
