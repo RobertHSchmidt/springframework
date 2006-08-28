@@ -24,7 +24,6 @@ import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.conversation.ConversationParameters;
 import org.springframework.webflow.conversation.NoSuchConversationException;
-import org.springframework.webflow.conversation.impl.LocalConversationManager;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.FlowExecution;
@@ -102,13 +101,10 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 	}
 
 	public FlowExecutionKey generateKey(FlowExecution flowExecution) {
-		Conversation conversation = conversationManager.beginConversation(createNewConversation(flowExecution));
+		ConversationParameters parameters = createConversationParameters(flowExecution);
+		Conversation conversation = conversationManager.beginConversation(parameters);
 		onBegin(conversation);
 		return new CompositeFlowExecutionKey(conversation.getId(), generateContinuationId(flowExecution));
-	}
-
-	public FlowExecutionLock getLock(FlowExecutionKey key) throws FlowExecutionRepositoryException {
-		return new ConversationBackedFlowExecutionLock(getConversation(key));
 	}
 
 	public FlowExecutionKey getNextKey(FlowExecution flowExecution, FlowExecutionKey previousKey) {
@@ -120,6 +116,15 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 			return previousKey;
 		}
 	}
+
+	public FlowExecutionLock getLock(FlowExecutionKey key) throws FlowExecutionRepositoryException {
+		return new ConversationBackedFlowExecutionLock(getConversation(key));
+	}
+
+	public abstract FlowExecution getFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
+
+	public abstract void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution)
+			throws FlowExecutionRepositoryException;
 
 	public void removeFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException {
 		try {
@@ -142,7 +147,16 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 		}
 	}
 
-	protected ConversationParameters createNewConversation(FlowExecution flowExecution) {
+	// overridable hooks
+
+	/**
+	 * Factory method that maps a new flow execution to a input
+	 * {@link ConversationParameters conversation parameters} object.
+	 * @param flowExecution the new flow execution
+	 * @return the conversation parameters object to pass to the conversation
+	 * manager when the conversation is started.
+	 */
+	protected ConversationParameters createConversationParameters(FlowExecution flowExecution) {
 		FlowDefinition flow = flowExecution.getDefinition();
 		return new ConversationParameters(flow.getId(), flow.getCaption(), flow.getDescription());
 	}
@@ -188,18 +202,27 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 		}
 	}
 
+	/**
+	 * Returns the conversation scope attribute for the flow execution with the
+	 * key provided.
+	 * @param key the flow execution key
+	 * @return the execution's conversation scope
+	 */
 	protected MutableAttributeMap getConversationScope(FlowExecutionKey key) {
 		return (MutableAttributeMap)getConversation(key).getAttribute(SCOPE_ATTRIBUTE);
 	}
 
+	/**
+	 * Sets the conversation scope attribute for the flow execution with the key
+	 * provided.
+	 * @param key the flow execution key
+	 * @param scope the execution's conversation scope
+	 */
 	protected void putConversationScope(FlowExecutionKey key, MutableAttributeMap scope) {
 		getConversation(key).putAttribute(SCOPE_ATTRIBUTE, scope);
 	}
 
-	public abstract FlowExecution getFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
-
-	public abstract void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution)
-			throws FlowExecutionRepositoryException;
+	// abstract template methods
 
 	/**
 	 * Template method used to generate a new continuation id for this flow
