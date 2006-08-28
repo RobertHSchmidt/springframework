@@ -18,7 +18,7 @@
 	</bean>
 
 	<!-- Launches new flow executions and resumes existing executions. -->
-	<flow:executor id="flowExecutor" registry-ref="flowRegistry" repositoryType="singleKey">
+	<flow:executor id="flowExecutor" registry-ref="flowRegistry" repository-type="singlekey">
 		<flow:execution-attributes>
 			<flow:alwaysRedirectOnPause />
 		</flow:execution-attributes>
