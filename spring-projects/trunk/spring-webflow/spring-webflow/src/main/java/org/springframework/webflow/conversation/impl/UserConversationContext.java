@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.conversation.impl;
 
-import java.util.Iterator;
+import java.io.Serializable;
 import java.util.LinkedList;
 
 import org.springframework.webflow.context.ExternalContext;
@@ -31,11 +31,11 @@ import org.springframework.webflow.core.collection.AttributeMapBindingListener;
  * @see ExternalContext
  * @see AttributeMapBindingListener
  */
-class UserConversationContext implements AttributeMapBindingListener {
+class UserConversationContext implements AttributeMapBindingListener, Serializable {
 
 	private LinkedList conversationIds = new LinkedList();
 
-	private LocalConversationManager conversationManager;
+	private transient LocalConversationManager conversationManager;
 
 	public UserConversationContext(LocalConversationManager conversationManager) {
 		this.conversationManager = conversationManager;
