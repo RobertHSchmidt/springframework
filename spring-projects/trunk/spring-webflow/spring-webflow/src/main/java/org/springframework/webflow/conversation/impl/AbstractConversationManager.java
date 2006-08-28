@@ -27,10 +27,18 @@ import org.springframework.webflow.conversation.NoSuchConversationException;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 
+/**
+ * Convenient base class for conversation manager implementations. Subclasses
+ * must override {@link #getConversationMap()} to return the data structure to
+ * store conversation entries.
+ * 
+ * @author Keith Donald
+ * @author Ben Hale
+ */
 public abstract class AbstractConversationManager implements ConversationManager {
 
 	/**
-	 * The uid generation strategy to use.
+	 * The conversation uid generation strategy to use.
 	 */
 	private UidGenerator conversationIdGenerator = new RandomGuidUidGenerator();
 
@@ -58,7 +66,7 @@ public abstract class AbstractConversationManager implements ConversationManager
 		onBegin(conversationId);
 		return getConversation(conversationId);
 	}
-	
+
 	public Conversation getConversation(ConversationId id) throws NoSuchConversationException {
 		assertValid(id);
 		return new ConversationProxy(id);
@@ -170,7 +178,7 @@ public abstract class AbstractConversationManager implements ConversationManager
 		public void end() {
 			AbstractConversationManager.this.end(conversationId);
 		}
-		
+
 		public String toString() {
 			return new ToStringCreator(this).append("id", conversationId).toString();
 		}
