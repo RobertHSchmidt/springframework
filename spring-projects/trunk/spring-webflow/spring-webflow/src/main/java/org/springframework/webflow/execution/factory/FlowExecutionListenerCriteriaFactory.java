@@ -23,7 +23,7 @@ import org.springframework.webflow.definition.FlowDefinition;
 /**
  * Static factory for creating commonly used flow execution listener criteria.
  * 
- * @see OFlowExecutionListenerCriteria
+ * @see FlowExecutionListenerCriteria
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
