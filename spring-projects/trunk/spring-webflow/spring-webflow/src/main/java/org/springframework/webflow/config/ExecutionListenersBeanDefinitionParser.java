@@ -23,9 +23,16 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
+/**
+ * {@link BeanDefinitionParser} for the
+ * <code>&lt;flow:execution-listeners&gt;</code> tag.
+ * 
+ * @author Ben Hale
+ */
 class ExecutionListenersBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
 	private static final String LISTENER = "listener";

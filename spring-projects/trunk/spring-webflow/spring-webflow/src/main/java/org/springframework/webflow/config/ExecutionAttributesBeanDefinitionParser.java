@@ -23,10 +23,17 @@ import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.util.xml.DomUtils;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.w3c.dom.Element;
 
+/**
+ * {@link BeanDefinitionParser} for the
+ * <code>&lt;flow:execution-attributes&gt;</code> tag.
+ * 
+ * @author Ben Hale
+ */
 class ExecutionAttributesBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
 	private static final String ATTRIBUTE = "attribute";
