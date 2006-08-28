@@ -16,7 +16,7 @@
 package org.springframework.webflow.execution.repository;
 
 /**
- * Thrown access to a flow execution was revoked by a repository.
+ * Thrown when access to a flow execution was revoked by a repository.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
