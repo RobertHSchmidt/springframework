@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.conversation.Conversation;
+import org.springframework.webflow.conversation.ConversationException;
 import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.conversation.ConversationParameters;
@@ -51,6 +52,13 @@ public abstract class AbstractConversationManager implements ConversationManager
 		return new SimpleConversationId(getConversationIdGenerator().parseUid(conversationId));
 	}
 
+	public Conversation beginConversation(ConversationParameters conversationParameters) throws ConversationException {
+		ConversationId conversationId = new SimpleConversationId(getConversationIdGenerator().generateUid());
+		getConversationMap().put(conversationId, createConversationEntry(conversationParameters, conversationId));
+		onBegin(conversationId);
+		return getConversation(conversationId);
+	}
+	
 	public Conversation getConversation(ConversationId id) throws NoSuchConversationException {
 		assertValid(id);
 		return new ConversationProxy(id);
@@ -87,11 +95,17 @@ public abstract class AbstractConversationManager implements ConversationManager
 		getConversationMap().remove(conversationId);
 		onEnd(conversationId);
 	}
-	
+
+	protected void onBegin(ConversationId conversationId) {
+	}
+
 	protected void onEnd(ConversationId conversationId) {
 	}
 
-	protected ConversationEntry createConversation(ConversationParameters parameters, ConversationId id) {
+	protected void onUnlock(ConversationId conversationId) {
+	}
+
+	protected ConversationEntry createConversationEntry(ConversationParameters parameters, ConversationId id) {
 		return new ConversationEntry(id, parameters.getName(), parameters.getCaption(), parameters.getDescription());
 	}
 
@@ -131,10 +145,6 @@ public abstract class AbstractConversationManager implements ConversationManager
 			AbstractConversationManager.this.getLock(conversationId).lock();
 		}
 
-		public void end() {
-			AbstractConversationManager.this.end(conversationId);
-		}
-
 		public Object getAttribute(Object name) {
 			return AbstractConversationManager.this.getAttribute(conversationId, name);
 		}
@@ -150,12 +160,17 @@ public abstract class AbstractConversationManager implements ConversationManager
 		public void unlock() {
 			try {
 				AbstractConversationManager.this.getLock(conversationId).unlock();
+				AbstractConversationManager.this.onUnlock(conversationId);
 			}
 			catch (NoSuchConversationException e) {
 				// ignore
 			}
 		}
 
+		public void end() {
+			AbstractConversationManager.this.end(conversationId);
+		}
+		
 		public String toString() {
 			return new ToStringCreator(this).append("id", conversationId).toString();
 		}

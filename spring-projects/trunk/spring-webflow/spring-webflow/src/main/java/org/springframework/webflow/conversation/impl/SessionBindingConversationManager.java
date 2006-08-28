@@ -15,21 +15,28 @@
  */
 package org.springframework.webflow.conversation.impl;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.SharedAttributeMap;
 import org.springframework.webflow.context.support.ExternalContextHolder;
-import org.springframework.webflow.conversation.Conversation;
-import org.springframework.webflow.conversation.ConversationException;
 import org.springframework.webflow.conversation.ConversationId;
-import org.springframework.webflow.conversation.ConversationParameters;
 
+/**
+ * <p>
+ * Stateless conversation manager that puts all conversational state in the
+ * @{link {@link ExternalContext#getSessionMap() session map}.  Conversations 
+ * are indexed in this map by their identifiers.
+ * </p>
+ * <p>
+ * Supports rebinding conversation entries to the session on an unlock operation
+ * to facilitate replication in a traditionally clustered environment.
+ * </p>
+ * @author Keith Donald
+ */
 public class SessionBindingConversationManager extends AbstractConversationManager {
-
-	private static final String CONVERSATION_MAP = "webflow.conversation.map";
 
 	private static final String CONVERSATION_ID_LIST = "webflow.conversation.idList";
 
@@ -53,35 +60,37 @@ public class SessionBindingConversationManager extends AbstractConversationManag
 	public SessionBindingConversationManager(int maxConversations) {
 		this.maxConversations = maxConversations;
 	}
+	
+	// overridden hooks
 
-	public Conversation beginConversation(ConversationParameters conversationParameters) throws ConversationException {
-		ConversationId conversationId = new SimpleConversationId(getConversationIdGenerator().generateUid());
-		getConversationMap().put(conversationId, createConversation(conversationParameters, conversationId));
+	protected Map getConversationMap() {
+		return ExternalContextHolder.getExternalContext().getSessionMap().asMap();
+	}
+	
+	protected void onBegin(ConversationId conversationId) {
 		getConversationIdList().add(conversationId);
-		// end the oldest conversation if them maximium number of
+		// end the oldest conversation if them maximum number of
 		// conversations has been exceeded
 		if (maxExceeded()) {
 			endOldestConversation();
 		}
-		return getConversation(conversationId);
 	}
 
-	protected Map getConversationMap() {
-		SharedAttributeMap session = ExternalContextHolder.getExternalContext().getSessionMap();
-		synchronized (session.getMutex()) {
-			Map map = (Map)session.get(CONVERSATION_MAP);
-			if (map == null) {
-				map = new HashMap();
-				ExternalContextHolder.getExternalContext().getSessionMap().put(CONVERSATION_MAP, map);
-			}
-			return map;
-		}
+	protected void onEnd(ConversationId id) {
+		getConversationIdList().remove(id);
 	}
 
-	protected List getConversationIdList() {
+	protected void onUnlock(ConversationId conversationId) {
+		// do rebinding to force session attribute replication if necessary
+		rebind(conversationId);
+	}
+
+	// helpers
+	
+	private List getConversationIdList() {
 		SharedAttributeMap session = ExternalContextHolder.getExternalContext().getSessionMap();
 		synchronized (session.getMutex()) {
-			LinkedList conversationIds = (LinkedList)session.get(CONVERSATION_ID_LIST);
+			List conversationIds = (List)session.get(CONVERSATION_ID_LIST);
 			if (conversationIds == null) {
 				conversationIds = new LinkedList();
 				ExternalContextHolder.getExternalContext().getSessionMap().put(CONVERSATION_ID_LIST, conversationIds);
@@ -96,11 +105,12 @@ public class SessionBindingConversationManager extends AbstractConversationManag
 		getConversationIdList().remove(id);
 	}
 	
-	protected void onEnd(ConversationId id) {
-		getConversationIdList().remove(id);
+	private void rebind(ConversationId conversationId) {
+		ConversationEntry entry = getConversationEntry(conversationId);
+		getConversationMap().put(conversationId, entry);
 	}
 
 	private boolean maxExceeded() {
-		return maxConversations > 0 && getConversationMap().size() > maxConversations;
+		return maxConversations > 0 && getConversationIdList().size() > maxConversations;
 	}
 }

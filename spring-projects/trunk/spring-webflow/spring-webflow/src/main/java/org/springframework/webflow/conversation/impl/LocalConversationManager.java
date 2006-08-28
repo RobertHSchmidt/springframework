@@ -23,12 +23,10 @@ import java.util.Map;
 
 import org.springframework.webflow.context.SharedAttributeMap;
 import org.springframework.webflow.context.support.ExternalContextHolder;
-import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationAccessException;
 import org.springframework.webflow.conversation.ConversationException;
 import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationManager;
-import org.springframework.webflow.conversation.ConversationParameters;
 
 /**
  * The default implementation of the {@link ConversationManager}. This
@@ -72,40 +70,15 @@ public class LocalConversationManager extends AbstractConversationManager implem
 		return conversations;
 	}
 
-	public Conversation beginConversation(ConversationParameters conversationParameters) {
-		ConversationId conversationId = new SimpleConversationId(getConversationIdGenerator().generateUid());
-		getConversationMap().put(conversationId, createConversation(conversationParameters, conversationId));
+	// overridden hooks
+	
+	protected void onBegin(ConversationId conversationId) {
 		getUserContext().add(conversationId);
-		// end the oldest conversation if them maximium number of
+		// end the oldest conversation if them maximum number of
 		// conversations has been exceeded
 		if (maxExceeded()) {
 			removeOldestConversation();
 		}
-		return getConversation(conversationId);
-	}
-
-	private UserConversationContext getUserContext() {
-		SharedAttributeMap session = ExternalContextHolder.getExternalContext().getSessionMap();
-		synchronized (session.getMutex()) {
-			UserConversationContext context = (UserConversationContext)session.get(USER_CONVERSATION_CONTEXT);
-			if (context == null) {
-				context = new UserConversationContext(this);
-				ExternalContextHolder.getExternalContext().getSessionMap().put(USER_CONVERSATION_CONTEXT, context);
-			}
-			return context;
-		}
-	}
-
-	private boolean maxExceeded() {
-		return maxConversations > 0 && getUserContext().size() > maxConversations;
-	}
-
-	// overridden hooks
-	
-	private void removeOldestConversation() {
-		ConversationId conversationId = getUserContext().getFirst();
-		getConversationMap().remove(conversationId);
-		getUserContext().remove(conversationId);
 	}
 
 	protected void assertValid(ConversationId conversationId) {
@@ -126,5 +99,29 @@ public class LocalConversationManager extends AbstractConversationManager implem
 			ConversationId id = (ConversationId)it.next();
 			getConversationMap().remove(id);
 		}
+	}
+	
+	// helpers
+	
+	private UserConversationContext getUserContext() {
+		SharedAttributeMap session = ExternalContextHolder.getExternalContext().getSessionMap();
+		synchronized (session.getMutex()) {
+			UserConversationContext context = (UserConversationContext)session.get(USER_CONVERSATION_CONTEXT);
+			if (context == null) {
+				context = new UserConversationContext(this);
+				ExternalContextHolder.getExternalContext().getSessionMap().put(USER_CONVERSATION_CONTEXT, context);
+			}
+			return context;
+		}
+	}
+
+	private boolean maxExceeded() {
+		return maxConversations > 0 && getUserContext().size() > maxConversations;
+	}
+
+	private void removeOldestConversation() {
+		ConversationId conversationId = getUserContext().getFirst();
+		getConversationMap().remove(conversationId);
+		getUserContext().remove(conversationId);
 	}
 }
