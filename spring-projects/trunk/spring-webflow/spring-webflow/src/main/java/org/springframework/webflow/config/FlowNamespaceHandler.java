@@ -17,46 +17,46 @@ package org.springframework.webflow.config;
 
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
-import org.springframework.webflow.executor.FlowExecutorImpl;
 
 /**
- * <code>NamespaceHandler</code> for the <code>flow</code> namespace.
- * 
  * <p>
- * Provides {@link BeanDefinitionParser}s for the <code>&lt;executor&gt;</code>
- * and <code>&lt;registry&gt;</code> tags. A <code>executor</code> tag can
- * include nested <code>listener</code> tags and a <code>registry</code> tag
- * can include <code>location</code> tags.
- * 
+ * <code>NamespaceHandler</code> for the <code>flow</code> namespace.
+ * </p>
+ * <p>
+ * Provides {@link BeanDefinitionParser bean definition parsers} for the
+ * <code>&lt;executor&gt;</code> and <code>&lt;registry&gt;</code> tags. A
+ * <code>executor</code> tag can include a <code>execution-listeners</code>
+ * tag and a <code>registry</code> tag can include <code>location</code>
+ * tags.
+ * </p>
+ * <p>
  * Using the <code>executor</code> tag you can configure a
- * {@link FlowExecutorImpl}. The <code>executor</code> tag allows you to
- * specify the repository type, and a reference to a registry. The repository
- * type enumeration will lead to creation of a
- * {@link DefaultFlowExecutionRepositoryFactory}, a{@link ContinuationFlowExecutionRepositoryFactory},
- * or a{@link ClientContinuationFlowExecutionRepositoryFactory}. The
- * <code>executor</code> tag also supports references to listeners with
- * in-line definition of listener criteria.
- * 
+ * {@link FlowExecutorFactoryBean} that creates a
+ * {@link org.springframework.webflow.executor.FlowExecutor}. The
+ * <code>executor</code> tag allows you to specify the repository type and a
+ * reference to a registry.
+ * </p>
  * <pre class="code">
- *      &lt;flow:executor id=&quot;registry&quot; repositoryType=&quot;continuation&quot; registry-ref=&quot;registry&quot;&gt;
- *          &lt;flow:listener ref=&quot;listener1&quot; /&gt;
- *          &lt;flow:listener ref=&quot;listener2&quot; ref=&quot;*&quot; /&gt;
- *          &lt;flow:listener ref=&quot;listener3&quot; ref=&quot;flow1, flow2, flow3&quot; /&gt;
- *      &lt;/flow:executor&gt;
+ *     &lt;flow:executor id=&quot;registry&quot; registry-ref=&quot;registry&quot; repository-type=&quot;continuation&quot; &gt;
+ *         &lt;flow:execution-listeners&gt;
+ *             &lt;flow:listener ref=&quot;listener1&quot; /&gt;
+ *             &lt;flow:listener ref=&quot;listener2&quot; ref=&quot;*&quot; /&gt;
+ *             &lt;flow:listener ref=&quot;listener3&quot; ref=&quot;flow1, flow2, flow3&quot; /&gt;
+ *         &lt;flow:execution-listeners /&gt;
+ *     &lt;/flow:executor&gt;
  * </pre>
- * 
+ * <p>
  * Using the <code>registry</code> tag you can configure an
  * {@link org.springframework.webflow.engine.builder.registry.XmlFlowRegistryFactoryBean}
  * for use by any number of <code>executor</code>s. The <code>registry</code>
  * tag supports in-line flow definition locations.
- * 
+ * </p> 
  * <pre class="code">
- *      &lt;flow:registry id=&quot;registry&quot;&gt;
- *          &lt;flow:location path=&quot;/path/to/flow.xml&quot; /&gt;
- *          &lt;flow:location path=&quot;/path/with/wildcards/*-flow.xml&quot; /&gt;
- *      &lt;/flow:registry&gt;
+ *     &lt;flow:registry id=&quot;registry&quot;&gt;
+ *         &lt;flow:location path=&quot;/path/to/flow.xml&quot; /&gt;
+ *         &lt;flow:location path=&quot;/path/with/wildcards/*-flow.xml&quot; /&gt;
+ *     &lt;/flow:registry&gt;
  * </pre>
- * 
  * @author Ben Hale
  */
 public class FlowNamespaceHandler extends NamespaceHandlerSupport {
