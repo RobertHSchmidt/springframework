@@ -27,7 +27,7 @@ import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.FlowRedirect;
 
 /**
- * Makes a {@link FlowRedirect} response selection when requested; calculating
+ * Makes a {@link FlowRedirect} response selection when requested, calculating
  * the flowId and flow input by evaluating an expression against the request
  * context.
  * 

@@ -24,10 +24,11 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * A transition criteria that will execute an action when tested and return
- * <code>true</code> if the action's result is equal to the 'trueEventId', false
- * otherwise.
+ * <code>true</code> if the action's result is equal to the 'trueEventId',
+ * <code>false</code> otherwise.
  * <p>
- * This effectively adapts an <code>Action</code> to a <code>TransitionCriteria</code>.
+ * This effectively adapts an <code>Action</code> to a
+ * <code>TransitionCriteria</code>.
  * 
  * @see org.springframework.webflow.execution.Action
  * @see org.springframework.webflow.engine.TransitionCriteria
@@ -44,7 +45,8 @@ public class ActionTransitionCriteria implements TransitionCriteria {
 	private String trueEventId = "success";
 
 	/**
-	 * The action to execute when the precondition is tested, annotated with usage attributes.
+	 * The action to execute when the precondition is tested, annotated with
+	 * usage attributes.
 	 */
 	private Action action;
 
@@ -58,8 +60,8 @@ public class ActionTransitionCriteria implements TransitionCriteria {
 
 	/**
 	 * Returns the action result <code>eventId</code> that should cause this
-	 * precondition to return true (it will return false otherwise). Defaults
-	 * to "success".
+	 * precondition to return true (it will return false otherwise). Defaults to
+	 * "success".
 	 */
 	public String getTrueEventId() {
 		return trueEventId;
@@ -82,7 +84,7 @@ public class ActionTransitionCriteria implements TransitionCriteria {
 	protected Action getAction() {
 		return action;
 	}
-	
+
 	public boolean test(RequestContext context) {
 		Event result = ActionExecutor.execute(getAction(), context);
 		return result != null && getTrueEventId().equals(result.getId());

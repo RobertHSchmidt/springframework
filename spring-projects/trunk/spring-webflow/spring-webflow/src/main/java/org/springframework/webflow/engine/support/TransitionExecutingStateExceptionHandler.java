@@ -56,7 +56,7 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 	/**
 	 * The exceptionType->targetStateId map.
 	 */
-	private Map exceptionTargetStateResolverMappings = new HashMap();
+	private Map exceptionTargetStateMappings = new HashMap();
 
 	/**
 	 * The list of actions to execute when this handler handles an exception.
@@ -72,7 +72,7 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 	 * statement
 	 */
 	public TransitionExecutingStateExceptionHandler add(Class exceptionClass, String targetStateId) {
-		exceptionTargetStateResolverMappings.put(exceptionClass, targetStateId);
+		exceptionTargetStateMappings.put(exceptionClass, targetStateId);
 		return this;
 	}
 
@@ -124,7 +124,7 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 			return findTargetStateId(e.getClass());
 		}
 		else {
-			targetStateId = (String)exceptionTargetStateResolverMappings.get(e.getClass());
+			targetStateId = (String)exceptionTargetStateMappings.get(e.getClass());
 			if (targetStateId != null) {
 				return targetStateId;
 			}
@@ -148,7 +148,7 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 			return findTargetStateId(t.getClass());
 		}
 		else {
-			targetStateId = (String)exceptionTargetStateResolverMappings.get(t.getClass());
+			targetStateId = (String)exceptionTargetStateMappings.get(t.getClass());
 			if (targetStateId != null) {
 				return targetStateId;
 			}
@@ -168,8 +168,8 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 
 	private String findTargetStateId(Class argumentType) {
 		while (argumentType != null && argumentType.getClass() != Object.class) {
-			if (exceptionTargetStateResolverMappings.containsKey(argumentType)) {
-				return (String)exceptionTargetStateResolverMappings.get(argumentType);
+			if (exceptionTargetStateMappings.containsKey(argumentType)) {
+				return (String)exceptionTargetStateMappings.get(argumentType);
 			}
 			else {
 				argumentType = argumentType.getSuperclass();
@@ -220,7 +220,7 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("exceptionTargetStateResolverMappings",
-				exceptionTargetStateResolverMappings).toString();
+		return new ToStringCreator(this).append("exceptionTargetStateMappings", exceptionTargetStateMappings)
+				.toString();
 	}
 }
