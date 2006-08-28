@@ -40,7 +40,7 @@ import org.springframework.webflow.definition.StateDefinition;
  * @see FlowExecution
  * @see RequestContext
  * @see Event
- * @see ViewSelecion
+ * @see ViewSelection
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
