@@ -81,10 +81,12 @@ an execution repository.
 								<xsd:enumeration value="default" />
 								<xsd:enumeration value="continuation" />
 								<xsd:enumeration value="client" />
+								<xsd:enumeration value="singleKey" />
 							</xsd:restriction>
 						</xsd:simpleType>
 					</xsd:attribute>
 					<xsd:attribute name="registry-ref" type="xsd:string" use="required" />
+					<xsd:attribute name="statisticsEnabled" type="xsd:boolean" default="false" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>

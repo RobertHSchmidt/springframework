@@ -3,6 +3,7 @@ package org.springframework.webflow.execution.repository.continuation;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.context.support.ExternalContextHolder;
+import org.springframework.webflow.conversation.impl.LocalConversationManager;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
@@ -29,7 +30,7 @@ public class ClientContinuationFlowExecutionRepositoryTests extends TestCase {
 		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(new SimpleFlow()));
 		execution = new FlowExecutionImplFactory().createFlowExecution(registry.getFlowDefinition("simpleFlow"));
 		FlowExecutionStateRestorer stateRestorer = new FlowExecutionImplStateRestorer(registry);
-		repository = new ClientContinuationFlowExecutionRepository(stateRestorer);
+		repository = new ClientContinuationFlowExecutionRepository(stateRestorer, new LocalConversationManager(-1));
 		ExternalContextHolder.setExternalContext(new MockExternalContext());
 	}
 

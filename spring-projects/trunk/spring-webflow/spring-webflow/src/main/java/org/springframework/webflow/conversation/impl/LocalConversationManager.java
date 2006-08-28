@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.context.SharedAttributeMap;
 import org.springframework.webflow.context.support.ExternalContextHolder;
 import org.springframework.webflow.conversation.Conversation;
@@ -30,8 +29,6 @@ import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.conversation.ConversationParameters;
 import org.springframework.webflow.conversation.NoSuchConversationException;
-import org.springframework.webflow.util.RandomGuidUidGenerator;
-import org.springframework.webflow.util.UidGenerator;
 
 /**
  * The default implementation of the {@link ConversationManager}. This
@@ -41,7 +38,7 @@ import org.springframework.webflow.util.UidGenerator;
  * @author Ben Hale
  * @author Keith Donald
  */
-public class LocalConversationManager implements ConversationManager, Serializable {
+public class LocalConversationManager extends AbstractConversationManager implements Serializable {
 
 	private static final String USER_CONVERSATION_CONTEXT = "userConversationContext";
 
@@ -63,11 +60,6 @@ public class LocalConversationManager implements ConversationManager, Serializab
 	private int maxConversations;
 
 	/**
-	 * The uid generation strategy to use.
-	 */
-	private UidGenerator conversationIdGenerator = new RandomGuidUidGenerator();
-
-	/**
 	 * Creates a new local conversation service.
 	 * @param maxConversations the maximum number of conversations that can be
 	 * active at once within this session.
@@ -76,24 +68,18 @@ public class LocalConversationManager implements ConversationManager, Serializab
 		this.maxConversations = maxConversations;
 	}
 
-	/**
-	 * Returns the configured generator for simple conversation ids.
-	 */
-	protected UidGenerator getConversationIdGenerator() {
-		return conversationIdGenerator;
+	protected Map getConversations() {
+		return conversations;
 	}
 
-	/**
-	 * Sets the configured generator simple conversation ids.
-	 */
-	public void setConversationIdGenerator(UidGenerator uidGenerator) {
-		this.conversationIdGenerator = uidGenerator;
+	protected LinkedList getConversationIds() {
+		return conversationIds;
 	}
 
 	public Conversation beginConversation(ConversationParameters conversationParameters) {
-		ConversationId conversationId = new SimpleConversationId(conversationIdGenerator.generateUid());
-		conversations.put(conversationId, createConversation(conversationParameters, conversationId));
-		conversationIds.add(conversationId);
+		ConversationId conversationId = new SimpleConversationId(getConversationIdGenerator().generateUid());
+		getConversations().put(conversationId, createConversation(conversationParameters, conversationId));
+		getConversationIds().add(conversationId);
 		getUserContext().add(conversationId);
 		// end the oldest conversation if them maximium number of
 		// conversations has been exceeded
@@ -104,76 +90,20 @@ public class LocalConversationManager implements ConversationManager, Serializab
 	}
 
 	public Conversation getConversation(ConversationId id) throws NoSuchConversationException {
-		if (!conversations.containsKey(id)) {
+		if (!getConversations().containsKey(id)) {
 			throw new NoSuchConversationException(id);
 		}
 		if (!getUserContext().contains(id)) {
 			throw new ConversationAccessException(id);
 		}
-		return new ConversationProxy(id);
-	}
-
-	public ConversationId parseConversationId(String conversationId) {
-		return new SimpleConversationId(conversationIdGenerator.parseUid(conversationId));
-	}
-
-	private ConversationLock getLock(ConversationId conversationId) {
-		if (!conversations.containsKey(conversationId)) {
-			throw new NoSuchConversationException(conversationId);
-		}
-		return getConversationEntry(conversationId).getLock();
-	}
-
-	private Object getAttribute(ConversationId conversationId, Object name) {
-		if (!conversations.containsKey(conversationId)) {
-			throw new NoSuchConversationException(conversationId);
-		}
-		return getConversationEntry(conversationId).getAttributes().get(name);
-	}
-
-	private Object putAttribute(ConversationId conversationId, Object name, Object value) {
-		if (!conversations.containsKey(conversationId)) {
-			throw new NoSuchConversationException(conversationId);
-		}
-		return getConversationEntry(conversationId).getAttributes().put(name, value);
-	}
-
-	private Object removeAttribute(ConversationId conversationId, Object name) {
-		if (!conversations.containsKey(conversationId)) {
-			throw new NoSuchConversationException(conversationId);
-		}
-		return getConversationEntry(conversationId).getAttributes().remove(name);
-	}
-
-	private void end(ConversationId conversationId) {
-		if (!conversations.containsKey(conversationId)) {
-			throw new NoSuchConversationException(conversationId);
-		}
-		ConversationLock lock = getConversationEntry(conversationId).getLock();
-		try {
-			lock.unlock();
-		}
-		catch (Exception e) {
-
-		}
-		conversations.remove(conversationId);
-		conversationIds.remove(conversationId);
+		return new LocalConversationProxy(id);
 	}
 
 	void expireConversation(ConversationId id) throws ConversationException {
-		if (!conversations.containsKey(id)) {
+		if (!getConversations().containsKey(id)) {
 			throw new NoSuchConversationException(id);
 		}
 		end(id);
-	}
-
-	private ConversationEntry createConversation(ConversationParameters newConversation, ConversationId conversationId) {
-		return new ConversationEntry(conversationId, newConversation.getName(), newConversation.getCaption(),
-				newConversation.getDescription());
-	}
-
-	private ConversationEntry getConversationEntry(ConversationId conversationId) {
-		return ((ConversationEntry)conversations.get(conversationId));
 	}
 
 	private UserConversationContext getUserContext() {
@@ -204,66 +134,15 @@ public class LocalConversationManager implements ConversationManager, Serializab
 		oldest.end();
 	}
 
-	/**
-	 * A proxy to a keyed entry in the conversation map.
-	 * 
-	 * @author Keith Donald
-	 */
-	private class ConversationProxy implements Conversation {
+	private class LocalConversationProxy extends ConversationProxy {
 
-		private ConversationId conversationId;
-
-		public ConversationProxy(ConversationId id) {
-			this.conversationId = id;
-		}
-
-		public ConversationId getId() {
-			return conversationId;
-		}
-
-		public void lock() {
-			LocalConversationManager.this.getLock(conversationId).lock();
+		public LocalConversationProxy(ConversationId id) {
+			super(id);
 		}
 
 		public void end() {
-			LocalConversationManager.this.end(conversationId);
-			getUserContext().remove(conversationId);
-		}
-
-		public Object getAttribute(Object name) {
-			return LocalConversationManager.this.getAttribute(conversationId, name);
-		}
-
-		public void putAttribute(Object name, Object value) {
-			LocalConversationManager.this.putAttribute(conversationId, name, value);
-		}
-
-		public void removeAttribute(Object name) {
-			LocalConversationManager.this.removeAttribute(conversationId, name);
-		}
-
-		public void unlock() {
-			try {
-				LocalConversationManager.this.getLock(conversationId).unlock();
-			}
-			catch (NoSuchConversationException e) {
-				// ignore
-			}
-		}
-
-		public String toString() {
-			return new ToStringCreator(this).append("id", conversationId).toString();
-		}
-
-		public boolean equals(Object o) {
-			if (!(o instanceof ConversationProxy)) {
-				return false;
-			}
-			return conversationId.equals(((ConversationProxy)o).conversationId);
-		}
-
-		public int hashCode() {
-			return conversationId.hashCode();
+			super.end();
+			getUserContext().remove(getId());
 		}
 
 	}

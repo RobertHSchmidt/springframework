@@ -2,6 +2,8 @@ package org.springframework.webflow.config;
 
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.util.Assert;
+import org.springframework.webflow.conversation.ConversationManager;
+import org.springframework.webflow.conversation.impl.LocalConversationManager;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
@@ -42,10 +44,20 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	private FlowExecutionImplStateRestorer executionStateRestorer;
 
 	/**
+	 * The conversation manager to be used by the flow execution repository.
+	 */
+	private ConversationManager conversationManager = new LocalConversationManager(-1);
+
+	/**
 	 * The type of execution repository to configure with executors created by
 	 * this factory.
 	 */
 	private RepositoryType repositoryType = RepositoryType.DEFAULT;
+
+	/**
+	 * Whether statistics gathering should be enabled for this flow executor.
+	 */
+	private boolean statisticsEnabled = false;
 
 	/**
 	 * Creates a new {@link FlowExecutor flow executor} factory.
@@ -101,12 +113,23 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	}
 
 	/**
+	 * Sets the strategy for managing conversations in a flow repository.
+	 */
+	public void setConversationManager(ConversationManager conversationManager) {
+		this.conversationManager = conversationManager;
+	}
+
+	/**
 	 * Sets the type of flow execution repository that should be configured for
 	 * the Flow executors created by this factory.
 	 * @param repositoryType the flow execution repository type
 	 */
 	public void setRepositoryType(RepositoryType repositoryType) {
 		this.repositoryType = repositoryType;
+	}
+
+	public void setStatisticsEnabled(boolean statisticsEnabled) {
+		this.statisticsEnabled = statisticsEnabled;
 	}
 
 	// implementing FlowExecutorFactory
@@ -127,13 +150,19 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	 */
 	protected FlowExecutionRepository createExecutionRepository(FlowExecutionStateRestorer executionStateRestorer) {
 		if (repositoryType == RepositoryType.DEFAULT) {
-			return new DefaultFlowExecutionRepository(executionStateRestorer);
+			return new DefaultFlowExecutionRepository(executionStateRestorer, conversationManager);
 		}
 		else if (repositoryType == RepositoryType.CONTINUATION) {
-			return new ContinuationFlowExecutionRepository(executionStateRestorer);
+			return new ContinuationFlowExecutionRepository(executionStateRestorer, conversationManager);
 		}
 		else if (repositoryType == RepositoryType.CLIENT) {
-			return new ClientContinuationFlowExecutionRepository(executionStateRestorer);
+			return new ClientContinuationFlowExecutionRepository(executionStateRestorer, conversationManager);
+		}
+		else if (repositoryType == RepositoryType.SINGLEKEY) {
+			DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(executionStateRestorer,
+					conversationManager);
+			repository.setAlwaysGenerateNewNextKey(false);
+			return repository;
 		}
 		else {
 			throw new IllegalStateException("Cannot create execution repository - unsupported repository type "

@@ -48,7 +48,7 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 	 * The conversation "scope" attribute.
 	 */
 	private static final String SCOPE_ATTRIBUTE = "scope";
-	
+
 	/**
 	 * Flag to indicate whether or not a new flow execution key should always be
 	 * generated before each put call. Default is true.
@@ -64,8 +64,8 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 	/**
 	 * Creates a new flow execution repository.
 	 */
-	protected AbstractConversationFlowExecutionRepository() {
-		setConversationManager(new LocalConversationManager(-1));
+	protected AbstractConversationFlowExecutionRepository(ConversationManager conversationManager) {
+		setConversationManager(conversationManager);
 	}
 
 	/**
@@ -198,7 +198,8 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 
 	public abstract FlowExecution getFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
 
-	public abstract void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) throws FlowExecutionRepositoryException;
+	public abstract void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution)
+			throws FlowExecutionRepositoryException;
 
 	/**
 	 * Template method used to generate a new continuation id for this flow

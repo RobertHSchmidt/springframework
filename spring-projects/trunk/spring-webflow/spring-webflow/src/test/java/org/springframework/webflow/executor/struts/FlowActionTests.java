@@ -12,6 +12,7 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.web.struts.SpringBindingActionForm;
+import org.springframework.webflow.conversation.impl.LocalConversationManager;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.engine.SimpleFlow;
@@ -26,19 +27,20 @@ public class FlowActionTests extends TestCase {
 
 	public void setUp() {
 		action = new FlowAction() {
-			protected WebApplicationContext initWebApplicationContext(ActionServlet actionServlet) throws IllegalStateException {
+			protected WebApplicationContext initWebApplicationContext(ActionServlet actionServlet)
+					throws IllegalStateException {
 				StaticWebApplicationContext context = new StaticWebApplicationContext();
 				context.setServletContext(new MockServletContext());
 				return context;
 			}
 		};
-		
+
 		FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
 		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(new SimpleFlow()));
 		FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
 		FlowExecutionRepository repository = new DefaultFlowExecutionRepository(new FlowExecutionImplStateRestorer(
-				registry));
-		action.setFlowExecutor(new FlowExecutorImpl(registry, factory, repository));		
+				registry), new LocalConversationManager(-1));
+		action.setFlowExecutor(new FlowExecutorImpl(registry, factory, repository));
 
 		action.setServlet(new ActionServlet());
 	}
