@@ -75,7 +75,7 @@ an execution repository.
 						<xsd:element ref="execution-attributes" minOccurs="0" />
 						<xsd:element ref="execution-listeners" minOccurs="0" />
 					</xsd:sequence>
-					<xsd:attribute name="repositoryType" default="default">
+					<xsd:attribute name="repository-type" default="default">
 						<xsd:simpleType>
 							<xsd:restriction base="xsd:string">
 								<xsd:enumeration value="default" />
@@ -86,7 +86,7 @@ an execution repository.
 						</xsd:simpleType>
 					</xsd:attribute>
 					<xsd:attribute name="registry-ref" type="xsd:string" use="required" />
-					<xsd:attribute name="statisticsEnabled" type="xsd:boolean" default="false" />
+					<xsd:attribute name="statistics-enabled" type="xsd:boolean" default="false" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -144,8 +144,8 @@ These attributes may influence execution behavior.
 			<xsd:documentation>
 				<![CDATA[
 A convienence attribute for the 'alwaysRedirectOnPause' attribute.  Will automatically set
-this attribute to true, indicating that every time a flow execution pauses a redirect 
-should be issued.
+this attribute to true indicating that every time a flow execution pauses a browser redirect 
+should be performed.
 ]]>
 			</xsd:documentation>
 		</xsd:annotation>
