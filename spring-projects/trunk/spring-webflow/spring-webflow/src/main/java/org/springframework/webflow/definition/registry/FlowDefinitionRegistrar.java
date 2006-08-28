@@ -39,7 +39,6 @@ package org.springframework.webflow.definition.registry;
  * BeanDefinitionReaders to drive context population.
  * </p>
  * @see FlowDefinitionRegistry
- * @see FlowDefinitionResource
  * 
  * @author Keith Donald
  */
@@ -49,9 +48,6 @@ public interface FlowDefinitionRegistrar {
 	 * Register flow definition resources managed by this registrar in the
 	 * registry provided.
 	 * @param registry the registry to register flow definitions in
-	 * @param flowServiceLocator the service locator for accessing externally
-	 * managed flow artifacts, typically used by flow builders that build flow
-	 * definitions
 	 */
 	public void registerFlowDefinitions(FlowDefinitionRegistry registry);
 }

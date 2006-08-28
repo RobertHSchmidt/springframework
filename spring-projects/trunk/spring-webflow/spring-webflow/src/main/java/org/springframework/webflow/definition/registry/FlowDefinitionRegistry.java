@@ -18,10 +18,10 @@ package org.springframework.webflow.definition.registry;
 import org.springframework.webflow.definition.FlowDefinition;
 
 /**
- * A container of flow definitions. Extends the FlowRegistryMBean management
- * interface exposing registry monitoring and management operations. Extends
- * FlowDefinitionLocator for accessing registered Flow definitions for execution
- * at runtime.
+ * A container of flow definitions. Extends the <code>FlowRegistryMBean</code>
+ * management interface exposing registry monitoring and management operations.
+ * Extends <code>FlowDefinitionLocator</code> for accessing registered Flow
+ * definitions for execution at runtime.
  * <p>
  * Is a <code>FlowDefinitionLocator</code> supporting the location of flow
  * definitions managed in this registry for purposes of execution.
