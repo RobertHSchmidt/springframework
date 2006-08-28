@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
-	"http://www.springframework.org/dtd/spring-beans.dtd">
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-<beans>
-
-	<bean id="repository" class="org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepository">
+	<bean id="repository"
+		class="org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepository">
+		<constructor-arg ref="stateRestorer" />
 		<constructor-arg>
-			<ref bean="stateRestorer"/>
+			<bean class="org.springframework.webflow.conversation.impl.LocalConversationManager">
+				<constructor-arg value="-1" />
+			</bean>
 		</constructor-arg>
 	</bean>
 

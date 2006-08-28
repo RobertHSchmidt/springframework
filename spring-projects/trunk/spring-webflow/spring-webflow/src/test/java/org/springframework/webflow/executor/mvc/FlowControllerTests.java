@@ -7,6 +7,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.webflow.conversation.impl.LocalConversationManager;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.engine.SimpleFlow;
@@ -26,7 +27,7 @@ public class FlowControllerTests extends TestCase {
 		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(new SimpleFlow()));
 		FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
 		FlowExecutionRepository repository = new DefaultFlowExecutionRepository(new FlowExecutionImplStateRestorer(
-				registry));
+				registry), new LocalConversationManager(-1));
 		controller.setFlowExecutor(new FlowExecutorImpl(registry, factory, repository));
 	}
 

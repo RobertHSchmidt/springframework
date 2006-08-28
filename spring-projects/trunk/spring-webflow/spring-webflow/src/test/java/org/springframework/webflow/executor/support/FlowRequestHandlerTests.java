@@ -2,6 +2,7 @@ package org.springframework.webflow.executor.support;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.conversation.impl.LocalConversationManager;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.engine.EndState;
@@ -29,7 +30,8 @@ public class FlowRequestHandlerTests extends TestCase {
 		new EndState(flow, "end");
 		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(flow));
 		FlowExecutorImpl executor = new FlowExecutorImpl(registry, new FlowExecutionImplFactory(),
-				new DefaultFlowExecutionRepository(new FlowExecutionImplStateRestorer(registry)));
+				new DefaultFlowExecutionRepository(new FlowExecutionImplStateRestorer(registry),
+						new LocalConversationManager(-1)));
 		handler = new FlowRequestHandler(executor);
 	}
 

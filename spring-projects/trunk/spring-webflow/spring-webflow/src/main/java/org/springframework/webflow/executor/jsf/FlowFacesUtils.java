@@ -5,6 +5,7 @@ import javax.faces.context.FacesContext;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
+import org.springframework.webflow.conversation.impl.LocalConversationManager;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.engine.impl.FlowExecutionImplStateRestorer;
@@ -50,7 +51,7 @@ public class FlowFacesUtils {
 		else {
 			if (defaultRepository == null) {
 				defaultRepository = new DefaultFlowExecutionRepository(new FlowExecutionImplStateRestorer(
-						getDefinitionLocator(context)));
+						getDefinitionLocator(context)), new LocalConversationManager(-1));
 			}
 			return defaultRepository;
 		}

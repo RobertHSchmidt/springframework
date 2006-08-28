@@ -81,8 +81,9 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	 */
 	private FlowExecutionStateRestorer executionStateRestorer;
 
-	public ClientContinuationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer) {
-		Assert.notNull(executionStateRestorer, "The flow execution state restorer is required");
+	public ClientContinuationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer,
+			ConversationManager conversationManager) {
+		super(conversationManager);
 		this.executionStateRestorer = executionStateRestorer;
 	}
 

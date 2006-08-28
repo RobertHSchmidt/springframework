@@ -8,9 +8,10 @@
        http://www.springframework.org/schema/webflow/spring-webflow-config-1.0.xsd">
 
 	<!-- Launches new flow executions and resumes existing executions. -->
-	<flow:executor id="flowExecutor" registry-ref="flowRegistry" repositoryType="continuation">
+	<flow:executor id="flowExecutor" registry-ref="flowRegistry" repositoryType="continuation"
+		statisticsEnabled="true">
 		<flow:execution-attributes>
-			<flow:alwaysRedirectOnPause/>
+			<flow:alwaysRedirectOnPause />
 		</flow:execution-attributes>
 		<flow:execution-listeners>
 			<flow:listener ref="listener" criteria="sellitem-flow" />

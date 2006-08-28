@@ -44,6 +44,8 @@ public class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	private static final String REPOSITORY_TYPE = "repositoryType";
 
+	private static final String STATISTICS_ENABLED = "statisticsEnabled";
+
 	protected BeanDefinition parseInternal(Element element, ParserContext parserContext) {
 		BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder
 				.rootBeanDefinition(FlowExecutorFactoryBean.class);
@@ -51,6 +53,7 @@ public class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		addExecutionAttributes(element, parserContext, definitionBuilder);
 		addExecutionListenerLoader(element, parserContext, definitionBuilder);
 		definitionBuilder.addPropertyValue(REPOSITORY_TYPE, getRepositoryType(element));
+		definitionBuilder.addPropertyValue(STATISTICS_ENABLED, getStatisticsEnabled(element));
 		return definitionBuilder.getBeanDefinition();
 	}
 
@@ -77,12 +80,16 @@ public class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		return element.getAttribute(REPOSITORY_TYPE).toUpperCase();
 	}
 
+	private Boolean getStatisticsEnabled(Element element) {
+		return Boolean.valueOf(element.getAttribute(STATISTICS_ENABLED));
+	}
+
 	private void addExecutionAttributes(Element element, ParserContext parserContext,
 			BeanDefinitionBuilder definitionBuilder) {
 		Element attributesElement = DomUtils.getChildElementByTagName(element, EXECUTION_ATTRIBUTES_ELEMENT);
 		if (attributesElement != null) {
-			definitionBuilder.addPropertyValue(EXECUTION_ATTRIBUTES_PROPERTY, parserContext.getDelegate().parseCustomElement(
-					attributesElement, true));
+			definitionBuilder.addPropertyValue(EXECUTION_ATTRIBUTES_PROPERTY, parserContext.getDelegate()
+					.parseCustomElement(attributesElement, true));
 		}
 	}
 

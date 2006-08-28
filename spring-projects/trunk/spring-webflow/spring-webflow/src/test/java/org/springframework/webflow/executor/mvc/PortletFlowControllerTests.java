@@ -8,6 +8,7 @@ import org.springframework.mock.web.portlet.MockPortletContext;
 import org.springframework.mock.web.portlet.MockRenderRequest;
 import org.springframework.mock.web.portlet.MockRenderResponse;
 import org.springframework.web.portlet.ModelAndView;
+import org.springframework.webflow.conversation.impl.LocalConversationManager;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.engine.SimpleFlow;
@@ -22,12 +23,12 @@ public class PortletFlowControllerTests extends TestCase {
 
 	public void setUp() {
 		controller.setPortletContext(new MockPortletContext());
-		
+
 		FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
 		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(new SimpleFlow()));
 		FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
 		FlowExecutionRepository repository = new DefaultFlowExecutionRepository(new FlowExecutionImplStateRestorer(
-				registry));
+				registry), new LocalConversationManager(-1));
 		controller.setFlowExecutor(new FlowExecutorImpl(registry, factory, repository));
 	}
 
@@ -46,7 +47,7 @@ public class PortletFlowControllerTests extends TestCase {
 		ModelAndView mv = controller.handleRenderRequest(renderRequest, renderResponse);
 		assertEquals("view", mv.getViewName());
 		assertNotNull(mv.getModel().get("flowExecutionKey"));
-		
+
 		MockActionRequest actionRequest = new MockActionRequest();
 		actionRequest.setSession(renderRequest.getPortletSession());
 		actionRequest.setContextPath("/app");
@@ -55,8 +56,9 @@ public class PortletFlowControllerTests extends TestCase {
 		actionRequest.addParameter("_eventId", "submit");
 		try {
 			controller.handleActionRequest(actionRequest, actionResponse);
-		} catch (IllegalArgumentException e) {
-			
+		}
+		catch (IllegalArgumentException e) {
+
 		}
 	}
 }
