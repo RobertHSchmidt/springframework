@@ -60,7 +60,7 @@ public class FlowExecutionListenerCriteriaFactory {
 	 */
 	private static class WildcardFlowExecutionListenerCriteria implements FlowExecutionListenerCriteria {
 
-		public boolean appliesTo(FlowDefinition flow) {
+		public boolean appliesTo(FlowDefinition definition) {
 			return true;
 		}
 
@@ -100,9 +100,9 @@ public class FlowExecutionListenerCriteriaFactory {
 			this.flowIds = flowIds;
 		}
 
-		public boolean appliesTo(FlowDefinition flow) {
+		public boolean appliesTo(FlowDefinition definition) {
 			for (int i = 0; i < flowIds.length; i++) {
-				if (flowIds[i].equals(flow.getId())) {
+				if (flowIds[i].equals(definition.getId())) {
 					return true;
 				}
 			}
