@@ -17,6 +17,7 @@ package org.springframework.webflow.conversation.impl;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.webflow.context.SharedAttributeMap;
@@ -25,13 +26,12 @@ import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationException;
 import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationParameters;
-import org.springframework.webflow.conversation.NoSuchConversationException;
 
 public class SessionBindingConversationManager extends AbstractConversationManager {
 
-	private static final String CONVERSATIONS = "conversations";
+	private static final String CONVERSATION_MAP = "webflow.conversation.map";
 
-	private static final String CONVERSATION_IDS = "conversationIds";
+	private static final String CONVERSATION_ID_LIST = "webflow.conversation.idList";
 
 	/**
 	 * The maximum number of active conversations allowed in a session.
@@ -56,8 +56,8 @@ public class SessionBindingConversationManager extends AbstractConversationManag
 
 	public Conversation beginConversation(ConversationParameters conversationParameters) throws ConversationException {
 		ConversationId conversationId = new SimpleConversationId(getConversationIdGenerator().generateUid());
-		getConversations().put(conversationId, createConversation(conversationParameters, conversationId));
-		getConversationIds().add(conversationId);
+		getConversationMap().put(conversationId, createConversation(conversationParameters, conversationId));
+		getConversationIdList().add(conversationId);
 		// end the oldest conversation if them maximium number of
 		// conversations has been exceeded
 		if (maxExceeded()) {
@@ -66,55 +66,41 @@ public class SessionBindingConversationManager extends AbstractConversationManag
 		return getConversation(conversationId);
 	}
 
-	public Conversation getConversation(ConversationId id) throws ConversationException {
-		if (!getConversations().containsKey(id)) {
-			throw new NoSuchConversationException(id);
-		}
-		return new ConversationProxy(id);
-	}
-
-	protected LinkedList getConversationIds() {
+	protected Map getConversationMap() {
 		SharedAttributeMap session = ExternalContextHolder.getExternalContext().getSessionMap();
 		synchronized (session.getMutex()) {
-			LinkedList conversationIds = (LinkedList)session.get(CONVERSATION_IDS);
+			Map map = (Map)session.get(CONVERSATION_MAP);
+			if (map == null) {
+				map = new HashMap();
+				ExternalContextHolder.getExternalContext().getSessionMap().put(CONVERSATION_MAP, map);
+			}
+			return map;
+		}
+	}
+
+	protected List getConversationIdList() {
+		SharedAttributeMap session = ExternalContextHolder.getExternalContext().getSessionMap();
+		synchronized (session.getMutex()) {
+			LinkedList conversationIds = (LinkedList)session.get(CONVERSATION_ID_LIST);
 			if (conversationIds == null) {
-				conversationIds = createConversationIds();
+				conversationIds = new LinkedList();
+				ExternalContextHolder.getExternalContext().getSessionMap().put(CONVERSATION_ID_LIST, conversationIds);
 			}
 			return conversationIds;
 		}
 	}
 
-	private LinkedList createConversationIds() {
-		LinkedList conversationIds = new LinkedList();
-		ExternalContextHolder.getExternalContext().getSessionMap().put(CONVERSATION_IDS, conversationIds);
-		return conversationIds;
-	}
-
-	protected Map getConversations() {
-		SharedAttributeMap session = ExternalContextHolder.getExternalContext().getSessionMap();
-		synchronized (session.getMutex()) {
-			Map conversations = (Map)session.get(CONVERSATIONS);
-			if (conversations == null) {
-				conversations = createConversations();
-			}
-			return conversations;
-		}
-	}
-
-	private Map createConversations() {
-		Map conversations = new HashMap();
-		ExternalContextHolder.getExternalContext().getSessionMap().put(CONVERSATIONS, conversations);
-		return conversations;
-	}
-
 	private void endOldestConversation() {
-		ConversationId conversationId = (ConversationId)getConversationIds().getFirst();
-		Conversation oldest = getConversation(conversationId);
-		oldest.lock();
-		oldest.end();
+		ConversationId id = (ConversationId)getConversationIdList().get(0);
+		getConversationMap().remove(id);
+		getConversationIdList().remove(id);
+	}
+	
+	protected void onEnd(ConversationId id) {
+		getConversationIdList().remove(id);
 	}
 
 	private boolean maxExceeded() {
-		return maxConversations > 0 && getConversations().size() > maxConversations;
+		return maxConversations > 0 && getConversationMap().size() > maxConversations;
 	}
 }

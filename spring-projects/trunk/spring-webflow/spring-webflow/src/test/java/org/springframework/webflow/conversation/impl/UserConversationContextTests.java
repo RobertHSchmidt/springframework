@@ -14,14 +14,14 @@ import org.springframework.webflow.test.MockExternalContext;
 
 public class UserConversationContextTests extends TestCase {
 
-	private static final String USER_CONVERSATION_CONTEXT = "userConversationContext";
+	private static final String USER_CONVERSATION_CONTEXT = "webflow.conversation.userContext";
 
 	private UserConversationContext userContext;
 
 	private LocalConversationManager conversationManager;
 
 	protected void setUp() throws Exception {
-		conversationManager = new LocalConversationManager(1);
+		conversationManager = new LocalConversationManager();
 		userContext = new UserConversationContext(conversationManager);
 		buildExternalContext(userContext);
 	}
@@ -38,10 +38,12 @@ public class UserConversationContextTests extends TestCase {
 		assertTrue("userContext should have a reference", userContext.contains(conversation.getId()));
 	}
 
-	public void testConversationCreationEndOldest() {
+	public void testConversationCreationEnd() {
 		Conversation conversation1 = conversationManager.beginConversation(new ConversationParameters("name",
 				"caption", "description"));
 		conversationManager.beginConversation(new ConversationParameters("name", "caption", "description"));
+		assertTrue("userContext should have a reference", userContext.contains(conversation1.getId()));
+		conversation1.end();
 		assertFalse("userContext should not have a reference", userContext.contains(conversation1.getId()));
 	}
 
@@ -75,5 +77,4 @@ public class UserConversationContextTests extends TestCase {
 		catch (NoSuchConversationException e) {
 		}
 	}
-
 }

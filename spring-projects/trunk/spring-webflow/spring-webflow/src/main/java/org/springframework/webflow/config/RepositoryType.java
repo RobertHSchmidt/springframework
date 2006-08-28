@@ -44,7 +44,7 @@ public class RepositoryType extends StaticLabeledEnum {
 	/**
 	 * The 'singleKey' flow execution repository type.
 	 */
-	public static RepositoryType SINGLEKEY = new RepositoryType(3, "SingleKey");
+	public static RepositoryType SINGLEKEY = new RepositoryType(3, "Single Key");
 
 	/**
 	 * Private constructor because this is a typesafe enum!

@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.conversation.impl;
 
-import java.util.LinkedList;
 import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
@@ -48,78 +47,75 @@ public abstract class AbstractConversationManager implements ConversationManager
 		this.conversationIdGenerator = uidGenerator;
 	}
 
-	/**
-	 * Returns the Map of conversations used by this conversation manager.
-	 */
-	protected abstract Map getConversations();
-
-	/**
-	 * Returns the list of conversationIds managed by this conversation manager.
-	 */
-	protected abstract LinkedList getConversationIds();
-
 	public ConversationId parseConversationId(String conversationId) {
 		return new SimpleConversationId(getConversationIdGenerator().parseUid(conversationId));
 	}
 
+	public Conversation getConversation(ConversationId id) throws NoSuchConversationException {
+		assertValid(id);
+		return new ConversationProxy(id);
+	}
+
 	private ConversationLock getLock(ConversationId conversationId) {
-		if (!getConversations().containsKey(conversationId)) {
-			throw new NoSuchConversationException(conversationId);
-		}
+		assertValid(conversationId);
 		return getConversationEntry(conversationId).getLock();
 	}
 
 	private Object getAttribute(ConversationId conversationId, Object name) {
-		if (!getConversations().containsKey(conversationId)) {
-			throw new NoSuchConversationException(conversationId);
-		}
+		assertValid(conversationId);
 		return getConversationEntry(conversationId).getAttributes().get(name);
 	}
 
 	private Object putAttribute(ConversationId conversationId, Object name, Object value) {
-		if (!getConversations().containsKey(conversationId)) {
-			throw new NoSuchConversationException(conversationId);
-		}
+		assertValid(conversationId);
 		return getConversationEntry(conversationId).getAttributes().put(name, value);
 	}
 
 	private Object removeAttribute(ConversationId conversationId, Object name) {
-		if (!getConversations().containsKey(conversationId)) {
-			throw new NoSuchConversationException(conversationId);
-		}
+		assertValid(conversationId);
 		return getConversationEntry(conversationId).getAttributes().remove(name);
 	}
 
-	protected void end(ConversationId conversationId) {
-		if (!getConversations().containsKey(conversationId)) {
-			throw new NoSuchConversationException(conversationId);
-		}
+	private void end(ConversationId conversationId) {
+		assertValid(conversationId);
 		ConversationLock lock = getConversationEntry(conversationId).getLock();
 		try {
 			lock.unlock();
 		}
 		catch (Exception e) {
-
 		}
-		getConversations().remove(conversationId);
-		getConversationIds().remove(conversationId);
+		getConversationMap().remove(conversationId);
+		onEnd(conversationId);
+	}
+	
+	protected void onEnd(ConversationId conversationId) {
 	}
 
-	protected ConversationEntry createConversation(ConversationParameters newConversation, ConversationId conversationId) {
-		return new ConversationEntry(conversationId, newConversation.getName(), newConversation.getCaption(),
-				newConversation.getDescription());
+	protected ConversationEntry createConversation(ConversationParameters parameters, ConversationId id) {
+		return new ConversationEntry(id, parameters.getName(), parameters.getCaption(), parameters.getDescription());
 	}
 
-	private ConversationEntry getConversationEntry(ConversationId conversationId) {
-		return ((ConversationEntry)getConversations().get(conversationId));
+	protected ConversationEntry getConversationEntry(ConversationId conversationId) {
+		return ((ConversationEntry)getConversationMap().get(conversationId));
 	}
+
+	protected void assertValid(ConversationId conversationId) {
+		if (!getConversationMap().containsKey(conversationId)) {
+			throw new NoSuchConversationException(conversationId);
+		}
+	}
+
+	/**
+	 * Returns the Map of conversations used by this conversation manager.
+	 */
+	protected abstract Map getConversationMap();
 
 	/**
 	 * A proxy to a keyed entry in the conversation map.
 	 * 
 	 * @author Keith Donald
 	 */
-	protected class ConversationProxy implements Conversation {
+	private class ConversationProxy implements Conversation {
 
 		private ConversationId conversationId;
 
@@ -174,6 +170,5 @@ public abstract class AbstractConversationManager implements ConversationManager
 		public int hashCode() {
 			return conversationId.hashCode();
 		}
-
 	}
 }

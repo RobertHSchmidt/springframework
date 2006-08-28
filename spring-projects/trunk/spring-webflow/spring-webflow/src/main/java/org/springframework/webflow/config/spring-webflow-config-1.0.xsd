@@ -81,7 +81,7 @@ an execution repository.
 								<xsd:enumeration value="default" />
 								<xsd:enumeration value="continuation" />
 								<xsd:enumeration value="client" />
-								<xsd:enumeration value="singleKey" />
+								<xsd:enumeration value="singlekey" />
 							</xsd:restriction>
 						</xsd:simpleType>
 					</xsd:attribute>
@@ -144,7 +144,8 @@ These attributes may influence execution behavior.
 			<xsd:documentation>
 				<![CDATA[
 A convienence attribute for the 'alwaysRedirectOnPause' attribute.  Will automatically set
-the attribute to true.
+this attribute to true, indicating that every time a flow execution pauses a redirect 
+should be issued.
 ]]>
 			</xsd:documentation>
 		</xsd:annotation>
