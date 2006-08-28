@@ -44,5 +44,4 @@ public abstract class FlowExecutionRepositoryException extends FlowException {
 	public FlowExecutionRepositoryException(String message, Throwable cause) {
 		super(message, cause);
 	}
-
 }
