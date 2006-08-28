@@ -18,8 +18,9 @@ package org.springframework.webflow.execution.repository;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
- * Central interface responsible for the saving and restoring of flow
- * executions, where each flow execution represents a state of an active flow.
+ * Central subsystem interface responsible for the saving and restoring of flow
+ * executions, where each flow execution represents a state of an active flow
+ * definition.
  * <p>
  * Flow execution repositories are responsible for managing the creation,
  * storage, restoration, and removal of flow executions launched by clients of
@@ -37,7 +38,7 @@ public interface FlowExecutionRepository {
 	 * Generate a unique flow execution key to be used as the persistent
 	 * identifier of the flow execution. This method should be called after a
 	 * new flow execution is started and remains active; thus needing to be
-	 * persisted. The FlowExecutionKey is the execution's persistent identity.
+	 * saved. The FlowExecutionKey is the execution's persistent identity.
 	 * @param flowExecution the flow execution
 	 * @return the flow execution key
 	 * @throws FlowExecutionRepositoryException a problem occured generating the
@@ -47,8 +48,10 @@ public interface FlowExecutionRepository {
 
 	/**
 	 * Obtain the "next" flow execution key to be used as as the flow
-	 * execution's persistent identity. The repository may choose to return the
-	 * previous key or generate a new key.
+	 * execution's persistent identity. This method should be called after a
+	 * existing flow execution has resumed and remains active; thus needing to
+	 * be updated. This repository may choose to return the previous key or
+	 * generate a new key.
 	 * @param flowExecution the flow execution
 	 * @throws FlowExecutionRepositoryException a problem occured generating the
 	 * key
@@ -70,11 +73,11 @@ public interface FlowExecutionRepository {
 	 * FlowExecutionLock lock = repository.getLock(key);
 	 * lock.lock();
 	 * try {
-	 *     FlowExecution execution = repository.getFlowExecution(key);
-	 *     // do work
+	 * 	FlowExecution execution = repository.getFlowExecution(key);
+	 * 	// do work
 	 * }
 	 * finally {
-	 *     lock.unlock();
+	 * 	lock.unlock();
 	 * }
 	 * </pre>
 	 * 
@@ -100,9 +103,8 @@ public interface FlowExecutionRepository {
 
 	/**
 	 * Place the <code>FlowExecution</code> in this repository under the
-	 * provided key. This should be called to insert or update the persistent
+	 * provided key. This should be called to save or update the persistent
 	 * state of an active (but paused) flow execution.
-	 * 
 	 * @param key the flow execution key
 	 * @param flowExecution the flow execution
 	 * @throws FlowExecutionRepositoryException the flow execution could not be

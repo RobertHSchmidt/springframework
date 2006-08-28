@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 /**
  * A key that uniquely identifies a flow execution in a managed
- * {@link FlowExecutionRepository}. Services as a flow execution's persistent
+ * {@link FlowExecutionRepository}. Serves as a flow execution's persistent
  * identity.
  * 
  * This class is abstract. The repository subsystem encapsulates the structure
