@@ -39,17 +39,21 @@ import org.springframework.webflow.executor.support.FlowRequestHandler;
 import org.springframework.webflow.executor.support.RequestPathFlowExecutorArgumentExtractor;
 
 /**
+ * <p>
  * Point of integration between Spring Web MVC and Spring Web Flow: a
  * {@link Controller} that routes incoming requests to one or more managed flow
  * executions.
+ * </p>
  * <p>
  * Requests into the web flow system are handled by a {@link FlowExecutor},
  * which this class delegates to using a {@link FlowRequestHandler} helper.
  * Consult the JavaDoc of that class for more information on how requests are
  * processed.
+ * </p>
  * <p>
- * Note: a single FlowController may execute all flows of your application.
- * <p>
+ * Note: a single <code>FlowController</code> may execute all flows of your application.
+ * </p>
+ * <ul>
  * <li>By default, to have this controller launch a new flow execution
  * (conversation), have the client send a
  * {@link FlowExecutorArgumentExtractor#getFlowIdParameterName()} request
@@ -58,30 +62,28 @@ import org.springframework.webflow.executor.support.RequestPathFlowExecutorArgum
  * (conversation), have the client send a
  * {@link FlowExecutorArgumentExtractor#getFlowExecutionKeyParameterName()}
  * request parameter identifying the conversation to participate in.
- * <p>
- * See the <tt>flowLauncher</tt> sample application for examples of the
+ * See the <code>flow-launcher</code> sample application for examples of the
  * various strategies for launching and resuming flow executions.
+ * </ul>
  * <p>
  * Usage example:
- * 
  * <pre>
- *      &lt;!--
- *          Exposes flows for execution at a single request URL.
- *          The id of a flow to launch should be passed in by clients using
- *          the &quot;_flowId&quot; request parameter:
- *          e.g. /app.htm?_flowId=flow1
- *      --&gt;
- *      &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.FlowController&quot;&gt;
- *          &lt;property name=&quot;flowExecutor&quot; ref=&quot;flowExecutor&quot;/&gt;
- *      &lt;/bean&gt;
+ *     &lt;!--
+ *         Exposes flows for execution at a single request URL.
+ *         The id of a flow to launch should be passed in by clients using
+ *         the &quot;_flowId&quot; request parameter:
+ *         e.g. /app.htm?_flowId=flow1
+ *     --&gt;
+ *     &lt;bean name=&quot;/app.htm&quot; class=&quot;org.springframework.webflow.executor.mvc.FlowController&quot;&gt;
+ *         &lt;property name=&quot;flowExecutor&quot; ref=&quot;flowExecutor&quot;/&gt;
+ *     &lt;/bean&gt;
  * </pre>
- * 
  * <p>
  * It is also possible to customize the {@link FlowExecutorArgumentExtractor}
  * strategy to allow for different types of controller parameterization, for
  * example perhaps in conjunction with a REST-style request mapper (see
  * {@link RequestPathFlowExecutorArgumentExtractor}).
- * 
+ * </p> 
  * @see org.springframework.webflow.executor.FlowExecutor
  * @see org.springframework.webflow.executor.support.FlowRequestHandler
  * @see org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor
@@ -106,6 +108,7 @@ public class FlowController extends AbstractController implements InitializingBe
 	/**
 	 * Create a new flow controller. Allows bean style usage.
 	 * @see #setFlowExecutor(FlowExecutor)
+	 * @see #setArgumentExtractor(FlowExecutorArgumentExtractor)
 	 */
 	public FlowController() {
 		// set the cache seconds property to 0 so no pages are cached by default
@@ -140,10 +143,10 @@ public class FlowController extends AbstractController implements InitializingBe
 	/**
 	 * Sets the flow executor argument extractor to use. The default is
 	 * {@link FlowExecutorArgumentExtractor}.
-	 * @param parameterExtractor the fully configured argument extractor
+	 * @param argumentExtractor the fully configured argument extractor
 	 */
-	public void setArgumentExtractor(FlowExecutorArgumentExtractor parameterExtractor) {
-		this.argumentExtractor = parameterExtractor;
+	public void setArgumentExtractor(FlowExecutorArgumentExtractor argumentExtractor) {
+		this.argumentExtractor = argumentExtractor;
 	}
 
 	/**

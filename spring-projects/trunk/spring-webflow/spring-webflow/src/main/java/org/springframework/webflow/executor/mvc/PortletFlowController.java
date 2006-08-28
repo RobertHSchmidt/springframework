@@ -31,7 +31,6 @@ import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.mvc.AbstractController;
 import org.springframework.web.portlet.mvc.Controller;
 import org.springframework.webflow.context.portlet.PortletExternalContext;
-import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowRedirect;
@@ -40,42 +39,27 @@ import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 
 /**
+ * <p>
  * Point of integration between Spring Portlet MVC and Spring Web Flow: a
  * {@link Controller} that routes incoming portlet requests to one or more
  * managed flow executions.
+ * </p>
  * <p>
  * Requests into the web flow system are handled by a {@link FlowExecutor},
  * which this class delegates to. Consult the JavaDoc of that class for more
  * information on how requests are processed.
+ * </p>
  * <p>
- * Note: a single PortletFlowController may execute all flows within your
- * application. See the phonebook-portlet sample application for examples of the
- * various strategies for launching and resuming flow executions in a Portlet
- * environment.
- * </ul>
- * <p>
- * Usage example:
- * 
- * <pre>
- * &lt;!--
- *     Exposes flows for execution.
- * --&gt;
- * &lt;bean id=&quot;flowController&quot; class=&quot;org.springframework.webflow.executor.mvc.PortletFlowController&quot;&gt;
- *     &lt;property name=&quot;flowLocator&quot; ref=&quot;flowRegistry&quot;/&gt;
- *     &lt;property name=&quot;defaultFlowId&quot; value=&quot;example-flow&quot;/&gt;
- * &lt;/bean&gt;
- *                                                                                                      
- * &lt;!-- Creates the registry of flow definitions for this application --&gt;
- * &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.config.registry.XmlFlowRegistryFactoryBean&quot;&gt;
- *     &lt;property name=&quot;flowLocations&quot; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt;
- * &lt;/bean&gt;
- * </pre>
- * 
+ * Note: a single <code>PortletFlowController</code> may execute all flows
+ * within your application. See the <code>phonebook-portlet</code> sample
+ * application for examples of the various strategies for launching and resuming
+ * flow executions in a Portlet environment.
+ * </p>
  * <p>
  * It is also possible to customize the {@link FlowExecutorArgumentExtractor}
  * strategy to allow for different types of controller parameterization, for
  * example perhaps in conjunction with a REST-style request mapper.
- * 
+ * </p>
  * @see org.springframework.webflow.executor.FlowExecutor
  * @see org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor
  * 
@@ -87,11 +71,10 @@ import org.springframework.webflow.executor.support.FlowExecutorArgumentExtracto
 public class PortletFlowController extends AbstractController implements InitializingBean {
 
 	/**
-	 * Name of the attribute under which the response instruction
-	 * will be stored in the session.
+	 * Name of the attribute under which the response instruction will be stored
+	 * in the session.
 	 */
 	private static final String RESPONSE_INSTRUCTION_SESSION_ATTRIBUTE = "actionRequest.responseInstruction";
-
 
 	/**
 	 * Delegate for executing flow executions (launching new executions, and
@@ -107,7 +90,7 @@ public class PortletFlowController extends AbstractController implements Initial
 	/**
 	 * Create a new portlet flow controller. Allows for bean style usage.
 	 * @see #setFlowExecutor(FlowExecutor)
-	 * @see #setFlowLocator(FlowDefinitionLocator)
+	 * @see #setArgumentExtractor(FlowExecutorArgumentExtractor)
 	 */
 	public PortletFlowController() {
 		// set the cache seconds property to 0 so no pages are cached by default
@@ -128,7 +111,7 @@ public class PortletFlowController extends AbstractController implements Initial
 	}
 
 	/**
-	 * Configures the flow executor implementation to use.  Required.
+	 * Configures the flow executor implementation to use. Required.
 	 * @param flowExecutor the fully configured flow executor
 	 */
 	public void setFlowExecutor(FlowExecutor flowExecutor) {
@@ -175,8 +158,8 @@ public class PortletFlowController extends AbstractController implements Initial
 			// flowExecutionKey render param present: this is a request to
 			// render an active flow execution -- extract its key
 			String flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
-			// look for a cached response instruction in the session put there by
-			// the action request phase as part of an "active view" forward
+			// look for a cached response instruction in the session put there
+			// by the action request phase as part of an "active view" forward
 			ResponseInstruction responseInstruction = extractActionResponseInstruction(request);
 			if (responseInstruction == null) {
 				// no response instruction found, simply refresh the current
@@ -219,9 +202,8 @@ public class PortletFlowController extends AbstractController implements Initial
 				// is an "active" forward from a view-state (not end-state) --
 				// set the flow execution key render parameter to support
 				// browser refresh
-				response.setRenderParameter(
-						argumentExtractor.getFlowExecutionKeyParameterName(),
-						responseInstruction.getFlowExecutionKey());
+				response.setRenderParameter(argumentExtractor.getFlowExecutionKeyParameterName(), responseInstruction
+						.getFlowExecutionKey());
 			}
 			// cache response instruction for access during render phase of this
 			// portlet
@@ -230,9 +212,8 @@ public class PortletFlowController extends AbstractController implements Initial
 		else if (responseInstruction.isFlowExecutionRedirect()) {
 			// is a flow execution redirect: simply expose key parameter to
 			// support refresh during render phase
-			response.setRenderParameter(
-					argumentExtractor.getFlowExecutionKeyParameterName(),
-					responseInstruction.getFlowExecutionKey());
+			response.setRenderParameter(argumentExtractor.getFlowExecutionKeyParameterName(), responseInstruction
+					.getFlowExecutionKey());
 		}
 		else if (responseInstruction.isFlowRedirect()) {
 			// set flow id render parameter to request that a new flow be
@@ -255,8 +236,8 @@ public class PortletFlowController extends AbstractController implements Initial
 	// helpers
 
 	/**
-	 * Expose given response instruction to the render phase by
-	 * putting it in the session.
+	 * Expose given response instruction to the render phase by putting it in
+	 * the session.
 	 */
 	private void exposeToRenderPhase(ResponseInstruction responseInstruction, ActionRequest request) {
 		PortletSession session = request.getPortletSession(false);
@@ -266,11 +247,12 @@ public class PortletFlowController extends AbstractController implements Initial
 	}
 
 	/**
-	 * Extract a response instruction stored in the session during the
-	 * action phase by {@link #exposeToRenderPhase(ResponseInstruction, ActionRequest)}.
+	 * Extract a response instruction stored in the session during the action
+	 * phase by {@link #exposeToRenderPhase(ResponseInstruction, ActionRequest)}.
 	 * If a response instruction is found, it will be removed from the session.
 	 * @param request the portlet request
-	 * @return the response instructions found in the session or null if not found
+	 * @return the response instructions found in the session or null if not
+	 * found
 	 */
 	private ResponseInstruction extractActionResponseInstruction(PortletRequest request) {
 		PortletSession session = request.getPortletSession(false);
@@ -286,8 +268,8 @@ public class PortletFlowController extends AbstractController implements Initial
 	}
 
 	/**
-	 * Convert given response instruction into a Spring Portlet MVC
-	 * model and view.
+	 * Convert given response instruction into a Spring Portlet MVC model and
+	 * view.
 	 */
 	protected ModelAndView toModelAndView(ResponseInstruction response) {
 		if (response.isApplicationView()) {
