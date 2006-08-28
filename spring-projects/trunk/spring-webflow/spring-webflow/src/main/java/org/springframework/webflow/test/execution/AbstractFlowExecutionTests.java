@@ -41,17 +41,19 @@ import org.springframework.webflow.execution.support.FlowRedirect;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
+ * <p>
  * Base class for integration tests that verify a flow executes as expected.
  * Flow execution tests captured by subclasses should test that a flow responds
  * to all supported transition criteria correctly, transitioning to the correct
  * states and producing the expected results on the occurence of possible
  * external (user) events.
+ * </p>
  * <p>
  * More specifically, a typical flow execution test case will test:
  * <ul>
  * <li>That the flow execution starts as expected given a request from an
  * external context containing potential input attributes (see the
- * {@link #startFlow(MutableAttributeMap, ExternalContext) variants).
+ * {@link #startFlow(MutableAttributeMap, ExternalContext)} variants).
  * <li>That given the set of supported state transition criteria a state
  * executes the appropriate transition when a matching event is signaled (with
  * potential input request parameters, see the
@@ -64,6 +66,8 @@ import org.springframework.webflow.test.MockExternalContext;
  * state or an end state) that the view selection returned to the client matches
  * what was expected and the current state of the flow matches what is expected.
  * </ul>
+ * </p>
+ * <p>
  * A flow execution test can effectively automate and validate the orchestration
  * required to drive an end-to-end business task that spans several steps
  * involving the user to complete. Such tests are a good way to test your system
@@ -72,7 +76,7 @@ import org.springframework.webflow.test.MockExternalContext;
  * can be used to effectively test a flow's execution (the weblayer) standalone,
  * typically with a mock service layer. Both styles of testing are valuable and
  * supported.
- * 
+ * </p>
  * @author Keith Donald
  */
 public abstract class AbstractFlowExecutionTests extends TestCase {
@@ -94,10 +98,10 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * object).
 	 */
 	private FlowExecution flowExecution;
-	
+
 	/**
-	 * Gets the factory that will create the flow execution to test.  This method will 
-	 * create the factory if it is not already set.
+	 * Gets the factory that will create the flow execution to test. This method
+	 * will create the factory if it is not already set.
 	 * @return the flow execution factory;
 	 */
 	protected FlowExecutionFactory getFlowExecutionFactory() {
@@ -527,14 +531,15 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	}
 
 	/**
-	 * Abstract factory method to create the flow execution factory.
+	 * Abstract factory method to create the flow execution factory. Subclasses
+	 * must implement.
 	 * @return the flow execution factory
 	 */
 	protected abstract FlowExecutionFactory createFlowExecutionFactory();
 
 	/**
-	 * Returns the id of the flow definition to test.
-	 * @return the flow id
+	 * Returns the flow definition to be tested. Subclasses must implement.
+	 * @return the flow definition
 	 */
 	protected abstract FlowDefinition getFlowDefinition();
 }
