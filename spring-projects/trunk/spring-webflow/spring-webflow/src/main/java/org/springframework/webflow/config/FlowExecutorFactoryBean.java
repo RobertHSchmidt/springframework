@@ -44,9 +44,10 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	private FlowExecutionImplStateRestorer executionStateRestorer;
 
 	/**
+	 
 	 * The conversation manager to be used by the flow execution repository.
 	 */
-	private ConversationManager conversationManager = new LocalConversationManager(-1);
+	private ConversationManager conversationManager = new LocalConversationManager();
 
 	/**
 	 * The type of execution repository to configure with executors created by
@@ -128,6 +129,9 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 		this.repositoryType = repositoryType;
 	}
 
+	/**
+	 * Sets whether statistics gathering should be enabled for this flow executor.
+	 */
 	public void setStatisticsEnabled(boolean statisticsEnabled) {
 		this.statisticsEnabled = statisticsEnabled;
 	}

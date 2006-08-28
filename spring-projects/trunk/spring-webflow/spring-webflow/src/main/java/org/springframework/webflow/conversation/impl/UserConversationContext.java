@@ -31,7 +31,7 @@ import org.springframework.webflow.core.collection.AttributeMapBindingListener;
  * @see ExternalContext
  * @see AttributeMapBindingListener
  */
-public class UserConversationContext implements AttributeMapBindingListener {
+class UserConversationContext implements AttributeMapBindingListener {
 
 	private LinkedList conversationIds = new LinkedList();
 
@@ -66,8 +66,11 @@ public class UserConversationContext implements AttributeMapBindingListener {
 	}
 
 	public synchronized void valueUnbound(AttributeMapBindingEvent event) {
-		for (Iterator i = conversationIds.iterator(); i.hasNext();) {
-			conversationManager.expireConversation((ConversationId)i.next());
-		}
+		conversationManager.expire(conversationIds);
+		conversationIds.clear();
+	}
+	
+	public String toString() {
+		return conversationIds.toString();
 	}
 }
