@@ -36,7 +36,7 @@ import org.springframework.webflow.execution.Action;
  * <ol>
  * <li> retrieving dependent (but externally managed) flow services needed to
  * configure flow and state definitions. Such services are usually hosted in a
- * backing registry, and may be shared by multiple flows.
+ * backing registry and may be shared by multiple flows.
  * <li> providing access to abstract factories to create core flow definitional
  * artifacts such as {@link Flow}, {@link State}, {@link Transition}, and
  * {@link AbstractBeanInvokingAction bean invoking actions}. These artifacts
@@ -44,11 +44,13 @@ import org.springframework.webflow.execution.Action;
  * </ol>
  * <p>
  * In general, implementations of this interface act as facades to accessing and
- * creating flow artifacts during {@link FlowAssembler flow assembly}. Finally,
- * this interface also exposes access to generic infrastructure services also
- * needed by flow assemblers such as a {@link ConversionService} and
- * {@link ExpressionParser}.
- * 
+ * creating flow artifacts during {@link FlowAssembler flow assembly}.
+ * </p>
+ * <p>
+ * Finally, this interface also exposes access to generic infrastructure
+ * services also needed by flow assemblers such as a {@link ConversionService}
+ * and {@link ExpressionParser}.
+ * </p>
  * @see org.springframework.webflow.engine.builder.FlowBuilder
  * @see org.springframework.webflow.engine.builder.BaseFlowBuilder
  * @see org.springframework.webflow.engine.builder.FlowAssembler
@@ -73,10 +75,10 @@ public interface FlowServiceLocator {
 	public Action getAction(String id) throws FlowArtifactLookupException;
 
 	/**
-	 * Returns true if the action with the given <code>id</code> is an
-	 * actual implementation of the {@link Action} interface. It could be an
-	 * arbitrary bean (any <code>java.lang.Object</code>), in which case it needs
-	 * to be adapted by a {@link AbstractBeanInvokingAction bean invoking action}.
+	 * Returns true if the action with the given <code>id</code> is an actual
+	 * implementation of the {@link Action} interface. It could be an arbitrary
+	 * bean (any <code>java.lang.Object</code>), in which case it needs to be
+	 * adapted by a {@link AbstractBeanInvokingAction bean invoking action}.
 	 * @param id the action id
 	 * @return true if the action is an Action, false otherwise
 	 */
@@ -110,8 +112,8 @@ public interface FlowServiceLocator {
 	public ViewSelector getViewSelector(String id) throws FlowArtifactLookupException;
 
 	/**
-	 * Returns the exception handler to handle flow execution exceptions with the
-	 * provided id.
+	 * Returns the exception handler to handle flow execution exceptions with
+	 * the provided id.
 	 * @param id the exception handler id
 	 * @return the exception handler
 	 * @throws FlowArtifactLookupException when no such handler is found
