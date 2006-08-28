@@ -27,7 +27,7 @@ import org.springframework.webflow.conversation.ConversationId;
 /**
  * <p>
  * Stateless conversation manager that puts all conversational state in the
- * @{link {@link ExternalContext#getSessionMap() session map}.  Conversations 
+ * {@link ExternalContext#getSessionMap() session map}.  Conversations 
  * are indexed in this map by their identifiers.
  * </p>
  * <p>

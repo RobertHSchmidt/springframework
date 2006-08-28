@@ -348,17 +348,15 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Adds a decision state to the flow built by this builder.
 	 * @param stateId the state identifier
 	 * @param decisionCriteria the criteria that defines the decision
-	 * @param trueStateResolver the resolver that will resolve the transition
-	 * target state on a "true" decision
-	 * @param falseStateResolver the resolver that will resolve the transition
-	 * target state on a "false" decision
+	 * @param trueStateId the target state on a "true" decision
+	 * @param falseStateId the target state on a "false" decision
 	 * @return the fully constructed decision state instance
 	 */
-	protected State addDecisionState(String stateId, TransitionCriteria decisionCriteria, String trueTargetState,
-			String falseTargetState) {
-		Transition thenTransition = getFlowArtifactFactory().createTransition(trueTargetState, decisionCriteria, null,
+	protected State addDecisionState(String stateId, TransitionCriteria decisionCriteria, String trueStateId,
+			String falseStateId) {
+		Transition thenTransition = getFlowArtifactFactory().createTransition(trueStateId, decisionCriteria, null,
 				null);
-		Transition elseTransition = getFlowArtifactFactory().createTransition(falseTargetState, null, null, null);
+		Transition elseTransition = getFlowArtifactFactory().createTransition(falseStateId, null, null, null);
 		return getFlowArtifactFactory().createDecisionState(stateId, getFlow(), null,
 				new Transition[] { thenTransition, elseTransition }, null, null, null);
 	}
@@ -561,10 +559,10 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the adapted bean invoking action
 	 * @throws FlowArtifactLookupException the action could not be resolved
 	 */
-	protected Action action(String id, MethodSignature methodSignature, ActionResultExposer resultSpecification)
+	protected Action action(String id, MethodSignature methodSignature, ActionResultExposer resultExposer)
 			throws FlowArtifactLookupException {
 		return getBeanInvokingActionFactory().createBeanInvokingAction(id, getFlowServiceLocator().getBeanFactory(),
-				methodSignature, resultSpecification, getFlowServiceLocator().getConversionService(), null);
+				methodSignature, resultExposer, getFlowServiceLocator().getConversionService(), null);
 	}
 
 	/**
@@ -572,16 +570,18 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * object. Method signatures are used to match methods on POJO services to
 	 * invoke on a {@link AbstractBeanInvokingAction bean invoking action}.
 	 * <p>
-	 * Encoded Method signature format: Method without arguments:
+	 * Encoded method signature format:
+	 * 
+	 * Method without arguments:
 	 * 
 	 * <pre>
-	 *        ${methodName}
+	 *     ${methodName}
 	 * </pre>
 	 * 
 	 * Method with arguments:
 	 * 
 	 * <pre>
-	 *        ${methodName}(${arg1}, ${arg2}, ${arg n})
+	 *     ${methodName}(${arg1}, ${arg2}, ${arg n})
 	 * </pre>
 	 * 
 	 * @param method the encoded method signature
@@ -677,11 +677,9 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Creates a transition target state resolver that is used to take a
-	 * Transition to its target state during execution.
-	 * @param targetStateExpression the target state expression, typically
-	 * simply the targetStateId
-	 * @return the target state resolver
+	 * Simple method that returns the target state identifier of a transition.
+	 * @param targetStateId the target state id
+	 * @return the target state id
 	 */
 	protected String to(String targetStateId) {
 		return targetStateId;
@@ -691,8 +689,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Creates a new transition.
 	 * @param matchingCriteria the criteria that determines when the transition
 	 * matches
-	 * @param targetStateResolver the resolver that calculates the target state
-	 * of the transition
+	 * @param targetStateId the target state identifier
 	 * @return the transition
 	 */
 	protected Transition transition(TransitionCriteria matchingCriteria, String targetStateId) {
@@ -703,8 +700,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Creates a new transition.
 	 * @param matchingCriteria the criteria that determines when the transition
 	 * matches
-	 * @param targetStateResolver the resolver that calculates the target state
-	 * of the transition
+	 * @param targetStateId the target state identifier
 	 * @param executionCriteria the criteria that determines if a matched
 	 * transition is allowed to execute
 	 * @return the transition
@@ -718,8 +714,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Creates a new transition.
 	 * @param matchingCriteria the criteria that determines when the transition
 	 * matches
-	 * @param targetStateResolver the resolver that calculates the target state
-	 * of the transition
+	 * @param targetStateId the target state identifier
 	 * @param executionCriteria the criteria that determines if a matched
 	 * transition is allowed to execute
 	 * @param attributes transition attributes
