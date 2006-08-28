@@ -23,9 +23,9 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Simple transition criteria that matches on an eventId and
- * nothing else. Specifically, if the last event that occured has id
- * ${eventId}, this criteria will return true.
+ * Simple transition criteria that matches on an eventId and nothing else.
+ * Specifically, if the id of the last event that occured equals
+ * {@link #getEventId()} this criteria will return true.
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
