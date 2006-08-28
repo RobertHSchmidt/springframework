@@ -29,28 +29,33 @@ import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 
 /**
+ * <p>
  * Stores <i>one to many</i> flow execution continuations (snapshots) per
  * conversation, where each continuation represents a paused, restorable
  * view-state of a flow execution snapshotted at a point in time.
+ * </p>
  * <p>
  * The set of active user conversations are managed by a
  * {@link ConversationManager} implementation, which this repository delegates
  * to.
+ * </p>
  * <p>
  * This repository is responsible for:
- * <p>
  * <ul>
  * <li>Beginning a new conversation when a new flow execution is made
  * persistent. Each conversation is assigned a unique conversartion id which
  * forms one part of the flow execution key.
  * <li>Associating a flow execution with that conversation by adding a
- * {@link FlowExecutionContinuation} to the
- * {@link FlowExecutionContinuationGroup}. When a flow execution is placed in
- * this repository a new continuation snapshot is created, assigned an id, and
- * added to the group. Each continuation logically represents a state of the
- * conversation at a point in time <i>that can be restored and continued</i>.
- * These continuations can be restored to support users going back in their
- * browser to continue a conversation from a previous point.
+ * {@link FlowExecutionContinuation} to a continuation group.
+ * <ul>
+ * <li>When a flow execution is placed in this repository a new continuation
+ * snapshot is created, assigned an id, and added to the group. Each
+ * continuation logically represents a state of the conversation at a point in
+ * time <i>that can be restored and continued</i>. These continuations can be
+ * restored to support users going back in their browser to continue a
+ * conversation from a previous point.
+ * </ul>
+ * </p>
  * <li>Ending existing conversations when persistent flow executions end, as
  * part of a repository removal operation.
  * </ul>

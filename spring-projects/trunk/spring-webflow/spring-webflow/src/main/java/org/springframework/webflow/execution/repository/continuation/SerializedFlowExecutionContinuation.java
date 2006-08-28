@@ -49,8 +49,8 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 
 	/**
 	 * Creates a new serialized flow execution continuation.
-	 * @param the flow execution
-	 * @param whether or not the execution should be compressed
+	 * @param flowExecution the flow execution
+	 * @param compress whether or not the execution should be compressed
 	 */
 	public SerializedFlowExecutionContinuation(FlowExecution flowExecution, boolean compress) throws ContinuationCreationException{
         byte [] data;
