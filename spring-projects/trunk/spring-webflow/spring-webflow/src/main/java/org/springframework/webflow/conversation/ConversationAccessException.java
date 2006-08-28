@@ -43,5 +43,4 @@ public class ConversationAccessException extends ConversationException {
 	public ConversationId getConversationId() {
 		return conversationId;
 	}
-
 }
