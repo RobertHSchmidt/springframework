@@ -185,6 +185,7 @@
 
     <zip zipfile="${target.release.dir}/${release.bin.zip}">
   	  <zipfileset file="../spring-ldap/readme.txt" prefix="${zip.toplevel.dir}"/>
+      <zipfileset file="../spring-ldap/license.txt" prefix="${zip.toplevel.dir}"/>
 	  <zipfileset dir="../spring-ldap/target/dist/jars" prefix="${zip.toplevel.dir}/dist"/>
 	  <zipfileset dir="../spring-ldap/target/dist/ivys" prefix="${zip.toplevel.dir}/dist/ivys"/>
    	  <zipfileset dir="../spring-ldap/docs/reference/target/html_single" prefix="${zip.toplevel.dir}/doc/reference/html_single"/>
@@ -201,6 +202,7 @@
 
     <zip zipfile="${target.release.dir}/${release.bin.deps.zip}">
    	  <zipfileset file="../spring-ldap/readme.txt" prefix="${zip.toplevel.dir}"/>
+      <zipfileset file="../spring-ldap/license.txt" prefix="${zip.toplevel.dir}"/>
 	  <zipfileset dir="../spring-ldap/target/dist/jars" prefix="${zip.toplevel.dir}/dist"/>
 	  <zipfileset dir="../spring-ldap/target/dist/ivys" prefix="${zip.toplevel.dir}/dist/ivys"/>
       <zipfileset dir="../spring-ldap/docs/reference/target/html_single" prefix="${zip.toplevel.dir}/doc/reference/html_single"/>
@@ -221,6 +223,7 @@
         <selector refid="project.source.zip.includes"/>
       </zipfileset>
   	  <zipfileset file="../spring-ldap/readme.txt"/>
+      <zipfileset file="../spring-ldap/license.txt"/>
       <zipfileset dir="../../common-build" prefix="common-build"/>
     </zip>
   </target>
