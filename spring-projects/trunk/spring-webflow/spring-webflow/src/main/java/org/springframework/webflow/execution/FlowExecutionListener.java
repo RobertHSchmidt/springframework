@@ -22,7 +22,7 @@ import org.springframework.webflow.definition.StateDefinition;
 
 /**
  * Interface to be implemented by objects that wish to listen and respond to the
- * lifecycle {@link FlowExecuton flow executions}.
+ * lifecycle {@link FlowExecution flow executions}.
  * <p>
  * An 'observer' that is very aspect like, allowing you to insert 'cross
  * cutting' behavior at well-defined points within one or more well-defined flow
