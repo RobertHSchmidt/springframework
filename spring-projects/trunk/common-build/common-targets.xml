@@ -786,7 +786,8 @@
   <!-- javadocs:  Creates the API documentation -->
   <target name="javadoc" depends="build.prepare" description="Create the project API documentation">
     <mkdir dir="${target.javadocs.dir}" />
-    <javadoc destdir="${target.javadocs.dir}" author="true" version="true" windowtitle="${project.title} ${project.version} API" doctitle="${project.title} ${project.version}" bottom="${project.copyright}">
+    <javadoc destdir="${target.javadocs.dir}" author="true" version="true" windowtitle="${project.title} ${project.version} API" doctitle="${project.title} ${project.version}" bottom="${project.copyright}"
+      overview="${src.java.main.dir}/overview.html">
       <classpath>
         <pathelement location="${target.classes.dir}" />
         <pathelement location="${target.testclasses.dir}" />
