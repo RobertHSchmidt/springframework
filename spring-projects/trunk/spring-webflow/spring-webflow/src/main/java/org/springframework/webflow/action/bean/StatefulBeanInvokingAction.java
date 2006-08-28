@@ -71,9 +71,6 @@ public class StatefulBeanInvokingAction extends BeanFactoryBeanInvokingAction {
 	 * Sets the scope to put the stateful bean instance in.
 	 */
 	public void setBeanScope(ScopeType beanScope) {
-		if (beanScope == null) {
-			beanScope = ScopeType.FLOW;
-		}
 		this.beanScope = beanScope;
 	}
 
