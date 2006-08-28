@@ -47,8 +47,8 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * </pre>
  * <p>
  * Using the <code>registry</code> tag you can configure an
- * {@link org.springframework.webflow.engine.builder.registry.XmlFlowRegistryFactoryBean}
- * for use by any number of <code>executor</code>s. The <code>registry</code>
+ * {@link org.springframework.webflow.engine.builder.xml.XmlFlowRegistryFactoryBean}
+ * to create a registry for use by any number of <code>executor</code>s. The <code>registry</code>
  * tag supports in-line flow definition locations.
  * </p> 
  * <pre class="code">
@@ -57,6 +57,7 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  *         &lt;flow:location path=&quot;/path/with/wildcards/*-flow.xml&quot; /&gt;
  *     &lt;/flow:registry&gt;
  * </pre>
+ * 
  * @author Ben Hale
  */
 public class FlowNamespaceHandler extends NamespaceHandlerSupport {
