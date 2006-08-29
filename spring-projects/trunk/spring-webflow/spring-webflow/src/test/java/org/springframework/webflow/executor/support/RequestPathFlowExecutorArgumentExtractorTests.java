@@ -72,16 +72,16 @@ public class RequestPathFlowExecutorArgumentExtractorTests extends TestCase {
 	public void testIsFlowExecutionKeyPresent() {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows");
-		context.setRequestPathInfo("/_c12345_k12345");
+		context.setRequestPathInfo("/k_c12345_k12345");
 		assertTrue(argumentExtractor.isFlowExecutionKeyPresent(context));
-		context.setRequestPathInfo("bogus_c12345_k12345");
+		context.setRequestPathInfo("/sellitem");
 		assertFalse(argumentExtractor.isFlowExecutionKeyPresent(context));
 	}
 	
 	public void testExtractFlowExecutionKey() {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows");
-		context.setRequestPathInfo("/_c12345_k12345");
+		context.setRequestPathInfo("/k_c12345_k12345");
 		assertEquals("_c12345_k12345", argumentExtractor.extractFlowExecutionKey(context));
 	}
 }
