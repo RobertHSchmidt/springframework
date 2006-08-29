@@ -17,6 +17,7 @@
 		<property name="cacheSeconds" value="5" />
 	</bean>
 
+	<!-- Launches new flow executions and resumes existing executions -->
 	<flow:executor id="flowExecutor" registry-ref="flowRegistry" />
 
 	<!-- Creates the registry of flow definitions for this application -->
@@ -24,6 +25,7 @@
 		<flow:location path="/WEB-INF/flows/**/*-flow.xml" />
 	</flow:registry>
 
+	<!-- Performs "form backing object" data binding and validation on input submit -->
 	<bean id="formAction" class="org.springframework.webflow.action.FormAction">
 		<property name="formObjectName" value="rateCriteria" />
 		<property name="formObjectClass" value="org.springframework.webflow.samples.shippingrate.domain.RateCriteria" />
@@ -39,6 +41,7 @@
 		<property name="suffix" value=".jsp" />
 	</bean>
 
+	<!-- Resolves message codes to internationalized messages -->
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basename">
 			<value>MessageResources</value>
