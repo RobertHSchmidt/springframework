@@ -66,7 +66,7 @@ public class RequestPathFlowExecutorArgumentExtractorTests extends TestCase {
 		context.setDispatcherPath("/flows");
 		FlowExecutionContext flowExecution = new MockFlowExecutionContext();
 		String url = argumentExtractor.createFlowExecutionUrl(flowExecutionKey, flowExecution, context);
-		assertEquals("/app/flows/_c12345_k12345", url);
+		assertEquals("/app/flows/k_c12345_k12345", url);
 	}
 	
 	public void testIsFlowExecutionKeyPresent() {

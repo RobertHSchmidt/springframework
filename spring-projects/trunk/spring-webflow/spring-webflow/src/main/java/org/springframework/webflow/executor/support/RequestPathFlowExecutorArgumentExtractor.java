@@ -93,6 +93,7 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 		StringBuffer flowExecutionUrl = new StringBuffer();
 		appendFlowExecutorPath(flowExecutionUrl, context);
 		flowExecutionUrl.append(PATH_SEPARATOR_CHARACTER);
+		flowExecutionUrl.append(KEY_DELIMITER);
 		flowExecutionUrl.append(flowExecutionKey);
 		return flowExecutionUrl.toString();
 	}
