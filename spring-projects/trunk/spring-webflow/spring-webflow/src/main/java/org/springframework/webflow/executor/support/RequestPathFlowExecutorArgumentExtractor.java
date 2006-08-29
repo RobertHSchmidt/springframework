@@ -47,6 +47,8 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 
 	private static final char PATH_SEPARATOR_CHARACTER = '/';
 
+	private static final String KEY_DELIMITER = "k";
+
 	public boolean isFlowIdPresent(ExternalContext context) {
 		String requestPathInfo = getRequestPathInfo(context);
 		boolean hasFileName = StringUtils.hasText(WebUtils.extractFilenameFromUrlPath(requestPathInfo));
@@ -61,14 +63,14 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 	
 	public boolean isFlowExecutionKeyPresent(ExternalContext context) {
 		String requestPathInfo = getRequestPathInfo(context);
-		return requestPathInfo.startsWith("/") || super.isFlowExecutionKeyPresent(context);
+		return requestPathInfo.startsWith(PATH_SEPARATOR_CHARACTER + KEY_DELIMITER) || super.isFlowExecutionKeyPresent(context);
 	}
 
 	public String extractFlowExecutionKey(ExternalContext context) throws FlowExecutorArgumentExtractionException {
 		String requestPathInfo = getRequestPathInfo(context);
-		int index = requestPathInfo.indexOf(PATH_SEPARATOR_CHARACTER);
+		int index = requestPathInfo.indexOf(PATH_SEPARATOR_CHARACTER + KEY_DELIMITER);
 		if (index != -1) {
-			return requestPathInfo.substring(index + 1);
+			return requestPathInfo.substring(index + 1 + KEY_DELIMITER.length());
 		} else {
 			return super.extractFlowExecutionKey(context);
 		}
