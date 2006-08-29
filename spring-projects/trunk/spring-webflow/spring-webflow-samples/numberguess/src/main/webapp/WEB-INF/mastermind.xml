@@ -20,6 +20,4 @@
 	
 	<end-state id="showAnswer" view="mastermind.showAnswer"/>
  
-	<import resource="mastermind-beans.xml"/>
-
 </flow>
