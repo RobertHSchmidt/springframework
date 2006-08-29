@@ -34,7 +34,7 @@ import org.springframework.webflow.execution.support.FlowRedirect;
  * <code>/springair</code> and a servlet mapping of <code>/reservation/*</code>.
  * <p>
  * This also allows for URLS to resume flow execution in the format:
- * <code>http://${host}/${context}/${servlet}/k${flowExecutionKey}</code>
+ * <code>http://${host}/${context}/${servlet}/k/${flowExecutionKey}</code>
  * 
  * Note: this implementation only works with <code>ExternalContext</code>
  * implementations that return a valid
@@ -63,14 +63,14 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 	
 	public boolean isFlowExecutionKeyPresent(ExternalContext context) {
 		String requestPathInfo = getRequestPathInfo(context);
-		return requestPathInfo.startsWith(PATH_SEPARATOR_CHARACTER + KEY_DELIMITER) || super.isFlowExecutionKeyPresent(context);
+		return requestPathInfo.startsWith(PATH_SEPARATOR_CHARACTER + KEY_DELIMITER + PATH_SEPARATOR_CHARACTER) || super.isFlowExecutionKeyPresent(context);
 	}
 
 	public String extractFlowExecutionKey(ExternalContext context) throws FlowExecutorArgumentExtractionException {
 		String requestPathInfo = getRequestPathInfo(context);
-		int index = requestPathInfo.indexOf(PATH_SEPARATOR_CHARACTER + KEY_DELIMITER);
+		int index = requestPathInfo.indexOf(PATH_SEPARATOR_CHARACTER + KEY_DELIMITER + PATH_SEPARATOR_CHARACTER);
 		if (index != -1) {
-			return requestPathInfo.substring(index + 1 + KEY_DELIMITER.length());
+			return requestPathInfo.substring(index + 2 + KEY_DELIMITER.length());
 		} else {
 			return super.extractFlowExecutionKey(context);
 		}
@@ -94,6 +94,7 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 		appendFlowExecutorPath(flowExecutionUrl, context);
 		flowExecutionUrl.append(PATH_SEPARATOR_CHARACTER);
 		flowExecutionUrl.append(KEY_DELIMITER);
+		flowExecutionUrl.append(PATH_SEPARATOR_CHARACTER);
 		flowExecutionUrl.append(flowExecutionKey);
 		return flowExecutionUrl.toString();
 	}
