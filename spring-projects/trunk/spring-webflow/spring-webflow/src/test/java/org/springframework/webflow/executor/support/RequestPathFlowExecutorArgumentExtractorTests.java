@@ -66,13 +66,13 @@ public class RequestPathFlowExecutorArgumentExtractorTests extends TestCase {
 		context.setDispatcherPath("/flows");
 		FlowExecutionContext flowExecution = new MockFlowExecutionContext();
 		String url = argumentExtractor.createFlowExecutionUrl(flowExecutionKey, flowExecution, context);
-		assertEquals("/app/flows/k_c12345_k12345", url);
+		assertEquals("/app/flows/k/_c12345_k12345", url);
 	}
 	
 	public void testIsFlowExecutionKeyPresent() {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows");
-		context.setRequestPathInfo("/k_c12345_k12345");
+		context.setRequestPathInfo("/k/_c12345_k12345");
 		assertTrue(argumentExtractor.isFlowExecutionKeyPresent(context));
 		context.setRequestPathInfo("/sellitem");
 		assertFalse(argumentExtractor.isFlowExecutionKeyPresent(context));
@@ -81,7 +81,7 @@ public class RequestPathFlowExecutorArgumentExtractorTests extends TestCase {
 	public void testExtractFlowExecutionKey() {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows");
-		context.setRequestPathInfo("/k_c12345_k12345");
+		context.setRequestPathInfo("/k/_c12345_k12345");
 		assertEquals("_c12345_k12345", argumentExtractor.extractFlowExecutionKey(context));
 	}
 }
