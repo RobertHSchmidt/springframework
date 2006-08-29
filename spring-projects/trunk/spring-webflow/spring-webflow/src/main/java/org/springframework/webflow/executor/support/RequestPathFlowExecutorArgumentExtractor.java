@@ -96,7 +96,7 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 		String requestPathInfo = getRequestPathInfo(context);
 		int index = requestPathInfo.indexOf(keyPath());
 		if (index != -1) {
-			return requestPathInfo.substring(keyPathLength(index));
+			return requestPathInfo.substring(index + keyPathLength());
 		}
 		else {
 			return super.extractFlowExecutionKey(context);
@@ -141,7 +141,7 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 		return PATH_SEPARATOR_CHARACTER + keyDelimiter + PATH_SEPARATOR_CHARACTER;
 	}
 
-	private int keyPathLength(int index) {
-		return index + 2 + keyDelimiter.length();
+	private int keyPathLength() {
+		return keyDelimiter.length() + 2;
 	}
 }
