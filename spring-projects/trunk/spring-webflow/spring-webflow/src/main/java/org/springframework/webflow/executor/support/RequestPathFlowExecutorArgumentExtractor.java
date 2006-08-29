@@ -26,7 +26,7 @@ import org.springframework.webflow.execution.support.FlowRedirect;
  * Extracts flow executor arguments from the request path.
  * <p>
  * This allows for REST-style URLs to launch flows in the general format:
- * <code>http://${host}/${context}/${servlet}/${flowId}</code>
+ * <code>http://${host}/${context path}/${dispatcher path}/${flowId}</code>
  * <p>
  * For example, the url
  * <code>http://localhost/springair/reservation/booking</code> would launch a
@@ -34,7 +34,7 @@ import org.springframework.webflow.execution.support.FlowRedirect;
  * <code>/springair</code> and a servlet mapping of <code>/reservation/*</code>.
  * <p>
  * This also allows for URLS to resume flow execution in the format:
- * <code>http://${host}/${context}/${servlet}/k/${flowExecutionKey}</code>
+ * <code>http://${host}/${context path}/${dispatcher path}/k/${flowExecutionKey}</code>
  * 
  * Note: this implementation only works with <code>ExternalContext</code>
  * implementations that return a valid
