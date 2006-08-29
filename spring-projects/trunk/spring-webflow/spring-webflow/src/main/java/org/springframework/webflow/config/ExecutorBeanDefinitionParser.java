@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
  * 
  * @author Ben Hale
  */
-public class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
+class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	private static final String EXECUTION_ATTRIBUTES_ELEMENT = "execution-attributes";
 
