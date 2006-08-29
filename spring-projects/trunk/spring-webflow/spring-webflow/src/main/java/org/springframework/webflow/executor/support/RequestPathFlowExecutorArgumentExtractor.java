@@ -31,10 +31,11 @@ import org.springframework.webflow.execution.support.FlowRedirect;
  * For example, the url
  * <code>http://localhost/springair/reservation/booking</code> would launch a
  * new execution of the <code>booking</code> flow, assuming a context path of
- * <code>/springair</code> and a servlet mapping of <code>/reservation/*</code>.
+ * <code>/springair</code> and a servlet mapping of
+ * <code>/reservation/*</code>.
  * <p>
  * This also allows for URLS to resume flow execution in the format:
- * <code>http://${host}/${context path}/${dispatcher path}/k/${flowExecutionKey}</code>
+ * <code>http://${host}/${context path}/${dispatcher path}/${key delimiter}/${flowExecutionKey}</code>
  * 
  * Note: this implementation only works with <code>ExternalContext</code>
  * implementations that return a valid
@@ -49,6 +50,31 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 
 	private static final String KEY_DELIMITER = "k";
 
+	/**
+	 * The delimiter that when present in the requestPathInfo indicates the
+	 * flowExecutionKey follows in the URL.
+	 * @see #extractFlowExecutionKey(ExternalContext)
+	 */
+	private String keyDelimiter = KEY_DELIMITER;
+
+	/**
+	 * Returns the key delimiter
+	 * @return the key delimiter
+	 */
+	protected String getKeyDelimiter() {
+		return keyDelimiter;
+	}
+
+	/**
+	 * Sets the delimiter that when present in the requestPathInfo indicates the
+	 * flowExecutionKey follows in the URL.
+	 * @param keyDelimiter the key delimiter.
+	 * @see #extractFlowExecutionKey(ExternalContext)
+	 */
+	public void setKeyDelimiter(String keyDelimiter) {
+		this.keyDelimiter = keyDelimiter;
+	}
+
 	public boolean isFlowIdPresent(ExternalContext context) {
 		String requestPathInfo = getRequestPathInfo(context);
 		boolean hasFileName = StringUtils.hasText(WebUtils.extractFilenameFromUrlPath(requestPathInfo));
@@ -60,18 +86,19 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 		String extractedFilename = WebUtils.extractFilenameFromUrlPath(requestPathInfo);
 		return StringUtils.hasText(extractedFilename) ? extractedFilename : super.extractFlowId(context);
 	}
-	
+
 	public boolean isFlowExecutionKeyPresent(ExternalContext context) {
 		String requestPathInfo = getRequestPathInfo(context);
-		return requestPathInfo.startsWith(PATH_SEPARATOR_CHARACTER + KEY_DELIMITER + PATH_SEPARATOR_CHARACTER) || super.isFlowExecutionKeyPresent(context);
+		return requestPathInfo.startsWith(keyPath()) || super.isFlowExecutionKeyPresent(context);
 	}
 
 	public String extractFlowExecutionKey(ExternalContext context) throws FlowExecutorArgumentExtractionException {
 		String requestPathInfo = getRequestPathInfo(context);
-		int index = requestPathInfo.indexOf(PATH_SEPARATOR_CHARACTER + KEY_DELIMITER + PATH_SEPARATOR_CHARACTER);
+		int index = requestPathInfo.indexOf(keyPath());
 		if (index != -1) {
-			return requestPathInfo.substring(index + 2 + KEY_DELIMITER.length());
-		} else {
+			return requestPathInfo.substring(keyPathLength(index));
+		}
+		else {
 			return super.extractFlowExecutionKey(context);
 		}
 	}
@@ -93,20 +120,28 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 		StringBuffer flowExecutionUrl = new StringBuffer();
 		appendFlowExecutorPath(flowExecutionUrl, context);
 		flowExecutionUrl.append(PATH_SEPARATOR_CHARACTER);
-		flowExecutionUrl.append(KEY_DELIMITER);
+		flowExecutionUrl.append(keyDelimiter);
 		flowExecutionUrl.append(PATH_SEPARATOR_CHARACTER);
 		flowExecutionUrl.append(flowExecutionKey);
 		return flowExecutionUrl.toString();
 	}
-	
+
 	// internal helpers
 
 	/**
-	 * Returns the request path info for given external context.
-	 * Never returns null, an empty string is returned instead.
+	 * Returns the request path info for given external context. Never returns
+	 * null, an empty string is returned instead.
 	 */
 	private String getRequestPathInfo(ExternalContext context) {
 		String requestPathInfo = context.getRequestPathInfo();
 		return requestPathInfo != null ? requestPathInfo : "";
+	}
+	
+	private String keyPath() {
+		return PATH_SEPARATOR_CHARACTER + keyDelimiter + PATH_SEPARATOR_CHARACTER;
+	}
+
+	private int keyPathLength(int index) {
+		return index + 2 + keyDelimiter.length();
 	}
 }
