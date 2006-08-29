@@ -39,7 +39,6 @@ public class RequestPathFlowExecutorArgumentExtractorTests extends TestCase {
 			fail("should've failed");
 		}
 		catch (FlowExecutorArgumentExtractionException e) {
-
 		}
 	}
 
@@ -67,6 +66,22 @@ public class RequestPathFlowExecutorArgumentExtractorTests extends TestCase {
 		context.setDispatcherPath("/flows");
 		FlowExecutionContext flowExecution = new MockFlowExecutionContext();
 		String url = argumentExtractor.createFlowExecutionUrl(flowExecutionKey, flowExecution, context);
-		assertEquals("/app/flows/_flowExecutionKey/_c12345_k12345", url);
+		assertEquals("/app/flows/_c12345_k12345", url);
+	}
+	
+	public void testIsFlowExecutionKeyPresent() {
+		context.setContextPath("/app");
+		context.setDispatcherPath("/flows");
+		context.setRequestPathInfo("/_c12345_k12345");
+		assertTrue(argumentExtractor.isFlowExecutionKeyPresent(context));
+		context.setRequestPathInfo("bogus_c12345_k12345");
+		assertFalse(argumentExtractor.isFlowExecutionKeyPresent(context));
+	}
+	
+	public void testExtractFlowExecutionKey() {
+		context.setContextPath("/app");
+		context.setDispatcherPath("/flows");
+		context.setRequestPathInfo("/_c12345_k12345");
+		assertEquals("_c12345_k12345", argumentExtractor.extractFlowExecutionKey(context));
 	}
 }

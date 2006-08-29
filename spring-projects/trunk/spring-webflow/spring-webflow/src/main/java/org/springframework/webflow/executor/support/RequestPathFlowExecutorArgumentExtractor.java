@@ -61,14 +61,14 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 	
 	public boolean isFlowExecutionKeyPresent(ExternalContext context) {
 		String requestPathInfo = getRequestPathInfo(context);
-		return requestPathInfo.startsWith(PATH_SEPARATOR_CHARACTER + getFlowExecutionKeyParameterName()) || super.isFlowExecutionKeyPresent(context);
+		return requestPathInfo.startsWith("/") || super.isFlowExecutionKeyPresent(context);
 	}
 
 	public String extractFlowExecutionKey(ExternalContext context) throws FlowExecutorArgumentExtractionException {
 		String requestPathInfo = getRequestPathInfo(context);
-		int index = requestPathInfo.indexOf(getFlowExecutionKeyParameterName() + PATH_SEPARATOR_CHARACTER);
+		int index = requestPathInfo.indexOf(PATH_SEPARATOR_CHARACTER);
 		if (index != -1) {
-			return requestPathInfo.substring(getFlowExecutionKeyParameterName().length() + 2);
+			return requestPathInfo.substring(index + 1);
 		} else {
 			return super.extractFlowExecutionKey(context);
 		}
@@ -90,8 +90,6 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 			ExternalContext context) {
 		StringBuffer flowExecutionUrl = new StringBuffer();
 		appendFlowExecutorPath(flowExecutionUrl, context);
-		flowExecutionUrl.append(PATH_SEPARATOR_CHARACTER);
-		flowExecutionUrl.append(getFlowExecutionKeyParameterName());
 		flowExecutionUrl.append(PATH_SEPARATOR_CHARACTER);
 		flowExecutionUrl.append(flowExecutionKey);
 		return flowExecutionUrl.toString();
