@@ -21,6 +21,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -100,7 +101,7 @@ public class LocalParameterMap implements ParameterMap, Serializable {
 	}
 
 	public Map asMap() {
-		return parameterAccessor.asMap();
+		return Collections.unmodifiableMap(parameterAccessor.asMap());
 	}
 
 	public boolean isEmpty() {
