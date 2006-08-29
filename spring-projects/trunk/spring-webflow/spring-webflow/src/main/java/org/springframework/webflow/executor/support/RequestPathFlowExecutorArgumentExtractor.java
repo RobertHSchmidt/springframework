@@ -34,7 +34,7 @@ import org.springframework.webflow.execution.support.FlowRedirect;
  * <code>/springair</code> and a servlet mapping of <code>/reservation/*</code>.
  * <p>
  * This also allows for URLS to resume flow execution in the format:
- * <code>http://${host}/${context}/${servlet}/${flowId}?_flowExecutionKey=&lt;key&gt;</code>
+ * <code>http://${host}/${context}/${servlet}/k${flowExecutionKey}</code>
  * 
  * Note: this implementation only works with <code>ExternalContext</code>
  * implementations that return a valid
