@@ -289,13 +289,6 @@ public class LocalAttributeMapTests extends TestCase {
 	public void testGetMap() {
 		Map map = attributeMap.asMap();
 		assertEquals(10, map.size());
-		try {
-			map.put("can't", "modify");
-			fail("Cant modify but u did");
-		}
-		catch (UnsupportedOperationException e) {
-
-		}
 	}
 
 	public void testUnion() {
