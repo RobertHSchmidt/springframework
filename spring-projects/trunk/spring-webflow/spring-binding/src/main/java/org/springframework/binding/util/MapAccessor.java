@@ -16,7 +16,6 @@
 package org.springframework.binding.util;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.util.Assert;
@@ -43,12 +42,10 @@ public class MapAccessor implements MapAdaptable {
 		this.map = map;
 	}
 
-	/**
-	 * Returns the wrapped target map.
-	 * @return the map
-	 */
+	// implementing MapAdaptable
+	
 	public Map asMap() {
-		return Collections.unmodifiableMap(map);
+		return map;
 	}
 
 	/**

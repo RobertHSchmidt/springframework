@@ -9,8 +9,8 @@ import java.util.Map;
 public interface MapAdaptable {
 
 	/**
-	 * Returns this object's contents as a {@link Map}. The returned map cannot
-	 * be modified.
+	 * Returns this object's contents as a {@link Map}. The returned map may or 
+	 * may not be modifiable depending on this implementation.
 	 * <p>
 	 * Warning: this operation may be called frequently; if so care should be
 	 * taken so that the map contents (if calculated) be cached as appropriate.
