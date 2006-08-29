@@ -75,16 +75,6 @@ public interface FlowServiceLocator {
 	public Action getAction(String id) throws FlowArtifactLookupException;
 
 	/**
-	 * Returns true if the action with the given <code>id</code> is an actual
-	 * implementation of the {@link Action} interface. It could be an arbitrary
-	 * bean (any <code>java.lang.Object</code>), in which case it needs to be
-	 * adapted by a {@link AbstractBeanInvokingAction bean invoking action}.
-	 * @param id the action id
-	 * @return true if the action is an Action, false otherwise
-	 */
-	public boolean isAction(String id) throws FlowArtifactLookupException;
-
-	/**
 	 * Returns the flow attribute mapper with the provided id. Flow attribute
 	 * mappers are used from subflow states to map input and output attributes.
 	 * @param id the attribute mapper id
