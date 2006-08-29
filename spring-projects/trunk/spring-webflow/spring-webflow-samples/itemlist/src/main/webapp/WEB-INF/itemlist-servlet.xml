@@ -28,9 +28,9 @@
 	</bean>
 
 	<!-- Launches new flow executions and resumes existing executions. -->
-	<flow:executor id="flowExecutor" registry-ref="flowRegistry" repositoryType="continuation">
+	<flow:executor id="flowExecutor" registry-ref="flowRegistry" repository-type="continuation">
 		<flow:execution-attributes>
-			<flow:attribute name="alwaysRedirectOnPause" type="boolean" value="true" />
+			<flow:alwaysRedirectOnPause/>
 		</flow:execution-attributes>
 	</flow:executor>
 
