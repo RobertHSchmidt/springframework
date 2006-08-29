@@ -97,15 +97,6 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		}
 	}
 
-	public boolean isAction(String actionId) throws FlowArtifactLookupException {
-		if (containsBean(actionId)) {
-			return Action.class.isAssignableFrom(getBeanFactory().getType(actionId));
-		}
-		else {
-			return parent.isAction(actionId);
-		}
-	}
-
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
 		if (containsBean(id)) {
 			return (FlowAttributeMapper)getBean(id, FlowAttributeMapper.class);
