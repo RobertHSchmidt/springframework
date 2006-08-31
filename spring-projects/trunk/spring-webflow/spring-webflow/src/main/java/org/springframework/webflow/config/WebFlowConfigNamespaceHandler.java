@@ -20,7 +20,7 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
  * <p>
- * <code>NamespaceHandler</code> for the <code>webflow:config</code>
+ * <code>NamespaceHandler</code> for the <code>webflow-config</code>
  * namespace.
  * </p>
  * <p>
