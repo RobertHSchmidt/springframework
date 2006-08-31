@@ -4,8 +4,8 @@
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/webflow
-       http://www.springframework.org/schema/webflow/spring-webflow-config-1.0.xsd">
+       http://www.springframework.org/schema/webflow-config
+       http://www.springframework.org/schema/webflow-config/spring-webflow-config-1.0.xsd">
 
 	<!--
 		A general purpose controller for the entire "Point of Sale (POS)" application, 
