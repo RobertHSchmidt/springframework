@@ -10,7 +10,7 @@ import org.springframework.ws.soap.context.SoapMessageContext;
 
 /**
  * Simple, SOAP-specific implementation of the <code>EndpointExceptionResolver</code> that stores the exception's
- * message as the fault code.
+ * message as the fault string. The fault code is always set to a Sender (in SOAP 1.1) or Receiver (SOAP 1.2).
  *
  * @author Arjen Poutsma
  */
