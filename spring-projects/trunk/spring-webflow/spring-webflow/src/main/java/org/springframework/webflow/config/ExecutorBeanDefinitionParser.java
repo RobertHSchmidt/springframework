@@ -25,8 +25,7 @@ import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 /**
- * {@link BeanDefinitionParser} for the <code>&lt;flow:executor&gt;</code>
- * tag.
+ * {@link BeanDefinitionParser} for the <code>&lt;executor&gt;</code> tag.
  * 
  * @author Ben Hale
  */

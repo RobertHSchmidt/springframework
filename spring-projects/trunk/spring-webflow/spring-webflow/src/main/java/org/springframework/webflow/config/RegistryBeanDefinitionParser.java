@@ -28,7 +28,7 @@ import org.springframework.webflow.engine.builder.xml.XmlFlowRegistryFactoryBean
 import org.w3c.dom.Element;
 
 /**
- * {@link BeanDefinitionParser} for the <code>&lt;flow:registry&gt;</code> tag.
+ * {@link BeanDefinitionParser} for the <code>&lt;registry&gt;</code> tag.
  * 
  * @author Ben Hale
  */

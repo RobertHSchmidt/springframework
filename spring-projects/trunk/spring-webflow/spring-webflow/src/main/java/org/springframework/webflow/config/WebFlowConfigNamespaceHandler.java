@@ -20,7 +20,8 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
  * <p>
- * <code>NamespaceHandler</code> for the <code>flow</code> namespace.
+ * <code>NamespaceHandler</code> for the <code>webflow:config</code>
+ * namespace.
  * </p>
  * <p>
  * Provides {@link BeanDefinitionParser bean definition parsers} for the
@@ -36,31 +37,34 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * <code>executor</code> tag allows you to specify the repository type and a
  * reference to a registry.
  * </p>
+ * 
  * <pre class="code">
- *     &lt;flow:executor id=&quot;registry&quot; registry-ref=&quot;registry&quot; repository-type=&quot;continuation&quot; &gt;
- *         &lt;flow:execution-listeners&gt;
- *             &lt;flow:listener ref=&quot;listener1&quot; /&gt;
- *             &lt;flow:listener ref=&quot;listener2&quot; ref=&quot;*&quot; /&gt;
- *             &lt;flow:listener ref=&quot;listener3&quot; ref=&quot;flow1, flow2, flow3&quot; /&gt;
- *         &lt;flow:execution-listeners /&gt;
- *     &lt;/flow:executor&gt;
+ *      &lt;flow:executor id=&quot;registry&quot; registry-ref=&quot;registry&quot; repository-type=&quot;continuation&quot; &gt;
+ *          &lt;flow:execution-listeners&gt;
+ *              &lt;flow:listener ref=&quot;listener1&quot; /&gt;
+ *              &lt;flow:listener ref=&quot;listener2&quot; ref=&quot;*&quot; /&gt;
+ *              &lt;flow:listener ref=&quot;listener3&quot; ref=&quot;flow1, flow2, flow3&quot; /&gt;
+ *          &lt;flow:execution-listeners /&gt;
+ *      &lt;/flow:executor&gt;
  * </pre>
+ * 
  * <p>
  * Using the <code>registry</code> tag you can configure an
  * {@link org.springframework.webflow.engine.builder.xml.XmlFlowRegistryFactoryBean}
- * to create a registry for use by any number of <code>executor</code>s. The <code>registry</code>
- * tag supports in-line flow definition locations.
- * </p> 
+ * to create a registry for use by any number of <code>executor</code>s. The
+ * <code>registry</code> tag supports in-line flow definition locations.
+ * </p>
+ * 
  * <pre class="code">
- *     &lt;flow:registry id=&quot;registry&quot;&gt;
- *         &lt;flow:location path=&quot;/path/to/flow.xml&quot; /&gt;
- *         &lt;flow:location path=&quot;/path/with/wildcards/*-flow.xml&quot; /&gt;
- *     &lt;/flow:registry&gt;
+ *      &lt;flow:registry id=&quot;registry&quot;&gt;
+ *          &lt;flow:location path=&quot;/path/to/flow.xml&quot; /&gt;
+ *          &lt;flow:location path=&quot;/path/with/wildcards/*-flow.xml&quot; /&gt;
+ *      &lt;/flow:registry&gt;
  * </pre>
  * 
  * @author Ben Hale
  */
-public class FlowNamespaceHandler extends NamespaceHandlerSupport {
+public class WebFlowConfigNamespaceHandler extends NamespaceHandlerSupport {
 	public void init() {
 		registerBeanDefinitionParser("execution-attributes", new ExecutionAttributesBeanDefinitionParser());
 		registerBeanDefinitionParser("execution-listeners", new ExecutionListenersBeanDefinitionParser());

@@ -28,7 +28,7 @@ import org.springframework.webflow.executor.FlowExecutor;
  * 
  * @author Ben Hale
  */
-public class FlowNamespaceHandlerTests extends TestCase {
+public class WebFlowConfigNamespaceHandlerTests extends TestCase {
 
 	private DefaultListableBeanFactory beanFactory;
 
@@ -36,7 +36,7 @@ public class FlowNamespaceHandlerTests extends TestCase {
 		super.setUp();
 		this.beanFactory = new DefaultListableBeanFactory();
 		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(this.beanFactory);
-		reader.loadBeanDefinitions(new ClassPathResource("org/springframework/webflow/config/testFlowNamespace.xml"));
+		reader.loadBeanDefinitions(new ClassPathResource("org/springframework/webflow/config/webflow-config-namespace.xml"));
 	}
 
 	public void testRegistryWithPath() {
