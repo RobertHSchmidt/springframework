@@ -28,8 +28,8 @@ import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 /**
- * {@link BeanDefinitionParser} for the
- * <code>&lt;flow:execution-listeners&gt;</code> tag.
+ * {@link BeanDefinitionParser} for the <code>&lt;execution-listeners&gt;</code>
+ * tag.
  * 
  * @author Ben Hale
  */

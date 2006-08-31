@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
 
 /**
  * {@link BeanDefinitionParser} for the
- * <code>&lt;flow:execution-attributes&gt;</code> tag.
+ * <code>&lt;execution-attributes&gt;</code> tag.
  * 
  * @author Ben Hale
  */
