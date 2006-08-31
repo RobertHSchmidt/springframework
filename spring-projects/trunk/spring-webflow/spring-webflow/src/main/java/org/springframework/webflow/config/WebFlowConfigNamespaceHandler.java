@@ -39,13 +39,13 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * </p>
  * 
  * <pre class="code">
- *      &lt;flow:executor id=&quot;registry&quot; registry-ref=&quot;registry&quot; repository-type=&quot;continuation&quot; &gt;
- *          &lt;flow:execution-listeners&gt;
- *              &lt;flow:listener ref=&quot;listener1&quot; /&gt;
- *              &lt;flow:listener ref=&quot;listener2&quot; ref=&quot;*&quot; /&gt;
- *              &lt;flow:listener ref=&quot;listener3&quot; ref=&quot;flow1, flow2, flow3&quot; /&gt;
- *          &lt;flow:execution-listeners /&gt;
- *      &lt;/flow:executor&gt;
+ *       &lt;flow:executor id=&quot;registry&quot; registry-ref=&quot;registry&quot; repository-type=&quot;continuation&quot; &gt;
+ *           &lt;flow:execution-listeners&gt;
+ *               &lt;flow:listener ref=&quot;listener1&quot; /&gt;
+ *               &lt;flow:listener ref=&quot;listener2&quot; ref=&quot;*&quot; /&gt;
+ *               &lt;flow:listener ref=&quot;listener3&quot; ref=&quot;flow1, flow2, flow3&quot; /&gt;
+ *           &lt;flow:execution-listeners /&gt;
+ *       &lt;/flow:executor&gt;
  * </pre>
  * 
  * <p>
@@ -56,10 +56,10 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * </p>
  * 
  * <pre class="code">
- *      &lt;flow:registry id=&quot;registry&quot;&gt;
- *          &lt;flow:location path=&quot;/path/to/flow.xml&quot; /&gt;
- *          &lt;flow:location path=&quot;/path/with/wildcards/*-flow.xml&quot; /&gt;
- *      &lt;/flow:registry&gt;
+ *       &lt;flow:registry id=&quot;registry&quot;&gt;
+ *           &lt;flow:location path=&quot;/path/to/flow.xml&quot; /&gt;
+ *           &lt;flow:location path=&quot;/path/with/wildcards/*-flow.xml&quot; /&gt;
+ *       &lt;/flow:registry&gt;
  * </pre>
  * 
  * @author Ben Hale
