@@ -308,13 +308,18 @@ public class MessageDispatcher extends ApplicationObjectSupport implements Messa
     protected EndpointInvocationChain getEndpoint(MessageContext messageContext) throws Exception {
         for (Iterator iterator = endpointMappings.iterator(); iterator.hasNext();) {
             EndpointMapping endpointMapping = (EndpointMapping) iterator.next();
-            if (logger.isDebugEnabled()) {
-                logger.debug("Testing endpoint mapping [" + endpointMapping + "]");
-            }
             EndpointInvocationChain endpoint = endpointMapping.getEndpoint(messageContext);
             if (endpoint != null) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Endpoint mapping [" + endpointMapping + "] maps request to endpoint [" +
+                            endpoint.getEndpoint() + "]");
+                }
                 return endpoint;
             }
+            else if (logger.isDebugEnabled()) {
+                logger.debug("Endpoint mapping [" + endpointMapping + "] has no mapping for request");
+            }
+
         }
         return null;
     }
