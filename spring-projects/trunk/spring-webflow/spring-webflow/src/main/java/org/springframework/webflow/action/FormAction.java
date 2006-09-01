@@ -35,7 +35,8 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
 
 /**
  * Multi-action that implements common logic dealing with input forms. This
- * class leverages the Spring MVC data binding code to do binding and validation.
+ * class leverages the Spring MVC data binding code to do binding and
+ * validation.
  * <p>
  * Several action execution methods are provided:
  * <ul>
@@ -44,8 +45,8 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * necessary and caching it in the configured
  * {@link #getFormObjectScope() form object scope}. Also
  * {@link #initBinder(RequestContext, DataBinder) installs} any custom property
- * editors for formatting form object field values. This action method
- * will return the success() event unless an exception is thrown. </li>
+ * editors for formatting form object field values. This action method will
+ * return the success() event unless an exception is thrown. </li>
  * <li> {@link #bindAndValidate(RequestContext)} - Binds all incoming request
  * parameters to the form object and then validates the form object using a
  * {@link #setValidator(Validator) registered validator}. This action method
@@ -98,7 +99,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
  *         &lt;/transition&gt;
  *     &lt;/view-state&gt;
- *                                         
+ *                                            
  *     &lt;action-state id=&quot;executeSearch&quot;&gt;
  *         &lt;action bean=&quot;searchFormAction&quot;/&gt;
  *         &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
@@ -134,59 +135,68 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <p>
  * Note that this action does not provide a <i>referenceData()</i> hook method
  * similar to that of Spring MVC's <code>SimpleFormController</code>. If you
- * wish to expose reference data to populate form drop downs you can
- * define a custom action method in your FormAction subclass that does
- * just that. Simply invoke it as either a chained action as part of the setupForm
- * state, or as a fine grained state definition itself.
+ * wish to expose reference data to populate form drop downs you can define a
+ * custom action method in your FormAction subclass that does just that. Simply
+ * invoke it as either a chained action as part of the setupForm state, or as a
+ * fine grained state definition itself.
  * <p>
  * For example, you might create this method in your subclass:
  * 
  * <pre>
- *     public Event setupReferenceData(RequestContext context) throws Exception {
- *         MutableAttributeMap requestScope = context.getRequestScope();
- *         requestScope.put(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
- *         return success();
- *     }
+ * public Event setupReferenceData(RequestContext context) throws Exception {
+ * 	MutableAttributeMap requestScope = context.getRequestScope();
+ * 	requestScope.put(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
+ * 	return success();
+ * }
  * </pre>
  * 
  * ... and then invoke it like this:
+ * 
  * <pre>
- *     &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *         &lt;entry-actions&gt;
- *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupReferenceData&quot;/&gt;
- *         &lt;/entry-actions&gt;
- *         ...
- *     &lt;/view-state&gt;
+ *        &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *            &lt;entry-actions&gt;
+ *                &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *                &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupReferenceData&quot;/&gt;
+ *            &lt;/entry-actions&gt;
+ *            ...
+ *        &lt;/view-state&gt;
  * </pre>
+ * 
  * <p>
  * When it comes to validating submitted input data using a registered
- * {@link org.springframework.validation.Validator}, this class offers the following options:
+ * {@link org.springframework.validation.Validator}, this class offers the
+ * following options:
  * <ul>
- * <li>If you don't want validation at all, just call {@link #bind(RequestContext)}
- * instead of {@link #bindAndValidate(RequestContext)}.</li>
+ * <li>If you don't want validation at all, just call
+ * {@link #bind(RequestContext)} instead of
+ * {@link #bindAndValidate(RequestContext)}.</li>
  * <li>If you want piecemeal validation, e.g. in a multi-page wizard, call
  * {@link #bindAndValidate(RequestContext)} or {@link #validate(RequestContext)}
  * and specify a "validatorMethod" action execution attribute. This will invoke
  * the identified custom validator method on the validator. The validator method
  * signature should follow the following pattern:
+ * 
  * <pre>
- *     public void ${validateMethodName}(${formObjectClass}, Errors)
+ *        public void ${validateMethodName}(${formObjectClass}, Errors)
  * </pre>
+ * 
  * For instance, having a action definition like this:
+ * 
  * <pre>
- *     &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;&gt;
- *         &lt;attribute name=&quot;validatorMethod&quot; value=&quot;validateSearchCriteria&quot;/&gt;
- *     &lt;/action&gt;
+ *        &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;&gt;
+ *            &lt;attribute name=&quot;validatorMethod&quot; value=&quot;validateSearchCriteria&quot;/&gt;
+ *        &lt;/action&gt;
  * </pre>
- * Would result in the <tt>public void validateSearchCriteria(SearchCriteria, Errors)</tt>
- * method of the registered validator being called if the form object class would
- * be <code>SearchCriteria</code>.</li>
+ * 
+ * Would result in the
+ * <tt>public void validateSearchCriteria(SearchCriteria, Errors)</tt> method
+ * of the registered validator being called if the form object class would be
+ * <code>SearchCriteria</code>.</li>
  * <li>If you want to do full validation using the
  * {@link org.springframework.validation.Validator#validate(java.lang.Object, org.springframework.validation.Errors) validate}
- * method of the registered validator, call {@link #bindAndValidate(RequestContext)}
- * or {@link #validate(RequestContext)} without specifying a "validatorMethod"
- * action execution attribute.</li>
+ * method of the registered validator, call
+ * {@link #bindAndValidate(RequestContext)} or {@link #validate(RequestContext)}
+ * without specifying a "validatorMethod" action execution attribute.</li>
  * </ul>
  * 
  * <p>
@@ -268,7 +278,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * validation.
 	 */
 	public static final String VALIDATOR_METHOD_ATTRIBUTE = "validatorMethod";
-	
+
 	/**
 	 * The name the form object should be exposed under. Default is
 	 * {@link #DEFAULT_FORM_OBJECT_NAME}.
@@ -360,19 +370,20 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * <p>
 	 * If not form object name is set at the moment this method is called, a
 	 * form object name will be automatically generated based on the provided
-	 * form object class using {@link ClassUtils#getShortNameAsProperty(java.lang.Class)}.
+	 * form object class using
+	 * {@link ClassUtils#getShortNameAsProperty(java.lang.Class)}.
 	 */
 	public void setFormObjectClass(Class formObjectClass) {
 		this.formObjectClass = formObjectClass;
-		//generate a default form object name
+		// generate a default form object name
 		if ((formObjectName == null || formObjectName == DEFAULT_FORM_OBJECT_NAME) && formObjectClass != null) {
 			formObjectName = ClassUtils.getShortNameAsProperty(formObjectClass);
 		}
 	}
 
 	/**
-	 * Get the scope in which the form object will be placed.
-	 * Defaults to flow scope.
+	 * Get the scope in which the form object will be placed. Defaults to flow
+	 * scope.
 	 */
 	public ScopeType getFormObjectScope() {
 		return formObjectScope;
@@ -386,16 +397,16 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 
 	/**
-	 * Get the scope in which the Errors object will be placed.
-	 * Defaults to request scope.
+	 * Get the scope in which the Errors object will be placed. Defaults to
+	 * request scope.
 	 */
 	public ScopeType getFormErrorsScope() {
 		return formErrorsScope;
 	}
 
 	/**
-	 * Set the scope in which the Errors object will be placed. 
-	 * Defaults to request scope.
+	 * Set the scope in which the Errors object will be placed. Defaults to
+	 * request scope.
 	 */
 	public void setFormErrorsScope(ScopeType errorsScope) {
 		this.formErrorsScope = errorsScope;
@@ -463,17 +474,18 @@ public class FormAction extends MultiAction implements InitializingBean {
 		}
 	}
 
-	// action execute methods (as defined by the FormActionMethods interface)
+	// action methods
 
 	/**
-	 * Prepares a form object for display in a new form, loading it if necessary.
+	 * Prepares a form object for display in a new form, loading it if
+	 * necessary.
 	 * @param context the action execution context, for accessing and setting
 	 * data in "flow scope" or "request scope"
 	 * @return "success" when binding and validation is successful
 	 * @throws Exception an <b>unrecoverable</b> exception occured, either
 	 * checked or unchecked
 	 */
-	public Event setupForm(RequestContext context) throws Exception {
+	public final Event setupForm(RequestContext context) throws Exception {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing setupForm");
 		}
@@ -491,7 +503,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @throws Exception an <b>unrecoverable</b> exception occured, either
 	 * checked or unchecked
 	 */
-	public Event bindAndValidate(RequestContext context) throws Exception {
+	public final Event bindAndValidate(RequestContext context) throws Exception {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing bind");
 		}
@@ -526,7 +538,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @throws Exception an <b>unrecoverable</b> exception occured, either
 	 * checked or unchecked
 	 */
-	public Event bind(RequestContext context) throws Exception {
+	public final Event bind(RequestContext context) throws Exception {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing bind");
 		}
@@ -545,7 +557,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @throws Exception an <b>unrecoverable</b> exception occured, either
 	 * checked or unchecked
 	 */
-	public Event validate(RequestContext context) throws Exception {
+	public final Event validate(RequestContext context) throws Exception {
 		if (getValidator() != null && validationEnabled(context)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing validate");
@@ -576,7 +588,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @return "success" if the reset action completed successfully
 	 * @throws Exception if an exception occured
 	 */
-	public Event resetForm(RequestContext context) throws Exception {
+	public final Event resetForm(RequestContext context) throws Exception {
 		Object formObject = loadFormObject(context);
 		setFormObject(context, formObject);
 		setFormErrors(context, createFormErrors(context, formObject));
@@ -669,11 +681,13 @@ public class FormAction extends MultiAction implements InitializingBean {
 
 	/**
 	 * Invoke specified validator method on the validator registered with this
-	 * action. The validator method for piecemeal validation should have the following
-	 * signature:
+	 * action. The validator method for piecemeal validation should have the
+	 * following signature:
+	 * 
 	 * <pre>
 	 *     public void ${validateMethodName}(${formObjectClass}, Errors)
 	 * </pre>
+	 * 
 	 * @param validatorMethod the name of the validator method to invoke
 	 * @param formObject the form object
 	 * @param errors possible binding errors
@@ -681,7 +695,8 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 */
 	private void invokeValidatorMethod(String validatorMethod, Object formObject, Errors errors) throws Exception {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Invoking piecemeal validator method '" + validatorMethod + "(" + getFormObjectClass() + ", Errors)'");
+			logger.debug("Invoking piecemeal validator method '" + validatorMethod + "(" + getFormObjectClass()
+					+ ", Errors)'");
 		}
 		getValidateMethodInvoker().invoke(validatorMethod, new Object[] { formObject, errors });
 	}
@@ -694,7 +709,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @return the form object
 	 * @throws Exception when an unrecoverable exception occurs
 	 */
-	protected Object getFormObject(RequestContext context) throws Exception {
+	protected final Object getFormObject(RequestContext context) throws Exception {
 		FormObjectAccessor accessor = getFormObjectAccessor(context);
 		Object formObject = accessor.getFormObject(getFormObjectName(), getFormObjectClass(), getFormObjectScope());
 		if (formObject == null) {
@@ -715,6 +730,18 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 
 	/**
+	 * Convenience method that returns the form object errors for this form
+	 * action. If not found in the configured scope, a new form object errors
+	 * will be created.
+	 * @param context the flow request context
+	 * @return the form errors
+	 * @throws Exception when an unrecoverable exception occurs
+	 */
+	protected final Errors getFormErrors(RequestContext context) throws Exception {
+		return ensureFormErrorsExposed(context, getFormObject(context));
+	}
+	
+	/**
 	 * Put given form object in the configured scope of given context.
 	 */
 	private void setFormObject(RequestContext context, Object formObject) {
@@ -723,18 +750,6 @@ public class FormAction extends MultiAction implements InitializingBean {
 					+ " with name '" + getFormObjectName() + "'");
 		}
 		getFormObjectAccessor(context).setFormObject(formObject, getFormObjectName(), getFormObjectScope());
-	}
-
-	/**
-	 * Convenience method that returns the form object errors for this form
-	 * action. If not found in the configured scope, a new form object errors
-	 * will be created.
-	 * @param context the flow request context
-	 * @return the form errors
-	 * @throws Exception when an unrecoverable exception occurs
-	 */
-	protected Errors getFormErrors(RequestContext context) throws Exception {
-		return ensureFormErrorsExposed(context, getFormObject(context));
 	}
 
 	/**
@@ -814,29 +829,22 @@ public class FormAction extends MultiAction implements InitializingBean {
 	/**
 	 * Load the backing form object that should be updated from incoming event
 	 * parameters and validated. By default, will attempt to instantiate a new
-	 * form object instance transiently in memory if not already present in the
-	 * configured scope by calling {@link #createFormObject(RequestContext)}.
+	 * form object instance of type {@link #getFormObjectClass()} transiently in
+	 * memory.
 	 * <p>
 	 * Subclasses should override if they need to load the form object from a
 	 * specific location or resource such as a database or filesystem.
+	 * <p>
+	 * Subclasses should override if they need to customize how a transient form
+	 * object is assembled during creation.
 	 * @param context the action execution context, for accessing and setting
 	 * data in "flow scope" or "request scope"
 	 * @return the form object
+	 * @throws IllegalStateException if the formObjectClass property is not set and this method
+	 * has not been overridden
 	 * @throws Exception when an unrecoverable exception occurs
 	 */
 	protected Object loadFormObject(RequestContext context) throws Exception {
-		return createFormObject(context);
-	}
-
-	/**
-	 * Create a new form object by instantiating the configured form object
-	 * class.
-	 * @param context the action execution context, for accessing and setting
-	 * data in "flow scope" or "request scope"
-	 * @return the form object
-	 * @throws Exception the form object could not be created
-	 */
-	protected Object createFormObject(RequestContext context) throws Exception {
 		if (formObjectClass == null) {
 			throw new IllegalStateException("Cannot create form object without formObjectClass being set -- "
 					+ "either set formObjectClass or override this method");
