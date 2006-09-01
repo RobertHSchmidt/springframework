@@ -172,7 +172,6 @@ A flag indicating if JMX management statistics should be collected for the flow 
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
-					</xsd:attribute>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -202,7 +201,6 @@ The idref to your flow execution listener.
 ]]>
 				</xsd:documentation>
 			</xsd:annotation>
-		</xsd:attribute>
 		</xsd:attribute>
 		<xsd:attribute name="criteria" type="xsd:string" default="*">
 			<xsd:annotation>
