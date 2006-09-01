@@ -52,7 +52,16 @@ Individual paths such as:
 	</xsd:element>
 
 	<xsd:complexType name="locationType">
-		<xsd:attribute name="path" type="xsd:string" use="required" />
+		<xsd:attribute name="path" type="xsd:string" use="required">
+			<xsd:annotation>
+				<xsd:documentation>
+					<![CDATA[
+The path to the externalized flow definition resource.  May be a path to a single resource or 
+a ANT-style path expression that matches multiple resources.
+]]>
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 
 	<!-- Executor Type -->
@@ -92,17 +101,78 @@ The listeners eligible for observing the lifecycle of executions launched by thi
 						</xsd:element>
 					</xsd:sequence>
 					<xsd:attribute name="repository-type" default="default">
+						<xsd:annotation>
+							<xsd:documentation>
+						<![CDATA[
+The type of execution repository to use.  The repository is responsible for managing flow execution 
+persistence between requests.
+]]>
+							</xsd:documentation>
+						</xsd:annotation>
 						<xsd:simpleType>
 							<xsd:restriction base="xsd:string">
-								<xsd:enumeration value="default" />
-								<xsd:enumeration value="continuation" />
-								<xsd:enumeration value="client" />
-								<xsd:enumeration value="singlekey" />
+								<xsd:enumeration value="default">
+									<xsd:annotation>
+										<xsd:documentation>
+											<![CDATA[
+The default repository type.  Use of this strategy incurs minimal storage overhead but explicity prevents 
+resubmits using the browser back button.
+]]>
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:enumeration>
+								<xsd:enumeration value="continuation">
+									<xsd:annotation>
+										<xsd:documentation>
+											<![CDATA[
+The continuation repository type.  Use this to snapshot flow execution state server-side to support use 
+of the browser back button.
+]]>
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:enumeration>
+								<xsd:enumeration value="client">
+									<xsd:annotation>
+										<xsd:documentation>
+											<![CDATA[
+The client continuation repository type.  Use this to snapshot flow execution state client-side to support use of the browser 
+back button in a stateless server environment.
+]]>
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:enumeration>
+								<xsd:enumeration value="singlekey">
+									<xsd:annotation>
+										<xsd:documentation>
+											<![CDATA[
+The "single key" repository type.  Use of this strategy assigns a single key per flow execution that remains 
+constant throughout the life of the execution.
+]]>
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:enumeration>
 							</xsd:restriction>
-						</xsd:simpleType>
+						</xsd:simpleType>			
 					</xsd:attribute>
-					<xsd:attribute name="registry-ref" type="xsd:string" use="required" />
-					<xsd:attribute name="statistics-enabled" type="xsd:boolean" default="false" />
+					<xsd:attribute name="registry-ref" type="xsd:string" use="required">
+						<xsd:annotation>
+							<xsd:documentation>
+								<![CDATA[
+The idref to the registry this executor will use to locate flow definitions for execution.
+]]>
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="statistics-enabled" type="xsd:boolean" default="false">
+						<xsd:annotation>
+							<xsd:documentation>
+								<![CDATA[
+A flag indicating if JMX management statistics should be collected for the flow execution system.
+]]>
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					</xsd:attribute>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -124,8 +194,26 @@ flow definitions.  The flow definitions this listener applies to may be restrict
 	</xsd:complexType>
 
 	<xsd:complexType name="listenerType">
-		<xsd:attribute name="ref" type="xsd:string" use="required" />
-		<xsd:attribute name="criteria" type="xsd:string" default="*" />
+		<xsd:attribute name="ref" type="xsd:string" use="required">
+			<xsd:annotation>
+				<xsd:documentation>
+					<![CDATA[
+The idref to your flow execution listener.
+]]>
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		</xsd:attribute>
+		<xsd:attribute name="criteria" type="xsd:string" default="*">
+			<xsd:annotation>
+				<xsd:documentation>
+					<![CDATA[
+The flow definitions your listener should apply to, delimited by commas or '*' for "all".
+Example: flow1,flow2,flow3.
+]]>
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 
 	<xsd:complexType name="execution-attributesType">
@@ -134,7 +222,7 @@ flow definitions.  The flow definitions this listener applies to may be restrict
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-A convienence attribute for the 'alwaysRedirectOnPause' attribute.  Will automatically set
+A convienence attribute for the 'alwaysRedirectOnPause' execution attribute.  Will automatically set
 this attribute to true indicating that every time a flow execution pauses a browser redirect 
 should be performed.
 ]]>
@@ -157,9 +245,33 @@ An attribute's type may be specified using the 'type' attribute.
 	<xsd:complexType name="alwaysRedirectOnPauseType" />
 
 	<xsd:complexType name="attributeType">
-		<xsd:attribute name="name" type="xsd:string" use="required" />
-		<xsd:attribute name="type" type="xsd:string" use="optional" />
-		<xsd:attribute name="value" type="xsd:string" use="required" />
+		<xsd:attribute name="name" type="xsd:string" use="required">
+			<xsd:annotation>
+				<xsd:documentation>
+					<![CDATA[
+The name of the attribute.
+]]>
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="type" type="xsd:string" use="optional">
+			<xsd:annotation>
+				<xsd:documentation>
+					<![CDATA[
+The attribute's type, used to perform a from-string type conversion if specified.
+]]>
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="value" type="xsd:string" use="required">
+			<xsd:annotation>
+				<xsd:documentation>
+					<![CDATA[
+The attribute value, subject to type conversion if the 'type' attribute is defined.
+]]>
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 
 </xsd:schema>
