@@ -23,7 +23,7 @@
 
 	<flow:executor id="defaultExecutor" registry-ref="withPathWithWildcards">
 		<flow:execution-attributes>
-			<flow:attribute name="test" type="java.lang.String" value="test" />
+			<flow:attribute name="test" value="test" />
 			<flow:attribute name="test1" type="java.lang.Integer" value="1" />
 		</flow:execution-attributes>
 	</flow:executor>

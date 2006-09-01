@@ -24,6 +24,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
+import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.w3c.dom.Element;
@@ -61,8 +62,14 @@ class ExecutionAttributesBeanDefinitionParser extends AbstractSingleBeanDefiniti
 	private void addAttributes(Map attributeMap, List attributeElements) {
 		for (Iterator i = attributeElements.iterator(); i.hasNext();) {
 			Element attributeElement = (Element)i.next();
-			attributeMap.put(attributeElement.getAttribute(NAME), new TypedStringValue(attributeElement
-					.getAttribute(VALUE), attributeElement.getAttribute(TYPE)));
+			String type = attributeElement.getAttribute(TYPE);
+			Object value;
+			if (StringUtils.hasText(type)) {
+				value = new TypedStringValue(attributeElement.getAttribute(VALUE), type);
+			} else {
+				value = attributeElement.getAttribute(VALUE);
+			}
+			attributeMap.put(attributeElement.getAttribute(NAME), value);
 		}
 	}
 
