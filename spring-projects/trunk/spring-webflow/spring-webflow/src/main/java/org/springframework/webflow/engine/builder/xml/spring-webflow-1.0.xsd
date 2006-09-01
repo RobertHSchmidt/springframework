@@ -1760,7 +1760,15 @@ For example:
 			<xsd:complexContent>
 				<xsd:extension base="identifiedType">
 					<xsd:sequence>
-						<xsd:element ref="flow" maxOccurs="unbounded" />
+						<xsd:element ref="flow" maxOccurs="unbounded">
+							<xsd:annotation>
+								<xsd:documentation>
+									<![CDATA[
+The contained in-line flow definition.
+]]>
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
 					</xsd:sequence>
 				</xsd:extension>
 			</xsd:complexContent>
