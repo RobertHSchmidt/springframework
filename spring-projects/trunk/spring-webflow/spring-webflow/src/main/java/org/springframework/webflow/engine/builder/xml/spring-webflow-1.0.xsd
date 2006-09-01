@@ -33,7 +33,7 @@ The unique identifier of this state; must be unique to this flow.
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-Defines a single action to be executed. An action is a Webflow-specific 
+Defines a single action to be executed. An action is a Web Flow specific 
 command object that executes arbitrary behavior.
 
 The action referenced by this element must implement the org.springframework.webflow.Action 
