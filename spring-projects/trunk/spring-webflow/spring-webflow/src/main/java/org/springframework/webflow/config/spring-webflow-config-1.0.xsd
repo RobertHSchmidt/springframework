@@ -129,7 +129,7 @@ flow definitions.  The flow definitions this listener applies to may be restrict
 		<xsd:attribute name="criteria" type="xsd:string" default="*" />
 	</xsd:complexType>
 
-	<xsd:complexType name="execution-attributeType">
+	<xsd:complexType name="execution-attributesType">
 		<xsd:sequence>
 			<xsd:element name="alwaysRedirectOnPause" type="alwaysRedirectOnPauseType" minOccurs="0">
 				<xsd:annotation>
@@ -155,11 +155,11 @@ An attribute's type may be specified using the 'type' attribute.
 		</xsd:sequence>
 	</xsd:complexType>
 
-	<xsd:complexType name="alwaysRedirectOnPause" />
+	<xsd:complexType name="alwaysRedirectOnPauseType" />
 
 	<xsd:complexType name="attributeType">
 		<xsd:attribute name="name" type="xsd:string" use="required" />
-		<xsd:attribute name="type" type="xsd:string" use="required" />
+		<xsd:attribute name="type" type="xsd:string" use="optional" />
 		<xsd:attribute name="value" type="xsd:string" use="required" />
 	</xsd:complexType>
 
