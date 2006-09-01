@@ -108,7 +108,6 @@ The listeners eligible for observing the lifecycle of executions launched by thi
 		</xsd:complexType>
 	</xsd:element>
 
-
 	<xsd:complexType name="execution-listenersType">
 		<xsd:sequence>
 			<xsd:element name="listener" type="listenerType" maxOccurs="unbounded">
