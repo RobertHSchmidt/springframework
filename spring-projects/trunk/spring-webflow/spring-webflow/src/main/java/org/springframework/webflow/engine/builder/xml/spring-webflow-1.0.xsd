@@ -17,13 +17,46 @@ The unique identifier of this state; must be unique to this flow.
 			</xsd:annotation>
 		</xsd:attribute>
 	</xsd:complexType>
+	
 
 	<xsd:simpleType name="scopeType">
 		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="request" />
-			<xsd:enumeration value="flow" />
-			<xsd:enumeration value="conversation" />
-			<xsd:enumeration value="default" />
+			<xsd:enumeration value="request">
+				<xsd:annotation>
+					<xsd:documentation>
+						<![CDATA[
+Goes out of scope when a single call into this flow completes.
+]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="flow">
+				<xsd:annotation>
+					<xsd:documentation>
+						<![CDATA[
+Goes out of scope when this local flow session ends.
+]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="conversation">
+				<xsd:annotation>
+					<xsd:documentation>
+						<![CDATA[
+Goes out of scope when the overall governing flow execution ends.
+]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="default">
+				<xsd:annotation>
+					<xsd:documentation>
+						<![CDATA[
+The default scope type.
+]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
 		</xsd:restriction>
 	</xsd:simpleType>
 
@@ -144,12 +177,7 @@ use as subflows, referred to as 'inline flows'.
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
-An attribute describing this element.
-
-Attributes are simple strings or typed values that allow you to annotate an element with metadata.
-For example:
-- an element's 'caption' attribute might serve a GUI tooltip or logging statement
-- an Action's 'validatorMethod' attribute might specify a target method to invoke on a validator
+An attribute describing this flow.
 ]]>
 						</xsd:documentation>
 					</xsd:annotation>
@@ -168,13 +196,13 @@ when an execution of this flow starts.
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
-The mapper to map input attributes provided at startup for use by this flow during its execution.
+The mapper that defines how to map input attributes provided to this flow at startup.
 
-For the input mapper the following mapping characteristics apply:
-- The 'source' of each mapping is the flow input map containing input provided by the caller 
-  that launched the flow.
-- The 'target' of each mapping is the flow RequestContext, exposing access to the central 
-  flow data structures such as flowScope.
+The following mapping characteristics apply:
+- The 'source' of each mapping is a map containing all the input provided by the caller 
+  that launched this flow.
+- The 'target' of each mapping is this flow execution's RequestContext, exposing access to
+data structures such as 'flowScope'.
 
 For example:
 
@@ -182,7 +210,7 @@ For example:
     <mapping source="clientInputAttribute" target="flowScope.myFlowAttribute"/>
 </input-mapper>
 
-... maps the value of "clientInputAttribute" to the "myFlowAttribute" in flow scope.
+... maps the value of "clientInputAttribute" to the "myFlowAttribute" in this flow's scope.
 ]]>
 						</xsd:documentation>
 					</xsd:annotation>
@@ -200,7 +228,7 @@ Defines flow startup logic to execute. This logic will always execute when this 
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
-Identifies the start state of this flow.  The start state is the point where flow execution begins.
+Identifies the starting point of this flow.  The start state is the point where flow execution begins.
 ]]>
 						</xsd:documentation>
 					</xsd:annotation>
@@ -323,12 +351,13 @@ Defines flow ending logic to be executed. This logic will always execute when th
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
-The mapper that will map flow output attributes.
+The mapper that will map flow output attributes when this flow ends.  Output attributes act 
+as flow return values.
 
 For the output mapper the following mapping characteristics apply:
-- The 'source' of each mapping is the flow RequestContext, exposing access to the central 
-  flow data structures such as flowScope.
-- The 'target' of each mapping is the flow output map that will contain output exposed to the 
+- The 'source' of each mapping is this flow execution's RequestContext, exposing access to 
+  internal data structures such as 'flowScope'.
+- The 'target' of each mapping is the flow output map that will contain the output returned to the 
   caller that terminated this flow.
   
 For example:
@@ -337,8 +366,8 @@ For example:
     <mapping source="flowScope.myFlowAttribute" target="clientOutputAttribute"/>
 </output-mapper>
 
-... maps the value of "myFlowAttribute" in flow scope to "clientOutputAttribute" in the
-flow output map.
+... maps the value of "myFlowAttribute" in flow scope to "clientOutputAttribute" in this
+flow's output map.
 ]]>
 						</xsd:documentation>
 					</xsd:annotation>
@@ -665,12 +694,7 @@ execution of this flow definition. Exception handlers may be attached at the sta
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
-An attribute describing this element.
-
-Attributes are simple strings or typed values that allow you to annotate an element with metadata.
-For example:
-- an element's 'caption' attribute might serve a GUI tooltip or logging statement
-- an Action's 'validatorMethod' attribute might specify a target method to invoke on a validator
+An attribute describing this action.
 ]]>
 						</xsd:documentation>
 					</xsd:annotation>
@@ -790,12 +814,7 @@ under the attribute name 'orderConfirmation'.
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
-An attribute describing this element.
-
-Attributes are simple strings or typed values that allow you to annotate an element with metadata.
-For example:
-- an element's 'caption' attribute might serve a GUI tooltip or logging statement
-- an Action's 'validatorMethod' attribute might specify a target method to invoke on a validator
+An attribute describing this bean action.
 ]]>
 						</xsd:documentation>
 					</xsd:annotation>
@@ -1076,12 +1095,7 @@ The default value if not specified is request scope.
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
-An attribute describing this element.
-
-Attributes are simple strings or typed values that allow you to annotate an element with metadata.
-For example:
-- an element's 'caption' attribute might serve a GUI tooltip or logging statement
-- an Action's 'validatorMethod' attribute might specify a target method to invoke on a validator
+An attribute describing this transition.
 ]]>
 						</xsd:documentation>
 					</xsd:annotation>
@@ -1151,12 +1165,7 @@ The state id must exist in this document.
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-An attribute describing this element.
-
-Attributes are simple strings or typed values that allow you to annotate an element with metadata.
-For example:
-- an element's 'caption' attribute might serve a GUI tooltip or logging statement
-- an Action's 'validatorMethod' attribute might specify a target method to invoke on a validator
+An attribute describing this state.
 ]]>
 								</xsd:documentation>
 							</xsd:annotation>
@@ -1299,12 +1308,7 @@ the client. Use a null view when another state is expected to generate the respo
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-An attribute describing this element.
-
-Attributes are simple strings or typed values that allow you to annotate an element with metadata.
-For example:
-- an element's 'caption' attribute might serve a GUI tooltip or logging statement
-- an Action's 'validatorMethod' attribute might specify a target method to invoke on a validator
+An attribute describing this state.
 ]]>
 								</xsd:documentation>
 							</xsd:annotation>
@@ -1413,12 +1417,7 @@ or an expression to be evaluated at runtime against the request context
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-An attribute describing this element.
-
-Attributes are simple strings or typed values that allow you to annotate an element with metadata.
-For example:
-- an element's 'caption' attribute might serve a GUI tooltip or logging statement
-- an Action's 'validatorMethod' attribute might specify a target method to invoke on a validator
+An attribute describing this state.
 ]]>
 								</xsd:documentation>
 							</xsd:annotation>
