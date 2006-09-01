@@ -156,6 +156,41 @@ public class FlowExecutorImpl implements FlowExecutor {
 		this.inputMapper = inputMapper;
 	}
 
+	/**
+	 * Exposes the configured flow definition locator to subclasses and
+	 * privileged accessors.
+	 * @return the flow definition locator
+	 */
+	protected FlowDefinitionLocator getDefinitionLocator() {
+		return definitionLocator;
+	}
+
+	/**
+	 * Exposes the configured execution factory to subclasses and privileged
+	 * accessors.
+	 * @return the execution factory
+	 */
+	protected FlowExecutionFactory getExecutionFactory() {
+		return executionFactory;
+	}
+
+	/**
+	 * Exposes the execution repository to subclasses and privileged accessors.
+	 * @return the execution repository
+	 */
+	protected FlowExecutionRepository getExecutionRepository() {
+		return executionRepository;
+	}
+
+	/**
+	 * Exposes the configured input mapper to subclasses and privileged
+	 * accessors.
+	 * @return the input mapper
+	 */
+	protected AttributeMapper getInputMapper() {
+		return inputMapper;
+	}
+
 	public ResponseInstruction launch(String flowId, ExternalContext context) throws FlowException {
 		// expose external context as a thread-bound service
 		ExternalContextHolder.setExternalContext(context);
