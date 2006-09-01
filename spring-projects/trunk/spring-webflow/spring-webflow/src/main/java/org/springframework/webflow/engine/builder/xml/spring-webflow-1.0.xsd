@@ -508,7 +508,7 @@ evaluates to null an error will be reported.
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
-The value of this attribute.
+The value of this attribute, defined within an element for supporting longer free-text values.
 ]]>
 						</xsd:documentation>
 					</xsd:annotation>
@@ -628,12 +628,7 @@ Only required if the bean name differs from the variable name.
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-An attribute describing this element.
-
-Attributes are simple strings or typed values that allow you to annotate an element with metadata.
-For example:
-- an element's 'caption' attribute might serve a GUI tooltip or logging statement
-- an Action's 'validatorMethod' attribute might specify a target method to invoke on a validator
+An attribute describing this state.
 ]]>
 								</xsd:documentation>
 							</xsd:annotation>
@@ -642,7 +637,7 @@ For example:
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-Defines state entry logic to be executed. This logic will always execute when the state is entered.
+Defines state entry logic to be executed. This logic will always execute when this state is entered.
 -]]>
 								</xsd:documentation>
 							</xsd:annotation>
@@ -665,7 +660,7 @@ actions to execute before executing.
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-Defines state exit logic to be executed. This logic will always execute when the state is exited 
+Defines state exit logic to be executed. This logic will always execute when this state is exited 
 regardless of what transition is executed.
 ]]>
 								</xsd:documentation>
@@ -1174,7 +1169,7 @@ An attribute describing this state.
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-Defines state entry logic to be executed. This logic will always execute when the state is entered.
+Defines state entry logic to be executed. This logic will always execute when this state is entered.
 -]]>
 								</xsd:documentation>
 							</xsd:annotation>
@@ -1183,8 +1178,8 @@ Defines state entry logic to be executed. This logic will always execute when th
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-Defines view-state render logic to be executed. This logic will always execute when the state makes 
-a view selection capable of rendering a response in the current request.
+Defines view-state render logic to be executed. This logic will always execute when this state is asked 
+to make a view selection capable of rendering a response in the current request.
 ]]>
 								</xsd:documentation>
 							</xsd:annotation>
@@ -1317,7 +1312,7 @@ An attribute describing this state.
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-Defines state entry logic to be executed. This logic will always execute when the state is entered.
+Defines state entry logic to be executed. This logic will always execute when this state is entered.
 -]]>
 								</xsd:documentation>
 							</xsd:annotation>
@@ -1341,7 +1336,7 @@ The form is:
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-Defines state exit logic to be executed. This logic will always execute when the state is exited 
+Defines state exit logic to be executed. This logic will always execute when this state is exited 
 regardless of what transition is executed.
 ]]>
 								</xsd:documentation>
@@ -1435,30 +1430,28 @@ Defines state entry logic to be executed. This logic will always execute when th
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-Defines an attribute mapper to map attributes to and from the subflow.
+Defines an attribute mapper to map attributes to and/or from the subflow.  Input attributes 
+may be exposed to the subflow when it is started by using an <input-mapper/>.  Output attributes may be mapped
+from the subflow when it ends by using an <output-mapper/>.
 
-Note that in the case of an attribute-mapper, the input-mapper and output-mapper
-elements have slightly different characteristics than when used to define
-a flow input or output mapper.
+For the input mapper the following mapping characteristics apply:
+- The 'source' of each mapping is the RequestContext, exposing access to internal 
+data structures of this flow such as flowScope.
+- The 'target' of each input mapping is the subflow's input map.
 
-For the subflow input mapper the following mapping characteristics apply:
-- The 'source' of each input mapping is the RequestContext, exposing access to the central 
-  parent flow data structures such as flowScope.
-- The 'target' of each input mapping is the subflow input map.
-
-For the subflow output mapper the following mapping characteristics apply:
-- The 'source' of each output mapping is the subflow output map.
-- The 'target' of each output mapping is the RequestContext, exposing access to the central
-  flow data structures of the resuming parent flow, e.g. flowScope.
+For the output mapper the following mapping characteristics apply:
+- The 'source' of each output mapping is the subflow's output map.
+- The 'target' of each output mapping is the RequestContext, exposing access to 
+  internal data structures of this flow such as flowScope.
 
 For example:
 
 <attribute-mapper>
 	<input-mapper>
-		<mapping source="flowScope.myFlowAttribute" target="clientInputAttribute"/>
+		<mapping source="flowScope.myFlowAttribute" target="subflowInputAttribute"/>
 	</input-mapper>
 	<output-mapper>
-		<mapping source="clientOutputAttribute" target="flowScope.myFlowAttribute"/>
+		<mapping source="subflowOutputAttribute" target="flowScope.myFlowAttribute"/>
 	</output-mapper>
 </attribute-mapper>
 ]]>
@@ -1482,7 +1475,7 @@ actions to execute before executing.
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-Defines state exit logic to be executed. This logic will always execute when the state is exited 
+Defines state exit logic to be executed. This logic will always execute when this state is exited 
 regardless of what transition is executed.
 ]]>
 								</xsd:documentation>
@@ -1520,21 +1513,20 @@ The id of the flow to be spawned as a subflow when this subflow state is entered
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
-The mapper to map input attributes provided at startup for use by this flow during its execution.
+The mapper to map input attributes to the subflow when it is started.
 
-For the input mapper the following mapping characteristics apply:
-- The 'source' of each mapping is the flow input map containing input provided by the caller 
-  that launched the flow.
-- The 'target' of each mapping is the flow RequestContext, exposing access to the central 
-  flow data structures such as flowScope.
+The following mapping characteristics apply:
+- The 'source' of each mapping is the RequestContext, exposing access to internal 
+data structures of this flow such as flowScope.
+- The 'target' of each input mapping is the subflow's input map.
 
 For example:
 
 <input-mapper>
-    <mapping source="clientInputAttribute" target="flowScope.myFlowAttribute"/>
+	<mapping source="flowScope.myFlowAttribute" target="subflowInputAttribute"/>
 </input-mapper>
 
-... maps the value of "clientInputAttribute" to the "myFlowAttribute" in flow scope.
+... maps the value of "flowScope.myFlowAttribute" to the "subflowInputAttribute" in the subflow input map.
 ]]>
 						</xsd:documentation>
 					</xsd:annotation>
@@ -1543,18 +1535,17 @@ For example:
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
-The mapper that will map flow output attributes.
+The mapper to map output attributes from the subflow when it ends.
 
 For the output mapper the following mapping characteristics apply:
-- The 'source' of each mapping is the flow RequestContext, exposing access to the central 
-  flow data structures such as flowScope.
-- The 'target' of each mapping is the flow output map that will contain output exposed to the 
-  caller that terminated this flow.
+- The 'source' of each output mapping is the subflow's output map.
+- The 'target' of each output mapping is the RequestContext, exposing access to 
+  internal data structures of this flow such as flowScope.
   
 For example:
 
 <output-mapper>
-    <mapping source="flowScope.myFlowAttribute" target="clientOutputAttribute"/>
+	<mapping source="subflowOutputAttribute" target="flowScope.myFlowAttribute"/>
 </output-mapper>
 
 ... maps the value of "myFlowAttribute" in flow scope to "clientOutputAttribute" in the
@@ -1589,12 +1580,7 @@ when you need full control of attribute mapping behavior for this subflow state.
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-An attribute describing this element.
-
-Attributes are simple strings or typed values that allow you to annotate an element with metadata.
-For example:
-- an element's 'caption' attribute might serve a GUI tooltip or logging statement
-- an Action's 'validatorMethod' attribute might specify a target method to invoke on a validator
+An attribute describing this state.
 ]]>
 								</xsd:documentation>
 							</xsd:annotation>
@@ -1603,7 +1589,7 @@ For example:
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-Defines state entry logic to be executed. This logic will always execute when the state is entered.
+Defines state entry logic to be executed. This logic will always execute when this state is entered.
 -]]>
 								</xsd:documentation>
 							</xsd:annotation>
@@ -1615,9 +1601,9 @@ Defines state entry logic to be executed. This logic will always execute when th
 The mapper that will map flow output attributes.
 
 For the output mapper the following mapping characteristics apply:
-- The 'source' of each mapping is the flow RequestContext, exposing access to the central 
-  flow data structures such as flowScope.
-- The 'target' of each mapping is the flow output map that will contain output exposed to the 
+- The 'source' of each mapping is the flow RequestContext, exposing access to internal 
+  data structures of this flow such as flowScope.
+- The 'target' of each mapping is the flow output map that will contain the output exposed to the 
   caller that terminated this flow.
   
 For example:
@@ -1757,6 +1743,11 @@ The relative resource path to a bean definition file to import.  Imported bean d
 are referenceable by this flow and any of its inline flows.
 
 The resource path is relative to this document.
+
+For example:
+    <import resource="orderitem-flow-beans.xml"/>
+       
+... would look for 'orderitem-flow-beans.xml' in the same directory as this document.
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
