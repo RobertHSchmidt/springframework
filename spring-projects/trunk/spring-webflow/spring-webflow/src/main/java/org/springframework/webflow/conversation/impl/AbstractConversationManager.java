@@ -162,6 +162,7 @@ public abstract class AbstractConversationManager implements ConversationManager
 		public void unlock() {
 			try {
 				AbstractConversationManager.this.getLock(conversationId).unlock();
+				// only called on valid unlock
 				AbstractConversationManager.this.onUnlock(conversationId);
 			}
 			catch (NoSuchConversationException e) {
@@ -171,7 +172,7 @@ public abstract class AbstractConversationManager implements ConversationManager
 
 		public void end() {
 			try {
-				// release lock if necessary
+				// release lock if necessary from this thread
 				AbstractConversationManager.this.getLock(conversationId).unlock();
 			}
 			catch (Exception e) {
