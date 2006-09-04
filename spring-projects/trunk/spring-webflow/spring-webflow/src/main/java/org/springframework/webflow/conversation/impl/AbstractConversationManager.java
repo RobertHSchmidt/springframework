@@ -94,12 +94,6 @@ public abstract class AbstractConversationManager implements ConversationManager
 
 	private void end(ConversationId conversationId) {
 		assertValid(conversationId);
-		ConversationLock lock = getConversationEntry(conversationId).getLock();
-		try {
-			lock.unlock();
-		}
-		catch (Exception e) {
-		}
 		getConversationMap().remove(conversationId);
 		onEnd(conversationId);
 	}
@@ -176,6 +170,12 @@ public abstract class AbstractConversationManager implements ConversationManager
 		}
 
 		public void end() {
+			try {
+				// release lock if necessary
+				AbstractConversationManager.this.getLock(conversationId).unlock();
+			}
+			catch (Exception e) {
+			}
 			AbstractConversationManager.this.end(conversationId);
 		}
 
