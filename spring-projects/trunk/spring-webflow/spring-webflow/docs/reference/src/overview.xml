@@ -120,10 +120,10 @@
 		</para>
 		<mediaobject>
 			<imageobject role="fo">
-				<imagedata fileref="images/swf-layers.png" format="PNG" align="center"/>
+				<imagedata fileref="images/architecture-layer-diagram.png" format="PNG" align="center"/>
 			</imageobject>
 			<imageobject role="html">
-				<imagedata fileref="images/swf-layers.png" format="PNG" align="center"/>
+				<imagedata fileref="images/architecture-layer-diagram.png" format="PNG" align="center"/>
 			</imageobject>
 			<caption>
 				<para>Spring Web Flow Layer Diagram</para>
