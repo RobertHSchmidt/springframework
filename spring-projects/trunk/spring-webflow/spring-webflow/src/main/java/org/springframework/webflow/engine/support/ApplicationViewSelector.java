@@ -95,7 +95,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	}
 
 	public boolean isEntrySelectionRenderable(RequestContext context) {
-		return !redirect;
+		return !shouldRedirect(context);
 	}
 
 	public ViewSelection makeEntrySelection(RequestContext context) {
@@ -142,7 +142,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 		return ((Boolean)context.getFlowExecutionContext().getAttributes().getBoolean(
 				ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE, Boolean.FALSE)).booleanValue();
 	}
-	
+
 	public String toString() {
 		return new ToStringCreator(this).append("viewName", viewName).append("redirect", redirect).toString();
 	}
