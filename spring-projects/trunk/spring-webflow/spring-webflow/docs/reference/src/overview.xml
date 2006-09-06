@@ -267,7 +267,9 @@
 		<sect2 id="layer-execution-engine">
 			<title>The Execution Engine Layer</title>
    	        <para>
-   	        	Description
+				Defines an implementation of the flow execution core API, forming the basis 
+				of the state machine or "engine" implementation.  More volatile, as it contains
+				specific implementations of stable execution abstractions.
    	        </para>
    	        <para>
    	        	Depends On: Execution Core
@@ -293,12 +295,12 @@
             			<row>
             				<entry>Engine Implementation</entry>
             				<entry>
-            				
+								The implementation of the flow execution engine based on a finite state machine.
             				</entry>
             				<entry>
-            					org.springframework.webflow.engine
-            					org.springframework.webflow.engine.support
-            					org.springframework.webflow.engine.impl
+            					engine,
+            					engine.support,
+            					engine.impl
             				</entry> 
             				<entry>None</entry>
             				<entry>None</entry>
@@ -311,8 +313,8 @@
 								in externalized resources such as XML files.	
             				</entry>
             				<entry>
-            					org.springframework.webflow.engine.builder
-            					org.springframework.webflow.engine.builder.xml
+            					engine.builder,
+            					engine.builder.xml
             				</entry>
             				<entry>
             					<literal>FlowBuilder</literal>
@@ -331,7 +333,7 @@
 		<sect2 id="layer-execution-test">
 			<title>The Test Layer</title>
 			<para>
-				Description
+				Support for unit and system testing flow executions.
 			</para>
 			<para>
 				Depends On: Execution Engine, Execution Core
@@ -359,7 +361,9 @@
             				<entry>
 								Support for unit testing implementations such as Actions in isolation.		
             				</entry>
-            				<entry>org.springframework.webflow.test.engine.**</entry> 
+            				<entry>
+            					test.engine
+            				</entry> 
             				<entry>None</entry>
             				<entry>JUnit 3.8.1</entry>
         	            </row>
@@ -368,7 +372,9 @@
             				<entry>
        							Support for testing Flow Executions out-of-container.
             				</entry>
-            				<entry>org.springframework.webflow.test.execution.**</entry>
+            				<entry>
+            					test.execution
+            				</entry>
             				<entry>None</entry>
             				<entry>
             					Spring Beans 1.2.7,
@@ -382,7 +388,8 @@
 		<sect2 id="layer-executor">
 			<title>The Executor Layer</title>
 			<para>
-				Description
+				Stable higher-layer for driving and coordinating the execution of flow definitions.
+				This layer is decoupled from the more-volatile engine implementation.
 			</para>
 			<para>
 				Depends On: Execution Core
@@ -406,10 +413,12 @@
 					<tbody>
 						<row>
 							<entry>Core</entry>
-            				<entry></entry>
             				<entry>
-            					org.springframework.webflow.executor
-            					org.springframework.webflow.executor.support
+            					Stable, generic flow executor abstractions and support.
+            				</entry>
+            				<entry>
+            					executor,
+            					executor.support
             				</entry>
             				<entry>
             					<literal>FlowExecutor</literal>
@@ -418,8 +427,10 @@
         	            </row>
 						<row>
 							<entry>Spring MVC</entry>
-            				<entry></entry>
-            				<entry>org.springframework.webflow.executor.mvc</entry>
+            				<entry>
+            					The integration between Spring Web Flow and the Spring MVC framework.
+            				</entry>
+            				<entry>executor.mvc</entry>
             				<entry>None</entry>
             				<entry>
             					Core,
@@ -429,8 +440,12 @@
         	            </row>
 						<row>
 							<entry>Struts</entry>
-            				<entry></entry>
-            				<entry>org.springframework.webflow.executor.struts</entry>
+            				<entry>
+            					The integration between Spring Web Flow the Struts Classic framework.
+            				</entry>
+            				<entry>
+            					executor.struts
+            				</entry>
             				<entry>None</entry>
             				<entry>
             					Core,
@@ -439,8 +454,12 @@
         	            </row>
 						<row>
 							<entry>Java Server Faces (JSF)</entry>
-            				<entry></entry>
-            				<entry>org.springframework.webflow.executor.jsf</entry>
+            				<entry>
+            					The integration between Spring Web Flow the Java Server Faces framework.
+            				</entry>
+            				<entry>
+            					executor.jsf
+            				</entry>
             				<entry>None</entry>
             				<entry>
             					Core,
@@ -452,9 +471,9 @@
     		</table>
 		</sect2>
 		<sect2 id="layer-config">
-			<title>The Config Layer</title>
+			<title>The Config Layer (Top Layer)</title>
 			<para>
-				Description
+				The top-most layer for configuring the overall Spring Web Flow system.
 			</para>
 			<para>
 				Depends On: Executor, Execution Engine, Execution Core
@@ -478,7 +497,9 @@
 					<tbody>
 						<row>
 							<entry>Spring Configuration Support</entry>
-            				<entry></entry>
+            				<entry>
+								For configuring Spring Web Flow using Spring 1.x and 2.x.            				
+            				</entry>
             				<entry>
             					org.springframework.webflow.config
             				</entry>
