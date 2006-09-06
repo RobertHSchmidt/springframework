@@ -6,9 +6,9 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
-import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.ApplicationView;
+import org.springframework.webflow.test.engine.MockFlowExecutionContext;
 import org.springframework.webflow.test.engine.MockRequestContext;
 
 public class ApplicationViewSelectorTests extends TestCase {
@@ -32,7 +32,7 @@ public class ApplicationViewSelectorTests extends TestCase {
 		assertEquals("bar", view.getModel().get("foo2"));
 		assertEquals("bar", view.getModel().get("foo3"));
 	}
-	
+
 	public void testMakeNullSelection() {
 		ApplicationViewSelector selector = new ApplicationViewSelector(new StaticExpression(null));
 		MockRequestContext context = new MockRequestContext();
@@ -45,5 +45,26 @@ public class ApplicationViewSelectorTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		ViewSelection selection = selector.makeEntrySelection(context);
 		assertTrue(selection == ViewSelection.NULL_VIEW);
+	}
+
+	public void testIsEntrySelectionRenderable() {
+		ApplicationViewSelector selector = new ApplicationViewSelector(new StaticExpression(null));
+		MockRequestContext context = new MockRequestContext();
+		assertTrue(selector.isEntrySelectionRenderable(context));
+	}
+
+	public void testIsEntrySelectionRenderableRedirect() {
+		ApplicationViewSelector selector = new ApplicationViewSelector(new StaticExpression(null), true);
+		MockRequestContext context = new MockRequestContext();
+		assertFalse(selector.isEntrySelectionRenderable(context));
+	}
+
+	public void testIsEntrySelectionRenderableAlwaysRedirectOnPause() {
+		ApplicationViewSelector selector = new ApplicationViewSelector(new StaticExpression(null));
+		MockRequestContext requestContext = new MockRequestContext();
+		MockFlowExecutionContext flowExecutionContext = new MockFlowExecutionContext();
+		flowExecutionContext.putAttribute("alwaysRedirectOnPause", Boolean.TRUE);
+		requestContext.setFlowExecutionContext(flowExecutionContext);
+		assertFalse(selector.isEntrySelectionRenderable(requestContext));
 	}
 }
