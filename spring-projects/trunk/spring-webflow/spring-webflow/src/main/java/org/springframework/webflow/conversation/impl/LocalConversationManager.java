@@ -17,10 +17,12 @@ package org.springframework.webflow.conversation.impl;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.springframework.core.JdkVersion;
 import org.springframework.webflow.context.SharedAttributeMap;
 import org.springframework.webflow.context.support.ExternalContextHolder;
 import org.springframework.webflow.conversation.ConversationAccessException;
@@ -43,12 +45,24 @@ public class LocalConversationManager extends AbstractConversationManager implem
 	/**
 	 * The local conversation data store.
 	 */
-	private Map conversations = new HashMap();
+	private Map conversations;
 
 	/**
 	 * The maximum number of active conversations allowed in a session.
 	 */
 	private int maxConversations;
+
+	private static boolean utilConcurrentPresent;
+
+	static {
+		try {
+			Class.forName("EDU.oswego.cs.dl.util.concurrent.ReentrantLock");
+			utilConcurrentPresent = true;
+		}
+		catch (ClassNotFoundException ex) {
+			utilConcurrentPresent = false;
+		}
+	}
 
 	/**
 	 * Creates a new local conversation service.
@@ -60,10 +74,11 @@ public class LocalConversationManager extends AbstractConversationManager implem
 	/**
 	 * Creates a new local conversation service.
 	 * @param maxConversations the maximum number of conversations that can be
-	 * active at once within this session.
+	 * active at once within any session.
 	 */
 	public LocalConversationManager(int maxConversations) {
 		this.maxConversations = maxConversations;
+		this.conversations = createConversations();
 	}
 
 	protected Map getConversationMap() {
@@ -71,7 +86,7 @@ public class LocalConversationManager extends AbstractConversationManager implem
 	}
 
 	// overridden hooks
-	
+
 	protected void onBegin(ConversationId conversationId) {
 		getUserContext().add(conversationId);
 		// end the oldest conversation if them maximum number of
@@ -94,15 +109,26 @@ public class LocalConversationManager extends AbstractConversationManager implem
 
 	// called by an async monitor thread
 	void expire(Collection conversationIds) throws ConversationException {
-		// synchronize?
 		for (Iterator it = conversationIds.iterator(); it.hasNext();) {
 			ConversationId id = (ConversationId)it.next();
 			getConversationMap().remove(id);
 		}
 	}
-	
+
 	// helpers
-	
+
+	private Map createConversations() {
+		if (JdkVersion.getMajorJavaVersion() >= JdkVersion.JAVA_15) {
+			return new java.util.concurrent.ConcurrentHashMap();
+		}
+		else if (utilConcurrentPresent) {
+			return new EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap();
+		}
+		else {
+			return Collections.synchronizedMap(new HashMap());
+		}
+	}
+
 	private UserConversationContext getUserContext() {
 		SharedAttributeMap session = ExternalContextHolder.getExternalContext().getSessionMap();
 		synchronized (session.getMutex()) {
