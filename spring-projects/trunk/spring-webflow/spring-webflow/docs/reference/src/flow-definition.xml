@@ -20,25 +20,25 @@
 		</para>
     </sect1>
     <sect1 id="flow">
-    	<title>Flow</title>
+    	<title>FlowDefinition</title>
     	<para>
-    		A flow is defined by a single instance of <literal>org.springframework.webflow.Flow</literal>.
+    		A flow definition is a instance of <literal>org.springframework.webflow.definition.FlowDefinition</literal>.
     		This is the central domain artifact representing the definition of a task.
 		</para>
 		<para>
-    		A flow consists of a set of one or more states, where each state defines a step in
-    		the flow that, when entered, executes a behavior.  What behavior is executed is 
+    		A flow definition consists of a set of one or more states, where each state defines a step in
+    		the flow that when entered executes a behavior.  What behavior is executed is 
     		a function of the state's type and configuration.  The outcome of a state's
     		execution, called an event, is used by the flow to drive a state transition.
     	</para>
     	<para>
-		Exactly one of a flow's states is the <literal>startState</literal> 
-		that defines the starting point of the flow. Optionally, a flow can have one or more end states
-		defining the ending points of the flow.
+			Exactly one of a flow's states is the <literal>startState</literal> 
+			that defines the starting point of the flow. Optionally, a flow can have one or more end states
+			defining the ending points of the flow.
     	</para>
     	<para>
-    		The properties of a <literal>org.springframework.webflow.Flow</literal> are summarized 
-    		below:
+    		The supported <literal>FlowDefinition</literal> implementation in Spring Web Flow is <literal>org.springframework.webflow.engine.Flow</literal>.  Its
+    		configurable properties are summarized below:
     	</para>
         <table frame="all">
             <title>Flow properties</title>
@@ -58,7 +58,7 @@
                <tbody>
                    <row>
                        <entry>id</entry>
-                       <entry>The identifier of the flow, typically unique to all other flows of the application.</entry>
+                       <entry>The identifier of the flow definition, typically unique to all other flows of the application.</entry>
 				       <entry>
 				           <emphasis>1</emphasis>
 				       </entry>
@@ -159,23 +159,30 @@
           </tgroup>
         </table>
         <para>
-            Below is a high level example of how these Flow properties can be configured in XML form
+            Below is a high level example of how these properties can be configured in XML form
             or directly in Java code.
         </para>
         <sect2 id="flow-xml">
-        	<title>XML-based flow template</title>
+        	<title>XML-based Flow template</title>
        	    <programlisting>
-    &lt;flow start-state="startingPoint"&gt;
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+
         &lt;attribute .../&gt;
 
         &lt;var .../&gt;
 
         &lt;input-mapper .../&gt;
-                
+
         &lt;start-actions&gt;
             ...
         &lt;/start-actions&gt;
-        
+
+        &lt;start-state idref="yourStartingStateId"/&gt;
+                        
         &lt;-- your state definitions go here --&gt;
 
         &lt;end-actions&gt;
@@ -193,11 +200,12 @@
         &lt;inline-flow&gt;
             ...
         &lt;/inline-flow&gt;
+        
     &lt;/flow&gt;
          	</programlisting>
         </sect2>
         <sect2 id="flow-java">
-           <title>Java flow API example</title>
+           <title>Java Flow API example</title>
            <programlisting>
     Flow flow = new Flow("id");
     flow.getAttributeMap().put("name", "value");
@@ -213,17 +221,19 @@
     flow.addInlineFlow(...);
           </programlisting>
           <para>
-              A Flow definition is typically built by a FlowBuilder rather than assembled 
+              A Flow is typically built by a FlowBuilder rather than assembled 
               by hand.  The flow building subsystem is contained within the 
-              <literal>org.springframework.webflow.builder</literal> package.
+              <literal>org.springframework.webflow.engine.builder</literal> package.
+              The XML Flow Builder and <literal>spring-webflow.xsd</literal> schema is located
+              within the <literal>org.springframework.webflow.engine.builder.xml</literal> package.
           </para>
         </sect2>
     </sect1>
     <sect1 id="state">
-    	<title>State</title>
+    	<title>StateDefinition</title>
     	<para>
-    	    A state defines the behavior for a step of a flow.
-    	    The base class for all Flow state types is <literal>org.springframework.webflow.State</literal>.
+    	    A <literal>StateDefinition</literal> defines the behavior for a step of a <literal>FlowDefinition</literal>.
+    	    The base implementation class for all Flow state types is <literal>org.springframework.webflow.engine.State</literal>.
     	    This abstract class defines common properties applicable to all state types, which include:
     	</para>
     	<table>
@@ -333,21 +343,21 @@
         	<title>XML-based state template</title>
        	    <programlisting>
     &lt;flow start-state="stateId"&gt;
-        &lt;some-state id="stateId"&gt;
-            &lt;attribute .../&gt;
+        &lt;xxx-state id="stateId"&gt;
+            &lt;attribute name="..." value="..."/&gt;
             
             &lt;entry-actions&gt;
                 ...
             &lt;/entry-actions&gt;
 
-            &lt;transition .../&gt;
+            &lt;transition on="..." to="..."/&gt;
             
             &lt;exit-actions&gt;
     	        ...
             &lt;/exit-actions&gt;
 
             &lt;exception-handler ../&gt;
-        &lt;/some-state&gt;
+        &lt;/xxx-state&gt;
     &lt;/flow&gt;
          	</programlisting>
         </sect2>
@@ -363,13 +373,13 @@
           </programlisting>
         </sect2>
         <para>
-            A State definition is typically built by a <literal>FlowArtifactFactory</literal>, used by 
+            A State is typically constructed by a <literal>FlowArtifactFactory</literal>, used by 
             a <literal>FlowBuilder</literal> during flow assembly.  The flow building subsystem is contained within the 
-            <literal>org.springframework.webflow.builder</literal> package.
+            <literal>org.springframework.webflow.engine.builder</literal> package.
         </para>
     </sect1>
     <sect1 id="transition">
-    	<title>Transition</title>
+    	<title>TransitionDefinition</title>
     	<para>
     	    A transition takes a flow from one state to another, defining a <emphasis>path</emphasis> through the flow.
     	</para>
@@ -398,7 +408,8 @@
 			</caption>
 		</mediaobject>
 		<para>
-			A transition is defined by an instance of <literal>org.springframework.webflow.Transition</literal>.
+			The transition definition implmentation is defined by an instance of
+			<literal>org.springframework.webflow.engine.Transition</literal>.
 			Its properties are summarized below:
 		</para>
     	<table>
@@ -448,8 +459,8 @@
            	   </tbody>
 				<tbody>
            			<row>
-           				<entry>targetStateResolver</entry>
-						<entry>The strategy that calculates the target state of the transition.</entry>
+           				<entry>targetStateId</entry>
+						<entry>The identifier of the target state of the transition.</entry>
 					    <entry>
 							<emphasis>1</emphasis>
 						</entry>
@@ -474,7 +485,7 @@
         <sect2 id="transition-java">
         	<title>Transition Java API example</title>
        	    <programlisting>
-    Transition transition = new Transition(new StaticTargetStateResolver("targetState"));
+    Transition transition = new Transition("targetState");
     transition.getAttributeMap().put("name", "value");
     transition.setMatchingCriteria(new EventIdTransitionCriteria("event"));
     transition.setExecutionCriteria(...);
@@ -597,7 +608,7 @@
     	<title>Concrete state types</title>
     	<para>
     		Spring Web Flow has five (5) built-in concrete state types, all contained within the 
-    		<literal>org.springframework.webflow</literal> package.  These states execute common 
+    		<literal>org.springframework.webflow.engine</literal> package.  These states execute common 
     		controller behaviors including:
     		<orderedlist>
     			<listitem><para>allowing the user to participate in a flow (ViewState)</para></listitem>
@@ -633,7 +644,7 @@
     			<orderedlist>
     				<listitem>
     					<para>
-	    					The entered view state makes a <literal>org.springframework.webflow.ViewSelection</literal> 
+	    					The entered view state makes a <literal>org.springframework.webflow.execution.ViewSelection</literal> 
 		   	 				that selects a <emphasis>logical</emphasis> response to issue with the data necessary 
    			 				to issue it.
    		 				</para>
@@ -666,7 +677,7 @@
     		    response suitable for the environment in which the flow is executing.
     		</para>
     	    <para>
-    	    	The properties of a <literal>org.springframework.webflow.ViewState</literal> are summarized below:
+    	    	The properties of a <literal>org.springframework.webflow.engine.ViewState</literal> are summarized below:
     	    </para>
 	    	<table>
     	        <title>ViewState properties</title>
@@ -696,7 +707,7 @@
 	          </tgroup>
     	    </table>
     	    <para>
-    	    	The <literal>org.springframework.webflow.ViewSelection</literal> base class is abstract, 
+    	    	The <literal>org.springframework.webflow.execution.ViewSelection</literal> base class is abstract, 
     	    	acting as a marker indicating a response should be issued to the client interacting 
     	    	with the flow.  Concrete subtypes exist for each of the supported response types.
     	    	These response types are summarized below:
@@ -758,7 +769,7 @@
     			<title>ViewSelector</title>
 	    		<para>
     				The creational strategy responsible for making a <literal>ViewSelection</literal> when an <literal>ViewState</literal> is entered
-    				is <literal>org.springframework.webflow.ViewSelector</literal>.  This provides a plugin-point for customizing <emphasis>how</emphasis>
+    				is <literal>org.springframework.webflow.engine.ViewSelector</literal>.  This provides a plugin-point for customizing <emphasis>how</emphasis>
     				a response instruction is constructed.
     			</para>
     			<para>
@@ -997,7 +1008,7 @@
     		    to your service layer operations.
     		</para>
     	    <para>
-    	    	The properties of a <literal>org.springframework.webflow.ActionState</literal> are summarized below:
+    	    	The properties of a <literal>org.springframework.webflow.engine.ActionState</literal> are summarized below:
     	    </para>
 	    	<table>
     	        <title>ActionState properties</title>
@@ -1033,7 +1044,7 @@
     			    or more actions and responding to their result to drive a state transition.  There are
     			    also other points within the lifecycle of a flow where a chain of actions can be executed.
     			    At all of these points the only requirement is that these actions implement the central
-    			    <literal>org.springframework.webflow.Action</literal> interface.
+    			    <literal>org.springframework.webflow.execution.Action</literal> interface.
 	    		</para>
 	    		<table>
     	   			<title>Points in a Flow where an Action can be executed</title>
@@ -1085,7 +1096,7 @@
     			<title>Action attributes</title>
     			<para>
     			    An <literal>Action</literal> may be annotated with attributes by wrapping the Action 
-    			    in a decorator, an instance of <literal>org.springframework.webflow.AnnotatedAction</literal>.
+    			    in a decorator, an instance of <literal>org.springframework.webflow.engine.AnnotatedAction</literal>.
     			    These attributes may provide descriptive characteristics, or may be used to affect
     			    the action's execution in a specific usage context.
 	    		</para>
@@ -1174,9 +1185,9 @@
     			    transition to the <literal>displayResults</literal> state</emphasis>."
     			</para>
     			<para>
-    			    The association between the <literal>searchAction</literal> id and an 
+    			    The binding between the <literal>searchAction</literal> id and an 
     			    <literal>Action</literal> implementation is made by the XmlFlowBuilder at 
-    			    Flow configuration time using a service locator, typically a
+    			    Flow configuration time by querying a service locator, typically a
     			    Spring BeanFactory.  For example:
     	    	<programlisting>
     &lt;beans&gt;
@@ -1332,8 +1343,11 @@
     &lt;flow start-state="displaySearchCriteria"&gt;
         ...
         &lt;action-state id="executeSearch"&gt;
-            &lt;action bean="searchService" method="executeSearch(${flowScope.criteria})"
-                       resultName="results"/&gt;
+            &lt;bean-action bean="searchService" method="executeSearch"&gt;
+                &lt;method-arguments&gt;
+                    &lt;argument expression="${flowScope.criteria}"/&gt;
+                &lt;/method-arguments&gt;
+                &lt;method-result name="results"/&gt;
             &lt;transition on="success" to="displayResults"/&gt;
         &lt;/action-state&gt;
         ...
@@ -1413,7 +1427,11 @@
     &lt;flow start-state="shippingRequired"&gt;
     
         &lt;action-state id="shippingRequired"&gt;
-            &lt;action bean="shippingService" method="isShippingRequired(${flowScope.purchase))"/&gt;
+            &lt;bean-action bean="shippingService" method="isShippingRequired"&gt;
+				&lt;method-arguments&gt;
+				    &lt;argument expression="${flowScope.purchase}"/&gt;
+				&lt;/method-arguments&gt;                
+            &lt;/bean-action&gt;
             &lt;transition on="yes" to="enterShippingDetails"/&gt;
             &lt;transition on="no" to="placeOrder"/&gt;
         &lt;/action-state&gt;
@@ -1478,13 +1496,17 @@
     	    	<para>
     	    	    The following example constructs an <literal>DecisionState</literal> from
     	    	    XML that executes a action that invokes a method on an application object that 
-    	    	    returns a java.lang.Enum:
+    	    	    returns a <literal>java.lang.Enum</literal>:
     	    	</para>
     	    	<programlisting>
     &lt;flow start-state="shippingRequired"&gt;
     
         &lt;action-state id="shippingRequired"&gt;
-            &lt;action bean="shippingService" method="calculateShippingMethod(${flowScope.order})"/&gt;
+            &lt;bean-action bean="shippingService" method="calculateShippingMethod"/&gt;
+            	&lt;method-arguments&gt;
+            	    &lt;argument expression="${flowScope.order}"/&gt;
+            	&lt;/method-arguments&gt;
+            &lt;/bean-action&gt;
             &lt;transition on="BASIC" to="enterBasicShippingDetails"/&gt;
             &lt;transition on="EXPRESS" to="enterExpressShippingDetails"/&gt;
             &lt;transition on="NONE" to="placeOrder"/>
@@ -1514,7 +1536,7 @@
     			</orderedlist>
     		</para>
     	    <para>
-    	    	The properties of a <literal>org.springframework.webflow.DecisionState</literal> are summarized below:
+    	    	The properties of a <literal>org.springframework.webflow.engine.DecisionState</literal> are summarized below:
     	    </para>
 	    	<table>
     	        <title>DecisionState properties</title>
@@ -1592,7 +1614,7 @@
     			<orderedlist>
     				<listitem>
     					<para>
-    						A Flow is an instance of <literal>org.springframework.webflow.Flow</literal>.
+    						A Flow is an instance of <literal>org.springframework.webflow.engine.Flow</literal>.
     					</para>
     				</listitem>
     				<listitem>
@@ -1615,7 +1637,7 @@
     		   they are potentially long-running, as they can span more than one request into the server.
     		</para>
     	    <para>
-    	    	The properties of a <literal>org.springframework.webflow.SubflowState</literal> are summarized below:
+    	    	The properties of a <literal>org.springframework.webflow.engine.SubflowState</literal> are summarized below:
     	    </para>
 	    	<table>
     	        <title>SubflowState properties</title>
