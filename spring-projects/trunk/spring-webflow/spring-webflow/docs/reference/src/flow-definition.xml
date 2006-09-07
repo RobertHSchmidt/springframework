@@ -1189,9 +1189,8 @@
     			</para>
     			<para>
     			    The binding between the <literal>searchAction</literal> id and an 
-    			    <literal>Action</literal> implementation is made by the XmlFlowBuilder at 
-    			    Flow configuration time by querying a service locator, typically a
-    			    Spring BeanFactory.  For example:
+    			    <literal>Action</literal> implementation is made by Flow build time
+    			    by querying a service locator, typically a Spring BeanFactory.  For example:
     	    	<programlisting>
     &lt;beans&gt;
         &lt;bean id="searchAction" class="example.webflow.SearchAction"/&gt;
@@ -1431,9 +1430,9 @@
     
         &lt;action-state id="shippingRequired"&gt;
             &lt;bean-action bean="shippingService" method="isShippingRequired"&gt;
-				&lt;method-arguments&gt;
-				    &lt;argument expression="${flowScope.purchase}"/&gt;
-				&lt;/method-arguments&gt;                
+                &lt;method-arguments&gt;
+                    &lt;argument expression="${flowScope.purchase}"/&gt;
+                &lt;/method-arguments&gt;                
             &lt;/bean-action&gt;
             &lt;transition on="yes" to="enterShippingDetails"/&gt;
             &lt;transition on="no" to="placeOrder"/&gt;
