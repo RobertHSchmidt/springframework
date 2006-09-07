@@ -796,7 +796,7 @@
 									Returns an ApplicationView referencing a logical <literal>viewName</literal> to render an containing a
 									<literal>modelMap</literal> with the application data needed by the rendering process
 									(by default, this map contains the union of the attributes in flow and request scope).
-									Supports setting a <literal>redirectType</literal> enum that triggers
+									Supports setting a <literal>redirect</literal> flag that triggers
 									a browser redirect to the selected view. The default implementation.
 								</entry>
 	        	   	        </row>
