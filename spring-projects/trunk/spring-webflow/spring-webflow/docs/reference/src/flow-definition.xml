@@ -538,11 +538,11 @@
     	    	<programlisting>
     &lt;flow start-state="state1"&gt;
     
-        &lt;some-state id="state1"&gt;
+        &lt;xxx-state id="state1"&gt;
             &lt;transition on="localEvent1" to="state2"/&gt;
         &lt;/some-state&gt;
 
-        &lt;some-state id="state2"&gt;
+        &lt;xxx-state id="state2"&gt;
             &lt;transition on="localEvent1" to="state1"/&gt;
         &lt;/some-state&gt;
 		        
@@ -590,10 +590,10 @@
     	    	<programlisting>
     &lt;flow start-state="state1"&gt;
     
-        &lt;some-state id="state1"&gt;
+        &lt;xxx-state id="state1"&gt;
             &lt;transition on="event1" to="state2"/&gt;
             &lt;transition on-exception="example.MyBusinessException" to="state3"/&gt;
-        &lt;/some-state&gt;
+        &lt;/xxx-state&gt;
 
         ...
         
