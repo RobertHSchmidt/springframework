@@ -342,9 +342,15 @@
         <sect2 id="state-xml">
         	<title>XML-based state template</title>
        	    <programlisting>
-    &lt;flow start-state="stateId"&gt;
-    
-        &lt;xxx-state id="stateId"&gt;
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+
+        &lt;start-state idref="myStateId"/&gt;
+            
+        &lt;xxx-state id="myStateId"&gt;
             &lt;attribute name="..." value="..."/&gt;
             
             &lt;entry-actions&gt;
@@ -536,7 +542,13 @@
     	    	    global transitions inherited from the flow level.
     	    	</para>
     	    	<programlisting>
-    &lt;flow start-state="state1"&gt;
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+
+        &lt;start-state idref="state1"/&gt;
     
         &lt;xxx-state id="state1"&gt;
             &lt;transition on="localEvent1" to="state2"/&gt;
@@ -588,8 +600,14 @@
     	    	    The following example shows a transition that is applied as an state exception handler:
     	    	</para>
     	    	<programlisting>
-    &lt;flow start-state="state1"&gt;
-    
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+
+        &lt;start-state idref="state1"/&gt;
+            
         &lt;xxx-state id="state1"&gt;
             &lt;transition on="event1" to="state2"/&gt;
             &lt;transition on-exception="example.MyBusinessException" to="state3"/&gt;
@@ -845,13 +863,21 @@
     	    	    two possible user input events (submit and cancel) in different ways:
     	    	</para>
     	    	<programlisting>
-    &lt;flow start-state="displaySearchForm"&gt;
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+
+        &lt;start-state idref="displaySearchForm"/&gt;
+        
         &lt;view-state id="displaySearchForm" view="searchForm"&gt;
             &lt;transition on="submit" to="processFormSubmission"/&gt;
             &lt;transition on="cancel" to="processCancellation"/&gt;
         &lt;/view-state&gt;
         
         ...
+        
     &lt;/flow&gt;
     			</programlisting>
     			<para>
@@ -888,12 +914,20 @@
     	    	    <literal>yourList</literal> view for display.
     	    	</para>
     	    	<programlisting>
-    &lt;flow start-state="displayList"&gt;
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+
+        &lt;start-state idref="displayList"/&gt;
+        
         &lt;view-state id="displayList" view="redirect:yourList"&gt;
             &lt;transition on="add" to="addListItem"/&gt;
         &lt;/view-state&gt;
         
         ...
+        
     &lt;/flow&gt;
     			</programlisting>
 			</sect3>
@@ -928,13 +962,22 @@
     	    	    null view selection when entered, which causes no additional response to be issued.
     	    	</para>
     	    	<programlisting>
-    &lt;flow start-state="displayPdf"&gt;
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+
+        &lt;start-state idref="displayPdf"/&gt;
+
         &lt;view-state id="displayPdf"&gt;
             &lt;entry-actions&gt;
                 &lt;action bean="pdfWriter" method="write"/&gt;
             &lt;/entry-actions&gt;
         &lt;/view-state&gt;
+
         ...
+        
     &lt;/flow&gt;
     			</programlisting>
 			</sect3>
@@ -960,7 +1003,14 @@
     	    	    by the capabilities of the <literal>view-state</literal> construct.  See below:
     	    	</para>
     	    	<programlisting>
-    &lt;flow start-state="displayForm"&gt;
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+
+        &lt;start-state idref="displayForm"/&gt;
+        
         &lt;view-state id="displayForm" view="form"&gt;
             &lt;entry-actions&gt;
                 &lt;action bean="formAction" method="setupForm"/&gt;
@@ -970,7 +1020,9 @@
                 &lt;action bean="formAction" method="bindAndValidate"/&gt;
             &lt;/transition&gt;
         &lt;/view-state&gt;
+
         ...
+        
     &lt;/flow&gt;
     			</programlisting>
     			<para>
@@ -1174,13 +1226,21 @@
     	    	    The following example constructs an <literal>ActionState</literal> definition from
     	    	    XML that executes a single action when entered and then responds to its result:
     	    	<programlisting>
-    &lt;flow start-state="displaySearchCriteria"&gt;
-        ...
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+
+        &lt;start-state idref="executeSearch"/&gt;
+        
         &lt;action-state id="executeSearch"&gt;
             &lt;action bean="searchAction"/&gt;
             &lt;transition on="success" to="displayResults"/&gt;
         &lt;/action-state&gt;
+
         ...
+        
     &lt;/flow&gt;
     			</programlisting>
     			    This state definition reads "<emphasis>when the <literal>executeSearch</literal>
@@ -1251,13 +1311,21 @@
 			executes a single <emphasis>action method</emphasis> on a <literal>org.springframework.webflow.MultiAction</literal>
 			and then responds to its result:
     	    	<programlisting>
-    &lt;flow start-state="displaySearchCriteria"&gt;
-        ...
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+        
+        &lt;start-state idref="executeSearch"/&gt;
+        
         &lt;action-state id="executeSearch"&gt;
             &lt;action bean="searchFlowAction" method="executeSearch"/&gt;
             &lt;transition on="success" to="displayResults"/&gt;
         &lt;/action-state&gt;
+
         ...
+        
     &lt;/flow&gt;
     			</programlisting>
     			    This state definition reads "<emphasis>when the <literal>executeSearch</literal>
@@ -1342,8 +1410,14 @@
     	    	    The next example constructs an <literal>ActionState</literal> definition from XML that 
 					executes a single method on a Plain Old Java Object (POJO) and then responds to the result:
     	    	<programlisting>
-    &lt;flow start-state="displaySearchCriteria"&gt;
-        ...
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+
+        &lt;start-state idref="executeSearch"/&gt;
+
         &lt;action-state id="executeSearch"&gt;
             &lt;bean-action bean="searchService" method="executeSearch"&gt;
                 &lt;method-arguments&gt;
@@ -1352,7 +1426,9 @@
                 &lt;method-result name="results"/&gt;
             &lt;transition on="success" to="displayResults"/&gt;
         &lt;/action-state&gt;
+
         ...
+        
     &lt;/flow&gt;
     			</programlisting>
     			    This state definition reads "<emphasis>when the <literal>executeSearch</literal>
@@ -1426,8 +1502,14 @@
     	    	    XML that executes a action whose execution result forms the basis for the transition decision:
     	    	</para>
     	    	<programlisting>
-    &lt;flow start-state="shippingRequired"&gt;
-    
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+        
+        ...
+        
         &lt;action-state id="shippingRequired"&gt;
             &lt;bean-action bean="shippingService" method="isShippingRequired"&gt;
                 &lt;method-arguments&gt;
@@ -1437,7 +1519,9 @@
             &lt;transition on="yes" to="enterShippingDetails"/&gt;
             &lt;transition on="no" to="placeOrder"/&gt;
         &lt;/action-state&gt;
+
         ...
+        
     &lt;/flow&gt;
     			</programlisting>
     			<para>
@@ -1501,8 +1585,14 @@
     	    	    returns a <literal>java.lang.Enum</literal>:
     	    	</para>
     	    	<programlisting>
-    &lt;flow start-state="shippingRequired"&gt;
-    
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+        
+        ...
+        
         &lt;action-state id="shippingRequired"&gt;
             &lt;bean-action bean="shippingService" method="calculateShippingMethod"/&gt;
             	&lt;method-arguments&gt;
@@ -1513,7 +1603,9 @@
             &lt;transition on="EXPRESS" to="enterExpressShippingDetails"/&gt;
             &lt;transition on="NONE" to="placeOrder"/>
         &lt;/action-state&gt;
+
         ...
+        
     &lt;/flow&gt;
     			</programlisting>
     			<para>
@@ -1577,12 +1669,19 @@
     	    	    to execute:
     	    	</para>
     	    	<programlisting>
-    &lt;flow start-state="shippingRequired"&gt;
-    
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+        ...
+        
         &lt;decision-state id="shippingRequired"&gt;
             &lt;if test="${flowScope.order.needsShipping}" then="enterShippingDetails" else="placeOrder"/&gt;
         &lt;/decision-state&gt;
+        
         ...
+        
     &lt;/flow&gt;
     			</programlisting>
     			<para>
@@ -1740,10 +1839,14 @@
     	    	    XML that spawns a shipping subflow:
     	    	</para>
     	    	<programlisting>
-    &lt;flow start-state="enterOrderInformation"&gt;
-    
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+
         ...
-		        
+        
         &lt;subflow-state id="enterShippingDetails" flow="shipping"&gt;
             &lt;attribute-mapper&gt;
                 &lt;input-mapper&gt;
@@ -1802,12 +1905,16 @@
     	    <sect3 id="flowInputMapping">
     	    	<title>Flow input mapping - input contract</title>
     	    	<programlisting>
-    &lt;flow start-state="displayShippingForm"&gt;
-    
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+
         &lt;input-mapper&gt;
             &lt;mapping source="shipping" target="flowScope.shipping"/&gt;
         &lt;/input-mapper&gt;
-		        
+        
         ...
         
     &lt;/flow&gt;
@@ -1921,8 +2028,14 @@
     	    	    redirect response to another flow:
     	    	</para>
     	    	<programlisting>
-    &lt;flow start-state="enterOrderInformation"&gt;
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+        
         ...
+        
         &lt;end-state id="finish" view="flowRedirect:searchFlow"/&gt;
         
     &lt;/flow&gt;
@@ -1940,8 +2053,14 @@
     	    	    redirect response to an external URL:
     	    	</para>
     	    	<programlisting>
-    &lt;flow start-state="enterOrderInformation"&gt;
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+        
         ...
+        
         &lt;end-state id="finish" view="externalRedirect:/orders/${flowScope.order.id}"/&gt;
         
     &lt;/flow&gt;
@@ -1964,8 +2083,14 @@
     	    	    XML that terminates a shipping subflow:
     	    	</para>
     	    	<programlisting>
-    &lt;flow start-state="enterShippingDetails"&gt;
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+        
         ...
+        
         &lt;end-state id="finish"&gt;
             &lt;output-mapper&gt;
                 &lt;mapping source="flowScope.shipping" target="shipping"/&gt;
@@ -2006,10 +2131,14 @@
     	    <sect3 id="subflowStateXml-output">
     	    	<title>SubflowState XML - mapping an output attribute</title>
     	    	<programlisting>
-    &lt;flow start-state="enterOrderInformation"&gt;
-    
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+        
         ...
-		        
+        
         &lt;subflow-state id="enterShippingDetails" flow="shipping"&gt;
             &lt;attribute-mapper&gt;
                 &lt;output-mapper&gt;
