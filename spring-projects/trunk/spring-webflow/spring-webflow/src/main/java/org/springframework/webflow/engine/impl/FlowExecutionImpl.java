@@ -167,6 +167,9 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	public boolean isActive() {
+		if (!isStateRestored()) {
+			return false;
+		}
 		return !flowSessions.isEmpty();
 	}
 
@@ -468,7 +471,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		out.writeObject(flowSessions);
 	}
 
-	public boolean isStateRestored() {
+	boolean isStateRestored() {
 		return flow != null;
 	}
 
