@@ -544,7 +544,7 @@
 
         &lt;xxx-state id="state2"&gt;
             &lt;transition on="localEvent1" to="state1"/&gt;
-        &lt;/some-state&gt;
+        &lt;/xxx-state&gt;
 		        
         &lt;global-transitions&gt;
             &lt;transition on="globalEvent1" to="state1"/&gt;
