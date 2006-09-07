@@ -343,6 +343,7 @@
         	<title>XML-based state template</title>
        	    <programlisting>
     &lt;flow start-state="stateId"&gt;
+    
         &lt;xxx-state id="stateId"&gt;
             &lt;attribute name="..." value="..."/&gt;
             
@@ -351,13 +352,15 @@
             &lt;/entry-actions&gt;
 
             &lt;transition on="..." to="..."/&gt;
+            &lt;transition on-exception="..." to="..."/&gt;
             
             &lt;exit-actions&gt;
     	        ...
             &lt;/exit-actions&gt;
 
-            &lt;exception-handler ../&gt;
+            &lt;exception-handler .../&gt;
         &lt;/xxx-state&gt;
+        
     &lt;/flow&gt;
          	</programlisting>
         </sect2>
