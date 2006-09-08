@@ -37,8 +37,10 @@
 			<param-name>contextConfigLocation</param-name>
 			<param-value>
 				/WEB-INF/phonebook-servlet-config.xml
+				/WEB-INF/phonebook-webflow-config.xml
+				<!-- Comment out to use alternative Java-based Flow Builders
 				classpath:org/springframework/webflow/samples/phonebook/webflow/phonebook-webflow-config.xml
-				<!-- Alternative Java-based flows: classpath:org/springframework/webflow/samples/phonebook/webflow/phonebook-webflow-config.xml -->
+				-->
 			</param-value>
 		</init-param>
 	</servlet>
