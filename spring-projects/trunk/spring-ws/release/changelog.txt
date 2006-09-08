@@ -33,6 +33,9 @@ Package org.springframework.ws.endpoint.mapping
 * moved EndpointMappings to seperate package
 * removed SOAP-specific roles functionality
 
+Package org.springframework.ws.pox
+* Added Plain Old XML support (#SWS-50)
+
 Package org.springframework.ws.soap
 * improved content-type handling (#SWS-32)
 * moved SOAP 1.1 specfics to separate package and interfaces

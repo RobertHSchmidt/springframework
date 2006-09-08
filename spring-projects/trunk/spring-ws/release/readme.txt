@@ -1,4 +1,4 @@
-SPRING WEB SERVICES 1.0-M1 (June 2006)
+SPRING WEB SERVICES 1.0-M2 (September 2006)
 -------------------------------
 http://www.springframework.org/spring-ws
 http://forum.springframework.org/forumdisplay.php?f=39
@@ -14,17 +14,19 @@ XMLBeans, Castor, JiBX and XStream; and a Web service framework that resembles S
 
 2. RELEASE INFO
 
-Spring-WS requires J2SE 1.4 and J2EE 1.4 (for now).  These are not very strict requirements: J2SE 1.5 is required for building.
+Spring-WS requires J2SE 1.4 and J2EE 1.4.  J2SE 1.5 is required for building.
 
 Release contents:
 
 "." contains Spring-WS distribution units (jars and source zip archives), readme, and copyright
 "docs" contains the Spring-WS reference manual and API Javadocs
-"projects" contains all buildable projects, including sample applications
-"projects/spring-oxm" contains buildable Spring O/X Mapping sources, an internal library used by Spring-WS
-"projects/spring-ws-core" contains buildable Spring-WS core sources
-"projects/spring-ws-security" contains buildable Spring-WS security sources
-"projects/spring-ws-samples" contains buildable Spring-WS sample application sources
+"lib" contains required dependencies. Optional, runtime and testing dependencies are not included.
+"modules" contains buildable modules
+"modules/spring-oxm" contains buildable Spring O/X Mapping sources
+"modules/spring-ws-core" contains buildable Spring-WS core sources
+"modules/spring-ws-security" contains buildable Spring-WS security sources
+"modules/spring-xml" contains buildable Spring XML utility sources, an internal library used by Spring-WS
+"samples" contains buildable Spring-WS sample application sources
 
 See the readme.txt within the above directories for additional information.
 
@@ -35,33 +37,39 @@ Spring-WS is released under the terms of the Apache Software License (see licens
 The following distinct jar files are included in the distribution. This list specifies the respective contents and
 third-party dependencies. Libraries in [brackets] are optional, i.e. just necessary for certain functionality.
 
-* spring-ws-core-1.0-m1.jar
-- Contents: The Spring-WS Core
-- Dependencies: Commons Logging, spring-beans, spring-core, spring-context
-                [Log4J, spring-oxm, spring-web, spring-webmvc, SAAJ, JDOM, StAX, Servlet API, JAF, Axiom, DOM4J, XOM]
-
-* spring-ws-security-1.0-m1.jar
-- Contents: Spring-WS Security implementation that integrates with Acegi
-- Dependencies: Commons Logging, spring-beans, spring-core, spring-context, spring-ws-core
-                [Log4J, xmlsdig, xmlsec, XWS-security, Acegi]
-
-* spring-oxm-1.0-m1.jar
+* spring-oxm-1.0-m2.jar
 - Contents: The Spring Object/XML Mapping framework
 - Dependencies: Commons Logging, spring-beans, spring-core
                 [Log4J, JAXB, Castor, XMLBeans, StAX, JiBX, XStream]
 
-For an exact list of Spring-WS project dependencies see the respective ivy.xml files.
+* spring-ws-core-1.0-m2.jar
+- Contents: The Spring-WS Core
+- Dependencies: Commons Logging, spring-beans, spring-core, spring-context
+                [Log4J, spring-oxm, spring-web, spring-webmvc, SAAJ, JDOM, StAX, Servlet API, JAF, Axiom, DOM4J, XOM]
+
+* spring-ws-security-1.0-m2.jar
+- Contents: Spring-WS Security integration
+- Dependencies: Commons Logging, spring-beans, spring-core, spring-context, spring-ws-core
+                [Log4J, xmlsdig, xmlsec, XWS-security, Acegi]
+
+* spring-xml-1.0-m2.jar
+- Contents: Spring XML utility framework
+- Dependencies: Commons Logging, spring-beans, spring-core
+                [StAX, Xalan, Jaxen]
+
+For an exact list of Spring-WS project dependencies see the respective pom.xml files.
 
 4. WHERE TO START
 
-This distribution contains documentation and a sample application illustrating the features of Spring-WS.
+This distribution contains documentation and two sample applications illustrating the features of Spring-WS.
 
 A great way to get started is to review and run the sample applications, supplementing with reference manual
-material as needed. To build deployable .war files for all samples, simply access the "build-spring-ws" directory and
-execute the "dist" target.
+material as needed. You will require Maven 2, which can be downloaded from http://maven.apache.org/, for building
+Spring-WS. To build deployable .war files for all samples, simply access the "samples" directory and
+execute the "mvn package" command.
 
 More information on deploying Spring-WS sample applications can be found at:
-	projects/spring-ws-samples/readme.txt
+	samples/readme.txt
 
 5. ADDITIONAL RESOURCES
 

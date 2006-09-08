@@ -19,18 +19,14 @@ The Airline sample is a normal web application that connects to a database of yo
 2. Adjust the jdbc.properties in src/main/resources/org/springframework/ws/samples/airline/dao
    to reflect your database connection settings
 3. Adjust the hibernate.properties in src/main/resources/org/springframework/ws/samples/airline/dao/hibernate
-4. run 'ant war' and deploy the war file generated in target/artifacts/war
+4. run "mvn package" and deploy the war file generated in target/artifacts/war; or run "mvn jetty:run" to run the sample 
+   using the Jetty Web container built into Maven 2.
 
-Note that both MySQL and PostgreSQL drivers are linked in using Maven so you don't have
-include these in your server if you're using either one of those databases.
+Note that both MySQL drivers are linked in using Maven so you don't have include these in your server if you're using
+this database.
 
-3. RUNNING THE CLIENTS
+3. THE CLIENTS
 
-The client directory contains two sample clients: one in C# and one using SAAJ. Both clients are executable: just run
-the executable file and (if the war file is deployed at the default http://localhost:8080/airline) the
-web service will be called, causing a flight reservations to be created.
-
-If the web service is NOT running at the default URL, you can append the URL argument to the exectuable file
-(e.g. 'airline.exe http://localhost:8080/airline-webservice/Airline').
-
+The client directory contains two sample clients: one in C# and one using SAAJ. More instructions are provided in the 
+readme files in the directories.
 
