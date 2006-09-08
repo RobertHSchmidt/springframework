@@ -31,19 +31,24 @@ import org.w3c.dom.Element;
  */
 class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
+	// elements and attributes
+
 	private static final String EXECUTION_ATTRIBUTES_ELEMENT = "execution-attributes";
 
-	private static final String EXECUTION_ATTRIBUTES_PROPERTY = "executionAttributes";
+	private static final String EXECUTION_LISTENERS_ELEMENT = "execution-listeners";
 
-	private static final String EXECUTION_LISTENER_LOADER = "executionListenerLoader";
-
-	private static final String EXECUTION_LISTENERS = "execution-listeners";
-
-	private static final String REGISTRY_REF = "registry-ref";
+	private static final String REGISTRY_REF_ATTRIBUTE = "registry-ref";
 
 	private static final String REPOSITORY_TYPE_ATTRIBUTE = "repository-type";
 
+	// properties
+	
+	private static final String EXECUTION_ATTRIBUTES_PROPERTY = "executionAttributes";
+
+	private static final String EXECUTION_LISTENER_LOADER_PROPERTY = "executionListenerLoader";
+
 	private static final String REPOSITORY_TYPE_PROPERTY = "repositoryType";
+
 
 	protected BeanDefinition parseInternal(Element element, ParserContext parserContext) {
 		BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder
@@ -61,9 +66,9 @@ class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 	 * @return The name of the registry
 	 */
 	private String getRegistryRef(Element element) {
-		String registryRef = element.getAttribute(REGISTRY_REF);
+		String registryRef = element.getAttribute(REGISTRY_REF_ATTRIBUTE);
 		if (!StringUtils.hasText(registryRef)) {
-			throw new IllegalArgumentException("The registry-ref of the <swf:executor> element must have a value");
+			throw new IllegalArgumentException("The 'registry-ref' attribute of the 'executor' element must have a value");
 		}
 		return registryRef;
 	}
@@ -89,9 +94,9 @@ class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	private void addExecutionListenerLoader(Element element, ParserContext parserContext,
 			BeanDefinitionBuilder definitionBuilder) {
-		Element listenersElement = DomUtils.getChildElementByTagName(element, EXECUTION_LISTENERS);
+		Element listenersElement = DomUtils.getChildElementByTagName(element, EXECUTION_LISTENERS_ELEMENT);
 		if (listenersElement != null) {
-			definitionBuilder.addPropertyValue(EXECUTION_LISTENER_LOADER, parserContext.getDelegate()
+			definitionBuilder.addPropertyValue(EXECUTION_LISTENER_LOADER_PROPERTY, parserContext.getDelegate()
 					.parseCustomElement(listenersElement, true));
 		}
 	}
