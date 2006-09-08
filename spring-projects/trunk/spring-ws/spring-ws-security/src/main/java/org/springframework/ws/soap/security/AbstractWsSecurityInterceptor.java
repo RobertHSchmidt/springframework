@@ -25,7 +25,6 @@ import org.springframework.util.Assert;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapEndpointInterceptor;
 import org.springframework.ws.soap.SoapHeaderElement;
-import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.context.SoapMessageContext;
 
