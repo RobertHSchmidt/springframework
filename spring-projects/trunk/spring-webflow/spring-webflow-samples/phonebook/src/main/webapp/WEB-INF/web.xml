@@ -38,6 +38,7 @@
 			<param-value>
 				/WEB-INF/phonebook-servlet-config.xml
 				/WEB-INF/phonebook-webflow-config.xml
+				<!-- Alternative Java-based flows: classpath:org/springframework/webflow/samples/phonebook/webflow/phonebook-webflow-config.xml -->
 			</param-value>
 		</init-param>
 	</servlet>
