@@ -15,12 +15,9 @@
  */
 package org.springframework.webflow.samples.phonebook.webflow;
 
-import java.io.File;
 import java.util.Map;
 
 import org.springframework.binding.mapping.AttributeMapper;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.engine.EndState;
@@ -28,7 +25,6 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.samples.phonebook.domain.ArrayListPhoneBook;
-import org.springframework.webflow.samples.phonebook.domain.PhoneBook;
 import org.springframework.webflow.test.MockParameterMap;
 import org.springframework.webflow.test.execution.AbstractXmlFlowExecutionTests;
 import org.springframework.webflow.test.execution.MockFlowServiceLocator;
