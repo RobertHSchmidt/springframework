@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>spring-ws</artifactId>
         <groupId>org.springframework.ws</groupId>
@@ -14,7 +12,7 @@
     <modules>
         <module>echo</module>
         <module>airline</module>
-    </modules>
+  </modules>
     <pluginRepositories>
         <pluginRepository>
             <id>mortbay-repo</id>
@@ -28,6 +26,9 @@
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>maven-jetty-plugin</artifactId>
                 <version>6.0.0rc0</version>
+                <configuration>
+                    <scanIntervalSeconds>3</scanIntervalSeconds>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
