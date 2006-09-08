@@ -226,6 +226,7 @@
               <literal>org.springframework.webflow.engine.builder</literal> package.
               The XML Flow Builder and <literal>spring-webflow.xsd</literal> schema is located
               within the <literal>org.springframework.webflow.engine.builder.xml</literal> package.
+              The XML-based format is the most popular way to define flows.
           </para>
         </sect2>
     </sect1>
@@ -254,14 +255,14 @@
                <tbody>
                    <row>
                        <entry>id</entry>
-                       <entry>The id of the state, unique to its containing Flow.</entry>
+                       <entry>The id of the state, unique to its containing flow definition.</entry>
 				       <entry>
 				           <emphasis>1</emphasis>
 				       </entry>
                    </row>
                    <row>
-                       <entry>flow</entry>
-                       <entry>The owning Flow.</entry>
+                       <entry>owner</entry>
+                       <entry>The owning flow definition.</entry>
 				       <entry>
 				           <emphasis>1</emphasis>
 				       </entry>
@@ -284,7 +285,7 @@
                    </row>
                    <row>
                        <entry>exceptionHandlers</entry>
-                       <entry>An ordered set of handlers to be applied when an exception is thrown within the state.</entry>
+                       <entry>An ordered set of handlers to be invoked when an exception is thrown within the state.</entry>
 				       <entry>
 				           <emphasis>0..*</emphasis>
 				       </entry>
@@ -374,7 +375,7 @@
            <title>Java state API example</title>
            <programlisting>
     Flow flow = new Flow("id");
-    TransitionableState state = new SomeConcreteStateType(flow, "stateId");
+    TransitionableState state = new XXXState(flow, "stateId");
     state.getAttributeMap().put("name", "value");
     state.getEntryActionList().add(...);
     state.getTransitionSet().add(...);
@@ -566,7 +567,7 @@
     &lt;/flow&gt;
     			</programlisting>
     			<para>
-    			    In this example <literal>state1</literal> defines one transition and also inherits
+    			    In this mock example <literal>state1</literal> defines one transition and also inherits
     			    the two others defined within the <literal>global-transitions</literal> element.
     			    Any other states defined within this flow would also inherit those global 
     			    transitions.
@@ -660,14 +661,13 @@
     	<sect2 id="viewState">
     		<title>ViewState</title>
     		<para>
-    			When entered, a view state allows the user (or other external client) to participate
+    			When entered a view state allows the user (or other external client) to participate
     			in a flow.  This participation process goes as follows:
     			<orderedlist>
     				<listitem>
     					<para>
 	    					The entered view state makes a <literal>org.springframework.webflow.execution.ViewSelection</literal> 
-		   	 				that selects a <emphasis>logical</emphasis> response to issue with the data necessary 
-   			 				to issue it.
+		   	 				that represents a <emphasis>logical</emphasis> response to issue to the caller.
    		 				</para>
     				</listitem>
     				<listitem>
@@ -678,13 +678,13 @@
     				</listitem>
     				<listitem>
     					<para>
-	    				    The calling system uses the returned <literal>ViewSelection</literal> to present an
-    					    interface (or other response) to the user.
+	    				    The calling system uses the returned <literal>ViewSelection</literal> to present a
+    					    suitable interface (or other response) to the user.
     					</para>
     				</listitem>
     				<listitem>
     					<para>
-	    				    After some 'think time', the user submits an input event to resume the flow execution 
+	    				    After some 'think time' the user submits an input event to resume the flow execution 
     					    from the 'paused' point.
     					</para>
     				</listitem>
@@ -1009,13 +1009,16 @@
              xsi:schemaLocation="http://www.springframework.org/schema/webflow
                                  http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
 
-        &lt;start-state idref="displayForm"/&gt;
+        &lt;start-actions&gt;
+            &lt;action bean="formAction" method="setupForm"/&gt;
+        &lt;/start-actions&gt;
         
+        &lt;start-state idref="displayForm"/&gt;
+
         &lt;view-state id="displayForm" view="form"&gt;
-            &lt;entry-actions&gt;
-                &lt;action bean="formAction" method="setupForm"/&gt;
-            &lt;/entry-actions&gt;
-            
+            &lt;render-actions&gt;
+                &lt;action bean="formAction" method="loadFormReferenceData"/>
+            &lt;/render-actions&gt;    
             &lt;transition on="submit" to="saveForm"&gt;
                 &lt;action bean="formAction" method="bindAndValidate"/&gt;
             &lt;/transition&gt;
@@ -1026,9 +1029,12 @@
     &lt;/flow&gt;
     			</programlisting>
     			<para>
-    			   This reads "<emphasis>when the <literal>displayForm</literal> state is entered, execute the <literal>setupForm</literal> method on the 
-    			   <literal>formAction</literal> and render the <literal>form</literal> view.  On <literal>submit</literal> transition to the <literal>saveForm</literal> state if the 
-    			   <literal>bindAndValidate</literal> method on the <literal>formAction</literal> executes successfully.</emphasis>"
+    			   This reads "<emphasis>when this flow starts execute the <literal>setupForm</literal> method
+    			   on the <literal>formAction</literal>, then enter the <literal>displayForm</literal> state to 
+    			   load the form reference data and render the <literal>form</literal> view.
+    			   On a user <literal>submit</literal> transition to the <literal>saveForm</literal> state
+    			   if the <literal>bindAndValidate</literal> method on the <literal>formAction</literal>
+    			   executes successfully.</emphasis>"
     			</para>
 			</sect3>
     	</sect2>
@@ -1249,7 +1255,7 @@
     			</para>
     			<para>
     			    The binding between the <literal>searchAction</literal> id and an 
-    			    <literal>Action</literal> implementation is made by Flow build time
+    			    <literal>Action</literal> implementation is made at Flow build time
     			    by querying a service locator, typically a Spring BeanFactory.  For example:
     	    	<programlisting>
     &lt;beans&gt;
@@ -1288,7 +1294,7 @@
     			</para>
 			</sect3>		
     	    <sect3 id="actionStateJava-simple">
-    	    	<title>ActionState API - simple action execution</title>
+    	    	<title>ActionState API - standard action</title>
     	    	<para>
     	    	    The following example constructs the equivalent action state definition using 
     	    	    the FlowBuilder API:
@@ -1305,7 +1311,7 @@
     			</programlisting>
 			</sect3> 		
     	    <sect3 id="actionStateXml-multiActionMethod">
-    	    	<title>ActionState XML - action method execution</title>
+    	    	<title>ActionState XML - multi action</title>
     	    	<para>
     	    	    The next example constructs an <literal>ActionState</literal> definition from XML that 
 			executes a single <emphasis>action method</emphasis> on a <literal>org.springframework.webflow.MultiAction</literal>
@@ -1388,7 +1394,7 @@
     			</para>
 			</sect3>    		
     	    <sect3 id="actionStateJava-multiActionMethod">
-    	    	<title>ActionState API - action method execution</title>
+    	    	<title>ActionState API - multi action</title>
     	    	<para>
     	    	    The following example constructs the equivalent action state definition using 
     	    	    the FlowBuilder API:
@@ -1404,8 +1410,8 @@
     }	
     			</programlisting>
 			</sect3>    		
-    	    <sect3 id="actionStateXml-pojoActionMethod">
-    	    	<title>ActionState XML - POJO action method execution</title>
+    	    <sect3 id="actionStateXml-beanActionMethod">
+    	    	<title>ActionState XML - bean action</title>
     	    	<para>
     	    	    The next example constructs an <literal>ActionState</literal> definition from XML that 
 					executes a single method on a Plain Old Java Object (POJO) and then responds to the result:
@@ -1435,11 +1441,11 @@
     			    state is entered, call the <literal>executeSearch</literal> method on the
     			    <literal>searchService</literal> passing it the object indexed by name <literal>criteria</literal>
     			    in <literal>flowScope</literal>.  On successful execution, expose the method 
-    			    return value in request scope under the name <literal>results</literal> 
+    			    return value in the default scope under the name <literal>results</literal> 
     			    and transition to the <literal>displayResults</literal> state</emphasis>."
     			</para>
     			<para>
-    				In this example, the referenced bean <literal>searchService</literal> would be
+    				In this example the referenced bean <literal>searchService</literal> would be
     				<emphasis>your application object</emphasis>, typically a transactional
     				business service.  Such a service implementation must have defined the
     				the <literal>Collection executeSearch(SearchCriteria)</literal> method, 
@@ -1477,11 +1483,11 @@
 					</caption>
 				</mediaobject>
 			</sect3>    		
-    	    <sect3 id="actionStateJava-pojoActionMethod">
-    	    	<title>ActionState API - POJO action method execution</title>
+    	    <sect3 id="actionStateJava-beanActionMethod">
+    	    	<title>ActionState API - bean action execution</title>
     	    	<para>
     	    	    The following example constructs the equivalent action state definition using 
-    	    	    the FlowBuilder API:
+    	    	    the Java FlowBuilder API:
     	    	</para>
     	    	<programlisting>
     public class SearchFlowBuilder extends AbstractFlowBuilder {
@@ -1496,10 +1502,10 @@
     			</programlisting>
 			</sect3>
     	    <sect3 id="actionStateXml-action">
-    	    	<title>ActionState XML - decision action</title>
+    	    	<title>ActionState XML - decision bean action</title>
     	    	<para>
     	    	    The following example constructs an <literal>ActionState</literal> from
-    	    	    XML that executes a action whose execution result forms the basis for the transition decision:
+    	    	    XML that executes an action whose execution result forms the basis for the transition decision:
     	    	</para>
     	    	<programlisting>
     &lt;?xml version="1.0" encoding="UTF-8"?&gt;
@@ -1578,9 +1584,9 @@
     			</para>
 			</sect3>
     	    <sect3 id="actionStateXml-actionenum">
-    	    	<title>ActionState XML - decision action with enum return value</title>
+    	    	<title>ActionState XML - decision bean action with enum return value</title>
     	    	<para>
-    	    	    The following example constructs an <literal>DecisionState</literal> from
+    	    	    The following example constructs an <literal>ActionState</literal> from
     	    	    XML that executes a action that invokes a method on an application object that 
     	    	    returns a <literal>java.lang.Enum</literal>:
     	    	</para>
@@ -1613,6 +1619,44 @@
     			    <literal>shippingService</literal> returns <literal>BASIC</literal> for the current order, transition to the <literal>enterBasicShippingDetails</literal>
     			    state.  If the return value is <literal>EXPRESS</literal> transition to the <literal>enterExpressShippingDetails</literal> state.
     			    If the return value is <literal>NONE</literal> transition to the <literal>placeOrder</literal> state</emphasis>."
+    			</para>
+			</sect3>
+    	    <sect3 id="actionStateXml-evaluateaction">
+    	    	<title>ActionState XML - evaluate action</title>
+    	    	<para>
+    	    	    The following example constructs an <literal>ActionState</literal> from
+    	    	    XML that executes a action that evaluates an expression against the 
+    	    	    flow request context and exposes the evaluation result:
+    	    	</para>
+    	    	<programlisting>
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                                 http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+        
+        ...
+        
+        &lt;action-state id="getNextInterviewQuestion"&gt;
+            &lt;evaluate-action expression="flowScope.interview.nextQuestion()"/&gt;
+                &lt;evaluation-result name="question"/&gt;
+            &lt;/evaluate-action&gt;
+            &lt;transition on="success" to="displayQuestion"/&gt;
+        &lt;/action-state&gt;
+
+        ...
+        
+    &lt;/flow&gt;
+    			</programlisting>
+    			<para>
+    			    This state definition reads "<emphasis>evaluate the <literal>flowScope.interview.nextQuestion()</literal> expression
+    			    and expose the result under name <literal>question</literal> in the default scope.</emphasis>"
+    			</para>
+    			<para>
+    				The expression can evaluate any object traversable from the flow's
+    				<literal>org.springframework.webflow.execution.RequestContext</literal>.  This example expressions evaluates the 
+    				<literal>nextQuestion</literal> method on the <literal>interview</literal>
+    				business object in flow scope.
     			</para>
 			</sect3>
     	</sect2>
@@ -1868,6 +1912,12 @@
     			    result event by transitioning to the <literal>placeOrder</literal> state</emphasis>."
     			</para>
 			</sect3>
+   			<para>
+   				Note how the inner structure and behavior of the <literal>shipping</literal> flow is fully encapsulated within 
+   				its own flow definition.  A flow calling another flow as a subflow can pass that flow input 
+   				and capture its output, but it cannot see inside it.  Flows are <emphasis>black boxes</emphasis>.
+   				Because any flow can be used as a subflow, it can be reused in other contexts without change.
+   			</para>
     	    <sect3 id="subflowStateJava">
     	    	<title>SubflowState API - input attributes</title>
     	    	<para>
@@ -1890,20 +1940,14 @@
     }	
     			</programlisting>
     		</sect3>
-   			<para>
-   				Note how the inner structure and behavior of the <literal>shipping</literal> flow is fully encapsulated within 
-   				its own flow definition.  A flow calling another flow as a subflow can pass that flow input 
-   				and capture its output, but it cannot see inside it.  Flows are <emphasis>black boxes</emphasis>.
-   				Because any flow can be used as a subflow, it can be reused in other contexts without change.
-   			</para>
-   			<para>
-   				Internally within the definition of the <literal>shipping</literal> flow referenced above, the flow 
-   				may choose to map the <literal>shipping</literal> input attribute into its own scope using
-   				its input mapper when it starts.  Any input attributes must be explictly mapped, defining the input
-   				contract for the flow:
-   			</para>
     	    <sect3 id="flowInputMapping">
     	    	<title>Flow input mapping - input contract</title>
+   				<para>
+   					Internally within the definition of the <literal>shipping</literal> flow referenced above, the flow 
+   					may choose to map the <literal>shipping</literal> input attribute into its own scope using
+   					its input mapper when it starts.  Any input attributes must be explictly mapped, defining the input
+   					contract for the flow:
+	   			</para>
     	    	<programlisting>
     &lt;?xml version="1.0" encoding="UTF-8"?&gt;
     &lt;flow xmlns="http://www.springframework.org/schema/webflow"
@@ -1925,7 +1969,7 @@
     			    the name <literal>shipping</literal></emphasis>." 
     			</para>
     			<para>
-    				Had this input mapping not been defined the shipping attribute made available as input 
+    				Note: had this input mapping not been defined the shipping attribute made available as input 
     				to this flow by a calling parent flow or external client would have been ignored.
     			</para>
 			</sect3>
@@ -2160,8 +2204,8 @@
     			    the <literal>placeOrder</literal> state</emphasis>."
     			</para>
     			<para>
-    				Had this output mapping not been defined the shipping attribute made available as output 
-    				to this flow by ending subflow would have been ignored.
+    				Note: had this output mapping not been defined the shipping attribute made available as output 
+    				to this flow by the ending subflow would have been ignored.
     			</para>
 			</sect3>   			
     	</sect2>
