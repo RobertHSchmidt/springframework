@@ -633,7 +633,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @see #action(String, MethodSignature, ActionResultExposer)
 	 */
 	protected ActionResultExposer result(String resultName) {
-		return result(resultName, null);
+		return result(resultName, ScopeType.REQUEST);
 	}
 
 	/**
