@@ -26,6 +26,7 @@ import javax.xml.soap.SOAPMessage;
 import junit.framework.TestCase;
 import org.springframework.ws.soap.saaj.SaajSoapMessageContext;
 import org.springframework.ws.transport.TransportRequest;
+import org.springframework.ws.transport.TransportException;
 
 public class XwsSecurityInterceptorTest extends TestCase {
 
@@ -87,6 +88,10 @@ public class XwsSecurityInterceptorTest extends TestCase {
 
         public Iterator getHeaders(String name) {
             return Collections.EMPTY_LIST.iterator();
+        }
+
+        public String getUrl() throws TransportException {
+            return null;
         }
 
         public InputStream getInputStream() throws IOException {
