@@ -32,16 +32,22 @@ public interface TransportRequest {
      * Returns an iteratoion over all the header names this request contains. Returns an empty <code>Iterator</code> if
      * the request has no headers, this method .
      */
-    Iterator getHeaderNames();
+    Iterator getHeaderNames() throws TransportException;
 
     /**
      * Returns an iteration over all the string values of the specified request header. Returns an empty
      * <code>Iterator</code> if the request did not include any headers of the specified name.
      */
-    Iterator getHeaders(String name);
+    Iterator getHeaders(String name) throws TransportException;
 
     /**
      * Returns the contents of the request as a <code>InputStream</code>.
      */
-    InputStream getInputStream() throws IOException;
+    InputStream getInputStream() throws TransportException, IOException;
+
+    /**
+     * Return a URL handle for this request.
+     */
+    String getUrl() throws TransportException;
+
 }

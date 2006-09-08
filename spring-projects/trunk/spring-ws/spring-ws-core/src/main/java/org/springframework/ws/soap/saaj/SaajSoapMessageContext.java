@@ -115,7 +115,7 @@ public class SaajSoapMessageContext extends AbstractSoapMessageContext {
         }
     }
 
-    protected SoapMessage createSoapMessage() {
+    protected SoapMessage createResponseSoapMessage() {
         try {
             SOAPMessage saajMessage = messageFactory.createMessage();
             return new SaajSoapMessage(saajMessage);

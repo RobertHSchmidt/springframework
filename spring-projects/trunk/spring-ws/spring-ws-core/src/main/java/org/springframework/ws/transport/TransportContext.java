@@ -8,8 +8,8 @@ package org.springframework.ws.transport;
  */
 public interface TransportContext {
 
-    TransportRequest getTransportRequest();
+    TransportRequest getTransportRequest() throws TransportException;
 
-    TransportResponse getTransportResponse();
+    TransportResponse getTransportResponse() throws TransportException;
 
 }
