@@ -16,7 +16,7 @@
     <sect1 id="executor">
     	<title>FlowExecutor</title>
     	<para>
-    		<literal>org.springframework.webflow.FlowExecutor</literal> is the 
+    		<literal>org.springframework.webflow.executor.FlowExecutor</literal> is the 
     		central facade interface external systems use to drive the execution of flows.
     		This facade acts as a simple, convenient service entry-point into
     		the Spring Web Flow system that is reusable across environments.
@@ -96,76 +96,125 @@
     		</para>
 		    <table>
    				<title>FlowExecutorImpl properties</title>
-	   	   		<tgroup cols="4">
+	   	   		<tgroup cols="3">
     				<colspec colname="c1" colwidth="2*" />
 	   	        	<colspec colname="c2" colwidth="4*" />
-	            	<colspec colname="c2" colwidth="2*" />
-	            	<colspec colname="c2" colwidth="2*" />
+	            	<colspec colname="c3" colwidth="2*" />
         	    	<thead>
 		        		<row>
          		   	    	<entry>Property name</entry>
                 			<entry>Description</entry>
     	          			<entry>Cardinality</entry>
-	               		 	<entry>Default value</entry>
         	        	</row>
    					</thead>
    					<tbody>
 						<row>
-           					<entry>flowLocator</entry>
+           					<entry>definitionLocator</entry>
 							<entry>The service for loading flow definitions to be executed, typically a flow registry</entry>
 					    	<entry>
 								<emphasis>1</emphasis>
 							</entry>
 						</row>
+						<row>
+           					<entry>executionFactory</entry>
+							<entry>The factory for creating new flow executions.</entry>
+					    	<entry>
+								<emphasis>1</emphasis>
+							</entry>
+						</row>
  						<row>
-     						<entry>repositoryFactory</entry>
-							<entry>The factory for loading repositories to create, save, and restore flow executions</entry>
+     						<entry>executionRepository</entry>
+							<entry>The repository for saving and loading persistent (paused) flow executions</entry>
 							<entry> 
 								<emphasis>1</emphasis>
 							</entry>
-							<entry>DefaultFlowExecutionRepositoryFactory</entry>
 						</row>
 					</tbody>
 				</tgroup>
 			</table>
 		</sect2>
     	<sect2 id="executor-simple">
-    		<title>A typical flow executor configuration</title>
+    		<title>A typical flow executor configuration with Spring</title>
 	    	<programlisting>
-    &lt;bean id="flowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl"&gt;
-        &lt;constructor-arg ref="flowRegistry"/&gt;
-    &lt;/bean&gt;
-		
-    &lt;bean id="flowRegistry" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean"&gt;
-        &lt;property name="flowLocations" value="/WEB-INF/flows/**/*-flow.xml"/&gt;
-    &lt;/bean&gt;
-	    	</programlisting>
-    	</sect2>
-    	<para>
-    		This instructs Spring to create a flow executor that can execute all XML-based flow definitions 
-    		contained within the <literal>/WEB-INF/flows</literal> directory.
-    	</para>	
-    	<sect2 id="executor-custom-repo">
-    		<title>A flow executor with a custom repository factory</title>
-	    	<programlisting>
-    &lt;bean id="flowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl"&gt;
-        &lt;constructor-arg ref="repositoryFactory"/&gt;
-    &lt;/bean&gt;
+    &lt;beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:flow="http://www.springframework.org/schema/webflow-config"
+        xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/webflow-config
+            http://www.springframework.org/schema/webflow-config/spring-webflow-config-1.0.xsd"&gt;
+           	    	
+        &lt;!-- Launches new flow executions and resumes existing executions. --&gt;
+        &lt;flow:executor id="flowExecutor" registry-ref="flowRegistry"/>
 
-    &lt;bean id="repositoryFactory" class="org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepositoryFactory"&gt;
-        &lt;constructor-arg ref="flowRegistry"/&gt;
-    &lt;/bean&gt;
-				
-    &lt;bean id="flowRegistry" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean"&gt;
-        &lt;property name="flowLocations" value="/WEB-INF/flows/**/*-flow.xml"/&gt;
-    &lt;/bean&gt;
+        &lt;!-- Creates the registry of flow definitions for this application --&gt;
+        &lt;flow:registry id="flowRegistry"&gt;
+            &lt;flow:location path="/WEB-INF/flows/**/**-flow.xml"/&gt;
+        &lt;/flow:registry&gt;
+        
+    &lt;/beans&gt;
+	        </programlisting>
+	    	<para>
+	    		This instructs Spring to create a flow executor that can execute all XML-based flow definitions 
+    			contained within the <literal>/WEB-INF/flows</literal> directory.
+    		</para>
+    	</sect2>
+    	<sect2 id="executor-custom-repo">
+    		<title>A flow executor using a continuation-based execution repository</title>
+	    	<programlisting>
+    &lt;flow:executor id="flowExecutor" registry-ref="flowRegistry" repository-type="continuation"/>
 	    	</programlisting>
     	</sect2>		
     	<para>
-    		This executor is configured with a continuation-based repository factory which creates 
-    		stateful continuation repositories managed in the user session.
+    		This executor is configured with a continuation-based repository that manages
+    		continuation state in the user session.
     	</para>	
-    </sect1>
+    	<sect2 id="executor-custom-repo2">
+    		<title>A flow executor using a client-side continuation-based execution repository</title>
+	    	<programlisting>
+    &lt;flow:executor id="flowExecutor" registry-ref="flowRegistry" repository-type="client"/>
+	    	</programlisting>
+	    	<para>
+	    		This executor is configured with a continuation-based repository that serializes
+    			continuation state to the client using no server-side state.
+	    	</para>	
+    	</sect2>		
+    	<sect2 id="executor-excution-attributes">
+    		<title>A flow executor setting system execution attributes</title>
+			<programlisting>
+    &lt;flow:executor id="flowExecutor" registry-ref="flowRegistry" repository-type="continuation"&gt;
+        &lt;flow:execution-attributes&gt;
+            &lt;flow:alwaysRedirectOnPause/&gt;
+            &lt;flow:attribute name="foo" value="bar"/&gt;
+        &lt;/flow:execution-attributes&gt;
+    &lt;/flow-executor&gt;
+			</programlisting>
+	    	<para>
+	    		This executor is configured to set two flow execution system attributes
+	    		<literal>alwaysRedirectOnPause=true</literal> and <literal>foo=bar</literal>.
+	    		The <literal>alwaysRedirectOnPause</literal> attribute will trigger a 
+	    		flow execution redirect each time an execution pauses
+	    		(automatic <literal>POST+REDIRECT+GET</literal> behavior).
+	    	</para>	
+		</sect2>
+    	<sect2 id="executor-excution-listeners">
+    		<title>A flow executor setting custom execution listeners</title>
+			<programlisting>
+    &lt;flow:executor id="flowExecutor" registry-ref="flowRegistry" repository-type="continuation"&gt;
+        &lt;flow:execution-listeners&gt;
+            &lt;flow:listener ref="listener" criteria="order-flow"/&gt;
+        &lt;/flow:execution-listeners&gt;
+    &lt;/flow-executor&gt;
+
+    &lt;!-- A FlowExecutionListener to observes the lifecycle of order-flow executions --&gt;
+    &lt;bean id="listener" class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/&gt;
+			</programlisting>
+	    	<para>
+	    		This executor is configured to apply the execution listener to the "order-flow".
+	    	</para>	
+		</sect2>    	
+	</sect1>
 	<sect1 id="executor-mvc">
 		<title>Spring MVC integration</title>
 		<para>
