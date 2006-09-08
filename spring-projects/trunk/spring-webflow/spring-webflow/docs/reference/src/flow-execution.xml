@@ -259,32 +259,32 @@
    						<entry>started</entry>
 						<entry>true</entry>
 						<entry>
-							A <literal>FlowSession</literal> whose <literal>flow</literal>
-							is the top-level flow and whose <literal>state</literal> is the flow's start state.
+							A <literal>FlowSession</literal> whose <literal>definition</literal>
+							is the top-level flow definition and whose <literal>state</literal> is the definition's start state.
 						</entry>
 					</row>
 					<row>
    						<entry>state entered</entry>
 						<entry>true</entry>
 						<entry>
-							A <literal>FlowSession</literal> whose <literal>flow</literal>
-							is the top-level flow and whose <literal>state</literal> is the newly entered state.
+							A <literal>FlowSession</literal> whose <literal>definition</literal>
+							is the top-level flow definition and whose <literal>state</literal> is the newly entered state.
 						</entry>
 					</row>
 					<row>
    						<entry>subflow spawned</entry>
 						<entry>true</entry>
 						<entry>
-							A <literal>FlowSession</literal> whose <literal>flow</literal>
-							is the subflow and whose <literal>state</literal> is the subflow's start state.
+							A <literal>FlowSession</literal> whose <literal>definition</literal>
+							is the subflow definition and whose <literal>state</literal> is the subflow's start state.
 						</entry>
 					</row>
 					<row>
    						<entry>subflow ended</entry>
 						<entry>true</entry>
 						<entry>
-							A <literal>FlowSession</literal> whose <literal>flow</literal> is again the
-							top-level flow and whose <literal>state</literal> is the resuming state.
+							A <literal>FlowSession</literal> whose <literal>definition</literal> is back to the
+							top-level flow definition and whose <literal>state</literal> is the resuming state.
 						</entry>
 					</row>
 					<row>
@@ -325,7 +325,7 @@
 				</thead>
 				<tbody>
 					<row>
-           				<entry>flow</entry>
+           				<entry>definition</entry>
 						<entry>
 							The definition of the flow the session is an instance of.
 						</entry>
@@ -556,7 +556,7 @@
 	    	</para>
 	    	<programlisting>
     public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
-	
+
         public void testStartFlow() {
             ApplicationView view = applicationView(startFlow());
             assertCurrentStateEquals("enterCriteria");
@@ -566,76 +566,60 @@
         
         public void testCriteriaSubmitSuccess() {
             startFlow();
-
-            ParameterMap input = new ParameterMap();
-            input.put("firstName", "Keith");
-            input.put("lastName", "Donald");
-			
-            // submit with valid input
-            ApplicationView view = applicationView(signalEvent("submit", input));
-			
+            MockParameterMap parameters = new MockParameterMap();
+            parameters.put("firstName", "Keith");
+            parameters.put("lastName", "Donald");
+            ApplicationView view = applicationView(signalEvent("search", parameters));
             assertCurrentStateEquals("displayResults");
             assertViewNameEquals("searchResults", view);
             assertModelAttributeCollectionSize(1, "results", view);
         }
-	
+        
         public void testCriteriaSubmitError() {
             startFlow();
-			
-            // submit with no input
-            signalEvent("submit");
+            signalEvent("search");
             assertCurrentStateEquals("enterCriteria");
         }
-	
+        
         public void testNewSearch() {
             testCriteriaSubmitSuccess();
             ApplicationView view = applicationView(signalEvent("newSearch"));
             assertCurrentStateEquals("enterCriteria");
             assertViewNameEquals("searchCriteria", view);
         }
-	
+        
         public void testSelectValidResult() {
             testCriteriaSubmitSuccess();
-			
-            ParameterMap input = new ParameterMap();
-            input.put("id", "1");
-            // select with valid input
-            ViewSelection view = signalEvent("select", input);
-			
+            MockParameterMap parameters = new MockParameterMap();
+            parameters.put("id", "1");
+            ApplicationView view = applicationView(signalEvent("select", parameters));
             assertCurrentStateEquals("displayResults");
             assertViewNameEquals("searchResults", view);
             assertModelAttributeCollectionSize(1, "results", view);
         }
-	
-        /**
-         * A stub for testing.
-         */
-        private PhoneBook phonebook = new ArrayListPhoneBook();
-	
-        @Override
-        protected ExternalizedFlowDefinition getFlowDefinition() {
-            File flowDir = new File("src/webapp/WEB-INF/flows");
-            File file = new File(flowDir, "search-flow.xml");
-            return new ExternalizedFlowDefinition(new FileSystemResource(file));
+
+        protected FlowDefinitionResource getFlowDefinitionResource() {
+            return createFlowDefinitionResource("src/main/webapp/WEB-INF/flows/search-flow.xml");
         }
-
-        @Override
+        
         protected FlowServiceLocator createFlowServiceLocator() {
-            MockFlowServiceLocator locator = new MockFlowServiceLocator();
-
+            MockFlowServiceLocator flowServiceLocator = new MockFlowServiceLocator();
+            
             Flow detailFlow = new Flow("detail-flow");
             detailFlow.setInputMapper(new AttributeMapper() {
                 public void map(Object source, Object target, Map context) {
-                    assertEquals("id of value 1 not provided as input by calling search flow", 
-                                 new Long(1), ((AttributeMap)source).get("id"));
+                    assertEquals("id of value 1 not provided as input by calling search flow", new Long(1), ((AttributeMap)source).get("id"));
                 }
             });
-            locator.registerSubflow(detailFlow);
-            locator.registerBean("phonebook", phonebook);
-            return locator;
+            // test responding to finish result
+            new EndState(detailFlow, "finish");
+            
+            flowServiceLocator.registerSubflow(detailFlow);
+            flowServiceLocator.registerBean("phonebook", new StubPhonebook());
+            return flowServiceLocator;
         }
-    }	    	
-	    	</programlisting>
+    }
+        </programlisting>
 	    	<para>
 	    		With a well-written flow execution test passing that covers the controller behavior scenarios 
 	    		possible for your flow you have concrete evidence the flow will execute as expected when 
