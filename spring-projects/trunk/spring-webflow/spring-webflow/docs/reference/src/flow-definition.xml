@@ -10,7 +10,7 @@
 		</para>
 		<para>
 			Flows are defined declaratively using a rich domain-specific language (DSL) 
-			tailored to the problem domain of UI flow.  Currently, Java-based and XML-based
+			tailored to the problem domain of UI flow.  Currently, XML and Java-based
 			forms of this language are provided.
 		</para>
 		<para>
@@ -1483,24 +1483,6 @@
 					</caption>
 				</mediaobject>
 			</sect3>    		
-    	    <sect3 id="actionStateJava-beanActionMethod">
-    	    	<title>ActionState API - bean action execution</title>
-    	    	<para>
-    	    	    The following example constructs the equivalent action state definition using 
-    	    	    the Java FlowBuilder API:
-    	    	</para>
-    	    	<programlisting>
-    public class SearchFlowBuilder extends AbstractFlowBuilder {
-    	public void buildStates() {
-    	    ...
-            addActionState("executeSearch",
-                action("searchService", method("search(${flowScope.searchCriteria})"), result("results"))
-                    transition(on("success"), to("displayResults")));
-            ...    	          
-        }
-    }	
-    			</programlisting>
-			</sect3>
     	    <sect3 id="actionStateXml-action">
     	    	<title>ActionState XML - decision bean action</title>
     	    	<para>
