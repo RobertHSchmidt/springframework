@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>spring-ws-doc</artifactId>
     <packaging>pom</packaging>
-    <name>Spring-WS documentation</name>
+    <name>Spring-WS Documentation</name>
     <pluginRepositories>
         <pluginRepository>
             <id>agilejava</id>
