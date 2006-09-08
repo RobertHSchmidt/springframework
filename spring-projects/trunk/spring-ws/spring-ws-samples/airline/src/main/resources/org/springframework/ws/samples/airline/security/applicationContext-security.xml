@@ -25,7 +25,7 @@
 
     <!-- ===================== WS-SECURITY  ============================== -->
 
-    <bean id="secureMapping" class="org.springframework.ws.soap.SoapActionEndpointMapping">
+    <bean id="secureMapping" class="org.springframework.ws.soap.endpoint.mapping.SoapActionEndpointMapping">
         <description>
             This SOAP Action endpoint mapping is used for endpoints that are secured via WS-Security. It uses a
             securityInterceptor to validate incoming messages.
@@ -38,7 +38,7 @@
         </property>
         <property name="interceptors">
             <list>
-                <bean class="org.springframework.ws.soap.endpoint.SoapEnvelopeLoggingInterceptor"/>
+                <bean class="org.springframework.ws.soap.endpoint.interceptor.SoapEnvelopeLoggingInterceptor"/>
                 <ref local="wsSecurityInterceptor"/>
             </list>
         </property>

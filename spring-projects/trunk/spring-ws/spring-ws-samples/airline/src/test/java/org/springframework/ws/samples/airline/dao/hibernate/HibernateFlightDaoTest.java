@@ -15,8 +15,14 @@
  */
 package org.springframework.ws.samples.airline.dao.hibernate;
 
-/*
-TODO: renable when we have a database on the build server
+import java.util.List;
+
+import org.joda.time.DateTime;
+import org.springframework.test.AbstractTransactionalDataSourceSpringContextTests;
+import org.springframework.ws.samples.airline.domain.Airport;
+import org.springframework.ws.samples.airline.domain.Flight;
+import org.springframework.ws.samples.airline.domain.ServiceClass;
+
 public class HibernateFlightDaoTest extends AbstractTransactionalDataSourceSpringContextTests {
 
     private HibernateFlightDao flightDao;
@@ -34,8 +40,8 @@ public class HibernateFlightDaoTest extends AbstractTransactionalDataSourceSprin
                 "classpath:org/springframework/ws/samples/airline/dao/hibernate/applicationContext-hibernate.xml"};
     }
 
-    public void setFlightDao(HibernateFlightDao dao) {
-        this.flightDao = dao;
+    public void setFlightDao(HibernateFlightDao flightDao) {
+        this.flightDao = flightDao;
     }
 
     protected void onSetUpBeforeTransaction() throws Exception {
@@ -97,4 +103,3 @@ public class HibernateFlightDaoTest extends AbstractTransactionalDataSourceSprin
         assertEquals("Flight not updated", 0, count);
     }
 }
-*/
