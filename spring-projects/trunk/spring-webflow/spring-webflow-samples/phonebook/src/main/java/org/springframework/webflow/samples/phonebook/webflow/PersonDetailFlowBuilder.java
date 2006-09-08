@@ -32,7 +32,7 @@ import org.springframework.webflow.engine.support.DefaultFlowAttributeMapper;
  * 
  * @author Keith Donald
  */
-public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
+class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
 	public PersonDetailFlowBuilder(FlowServiceLocator flowServiceLocator) {
 		super(flowServiceLocator);

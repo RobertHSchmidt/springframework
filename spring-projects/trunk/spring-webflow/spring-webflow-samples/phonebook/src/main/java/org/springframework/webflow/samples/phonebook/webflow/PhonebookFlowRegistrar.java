@@ -13,7 +13,7 @@ import org.springframework.webflow.engine.builder.FlowServiceLocator;
  * 
  * @author Keith Donald
  */
-public class PhonebookFlowRegistrar implements FlowDefinitionRegistrar {
+class PhonebookFlowRegistrar implements FlowDefinitionRegistrar {
 	private FlowServiceLocator serviceLocator;
 
 	public PhonebookFlowRegistrar(FlowServiceLocator serviceLocator) {

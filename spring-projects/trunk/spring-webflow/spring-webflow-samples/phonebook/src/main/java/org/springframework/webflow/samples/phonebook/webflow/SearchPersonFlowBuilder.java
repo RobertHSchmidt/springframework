@@ -37,7 +37,7 @@ import org.springframework.webflow.samples.phonebook.domain.SearchCriteriaValida
  * 
  * @author Keith Donald
  */
-public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
+class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
 	public SearchPersonFlowBuilder(FlowServiceLocator flowServiceLocator) {
 		super(flowServiceLocator);
