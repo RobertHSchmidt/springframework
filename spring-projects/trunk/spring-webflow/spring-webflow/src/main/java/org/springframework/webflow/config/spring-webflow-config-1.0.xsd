@@ -163,15 +163,6 @@ The idref to the registry this executor will use to locate flow definitions for 
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
-					<xsd:attribute name="statistics-enabled" type="xsd:boolean" default="false">
-						<xsd:annotation>
-							<xsd:documentation>
-								<![CDATA[
-A flag indicating if JMX management statistics should be collected for the flow execution system.
-]]>
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>

@@ -77,12 +77,6 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	private RepositoryType repositoryType = RepositoryType.DEFAULT;
 
 	/**
-	 * Whether statistics gathering should be enabled for the flow execution
-	 * system.
-	 */
-	private boolean statisticsEnabled = false;
-
-	/**
 	 * Creates a new {@link FlowExecutor flow executor} factory.
 	 * @param definitionLocator The locator the executor will use to access flow
 	 * definitions registered in a central registry.
@@ -155,15 +149,6 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	 */
 	public void setConversationManager(ConversationManager conversationManager) {
 		this.conversationManager = conversationManager;
-	}
-
-	/**
-	 * Sets whether statistics gathering should be enabled for the flow
-	 * execution system.
-	 * @param statisticsEnabled true if yes, false otherwise
-	 */
-	public void setStatisticsEnabled(boolean statisticsEnabled) {
-		this.statisticsEnabled = statisticsEnabled;
 	}
 
 	// implementing FlowExecutorFactory
