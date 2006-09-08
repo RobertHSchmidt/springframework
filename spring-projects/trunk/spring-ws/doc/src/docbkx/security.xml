@@ -37,6 +37,13 @@
             All of these three areas are implemented using the <classname>XwsSecurityInterceptor</classname>, which we
             will describe in <xref linkend="security-xws-security-interceptor"/>
         </para>
+        <note>
+            <para>
+                Note that WS-Security (especially encryption and signing) requires substantial amounts of memory, 
+                and will also decrease performance. If performance is important to you, you might want to consider using 
+                not using WS-Security.
+            </para>
+        </note>
     </section>
     <section id="security-xws-security-interceptor">
         <title>XwsSecurityInterceptor</title>
