@@ -49,7 +49,7 @@ public class MockMessageContext extends AbstractMessageContext {
         super(new MockWebServiceMessage(content), new MockTransportRequest());
     }
 
-    protected WebServiceMessage createWebServiceMessage() {
+    protected WebServiceMessage createResponseMessage() {
         return new MockWebServiceMessage();
     }
 

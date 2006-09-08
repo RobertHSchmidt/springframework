@@ -46,7 +46,7 @@ public class AxiomSoapMessageContext extends AbstractSoapMessageContext {
         super(messageRequest, transportRequest);
     }
 
-    protected SoapMessage createSoapMessage() {
+    protected SoapMessage createResponseSoapMessage() {
         SOAPFactory soapFactory = (SOAPFactory) getAxiomRequest().getSOAPEnvelope().getOMFactory();
         return new AxiomSoapMessage(soapFactory);
     }

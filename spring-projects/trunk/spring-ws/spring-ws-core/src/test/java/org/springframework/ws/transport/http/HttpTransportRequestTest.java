@@ -46,4 +46,14 @@ public class HttpTransportRequestTest extends TestCase {
         assertTrue("Invalid value", "value1".equals(value) || "value2".equals(value));
         assertFalse("Invalid amount of header names", values.hasNext());
     }
+
+    public void testGetURL() throws Exception {
+        mockRequest.setScheme("http");
+        mockRequest.setServerName("www.example.com");
+        mockRequest.setServerPort(8080);
+        mockRequest.setRequestURI("/services/Service");
+        String url = transportRequest.getUrl();
+        assertNotNull("No url returned", url);
+        assertEquals("Invalid url returned", "http://www.example.com:8080/services/Service", url);
+    }
 }

@@ -63,6 +63,13 @@ public class HttpTransportRequest implements TransportRequest {
         return new EnumerationIterator(request.getHeaderNames());
     }
 
+    public String getUrl() {
+        StringBuffer url = new StringBuffer(request.getScheme());
+        url.append("://").append(request.getServerName()).append(':').append(request.getServerPort());
+        url.append(request.getRequestURI());
+        return url.toString();
+    }
+
     /**
      * Private static class that adapts a header enumeration provided by the HttpServletRequest and provides it as an
      * iterator.

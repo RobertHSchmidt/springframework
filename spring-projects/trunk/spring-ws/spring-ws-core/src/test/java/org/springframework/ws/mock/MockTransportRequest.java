@@ -33,9 +33,11 @@ import org.springframework.ws.transport.TransportRequest;
  */
 public class MockTransportRequest implements TransportRequest {
 
+    private byte[] contents;
+
     private Properties headers;
 
-    private byte[] contents;
+    private String url;
 
     public MockTransportRequest() {
         headers = new Properties();
@@ -49,6 +51,23 @@ public class MockTransportRequest implements TransportRequest {
         this.contents = contents;
     }
 
+    public MockTransportRequest(byte[] contents) {
+        Assert.notNull(contents, "contents must not be null");
+        this.contents = contents;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public InputStream getInputStream() throws IOException {
+        return new ByteArrayInputStream(contents);
+    }
+
     public Iterator getHeaderNames() {
         return headers.keySet().iterator();
     }
@@ -56,10 +75,6 @@ public class MockTransportRequest implements TransportRequest {
     public Iterator getHeaders(String name) {
         String value = headers.getProperty(name);
         return value != null ? Collections.singletonList(value).iterator() : Collections.EMPTY_LIST.iterator();
-    }
-
-    public InputStream getInputStream() throws IOException {
-        return new ByteArrayInputStream(contents);
     }
 
     public void addHeader(String name, String value) {

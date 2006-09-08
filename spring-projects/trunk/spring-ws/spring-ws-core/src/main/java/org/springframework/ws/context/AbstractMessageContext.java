@@ -43,6 +43,10 @@ public abstract class AbstractMessageContext implements MessageContext {
      */
     private Map properties;
 
+    /**
+     * Construct a new instance of the <code>AbstractMessageContext</code> with the given request message and
+     * transportRequest.
+     */
     protected AbstractMessageContext(WebServiceMessage request, TransportRequest transportRequest) {
         Assert.notNull(request, "No request given");
         Assert.notNull(transportRequest, "No transport request given");
@@ -64,7 +68,7 @@ public abstract class AbstractMessageContext implements MessageContext {
 
     public final WebServiceMessage getResponse() {
         if (response == null) {
-            response = createWebServiceMessage();
+            response = createResponseMessage();
         }
         return response;
     }
@@ -115,5 +119,5 @@ public abstract class AbstractMessageContext implements MessageContext {
     /**
      * Abstract template method that creates a new <code>WebServiceMessage</code>.
      */
-    protected abstract WebServiceMessage createWebServiceMessage();
+    protected abstract WebServiceMessage createResponseMessage();
 }

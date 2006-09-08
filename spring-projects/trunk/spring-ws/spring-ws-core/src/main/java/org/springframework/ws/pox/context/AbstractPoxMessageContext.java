@@ -14,36 +14,36 @@
  * limitations under the License.
  */
 
-package org.springframework.ws.soap.context;
+package org.springframework.ws.pox.context;
 
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.context.AbstractMessageContext;
-import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.pox.PoxMessage;
 import org.springframework.ws.transport.TransportRequest;
 
 /**
- * Abstract implementation of the <code>SoapMessageContext</code> interface. Implements base <code>MessageContext</code>
- * methods by delegating to <code>SoapMessageContext</code> functionality.
+ * Abstract implementation of the <code>PoxMessageContext</code> interface. Implements base <code>MessageContext</code>
+ * methods by delegating to <code>PoxMessageContext</code> functionality.
  *
  * @author Arjen Poutsma
  */
-public abstract class AbstractSoapMessageContext extends AbstractMessageContext implements SoapMessageContext {
+public abstract class AbstractPoxMessageContext extends AbstractMessageContext implements PoxMessageContext {
 
-    protected AbstractSoapMessageContext(SoapMessage request, TransportRequest transportRequest) {
+    protected AbstractPoxMessageContext(PoxMessage request, TransportRequest transportRequest) {
         super(request, transportRequest);
     }
 
-    public final SoapMessage getSoapResponse() {
-        return (SoapMessage) getResponse();
+    public final PoxMessage getPoxResponse() {
+        return (PoxMessage) getResponse();
     }
 
-    public final SoapMessage getSoapRequest() {
-        return (SoapMessage) getRequest();
+    public final PoxMessage getPoxRequest() {
+        return (PoxMessage) getRequest();
     }
 
     protected final WebServiceMessage createResponseMessage() {
-        return createResponseSoapMessage();
+        return createResponsePoxMessage();
     }
 
-    protected abstract SoapMessage createResponseSoapMessage();
+    protected abstract PoxMessage createResponsePoxMessage();
 }
