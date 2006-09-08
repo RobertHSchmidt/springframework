@@ -19,43 +19,74 @@
     <sect1 id="execution">
     	<title>FlowExecution</title>
     	<para>
-		    A <emphasis>flow execution</emphasis> is a single instance of a flow at a given point in 
-            time, realized by an instance of <literal>org.springframework.webflow.execution.FlowExecution</literal>.
-		    A flow execution represents the state of a flow at a point in time.
-		    Given an instance of <literal>org.springframework.webflow.Flow</literal>, any
-		    number of flow executions can be created.  A flow definition serves as the
-		    instructional blueprint for a flow execution.  
+		    A <emphasis>flow execution</emphasis> is a runtime instantiation of a flow definition
+		    realized by an instance of <literal>org.springframework.webflow.execution.FlowExecution</literal>.
+		    Given a single <literal>org.springframework.webflow.definition.FlowDefinition</literal> any
+		    number of independent flow executions may be created, typically by a
+		    <literal>org.springframework.webflow.execution.FlowExecutionFactory</literal>.
+		</para>
+		<para>
+		    A flow execution carries out the execution of program instructions defined within
+		    its definition in response to user events.
 		</para>
 		<para>
 			<emphasis>
-				It may be helpful to think of a flow as analagous to <literal>Class</literal> and a 
-				flow execution as analagous to an instance of that <literal>Class</literal>
-			</emphasis>.
+				It may be helpful to think of a flow definition as analagous to a Java <literal>Class</literal> and a 
+				flow execution as analagous to an object instance of that <literal>Class</literal>.  Signaling
+				an execution event can be considered analagous to sending an object a message.
+			</emphasis>
 		</para>
+	    <sect2 id="execution-creation">
+ 	  	 	<title>Flow execution creation</title>
+ 	  	 	<programlisting>
+    FlowDefinition definition = ...
+    FlowExecutionFactory factory = ...
+    FlowExecution execution = factory.createFlowExecution(definition);
+ 	  	 	</programlisting>
+ 	  	</sect2>
 		<para>
 			Once created, a new flow execution is initially inactive, waiting to be started.  Once 
-			started, a flow execution enters its <literal>startState</literal> and continues executing until 
-			it enters a <literal>ViewState</literal> where user input is required to continue or
-			it enters an <literal>EndState</literal> where it terminates.
+			started a flow execution becomes active by entering its <literal>startState</literal>.  
+			From there it continues executing until it enters a state where user input is required
+			to continue or it terminates.
 		</para>
+	    <sect2 id="execution-start">
+ 	  	 	<title>Flow execution startup</title>
+ 	  	 	<programlisting>
+    MutableAttributeMap input = ...
+    ExternalContext context = ...
+    ViewSelection startingView = execution.start(input, context);
+ 	  	 	</programlisting>
+ 	  	</sect2>
 		<para>
-			When a flow execution reaches a <literal>ViewState</literal> it is said to have <emphasis>paused</emphasis>,
-			where it waits in that state for user input to be provided so it can continue.  After pausing the 
+			When a flow execution reaches a state where input is required to continue it is said to have <emphasis>paused</emphasis>,
+			where it waits in that state for the input to be provided.  After pausing the 
 			<literal>ViewSelection</literal> returned is typically used to issue a response to the user
 			that provides a vehicle for collecting the required input.
 		</para>
 		<para>			
 			User input is provided by <emphasis>signaling an event</emphasis> that
 			<emphasis>resumes</emphasis> the flow execution by communicating what user action was taken.
-			Parameters sent in the signal event request form the basis for user input.  The flow execution 
-			responds to an event in standard fashion by executing a matching state transition
-			in the resuming <literal>ViewState</literal>.
+			Attributes of the signal event request form the basis for user input.  The flow execution 
+			resumes by consuming the event.
 		</para>
 		<para>
-			Once a flow execution has resumed after being paused by a view state, it continues executing 
-			until it again enters another view state or enters an end state where it terminates.  Once 
-			a flow execution has terminated it cannot be resumed.
+			Once a flow execution has resumed it continues executing until it again enters a 
+			state where more input is needed or it terminates.  Once a flow execution has terminated
+			it becomes inactive and cannot be resumed.
 		</para>
+	    <sect2 id="execution-resume">
+ 	  	 	<title>Flow execution resume</title>
+ 	  	 	<programlisting>
+    ExternalContext context = ...
+    ViewSelection nextView = execution.signalEvent(new EventId("submit"), context);
+    if (execution.isActive()) {
+        // still active but paused
+    } else {
+        // has ended
+    }
+ 	  	 	</programlisting>
+ 	  	</sect2>		
 	    <sect2 id="execution-lifecycle">
  	  	 	<title>Flow execution lifecycle</title>
    	 		<para>
@@ -104,15 +135,15 @@
    					</thead>
    					<tbody>
 						<row>
-             				<entry>flow</entry>
-							<entry>The definition of the flow to be executed.</entry>
+             				<entry>definition</entry>
+							<entry>The flow definition to be executed.</entry>
 						    <entry>
 								<emphasis>1</emphasis>
 							</entry>
 						</row>
  						<row>
      						<entry>listeners</entry>
-							<entry>The set of observers observing the lifecycle of the flow execution.</entry>
+							<entry>The set of observers observing the lifecycle of this flow execution.</entry>
 							<entry>
 								<emphasis>0..*</emphasis>
 							</entry>
@@ -149,7 +180,7 @@
 			The contextual properties associated with a flow execution are summarized below:
 		</para>
     	<table>
-			<title>Flow Execution properties</title>
+			<title>Flow Execution Context properties</title>
             <tgroup cols="4">
    	            <colspec colname="c1" colwidth="2*" />
                 <colspec colname="c2" colwidth="4*" />
@@ -175,10 +206,10 @@
 						</entry>
 					</row>
 					<row>
-   						<entry>flow</entry>
+   						<entry>definition</entry>
 						<entry>
-							The definition of the flow execution.  The flow serves as
-							the blueprint for the conversation.  <emphasis>It may be helpful to think of a flow as like a <literal>Class</literal> and a 
+							The definition of the flow execution.  The flow definition serves as
+							the blueprint for the program.  <emphasis>It may be helpful to think of a flow as like a <literal>Class</literal> and a 
 							flow execution as like an instance of that <literal>Class</literal></emphasis>.
 							This method may always be safely called.
 						</entry>
