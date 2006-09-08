@@ -55,6 +55,7 @@ import org.springframework.webflow.action.bean.BeanInvokingActionFactory;
 import org.springframework.webflow.core.CollectionAddingPropertyExpression;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.engine.AnnotatedAction;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;
@@ -88,9 +89,11 @@ import org.xml.sax.SAXException;
  * the following format:
  * 
  * <pre>
- *      &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
- *      &lt;flow xmlns=&quot;http://www.springframework.org/schema/webflow&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
- *          xsi:schemaLocation=&quot;http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd&quot;&gt;
+ *     &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+ *     &lt;flow xmlns=&quot;http://www.springframework.org/schema/webflow&quot;
+ *              xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+ *              xsi:schemaLocation=&quot;http://www.springframework.org/schema/webflow
+ *                                  http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd&quot;&gt;
  * </pre>
  * 
  * <p>
@@ -514,11 +517,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private void parseAndAddFlowVariables(Element flowElement, Flow flow) {
 		List varElements = DomUtils.getChildElementsByTagName(flowElement, VAR_ELEMENT);
-		if (varElements.isEmpty()) {
-			return;
-		}
-		for (int i = 0; i < varElements.size(); i++) {
-			flow.addVariable(parseVariable((Element)varElements.get(i)));
+		for (Iterator it = varElements.iterator(); it.hasNext();) {
+			flow.addVariable(parseVariable((Element)it.next()));
 		}
 	}
 
@@ -545,36 +545,30 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private void parseAndAddStartActions(Element element, Flow flow) {
-		List startElements = DomUtils.getChildElementsByTagName(element, START_ACTIONS_ELEMENT);
-		if (!startElements.isEmpty()) {
-			Element startElement = (Element)startElements.get(0);
+		Element startElement = getChildElementByTagName(element, START_ACTIONS_ELEMENT);
+		if (startElement != null) {
 			flow.getStartActionList().addAll(parseAnnotatedActions(startElement));
 		}
 	}
 
 	private void parseAndAddEndActions(Element element, Flow flow) {
-		List endElements = DomUtils.getChildElementsByTagName(element, END_ACTIONS_ELEMENT);
-		if (!endElements.isEmpty()) {
-			Element endElement = (Element)endElements.get(0);
+		Element endElement = getChildElementByTagName(element, END_ACTIONS_ELEMENT);
+		if (endElement != null) {
 			flow.getEndActionList().addAll(parseAnnotatedActions(endElement));
 		}
 	}
 
 	private void parseAndAddGlobalTransitions(Element element, Flow flow) {
-		List globalTransitionElements = DomUtils.getChildElementsByTagName(element, GLOBAL_TRANSITIONS_ELEMENT);
-		if (!globalTransitionElements.isEmpty()) {
-			Element globalTransitionsElement = (Element)globalTransitionElements.get(0);
+		Element globalTransitionsElement = DomUtils.getChildElementByTagName(element, GLOBAL_TRANSITIONS_ELEMENT);
+		if (globalTransitionsElement != null) {
 			flow.getGlobalTransitionSet().addAll(parseTransitions(globalTransitionsElement));
 		}
 	}
 
 	private void parseAndAddInlineFlowDefinitions(Element parentFlowElement, Flow flow) {
 		List inlineFlowElements = DomUtils.getChildElementsByTagName(parentFlowElement, INLINE_FLOW_ELEMENT);
-		if (inlineFlowElements.isEmpty()) {
-			return;
-		}
-		for (int i = 0; i < inlineFlowElements.size(); i++) {
-			Element inlineFlowElement = (Element)inlineFlowElements.get(i);
+		for (Iterator it = inlineFlowElements.iterator(); it.hasNext();) {
+			Element inlineFlowElement = (Element)it.next();
 			String inlineFlowId = inlineFlowElement.getAttribute(ID_ATTRIBUTE);
 			Element flowElement = (Element)inlineFlowElement.getElementsByTagName(FLOW_ATTRIBUTE).item(0);
 			Flow inlineFlow = parseFlow(inlineFlowId, null, flowElement);
@@ -628,7 +622,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private String getStartStateId(Element element) {
-		Element startStateElement = DomUtils.getChildElementByTagName(element, START_STATE_ELEMENT);
+		Element startStateElement = getChildElementByTagName(element, START_STATE_ELEMENT);
 		return startStateElement.getAttribute(IDREF_ATTRIBUTE);
 	}
 
@@ -667,34 +661,28 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private Action[] parseEntryActions(Element element) {
-		List entryElements = DomUtils.getChildElementsByTagName(element, ENTRY_ACTIONS_ELEMENT);
-		if (!entryElements.isEmpty()) {
-			Element entryElement = (Element)entryElements.get(0);
-			return parseAnnotatedActions(entryElement);
-		}
-		else {
+		Element entryActionsElement = getChildElementByTagName(element, ENTRY_ACTIONS_ELEMENT);
+		if (entryActionsElement != null) {
+			return parseAnnotatedActions(entryActionsElement);
+		} else {
 			return null;
 		}
 	}
 
 	private Action[] parseRenderActions(Element element) {
-		List entryElements = DomUtils.getChildElementsByTagName(element, RENDER_ACTIONS_ELEMENT);
-		if (!entryElements.isEmpty()) {
-			Element entryElement = (Element)entryElements.get(0);
-			return parseAnnotatedActions(entryElement);
-		}
-		else {
+		Element renderActionsElement = getChildElementByTagName(element, RENDER_ACTIONS_ELEMENT);
+		if (renderActionsElement != null) {
+			return parseAnnotatedActions(renderActionsElement);
+		} else {
 			return null;
 		}
 	}
 
 	private Action[] parseExitActions(Element element) {
-		List exitElements = DomUtils.getChildElementsByTagName(element, EXIT_ACTIONS_ELEMENT);
-		if (!exitElements.isEmpty()) {
-			Element exitElement = (Element)exitElements.get(0);
-			return parseAnnotatedActions(exitElement);
-		}
-		else {
+		Element exitActionsElement = getChildElementByTagName(element, EXIT_ACTIONS_ELEMENT);
+		if (exitActionsElement != null) {
+			return parseAnnotatedActions(exitActionsElement);
+		} else {
 			return null;
 		}
 	}
@@ -702,8 +690,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private Transition[] parseTransitions(Element element) {
 		List transitions = new LinkedList();
 		List transitionElements = DomUtils.getChildElementsByTagName(element, TRANSITION_ELEMENT);
-		for (int i = 0; i < transitionElements.size(); i++) {
-			Element transitionElement = (Element)transitionElements.get(i);
+		for (Iterator it = transitionElements.iterator(); it.hasNext();) {
+			Element transitionElement = (Element)it.next();
 			if (!StringUtils.hasText(transitionElement.getAttribute(ON_EXCEPTION_ATTRIBUTE))) {
 				transitions.add(parseTransition(transitionElement));
 			}
@@ -790,12 +778,11 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private Parameters parseMethodParameters(Element element) {
-		List methodArgumentsElements = DomUtils.getChildElementsByTagName(element, METHOD_ARGUMENTS_ELEMENT);
-		if (methodArgumentsElements.isEmpty()) {
+		Element methodArgumentsElement = getChildElementByTagName(element, METHOD_ARGUMENTS_ELEMENT);
+		if (methodArgumentsElement == null) {
 			return Parameters.NONE;
 		}
 		ExpressionParser parser = getLocalFlowServiceLocator().getExpressionParser();
-		Element methodArgumentsElement = (Element)methodArgumentsElements.get(0);
 		Parameters parameters = new Parameters();
 		Iterator it = DomUtils.getChildElementsByTagName(methodArgumentsElement, ARGUMENT_ELEMENT).iterator();
 		while (it.hasNext()) {
@@ -811,12 +798,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private ActionResultExposer parseMethodResultExposer(Element element) {
-		List resultsElements = DomUtils.getChildElementsByTagName(element, METHOD_RESULT_ELEMENT);
-		if (resultsElements.isEmpty()) {
+		Element resultElement = getChildElementByTagName(element, METHOD_RESULT_ELEMENT);
+		if (resultElement != null) {
+			return parseActionResultExposer(resultElement);
+		} else {
 			return null;
 		}
-		Element resultElement = (Element)resultsElements.get(0);
-		return parseActionResultExposer(resultElement);
 	}
 	
 	private ActionResultExposer parseActionResultExposer(Element element) {
@@ -841,12 +828,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private ActionResultExposer parseEvaluationResultExposer(Element element) {
-		List resultsElements = DomUtils.getChildElementsByTagName(element, EVALUATION_RESULT_ELEMENT);
-		if (resultsElements.isEmpty()) {
+		Element resultElement = getChildElementByTagName(element, EVALUATION_RESULT_ELEMENT);
+		if (resultElement != null) {
+			return parseActionResultExposer(resultElement);
+		} else {
 			return null;
 		}
-		Element resultElement = (Element)resultsElements.get(0);
-		return parseActionResultExposer(resultElement);
 	}
 	
 	private BeanInvokingActionFactory getBeanInvokingActionFactory() {
@@ -862,7 +849,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		return attributes;
 	}
 
-	private void parseAndSetAttribute(Element element, LocalAttributeMap attributes) {
+	private void parseAndSetAttribute(Element element, MutableAttributeMap attributes) {
 		String name = element.getAttribute(NAME_ATTRIBUTE);
 		String value = null;
 		if (element.hasAttribute(VALUE_ATTRIBUTE)) {
@@ -897,8 +884,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private Transition[] parseIfs(Element element) {
 		List transitions = new LinkedList();
 		List transitionElements = DomUtils.getChildElementsByTagName(element, IF_ELEMENT);
-		Iterator it = transitionElements.iterator();
-		while (it.hasNext()) {
+		for (Iterator it = transitionElements.iterator(); it.hasNext();) {
 			transitions.addAll(Arrays.asList(parseIf((Element)it.next())));
 		}
 		return (Transition[])transitions.toArray(new Transition[transitions.size()]);
@@ -928,11 +914,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private FlowAttributeMapper parseFlowAttributeMapper(Element element) {
-		List mapperElements = DomUtils.getChildElementsByTagName(element, ATTRIBUTE_MAPPER_ELEMENT);
-		if (mapperElements.isEmpty()) {
+		Element mapperElement = getChildElementByTagName(element, ATTRIBUTE_MAPPER_ELEMENT);
+		if (mapperElement == null) {
 			return null;
 		}
-		Element mapperElement = (Element)mapperElements.get(0);
 		if (StringUtils.hasText(mapperElement.getAttribute(BEAN_ATTRIBUTE))) {
 			return getLocalFlowServiceLocator().getAttributeMapper(mapperElement.getAttribute(BEAN_ATTRIBUTE));
 		}
@@ -942,13 +927,13 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private AttributeMapper parseInputMapper(Element element) {
-		List mapperElements = DomUtils.getChildElementsByTagName(element, INPUT_MAPPER_ELEMENT);
-		return mapperElements.isEmpty() ? null : parseAttributeMapper((Element)mapperElements.get(0));
+		Element mapperElement = getChildElementByTagName(element, INPUT_MAPPER_ELEMENT);
+		return mapperElement != null ? parseAttributeMapper(mapperElement) : null;
 	}
 
 	private AttributeMapper parseOutputMapper(Element element) {
-		List mapperElements = DomUtils.getChildElementsByTagName(element, OUTPUT_MAPPER_ELEMENT);
-		return mapperElements.isEmpty() ? null : parseAttributeMapper((Element)mapperElements.get(0));
+		Element mapperElement = getChildElementByTagName(element, OUTPUT_MAPPER_ELEMENT);
+		return mapperElement != null ? parseAttributeMapper(mapperElement) : null;
 	}
 
 	private AttributeMapper parseAttributeMapper(Element element) {
@@ -1014,9 +999,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private FlowExecutionExceptionHandler[] parseTransitionExecutingExceptionHandlers(Element element) {
 		List transitionElements = Collections.EMPTY_LIST;
 		if (isFlowElement(element)) {
-			List globalTransitionElements = DomUtils.getChildElementsByTagName(element, GLOBAL_TRANSITIONS_ELEMENT);
-			if (!globalTransitionElements.isEmpty()) {
-				Element globalTransitionsElement = (Element)globalTransitionElements.get(0);
+			Element globalTransitionsElement = getChildElementByTagName(element, GLOBAL_TRANSITIONS_ELEMENT);
+			if (globalTransitionsElement != null) {
 				transitionElements = DomUtils.getChildElementsByTagName(globalTransitionsElement, TRANSITION_ELEMENT);
 			}
 		}
@@ -1024,8 +1008,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			transitionElements = DomUtils.getChildElementsByTagName(element, TRANSITION_ELEMENT);
 		}
 		List exceptionHandlers = new LinkedList();
-		for (int i = 0; i < transitionElements.size(); i++) {
-			Element transitionElement = (Element)transitionElements.get(i);
+		for (Iterator it = transitionElements.iterator(); it.hasNext();) {
+			Element transitionElement = (Element)it.next();
 			if (StringUtils.hasText(transitionElement.getAttribute(ON_EXCEPTION_ATTRIBUTE))) {
 				exceptionHandlers.add(parseTransitionExecutingExceptionHandler(transitionElement));
 			}
@@ -1059,5 +1043,35 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private void destroyLocalServiceRegistry(Flow flow) {
 		localFlowServiceLocator.pop();
+	}
+	
+	// utility
+	
+	/**
+	 * Utility method that returns the first child element
+	 * identified by its name.
+	 * @param ele the DOM element to analyze
+	 * @param childEleName the child element name to look for
+	 * @return the <code>org.w3c.dom.Element</code> instance,
+	 * or <code>null</code> if none found
+	 */
+	private Element getChildElementByTagName(Element ele, String childEleName) {
+		NodeList nl = ele.getChildNodes();
+		for (int i = 0; i < nl.getLength(); i++) {
+			Node node = nl.item(i);
+			if (node instanceof Element && nodeNameEquals(node, childEleName)) {
+				return (Element) node;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Namespace-aware equals comparison. Returns <code>true</code> if either
+	 * {@link Node#getLocalName} or {@link Node#getNodeName} equals <code>desiredName</code>,
+	 * otherwise returns <code>false</code>.
+	 */
+	private boolean nodeNameEquals(Node node, String desiredName) {
+		return desiredName.equals(node.getNodeName()) || desiredName.equals(node.getLocalName());
 	}
 }
