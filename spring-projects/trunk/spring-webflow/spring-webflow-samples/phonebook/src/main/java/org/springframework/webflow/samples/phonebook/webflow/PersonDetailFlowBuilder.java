@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.samples.phonebook.webflow;
 
+import org.springframework.binding.mapping.DefaultAttributeMapper;
+import org.springframework.binding.mapping.Mapping;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.builder.AbstractFlowBuilder;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
@@ -34,6 +36,11 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
 	public PersonDetailFlowBuilder(FlowServiceLocator flowServiceLocator) {
 		super(flowServiceLocator);
+	}
+
+	public void buildInputMapper() throws FlowBuilderException {
+		Mapping idMapping = mapping().source("id").target("flowScope.id").value();
+		getFlow().setInputMapper(new DefaultAttributeMapper().addMapping(idMapping));
 	}
 
 	public void buildStates() throws FlowBuilderException {

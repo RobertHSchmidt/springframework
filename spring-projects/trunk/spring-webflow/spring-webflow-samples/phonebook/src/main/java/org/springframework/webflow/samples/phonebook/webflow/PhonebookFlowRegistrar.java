@@ -21,8 +21,8 @@ public class PhonebookFlowRegistrar implements FlowDefinitionRegistrar {
 	}
 
 	public void registerFlowDefinitions(FlowDefinitionRegistry registry) {
-		registry.registerFlowDefinition(assemble("search-flow", new SearchPersonFlowBuilder(serviceLocator)));
 		registry.registerFlowDefinition(assemble("detail-flow", new PersonDetailFlowBuilder(serviceLocator)));
+		registry.registerFlowDefinition(assemble("search-flow", new SearchPersonFlowBuilder(serviceLocator)));
 	}
 
 	private FlowDefinitionHolder assemble(String flowId, FlowBuilder flowBuilder) {
