@@ -87,8 +87,8 @@
     		<title>FlowExecutorImpl</title>
 	    	<para>
     			The default executor implementation is <literal>org.springframework.webflow.executor.FlowExecutorImpl</literal>.
-    			It allows for configuration of the flow locator responsible for loading the flow definitions to execute, as well as
-    			the flow execution repository strategy responsible for persisting flow executions that remain 
+    			It allows for configuration of a <literal>FlowDefinitionLocator</literal> responsible for loading the flow definitions to execute, as well as
+    			the <literal>FlowExecutionRepository</literal> strategy responsible for persisting flow executions that remain 
     			active beyond a single request into the server.
     		</para>
     		<para>
@@ -110,7 +110,7 @@
    					<tbody>
 						<row>
            					<entry>definitionLocator</entry>
-							<entry>The service for loading flow definitions to be executed, typically a flow registry</entry>
+							<entry>The service for loading flow definitions to be executed, typically a <literal>FlowDefinitionRegistry</literal></entry>
 					    	<entry>
 								<emphasis>1</emphasis>
 							</entry>
