@@ -45,10 +45,6 @@ class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	private static final String REPOSITORY_TYPE_PROPERTY = "repositoryType";
 
-	private static final String STATISTICS_ENABLED_ATTRIBUTE = "statistics-enabled";
-
-	private static final String STATISTICS_ENABLED_PROPERTY = "statisticsEnabled";
-
 	protected BeanDefinition parseInternal(Element element, ParserContext parserContext) {
 		BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder
 				.rootBeanDefinition(FlowExecutorFactoryBean.class);
@@ -56,7 +52,6 @@ class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		addExecutionAttributes(element, parserContext, definitionBuilder);
 		addExecutionListenerLoader(element, parserContext, definitionBuilder);
 		definitionBuilder.addPropertyValue(REPOSITORY_TYPE_PROPERTY, getRepositoryType(element));
-		definitionBuilder.addPropertyValue(STATISTICS_ENABLED_PROPERTY, getStatisticsEnabled(element));
 		return definitionBuilder.getBeanDefinition();
 	}
 
@@ -81,10 +76,6 @@ class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 	 */
 	private String getRepositoryType(Element element) {
 		return element.getAttribute(REPOSITORY_TYPE_ATTRIBUTE).toUpperCase();
-	}
-
-	private Boolean getStatisticsEnabled(Element element) {
-		return Boolean.valueOf(element.getAttribute(STATISTICS_ENABLED_ATTRIBUTE));
 	}
 
 	private void addExecutionAttributes(Element element, ParserContext parserContext,
