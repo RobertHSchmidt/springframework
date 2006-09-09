@@ -889,19 +889,23 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 
 	/**
+	 * <p>
 	 * Create the backing form object instance that should be managed by this
-	 * {@link FormAction form action).  By default, will attempt to instantiate a new
+	 * {@link FormAction form action}.  By default, will attempt to instantiate a new
 	 * form object instance of type {@link #getFormObjectClass()} transiently in
 	 * memory.
+	 * </p>
 	 * <p>
 	 * Subclasses should override if they need to load the form object from a
 	 * specific location or resource such as a database or filesystem.
+	 * </p>
 	 * <p>
 	 * Subclasses should override if they need to customize how a transient form
 	 * object is assembled during creation.
+	 * </p>
 	 * @param context the action execution context for accessing flow data
 	 * @return the form object
-	 * @throws IllegalStateException if the formObjectClass property is not set
+	 * @throws IllegalStateException if the {@link #getFormObjectClass()} property is not set
 	 * and this method has not been overridden
 	 * @throws Exception when an unrecoverable exception occurs
 	 */
