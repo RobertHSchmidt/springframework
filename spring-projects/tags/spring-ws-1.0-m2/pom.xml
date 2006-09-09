@@ -24,6 +24,10 @@
         </notifiers>
     </ciManagement>
     <distributionManagement>
+        <repository> 
+           <id>local</id> 
+           <url>file://${basedir}/target/deploy</url>
+        </repository> 
         <snapshotRepository>
             <id>static.springframework.org</id>
             <url>
