@@ -24,11 +24,6 @@
         </notifiers>
     </ciManagement>
     <distributionManagement>
-        <repository>
-            <id>static.springframework.org</id>
-            <url>
-                scp://static.springframework.org/var/www/domains/springframework.org/static/htdocs/maven2</url>
-        </repository>
         <snapshotRepository>
             <id>static.springframework.org</id>
             <url>
