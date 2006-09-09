@@ -220,6 +220,12 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <tagBase>https://svn.sourceforge.net/svnroot/springframework/spring-projects/tags/</tagBase>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
