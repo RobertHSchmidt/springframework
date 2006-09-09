@@ -19,7 +19,7 @@ The Airline sample is a normal web application that connects to a database of yo
 2. Adjust the jdbc.properties in src/main/resources/org/springframework/ws/samples/airline/dao
    to reflect your database connection settings
 3. Adjust the hibernate.properties in src/main/resources/org/springframework/ws/samples/airline/dao/hibernate
-4. run "mvn package" and deploy the war file generated in target/artifacts/war; or run "mvn jetty:run" to run the sample 
+4. run "mvn package" and deploy the war file generated in target; or run "mvn jetty:run" to run the sample 
    using the Jetty Web container built into Maven 2.
 
 Note that both MySQL drivers are linked in using Maven so you don't have include these in your server if you're using

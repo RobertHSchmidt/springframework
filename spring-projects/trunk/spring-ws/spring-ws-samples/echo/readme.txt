@@ -10,4 +10,4 @@ service is used to obtain the result.
 
 2. INSTALLATION
 
-Simply run 'ant war' and deploy the war file generated in target/artifacts/war
+Simply run "mvn package" and deploy the war file generated in target

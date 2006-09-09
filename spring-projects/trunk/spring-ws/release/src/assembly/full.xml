@@ -66,7 +66,7 @@
     <dependencySets>
         <dependencySet>
             <outputDirectory>lib</outputDirectory>
-            <scope>runtime</scope>
+            <scope>test</scope>
             <excludes>
                 <exclude>org.springframework.ws:spring-xml</exclude>
                 <exclude>org.springframework.ws:spring-oxm</exclude>
