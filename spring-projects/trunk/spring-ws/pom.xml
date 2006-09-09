@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springframework.ws</groupId>
     <artifactId>spring-ws</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-m2-SNAPSHOT</version>
+    <version>1.0-m2</version>
     <name>Spring Web Services</name>
     <description>Spring Web Services Framework</description>
     <url>http://www.springframework.org/spring-ws</url>
@@ -67,11 +66,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>
-            scm:svn:https://svn.sourceforge.net/svnroot/springframework/spring-projects/trunk/spring-ws/</connection>
-        <developerConnection>
-            scm:svn:https://svn.sourceforge.net/svnroot/springframework/spring-projects/trunk/spring-ws/</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/springframework/spring-projects/trunk/spring-ws/</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/springframework/spring-projects/tags/spring-ws-1.0-m2</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/springframework/spring-projects/tags/spring-ws-1.0-m2</developerConnection>
+        <url>https://svn.sourceforge.net/svnroot/springframework/spring-projects/tags/spring-ws-1.0-m2</url>
     </scm>
     <modules>
         <module>spring-xml</module>
@@ -353,6 +350,18 @@
                 <artifactId>spring-ws-doc</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ws</groupId>
+                <artifactId>airline</artifactId>
+                <type>war</type>
+                <version>${pom.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ws</groupId>
+                <artifactId>echo</artifactId>
+                <type>war</type>
+                <version>${pom.version}</version>
             </dependency>
             <!-- Spring dependencies -->
             <dependency>
