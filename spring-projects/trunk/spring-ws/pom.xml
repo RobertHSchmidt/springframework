@@ -352,6 +352,7 @@
                 <groupId>org.springframework.ws</groupId>
                 <artifactId>spring-ws-doc</artifactId>
                 <version>${project.version}</version>
+                <type>pom</type>
             </dependency>
             <!-- Spring dependencies -->
             <dependency>
