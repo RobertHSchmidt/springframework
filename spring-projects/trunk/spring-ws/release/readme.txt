@@ -20,7 +20,7 @@ Release contents:
 
 "." contains Spring-WS distribution units (jars and source zip archives), readme, and copyright
 "docs" contains the Spring-WS reference manual and API Javadocs
-"lib" contains required dependencies. Optional, runtime and testing dependencies are not included.
+"lib" contains dependencies
 "modules" contains buildable modules
 "modules/spring-oxm" contains buildable Spring O/X Mapping sources
 "modules/spring-ws-core" contains buildable Spring-WS core sources

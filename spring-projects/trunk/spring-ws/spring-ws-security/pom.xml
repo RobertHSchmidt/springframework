@@ -27,6 +27,10 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-mock</artifactId>
         </dependency>
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-jdbc</artifactId>
+        </dependency>
         <!-- SOAP dependencies -->
         <dependency>
             <groupId>com.sun.xml.messaging.saaj</groupId>

@@ -50,8 +50,9 @@ Package org.springframework.ws.soap.axiom
 Package org.springframework.ws.soap.endpoint.interceptor
 * added SoapEnvelopeLoggingInterceptor, which logs the entire SoapEnvelope
 
-Package org.springframework.ws.soap.endpoint.interceptor
-*
+Package org.springframework.ws.soap.endpoint.mapping
+* moved SOAP-specific EndpointMappings to seperate package
+* added Role/Actor functionality to DelegatingSoapEndpointMapping
 
 Package org.springframework.ws.soap.saaj
 * add support for SAAJ 1.3
