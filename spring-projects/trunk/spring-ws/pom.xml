@@ -76,11 +76,8 @@
     <modules>
         <module>spring-xml</module>
         <module>spring-oxm</module>
-        <module>spring-oxm-tiger</module>
         <module>spring-ws-core</module>
         <module>spring-ws-security</module>
-        <module>spring-ws-samples</module>
-        <module>doc</module>
         <module>release</module>
     </modules>
     <profiles>
