@@ -2,47 +2,141 @@ SPRING WEB FLOW (SWF) CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 RC4 (16.8.2006)
+Changes in version 1.0 RC4 (09.9.2006)
 
 General
-* Several JavaDoc enhancements all over the source code.
+* Restructured codebase into distinct layers and subsystems upon in-depth SonarJ analysis of architecture.
+  Notable restructuring:
+  - Extracted stable "Flow Definition" API to webflow.definition package from root webflow package
+  - Extracted stable "Flow Definition Registry" subsystem to webflow.definition.registry.
+  - Extracted stable "Flow Execution" API to webflow.execution package from root webflow package.
+  - Extracted stable "External Context" subsystem to webflow.context from root webflow package.
+  - Extracted "Flow Execution Engine" implementation to webflow.engine package from root webflow package,
+    decoupling stable Flow Definition, Flow Definition Registry, Flow Execution, Flow Execution Repository,
+    and Flow Executor subsystems from the more volatile engine implementation.
+  - Moved webflow.builder subsystem into the webflow.engine implementation package.
+  - Extracted the XML-based Flow Builder into webflow.builder.xml sub package.
+  - Extracted generic data structures into webflow.core.collection from root webflow package.
+  - Extracted generic "Conversation Manager" subsystem into webflow.conversation from execution.repository.
+  - Factored out test support code into "engine" and "execution" subpackages, for unit testing 
+    flow artifacts and system testing flow executions respectively.
+  Restructuring effort successfully reduced project average component dependency from 48 to 27 (45%), 
+  largely by isolating and encapsulating the complexity of the Spring Web Flow engine implementation.
+  See reference documentation and JavaDoc overview for layer and subsystem descriptions.
+  See root spring-webflow project directory for SonarJ architecture document - "webflow-architecture.xml"
+* JavaDoc enhancements all over the source code.
+* Significant reference documentation updates.
 
-Package org.springframework.binding.mapping
-* Changed semantics for mapping of null values.  Source mapping expressions that evaluate to null now result in a 'no-op' 
-  mapping operation or an error if the mapping is required.  Previously mapping of the null value was performed.
-
-Package org.springframework.webflow
-* Added 'actionList' property to ViewState, for executing behavior when the view state is entered *and* refreshed.
+Package org.springframework.webflow.action
+* Added EvaluateAction for evaluating Expression objects against the RequestContext as part of Action execution.
+* Factored bean invoking action specific code into "bean" subpackage.
+* Factored out generic ResultEventFactory and ResultEventFactorySelector helpers.
+* Renamed MethodResultSpecification to ActionResultExposer indicating its more general applicability.
+* Made FormAction methods final.  In general, do not override action methods, instead have your flow call
+  multiple methods in a chain or have your action method delegate to a explict overridable hook.
+* Collapsed default RC3 FormAction.createFormObject behavior into "loadFormObject" for simplictly and 
+  renamed "loadFormObject" to simply "createFormObject" for consistency.  This leaves a single hook
+  -- createFormObject -- to customize how the form object instance is created/retrieved.
+* Removed GuardedAction as it was not being used.
   
-Package org.springframework.webflow.builder
+Package org.springframework.webflow.config
+* Introduced new Spring 2.0 webflow-config XML namespace, significantly simplifying user configuration 
+  of the flow execution engine.  See spring-webflow-config.xsd and sample applications for more information.
+* Introduced Spring 1.2 compatible FlowExecutorFactoryBean for easing configuration of the flow
+  execution engine.
+
+Package org.springframework.webflow.core
+* Factored out "AttributeMap" interface and renamed default implementation to "LocalAttributeMap".
+* Factored out "ParameterMap" interface and renamed default implementation to "LocalParameterMap".
+* Factored out "MutableAttributeMap" interface from "AttributeMap" for modifiable maps.
+
+Package org.springframework.webflow.context
+* Added AttributeMapBindingListener abstraction for listening to bind and unbind events in supported attribute maps 
+  such as the session map.  
+* Introduced ExternalContextHolder for setting a thread-bound ExternalContext.  Used by FlowExecutionRepository 
+  implementations that need to access external state such as the sessionMap.
+
+Package org.springframework.webflow.conversation
+* Renamed ConversationService to ConversationManager.
+* Added SessionBindingConversationManager for storing conversations in the session map.
+* Added stateful LocalConversationManager for storing conversations in a local concurrent hash map
+  with session-based expiration support.
+* Fixed bug where ConversationEntry lock was not released on 'end'.
+* Fixed bug where an IllegalMonitorException could occur on implicit conversation unlock on 'end'.
+
+Package org.springframework.webflow.definition
+* Introduced stable FlowDefinition abstractions, useful for reasoning on flow definition metadata 
+  to support tooling and other runtime introspection.
+* Relocated FlowLocator and related exception types from execution to registry subpackage.
+* Renamed FlowLocator to FlowDefinitionLocator for consistency.
+* Renamed FlowRegistry to FlowDefinitionRegistry for consistency.
+* Renamed FlowRegistrar to FlowDefinitionRegistrar for consistency.
+* Renamed ExternalizedFlowDefinition to FlowDefinitionResource for clarity.
+* Reworked FlowDefinitionRegistrar interface, simplifying and decoupling it from the concept of a FlowServiceLocator.
+* Removed FlowDefinitionRegistryFactoryBean as it was not used.
+
+Package org.springframework.webflow.engine
+* Introduced full support for XML schema, see builder/xml/spring-webflow.xsd
+* Removed support for XML DTD, removing spring-webflow.dtd.
+* Significantly enhanced in-line XML element and attribute documentation for benefit of .xsd users.
+* Reworked support for "bean invoking actions".  Introduced new <bean action/> tag.
+* Added support for <evaluate-action/> elements for evaluated arbitrary flow expressions as an action using OGNL.
 * Added support for 'required' mappings.  A required mapping will report an error if its source expression evaluates to a null value.
+* Added 'renderActionList' property to ViewState, for executing behavior before a view selection is rendered. 
+* Added support for <render-actions> within a <view-state/> element, for executing behavior
+  when the view state makes a renderable view selection.
+* Added the ability to invoke a list of actions before executing an exception handling transition.
+* Added several AbstractFlowBuilder.addViewState convenience operations.
 * BaseFlowBuilder now resets its internal flow reference on a call to dispose.
 * FlowAssembler.assembleFlow now returns the constructed flow for clarity. This also clarifies the API in that it is no longer
   required to call getFlow on a FlowBuilder that has already been disposed by the FlowAssembler.
 * Replaced STATE_TYPE_CONTEXT_PARAMETER parameter used by the TextToViewSelector by END_STATE_VIEW_FLAG_PARAMETER which just
   has a boolean value (a flag). This makes the contract a bit clearer. As a result, the VIEW_STATE_TYPE and END_STATE_TYPE
   constants in TextToViewSelector were also dropped.
-* Refactored ResultEventFactorySelector to be a static inner class of BeanInvokingActionFactory to highlight the fact that it
-  is a helper strategy of this class.
-* Added support for 0..n <action/> elements within a <view-state/> element, for executing behavior
-  when the view state is entered *and* refreshed.
-* Added several AbstractFlowBuilder.addViewState convenience operations.
-
-Package org.springframework.webflow.execution
-* Fixed inconsistency in continuation id parsing within ClientContinuationFlowExecutionRepository.
-* Added 'maxConversations' property to LocalConversationService to allow setting an upper bound on the number 
-  of conversations that can be active at one time.
-* Fixed bug where ConversationEntry lock was not released on 'end'.
-
-Package org.springframework.webflow.executor
-* Renamed 'redirectOnPause' property to 'alwaysRedirectOnPause' for clarity.
-* Changed RequestPathFlowExecutorArgumentExtractor to append '_flowExecutionKey' as path element instead of
-  request parameter for flow execution URLs.
-  
-Package org.springframework.webflow.support
 * Moved ImmutableFlowAttributeMapper to builder and made package-private.  Not a general support class.
-* Added the ability to invoke a list of actions before executing an exception handling transition.
+* Reworked FlowExecution transient state restoration behavior, now using
+  a dedicated FlowExecutionImplStateRestorer.
+  
+Package org.springframework.webflow.execution
+* Decoupled the central RequestContext interface from the flow execution engine implementation.
+* Renamed the "flow" property of FlowExecutionContext to "definition" for consistency.
+* Renamed the "flow" property of FlowSession to "definition" for consistency.
+* Made all modifiable execution data maps "MutableAttributeMap" references: this includes 
+  "request scope", "flow scope", and "conversation scope".  Umodifiable maps are simply plain
+  "AttributeMap" references: this includes request context attributes, flow execution system
+  attributes, and flow definition attributes.
+* Introduced FlowExecutionFactory for encapsulating the construction of a FlowExecution from a FlowDefinition.
+* Moved generic FlowExcutionFactory support code into "factory" subpackage.
+* Added support for "flow execution attributes" for setting system parameters that can affect flow execution.
+* Fixed inconsistency in continuation id parsing within ClientContinuationFlowExecutionRepository.
+* Removed FlowExecutionRepositoryFactory abstraction, simplifying overall use of the
+  FlowExecutionRepository subsystem.
+* Improved support for customization of FlowExecutionContinuation creation via the FlowExecutionContinuationFactory.
+  
+Package org.springframework.webflow.executor
+* Introduced FlowExecutorFactory to encapsulate construction of a FlowExecutor.
+* Decoupled executor subsystem from the flow execution engine implementation and assumptions about engine defaults.
+* Removed 'alwaysRedirectOnPause' property in favor of dedicated 'alwaysRedirectOnPause' flow execution attribute.
+* Changed RequestPathFlowExecutorArgumentExtractor to append keyDelimiter property as path element instead of
+  request parameter for flow execution URLs.
 
+Package org.springframework.webflow.samples
+* Updated sample applications to take advantage of new features including:
+  - New spring-webflow-config Spring 2.0 XML Schema
+  - "Render actions"
+  - "Always redirect on pause"
+  - "Bean actions"
+  - "Evaluate actions"
+  Please review samples to see these features in action!
+  
+Package org.springframework.webflow.test
+* Changed AbstractXmlFlowExecutionTests 'getFlowDefinition' hook to 'getFlowDefinitionResource' returning
+  a FlowDefinitionResource.  See phonebook and sellitem src/test trees for an example.
+* Added several convenience flow definition resource factory methods.
+* Removed startFlow variants in AbstractFlowExecutionTests that accept a flow execution listener, call
+  setFlowExecutionListener(...) instead.
+* Added convenient registerMockServices hook to AbstractExternalizedFlowExecutionTests.
+    
 Changes in version 1.0 RC3 (23.6.2006)
 ------------------------------------
 Package org.springframework.webflow

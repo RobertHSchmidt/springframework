@@ -41,7 +41,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Several action execution methods are provided:
  * <ul>
  * <li> {@link #setupForm(RequestContext)} - Prepares the form object for
- * display on a form, {@link #loadFormObject(RequestContext) loading it} if
+ * display on a form, {@link #createFormObject(RequestContext) creating it} if
  * necessary and caching it in the configured
  * {@link #getFormObjectScope() form object scope}. Also
  * {@link #initBinder(RequestContext, DataBinder) installs} any custom property
@@ -91,19 +91,19 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Here is an example implementation of such a compact form flow:
  * 
  * <pre>
- *     &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *         &lt;entry-actions&gt;
- *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *         &lt;/entry-actions&gt;
- *         &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
- *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
- *         &lt;/transition&gt;
- *     &lt;/view-state&gt;
- *                                            
- *     &lt;action-state id=&quot;executeSearch&quot;&gt;
- *         &lt;action bean=&quot;searchFormAction&quot;/&gt;
- *         &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
- *     &lt;/action-state&gt;
+ *      &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *          &lt;entry-actions&gt;
+ *              &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *          &lt;/entry-actions&gt;
+ *          &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
+ *              &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *          &lt;/transition&gt;
+ *      &lt;/view-state&gt;
+ *                                             
+ *      &lt;action-state id=&quot;executeSearch&quot;&gt;
+ *          &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *          &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
+ *      &lt;/action-state&gt;
  * </pre>
  * 
  * </p>
@@ -118,6 +118,10 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * <p>
  * <b>Subclassing hooks:</b>
  * <ul>
+ * <li>A important hook is
+ * {@link #createFormObject(RequestContext) createFormObject}. You may override
+ * this to customize where the backing form object instance comes from (e.g instantiated
+ * transiently in memory or loaded from a database).</li>
  * <li>An optional hook method provided by this class is
  * {@link #initBinder(RequestContext, DataBinder) initBinder}. This is called
  * after a new data binder is created by any of the action execution methods. It
@@ -127,10 +131,6 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Note: consider setting an explicit
  * {@link org.springframework.beans.PropertyEditorRegistrar} strategy as a more
  * reusable way to encapsulate custom PropertyEditor installation logic.</li>
- * <li>Another important hook is
- * {@link #loadFormObject(RequestContext) loadFormObject}. You may override
- * this to customize where the backing form object comes from (e.g instantiated
- * directly in memory or loaded from a database).</li>
  * </ul>
  * <p>
  * Note that this action does not provide a <i>referenceData()</i> hook method
@@ -144,22 +144,22 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * 
  * <pre>
  * public Event setupReferenceData(RequestContext context) throws Exception {
- * 	MutableAttributeMap requestScope = context.getRequestScope();
- * 	requestScope.put(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
- * 	return success();
+ *     MutableAttributeMap requestScope = context.getRequestScope();
+ * 	   requestScope.put(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
+ * 	   return success();
  * }
  * </pre>
  * 
  * ... and then invoke it like this:
  * 
  * <pre>
- *        &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *            &lt;entry-actions&gt;
- *                &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *                &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupReferenceData&quot;/&gt;
- *            &lt;/entry-actions&gt;
- *            ...
- *        &lt;/view-state&gt;
+ *     &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *         &lt;entry-actions&gt;
+ *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupReferenceData&quot;/&gt;
+ *         &lt;/entry-actions&gt;
+ *         ...
+ *     &lt;/view-state&gt;
  * </pre>
  * 
  * <p>
@@ -177,15 +177,15 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * signature should follow the following pattern:
  * 
  * <pre>
- *        public void ${validateMethodName}(${formObjectClass}, Errors)
+ *     public void ${validateMethodName}(${formObjectClass}, Errors)
  * </pre>
  * 
  * For instance, having a action definition like this:
  * 
  * <pre>
- *        &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;&gt;
- *            &lt;attribute name=&quot;validatorMethod&quot; value=&quot;validateSearchCriteria&quot;/&gt;
- *        &lt;/action&gt;
+ *     &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;&gt;
+ *         &lt;attribute name=&quot;validatorMethod&quot; value=&quot;validateSearchCriteria&quot;/&gt;
+ *     &lt;/action&gt;
  * </pre>
  * 
  * Would result in the
@@ -209,7 +209,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * </tr>
  * <tr>
  * <td>formObjectName</td>
- * <td>"formObject"</td>
+ * <td>formObject</td>
  * <td>The name of the form object. The form object will be set in the
  * configured scope using this name.</td>
  * </tr>
@@ -589,7 +589,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @throws Exception if an exception occured
 	 */
 	public final Event resetForm(RequestContext context) throws Exception {
-		Object formObject = loadFormObject(context);
+		Object formObject = createFormObject(context);
 		setFormObject(context, formObject);
 		setFormErrors(context, createFormErrors(context, formObject));
 		return success();
@@ -685,7 +685,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * following signature:
 	 * 
 	 * <pre>
-	 *     public void ${validateMethodName}(${formObjectClass}, Errors)
+	 *      public void ${validateMethodName}(${formObjectClass}, Errors)
 	 * </pre>
 	 * 
 	 * @param validatorMethod the name of the validator method to invoke
@@ -704,7 +704,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	/**
 	 * Convenience method that returns the form object for this form action. If
 	 * not found in the configured scope, a new form object will be created or
-	 * loaded by a call to {@link #loadFormObject(RequestContext)}.
+	 * loaded by a call to {@link #createFormObject(RequestContext)}.
 	 * @param context the flow request context
 	 * @return the form object
 	 * @throws Exception when an unrecoverable exception occurs
@@ -716,7 +716,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Loading new form object");
 			}
-			formObject = loadFormObject(context);
+			formObject = createFormObject(context);
 			setFormObject(context, formObject);
 		}
 		else {
@@ -740,7 +740,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	protected final Errors getFormErrors(RequestContext context) throws Exception {
 		return ensureFormErrorsExposed(context, getFormObject(context));
 	}
-	
+
 	/**
 	 * Put given form object in the configured scope of given context.
 	 */
@@ -827,8 +827,8 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 
 	/**
-	 * Load the backing form object that should be updated from incoming event
-	 * parameters and validated. By default, will attempt to instantiate a new
+	 * Create the backing form object instance that should be managed by this
+	 * {@link FormAction form action).  By default, will attempt to instantiate a new
 	 * form object instance of type {@link #getFormObjectClass()} transiently in
 	 * memory.
 	 * <p>
@@ -837,16 +837,15 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * <p>
 	 * Subclasses should override if they need to customize how a transient form
 	 * object is assembled during creation.
-	 * @param context the action execution context, for accessing and setting
-	 * data in "flow scope" or "request scope"
+	 * @param context the action execution context for accessing flow data
 	 * @return the form object
-	 * @throws IllegalStateException if the formObjectClass property is not set and this method
-	 * has not been overridden
+	 * @throws IllegalStateException if the formObjectClass property is not set
+	 * and this method has not been overridden
 	 * @throws Exception when an unrecoverable exception occurs
 	 */
-	protected Object loadFormObject(RequestContext context) throws Exception {
+	protected Object createFormObject(RequestContext context) throws Exception {
 		if (formObjectClass == null) {
-			throw new IllegalStateException("Cannot create form object without formObjectClass being set -- "
+			throw new IllegalStateException("Cannot create form object without formObjectClass property being set -- "
 					+ "either set formObjectClass or override this method");
 		}
 		if (logger.isDebugEnabled()) {
