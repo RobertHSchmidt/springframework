@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
 
+	<start-actions>
+		<action bean="formAction" method="setupForm" />
+	</start-actions>
+	
 	<start-state idref="selectCustomerType" />
 
 	<view-state id="selectCustomerType" view="selectCustomer">
-		<entry-actions>
-			<action bean="formAction" method="setupForm" />
-		</entry-actions>
 		<transition on="submit" to="selectSender">
 			<action bean="formAction" method="bind" />
 		</transition>
 	</view-state>
 
 	<view-state id="selectSender" view="selectSender">
-		<entry-actions>
+		<render-actions>
 			<bean-action bean="rateService" method="getCountries">
 				<method-result name="countries" />
 			</bean-action>
-		</entry-actions>
+		</render-actions>
 		<transition on="submit" to="selectReceiver">
 			<action bean="formAction" method="bindAndValidate">
 				<attribute name="validatorMethod" value="validateSender" />
@@ -27,11 +30,11 @@
 	</view-state>
 
 	<view-state id="selectReceiver" view="selectReceiver">
-		<entry-actions>
+		<render-actions>
 			<bean-action bean="rateService" method="getCountries">
 				<method-result name="countries" />
 			</bean-action>
-		</entry-actions>
+		</render-actions>
 		<transition on="submit" to="selectPackageDetails">
 			<action bean="formAction" method="bindAndValidate">
 				<attribute name="validatorMethod" value="validateReceiver" />
@@ -40,11 +43,11 @@
 	</view-state>
 
 	<view-state id="selectPackageDetails" view="selectPackageDetails">
-		<entry-actions>
+		<render-actions>
 			<bean-action bean="rateService" method="getPackageTypes">
 				<method-result name="packageTypes" />
 			</bean-action>
-		</entry-actions>
+		</render-actions>
 		<transition on="submit" to="findRate">
 			<action bean="formAction" method="bindAndValidate">
 				<attribute name="validatorMethod" value="validatePackageDetails" />
