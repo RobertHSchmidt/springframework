@@ -723,6 +723,17 @@
 								<emphasis>0..1</emphasis>
 					       </entry>
 					       <entry>Null</entry>
+					    </row>
+            			<row>
+              				<entry>renderActions</entry>
+							<entry>
+								The list of actions to execute each time a renderable view selection is made.
+								Allows for execution of pre-render logic.
+							</entry>
+						    <entry>
+								<emphasis>0..*</emphasis>
+					       </entry>
+					       <entry>Empty</entry>
         	           </row>
             	   </tbody>
 	          </tgroup>
