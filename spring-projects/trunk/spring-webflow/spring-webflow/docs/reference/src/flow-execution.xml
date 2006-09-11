@@ -116,7 +116,9 @@
 	    <sect2 id="execution-properties">
  	  	 	<title>Flow execution properties</title>
    	 		<para>
-   	 			The configurable properties of a flow execution are summarized below:
+   	 			The Spring Web Flow flow execution implementation is <literal>org.springframework.engine.impl.FlowExecutionImpl</literal>,
+   	 			typically created by a <literal>org.springframework.engine.impl.FlowExecutionImplFactory</literal>
+   	 			The configurable properties of this flow execution implementation are summarized below:
    		 	</para>
 	    	<table>
    				<title>Flow Execution properties</title>
@@ -149,6 +151,14 @@
 							</entry>
 							<entry>Empty</entry>
 						</row>
+ 						<row>
+     						<entry>attributes</entry>
+							<entry>Global system attributes that can be used to affect flow execution behavior</entry>
+							<entry>
+								<emphasis>0..*</emphasis>
+							</entry>
+							<entry>Empty</entry>
+						</row>
 					</tbody>
 				</tgroup>
 			</table>
@@ -167,6 +177,15 @@
 				</caption>
 			</mediaobject>
 		</sect2>
+	    <sect2 id="execution-impl-creation">
+ 	  	 	<title>Flow execution impl creation</title>
+ 	  	 	<programlisting>
+    FlowExecutionFactory factory = new FlowExecutionImplFactory();
+    factory.setExecutionListeners(...);
+    factory.setExecutionAttributes(...);
+    FlowExecution execution = factory.createFlowExecution(definition);
+ 	  	 	</programlisting>
+ 	  	</sect2>		
 	</sect1>
 	<sect1 id="execution-context">
 		<title>Flow execution context</title>
@@ -432,31 +451,53 @@
 	    <sect2 id="execution-testing-example">
  	  	 	<title>Flow execution test example</title>
    	 		<para>
-   	 			To help illustrate testing a flow execution, first consider the following flow
+   	 			To help illustrate testing a flow execution, first consider the following flow definition
    	 			to search a phonebook for contacts:
    		 	</para>
-			<mediaobject>
-				<imageobject role="fo">
-					<imagedata fileref="images/phonebook-searchflowuml.png" format="PNG" align="center"/>
-				</imageobject>
-				<imageobject role="html">
-					<imagedata fileref="images/phonebook-searchflowuml.png" format="PNG" align="center"/>
-				</imageobject>
-				<caption>
-					<para>Phonebook Search Flow - UML Model</para>
-				</caption>
-			</mediaobject>
-			<mediaobject>
-				<imageobject role="fo">
-					<imagedata fileref="images/phonebook-searchflow.png" format="PNG" align="center"/>
-				</imageobject>
-				<imageobject role="html">
-					<imagedata fileref="images/phonebook-searchflow.png" format="PNG" align="center"/>
-				</imageobject>
-				<caption>
-					<para>Phonebook Search Flow - XML Definition</para>
-				</caption>
-			</mediaobject>
+   		 	<programlisting>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;flow xmlns="http://www.springframework.org/schema/webflow"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                             http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+                             
+    &lt;start-state idref="enterCriteria"/&gt;
+    
+    &lt;view-state id="enterCriteria" view="searchCriteria"&gt;
+        &lt;entry-actions&gt;
+            &lt;action bean="formAction" method="setupForm"/&gt;
+        &lt;/entry-actions&gt;
+            &lt;transition on="search" to="executeSearch"&gt;
+            &lt;action bean="formAction" method="bindAndValidate"/&gt;
+        &lt;/transition&gt;
+    &lt;/view-state&gt;
+    
+    &lt;action-state id="executeSearch"&gt;
+        &lt;bean-action bean="phonebook" method="search"&gt;
+            &lt;method-arguments&gt;
+                &lt;argument expression="flowScope.searchCriteria"/&gt;
+            &lt;/method-arguments&gt;
+            &lt;method-result name="results"/&gt;
+        &lt;/bean-action&gt;
+        &lt;transition on="success" to="displayResults"/&gt;
+    &lt;/action-state&gt;
+    
+    &lt;view-state id="displayResults" view="searchResults"&gt;
+        &lt;transition on="newSearch" to="enterCriteria"/&gt;
+        &lt;transition on="select" to="browseDetails"/&gt;
+    &lt;/view-state&gt;
+    
+    &lt;subflow-state id="browseDetails" flow="detail-flow"&gt;
+        &lt;attribute-mapper&gt;
+            &lt;input-mapper&gt;
+                &lt;mapping source="${requestParameters.id}" target="id" from="string" to="long"/&gt;
+            &lt;/input-mapper&gt;
+        &lt;/attribute-mapper&gt;
+        &lt;transition on="finish" to="executeSearch"/&gt;
+    &lt;/subflow-state&gt;
+    
+&lt;/flow>   		 	
+   		 	</programlisting>
 			<para>
 				Above you see a flow with four (4) states that execute these behaviors, respectively:
 			</para>
@@ -464,7 +505,7 @@
 	    		<orderedlist>
     				<listitem>
     					<para>
-							The first state displays a search criteria form so the user can enter who
+							The first state <literal>enterCriteria</literal> displays a search criteria form so the user can enter who
 							they wish to search for.    					
 	    				</para>
 	    			</listitem>
