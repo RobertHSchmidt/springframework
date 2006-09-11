@@ -646,10 +646,10 @@
     	</para>
 		<mediaobject>
 			<imageobject role="fo">
-				<imagedata fileref="images/state-classdiagram.jpg" format="JPEG" align="center"/>
+				<imagedata fileref="images/flowdefinition-classdiagram.png" format="PNG" align="center"/>
 			</imageobject>
 			<imageobject role="html">
-				<imagedata fileref="images/state-classdiagram.jpg" format="JPEG" align="center"/>
+				<imagedata fileref="images/flowdefinition-classdiagram.png" format="PNG" align="center"/>
 			</imageobject>
 			<caption>
 				<para>State class diagram</para>
