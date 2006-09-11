@@ -652,7 +652,7 @@
 				<imagedata fileref="images/flowdefinition-classdiagram.png" format="PNG" align="center"/>
 			</imageobject>
 			<caption>
-				<para>State class diagram</para>
+				<para>Flow Definition class diagram</para>
 			</caption>
 		</mediaobject>
     	<para>
