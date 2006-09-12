@@ -89,6 +89,10 @@ public class MockExternalContext implements ExternalContext {
 		return sessionMap;
 	}
 
+	public SharedAttributeMap getGlobalSessionMap() {
+		return sessionMap;
+	}
+	
 	public SharedAttributeMap getApplicationMap() {
 		return applicationMap;
 	}

@@ -88,6 +88,10 @@ public class ServletExternalContext implements ExternalContext {
 		return new LocalSharedAttributeMap(new HttpSessionMap(request));
 	}
 
+	public SharedAttributeMap getGlobalSessionMap() {
+		return getSessionMap();
+	}
+	
 	public SharedAttributeMap getApplicationMap() {
 		return new LocalSharedAttributeMap(new HttpServletContextMap(context));
 	}

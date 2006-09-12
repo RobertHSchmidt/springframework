@@ -94,6 +94,10 @@ public class JsfExternalContext implements ExternalContext {
 		return new LocalSharedAttributeMap(new SessionSharedMap(facesContext));
 	}
 
+	public SharedAttributeMap getGlobalSessionMap() {
+		return getSessionMap();
+	}
+	
 	public SharedAttributeMap getApplicationMap() {
 		return new LocalSharedAttributeMap(new ApplicationSharedMap(facesContext));
 	}

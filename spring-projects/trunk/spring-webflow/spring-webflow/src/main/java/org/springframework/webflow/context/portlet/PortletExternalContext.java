@@ -85,6 +85,10 @@ public class PortletExternalContext implements ExternalContext {
 		return new LocalAttributeMap(new PortletRequestMap(request));
 	}
 	
+	/**
+	 * Returns the {@link PortletRequest#USER_INFO} map as a mutable attribute map.
+	 * @return the portlet user info
+	 */
 	public MutableAttributeMap getUserInfoMap() {
 		Map userInfo = (Map)request.getAttribute(PortletRequest.USER_INFO);
 		if (userInfo != null) {
