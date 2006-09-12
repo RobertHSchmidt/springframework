@@ -507,7 +507,7 @@
             				</entry>
             				<entry>None</entry>
             				<entry>
-            					Spring Beans 1.2.7
+            					Spring Beans 1.2.7,
             					XSD support requires Spring 2.0
             				</entry>
         	            </row>
