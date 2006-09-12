@@ -503,7 +503,7 @@
 								For configuring Spring Web Flow using Spring 1.x and 2.x.            				
             				</entry>
             				<entry>
-            					org.springframework.webflow.config
+            					config
             				</entry>
             				<entry>None</entry>
             				<entry>
