@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2006 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,8 @@ package org.springframework.binding.convert;
 import java.util.Map;
 
 /**
- * A type converter converts objects of one type to that of another. They may
- * also support conversion from multiple source types to multiple different
- * target types.
+ * A type converter converts objects from one type to another. They may
+ * support conversion of multiple source types to multiple target types.
  * <p>
  * Implementations of this interface are thread-safe.
  * @author Keith Donald

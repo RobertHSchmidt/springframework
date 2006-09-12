@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2006 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
- * A command object that is parameterized with the information neccessary to
+ * A command object that is parameterized with the information necessary to
  * perform a conversion of a source input to a target output.
  * <p>
  * Specifically, encapsulates knowledge about how to convert source objects to a
