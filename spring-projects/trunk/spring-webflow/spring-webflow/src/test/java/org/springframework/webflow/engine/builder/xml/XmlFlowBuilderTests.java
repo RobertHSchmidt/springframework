@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.RequiredMapping;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.webflow.action.bean.LocalBeanInvokingAction;
+import org.springframework.webflow.action.bean.AbstractBeanInvokingAction;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.EndState;
@@ -155,14 +155,14 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(actionState4);
 		assertNotNull(actionState4.getActionList().get(0));
 		assertNull(actionState4.getActionList().getAnnotated(0).getAttributeMap().get("method"));
-		assertTrue(actionState4.getActionList().getAnnotated(0).getTargetAction() instanceof LocalBeanInvokingAction);
+		assertTrue(actionState4.getActionList().getAnnotated(0).getTargetAction() instanceof AbstractBeanInvokingAction);
 
 		ActionState actionState5 = (ActionState)flow.getState("actionState5");
 		assertTrue(actionState5.getTransitionSet().size() == 2);
 		assertNotNull(actionState5);
 		assertNotNull(actionState5.getActionList().get(0));
 		assertNull(actionState5.getActionList().getAnnotated(0).getAttributeMap().get("method"));
-		assertTrue(actionState5.getActionList().getAnnotated(0).getTargetAction() instanceof LocalBeanInvokingAction);
+		assertTrue(actionState5.getActionList().getAnnotated(0).getTargetAction() instanceof AbstractBeanInvokingAction);
 
 		EndState endState1 = (EndState)flow.getState("endState1");
 		assertNotNull(endState1);
