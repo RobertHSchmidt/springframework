@@ -55,6 +55,8 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 
 	private boolean sessionEnding;
 	
+	private int exceptionsThrown;
+	
 	/**
 	 * Is the flow execution running: it has started but not yet ended.
 	 */
@@ -121,13 +123,20 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		return stateTransitions;
 	}
 
+	/**
+	 * Returns the number of exceptions thrown.
+	 */
+	public int getExceptionsThrown() {
+		return exceptionsThrown;
+	}
+
 	public void requestSubmitted(RequestContext context) {
 		Assert.state(!requestInProcess, "There is already a request being processed");
 		requestsSubmitted++;
 		requestInProcess = true;
 	}
 
-	public void sessionStarting(RequestContext context, FlowDefinition definition, MutableAttributeMap input) throws EnterStateVetoException {
+	public void sessionStarting(RequestContext context, FlowDefinition definition, MutableAttributeMap input) {
 		if (!context.getFlowExecutionContext().isActive()) {
 			Assert.state(!started, "The flow execution was already started");
 			flowNestingLevel = 0;
@@ -184,7 +193,6 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 	public void sessionEnding(RequestContext context, FlowSession session, MutableAttributeMap output) {
 		sessionEnding = true;
 	}
-
 	
 	public void sessionEnded(RequestContext context, FlowSession session, AttributeMap output) {
 		assertStarted();
@@ -199,6 +207,10 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 			flowNestingLevel--;
 			Assert.state(started, "The flow execution prematurely ended");
 		}
+	}
+
+	public void exceptionThrown(RequestContext context, FlowExecutionException exception) {
+		exceptionsThrown++;
 	}
 
 	/**
@@ -216,5 +228,6 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		executing = false;
 		requestsSubmitted = 0;
 		requestsProcessed = 0;
+		exceptionsThrown = 0;
 	}
 }

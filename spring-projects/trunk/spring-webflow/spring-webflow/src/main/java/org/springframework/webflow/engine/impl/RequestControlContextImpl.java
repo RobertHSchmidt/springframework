@@ -206,12 +206,7 @@ class RequestControlContextImpl implements RequestControlContext {
 	}
 
 	public ViewSelection execute(Transition transition) {
-		State sourceState = getCurrentStateInternal();
-		if (!(sourceState instanceof TransitionableState)) {
-			throw new IllegalStateException("The source state '" + sourceState.getId()
-					+ "' to transition from must be transitionable!");
-		}		
-		return transition.execute((TransitionableState)sourceState, this);
+		return transition.execute(getCurrentStateInternal(), this);
 	}
 
 	public FlowSession endActiveFlowSession(MutableAttributeMap output) throws IllegalStateException {

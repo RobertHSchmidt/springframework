@@ -40,6 +40,7 @@ import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilderTests;
 import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
+import org.springframework.webflow.engine.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
@@ -81,7 +82,17 @@ public class FlowExecutionImplTests extends TestCase {
 		SubflowState subflowState = new SubflowState(flow, "subFlowState", subFlow);
 		subflowState.getTransitionSet().add(new Transition(onEvent("finish"), toState("finish")));
 
-		new EndState(flow, "finish");
+		EndState endState = new EndState(flow, "finish");
+		endState.getEntryActionList().add(new AbstractAction() {
+			protected Event doExecute(RequestContext context) throws Exception {
+				throw new IllegalStateException("Whoops!");
+			}
+		});
+		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
+		handler.add(Exception.class, "error");
+		endState.getExceptionHandlerSet().add(handler);
+
+		new EndState(flow, "error");
 
 		MockFlowExecutionListener flowExecutionListener = new MockFlowExecutionListener();
 		FlowExecutionImpl flowExecution = new FlowExecutionImpl(flow,
@@ -106,7 +117,9 @@ public class FlowExecutionImplTests extends TestCase {
 		assertTrue(!flowExecutionListener.isExecuting());
 		assertEquals(0, flowExecutionListener.getFlowNestingLevel());
 		assertEquals(4, flowExecutionListener.getEventsSignaledCount());
-		assertEquals(6, flowExecutionListener.getTransitionCount());
+		assertEquals(7, flowExecutionListener.getTransitionCount());
+		assertEquals(1, flowExecutionListener.getExceptionsThrown());
+		assertTrue(!flowExecution.isActive());
 	}
 
 	public void testLoopInFlow() throws Exception {
