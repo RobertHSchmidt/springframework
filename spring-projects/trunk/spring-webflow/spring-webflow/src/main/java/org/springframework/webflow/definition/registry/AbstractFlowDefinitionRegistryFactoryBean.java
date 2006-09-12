@@ -16,6 +16,7 @@
 package org.springframework.webflow.definition.registry;
 
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * A base class for factory beans that create populated Flow Registries.
@@ -25,23 +26,36 @@ import org.springframework.beans.factory.FactoryBean;
  * 
  * @author Keith Donald
  */
-public abstract class AbstractFlowDefinitionRegistryFactoryBean implements FactoryBean {
+public abstract class AbstractFlowDefinitionRegistryFactoryBean implements FactoryBean, InitializingBean {
 
 	/**
 	 * The registry to register Flow definitions in.
 	 */
-	private FlowDefinitionRegistryImpl flowRegistry = new FlowDefinitionRegistryImpl();
+	private FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
 
 	/**
+	 * <p>
 	 * Sets the parent registry of the registry constructed by this factory
 	 * bean.
+	 * </p>
 	 * <p>
 	 * A child registry will delegate to its parent if it cannot fulfill a
 	 * request to locate a Flow definition.
+	 * </p>
+	 * 
+	 * @see FlowDefinitionLocator#getFlowDefinition(String)
+	 * 
 	 * @param parent the parent flow definition registry
 	 */
 	public void setParent(FlowDefinitionRegistry parent) {
-		flowRegistry.setParent(parent);
+		registry.setParent(parent);
+	}
+
+	// implementing after properties set
+
+	public final void afterPropertiesSet() throws Exception {
+		init();
+		doPopulate(registry);
 	}
 
 	// implementing factory bean
@@ -55,18 +69,19 @@ public abstract class AbstractFlowDefinitionRegistryFactoryBean implements Facto
 	}
 
 	public Object getObject() throws Exception {
-		return populateFlowRegistry();
-	}
-
-	/**
-	 * Populates and returns the configured flow definition registry.
-	 */
-	public final FlowDefinitionRegistry populateFlowRegistry() {
-		doPopulate(getFlowRegistry());
-		return getFlowRegistry();
+		// the registry is populated by the time this is called
+		return registry;
 	}
 
 	// subclassing hooks
+	
+	/**
+	 * Template method subclasses may override to perform factory bean initialization 
+	 * logic before registry population.
+	 */
+	protected void init() {
+		
+	}
 	
 	/**
 	 * Template method subclasses must override to perform registry population.
@@ -77,7 +92,7 @@ public abstract class AbstractFlowDefinitionRegistryFactoryBean implements Facto
 	/**
 	 * Returns the flow registry constructed by the factory bean.
 	 */
-	protected FlowDefinitionRegistry getFlowRegistry() {
-		return flowRegistry;
+	protected FlowDefinitionRegistry getRegistry() {
+		return registry;
 	}
 }

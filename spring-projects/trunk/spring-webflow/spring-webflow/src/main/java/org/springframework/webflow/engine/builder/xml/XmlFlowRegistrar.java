@@ -16,6 +16,7 @@
 package org.springframework.webflow.engine.builder.xml;
 
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.webflow.definition.registry.ExternalizedFlowDefinitionRegistrar;
 import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
@@ -145,5 +146,16 @@ public class XmlFlowRegistrar extends ExternalizedFlowDefinitionRegistrar {
 			builder.setEntityResolver(entityResolver);
 		}
 		return builder;
+	}
+
+	/**
+	 * Convenience factory method that converts the specified resource location into
+	 * a {@link Resource} object using the configured {@link ResourceLoader} on the
+	 * {@link #getFlowServiceLocator() flow service locator}.
+	 * @param location the resource string
+	 * @return the resource
+	 */
+	public Resource resource(String location) {
+		return getFlowServiceLocator().getResourceLoader().getResource(location);
 	}
 }
