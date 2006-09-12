@@ -137,13 +137,13 @@
     		<title>A typical flow executor configuration with Spring</title>
 	    	<programlisting>
     &lt;beans xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:flow="http://www.springframework.org/schema/webflow-config"
-        xsi:schemaLocation="
-            http://www.springframework.org/schema/beans
-            http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://www.springframework.org/schema/webflow-config
-            http://www.springframework.org/schema/webflow-config/spring-webflow-config-1.0.xsd"&gt;
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:flow="http://www.springframework.org/schema/webflow-config"
+           xsi:schemaLocation="
+               http://www.springframework.org/schema/beans
+               http://www.springframework.org/schema/beans/spring-beans.xsd
+               http://www.springframework.org/schema/webflow-config
+               http://www.springframework.org/schema/webflow-config/spring-webflow-config-1.0.xsd"&gt;
            	    	
         &lt;!-- Launches new flow executions and resumes existing executions. --&gt;
         &lt;flow:executor id="flowExecutor" registry-ref="flowRegistry"/>
