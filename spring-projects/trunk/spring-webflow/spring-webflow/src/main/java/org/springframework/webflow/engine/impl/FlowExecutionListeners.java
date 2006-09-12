@@ -20,6 +20,7 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
@@ -186,6 +187,15 @@ class FlowExecutionListeners {
 	public void fireSessionEnded(RequestContext context, FlowSession session, AttributeMap output) {
 		for (int i = 0; i < listeners.length; i++) {
 			listeners[i].sessionEnded(context, session, output);
+		}
+	}
+
+	/**
+	 * Notify all interested listeners that a flow execution threw an exception.
+	 */
+	public void fireExceptionThrown(RequestContext context, FlowExecutionException exception) {
+		for (int i = 0; i < listeners.length; i++) {
+			listeners[i].exceptionThrown(context, exception);
 		}
 	}
 }

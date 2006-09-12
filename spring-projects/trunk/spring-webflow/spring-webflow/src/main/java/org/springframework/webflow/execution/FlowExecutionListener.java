@@ -104,6 +104,7 @@ public interface FlowExecutionListener {
 	 */
 	public void stateEntered(RequestContext context, StateDefinition previousState, StateDefinition state);
 
+	
 	/**
 	 * Called when a flow execution is paused, for instance when it is waiting
 	 * for user input (after event processing).
@@ -137,4 +138,11 @@ public interface FlowExecutionListener {
 	 * @param output final, unmodifiable output returned by the ended session
 	 */
 	public void sessionEnded(RequestContext context, FlowSession session, AttributeMap output);
+	
+	/**
+	 * Called when an exception is thrown during a flow execution.
+	 * @param context the source of the exception
+	 * @param exception the exception that occurred
+	 */
+	public void exceptionThrown(RequestContext context, FlowExecutionException exception);
 }
