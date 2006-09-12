@@ -455,48 +455,49 @@
    	 			to search a phonebook for contacts:
    		 	</para>
    		 	<programlisting>
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;flow xmlns="http://www.springframework.org/schema/webflow"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://www.springframework.org/schema/webflow
-                             http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="
+              http://www.springframework.org/schema/webflow
+              http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
                              
-    &lt;start-state idref="enterCriteria"/&gt;
+        &lt;start-state idref="enterCriteria"/&gt;
     
-    &lt;view-state id="enterCriteria" view="searchCriteria"&gt;
-        &lt;entry-actions&gt;
-            &lt;action bean="formAction" method="setupForm"/&gt;
-        &lt;/entry-actions&gt;
+        &lt;view-state id="enterCriteria" view="searchCriteria"&gt;
+            &lt;entry-actions&gt;
+                &lt;action bean="formAction" method="setupForm"/&gt;
+            &lt;/entry-actions&gt;
             &lt;transition on="search" to="executeSearch"&gt;
-            &lt;action bean="formAction" method="bindAndValidate"/&gt;
-        &lt;/transition&gt;
-    &lt;/view-state&gt;
+                &lt;action bean="formAction" method="bindAndValidate"/&gt;
+            &lt;/transition&gt;
+        &lt;/view-state&gt;
     
-    &lt;action-state id="executeSearch"&gt;
-        &lt;bean-action bean="phonebook" method="search"&gt;
-            &lt;method-arguments&gt;
-                &lt;argument expression="flowScope.searchCriteria"/&gt;
-            &lt;/method-arguments&gt;
-            &lt;method-result name="results"/&gt;
-        &lt;/bean-action&gt;
-        &lt;transition on="success" to="displayResults"/&gt;
-    &lt;/action-state&gt;
+        &lt;action-state id="executeSearch"&gt;
+            &lt;bean-action bean="phonebook" method="search"&gt;
+                &lt;method-arguments&gt;
+                    &lt;argument expression="flowScope.searchCriteria"/&gt;
+                &lt;/method-arguments&gt;
+                &lt;method-result name="results"/&gt;
+            &lt;/bean-action&gt;
+            &lt;transition on="success" to="displayResults"/&gt;
+        &lt;/action-state&gt;
     
-    &lt;view-state id="displayResults" view="searchResults"&gt;
-        &lt;transition on="newSearch" to="enterCriteria"/&gt;
-        &lt;transition on="select" to="browseDetails"/&gt;
-    &lt;/view-state&gt;
+        &lt;view-state id="displayResults" view="searchResults"&gt;
+            &lt;transition on="newSearch" to="enterCriteria"/&gt;
+            &lt;transition on="select" to="browseDetails"/&gt;
+        &lt;/view-state&gt;
     
-    &lt;subflow-state id="browseDetails" flow="detail-flow"&gt;
-        &lt;attribute-mapper&gt;
-            &lt;input-mapper&gt;
-                &lt;mapping source="${requestParameters.id}" target="id" from="string" to="long"/&gt;
-            &lt;/input-mapper&gt;
-        &lt;/attribute-mapper&gt;
-        &lt;transition on="finish" to="executeSearch"/&gt;
-    &lt;/subflow-state&gt;
+        &lt;subflow-state id="browseDetails" flow="detail-flow"&gt;
+            &lt;attribute-mapper&gt;
+                &lt;input-mapper&gt;
+                    &lt;mapping source="${requestParameters.id}" target="id" from="string" to="long"/&gt;
+                &lt;/input-mapper&gt;
+            &lt;/attribute-mapper&gt;
+            &lt;transition on="finish" to="executeSearch"/&gt;
+        &lt;/subflow-state&gt;
     
-&lt;/flow>   		 	
+    &lt;/flow>   		 	
    		 	</programlisting>
 			<para>
 				Above you see a flow with four (4) states that execute these behaviors, respectively:
