@@ -26,6 +26,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.engine.builder.AbstractFlowBuildingFlowRegistryFactoryBean;
 import org.springframework.webflow.engine.builder.DefaultFlowServiceLocator;
+import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.xml.sax.EntityResolver;
 
 /**
@@ -123,7 +124,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowBuildingFlowRegistry
 	 * Here is the exact format:
 	 * 
 	 * <pre>
-	 *     flow id=resource
+	 *      flow id=resource
 	 * </pre>
 	 * 
 	 * For example:
@@ -165,8 +166,9 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowBuildingFlowRegistry
 		getXmlFlowRegistrar().setEntityResolver(entityResolver);
 	}
 
-	protected void init() {
-		flowRegistrar.setFlowServiceLocator(getFlowServiceLocator());
+	protected void init(FlowServiceLocator flowServiceLocator) {
+		// simply wire in the locator to the registrar 
+		flowRegistrar.setFlowServiceLocator(flowServiceLocator);
 	}
 
 	protected void doPopulate(FlowDefinitionRegistry registry) {
@@ -182,10 +184,9 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowBuildingFlowRegistry
 				Map.Entry entry = (Map.Entry)it.next();
 				String flowId = (String)entry.getKey();
 				String location = (String)entry.getValue();
-				Resource resource = getFlowServiceLocator().getResourceLoader().getResource(location);
-				flows.add(new FlowDefinitionResource(flowId, resource));
+				flows.add(new FlowDefinitionResource(flowId, getXmlFlowRegistrar().resource(location)));
 			}
-			getXmlFlowRegistrar().addResource(
+			getXmlFlowRegistrar().addResources(
 					(FlowDefinitionResource[])flows.toArray(new FlowDefinitionResource[flows.size()]));
 			flowDefinitions = null;
 		}

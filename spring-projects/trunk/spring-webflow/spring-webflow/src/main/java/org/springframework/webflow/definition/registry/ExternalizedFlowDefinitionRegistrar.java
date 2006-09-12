@@ -132,7 +132,7 @@ public abstract class ExternalizedFlowDefinitionRegistrar implements FlowDefinit
 	 * the set of properties applied to the externalized flow resource.
 	 * @param resources the definitions
 	 */
-	public boolean addResource(FlowDefinitionResource[] resources) {
+	public boolean addResources(FlowDefinitionResource[] resources) {
 		if (resources == null) {
 			return false;
 		}

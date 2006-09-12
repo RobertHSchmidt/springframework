@@ -17,7 +17,6 @@ package org.springframework.webflow.engine.builder;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.context.ResourceLoaderAware;
@@ -32,8 +31,8 @@ import org.springframework.webflow.execution.Action;
 
 /**
  * <p>
- * A base class for factory beans that created populated registries 
- * of flow definitions built using a {@link FlowBuilder}.
+ * A base class for factory beans that created populated registries of flow
+ * definitions built using a {@link FlowBuilder}.
  * </p>
  * <p>
  * Subclasses should override the {@link #doPopulate(FlowDefinitionRegistry)} to
@@ -42,8 +41,8 @@ import org.springframework.webflow.execution.Action;
  * </p>
  * @author Keith Donald
  */
-public abstract class AbstractFlowBuildingFlowRegistryFactoryBean extends AbstractFlowDefinitionRegistryFactoryBean implements
-		BeanFactoryAware, ResourceLoaderAware, InitializingBean {
+public abstract class AbstractFlowBuildingFlowRegistryFactoryBean extends AbstractFlowDefinitionRegistryFactoryBean
+		implements BeanFactoryAware, ResourceLoaderAware {
 
 	/**
 	 * The locator of services needed by the Flows built for inclusion in the
@@ -124,18 +123,12 @@ public abstract class AbstractFlowBuildingFlowRegistryFactoryBean extends Abstra
 		this.beanFactory = beanFactory;
 	}
 
-	public void afterPropertiesSet() {
+	protected final void init() {
 		flowServiceLocator = createFlowServiceLocator();
-		init();
+		init(flowServiceLocator);
 	}
 
-	/**
-	 * Called after properties set, subclasses may override to do custom
-	 * initialization.
-	 */
-	protected void init() {
-
-	}
+	// subclassing hooks
 
 	/**
 	 * Factory method for creating the service locator used to locate webflow
@@ -170,16 +163,18 @@ public abstract class AbstractFlowBuildingFlowRegistryFactoryBean extends Abstra
 	 * @return the default service locator
 	 */
 	protected DefaultFlowServiceLocator newDefaultFlowServiceLocator() {
-		return new DefaultFlowServiceLocator(getFlowRegistry(), beanFactory);
+		return new DefaultFlowServiceLocator(getRegistry(), beanFactory);
 	}
 
 	/**
-	 * Returns the strategy for locating dependent artifacts when a Flow is
-	 * being built.
+	 * Called after properties set but before registry population. Subclasses
+	 * may override to perform custom initialization.
+	 * @param the flow service locator to use to locate externally managed
+	 * services needed duringf flow building and assembly.
 	 */
-	protected FlowServiceLocator getFlowServiceLocator() {
-		return flowServiceLocator;
+	protected void init(FlowServiceLocator flowServiceLocator) {
+
 	}
-	
+
 	protected abstract void doPopulate(FlowDefinitionRegistry registry);
 }
