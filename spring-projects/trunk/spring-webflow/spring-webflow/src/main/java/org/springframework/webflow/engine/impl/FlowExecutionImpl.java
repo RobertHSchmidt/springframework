@@ -309,8 +309,9 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 */
 	protected ViewSelection handleException(FlowExecutionException exception, RequestControlContext context)
 			throws FlowExecutionException {
+		getListeners().fireExceptionThrown(context, exception);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Attempting to handle exception [" + exception + "]");
+			logger.debug("Attempting to handle [" + exception + "]");
 		}
 		// the state could be null if the flow was attempting a start operation
 		ViewSelection selectedView = tryStateHandlers(exception, context);
@@ -322,7 +323,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			return selectedView;
 		}
 		if (logger.isDebugEnabled()) {
-			logger.debug("Rethrowing unhandled state exception");
+			logger.debug("Rethrowing unhandled flow execution exception");
 		}
 		throw exception;
 	}

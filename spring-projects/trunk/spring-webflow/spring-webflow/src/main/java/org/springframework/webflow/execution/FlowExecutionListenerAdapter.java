@@ -63,4 +63,8 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 
 	public void sessionEnded(RequestContext context, FlowSession session, AttributeMap output) {
 	}
+
+	public void exceptionThrown(RequestContext context, FlowExecutionException exception) {
+	}
+
 }
