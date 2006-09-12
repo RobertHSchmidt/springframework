@@ -2,7 +2,7 @@ SPRING WEB FLOW (SWF) CHANGELOG
 =========================
 http://www.springframework.org
 
-Changes in version 1.0 RC4 (09.9.2006)
+Changes in version 1.0 RC4 (13.9.2006)
 
 General
 * Restructured codebase into distinct layers and subsystems upon in-depth SonarJ analysis of architecture.
@@ -96,7 +96,9 @@ Package org.springframework.webflow.engine
 * Moved ImmutableFlowAttributeMapper to builder and made package-private.  Not a general support class.
 * Reworked FlowExecution transient state restoration behavior, now using
   a dedicated FlowExecutionImplStateRestorer.
-  
+* Added support for EndState transitions on exception, typically thrown as party of an entry action.
+  Transition.execute now accepts the base State type now, no longer requiring a TransitionableState reference.
+    
 Package org.springframework.webflow.execution
 * Decoupled the central RequestContext interface from the flow execution engine implementation.
 * Renamed the "flow" property of FlowExecutionContext to "definition" for consistency.
@@ -108,6 +110,7 @@ Package org.springframework.webflow.execution
 * Introduced FlowExecutionFactory for encapsulating the construction of a FlowExecution from a FlowDefinition.
 * Moved generic FlowExcutionFactory support code into "factory" subpackage.
 * Added support for "flow execution attributes" for setting system parameters that can affect flow execution.
+* Added support for listening to "exceptionThrown" events in a FlowExecution - see FlowExecutionListener.
 * Fixed inconsistency in continuation id parsing within ClientContinuationFlowExecutionRepository.
 * Removed FlowExecutionRepositoryFactory abstraction, simplifying overall use of the
   FlowExecutionRepository subsystem.
