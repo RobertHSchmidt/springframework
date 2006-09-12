@@ -169,7 +169,7 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	 * render the results of the transition execution
 	 * @throws FlowExecutionException when transition execution fails
 	 */
-	public ViewSelection execute(TransitionableState sourceState, RequestControlContext context)
+	public ViewSelection execute(State sourceState, RequestControlContext context)
 			throws FlowExecutionException {
 		ViewSelection selectedView;
 		if (canExecute(context)) {
@@ -177,7 +177,10 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Executing " + this + " out of state '" + sourceState.getId() + "'");
 				}
-				sourceState.exit(context);
+				if (sourceState instanceof TransitionableState) {
+					// make exit call back on transitionable state
+					((TransitionableState)sourceState).exit(context);
+				}
 			}
 			else {
 				if (logger.isDebugEnabled()) {
@@ -190,9 +193,9 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 			selectedView = targetState.enter(context);
 		}
 		else {
-			// 'roll back' and re-enter the source state
-			if (sourceState != null) {
-				selectedView = sourceState.reenter(context);
+			if (sourceState != null && sourceState instanceof TransitionableState) {
+				// 'roll back' and re-enter the transitionable source state
+				selectedView = ((TransitionableState)sourceState).reenter(context);
 			}
 			else {
 				throw new IllegalStateException("Execution of '" + this + "' was blocked by '" + getExecutionCriteria()
