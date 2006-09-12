@@ -26,7 +26,7 @@ import org.springframework.binding.method.TextToMethodSignature;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
-import org.springframework.webflow.action.bean.BeanInvokingActionFactory;
+import org.springframework.webflow.action.BeanInvokingActionFactory;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;

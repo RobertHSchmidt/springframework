@@ -88,7 +88,7 @@ import org.springframework.webflow.execution.ViewSelection;
  * <code>public Event setupForm(RequestContext context)</code>. <br>
  * As an alternative to a MultiAction method binding, this action state may
  * excute a
- * {@link org.springframework.webflow.action.bean.AbstractBeanInvokingAction bean invoking action}
+ * {@link org.springframework.webflow.action.AbstractBeanInvokingAction bean invoking action}
  * that invokes a method on a POJO (Plain Old Java Object). If the method
  * signature accepts arguments those arguments may be specified by using the
  * format:
@@ -107,7 +107,7 @@ import org.springframework.webflow.execution.ViewSelection;
  * 
  * @see org.springframework.webflow.execution.Action
  * @see org.springframework.webflow.action.MultiAction
- * @see org.springframework.webflow.action.bean.AbstractBeanInvokingAction
+ * @see org.springframework.webflow.action.AbstractBeanInvokingAction
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

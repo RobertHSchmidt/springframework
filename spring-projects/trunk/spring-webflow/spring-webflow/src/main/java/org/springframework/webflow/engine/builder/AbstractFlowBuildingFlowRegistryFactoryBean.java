@@ -21,7 +21,7 @@ import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.webflow.action.bean.BeanInvokingActionFactory;
+import org.springframework.webflow.action.BeanInvokingActionFactory;
 import org.springframework.webflow.definition.registry.AbstractFlowDefinitionRegistryFactoryBean;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistrar;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
