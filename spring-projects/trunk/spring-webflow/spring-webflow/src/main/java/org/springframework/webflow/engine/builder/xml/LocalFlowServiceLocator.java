@@ -22,7 +22,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.webflow.action.bean.BeanInvokingActionFactory;
+import org.springframework.webflow.action.BeanInvokingActionFactory;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;

@@ -3,8 +3,8 @@ package org.springframework.webflow.engine.builder.xml;
 import junit.framework.TestCase;
 
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.webflow.action.AbstractBeanInvokingAction;
 import org.springframework.webflow.action.ActionResultExposer;
-import org.springframework.webflow.action.bean.AbstractBeanInvokingAction;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowAssembler;

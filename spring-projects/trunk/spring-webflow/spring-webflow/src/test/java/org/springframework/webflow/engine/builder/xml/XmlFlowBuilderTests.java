@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.RequiredMapping;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.webflow.action.bean.AbstractBeanInvokingAction;
+import org.springframework.webflow.action.AbstractBeanInvokingAction;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.EndState;
