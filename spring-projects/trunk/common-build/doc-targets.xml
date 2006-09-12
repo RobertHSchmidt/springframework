@@ -83,6 +83,7 @@
 
 	<target name="doc-html" depends="doc.prepare" description="Generate multi-page HTML reference documentation">
 		<mkdir dir="${docs.ref.target.dir}/html/images" />
+		<mkdir dir="${docs.ref.target.dir}/html_single/styles" />
 		<copy todir="${docs.ref.target.dir}/html/images">
 			<fileset dir="${docs.ref.src.dir}/images">
 				<include name="*.gif" />
@@ -97,6 +98,7 @@
 				<include name="**/*.jpg" />
 			</fileset>
 		</copy>
+		<copy todir="${docs.ref.target.dir}/html/styles" file="${docs.ref.dir}/styles/html.css"/>
 
 		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.target.dir}/html">
 			<classpath>
@@ -112,6 +114,7 @@
 
 	<target name="doc-htmlsingle" description="Generate single-page HTML reference documentation">
 		<mkdir dir="${docs.ref.target.dir}/html_single/images" />
+		<mkdir dir="${docs.ref.target.dir}/html_single/styles" />
 		<copy todir="${docs.ref.target.dir}/html_single/images">
 			<fileset dir="${docs.ref.src.dir}/images">
 				<include name="*.gif" />
@@ -126,6 +129,7 @@
 				<include name="**/*.jpg" />
 			</fileset>
 		</copy>
+		<copy todir="${docs.ref.target.dir}/html_single/styles" file="${docs.ref.dir}/styles/html.css"/>
 
 		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.target.dir}/html_single">
 			<classpath>
