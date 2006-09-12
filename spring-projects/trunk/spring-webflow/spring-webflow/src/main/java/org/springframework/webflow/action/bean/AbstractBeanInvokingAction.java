@@ -68,14 +68,6 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	private ResultEventFactory resultEventFactory = new SuccessEventFactory();
 
 	/**
-	 * The strategy that saves and restores stateful bean fields. Some people
-	 * might call what this enables memento-like <i>bijection</i>, where state
-	 * is <i>injected</i> into a bean before invocation and then <i>outjected</i>
-	 * after invocation.
-	 */
-	private BeanStatePersister beanStatePersister = new NoOpBeanStatePersister();
-
-	/**
 	 * Creates a new bean invoking action.
 	 * @param methodSignature the signature of the method to invoke
 	 */
@@ -125,21 +117,6 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	}
 
 	/**
-	 * Returns the bean state management strategy used by this action.
-	 */
-	protected BeanStatePersister getBeanStatePersister() {
-		return beanStatePersister;
-	}
-
-	/**
-	 * Set the bean state management strategy. Defaults to no bean state
-	 * persistence.
-	 */
-	public void setBeanStatePersister(BeanStatePersister beanStatePersister) {
-		this.beanStatePersister = beanStatePersister;
-	}
-
-	/**
 	 * Set the conversion service to perform type conversion of event parameters
 	 * to method arguments as neccessary.
 	 */
@@ -155,12 +132,11 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	}
 
 	protected Event doExecute(RequestContext context) throws Exception {
-		Object bean = getBeanStatePersister().restoreState(getBean(context), context);
+		Object bean = getBean(context);
 		Object returnValue = getMethodInvoker().invoke(methodSignature, bean, context);
 		if (methodResultExposer != null) {
 			methodResultExposer.exposeResult(returnValue, context);
 		}
-		getBeanStatePersister().saveState(bean, context);
 		return getResultEventFactory().createResultEvent(bean, returnValue, context);
 	}
 
@@ -175,19 +151,4 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	 */
 	protected abstract Object getBean(RequestContext context) throws Exception;
 
-	/**
-	 * State persister that doesn't take any action - default, private
-	 * implementation.
-	 * 
-	 * @author Keith Donald
-	 */
-	private static class NoOpBeanStatePersister implements BeanStatePersister {
-
-		public void saveState(Object bean, RequestContext context) {
-		}
-
-		public Object restoreState(Object bean, RequestContext context) {
-			return bean;
-		}
-	}
 }

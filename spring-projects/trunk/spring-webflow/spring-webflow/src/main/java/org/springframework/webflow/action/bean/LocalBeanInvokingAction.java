@@ -27,7 +27,7 @@ import org.springframework.webflow.execution.RequestContext;
  * 
  * @author Keith Donald
  */
-public class LocalBeanInvokingAction extends AbstractBeanInvokingAction implements Serializable {
+class LocalBeanInvokingAction extends AbstractBeanInvokingAction implements Serializable {
 
 	/**
 	 * The target bean (any POJO) to invoke.

@@ -34,8 +34,6 @@ import org.springframework.webflow.execution.Action;
  * interface.
  * 
  * @see org.springframework.webflow.action.bean.LocalBeanInvokingAction
- * @see org.springframework.webflow.action.bean.BeanFactoryBeanInvokingAction
- * @see org.springframework.webflow.action.bean.StatefulBeanInvokingAction
  * 
  * @author Keith Donald
  */
@@ -83,47 +81,10 @@ public class BeanInvokingActionFactory {
 	 */
 	public Action createBeanInvokingAction(String beanId, BeanFactory beanFactory, MethodSignature methodSignature,
 			ActionResultExposer resultExposer, ConversionService conversionService, AttributeMap attributes) {
-		if (!beanFactory.isSingleton(beanId)) {
-			return createStatefulAction(beanId, beanFactory, methodSignature, resultExposer, conversionService,
-					attributes);
-		}
-		else {
-			Object bean = beanFactory.getBean(beanId);
-			LocalBeanInvokingAction action = new LocalBeanInvokingAction(methodSignature, bean);
-			configureCommonProperties(action, methodSignature, resultExposer, bean.getClass(), conversionService);
-			return action;
-		}
-	}
-
-	/**
-	 * Create a bean invoking action wrapping a statefull (prototype) bean.
-	 * @param beanId the id of the bean to be adapted to an Action instance
-	 * @param beanFactory the bean factory where the bean is managed
-	 * @param methodSignature the method to invoke on the bean when the action
-	 * is executed (required)
-	 * @param resultSpecification the specification for what to do with the
-	 * method return value; may be null
-	 * @param conversionService the conversion service to be used to convert
-	 * method parameters
-	 * @param attributes attributes that may be used to affect the bean invoking
-	 * action's construction
-	 * @return the fully configured bean invoking action instance
-	 */
-	protected Action createStatefulAction(String beanId, BeanFactory beanFactory, MethodSignature methodSignature,
-			ActionResultExposer resultSpecification, ConversionService conversionService, AttributeMap attributes) {
-		Class beanClass = beanFactory.getType(beanId);
-		if (MementoOriginator.class.isAssignableFrom(beanClass)) {
-			BeanFactoryBeanInvokingAction action = new BeanFactoryBeanInvokingAction(methodSignature, beanId,
-					beanFactory);
-			action.setBeanStatePersister(new MementoBeanStatePersister());
-			configureCommonProperties(action, methodSignature, resultSpecification, beanClass, conversionService);
-			return action;
-		}
-		else {
-			StatefulBeanInvokingAction action = new StatefulBeanInvokingAction(methodSignature, beanId, beanFactory);
-			configureCommonProperties(action, methodSignature, resultSpecification, beanClass, conversionService);
-			return action;
-		}
+		Object bean = beanFactory.getBean(beanId);
+		AbstractBeanInvokingAction action = new LocalBeanInvokingAction(methodSignature, bean);
+		configureCommonProperties(action, methodSignature, resultExposer, bean.getClass(), conversionService);
+		return action;
 	}
 
 	// internal helpers
