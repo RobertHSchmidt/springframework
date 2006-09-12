@@ -6,7 +6,7 @@
 	attributeFormDefault="unqualified" version="1.0">
 
 	<xsd:import namespace="http://www.springframework.org/schema/beans"
-		schemaLocation="http://www.springframework.org/schema/beans/spring-beans.xsd" />
+		schemaLocation="http://www.springframework.org/schema/beans/spring-beans-2.0.xsd" />
 
 	<!-- Registry Tag -->
 	<xsd:element name="registry">
