@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.context.portlet;
 
+import java.util.Map;
+
 import javax.portlet.PortletContext;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
@@ -81,6 +83,15 @@ public class PortletExternalContext implements ExternalContext {
 
 	public MutableAttributeMap getRequestMap() {
 		return new LocalAttributeMap(new PortletRequestMap(request));
+	}
+	
+	public MutableAttributeMap getUserInfoMap() {
+		Map userInfo = (Map)request.getAttribute(PortletRequest.USER_INFO);
+		if (userInfo != null) {
+			return new LocalAttributeMap(userInfo);
+		} else {
+			return null;
+		}
 	}
 
 	public SharedAttributeMap getSessionMap() {
