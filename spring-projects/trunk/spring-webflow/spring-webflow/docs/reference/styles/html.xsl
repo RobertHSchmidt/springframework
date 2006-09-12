@@ -14,13 +14,13 @@
                 xmlns="http://www.w3.org/TR/xhtml1/transitional"
                 exclude-result-prefixes="#default">
                 
-<xsl:import href="&db_xsl_path;/html/docbook.xsl"/>
+<xsl:import href="&db_xsl_path;/html/onechunk.xsl"/>
 
 <!--###################################################
                      HTML Settings
     ################################################### -->   
 
-    <xsl:param name="html.stylesheet">../styles/html.css</xsl:param>
+    <xsl:param name="html.stylesheet">styles/html.css</xsl:param>
 
     <!-- These extensions are required for table printing and other stuff -->
     <xsl:param name="use.extensions">1</xsl:param>
@@ -96,5 +96,72 @@
 			<xsl:apply-templates mode="titlepage.mode" />
 		</div>
 	</xsl:template>
+
+    <!--###################################################
+                     Headers and Footers
+    ################################################### -->
+    <!-- let's have a Spring and I21 banner across the top of each page -->
+    <xsl:template name="user.header.navigation">
+        <div style="background-color:white;border:none;height:73px;border:1px solid black;">
+            <a style="border:none;" href="http://www.springframework.org/" title="The Spring Framework">
+                <img style="border:none;" src="images/xdev-spring_logo.jpg" />
+            </a>
+            <a style="border:none;" href="http://www.interface21.com/" title="Interface21 - Spring from the Source">
+                <img style="border:none;position:absolute;padding-top:5px;right:42px;" src="images/i21-banner-rhs.jpg" />
+            </a>
+        </div>
+    </xsl:template>
+    <!-- no other header navigation (prev, next, etc.) -->
+    <xsl:template name="header.navigation" />
+    <xsl:param name="navig.showtitles">1</xsl:param>
+    <!-- let's have a 'Sponsored by Interface21' strapline (or somesuch) across the bottom of each page -->
+    <xsl:template name="footer.navigation">
+        <xsl:param name="prev" select="/foo" />
+        <xsl:param name="next" select="/foo" />
+        <xsl:param name="nav.context" />
+        <xsl:variable name="home" select="/*[1]" />
+        <xsl:variable name="up" select="parent::*" />
+        <xsl:variable name="row1" select="count($prev) &gt; 0
+                                        or count($up) &gt; 0
+                                        or count($next) &gt; 0" />
+        <xsl:variable name="row2" select="($prev and $navig.showtitles != 0)
+                                        or (generate-id($home) != generate-id(.)
+                                            or $nav.context = 'toc')
+                                        or ($chunk.tocs.and.lots != 0
+                                            and $nav.context != 'toc')
+                                        or ($next and $navig.showtitles != 0)" />
+        <xsl:if test="$suppress.navigation = '0' and $suppress.footer.navigation = '0'">
+            <div class="navfooter">
+                <xsl:if test="$footer.rule != 0">
+                    <hr />
+                </xsl:if>
+                <xsl:if test="$row1 or $row2">
+                    <table width="100%" summary="Navigation footer">
+                        <xsl:if test="$row1">
+                            <tr>
+                                <td width="40%" align="left" valign="top">
+                                    <xsl:if test="$navig.showtitles != 0">
+                                        <xsl:apply-templates select="$prev" mode="object.title.markup" />
+                                    </xsl:if>
+                                    <xsl:text>&#160;</xsl:text>
+                                </td>
+                                <td width="20%" align="center">
+                                    <span style="color:white;font-size:90%;">
+                                        <a href="http://www.interface21.com/" title="Interface21 - Spring from the Source">Sponsored by Interface21</a>
+                                    </span>
+                                </td>
+                                <td width="40%" align="right" valign="top">
+                                    <xsl:text>&#160;</xsl:text>
+                                    <xsl:if test="$navig.showtitles != 0">
+                                        <xsl:apply-templates select="$next" mode="object.title.markup" />
+                                    </xsl:if>
+                                </td>
+                            </tr>
+                        </xsl:if>
+                    </table>
+                </xsl:if>
+            </div>
+        </xsl:if>
+    </xsl:template>
   
 </xsl:stylesheet>
