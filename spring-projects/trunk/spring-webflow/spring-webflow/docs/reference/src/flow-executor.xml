@@ -418,13 +418,13 @@
     				<para>Phonebook - the original sample demonstrating most features (including subflows).</para>
     			</listitem>
     			<listitem>
-    				<para>Sellitem - demonstrates a wizard with conditional transitions, conversational scope, flow execution redirects, and continuations.</para>
+    				<para>Sellitem - demonstrates a wizard with conditional transitions, flow scope, flow execution redirects, and continuations.</para>
     			</listitem>
     			<listitem>
     				<para>Flowlauncher - demonstrates all the possible ways to launch and resume flows.</para>
     			</listitem>
     			<listitem>
-    				<para>Itemlist - demonstrates REST-style URLs, conversational redirects, and inline flows.</para>
+    				<para>Itemlist - demonstrates REST-style URLs and inline flows.</para>
     			</listitem>
     			<listitem>
     				<para>Shippingrate - demonstrates Spring Web Flow together with Ajax technology.</para>
