@@ -56,6 +56,7 @@ Package org.springframework.webflow.context
 * Added support for accessing a PortletRequest.USER_INFO map as context.getUserInfoMap().
 * Introduced ExternalContextHolder for setting a thread-bound ExternalContext.  Used by FlowExecutionRepository 
   implementations that need to access external state such as the sessionMap.
+* Promoted the "globalSessionMap" property to the normalized ExternalContext interface.
 
 Package org.springframework.webflow.conversation
 * Renamed ConversationService to ConversationManager.

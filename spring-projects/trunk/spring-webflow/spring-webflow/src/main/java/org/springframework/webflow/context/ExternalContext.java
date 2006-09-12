@@ -83,6 +83,22 @@ public interface ExternalContext {
 	public SharedAttributeMap getSessionMap();
 
 	/**
+	 * <p>
+	 * Provides access to the <i>global</i> external session map, providing a storage for data
+	 * globally accross the user session and accessible to both internal and
+	 * external SWF artifacts.
+	 * </p>
+	 * <p>
+	 * Note: most external context implementations do not distinguish between the concept of a 
+	 * "local" user session scope and a "global" session scope.  The Portlet world does, but 
+	 * not the Servlet for example.  In those cases calling this method returns the same 
+	 * map as calling {@link #getSessionMap()}.
+	 * </p>
+	 * @return the mutable global session attribute map
+	 */
+	public SharedAttributeMap getGlobalSessionMap();
+	
+	/**
 	 * Provides access to the external application map, providing a storage for
 	 * data local to the current user application and accessible to both
 	 * internal and external SWF artifacts.
