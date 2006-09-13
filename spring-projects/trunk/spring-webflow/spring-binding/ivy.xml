@@ -14,9 +14,9 @@
 		<dependency org="apache" name="commons-logging" rev="1.1" />
 		<dependency org="apache" name="log4j" rev="1.2.13" />
 		<dependency org="ognl" name="ognl" rev="2.6.7" />
-		<dependency org="org.springframework" name="spring-beans" rev="2.0-rc3" />
-		<dependency org="org.springframework" name="spring-context"	rev="2.0-rc3" />
-		<dependency org="org.springframework" name="spring-core" rev="2.0-rc3" />
+		<dependency org="org.springframework" name="spring-beans" rev="2.0-rc4" />
+		<dependency org="org.springframework" name="spring-context"	rev="2.0-rc4" />
+		<dependency org="org.springframework" name="spring-core" rev="2.0-rc4" />
 		<!-- test dependencies -->
 		<dependency org="easymock" name="easymock" rev="1.1" conf="test->default" />
 		<dependency org="junit" name="junit" rev="3.8.1" conf="test->default" />
