@@ -117,9 +117,10 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	}
 
 	/**
-	 * Template method called by {@link #createFlowServiceLocator()} to ease the
+	 * Template method called by {@link #createFlowServiceLocator()} to allow
 	 * registration of mock implementations of services needed to test the flow
-	 * execution. Subclasses may override.
+	 * execution. Useful when testing flow definition in execution in isolation 
+	 * from flows and middle-tier services.  Subclasses may override.
 	 * @param serviceLocator the mock service locator
 	 */
 	protected void registerMockServices(MockFlowServiceLocator serviceLocator) {
@@ -172,7 +173,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * @param filePath the full path to the externalized flow definition file
 	 * @return the flow definition resource
 	 */
-	protected FlowDefinitionResource createFlowDefinitionResource(String filePath) {
+	protected final FlowDefinitionResource createFlowDefinitionResource(String filePath) {
 		return createFlowDefinitionResource(new File(filePath));
 	}
 
@@ -183,7 +184,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * @param fileName the short file name
 	 * @return the flow definition resource pointing to the file
 	 */
-	protected FlowDefinitionResource createFlowDefinitionResource(String fileDirectory, String fileName) {
+	protected final FlowDefinitionResource createFlowDefinitionResource(String fileDirectory, String fileName) {
 		return createFlowDefinitionResource(new File(fileDirectory, fileName));
 	}
 	

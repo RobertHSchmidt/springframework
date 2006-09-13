@@ -28,11 +28,10 @@ import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
  * 
  * <pre>
  * public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
- *     protected FlowDefinitionResource getFlowDefinitionResource() {
- *         File flowDir = new File(&quot;src/webapp/WEB-INF&quot;);
- *  	   Resource resource = return new FileSystemResource(new File(flowDir, &quot;search-flow.xml&quot;));
- *  	   return new FlowDefinitionResource(&quot;searchFlow&quot;, resource);
- *     }
+ * 
+ *	   protected FlowDefinitionResource getFlowDefinitionResource() {
+ *         return createFlowDefinitionResource("src/main/webapp/WEB-INF/flows/search-flow.xml");
+ *	   }
  * 
  *     public void testStartFlow() {
  * 	       startFlow();
@@ -47,14 +46,14 @@ import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
  * 		   ViewSelection view = signalEvent(&quot;search&quot;, parameters);
  * 		   assertCurrentStateEquals(&quot;displaySearchResults&quot;);
  * 		   assertModelAttributeCollectionSize(1, &quot;results&quot;, view);
- * 	   }
+ * 	   } 
  * }
  * </pre>
  * 
  * @author Keith Donald
  */
 public abstract class AbstractXmlFlowExecutionTests extends AbstractExternalizedFlowExecutionTests {
-	protected FlowBuilder createFlowBuilder(Resource resource, FlowServiceLocator flowServiceLocator) {
+	protected final FlowBuilder createFlowBuilder(Resource resource, FlowServiceLocator flowServiceLocator) {
 		return new XmlFlowBuilder(resource, flowServiceLocator);
 	}
 }
