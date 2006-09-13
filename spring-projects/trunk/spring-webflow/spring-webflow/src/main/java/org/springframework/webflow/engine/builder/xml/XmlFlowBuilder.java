@@ -559,7 +559,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private void parseAndAddGlobalTransitions(Element element, Flow flow) {
-		Element globalTransitionsElement = DomUtils.getChildElementByTagName(element, GLOBAL_TRANSITIONS_ELEMENT);
+		Element globalTransitionsElement = getChildElementByTagName(element, GLOBAL_TRANSITIONS_ELEMENT);
 		if (globalTransitionsElement != null) {
 			flow.getGlobalTransitionSet().addAll(parseTransitions(globalTransitionsElement));
 		}
