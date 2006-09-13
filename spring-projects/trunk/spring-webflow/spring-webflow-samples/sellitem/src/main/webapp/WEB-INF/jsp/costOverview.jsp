@@ -13,16 +13,32 @@
 	</tr>
 	<tr class="readOnly">
 		<td>Category:</td><td>${sale.category}</td>
+	</tr>
 	<tr class="readOnly">
-		<td>Shipping:</td>
-		<c:choose>
-			<c:when test="${sale.shipping}">
-				<td>${sale.shippingType}</td>
-			</c:when>
-			<c:otherwise>
-				<td>No shipping required: you're picking up the items</td>
-			</c:otherwise>
-		</c:choose>
+		<td valign="top">Shipping Info:</td>
+		<td>
+			<c:choose>
+				<c:when test="${sale.shipping}">
+					<table>
+						<tr class="readOnly">
+							<td>Type:</td>
+							<td>${sale.shippingType}</td>
+						</tr>
+						<tr class="readOnly">
+							<td>Date:</td>
+							<td>
+								<spring:bind path="sale.shipDate">
+								${status.value}
+								</spring:bind>
+							</td>
+						</tr>
+					</table>
+				</c:when>
+				<c:otherwise>
+					No shipping required: you're picking up the items
+				</c:otherwise>
+			</c:choose>
+		</td>
 	</tr>
 	<tr>
 		<td colspan="2"></td>
