@@ -61,6 +61,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 		MockParameterMap parameters = new MockParameterMap();
 		parameters.put("shippingType", "E");
+		parameters.put("shipDate", "12/06/2006");
 		ApplicationView selectedView = applicationView(signalEvent("submit", parameters));
 		assertViewNameEquals("costOverview", selectedView);
 		assertFlowExecutionEnded();

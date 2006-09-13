@@ -16,7 +16,7 @@
 	<tr class="readOnly">
 		<td>Shipping:</td><td>${sale.shipping}</td>
 	</tr>
-	<form name="shippingForm" method="post">
+	<form:form commandName="sale" method="post">
 		<tr>
 			<td>Shipping type:</td>
 			<td>
@@ -33,12 +33,18 @@
 			</td>
 		</tr>
 		<tr>
+			<td>Ship date (DD/MM/YYYY):</td>
+			<td>
+				<form:input path="shipDate" />
+			</td>
+		</tr>
+		<tr>
 			<td colspan="2" class="buttonBar">
 				<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">
 				<input type="submit" class="button" name="_eventId_submit" value="Next">
 			</td>
 		</tr>
-	</form>
+		</form:form>
 	</table>
 </div>
 

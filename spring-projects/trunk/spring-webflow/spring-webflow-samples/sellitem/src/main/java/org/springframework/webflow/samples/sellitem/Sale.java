@@ -16,6 +16,7 @@
 package org.springframework.webflow.samples.sellitem;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.springframework.core.style.ToStringCreator;
 
@@ -30,6 +31,8 @@ public class Sale implements Serializable {
 	private boolean shipping;
 
 	private String shippingType;
+
+	private Date shipDate;
 
 	public String getCategory() {
 		return category;
@@ -71,6 +74,14 @@ public class Sale implements Serializable {
 		this.shippingType = shippingType;
 	}
 
+	public Date getShipDate() {
+		return shipDate;
+	}
+
+	public void setShipDate(Date shipDate) {
+		this.shipDate = shipDate;
+	}
+
 	// business logic methods
 
 	/**
@@ -89,7 +100,8 @@ public class Sale implements Serializable {
 			if (itemCount >= 100) {
 				discount = 0.1;
 			}
-		} else if ("B".equals(category)) {
+		}
+		else if ("B".equals(category)) {
 			if (itemCount >= 200) {
 				discount = 0.2;
 			}
@@ -111,7 +123,8 @@ public class Sale implements Serializable {
 		double delCost = 0.0;
 		if ("S".equals(shippingType)) {
 			delCost = 10.0;
-		} else if ("E".equals(shippingType)) {
+		}
+		else if ("E".equals(shippingType)) {
 			delCost = 20.0;
 		}
 		return delCost;
@@ -125,7 +138,7 @@ public class Sale implements Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("price", price).append(
-				"itemCount", itemCount).toString();
+		return new ToStringCreator(this).append("price", price).append("itemCount", itemCount).append("shippingType",
+				shippingType).append("shipDate", shipDate).toString();
 	}
 }
