@@ -36,7 +36,7 @@ import org.springframework.webflow.execution.Action;
  * <p>
  * Subclasses should override the {@link #doPopulate(FlowDefinitionRegistry)} to
  * perform the registry population logic, typically delegating to a
- * {@link org.springframework.webflow.definition.regisrtry.FlowDefinitionRegistrar}
+ * {@link org.springframework.webflow.definition.registry.FlowDefinitionRegistrar}
  * strategy.
  * </p>
  * @see org.springframework.webflow.definition.registry.FlowDefinitionRegistry
@@ -172,7 +172,7 @@ public abstract class AbstractFlowBuildingFlowRegistryFactoryBean extends Abstra
 	/**
 	 * Called after properties set but before registry population. Subclasses
 	 * may override to perform custom initialization.
-	 * @param the flow service locator to use to locate externally managed
+	 * @param flowServiceLocator the flow service locator to use to locate externally managed
 	 * services needed duringf flow building and assembly. Typically used by a
 	 * {@link org.springframework.webflow.definition.registry.FlowDefinitionRegistrar}.
 	 */

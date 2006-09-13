@@ -64,7 +64,7 @@ public interface RequestControlContext extends RequestContext {
 	 * method will be called as part of executing a transition from one state to
 	 * another.
 	 * @param lastTransition the last transition that executed
-	 * @see Transition#execute(TransitionableState, RequestControlContext)
+	 * @see Transition#execute(State, RequestControlContext)
 	 */
 	public void setLastTransition(Transition lastTransition);
 
@@ -126,6 +126,7 @@ public interface RequestControlContext extends RequestContext {
 	/**
 	 * Execute this transition out of the current source state. Allows for
 	 * privileged execution of an arbitrary transition.
+	 * @see Transition#execute(State, RequestControlContext)
 	 * @param transition the transition
 	 * @return a new view selection
 	 */
