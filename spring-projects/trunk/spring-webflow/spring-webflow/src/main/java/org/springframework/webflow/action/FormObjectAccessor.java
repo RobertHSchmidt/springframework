@@ -155,7 +155,7 @@ public class FormObjectAccessor {
 	 * @param formObjectName the name of the form object
 	 * @param scopeType the scope in which to expose the form object
 	 */
-	public void setFormObject(Object formObject, String formObjectName, ScopeType scopeType) {
+	public void putFormObject(Object formObject, String formObjectName, ScopeType scopeType) {
 		scopeType.getScope(context).put(formObjectName, formObject);
 		setCurrentFormObject(formObject, scopeType);
 	}
@@ -216,7 +216,7 @@ public class FormObjectAccessor {
 	 * @param errors the errors object
 	 * @param scopeType the scope to expose the errors in
 	 */
-	public void setFormErrors(Errors errors, ScopeType scopeType) {
+	public void putFormErrors(Errors errors, ScopeType scopeType) {
 		scopeType.getScope(context).put(ERRORS_PREFIX + errors.getObjectName(), errors);
 		setCurrentFormErrors(errors, scopeType);
 	}
