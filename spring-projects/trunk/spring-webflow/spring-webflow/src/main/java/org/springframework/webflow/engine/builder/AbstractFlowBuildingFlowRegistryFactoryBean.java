@@ -23,7 +23,6 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.action.BeanInvokingActionFactory;
 import org.springframework.webflow.definition.registry.AbstractFlowDefinitionRegistryFactoryBean;
-import org.springframework.webflow.definition.registry.FlowDefinitionRegistrar;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
@@ -37,8 +36,12 @@ import org.springframework.webflow.execution.Action;
  * <p>
  * Subclasses should override the {@link #doPopulate(FlowDefinitionRegistry)} to
  * perform the registry population logic, typically delegating to a
- * {@link FlowDefinitionRegistrar} strategy.
+ * {@link org.springframework.webflow.definition.regisrtry.FlowDefinitionRegistrar}
+ * strategy.
  * </p>
+ * @see org.springframework.webflow.definition.registry.FlowDefinitionRegistry
+ * @see org.springframework.webflow.definition.registry.FlowDefinitionRegistrar
+ * 
  * @author Keith Donald
  */
 public abstract class AbstractFlowBuildingFlowRegistryFactoryBean extends AbstractFlowDefinitionRegistryFactoryBean
@@ -170,10 +173,21 @@ public abstract class AbstractFlowBuildingFlowRegistryFactoryBean extends Abstra
 	 * Called after properties set but before registry population. Subclasses
 	 * may override to perform custom initialization.
 	 * @param the flow service locator to use to locate externally managed
-	 * services needed duringf flow building and assembly.
+	 * services needed duringf flow building and assembly. Typically used by a
+	 * {@link org.springframework.webflow.definition.registry.FlowDefinitionRegistrar}.
 	 */
 	protected void init(FlowServiceLocator flowServiceLocator) {
 
+	}
+
+	/**
+	 * Returns the strategy for locating dependent artifacts when a Flow is
+	 * being built. May be called by subclasses during
+	 * {@link #doPopulate(FlowDefinitionRegistry) registry population} to wire
+	 * in the service locator needed for flow assembly.
+	 */
+	protected FlowServiceLocator getFlowServiceLocator() {
+		return flowServiceLocator;
 	}
 
 	protected abstract void doPopulate(FlowDefinitionRegistry registry);
