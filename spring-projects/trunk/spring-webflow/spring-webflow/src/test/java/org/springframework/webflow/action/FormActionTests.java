@@ -282,7 +282,7 @@ public class FormActionTests extends TestCase {
 		assertNotNull(formObject);
 		formObject = new TestBean();
 		TestBean testBean = formObject;
-		new FormObjectAccessor(context).setFormObject(formObject, action.getFormObjectName(), action
+		new FormObjectAccessor(context).putFormObject(formObject, action.getFormObjectName(), action
 				.getFormObjectScope());
 		formObject = (TestBean)action.getFormObject(context);
 		assertSame(formObject, testBean);
@@ -297,7 +297,7 @@ public class FormActionTests extends TestCase {
 		assertTrue(!errors.hasErrors());
 		errors = new BindException(getFormObject(context), "test");
 		Errors testErrors = errors;
-		new FormObjectAccessor(context).setFormErrors(errors, action.getFormErrorsScope());
+		new FormObjectAccessor(context).putFormErrors(errors, action.getFormErrorsScope());
 		errors = (Errors)action.getFormErrors(context);
 		assertSame(errors, testErrors);
 	}
