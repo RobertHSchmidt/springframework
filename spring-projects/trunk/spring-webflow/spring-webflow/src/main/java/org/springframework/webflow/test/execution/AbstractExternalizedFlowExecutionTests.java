@@ -127,7 +127,10 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	}
 
 	/**
-	 * Factory method to assemble another flow definition from a resource.
+	 * Factory method to assemble another flow definition from a resource.  Called by
+	 * {@link #getFlowDefinition()} to create the "main" flow to test.  May also be
+	 * called by subclasses to create subflow definitions whose executions should also
+	 * be exercised by this test.
 	 * @param resource the flow definition resource
 	 * @return the built flow definition, ready for execution
 	 */
