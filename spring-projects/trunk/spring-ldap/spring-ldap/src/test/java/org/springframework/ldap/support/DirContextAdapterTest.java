@@ -489,6 +489,45 @@ public class DirContextAdapterTest extends TestCase {
         assertEquals(0, modificationItems.length);
     }
 
+    public void testChangeMultiAttribute_AddAndRemoveValue() throws Exception {
+        final Attributes fixtureAttrs = new BasicAttributes();
+        Attribute multi = new BasicAttribute("abc");
+        multi.add("123");
+        multi.add("qwe");
+        multi.add("rty");
+        multi.add("uio");
+        fixtureAttrs.put(multi);
+        class TestableDirContextAdapter extends DirContextAdapter {
+            public TestableDirContextAdapter() {
+                super(fixtureAttrs, null);
+                setUpdateMode(true);
+            }
+        }
+        classUnderTest = new TestableDirContextAdapter();
+        assertTrue(classUnderTest.isUpdateMode());
+        classUnderTest.setAttributeValues("abc", new String[] { "123", "qwe",
+                "klytt", "kalle" });
+
+        ModificationItem[] modificationItems = classUnderTest
+                .getModificationItems();
+        assertEquals(2, modificationItems.length);
+        
+        assertEquals(DirContext.ADD_ATTRIBUTE, modificationItems[0]
+                .getModificationOp());
+        Attribute modifiedAttribute = modificationItems[0].getAttribute();
+        assertEquals("abc",modifiedAttribute.getID());
+        assertEquals(2, modifiedAttribute.size());
+        assertEquals("klytt", modifiedAttribute.get(0));
+        assertEquals("kalle", modifiedAttribute.get(1));
+        
+        modifiedAttribute = modificationItems[1].getAttribute();
+        assertEquals(DirContext.REMOVE_ATTRIBUTE, modificationItems[1].getModificationOp());
+        assertEquals("abc", modifiedAttribute.getID());
+        assertEquals(2, modifiedAttribute.size());
+        assertEquals("rty", modifiedAttribute.get(0));
+        assertEquals("uio", modifiedAttribute.get(1));
+    }
+
     public void testAddAttribute_Multivalue() throws Exception {
         final Attributes fixtureAttrs = new BasicAttributes();
         Attribute multi = new BasicAttribute("abc");
