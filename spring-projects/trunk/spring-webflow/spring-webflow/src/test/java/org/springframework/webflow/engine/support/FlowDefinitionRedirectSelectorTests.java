@@ -10,7 +10,7 @@ import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.test.engine.MockRequestContext;
 
-public class FlowRedirectSelectorTests extends TestCase {
+public class FlowDefinitionRedirectSelectorTests extends TestCase {
 	ExpressionParser parser = new DefaultExpressionParserFactory().getExpressionParser();
 
 	public void testMakeSelection() {

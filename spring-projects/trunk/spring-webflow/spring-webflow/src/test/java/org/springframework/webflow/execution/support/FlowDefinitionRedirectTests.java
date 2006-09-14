@@ -7,7 +7,7 @@ import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 
 import junit.framework.TestCase;
 
-public class FlowRedirectTests extends TestCase {
+public class FlowDefinitionRedirectTests extends TestCase {
 	public void testConstructAndAccess() {
 		Map input = new HashMap();
 		input.put("name", "value");
