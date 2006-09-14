@@ -29,6 +29,7 @@ import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.execution.FlowExecutionFactory;
 import org.springframework.webflow.execution.FlowExecutionListener;
+import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
 
 /**
  * Base class for flow integration tests that verify an externalized flow
@@ -65,16 +66,6 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	}
 
 	/**
-	 * Set the listener to be attached to the flow execution the next time one
-	 * is {@link #startFlow() started} by this test. Useful for attaching a
-	 * listener that does test assertions during the execution of the flow.
-	 * @param executionListener the listener to attach
-	 */
-	protected void setFlowExecutionListener(FlowExecutionListener executionListener) {
-		getFlowExecutionImplFactory().setLExecutionistener(executionListener);
-	}
-
-	/**
 	 * Sets system attributes to be associated with the flow execution the next
 	 * time one is {@link #startFlow() started} by this test. Useful for
 	 * assigning attributes that influence flow execution behavior.
@@ -82,6 +73,17 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 */
 	protected void setFlowExecutionAttributes(AttributeMap executionAttributes) {
 		getFlowExecutionImplFactory().setExecutionAttributes(executionAttributes);
+	}
+
+	/**
+	 * Set the listener to be attached to the flow execution the next time one
+	 * is {@link #startFlow() started} by this test. Useful for attaching a
+	 * listener that does test assertions during the execution of the flow.
+	 * @param executionListener the listener to attach
+	 */
+	protected void setFlowExecutionListener(FlowExecutionListener executionListener) {
+		getFlowExecutionImplFactory().setExecutionListenerLoader(
+				new StaticFlowExecutionListenerLoader(executionListener));
 	}
 
 	protected final FlowDefinition getFlowDefinition() {
@@ -119,18 +121,18 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	/**
 	 * Template method called by {@link #createFlowServiceLocator()} to allow
 	 * registration of mock implementations of services needed to test the flow
-	 * execution. Useful when testing flow definition in execution in isolation 
-	 * from flows and middle-tier services.  Subclasses may override.
+	 * execution. Useful when testing flow definition in execution in isolation
+	 * from flows and middle-tier services. Subclasses may override.
 	 * @param serviceLocator the mock service locator
 	 */
 	protected void registerMockServices(MockFlowServiceLocator serviceLocator) {
 	}
 
 	/**
-	 * Factory method to assemble another flow definition from a resource.  Called by
-	 * {@link #getFlowDefinition()} to create the "main" flow to test.  May also be
-	 * called by subclasses to create subflow definitions whose executions should also
-	 * be exercised by this test.
+	 * Factory method to assemble another flow definition from a resource.
+	 * Called by {@link #getFlowDefinition()} to create the "main" flow to test.
+	 * May also be called by subclasses to create subflow definitions whose
+	 * executions should also be exercised by this test.
 	 * @param resource the flow definition resource
 	 * @return the built flow definition, ready for execution
 	 */
@@ -151,11 +153,13 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * </p>
 	 * <p>
 	 * Example usage:
+	 * 
 	 * <pre class="code">
 	 *     protected FlowDefinitionResource getFlowDefinitionResource() {
-	 *         return createFlowDefinitionResource("/WEB-INF/flows/order-flow.xml");
+	 * 	      return createFlowDefinitionResource(&quot;/WEB-INF/flows/order-flow.xml&quot;);
 	 *     }
 	 * </pre>
+	 * 
 	 * </p>
 	 * @return the flow definition resource
 	 */
@@ -171,8 +175,9 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	protected abstract FlowBuilder createFlowBuilder(Resource resource, FlowServiceLocator serviceLocator);
 
 	/**
-	 * Convenient factory method that creates a {@link FlowDefinitionResource} from a file path.
-	 * Typically called by subclasses overriding {@link #getFlowDefinitionResource()}.
+	 * Convenient factory method that creates a {@link FlowDefinitionResource}
+	 * from a file path. Typically called by subclasses overriding
+	 * {@link #getFlowDefinitionResource()}.
 	 * @param filePath the full path to the externalized flow definition file
 	 * @return the flow definition resource
 	 */
@@ -181,8 +186,9 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	}
 
 	/**
-	 * Convenient factory method that creates a {@link FlowDefinitionResource} from a file.
-	 * Typically called by subclasses overriding {@link #getFlowDefinitionResource()}.
+	 * Convenient factory method that creates a {@link FlowDefinitionResource}
+	 * from a file. Typically called by subclasses overriding
+	 * {@link #getFlowDefinitionResource()}.
 	 * @param fileDirectory the directory containing the file
 	 * @param fileName the short file name
 	 * @return the flow definition resource pointing to the file
@@ -190,9 +196,10 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	protected final FlowDefinitionResource createFlowDefinitionResource(String fileDirectory, String fileName) {
 		return createFlowDefinitionResource(new File(fileDirectory, fileName));
 	}
-	
+
 	/**
-	 * Convenient factory method that creates a {@link FlowDefinitionResource} from a file.
+	 * Convenient factory method that creates a {@link FlowDefinitionResource}
+	 * from a file.
 	 * @param file the file
 	 * @return the flow definition resource
 	 */

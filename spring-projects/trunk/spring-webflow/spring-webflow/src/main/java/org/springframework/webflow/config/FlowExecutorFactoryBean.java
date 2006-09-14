@@ -15,34 +15,49 @@
  */
 package org.springframework.webflow.config;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
 import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.CollectionUtils;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.engine.impl.FlowExecutionImplStateRestorer;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.factory.FlowExecutionListenerLoader;
+import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.continuation.ClientContinuationFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
 import org.springframework.webflow.executor.FlowExecutor;
-import org.springframework.webflow.executor.FlowExecutorFactory;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 
 /**
  * <p>
- * The default flow executor factory implementation. Encapsulates the
- * construction and assembly of a {@link FlowExecutor}, including the provision
- * of its {@link FlowExecutionRepository} strategy.
+ * The default flow executor factory implementation. As a
+ * <code>FactoryBean</code>, this class has been designed for use as a Spring
+ * managed bean.
+ * </p>
+ * <p>
+ * This factory encapsulates the construction and assembly of a
+ * {@link FlowExecutor}, including the provision of its
+ * {@link FlowExecutionRepository} strategy.
+ * </p>
+ * <p>
+ * The {@link #setDefinitionLocator(FlowDefinitionLocator) definition locator}
+ * property is required, all other properties are optional.
  * </p>
  * @author Keith Donald
  */
-public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean {
+public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 
 	/**
 	 * The locator the executor will use to access flow definitions registered
@@ -51,16 +66,15 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	private FlowDefinitionLocator definitionLocator;
 
 	/**
-	 * The factory the executor will use to create new flow executions.
+	 * Execution attributes to apply.
 	 */
-	private FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
-
+	private AttributeMap executionAttributes;
+	
 	/**
-	 * The strategy used by the repository to restore transient flow execution
-	 * state.
+	 * The loader that will determine which listeners to attach to flow definition executions. 
 	 */
-	private FlowExecutionImplStateRestorer executionStateRestorer;
-
+	private FlowExecutionListenerLoader executionListenerLoader;
+	
 	/**
 	 * The conversation manager to be used by the flow execution repository to
 	 * begin and end new conversations driven by Spring Web Flow.
@@ -77,25 +91,34 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	private RepositoryType repositoryType = RepositoryType.DEFAULT;
 
 	/**
-	 * Creates a new {@link FlowExecutor flow executor} factory.
-	 * @param definitionLocator The locator the executor will use to access flow
-	 * definitions registered in a central registry.
+	 * The flow executor this factory bean creates.
 	 */
-	public FlowExecutorFactoryBean(FlowDefinitionLocator definitionLocator) {
-		Assert.notNull(definitionLocator, "The flow definition locator is required");
+	private FlowExecutor flowExecutor;
+
+	/**
+	 * Sets the flow definition locator that will locate flow definitions needed
+	 * for execution. Typically also a {@link FlowDefinitionRegistry}.  Required.
+	 * @param definitionLocator the flow definition locator (registry)
+	 */
+	public void setDefinitionLocator(FlowDefinitionLocator definitionLocator) {
 		this.definitionLocator = definitionLocator;
-		this.executionStateRestorer = new FlowExecutionImplStateRestorer(definitionLocator);
 	}
 
 	/**
+	 * <p>
 	 * Sets the system attributes that apply to flow executions launched by the
 	 * executor created by this factory. Execution attributes may affect flow
 	 * execution behavior.
-	 * @param executionAttributes flow execution system attributes
+	 * </p>
+	 * <p>
+	 * Note: this method simply accepts a generic <code>java.util.Map</code>
+	 * to allow for easy configuration by Spring. The map entries should consist
+	 * of non-null String keys with object values.
+	 * </p>
+	 * @param executionAttributes the flow execution system attributes
 	 */
-	public void setExecutionAttributes(AttributeMap executionAttributes) {
-		this.executionFactory.setExecutionAttributes(executionAttributes);
-		this.executionStateRestorer.setExecutionAttributes(executionAttributes);
+	public void setExecutionAttributes(Map executionAttributes) {
+		this.executionAttributes = new LocalAttributeMap(executionAttributes);
 	}
 
 	/**
@@ -104,8 +127,7 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	 * @param executionListener the flow execution listener
 	 */
 	public void setExecutionListener(FlowExecutionListener executionListener) {
-		executionFactory.setLExecutionistener(executionListener);
-		executionStateRestorer.setExecutionListener(executionListener);
+		setExecutionListeners(new FlowExecutionListener[] { executionListener });
 	}
 
 	/**
@@ -114,8 +136,7 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	 * @param executionListeners the flow execution listeners
 	 */
 	public void setExecutionListeners(FlowExecutionListener[] executionListeners) {
-		executionFactory.setExecutionListeners(executionListeners);
-		executionStateRestorer.setExecutionListeners(executionListeners);
+		setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(executionListeners));
 	}
 
 	/**
@@ -125,8 +146,7 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	 * by this factory.
 	 */
 	public void setExecutionListenerLoader(FlowExecutionListenerLoader executionListenerLoader) {
-		executionFactory.setExecutionListenerLoader(executionListenerLoader);
-		executionStateRestorer.setExecutionListenerLoader(executionListenerLoader);
+		this.executionListenerLoader = executionListenerLoader;
 	}
 
 	/**
@@ -141,20 +161,34 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	}
 
 	/**
+	 * <p>
 	 * Sets the strategy for managing conversations that should be configured
 	 * for flow executors created by this factory.
+	 * </p>
 	 * <p>
 	 * The conversation manager is used by the flow execution repository
 	 * subsystem to begin and end new conversations that store execution state.
+	 * </p>
 	 */
 	public void setConversationManager(ConversationManager conversationManager) {
 		this.conversationManager = conversationManager;
 	}
 
-	// implementing FlowExecutorFactory
+	// implementing InitializingBean
 
-	public FlowExecutor createFlowExecutor() {
-		return new FlowExecutorImpl(definitionLocator, executionFactory,
+	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(definitionLocator, "The flow definition locator is required");
+		FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
+		FlowExecutionImplStateRestorer executionStateRestorer = new FlowExecutionImplStateRestorer(definitionLocator);
+		if (executionAttributes != null) {
+			executionFactory.setExecutionAttributes(executionAttributes);
+			executionStateRestorer.setExecutionAttributes(executionAttributes);
+		}
+		if (executionListenerLoader != null) {
+			executionFactory.setExecutionListenerLoader(executionListenerLoader);
+			executionStateRestorer.setExecutionListenerLoader(executionListenerLoader);
+		}
+		flowExecutor = new FlowExecutorImpl(definitionLocator, executionFactory,
 				createExecutionRepository(executionStateRestorer));
 	}
 
@@ -193,6 +227,10 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 		return repositoryType;
 	}
 
+	protected ConversationManager getConversationManager() {
+		return conversationManager;
+	}
+
 	// implementing FactoryBean
 
 	public Class getObjectType() {
@@ -204,6 +242,6 @@ public class FlowExecutorFactoryBean implements FlowExecutorFactory, FactoryBean
 	}
 
 	public Object getObject() throws Exception {
-		return createFlowExecutor();
+		return flowExecutor;
 	}
 }

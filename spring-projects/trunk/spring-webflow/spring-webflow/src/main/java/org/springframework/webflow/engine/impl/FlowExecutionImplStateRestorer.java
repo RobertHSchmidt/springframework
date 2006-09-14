@@ -11,7 +11,6 @@ import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.factory.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
 import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
@@ -49,6 +48,15 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 	}
 
 	/**
+	 * Sets the attributes to apply to flow executions created by this factory.
+	 * Execution attributes may affect flow execution behavior.
+	 * @param executionAttributes flow execution system attributes
+	 */
+	public void setExecutionAttributes(AttributeMap executionAttributes) {
+		Assert.notNull(executionAttributes, "The execution attributes map is required");
+		this.executionAttributes = executionAttributes;
+	}
+
 	/**
 	 * Sets the strategy for loading listeners that should observe executions of
 	 * a flow definition. Allows full control over what listeners should apply
@@ -57,33 +65,6 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 	public void setExecutionListenerLoader(FlowExecutionListenerLoader executionListenerLoader) {
 		Assert.notNull(executionListenerLoader, "The listener loader is required");
 		this.executionListenerLoader = executionListenerLoader;
-	}
-
-	/**
-	 * Sets the attributes to apply to flow executions created by this factory.
-	 * Execution attributes may affect flow execution behavior.
-	 * @param executionAttributes flow execution system attributes
-	 */
-	public void setExecutionAttributes(AttributeMap executionAttributes) {
-		this.executionAttributes = executionAttributes;
-	}
-
-	/**
-	 * Convenience setter for setting a single listener that always applys to
-	 * flow executions created by this factory.
-	 * @param executionListener the flow execution listener
-	 */
-	public void setExecutionListener(FlowExecutionListener executionListener) {
-		setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(executionListener));
-	}
-
-	/**
-	 * Convenience setter for setting a list of listeners that always apply to
-	 * flow executions created by this factory.
-	 * @param executionListeners the flow execution listeners
-	 */
-	public void setExecutionListeners(FlowExecutionListener[] executionListeners) {
-		setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(executionListeners));
 	}
 
 	public FlowExecution restoreState(FlowExecution flowExecution, MutableAttributeMap conversationScope) {

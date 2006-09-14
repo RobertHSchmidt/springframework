@@ -42,18 +42,19 @@ class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 	private static final String REPOSITORY_TYPE_ATTRIBUTE = "repository-type";
 
 	// properties
-	
+
+	private static final String DEFINITION_LOCATOR_PROPERTY = "definitionLocator";
+
 	private static final String EXECUTION_ATTRIBUTES_PROPERTY = "executionAttributes";
 
 	private static final String EXECUTION_LISTENER_LOADER_PROPERTY = "executionListenerLoader";
 
 	private static final String REPOSITORY_TYPE_PROPERTY = "repositoryType";
 
-
 	protected BeanDefinition parseInternal(Element element, ParserContext parserContext) {
 		BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder
 				.rootBeanDefinition(FlowExecutorFactoryBean.class);
-		definitionBuilder.addConstructorArgReference(getRegistryRef(element));
+		definitionBuilder.addPropertyReference(DEFINITION_LOCATOR_PROPERTY, getRegistryRef(element));
 		addExecutionAttributes(element, parserContext, definitionBuilder);
 		addExecutionListenerLoader(element, parserContext, definitionBuilder);
 		definitionBuilder.addPropertyValue(REPOSITORY_TYPE_PROPERTY, getRepositoryType(element));
