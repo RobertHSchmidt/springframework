@@ -25,10 +25,10 @@ import javax.servlet.http.HttpSessionBindingListener;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.context.support.SharedMap;
 import org.springframework.webflow.context.support.StringKeyedMapAdapter;
-import org.springframework.webflow.core.collection.CollectionUtils;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.AttributeMapBindingEvent;
 import org.springframework.webflow.core.collection.AttributeMapBindingListener;
+import org.springframework.webflow.core.collection.CollectionUtils;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 
 /**
  * A Shared Map backed by the Servlet HTTP session, for accessing session scoped
