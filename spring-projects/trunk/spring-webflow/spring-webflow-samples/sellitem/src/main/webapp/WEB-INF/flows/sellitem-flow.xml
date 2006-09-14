@@ -54,8 +54,6 @@
 		</entry-actions>
 	</end-state>
 
-	<end-state id="error" view="error"/>
-
 	<import resource="sellitem-beans.xml"/>
 	
 </flow>
