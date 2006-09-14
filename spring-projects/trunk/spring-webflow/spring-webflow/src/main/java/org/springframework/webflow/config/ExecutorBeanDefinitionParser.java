@@ -88,7 +88,7 @@ class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		Element attributesElement = DomUtils.getChildElementByTagName(element, EXECUTION_ATTRIBUTES_ELEMENT);
 		if (attributesElement != null) {
 			definitionBuilder.addPropertyValue(EXECUTION_ATTRIBUTES_PROPERTY, parserContext.getDelegate()
-					.parseCustomElement(attributesElement, true));
+					.parseCustomElement(attributesElement, definitionBuilder.getBeanDefinition()));
 		}
 	}
 
@@ -97,7 +97,7 @@ class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		Element listenersElement = DomUtils.getChildElementByTagName(element, EXECUTION_LISTENERS_ELEMENT);
 		if (listenersElement != null) {
 			definitionBuilder.addPropertyValue(EXECUTION_LISTENER_LOADER_PROPERTY, parserContext.getDelegate()
-					.parseCustomElement(listenersElement, true));
+					.parseCustomElement(listenersElement, definitionBuilder.getBeanDefinition()));
 		}
 	}
 }
