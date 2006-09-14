@@ -212,7 +212,7 @@ public class FlowController extends AbstractController implements InitializingBe
 			String externalUrl = argumentExtractor.createExternalUrl(redirect, response.getFlowExecutionKey(), context);
 			return new ModelAndView(new RedirectView(externalUrl));
 		}
-		else if (response.isFlowRedirect()) {
+		else if (response.isLaunchFlowRedirect()) {
 			// restart the flow by redirecting to flow launch URL
 			String flowUrl = argumentExtractor.createFlowUrl((LaunchFlowRedirect)response.getViewSelection(), context);
 			return new ModelAndView(new RedirectView(flowUrl));

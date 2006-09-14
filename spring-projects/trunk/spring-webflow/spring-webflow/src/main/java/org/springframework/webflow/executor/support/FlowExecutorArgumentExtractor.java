@@ -460,7 +460,7 @@ public class FlowExecutorArgumentExtractor {
 		StringBuffer flowUrl = new StringBuffer();
 		appendFlowExecutorPath(flowUrl, context);
 		flowUrl.append('?');
-		appendQueryParameter(getFlowIdParameterName(), flowRedirect.getFlowId(), flowUrl);
+		appendQueryParameter(getFlowIdParameterName(), flowRedirect.getFlowDefinitionId(), flowUrl);
 		if (!flowRedirect.getInput().isEmpty()) {
 			flowUrl.append('&');
 		}

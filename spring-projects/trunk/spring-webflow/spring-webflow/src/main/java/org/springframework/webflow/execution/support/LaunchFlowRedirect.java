@@ -18,7 +18,6 @@ package org.springframework.webflow.execution.support;
 import java.util.Collections;
 import java.util.Map;
 
-import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.ViewSelection;
 
@@ -40,7 +39,7 @@ public final class LaunchFlowRedirect extends ViewSelection {
 	/**
 	 * The id of the flow definition to launch.
 	 */
-	private final String flowId;
+	private final String flowDefinitionId;
 
 	/**
 	 * A map of input attributes to pass to the flow.
@@ -49,12 +48,12 @@ public final class LaunchFlowRedirect extends ViewSelection {
 
 	/**
 	 * Creates a new flow redirect.
-	 * @param flowId the id of the flow to launch
-	 * @param input the input data to pass to the flow
+	 * @param flowDefinitionId the id of the flow definition to launch
+	 * @param input the input data to pass to the new flow execution on launch
 	 */
-	public LaunchFlowRedirect(String flowId, Map input) {
-		Assert.hasText(flowId, "The flow id is required");
-		this.flowId = flowId;
+	public LaunchFlowRedirect(String flowDefinitionId, Map input) {
+		Assert.hasText(flowDefinitionId, "The flow definition id is required");
+		this.flowDefinitionId = flowDefinitionId;
 		if (input == null) {
 			input = Collections.EMPTY_MAP;
 		}
@@ -62,14 +61,14 @@ public final class LaunchFlowRedirect extends ViewSelection {
 	}
 
 	/**
-	 * Return the id of the flow definition to launch.
+	 * Return the id of the flow definition to launch a new execution of.
 	 */
-	public String getFlowId() {
-		return flowId;
+	public String getFlowDefinitionId() {
+		return flowDefinitionId;
 	}
 
 	/**
-	 * Return the flow input map as an unmodifiable map. Never returns null.
+	 * Return the flow execution input map as an unmodifiable map. Never returns null.
 	 */
 	public Map getInput() {
 		return Collections.unmodifiableMap(input);
@@ -80,14 +79,14 @@ public final class LaunchFlowRedirect extends ViewSelection {
 			return false;
 		}
 		LaunchFlowRedirect other = (LaunchFlowRedirect)o;
-		return flowId.equals(other.flowId) && input.equals(other.input);
+		return flowDefinitionId.equals(other.flowDefinitionId) && input.equals(other.input);
 	}
 
 	public int hashCode() {
-		return flowId.hashCode() + input.hashCode();
+		return flowDefinitionId.hashCode() + input.hashCode();
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("flowId", flowId).append("inputKeys", input.keySet()).toString();
+		return "launchFlow:'" + flowDefinitionId + "'";
 	}
 }

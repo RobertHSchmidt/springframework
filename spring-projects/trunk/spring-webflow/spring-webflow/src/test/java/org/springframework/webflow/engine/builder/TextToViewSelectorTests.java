@@ -69,7 +69,7 @@ public class TextToViewSelectorTests extends TestCase {
 		ViewSelector selector = (ViewSelector)viewSelector("flowRedirect:myFlow", true);
 		RequestContext context = getRequestContext();
 		LaunchFlowRedirect redirect = (LaunchFlowRedirect)selector.makeEntrySelection(context);
-		assertEquals("myFlow", redirect.getFlowId());
+		assertEquals("myFlow", redirect.getFlowDefinitionId());
 		assertEquals(0, redirect.getInput().size());
 	}
 
@@ -78,7 +78,7 @@ public class TextToViewSelectorTests extends TestCase {
 				"flowRedirect:myFlow?foo=${flowScope.foo}&bar=${requestScope.oven}", true);
 		RequestContext context = getRequestContext();
 		LaunchFlowRedirect redirect = (LaunchFlowRedirect)selector.makeEntrySelection(context);
-		assertEquals("myFlow", redirect.getFlowId());
+		assertEquals("myFlow", redirect.getFlowDefinitionId());
 		assertEquals(2, redirect.getInput().size());
 		assertEquals("bar", redirect.getInput().get("foo"));
 		assertEquals("mit", redirect.getInput().get("bar"));

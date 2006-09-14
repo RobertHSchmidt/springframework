@@ -107,7 +107,7 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 		StringBuffer flowUrl = new StringBuffer();
 		appendFlowExecutorPath(flowUrl, context);
 		flowUrl.append(PATH_SEPARATOR_CHARACTER);
-		flowUrl.append(flowRedirect.getFlowId());
+		flowUrl.append(flowRedirect.getFlowDefinitionId());
 		if (!flowRedirect.getInput().isEmpty()) {
 			flowUrl.append('?');
 			appendQueryParameters(flowRedirect.getInput(), flowUrl);

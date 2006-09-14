@@ -12,7 +12,7 @@ public class FlowRedirectTests extends TestCase {
 		Map input = new HashMap();
 		input.put("name", "value");
 		LaunchFlowRedirect redirect = new LaunchFlowRedirect("foo", input);
-		assertEquals("foo", redirect.getFlowId());
+		assertEquals("foo", redirect.getFlowDefinitionId());
 		assertEquals(1, redirect.getInput().size());
 		assertEquals("value", redirect.getInput().get("name"));
 		try {
