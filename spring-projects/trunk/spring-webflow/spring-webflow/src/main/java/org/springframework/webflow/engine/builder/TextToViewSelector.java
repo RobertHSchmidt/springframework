@@ -23,10 +23,10 @@ import org.springframework.webflow.engine.NullViewSelector;
 import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.engine.support.ExternalRedirectSelector;
-import org.springframework.webflow.engine.support.LaunchFlowRedirectSelector;
+import org.springframework.webflow.engine.support.FlowDefinitionRedirectSelector;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowExecutionRedirect;
-import org.springframework.webflow.execution.support.LaunchFlowRedirect;
+import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 
 /**
  * Converter that converts an encoded string representation of a view selector
@@ -43,7 +43,7 @@ import org.springframework.webflow.execution.support.LaunchFlowRedirect;
  * {@link ExternalRedirectSelector} that returns an {@link ExternalRedirect} to a
  * URL.</li>
  * <li>"flowRedirect:&lt;url&gt;" - will result in a
- * {@link LaunchFlowRedirectSelector} that returns a {@link LaunchFlowRedirect} to a flow.</li>
+ * {@link FlowDefinitionRedirectSelector} that returns a {@link FlowDefinitionRedirect} to a flow.</li>
  * <li>"bean:&lt;id&gt;" - will result usage of a custom
  * <code>ViewSelector</code> bean implementation.</li>
  * </ul>
@@ -146,7 +146,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		else if (encodedView.startsWith(FLOW_REDIRECT_PREFIX)) {
 			String flowRedirect = encodedView.substring(FLOW_REDIRECT_PREFIX.length());
 			Expression redirectExpr = (Expression)fromStringTo(Expression.class).execute(flowRedirect);
-			return new LaunchFlowRedirectSelector(redirectExpr);
+			return new FlowDefinitionRedirectSelector(redirectExpr);
 		}
 		else if (encodedView.startsWith(BEAN_PREFIX)) {
 			String id = encodedView.substring(BEAN_PREFIX.length());

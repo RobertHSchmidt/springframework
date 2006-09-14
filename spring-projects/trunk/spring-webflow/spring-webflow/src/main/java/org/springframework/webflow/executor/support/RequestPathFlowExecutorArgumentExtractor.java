@@ -20,7 +20,7 @@ import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.FlowExecutionContext;
-import org.springframework.webflow.execution.support.LaunchFlowRedirect;
+import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 
 /**
  * Extracts flow executor arguments from the request path.
@@ -103,14 +103,14 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 		}
 	}
 
-	public String createFlowUrl(LaunchFlowRedirect flowRedirect, ExternalContext context) {
+	public String createFlowUrl(FlowDefinitionRedirect flowRedirect, ExternalContext context) {
 		StringBuffer flowUrl = new StringBuffer();
 		appendFlowExecutorPath(flowUrl, context);
 		flowUrl.append(PATH_SEPARATOR_CHARACTER);
 		flowUrl.append(flowRedirect.getFlowDefinitionId());
-		if (!flowRedirect.getInput().isEmpty()) {
+		if (!flowRedirect.getExecutionInput().isEmpty()) {
 			flowUrl.append('?');
-			appendQueryParameters(flowRedirect.getInput(), flowUrl);
+			appendQueryParameters(flowRedirect.getExecutionInput(), flowUrl);
 		}
 		return flowUrl.toString();
 	}

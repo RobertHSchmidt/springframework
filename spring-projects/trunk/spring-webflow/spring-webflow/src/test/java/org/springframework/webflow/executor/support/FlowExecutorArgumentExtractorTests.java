@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.support.ExternalRedirect;
-import org.springframework.webflow.execution.support.LaunchFlowRedirect;
+import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.engine.MockFlowExecutionContext;
 
@@ -84,7 +84,7 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 	public void testCreateFlowUrl() {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows.htm");
-		LaunchFlowRedirect flowRedirect = new LaunchFlowRedirect("flow", null);
+		FlowDefinitionRedirect flowRedirect = new FlowDefinitionRedirect("flow", null);
 		String url = argumentExtractor.createFlowUrl(flowRedirect, context);
 		assertEquals("/app/flows.htm?_flowId=flow", url);
 	}
@@ -93,7 +93,7 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/system");
 		context.setRequestPathInfo("/flows");
-		LaunchFlowRedirect flowRedirect = new LaunchFlowRedirect("flow", null);
+		FlowDefinitionRedirect flowRedirect = new FlowDefinitionRedirect("flow", null);
 		String url = argumentExtractor.createFlowUrl(flowRedirect, context);
 		assertEquals("/app/system?_flowId=flow", url);
 	}
@@ -104,7 +104,7 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 		Map input = new HashMap();
 		input.put("foo", "bar");
 		input.put("baz", new Integer(3));
-		LaunchFlowRedirect flowRedirect = new LaunchFlowRedirect("flow", input);
+		FlowDefinitionRedirect flowRedirect = new FlowDefinitionRedirect("flow", input);
 		String url = argumentExtractor.createFlowUrl(flowRedirect, context);
 		assertEquals("/app/flows.htm?_flowId=flow&foo=bar&baz=3", url);
 	}

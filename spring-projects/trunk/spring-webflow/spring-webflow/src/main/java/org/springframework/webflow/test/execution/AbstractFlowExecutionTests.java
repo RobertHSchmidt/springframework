@@ -37,7 +37,7 @@ import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowExecutionRedirect;
-import org.springframework.webflow.execution.support.LaunchFlowRedirect;
+import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
@@ -420,22 +420,22 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 
 	/**
 	 * Assert that the returned view selection is an instance of
+	 * {@link FlowDefinitionRedirect}.
+	 * @param viewSelection the view selection
+	 */
+	protected FlowDefinitionRedirect flowDefinitionRedirect(ViewSelection viewSelection) {
+		Assert.isInstanceOf(FlowDefinitionRedirect.class, viewSelection, "Unexpected class of view selection: ");
+		return (FlowDefinitionRedirect)viewSelection;
+	}
+
+	/**
+	 * Assert that the returned view selection is an instance of
 	 * {@link FlowExecutionRedirect}.
 	 * @param viewSelection the view selection
 	 */
 	protected FlowExecutionRedirect flowExecutionRedirect(ViewSelection viewSelection) {
 		Assert.isInstanceOf(FlowExecutionRedirect.class, viewSelection, "Unexpected class of view selection: ");
 		return (FlowExecutionRedirect)viewSelection;
-	}
-
-	/**
-	 * Assert that the returned view selection is an instance of
-	 * {@link LaunchFlowRedirect}.
-	 * @param viewSelection the view selection
-	 */
-	protected LaunchFlowRedirect flowRedirect(ViewSelection viewSelection) {
-		Assert.isInstanceOf(LaunchFlowRedirect.class, viewSelection, "Unexpected class of view selection: ");
-		return (LaunchFlowRedirect)viewSelection;
 	}
 
 	/**
