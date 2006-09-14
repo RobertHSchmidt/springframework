@@ -24,31 +24,31 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewSelection;
-import org.springframework.webflow.execution.support.LaunchFlowRedirect;
+import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 
 /**
- * Makes a {@link LaunchFlowRedirect} selection when requested, calculating
- * the flowId and flow input by evaluating an expression against the request
- * context.
+ * Makes a {@link FlowDefinitionRedirect} selection when requested, calculating the
+ * <code>flowDefinitionId</code> and <code>executionInput</code> by
+ * evaluating an expression against the request context.
  * 
- * @see org.springframework.webflow.execution.support.LaunchFlowRedirect
+ * @see org.springframework.webflow.execution.support.FlowDefinitionRedirect
  * 
  * @author Keith Donald
  */
-public class LaunchFlowRedirectSelector implements ViewSelector {
+public class FlowDefinitionRedirectSelector implements ViewSelector {
 
 	/**
 	 * The parsed flow expression, evaluatable to the string format:
-	 * flowId?param1Name=parmValue&param2Name=paramValue.
+	 * flowDefinitionId?param1Name=parmValue&param2Name=paramValue.
 	 */
 	private Expression expression;
 
 	/**
 	 * Creates a new flow redirect selector
 	 * @param expression the parsed flow redirect expression, evaluatable to the
-	 * string format: flowId?param1Name=parmValue&param2Name=paramValue
+	 * string format: flowDefinitionId?param1Name=parmValue&param2Name=paramValue
 	 */
-	public LaunchFlowRedirectSelector(Expression expression) {
+	public FlowDefinitionRedirectSelector(Expression expression) {
 		this.expression = expression;
 	}
 
@@ -57,39 +57,40 @@ public class LaunchFlowRedirectSelector implements ViewSelector {
 	}
 
 	public ViewSelection makeEntrySelection(RequestContext context) {
-		String launchFlowInfo = (String)expression.evaluateAgainst(context, Collections.EMPTY_MAP);
-		if (launchFlowInfo == null) {
-			throw new IllegalStateException("Launch flow expression evaluated to [null], the expression was " + expression);
+		String encodedRedirect = (String)expression.evaluateAgainst(context, Collections.EMPTY_MAP);
+		if (encodedRedirect == null) {
+			throw new IllegalStateException("Flow definition redirect expression evaluated to [null], the expression was "
+					+ expression);
 		}
-		// the encoded flowRedirect should look something like
-		// "flowId?param0=value0&param1=value1"
+		// the encoded flowDefinitionRedirect should look something like
+		// "flowDefinitionId?param0=value0&param1=value1"
 		// now parse that and build a corresponding view selection
-		int index = launchFlowInfo.indexOf('?');
-		String definitionId;
-		Map input = null;
+		int index = encodedRedirect.indexOf('?');
+		String flowDefinitionId;
+		Map executionInput = null;
 		if (index != -1) {
-			definitionId = launchFlowInfo.substring(0, index);
-			String[] parameters = StringUtils.delimitedListToStringArray(launchFlowInfo.substring(index + 1), "&");
-			input = new HashMap(parameters.length, 1);
+			flowDefinitionId = encodedRedirect.substring(0, index);
+			String[] parameters = StringUtils.delimitedListToStringArray(encodedRedirect.substring(index + 1), "&");
+			executionInput = new HashMap(parameters.length, 1);
 			for (int i = 0; i < parameters.length; i++) {
 				String nameAndValue = parameters[i];
 				index = nameAndValue.indexOf('=');
 				if (index != -1) {
-					input.put(nameAndValue.substring(0, index), nameAndValue.substring(index + 1));
+					executionInput.put(nameAndValue.substring(0, index), nameAndValue.substring(index + 1));
 				}
 				else {
-					input.put(nameAndValue, "");
+					executionInput.put(nameAndValue, "");
 				}
 			}
 		}
 		else {
-			definitionId = launchFlowInfo;
+			flowDefinitionId = encodedRedirect;
 		}
-		if (!StringUtils.hasText(definitionId)) {
+		if (!StringUtils.hasText(flowDefinitionId)) {
 			// equivalent to restart
-			definitionId = context.getFlowExecutionContext().getDefinition().getId();
+			flowDefinitionId = context.getFlowExecutionContext().getDefinition().getId();
 		}
-		return new LaunchFlowRedirect(definitionId, input);
+		return new FlowDefinitionRedirect(flowDefinitionId, executionInput);
 	}
 
 	public ViewSelection makeRefreshSelection(RequestContext context) {

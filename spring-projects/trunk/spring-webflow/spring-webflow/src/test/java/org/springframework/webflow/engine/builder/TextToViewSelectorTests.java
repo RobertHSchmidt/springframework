@@ -28,7 +28,7 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowExecutionRedirect;
-import org.springframework.webflow.execution.support.LaunchFlowRedirect;
+import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.test.engine.MockRequestContext;
 
 /**
@@ -68,20 +68,20 @@ public class TextToViewSelectorTests extends TestCase {
 	public void testFlowRedirect() {
 		ViewSelector selector = (ViewSelector)viewSelector("flowRedirect:myFlow", true);
 		RequestContext context = getRequestContext();
-		LaunchFlowRedirect redirect = (LaunchFlowRedirect)selector.makeEntrySelection(context);
+		FlowDefinitionRedirect redirect = (FlowDefinitionRedirect)selector.makeEntrySelection(context);
 		assertEquals("myFlow", redirect.getFlowDefinitionId());
-		assertEquals(0, redirect.getInput().size());
+		assertEquals(0, redirect.getExecutionInput().size());
 	}
 
 	public void testFlowRedirectWithModel() {
 		ViewSelector selector = (ViewSelector)viewSelector(
 				"flowRedirect:myFlow?foo=${flowScope.foo}&bar=${requestScope.oven}", true);
 		RequestContext context = getRequestContext();
-		LaunchFlowRedirect redirect = (LaunchFlowRedirect)selector.makeEntrySelection(context);
+		FlowDefinitionRedirect redirect = (FlowDefinitionRedirect)selector.makeEntrySelection(context);
 		assertEquals("myFlow", redirect.getFlowDefinitionId());
-		assertEquals(2, redirect.getInput().size());
-		assertEquals("bar", redirect.getInput().get("foo"));
-		assertEquals("mit", redirect.getInput().get("bar"));
+		assertEquals(2, redirect.getExecutionInput().size());
+		assertEquals("bar", redirect.getExecutionInput().get("foo"));
+		assertEquals("mit", redirect.getExecutionInput().get("bar"));
 	}
 
 	public void testExternalRedirect() {

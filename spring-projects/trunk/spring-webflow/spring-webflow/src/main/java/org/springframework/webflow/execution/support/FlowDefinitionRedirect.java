@@ -23,8 +23,8 @@ import org.springframework.webflow.execution.ViewSelection;
 
 /**
  * <p>
- * Concrete response type that requests that a <i>new</i> flow execution
- * (representing the start of a new conversation) be launched.
+ * Concrete response type that requests that a <i>new</i> execution of a flow
+ * definition (representing the start of a new conversation) be launched.
  * </p>
  * <p>
  * This allows "redirect to new flow" semantics; useful for restarting a flow
@@ -34,7 +34,7 @@ import org.springframework.webflow.execution.ViewSelection;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public final class LaunchFlowRedirect extends ViewSelection {
+public final class FlowDefinitionRedirect extends ViewSelection {
 
 	/**
 	 * The id of the flow definition to launch.
@@ -44,20 +44,20 @@ public final class LaunchFlowRedirect extends ViewSelection {
 	/**
 	 * A map of input attributes to pass to the flow.
 	 */
-	private final Map input;
+	private final Map executionInput;
 
 	/**
 	 * Creates a new flow redirect.
 	 * @param flowDefinitionId the id of the flow definition to launch
-	 * @param input the input data to pass to the new flow execution on launch
+	 * @param executionInput the input data to pass to the new flow execution on launch
 	 */
-	public LaunchFlowRedirect(String flowDefinitionId, Map input) {
+	public FlowDefinitionRedirect(String flowDefinitionId, Map executionInput) {
 		Assert.hasText(flowDefinitionId, "The flow definition id is required");
 		this.flowDefinitionId = flowDefinitionId;
-		if (input == null) {
-			input = Collections.EMPTY_MAP;
+		if (executionInput == null) {
+			executionInput = Collections.EMPTY_MAP;
 		}
-		this.input = input;
+		this.executionInput = executionInput;
 	}
 
 	/**
@@ -68,25 +68,26 @@ public final class LaunchFlowRedirect extends ViewSelection {
 	}
 
 	/**
-	 * Return the flow execution input map as an unmodifiable map. Never returns null.
+	 * Return the flow execution input map as an unmodifiable map. Never returns
+	 * null.
 	 */
-	public Map getInput() {
-		return Collections.unmodifiableMap(input);
+	public Map getExecutionInput() {
+		return Collections.unmodifiableMap(executionInput);
 	}
 
 	public boolean equals(Object o) {
-		if (!(o instanceof LaunchFlowRedirect)) {
+		if (!(o instanceof FlowDefinitionRedirect)) {
 			return false;
 		}
-		LaunchFlowRedirect other = (LaunchFlowRedirect)o;
-		return flowDefinitionId.equals(other.flowDefinitionId) && input.equals(other.input);
+		FlowDefinitionRedirect other = (FlowDefinitionRedirect)o;
+		return flowDefinitionId.equals(other.flowDefinitionId) && executionInput.equals(other.executionInput);
 	}
 
 	public int hashCode() {
-		return flowDefinitionId.hashCode() + input.hashCode();
+		return flowDefinitionId.hashCode() + executionInput.hashCode();
 	}
 
 	public String toString() {
-		return "launchFlow:'" + flowDefinitionId + "'";
+		return "flowRedirect:'" + flowDefinitionId + "'";
 	}
 }
