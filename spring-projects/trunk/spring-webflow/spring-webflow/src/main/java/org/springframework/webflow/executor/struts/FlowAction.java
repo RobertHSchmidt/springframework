@@ -264,7 +264,7 @@ public class FlowAction extends ActionSupport {
 					response.getFlowExecutionKey(), context);
 			return createRedirectForward(externalUrl, httpResponse);
 		}
-		else if (response.isFlowRedirect()) {
+		else if (response.isLaunchFlowRedirect()) {
 			// restart the flow by redirecting to flow launch URL
 			String flowUrl = argumentExtractor.createFlowUrl((LaunchFlowRedirect)response.getViewSelection(), context);
 			return createRedirectForward(flowUrl, httpResponse);

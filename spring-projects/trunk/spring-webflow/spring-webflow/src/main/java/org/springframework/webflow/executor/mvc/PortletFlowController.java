@@ -215,12 +215,12 @@ public class PortletFlowController extends AbstractController implements Initial
 			response.setRenderParameter(argumentExtractor.getFlowExecutionKeyParameterName(), responseInstruction
 					.getFlowExecutionKey());
 		}
-		else if (responseInstruction.isFlowRedirect()) {
+		else if (responseInstruction.isLaunchFlowRedirect()) {
 			// set flow id render parameter to request that a new flow be
 			// launched within this portlet
 			LaunchFlowRedirect redirect = (LaunchFlowRedirect)responseInstruction.getViewSelection();
 			response.setRenderParameters(redirect.getInput());
-			response.setRenderParameter(argumentExtractor.getFlowIdParameterName(), redirect.getFlowId());
+			response.setRenderParameter(argumentExtractor.getFlowIdParameterName(), redirect.getFlowDefinitionId());
 		}
 		else if (responseInstruction.isExternalRedirect()) {
 			// issue the redirect to the external URL

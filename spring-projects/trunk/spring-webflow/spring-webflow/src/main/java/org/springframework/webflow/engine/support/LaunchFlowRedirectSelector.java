@@ -27,7 +27,7 @@ import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.LaunchFlowRedirect;
 
 /**
- * Makes a {@link LaunchFlowRedirect} response selection when requested, calculating
+ * Makes a {@link LaunchFlowRedirect} selection when requested, calculating
  * the flowId and flow input by evaluating an expression against the request
  * context.
  * 
@@ -35,7 +35,7 @@ import org.springframework.webflow.execution.support.LaunchFlowRedirect;
  * 
  * @author Keith Donald
  */
-public class FlowRedirectSelector implements ViewSelector {
+public class LaunchFlowRedirectSelector implements ViewSelector {
 
 	/**
 	 * The parsed flow expression, evaluatable to the string format:
@@ -48,7 +48,7 @@ public class FlowRedirectSelector implements ViewSelector {
 	 * @param expression the parsed flow redirect expression, evaluatable to the
 	 * string format: flowId?param1Name=parmValue&param2Name=paramValue
 	 */
-	public FlowRedirectSelector(Expression expression) {
+	public LaunchFlowRedirectSelector(Expression expression) {
 		this.expression = expression;
 	}
 
@@ -57,19 +57,19 @@ public class FlowRedirectSelector implements ViewSelector {
 	}
 
 	public ViewSelection makeEntrySelection(RequestContext context) {
-		String flowRedirect = (String)expression.evaluateAgainst(context, Collections.EMPTY_MAP);
-		if (flowRedirect == null) {
-			throw new IllegalStateException("Flow redirect expression evaluated to [null], the expression was " + expression);
+		String launchFlowInfo = (String)expression.evaluateAgainst(context, Collections.EMPTY_MAP);
+		if (launchFlowInfo == null) {
+			throw new IllegalStateException("Launch flow expression evaluated to [null], the expression was " + expression);
 		}
 		// the encoded flowRedirect should look something like
 		// "flowId?param0=value0&param1=value1"
 		// now parse that and build a corresponding view selection
-		int index = flowRedirect.indexOf('?');
-		String flowId;
+		int index = launchFlowInfo.indexOf('?');
+		String definitionId;
 		Map input = null;
 		if (index != -1) {
-			flowId = flowRedirect.substring(0, index);
-			String[] parameters = StringUtils.delimitedListToStringArray(flowRedirect.substring(index + 1), "&");
+			definitionId = launchFlowInfo.substring(0, index);
+			String[] parameters = StringUtils.delimitedListToStringArray(launchFlowInfo.substring(index + 1), "&");
 			input = new HashMap(parameters.length, 1);
 			for (int i = 0; i < parameters.length; i++) {
 				String nameAndValue = parameters[i];
@@ -83,13 +83,13 @@ public class FlowRedirectSelector implements ViewSelector {
 			}
 		}
 		else {
-			flowId = flowRedirect;
+			definitionId = launchFlowInfo;
 		}
-		if (!StringUtils.hasText(flowId)) {
+		if (!StringUtils.hasText(definitionId)) {
 			// equivalent to restart
-			flowId = context.getFlowExecutionContext().getDefinition().getId();
+			definitionId = context.getFlowExecutionContext().getDefinition().getId();
 		}
-		return new LaunchFlowRedirect(flowId, input);
+		return new LaunchFlowRedirect(definitionId, input);
 	}
 
 	public ViewSelection makeRefreshSelection(RequestContext context) {

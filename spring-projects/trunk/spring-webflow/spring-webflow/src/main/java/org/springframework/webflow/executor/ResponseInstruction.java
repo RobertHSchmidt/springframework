@@ -157,7 +157,7 @@ public class ResponseInstruction implements Serializable {
 	 * Returns true if this is an instruction to launch an entirely new
 	 * (independent) flow execution.
 	 */
-	public boolean isFlowRedirect() {
+	public boolean isLaunchFlowRedirect() {
 		return viewSelection instanceof LaunchFlowRedirect;
 	}
 
