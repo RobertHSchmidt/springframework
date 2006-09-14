@@ -25,6 +25,11 @@
 						Implementing a wizard using web flows.
 					</LI>
 					<LI>
+						Use of the FormAction to perform form processing, including the 
+						FormAction's "setupForm" method to install custom property editors for
+						formatting text field values (shipDate).
+					</LI>					
+					<LI>
 						Using continuations to make the flow completely stable, no matter
 						how browser navigation buttons are used.
 					</LI>
@@ -34,18 +39,13 @@
 					    usage while the application transaction is in process.
 					</LI>
 					<LI>
-						Multi actions to group several action execution methods together on
-						a single action implementation class.
+						"Always redirect on pause" to benefit from the POST+REDIRECT+GET pattern with no special coding.
 					</LI>
 					<LI>
 						Using <A href="http://www.ognl.org/">OGNL</A> based conditional expressions.
 					</LI>
 					<LI>
-						Exporting the flow registry as a JMX MBean (for access via a standard JMX client
-						like JConsole).
-					</LI>
-					<LI>
-						Use of custom flow state exception handlers to recover from exceptions.
+						Use of subflows to compose a multi-step business process from independently reusable modules.
 					</LI>
 				</UL>
 			</P>
