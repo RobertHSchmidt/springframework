@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.config.MapFactoryBean;
 import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedMap;
@@ -26,7 +27,6 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.w3c.dom.Element;
 
 /**
@@ -36,6 +36,8 @@ import org.w3c.dom.Element;
  * @author Ben Hale
  */
 class ExecutionAttributesBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+
+	private static final String SOURCE_MAP_PROPERTY = "sourceMap";
 
 	private static final String ATTRIBUTE = "attribute";
 
@@ -48,7 +50,7 @@ class ExecutionAttributesBeanDefinitionParser extends AbstractSingleBeanDefiniti
 	private static final String ALWAYS_REDIRECT_ON_PAUSE = "alwaysRedirectOnPause";
 
 	protected Class getBeanClass(Element element) {
-		return LocalAttributeMap.class;
+		return MapFactoryBean.class;
 	}
 
 	protected void doParse(Element element, BeanDefinitionBuilder definitionBuilder) {
@@ -56,7 +58,7 @@ class ExecutionAttributesBeanDefinitionParser extends AbstractSingleBeanDefiniti
 		Map attributeMap = new ManagedMap(attributeElements.size());
 		addAttributes(attributeMap, attributeElements);
 		addSpecialAttributes(attributeMap, element);
-		definitionBuilder.addConstructorArg(attributeMap);
+		definitionBuilder.addPropertyValue(SOURCE_MAP_PROPERTY, attributeMap);
 	}
 
 	private void addAttributes(Map attributeMap, List attributeElements) {
@@ -82,5 +84,4 @@ class ExecutionAttributesBeanDefinitionParser extends AbstractSingleBeanDefiniti
 	private void addAlwaysRedirectOnPauseAttribute(Map attributeMap) {
 		attributeMap.put(ALWAYS_REDIRECT_ON_PAUSE, Boolean.TRUE);
 	}
-
 }
