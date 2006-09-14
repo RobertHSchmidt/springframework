@@ -24,14 +24,14 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewSelection;
-import org.springframework.webflow.execution.support.FlowRedirect;
+import org.springframework.webflow.execution.support.LaunchFlowRedirect;
 
 /**
- * Makes a {@link FlowRedirect} response selection when requested, calculating
+ * Makes a {@link LaunchFlowRedirect} response selection when requested, calculating
  * the flowId and flow input by evaluating an expression against the request
  * context.
  * 
- * @see org.springframework.webflow.execution.support.FlowRedirect
+ * @see org.springframework.webflow.execution.support.LaunchFlowRedirect
  * 
  * @author Keith Donald
  */
@@ -89,7 +89,7 @@ public class FlowRedirectSelector implements ViewSelector {
 			// equivalent to restart
 			flowId = context.getFlowExecutionContext().getDefinition().getId();
 		}
-		return new FlowRedirect(flowId, input);
+		return new LaunchFlowRedirect(flowId, input);
 	}
 
 	public ViewSelection makeRefreshSelection(RequestContext context) {

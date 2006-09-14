@@ -3,7 +3,7 @@ package org.springframework.webflow.execution.support;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.webflow.execution.support.FlowRedirect;
+import org.springframework.webflow.execution.support.LaunchFlowRedirect;
 
 import junit.framework.TestCase;
 
@@ -11,7 +11,7 @@ public class FlowRedirectTests extends TestCase {
 	public void testConstructAndAccess() {
 		Map input = new HashMap();
 		input.put("name", "value");
-		FlowRedirect redirect = new FlowRedirect("foo", input);
+		LaunchFlowRedirect redirect = new LaunchFlowRedirect("foo", input);
 		assertEquals("foo", redirect.getFlowId());
 		assertEquals(1, redirect.getInput().size());
 		assertEquals("value", redirect.getInput().get("name"));
@@ -24,7 +24,7 @@ public class FlowRedirectTests extends TestCase {
 	
 	public void testNullParams() {
 		try {
-			FlowRedirect redirect = new FlowRedirect(null, null);
+			LaunchFlowRedirect redirect = new LaunchFlowRedirect(null, null);
 			fail("was null");
 		} catch (IllegalArgumentException e) {
 			
@@ -33,7 +33,7 @@ public class FlowRedirectTests extends TestCase {
 	}
 	
 	public void testMapLookup() {
-		FlowRedirect redirect = new FlowRedirect("foo", null);
+		LaunchFlowRedirect redirect = new LaunchFlowRedirect("foo", null);
 		Map map = new HashMap();
 		map.put("redirect", redirect);
 		assertSame(redirect, map.get("redirect"));

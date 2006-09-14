@@ -28,7 +28,7 @@ import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.support.ExternalRedirect;
-import org.springframework.webflow.execution.support.FlowRedirect;
+import org.springframework.webflow.execution.support.LaunchFlowRedirect;
 import org.springframework.webflow.executor.FlowExecutor;
 
 /**
@@ -456,7 +456,7 @@ public class FlowExecutorArgumentExtractor {
 	 * @param context the external context
 	 * @return the relative flow URL path to redirect to
 	 */
-	public String createFlowUrl(FlowRedirect flowRedirect, ExternalContext context) {
+	public String createFlowUrl(LaunchFlowRedirect flowRedirect, ExternalContext context) {
 		StringBuffer flowUrl = new StringBuffer();
 		appendFlowExecutorPath(flowUrl, context);
 		flowUrl.append('?');

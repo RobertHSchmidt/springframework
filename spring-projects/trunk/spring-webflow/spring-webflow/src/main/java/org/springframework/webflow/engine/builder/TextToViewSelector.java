@@ -26,7 +26,7 @@ import org.springframework.webflow.engine.support.ExternalRedirectSelector;
 import org.springframework.webflow.engine.support.FlowRedirectSelector;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowExecutionRedirect;
-import org.springframework.webflow.execution.support.FlowRedirect;
+import org.springframework.webflow.execution.support.LaunchFlowRedirect;
 
 /**
  * Converter that converts an encoded string representation of a view selector
@@ -43,7 +43,7 @@ import org.springframework.webflow.execution.support.FlowRedirect;
  * {@link ExternalRedirectSelector} that returns an {@link ExternalRedirect} to a
  * URL.</li>
  * <li>"flowRedirect:&lt;url&gt;" - will result in a
- * {@link FlowRedirectSelector} that returns a {@link FlowRedirect} to a flow.</li>
+ * {@link FlowRedirectSelector} that returns a {@link LaunchFlowRedirect} to a flow.</li>
  * <li>"bean:&lt;id&gt;" - will result usage of a custom
  * <code>ViewSelector</code> bean implementation.</li>
  * </ul>

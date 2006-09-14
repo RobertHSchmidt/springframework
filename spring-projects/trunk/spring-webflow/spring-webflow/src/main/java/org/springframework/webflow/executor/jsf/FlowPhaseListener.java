@@ -41,7 +41,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowExecutionRedirect;
-import org.springframework.webflow.execution.support.FlowRedirect;
+import org.springframework.webflow.execution.support.LaunchFlowRedirect;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 
 /**
@@ -220,11 +220,11 @@ public class FlowPhaseListener implements PhaseListener {
 					.getFlowExecutionKey().toString(), context);
 			sendRedirect(url, context);
 		}
-		else if (selectedView instanceof FlowRedirect) {
+		else if (selectedView instanceof LaunchFlowRedirect) {
 			if (holder.needsSave()) {
 				saveFlowExecution(context, holder);
 			}
-			String url = argumentExtractor.createFlowUrl((FlowRedirect)holder.getViewSelection(), context);
+			String url = argumentExtractor.createFlowUrl((LaunchFlowRedirect)holder.getViewSelection(), context);
 			sendRedirect(url, context);
 		}
 	}
