@@ -28,6 +28,12 @@
 					<LI>
 						Event pattern matching, for matching eventId expressions to transitions.
 					</LI>
+					<LI>
+						"Always redirect on pause" - to achieve the POST+REDIRECT+GET pattern with no coding.
+					</LI>
+					<LI>
+						Spring 1.2 compatible configuration, as an alternative to the Spring 2.0 support.
+					</LI>
 				</UL>
 			</P>
 		</DIV>
