@@ -29,21 +29,24 @@ General
 
 Package org.springframework.webflow.action
 * Added EvaluateAction for evaluating Expression objects against the RequestContext as part of Action execution.
-* Factored bean invoking action specific code into "bean" subpackage.
 * Factored out generic ResultEventFactory and ResultEventFactorySelector helpers.
-* Renamed MethodResultSpecification to ActionResultExposer indicating its more general applicability.
-* Made FormAction methods final.  In general, do not override action methods, instead have your flow call
-  multiple methods in a chain or have your action method delegate to a explict overridable hook.
+* Added note about the "final" nature of FormAction's action methods.  In general, do not override action methods,
+  instead have your flow call multiple methods in a chain or have your action method delegate to an explict overridable hook.
+* Added support for reinstalling custom property editors on FormAction.setupForm if necessary; for 
+  example, because the errors collection was serialized and transient editors were lost.
 * Collapsed default RC3 FormAction.createFormObject behavior into "loadFormObject" for simplictly and 
   renamed "loadFormObject" to simply "createFormObject" for consistency.  This leaves a single hook
   -- createFormObject -- to customize how the form object instance is created/retrieved.
+* Extracted FormAction.registerPropertyEditors(PropertyEditorRegistry) hook, now called by initBinder
+  on bind and initFormErrors on setupForm.
+* Renamed MethodResultSpecification to ActionResultExposer indicating its more general applicability.
 * Removed GuardedAction as it was not being used.
-  
+    
 Package org.springframework.webflow.config
 * Introduced new Spring 2.0 webflow-config XML namespace, significantly simplifying user configuration 
   of the flow execution engine.  See spring-webflow-config.xsd and sample applications for more information.
 * Introduced Spring 1.2 compatible FlowExecutorFactoryBean for easing configuration of the flow
-  execution engine.
+  execution engine.  See itemlist sample for an example of how to use.
 
 Package org.springframework.webflow.core
 * Factored out "AttributeMap" interface and renamed default implementation to "LocalAttributeMap".
@@ -128,10 +131,10 @@ Package org.springframework.webflow.executor
 Package org.springframework.webflow.samples
 * Updated sample applications to take advantage of new features including:
   - New spring-webflow-config Spring 2.0 XML Schema
-  - "Render actions"
-  - "Always redirect on pause"
-  - "Bean actions"
-  - "Evaluate actions"
+  - "Render actions" (Shipping rate)
+  - "Always redirect on pause" (Sellitem, Itemlist)
+  - "Bean actions" (Phonebook, Sellitem)
+  - "Evaluate actions" (Numberguess)
   Please review samples to see these features in action!
   
 Package org.springframework.webflow.test
