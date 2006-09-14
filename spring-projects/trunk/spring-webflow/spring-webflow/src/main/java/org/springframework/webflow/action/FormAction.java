@@ -1012,8 +1012,8 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * Initialize the new binder instance. This hook allows for registration of
 	 * custom property editors for performing type conversion on binding, as
 	 * well as customization of other binder settings such as the
-	 * {@link DataBinder#getAllowedFields() allowed fields) and 
-	 * {@link DataBinder#getRequiredFields() required fields). Called by
+	 * {@link DataBinder#getAllowedFields() allowed fields} and 
+	 * {@link DataBinder#getRequiredFields() required fields}. Called by
 	 * {@link #createBinder(RequestContext, Object)}
 	 * <p>
 	 * @param context the action execution context, for accessing and setting
