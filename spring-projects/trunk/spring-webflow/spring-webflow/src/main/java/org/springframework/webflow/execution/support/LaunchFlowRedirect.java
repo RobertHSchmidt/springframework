@@ -23,17 +23,19 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.execution.ViewSelection;
 
 /**
+ * <p>
  * Concrete response type that requests that a <i>new</i> flow execution
  * (representing the start of a new conversation) be launched.
+ * </p>
  * <p>
  * This allows "redirect to new flow" semantics; useful for restarting a flow
  * after completion, or starting an entirely new flow from within the end state
  * of another flow definition.
- * 
+ * </p>
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public final class FlowRedirect extends ViewSelection {
+public final class LaunchFlowRedirect extends ViewSelection {
 
 	/**
 	 * The id of the flow definition to launch.
@@ -50,7 +52,7 @@ public final class FlowRedirect extends ViewSelection {
 	 * @param flowId the id of the flow to launch
 	 * @param input the input data to pass to the flow
 	 */
-	public FlowRedirect(String flowId, Map input) {
+	public LaunchFlowRedirect(String flowId, Map input) {
 		Assert.hasText(flowId, "The flow id is required");
 		this.flowId = flowId;
 		if (input == null) {
@@ -74,10 +76,10 @@ public final class FlowRedirect extends ViewSelection {
 	}
 
 	public boolean equals(Object o) {
-		if (!(o instanceof FlowRedirect)) {
+		if (!(o instanceof LaunchFlowRedirect)) {
 			return false;
 		}
-		FlowRedirect other = (FlowRedirect)o;
+		LaunchFlowRedirect other = (LaunchFlowRedirect)o;
 		return flowId.equals(other.flowId) && input.equals(other.input);
 	}
 

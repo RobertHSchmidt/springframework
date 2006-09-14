@@ -33,7 +33,7 @@ import org.springframework.web.portlet.mvc.Controller;
 import org.springframework.webflow.context.portlet.PortletExternalContext;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
-import org.springframework.webflow.execution.support.FlowRedirect;
+import org.springframework.webflow.execution.support.LaunchFlowRedirect;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
@@ -218,7 +218,7 @@ public class PortletFlowController extends AbstractController implements Initial
 		else if (responseInstruction.isFlowRedirect()) {
 			// set flow id render parameter to request that a new flow be
 			// launched within this portlet
-			FlowRedirect redirect = (FlowRedirect)responseInstruction.getViewSelection();
+			LaunchFlowRedirect redirect = (LaunchFlowRedirect)responseInstruction.getViewSelection();
 			response.setRenderParameters(redirect.getInput());
 			response.setRenderParameter(argumentExtractor.getFlowIdParameterName(), redirect.getFlowId());
 		}

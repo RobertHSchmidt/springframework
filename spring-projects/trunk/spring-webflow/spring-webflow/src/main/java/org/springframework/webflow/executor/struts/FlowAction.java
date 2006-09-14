@@ -34,7 +34,7 @@ import org.springframework.webflow.action.FormObjectAccessor;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
-import org.springframework.webflow.execution.support.FlowRedirect;
+import org.springframework.webflow.execution.support.LaunchFlowRedirect;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
@@ -266,7 +266,7 @@ public class FlowAction extends ActionSupport {
 		}
 		else if (response.isFlowRedirect()) {
 			// restart the flow by redirecting to flow launch URL
-			String flowUrl = argumentExtractor.createFlowUrl((FlowRedirect)response.getViewSelection(), context);
+			String flowUrl = argumentExtractor.createFlowUrl((LaunchFlowRedirect)response.getViewSelection(), context);
 			return createRedirectForward(flowUrl, httpResponse);
 		}
 		else if (response.isNull()) {

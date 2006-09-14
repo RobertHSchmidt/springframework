@@ -24,7 +24,7 @@ import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowExecutionRedirect;
-import org.springframework.webflow.execution.support.FlowRedirect;
+import org.springframework.webflow.execution.support.LaunchFlowRedirect;
 
 /**
  * Immutable value object that provides clients with information about a
@@ -158,7 +158,7 @@ public class ResponseInstruction implements Serializable {
 	 * (independent) flow execution.
 	 */
 	public boolean isFlowRedirect() {
-		return viewSelection instanceof FlowRedirect;
+		return viewSelection instanceof LaunchFlowRedirect;
 	}
 
 	public boolean equals(Object o) {

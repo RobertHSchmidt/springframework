@@ -7,7 +7,7 @@ import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.engine.support.FlowRedirectSelector;
 import org.springframework.webflow.execution.ViewSelection;
-import org.springframework.webflow.execution.support.FlowRedirect;
+import org.springframework.webflow.execution.support.LaunchFlowRedirect;
 import org.springframework.webflow.test.engine.MockRequestContext;
 
 public class FlowRedirectSelectorTests extends TestCase {
@@ -20,8 +20,8 @@ public class FlowRedirectSelectorTests extends TestCase {
 		context.getRequestScope().put("flowIdVar", "foo");
 		context.getRequestScope().put("bar", "baz");
 		ViewSelection selection = selector.makeEntrySelection(context);
-		assertTrue(selection instanceof FlowRedirect);
-		FlowRedirect redirect = (FlowRedirect)selection;
+		assertTrue(selection instanceof LaunchFlowRedirect);
+		LaunchFlowRedirect redirect = (LaunchFlowRedirect)selection;
 		assertEquals("foo", redirect.getFlowId());
 		assertEquals("b", redirect.getInput().get("a"));
 		assertEquals("baz", redirect.getInput().get("c"));
@@ -33,7 +33,7 @@ public class FlowRedirectSelectorTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		try {
 			ViewSelection selection = selector.makeEntrySelection(context);
-			assertTrue(selection instanceof FlowRedirect);
+			assertTrue(selection instanceof LaunchFlowRedirect);
 		} catch (IllegalStateException e) {
 			
 		}
