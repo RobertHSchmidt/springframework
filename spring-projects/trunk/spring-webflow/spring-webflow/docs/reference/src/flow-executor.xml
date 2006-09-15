@@ -26,7 +26,7 @@
     	</para>
     	<programlisting>
     public interface FlowExecutor {
-        ResponseInstruction launch(String flowId, ExternalContext context);
+        ResponseInstruction launch(String flowDefinitionId, ExternalContext context);
         ResponseInstruction signalEvent(String eventId, String flowExecutionKey, ExternalContext context);
         ResponseInstruction refresh(String flowExecutionKey, ExternalContext context);
     }    	
@@ -36,7 +36,7 @@
     		<orderedlist>
     			<listitem>
     				<para>
-    					Launch (start) a new top-level flow execution.
+    					Launch (start) a new execution of a flow definition.
     				</para>
     			</listitem>
     			<listitem>
