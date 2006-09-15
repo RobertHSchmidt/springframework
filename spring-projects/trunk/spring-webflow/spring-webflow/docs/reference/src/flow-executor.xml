@@ -134,14 +134,14 @@
 			</table>
 		</sect2>
     	<sect2 id="executor-simple">
-    		<title>A typical flow executor configuration with Spring</title>
+    		<title>A typical flow executor configuration with Spring 2.0</title>
 	    	<programlisting>
     &lt;beans xmlns="http://www.springframework.org/schema/beans"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xmlns:flow="http://www.springframework.org/schema/webflow-config"
            xsi:schemaLocation="
                http://www.springframework.org/schema/beans
-               http://www.springframework.org/schema/beans/spring-beans.xsd
+               http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
                http://www.springframework.org/schema/webflow-config
                http://www.springframework.org/schema/webflow-config/spring-webflow-config-1.0.xsd"&gt;
            	    	
@@ -214,6 +214,19 @@
 	    		This executor is configured to apply the execution listener to the "order-flow".
 	    	</para>	
 		</sect2>    	
+    	<sect2 id="executor-1.2-compatible">
+    		<title>A Spring 1.2 compatible flow executor configuration</title>
+	    	<programlisting>
+    &lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+	    "http://www.springframework.org/dtd/spring-beans.dtd"&gt;
+           	    	      
+    &lt;/beans&gt;
+	        </programlisting>
+	    	<para>
+	    		This instructs Spring to create a flow executor that can execute all XML-based flow definitions 
+    			contained within the <literal>/WEB-INF/flows</literal> directory.
+    		</para>
+    	</sect2>
 	</sect1>
 	<sect1 id="executor-mvc">
 		<title>Spring MVC integration</title>

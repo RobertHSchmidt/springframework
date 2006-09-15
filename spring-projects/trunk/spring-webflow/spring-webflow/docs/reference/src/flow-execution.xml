@@ -19,7 +19,7 @@
     <sect1 id="execution">
     	<title>FlowExecution</title>
     	<para>
-		    A <literal>FlowExecution</literal> is a runtime instantiation of a flow definition.
+		    A <literal>org.springframework.webflow.execution.FlowExecution</literal> is a runtime instantiation of a flow definition.
 		    Given a single <literal>FlowDefinition</literal> any
 		    number of independent flow executions may be created, typically by a
 		    <literal>FlowExecutionFactory</literal>.
@@ -115,7 +115,7 @@
 	    <sect2 id="execution-properties">
  	  	 	<title>Flow execution properties</title>
    	 		<para>
-   	 			The Spring Web Flow flow execution implementation is <literal>FlowExecutionImpl</literal>,
+   	 			The Spring Web Flow flow execution implementation is <literal>org.springframework.webflow.engine.impl.FlowExecutionImpl</literal>,
    	 			typically created by a <literal>FlowExecutionImplFactory</literal>.
    	 			The configurable properties of this flow execution implementation are summarized below:
    		 	</para>
