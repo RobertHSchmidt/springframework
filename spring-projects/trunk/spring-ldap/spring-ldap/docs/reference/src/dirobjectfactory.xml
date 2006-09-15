@@ -192,12 +192,12 @@ import javax.naming.Name;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 
-import net.sf.ldaptemplate.AttributesMapper;
-import net.sf.ldaptemplate.ContextMapper;
-import net.sf.ldaptemplate.LdapTemplate;
-import net.sf.ldaptemplate.support.DirContextAdapter;
-import net.sf.ldaptemplate.support.DistinguishedName;
-import net.sf.ldaptemplate.support.filter.EqualsFilter;
+import org.springframework.ldap.AttributesMapper;
+import org.springframework.ldap.ContextMapper;
+import org.springframework.ldap.LdapTemplate;
+import org.springframework.ldap.support.DirContextAdapter;
+import org.springframework.ldap.support.DistinguishedName;
+import org.springframework.ldap.support.filter.EqualsFilter;
 
 public class PersonDaoImpl implements PersonDao {
    private LdapTemplate ldapTemplate;
