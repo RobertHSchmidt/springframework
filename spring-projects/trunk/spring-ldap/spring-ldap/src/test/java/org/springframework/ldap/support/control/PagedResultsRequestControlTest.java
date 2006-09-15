@@ -75,6 +75,7 @@ public class PagedResultsRequestControlTest extends TestCase {
                 .getResponseControls(), new Control[] { control });
 
         PagedResultsRequestControl tested = new PagedResultsRequestControl(20);
+        tested.setForceComSunPagedResultsControl(true);
 
         replay();
 
