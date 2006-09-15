@@ -1028,14 +1028,11 @@
               http://www.springframework.org/schema/webflow
               http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
 
-        &lt;start-actions&gt;
-            &lt;action bean="formAction" method="setupForm"/&gt;
-        &lt;/start-actions&gt;
-        
         &lt;start-state idref="displayForm"/&gt;
 
         &lt;view-state id="displayForm" view="form"&gt;
             &lt;render-actions&gt;
+                &lt;action bean="formAction" method="setupForm"/&gt;
                 &lt;action bean="formAction" method="loadFormReferenceData"/>
             &lt;/render-actions&gt;    
             &lt;transition on="submit" to="saveForm"&gt;
@@ -1048,9 +1045,9 @@
     &lt;/flow&gt;
     			</programlisting>
     			<para>
-    			   This reads "<emphasis>when this flow starts execute the <literal>setupForm</literal> method
-    			   on the <literal>formAction</literal>, then enter the <literal>displayForm</literal> state to 
-    			   load the form reference data and render the <literal>form</literal> view.
+    			   This reads "<emphasis>when this flow starts enter the <literal>displayForm</literal> state
+    			   to execute the <literal>setupForm</literal> and <literal>loadFormReferenceDAta</literal> methods
+    			   and render the <literal>form</literal> view.
     			   On a user <literal>submit</literal> transition to the <literal>saveForm</literal> state
     			   if the <literal>bindAndValidate</literal> method on the <literal>formAction</literal>
     			   executes successfully.</emphasis>"
