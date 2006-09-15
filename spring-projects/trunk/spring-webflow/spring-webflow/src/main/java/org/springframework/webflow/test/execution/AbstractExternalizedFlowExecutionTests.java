@@ -123,9 +123,9 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * registration of mock implementations of services needed to test the flow
 	 * execution. Useful when testing flow definition in execution in isolation
 	 * from flows and middle-tier services. Subclasses may override.
-	 * @param serviceLocator the mock service locator
+	 * @param serviceRegistry the mock service registry (and locator)
 	 */
-	protected void registerMockServices(MockFlowServiceLocator serviceLocator) {
+	protected void registerMockServices(MockFlowServiceLocator serviceRegistry) {
 	}
 
 	/**
