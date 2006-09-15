@@ -45,25 +45,24 @@ public interface FlowExecutor {
 	public ResponseInstruction launch(String flowDefinitionId, ExternalContext context) throws FlowException;
 
 	/**
-	 * Signal an occurrence of an event in the current state of an existing,
-	 * paused flow execution. The flow execution will resume to process the
-	 * event.
-	 * @param eventId the user event that occured
+	 * Resume a existing, paused flow execution by signaling an event against 
+	 * its current state.
 	 * @param flowExecutionKey the identifying key of a paused flow execution
 	 * that is waiting to resume on the occurrence of a user event
+	 * @param eventId the user event that occured
 	 * @param context the external context representing the state of a request
 	 * into Spring Web Flow from an external system
 	 * @return the next response instruction
 	 * @throws FlowException if an exception occured resuming the existing flow
 	 * execution
 	 */
-	public ResponseInstruction signalEvent(String eventId, String flowExecutionKey, ExternalContext context)
+	public ResponseInstruction resume(String flowExecutionKey, String eventId, ExternalContext context)
 			throws FlowException;
 
 	/**
-	 * Returns the current response instruction for the flow execution. This is
+	 * Reissue the last response instruction issued by the flow execution. This is
 	 * a logical refresh operation that allows the "current response" to be
-	 * re-issued. This operation does not affect the state of the flow
+	 * re-issued. This operation is idempotent and does not affect the state of the flow
 	 * execution.
 	 * @param flowExecutionKey the identifying key of a paused flow execution
 	 * that is waiting to resume on the ocurrence of a user event

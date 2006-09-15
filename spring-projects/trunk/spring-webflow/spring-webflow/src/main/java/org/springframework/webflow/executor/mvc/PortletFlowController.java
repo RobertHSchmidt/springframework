@@ -195,7 +195,7 @@ public class PortletFlowController extends AbstractController implements Initial
 		String eventId = argumentExtractor.extractEventId(context);
 		// signal the event against the flow execution, returning the next
 		// response instruction
-		ResponseInstruction responseInstruction = flowExecutor.signalEvent(eventId, flowExecutionKey, context);
+		ResponseInstruction responseInstruction = flowExecutor.resume(flowExecutionKey, eventId, context);
 		if (responseInstruction.isApplicationView()) {
 			// response instruction is a forward to an "application view"
 			if (responseInstruction.isActiveView()) {

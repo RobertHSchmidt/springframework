@@ -111,7 +111,7 @@ public class FlowRequestHandler {
 			String flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
 			if (argumentExtractor.isEventIdPresent(context)) {
 				String eventId = argumentExtractor.extractEventId(context);
-				ResponseInstruction response = flowExecutor.signalEvent(eventId, flowExecutionKey, context);
+				ResponseInstruction response = flowExecutor.resume(flowExecutionKey, eventId, context);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Returning [resume] " + response);
 				}
@@ -126,8 +126,8 @@ public class FlowRequestHandler {
 			}
 		}
 		else {
-			String flowId = argumentExtractor.extractFlowId(context);
-			ResponseInstruction response = flowExecutor.launch(flowId, context);
+			String flowDefinitionId = argumentExtractor.extractFlowId(context);
+			ResponseInstruction response = flowExecutor.launch(flowDefinitionId, context);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Returning [launch] " + response);
 			}
