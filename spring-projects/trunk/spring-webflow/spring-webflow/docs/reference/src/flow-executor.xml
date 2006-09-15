@@ -136,6 +136,7 @@
     	<sect2 id="executor-simple">
     		<title>A typical flow executor configuration with Spring 2.0</title>
 	    	<programlisting>
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;	    	
     &lt;beans xmlns="http://www.springframework.org/schema/beans"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xmlns:flow="http://www.springframework.org/schema/webflow-config"
@@ -217,14 +218,40 @@
     	<sect2 id="executor-1.2-compatible">
     		<title>A Spring 1.2 compatible flow executor configuration</title>
 	    	<programlisting>
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;	    	
     &lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
 	    "http://www.springframework.org/dtd/spring-beans.dtd"&gt;
-           	    	      
+    &lt;beans&gt;
+    
+        &lt;!-- Launches new flow executions and resumes existing executions: Spring 1.2 config version --&gt;
+        &lt;bean id="flowExecutor" class="org.springframework.webflow.config.FlowExecutorFactoryBean"&gt;
+            &lt;property name="definitionLocator" ref="flowRegistry"/&gt;
+            &lt;property name="executionAttributes"&gt;
+                &lt;map&gt;
+                    &lt;entry key="alwaysRedirectOnPause"&gt;
+                        &lt;value type="java.lang.Boolean"&gt;true&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/map&gt;
+            &lt;/property&gt;
+            &lt;property name="repositoryType" value="CONTINUATION"/&gt;
+        &lt;/bean&gt;
+        
+        &lt;!-- Creates the registry of flow definitions for this application: Spring 1.2 config version --&gt;
+        &lt;bean id="flowRegistry" class="org.springframework.webflow.engine.builder.xml.XmlFlowRegistryFactoryBean"&gt;
+            &lt;property name="flowLocations"&gt;
+                &lt;list&gt;
+                    &lt;value&gt;/WEB-INF/flows/**/**-flow.xml&lt;/value&gt;
+                &lt;/list&gt;
+            &lt;/property&gt;
+        &lt;/bean&gt;
+	
     &lt;/beans&gt;
 	        </programlisting>
 	    	<para>
-	    		This instructs Spring to create a flow executor that can execute all XML-based flow definitions 
-    			contained within the <literal>/WEB-INF/flows</literal> directory.
+	    		This achieves similar semantics as the Spring 2.0 version in section 5.2.5.
+	    		The 2.0 version is more concise, provides stronger validation, and encapsulates
+	    		internal details such as FactoryBean class names.   The 1.2 version is Spring 1.2 or >
+	    		compatible and digestable by Spring IDE 1.3.
     		</para>
     	</sect2>
 	</sect1>
