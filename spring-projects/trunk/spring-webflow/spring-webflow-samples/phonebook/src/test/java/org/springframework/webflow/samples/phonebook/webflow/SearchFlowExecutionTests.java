@@ -22,7 +22,6 @@ import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.samples.phonebook.domain.ArrayListPhoneBook;
 import org.springframework.webflow.test.MockParameterMap;
@@ -72,24 +71,23 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		assertModelAttributeCollectionSize(1, "results", view);
 	}
 
+	@Override
 	protected FlowDefinitionResource getFlowDefinitionResource() {
         return createFlowDefinitionResource("src/main/webapp/WEB-INF/flows/search-flow.xml");
 	}
 
-	protected FlowServiceLocator createFlowServiceLocator() {
-		MockFlowServiceLocator flowServiceLocator = new MockFlowServiceLocator();
-
-		Flow detailFlow = new Flow("detail-flow");
-		detailFlow.setInputMapper(new AttributeMapper() {
+	@Override
+	protected void registerMockServices(MockFlowServiceLocator serviceRegistry) {
+		Flow mockDetailFlow = new Flow("detail-flow");
+		mockDetailFlow.setInputMapper(new AttributeMapper() {
 			public void map(Object source, Object target, Map context) {
 				assertEquals("id of value 1 not provided as input by calling search flow", new Long(1), ((AttributeMap)source).get("id"));
 			}
 		});
 		// test responding to finish result
-		new EndState(detailFlow, "finish");
+		new EndState(mockDetailFlow, "finish");
 
-		flowServiceLocator.registerSubflow(detailFlow);
-		flowServiceLocator.registerBean("phonebook", new ArrayListPhoneBook());
-		return flowServiceLocator;
+		serviceRegistry.registerSubflow(mockDetailFlow);
+		serviceRegistry.registerBean("phonebook", new ArrayListPhoneBook());
 	}
 }
