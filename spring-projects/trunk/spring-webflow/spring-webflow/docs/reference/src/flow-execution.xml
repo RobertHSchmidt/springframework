@@ -688,5 +688,48 @@
 				</caption>
 			</mediaobject>
 		</sect2>
+	    <sect2 id="execution-testing-system">
+ 	  	 	<title>Execution unit testing vs. full-blown system testing</title>
+   	 		<para>
+   	 			The previous example shows how to test a flow execution in relative isolation with a mock service 
+   	 			layer and mock subflows.  Flow execution testing against a real service-layer 
+   	 			and real subflows is also supported.
+   		 	</para>
+   		 	<para>
+   		 	    The next example shows how the <literal>createFlowServiceLocator</literal> method can 
+   		 	    be overridden to create the service-layer using a Spring application context:
+   		 	</para>
+	    	<programlisting>
+    public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
+
+        ...
+        
+        @Override
+        protected FlowServiceLocator createFlowServiceLocator() {
+        
+            // create a context to host our middle tier services
+            ApplicationContext context =
+                new ClassPathXmlApplicationContext(new String[] {
+                   "classpath:service-layer-config.xml",
+                   "classpath:dao-layer-config.xml"
+                });
+            
+            // create a registry for our flow definitions being tested
+            FlowDefinitionRegistry registry = new FlowDefinitionRegistryImpl();
+            
+            // initialize the service locator
+            DefaultFlowServiceLocator locator = new DefaultFlowServiceLocator(registry, context);
+            
+            // perform flow definition registration with the help of a registrar
+            XmlFlowRegistrar registrar = new XmlFlowRegistrar(locator);
+            registrar.addResource(createFlowDefinitionResource("/WEB-INF/flows/search-flow.xml"));
+            registrar.addResource(createFlowDefinitionResource("/WEB-INF/flows/detail-flow.xml"));
+            registrar.registerFlowDefinitions(registry);
+            
+            return locator;
+        }
+    }
+	    </programlisting>   		 	
+		</sect2>
     </sect1>
 </chapter>
