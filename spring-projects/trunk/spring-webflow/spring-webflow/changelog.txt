@@ -41,7 +41,12 @@ Package org.springframework.webflow.action
   on bind and initFormErrors on setupForm.
 * Renamed MethodResultSpecification to ActionResultExposer indicating its more general applicability.
 * Removed GuardedAction as it was not being used.
-    
+* Removed automatic adaption of a Spring-managed prototype bean to a flow-scoped bean.  Overloaded usage
+  of prototype semantics was confusing particular in a Spring 2.0 environment with the notion of custom
+  bean scopes.  If you need flow-scoped beans, use flow variables (see 'var' element).  You can call
+  methods on a flow-scoped bean using an evaluate action (see 'evaluate-action' element and Numberguess
+  sample application).
+      
 Package org.springframework.webflow.config
 * Introduced new Spring 2.0 webflow-config XML namespace, significantly simplifying user configuration 
   of the flow execution engine.  See spring-webflow-config.xsd and sample applications for more information.
@@ -108,6 +113,7 @@ Package org.springframework.webflow.execution
 * Decoupled the central RequestContext interface from the flow execution engine implementation.
 * Renamed the "flow" property of FlowExecutionContext to "definition" for consistency.
 * Renamed the "flow" property of FlowSession to "definition" for consistency.
+* Renamed FlowRedirect to FlowDefinitionRedirect for clarity.
 * Made all modifiable execution data maps "MutableAttributeMap" references: this includes 
   "request scope", "flow scope", and "conversation scope".  Umodifiable maps are simply plain
   "AttributeMap" references: this includes request context attributes, flow execution system
@@ -134,7 +140,7 @@ Package org.springframework.webflow.samples
   - "Render actions" (Shipping rate)
   - "Always redirect on pause" (Sellitem, Itemlist)
   - "Bean actions" (Phonebook, Sellitem)
-  - "Evaluate actions" (Numberguess)
+  - "Flow variables" and "Evaluate actions" (Numberguess)
   Please review samples to see these features in action!
   
 Package org.springframework.webflow.test
