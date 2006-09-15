@@ -83,6 +83,9 @@ public class LdapTemplateTest extends TestCase {
 
     private LdapTemplate tested;
 
+    private MockControl dirContextProcessorControl;
+    private DirContextProcessor dirContextProcessorMock;
+
     protected void setUp() throws Exception {
         super.setUp();
 
@@ -130,6 +133,9 @@ public class LdapTemplateTest extends TestCase {
         searchExecutorControl = MockControl.createControl(SearchExecutor.class);
         searchExecutorMock = (SearchExecutor) searchExecutorControl.getMock();
 
+        dirContextProcessorControl = MockControl.createControl(DirContextProcessor.class);
+        dirContextProcessorMock = (DirContextProcessor) dirContextProcessorControl.getMock();
+
         tested = new LdapTemplate(contextSourceMock);
         tested.setExceptionTranslator(exceptionTranslatorMock);
     }
@@ -167,6 +173,8 @@ public class LdapTemplateTest extends TestCase {
         searchExecutorControl = null;
         searchExecutorMock = null;
 
+        dirContextProcessorControl = null;
+        dirContextProcessorMock = null;
     }
 
     protected void replay() {
@@ -180,6 +188,7 @@ public class LdapTemplateTest extends TestCase {
         exceptionTranslatorControl.replay();
         contextExecutorControl.replay();
         searchExecutorControl.replay();
+        dirContextProcessorControl.replay();
     }
 
     protected void verify() {
@@ -193,6 +202,7 @@ public class LdapTemplateTest extends TestCase {
         exceptionTranslatorControl.verify();
         contextExecutorControl.verify();
         searchExecutorControl.verify();
+        dirContextProcessorControl.verify();
     }
 
     private void expectGetReadWriteContext() {
@@ -1466,6 +1476,63 @@ public class LdapTemplateTest extends TestCase {
 
         try {
             tested.executeReadWrite(contextExecutorMock);
+            fail("EntryNotFoundException expected");
+        } catch (EntryNotFoundException expected) {
+            assertTrue(true);
+        }
+
+        verify();
+    }
+
+    public void testDoSearch_DirContextProcessor() throws Exception {
+        expectGetReadOnlyContext();
+
+        SearchResult searchResult = new SearchResult(null, null, null);
+
+        dirContextProcessorMock.preProcess(dirContextMock);
+        
+        searchExecutorControl.expectAndReturn(searchExecutorMock
+                .executeSearch(dirContextMock), namingEnumerationMock);
+
+        namingEnumerationControl.expectAndReturn(namingEnumerationMock
+                .hasMore(), true);
+        namingEnumerationControl.expectAndReturn(namingEnumerationMock.next(),
+                searchResult);
+        namingEnumerationControl.expectAndReturn(namingEnumerationMock
+                .hasMore(), false);
+        namingEnumerationMock.close();
+
+        handlerMock.handleNameClassPair(searchResult);
+
+        dirContextProcessorMock.postProcess(dirContextMock);
+
+        dirContextMock.close();
+
+        replay();
+
+        tested.search(searchExecutorMock, handlerMock, dirContextProcessorMock);
+
+        verify();
+    }
+
+    public void testDoSearch_DirContextProcessor_NamingException() throws Exception {
+        expectGetReadOnlyContext();
+
+        dirContextProcessorMock.preProcess(dirContextMock);
+
+        NamingException ne = new NamingException();
+        searchExecutorControl.expectAndThrow(searchExecutorMock
+                .executeSearch(dirContextMock), ne);
+
+        dirContextMock.close();
+
+        exceptionTranslatorControl.expectAndReturn(exceptionTranslatorMock
+                .translate(ne), new EntryNotFoundException("dummy"));
+
+        replay();
+
+        try {
+            tested.search(searchExecutorMock, handlerMock, dirContextProcessorMock);
             fail("EntryNotFoundException expected");
         } catch (EntryNotFoundException expected) {
             assertTrue(true);

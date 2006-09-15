@@ -38,6 +38,31 @@ import org.springframework.dao.DataIntegrityViolationException;
  */
 public interface LdapOperations {
     /**
+     * Perform a search using a custom context processor. Use this method only
+     * if especially needed - for the most cases there is an overloaded
+     * convenience method which calls this one with suitable argments. This
+     * method handles all the plumbing; getting a readonly context; looping
+     * through the NamingEnumeration and closing the context and enumeration.
+     * The actual search is delegated to the SearchExecutor and each found
+     * SearchResult is passed to the CallbackHandler. Any encountered
+     * NamingException will be translated using the NamingExceptionTranslator.
+     * 
+     * @param se
+     *            The SearchExecutor to use for performing the actual search.
+     * @param handler
+     *            The NameClassPairCallbackHandler to which each found entry
+     *            will be passed.
+     * @param processor
+     *            DirContextProcessor for custom pre- and post-processing.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted as no entries being
+     *             found.
+     */
+    public void search(SearchExecutor se, NameClassPairCallbackHandler handler,
+            DirContextProcessor processor) throws DataAccessException;
+
+    /**
      * Perform a search. Use this method only if especially needed - for the
      * most cases there is an overloaded convenience method which calls this one
      * with suitable argments. This method handles all the plumbing; getting a

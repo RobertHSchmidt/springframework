@@ -191,7 +191,11 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     /**
      * Perform a search operation, such as a search(), list() or listBindings().
      * This method handles all the plumbing; getting a readonly context; looping
-     * through the NamingEnumeration and closing the context and enumeration.
+     * through the NamingEnumeration and closing the context and enumeration. It
+     * also calls the supplied DirContextProcessor before and after the search,
+     * respectively. This enables custom pre-processing and post-processing,
+     * like for example when handling paged results or other search controls.
+     * <p>
      * The actual list is delegated to the {@link SearchExecutor} and each
      * {@link NameClassPair} (this might be a NameClassPair or a subclass
      * thereof) is passed to the CallbackHandler. Any encountered
@@ -202,21 +206,32 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
      * @param handler
      *            the NameClassPairCallbackHandler to which each found entry
      *            will be passed.
+     * @param processor
+     *            DirContextProcessor for custom pre- and post-processing. May
+     *            be <code>null</code> if no custom processing should take
+     *            place.
      * @throws DataAccessException
      *             if any error occurs. Note that a NameNotFoundException will
      *             be ignored. Instead this is interpreted that no entries were
      *             found.
      */
-    public void search(SearchExecutor se, NameClassPairCallbackHandler handler) {
+    public void search(SearchExecutor se, NameClassPairCallbackHandler handler,
+            DirContextProcessor processor) {
         DirContext ctx = contextSource.getReadOnlyContext();
 
         NamingEnumeration results = null;
         try {
+            if (processor != null) {
+                processor.preProcess(ctx);
+            }
             results = se.executeSearch(ctx);
 
             while (results.hasMore()) {
                 NameClassPair result = (NameClassPair) results.next();
                 handler.handleNameClassPair(result);
+            }
+            if (processor != null) {
+                processor.postProcess(ctx);
             }
         } catch (NameNotFoundException e) {
             // The base context was not found, which basically means
@@ -234,6 +249,30 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
         } finally {
             closeContextAndNamingEnumeration(ctx, results);
         }
+    }
+
+    /**
+     * Perform a search operation, such as a search(), list() or listBindings().
+     * This method handles all the plumbing; getting a readonly context; looping
+     * through the NamingEnumeration and closing the context and enumeration.
+     * <p>
+     * The actual list is delegated to the {@link SearchExecutor} and each
+     * {@link NameClassPair} (this might be a NameClassPair or a subclass
+     * thereof) is passed to the CallbackHandler. Any encountered
+     * NamingException will be translated using the NamingExceptionTranslator.
+     * 
+     * @param se
+     *            the SearchExecutor to use for performing the actual list.
+     * @param handler
+     *            the NameClassPairCallbackHandler to which each found entry
+     *            will be passed.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
+     */
+    public void search(SearchExecutor se, NameClassPairCallbackHandler handler) {
+        search(se, handler, null);
     }
 
     /*
