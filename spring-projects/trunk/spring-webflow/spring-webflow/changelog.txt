@@ -128,7 +128,6 @@ Package org.springframework.webflow.execution
 * Improved support for customization of FlowExecutionContinuation creation via the FlowExecutionContinuationFactory.
   
 Package org.springframework.webflow.executor
-* Introduced FlowExecutorFactory to encapsulate construction of a FlowExecutor.
 * Decoupled executor subsystem from the flow execution engine implementation and assumptions about engine defaults.
 * Removed 'alwaysRedirectOnPause' property in favor of dedicated 'alwaysRedirectOnPause' flow execution attribute.
 * Changed RequestPathFlowExecutorArgumentExtractor to append keyDelimiter property as path element instead of
