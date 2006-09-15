@@ -2,8 +2,6 @@ package org.springframework.webflow.execution;
 
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 public class TestAction extends AbstractAction {
 	private Event result = new Event(this, "success");

@@ -6,9 +6,9 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.core.MapAdaptable;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.PropertyExpression;
-import org.springframework.binding.util.MapAdaptable;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 
 public class WebFlowOgnlExpressionParserTests extends TestCase {

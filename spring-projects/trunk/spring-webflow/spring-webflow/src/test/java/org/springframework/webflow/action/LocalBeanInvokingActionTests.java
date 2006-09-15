@@ -22,8 +22,6 @@ import org.springframework.binding.method.MethodSignature;
 import org.springframework.binding.method.Parameter;
 import org.springframework.binding.method.Parameters;
 import org.springframework.webflow.TestBean;
-import org.springframework.webflow.action.ActionResultExposer;
-import org.springframework.webflow.action.LocalBeanInvokingAction;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;

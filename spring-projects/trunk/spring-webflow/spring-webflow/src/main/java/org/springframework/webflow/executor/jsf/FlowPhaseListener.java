@@ -40,8 +40,8 @@ import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
-import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
+import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 
 /**

@@ -21,14 +21,12 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.engine.ViewSelector;
-import org.springframework.webflow.engine.builder.BaseFlowServiceLocator;
-import org.springframework.webflow.engine.builder.TextToViewSelector;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
-import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
+import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 import org.springframework.webflow.test.engine.MockRequestContext;
 
 /**

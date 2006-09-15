@@ -3,8 +3,6 @@ package org.springframework.webflow.execution.factory;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.execution.factory.FlowExecutionListenerCriteria;
-import org.springframework.webflow.execution.factory.FlowExecutionListenerCriteriaFactory;
 
 public class FlowExecutionListenerCriteriaFactoryTests extends TestCase {
 

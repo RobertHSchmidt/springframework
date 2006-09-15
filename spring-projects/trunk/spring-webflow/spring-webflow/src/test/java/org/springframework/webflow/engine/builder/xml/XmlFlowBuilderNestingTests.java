@@ -33,7 +33,6 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.builder.DefaultFlowServiceLocator;
 import org.springframework.webflow.engine.builder.FlowAssembler;
-import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 

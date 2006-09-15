@@ -16,8 +16,8 @@
 package org.springframework.webflow.engine.builder;
 
 import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
+import org.springframework.binding.core.MapAccessor;
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.util.MapAccessor;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.engine.NullViewSelector;
 import org.springframework.webflow.engine.ViewSelector;
@@ -25,8 +25,8 @@ import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.engine.support.ExternalRedirectSelector;
 import org.springframework.webflow.engine.support.FlowDefinitionRedirectSelector;
 import org.springframework.webflow.execution.support.ExternalRedirect;
-import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
+import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 
 /**
  * Converter that converts an encoded string representation of a view selector

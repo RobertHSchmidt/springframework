@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.binding.util.MapAccessor;
+import org.springframework.binding.core.MapAccessor;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 

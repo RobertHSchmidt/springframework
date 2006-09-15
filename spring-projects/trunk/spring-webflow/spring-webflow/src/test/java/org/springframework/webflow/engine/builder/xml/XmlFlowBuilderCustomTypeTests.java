@@ -28,7 +28,6 @@ import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.builder.BaseFlowServiceLocator;
 import org.springframework.webflow.engine.builder.FlowArtifactLookupException;
 import org.springframework.webflow.engine.builder.FlowAssembler;
-import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
 import org.springframework.webflow.engine.support.DefaultFlowAttributeMapper;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;

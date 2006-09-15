@@ -1,7 +1,7 @@
 package org.springframework.webflow.core.collection;
 
 import org.springframework.binding.convert.ConversionException;
-import org.springframework.binding.util.MapAdaptable;
+import org.springframework.binding.core.MapAdaptable;
 import org.springframework.web.multipart.MultipartFile;
 
 /**

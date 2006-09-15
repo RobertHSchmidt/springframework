@@ -16,10 +16,10 @@
 package org.springframework.webflow.engine;
 
 
+import junit.framework.TestCase;
+
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
-
-import junit.framework.TestCase;
 
 /**
  * Tests that each of the Flow state types execute as expected when entered.

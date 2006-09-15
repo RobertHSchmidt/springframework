@@ -23,8 +23,8 @@ import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
-import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
+import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 
 /**
  * Immutable value object that provides clients with information about a
