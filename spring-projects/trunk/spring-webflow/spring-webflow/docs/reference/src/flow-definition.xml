@@ -1046,8 +1046,8 @@
     			</programlisting>
     			<para>
     			   This reads "<emphasis>when this flow starts enter the <literal>displayForm</literal> state
-    			   to execute the <literal>setupForm</literal> and <literal>loadFormReferenceDAta</literal> methods
-    			   and render the <literal>form</literal> view.
+    			   to execute the <literal>setupForm</literal> and <literal>loadFormReferenceData</literal> methods
+    			   before rendering the <literal>form</literal> view.
     			   On a user <literal>submit</literal> transition to the <literal>saveForm</literal> state
     			   if the <literal>bindAndValidate</literal> method on the <literal>formAction</literal>
     			   executes successfully.</emphasis>"
@@ -1081,7 +1081,7 @@
     		    Spring Web Flow gives you full control over implementing your own actions and configuring when they should be invoked 
     		    within the lifecycle of a flow.  The system can also <emphasis>automatically</emphasis> adapt methods on
     		    your existing application objects (POJOs) to the <literal>Action</literal> interface in a non-invasive manner.
-    		    This means in most cases you can implement your flows without needing to develop custom glue code to bind SWF 
+    		    This means in many cases you can implement your flows without needing to develop custom glue code to bind SWF 
     		    to your service layer operations.
     		</para>
     	    <para>
@@ -1124,14 +1124,19 @@
     			    <literal>org.springframework.webflow.execution.Action</literal> interface.
 	    		</para>
 	    		<table>
-    	   			<title>Points in a Flow where an Action can be executed</title>
+    	   			<title>
+    	   				Points in a Flow where an Action can be executed and how those points
+    	   				can be defined in a XML-based Flow definition.
+    	   			</title>
         		    <tgroup cols="2">
 		           	    <colspec colname="c1" colwidth="2*" />
         				<colspec colname="c2" colwidth="4*" />
+        				<colspec colname="c3" colwidth="4*" />
 	        	        <thead>
        		    	        <row>
                			        <entry>Point</entry>
                					<entry>Description</entry>
+               					<entry>XML Configuration Element</entry>
                			    </row>
 						</thead>
 					  	<tbody>
@@ -1140,30 +1145,54 @@
 								<entry>
 									Each time a new flow session starts.
 								</entry>
+								<entry>
+								    A flow's <literal>&lt;start-actions/&gt;</literal>
+								</entry>
 	        	   	        </row>
             				<row>
               					<entry>on state entry</entry>
 								<entry>
 									Each time a state enters.
 								</entry>
+								<entry>
+								    A state's <literal>&lt;entry-actions/&gt;</literal>
+								</entry>								
 	        	   	        </row>
             				<row>
               					<entry>on transition</entry>
 								<entry>
 									Each time a state transition is matched but before it is executed.
 								</entry>
+								<entry>
+								    A transition <literal>&lt;action/&gt;</literal>
+								</entry>								
 	        	   	        </row>
             				<row>
               					<entry>on state exit</entry>
 								<entry>
 									Each time a transitionable state exits.
 								</entry>
+								<entry>
+								    A transitionable state's <literal>&lt;exit-actions/&gt;</literal>
+								</entry>								
+	        	   	        </row>
+            				<row>
+              					<entry>before view rendering</entry>
+								<entry>
+									Each time a renderable view selection is made.
+								</entry>
+								<entry>
+								    A view state's <literal>&lt;render-actions/&gt;</literal>
+								</entry>								
 	        	   	        </row>
             				<row>
               					<entry>on flow end</entry>
 								<entry>
 									Each time a flow session terminates.
 								</entry>
+								<entry>
+								    A flow's <literal>&lt;end-actions/&gt;</literal>
+								</entry>								
 	        	   	        </row>
 	            		</tbody>
 		       		</tgroup>
@@ -1344,7 +1373,7 @@
         &lt;start-state idref="executeSearch"/&gt;
         
         &lt;action-state id="executeSearch"&gt;
-            &lt;action bean="searchFlowAction" method="executeSearch"/&gt;
+            &lt;action bean="searchAction" method="executeSearch"/&gt;
             &lt;transition on="success" to="displayResults"/&gt;
         &lt;/action-state&gt;
 
@@ -1358,10 +1387,10 @@
     			    transition to the <literal>displayResults</literal> state</emphasis>."
     			</para>
     			<para>
-    			    A <literal>SearchFlowAction</literal> implementation containing multiple action methods 
+    			    A <literal>SearchAction</literal> implementation containing multiple action methods 
     			    might look like this:
     			<programlisting>
-    public class SearchFlowAction extends MultiAction {
+    public class SearchAction extends MultiAction {
         private SearchService searchService;
         
         public SearchAction(SearchService searchService) {
@@ -1384,10 +1413,12 @@
         }
 
         public Event someOtherRelatedActionMethod(RequestContext context) {
+            ...
             return success();
         }
 
         public Event yetAnotherRelatedActionMethod(RequestContext context) {
+            ...
             return success();
         }
     }	
@@ -1409,6 +1440,10 @@
  							</para>
  						</listitem>   				
     				</orderedlist> 
+    			</para>
+    			<para>
+    			    MultiActions are useful for centralizing command logic on a per-flow definition basis, as 
+    			    a flow definition typically carries out execution of a single application use case.
     			</para>
 			</sect3>    		
     	    <sect3 id="actionStateJava-multiActionMethod">
@@ -1663,6 +1698,61 @@
     				business object in flow scope.
     			</para>
 			</sect3>
+    		<sect3>
+    			<title>When to use which kind of action?</title>
+    			<para>
+    				Simple action, Multi action, bean action, evaluate action?  When to use one or the other?
+	    		</para>
+	    		<table>
+    	   			<title>
+    	   				Action implementation usage guidelines
+    	   			</title>
+        		    <tgroup cols="2">
+		           	    <colspec colname="c1" colwidth="2*" />
+        				<colspec colname="c2" colwidth="4*" />
+	        	        <thead>
+       		    	        <row>
+               			        <entry>Action type</entry>
+               					<entry>Usage scenario</entry>
+               			    </row>
+						</thead>
+					  	<tbody>
+            				<row>
+              					<entry>Simple (extends <literal>AbstractAction</literal>)</entry>
+								<entry>
+									You have a specialized behavior that stands on its own;
+									for creating lightweight stubs or mocks for testing purposes.
+								</entry>
+	        	   	        </row>
+            				<row>
+              					<entry><literal>MultiAction</literal></entry>
+								<entry>
+									To group related command logic together.  Particularly 
+									useful for when there are multiple related behaviors 
+									called by a flow.
+								</entry>
+	        	   	        </row>	        	   	        
+            				<row>
+              					<entry>Bean action</entry>
+								<entry>
+									When the logical behavior maps well to a method call on a service
+									layer bean.  When there is no "special" or exotic glue code
+									required.
+								</entry>
+	        	   	        </row>
+            				<row>
+              					<entry>
+              						<literal>EvaluateAction</literal>
+              					</entry>
+								<entry>
+									When you need to invoke a bean in flow scope or evaluate 
+									any other flow expression.
+								</entry>
+	        	   	        </row>	        	   	        
+	            		</tbody>
+		       		</tgroup>
+    		    </table> 	
+    		</sect3>			
     	</sect2>
     	<sect2 id="decisionState">
     		<title>DecisionState</title>
@@ -2094,7 +2184,7 @@
     			</programlisting>
     			<para>
     			    This end state definition reads "<emphasis>terminate the <literal>order</literal> flow 
-    			    and request a redirect to the <literal>searchFlow</literal></emphasis>".
+    			    and redirect to a new execution of the <literal>searchFlow</literal></emphasis>".
     			</para>
 			</sect3>    		
     	    <sect3 id="endStateXml-externalRedirect">
@@ -2120,7 +2210,7 @@
     			</programlisting>
     			<para>
     			    This end state definition reads "<emphasis>terminate the <literal>order</literal> flow 
-    			    and request a redirect to the URL returned by evaluating the <literal>/orders/${flowScope.order.id}</literal> 
+    			    and redirect to the URL returned by evaluating the <literal>/orders/${flowScope.order.id}</literal> 
     			    expression</emphasis>."
     			</para>
     			<para>
@@ -2184,6 +2274,10 @@
    			</para>
     	    <sect3 id="subflowStateXml-output">
     	    	<title>SubflowState XML - mapping an output attribute</title>
+    	    	<para>
+    	    		The next example shows how a <literal>subflow-state</literal> can respond to the ending 
+    	    		result of a subflow and map output attributes into its own scope:
+    	    	</para>
     	    	<programlisting>
     &lt;?xml version="1.0" encoding="UTF-8"?&gt;
     &lt;flow xmlns="http://www.springframework.org/schema/webflow"
@@ -2208,8 +2302,8 @@
     &lt;/flow&gt;
     			</programlisting>
     			<para>
-    			    This subflow state definition reads "<emphasis>spawn the <literal>shipping</literal> flow. 
-    			    When the <literal>shipping</literal> flow ends map the <literal>shipping</literal> output 
+    			    This subflow state definition reads "<emphasis>spawn the <literal>shipping</literal> flow
+    			    as a subflow.  When the <literal>shipping</literal> flow ends map the <literal>shipping</literal> output 
     			    attribute into flow scope under the name <literal>shipping</literal>, then respond to
     			    the <literal>finish</literal> result event by transitioning to
     			    the <literal>placeOrder</literal> state</emphasis>."

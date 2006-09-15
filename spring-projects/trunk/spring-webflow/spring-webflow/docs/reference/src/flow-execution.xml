@@ -19,11 +19,10 @@
     <sect1 id="execution">
     	<title>FlowExecution</title>
     	<para>
-		    A <emphasis>flow execution</emphasis> is a runtime instantiation of a flow definition
-		    realized by an instance of <literal>org.springframework.webflow.execution.FlowExecution</literal>.
-		    Given a single <literal>org.springframework.webflow.definition.FlowDefinition</literal> any
+		    A <literal>FlowExecution</literal> is a runtime instantiation of a flow definition.
+		    Given a single <literal>FlowDefinition</literal> any
 		    number of independent flow executions may be created, typically by a
-		    <literal>org.springframework.webflow.execution.FlowExecutionFactory</literal>.
+		    <literal>FlowExecutionFactory</literal>.
 		</para>
 		<para>
 		    A flow execution carries out the execution of program instructions defined within
@@ -96,7 +95,7 @@
    		 	</para>
     		<para>
    	 			Spring Web Flow gives you full control over the ability to observe the lifecycle of an 
-    			executing flow by implementing a <literal>org.springframework.webflow.execution.FlowExecutionListener</literal>.
+    			executing flow by implementing a <literal>FlowExecutionListener</literal>.
     		</para>
     		<para>
     			The different phases of a flow execution is shown graphically below:
@@ -116,8 +115,8 @@
 	    <sect2 id="execution-properties">
  	  	 	<title>Flow execution properties</title>
    	 		<para>
-   	 			The Spring Web Flow flow execution implementation is <literal>org.springframework.engine.impl.FlowExecutionImpl</literal>,
-   	 			typically created by a <literal>org.springframework.engine.impl.FlowExecutionImplFactory</literal>
+   	 			The Spring Web Flow flow execution implementation is <literal>FlowExecutionImpl</literal>,
+   	 			typically created by a <literal>FlowExecutionImplFactory</literal>.
    	 			The configurable properties of this flow execution implementation are summarized below:
    		 	</para>
 	    	<table>
@@ -192,7 +191,7 @@
 		<para>
 			Once created, a flow execution, representing the state of a flow at a point in time, 
 			maintains contextual state about itself that can be reasoned upon by clients.  In addition,
-			a flow execution exposes two data structures, called scopes, that allow clients to set 
+			a flow execution exposes several data structures, called scopes, that allow clients to set 
 			arbitrary attributes that are managed by the execution.
 		</para>
 		<para>
@@ -248,6 +247,17 @@
 							<emphasis>1</emphasis>
 						</entry>
 					</row>
+					<row>
+   						<entry>conversationScope</entry>
+						<entry>
+							A data map that forms the basis for "conversation scope". Arbitrary attributes placed in this map will be retained
+							for the life of the flow execution and correspond to the length of the logical conversation.
+							This map is <emphasis>shared</emphasis> by all flow sessions.
+						</entry>
+						<entry>
+							<emphasis>1</emphasis>
+						</entry>
+					</row>					
 				</tbody>
 			</tgroup>
 		</table>
@@ -324,7 +334,7 @@
 			the session at the top of the stack.
 		</para>
 		<para>
-			The contextual properties associated with a <literal>org.springframework.webflow.FlowSession</literal>
+			The contextual properties associated with a <literal>FlowSession</literal>
 			are summarized below:
 		</para>
     	<table>
@@ -640,25 +650,24 @@
             assertModelAttributeCollectionSize(1, "results", view);
         }
 
+        @Override
         protected FlowDefinitionResource getFlowDefinitionResource() {
             return createFlowDefinitionResource("src/main/webapp/WEB-INF/flows/search-flow.xml");
         }
         
-        protected FlowServiceLocator createFlowServiceLocator() {
-            MockFlowServiceLocator flowServiceLocator = new MockFlowServiceLocator();
-            
-            Flow detailFlow = new Flow("detail-flow");
-            detailFlow.setInputMapper(new AttributeMapper() {
+        @Override
+        protected void registerMockServices(MockFlowServiceLocator serviceRegistry) {
+            Flow mockDetailFlow = new Flow("detail-flow");
+            mockDetailFlow.setInputMapper(new AttributeMapper() {
                 public void map(Object source, Object target, Map context) {
                     assertEquals("id of value 1 not provided as input by calling search flow", new Long(1), ((AttributeMap)source).get("id"));
                 }
             });
             // test responding to finish result
-            new EndState(detailFlow, "finish");
+            new EndState(mockDetailFlow, "finish");
             
-            flowServiceLocator.registerSubflow(detailFlow);
-            flowServiceLocator.registerBean("phonebook", new StubPhonebook());
-            return flowServiceLocator;
+            serviceRegistry.registerSubflow(mockDetailFlow);
+            serviceRegistry.registerBean("phonebook", new ArrayListPhoneBook());
         }
     }
         </programlisting>
