@@ -35,14 +35,14 @@ public interface FlowExecutor {
 	/**
 	 * Launch a new execution of identified flow in the context of the current
 	 * external request.
-	 * @param flowId the unique id of the flow definition to launch
+	 * @param flowDefinitionId the unique id of the flow definition to launch
 	 * @param context the external context representing the state of a request
 	 * into Spring Web Flow from an external system
 	 * @return the starting response instruction
 	 * @throws FlowException if an exception occured launching the new flow
 	 * execution
 	 */
-	public ResponseInstruction launch(String flowId, ExternalContext context) throws FlowException;
+	public ResponseInstruction launch(String flowDefinitionId, ExternalContext context) throws FlowException;
 
 	/**
 	 * Signal an occurrence of an event in the current state of an existing,

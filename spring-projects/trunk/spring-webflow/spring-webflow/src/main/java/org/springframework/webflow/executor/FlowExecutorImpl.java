@@ -191,11 +191,11 @@ public class FlowExecutorImpl implements FlowExecutor {
 		return inputMapper;
 	}
 
-	public ResponseInstruction launch(String flowId, ExternalContext context) throws FlowException {
+	public ResponseInstruction launch(String flowDefinitionId, ExternalContext context) throws FlowException {
 		// expose external context as a thread-bound service
 		ExternalContextHolder.setExternalContext(context);
 		try {
-			FlowDefinition flowDefinition = definitionLocator.getFlowDefinition(flowId);
+			FlowDefinition flowDefinition = definitionLocator.getFlowDefinition(flowDefinitionId);
 			FlowExecution flowExecution = executionFactory.createFlowExecution(flowDefinition);
 			ViewSelection selectedView = flowExecution.start(createInput(context), context);
 			if (flowExecution.isActive()) {
