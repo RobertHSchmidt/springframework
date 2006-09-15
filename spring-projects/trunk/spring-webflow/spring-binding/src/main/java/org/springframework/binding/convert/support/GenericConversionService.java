@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2006 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,11 +102,11 @@ public class GenericConversionService implements ConversionService {
 		addAlias(StringUtils.uncapitalize(ClassUtils.getShortName(targetType)), targetType);
 	}
 
-	public ConversionExecutor[] getConversionExecutorsFrom(Class sourceClass) {
+	public ConversionExecutor[] getConversionExecutorsForSource(Class sourceClass) {
 		Map sourceTargetConverters = (Map)findConvertersForSource(sourceClass);
 		if (sourceTargetConverters.isEmpty()) {
 			if (parent != null) {
-				return parent.getConversionExecutorsFrom(sourceClass);
+				return parent.getConversionExecutorsForSource(sourceClass);
 			}
 			else {
 				return new ConversionExecutor[0];
@@ -114,7 +114,7 @@ public class GenericConversionService implements ConversionService {
 		}
 		Set executors = new HashSet();
 		if (parent != null) {
-			executors.addAll(Arrays.asList(parent.getConversionExecutorsFrom(sourceClass)));
+			executors.addAll(Arrays.asList(parent.getConversionExecutorsForSource(sourceClass)));
 		}
 		Iterator it = sourceTargetConverters.entrySet().iterator();
 		while (it.hasNext()) {
