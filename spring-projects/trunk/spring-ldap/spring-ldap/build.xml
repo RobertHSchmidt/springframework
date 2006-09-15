@@ -21,12 +21,9 @@
 	<import file="${common.build.dir}/clover-targets.xml" />
 
 	<!--
-		Overridden only to be able to manually fail the build if the unit tests have failed.
-		And to create a test report.
+		Overridden to create test report and run integration tests as well.
 	-->
-	<target name="tests" depends="tests-local,test-report" description="Runs all tests, first local then server (if any)">
-		<fail if="tests.failed" message="Unit tests failed" />
-	</target>
+	<target name="tests" depends="tests-local,test-report,itests,itest-report" description="Runs all tests, first local then server (if any)" />
 
 	<!--
 		Overridden only to have the errorproperty and failureproperty attributes
@@ -76,6 +73,7 @@
 Unit test report has been generated.
 The HTML report is ${target.testresults.html.dir}/index.html
 		</echo>
+		<fail if="tests.failed" message="Unit tests failed" />
 	</target>
 
 </project>
