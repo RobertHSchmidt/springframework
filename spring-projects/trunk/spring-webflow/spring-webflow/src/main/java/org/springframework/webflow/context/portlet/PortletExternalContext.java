@@ -85,6 +85,18 @@ public class PortletExternalContext implements ExternalContext {
 		return new LocalAttributeMap(new PortletRequestMap(request));
 	}
 	
+	public SharedAttributeMap getSessionMap() {
+		return new LocalSharedAttributeMap(new PortletSessionMap(request, PortletSession.PORTLET_SCOPE));
+	}
+
+	public SharedAttributeMap getGlobalSessionMap() {
+		return new LocalSharedAttributeMap(new PortletSessionMap(request, PortletSession.APPLICATION_SCOPE));
+	}
+
+	public SharedAttributeMap getApplicationMap() {
+		return new LocalSharedAttributeMap(new PortletContextMap(context));
+	}
+
 	/**
 	 * Returns the {@link PortletRequest#USER_INFO} map as a mutable attribute map.
 	 * @return the portlet user info
@@ -96,18 +108,6 @@ public class PortletExternalContext implements ExternalContext {
 		} else {
 			return null;
 		}
-	}
-
-	public SharedAttributeMap getSessionMap() {
-		return new LocalSharedAttributeMap(new PortletSessionMap(request, PortletSession.PORTLET_SCOPE));
-	}
-
-	public SharedAttributeMap getGlobalSessionMap() {
-		return new LocalSharedAttributeMap(new PortletSessionMap(request, PortletSession.APPLICATION_SCOPE));
-	}
-
-	public SharedAttributeMap getApplicationMap() {
-		return new LocalSharedAttributeMap(new PortletContextMap(context));
 	}
 
 	/**
