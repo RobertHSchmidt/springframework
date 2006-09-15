@@ -26,7 +26,8 @@
 	<dependency	org="org.springframework" name="spring-core" rev="2.0-rc3"/>
 	<dependency	org="org.springframework" name="spring-context"	rev="2.0-rc3"/>
 	<dependency	org="org.springframework" name="spring-dao"	rev="2.0-rc3"/>
-
+	<dependency org="com.sun" name="ldapbp" rev="1.0" />
+	
 	<!-- build time	only dependencies -->
 	<dependency org="org.acegisecurity" name="acegi-security" rev="1.0.1"
 				conf="buildtime->default" />
