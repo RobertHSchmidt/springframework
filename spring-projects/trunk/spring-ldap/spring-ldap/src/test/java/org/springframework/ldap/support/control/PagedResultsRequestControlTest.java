@@ -98,7 +98,7 @@ public class PagedResultsRequestControlTest extends TestCase {
         int actualPageSize = ber.parseInt();
         byte[] actualValue = ber.parseOctetString(Ber.ASN_OCTET_STR, null);
 
-        assertEquals("pageSize,", 9, actualPageSize);
+        assertEquals("pageSize,", 20, actualPageSize);
         assertEquals("value length", value.length, actualValue.length);
         for (int i = 0; i < value.length; i++) {
             assertEquals("value (index " + i + "),", value[i], actualValue[i]);
