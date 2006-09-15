@@ -317,18 +317,16 @@
 			from the browser to launch and resume flow executions:
 		</para>
 		<sect2 id="executor-parmeterization-default">
-			<title>FlowExecutorArgumentExtractor</title>
+			<title>Parameter-based flow executor argument extraction</title>
 			<para>
 				The default executor argument extractor strategy is request-parameter based.
 				The default request parameters are:
 			</para>
 	    	<table>
-    	        <title>Flow executor request parameter names</title>
-        	    <tgroup cols="4">
+    	        <title>Extractor request parameter names</title>
+        	    <tgroup cols="2">
             	    <colspec colname="c1" colwidth="2*" />
         			<colspec colname="c2" colwidth="4*" />
-    	            <colspec colname="c2" colwidth="2*" />
-	                <colspec colname="c2" colwidth="2*" />
 	                <thead>
        		            <row>
                		        <entry>Parameter name</entry>
@@ -350,62 +348,94 @@
 					    </row>					    
             	   </tbody>
 	          </tgroup>
-    	    </table>				
-			</para>
-		</sect2>
-    	<sect2 id="executor-mvc-launch-get">
-    		<title>Launching a flow execution - parameter-style anchor</title>
-	    	<programlisting>
-	&lt;a href="flowController.htm?_flowId=myflow"/&gt;
-	    	</programlisting>
-    	</sect2>
-    	<sect2 id="executor-mvc-launch-get-rest">
-    		<title>Launching a flow execution - REST-style anchor</title>
-	    	<programlisting>
-	&lt;a href="flowController/myflow"/&gt;
-	    	</programlisting>
-    	</sect2>
-    	<sect2 id="executor-mvc-launch-post">
-    		<title>Launching a flow execution - form</title>
-	    	<programlisting>
+    	    </table>
+	    	<sect3 id="executor-mvc-launch-get">
+	   	 		<title>Launching a flow execution - parameter-style anchor</title>
+		    	<programlisting>
+	&lt;a href="flowController.htm?_flowId=myflow"&gt;Launch My Flow&lt;/a&gt;
+		    	</programlisting>
+   		 	</sect3>
+  		  	<sect3 id="executor-mvc-launch-post">
+  		  		<title>Launching a flow execution - form</title>
+		    	<programlisting>
     &lt;form action="flowController.htm" method="post"&gt;
-        &lt;input type="submit" value="Go"/>
+        &lt;input type="submit" value="Launch My Flow"/>
         &lt;input type="hidden" name="_flowId" value="myflow"&gt;
     &lt;/form&gt;
-	    	</programlisting>
-    	</sect2>
-    	<sect2 id="executor-mvc-resume-anchor">
-    		<title>Resuming a flow execution - anchor</title>
-	    	<programlisting>
-    &lt;a href="flowController.htm?_flowExecutionKey=${flowExecutionKey}&amp;_eventId=submit"/&gt;
-	    	</programlisting>
-    	</sect2>
-    	<sect2 id="executor-mvc-resume-form">
-    		<title>Resuming a flow execution - form</title>
-	    	<programlisting>
+	    		</programlisting>
+    		</sect3>
+   		 	<sect3 id="executor-mvc-resume-anchor">
+   		 		<title>Resuming a flow execution - anchor</title>
+	   		 	<programlisting>
+    &lt;a href="flowController.htm?_flowExecutionKey=${flowExecutionKey}&amp;_eventId=submit"&gt;
+        Submit
+    &lt;/a&gt;
+	    		</programlisting>
+	    	</sect3>
+    		<sect3 id="executor-mvc-resume-form">
+    			<title>Resuming a flow execution - form</title>
+		    	<programlisting>
     &lt;form action="flowController.htm" method="post"&gt;
         ...
         &lt;input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}"&gt;
         &lt;input type="hidden" name="_eventId" value="submit"/>
         &lt;input type="submit" class="button" value="Submit"&gt;
     &lt;/form&gt;
-	    	</programlisting>
-    	</sect2>
-    	<sect2 id="executor-mvc-resume-form-buttons">
-    		<title>Resuming a flow execution - multiple form buttons</title>
-	    	<programlisting>
+		    	</programlisting>
+   		 	</sect3>
+    		<sect3 id="executor-mvc-resume-form-buttons">
+   	 			<title>Resuming a flow execution - multiple form buttons</title>
+		    	<programlisting>
     &lt;form action="flowController.htm" method="post"&gt;
         ...
         &lt;input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}"&gt;
         &lt;input type="submit" class="button" name="_eventId_submit" value="Submit"&gt;
         &lt;input type="submit" class="button" name="_eventId_cancel" value="Cancel"&gt;
     &lt;/form&gt;
-	    	</programlisting>
-	    	<para>
-	    		Note in this case the <literal>eventId</literal> is determined by parsing the parameter name of the 
-	    		button that was pressed.
-	    	</para>
+		    	</programlisting>
+	   		 	<para>
+	  	  			Note in this case the <literal>eventId</literal> is determined by parsing the parameter name of the 
+	   		 		button that was pressed.
+		    	</para>
+    		</sect3>
     	</sect2>
+		<sect2 id="executor-extraction-requestpath">
+			<title>Request path based flow executor argument extraction</title>
+			<para>
+				The request-path based argument extractor strategy relies on executor arguments
+				being path elements as much as possible.  This results in friendlier REST-style URLs such
+				as <literal>http://host/app/myflow</literal> instead of
+				<literal>http://host/app?_flowId=myflow</literal>.  This strategy may become the 
+				default by the 1.0 final release (it is under consideration).
+			</para>
+	    	<sect3 id="executor-servletmvc-pathextractor">
+    			<title>A flow controller with a request-path based argument extractor</title>
+	    		<programlisting>
+    &lt;bean name="/flowController.htm" class="org.springframework.webflow.executor.mvc.FlowController"&gt;
+        &lt;property name="flowExecutor" ref="flowExecutor"/&gt;
+        &lt;property name="argumentExtractor"&gt;
+            &lt;bean class="org.springframework.webflow.executor.support.RequestPathFlowExecutorArgumentExtractor"/&gt;
+        &lt;/property&gt;        
+    &lt;/bean&gt;
+		    	</programlisting>
+		    </sect3>
+	    	<sect3 id="executor-mvc-launch-get-rest">
+	   	 		<title>Launching a flow execution - REST-style anchor</title>
+		    	<programlisting>
+	&lt;a href="flowController/myflow"/&gt;Launch My Flow&lt;/a&gt;
+		    	</programlisting>
+   		 	</sect3>
+    		<sect3 id="executor-mvc-resume-form-buttons-requestpath">
+   	 			<title>Resuming a flow execution - multiple form buttons</title>
+		    	<programlisting>
+    &lt;form action="${flowExecutionKey}" method="post"&gt;
+        ...
+        &lt;input type="submit" class="button" name="_eventId_submit" value="Submit"&gt;
+        &lt;input type="submit" class="button" name="_eventId_cancel" value="Cancel"&gt;
+    &lt;/form&gt;
+		    	</programlisting>
+    		</sect3>   		 	
+		</sect2>    	
 	</sect1>	
 	<sect1 id="executor-struts">
 		<title>Struts integration</title>
