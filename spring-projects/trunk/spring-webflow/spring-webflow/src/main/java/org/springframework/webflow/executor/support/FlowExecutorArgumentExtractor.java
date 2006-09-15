@@ -32,16 +32,24 @@ import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.executor.FlowExecutor;
 
 /**
+ * <p>
  * A simple helper for extracting {@link FlowExecutor} method input arguments
- * from an request initiated by an {@link ExternalContext}. After request
- * processing, this class is also responsible for supporting response generation
- * by provisioning model attributes necessary to execute subsequent callbacks
- * into Spring Web Flow. Those attributes can then again be extracted using this
- * class.
+ * from an request initiated by an {@link ExternalContext}.
+ * </p>
+ * <p>
+ * In addition, after request processing this class supports response generation
+ * by creating URLs and context necessary to execute subsequent HTTL callbacks
+ * into Spring Web Flow.
+ * </p>
  * <p>
  * By default, this class extracts flow executor method arguments from the
  * {@link ExternalContext#getRequestParameterMap()}.
- * 
+ * </p>
+ * <p>
+ * Note: <code>flowId</code> references in this class are used as the short
+ * name form for a <code>flowDefinitionId</code> that uniquely identifies a
+ * single flow definition.
+ * </p>
  * @author Keith Donald
  */
 public class FlowExecutorArgumentExtractor {
@@ -83,9 +91,9 @@ public class FlowExecutorArgumentExtractor {
 	private String flowIdParameterName = FLOW_ID_PARAMETER;
 
 	/**
-	 * The default flowId value that will be returned if no flowId parameter
-	 * value can be extracted during {@link #extractFlowId(ExternalContext)}
-	 * operation. Default value is <code>null</code>.
+	 * The flow definition id to use if no flowId parameter value can be
+	 * extracted during {@link #extractFlowId(ExternalContext)} operation.
+	 * Default value is <code>null</code>.
 	 */
 	private String defaultFlowId;
 
@@ -216,8 +224,9 @@ public class FlowExecutorArgumentExtractor {
 		}
 		if (!StringUtils.hasText(flowId)) {
 			throw new FlowExecutorArgumentExtractionException(
-					"Unable to extract the flowId argument: make sure the client provides the '"
-							+ getFlowIdParameterName() + "' parameter as input or set the 'defaultFlowId' property; "
+					"Unable to extract the flow definition id argument: make sure the client provides the '"
+							+ getFlowIdParameterName()
+							+ "' parameter as input or set the 'defaultFlowDefinition' property; "
 							+ "the parameters provided in this request are: "
 							+ StylerUtils.style(context.getRequestParameterMap()));
 		}
@@ -457,15 +466,15 @@ public class FlowExecutorArgumentExtractor {
 	 * @return the relative flow URL path to redirect to
 	 */
 	public String createFlowUrl(FlowDefinitionRedirect flowRedirect, ExternalContext context) {
-		StringBuffer flowUrl = new StringBuffer();
-		appendFlowExecutorPath(flowUrl, context);
-		flowUrl.append('?');
-		appendQueryParameter(getFlowIdParameterName(), flowRedirect.getFlowDefinitionId(), flowUrl);
+		StringBuffer url = new StringBuffer();
+		appendFlowExecutorPath(url, context);
+		url.append('?');
+		appendQueryParameter(getFlowIdParameterName(), flowRedirect.getFlowDefinitionId(), url);
 		if (!flowRedirect.getExecutionInput().isEmpty()) {
-			flowUrl.append('&');
+			url.append('&');
 		}
-		appendQueryParameters(flowRedirect.getExecutionInput(), flowUrl);
-		return flowUrl.toString();
+		appendQueryParameters(flowRedirect.getExecutionInput(), url);
+		return url.toString();
 	}
 
 	/**
@@ -480,11 +489,11 @@ public class FlowExecutorArgumentExtractor {
 	 */
 	public String createFlowExecutionUrl(String flowExecutionKey, FlowExecutionContext flowExecution,
 			ExternalContext context) {
-		StringBuffer flowExecutionUrl = new StringBuffer();
-		appendFlowExecutorPath(flowExecutionUrl, context);
-		flowExecutionUrl.append('?');
-		appendQueryParameter(getFlowExecutionKeyParameterName(), flowExecutionKey, flowExecutionUrl);
-		return flowExecutionUrl.toString();
+		StringBuffer url = new StringBuffer();
+		appendFlowExecutorPath(url, context);
+		url.append('?');
+		appendQueryParameter(getFlowExecutionKeyParameterName(), flowExecutionKey, url);
+		return url.toString();
 	}
 
 	/**

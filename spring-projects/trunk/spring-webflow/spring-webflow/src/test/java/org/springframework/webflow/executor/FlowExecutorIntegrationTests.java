@@ -58,7 +58,7 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 		ResponseInstruction response = flowExecutor.launch("flow", context);
 		String key = response.getFlowExecutionKey();
 		assertEquals("viewState1", response.getFlowExecutionContext().getActiveSession().getState().getId());
-		response = flowExecutor.signalEvent("event1", key, context);
+		response = flowExecutor.resume(key, "event1", context);
 		assertTrue(response.getFlowExecutionContext().isActive());
 		assertEquals("viewState2", response.getFlowExecutionContext().getActiveSession().getState().getId());
 		assertTrue(response.isApplicationView());
@@ -66,7 +66,7 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 		ApplicationView view = (ApplicationView)response.getViewSelection();
 		assertEquals("view2", view.getViewName());
 		assertEquals(0, view.getModel().size());
-		response = flowExecutor.signalEvent("event1", response.getFlowExecutionKey(), context);
+		response = flowExecutor.resume(response.getFlowExecutionKey(), "event1", context);
 		view = (ApplicationView)response.getViewSelection();
 		assertFalse(response.getFlowExecutionContext().isActive());
 		assertTrue(response.isApplicationView());
@@ -74,7 +74,7 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 		assertEquals("endView1", view.getViewName());
 		assertEquals(0, view.getModel().size());
 		try {
-			flowExecutor.signalEvent("event1", key, context);
+			flowExecutor.resume(key, "event1", context);
 			fail("Should've been removed");
 		}
 		catch (NoSuchFlowExecutionException e) {
@@ -92,7 +92,7 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 
 	public void testNoSuchFlowExecution() {
 		try {
-			flowExecutor.signalEvent("bogus", "_cbogus_kbogus", new MockExternalContext());
+			flowExecutor.resume("_cbogus_kbogus", "bogus", new MockExternalContext());
 			fail("Should've failed");
 		}
 		catch (NoSuchFlowExecutionException e) {
@@ -106,7 +106,7 @@ public class FlowExecutorIntegrationTests extends AbstractDependencyInjectionSpr
 		ResponseInstruction response = flowExecutor.launch("flow", context);
 		String key = response.getFlowExecutionKey();
 		try {
-			flowExecutor.signalEvent("bogus", key, context);
+			flowExecutor.resume(key, "bogus", context);
 			fail("Should've been removed");
 		}
 		catch (NoMatchingTransitionException e) {

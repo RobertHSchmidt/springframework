@@ -214,7 +214,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 		}
 	}
 
-	public ResponseInstruction signalEvent(String eventId, String flowExecutionKey, ExternalContext context)
+	public ResponseInstruction resume(String flowExecutionKey, String eventId, ExternalContext context)
 			throws FlowException {
 		// expose external context as a thread-bound service
 		ExternalContextHolder.setExternalContext(context);
