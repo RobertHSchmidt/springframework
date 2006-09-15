@@ -30,8 +30,8 @@ import org.springframework.ldap.AttributesMapper;
  */
 public class PersonAttributesMapper implements AttributesMapper {
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Maps the given attributes into a {@link Person} object.
      * 
      * @see org.springframework.ldap.AttributesMapper#mapFromAttributes(javax.naming.directory.Attributes)
      */
