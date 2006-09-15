@@ -149,7 +149,7 @@
 	         local tests and there is no external server to shut down, etc.
 	         But if we want to optionally run all tests and report on the
 	         whole batch, then we need to set a failure property. -->
-		<junit forkmode="perBatch" printsummary="yes" haltonfailure="no" haltonerror="no" dir="${basedir}">
+		<junit forkmode="perBatch" printsummary="yes" haltonfailure="no" haltonerror="no" dir="${basedir}" errorproperty="itests.failed" failureproperty="itests.failed">
 			<jvmarg value="${unitvm}" />
 			<jvmarg value="-Djava.security.auth.login.config=${target.itestclasses.dir}/auth.conf" />
 			<jvmarg value="${itest.arguments}" />
@@ -207,4 +207,24 @@
 	        </antcall>
 	      </target>
 	  -->
+
+	<property name="target.itestresults.html.dir" location="${target.itestresults.dir}/html" />
+
+	<!-- Generate the unit test report -->
+	<target name="itest-report" depends="build.prepare" description="Generate HTML report of integration test results">
+		<delete dir="${target.itestresults.html.dir}" />
+		<mkdir dir="${target.itestresults.html.dir}" />
+		<junitreport todir="${target.itestresults.html.dir}">
+			<fileset dir="${target.itestresults.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${target.itestresults.html.dir}" />
+		</junitreport>
+		<echo>
+Integration test report has been generated.
+The HTML report is ${target.itestresults.html.dir}/index.html
+		</echo>
+		<fail if="itests.failed" message="Integration tests failed" />
+	</target>
+
 </project>
