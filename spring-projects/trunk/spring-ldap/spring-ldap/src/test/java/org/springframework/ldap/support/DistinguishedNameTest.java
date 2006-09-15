@@ -63,13 +63,13 @@ public class DistinguishedNameTest extends TestCase {
 
     public void testRemove() throws InvalidNameException {
 
-        String testPath = "cn=anna.jansson, OU=Users,OU=ELMHULT,OU=G,OU=I,OU=M";
+        String testPath = "cn=john.doe, OU=Users,OU=Some Company,OU=G,OU=I,OU=M";
         DistinguishedName path = new DistinguishedName(testPath);
 
         path.remove(1);
         path.remove(3);
 
-        assertEquals("cn=anna.jansson, ou=ELMHULT, ou=G, ou=M", path.toString());
+        assertEquals("cn=john.doe, ou=Some Company, ou=G, ou=M", path.toString());
     }
 
     /**
@@ -79,17 +79,17 @@ public class DistinguishedNameTest extends TestCase {
 
         DistinguishedName migpath = new DistinguishedName("OU=G,OU=I,OU=M");
         DistinguishedName path1 = new DistinguishedName(
-                "cn=anna.jansson, OU=Users,OU=ELMHULT,OU=G,OU=I,OU=M");
+                "cn=john.doe, OU=Users,OU=SE,OU=G,OU=I,OU=M");
         DistinguishedName path2 = new DistinguishedName(
-                "cn=anna.jansson, OU=Users,OU=ELMHULT,ou=G,OU=i,OU=M, ou=foo");
+                "cn=john.doe, OU=Users,OU=SE,ou=G,OU=i,OU=M, ou=foo");
         DistinguishedName path3 = new DistinguishedName(
                 "ou=G,OU=i,OU=M, ou=foo");
         DistinguishedName path4 = new DistinguishedName("ou=G,OU=i,ou=m");
 
         DistinguishedName pathE1 = new DistinguishedName(
-                "cn=anna.jansson, OU=Users,OU=ELMHULT,ou=G,OU=L,OU=M, ou=foo");
+                "cn=john.doe, OU=Users,OU=SE,ou=G,OU=L,OU=M, ou=foo");
         DistinguishedName pathE2 = new DistinguishedName(
-                "cn=anna.jansson, OU=Users,OU=ELMHULT");
+                "cn=john.doe, OU=Users,OU=SE");
 
         assertTrue("Contains MIG", path1.contains(migpath));
         assertTrue("Contains MIG", path2.contains(migpath));
