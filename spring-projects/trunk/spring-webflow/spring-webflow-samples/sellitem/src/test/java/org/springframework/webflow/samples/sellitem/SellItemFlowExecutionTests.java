@@ -70,12 +70,13 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 	}
 
 	@Override
-	protected void registerMockServices(MockFlowServiceLocator serviceLocator) {
+	protected void registerMockServices(MockFlowServiceLocator serviceRegistry) {
 		saleProcessorControl = MockControl.createControl(SaleProcessor.class);
 		saleProcessor = (SaleProcessor)saleProcessorControl.getMock();
-		serviceLocator.registerBean("saleProcessor", saleProcessor);
+		serviceRegistry.registerBean("saleProcessor", saleProcessor);
 
+		// we'll use real shipping flow
 		FlowDefinitionResource shipping = createFlowDefinitionResource(flowDir, "shipping-flow.xml");
-		serviceLocator.registerSubflow(createFlow(shipping, serviceLocator));
+		serviceRegistry.registerSubflow(createFlow(shipping, serviceRegistry));
 	}
 }
