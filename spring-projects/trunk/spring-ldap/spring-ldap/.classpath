@@ -41,5 +41,6 @@
 	<classpathentry kind="lib" path="lib/test/apacheds-protocol-ldap.jar"/>
 	<classpathentry kind="lib" path="lib/test/junit-addons.jar"/>
 	<classpathentry kind="lib" path="lib/test/DDSteps.jar"/>
+	<classpathentry kind="lib" path="lib/global/ldapbp.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
