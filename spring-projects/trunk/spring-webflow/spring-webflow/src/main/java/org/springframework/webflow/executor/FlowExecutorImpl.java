@@ -252,7 +252,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 		ExternalContextHolder.setExternalContext(context);
 		try {
 			FlowExecutionKey key = executionRepository.parseFlowExecutionKey(flowExecutionKey);
-			// do we need to lock here?
+			// TODO should we lock here?
 			FlowExecutionLock lock = executionRepository.getLock(key);
 			// make sure we're the only one manipulating the flow execution
 			lock.lock();
