@@ -18,9 +18,9 @@ package org.springframework.binding.convert.support;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import org.springframework.binding.core.MapAccessor;
 import org.springframework.binding.format.FormatterFactory;
 import org.springframework.binding.format.support.SimpleFormatterFactory;
-import org.springframework.binding.util.MapAccessor;
 
 /**
  * Converts textual representations of numbers to a <code>Number</code>
