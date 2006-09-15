@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.webflow.context.support.SharedMapDecorator;
-
 import junit.framework.TestCase;
 
 public class SharedMapDecoratorTests extends TestCase {

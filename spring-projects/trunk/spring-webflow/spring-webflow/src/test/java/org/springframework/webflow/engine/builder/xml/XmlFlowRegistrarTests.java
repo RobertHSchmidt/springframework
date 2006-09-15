@@ -7,7 +7,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.engine.builder.BaseFlowServiceLocator;
-import org.springframework.webflow.engine.builder.xml.XmlFlowRegistrar;
 
 public class XmlFlowRegistrarTests extends TestCase {
 	private XmlFlowRegistrar registrar;

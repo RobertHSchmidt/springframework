@@ -1,8 +1,5 @@
 package org.springframework.webflow.engine;
 
-import org.springframework.webflow.engine.AnnotatedObject;
-import org.springframework.webflow.engine.Flow;
-
 import junit.framework.TestCase;
 
 public class AnnotatedObjectTests extends TestCase {

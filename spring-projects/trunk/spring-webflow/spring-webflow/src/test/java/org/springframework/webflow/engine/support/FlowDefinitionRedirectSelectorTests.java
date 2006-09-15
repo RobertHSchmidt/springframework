@@ -5,7 +5,6 @@ import junit.framework.TestCase;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
-import org.springframework.webflow.engine.support.FlowDefinitionRedirectSelector;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.test.engine.MockRequestContext;

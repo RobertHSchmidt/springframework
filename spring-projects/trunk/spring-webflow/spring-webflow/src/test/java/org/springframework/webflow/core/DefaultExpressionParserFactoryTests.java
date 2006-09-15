@@ -3,8 +3,6 @@ package org.springframework.webflow.core;
 import junit.framework.TestCase;
 
 import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.webflow.core.DefaultExpressionParserFactory;
-import org.springframework.webflow.core.WebFlowOgnlExpressionParser;
 
 public class DefaultExpressionParserFactoryTests extends TestCase {
 	public void testGetDefaultExpressionParser() {

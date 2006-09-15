@@ -20,8 +20,8 @@ import java.util.Map;
 import ognl.OgnlException;
 import ognl.PropertyAccessor;
 
+import org.springframework.binding.core.MapAdaptable;
 import org.springframework.binding.expression.support.OgnlExpressionParser;
-import org.springframework.binding.util.MapAdaptable;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 
 /**
