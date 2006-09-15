@@ -133,6 +133,7 @@ Package org.springframework.webflow.executor
 * Removed 'alwaysRedirectOnPause' property in favor of dedicated 'alwaysRedirectOnPause' flow execution attribute.
 * Changed RequestPathFlowExecutorArgumentExtractor to append keyDelimiter property as path element instead of
   request parameter for flow execution URLs.
+* Renamed FlowExecutor.signalEvent to FlowExecutor.resume for clarity and revised order of parameters accordingly.
 
 Package org.springframework.webflow.samples
 * Updated sample applications to take advantage of new features including:
