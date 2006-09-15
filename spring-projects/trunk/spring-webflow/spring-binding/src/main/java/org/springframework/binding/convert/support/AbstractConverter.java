@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.Converter;
-import org.springframework.binding.util.MapAccessor;
+import org.springframework.binding.core.MapAccessor;
 
 /**
  * Base class for converters provided as a convenience to implementors.

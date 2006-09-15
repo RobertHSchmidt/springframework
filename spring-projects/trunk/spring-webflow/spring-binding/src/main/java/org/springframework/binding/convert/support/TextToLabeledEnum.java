@@ -15,8 +15,8 @@
  */
 package org.springframework.binding.convert.support;
 
+import org.springframework.binding.core.MapAccessor;
 import org.springframework.binding.format.support.LabeledEnumFormatter;
-import org.springframework.binding.util.MapAccessor;
 import org.springframework.core.enums.LabeledEnum;
 
 /**
