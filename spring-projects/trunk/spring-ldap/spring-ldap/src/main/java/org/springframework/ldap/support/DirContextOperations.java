@@ -143,7 +143,7 @@ public interface DirContextOperations extends DirContext,
     public SortedSet getAttributeSortedStringSet(String name);
 
     /**
-     * Returns DN, for example <code>uid=some.user,ou=People,ou=EU</code>.
+     * Returns DN, without the base path.
      * 
      * @return The distinguished name of the current context.
      * 
