@@ -41,13 +41,13 @@
     			</listitem>
     			<listitem>
     				<para>
-    					Resume a paused flow execution by signaling an event in its current state.
+    					Resume a paused flow execution by signaling an event against its current state.
     				</para>
     			</listitem>
     			<listitem>
     				<para>
     					Request that the last response issued by a flow execution be re-issued. 
-    					Unlike start and signalEvent, the refresh operations are idempotent operations
+    					Unlike start and signalEvent, the refresh operation is an idempotent operation
     					that does not affect the state of a flow execution.
     				</para>
     			</listitem>
