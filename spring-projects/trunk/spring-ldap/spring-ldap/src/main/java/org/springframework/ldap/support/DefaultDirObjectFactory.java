@@ -52,7 +52,7 @@ public class DefaultDirObjectFactory implements DirObjectFactory {
 
         try {
             DirContextAdapter dirContextAdapter = new DirContextAdapter(attrs,
-                    stripBasePath(name, environment));
+                    name, (Name) environment.get(JNDI_ENV_BASE_PATH_KEY));
             dirContextAdapter.setUpdateMode(true);
 
             return dirContextAdapter;
@@ -72,28 +72,6 @@ public class DefaultDirObjectFactory implements DirObjectFactory {
                 }
 
             }
-        }
-    }
-
-    /**
-     * Rather crude method to remove the base suffix if specified in the LDAP
-     * environment. This could probably be improved to increase performance.
-     * 
-     * @param name
-     *            the full distinguished name of the found object.
-     * @param environment
-     *            the context environment.
-     * @return the DN, without the base suffix.
-     */
-    private Name stripBasePath(Name name, Hashtable environment) {
-        if (environment.containsKey(JNDI_ENV_BASE_PATH_KEY)) {
-            DistinguishedName distinguishedName = new DistinguishedName(name
-                    .toString());
-            distinguishedName.removeFirst((Name) environment
-                    .get(JNDI_ENV_BASE_PATH_KEY));
-            return distinguishedName;
-        } else {
-            return name;
         }
     }
 

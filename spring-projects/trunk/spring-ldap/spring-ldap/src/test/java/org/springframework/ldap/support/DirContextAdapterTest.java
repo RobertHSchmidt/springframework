@@ -16,6 +16,7 @@
 
 package org.springframework.ldap.support;
 
+import javax.naming.Name;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttribute;
@@ -24,7 +25,6 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.ModificationItem;
 
 import org.springframework.ldap.support.DirContextAdapter;
-
 
 import junit.framework.TestCase;
 
@@ -35,6 +35,12 @@ import junit.framework.TestCase;
  * @author Mattias Arthursson
  */
 public class DirContextAdapterTest extends TestCase {
+    private static final DistinguishedName BASE_NAME = new DistinguishedName(
+            "dc=jayway, dc=se");
+
+    private static final DistinguishedName DUMMY_NAME = new DistinguishedName(
+            "c=SE, dc=jayway, dc=se");
+
     private DirContextAdapter classUnderTest;
 
     protected void setUp() throws Exception {
@@ -154,22 +160,28 @@ public class DirContextAdapterTest extends TestCase {
     }
 
     public void testGetDn() throws Exception {
+        DirContextAdapter tested = new DirContextAdapter(DUMMY_NAME);
+        Name result = tested.getDn();
+        assertEquals(DUMMY_NAME, result);
+    }
 
-        // final Attributes fixtureAttrs = new BasicAttributes();
-        //
-        // class TestableDirContextAdapter extends DirContextAdapter {
-        // public TestableDirContextAdapter() {
-        // super(fixtureAttrs, DistinguishedName
-        // .parse("uid=adam.skogman, ou=People, ou=EU"));
-        // setUpdateMode(true);
-        // }
-        // }
-        // classUnderTest = new TestableDirContextAdapter();
-        // assertEquals(classUnderTest.getDn(), DistinguishedName
-        // .parse("uid=adam.skogman, ou=People, ou=EU"));
-        // assertEquals(classUnderTest.getNameInNamespace(),
-        // "uid=adam.skogman, ou=People, ou=EU");
-        //
+    public void testGetDn_BasePath() {
+        DirContextAdapter tested = new DirContextAdapter(null, DUMMY_NAME,
+                BASE_NAME);
+        Name result = tested.getDn();
+        assertEquals("c=SE", result.toString());
+    }
+
+    public void testGetNameInNamespace(){
+        DirContextAdapter tested = new DirContextAdapter(DUMMY_NAME);
+        String result = tested.getNameInNamespace();
+        assertEquals(DUMMY_NAME.toString(), result);        
+    }
+    
+    public void testGetNameInNamespace_BasePath(){
+        DirContextAdapter tested = new DirContextAdapter(null, DUMMY_NAME, BASE_NAME);
+        String result = tested.getNameInNamespace();
+        assertEquals(DUMMY_NAME.toString(), result);        
     }
 
     public void testAddMultiAttributes() throws Exception {
@@ -511,17 +523,18 @@ public class DirContextAdapterTest extends TestCase {
         ModificationItem[] modificationItems = classUnderTest
                 .getModificationItems();
         assertEquals(2, modificationItems.length);
-        
+
         assertEquals(DirContext.ADD_ATTRIBUTE, modificationItems[0]
                 .getModificationOp());
         Attribute modifiedAttribute = modificationItems[0].getAttribute();
-        assertEquals("abc",modifiedAttribute.getID());
+        assertEquals("abc", modifiedAttribute.getID());
         assertEquals(2, modifiedAttribute.size());
         assertEquals("klytt", modifiedAttribute.get(0));
         assertEquals("kalle", modifiedAttribute.get(1));
-        
+
         modifiedAttribute = modificationItems[1].getAttribute();
-        assertEquals(DirContext.REMOVE_ATTRIBUTE, modificationItems[1].getModificationOp());
+        assertEquals(DirContext.REMOVE_ATTRIBUTE, modificationItems[1]
+                .getModificationOp());
         assertEquals("abc", modifiedAttribute.getID());
         assertEquals(2, modifiedAttribute.size());
         assertEquals("rty", modifiedAttribute.get(0));
