@@ -304,7 +304,7 @@ public abstract class AbstractValidatingInterceptor extends TransformerObjectSup
             SoapFaultDetail detail = fault.addFaultDetail();
             for (int i = 0; i < errors.length; i++) {
                 SoapFaultDetailElement detailElement = detail.addFaultDetailElement(getDetailElementName());
-                detailElement.addText(errors[0].getMessage());
+                detailElement.addText(errors[i].getMessage());
             }
         }
     }
