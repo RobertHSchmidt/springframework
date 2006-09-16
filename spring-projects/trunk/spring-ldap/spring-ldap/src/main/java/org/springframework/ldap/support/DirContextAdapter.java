@@ -39,7 +39,6 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
 
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -56,7 +55,8 @@ import org.springframework.ldap.NamingExceptionTranslator;
  * {@link org.springframework.ldap.support.DefaultDirObjectFactory} in your
  * ContextSource you may receive instances of this class from searches and
  * lookups. This can be particularly useful when updating data, since this class
- * implements {@link org.springframework.ldap.support.AttributeModificationsAware},
+ * implements
+ * {@link org.springframework.ldap.support.AttributeModificationsAware},
  * providing a {@link #getModificationItems()} method.
  * 
  * @author Magnus Robertsson
@@ -72,7 +72,9 @@ public class DirContextAdapter implements DirContextOperations {
 
     private final Attributes attrs;
 
-    private Name dn;
+    private DistinguishedName dn;
+
+    private DistinguishedName base;
 
     private boolean updateMode = false;
 
@@ -84,26 +86,41 @@ public class DirContextAdapter implements DirContextOperations {
      * Default constructor.
      */
     public DirContextAdapter() {
-        attrs = new BasicAttributes(true);
-        dn = null;
+        this(null, null, null);
     }
 
     public DirContextAdapter(Name dn) {
-        attrs = new BasicAttributes(true);
-        this.dn = dn;
+        this(null, dn);
     }
 
     /**
      * Create a new entry from the supplied attributes and dn.
      * 
-     * @param pAttrs
+     * @param attrs
      *            the attributes.
      * @param dn
      *            the dn.
      */
-    public DirContextAdapter(Attributes pAttrs, Name dn) {
-        attrs = (Attributes) pAttrs.clone();
-        this.dn = dn;
+    public DirContextAdapter(Attributes attrs, Name dn) {
+        this(attrs, dn, null);
+    }
+
+    public DirContextAdapter(Attributes attrs, Name dn, Name base) {
+        if (attrs != null) {
+            this.attrs = attrs;
+        } else {
+            this.attrs = new BasicAttributes(true);
+        }
+        if (dn != null) {
+            this.dn = new DistinguishedName(dn.toString());
+        } else {
+            this.dn = new DistinguishedName();
+        }
+        if (base != null) {
+            this.base = new DistinguishedName(base.toString());
+        } else {
+            this.base = new DistinguishedName();
+        }
     }
 
     /**
@@ -1082,7 +1099,9 @@ public class DirContextAdapter implements DirContextOperations {
      * @see org.springframework.ldap.support.DirContextOperations#getDn()
      */
     public Name getDn() {
-        return dn;
+        DistinguishedName retval = new DistinguishedName(dn);
+        retval.removeFirst(base);
+        return retval;
     }
 
     /*
@@ -1092,7 +1111,7 @@ public class DirContextAdapter implements DirContextOperations {
      */
     public final void setDn(Name dn) {
         if (!updateMode) {
-            this.dn = dn;
+            this.dn = new DistinguishedName(dn.toString());
         }
     }
 
