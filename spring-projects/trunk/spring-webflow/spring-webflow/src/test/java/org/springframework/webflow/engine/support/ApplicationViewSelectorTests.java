@@ -36,15 +36,25 @@ public class ApplicationViewSelectorTests extends TestCase {
 	public void testMakeNullSelection() {
 		ApplicationViewSelector selector = new ApplicationViewSelector(new StaticExpression(null));
 		MockRequestContext context = new MockRequestContext();
-		ViewSelection selection = selector.makeEntrySelection(context);
-		assertTrue(selection == ViewSelection.NULL_VIEW);
+		try {
+			selector.makeEntrySelection(context);
+			fail();
+		}
+		catch (IllegalStateException e) {
+			//expected
+		}
 	}
 
 	public void testMakeNullSelectionEmptyString() {
 		ApplicationViewSelector selector = new ApplicationViewSelector(new StaticExpression(""));
 		MockRequestContext context = new MockRequestContext();
-		ViewSelection selection = selector.makeEntrySelection(context);
-		assertTrue(selection == ViewSelection.NULL_VIEW);
+		try {
+			selector.makeEntrySelection(context);
+			fail();
+		}
+		catch (IllegalStateException e) {
+			//expected
+		}
 	}
 
 	public void testIsEntrySelectionRenderable() {
