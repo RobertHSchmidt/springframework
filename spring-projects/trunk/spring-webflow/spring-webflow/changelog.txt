@@ -113,6 +113,8 @@ Package org.springframework.webflow.engine
   a dedicated FlowExecutionImplStateRestorer.
 * Added support for EndState transitions on exception, typically thrown as party of an entry action.
   Transition.execute now accepts the base State type now, no longer requiring a TransitionableState reference.
+* Made execution state restorer strategy always apply, updated execution impl types to keep transient 
+  and serialized references in sync for VM clustering purposes.
     
 Package org.springframework.webflow.execution
 * Decoupled the central RequestContext interface from the flow execution engine implementation.
