@@ -23,7 +23,7 @@ import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
-import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
+import org.springframework.webflow.execution.support.LaunchFlowRedirect;
 import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 
 /**
@@ -141,8 +141,8 @@ public class ResponseInstruction implements Serializable {
 	 * Returns true if this is an instruction to launch an entirely new
 	 * (independent) flow execution.
 	 */
-	public boolean isFlowDefinitionRedirect() {
-		return viewSelection instanceof FlowDefinitionRedirect;
+	public boolean isLaunchFlowRedirect() {
+		return viewSelection instanceof LaunchFlowRedirect;
 	}
 
 	/**

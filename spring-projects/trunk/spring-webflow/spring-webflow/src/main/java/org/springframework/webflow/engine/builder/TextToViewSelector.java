@@ -23,9 +23,9 @@ import org.springframework.webflow.engine.NullViewSelector;
 import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.engine.support.ExternalRedirectSelector;
-import org.springframework.webflow.engine.support.FlowDefinitionRedirectSelector;
+import org.springframework.webflow.engine.support.LaunchFlowRedirectSelector;
 import org.springframework.webflow.execution.support.ExternalRedirect;
-import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
+import org.springframework.webflow.execution.support.LaunchFlowRedirect;
 import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 
 /**
@@ -42,8 +42,8 @@ import org.springframework.webflow.execution.support.FlowExecutionRedirect;
  * <li>"externalRedirect:&lt;url&gt;" - will result in a
  * {@link ExternalRedirectSelector} that returns an {@link ExternalRedirect} to a
  * URL.</li>
- * <li>"flowRedirect:&lt;url&gt;" - will result in a
- * {@link FlowDefinitionRedirectSelector} that returns a {@link FlowDefinitionRedirect} to a flow.</li>
+ * <li>"launchFlow:&lt;url&gt;" - will result in a
+ * {@link LaunchFlowRedirectSelector} that returns a {@link LaunchFlowRedirect} to a flow.</li>
  * <li>"bean:&lt;id&gt;" - will result usage of a custom
  * <code>ViewSelector</code> bean implementation.</li>
  * </ul>
@@ -78,7 +78,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	 * Prefix used when the encoded view name wants to specify that a redirect
 	 * to a flow is requred.
 	 */
-	public static final String FLOW_REDIRECT_PREFIX = "flowRedirect:";
+	public static final String LAUNCH_FLOW_REDIRECT_PREFIX = "launchFlow:";
 
 	/**
 	 * Prefix used when the user wants to use a ViewSelector implementation
@@ -143,10 +143,10 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 			Expression urlExpr = (Expression)fromStringTo(Expression.class).execute(externalUrl);
 			return new ExternalRedirectSelector(urlExpr);
 		}
-		else if (encodedView.startsWith(FLOW_REDIRECT_PREFIX)) {
-			String flowRedirect = encodedView.substring(FLOW_REDIRECT_PREFIX.length());
-			Expression redirectExpr = (Expression)fromStringTo(Expression.class).execute(flowRedirect);
-			return new FlowDefinitionRedirectSelector(redirectExpr);
+		else if (encodedView.startsWith(LAUNCH_FLOW_REDIRECT_PREFIX)) {
+			String launchFlowRedirect = encodedView.substring(LAUNCH_FLOW_REDIRECT_PREFIX.length());
+			Expression redirectExpr = (Expression)fromStringTo(Expression.class).execute(launchFlowRedirect);
+			return new LaunchFlowRedirectSelector(redirectExpr);
 		}
 		else if (encodedView.startsWith(BEAN_PREFIX)) {
 			String id = encodedView.substring(BEAN_PREFIX.length());

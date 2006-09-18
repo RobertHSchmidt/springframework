@@ -782,7 +782,7 @@
               				</entry>
  						</row>
             			<row>
-              				<entry>FlowDefinitionRedirect</entry>
+              				<entry>LaunchFlowRedirect</entry>
               				<entry>
               					Requests a redirect that launches an entirely new flow execution.  Used to support 
               					<emphasis>redirect to flow</emphasis> (flow chaining) and <emphasis>restart flow</emphasis> use cases.
@@ -839,10 +839,10 @@
 								</entry>
 	        	   	        </row>
 	        	   	        <row>
-              					<entry>FlowDefinitionRedirectSelector</entry>
+              					<entry>LaunchFlowRedirectSelector</entry>
 								<entry>
-									Returns a FlowDefinitionRedirect with a <literal>flowId</literal> and <literal>inputMap</literal> requesting 
-									the start of an entirely new flow execution (an instance of the Flow identified by the flowId).
+									Returns a LaunchFlowRedirect with a <literal>flowId</literal> and <literal>inputMap</literal> requesting 
+									the launch of an entirely new flow execution (an instance of the Flow identified by the flowId).
 									Useful for <emphasis>redirect after flow completion</emphasis>, where one flow ending should trigger
 									the start of another flow, independently.
 								</entry>
@@ -1010,10 +1010,10 @@
     &lt;/flow&gt;
     			</programlisting>
 			</sect3>
-			<sect3 id="viewState-flowDefinitionRedirectAndExternalRedirect">
-    	    	<title>FlowDefinitionRedirect and ExternalRedirect</title>
+			<sect3 id="viewState-launchFlowRedirectAndExternalRedirect">
+    	    	<title>LaunchFlowRedirect and ExternalRedirect</title>
 				<para>
-					The <literal>FlowDefinitionRedirect</literal> and <literal>ExternalRedirect</literal> are not
+					The <literal>LaunchFlowRedirect</literal> and <literal>ExternalRedirect</literal> are not
 					normally used with a view state. Instead they're used in an end state to continue with another,
 					independent flow or to redirect to an external URL. Examples are provided in the discussion of the
 					end state.
@@ -2201,7 +2201,7 @@
             	   </tbody>
 	          </tgroup>
     	    </table>
-    	    <sect3 id="endStateXml-flowDefinitionRedirect">
+    	    <sect3 id="endStateXml-launchFlowRedirect">
     	    	<title>EndState XML - redirect to flow after completion</title>
     	    	<para>
     	    	    The following example constructs an <literal>EndState</literal> from
@@ -2218,7 +2218,7 @@
         
         ...
         
-        &lt;end-state id="finish" view="flowRedirect:searchFlow"/&gt;
+        &lt;end-state id="finish" view="launchFlow:searchFlow"/&gt;
         
     &lt;/flow&gt;
     			</programlisting>

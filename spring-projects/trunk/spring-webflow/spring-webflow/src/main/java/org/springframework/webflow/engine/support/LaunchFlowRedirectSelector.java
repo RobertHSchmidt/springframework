@@ -24,18 +24,18 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewSelection;
-import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
+import org.springframework.webflow.execution.support.LaunchFlowRedirect;
 
 /**
- * Makes a {@link FlowDefinitionRedirect} selection when requested, calculating the
+ * Makes a {@link LaunchFlowRedirect} selection when requested, calculating the
  * <code>flowDefinitionId</code> and <code>executionInput</code> by
  * evaluating an expression against the request context.
  * 
- * @see org.springframework.webflow.execution.support.FlowDefinitionRedirect
+ * @see org.springframework.webflow.execution.support.LaunchFlowRedirect
  * 
  * @author Keith Donald
  */
-public class FlowDefinitionRedirectSelector implements ViewSelector {
+public class LaunchFlowRedirectSelector implements ViewSelector {
 
 	/**
 	 * The parsed flow expression, evaluatable to the string format:
@@ -48,7 +48,7 @@ public class FlowDefinitionRedirectSelector implements ViewSelector {
 	 * @param expression the parsed flow redirect expression, evaluatable to the
 	 * string format: flowDefinitionId?param1Name=parmValue&param2Name=paramValue
 	 */
-	public FlowDefinitionRedirectSelector(Expression expression) {
+	public LaunchFlowRedirectSelector(Expression expression) {
 		this.expression = expression;
 	}
 
@@ -62,7 +62,7 @@ public class FlowDefinitionRedirectSelector implements ViewSelector {
 			throw new IllegalStateException("Flow definition redirect expression evaluated to [null], the expression was "
 					+ expression);
 		}
-		// the encoded flowDefinitionRedirect should look something like
+		// the encoded LaunchFlowRedirect should look something like
 		// "flowDefinitionId?param0=value0&param1=value1"
 		// now parse that and build a corresponding view selection
 		int index = encodedRedirect.indexOf('?');
@@ -90,7 +90,7 @@ public class FlowDefinitionRedirectSelector implements ViewSelector {
 			// equivalent to restart
 			flowDefinitionId = context.getFlowExecutionContext().getDefinition().getId();
 		}
-		return new FlowDefinitionRedirect(flowDefinitionId, executionInput);
+		return new LaunchFlowRedirect(flowDefinitionId, executionInput);
 	}
 
 	public ViewSelection makeRefreshSelection(RequestContext context) {
