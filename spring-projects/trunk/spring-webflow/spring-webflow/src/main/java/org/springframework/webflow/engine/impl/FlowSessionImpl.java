@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -44,8 +42,6 @@ import org.springframework.webflow.execution.FlowSessionStatus;
  * @author Erwin Vervaet
  */
 class FlowSessionImpl implements FlowSession, Externalizable {
-
-	private static final Log logger = LogFactory.getLog(FlowSessionImpl.class);
 
 	/**
 	 * The flow definition (a singleton).
