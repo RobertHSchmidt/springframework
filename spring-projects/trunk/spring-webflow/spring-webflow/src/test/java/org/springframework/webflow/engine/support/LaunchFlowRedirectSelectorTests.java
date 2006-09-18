@@ -6,21 +6,21 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.execution.ViewSelection;
-import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
+import org.springframework.webflow.execution.support.LaunchFlowRedirect;
 import org.springframework.webflow.test.engine.MockRequestContext;
 
-public class FlowDefinitionRedirectSelectorTests extends TestCase {
+public class LaunchFlowRedirectSelectorTests extends TestCase {
 	ExpressionParser parser = new DefaultExpressionParserFactory().getExpressionParser();
 
 	public void testMakeSelection() {
 		Expression exp = parser.parseExpression("${requestScope.flowIdVar}?a=b&c=${requestScope.bar}");
-		FlowDefinitionRedirectSelector selector = new FlowDefinitionRedirectSelector(exp);
+		LaunchFlowRedirectSelector selector = new LaunchFlowRedirectSelector(exp);
 		MockRequestContext context = new MockRequestContext();
 		context.getRequestScope().put("flowIdVar", "foo");
 		context.getRequestScope().put("bar", "baz");
 		ViewSelection selection = selector.makeEntrySelection(context);
-		assertTrue(selection instanceof FlowDefinitionRedirect);
-		FlowDefinitionRedirect redirect = (FlowDefinitionRedirect)selection;
+		assertTrue(selection instanceof LaunchFlowRedirect);
+		LaunchFlowRedirect redirect = (LaunchFlowRedirect)selection;
 		assertEquals("foo", redirect.getFlowDefinitionId());
 		assertEquals("b", redirect.getExecutionInput().get("a"));
 		assertEquals("baz", redirect.getExecutionInput().get("c"));
@@ -28,11 +28,11 @@ public class FlowDefinitionRedirectSelectorTests extends TestCase {
 	
 	public void testMakeSelectionInvalidVariable() {
 		Expression exp = parser.parseExpression("${flowScope.flowId}");
-		FlowDefinitionRedirectSelector selector = new FlowDefinitionRedirectSelector(exp);
+		LaunchFlowRedirectSelector selector = new LaunchFlowRedirectSelector(exp);
 		MockRequestContext context = new MockRequestContext();
 		try {
 			ViewSelection selection = selector.makeEntrySelection(context);
-			assertTrue(selection instanceof FlowDefinitionRedirect);
+			assertTrue(selection instanceof LaunchFlowRedirect);
 		} catch (IllegalStateException e) {
 			
 		}

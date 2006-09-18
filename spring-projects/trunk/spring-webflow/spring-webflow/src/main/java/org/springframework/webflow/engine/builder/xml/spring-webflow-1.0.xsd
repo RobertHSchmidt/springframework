@@ -1247,9 +1247,9 @@ External redirect query parameters may be specified using ${expressions} that ev
 against the request context. For example:
 	"externalRedirect:/someOtherSystem.htm?orderId=${flowScope.order.id}"
     
-Use of the "flowRedirect:" prefix has this view state generate a redirect to a URL
+Use of the "launchFlow:" prefix has this view state generate a redirect to a URL
 that launches a new flow execution of an identified flow. For example:
-	"flowRedirect:editOrderFlow?orderId=${flowScope.order.id}"
+	"launchFlow:editOrderFlow?orderId=${flowScope.order.id}"
 
 Use of the "bean:" prefix references a custom ViewSelector implementation you define,
 exposed by id in either a flow-local context using the "import" element or in the parent 
@@ -1651,10 +1651,10 @@ Redirect query parameters may also be specified using ${expressions} that evalua
 the request context. For example:
     "redirect:/thankyou.htm?confirmationNumber=${flowScope.order.confirmation.id}"
 
-Use of the "flowRedirect:" prefix indicates this end state should trigger a redirect that
+Use of the "launchFlow:" prefix indicates this end state should trigger a redirect that
 starts another flow.  Flow input parameters may be specified using ${expressions} that 
 evaluate against the request context.
-	"flowRedirect:search-flow?firstName=${flowScope.searchCriteria.firstName}"
+	"launchFlow:search-flow?firstName=${flowScope.searchCriteria.firstName}"
 	
 Use of the "bean:" prefix references a custom ViewSelector implementation you define,
 exposed by id in either a flow-local context using the "import" element or in the parent 
