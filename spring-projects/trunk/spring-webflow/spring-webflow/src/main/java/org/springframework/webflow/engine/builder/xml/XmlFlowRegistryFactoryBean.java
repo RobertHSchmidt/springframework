@@ -27,7 +27,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.engine.builder.AbstractFlowBuildingFlowRegistryFactoryBean;
 import org.springframework.webflow.engine.builder.DefaultFlowServiceLocator;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
-import org.xml.sax.EntityResolver;
 
 /**
  * A factory bean that produces a populated flow registry using a
@@ -150,20 +149,13 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowBuildingFlowRegistry
 	}
 
 	/**
-	 * Sets whether or not the flow builder used to build the flow definitions
-	 * in this registry should perform build-time validation.
-	 * @param builderValidating the validating flag
+	 * Sets the loader to load XML-based flow definition documents during flow
+	 * definition assembly. Allows for customization over how documents are
+	 * loaded. Optional.
+	 * @param documentLoader the document loader
 	 */
-	public void setBuilderValidating(boolean builderValidating) {
-		getXmlFlowRegistrar().setBuilderValidating(builderValidating);
-	}
-
-	/**
-	 * Sets the entity resolver to use during Xml flow definition building.
-	 * @param entityResolver the entity resolver
-	 */
-	public void setEntityResolver(EntityResolver entityResolver) {
-		getXmlFlowRegistrar().setEntityResolver(entityResolver);
+	public void setDocumentLoader(DocumentLoader documentLoader) {
+		getXmlFlowRegistrar().setDocumentLoader(documentLoader);
 	}
 
 	protected void init(FlowServiceLocator flowServiceLocator) {

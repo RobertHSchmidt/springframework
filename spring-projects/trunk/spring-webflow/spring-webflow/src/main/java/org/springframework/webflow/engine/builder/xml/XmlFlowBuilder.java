@@ -16,7 +16,6 @@
 package org.springframework.webflow.engine.builder.xml;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,12 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
@@ -48,7 +43,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
-import org.springframework.util.xml.SimpleSaxErrorHandler;
 import org.springframework.webflow.action.ActionResultExposer;
 import org.springframework.webflow.action.BeanInvokingActionFactory;
 import org.springframework.webflow.action.EvaluateAction;
@@ -65,6 +59,7 @@ import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.engine.builder.BaseFlowBuilder;
+import org.springframework.webflow.engine.builder.BaseFlowServiceLocator;
 import org.springframework.webflow.engine.builder.FlowArtifactFactory;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
@@ -80,7 +75,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.EntityResolver;
 import org.xml.sax.SAXException;
 
 /**
@@ -91,9 +85,13 @@ import org.xml.sax.SAXException;
  * <pre>
  *     &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
  *     &lt;flow xmlns=&quot;http://www.springframework.org/schema/webflow&quot;
- *              xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
- *              xsi:schemaLocation=&quot;http://www.springframework.org/schema/webflow
- *                                  http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd&quot;&gt;
+ *           xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+ *           xsi:schemaLocation=&quot;http://www.springframework.org/schema/webflow
+ *                               http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd&quot;&gt;
+ *                               
+ *         &lt;!-- Define your states here --&gt;
+ *         
+ *     &lt;/flow&gt;
  * </pre>
  * 
  * <p>
@@ -123,23 +121,22 @@ import org.xml.sax.SAXException;
  * is loaded. This "input stream source" is a required property.</td>
  * </tr>
  * <tr>
- * <td>validating</td>
- * <td><i>true</i></td>
- * <td>Set if the XML parser should validate the document and thus enforce a
- * DTD.</td>
+ * <td>flowServiceLocator</td>
+ * <td>{@link BaseFlowServiceLocator}</td>
+ * <td>The locator for externally managed services needed by the flow definition, 
+ * such a service-layer beans.</td>
  * </tr>
  * <tr>
- * <td>entityResolver</td>
- * <td><i>{@link WebFlowEntityResolver}</i></td>
- * <td>Set a SAX entity resolver to be used for parsing.</td>
+ * <td>documentLoader</td>
+ * <td>{@link DefaultDocumentLoader}</td>
+ * <td>The loader for loading the flow definition resource XML document.  Allows 
+ * for customization of how the document is loaded.</td>
  * </tr>
  * </table>
  * @author Erwin Vervaet
  * @author Keith Donald
  */
 public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
-
-	private static final Log logger = LogFactory.getLog(XmlFlowBuilder.class);
 
 	// recognized XML elements and attributes
 
@@ -260,16 +257,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String RESOURCE_ATTRIBUTE = "resource";
 
 	/**
-	 * JAXP attribute used to configure the schema language for validation.
-	 */
-	private static final String SCHEMA_LANGUAGE_ATTRIBUTE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
-
-	/**
-	 * JAXP attribute value indicating the XSD schema language.
-	 */
-	private static final String XSD_SCHEMA_LANGUAGE = "http://www.w3.org/2001/XMLSchema";
-
-	/**
 	 * The resource from which the document element being parsed was read. Used
 	 * as a location for relative resource lookup.
 	 */
@@ -283,15 +270,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private LocalFlowServiceLocator localFlowServiceLocator;
 
 	/**
-	 * Flag indicating if the the XML document parser will perform DTD
-	 * validation.
+	 * The loader for loading the flow definition resource XML document.
 	 */
-	private boolean validating = true;
-
-	/**
-	 * The spring-webflow DTD and XML Schema resolution strategy.
-	 */
-	private EntityResolver entityResolver = new WebFlowEntityResolver();
+	private DocumentLoader documentLoader = new DefaultDocumentLoader();
 
 	/**
 	 * The in-memory document object model (DOM) of the XML Document read from
@@ -335,62 +316,35 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 */
 	public void setLocation(Resource location) {
 		Assert.notNull(location,
-				"The location property specifying the XML flow definition resource location is required");
+				"The resource location of the XML-based flow definition is required");
 		this.location = location;
 	}
 
-	public Resource getResource() {
-		return location;
-	}
-
 	/**
-	 * Returns whether or not the XML parser will validate the document.
+	 * Sets the loader that will load the XML-based flow definition document.
+	 * @param documentLoader the document loader
 	 */
-	public boolean isValidating() {
-		return validating;
+	public void setDocumentLoader(DocumentLoader documentLoader) {
+		Assert.notNull(documentLoader, "The XML document loader is required");
+		this.documentLoader = documentLoader;
 	}
 
-	/**
-	 * Set if the XML parser should validate the document and thus enforce a
-	 * DTD. Defaults to true.
-	 */
-	public void setValidating(boolean validating) {
-		this.validating = validating;
-	}
-
-	/**
-	 * Returns the SAX entity resolver used by the XML parser.
-	 */
-	public EntityResolver getEntityResolver() {
-		return entityResolver;
-	}
-
-	/**
-	 * Set a SAX entity resolver to be used for parsing. By default,
-	 * WebFlowDtdResolver will be used. Can be overridden for custom entity
-	 * resolution, for example relative to some specific base path.
-	 * 
-	 * @see org.springframework.webflow.engine.builder.xml.WebFlowEntityResolver
-	 */
-	public void setEntityResolver(EntityResolver entityResolver) {
-		this.entityResolver = entityResolver;
-	}
-
+	// implementing FlowBuilder
+	
 	public void init(String id, AttributeMap attributes) throws FlowBuilderException {
 		localFlowServiceLocator = new LocalFlowServiceLocator(getFlowServiceLocator());
 		try {
-			document = loadDocument();
-			Assert.notNull(document, "Document should never be null");
+			document = documentLoader.loadDocument(location);
 		}
 		catch (IOException e) {
-			throw new FlowBuilderException("Could not load the XML flow definition resource at " + getLocation(), e);
+			throw new FlowBuilderException("Could not access the XML flow definition resource at " + location, e);
 		}
 		catch (ParserConfigurationException e) {
 			throw new FlowBuilderException("Could not configure the parser to parse the XML flow definition at "
-					+ getLocation(), e);
+					+ location, e);
 		}
 		catch (SAXException e) {
-			throw new FlowBuilderException("Could not parse the flow definition XML document at " + getLocation(), e);
+			throw new FlowBuilderException("Could not parse the XML flow definition document at " + location, e);
 		}
 		setFlow(parseFlow(id, attributes, getDocumentElement()));
 	}
@@ -436,29 +390,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		document = null;
 	}
 
-	private Document loadDocument() throws IOException, ParserConfigurationException, SAXException {
-		InputStream is = null;
-		try {
-			is = getLocation().getInputStream();
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			factory.setValidating(isValidating());
-			factory.setNamespaceAware(true);
-			factory.setAttribute(SCHEMA_LANGUAGE_ATTRIBUTE, XSD_SCHEMA_LANGUAGE);
-			DocumentBuilder docBuilder = factory.newDocumentBuilder();
-			docBuilder.setErrorHandler(new SimpleSaxErrorHandler(logger));
-			docBuilder.setEntityResolver(getEntityResolver());
-			return docBuilder.parse(is);
-		}
-		finally {
-			if (is != null) {
-				try {
-					is.close();
-				}
-				catch (IOException ex) {
-					logger.warn("Could not close InputStream", ex);
-				}
-			}
-		}
+	// implementing ResourceHolder
+	
+	public Resource getResource() {
+		return location;
 	}
 
 	private Flow parseFlow(String id, AttributeMap attributes, Element flowElement) {
@@ -664,7 +599,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		Element entryActionsElement = getChildElementByTagName(element, ENTRY_ACTIONS_ELEMENT);
 		if (entryActionsElement != null) {
 			return parseAnnotatedActions(entryActionsElement);
-		} else {
+		}
+		else {
 			return null;
 		}
 	}
@@ -673,7 +609,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		Element renderActionsElement = getChildElementByTagName(element, RENDER_ACTIONS_ELEMENT);
 		if (renderActionsElement != null) {
 			return parseAnnotatedActions(renderActionsElement);
-		} else {
+		}
+		else {
 			return null;
 		}
 	}
@@ -682,7 +619,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		Element exitActionsElement = getChildElementByTagName(element, EXIT_ACTIONS_ELEMENT);
 		if (exitActionsElement != null) {
 			return parseAnnotatedActions(exitActionsElement);
-		} else {
+		}
+		else {
 			return null;
 		}
 	}
@@ -801,16 +739,16 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		Element resultElement = getChildElementByTagName(element, METHOD_RESULT_ELEMENT);
 		if (resultElement != null) {
 			return parseActionResultExposer(resultElement);
-		} else {
+		}
+		else {
 			return null;
 		}
 	}
-	
+
 	private ActionResultExposer parseActionResultExposer(Element element) {
 		String resultName = element.getAttribute(NAME_ATTRIBUTE);
 		ScopeType resultScope = null;
-		if (element.hasAttribute(SCOPE_ATTRIBUTE)
-				&& !element.getAttribute(SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
+		if (element.hasAttribute(SCOPE_ATTRIBUTE) && !element.getAttribute(SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
 			resultScope = (ScopeType)fromStringTo(ScopeType.class).execute(element.getAttribute(SCOPE_ATTRIBUTE));
 		}
 		return new ActionResultExposer(resultName, (resultScope != null ? resultScope : ScopeType.REQUEST));
@@ -831,11 +769,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		Element resultElement = getChildElementByTagName(element, EVALUATION_RESULT_ELEMENT);
 		if (resultElement != null) {
 			return parseActionResultExposer(resultElement);
-		} else {
+		}
+		else {
 			return null;
 		}
 	}
-	
+
 	private BeanInvokingActionFactory getBeanInvokingActionFactory() {
 		return getFlowServiceLocator().getBeanInvokingActionFactory();
 	}
@@ -1044,32 +983,32 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private void destroyLocalServiceRegistry(Flow flow) {
 		localFlowServiceLocator.pop();
 	}
-	
+
 	// utility
-	
+
 	/**
-	 * Utility method that returns the first child element
-	 * identified by its name.
+	 * Utility method that returns the first child element identified by its
+	 * name.
 	 * @param ele the DOM element to analyze
 	 * @param childEleName the child element name to look for
-	 * @return the <code>org.w3c.dom.Element</code> instance,
-	 * or <code>null</code> if none found
+	 * @return the <code>org.w3c.dom.Element</code> instance, or
+	 * <code>null</code> if none found
 	 */
 	private Element getChildElementByTagName(Element ele, String childEleName) {
 		NodeList nl = ele.getChildNodes();
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node node = nl.item(i);
 			if (node instanceof Element && nodeNameEquals(node, childEleName)) {
-				return (Element) node;
+				return (Element)node;
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Namespace-aware equals comparison. Returns <code>true</code> if either
-	 * {@link Node#getLocalName} or {@link Node#getNodeName} equals <code>desiredName</code>,
-	 * otherwise returns <code>false</code>.
+	 * {@link Node#getLocalName} or {@link Node#getNodeName} equals
+	 * <code>desiredName</code>, otherwise returns <code>false</code>.
 	 */
 	private boolean nodeNameEquals(Node node, String desiredName) {
 		return desiredName.equals(node.getNodeName()) || desiredName.equals(node.getLocalName());
