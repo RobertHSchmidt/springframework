@@ -1,8 +1,9 @@
 SPRING WEB FLOW (SWF) CHANGELOG
-=========================
+===============================
 http://www.springframework.org
 
 Changes in version 1.0 RC4 (15.9.2006)
+--------------------------------------
 
 General
 * Restructured codebase into distinct layers and subsystems upon in-depth SonarJ analysis of architecture.
@@ -156,7 +157,8 @@ Package org.springframework.webflow.test
 * Added convenient registerMockServices hook to AbstractExternalizedFlowExecutionTests.
     
 Changes in version 1.0 RC3 (23.6.2006)
-------------------------------------
+--------------------------------------
+
 Package org.springframework.webflow
 * Renamed TransitionSet.transitionMatches to "hasMatchingTransition".
 * A flow variable can now be annotated with arbitrary properties to influence behaviour.
@@ -226,7 +228,7 @@ Package org.springframework.webflow.support
 * Removed RedirectType. Classes using it now have a simple boolean redirect flag.
 
 Changes in version 1.0 RC2 (09.6.2006)
-------------------------------------
+--------------------------------------
 
 Overall
 * Moved project source control (with history preserved) to sourceforge subversion (SVN) repository at:
@@ -327,7 +329,7 @@ Package org.springframework.webflow.test
 * Removed AbstractFlowExecutionTests.conversationRedirect method.
   
 Changes in version 1.0 RC1 (03.5.2006)
-------------------------------------
+--------------------------------------
 
 Package org.springframework.webflow
 * Added explict Flow variable support to this package; see Flow.addVariable and Flow.start
@@ -432,7 +434,7 @@ Package org.springframework.webflow.samples
 * Made the number guess "games" fully stateful, 100% decoupling game logic from SWF APIs.
 
 Changes in version 1.0 Early Access (02.3.2006)
-------------------------------------
+-----------------------------------------------
 
 Overall
 * The proposal to the community for Spring Web Flow 1.0; the next release will be 1.0 RC1 
@@ -577,7 +579,8 @@ Package org.springframework.webflow.samples
 * Added shippingrate sample, showing Spring Web Flow together with Ajax technology.
 
 Changes in version PR5 (28.7.2005)
-------------------------------------
+----------------------------------
+
 * Renamed the static helpers in the ServletEvent class to match with their instance counterparts: e.g. getHttpServletRequest()
   was renamed to getRequest().
 * Renamed the addSubFlowState(...) methods in AbstractFlowBuilder to addSubflowState(...) to be consistent with the class name.
@@ -598,7 +601,8 @@ Changes in version PR5 (28.7.2005)
 * Miscellaneous code cleanup, especially in spring-binding.
 
 Changes in version PR4 (17.7.2005)
-------------------------------------
+----------------------------------
+
 * Top level package rename from org.springframework.web.flow to org.springframework.webflow.
 * Changes to make this SWF compatible with Spring 1.2.2 and later.
 * Moved to a new build system based on Ant and Ivy.
@@ -630,7 +634,8 @@ Changes in version PR4 (17.7.2005)
 * Miscellaneous code cleanup and JavaDoc enhancements.
 
 Changes in version PR3 (22.5.2005)
-------------------------------------
+----------------------------------
+
 * Renamed EventParameterMapperAction to AttributeMapperAction.
 * Dynamic (pluggable) view selection and model population capability for view states.
 * View state setup actions.
@@ -681,7 +686,8 @@ Changes in version PR3 (22.5.2005)
 * Miscellaneous code cleanup and JavaDoc enhancements.
 
 Changes in version PR2 (11.4.2005)
-------------------------------------
+----------------------------------
+
 * Added sample flow execution tests to PhoneBook sample app.
 * ViewDescriptor is now an AttributeSource.
 * Added Sell Item sample application, demonstrating a wizard using continuations to preserve use of back/refresh browser buttons.
@@ -730,5 +736,6 @@ Changes in version PR2 (11.4.2005)
 * Miscellaneous code cleanup and JavaDoc enhancements.
 
 Changes in version PR1 (30.3.2005)
-------------------------------------
+----------------------------------
+
 * First public preview release.
