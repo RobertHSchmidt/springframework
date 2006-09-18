@@ -97,19 +97,19 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * Here is an example implementation of such a compact form flow:
  * 
  * <pre>
- *                                  &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *                                      &lt;entry-actions&gt;
- *                                          &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *                                      &lt;/entry-actions&gt;
- *                                      &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
- *                                          &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
- *                                      &lt;/transition&gt;
- *                                  &lt;/view-state&gt;
+ *     &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *         &lt;entry-actions&gt;
+ *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *         &lt;/entry-actions&gt;
+ *         &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
+ *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *         &lt;/transition&gt;
+ *     &lt;/view-state&gt;
  *                                                                                
- *                                  &lt;action-state id=&quot;executeSearch&quot;&gt;
- *                                      &lt;action bean=&quot;searchFormAction&quot;/&gt;
- *                                      &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
- *                                  &lt;/action-state&gt;
+ *     &lt;action-state id=&quot;executeSearch&quot;&gt;
+ *         &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *         &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
+ *     &lt;/action-state&gt;
  * </pre>
  * 
  * </p>
@@ -150,22 +150,22 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * 
  * <pre>
  * public Event setupReferenceData(RequestContext context) throws Exception {
- * 	MutableAttributeMap requestScope = context.getRequestScope();
- * 	requestScope.put(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
- * 	return success();
+ *     MutableAttributeMap requestScope = context.getRequestScope();
+ *     requestScope.put(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
+ *     return success();
  * }
  * </pre>
  * 
  * ... and then invoke it like this:
  * 
  * <pre>
- *                                  &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *                                      &lt;entry-actions&gt;
- *                                          &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *                                          &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupReferenceData&quot;/&gt;
- *                                      &lt;/entry-actions&gt;
- *                                      ...
- *                                  &lt;/view-state&gt;
+ *     &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
+ *         &lt;render-actions&gt;
+ *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
+ *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupReferenceData&quot;/&gt;
+ *         &lt;/render-actions&gt;
+ *         ...
+ *     &lt;/view-state&gt;
  * </pre>
  * 
  * This style of calling multiple action methods in a chain (Chain of
@@ -187,15 +187,15 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * pattern:
  * 
  * <pre>
- *                                  public void ${validateMethodName}(${formObjectClass}, Errors)
+ *     public void ${validateMethodName}(${formObjectClass}, Errors)
  * </pre>
  * 
  * For instance, having a action definition like this:
  * 
  * <pre>
- *                                  &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;&gt;
- *                                      &lt;attribute name=&quot;validatorMethod&quot; value=&quot;validateSearchCriteria&quot;/&gt;
- *                                  &lt;/action&gt;
+ *     &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;&gt;
+ *         &lt;attribute name=&quot;validatorMethod&quot; value=&quot;validateSearchCriteria&quot;/&gt;
+ *     &lt;/action&gt;
  * </pre>
  * 
  * Would result in the
@@ -929,7 +929,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 			}
 		}
 		catch (NoSuchMethodException e) {
-			throw new IllegalStateException("Unable to resolve property editor registry accessor method as expected",e);
+			throw new IllegalStateException("Unable to resolve property editor registry accessor method as expected - this should not happen");
 		}
 		return (PropertyEditorRegistry)ReflectionUtils.invokeMethod(accessor, errors);
 	}
@@ -940,7 +940,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * following signature:
 	 * 
 	 * <pre>
-	 *             public void ${validateMethodName}(${formObjectClass}, Errors)
+	 *     public void ${validateMethodName}(${formObjectClass}, Errors)
 	 * </pre>
 	 * 
 	 * @param validatorMethod the name of the validator method to invoke
