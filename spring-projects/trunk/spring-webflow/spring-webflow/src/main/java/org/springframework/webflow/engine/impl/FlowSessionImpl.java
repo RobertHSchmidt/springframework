@@ -24,7 +24,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
@@ -51,30 +50,30 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	/**
 	 * The flow definition (a singleton).
 	 * <p>
-	 * Transient and package private to support restoration by the
+	 * Transient to support restoration by the
 	 * {@link FlowExecutionImplStateRestorer}.
 	 */
-	transient Flow flow;
+	private transient Flow flow;
 
 	/**
-	 * Set only on deserialization so the {@link #flow} field can be restored
-	 * by the {@link FlowExecutionImplStateRestorer}.
+	 * Set so the transient {@link #flow} field can be restored by the
+	 * {@link FlowExecutionImplStateRestorer}.
 	 */
-	String flowId;
+	private String flowId;
 
 	/**
 	 * The current state of this flow session.
 	 * <p>
-	 * Transient and package private to support restoration by the
+	 * Transient to support restoration by the
 	 * {@link FlowExecutionImplStateRestorer}.
 	 */
-	transient State state;
+	private transient State state;
 
 	/**
-	 * Set only on deserialization so the {@link #state} field can be restored
-	 * by the {@link FlowExecutionImplStateRestorer}.
+	 * Set so the transient {@link #state} field can be restored by the
+	 * {@link FlowExecutionImplStateRestorer}.
 	 */
-	String stateId;
+	private String stateId;
 
 	/**
 	 * The session status; may be CREATED, STARTING, ACTIVE, PAUSED, SUSPENDED,
@@ -88,7 +87,7 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	private LocalAttributeMap scope = new LocalAttributeMap();
 
 	/**
-	 * The parent session of this session (may be null if this is a root
+	 * The parent session of this session (may be <code>null</code> if this is a root
 	 * session.)
 	 */
 	private FlowSessionImpl parent;
@@ -103,14 +102,11 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 
 	/**
 	 * Create a new flow session.
-	 * @param flow the flow associated with this flow session
-	 * @param input the input parameters used to populate the flow session
-	 * @param parent the parent flow session of the created flow session in the
-	 * owning flow execution
+	 * @param flow the flow definition associated with this flow session
+	 * @param parent this session's parent (may be null)
 	 */
 	public FlowSessionImpl(Flow flow, FlowSessionImpl parent) {
-		Assert.notNull(flow, "The flow is required");
-		this.flow = flow;
+		setFlow(flow);
 		this.parent = parent;
 	}
 
@@ -140,32 +136,6 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 		return parent == null;
 	}
 
-	// helpers
-
-	/**
-	 * Set the current state of this flow session.
-	 * @param state the state that is currently active in this flow session
-	 */
-	protected void setState(State state) {
-		Assert.notNull(state, "The state is required");
-		Assert.isTrue(flow == state.getOwner(),
-				"The state does not belong to the flow associated with this flow session");
-		if (logger.isDebugEnabled()) {
-			logger.debug("Setting current state of '" + getDefinition().getId() + "@"
-					+ ObjectUtils.getIdentityHexString(this) + "' to '" + state.getId() + "'");
-		}
-		this.state = state;
-	}
-
-	/**
-	 * Set the status of this flow session.
-	 * @param status the new status to set
-	 */
-	protected void setStatus(FlowSessionStatus status) {
-		Assert.notNull(status);
-		this.status = status;
-	}
-
 	// custom serialization
 
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
@@ -177,25 +147,59 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	}
 
 	public void writeExternal(ObjectOutput out) throws IOException {
-		if (flow != null) {
-			out.writeObject(flow.getId());
-		}
-		else {
-			out.writeObject(flowId);
-		}
-		if (state != null) {
-			out.writeObject(state.getId());
-		}
-		else {
-			out.writeObject(stateId);
-		}
+		out.writeObject(flowId);
+		out.writeObject(stateId);
 		out.writeObject(status);
 		out.writeObject(scope);
 		out.writeObject(parent);
 	}
 
+	// package private setters for setting/updating internal state
+
+	/**
+	 * Restores the definition of this flow session.
+	 * @see FlowExecutionImplStateRestorer
+	 * @param flow the flow sessions definition
+	 */
+	void setFlow(Flow flow) {
+		Assert.notNull(flow, "The flow is required");
+		this.flow = flow;
+		this.flowId = flow.getId();
+	}
+
+	/**
+	 * Set the current state of this flow session.
+	 * @see FlowExecutionImpl#setCurrentState(State)
+	 * @see FlowExecutionImplStateRestorer
+	 * @param state the state that is currently active in this flow session
+	 */
+	void setState(State state) {
+		Assert.notNull(state, "The state is required");
+		Assert.isTrue(flow == state.getOwner(),
+				"The state does not belong to the flow associated with this flow session");
+		this.state = state;
+		this.stateId = state.getId();
+	}
+
+	/**
+	 * Set the status of this flow session.
+	 * @param status the new status to set
+	 */
+	protected void setStatus(FlowSessionStatus status) {
+		Assert.notNull(status, "The flow session status is requred");
+		this.status = status;
+	}
+	
+	String getFlowId() {
+		return flowId;
+	}
+
+	String getStateId() {
+		return stateId;
+	}
+
 	public String toString() {
-		return new ToStringCreator(this).append("flow", flow.getId()).append("state",
-				(state != null ? state.getId() : "[none]")).append("scope", scope).toString();
+		return new ToStringCreator(this).append("flow", flowId).append("state", stateId).append("scope", scope)
+				.toString();
 	}
 }

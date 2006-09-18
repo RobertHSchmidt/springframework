@@ -225,11 +225,11 @@ class RequestControlContextImpl implements RequestControlContext {
 	}
 
 	protected Flow getActiveFlowInternal() {
-		return getActiveSession().flow;
+		return (Flow)getActiveSession().getDefinition();
 	}
 
 	protected State getCurrentStateInternal() {
-		return getActiveSession().state;
+		return (State)getActiveSession().getState();
 	}
 
 	protected FlowSessionImpl getActiveSession() {

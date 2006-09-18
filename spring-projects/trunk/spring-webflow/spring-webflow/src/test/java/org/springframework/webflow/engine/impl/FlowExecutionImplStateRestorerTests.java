@@ -71,7 +71,7 @@ public class FlowExecutionImplStateRestorerTests extends TestCase {
 
 		MutableAttributeMap conversationScope = new LocalAttributeMap();
 		conversationScope.put("baz", "bear");
-		flowExecution.conversationScope = conversationScope;
+		flowExecution.setConversationScope(conversationScope);
 
 		flowLocator = new FlowDefinitionLocator() {
 			public FlowDefinition getFlowDefinition(String flowId) {
@@ -121,7 +121,7 @@ public class FlowExecutionImplStateRestorerTests extends TestCase {
 		assertNotNull(restoredFlowExecution);
 		assertFalse(restoredFlowExecution.isStateRestored());
 
-		stateRestorer.restoreState(restoredFlowExecution, flowExecution.conversationScope);
+		stateRestorer.restoreState(restoredFlowExecution, flowExecution.getConversationScope());
 		assertTrue(restoredFlowExecution.isStateRestored());
 
 		assertEquals(flowExecution.isActive(), restoredFlowExecution.isActive());
@@ -135,7 +135,7 @@ public class FlowExecutionImplStateRestorerTests extends TestCase {
 			assertSame(flowExecution.getDefinition(), restoredFlowExecution.getDefinition());
 		}
 		assertEquals(flowExecution.getListeners().size(), restoredFlowExecution.getListeners().size());
-		assertEquals(flowExecution.conversationScope, restoredFlowExecution.conversationScope);
+		assertEquals(flowExecution.getConversationScope(), restoredFlowExecution.getConversationScope());
 		assertEquals(flowExecution.getAttributes(), flowExecution.getAttributes());
 	}
 }

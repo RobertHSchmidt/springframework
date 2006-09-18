@@ -72,21 +72,22 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 		if (impl.isStateRestored()) {
 			return impl;
 		}
-		Flow flow = (Flow)definitionLocator.getFlowDefinition(impl.flowId);
-		impl.flow = flow;
-		Iterator it = impl.flowSessions.iterator();
+		Flow flow = (Flow)definitionLocator.getFlowDefinition(impl.getFlowId());
+		impl.setFlow(flow);
+		Iterator it = impl.getFlowSessions().iterator();
 		FlowSessionFlowDefinitionLocator locator = new FlowSessionFlowDefinitionLocator(flow, definitionLocator);
 		while (it.hasNext()) {
 			FlowSessionImpl session = (FlowSessionImpl)it.next();
-			session.flow = (Flow)locator.getFlowDefinition(session.flowId);
-			session.state = session.flow.getStateInternal(session.stateId);
+			Flow definition = (Flow)locator.getFlowDefinition(session.getFlowId());
+			session.setFlow(definition);
+			session.setState(definition.getStateInternal(session.getStateId()));
 		}
 		if (conversationScope == null) {
 			conversationScope = new LocalAttributeMap();
 		}
-		impl.conversationScope = conversationScope;
-		impl.listeners = new FlowExecutionListeners(executionListenerLoader.getListeners(flow));
-		impl.attributes = executionAttributes;
+		impl.setConversationScope(conversationScope);
+		impl.setListeners(new FlowExecutionListeners(executionListenerLoader.getListeners(flow)));
+		impl.setAttributes(executionAttributes);
 		return flowExecution;
 	}
 
