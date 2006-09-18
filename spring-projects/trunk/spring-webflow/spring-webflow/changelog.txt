@@ -115,7 +115,9 @@ Package org.springframework.webflow.engine
   Transition.execute now accepts the base State type now, no longer requiring a TransitionableState reference.
 * Made execution state restorer strategy always apply, updated execution impl types to keep transient 
   and serialized references in sync for VM clustering purposes.
-    
+* Extracted DocumentLoader strategy interface from XmlFlowBuilder to isolate dependency on DOM/SAX
+  DocumentBuilder factory logic.
+   
 Package org.springframework.webflow.execution
 * Decoupled the central RequestContext interface from the flow execution engine implementation.
 * Renamed the "flow" property of FlowExecutionContext to "definition" for consistency.
