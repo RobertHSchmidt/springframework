@@ -185,7 +185,7 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	 * Set the status of this flow session.
 	 * @param status the new status to set
 	 */
-	protected void setStatus(FlowSessionStatus status) {
+	void setStatus(FlowSessionStatus status) {
 		Assert.notNull(status, "The flow session status is requred");
 		this.status = status;
 	}
