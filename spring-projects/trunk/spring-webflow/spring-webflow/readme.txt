@@ -1,5 +1,5 @@
 SPRING WEB FLOW 1.0 RC4 (September 2006)
--------------------------------
+----------------------------------------
 http://www.springframework.org/webflow
 http://forum.springframework.org
 
@@ -15,7 +15,7 @@ typically span HTTP requests and may be dynamic in nature.
 
 SWF is a focused flow engine that integrates with existing frameworks like Spring MVC,
 Struts, and JSF, capable of capturing your application's page flow explicity in a
-declarative, reusable fashion.  SWF is a very a powerful framework based on a finite-state
+declarative, reusable fashion.  SWF is a very powerful framework based on a finite-state
 machine for the definition and execution of web conversations.
 
 2. RELEASE INFO
