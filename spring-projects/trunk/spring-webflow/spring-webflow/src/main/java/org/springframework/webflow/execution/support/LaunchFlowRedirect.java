@@ -22,15 +22,13 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.execution.ViewSelection;
 
 /**
- * <p>
  * Concrete response type that requests that a <i>new</i> execution of a flow
  * definition (representing the start of a new conversation) be launched.
- * </p>
  * <p>
  * This allows "redirect to new flow" semantics; useful for restarting a flow
  * after completion, or starting an entirely new flow from within the end state
  * of another flow definition.
- * </p>
+ * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
@@ -47,7 +45,7 @@ public final class LaunchFlowRedirect extends ViewSelection {
 	private final Map executionInput;
 
 	/**
-	 * Creates a new flow redirect.
+	 * Creates a new launch flow redirect.
 	 * @param flowDefinitionId the id of the flow definition to launch
 	 * @param executionInput the input data to pass to the new flow execution on launch
 	 */

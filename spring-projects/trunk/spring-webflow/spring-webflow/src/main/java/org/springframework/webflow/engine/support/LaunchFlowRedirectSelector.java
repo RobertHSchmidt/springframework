@@ -44,7 +44,7 @@ public class LaunchFlowRedirectSelector implements ViewSelector {
 	private Expression expression;
 
 	/**
-	 * Creates a new flow redirect selector
+	 * Creates a new launch flow redirect selector.
 	 * @param expression the parsed flow redirect expression, evaluatable to the
 	 * string format: flowDefinitionId?param1Name=parmValue&param2Name=paramValue
 	 */
@@ -59,8 +59,8 @@ public class LaunchFlowRedirectSelector implements ViewSelector {
 	public ViewSelection makeEntrySelection(RequestContext context) {
 		String encodedRedirect = (String)expression.evaluateAgainst(context, Collections.EMPTY_MAP);
 		if (encodedRedirect == null) {
-			throw new IllegalStateException("Flow definition redirect expression evaluated to [null], the expression was "
-					+ expression);
+			throw new IllegalStateException(
+					"Flow definition redirect expression evaluated to [null], the expression was " + expression);
 		}
 		// the encoded LaunchFlowRedirect should look something like
 		// "flowDefinitionId?param0=value0&param1=value1"
