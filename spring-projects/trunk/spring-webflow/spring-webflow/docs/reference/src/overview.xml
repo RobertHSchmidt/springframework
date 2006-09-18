@@ -98,7 +98,7 @@
 			framework, as SWF is a focused <emphasis>controller technology</emphasis> that expects a
 			calling system to care for request mapping and response rendering.  In this case, those users
 			will depend on a thin integration piece for their environment.  For example, those executing
-			flows within a Servlet might use the Spring MVC integration to care for dispatching
+			flows within a Servlet environment might use the Spring MVC integration to care for dispatching
 			requests to SWF and rendering responses for SWF view selections.
 		</para>
 		<para>			
@@ -126,15 +126,48 @@
 				<imagedata fileref="images/architecture-layer-diagram.png" format="PNG" align="center"/>
 			</imageobject>
 			<caption>
-				<para>Spring Web Flow Layer Diagram</para>
+				<para>Spring Web Flow layer diagram</para>
 			</caption>
 		</mediaobject>		
 	</sect1>
 	<sect1 id="introduction-structure-layer-description">
 		<title>Layer descriptions</title>
 		<para>
-			This section provides a description of each layer including subsystems and dependencies.
+			This section provides a description of each layer including subsystems and dependencies. The
+			structure of a layer is clarified using a table that details the following elements:
 		</para>
+		<itemizedlist spacing="compact">
+			<listitem>
+				<para>
+					<emphasis>Subsystem name</emphasis> - The name of the layer subsystem.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>Description</emphasis> - Provides a high level description of the contents
+					of the subsystem.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>Packages</emphasis> - The Java packages that contain the source code for
+					the subsystem. The packages are rooted at the <literal>org.springframework.webflow</literal>
+					root package in the package hierarchy.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>Subsystem interfaces</emphasis> - Central API elements exposed by the subsystem,
+					typically through Java interfaces.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>Internal dependencies</emphasis> - Dependencies of the subsystem. These could be
+					other subsystems of the layer or external libraries.
+				</para>
+			</listitem>
+		</itemizedlist>
 		<sect2 id="layer-execution-core">
 			<title>The Execution Core Layer (Bottom Layer)</title>
 			<para>
