@@ -1,7 +1,5 @@
 package org.springframework.webflow.action;
 
-import javax.swing.text.html.FormSubmitEvent.MethodType;
-
 import junit.framework.TestCase;
 
 import org.springframework.webflow.execution.Event;
@@ -22,7 +20,6 @@ public class ResultObjectEventFactoryTests extends TestCase {
 
 	public void testMappedTypes() {
 		assertTrue(factory.isMappedValueType(FlowSessionStatus.class));
-		assertTrue(factory.isMappedValueType(MethodType.class));
 		assertTrue(factory.isMappedValueType(boolean.class));
 		assertTrue(factory.isMappedValueType(Boolean.class));
 		assertTrue(factory.isMappedValueType(String.class));
