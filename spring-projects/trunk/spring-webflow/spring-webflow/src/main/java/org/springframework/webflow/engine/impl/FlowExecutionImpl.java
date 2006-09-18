@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -75,37 +76,34 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * The execution's root flow; the top level flow that acts as the starting
 	 * point for this flow execution.
 	 * <p>
-	 * Transient and package private to support restoration by the
+	 * Transient to support restoration by the
 	 * {@link FlowExecutionImplStateRestorer}.
 	 */
-	transient Flow flow;
+	private transient Flow flow;
 
 	/**
 	 * The stack of active, currently executing flow sessions. As subflows are
 	 * spawned, they are pushed onto the stack. As they end, they are popped off
 	 * the stack.
-	 * <p>
-	 * Package private to support restoration by the
-	 * {@link FlowExecutionImplStateRestorer}.
 	 */
-	LinkedList flowSessions;
+	private LinkedList flowSessions;
 
 	/**
 	 * A thread-safe listener list, holding listeners monitoring the lifecycle
 	 * of this flow execution.
 	 * <p>
-	 * Transient and package private to support restoration by the
+	 * Transient to support restoration by the
 	 * {@link FlowExecutionImplStateRestorer}.
 	 */
-	transient FlowExecutionListeners listeners;
+	private transient FlowExecutionListeners listeners;
 
 	/**
 	 * A data structure for attributes shared by all flow sessions.
 	 * <p>
-	 * Transient and package private to support restoration by the
+	 * Transient to support restoration by the
 	 * {@link FlowExecutionImplStateRestorer}.
 	 */
-	transient MutableAttributeMap conversationScope;
+	private transient MutableAttributeMap conversationScope;
 
 	/**
 	 * A data structure for runtime system execution attributes.
@@ -113,13 +111,13 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * Transient and package private to support restoration by the
 	 * {@link FlowExecutionImplStateRestorer}.
 	 */
-	transient AttributeMap attributes;
+	private transient AttributeMap attributes;
 
 	/**
-	 * Set only on deserialization so the {@link #flow} field can be restored by
-	 * the {@link FlowExecutionImplStateRestorer}.
+	 * Set so the transient {@link #flow} field can be restored by the
+	 * {@link FlowExecutionImplStateRestorer}.
 	 */
-	String flowId;
+	private String flowId;
 
 	/**
 	 * Default constructor required for externalizable serialization. Should NOT
@@ -145,8 +143,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * @param attributes flow execution system attributes
 	 */
 	public FlowExecutionImpl(Flow flow, FlowExecutionListener[] listeners, AttributeMap attributes) {
-		Assert.notNull(flow, "The root flow definition is required");
-		this.flow = flow;
+		setFlow(flow);
 		this.flowSessions = new LinkedList();
 		this.listeners = new FlowExecutionListeners(listeners);
 		this.attributes = (attributes != null ? attributes : CollectionUtils.EMPTY_ATTRIBUTE_MAP);
@@ -157,7 +154,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	public String getCaption() {
-		return "FlowExecution:flow=[" + (flow != null ? flow.getId() : flowId) + "]";
+		return "execution of '" + flowId + "'";
 	}
 
 	// implementing FlowExecutionContext
@@ -447,11 +444,11 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	private Flow getActiveFlow() {
-		return getActiveSessionInternal().flow;
+		return (Flow)getActiveSessionInternal().getDefinition();
 	}
 
 	private State getCurrentState() {
-		return getActiveSessionInternal().state;
+		return (State)getActiveSessionInternal().getState();
 	}
 
 	// custom serialization (implementation of Externalizable for optimized
@@ -463,12 +460,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	public void writeExternal(ObjectOutput out) throws IOException {
-		if (getDefinition() != null) {
-			out.writeObject(getDefinition().getId());
-		}
-		else {
-			out.writeObject(flowId);
-		}
+		out.writeObject(flowId);
 		out.writeObject(flowSessions);
 	}
 
@@ -489,5 +481,36 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 				return "[Unhydrated " + getCaption() + "]";
 			}
 		}
+	}
+
+	// package private setters for restoring transient state
+
+	void setFlow(Flow flow) {
+		Assert.notNull(flow, "The root flow definition is required");
+		this.flow = flow;
+		this.flowId = flow.getId();
+	}
+
+	void setListeners(FlowExecutionListeners listeners) {
+		Assert.notNull(listeners, "The execution listener list is required");
+		this.listeners = listeners;
+	}
+
+	void setAttributes(AttributeMap attributes) {
+		Assert.notNull(conversationScope, "The execution attribute map is required");
+		this.attributes = attributes;
+	}
+
+	void setConversationScope(MutableAttributeMap conversationScope) {
+		Assert.notNull(conversationScope, "The conversation scope map is required");
+		this.conversationScope = conversationScope;
+	}
+
+	String getFlowId() {
+		return flowId;
+	}
+
+	List getFlowSessions() {
+		return flowSessions;
 	}
 }
