@@ -25,7 +25,6 @@ import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.engine.builder.RefreshableFlowDefinitionHolder;
-import org.xml.sax.EntityResolver;
 
 /**
  * A flow registrar that populates a flow registry from flow definitions defined
@@ -43,15 +42,15 @@ import org.xml.sax.EntityResolver;
  * </p>
  * 
  * <pre class="code">
- *       BeanFactory beanFactory = ...
- *       FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
- *       FlowServiceLocator flowServiceLocator =
- *           new DefaultFlowServiceLocator(registry, beanFactory);
- *       XmlFlowRegistrar registrar = new XmlFlowRegistrar(flowServiceLocator);
- *       File parent = new File(&quot;src/webapp/WEB-INF&quot;);
- *       registrar.addLocation(new FileSystemResource(new File(parent, &quot;flow1.xml&quot;));
- *       registrar.addLocation(new FileSystemResource(new File(parent, &quot;flow2.xml&quot;));
- *       registrar.registerFlows(registry);
+ *     BeanFactory beanFactory = ...
+ *     FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
+ *     FlowServiceLocator flowServiceLocator =
+ *         new DefaultFlowServiceLocator(registry, beanFactory);
+ *     XmlFlowRegistrar registrar = new XmlFlowRegistrar(flowServiceLocator);
+ *     File parent = new File(&quot;src/webapp/WEB-INF&quot;);
+ *     registrar.addLocation(new FileSystemResource(new File(parent, &quot;flow1.xml&quot;));
+ *     registrar.addLocation(new FileSystemResource(new File(parent, &quot;flow2.xml&quot;));
+ *     registrar.registerFlows(registry);
  * </pre>
  * 
  * @author Keith Donald
@@ -64,25 +63,18 @@ public class XmlFlowRegistrar extends ExternalizedFlowDefinitionRegistrar {
 	private static final String XML_SUFFIX = ".xml";
 
 	/**
-	 * The locator of services needed by the Flows built for inclusion in the
-	 * registry.
+	 * The locator of services needed by flow definitions.
 	 */
 	private FlowServiceLocator flowServiceLocator;
 
 	/**
-	 * A flag indicating whether or not the flow builder used to build the flow
-	 * definitions in this registry should perform build-time validation.
+	 * The loader of XML-based flow definition documents.
 	 */
-	private boolean builderValidating = true;
+	private DocumentLoader documentLoader;
 
 	/**
-	 * The entity resolver to use during Xml flow definition building.
-	 */
-	private EntityResolver entityResolver;
-
-	/**
-	 * Creates a new xml flow registrar.  Protected constructor - if used, make sure 
-	 * the required {@link #flowServiceLocator} reference is set.
+	 * Creates a new xml flow registrar. Protected constructor - if used, make
+	 * sure the required {@link #flowServiceLocator} reference is set.
 	 */
 	protected XmlFlowRegistrar() {
 
@@ -90,7 +82,8 @@ public class XmlFlowRegistrar extends ExternalizedFlowDefinitionRegistrar {
 
 	/**
 	 * Creates a new xml flow registrar.
-	 * @param flowServiceLocator the locator needed to support flow definition assembly.
+	 * @param flowServiceLocator the locator needed to support flow definition
+	 * assembly.
 	 */
 	public XmlFlowRegistrar(FlowServiceLocator flowServiceLocator) {
 		setFlowServiceLocator(flowServiceLocator);
@@ -98,7 +91,7 @@ public class XmlFlowRegistrar extends ExternalizedFlowDefinitionRegistrar {
 
 	/**
 	 * Sets the flow service locator.
-	 * @param flowServiceLocator the flow service locator, may not be null
+	 * @param flowServiceLocator the flow service locator (may not be null)
 	 */
 	protected void setFlowServiceLocator(FlowServiceLocator flowServiceLocator) {
 		Assert.notNull(flowServiceLocator, "The flow service locator is required");
@@ -113,20 +106,13 @@ public class XmlFlowRegistrar extends ExternalizedFlowDefinitionRegistrar {
 	}
 
 	/**
-	 * Sets whether or not the flow builder used to build the flow definitions
-	 * in this registry should perform build-time validation.
-	 * @param builderValidating the validating flag
+	 * Sets the loader to load XML-based flow definition documents during flow
+	 * definition assembly. Allows for customization over how documents are
+	 * loaded. Optional.
+	 * @param documentLoader the document loader
 	 */
-	public void setBuilderValidating(boolean builderValidating) {
-		this.builderValidating = builderValidating;
-	}
-
-	/**
-	 * Sets the entity resolver to use during Xml flow definition building.
-	 * @param entityResolver the entity resolver
-	 */
-	public void setEntityResolver(EntityResolver entityResolver) {
-		this.entityResolver = entityResolver;
+	public void setDocumentLoader(DocumentLoader documentLoader) {
+		this.documentLoader = documentLoader;
 	}
 
 	protected boolean isFlowDefinitionResource(Resource resource) {
@@ -139,18 +125,24 @@ public class XmlFlowRegistrar extends ExternalizedFlowDefinitionRegistrar {
 		return new RefreshableFlowDefinitionHolder(assembler);
 	}
 
+	/**
+	 * Factory method that creates and fully initializes the XML-based flow
+	 * definition builder.
+	 * @param location the xml-based resource
+	 * @return the builder to build the flow definition from the resource.
+	 */
 	protected FlowBuilder createFlowBuilder(Resource location) {
 		XmlFlowBuilder builder = new XmlFlowBuilder(location, getFlowServiceLocator());
-		builder.setValidating(builderValidating);
-		if (entityResolver != null) {
-			builder.setEntityResolver(entityResolver);
+		if (documentLoader != null) {
+			builder.setDocumentLoader(documentLoader);
 		}
 		return builder;
 	}
 
 	/**
-	 * Convenience factory method that converts the specified resource location into
-	 * a {@link Resource} object using the configured {@link ResourceLoader} on the
+	 * Convenience factory method that converts the specified resource location
+	 * into a {@link Resource} object using the configured
+	 * {@link ResourceLoader} on the
 	 * {@link #getFlowServiceLocator() flow service locator}.
 	 * @param location the resource string
 	 * @return the resource
