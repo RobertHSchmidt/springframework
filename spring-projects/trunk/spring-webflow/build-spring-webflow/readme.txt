@@ -21,7 +21,7 @@ DEVELOPERS
   2. From this directory, run:
 		ant release
 		
-     The release archive will created and placed in:
+     The release archive will be created and placed in:
      	target/release
      	                	
-Questions? See http://forum.springframework.org
+Questions? See http://forum.springframework.org.
