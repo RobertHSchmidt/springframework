@@ -2,13 +2,13 @@
 
 <!--
  Copyright 2002-2005 the original author or authors.
-  
+
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
- 
+
       http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,7 @@
 
  - - -
  Author: Alef Arendsen
- 
+
  Targets for generating reference documentation.
 -->
 
@@ -25,11 +25,22 @@
 
 	<import file="common-targets.xml" />
 
-	<target name="doc.clean" description="Delete temporary directories for reference docs">
+	<target name="doc-targets">
+		<echo>
+Targets for generating reference documentation.
+
+Please execute
+	ant -p
+
+to see a list of all relevant targets.
+		</echo>
+	</target>
+
+	<target name="doc-clean" description="Delete temporary directories for reference docs">
 		<delete quiet="true" dir="${docs.ref.target.dir}" />
 	</target>
 
-	<target name="doc.prepare" description="Prepare the documentation for generation">
+	<target name="doc-prepare">
 		<fail message="Supporting libraries needed to generate documentation not found in: ${docs.ref.lib.dir}, please see docs/reference/readme.txt for instructions.">
 			<condition>
 				<not>
@@ -39,7 +50,7 @@
 		</fail>
 	</target>
 
-	<target name="doc-pdf" depends="doc.prepare" description="Generate PDF reference documentation">
+	<target name="doc-pdf" depends="doc-prepare" description="Generate PDF reference documentation">
 		<mkdir dir="${docs.ref.target.dir}/pdf/images" />
 		<copy todir="${docs.ref.target.dir}/pdf/images">
 			<fileset dir="${docs.ref.src.dir}/images">
@@ -81,7 +92,7 @@
 		<delete file="${docs.ref.target.dir}/pdf/docbook_fop.tmp" />
 	</target>
 
-	<target name="doc-html" depends="doc.prepare" description="Generate multi-page HTML reference documentation">
+	<target name="doc-html" depends="doc-prepare" description="Generate multi-page HTML reference documentation">
 		<mkdir dir="${docs.ref.target.dir}/html/images" />
 		<mkdir dir="${docs.ref.target.dir}/html_single/styles" />
 		<copy todir="${docs.ref.target.dir}/html/images">
@@ -112,7 +123,7 @@
 		<delete file="${docs.ref.target.dir}/html/docbook_fop.tmp" />
 	</target>
 
-	<target name="doc-htmlsingle" description="Generate single-page HTML reference documentation">
+	<target name="doc-htmlsingle" depends="doc-prepare" description="Generate single-page HTML reference documentation">
 		<mkdir dir="${docs.ref.target.dir}/html_single/images" />
 		<mkdir dir="${docs.ref.target.dir}/html_single/styles" />
 		<copy todir="${docs.ref.target.dir}/html_single/images">
