@@ -86,11 +86,9 @@ public class FlowExecutionImplStateRestorerTests extends TestCase {
 				return listeners;
 			}
 		};
-		
 		stateRestorer = new FlowExecutionImplStateRestorer(flowLocator);
 		stateRestorer.setExecutionListenerLoader(listenerLoader);
 		stateRestorer.setExecutionAttributes(attributes);
-
 	}
 
 	public void testRehydrate() throws Exception {
@@ -119,11 +117,10 @@ public class FlowExecutionImplStateRestorerTests extends TestCase {
 		ObjectInputStream oin = new ObjectInputStream(bin);
 		FlowExecutionImpl restoredFlowExecution = (FlowExecutionImpl)oin.readObject();
 		assertNotNull(restoredFlowExecution);
-		assertFalse(restoredFlowExecution.isStateRestored());
+		assertNull(restoredFlowExecution.getDefinition());
 
 		stateRestorer.restoreState(restoredFlowExecution, flowExecution.getConversationScope());
-		assertTrue(restoredFlowExecution.isStateRestored());
-
+		assertNotNull(restoredFlowExecution.getDefinition());
 		assertEquals(flowExecution.isActive(), restoredFlowExecution.isActive());
 		if (flowExecution.isActive()) {
 			assertEquals(flowExecution.getActiveSession().getScope().asMap(), restoredFlowExecution.getActiveSession()
