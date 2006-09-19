@@ -21,6 +21,8 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 
 import org.springframework.web.util.WebUtils;
+import org.springframework.webflow.context.servlet.HttpSessionMapBindingListener;
+import org.springframework.webflow.core.collection.AttributeMapBindingListener;
 import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.core.collection.SharedMap;
 import org.springframework.webflow.core.collection.StringKeyedMapAdapter;
@@ -62,11 +64,25 @@ public class PortletSessionMap extends StringKeyedMapAdapter implements SharedMa
 
 	protected Object getAttribute(String key) {
 		PortletSession session = getSession();
-		return (session == null) ? null : session.getAttribute(key, scope);
+		if (session == null) {
+			return null;
+		}
+		Object value = session.getAttribute(key);
+		if (value instanceof HttpSessionMapBindingListener) {
+			return ((HttpSessionMapBindingListener)value).getListener();
+		} else {
+			return value;
+		}
 	}
 
 	protected void setAttribute(String key, Object value) {
-		request.getPortletSession(true).setAttribute(key, value, scope);
+		PortletSession session = request.getPortletSession(true);
+		if (value instanceof AttributeMapBindingListener) {
+			session.setAttribute(key, new HttpSessionMapBindingListener((AttributeMapBindingListener)value, this));
+		}
+		else {
+			session.setAttribute(key, value);
+		}
 	}
 
 	protected void removeAttribute(String key) {
