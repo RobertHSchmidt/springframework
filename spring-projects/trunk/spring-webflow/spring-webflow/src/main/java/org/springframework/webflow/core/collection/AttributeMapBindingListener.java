@@ -17,7 +17,7 @@ package org.springframework.webflow.core.collection;
 
 /**
  * Causes an object to be notified when it is bound or unbound from
- * an <code>AttributeMap</code>.
+ * an {@link AttributeMap}.
  * 
  * @see AttributeMap
  * 
