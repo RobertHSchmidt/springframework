@@ -32,7 +32,7 @@ import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.core.collection.SharedAttributeMap;
 
 /**
- * Provides contextual information about a JSR 168 portlet environment that has
+ * Provides contextual information about a JSR-168 Portlet environment that has
  * called into Spring Web Flow.
  * 
  * @author Keith Donald
@@ -55,9 +55,10 @@ public class PortletExternalContext implements ExternalContext {
 	private PortletResponse response;
 
 	/**
-	 * Create an external context wrapping given portlet request and response.
-	 * @param request the portlet request
-	 * @param response the portlet response
+	 * Create an external context wrapping given Portlet context, request and response.
+	 * @param context the Portlet context
+	 * @param request the Portlet request
+	 * @param response the Portlet response
 	 */
 	public PortletExternalContext(PortletContext context, PortletRequest request, PortletResponse response) {
 		this.context = context;
@@ -99,7 +100,7 @@ public class PortletExternalContext implements ExternalContext {
 
 	/**
 	 * Returns the {@link PortletRequest#USER_INFO} map as a mutable attribute map.
-	 * @return the portlet user info
+	 * @return the Portlet user info
 	 */
 	public MutableAttributeMap getUserInfoMap() {
 		Map userInfo = (Map)request.getAttribute(PortletRequest.USER_INFO);
@@ -111,21 +112,21 @@ public class PortletExternalContext implements ExternalContext {
 	}
 
 	/**
-	 * Returns the wrapped portlet context.
+	 * Returns the wrapped Portlet context.
 	 */
 	public PortletContext getContext() {
 		return context;
 	}
 
 	/**
-	 * Returns the wrapped portlet request.
+	 * Returns the wrapped Portlet request.
 	 */
 	public PortletRequest getRequest() {
 		return request;
 	}
 
 	/**
-	 * Returns the wrapped portlet response.
+	 * Returns the wrapped Portlet response.
 	 */
 	public PortletResponse getResponse() {
 		return response;

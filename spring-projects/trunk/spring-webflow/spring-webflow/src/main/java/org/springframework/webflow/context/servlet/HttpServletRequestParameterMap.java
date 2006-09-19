@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.context.servlet;
 
-import java.util.Enumeration;
 import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.binding.collection.StringKeyedMapAdapter;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.webflow.core.collection.CollectionUtils;
+import org.springframework.webflow.core.collection.CompositeIterator;
 
 /**
  * Map backed by the Servlet HTTP request parameter map for accessing request
@@ -72,48 +72,15 @@ public class HttpServletRequestParameterMap extends StringKeyedMapAdapter {
 	}
 
 	protected Iterator getAttributeNames() {
-		Enumeration parameterNames = request.getParameterNames();
 		if (request instanceof MultipartHttpServletRequest) {
 			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request;
-			return new MultiPartIterator(multipartRequest.getFileMap().keySet().iterator(), parameterNames);
+			CompositeIterator iterator = new CompositeIterator();
+			iterator.add(multipartRequest.getFileMap().keySet().iterator());
+			iterator.add(CollectionUtils.toIterator(request.getParameterNames()));
+			return iterator;
 		}
 		else {
-			return CollectionUtils.toIterator(parameterNames);
+			return CollectionUtils.toIterator(request.getParameterNames());
 		}
-	}
-
-	/**
-	 * A iterator that combines elements in the multipart map with those of
-	 * the request parameter map.
-	 * 
-	 * @author Keith Donald
-	 */
-	private static class MultiPartIterator implements Iterator {
-
-		private Iterator fileMapNames;
-
-		private Enumeration parameterNames;
-
-		public MultiPartIterator(Iterator fileMapNames, Enumeration parameterNames) {
-			this.fileMapNames = fileMapNames;
-			this.parameterNames = parameterNames;
-		}
-
-		public boolean hasNext() {
-			return fileMapNames.hasNext() || parameterNames.hasMoreElements();
-		}
-
-		public Object next() {
-			if (fileMapNames.hasNext()) {
-				return fileMapNames.next();
-			}
-			else {
-				return parameterNames.nextElement();
-			}
-		}
-
-		public void remove() {
-			throw new UnsupportedOperationException("Remove not supported");
-		}		
 	}
 }

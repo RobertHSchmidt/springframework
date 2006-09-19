@@ -20,7 +20,9 @@ import java.util.Iterator;
 import javax.portlet.PortletRequest;
 
 import org.springframework.binding.collection.StringKeyedMapAdapter;
+import org.springframework.web.portlet.multipart.MultipartActionRequest;
 import org.springframework.webflow.core.collection.CollectionUtils;
+import org.springframework.webflow.core.collection.CompositeIterator;
 
 /**
  * Map backed by the Portlet request parameter map for accessing request local
@@ -43,6 +45,13 @@ public class PortletRequestParameterMap extends StringKeyedMapAdapter {
 	}
 
 	protected Object getAttribute(String key) {
+		if (request instanceof MultipartActionRequest) {
+			MultipartActionRequest multipartRequest = (MultipartActionRequest)request;
+			Object data = multipartRequest.getFileMap().get(key);
+			if (data != null) {
+				return data;
+			}
+		}
 		String[] parameters = request.getParameterValues(key);
 		if (parameters == null) {
 			return null;
@@ -62,6 +71,15 @@ public class PortletRequestParameterMap extends StringKeyedMapAdapter {
 	}
 
 	protected Iterator getAttributeNames() {
-		return CollectionUtils.toIterator(request.getParameterNames());
+		if (request instanceof MultipartActionRequest) {
+			MultipartActionRequest multipartRequest = (MultipartActionRequest)request;
+			CompositeIterator iterator = new CompositeIterator();
+			iterator.add(multipartRequest.getFileMap().keySet().iterator());
+			iterator.add(CollectionUtils.toIterator(request.getParameterNames()));
+			return iterator;
+		}
+		else {
+			return CollectionUtils.toIterator(request.getParameterNames());
+		}
 	}
 }
