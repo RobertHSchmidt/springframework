@@ -18,9 +18,9 @@ package org.springframework.binding.convert.support;
 import java.util.Collections;
 import java.util.Map;
 
+import org.springframework.binding.collection.MapAccessor;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.Converter;
-import org.springframework.binding.core.MapAccessor;
 
 /**
  * Base class for converters provided as a convenience to implementors.

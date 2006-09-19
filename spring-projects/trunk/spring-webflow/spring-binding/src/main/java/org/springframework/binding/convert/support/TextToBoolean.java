@@ -15,7 +15,7 @@
  */
 package org.springframework.binding.convert.support;
 
-import org.springframework.binding.core.MapAccessor;
+import org.springframework.binding.collection.MapAccessor;
 import org.springframework.util.StringUtils;
 
 /**

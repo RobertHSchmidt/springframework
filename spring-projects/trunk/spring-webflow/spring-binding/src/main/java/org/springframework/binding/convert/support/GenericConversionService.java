@@ -24,11 +24,11 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.binding.collection.MapAccessor;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.ConversionServiceAware;
 import org.springframework.binding.convert.Converter;
-import org.springframework.binding.core.MapAccessor;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
