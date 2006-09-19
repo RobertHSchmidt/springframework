@@ -356,7 +356,7 @@
             					Engine Implementation,
             					Spring Beans 1.2.7,
             					Spring Context 1.2.7,
-            					<literal>builder.xml</literal> requires JDK 1.4 or Xerces
+            					<literal>builder.xml</literal> requires JDK 1.5 or Xerces for XSD support
             				</entry>
         	       		</row>
             	   </tbody>
