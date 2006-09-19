@@ -32,14 +32,15 @@ import org.xml.sax.SAXException;
 
 /**
  * <p>
- * The default document loader strategy for XSD-based XML documents with 
+ * The default document loader strategy for XSD-based XML documents with
  * validation enabled by default.
  * </p>
  * <p>
- * Note: full XSD support requires JDK 5.0 or a capable parser such as Xerces 2.0.  
- * JDK 1.4 or < does not fully support XSD out of the box.  To use this implementation on 
- * JDK 1.4 make sure Xerces is available in your classpath or disable XSD validation 
- * by {@link #setValidating(boolean) setting the validating property to false}.
+ * Note: full XSD support requires JDK 5.0 or a capable parser such as Xerces
+ * 2.0. JDK 1.4 or < does not fully support XSD out of the box. To use this
+ * implementation on JDK 1.4 make sure Xerces is available in your classpath or
+ * disable XSD validation by
+ * {@link #setValidating(boolean) setting the validating property to false}.
  * </p>
  * @author Keith Donald
  */
@@ -108,7 +109,16 @@ public class DefaultDocumentLoader implements DocumentLoader {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setValidating(isValidating());
 			factory.setNamespaceAware(true);
-			factory.setAttribute(SCHEMA_LANGUAGE_ATTRIBUTE, XSD_SCHEMA_LANGUAGE);
+			try {
+				factory.setAttribute(SCHEMA_LANGUAGE_ATTRIBUTE, XSD_SCHEMA_LANGUAGE);
+			}
+			catch (IllegalArgumentException ex) {
+				throw new IllegalStateException("Unable to validate using XSD: Your JAXP provider [" + factory
+						+ "] does not support XML Schema. "
+						+ "Are you running on Java 1.4 or below with Apache Crimson? "
+						+ "If so you must upgrade to Apache Xerces (or Java 5 or >) for full XSD support "
+						+ "or turn off schema validation.");
+			}
 			DocumentBuilder docBuilder = factory.newDocumentBuilder();
 			docBuilder.setErrorHandler(new SimpleSaxErrorHandler(logger));
 			docBuilder.setEntityResolver(getEntityResolver());
