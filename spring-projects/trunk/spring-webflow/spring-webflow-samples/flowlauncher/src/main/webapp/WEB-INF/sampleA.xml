@@ -24,6 +24,6 @@
 		<transition on="end" to="aPage" />
 	</subflow-state>
 
-	<end-state id="endAndLaunchB" view="launchFlow:sampleB?input=${requestParameters.input}" />
+	<end-state id="endAndLaunchB" view="flowRedirect:sampleB?input=${requestParameters.input}" />
 
 </flow>
