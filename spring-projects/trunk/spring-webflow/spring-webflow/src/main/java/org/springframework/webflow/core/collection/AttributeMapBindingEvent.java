@@ -21,8 +21,9 @@ import java.util.EventObject;
  * Holder for information about the binding or unbinding event in an
  * <code>AttributeMap</code>.
  * 
+ * @see AttributeMapBindingListener
+ * 
  * @author Ben Hale
- * @see AttributeMap
  */
 public class AttributeMapBindingEvent extends EventObject {
 
@@ -32,10 +33,10 @@ public class AttributeMapBindingEvent extends EventObject {
 
 	/**
 	 * Creates an event for map binding that contains information about the
-	 * event
-	 * @param source The source map that this attribute was bound in
-	 * @param attributeName The name that this attribute was bound with
-	 * @param attributeValue The attribute
+	 * event.
+	 * @param source the source map that this attribute was bound in
+	 * @param attributeName the name that this attribute was bound with
+	 * @param attributeValue the attribute
 	 */
 	public AttributeMapBindingEvent(AttributeMap source, String attributeName, Object attributeValue) {
 		super(source);
@@ -44,10 +45,16 @@ public class AttributeMapBindingEvent extends EventObject {
 		this.attributeValue = attributeValue;
 	}
 
+	/**
+	 * Returns the name the attribute was bound with.
+	 */
 	public String getAttributeName() {
 		return attributeName;
 	}
 
+	/**
+	 * Returns the value of the attribute.
+	 */
 	public Object getAttributeValue() {
 		return attributeValue;
 	}

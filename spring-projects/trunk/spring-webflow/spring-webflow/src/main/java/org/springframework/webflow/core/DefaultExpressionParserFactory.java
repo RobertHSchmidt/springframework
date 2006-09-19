@@ -16,13 +16,12 @@
 package org.springframework.webflow.core;
 
 import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.binding.expression.support.OgnlExpressionParser;
 
 /**
  * Factory that creates instances of the default expression parser used by
  * Spring Web Flow when requested.
  * <p>
- * Returns {@link OgnlExpressionParser} by default. Also asserts that OGNL is in
+ * Returns {@link WebFlowOgnlExpressionParser} by default. Also asserts that OGNL is in
  * the classpath when this class is loaded.
  * 
  * @author Keith Donald
@@ -32,7 +31,8 @@ public class DefaultExpressionParserFactory {
 	private static ExpressionParser INSTANCE;
 	
 	/**
-	 * Returns the default expression parser.
+	 * Returns the default expression parser. The returned expression parser
+	 * is a thread-safe object.
 	 * @return the expression parser
 	 */
 	public synchronized ExpressionParser getExpressionParser() {
@@ -42,6 +42,11 @@ public class DefaultExpressionParserFactory {
 		return INSTANCE;
 	}
 	
+	/**
+	 * Create the default expression parser. This implementation returns
+	 * a {@link WebFlowOgnlExpressionParser}.
+	 * @return the default expression parser
+	 */
 	protected ExpressionParser createDefaultExpressionParser() {
 		try {
 			Class.forName("ognl.Ognl");

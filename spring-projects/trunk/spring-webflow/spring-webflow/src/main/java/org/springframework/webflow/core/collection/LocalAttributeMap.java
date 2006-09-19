@@ -54,6 +54,8 @@ public class LocalAttributeMap implements MutableAttributeMap, Serializable {
 
 	/**
 	 * Creates a new attribute map, initially empty.
+     * @param size the initial size
+     * @param loadFactor the load factor
 	 */
 	public LocalAttributeMap(int size, int loadFactor) {
 		initAttributes(createTargetMap(size, loadFactor));
@@ -218,7 +220,7 @@ public class LocalAttributeMap implements MutableAttributeMap, Serializable {
 		}
 	}
 
-	// mutators
+	// implementing MutableAttributeMap
 
 	public Object put(String attributeName, Object attributeValue) {
 		return getMapInternal().put(attributeName, attributeValue);
@@ -279,6 +281,8 @@ public class LocalAttributeMap implements MutableAttributeMap, Serializable {
 	/**
 	 * Factory method that returns the target map storing the data in this
 	 * attribute map.
+	 * @param size the initial size of the map
+	 * @param loadFactor the load factor
 	 * @return the target map
 	 */
 	protected Map createTargetMap(int size, int loadFactor) {

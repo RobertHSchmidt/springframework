@@ -35,10 +35,9 @@ import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * A base class for map decorators who manage the storage of immutable
- * String-keyed, String-valued parameters in a backing {@link Map}
- * implementation. This base provides convenient operations for accessing
- * parameters in a typed-manner.
+ * An immutable parameter map storing String-keyed, String-valued parameters
+ * in a backing {@link Map} implementation. This base provides convenient
+ * operations for accessing parameters in a typed-manner.
  * 
  * @author Keith Donald
  */
