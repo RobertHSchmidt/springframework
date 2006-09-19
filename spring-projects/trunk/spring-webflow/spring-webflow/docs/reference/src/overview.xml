@@ -541,7 +541,7 @@
             				<entry>None</entry>
             				<entry>
             					Spring Beans 1.2.7,
-            					XSD support requires Spring 2.0
+            					<literal>spring-webflow-config-1.0</literal> XSD support requires Spring 2.0
             				</entry>
         	            </row>
  					</tbody>
@@ -564,7 +564,9 @@
 	<sect1 id="introduction-support">
 		<title>Support</title>
 		<para>
-			Spring Web Flow 1.0 is supported on Spring 1.2.7 or later.
+			Spring Web Flow 1.0 RC4 is supported on Spring 1.2.7 or > for the Spring 1.x series.
+			Spring Web Flow 1.0 RC4 is supported on Spring 2.0 RC4 or > for the Spring 2.x series.
+			XML-based flow building requires Xerces or JDK 1.5 (for XSD support)
 			The Portlet integration requires Spring 2.0.
 		</para>
 		<para>
