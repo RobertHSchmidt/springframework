@@ -150,8 +150,8 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowBuildingFlowRegistry
 
 	/**
 	 * Sets the loader to load XML-based flow definition documents during flow
-	 * definition assembly. Allows for customization over how documents are
-	 * loaded. Optional.
+	 * definition assembly. Allows for customization over how flow definition 
+	 * documents are loaded. Optional.
 	 * @param documentLoader the document loader
 	 */
 	public void setDocumentLoader(DocumentLoader documentLoader) {
