@@ -25,7 +25,6 @@ import org.springframework.beans.propertyeditors.PropertiesEditor;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.DataBinder;
@@ -37,6 +36,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.util.DispatchMethodInvoker;
+import org.springframework.webflow.util.ReflectionUtils;
 
 /**
  * Multi-action that implements common logic dealing with input forms. This
