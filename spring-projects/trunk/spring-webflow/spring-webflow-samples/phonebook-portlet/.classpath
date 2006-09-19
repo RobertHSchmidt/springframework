@@ -9,7 +9,6 @@
 	<classpathentry kind="lib" path="lib/global/spring-core.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-beans.jar"/>
 	<classpathentry kind="lib" path="lib/global/ognl.jar"/>
-	<classpathentry kind="lib" path="lib/buildtime/servlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-codec.jar"/>
 	<classpathentry kind="lib" path="lib/global/jstl.jar"/>
 	<classpathentry kind="lib" path="lib/global/junit.jar"/>
@@ -18,7 +17,6 @@
 	<classpathentry kind="lib" path="lib/global/spring-web.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-webflow.jar"/>
 	<classpathentry kind="lib" path="lib/global/standard.jar"/>
-	<classpathentry kind="lib" path="lib/global/spring-portlet.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-webmvc.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
