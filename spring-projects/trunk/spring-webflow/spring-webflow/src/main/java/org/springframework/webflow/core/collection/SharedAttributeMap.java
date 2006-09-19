@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.core.collection;
 
-
 /**
  * An interface to be implemented by mutable attribute maps accessed by
  * multiple threads that need to be synchronized.
