@@ -767,13 +767,13 @@
               				<entry>Requests the rendering of a local, internal application view resource such as a JSP, Velocity, or Freemarker template.</entry>
  						</row>
             			<row>
-              				<entry>FlowExecutionRedirect</entry>
+              				<entry>ApplicationViewRedirect</entry>
               				<entry>
               					Requests a redirect back to a ViewState at a unique <emphasis>flow execution URL</emphasis>.  
               					When this URL is accessed on subsequent requests an ApplicationView will be reconstituted and rendered.
               					The URL is refreshable while the flow execution remains active.
 								<para>        				
-              						Multiple flow execution URLs may be generated for a single logical conversation.  
+              						Multiple flow execution URLs may be generated for a single logical conversation.
               						In that case each flow execution URL provides access to a paused flow execution
               						continuation waiting in a restorable ViewState.
               						Accessing the URL refreshes the execution from that state.
@@ -834,7 +834,7 @@
 									<literal>modelMap</literal> with the application data needed by the rendering process
 									(by default, this map contains the union of the attributes in flow and request scope).
 									Supports setting a <literal>redirect</literal> flag that triggers
-									a browser redirect to the selected view using a <literal>FlowExecutionRedirect</literal>.
+									a browser redirect to the selected view using a <literal>ApplicationViewRedirect</literal>.
 									The default implementation.
 								</entry>
 	        	   	        </row>
@@ -934,10 +934,10 @@
     			</programlisting>
 			</sect3>
     	    <sect3 id="viewStateXml-redirect">
-    	    	<title>ViewState XML - flow execution redirect</title>
+    	    	<title>ViewState XML - application view redirect</title>
     	    	<para>
-    	    	    The following example illustrates a <literal>view-state</literal> definition in XML that makes a
-    	    	    flow execution redirect selection when entered, redirecting to the
+    	    	    The following example illustrates a <literal>view-state</literal> definition in XML that makes an
+    	    	    application view redirect selection when entered, redirecting to the
     	    	    <literal>yourList</literal> view for display.
     	    	</para>
     	    	<programlisting>
@@ -960,14 +960,14 @@
     			</programlisting>
 			</sect3>
 			<para>
-			    This example is called a <emphasis>flow execution redirect</emphasis> because the application view selected 
+			    This example is called a <emphasis>application view redirect</emphasis> because the application view selected 
 			    is constructed only after a redirect to the flow execution.  The redirect is sent to a
 			    URL that <emphasis>refreshes</emphasis> the flow execution which is paused at the <literal>displayList</literal>
 			    view state, triggering the rendering of the <literal>yourList</literal> application view on the next request
 			    into the server.
 			</para>
     	    <sect3 id="viewStateJava-redirect">
-    	    	<title>ViewState API - flow execution redirect</title>
+    	    	<title>ViewState API - application view redirect</title>
     	    	<para>
     	    	    The following example shows the equivalent view state definition using 
     	    	    the FlowBuilder API:

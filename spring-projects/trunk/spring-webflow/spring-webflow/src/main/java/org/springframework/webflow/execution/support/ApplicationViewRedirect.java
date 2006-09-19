@@ -21,10 +21,10 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.ViewSelection;
 
 /**
- * Concrete response type that requests a redirect to an <i>existing</i>,
- * active Spring Web Flow execution at a unique SWF-specific <i>flow execution
- * URL</i>. This enables the triggering of post+redirect+get semantics from
- * within an <i>active</i> flow execution.
+ * Concrete response type that refreshes an application view by redirecting
+ * to an <i>existing</i>, active Spring Web Flow execution at a unique
+ * SWF-specific <i>flow execution URL</i>. This enables the triggering of
+ * post-redirect-get semantics from within an <i>active</i> flow execution.
  * <p>
  * Once the redirect response is issued a new request is initiated by the
  * browser targeted at the flow execution URL. The URL is stabally refreshable
@@ -35,17 +35,17 @@ import org.springframework.webflow.execution.ViewSelection;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public final class FlowExecutionRedirect extends ViewSelection {
+public final class ApplicationViewRedirect extends ViewSelection {
 
 	/**
 	 * The single instance of this class.
 	 */
-	public static final FlowExecutionRedirect INSTANCE = new FlowExecutionRedirect();
+	public static final ApplicationViewRedirect INSTANCE = new ApplicationViewRedirect();
 
 	/**
 	 * Avoid instantiation.
 	 */
-	private FlowExecutionRedirect() {
+	private ApplicationViewRedirect() {
 	}
 
 	// resolve the singleton instance
@@ -54,6 +54,6 @@ public final class FlowExecutionRedirect extends ViewSelection {
 	}
 
 	public String toString() {
-		return "flowExecutionRedirect";
+		return "redirect:";
 	}
 }

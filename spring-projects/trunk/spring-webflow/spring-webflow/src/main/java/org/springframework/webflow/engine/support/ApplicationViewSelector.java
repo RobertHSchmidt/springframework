@@ -27,7 +27,7 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.ApplicationView;
-import org.springframework.webflow.execution.support.FlowExecutionRedirect;
+import org.springframework.webflow.execution.support.ApplicationViewRedirect;
 
 /**
  * Simple view selector that makes an {@link ApplicationView} selection using a
@@ -39,18 +39,22 @@ import org.springframework.webflow.execution.support.FlowExecutionRedirect;
  * flow, and conversation scope.
  * <p>
  * This selector also supports setting a <i>redirect</i> flag that can be used
- * to trigger a redirect to the {@link ApplicationView} at a bookmarkable URL.
+ * to trigger a redirect to the {@link ApplicationView} at a bookmarkable URL
+ * using an {@link ApplicationViewRedirect}}.
  * 
  * @see org.springframework.webflow.execution.support.ApplicationView
- * @see org.springframework.webflow.execution.support.FlowExecutionRedirect
- * @see org.springframework.webflow.execution.ViewSelection#NULL_VIEW
+ * @see org.springframework.webflow.execution.support.ApplicationViewRedirect
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public class ApplicationViewSelector implements ViewSelector, Serializable {
 
-	private static final String ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE = "alwaysRedirectOnPause";
+	/**
+	 * Flow execution attribute name that indicates that we should always
+	 * render an application view via a redirect.
+	 */
+	protected static final String ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE = "alwaysRedirectOnPause";
 
 	/**
 	 * The view name to render.
@@ -78,6 +82,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	/**
 	 * Creates a application view selector that will make application view
 	 * selections requesting that the specified view be rendered.
+	 * No redirects will be done.
 	 * @param viewName the view name expression
 	 * @param redirect indicates if a redirect to the view should be initiated
 	 */
@@ -100,7 +105,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 
 	public ViewSelection makeEntrySelection(RequestContext context) {
 		if (shouldRedirect(context)) {
-			return FlowExecutionRedirect.INSTANCE;
+			return ApplicationViewRedirect.INSTANCE;
 		}
 		else {
 			return makeRefreshSelection(context);
@@ -111,11 +116,13 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 		String viewName = resolveViewName(context);
 		if (!StringUtils.hasText(viewName)) {
 			throw new IllegalStateException(
-					"Resolved application view name was empty; programmer error -- " +
+					"Resolved application view name was empty; programmer error! -- " +
 					"The expression that was evaluated against the request context was '" + getViewName() + "'");
 		}
 		return createApplicationView(viewName, context);
 	}
+	
+	// internal helpers
 
 	/**
 	 * Resolves the application view name from the request context.
@@ -136,11 +143,23 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 		return new ApplicationView(viewName, context.getModel().asMap());
 	}
 
-	private boolean shouldRedirect(RequestContext context) {
+	/**
+	 * Determine whether or not a redirect should be used to render
+	 * the application view.
+	 * @param context the context
+	 * @return true or false
+	 */
+	protected boolean shouldRedirect(RequestContext context) {
 		return context.getCurrentState() instanceof ViewState && (redirect || alwaysRedirectOnPause(context));
 	}
 
-	private boolean alwaysRedirectOnPause(RequestContext context) {
+	/**
+	 * Checks the {@link #ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE} to see if every
+	 * application view of the flow execution should be rendered via a redirect.
+	 * @param context the flow execution request context
+	 * @return true or false
+	 */
+	protected boolean alwaysRedirectOnPause(RequestContext context) {
 		return ((Boolean)context.getFlowExecutionContext().getAttributes().getBoolean(
 				ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE, Boolean.FALSE)).booleanValue();
 	}

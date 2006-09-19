@@ -41,7 +41,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.LaunchFlowRedirect;
-import org.springframework.webflow.execution.support.FlowExecutionRedirect;
+import org.springframework.webflow.execution.support.ApplicationViewRedirect;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 
 /**
@@ -204,7 +204,7 @@ public class FlowPhaseListener implements PhaseListener {
 		if (selectedView instanceof ApplicationView) {
 			prepareApplicationView(context.getFacesContext(), holder);
 		}
-		else if (selectedView instanceof FlowExecutionRedirect) {
+		else if (selectedView instanceof ApplicationViewRedirect) {
 			if (holder.needsSave()) {
 				saveFlowExecution(context, holder);
 			}

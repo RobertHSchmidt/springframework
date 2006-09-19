@@ -252,7 +252,7 @@ public class FlowAction extends ActionSupport {
 			return findForward(forward, mapping);
 
 		}
-		else if (response.isFlowExecutionRedirect()) {
+		else if (response.isApplicationViewRedirect()) {
 			// redirect to active flow execution URL
 			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(response.getFlowExecutionKey(), response
 					.getFlowExecutionContext(), context);
