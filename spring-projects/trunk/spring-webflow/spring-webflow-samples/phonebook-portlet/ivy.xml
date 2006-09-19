@@ -11,18 +11,14 @@
 	
   <dependencies defaultconf="global->default">
   	<!-- global dependencies -->
-    <dependency org="apache" name="log4j" rev="1.2.9"/>
-    <dependency org="apache" name="taglibs" rev="1.1.2">
+    <dependency org="org.apache" name="taglibs" rev="1.1.2">
        <artifact name="standard" type="jar"/>
     </dependency>
     <dependency org="java" name="jstl" rev="1.1.2"/>
-    <dependency org="org.springframework" name="spring-webflow" rev="latest.integration" conf="global->portlet"/>
+    <dependency org="org.springframework" name="spring-webflow" rev="latest.integration"/>
 
-    <!--  build-time only dependencies -->
-	<dependency	org="javax.servlet" name="servlet-api" rev="2.4" conf="buildtime->default"/>
-	
 	<!-- test-time only dependencies -->
-    <dependency org="junit" name="junit" rev="3.8.1" conf="test->default"/>
+    <dependency org="org.junit" name="junit" rev="3.8.1" conf="test->default"/>
   </dependencies>
 
 </ivy-module>
