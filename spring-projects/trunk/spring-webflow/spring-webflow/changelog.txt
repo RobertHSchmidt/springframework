@@ -63,10 +63,10 @@ Package org.springframework.webflow.core
 * Factored out "AttributeMap" interface and renamed default implementation to "LocalAttributeMap".
 * Factored out "ParameterMap" interface and renamed default implementation to "LocalParameterMap".
 * Factored out "MutableAttributeMap" interface from "AttributeMap" for modifiable maps.
+* Added AttributeMapBindingListener abstraction for listening to bind and unbind events in supported attribute maps 
+  such as the external context session map.  
 
 Package org.springframework.webflow.context
-* Added AttributeMapBindingListener abstraction for listening to bind and unbind events in supported attribute maps 
-  such as the session map.  
 * Added support for accessing a PortletRequest.USER_INFO map as context.getUserInfoMap().
 * Added support for MultipartActionRequest parameters for fileupload support in a Portlet environment.
 * Introduced ExternalContextHolder for setting a thread-bound ExternalContext.  Used by FlowExecutionRepository 
