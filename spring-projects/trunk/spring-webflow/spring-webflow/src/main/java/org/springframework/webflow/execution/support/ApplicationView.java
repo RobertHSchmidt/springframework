@@ -18,13 +18,12 @@ package org.springframework.webflow.execution.support;
 import java.util.Collections;
 import java.util.Map;
 
-import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.ObjectUtils;
 import org.springframework.webflow.execution.ViewSelection;
 
 /**
  * Concrete response type that requests the rendering of a local, internal
- * application view resource such as a JSP, Velocity, or Freemarker template.
+ * application view resource such as a JSP, Velocity, or FreeMarker template.
  * <p>
  * This is typically the most common type of view selection.
  * 
@@ -91,6 +90,6 @@ public final class ApplicationView extends ViewSelection {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("viewName", viewName).append("modelKeys", model.keySet()).toString();
+		return "'" + viewName + "' [" + model.keySet() + "]";
 	}
 }

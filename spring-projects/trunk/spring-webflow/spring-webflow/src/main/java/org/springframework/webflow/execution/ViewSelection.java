@@ -23,7 +23,7 @@ import java.io.Serializable;
  * execution information about a logical response to issue and the data
  * necessary to issue it.
  * <p>
- * This class is a generic marker returned from a request into an executing flow
+ * This class is a generic marker returned when a request into an executing flow
  * has completed processing, indicating a client response needs to be issued. An
  * instance of a ViewSelection subclass represents the selection of a concrete
  * response type. It is expected that callers introspect the returned view
@@ -54,7 +54,7 @@ public abstract class ViewSelection implements Serializable {
 		}
 
 		public String toString() {
-			return "nullView";
+			return "null";
 		}
 	}
 }

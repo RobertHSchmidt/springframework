@@ -24,9 +24,10 @@ import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.engine.support.ExternalRedirectSelector;
 import org.springframework.webflow.engine.support.LaunchFlowRedirectSelector;
+import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.LaunchFlowRedirect;
-import org.springframework.webflow.execution.support.FlowExecutionRedirect;
+import org.springframework.webflow.execution.support.ApplicationViewRedirect;
 
 /**
  * Converter that converts an encoded string representation of a view selector
@@ -35,16 +36,16 @@ import org.springframework.webflow.execution.support.FlowExecutionRedirect;
  * This converter supports the following encoded forms:
  * <ul>
  * <li>"viewName" - will result in an {@link ApplicationViewSelector} that
- * returns a ViewSelection with the provided view name expression.</li>
+ * returns an {@link ApplicationView} ViewSelection with the provided view name expression.</li>
  * <li>"redirect:&lt;viewName&gt;" - will result in a
- * {@link ApplicationViewSelector} that returns a {@link FlowExecutionRedirect}
+ * {@link ApplicationViewSelector} that returns an {@link ApplicationViewRedirect}
  * to a flow execution URL.</li>
  * <li>"externalRedirect:&lt;url&gt;" - will result in a
  * {@link ExternalRedirectSelector} that returns an {@link ExternalRedirect} to a
  * URL.</li>
- * <li>"launchFlow:&lt;url&gt;" - will result in a
+ * <li>"launchFlow:&lt;flowId&gt;" - will result in a
  * {@link LaunchFlowRedirectSelector} that returns a {@link LaunchFlowRedirect} to a flow.</li>
- * <li>"bean:&lt;id&gt;" - will result usage of a custom
+ * <li>"bean:&lt;id&gt;" - will result in usage of a custom
  * <code>ViewSelector</code> bean implementation.</li>
  * </ul>
  * 
@@ -58,7 +59,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 
 	/**
 	 * The name of the context parameter indicating whether or not the view selector
-	 * to create will select a view used in an end state
+	 * to create will select a view used in an end state.
 	 */
 	public static final String END_STATE_VIEW_FLAG_PARAMETER = "endStateView";
 
@@ -82,7 +83,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 
 	/**
 	 * Prefix used when the user wants to use a ViewSelector implementation
-	 * managed by a factory.
+	 * managed by a bean factory.
 	 */
 	private static final String BEAN_PREFIX = "bean:";
 
@@ -92,7 +93,8 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	private FlowServiceLocator flowServiceLocator;
 
 	/**
-	 * Create a new text to ViewSelector converter.
+	 * Create a new text to ViewSelector converter. Custom ViewSelector implemenations
+	 * will be looked up using given service locator.
 	 */
 	public TextToViewSelector(FlowServiceLocator flowServiceLocator) {
 		this.flowServiceLocator = flowServiceLocator;

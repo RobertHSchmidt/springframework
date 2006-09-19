@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.execution.support;
 
-import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.ViewSelection;
 
@@ -62,6 +61,6 @@ public final class ExternalRedirect extends ViewSelection {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("url", url).toString();
+		return "externalRedirect:'" + url + "'";
 	}
 }

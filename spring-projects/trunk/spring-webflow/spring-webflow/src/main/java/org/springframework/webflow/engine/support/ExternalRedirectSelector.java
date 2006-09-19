@@ -30,7 +30,7 @@ import org.springframework.webflow.execution.support.ExternalRedirect;
  * Makes view selections requesting a client side redirect to an <i>external</i>
  * URL outside of the flow.
  * <p>
- * This selector is applicable when you wish to request a <i>redirect after
+ * This selector is usefull when you wish to request a <i>redirect after
  * conversation completion</i> as part of entering an EndState.
  * <p>
  * This selector may also be used to redirect to an external URL from a

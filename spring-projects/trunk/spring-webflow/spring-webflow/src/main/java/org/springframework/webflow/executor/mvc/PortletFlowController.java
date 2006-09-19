@@ -209,7 +209,7 @@ public class PortletFlowController extends AbstractController implements Initial
 			// portlet
 			exposeToRenderPhase(responseInstruction, request);
 		}
-		else if (responseInstruction.isFlowExecutionRedirect()) {
+		else if (responseInstruction.isApplicationViewRedirect()) {
 			// is a flow execution redirect: simply expose key parameter to
 			// support refresh during render phase
 			response.setRenderParameter(argumentExtractor.getFlowExecutionKeyParameterName(), responseInstruction
