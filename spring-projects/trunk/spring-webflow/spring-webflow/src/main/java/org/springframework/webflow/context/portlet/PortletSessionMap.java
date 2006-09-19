@@ -48,6 +48,10 @@ public class PortletSessionMap extends StringKeyedMapAdapter implements SharedMa
 
 	/**
 	 * Create a new map wrapping the session associated with given request.
+	 * @param request the current portlet request
+	 * @param scope the scope to access in the session, either
+	 * {@link PortletSession#APPLICATION_SCOPE} (global) or
+	 * {@link PortletSession#PORTLET_SCOPE}
 	 */
 	public PortletSessionMap(PortletRequest request, int scope) {
 		this.request = request;
@@ -69,6 +73,7 @@ public class PortletSessionMap extends StringKeyedMapAdapter implements SharedMa
 		}
 		Object value = session.getAttribute(key);
 		if (value instanceof HttpSessionMapBindingListener) {
+			// unwrap
 			return ((HttpSessionMapBindingListener)value).getListener();
 		} else {
 			return value;
@@ -78,6 +83,7 @@ public class PortletSessionMap extends StringKeyedMapAdapter implements SharedMa
 	protected void setAttribute(String key, Object value) {
 		PortletSession session = request.getPortletSession(true);
 		if (value instanceof AttributeMapBindingListener) {
+			// wrap
 			session.setAttribute(key, new HttpSessionMapBindingListener((AttributeMapBindingListener)value, this));
 		}
 		else {
