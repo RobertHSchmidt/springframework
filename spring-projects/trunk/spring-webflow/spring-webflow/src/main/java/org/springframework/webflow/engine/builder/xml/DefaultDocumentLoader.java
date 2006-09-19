@@ -116,8 +116,7 @@ public class DefaultDocumentLoader implements DocumentLoader {
 				throw new IllegalStateException("Unable to validate using XSD: Your JAXP provider [" + factory
 						+ "] does not support XML Schema. "
 						+ "Are you running on Java 1.4 or below with Apache Crimson? "
-						+ "If so you must upgrade to Apache Xerces (or Java 5 or >) for full XSD support "
-						+ "or turn off schema validation.");
+						+ "If so you must upgrade to Apache Xerces (or Java 5 or >) for full XSD support.");
 			}
 			DocumentBuilder docBuilder = factory.newDocumentBuilder();
 			docBuilder.setErrorHandler(new SimpleSaxErrorHandler(logger));
