@@ -27,7 +27,5 @@
 	<classpathentry sourcepath="/spring/mock" kind="lib" path="lib/test/spring-mock.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/commons-digester.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-struts.jar"/>
-	<classpathentry kind="lib" path="lib/global/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="lib/global/xml-apis.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
