@@ -21,13 +21,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
 import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
-import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.util.ResourceHolder;
 
 /**
  * A flow definition holder that can detect changes on an underlying flow
  * definition resource and refresh that resource automatically.
- * 
+ * <p>
  * This class is threadsafe.
  * 
  * @author Keith Donald
@@ -37,7 +36,7 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 	/**
 	 * The flow definition assembled by this assembler.
 	 */
-	private Flow flow;
+	private FlowDefinition flowDefinition;
 
 	/**
 	 * The flow assembler.
@@ -51,14 +50,14 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 	private long lastModified;
 
 	/**
-	 * A flag indicating whether or not this assembler is in the middle of the
+	 * A flag indicating whether or not this holder is in the middle of the
 	 * assembly process.
 	 */
 	private boolean assembling;
 
 	/**
 	 * Creates a new refreshable flow holder that uses the configured assembler (GOF director) to
-	 * drive flow assembly, on initial use and on any resource change.
+	 * drive flow assembly, on initial use and on any resource change or refresh.
 	 * @param assembler the flow assembler (director)
 	 */
 	public RefreshableFlowDefinitionHolder(FlowAssembler assembler) {
@@ -67,13 +66,6 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 
 	public String getFlowDefinitionId() {
 		return assembler.getFlowId();
-	}
-
-	/**
-	 * Returns the flow builder that actually builds the Flow definition.
-	 */
-	public FlowBuilder getFlowBuilder() {
-		return assembler.getFlowBuilder();
 	}
 
 	public synchronized FlowDefinition getFlowDefinition() throws FlowDefinitionConstructionException {
@@ -88,11 +80,20 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 		else {
 			refreshIfChanged();
 		}
-		return flow;
+		return flowDefinition;
 	}
 
 	public synchronized void refresh() throws FlowBuilderException {
 		assembleFlow();
+	}
+	
+	// internal helpers
+
+	/**
+	 * Returns the flow builder that actually builds the Flow definition.
+	 */
+	protected FlowBuilder getFlowBuilder() {
+		return assembler.getFlowBuilder();
 	}
 
 	/**
@@ -105,20 +106,6 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 		}
 		if (this.lastModified < calculateLastModified()) {
 			assembleFlow();
-		}
-	}
-
-	/**
-	 * Assemble the held flow definition, delegating to the configured
-	 * FlowAssembler (director).
-	 */
-	protected void assembleFlow() throws FlowBuilderException {
-		try {
-			assembling = true;
-			flow = assembler.assembleFlow();
-		}
-		finally {
-			assembling = false;
 		}
 	}
 
@@ -139,13 +126,35 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 		}
 		return -1;
 	}
-	
+
+	/**
+	 * Returns the last modifed date of the backed flow definition resource.
+	 * @return the last modified date
+	 */
+	protected long getLastModified() {
+		return lastModified;
+	}
+
+	/**
+	 * Assemble the held flow definition, delegating to the configured
+	 * FlowAssembler (director).
+	 */
+	protected void assembleFlow() throws FlowBuilderException {
+		try {
+			assembling = true;
+			flowDefinition = assembler.assembleFlow();
+		}
+		finally {
+			assembling = false;
+		}
+	}
+
 	/**
 	 * Returns a flag indicating if this holder has performed and completed
-	 * Flow assembly.
+	 * flow definition assembly.
 	 */
 	protected boolean isAssembled() {
-		return flow != null;
+		return flowDefinition != null;
 	}
 
 	/**
@@ -153,13 +162,5 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 	 */
 	protected boolean isAssembling() {
 		return assembling;
-	}
-	
-	/**
-	 * Returns the last modifed date of the backed builder resource.
-	 * @return the last modified date
-	 */
-	protected long getLastModified() {
-		return lastModified;
 	}
 }

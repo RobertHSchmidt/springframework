@@ -28,6 +28,8 @@ import org.springframework.webflow.core.collection.CollectionUtils;
  * identification information about the resource including the flow id and
  * attributes.
  * 
+ * @see ExternalizedFlowDefinitionRegistrar
+ * 
  * @author Keith Donald
  */
 public class FlowDefinitionResource implements Serializable {
@@ -48,19 +50,19 @@ public class FlowDefinitionResource implements Serializable {
 	private Resource location;
 
 	/**
-	 * Creates a new externalized flow definition. The flow id assigned will be
-	 * the same name as the externalized resource's filename.
+	 * Creates a new externalized flow definition resource. The flow id assigned will be
+	 * the same name as the externalized resource's filename, excluding the extension.
 	 * @param location the flow resource location.
 	 */
 	public FlowDefinitionResource(Resource location) {
 		Assert.notNull(location, "The location of the externalized flow definition is required");
-		init(stripExtension(location.getFilename()), location, null);
+		init(conventionalFlowId(location), location, null);
 	}
 
 	/**
 	 * Creates a new externalized flow definition.
 	 * @param id the flow id to be assigned
-	 * @param location the flow resource location.
+	 * @param location the flow resource location
 	 */
 	public FlowDefinitionResource(String id, Resource location) {
 		init(id, location, null);
@@ -69,8 +71,8 @@ public class FlowDefinitionResource implements Serializable {
 	/**
 	 * Creates a new externalized flow definition.
 	 * @param id the flow id to be assigned
-	 * @param location the flow resource location.
-	 * @param attributes flow definition attributes to be assigned.
+	 * @param location the flow resource location
+	 * @param attributes flow definition attributes to be assigned
 	 */
 	public FlowDefinitionResource(String id, Resource location, AttributeMap attributes) {
 		init(id, location, attributes);
@@ -84,7 +86,7 @@ public class FlowDefinitionResource implements Serializable {
 	}
 
 	/**
-	 * Returns the externalized flow resource location.
+	 * Returns the externalized flow definition resource location.
 	 */
 	public Resource getLocation() {
 		return location;
@@ -108,7 +110,12 @@ public class FlowDefinitionResource implements Serializable {
 	public int hashCode() {
 		return id.hashCode() + location.hashCode();
 	}
+	
+	// internal helpers
 
+	/**
+	 * Initialize this object.
+	 */
 	private void init(String id, Resource location, AttributeMap attributes) {
 		Assert.hasText(id, "The id of the externalized flow definition is required");
 		Assert.notNull(location, "The location of the externalized flow definition is required");
@@ -122,7 +129,12 @@ public class FlowDefinitionResource implements Serializable {
 		}
 	}
 
-	private String stripExtension(String fileName) {
+	/**
+	 * Returns the flow id assigned to the flow definition contained in given resource.
+	 * By convention this will be the filename of the resource, excluding extension.
+	 */
+	private String conventionalFlowId(Resource location) {
+		String fileName = location.getFilename();
 		int extensionIndex = fileName.lastIndexOf('.');
 		if (extensionIndex != -1) {
 			return fileName.substring(0, extensionIndex);

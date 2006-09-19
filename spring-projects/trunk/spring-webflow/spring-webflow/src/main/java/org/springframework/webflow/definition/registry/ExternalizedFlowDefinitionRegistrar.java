@@ -24,10 +24,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
 
 /**
- * A flow registrar that populates a flow registry from flow definitions defined
- * within externalized resources. Encapsulates registration behaivior common to
- * all externalized registrars and is not tied to a specific flow definition
- * format (e.g. xml).
+ * A flow definition registrar that populates a flow definition registry from
+ * flow definitions defined within externalized resources. Encapsulates
+ * registration behaivior common to all externalized registrars and is not tied
+ * to a specific flow definition format (e.g. xml).
  * <p>
  * Concrete subclasses are expected to derive from this class to provide
  * knowledge about a particular kind of definition format by implementing the
@@ -54,12 +54,13 @@ public abstract class ExternalizedFlowDefinitionRegistrar implements FlowDefinit
 
 	/**
 	 * File locations of externalized flow definition resources to load.
+	 * A set of {@link Resource}} objects.
 	 */
 	private Set locations = new HashSet();
 
 	/**
 	 * A set of formal externalized flow definitions to load.
-	 * @see {@link FlowDefinitionResource}
+	 * A set of {@link FlowDefinitionResource} objects.
 	 */
 	private Set resources = new HashSet();
 
@@ -80,8 +81,8 @@ public abstract class ExternalizedFlowDefinitionRegistrar implements FlowDefinit
 	 * register.
 	 * <p>
 	 * Use this method when you want full control over the assigned flow id and
-	 * the set of properties applied to the externalized flow resource.
-	 * @param resources the externalized flow definition specification
+	 * the set of properties applied to the externalized flow resources.
+	 * @param resources the externalized flow definition specifications
 	 */
 	public void setResources(FlowDefinitionResource[] resources) {
 		this.resources = new HashSet(Arrays.asList(resources));
@@ -129,7 +130,7 @@ public abstract class ExternalizedFlowDefinitionRegistrar implements FlowDefinit
 	 * resources.
 	 * <p>
 	 * Use this method when you want full control over the assigned flow id and
-	 * the set of properties applied to the externalized flow resource.
+	 * the set of properties applied to the externalized flow resources.
 	 * @param resources the definitions
 	 */
 	public boolean addResources(FlowDefinitionResource[] resources) {
@@ -143,11 +144,12 @@ public abstract class ExternalizedFlowDefinitionRegistrar implements FlowDefinit
 		processLocations(registry);
 		processResources(registry);
 	}
+	
+	// internal helpers
 
 	/**
-	 * Register the Flow definitions at the configured file locations
+	 * Register the flow definitions at the configured file locations.
 	 * @param registry the registry
-	 * @param flowServiceLocator the flow artifactFactory
 	 */
 	private void processLocations(FlowDefinitionRegistry registry) {
 		Iterator it = locations.iterator();
@@ -161,9 +163,8 @@ public abstract class ExternalizedFlowDefinitionRegistrar implements FlowDefinit
 	}
 
 	/**
-	 * Register the Flow definitions at the configured file locations
+	 * Register the flow definitions at the configured file locations.
 	 * @param registry the registry
-	 * @param flowServiceLocator the flow artifactFactory
 	 */
 	private void processResources(FlowDefinitionRegistry registry) {
 		Iterator it = resources.iterator();

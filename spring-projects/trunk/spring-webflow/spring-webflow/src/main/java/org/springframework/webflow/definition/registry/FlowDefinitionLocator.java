@@ -21,8 +21,8 @@ import org.springframework.webflow.definition.FlowDefinition;
  * A runtime service locator interface for retrieving flow definitions by
  * <code>id</code>.
  * <p>
- * Flow locators are needed at by flow executors at runtime to retrieve
- * fully-configured Flow definitions to support launching new flow executions.
+ * Flow locators are needed by flow executors at runtime to retrieve
+ * fully-configured flow definitions to support launching new flow executions.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -34,7 +34,10 @@ public interface FlowDefinitionLocator {
 	 * @param id the flow definition id
 	 * @return the flow definition
 	 * @throws NoSuchFlowDefinitionException when the flow definition with the
-	 * specified id does not exist.
+	 * specified id does not exist
+	 * @throws FlowDefinitionConstructionException if there is a problem constructing 
+	 * the identified flow definition
 	 */
-	public FlowDefinition getFlowDefinition(String id) throws NoSuchFlowDefinitionException;
+	public FlowDefinition getFlowDefinition(String id)
+			throws NoSuchFlowDefinitionException, FlowDefinitionConstructionException;
 }

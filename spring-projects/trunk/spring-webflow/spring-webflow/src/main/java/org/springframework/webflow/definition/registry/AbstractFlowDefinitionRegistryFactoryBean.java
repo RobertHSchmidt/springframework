@@ -19,9 +19,9 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * A base class for factory beans that create populated Flow Registries.
- * Subclasses should override the {@link #doPopulate(FlowDefinitionRegistry)} to
- * perform the registry population logic, typically delegating to a
+ * A base class for factory beans that create populated flow definition registries.
+ * Subclasses should override the {@link #doPopulate(FlowDefinitionRegistry)} method
+ * to perform the registry population logic, typically delegating to a
  * {@link FlowDefinitionRegistrar} strategy to perform the population.
  * 
  * @author Keith Donald
@@ -29,22 +29,16 @@ import org.springframework.beans.factory.InitializingBean;
 public abstract class AbstractFlowDefinitionRegistryFactoryBean implements FactoryBean, InitializingBean {
 
 	/**
-	 * The registry to register Flow definitions in.
+	 * The registry to register flow definitions in.
 	 */
-	private FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
+	private FlowDefinitionRegistry registry = new FlowDefinitionRegistryImpl();
 
 	/**
-	 * <p>
 	 * Sets the parent registry of the registry constructed by this factory
 	 * bean.
-	 * </p>
 	 * <p>
 	 * A child registry will delegate to its parent if it cannot fulfill a
-	 * request to locate a Flow definition.
-	 * </p>
-	 * 
-	 * @see FlowDefinitionLocator#getFlowDefinition(String)
-	 * 
+	 * request to locate a flow definition itself.
 	 * @param parent the parent flow definition registry
 	 */
 	public void setParent(FlowDefinitionRegistry parent) {
@@ -70,6 +64,13 @@ public abstract class AbstractFlowDefinitionRegistryFactoryBean implements Facto
 
 	public Object getObject() throws Exception {
 		// the registry is populated by the time this is called
+		return getRegistry();
+	}
+
+	/**
+	 * Returns the flow registry constructed by the factory bean.
+	 */
+	protected FlowDefinitionRegistry getRegistry() {
 		return registry;
 	}
 
@@ -80,7 +81,6 @@ public abstract class AbstractFlowDefinitionRegistryFactoryBean implements Facto
 	 * logic before registry population.
 	 */
 	protected void init() {
-		
 	}
 	
 	/**
@@ -89,10 +89,4 @@ public abstract class AbstractFlowDefinitionRegistryFactoryBean implements Facto
 	 */
 	protected abstract void doPopulate(FlowDefinitionRegistry registry);
 
-	/**
-	 * Returns the flow registry constructed by the factory bean.
-	 */
-	protected FlowDefinitionRegistry getRegistry() {
-		return registry;
-	}
 }

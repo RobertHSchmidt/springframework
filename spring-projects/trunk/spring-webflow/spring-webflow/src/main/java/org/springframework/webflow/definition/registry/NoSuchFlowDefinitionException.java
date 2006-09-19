@@ -28,7 +28,7 @@ import org.springframework.webflow.core.FlowException;
 public class NoSuchFlowDefinitionException extends FlowException {
 
 	/**
-	 * The id of the flow that could not be located.
+	 * The id of the flow definition that could not be located.
 	 */
 	private String flowId;
 
@@ -39,7 +39,7 @@ public class NoSuchFlowDefinitionException extends FlowException {
 	 * this exception
 	 */
 	public NoSuchFlowDefinitionException(String flowId, String[] availableFlowIds) {
-		super("No such flow with id '" + flowId + "' found; the flows available are: "
+		super("No such flow definition with id '" + flowId + "' found; the flows available are: "
 				+ StylerUtils.style(availableFlowIds));
 		this.flowId = flowId;
 	}
