@@ -35,17 +35,17 @@ import org.springframework.webflow.execution.ViewSelection;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public final class ApplicationViewRedirect extends ViewSelection {
+public final class FlowExecutionRedirect extends ViewSelection {
 
 	/**
 	 * The single instance of this class.
 	 */
-	public static final ApplicationViewRedirect INSTANCE = new ApplicationViewRedirect();
+	public static final FlowExecutionRedirect INSTANCE = new FlowExecutionRedirect();
 
 	/**
 	 * Avoid instantiation.
 	 */
-	private ApplicationViewRedirect() {
+	private FlowExecutionRedirect() {
 	}
 
 	// resolve the singleton instance

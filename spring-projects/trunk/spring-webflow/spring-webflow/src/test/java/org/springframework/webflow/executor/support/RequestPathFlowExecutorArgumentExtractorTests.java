@@ -6,7 +6,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.execution.FlowExecutionContext;
-import org.springframework.webflow.execution.support.LaunchFlowRedirect;
+import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.engine.MockFlowExecutionContext;
 
@@ -45,7 +45,7 @@ public class RequestPathFlowExecutorArgumentExtractorTests extends TestCase {
 	public void testCreateFlowUrl() {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows");
-		LaunchFlowRedirect redirect = new LaunchFlowRedirect("flow", null);
+		FlowDefinitionRedirect redirect = new FlowDefinitionRedirect("flow", null);
 		String url = argumentExtractor.createFlowUrl(redirect, context);
 		assertEquals("/app/flows/flow", url);
 	}
@@ -56,7 +56,7 @@ public class RequestPathFlowExecutorArgumentExtractorTests extends TestCase {
 		Map input = new HashMap();
 		input.put("foo", "bar");
 		input.put("baz", new Integer(3));
-		LaunchFlowRedirect redirect = new LaunchFlowRedirect("flow", input);
+		FlowDefinitionRedirect redirect = new FlowDefinitionRedirect("flow", input);
 		String url = argumentExtractor.createFlowUrl(redirect, context);
 		assertEquals("/app/flows/flow?foo=bar&baz=3", url);
 	}

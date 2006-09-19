@@ -34,7 +34,7 @@ import org.springframework.webflow.action.FormObjectAccessor;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
-import org.springframework.webflow.execution.support.LaunchFlowRedirect;
+import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
@@ -252,7 +252,7 @@ public class FlowAction extends ActionSupport {
 			return findForward(forward, mapping);
 
 		}
-		else if (response.isApplicationViewRedirect()) {
+		else if (response.isFlowExecutionRedirect()) {
 			// redirect to active flow execution URL
 			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(response.getFlowExecutionKey(), response
 					.getFlowExecutionContext(), context);
@@ -264,9 +264,9 @@ public class FlowAction extends ActionSupport {
 					response.getFlowExecutionKey(), context);
 			return createRedirectForward(externalUrl, httpResponse);
 		}
-		else if (response.isLaunchFlowRedirect()) {
+		else if (response.isFlowDefinitionRedirect()) {
 			// restart the flow by redirecting to flow launch URL
-			String flowUrl = argumentExtractor.createFlowUrl((LaunchFlowRedirect)response.getViewSelection(), context);
+			String flowUrl = argumentExtractor.createFlowUrl((FlowDefinitionRedirect)response.getViewSelection(), context);
 			return createRedirectForward(flowUrl, httpResponse);
 		}
 		else if (response.isNull()) {

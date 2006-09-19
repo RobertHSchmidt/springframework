@@ -33,7 +33,7 @@ import org.springframework.web.portlet.mvc.Controller;
 import org.springframework.webflow.context.portlet.PortletExternalContext;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
-import org.springframework.webflow.execution.support.LaunchFlowRedirect;
+import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
@@ -209,16 +209,16 @@ public class PortletFlowController extends AbstractController implements Initial
 			// portlet
 			exposeToRenderPhase(responseInstruction, request);
 		}
-		else if (responseInstruction.isApplicationViewRedirect()) {
+		else if (responseInstruction.isFlowExecutionRedirect()) {
 			// is a flow execution redirect: simply expose key parameter to
 			// support refresh during render phase
 			response.setRenderParameter(argumentExtractor.getFlowExecutionKeyParameterName(), responseInstruction
 					.getFlowExecutionKey());
 		}
-		else if (responseInstruction.isLaunchFlowRedirect()) {
+		else if (responseInstruction.isFlowDefinitionRedirect()) {
 			// set flow id render parameter to request that a new flow be
 			// launched within this portlet
-			LaunchFlowRedirect redirect = (LaunchFlowRedirect)responseInstruction.getViewSelection();
+			FlowDefinitionRedirect redirect = (FlowDefinitionRedirect)responseInstruction.getViewSelection();
 			response.setRenderParameters(redirect.getExecutionInput());
 			response.setRenderParameter(argumentExtractor.getFlowIdParameterName(), redirect.getFlowDefinitionId());
 		}

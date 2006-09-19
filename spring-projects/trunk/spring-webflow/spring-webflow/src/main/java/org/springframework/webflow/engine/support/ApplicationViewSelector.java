@@ -27,7 +27,7 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.ApplicationView;
-import org.springframework.webflow.execution.support.ApplicationViewRedirect;
+import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 
 /**
  * Simple view selector that makes an {@link ApplicationView} selection using a
@@ -40,10 +40,10 @@ import org.springframework.webflow.execution.support.ApplicationViewRedirect;
  * <p>
  * This selector also supports setting a <i>redirect</i> flag that can be used
  * to trigger a redirect to the {@link ApplicationView} at a bookmarkable URL
- * using an {@link ApplicationViewRedirect}}.
+ * using an {@link FlowExecutionRedirect}}.
  * 
  * @see org.springframework.webflow.execution.support.ApplicationView
- * @see org.springframework.webflow.execution.support.ApplicationViewRedirect
+ * @see org.springframework.webflow.execution.support.FlowExecutionRedirect
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -105,7 +105,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 
 	public ViewSelection makeEntrySelection(RequestContext context) {
 		if (shouldRedirect(context)) {
-			return ApplicationViewRedirect.INSTANCE;
+			return FlowExecutionRedirect.INSTANCE;
 		}
 		else {
 			return makeRefreshSelection(context);

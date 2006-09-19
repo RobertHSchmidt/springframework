@@ -32,7 +32,7 @@ import org.springframework.webflow.execution.ViewSelection;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public final class LaunchFlowRedirect extends ViewSelection {
+public final class FlowDefinitionRedirect extends ViewSelection {
 
 	/**
 	 * The id of the flow definition to launch.
@@ -45,11 +45,11 @@ public final class LaunchFlowRedirect extends ViewSelection {
 	private final Map executionInput;
 
 	/**
-	 * Creates a new launch flow redirect.
+	 * Creates a new flow definition redirect.
 	 * @param flowDefinitionId the id of the flow definition to launch
 	 * @param executionInput the input data to pass to the new flow execution on launch
 	 */
-	public LaunchFlowRedirect(String flowDefinitionId, Map executionInput) {
+	public FlowDefinitionRedirect(String flowDefinitionId, Map executionInput) {
 		Assert.hasText(flowDefinitionId, "The flow definition id is required");
 		this.flowDefinitionId = flowDefinitionId;
 		if (executionInput == null) {
@@ -74,10 +74,10 @@ public final class LaunchFlowRedirect extends ViewSelection {
 	}
 
 	public boolean equals(Object o) {
-		if (!(o instanceof LaunchFlowRedirect)) {
+		if (!(o instanceof FlowDefinitionRedirect)) {
 			return false;
 		}
-		LaunchFlowRedirect other = (LaunchFlowRedirect)o;
+		FlowDefinitionRedirect other = (FlowDefinitionRedirect)o;
 		return flowDefinitionId.equals(other.flowDefinitionId) && executionInput.equals(other.executionInput);
 	}
 
@@ -86,6 +86,6 @@ public final class LaunchFlowRedirect extends ViewSelection {
 	}
 
 	public String toString() {
-		return "launchFlow:'" + flowDefinitionId + "'";
+		return "flowRedirect:'" + flowDefinitionId + "'";
 	}
 }

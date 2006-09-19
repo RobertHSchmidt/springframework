@@ -31,7 +31,7 @@ import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
-import org.springframework.webflow.execution.support.LaunchFlowRedirect;
+import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
@@ -200,7 +200,7 @@ public class FlowController extends AbstractController implements InitializingBe
 			argumentExtractor.put(response.getFlowExecutionContext(), model);
 			return new ModelAndView(view.getViewName(), model);
 		}
-		else if (response.isApplicationViewRedirect()) {
+		else if (response.isFlowExecutionRedirect()) {
 			// redirect to active flow execution URL
 			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(response.getFlowExecutionKey(), response
 					.getFlowExecutionContext(), context);
@@ -212,9 +212,9 @@ public class FlowController extends AbstractController implements InitializingBe
 			String externalUrl = argumentExtractor.createExternalUrl(redirect, response.getFlowExecutionKey(), context);
 			return new ModelAndView(new RedirectView(externalUrl));
 		}
-		else if (response.isLaunchFlowRedirect()) {
+		else if (response.isFlowDefinitionRedirect()) {
 			// restart the flow by redirecting to flow launch URL
-			String flowUrl = argumentExtractor.createFlowUrl((LaunchFlowRedirect)response.getViewSelection(), context);
+			String flowUrl = argumentExtractor.createFlowUrl((FlowDefinitionRedirect)response.getViewSelection(), context);
 			return new ModelAndView(new RedirectView(flowUrl));
 		}
 		else if (response.isNull()) {
