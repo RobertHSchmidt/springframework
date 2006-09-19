@@ -21,8 +21,8 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.webflow.context.support.StringKeyedMapAdapter;
 import org.springframework.webflow.core.collection.CollectionUtils;
+import org.springframework.webflow.core.collection.StringKeyedMapAdapter;
 
 /**
  * Map backed by the Servlet HTTP request parameter map for accessing request
@@ -34,7 +34,7 @@ import org.springframework.webflow.core.collection.CollectionUtils;
 public class HttpServletRequestParameterMap extends StringKeyedMapAdapter {
 
 	/**
-	 * The wrapped http request.
+	 * The wrapped HTTP request.
 	 */
 	private HttpServletRequest request;
 
@@ -83,8 +83,9 @@ public class HttpServletRequestParameterMap extends StringKeyedMapAdapter {
 	}
 
 	/**
-	 * A enumeration that combines elements in the multipart map with that of
+	 * A iterator that combines elements in the multipart map with those of
 	 * the request parameter map.
+	 * 
 	 * @author Keith Donald
 	 */
 	private static class MultiPartIterator implements Iterator {

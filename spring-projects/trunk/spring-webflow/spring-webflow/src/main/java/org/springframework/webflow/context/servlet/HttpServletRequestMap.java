@@ -19,8 +19,8 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.webflow.context.support.StringKeyedMapAdapter;
 import org.springframework.webflow.core.collection.CollectionUtils;
+import org.springframework.webflow.core.collection.StringKeyedMapAdapter;
 
 /**
  * Map backed by the Servlet HTTP request attribute map for accessing request
@@ -31,7 +31,7 @@ import org.springframework.webflow.core.collection.CollectionUtils;
 public class HttpServletRequestMap extends StringKeyedMapAdapter {
 
 	/**
-	 * The wrapped http request.
+	 * The wrapped HTTP request.
 	 */
 	private HttpServletRequest request;
 

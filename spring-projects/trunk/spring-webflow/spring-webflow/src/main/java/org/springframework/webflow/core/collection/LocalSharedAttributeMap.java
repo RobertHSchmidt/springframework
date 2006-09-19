@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.context.support;
+package org.springframework.webflow.core.collection;
 
-import org.springframework.webflow.context.SharedAttributeMap;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 
 /**
  * An attribute map that exposes a mutex that application code can synchronize
  * on. This class wraps another shared map in an attribute map.
  * <p>
  * The mutex can be used to serialize concurrent access to the shared map's
- * contents by multiple threads. 
+ * contents by multiple threads.
+ * 
+ * @author Keith Donald
  */
 public class LocalSharedAttributeMap extends LocalAttributeMap implements SharedAttributeMap {
 

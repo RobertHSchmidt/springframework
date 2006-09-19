@@ -6,7 +6,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.context.support.ExternalContextHolder;
+import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationParameters;
 import org.springframework.webflow.test.MockExternalContext;

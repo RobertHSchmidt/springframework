@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.context.support;
+package org.springframework.webflow.core.collection;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -22,8 +22,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
- * Base class for attribute map adapters whose keys are String values. Concrete`
- * classes need only implement the abstract hook method defined by this class.
+ * Base class for map adapters whose keys are String values. Concrete
+ * classes need only implement the abstract hook methods defined by this class.
  * 
  * @author Keith Donald
  */
@@ -34,6 +34,8 @@ public abstract class StringKeyedMapAdapter implements Map {
 	private Collection values;
 
 	private Set entrySet;
+	
+	// implementing Map
 
 	public void clear() {
 		for (Iterator it = getAttributeNames(); it.hasNext();) {
@@ -107,6 +109,8 @@ public abstract class StringKeyedMapAdapter implements Map {
 	public Collection values() {
 		return (values != null) ? values : (values = new Values());
 	}
+	
+	// hook methods
 
 	/**
 	 * Hook method that needs to be implemented by concrete subclasses.

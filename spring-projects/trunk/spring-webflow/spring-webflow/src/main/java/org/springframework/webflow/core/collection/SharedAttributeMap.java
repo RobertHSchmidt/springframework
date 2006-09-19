@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.context;
+package org.springframework.webflow.core.collection;
 
-import org.springframework.webflow.core.collection.MutableAttributeMap;
 
 /**
- * An interface to be implemented by mutable attributes maps accessed by
+ * An interface to be implemented by mutable attribute maps accessed by
  * multiple threads that need to be synchronized.
  * 
  * @author Keith Donald

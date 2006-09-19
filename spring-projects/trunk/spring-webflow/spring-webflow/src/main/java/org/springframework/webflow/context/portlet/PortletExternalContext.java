@@ -24,12 +24,12 @@ import javax.portlet.PortletSession;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.context.SharedAttributeMap;
-import org.springframework.webflow.context.support.LocalSharedAttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.LocalParameterMap;
+import org.springframework.webflow.core.collection.LocalSharedAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
+import org.springframework.webflow.core.collection.SharedAttributeMap;
 
 /**
  * Provides contextual information about a JSR 168 portlet environment that has

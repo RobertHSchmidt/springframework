@@ -23,12 +23,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.springframework.core.JdkVersion;
-import org.springframework.webflow.context.SharedAttributeMap;
-import org.springframework.webflow.context.support.ExternalContextHolder;
+import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.conversation.ConversationAccessException;
 import org.springframework.webflow.conversation.ConversationException;
 import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationManager;
+import org.springframework.webflow.core.collection.SharedAttributeMap;
 
 /**
  * The default implementation of the {@link ConversationManager}. This

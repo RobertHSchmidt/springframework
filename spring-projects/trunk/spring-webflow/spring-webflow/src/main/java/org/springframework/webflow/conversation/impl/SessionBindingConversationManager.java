@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.context.SharedAttributeMap;
-import org.springframework.webflow.context.support.ExternalContextHolder;
+import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.conversation.ConversationId;
+import org.springframework.webflow.core.collection.SharedAttributeMap;
 
 /**
  * <p>

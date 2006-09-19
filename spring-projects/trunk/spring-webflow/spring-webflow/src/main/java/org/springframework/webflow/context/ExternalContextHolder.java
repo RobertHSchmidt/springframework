@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.context.support;
+package org.springframework.webflow.context;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.context.ExternalContext;
 
 /**
- * Simple holder class that associates a {@link ExternalContext} instance with
+ * Simple holder class that associates an {@link ExternalContext} instance with
  * the current thread. The ExternalContext will be inherited by any child
  * threads spawned by the current thread.
  * <p>
@@ -27,16 +26,17 @@ import org.springframework.webflow.context.ExternalContext;
  * wherever necessary. Often used by artifacts needing access to the current
  * application session.
  * 
- * @author Keith Donald
  * @see ExternalContext
+ * 
+ * @author Keith Donald
  */
 public final class ExternalContextHolder {
 
 	private static ThreadLocal externalContextHolder = new InheritableThreadLocal();
 
 	/**
-	 * Associate the given LocaleContext with the current thread.
-	 * @param externalContext the current LocaleContext, or <code>null</code>
+	 * Associate the given ExternalContext with the current thread.
+	 * @param externalContext the current ExternalContext, or <code>null</code>
 	 * to reset the thread-bound context
 	 */
 	public static void setExternalContext(ExternalContext externalContext) {
@@ -44,8 +44,8 @@ public final class ExternalContextHolder {
 	}
 
 	/**
-	 * Return the LocaleContext associated with the current thread, if any.
-	 * @return the current LocaleContext, or <code>null</code> if none
+	 * Return the ExternalContext associated with the current thread, if any.
+	 * @return the current ExternalContext, or <code>null</code> if none
 	 */
 	public static ExternalContext getExternalContext() {
 		Assert.state(externalContextHolder.get() != null, "No external context is bound to this thread");
@@ -54,6 +54,5 @@ public final class ExternalContextHolder {
 
 	// not instantiable
 	private ExternalContextHolder() {
-
 	}
 }
