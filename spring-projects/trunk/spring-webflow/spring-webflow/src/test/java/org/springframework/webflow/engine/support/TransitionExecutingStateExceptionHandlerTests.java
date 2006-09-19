@@ -3,7 +3,7 @@ package org.springframework.webflow.engine.support;
 import junit.framework.TestCase;
 
 import org.springframework.binding.expression.support.StaticExpression;
-import org.springframework.webflow.MyCustomException;
+import org.springframework.webflow.TestException;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.RequestControlContext;
@@ -27,7 +27,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		flow = new Flow("myFlow");
 		state = new TransitionableState(flow, "state1") {
 			protected ViewSelection doEnter(RequestControlContext context) {
-				throw new FlowExecutionException(getFlow().getId(), getId(), "Oops!", new MyCustomException());
+				throw new FlowExecutionException(getFlow().getId(), getId(), "Oops!", new TestException());
 			}
 		};
 		state.getTransitionSet().add(new Transition(to("end")));
@@ -35,9 +35,9 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 
 	public void testTransitionExecutorHandlesExceptionExactMatch() {
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
-		handler.add(MyCustomException.class, "state");
+		handler.add(TestException.class, "state");
 		FlowExecutionException e = new FlowExecutionException(state.getOwner().getId(), state.getId(), "Oops",
-				new MyCustomException());
+				new TestException());
 		assertTrue("Doesn't handle state exception", handler.handles(e));
 
 		e = new FlowExecutionException(state.getOwner().getId(), state.getId(), "Oops", new Exception());
@@ -48,7 +48,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
 		handler.add(Exception.class, "state");
 		FlowExecutionException e = new FlowExecutionException(state.getOwner().getId(), state.getId(), "Oops",
-				new MyCustomException());
+				new TestException());
 		assertTrue("Doesn't handle state exception", handler.handles(e));
 		e = new FlowExecutionException(state.getOwner().getId(), state.getId(), "Oops", new RuntimeException());
 		assertTrue("Doesn't handle state exception", handler.handles(e));
@@ -58,13 +58,13 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		EndState state2 = new EndState(flow, "end");
 		state2.setViewSelector(new ApplicationViewSelector(new StaticExpression("view")));
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
-		handler.add(MyCustomException.class, "end");
+		handler.add(TestException.class, "end");
 		flow.getExceptionHandlerSet().add(handler);
 		FlowExecutionListener listener = new FlowExecutionListenerAdapter() {
 			public void requestProcessed(RequestContext context) {
 				assertTrue(context.getRequestScope().contains("stateException"));
 				assertTrue(context.getRequestScope().contains("rootCauseException"));
-				assertTrue(context.getRequestScope().get("rootCauseException") instanceof MyCustomException);
+				assertTrue(context.getRequestScope().get("rootCauseException") instanceof TestException);
 			}
 		};
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow, new FlowExecutionListener[] { listener }, null);
@@ -74,7 +74,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 
 	public void testStateExceptionHandlingTransitionNoSuchState() {
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
-		handler.add(MyCustomException.class, "end");
+		handler.add(TestException.class, "end");
 		flow.getExceptionHandlerSet().add(handler);
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		try {

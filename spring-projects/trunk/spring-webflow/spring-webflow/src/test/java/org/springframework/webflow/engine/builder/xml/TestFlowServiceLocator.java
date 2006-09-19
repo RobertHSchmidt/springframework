@@ -2,7 +2,7 @@ package org.springframework.webflow.engine.builder.xml;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
-import org.springframework.webflow.MyCustomException;
+import org.springframework.webflow.TestException;
 import org.springframework.webflow.action.MultiAction;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -59,7 +59,7 @@ public class TestFlowServiceLocator extends BaseFlowServiceLocator {
 
 	public class TestMultiAction extends MultiAction {
 		public Event actionMethod(RequestContext context) throws Exception {
-			throw new MyCustomException("Oops!");
+			throw new TestException("Oops!");
 		}
 	}
 

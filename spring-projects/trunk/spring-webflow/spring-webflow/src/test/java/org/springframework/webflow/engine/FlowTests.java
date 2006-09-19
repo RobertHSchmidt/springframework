@@ -23,7 +23,7 @@ import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.context.support.StaticApplicationContext;
-import org.springframework.webflow.MyCustomException;
+import org.springframework.webflow.TestException;
 import org.springframework.webflow.action.TestMultiAction;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -311,11 +311,11 @@ public class FlowTests extends TestCase {
 
 	public void testHandleStateException() {
 		flow.getExceptionHandlerSet().add(
-				new TransitionExecutingStateExceptionHandler().add(MyCustomException.class, "myState2"));
+				new TransitionExecutingStateExceptionHandler().add(TestException.class, "myState2"));
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.setCurrentState(flow.getStateInternal("myState1"));
 		FlowExecutionException e = new FlowExecutionException(flow.getId(), flow.getStartState().getId(), "Oops!",
-				new MyCustomException());
+				new TestException());
 		ApplicationView selectedView = (ApplicationView)flow.handleException(e, context);
 		assertFalse(context.getFlowExecutionContext().isActive());
 		assertNotNull("Should not have been null", selectedView);
@@ -325,7 +325,7 @@ public class FlowTests extends TestCase {
 	public void testHandleStateExceptionNoMatch() {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		FlowExecutionException e = new FlowExecutionException(flow.getId(), flow.getStartState().getId(), "Oops!",
-				new MyCustomException());
+				new TestException());
 		try {
 			flow.handleException(e, context);
 		}
