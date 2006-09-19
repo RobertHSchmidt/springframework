@@ -23,6 +23,7 @@ package org.springframework.webflow.definition;
  * They may also be annotated with attributes.
  * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
 public interface StateDefinition extends Annotated {
 

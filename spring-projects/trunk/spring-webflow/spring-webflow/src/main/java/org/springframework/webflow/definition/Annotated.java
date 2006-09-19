@@ -22,18 +22,19 @@ import org.springframework.webflow.core.collection.AttributeMap;
  * they wish to expose to clients.
  * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
 public interface Annotated {
 
 	/**
-	 * Returns a short summary of this flow definition, suitable for display as
+	 * Returns a short summary of this object, suitable for display as
 	 * an icon caption or tool tip.
 	 * @return the caption
 	 */
 	public String getCaption();
 
 	/**
-	 * Returns a longer, more detailed description of this flow definition.
+	 * Returns a longer, more detailed description of this object.
 	 * @return the description
 	 */
 	public String getDescription();

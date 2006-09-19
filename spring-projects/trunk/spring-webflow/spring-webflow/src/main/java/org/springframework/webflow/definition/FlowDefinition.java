@@ -17,9 +17,9 @@ package org.springframework.webflow.definition;
 
 /**
  * The definition of a flow, a program that when executed carries out the
- * execution of a task on behalf of a single client.
+ * orchestration of a task on behalf of a single client.
  * <p>
- * A Flow definition is a reusable, self-contained controller module that
+ * A flow definition is a reusable, self-contained controller module that
  * defines a blue print for an executable user task. Flows typically orchestrate
  * controlled navigations or dialogs within web applications to guide users
  * through fulfillment of a business process/goal that takes place over a series
@@ -33,14 +33,17 @@ package org.springframework.webflow.definition;
  * {@link TransitionableStateDefinition transitionable states}, meaning they
  * can respond to events by taking the flow from one state to another.
  * <p>
- * Each Flow has exactly one {@link #getStartState() start state} which defines
+ * Each flow has exactly one {@link #getStartState() start state} which defines
  * the starting point of the program.
  * <p>
  * This interface exposes the flow's identifier, states, and other definitional
  * attributes. It is suitable for introspection by tools as well as user-code at
  * flow execution time.
+ * <p>
+ * Flow definitions may be annotated with attributes.
  * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
 public interface FlowDefinition extends Annotated {
 
