@@ -15,21 +15,25 @@
  */
 package org.springframework.webflow;
 
-import junit.framework.TestCase;
-
 /**
- * Keith likes to have these little cup & paste examples in the source
- * repositories. If only he knew the power of code templates in Eclipse...
+ * Dummy exception used by several test cases.
  */
-public class UnitTestTemplate extends TestCase {
+public class TestException extends Exception {
 
-	protected void setUp() throws Exception {
+	public TestException() {
+		super();
 	}
 
-	public void testScenario1() {
+	public TestException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
-	public void testScenario2() {
+	public TestException(String message) {
+		super(message);
+	}
+
+	public TestException(Throwable cause) {
+		super(cause);
 	}
 
 }

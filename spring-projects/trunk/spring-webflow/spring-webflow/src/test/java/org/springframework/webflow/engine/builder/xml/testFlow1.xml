@@ -36,7 +36,7 @@
 	<action-state id="actionState2">
 		<action bean="multiAction" method="actionMethod" />
 		<transition on="success" to="actionState3" />
-		<transition on-exception="org.springframework.webflow.MyCustomException" to="actionState3" />
+		<transition on-exception="org.springframework.webflow.TestException" to="actionState3" />
 	</action-state>
 
 	<action-state id="actionState3">
@@ -114,7 +114,7 @@
 	<end-state id="endState2" />
 
 	<global-transitions>
-		<transition on-exception="org.springframework.webflow.MyCustomException" to="endState1" />
+		<transition on-exception="org.springframework.webflow.TestException" to="endState1" />
 	</global-transitions>
 
 	<end-actions>
