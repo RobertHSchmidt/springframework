@@ -29,7 +29,7 @@ public class ReflectionUtils {
 
 	/**
 	 * Invoke the specified {@link Method} against the supplied target object
-	 * with no arguments The target object can be <code>null</code> when
+	 * with no arguments. The target object can be <code>null</code> when
 	 * invoking a static {@link Method}.
 	 * @see #invokeMethod(java.lang.reflect.Method, Object, Object[])
 	 */
@@ -39,7 +39,7 @@ public class ReflectionUtils {
 
 	/**
 	 * Invoke the specified {@link Method} against the supplied target object
-	 * with the supplied arguments The target object can be null when invoking a
+	 * with the supplied arguments. The target object can be null when invoking a
 	 * static {@link Method}.
 	 * <p>
 	 * Thrown exceptions are handled via a call to
@@ -66,7 +66,8 @@ public class ReflectionUtils {
 	 * Handle the given reflection exception.
 	 * Should only be called if no checked exception is expected to
 	 * be thrown by the target method.
-	 * <p>Throws the underlying RuntimeException or Error in case
+	 * <p>
+	 * Throws the underlying RuntimeException or Error in case
 	 * of an InvocationTargetException with such a root cause. Throws
 	 * an IllegalStateException with an appropriate message else.
 	 * @param ex the reflection exception to handle
@@ -89,7 +90,8 @@ public class ReflectionUtils {
 	 * Handle the given invocation target exception.
 	 * Should only be called if no checked exception is expected to
 	 * be thrown by the target method.
-	 * <p>Throws the underlying RuntimeException or Error in case
+	 * <p>
+	 * Throws the underlying RuntimeException or Error in case
 	 * of such a root cause. Throws an IllegalStateException else.
 	 * @param ex the invocation target exception to handle
 	 */
