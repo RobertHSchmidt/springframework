@@ -63,6 +63,7 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 		}
 		Object value = session.getAttribute(key);
 		if (value instanceof HttpSessionMapBindingListener) {
+			// unwrap
 			return ((HttpSessionMapBindingListener)value).getListener();
 		} else {
 			return value;
@@ -73,7 +74,9 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 		// force session creation
 		HttpSession session = request.getSession(true);
 		if (value instanceof AttributeMapBindingListener) {
-			session.setAttribute(key, new HttpSessionMapBindingListener((AttributeMapBindingListener)value, this));
+			// wrap
+			session.setAttribute(key,
+					new HttpSessionMapBindingListener((AttributeMapBindingListener)value, this));
 		}
 		else {
 			session.setAttribute(key, value);
@@ -99,35 +102,4 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 		Object mutex = session.getAttribute(WebUtils.SESSION_MUTEX_ATTRIBUTE);
 		return mutex != null ? mutex : session;
 	}
-<<<<<<< .mine
-=======
-
-	/**
-	 * Helper class that wraps an {@link AttributeMapBindingListener} in an
-	 * {@link HttpSessionBindingListener}. Calls will be forwarded to the
-	 * wrapped listener.
-	 * 
-	 * @author Keith Donald
-	 */
-	private class HttpSessionMapBindingListener implements HttpSessionBindingListener {
-		
-		private AttributeMapBindingListener listener;
-
-		public HttpSessionMapBindingListener(AttributeMapBindingListener listner) {
-			this.listener = listner;
-		}
-
-		public void valueBound(HttpSessionBindingEvent event) {
-			listener.valueBound(getContextBindingEvent(event));
-		}
-
-		public void valueUnbound(HttpSessionBindingEvent event) {
-			listener.valueUnbound(getContextBindingEvent(event));
-		}
-
-		private AttributeMapBindingEvent getContextBindingEvent(HttpSessionBindingEvent event) {
-			return new AttributeMapBindingEvent(new LocalAttributeMap(HttpSessionMap.this), event.getName(), listener);
-		}
-	}
->>>>>>> .r4192
 }
