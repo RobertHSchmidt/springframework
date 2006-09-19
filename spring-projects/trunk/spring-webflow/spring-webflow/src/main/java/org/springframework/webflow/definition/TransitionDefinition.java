@@ -16,10 +16,10 @@
 package org.springframework.webflow.definition;
 
 /**
- * A transition takes a flow from one state to another. A transition is
- * typically triggered by an event.
+ * A transition takes a flow from one state to another.
  * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
 public interface TransitionDefinition extends Annotated {
 

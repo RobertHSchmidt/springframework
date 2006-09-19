@@ -16,9 +16,10 @@
 package org.springframework.webflow.definition;
 
 /**
- * A state that can transition to another state. Transitions are driven by
- * events.
+ * A state that can transition to another state.
+ * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
 public interface TransitionableStateDefinition extends StateDefinition {
 	
