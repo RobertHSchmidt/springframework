@@ -21,6 +21,8 @@ import org.springframework.webflow.definition.FlowDefinition;
  * A holder holding a reference to a Flow definition. Provides a layer of
  * indirection, enabling things like "hot-reloadable" flow definitions.
  * 
+ * @see FlowDefinitionRegistry#registerFlowDefinition(FlowDefinitionHolder)
+ * 
  * @author Keith Donald
  */
 public interface FlowDefinitionHolder {
@@ -28,24 +30,25 @@ public interface FlowDefinitionHolder {
 	/**
 	 * Returns the <code>id</code> of the flow definition held by this holder.
 	 * This is a <i>lightweight</i> method callers may call to obtain the id of
-	 * the Flow without triggering full Flow definition assembly (which may be
+	 * the flow without triggering full flow definition assembly (which may be
 	 * an expensive operation).
 	 */
 	public String getFlowDefinitionId();
 
 	/**
-	 * Returns the Flow definition held by this holder. Calling this method the
-	 * first time may trigger Flow assembly (which may be expensive).
+	 * Returns the flow definition held by this holder. Calling this method the
+	 * first time may trigger flow assembly (which may be expensive).
 	 * @throws FlowDefinitionConstructionException if there is a problem constructing 
 	 * the target flow definition
 	 */
 	public FlowDefinition getFlowDefinition() throws FlowDefinitionConstructionException;
 
 	/**
-	 * Refresh the Flow definition held by this holder. Calling this method
-	 * typically triggers Flow reassembly, which may include a refresh from an
+	 * Refresh the flow definition held by this holder. Calling this method
+	 * typically triggers flow reassembly, which may include a refresh from an
 	 * externalized resource such as a file.
-	 * @throws UnsupportedOperationException if this holder does not support a refresh
+	 * @throws FlowDefinitionConstructionException if there is a problem constructing 
+	 * the target flow definition
 	 */
-	public void refresh() throws UnsupportedOperationException;
+	public void refresh() throws FlowDefinitionConstructionException;
 }

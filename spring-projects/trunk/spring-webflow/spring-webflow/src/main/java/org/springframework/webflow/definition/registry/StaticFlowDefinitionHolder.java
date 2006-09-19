@@ -31,7 +31,7 @@ public final class StaticFlowDefinitionHolder implements FlowDefinitionHolder {
 	private final FlowDefinition flowDefinition;
 
 	/**
-	 * Creates the static flow holder
+	 * Creates the static flow definition holder.
 	 * @param flowDefinition the flow to hold
 	 */
 	public StaticFlowDefinitionHolder(FlowDefinition flowDefinition) {

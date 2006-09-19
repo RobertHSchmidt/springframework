@@ -32,7 +32,7 @@ public abstract class FlowDefinitionConstructionException extends FlowException 
 	private String flowId;
 	
 	/**
-	 * Creates an exception indicating a flow definition could not be found.
+	 * Creates an exception indicating a flow definition could not be constructed.
 	 * @param flowId the flow id
 	 * @param cause underlying cause of the exception
 	 */

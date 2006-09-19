@@ -25,17 +25,10 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.definition.FlowDefinition;
 
 /**
+ * A generic registry implementation for housing one or more flow definitions.
  * <p>
- * A generic registry implementing for housing one or more Flow definitions.
- * </p>
- * <p>
- * This registry may be refreshed at runtime to "hot reload" refreshable Flow
+ * This registry may be refreshed at runtime to "hot reload" refreshable flow
  * definitions.
- * </p>
- * <p>
- * This registry be configured with a "parent" flow registry to provide a hook
- * into a larger flow definition registry hierarchy.
- * </p>
  * 
  * @author Keith Donald
  */
@@ -47,19 +40,11 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 	private Map flowDefinitions = new TreeMap();
 
 	/**
-	 * An optional parent flow registry.
+	 * An optional parent flow definition registry.
 	 */
 	private FlowDefinitionRegistry parent;
-
-	/**
-	 * Sets this registry's parent registry. When asked by a client to locate a
-	 * flow definition this registry will query it's parent if it cannot
-	 * fullfill the lookup request.
-	 * @param parent the parent flow registry, may be null
-	 */
-	public void setParent(FlowDefinitionRegistry parent) {
-		this.parent = parent;
-	}
+	
+	// implementing FlowDefinitionRegistryMBean
 
 	public String[] getFlowDefinitionIds() {
 		return (String[])flowDefinitions.keySet().toArray(new String[flowDefinitions.size()]);
@@ -74,29 +59,7 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 		return flowDefinitions.get(id) != null;
 	}
 
-	public FlowDefinition[] getFlowDefinitions() {
-		FlowDefinition[] flows = new FlowDefinition[flowDefinitions.size()];
-		Iterator it = flowDefinitions.values().iterator();
-		int i = 0;
-		while (it.hasNext()) {
-			FlowDefinitionHolder holder = (FlowDefinitionHolder)it.next();
-			flows[i] = holder.getFlowDefinition();
-			i++;
-		}
-		return flows;
-	}
-
-	public void registerFlowDefinition(FlowDefinitionHolder flowHolder) {
-		Assert.notNull(flowHolder, "The flow definition holder to register is required");
-		index(flowHolder);
-	}
-
-	public void removeFlowDefinition(String id) {
-		Assert.hasText(id, "The flow id is required");
-		flowDefinitions.remove(id);
-	}
-
-	public void refresh() {
+	public void refresh() throws FlowDefinitionConstructionException {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		try {
 			// workaround for JMX
@@ -123,7 +86,8 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 		}
 	}
 
-	public void refresh(String flowId) throws NoSuchFlowDefinitionException {
+	public void refresh(String flowId)
+			throws NoSuchFlowDefinitionException, FlowDefinitionConstructionException {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		try {
 			// workaround for JMX
@@ -133,34 +97,16 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 			if (!holder.getFlowDefinitionId().equals(flowId)) {
 				reindex(holder, flowId);
 			}
-
 		}
 		finally {
 			Thread.currentThread().setContextClassLoader(loader);
 		}
 	}
-
-	private void reindex(FlowDefinitionHolder holder, String oldId) {
-		flowDefinitions.remove(oldId);
-		index(holder);
-	}
-
-	private void index(FlowDefinitionHolder holder) {
-		Assert.hasText(holder.getFlowDefinitionId(), "The flow holder to index must return a non-blank flow id");
-		flowDefinitions.put(holder.getFlowDefinitionId(), holder);
-	}
-
-	private FlowDefinitionHolder getFlowDefinitionHolder(String id) {
-		FlowDefinitionHolder flowHolder = (FlowDefinitionHolder)flowDefinitions.get(id);
-		if (flowHolder == null) {
-			throw new NoSuchFlowDefinitionException(id, getFlowDefinitionIds());
-		}
-		return flowHolder;
-	}
-
+	
 	// implementing FlowDefinitionLocator
-
-	public FlowDefinition getFlowDefinition(String id) throws NoSuchFlowDefinitionException {
+	
+	public FlowDefinition getFlowDefinition(String id)
+			throws NoSuchFlowDefinitionException, FlowDefinitionConstructionException {
 		Assert.hasText(id,
 				"Unable to load a flow definition: no flow id was provided.  Please provide a valid flow identifier.");
 		try {
@@ -174,13 +120,81 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 			throw e;
 		}
 	}
+	
+	// implementing FlowDefinitionRegistry
+	
+	public void setParent(FlowDefinitionRegistry parent) {
+		this.parent = parent;
+	}
+	
+	public FlowDefinition[] getFlowDefinitions() throws FlowDefinitionConstructionException {
+		FlowDefinition[] flows = new FlowDefinition[flowDefinitions.size()];
+		Iterator it = flowDefinitions.values().iterator();
+		int i = 0;
+		while (it.hasNext()) {
+			FlowDefinitionHolder holder = (FlowDefinitionHolder)it.next();
+			flows[i] = holder.getFlowDefinition();
+			i++;
+		}
+		return flows;
+	}
+
+	public void registerFlowDefinition(FlowDefinitionHolder flowHolder) {
+		Assert.notNull(flowHolder, "The flow definition holder to register is required");
+		index(flowHolder);
+	}
+
+	/**
+	 * Remove identified flow definition from this registry. If the given
+	 * id is not known in this registry, nothing will happen.
+	 * @param id the flow definition id
+	 */
+	public void removeFlowDefinition(String id) {
+		Assert.hasText(id, "The flow id is required");
+		flowDefinitions.remove(id);
+	}
+	
+	// internal helpers
+
+	/**
+	 * Reindex given flow definition.
+	 * @param holder the holder holding the flow definition to reindex
+	 * @param oldId the id that was previously assigned to given flow definition
+	 */
+	private void reindex(FlowDefinitionHolder holder, String oldId) {
+		flowDefinitions.remove(oldId);
+		index(holder);
+	}
+
+	/**
+	 * Index given flow definition.
+	 * @param holder the holder holding the flow definition to index
+	 */
+	private void index(FlowDefinitionHolder holder) {
+		Assert.hasText(holder.getFlowDefinitionId(), "The flow holder to index must return a non-blank flow id");
+		flowDefinitions.put(holder.getFlowDefinitionId(), holder);
+	}
+
+	/**
+	 * Returns the identified flow definition holder. Throws an exception
+	 * if it cannot be found.
+	 */
+	private FlowDefinitionHolder getFlowDefinitionHolder(String id) throws NoSuchFlowDefinitionException {
+		FlowDefinitionHolder flowHolder = (FlowDefinitionHolder)flowDefinitions.get(id);
+		if (flowHolder == null) {
+			throw new NoSuchFlowDefinitionException(id, getFlowDefinitionIds());
+		}
+		return flowHolder;
+	}
 
 	/**
 	 * Simple value object that holds the key for an indexed flow definition
 	 * holder in this registry. Used to support reindexing on a refresh.
+	 * 
 	 * @author Keith Donald
 	 */
 	private static class Indexed {
+		
 		private String key;
 
 		private FlowDefinitionHolder holder;

@@ -16,18 +16,16 @@
 package org.springframework.webflow.definition.registry;
 
 /**
- * <p>
- * A management interface for managing Flow definition registries at runtime.
+ * A management interface for managing flow definition registries at runtime.
  * Provides the ability to query the size and state of the registry, as well as
- * refresh registered Flow definitions at runtime.
- * </p>
+ * refresh registered flow definitions at runtime.
  * <p>
  * Flow registries that implement this interface may be exposed for management
  * over the JMX protocol. The following is an example of using Spring's JMX
  * <code>MBeanExporter</code> to export a flow registry to an MBeanServer:
  * <pre class="code">
  *     &lt;!-- Creates the registry of flow definitions for this application --&gt;
- *     &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+ *     &lt;bean name=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow...XmlFlowRegistryFactoryBean&quot;&gt;
  *         &lt;property name=&quot;locations&quot; value=&quot;/WEB-INF/flow1.xml&quot;/&gt;
  *     &lt;/bean&gt;
  *  
@@ -47,20 +45,20 @@ package org.springframework.webflow.definition.registry;
  * </pre>
  * With the above configuration, you may then use any JMX client (such as Sun's
  * jConsole which ships with JDK 1.5) to refresh flow definitions at runtime.
- * </p>
+ * 
  * @author Keith Donald
  */
 public interface FlowDefinitionRegistryMBean {
 
 	/**
-	 * Returns the names of the flow definitions registered in this registry.
-	 * @return the flow definition names
+	 * Returns the ids of the flow definitions registered in this registry.
+	 * @return the flow definition ids
 	 */
 	public String[] getFlowDefinitionIds();
 
 	/**
 	 * Return the number of flow definitions registered in this registry.
-	 * @return the flow definition count;
+	 * @return the flow definition count
 	 */
 	public int getFlowDefinitionCount();
 
@@ -77,15 +75,16 @@ public interface FlowDefinitionRegistryMBean {
 	 * Refresh this flow definition registry, reloading all Flow definitions
 	 * from their externalized representations.
 	 */
-	public void refresh();
+	public void refresh() throws FlowDefinitionConstructionException;
 
 	/**
 	 * Refresh the Flow definition in this registry with the <code>id</code>
-	 * provided, reloading it from it's externalized representation.
-	 * @param flowDefinitionId the id of the flow definition to refresh.
-	 * @throws IllegalArgumentException if a flow with the id provided is not
-	 * stored in this registry.
+	 * provided, reloading it from it's externalized representation
+	 * @param flowDefinitionId the id of the flow definition to refresh
+	 * @throws NoSuchFlowDefinitionException if a flow with the id provided is not
+	 * stored in this registry
 	 */
-	public void refresh(String flowDefinitionId) throws IllegalArgumentException;
+	public void refresh(String flowDefinitionId)
+			throws NoSuchFlowDefinitionException, FlowDefinitionConstructionException;
 
 }
