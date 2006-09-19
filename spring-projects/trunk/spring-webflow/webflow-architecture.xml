@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<java version="1.5.0_06" class="java.beans.XMLDecoder"> 
+<java version="1.5.0_08" class="java.beans.XMLDecoder"> 
  <object class="com.hello2morrow.sonar.core.architecturedescription.ArchitectureDescription"> 
   <void property="assertionPatternsCollection"> 
    <void method="add"> 
@@ -107,11 +107,11 @@
          <void method="add"> 
           <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
            <void property="fullyQualifiedName"> 
-            <string>Spring Data Binding::Util</string> 
+            <string>Spring Data Binding::Core</string> 
            </void> 
            <void property="includePackagePatternsCollection"> 
             <void method="add"> 
-             <string>org.springframework.binding.util</string> 
+             <string>org.springframework.binding.core</string> 
             </void> 
            </void> 
           </object> 
