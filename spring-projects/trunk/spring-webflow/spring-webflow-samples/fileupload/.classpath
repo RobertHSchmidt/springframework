@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
-	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry output="target/classes" kind="src" path="src/main/java"/>
+	<classpathentry output="target/test-classes" kind="src" path="src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/test/junit.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-logging.jar"/>
@@ -9,7 +9,6 @@
 	<classpathentry kind="lib" path="lib/global/spring-core.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-beans.jar"/>
 	<classpathentry kind="lib" path="lib/global/ognl.jar"/>
-	<classpathentry kind="lib" path="lib/buildtime/servlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-codec.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-fileupload.jar"/>
 	<classpathentry kind="lib" path="lib/global/jstl.jar"/>
