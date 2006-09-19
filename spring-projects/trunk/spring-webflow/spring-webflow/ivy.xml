@@ -19,6 +19,7 @@
 	<dependency	org="org.apache" name="commons-codec" rev="1.1"/>
 	<dependency	org="org.apache" name="commons-logging"	rev="1.1"/>
 	<dependency	org="org.apache" name="log4j" rev="1.2.13"/>
+	<!-- Xerces and XML-apis are required only under JDK 1.4 for XSD support -->
 	<dependency	org="org.apache" name="xerces" rev="2.8.1">
 		<artifact name="xercesImpl" type="jar"/>
 	</dependency>
