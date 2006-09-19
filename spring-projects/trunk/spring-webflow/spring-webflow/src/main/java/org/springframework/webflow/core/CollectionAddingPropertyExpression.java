@@ -28,6 +28,7 @@ import org.springframework.util.Assert;
 /**
  * A property expression that can add an element to a collection when asked to
  * set its value.
+ * 
  * @author Keith Donald
  */
 public class CollectionAddingPropertyExpression implements PropertyExpression {
