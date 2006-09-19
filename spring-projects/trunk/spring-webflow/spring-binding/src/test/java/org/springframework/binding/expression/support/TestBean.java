@@ -15,14 +15,27 @@
  */
 package org.springframework.binding.expression.support;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TestBean {
 	private boolean flag;
 
+	private List collection = new ArrayList();
+	
 	public boolean isFlag() {
 		return flag;
 	}
 
 	public void setFlag(boolean flag) {
 		this.flag = flag;
+	}
+
+	public List getCollection() {
+		return collection;
+	}
+	
+	public void setCollection(List collection) {
+		this.collection = collection;
 	}
 }
