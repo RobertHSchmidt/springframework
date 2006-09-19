@@ -19,7 +19,7 @@ import java.util.EventObject;
 
 /**
  * Holder for information about the binding or unbinding event in an
- * <code>AttributeMap</code>.
+ * {@link AttributeMap}.
  * 
  * @see AttributeMapBindingListener
  * 
