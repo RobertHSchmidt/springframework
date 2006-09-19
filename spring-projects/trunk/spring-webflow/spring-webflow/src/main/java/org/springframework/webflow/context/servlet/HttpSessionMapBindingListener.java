@@ -1,6 +1,6 @@
 /*
  * Copyright 2005 the original author or authors.
-/*
+ /*
  * Copyright 2002-2006 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -27,18 +27,18 @@ import org.springframework.webflow.core.collection.AttributeMapBindingListener;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 
 /**
- * Helper class that wraps an {@link AttributeMapBindingListener} in an
- * {@link HttpSessionBindingListener}. Calls will be forwarded to the
- * wrapped listener.
+ * Helper class that adapts a generic {@link AttributeMapBindingListener} to a
+ * http-specific {@link HttpSessionBindingListener}. Calls will be forwarded to
+ * the wrapped listener.
  * 
  * @author Keith Donald
  */
 public class HttpSessionMapBindingListener implements HttpSessionBindingListener {
-	
+
 	private AttributeMapBindingListener listener;
 
 	private Map sessionMap;
-	
+
 	/**
 	 * Create a new wrapper for given listener.
 	 * @param listener the listener to wrap
@@ -55,14 +55,14 @@ public class HttpSessionMapBindingListener implements HttpSessionBindingListener
 	public AttributeMapBindingListener getListener() {
 		return listener;
 	}
-	
+
 	/**
 	 * Returns the session map containing the listener.
 	 */
 	public Map getSessionMap() {
 		return sessionMap;
 	}
-	
+
 	public void valueBound(HttpSessionBindingEvent event) {
 		listener.valueBound(getContextBindingEvent(event));
 	}
@@ -72,7 +72,8 @@ public class HttpSessionMapBindingListener implements HttpSessionBindingListener
 	}
 
 	/**
-	 * Create a attribute map binding event for given HTTP session binding event.
+	 * Create a attribute map binding event for given HTTP session binding
+	 * event.
 	 */
 	private AttributeMapBindingEvent getContextBindingEvent(HttpSessionBindingEvent event) {
 		return new AttributeMapBindingEvent(new LocalAttributeMap(sessionMap), event.getName(), listener);
