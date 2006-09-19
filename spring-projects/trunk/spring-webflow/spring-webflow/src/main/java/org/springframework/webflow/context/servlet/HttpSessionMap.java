@@ -19,14 +19,10 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionBindingEvent;
-import javax.servlet.http.HttpSessionBindingListener;
 
 import org.springframework.web.util.WebUtils;
-import org.springframework.webflow.core.collection.AttributeMapBindingEvent;
 import org.springframework.webflow.core.collection.AttributeMapBindingListener;
 import org.springframework.webflow.core.collection.CollectionUtils;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.SharedMap;
 import org.springframework.webflow.core.collection.StringKeyedMapAdapter;
 
@@ -67,7 +63,7 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 		}
 		Object value = session.getAttribute(key);
 		if (value instanceof HttpSessionMapBindingListener) {
-			return ((HttpSessionMapBindingListener)value).listener;
+			return ((HttpSessionMapBindingListener)value).getListener();
 		} else {
 			return value;
 		}
@@ -77,7 +73,7 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 		// force session creation
 		HttpSession session = request.getSession(true);
 		if (value instanceof AttributeMapBindingListener) {
-			session.setAttribute(key, new HttpSessionMapBindingListener((AttributeMapBindingListener)value));
+			session.setAttribute(key, new HttpSessionMapBindingListener((AttributeMapBindingListener)value, this));
 		}
 		else {
 			session.setAttribute(key, value);
@@ -103,6 +99,8 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 		Object mutex = session.getAttribute(WebUtils.SESSION_MUTEX_ATTRIBUTE);
 		return mutex != null ? mutex : session;
 	}
+<<<<<<< .mine
+=======
 
 	/**
 	 * Helper class that wraps an {@link AttributeMapBindingListener} in an
@@ -131,4 +129,5 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 			return new AttributeMapBindingEvent(new LocalAttributeMap(HttpSessionMap.this), event.getName(), listener);
 		}
 	}
+>>>>>>> .r4192
 }
