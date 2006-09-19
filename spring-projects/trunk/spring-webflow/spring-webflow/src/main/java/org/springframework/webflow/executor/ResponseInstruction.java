@@ -22,9 +22,9 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.ApplicationView;
-import org.springframework.webflow.execution.support.ApplicationViewRedirect;
+import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 import org.springframework.webflow.execution.support.ExternalRedirect;
-import org.springframework.webflow.execution.support.LaunchFlowRedirect;
+import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 
 /**
  * Immutable value object that provides clients with information about a
@@ -141,16 +141,16 @@ public class ResponseInstruction implements Serializable {
 	 * Returns true if this is an instruction to launch an entirely new
 	 * (independent) flow execution.
 	 */
-	public boolean isLaunchFlowRedirect() {
-		return viewSelection instanceof LaunchFlowRedirect;
+	public boolean isFlowDefinitionRedirect() {
+		return viewSelection instanceof FlowDefinitionRedirect;
 	}
 
 	/**
 	 * Returns true if this is an instruction to perform a redirect to the
 	 * current flow execution to render an application view.
 	 */
-	public boolean isApplicationViewRedirect() {
-		return viewSelection instanceof ApplicationViewRedirect;
+	public boolean isFlowExecutionRedirect() {
+		return viewSelection instanceof FlowExecutionRedirect;
 	}
 
 	/**

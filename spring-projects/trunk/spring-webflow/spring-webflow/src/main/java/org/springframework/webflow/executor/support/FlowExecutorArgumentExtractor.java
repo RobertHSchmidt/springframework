@@ -28,7 +28,7 @@ import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.support.ExternalRedirect;
-import org.springframework.webflow.execution.support.LaunchFlowRedirect;
+import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.executor.FlowExecutor;
 
 /**
@@ -461,19 +461,19 @@ public class FlowExecutorArgumentExtractor {
 	 * Create a URL that when redirected to launches a entirely new execution of
 	 * a flow (starts a new conversation). Used to support the <i>restart flow</i>
 	 * and <i>redirect to flow</i> use cases.
-	 * @param launchFlowRedirect the launch flow redirect view selection
+	 * @param flowDefinitionRedirect the launch flow redirect view selection
 	 * @param context the external context
 	 * @return the relative flow URL path to redirect to
 	 */
-	public String createFlowUrl(LaunchFlowRedirect launchFlowRedirect, ExternalContext context) {
+	public String createFlowUrl(FlowDefinitionRedirect flowDefinitionRedirect, ExternalContext context) {
 		StringBuffer url = new StringBuffer();
 		appendFlowExecutorPath(url, context);
 		url.append('?');
-		appendQueryParameter(getFlowIdParameterName(), launchFlowRedirect.getFlowDefinitionId(), url);
-		if (!launchFlowRedirect.getExecutionInput().isEmpty()) {
+		appendQueryParameter(getFlowIdParameterName(), flowDefinitionRedirect.getFlowDefinitionId(), url);
+		if (!flowDefinitionRedirect.getExecutionInput().isEmpty()) {
 			url.append('&');
 		}
-		appendQueryParameters(launchFlowRedirect.getExecutionInput(), url);
+		appendQueryParameters(flowDefinitionRedirect.getExecutionInput(), url);
 		return url.toString();
 	}
 

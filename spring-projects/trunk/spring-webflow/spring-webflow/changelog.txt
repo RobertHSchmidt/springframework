@@ -125,7 +125,7 @@ Package org.springframework.webflow.execution
 * Decoupled the central RequestContext interface from the flow execution engine implementation.
 * Renamed the "flow" property of FlowExecutionContext to "definition" for consistency.
 * Renamed the "flow" property of FlowSession to "definition" for consistency.
-* Renamed FlowRedirect to LaunchFlowRedirect for clarity.
+* Renamed FlowRedirect to FlowDefinitionRedirect for clarity.
 * Made all modifiable execution data maps "MutableAttributeMap" references: this includes 
   "request scope", "flow scope", and "conversation scope".  Umodifiable maps are simply plain
   "AttributeMap" references: this includes request context attributes, flow execution system

@@ -35,9 +35,9 @@ import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionFactory;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.ApplicationView;
-import org.springframework.webflow.execution.support.ApplicationViewRedirect;
+import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 import org.springframework.webflow.execution.support.ExternalRedirect;
-import org.springframework.webflow.execution.support.LaunchFlowRedirect;
+import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
@@ -420,22 +420,22 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 
 	/**
 	 * Assert that the returned view selection is an instance of
-	 * {@link LaunchFlowRedirect}.
+	 * {@link FlowDefinitionRedirect}.
 	 * @param viewSelection the view selection
 	 */
-	protected LaunchFlowRedirect launchFlowRedirect(ViewSelection viewSelection) {
-		Assert.isInstanceOf(LaunchFlowRedirect.class, viewSelection, "Unexpected class of view selection: ");
-		return (LaunchFlowRedirect)viewSelection;
+	protected FlowDefinitionRedirect flowDefinitionRedirect(ViewSelection viewSelection) {
+		Assert.isInstanceOf(FlowDefinitionRedirect.class, viewSelection, "Unexpected class of view selection: ");
+		return (FlowDefinitionRedirect)viewSelection;
 	}
 
 	/**
 	 * Assert that the returned view selection is an instance of
-	 * {@link ApplicationViewRedirect}.
+	 * {@link FlowExecutionRedirect}.
 	 * @param viewSelection the view selection
 	 */
-	protected ApplicationViewRedirect applicationViewRedirect(ViewSelection viewSelection) {
-		Assert.isInstanceOf(ApplicationViewRedirect.class, viewSelection, "Unexpected class of view selection: ");
-		return (ApplicationViewRedirect)viewSelection;
+	protected FlowExecutionRedirect flowExecutionRedirect(ViewSelection viewSelection) {
+		Assert.isInstanceOf(FlowExecutionRedirect.class, viewSelection, "Unexpected class of view selection: ");
+		return (FlowExecutionRedirect)viewSelection;
 	}
 
 	/**

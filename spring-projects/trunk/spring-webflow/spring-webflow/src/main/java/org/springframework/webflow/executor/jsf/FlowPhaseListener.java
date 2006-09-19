@@ -39,9 +39,9 @@ import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.support.ApplicationView;
-import org.springframework.webflow.execution.support.ApplicationViewRedirect;
+import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 import org.springframework.webflow.execution.support.ExternalRedirect;
-import org.springframework.webflow.execution.support.LaunchFlowRedirect;
+import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 
 /**
@@ -204,7 +204,7 @@ public class FlowPhaseListener implements PhaseListener {
 		if (selectedView instanceof ApplicationView) {
 			prepareApplicationView(context.getFacesContext(), holder);
 		}
-		else if (selectedView instanceof ApplicationViewRedirect) {
+		else if (selectedView instanceof FlowExecutionRedirect) {
 			if (holder.needsSave()) {
 				saveFlowExecution(context, holder);
 			}
@@ -220,11 +220,11 @@ public class FlowPhaseListener implements PhaseListener {
 					.getFlowExecutionKey().toString(), context);
 			sendRedirect(url, context);
 		}
-		else if (selectedView instanceof LaunchFlowRedirect) {
+		else if (selectedView instanceof FlowDefinitionRedirect) {
 			if (holder.needsSave()) {
 				saveFlowExecution(context, holder);
 			}
-			String url = argumentExtractor.createFlowUrl((LaunchFlowRedirect)holder.getViewSelection(), context);
+			String url = argumentExtractor.createFlowUrl((FlowDefinitionRedirect)holder.getViewSelection(), context);
 			sendRedirect(url, context);
 		}
 	}

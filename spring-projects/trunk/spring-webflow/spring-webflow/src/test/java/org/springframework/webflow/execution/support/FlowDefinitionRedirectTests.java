@@ -5,11 +5,11 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-public class LaunchFlowRedirectTests extends TestCase {
+public class FlowDefinitionRedirectTests extends TestCase {
 	public void testConstructAndAccess() {
 		Map input = new HashMap();
 		input.put("name", "value");
-		LaunchFlowRedirect redirect = new LaunchFlowRedirect("foo", input);
+		FlowDefinitionRedirect redirect = new FlowDefinitionRedirect("foo", input);
 		assertEquals("foo", redirect.getFlowDefinitionId());
 		assertEquals(1, redirect.getExecutionInput().size());
 		assertEquals("value", redirect.getExecutionInput().get("name"));
@@ -22,7 +22,7 @@ public class LaunchFlowRedirectTests extends TestCase {
 	
 	public void testNullParams() {
 		try {
-			LaunchFlowRedirect redirect = new LaunchFlowRedirect(null, null);
+			FlowDefinitionRedirect redirect = new FlowDefinitionRedirect(null, null);
 			fail("was null");
 		} catch (IllegalArgumentException e) {
 			
@@ -31,7 +31,7 @@ public class LaunchFlowRedirectTests extends TestCase {
 	}
 	
 	public void testMapLookup() {
-		LaunchFlowRedirect redirect = new LaunchFlowRedirect("foo", null);
+		FlowDefinitionRedirect redirect = new FlowDefinitionRedirect("foo", null);
 		Map map = new HashMap();
 		map.put("redirect", redirect);
 		assertSame(redirect, map.get("redirect"));
