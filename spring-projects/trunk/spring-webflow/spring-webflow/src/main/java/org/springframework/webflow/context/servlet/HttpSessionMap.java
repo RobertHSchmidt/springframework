@@ -74,6 +74,7 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 	}
 
 	protected void setAttribute(String key, Object value) {
+		// force session creation
 		HttpSession session = request.getSession(true);
 		if (value instanceof AttributeMapBindingListener) {
 			session.setAttribute(key, new HttpSessionMapBindingListener((AttributeMapBindingListener)value));
@@ -97,12 +98,21 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 	}
 
 	public Object getMutex() {
+		// force session creation
 		HttpSession session = request.getSession(true);
 		Object mutex = session.getAttribute(WebUtils.SESSION_MUTEX_ATTRIBUTE);
 		return mutex != null ? mutex : session;
 	}
 
+	/**
+	 * Helper class that wraps an {@link AttributeMapBindingListener} in an
+	 * {@link HttpSessionBindingListener}. Calls will be forwarded to the
+	 * wrapped listener.
+	 * 
+	 * @author Keith Donald
+	 */
 	private class HttpSessionMapBindingListener implements HttpSessionBindingListener {
+		
 		private AttributeMapBindingListener listener;
 
 		public HttpSessionMapBindingListener(AttributeMapBindingListener listner) {
