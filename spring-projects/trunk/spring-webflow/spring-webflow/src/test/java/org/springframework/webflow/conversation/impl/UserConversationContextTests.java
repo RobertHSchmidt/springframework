@@ -3,7 +3,7 @@ package org.springframework.webflow.conversation.impl;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.context.support.ExternalContextHolder;
+import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationAccessException;
 import org.springframework.webflow.conversation.ConversationParameters;

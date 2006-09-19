@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.webflow.core.collection.StringKeyedMapAdapter;
+
 import junit.framework.TestCase;
 
 public class StringKeyedMapAdapterTests extends TestCase {

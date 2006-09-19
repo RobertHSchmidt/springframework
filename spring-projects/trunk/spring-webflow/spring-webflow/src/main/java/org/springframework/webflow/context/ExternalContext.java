@@ -17,25 +17,24 @@ package org.springframework.webflow.context;
 
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
+import org.springframework.webflow.core.collection.SharedAttributeMap;
 
 /**
- * <p>
  * A facade that provides normalized access to an external system that has
  * interacted with Spring Web Flow.
- * </p>
  * <p>
  * This context object provides a normalized interface for internal web flow
  * artifacts to use to reason on and manipulate the state of an external actor
  * calling into SWF to execute flows. It represents the context about a single,
  * <i>external</i> client request to manipulate a flow execution.
- * </p>
  * <p>
  * The design of this interface was inspired by JSF's own ExternalContext
  * abstraction and shares the same name for consistency. If a particular
  * external client type does not support all methods defined by this interface,
  * they can just be implemented as returning an empty map or <code>null</code>.
- * </p>
+ * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
 public interface ExternalContext {
 
@@ -46,8 +45,8 @@ public interface ExternalContext {
 	public String getContextPath();
 
 	/**
-	 * Returns the path (or identifier) of the dispatcher within the application
-	 * that dispatched this request.
+	 * Returns the path (or identifier) of the dispatcher <i>within</i> the
+	 * application that dispatched this request.
 	 * @return the dispatcher path (e.g. "/dispatcher")
 	 */
 	public String getDispatcherPath();
@@ -83,17 +82,14 @@ public interface ExternalContext {
 	public SharedAttributeMap getSessionMap();
 
 	/**
-	 * <p>
 	 * Provides access to the <i>global</i> external session map, providing a storage for data
 	 * globally accross the user session and accessible to both internal and
 	 * external SWF artifacts.
-	 * </p>
 	 * <p>
 	 * Note: most external context implementations do not distinguish between the concept of a 
 	 * "local" user session scope and a "global" session scope.  The Portlet world does, but 
 	 * not the Servlet for example.  In those cases calling this method returns the same 
 	 * map as calling {@link #getSessionMap()}.
-	 * </p>
 	 * @return the mutable global session attribute map
 	 */
 	public SharedAttributeMap getGlobalSessionMap();

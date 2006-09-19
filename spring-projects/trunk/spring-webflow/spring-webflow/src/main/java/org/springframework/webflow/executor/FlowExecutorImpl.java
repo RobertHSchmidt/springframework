@@ -18,7 +18,7 @@ package org.springframework.webflow.executor;
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.context.support.ExternalContextHolder;
+import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.core.FlowException;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;

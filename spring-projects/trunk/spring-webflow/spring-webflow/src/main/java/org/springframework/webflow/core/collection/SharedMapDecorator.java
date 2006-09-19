@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.springframework.webflow.context.support;
+package org.springframework.webflow.core.collection;
 
 import java.util.Collection;
 import java.util.Map;
@@ -37,11 +37,13 @@ public class SharedMapDecorator implements SharedMap {
 
 	/**
 	 * Creates a new shared map decorator.
-	 * @param map the map that is shared by multiple threads, to be synced.
+	 * @param map the map that is shared by multiple threads, to be synced
 	 */
 	public SharedMapDecorator(Map map) {
 		this.map = map;
 	}
+	
+	// implementing Map
 
 	public void clear() {
 		map.clear();
@@ -90,6 +92,8 @@ public class SharedMapDecorator implements SharedMap {
 	public Collection values() {
 		return map.values();
 	}
+	
+	// implementing SharedMap
 
 	public Object getMutex() {
 		return map;

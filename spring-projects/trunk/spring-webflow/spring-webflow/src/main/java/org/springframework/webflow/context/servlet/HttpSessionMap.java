@@ -23,12 +23,12 @@ import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
 import org.springframework.web.util.WebUtils;
-import org.springframework.webflow.context.support.SharedMap;
-import org.springframework.webflow.context.support.StringKeyedMapAdapter;
 import org.springframework.webflow.core.collection.AttributeMapBindingEvent;
 import org.springframework.webflow.core.collection.AttributeMapBindingListener;
 import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.core.collection.SharedMap;
+import org.springframework.webflow.core.collection.StringKeyedMapAdapter;
 
 /**
  * A Shared Map backed by the Servlet HTTP session, for accessing session scoped
@@ -39,7 +39,7 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 
 	/**
-	 * The wrapped http request, providing access to the session.
+	 * The wrapped HTTP request, providing access to the session.
 	 */
 	private HttpServletRequest request;
 
@@ -53,6 +53,8 @@ public class HttpSessionMap extends StringKeyedMapAdapter implements SharedMap {
 	/**
 	 * Internal helper to get the HTTP session associated with the wrapped
 	 * request, or null if there is no such session.
+	 * <p>
+	 * Note that this method will not force session creation.
 	 */
 	private HttpSession getSession() {
 		return request.getSession(false);
