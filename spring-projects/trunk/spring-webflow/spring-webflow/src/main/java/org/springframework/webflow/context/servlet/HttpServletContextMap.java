@@ -19,9 +19,9 @@ import java.util.Iterator;
 
 import javax.servlet.ServletContext;
 
+import org.springframework.binding.collection.SharedMap;
+import org.springframework.binding.collection.StringKeyedMapAdapter;
 import org.springframework.webflow.core.collection.CollectionUtils;
-import org.springframework.webflow.core.collection.SharedMap;
-import org.springframework.webflow.core.collection.StringKeyedMapAdapter;
 
 /**
  * Map backed by the Servlet context for accessing application scoped

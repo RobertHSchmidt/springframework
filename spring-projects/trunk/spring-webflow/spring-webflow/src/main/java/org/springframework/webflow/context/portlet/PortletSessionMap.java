@@ -20,12 +20,12 @@ import java.util.Iterator;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 
+import org.springframework.binding.collection.SharedMap;
+import org.springframework.binding.collection.StringKeyedMapAdapter;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.context.servlet.HttpSessionMapBindingListener;
 import org.springframework.webflow.core.collection.AttributeMapBindingListener;
 import org.springframework.webflow.core.collection.CollectionUtils;
-import org.springframework.webflow.core.collection.SharedMap;
-import org.springframework.webflow.core.collection.StringKeyedMapAdapter;
 
 /**
  * Shared map backed by the Portlet session for accessing session scoped

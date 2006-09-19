@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.core.collection;
 
+import org.springframework.binding.collection.SharedMap;
 
 /**
  * An attribute map that exposes a mutex that application code can synchronize

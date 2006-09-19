@@ -17,6 +17,7 @@ package org.springframework.webflow.executor.jsf;
 
 import javax.faces.context.FacesContext;
 
+import org.springframework.binding.collection.SharedMapDecorator;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -25,7 +26,6 @@ import org.springframework.webflow.core.collection.LocalSharedAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.core.collection.SharedAttributeMap;
-import org.springframework.webflow.core.collection.SharedMapDecorator;
 
 /**
  * Provides contextual information about a JSF environment that has interacted
