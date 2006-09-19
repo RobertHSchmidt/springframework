@@ -17,7 +17,7 @@ package org.springframework.webflow.core.collection;
 
 import java.util.Collection;
 
-import org.springframework.binding.core.MapAdaptable;
+import org.springframework.binding.collection.MapAdaptable;
 
 /**
  * An immutable interface for accessing attributes in a backing map with string keys.

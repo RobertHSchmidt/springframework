@@ -15,9 +15,9 @@
  */
 package org.springframework.webflow.engine.builder;
 
+import org.springframework.binding.collection.MapAccessor;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.support.AbstractConverter;
-import org.springframework.binding.core.MapAccessor;
 import org.springframework.binding.expression.Expression;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.engine.TransitionCriteria;

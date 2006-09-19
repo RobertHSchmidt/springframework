@@ -20,11 +20,11 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.binding.collection.SharedMap;
+import org.springframework.binding.collection.StringKeyedMapAdapter;
 import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.core.collection.AttributeMapBindingListener;
 import org.springframework.webflow.core.collection.CollectionUtils;
-import org.springframework.webflow.core.collection.SharedMap;
-import org.springframework.webflow.core.collection.StringKeyedMapAdapter;
 
 /**
  * A Shared Map backed by the Servlet HTTP session, for accessing session scoped

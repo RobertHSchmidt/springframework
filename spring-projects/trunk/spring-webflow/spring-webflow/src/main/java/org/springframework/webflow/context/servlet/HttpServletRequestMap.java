@@ -19,8 +19,8 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.binding.collection.StringKeyedMapAdapter;
 import org.springframework.webflow.core.collection.CollectionUtils;
-import org.springframework.webflow.core.collection.StringKeyedMapAdapter;
 
 /**
  * Map backed by the Servlet HTTP request attribute map for accessing request
