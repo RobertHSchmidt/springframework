@@ -48,7 +48,7 @@ Package org.springframework.webflow.action
   bean scopes.  If you need flow-scoped beans, use flow variables (see 'var' element).  You can call
   methods on a flow-scoped bean using an evaluate action (see 'evaluate-action' element and Numberguess
   sample application).
-* Removed experimental now unused and bean action related classes BeanFactoryBeanInvokingAction,
+* Removed experimental and now unused bean action related classes BeanFactoryBeanInvokingAction,
   BeanStatePersister, and related Memento persister classes.  Flow variables with evaluate actions
   provide a better solution.  In the future we may provide support for restoring transient variable
   references on flow execution restoration.
