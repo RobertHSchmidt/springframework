@@ -24,11 +24,19 @@ package org.springframework.webflow.core.collection;
 public interface MutableAttributeMap extends AttributeMap {
 
 	/**
+	 * <p>
 	 * Put the attribute into this map.
+	 * </p>
+	 * <p>
+	 * If the attribute value is a {@link AttributeMapBindingListener} this map
+	 * will publish {@link AttributeMapBindingEvent binding events} such as on
+	 * "bind" and "unbind" if supported. Note: not all
+	 * <code>MutableAttributeMap</code> implementations support this.
+	 * </p>
 	 * @param attributeName the attribute name
 	 * @param attributeValue the attribute value
-	 * @return the previous value of the attribute, or <tt>null</tt> of there was no
-	 * previous value
+	 * @return the previous value of the attribute, or <tt>null</tt> of there
+	 * was no previous value
 	 */
 	public Object put(String attributeName, Object attributeValue);
 
