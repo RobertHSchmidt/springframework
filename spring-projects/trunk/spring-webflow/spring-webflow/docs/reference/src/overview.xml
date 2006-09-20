@@ -568,7 +568,7 @@
 			supported on 2.0 RC4 or > for the 2.x series.
 		</para>
 		<para>
-			XML-based flow building requires Xerces or JDK 1.5 (for XSD support)
+			XML-based flow building requires Xerces or JDK 1.5 (for XSD support).
 		</para>
 		<para>
 			The Spring Web Flow Portlet integration requires Spring Portlet MVC 2.0.

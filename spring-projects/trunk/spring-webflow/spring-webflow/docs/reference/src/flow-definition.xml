@@ -968,7 +968,7 @@
 					<title>POST+REDIRECT+GET in Spring Web Flow</title>
 					<para>
 						The above example is one way to achieve the <literal>POST+REDIRECT+GET</literal> pattern in Spring Web Flow.
-						When the redirect performed, the GET request issued hits a stable <emphasis>flow execution URL</emphasis>
+						When the redirect is performed, the GET request issued hits a stable <emphasis>flow execution URL</emphasis>
 						which remains active for the duration of the conversation.  This URL may be freely refreshed. 
 						Browser navigational buttons may be used freely without browser warnings.
 					</para>
