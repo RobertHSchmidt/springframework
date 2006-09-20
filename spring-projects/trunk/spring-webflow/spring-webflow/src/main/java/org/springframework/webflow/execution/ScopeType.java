@@ -75,6 +75,7 @@ public abstract class ScopeType extends StaticLabeledEnum {
 	}
 
 	public Class getType() {
+		// force ScopeType as type
 		return ScopeType.class;
 	}
 
