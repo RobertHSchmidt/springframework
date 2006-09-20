@@ -26,7 +26,7 @@ import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.engine.impl.FlowExecutionImplStateRestorer;
 import org.springframework.webflow.execution.FlowExecutionFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
-import org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepository;
 
 /**
  * Trivial helper utility class for SWF within a JSF environment.
@@ -40,7 +40,7 @@ public class FlowFacesUtils {
 
 	private static final String FACTORY_BEAN_NAME = "flowExecutionFactory";
 
-	private static DefaultFlowExecutionRepository defaultRepository;
+	private static SimpleFlowExecutionRepository defaultRepository;
 
 	private static FlowExecutionImplFactory defaultFactory;
 
@@ -65,7 +65,7 @@ public class FlowFacesUtils {
 		}
 		else {
 			if (defaultRepository == null) {
-				defaultRepository = new DefaultFlowExecutionRepository(new FlowExecutionImplStateRestorer(
+				defaultRepository = new SimpleFlowExecutionRepository(new FlowExecutionImplStateRestorer(
 						getDefinitionLocator(context)), new LocalConversationManager(-1));
 			}
 			return defaultRepository;

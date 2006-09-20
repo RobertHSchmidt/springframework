@@ -5,7 +5,7 @@
        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<bean id="repository"
-		class="org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepository">
+		org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepositoryository">
 		<constructor-arg ref="stateRestorer" />
 		<constructor-arg ref="conversationManager"/>
 	</bean>

@@ -155,7 +155,7 @@
 			with Spring Web Flow out-of-the-box.
 		</para>
 		<sect2 id="repository-simple">
-			<title>Default flow execution repository</title>
+			<title>Simple flow execution repository</title>
 			<para>
 				The simplest possible repository and the default implementation.  This repository
 				stores <emphasis>exactly one</emphasis> flow execution instance per conversation
