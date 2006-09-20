@@ -18,21 +18,22 @@ package org.springframework.webflow.core.collection;
 /**
  * An interface for accessing and modifying attributes in a backing map with
  * string keys.
+ * <p>
+ * Implementations can optionally support {@link AttributeMapBindingListener listeners}
+ * that will be notified when they're bound in or unbound from the map.
  * 
  * @author Keith Donald
  */
 public interface MutableAttributeMap extends AttributeMap {
 
 	/**
-	 * <p>
 	 * Put the attribute into this map.
-	 * </p>
 	 * <p>
-	 * If the attribute value is a {@link AttributeMapBindingListener} this map
+	 * If the attribute value is an {@link AttributeMapBindingListener} this map
 	 * will publish {@link AttributeMapBindingEvent binding events} such as on
-	 * "bind" and "unbind" if supported. Note: not all
-	 * <code>MutableAttributeMap</code> implementations support this.
-	 * </p>
+	 * "bind" and "unbind" if supported.
+	 * <p>
+	 * <b>Note</b>: not all <code>MutableAttributeMap</code> implementations support this.
 	 * @param attributeName the attribute name
 	 * @param attributeValue the attribute value
 	 * @return the previous value of the attribute, or <tt>null</tt> of there
