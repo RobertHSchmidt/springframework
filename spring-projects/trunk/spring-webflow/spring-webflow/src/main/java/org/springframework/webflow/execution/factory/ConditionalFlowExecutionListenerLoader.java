@@ -95,7 +95,7 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 	}
 
 	/**
-	 * Is the listener contained by this Flow execution manager?
+	 * Is the given listener contained by this Flow execution manager?
 	 * @param listener the listener
 	 * @return true if yes, false otherwise
 	 */
@@ -163,16 +163,18 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 		}
 		if (logger.isDebugEnabled()) {
 			logger.debug("Loaded [" + listenersToAttach.size() + "] of possible " + listeners.size()
-					+ " listeners to this execution request for flow '" + flowDefinition.getId()
+					+ " listeners for this execution request for flow '" + flowDefinition.getId()
 					+ "', the listeners to attach are " + StylerUtils.style(listenersToAttach));
 		}
 		return (FlowExecutionListener[])listenersToAttach.toArray(new FlowExecutionListener[listenersToAttach.size()]);
 	}
+	
+	// internal helpers
 
 	/**
 	 * Lookup the listener criteria holder for the listener provided.
 	 * @param listener the listener
-	 * @return the holder
+	 * @return the holder, or null if not found
 	 */
 	protected ConditionalFlowExecutionListenerHolder getHolder(FlowExecutionListener listener) {
 		Iterator it = listeners.iterator();

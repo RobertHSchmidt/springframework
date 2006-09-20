@@ -22,18 +22,21 @@ import org.springframework.webflow.definition.StateDefinition;
 
 /**
  * Interface to be implemented by objects that wish to listen and respond to the
- * lifecycle {@link FlowExecution flow executions}.
+ * lifecycle of {@link FlowExecution flow executions}.
  * <p>
  * An 'observer' that is very aspect like, allowing you to insert 'cross
  * cutting' behavior at well-defined points within one or more well-defined flow
  * execution lifecycles.
  * <p>
- * For example, one custom listener my apply security checks at the flow
+ * For example, one custom listener may apply security checks at the flow
  * execution level, preventing a flow from starting or a state from entering if
  * the curent user does not have the necessary permissions. Another listener may
  * track flow execution navigation history to support bread crumbs. Another may
  * perform auditing, or setup and tear down connections to a transactional
  * resource.
+ * <p>
+ * Note that flow execution listeners are registered with a flow execution when
+ * that execution is created by a {@link FlowExecutionFactory factory}.
  * 
  * @see FlowDefinition
  * @see StateDefinition
@@ -50,15 +53,13 @@ public interface FlowExecutionListener {
 	/**
 	 * Called when any client request is submitted to manipulate this flow
 	 * execution. This call happens before request processing.
-	 * @param context the source of the event, with a 'sourceEvent' property for
-	 * access to the request event
+	 * @param context the source of the event
 	 */
 	public void requestSubmitted(RequestContext context);
 
 	/**
 	 * Called when a client request has completed processing.
-	 * @param context the source of the event, with a 'sourceEvent' property for
-	 * access to the request event
+	 * @param context the source of the event
 	 */
 	public void requestProcessed(RequestContext context);
 
@@ -67,7 +68,7 @@ public interface FlowExecutionListener {
 	 * session of the flow is starting but has not yet entered its start state.
 	 * An exception may be thrown from this method to veto the start operation.
 	 * @param context the source of the event
-	 * @param definition the flow for which a new session starting.
+	 * @param definition the flow for which a new session is starting
 	 * @param input a mutable input map to the starting flow session
 	 */
 	public void sessionStarting(RequestContext context, FlowDefinition definition, MutableAttributeMap input);
@@ -92,7 +93,7 @@ public interface FlowExecutionListener {
 	 * before the transition occurs.
 	 * @param context the source of the event
 	 * @param state the proposed state to transition to
-	 * @throws EnterStateVetoException when entering the state is now allowed
+	 * @throws EnterStateVetoException when entering the state is not allowed
 	 */
 	public void stateEntering(RequestContext context, StateDefinition state) throws EnterStateVetoException;
 
@@ -103,7 +104,6 @@ public interface FlowExecutionListener {
 	 * @param state <i>to</i> state of the transition
 	 */
 	public void stateEntered(RequestContext context, StateDefinition previousState, StateDefinition state);
-
 	
 	/**
 	 * Called when a flow execution is paused, for instance when it is waiting
@@ -125,8 +125,8 @@ public interface FlowExecutionListener {
 	 * before it has ended.
 	 * @param context the source of the event
 	 * @param session the current active session that is ending
-	 * @param output the flow output produced by the ending session. The map may
-	 * be modified by this listener to affect the output returned.
+	 * @param output the flow output produced by the ending session, this map may
+	 * be modified by this listener to affect the output returned
 	 */
 	public void sessionEnding(RequestContext context, FlowSession session, MutableAttributeMap output);
 

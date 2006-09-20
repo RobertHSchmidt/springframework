@@ -26,8 +26,7 @@ import org.springframework.webflow.definition.TransitionDefinition;
 /**
  * A context for a single request to manipulate a flow execution. Allows Web
  * Flow users to access contextual information about the executing request, as
- * well as the governing
- * {@link #getFlowExecutionContext() active flow execution}.
+ * well as the governing {@link #getFlowExecutionContext() active flow execution}.
  * <p>
  * The term <i>request</i> is used to describe a single call (thread) into the
  * flow system by an external actor to manipulate exactly one flow execution.
@@ -45,14 +44,13 @@ import org.springframework.webflow.definition.TransitionDefinition;
  * criteria.
  * <p>
  * When a call into a flow execution returns this object goes out of scope and
- * is disposed of automatically. Thus this object is an internal artifact used
+ * is disposed of automatically. Thus a request context is an internal artifact used
  * within a FlowExecution: this object is not exposed to external client code,
  * e.g. a view implementation (JSP).
  * <p>
  * The {@link #getRequestScope() requestScope} property may be used as a store
  * for arbitrary data that should exist for the life of this object.
- * Request-scoped data, along with all data in
- * {@link #getFlowScope() flow scope} and
+ * Request-scoped data, along with all data in {@link #getFlowScope() flow scope} and
  * {@link #getConversationScope() conversation scope} is available for exposing
  * to view templates via a {@link #getModel() model} property.
  * <p>
@@ -82,10 +80,9 @@ public interface RequestContext {
 	 * <code>null</code> if this flow execution is in the process of starting
 	 * and has not yet entered its start state.
 	 * @return the current state, or <code>null</code> if in the process of
-	 * starting.
+	 * starting
 	 * @throws IllegalStateException if this flow execution has not been started
-	 * at all, or if this execution has ended and is no longer actively
-	 * executing
+	 * at all, or if this execution has ended and is no longer actively executing
 	 */
 	public StateDefinition getCurrentState() throws IllegalStateException;
 
@@ -102,7 +99,7 @@ public interface RequestContext {
 	 * flow scope. <b>Flow scoped attributes exist for the life of the active
 	 * flow session.</b>
 	 * @return the flow scope
-	 * @see FlowExecutionContext#getActiveSession()
+	 * @see FlowSession
 	 */
 	public MutableAttributeMap getFlowScope();
 
@@ -111,6 +108,7 @@ public interface RequestContext {
 	 * conversation scope. <b>Conversation scoped attributes exist for the life
 	 * of the executing flow and are shared across all flow sessions.</b>
 	 * @return the conversation scope
+	 * @see FlowExecutionContext
 	 */
 	public MutableAttributeMap getConversationScope();
 
@@ -120,12 +118,13 @@ public interface RequestContext {
 	 * <p>
 	 * This is typically a convenient shortcut for accessing the
 	 * {@link ExternalContext#getRequestParameterMap()} directly.
+	 * @see #getExternalContext()
 	 */
 	public ParameterMap getRequestParameters();
 
 	/**
 	 * Returns the external client context that originated (or triggered) this
-	 * request. Also known as the "user context".
+	 * request.
 	 * <p>
 	 * Acting as a facade, the returned context object provides a single point
 	 * of access to the calling client's environment. It provides normalized
@@ -185,7 +184,7 @@ public interface RequestContext {
 	/**
 	 * Returns the data model capturing the state of this context, suitable for
 	 * exposing to clients (mostly web views). Typically the model will contain
-	 * the union of the data available in all scopes.
+	 * the union of the data available in request, session and conversation scope.
 	 * @return the model that can be exposed to a client view for rendering
 	 * purposes
 	 */

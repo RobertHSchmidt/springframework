@@ -21,7 +21,7 @@ import org.springframework.webflow.definition.StateDefinition;
 
 /**
  * A single, local instantiation of a {@link FlowDefinition flow definition}
- * launched within a overall flow execution.
+ * launched within an overall flow execution.
  * <p>
  * This object maintains all instance state including session status within
  * exactly one governing FlowExecution, as well as the current flow state. This
@@ -34,7 +34,8 @@ import org.springframework.webflow.definition.StateDefinition;
  * Initially it will be {@link FlowSessionStatus#CREATED} when a new execution
  * is started.
  * <p>
- * When a flow session is activated (about to be manipulated) its status becomes
+ * After passing through the {@link FlowSessionStatus#STARTING} status, the
+ * flow session is activated (about to be manipulated) and its status becomes
  * {@link FlowSessionStatus#ACTIVE}. In the case of a new execution session
  * activation happens immediately after creation to put the "root flow" at the
  * top of the stack and transition it to its start state.
@@ -51,7 +52,7 @@ import org.springframework.webflow.definition.StateDefinition;
  * <p>
  * When a flow session is terminated because an EndState is reached its status
  * becomes {@link FlowSessionStatus#ENDED}, which ends its life. When this
- * happen the session is popped off the stack and discarded, and any allocated
+ * happens the session is popped off the stack and discarded, and any allocated
  * resources in "flow scope" are automatically cleaned up.
  * <p>
  * Note that a flow <i>session</i> is in no way linked to an HTTP session. It
@@ -59,7 +60,7 @@ import org.springframework.webflow.definition.StateDefinition;
  * object.
  * 
  * @see FlowDefinition
- * @see StateDefinition
+ * @see FlowExecution
  * @see FlowSessionStatus
  * 
  * @author Keith Donald
@@ -68,13 +69,13 @@ import org.springframework.webflow.definition.StateDefinition;
 public interface FlowSession {
 
 	/**
-	 * Returns the definition of this session.
+	 * Returns the flow definition backing this session.
 	 */
 	public FlowDefinition getDefinition();
 
 	/**
 	 * Returns the current state of this flow session. This value changes as the
-	 * flow is executes.
+	 * flow executes.
 	 */
 	public StateDefinition getState();
 
@@ -92,7 +93,7 @@ public interface FlowSession {
 
 	/**
 	 * Returns the parent flow session in the current flow execution, or
-	 * <code>null</code> if there is not parent flow session.
+	 * <code>null</code> if there is no parent flow session.
 	 */
 	public FlowSession getParent();
 

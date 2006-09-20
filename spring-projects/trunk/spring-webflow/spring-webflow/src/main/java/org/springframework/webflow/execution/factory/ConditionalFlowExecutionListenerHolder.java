@@ -26,12 +26,17 @@ import org.springframework.webflow.execution.FlowExecutionListener;
 /**
  * A holder that holds a listener plus a set of criteria defining the flows in
  * which that listener applies.
+ * <p>
+ * This is an internal helper class used by the {@link ConditionalFlowExecutionListenerLoader}.
+ * 
+ * @see ConditionalFlowExecutionListenerLoader
+ * 
  * @author Keith Donald
  */
 class ConditionalFlowExecutionListenerHolder {
 
 	/**
-	 * The held listener
+	 * The held listener.
 	 */
 	private FlowExecutionListener listener;
 
@@ -40,43 +45,48 @@ class ConditionalFlowExecutionListenerHolder {
 	 */
 	private Set criteriaSet = CollectionFactory.createLinkedSetIfPossible(3);
 
+	/**
+	 * Create a new conditional flow execution listener holder.
+	 * @param listener the listener to hold
+	 */
 	public ConditionalFlowExecutionListenerHolder(FlowExecutionListener listener) {
 		Assert.notNull(listener, "The listener is required");
 		this.listener = listener;
 	}
 
+	/**
+	 * Returns the held listener.
+	 */
 	public FlowExecutionListener getListener() {
 		return listener;
 	}
 
+	/**
+	 * Add given criteria.
+	 */
 	public void add(FlowExecutionListenerCriteria criteria) {
 		criteriaSet.add(criteria);
 	}
 
+	/**
+	 * Remove given criteria. If not present, does nothing.
+	 */
 	public void remove(FlowExecutionListenerCriteria criteria) {
 		criteriaSet.remove(criteria);
 	}
 
+	/**
+	 * Are there any criteria registered?
+	 */
 	public boolean isCriteriaSetEmpty() {
 		return criteriaSet.isEmpty();
 	}
 
-	public boolean equals(Object o) {
-		if (!(o instanceof ConditionalFlowExecutionListenerHolder)) {
-			return false;
-		}
-		return listener.equals(((ConditionalFlowExecutionListenerHolder)o).listener);
-	}
-
-	public int hashCode() {
-		return listener.hashCode();
-	}
-
 	/**
 	 * Determines if the listener held by this holder applies to the specified
-	 * flow definition.
+	 * flow definition. Will do a logical OR between the registered criteria.
 	 * @param flowDefinition the flow
-	 * @return true if yes, false otherwise.
+	 * @return true if yes, false otherwise
 	 */
 	public boolean listenerAppliesTo(FlowDefinition flowDefinition) {
 		Iterator it = criteriaSet.iterator();

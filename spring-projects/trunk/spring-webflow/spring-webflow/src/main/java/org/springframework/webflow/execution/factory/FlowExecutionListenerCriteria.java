@@ -35,7 +35,8 @@ import org.springframework.webflow.definition.FlowDefinition;
 public interface FlowExecutionListenerCriteria {
 
 	/**
-	 * Does this listener criteria apply to the provided flow definition?
+	 * Do the listeners guarded by this criteria object apply to the provided
+	 * flow definition?
 	 * @param definition the flow definition
 	 * @return true if yes, false if no
 	 */

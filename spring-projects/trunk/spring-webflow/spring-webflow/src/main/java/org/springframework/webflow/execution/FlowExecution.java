@@ -18,14 +18,11 @@ package org.springframework.webflow.execution;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.StateDefinition;
 
 /**
- * <p>
  * A top-level instance of a flow definition that carries out definition
  * execution on behalf of a single client. Typically used to support the
  * orchestration of a web conversation.
- * </p>
  * <p>
  * This is the central facade interface for manipulating one runtime execution
  * of a flow definition. Implementations of this interface are the finite state
@@ -37,19 +34,17 @@ import org.springframework.webflow.definition.StateDefinition;
  * {@link org.springframework.webflow.executor.FlowExecutor#launch(String, ExternalContext) flow executor}.
  * This coordinator then typically uses a
  * {@link FlowExecutionFactory flow execution factory} to create an object
- * implementing this interface, initializing it with the requested Flow
+ * implementing this interface, initializing it with the requested flow
  * definition which becomes the execution's "root" or top-level flow.
- * </p>
  * <p>
  * After execution creation, the
  * {@link #start(MutableAttributeMap, ExternalContext) start} operation is
  * called, which causes this execution to activate a new
  * {@link FlowSession session} for its root flow definition. That session is
  * then said to become the <i>active flow</i>. An execution
- * {@link RequestContext request context} is then created, the Flow's
- * {@link FlowDefinition#getStartState() start state} is then entered, and the
+ * {@link RequestContext request context} is created, the Flow's
+ * {@link FlowDefinition#getStartState() start state} is entered, and the
  * request is processed.
- * </p>
  * <p>
  * In a distributed environment such as HTTP, after a call into this object has
  * completed and control returns to the caller, this execution object (if still
@@ -64,20 +59,22 @@ import org.springframework.webflow.definition.StateDefinition;
  * restoration of this object, followed by an invocation of the
  * {@link #signalEvent(EventId, ExternalContext) signal event} operation. The
  * signalEvent operation resumes this execution by indicating what action the
- * user took from within the the current state; for example, the user may have
- * pressed pressed the "submit" button, or pressed "cancel". After the user
+ * user took from within the current state; for example, the user may have
+ * pressed the "submit" button, or pressed "cancel". After the user
  * event is processed, control again goes back to the caller and if this
  * execution is still active, it is again saved out to the repository.
- * </p>
  * <p>
  * This process continues until a client event causes this flow execution to end
  * (by the root flow reaching an end state). At that time this object is no
  * longer active, and is removed from the repository and discarded.
- * </p>
+ * <p>
+ * Flow executions can have their lifecycle observed by {@link FlowExecutionListener listeners}.
+ * 
+ * 
  * @see FlowDefinition
- * @see StateDefinition
  * @see FlowSession
  * @see RequestContext
+ * @see FlowExecutionListener
  * @see org.springframework.webflow.execution.repository.FlowExecutionRepository
  * @see org.springframework.webflow.executor.FlowExecutor
  * 
@@ -93,12 +90,11 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * browser client, but also from test code.
 	 * @param input input attributes to pass to the flow, which the flow may
 	 * choose to map into its scope
-	 * @param context the external context in which the event occured
+	 * @param context the external context in which the starting event occured
 	 * @return the starting view selection, a value object to be used to issue a
 	 * suitable response to the caller
 	 * @throws FlowExecutionException if an exception was thrown within a state
 	 * of the flow execution during request processing
-	 * @see FlowExecutionContext#getDefinition()
 	 */
 	public ViewSelection start(MutableAttributeMap input, ExternalContext context) throws FlowExecutionException;
 
@@ -109,7 +105,7 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * @param eventId the identifier of the user event that occured
 	 * @param context the external context in which the event occured
 	 * @return the next view selection to render, used by the calling executor
-	 * to issue a suitable response to the client.
+	 * to issue a suitable response to the client
 	 * @throws FlowExecutionException if an exception was thrown within a state
 	 * of the resumed flow execution during event processing
 	 */
@@ -117,7 +113,7 @@ public interface FlowExecution extends FlowExecutionContext {
 
 	/**
 	 * Refresh this flow execution, asking the current view selection to be
-	 * reconstituted to support reissuing the last response. This is idempotent
+	 * reconstituted to support reissuing the last response. This is an idempotent
 	 * operation that may be safely called on a paused execution.
 	 * @param context the externa context in which the refresh event occured
 	 * @return the current view selection for this flow execution

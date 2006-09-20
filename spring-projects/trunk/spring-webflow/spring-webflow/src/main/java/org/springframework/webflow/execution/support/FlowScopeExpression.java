@@ -36,7 +36,7 @@ public class FlowScopeExpression implements Expression {
 	private Expression expression;
 
 	/**
-	 * Create a new expression evaluator that executes given expression 'in flow
+	 * Create a new expression evaluator that executes given expression in 'flow
 	 * scope'.
 	 * @param expression the nested evaluator to execute
 	 */
@@ -60,7 +60,7 @@ public class FlowScopeExpression implements Expression {
 		}
 		else {
 			throw new IllegalArgumentException(
-					"Only supports evaluation against a [RequestContext] or [Scope] instance, but was a ["
+					"Only supports evaluation against a [RequestContext] or [AttributeMap] instance, but was a ["
 							+ target.getClass() + "]");
 		}
 	}

@@ -60,8 +60,8 @@ public final class Event extends EventObject {
 
 	/**
 	 * Create a new event with the specified <code>id</code> and no payload.
-	 * @param source the source of the event
-	 * @param id the event identifier
+	 * @param source the source of the event (required)
+	 * @param id the event identifier (required)
 	 */
 	public Event(Object source, String id) {
 		this(source, id, null);
@@ -70,8 +70,8 @@ public final class Event extends EventObject {
 	/**
 	 * Create a new event with the specified <code>id</code> and payload
 	 * attributes.
-	 * @param source the source of the event
-	 * @param id the event identifier
+	 * @param source the source of the event (required)
+	 * @param id the event identifier (required)
 	 * @param attributes additional event attributes
 	 */
 	public Event(Object source, String id, AttributeMap attributes) {
@@ -82,8 +82,7 @@ public final class Event extends EventObject {
 	}
 
 	/**
-	 * Returns the event identifier. This could be <code>null</code> if not
-	 * available, e.g. for an event starting a flow.
+	 * Returns the event identifier.
 	 * @return the event id
 	 */
 	public String getId() {
@@ -100,7 +99,8 @@ public final class Event extends EventObject {
 	}
 
 	/**
-	 * Returns an unmodifiable map storing the attributes of this event.
+	 * Returns an unmodifiable map storing the attributes of this event. Never
+	 * returns <code>null</code>.
 	 * @return the event attributes (payload)
 	 */
 	public AttributeMap getAttributes() {
