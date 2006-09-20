@@ -564,13 +564,17 @@
 	<sect1 id="introduction-support">
 		<title>Support</title>
 		<para>
-			Spring Web Flow 1.0 RC4 is supported on Spring 1.2.7 or > for the Spring 1.x series.
-			Spring Web Flow 1.0 RC4 is supported on Spring 2.0 RC4 or > for the Spring 2.x series.
-			XML-based flow building requires Xerces or JDK 1.5 (for XSD support)
-			The Portlet integration requires Spring 2.0.
+			Spring Web Flow is supported on Spring Framework 1.2.7 or > for the 1.x series and 
+			supported on 2.0 RC4 or > for the 2.x series.
 		</para>
 		<para>
-		    The community support forum is located at http://forum.springframework.org.
+			XML-based flow building requires Xerces or JDK 1.5 (for XSD support)
+		</para>
+		<para>
+			The Spring Web Flow Portlet integration requires Spring Portlet MVC 2.0.
+		</para>
+		<para>
+		    Our active community support forum is located at http://forum.springframework.org.
 		</para>
 	</sect1>
 </chapter>
