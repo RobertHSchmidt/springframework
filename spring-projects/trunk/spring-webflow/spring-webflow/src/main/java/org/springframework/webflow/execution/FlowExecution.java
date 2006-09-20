@@ -57,7 +57,7 @@ import org.springframework.webflow.definition.FlowDefinition;
  * <p>
  * Subsequent requests from the client to manipuate this flow execution trigger
  * restoration of this object, followed by an invocation of the
- * {@link #signalEvent(EventId, ExternalContext) signal event} operation. The
+ * {@link #signalEvent(String, ExternalContext) signal event} operation. The
  * signalEvent operation resumes this execution by indicating what action the
  * user took from within the current state; for example, the user may have
  * pressed the "submit" button, or pressed "cancel". After the user
