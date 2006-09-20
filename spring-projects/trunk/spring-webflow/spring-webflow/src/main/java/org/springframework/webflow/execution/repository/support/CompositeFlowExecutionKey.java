@@ -27,28 +27,39 @@ import org.springframework.webflow.execution.repository.continuation.FlowExecuti
 /**
  * A flow execution key consisting of two parts:
  * <ol>
- * <li>A conversationId, identifying an active conversation managed by a
+ * <li>A <i>conversationId</i>, identifying an active conversation managed by a
  * {@link ConversationManager}.
- * <li>A continuationId, identifying a restorable
+ * <li>A <i>continuationId</i>, identifying a restorable
  * {@link FlowExecutionContinuation} within a continuation group governed by
  * that conversation.
- * 
+ * </ol>
+ * <p>
  * This key is used to restore a FlowExecution from a conversation-service
  * backed store.
+ * 
+ * @see ConversationManager
+ * @see FlowExecutionContinuation
  * 
  * @author Keith Donald
  */
 class CompositeFlowExecutionKey extends FlowExecutionKey {
-
+	
 	/**
-	 * The default conversation id prefix delimiter ("_c");
+	 * The default conversation id prefix delimiter ("_c").
 	 */
 	private static final String CONVERSATION_ID_PREFIX = "_c";
 
 	/**
-	 * The default continuation id prefix delimiter ("_k");
+	 * The default continuation id prefix delimiter ("_k").
 	 */
 	private static final String CONTINUATION_ID_PREFIX = "_k";
+
+	/**
+	 * The format of the default string-encoded form, as returned
+	 * by toString().
+	 */
+	private static final String FORMAT =
+		CONVERSATION_ID_PREFIX + "<conversationId>" + CONTINUATION_ID_PREFIX + "<continuationId>";
 
 	/**
 	 * The conversation id.
@@ -60,6 +71,11 @@ class CompositeFlowExecutionKey extends FlowExecutionKey {
 	 */
 	private Serializable continuationId;
 
+	/**
+	 * Create a new composite flow execution key given the composing parts.
+	 * @param conversationId the conversation id
+	 * @param continuationId the continuation id
+	 */
 	public CompositeFlowExecutionKey(ConversationId conversationId, Serializable continuationId) {
 		Assert.notNull(conversationId, "The conversation id is required");
 		Assert.notNull(continuationId, "The continuation id is required");
@@ -93,6 +109,13 @@ class CompositeFlowExecutionKey extends FlowExecutionKey {
 		return conversationId.hashCode() + continuationId.hashCode();
 	}
 
+	public String toString() {
+		return new StringBuffer().append(CONVERSATION_ID_PREFIX).append(getConversationId())
+			.append(CONTINUATION_ID_PREFIX).append(getContinuationId()).toString();
+	}
+	
+	// static helpers
+
 	/**
 	 * Helper that splits the string-form of an instance of this class into its
 	 * "parts" so the parts can be easily parsed.
@@ -102,26 +125,14 @@ class CompositeFlowExecutionKey extends FlowExecutionKey {
 	 */
 	public static String[] keyParts(String encodedKey) throws BadlyFormattedFlowExecutionKeyException {
 		if (!encodedKey.startsWith(CONVERSATION_ID_PREFIX)) {
-			throw new BadlyFormattedFlowExecutionKeyException(encodedKey, CompositeFlowExecutionKey.getFormat());
+			throw new BadlyFormattedFlowExecutionKeyException(encodedKey, FORMAT);
 		}
 		int continuationStart = encodedKey.indexOf(CONTINUATION_ID_PREFIX, CONVERSATION_ID_PREFIX.length());
 		if (continuationStart == -1) {
-			throw new BadlyFormattedFlowExecutionKeyException(encodedKey, getFormat());
+			throw new BadlyFormattedFlowExecutionKeyException(encodedKey, FORMAT);
 		}
 		String conversationId = encodedKey.substring(CONVERSATION_ID_PREFIX.length(), continuationStart);
 		String continuationId = encodedKey.substring(continuationStart + CONTINUATION_ID_PREFIX.length());
 		return new String[] { conversationId, continuationId };
-	}
-
-	/**
-	 * Returns the format of the default string-encoded form.
-	 * @return the format
-	 */
-	static String getFormat() {
-		return CONVERSATION_ID_PREFIX + "<conversationId>" + CONTINUATION_ID_PREFIX + "<continuationId>";
-	}
-
-	public String toString() {
-		return CONVERSATION_ID_PREFIX + getConversationId() + CONTINUATION_ID_PREFIX + getContinuationId();
 	}
 }
