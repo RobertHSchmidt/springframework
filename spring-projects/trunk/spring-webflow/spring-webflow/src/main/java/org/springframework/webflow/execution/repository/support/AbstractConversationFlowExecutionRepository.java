@@ -35,9 +35,11 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryE
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
 /**
- * A convenient base for flow execution repository implementations that delegate
+ * A convenient base class for flow execution repository implementations that delegate
  * to a conversation service for managing conversations that govern the
  * persistent state of paused flow executions.
+ * 
+ * @see ConversationManager
  * 
  * @author Keith Donald
  */
@@ -138,13 +140,25 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 	public FlowExecutionKey parseFlowExecutionKey(String encodedKey) throws FlowExecutionRepositoryException {
 		Assert.hasText(encodedKey, "The string encoded flow execution key is required");
 		String[] keyParts = CompositeFlowExecutionKey.keyParts(encodedKey);
+		ConversationId conversationId;
 		try {
-			ConversationId conversationId = conversationManager.parseConversationId(keyParts[0]);
-			return new CompositeFlowExecutionKey(conversationId, parseContinuationId(keyParts[1]));
+			conversationId = conversationManager.parseConversationId(keyParts[0]);
 		}
 		catch (ConversationException e) {
-			throw new BadlyFormattedFlowExecutionKeyException(encodedKey, CompositeFlowExecutionKey.getFormat(), e);
+			throw new BadlyFormattedFlowExecutionKeyException(encodedKey,
+					"Conversation id '" + keyParts[0] + "' contained in encoded flow execution key '"
+					+ encodedKey + "' is invalid", e);
 		}
+		Serializable continuationId;
+		try {
+			continuationId = parseContinuationId(keyParts[1]);
+		}
+		catch (FlowExecutionRepositoryException e) {
+			throw new BadlyFormattedFlowExecutionKeyException(encodedKey,
+					"Continuation id '" + keyParts[1] + "' contained in encoded flow execution key '"
+					+ encodedKey + "' is invalid", e);
+		}
+		return new CompositeFlowExecutionKey(conversationId, continuationId);
 	}
 
 	// overridable hooks
