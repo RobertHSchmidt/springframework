@@ -58,7 +58,7 @@ public class LocalConversationManager extends AbstractConversationManager implem
 	private static boolean utilConcurrentPresent;
 	static {
 		try {
-			Class.forName("EDU.oswego.cs.dl.util.concurrent.ReentrantLock");
+			Class.forName("EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap");
 			utilConcurrentPresent = true;
 		}
 		catch (ClassNotFoundException ex) {
@@ -84,6 +84,7 @@ public class LocalConversationManager extends AbstractConversationManager implem
 	}
 
 	protected Map getConversationMap() {
+		// store conversation entries in a local map
 		return conversations;
 	}
 
@@ -137,7 +138,7 @@ public class LocalConversationManager extends AbstractConversationManager implem
 	/**
 	 * Returns the UserConversationContext storing the conversations
 	 * managed by this manager. Sets up a new UserConversationContext object if
-	 * non can be found in the session.
+	 * none can be found in the session.
 	 */
 	private UserConversationContext getUserContext() {
 		SharedAttributeMap session = ExternalContextHolder.getExternalContext().getSessionMap();

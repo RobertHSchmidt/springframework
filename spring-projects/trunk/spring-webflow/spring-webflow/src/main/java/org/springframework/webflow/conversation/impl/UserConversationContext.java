@@ -27,9 +27,10 @@ import org.springframework.webflow.core.collection.AttributeMapBindingListener;
  * Container for the contextual information for a given user. This context can
  * be bound as a binding listener in an <code>ExternalContext</code>.
  * 
- * @author Ben Hale
  * @see ExternalContext
  * @see AttributeMapBindingListener
+ * 
+ * @author Ben Hale
  */
 class UserConversationContext implements AttributeMapBindingListener, Serializable {
 
@@ -37,26 +38,48 @@ class UserConversationContext implements AttributeMapBindingListener, Serializab
 
 	private transient LocalConversationManager conversationManager;
 
+	/**
+	 * Create a new user conversation context for given conversation manager.
+	 */
 	public UserConversationContext(LocalConversationManager conversationManager) {
 		this.conversationManager = conversationManager;
 	}
 
+	/**
+	 * Register a new conversation in this context.
+	 */
 	public synchronized boolean add(ConversationId conversationId) {
 		return conversationIds.add(conversationId);
 	}
 
+	/**
+	 * Does this context contain identified conversation?
+	 */
 	public synchronized boolean contains(ConversationId conversationId) {
 		return conversationIds.contains(conversationId);
 	}
 
+	/**
+	 * Returns the id of the first conversation that was registered
+	 * with this context.
+	 * @see #add(ConversationId)
+	 */
 	public synchronized ConversationId getFirst() {
 		return (ConversationId)conversationIds.getFirst();
 	}
 
+	/**
+	 * Unregister identified conversation from this context.
+	 * @param conversationId the id of the conversation to remove
+	 * @return true if the conversation was known in this context, false otherwise
+	 */
 	public synchronized boolean remove(ConversationId conversationId) {
 		return conversationIds.remove(conversationId);
 	}
 
+	/**
+	 * Returns the number of conversations registered in this context.
+	 */
 	public synchronized int size() {
 		return conversationIds.size();
 	}
@@ -66,6 +89,7 @@ class UserConversationContext implements AttributeMapBindingListener, Serializab
 	}
 
 	public synchronized void valueUnbound(AttributeMapBindingEvent event) {
+		// all conversations have expired
 		conversationManager.expire(conversationIds);
 		conversationIds.clear();
 	}
