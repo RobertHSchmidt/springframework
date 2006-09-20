@@ -21,6 +21,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
 import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
+import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.util.ResourceHolder;
 
 /**
@@ -28,6 +29,15 @@ import org.springframework.webflow.util.ResourceHolder;
  * definition resource and refresh that resource automatically.
  * <p>
  * This class is threadsafe.
+ * <p>
+ * Note that this {@link FlowDefinition} holder uses a {@link Flow} assembler.
+ * This is normal since a {@link Flow} is a {@link FlowDefinition}! This class
+ * bridges the <i>abstract</i> world of {@link FlowDefinition flow definitions}
+ * with the <i>concrete</i> world of {@link Flow flow implementations}.
+ * 
+ * @see FlowDefinition
+ * @see Flow
+ * @see FlowAssembler
  * 
  * @author Keith Donald
  */
@@ -44,7 +54,7 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 	private FlowAssembler assembler;
 
 	/**
-	 * A last modified date for the backing flow resource, used to support
+	 * A last modified date for the backing flow definition resource, used to support
 	 * automatic reassembly on resource change.
 	 */
 	private long lastModified;
@@ -56,9 +66,10 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 	private boolean assembling;
 
 	/**
-	 * Creates a new refreshable flow holder that uses the configured assembler (GOF director) to
-	 * drive flow assembly, on initial use and on any resource change or refresh.
-	 * @param assembler the flow assembler (director)
+	 * Creates a new refreshable flow definition holder that uses the configured
+	 * assembler (GOF director) to drive flow assembly, on initial use and on any
+	 * resource change or refresh.
+	 * @param assembler the flow assembler to use
 	 */
 	public RefreshableFlowDefinitionHolder(FlowAssembler assembler) {
 		this.assembler = assembler;
