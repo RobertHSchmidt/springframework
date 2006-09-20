@@ -15,30 +15,26 @@
  */
 package org.springframework.webflow.conversation;
 
-import org.springframework.core.NestedRuntimeException;
+import org.springframework.webflow.core.FlowException;
 
 /**
- * The root of the conversation service exception hierarchy. Indicates a problem
- * occured either creating, restoring, saving, or invalidating a managed flow
- * execution.
+ * The root of the conversation service exception hierarchy.
  * 
  * @author Keith Donald
  */
-public abstract class ConversationException extends NestedRuntimeException {
+public abstract class ConversationException extends FlowException {
 
 	/**
-	 * Creates a new flow execution repository exception explicitly noting the
-	 * repository that had the problem.
-	 * @param message the message
+	 * Creates a conversation service exception.
+	 * @param message a descriptive message
 	 */
 	public ConversationException(String message) {
 		super(message);
 	}
 
 	/**
-	 * Creates a new flow execution repository exception explicitly noting the
-	 * repository that had the problem.
-	 * @param message the message
+	 * Creates a conversation service exception.
+	 * @param message a descriptive message
 	 * @param cause the root cause of the problem
 	 */
 	public ConversationException(String message, Throwable cause) {

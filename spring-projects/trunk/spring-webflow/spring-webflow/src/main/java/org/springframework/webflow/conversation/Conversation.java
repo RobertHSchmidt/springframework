@@ -33,7 +33,7 @@ public interface Conversation {
 	/**
 	 * Returns the unique id assigned to this conversation. This id remains the
 	 * same throughout the life of the conversation.
-	 * @return the conversation id.
+	 * @return the conversation id
 	 */
 	public ConversationId getId();
 
@@ -44,14 +44,14 @@ public interface Conversation {
 	public void lock();
 
 	/**
-	 * Returns the conversation attribute with the specified name.
+	 * Returns the conversation scope attribute with the specified name.
 	 * @param name the attribute name
 	 * @return the attribute value
 	 */
 	public Object getAttribute(Object name);
 
 	/**
-	 * Puts a conversation attribute into this context.
+	 * Puts a conversation attribute into this context (scope).
 	 * @param name the attribute name
 	 * @param value the attribute value
 	 */

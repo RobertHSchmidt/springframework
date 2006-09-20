@@ -17,28 +17,29 @@ package org.springframework.webflow.conversation;
 
 /**
  * Thrown when a user tries to access a conversation without having the
- * permissions to do so
+ * permissions to do so.
  * 
  * @author Ben Hale
  */
 public class ConversationAccessException extends ConversationException {
 
 	/**
-	 * The unique conversation identifier that was invalid.
+	 * The unique conversation identifier.
 	 */
 	private ConversationId conversationId;
 
 	/**
-	 * Creates a new ConversationAccessException
-	 * @param conversationId The unique conversation identifier that was invalid
+	 * Creates a new conversation access exception.
+	 * @param conversationId the unique conversation identifier
 	 */
 	public ConversationAccessException(ConversationId conversationId) {
-		super("You do not have access to conversation with id '" + conversationId);
+		super("You do not have access to conversation with id '" + conversationId + "'");
 		this.conversationId = conversationId;
 	}
 
 	/**
-	 * Returns the conversation id that was invalid.
+	 * Returns the conversation id of the conversation that could not
+	 * be accessed.
 	 */
 	public ConversationId getConversationId() {
 		return conversationId;

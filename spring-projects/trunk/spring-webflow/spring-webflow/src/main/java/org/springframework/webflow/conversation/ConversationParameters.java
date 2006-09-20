@@ -22,6 +22,7 @@ import org.springframework.core.style.ToStringCreator;
 /**
  * Simple parameter object for clumping together input needed to begin a new
  * conversation.
+ * 
  * @author Keith Donald
  */
 public class ConversationParameters implements Serializable {
