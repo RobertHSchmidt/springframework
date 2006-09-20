@@ -22,14 +22,17 @@ import org.springframework.webflow.execution.FlowExecution;
  * executions, where each flow execution represents a state of an active flow
  * definition.
  * <p>
- * Flow execution repositories are responsible for managing the creation,
- * storage, restoration, and removal of flow executions launched by clients of
- * the Spring Web Flow system.
+ * Flow execution repositories are responsible for managing the storage, restoration
+ * and removal of flow executions launched by clients of the Spring Web Flow system.
  * <p>
  * When placed in a repository a {@link FlowExecution} object representing the
  * state of a flow at a point in time is indexed under a unique
  * {@link FlowExecutionKey}.
  * 
+ * @see FlowExecution
+ * @see FlowExecutionKey
+ * 
+ * @author Erwin Vervaet
  * @author Keith Donald
  */
 public interface FlowExecutionRepository {
@@ -47,12 +50,13 @@ public interface FlowExecutionRepository {
 	public FlowExecutionKey generateKey(FlowExecution flowExecution) throws FlowExecutionRepositoryException;
 
 	/**
-	 * Obtain the "next" flow execution key to be used as as the flow
+	 * Obtain the "next" flow execution key to be used as the flow
 	 * execution's persistent identity. This method should be called after a
 	 * existing flow execution has resumed and remains active; thus needing to
 	 * be updated. This repository may choose to return the previous key or
 	 * generate a new key.
 	 * @param flowExecution the flow execution
+	 * @param previousKey the <i>current</i> key associated with the flow exection
 	 * @throws FlowExecutionRepositoryException a problem occured generating the
 	 * key
 	 */
@@ -68,7 +72,6 @@ public interface FlowExecutionRepository {
 	 * <p>
 	 * The general pattern for safely doing work against a locked conversation
 	 * follows:
-	 * 
 	 * <pre>
 	 * FlowExecutionLock lock = repository.getLock(key);
 	 * lock.lock();
@@ -80,7 +83,6 @@ public interface FlowExecutionRepository {
 	 * 	lock.unlock();
 	 * }
 	 * </pre>
-	 * 
 	 * @param key the identifier of the flow execution to lock
 	 * @return the lock
 	 * @throws FlowExecutionRepositoryException a problem occured accessing the
@@ -95,7 +97,7 @@ public interface FlowExecutionRepository {
 	 * flow execution.
 	 * @param key the flow execution key
 	 * @return the flow execution, fully hydrated and ready to signal an event
-	 * against.
+	 * against
 	 * @throws FlowExecutionRepositoryException if no flow execution was indexed
 	 * with the key provided
 	 */
@@ -127,7 +129,7 @@ public interface FlowExecutionRepository {
 	 * Essentially, the reverse of {@link FlowExecutionKey#toString()}.
 	 * @param encodedKey the string encoded key
 	 * @return the parsed flow execution key, the persistent identifier for
-	 * exactly one flow execution.
+	 * exactly one flow execution
 	 */
 	public FlowExecutionKey parseFlowExecutionKey(String encodedKey) throws FlowExecutionRepositoryException;
 

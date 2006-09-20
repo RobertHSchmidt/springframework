@@ -21,7 +21,7 @@ import java.io.Serializable;
  * A key that uniquely identifies a flow execution in a managed
  * {@link FlowExecutionRepository}. Serves as a flow execution's persistent
  * identity.
- * 
+ * <p>
  * This class is abstract. The repository subsystem encapsulates the structure
  * of concrete key implementations.
  * 
@@ -29,10 +29,11 @@ import java.io.Serializable;
  */
 public abstract class FlowExecutionKey implements Serializable {
 
-	/*
+	/**
 	 * Subclasses should override toString to return a parseable string form of
 	 * the key.
 	 * @see java.lang.Object#toString()
+	 * @see FlowExecutionRepository#parseFlowExecutionKey(String)
 	 */
 	public abstract String toString();
 }
