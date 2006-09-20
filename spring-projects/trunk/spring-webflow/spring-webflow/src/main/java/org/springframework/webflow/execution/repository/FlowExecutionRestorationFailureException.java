@@ -25,10 +25,10 @@ package org.springframework.webflow.execution.repository;
 public class FlowExecutionRestorationFailureException extends FlowExecutionAccessException {
 
 	/**
-	 * Creates a new flow execution restoration exception.
+	 * Creates a new flow execution restoration failure exception.
 	 * @param flowExecutionKey the key of the execution that could not be
-	 * restored.
-	 * @param cause the root cause of the restoration failure.
+	 * restored
+	 * @param cause the root cause of the restoration failure
 	 */
 	public FlowExecutionRestorationFailureException(FlowExecutionKey flowExecutionKey, Exception cause) {
 		super(flowExecutionKey, "A problem occurred restoring the flow execution with key '" + flowExecutionKey + "'",

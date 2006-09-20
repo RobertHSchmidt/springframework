@@ -32,7 +32,7 @@ public abstract class FlowExecutionAccessException extends FlowExecutionReposito
 	/**
 	 * Creates a new flow execution access exception.
 	 * @param flowExecutionKey the key of the execution that could not be
-	 * restored.
+	 * accessed
 	 * @param message a descriptive message
 	 */
 	public FlowExecutionAccessException(FlowExecutionKey flowExecutionKey, String message) {
@@ -42,9 +42,9 @@ public abstract class FlowExecutionAccessException extends FlowExecutionReposito
 	/**
 	 * Creates a new flow execution access exception.
 	 * @param flowExecutionKey the key of the execution that could not be
-	 * restored.
+	 * accessed
 	 * @param message a descriptive message
-	 * @param cause the root cause of the restoration failure.
+	 * @param cause the root cause of the access failure
 	 */
 	public FlowExecutionAccessException(FlowExecutionKey flowExecutionKey, String message, Exception cause) {
 		super(message, cause);

@@ -16,7 +16,7 @@
 package org.springframework.webflow.execution.repository;
 
 /**
- * Thrown when access to a flow execution was revoked by a repository.
+ * Thrown when access to a flow execution was denied by a repository.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -26,8 +26,8 @@ public class PermissionDeniedFlowExecutionAccessException extends FlowExecutionA
 	/**
 	 * Creates a new flow execution restoration exception.
 	 * @param flowExecutionKey the key of the execution that could not be
-	 * restored.
-	 * @param cause the root cause of the restoration failure.
+	 * accessed
+	 * @param cause the root cause of the access failure
 	 */
 	public PermissionDeniedFlowExecutionAccessException(FlowExecutionKey flowExecutionKey, Exception cause) {
 		super(flowExecutionKey, "Unable to restore flow execution with key '" + flowExecutionKey

@@ -17,7 +17,8 @@ package org.springframework.webflow.execution.repository;
 
 /**
  * Thrown when an encoded flow execution key is badly formatted and could not be
- * parsed.
+ * parsed. We debated calling this the <tt>FuckedUpFlowExecutionKeyException</tt>.
+ * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
@@ -29,12 +30,13 @@ public class BadlyFormattedFlowExecutionKeyException extends FlowExecutionReposi
 	private String invalidKey;
 
 	/**
-	 * The format the string key should have been in.
+	 * The format the string key should have been in. Could just be a
+	 * description of that format.
 	 */
 	private String format;
 
 	/**
-	 * Creates a bad execution key format exception
+	 * Creates a bad execution key format exception.
 	 * @param invalidKey the invalid key
 	 * @param format the format the key should have been in
 	 */
@@ -45,7 +47,7 @@ public class BadlyFormattedFlowExecutionKeyException extends FlowExecutionReposi
 	}
 
 	/**
-	 * Creates a bad execution key format exception
+	 * Creates a bad execution key format exception.
 	 * @param invalidKey the invalid key
 	 * @param format the format the key should have been in
 	 * @param cause the cause
@@ -57,7 +59,7 @@ public class BadlyFormattedFlowExecutionKeyException extends FlowExecutionReposi
 	}
 
 	/**
-	 * Returns key of the flow execution that could not be restored.
+	 * Returns the string key of the flow execution that could not be parsed.
 	 */
 	public String getInvalidKey() {
 		return invalidKey;
