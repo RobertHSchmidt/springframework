@@ -25,8 +25,8 @@ public interface ConversationManager {
 
 	/**
 	 * Begin a new conversation.
-	 * @param conversationParameters the input needed
-	 * @return a service interface allowing access to the conversatio context
+	 * @param conversationParameters descriptive conversation parameters
+	 * @return a service interface allowing access to the conversation context
 	 * @throws ConversationException an exception occured
 	 */
 	public Conversation beginConversation(ConversationParameters conversationParameters) throws ConversationException;
@@ -35,7 +35,7 @@ public interface ConversationManager {
 	 * Get the conversation with the provided id.
 	 * @param id the conversation id
 	 * @return the conversation
-	 * @throws NoSuchConversationException the id provided was invalid.
+	 * @throws NoSuchConversationException the id provided was invalid
 	 */
 	public Conversation getConversation(ConversationId id) throws ConversationException;
 
@@ -44,7 +44,7 @@ public interface ConversationManager {
 	 * Essentially, the reverse of {@link ConversationId#toString()}.
 	 * @param encodedId the encoded id
 	 * @return the parsed conversation id
-	 * @throws ConversationException an exception occured.
+	 * @throws ConversationException an exception occured parsing the id
 	 */
 	public ConversationId parseConversationId(String encodedId) throws ConversationException;
 }

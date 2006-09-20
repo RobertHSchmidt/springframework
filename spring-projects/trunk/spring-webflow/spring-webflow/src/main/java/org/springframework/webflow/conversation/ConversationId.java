@@ -25,5 +25,12 @@ import java.io.Serializable;
  * @author Keith Donald
  */
 public abstract class ConversationId implements Serializable {
+
+	/**
+	 * Subclasses should override toString to return a parseable string form of
+	 * the key.
+	 * @see java.lang.Object#toString()
+	 * @see ConversationManager#parseConversationId(String)
+	 */
 	public abstract String toString();
 }

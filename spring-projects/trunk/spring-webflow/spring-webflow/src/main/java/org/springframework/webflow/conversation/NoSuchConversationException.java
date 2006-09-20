@@ -21,7 +21,6 @@ package org.springframework.webflow.conversation;
  * expired, or was otherwise invalidated, but a client view still references it.
  * 
  * @author Keith Donald
- * @author Erwin Vervaet
  */
 public class NoSuchConversationException extends ConversationException {
 
@@ -31,7 +30,7 @@ public class NoSuchConversationException extends ConversationException {
 	private ConversationId conversationId;
 
 	/**
-	 * Create a new flow execution lookup exception.
+	 * Create a new conversation lookup exception.
 	 * @param conversationId the conversation id
 	 */
 	public NoSuchConversationException(ConversationId conversationId) {
@@ -41,7 +40,7 @@ public class NoSuchConversationException extends ConversationException {
 	}
 
 	/**
-	 * Returns the conversation id that was invalid.
+	 * Returns the conversation id that was not found.
 	 */
 	public ConversationId getConversationId() {
 		return conversationId;
