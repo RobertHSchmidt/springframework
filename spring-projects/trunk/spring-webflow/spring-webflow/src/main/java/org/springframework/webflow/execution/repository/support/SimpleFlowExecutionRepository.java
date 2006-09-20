@@ -26,8 +26,7 @@ import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 
 /**
- * Stores <i>exactly one</i> flow execution per conversation, where each
- * continuation represents the current state of an active conversation.
+ * Stores <i>exactly one</i> flow execution per conversation.
  * <p>
  * It is important to note use of this repository <b>does not</b> allow for
  * duplicate submission in conjunction with browser navigational buttons (such
@@ -45,9 +44,10 @@ import org.springframework.webflow.util.UidGenerator;
  * lock down the browser and require that all navigational events to be routed
  * explicitly through Spring Web Flow.
  * 
+ * @author Erwin Vervaet
  * @author Keith Donald
  */
-public class DefaultFlowExecutionRepository extends AbstractConversationFlowExecutionRepository {
+public class SimpleFlowExecutionRepository extends AbstractConversationFlowExecutionRepository {
 
 	/**
 	 * The flow execution entry attribute.
@@ -65,7 +65,12 @@ public class DefaultFlowExecutionRepository extends AbstractConversationFlowExec
 	 */
 	private UidGenerator continuationIdGenerator = new RandomGuidUidGenerator();
 
-	public DefaultFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer,
+	/**
+	 * Create a new repository using given state restorer and conversation manager.
+	 * @param executionStateRestorer
+	 * @param conversationManager
+	 */
+	public SimpleFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer,
 			ConversationManager conversationManager) {
 		super(conversationManager);
 		setExecutionStateRestorer(executionStateRestorer);

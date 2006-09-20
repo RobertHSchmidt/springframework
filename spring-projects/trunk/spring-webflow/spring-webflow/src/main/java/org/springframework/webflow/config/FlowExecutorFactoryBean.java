@@ -34,7 +34,7 @@ import org.springframework.webflow.execution.factory.StaticFlowExecutionListener
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.continuation.ClientContinuationFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepository;
-import org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
@@ -202,7 +202,7 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 */
 	protected FlowExecutionRepository createExecutionRepository(FlowExecutionStateRestorer executionStateRestorer) {
 		if (repositoryType == RepositoryType.DEFAULT) {
-			return new DefaultFlowExecutionRepository(executionStateRestorer, conversationManager);
+			return new SimpleFlowExecutionRepository(executionStateRestorer, conversationManager);
 		}
 		else if (repositoryType == RepositoryType.CONTINUATION) {
 			return new ContinuationFlowExecutionRepository(executionStateRestorer, conversationManager);
@@ -211,7 +211,7 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 			return new ClientContinuationFlowExecutionRepository(executionStateRestorer, conversationManager);
 		}
 		else if (repositoryType == RepositoryType.SINGLEKEY) {
-			DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(executionStateRestorer,
+			SimpleFlowExecutionRepository repository = new SimpleFlowExecutionRepository(executionStateRestorer,
 					conversationManager);
 			repository.setAlwaysGenerateNewNextKey(false);
 			return repository;

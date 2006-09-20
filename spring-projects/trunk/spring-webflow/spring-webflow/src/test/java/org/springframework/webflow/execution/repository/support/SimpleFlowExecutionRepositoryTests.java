@@ -32,9 +32,9 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
 import org.springframework.webflow.execution.repository.PermissionDeniedFlowExecutionAccessException;
 import org.springframework.webflow.test.MockExternalContext;
 
-public class DefaultFlowExecutionRepositoryTests extends TestCase {
+public class SimpleFlowExecutionRepositoryTests extends TestCase {
 
-	private DefaultFlowExecutionRepository repository;
+	private SimpleFlowExecutionRepository repository;
 
 	private FlowExecution execution;
 
@@ -45,7 +45,7 @@ public class DefaultFlowExecutionRepositoryTests extends TestCase {
 		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(new SimpleFlow()));
 		execution = new FlowExecutionImplFactory().createFlowExecution(registry.getFlowDefinition("simpleFlow"));
 		FlowExecutionStateRestorer stateRestorer = new FlowExecutionImplStateRestorer(registry);
-		repository = new DefaultFlowExecutionRepository(stateRestorer, new LocalConversationManager(-1));
+		repository = new SimpleFlowExecutionRepository(stateRestorer, new LocalConversationManager(-1));
 		ExternalContextHolder.setExternalContext(new MockExternalContext());
 	}
 

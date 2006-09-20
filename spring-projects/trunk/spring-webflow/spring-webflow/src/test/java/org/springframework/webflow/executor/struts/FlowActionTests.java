@@ -34,7 +34,7 @@ import org.springframework.webflow.engine.SimpleFlow;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.engine.impl.FlowExecutionImplStateRestorer;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
-import org.springframework.webflow.execution.repository.support.DefaultFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepository;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 
 public class FlowActionTests extends TestCase {
@@ -53,7 +53,7 @@ public class FlowActionTests extends TestCase {
 		FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
 		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(new SimpleFlow()));
 		FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
-		FlowExecutionRepository repository = new DefaultFlowExecutionRepository(new FlowExecutionImplStateRestorer(
+		FlowExecutionRepository repository = new SimpleFlowExecutionRepository(new FlowExecutionImplStateRestorer(
 				registry), new LocalConversationManager(-1));
 		action.setFlowExecutor(new FlowExecutorImpl(registry, factory, repository));
 
