@@ -56,10 +56,6 @@ public abstract class AbstractConversationManager implements ConversationManager
 		this.conversationIdGenerator = uidGenerator;
 	}
 
-	public ConversationId parseConversationId(String conversationId) {
-		return new SimpleConversationId(getConversationIdGenerator().parseUid(conversationId));
-	}
-
 	public Conversation beginConversation(ConversationParameters conversationParameters) throws ConversationException {
 		ConversationId conversationId = new SimpleConversationId(getConversationIdGenerator().generateUid());
 		getConversationMap().put(conversationId, createConversationEntry(conversationParameters, conversationId));
@@ -69,10 +65,16 @@ public abstract class AbstractConversationManager implements ConversationManager
 
 	public Conversation getConversation(ConversationId id) throws NoSuchConversationException {
 		assertValid(id);
+		// return a conversation proxy that delegates all calls on the Conversation
+		// back to this manager so we can take appropriate actions
 		return new ConversationProxy(id);
 	}
 
-	// internal hooks called by ConversationProxy inner class
+	public ConversationId parseConversationId(String conversationId) {
+		return new SimpleConversationId(getConversationIdGenerator().parseUid(conversationId));
+	}
+
+	// internal hooks called by ConversationProxy inner class to manage conversations
 	
 	private ConversationLock getLock(ConversationId conversationId) throws NoSuchConversationException {
 		assertValid(conversationId);
@@ -124,7 +126,7 @@ public abstract class AbstractConversationManager implements ConversationManager
 	}
 
 	/**
-	 * Returns the identified conversation entry.
+	 * Returns the identified conversation entry, or null if not found.
 	 * @param conversationId the id to lookup
 	 * @return the conversation entry
 	 */
@@ -169,11 +171,13 @@ public abstract class AbstractConversationManager implements ConversationManager
 
 	/**
 	 * Returns the Map of conversations used by this conversation manager.
+	 * The map will be used to store {@link ConversationEntry} objects.
 	 */
 	protected abstract Map getConversationMap();
 
 	/**
 	 * A proxy to a keyed {@link ConversationEntry entry} in the conversation map.
+	 * All calls on the proxy will be delegated to this conversation manager.
 	 * 
 	 * @author Keith Donald
 	 */

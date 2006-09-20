@@ -32,6 +32,10 @@ import org.springframework.webflow.conversation.ConversationId;
  * <i>application transaction</i>. This key is used as an index into a single
  * <i>logical</i> executing conversation, identifying a user interaction that
  * is currently in process and has not yet completed.
+ * <p>
+ * This is an internal helper class of the {@link AbstractConversationManager}.
+ * 
+ * @see AbstractConversationManager
  * 
  * @author Ben Hale
  */

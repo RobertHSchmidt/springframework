@@ -36,6 +36,9 @@ import org.springframework.webflow.core.collection.SharedAttributeMap;
  */
 public class SessionBindingConversationManager extends AbstractConversationManager {
 
+	/**
+	 * Session attribute holding the list of known conversation ids.
+	 */
 	private static final String CONVERSATION_ID_LIST = "webflow.conversation.idList";
 
 	/**
@@ -62,6 +65,7 @@ public class SessionBindingConversationManager extends AbstractConversationManag
 	// overridden hooks
 
 	protected Map getConversationMap() {
+		// use the session map to store conversation entries
 		return ExternalContextHolder.getExternalContext().getSessionMap().asMap();
 	}
 	
@@ -85,6 +89,10 @@ public class SessionBindingConversationManager extends AbstractConversationManag
 
 	// internal helpers
 	
+	/**
+	 * Return the list of known conversation ids which is stored in the session.
+	 * If the list cannot be found, a new empty one will be created and returned.
+	 */
 	private List getConversationIdList() {
 		SharedAttributeMap session = ExternalContextHolder.getExternalContext().getSessionMap();
 		synchronized (session.getMutex()) {
@@ -95,6 +103,14 @@ public class SessionBindingConversationManager extends AbstractConversationManag
 			}
 			return conversationIds;
 		}
+	}
+
+	/**
+	 * Has the maximum number of allowed concurrent conversations in the session
+	 * been exceeded?
+	 */
+	private boolean maxExceeded() {
+		return maxConversations > 0 && getConversationIdList().size() > maxConversations;
 	}
 
 	/**
@@ -113,13 +129,5 @@ public class SessionBindingConversationManager extends AbstractConversationManag
 	private void rebind(ConversationId conversationId) {
 		ConversationEntry entry = getConversationEntry(conversationId);
 		getConversationMap().put(conversationId, entry);
-	}
-
-	/**
-	 * Has the maximum number of allowed concurrent conversations in the session
-	 * been exceeded?
-	 */
-	private boolean maxExceeded() {
-		return maxConversations > 0 && getConversationIdList().size() > maxConversations;
 	}
 }
