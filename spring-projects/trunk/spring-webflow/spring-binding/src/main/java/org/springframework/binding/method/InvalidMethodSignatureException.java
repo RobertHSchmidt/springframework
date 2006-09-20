@@ -29,7 +29,7 @@ public class InvalidMethodSignatureException extends NestedRuntimeException {
 	 * Creates an exception for the specified class method key with the
 	 * specified root cause.
 	 * 
-	 * @param methodKey the method key
+	 * @param signature the class method key defining the method signature
 	 * @param cause the cause
 	 */
 	public InvalidMethodSignatureException(ClassMethodKey signature, Exception cause) {

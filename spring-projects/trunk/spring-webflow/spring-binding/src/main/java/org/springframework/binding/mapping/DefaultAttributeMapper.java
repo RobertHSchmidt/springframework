@@ -51,7 +51,7 @@ public class DefaultAttributeMapper implements AttributeMapper, Serializable {
 
 	/**
 	 * Add a set of mappings.
-	 * @param the mappings
+	 * @param mappings the mappings
 	 */
 	public void addMappings(Mapping[] mappings) {
 		if (mappings == null) {
@@ -68,9 +68,6 @@ public class DefaultAttributeMapper implements AttributeMapper, Serializable {
 		return (Mapping[])mappings.toArray(new Mapping[mappings.size()]);
 	}
 
-	/**
-	 * Map data from one map to another map using specified mappings.
-	 */
 	public void map(Object source, Object target, Map context) {
 		if (mappings != null) {
 			Iterator it = mappings.iterator();

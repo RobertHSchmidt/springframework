@@ -37,7 +37,7 @@ import org.springframework.util.StringUtils;
  * data binding to retrieve the argument value.
  * </ul>
  * 
- * @see org.springframework.webflow.action.bean.MethodSignature
+ * @see MethodSignature
  * 
  * @author Keith Donald
  */
