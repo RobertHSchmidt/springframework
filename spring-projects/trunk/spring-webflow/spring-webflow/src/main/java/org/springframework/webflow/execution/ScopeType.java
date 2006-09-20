@@ -19,7 +19,8 @@ import org.springframework.core.enums.StaticLabeledEnum;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 
 /**
- * An enumeration of the core scope types of Spring Web Flow.
+ * An enumeration of the core scope types of Spring Web Flow. Provides easy
+ * access to each scope by <i>type</i> using {@link #getScope(RequestContext)()}.
  * <p>
  * A "scope" defines a data structure for storing custom user attributes within
  * a flow execution. Different scope types have different semantics in terms of
@@ -45,7 +46,7 @@ public abstract class ScopeType extends StaticLabeledEnum {
 	 * Constant indicating flow scope. Data in flow scope is shared by all
 	 * artifacts of exactly one flow definition (actions, view, states, etc.)
 	 * and lives locally for the life of a executing flow session. When the flow
-	 * session ends an data in flow scope goes out of scope.
+	 * session ends any data in flow scope goes out of scope.
 	 */
 	public static final ScopeType FLOW = new ScopeType(1, "Flow") {
 		public MutableAttributeMap getScope(RequestContext context) {
@@ -79,7 +80,7 @@ public abstract class ScopeType extends StaticLabeledEnum {
 
 	/**
 	 * Accessor that returns the mutable attribute map for this scope type for a
-	 * given flow execution request.
+	 * given flow execution request context.
 	 * @param context the context representing an executing request
 	 * @return the scope map of this type for that request, allowing attributes
 	 * to be accessed and set

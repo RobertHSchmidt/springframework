@@ -26,16 +26,13 @@ import org.springframework.webflow.core.FlowException;
  * behalf of a client. They signal that an execution problem occured: e.g.
  * action execution failed or no transition matched the current request context.
  * 
- * @see org.springframework.webflow.definition.FlowDefinition
- * @see org.springframework.webflow.definition.StateDefinition
- * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
 public class FlowExecutionException extends FlowException {
 
 	/**
-	 * The flow in which the exception occured.
+	 * The id of the flow definition in which the exception occured.
 	 */
 	private String flowId;
 

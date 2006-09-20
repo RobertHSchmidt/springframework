@@ -20,7 +20,7 @@ import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.execution.Event;
 
 /**
- * A convenience support class assisting in the creation of event objects.
+ * A convenience support class assisting in the creation of {@link Event} objects.
  * <p>
  * This class can be used as a simple utility class when you need to create
  * common event objects.  Alternatively you could extend it as a base support class
@@ -240,21 +240,21 @@ public class EventFactorySupport {
 	 * attributes.
 	 * @param source the source of the event
 	 * @param eventId the result event identifier
-	 * @param attributes the event attributes
-	 * @return the action result event
+	 * @param attributes the event payload attributes
+	 * @return the event
 	 */
 	public Event event(Object source, String eventId, AttributeMap attributes) {
 		return new Event(source, eventId, attributes);
 	}
 
 	/**
-	 * Returns a result event for this action with the specified identifier and
+	 * Returns a result event with the specified identifier and
 	 * a single attribute.
 	 * @param source the source of the event
 	 * @param eventId the result id
 	 * @param attributeName the attribute name
 	 * @param attributeValue the attribute value
-	 * @return the action result event
+	 * @return the event
 	 */
 	public Event event(Object source, String eventId, String attributeName, Object attributeValue) {
 		return new Event(source, eventId, CollectionUtils.singleEntryMap(attributeName, attributeValue));

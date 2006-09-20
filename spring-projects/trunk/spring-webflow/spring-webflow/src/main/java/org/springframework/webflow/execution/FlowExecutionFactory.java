@@ -23,16 +23,24 @@ import org.springframework.webflow.definition.FlowDefinition;
  * <p>
  * This factory provides encapsulation of the flow execution implementation
  * type, as well as its construction and assembly process.
+ * <p>
+ * Flow execution factories are responsible for registering
+ * {@link FlowExecutionListener listeners} with the constructed flow execution.
+ * 
+ * @see FlowExecution
+ * @see FlowDefinition
+ * @see FlowExecutionListener
  * 
  * @author Keith Donald
  */
 public interface FlowExecutionFactory {
 
 	/**
-	 * Create a new flow execution product for the flow definition.
+	 * Create a new flow execution product for the given flow definition.
 	 * @param flowDefinition the flow definition
 	 * @return the new flow execution, fully initialized and awaiting to be
-	 * started.
+	 * started
+	 * @see FlowExecution#start(org.springframework.webflow.core.collection.MutableAttributeMap, org.springframework.webflow.context.ExternalContext)
 	 */
 	public FlowExecution createFlowExecution(FlowDefinition flowDefinition);
 }

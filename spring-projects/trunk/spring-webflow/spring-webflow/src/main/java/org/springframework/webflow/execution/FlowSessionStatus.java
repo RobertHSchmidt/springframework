@@ -18,7 +18,9 @@ package org.springframework.webflow.execution;
 import org.springframework.core.enums.StaticLabeledEnum;
 
 /**
- * Type-safe enumeration of possible flow session statuses.
+ * Type-safe enumeration of possible flow session statuses. Consult the
+ * JavaDoc for the {@link FlowSession} for more information on how these
+ * statuses are used during the life cycle of a flow session.
  * 
  * @see org.springframework.webflow.execution.FlowSession
  * 

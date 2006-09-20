@@ -23,7 +23,7 @@ import org.springframework.webflow.definition.FlowDefinition;
  * Provides contextual information about a flow execution. A flow execution is
  * an runnable instance of a {@link FlowDefinition}. In other words, it is the
  * central Spring Web Flow construct for carrying out a conversation with a
- * client. This is immutable interface provides access to runtime information
+ * client. This immutable interface provides access to runtime information
  * about the conversation, such as it's {@link #isActive() status} and
  * {@link #getActiveSession() current state}.
  * <p>
@@ -61,14 +61,13 @@ public interface FlowExecutionContext {
 	 * All methods on an active flow execution context can be called
 	 * successfully. If the flow execution is not active, a caller cannot access
 	 * some methods such as {@link #getActiveSession()}.
-	 * 
-	 * @return true if active, false if flow execution has terminated
+	 * @return true if active, false if the flow execution has terminated
 	 */
 	public boolean isActive();
 
 	/**
 	 * Returns the active flow session of this flow execution. The active flow
-	 * session is the currently executing session--it may be the "root flow"
+	 * session is the currently executing session -- it may be the "root flow"
 	 * session, or it may be a subflow session if this flow execution has
 	 * spawned a subflow.
 	 * @return the active flow session
@@ -87,7 +86,7 @@ public interface FlowExecutionContext {
 
 	/**
 	 * Returns runtime execution attributes that may influence the behavior of
-	 * definitional artifacts, such as States and Actions.
+	 * flow artifacts, such as states and actions.
 	 * @return execution attributes
 	 */
 	public AttributeMap getAttributes();

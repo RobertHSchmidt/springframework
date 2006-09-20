@@ -84,6 +84,8 @@ public interface Action {
 	 * when the flow session ends. All attributes set in
 	 * {@link RequestContext#getRequestScope() request scope} exist for the life
 	 * of the currently executing request only.
+	 * {@link RequestContext#getConversationScope() Conversation scope} persists
+	 * for the life of an entire flow execution.
 	 * <p>
 	 * All attributes present in any scope are typically exposed in the model
 	 * for access by a view when an "interactive" state type such as a view
@@ -102,12 +104,11 @@ public interface Action {
 	 * should be <code>Serializable</code>.
 	 * 
 	 * @param context the action execution context, for accessing and setting
-	 * data in "flow scope" or "request scope" as well as obtaining other flow
-	 * contextual information (e.g. action execution attributes and flow
-	 * execution data)
-	 * @return a logical result outcome, used as grounds for a transition out of
-	 * the current calling action state (e.g. "success", "error", "yes", "no",
-	 * ...)
+	 * data in "request scope", "flow scope" or "conversation scope", as well as
+	 * obtaining other flow contextual information (e.g. action execution
+	 * attributes and flow execution data)
+	 * @return a logical result outcome, used as grounds for a transition in the
+	 * calling flow (e.g. "success", "error", "yes", "no", * ...)
 	 * @throws Exception a exception occured during action execution, either
 	 * checked or unchecked; note, any <i>recoverable</i> exceptions should be
 	 * caught within this method and an appropriate result outcome returned

@@ -29,6 +29,8 @@ import java.io.Serializable;
  * response type. It is expected that callers introspect the returned view
  * selection instance to handle the response types they support.
  * 
+ * @see FlowExecution
+ * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
@@ -43,8 +45,6 @@ public abstract class ViewSelection implements Serializable {
 	/**
 	 * The definition of the 'null' view selection type, indicating that no
 	 * response should be issued.
-	 * 
-	 * @author Keith Donald
 	 */
 	private static final class NullView extends ViewSelection {
 

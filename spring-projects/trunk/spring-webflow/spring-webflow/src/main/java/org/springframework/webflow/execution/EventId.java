@@ -19,11 +19,11 @@ import java.io.Serializable;
 
 /**
  * A value object describing an event that occured within a flow execution.
- * Currently just a simple string.
  * <p>
- * In the future this may evolve into a path-like data structure to support
- * hierarchical events on nested flow executions.
+ * Currently just a simple string. In the future this may evolve into a path-like
+ * data structure to support hierarchical events on nested flow executions.
  * 
+ * @author Erwin Vervaet
  * @author Keith Donald
  */
 public class EventId implements Serializable {

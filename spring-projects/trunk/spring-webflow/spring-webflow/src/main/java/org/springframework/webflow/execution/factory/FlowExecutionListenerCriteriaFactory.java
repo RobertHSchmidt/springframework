@@ -48,7 +48,7 @@ public class FlowExecutionListenerCriteriaFactory {
 	/**
 	 * Returns a criteria that just matches a flow if it is identified by one of
 	 * the specified ids.
-	 * @param flowIds the flow id to match
+	 * @param flowIds the flow ids to match
 	 */
 	public FlowExecutionListenerCriteria flows(String[] flowIds) {
 		return new FlowIdFlowExecutionListenerCriteria(flowIds);

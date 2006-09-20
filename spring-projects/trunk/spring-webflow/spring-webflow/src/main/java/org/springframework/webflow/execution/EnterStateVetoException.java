@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.execution;
 
+import org.springframework.webflow.definition.StateDefinition;
+
 /**
  * Exception thrown to veto the entering of a state of a flow. Typically thrown
  * by {@link FlowExecutionListener} objects that apply security or other runtime
@@ -53,6 +55,27 @@ public class EnterStateVetoException extends FlowExecutionException {
 	public EnterStateVetoException(String flowId, String sourceStateId, String vetoedStateId, String message, Throwable cause) {
 		super(flowId, sourceStateId, message, cause);
 		this.vetoedStateId = vetoedStateId;
+	}
+
+	/**
+	 * Create a new enter state veto exception.
+	 * @param context the flow execution request context
+	 * @param vetoedState the state for which entering is vetoed
+	 * @param message a descriptive message
+	 */
+	public EnterStateVetoException(RequestContext context, StateDefinition vetoedState, String message) {
+		this(context.getActiveFlow().getId(), context.getCurrentState().getId(), vetoedState.getId(), message);
+	}
+
+	/**
+	 * Create a new enter state veto exception.
+	 * @param context the flow execution request context
+	 * @param vetoedState the state for which entering is vetoed
+	 * @param message a descriptive message
+	 * @param cause the underlying cause
+	 */
+	public EnterStateVetoException(RequestContext context, StateDefinition vetoedState, String message, Throwable cause) {
+		this(context.getActiveFlow().getId(), context.getCurrentState().getId(), vetoedState.getId(), message, cause);
 	}
 
 	/**
