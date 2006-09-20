@@ -21,6 +21,9 @@ import org.springframework.binding.collection.MapAdaptable;
 
 /**
  * An immutable interface for accessing attributes in a backing map with string keys.
+ * <p>
+ * Implementations can optionally support {@link AttributeMapBindingListener listeners}
+ * that will be notified when they're bound in or unbound from the map.
  * 
  * @author Keith Donald
  */
