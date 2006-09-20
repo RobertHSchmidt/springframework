@@ -769,15 +769,14 @@
             			<row>
               				<entry>FlowExecutionRedirect</entry>
               				<entry>
-              					Requests a redirect back to a ViewState at a unique <emphasis>flow execution URL</emphasis>.  
+              					Requests a redirect back to the ViewState at a unique <emphasis>flow execution URL</emphasis>.  
               					When this URL is accessed on subsequent requests an ApplicationView will be reconstituted and rendered.
               					The URL is refreshable while the flow execution remains active.
 								<para>        				
-              						Multiple flow execution URLs may be generated for a single logical conversation.
-              						In that case each flow execution URL provides access to a paused flow execution
-              						continuation waiting in a restorable ViewState.
-              						Accessing the URL refreshes the execution from that state.
-              						(Continuations will be discussed in more detail later.)
+              						Note: multiple flow execution URLs may be generated for a single logical user conversation.
+              						In that case each flow execution URL provides access to the conversation 
+              						from a previous point (ViewState).  Accessing the URL refreshes the execution
+              						from that point.
               					</para>
               				</entry>
  						</row>
@@ -813,7 +812,7 @@
     				a response instruction is constructed.
     			</para>
     			<para>
-    			    Three <literal>ViewSelector</literal> implementations are provided with Spring Web Flow:
+    			    Four <literal>ViewSelector</literal> implementations are provided with Spring Web Flow:
     			</para>
 	    		<table>
     	   			<title>ViewSelector implementations</title>
@@ -841,10 +840,10 @@
 	        	   	        <row>
               					<entry>FlowDefinitionRedirectSelector</entry>
 								<entry>
-									Returns a FlowDefinitionRedirect with a <literal>flowId</literal> and <literal>inputMap</literal> requesting 
-									the launch of an entirely new flow execution (an instance of the Flow identified by the flowId).
+									Returns a FlowDefinitionRedirect with a <literal>flowId</literal> and <literal>executionInput</literal> map requesting 
+									the launch of an entirely new flow execution (an instance of the FlowDefinition identified by the flowId).
 									Useful for <emphasis>redirect after flow completion</emphasis>, where one flow ending should trigger
-									the start of another flow, independently.
+									the start of another flow independently.
 								</entry>
 	        	   	        </row>
             				<row>
@@ -958,14 +957,28 @@
         
     &lt;/flow&gt;
     			</programlisting>
-			</sect3>
-			<para>
-			    This example is called a <emphasis>flow execution redirect</emphasis> because the application view selected 
-			    is constructed only after a redirect to the flow execution.  The redirect is sent to a
-			    URL that <emphasis>refreshes</emphasis> the flow execution which is paused at the <literal>displayList</literal>
-			    view state, triggering the rendering of the <literal>yourList</literal> application view on the next request
-			    into the server.
-			</para>
+				<para>
+				    This example is called a <emphasis>flow execution redirect</emphasis> because the application view selected 
+				    is rendered only after a redirect to the flow execution.  The redirect request is sent to a
+				    URL that <emphasis>refreshes</emphasis> the flow execution paused in the <literal>displayList</literal>
+				    view state.  Refresh then triggers the rendering of the <literal>yourList</literal> application view
+				    on the next request into the server.
+				</para>
+				<sect4 id="viewState-POST-REDIRECT-GET">
+					<title>POST+REDIRECT+GET in Spring Web Flow</title>
+					<para>
+						The above example is one way to achieve the <literal>POST+REDIRECT+GET</literal> pattern in Spring Web Flow.
+						When the redirect performed, the GET request issued hits a stable <emphasis>flow execution URL</emphasis>
+						which remains active for the duration of the conversation.  This URL may be freely refreshed. 
+						Browser navigational buttons may be used freely without browser warnings.
+					</para>
+					<para>
+				 	    Later in this document the execution attribute <literal>alwaysRedirectOnPause</literal> is discussed, 
+				 	    which enforces this pattern by default.  In that case each time a view state is entered
+				 	    a redirect is always performed--<emphasis>automatically</emphasis>.
+					</para>
+				</sect4>
+			</sect3>				
     	    <sect3 id="viewStateJava-redirect">
     	    	<title>ViewState API - flow execution redirect</title>
     	    	<para>

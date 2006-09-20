@@ -19,10 +19,10 @@ import java.util.Iterator;
 
 import javax.portlet.PortletRequest;
 
+import org.springframework.binding.collection.CompositeIterator;
 import org.springframework.binding.collection.StringKeyedMapAdapter;
 import org.springframework.web.portlet.multipart.MultipartActionRequest;
 import org.springframework.webflow.core.collection.CollectionUtils;
-import org.springframework.webflow.core.collection.CompositeIterator;
 
 /**
  * Map backed by the Portlet request parameter map for accessing request local
