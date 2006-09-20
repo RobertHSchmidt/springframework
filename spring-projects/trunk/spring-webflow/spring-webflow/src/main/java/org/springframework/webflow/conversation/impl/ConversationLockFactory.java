@@ -45,7 +45,7 @@ public class ConversationLockFactory {
 	/**
 	 * When running on Java 1.5+, returns a jdk5 concurrent lock. When running on older JDKs with
 	 * the 'util.concurrent' package available, returns a util concurrent lock.
-	 * In all other cases an a "no-op" lock is returned.
+	 * In all other cases a "no-op" lock is returned.
 	 */
 	public static ConversationLock createLock() {
 		if (JdkVersion.getMajorJavaVersion() >= JdkVersion.JAVA_15) {

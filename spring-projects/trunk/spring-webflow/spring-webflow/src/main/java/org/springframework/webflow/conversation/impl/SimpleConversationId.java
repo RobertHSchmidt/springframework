@@ -21,7 +21,7 @@ import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationManager;
 
 /**
- * An id that uniquely identifies a conversation managed by
+ * An id that uniquely identifies a conversation managed by a
  * {@link ConversationManager}.
  * <p>
  * This key consists of a unique string that is typically a GUID.
@@ -31,13 +31,13 @@ import org.springframework.webflow.conversation.ConversationManager;
 public class SimpleConversationId extends ConversationId {
 
 	/**
-	 * The scalar id value.
+	 * The id value.
 	 */
 	private Serializable id;
 
 	/**
 	 * Creates a new simple conversation id.
-	 * @param id the scalar id value.
+	 * @param id the id value
 	 */
 	public SimpleConversationId(Serializable id) {
 		this.id = id;

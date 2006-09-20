@@ -19,7 +19,7 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 
 /**
- * A singleton lock that doesn't do anything. For use when repositories don't
+ * A singleton lock that doesn't do anything. For use when conversations don't
  * require or choose not to implement locking.
  * 
  * @author Keith Donald
@@ -31,14 +31,18 @@ class NoOpConversationLock implements ConversationLock, Serializable {
 	 */
 	public static final NoOpConversationLock INSTANCE = new NoOpConversationLock();
 
+	/**
+	 * Private constructor to avoid instantiation.
+	 */
 	private NoOpConversationLock() {
-
 	}
 
 	public void lock() {
+		// no-op
 	}
 
 	public void unlock() {
+		// no-op
 	}
 
 	// resolve the singleton instance

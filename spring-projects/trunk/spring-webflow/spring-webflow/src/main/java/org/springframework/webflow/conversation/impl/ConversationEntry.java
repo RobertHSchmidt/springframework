@@ -28,7 +28,7 @@ import org.springframework.webflow.conversation.ConversationId;
 
 /**
  * A container that holds the state of a conversation. The primary identifier is
- * a conversationId, which identifies a logical <i>conversation</i> or
+ * a {@link ConversationId}, which identifies a logical <i>conversation</i> or
  * <i>application transaction</i>. This key is used as an index into a single
  * <i>logical</i> executing conversation, identifying a user interaction that
  * is currently in process and has not yet completed.
@@ -51,6 +51,13 @@ class ConversationEntry implements Serializable {
 
 	private Map attributes = new HashMap();
 
+	/**
+	 * Create a new conversation entry.
+	 * @param id the id to assign
+	 * @param name the name of the conversation
+	 * @param caption a short description
+	 * @param description a long description
+	 */
 	public ConversationEntry(ConversationId id, String name, String caption, String description) {
 		this.id = id;
 		this.name = name;
@@ -58,30 +65,52 @@ class ConversationEntry implements Serializable {
 		this.description = description;
 	}
 
+	/**
+	 * Returns the unique id of the conversation.
+	 */
 	public ConversationId getId() {
 		return id;
 	}
 
+	/**
+	 * Returns the timestamp when the conversation began, represented as the number of
+	 * milliseconds since January 1, 1970, 00:00:00 GMT.
+	 */
 	public long getBeginTime() {
 		return beginTime;
 	}
 	
+	/**
+	 * Returns the name of the conversation.
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Returns the short description of the conversation.
+	 */
 	public String getCaption() {
 		return caption;
 	}
 
+	/**
+	 * Returns the long description of the conversation.
+	 */
+	public String getDescription() {
+		return description;
+	}
+	
+	/**
+	 * Returns a map of attributes associated with the conversation.
+	 */
 	public Map getAttributes() {
 		return attributes;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
+	/**
+	 * Returns a lock for the conversation.
+	 */
 	public ConversationLock getLock() {
 		return lock;
 	}
