@@ -37,7 +37,6 @@ import org.springframework.webflow.engine.RequestControlContext;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionListener;
@@ -201,7 +200,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 	}
 
-	public ViewSelection signalEvent(EventId eventId, ExternalContext externalContext) throws FlowExecutionException {
+	public ViewSelection signalEvent(String eventId, ExternalContext externalContext) throws FlowExecutionException {
 		assertActive();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Resuming this execution on user event '" + eventId + "'");
@@ -211,7 +210,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		try {
 			try {
 				resume(context);
-				Event event = new Event(externalContext, eventId.getValue(), externalContext.getRequestParameterMap()
+				Event event = new Event(externalContext, eventId, externalContext.getRequestParameterMap()
 						.asAttributeMap());
 				ViewSelection selectedView = context.signalEvent(event);
 				return pause(context, selectedView);

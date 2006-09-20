@@ -25,7 +25,6 @@ import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
-import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionFactory;
 import org.springframework.webflow.execution.ViewSelection;
@@ -122,7 +121,7 @@ public class FlowNavigationHandler extends DecoratingNavigationHandler {
 				// a flow execution has been restored, signal an event in it
 				String eventId = argumentExtractor.extractEventId(context);
 				FlowExecutionHolder holder = FlowExecutionHolderUtils.getFlowExecutionHolder(facesContext);
-				ViewSelection selectedView = holder.getFlowExecution().signalEvent(new EventId(eventId), context);
+				ViewSelection selectedView = holder.getFlowExecution().signalEvent(eventId, context);
 				holder.setViewSelection(selectedView);
 				holder.markNeedsSave();
 			}

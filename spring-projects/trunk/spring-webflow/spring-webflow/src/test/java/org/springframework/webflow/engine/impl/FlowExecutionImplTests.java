@@ -42,7 +42,6 @@ import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.engine.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.MockFlowExecutionListener;
@@ -108,12 +107,12 @@ public class FlowExecutionImplTests extends TestCase {
 		assertEquals(0, flowExecutionListener.getFlowNestingLevel());
 		assertEquals(2, flowExecutionListener.getTransitionCount());
 		assertEquals("value", flowExecution.getActiveSession().getScope().getString("name"));
-		flowExecution.signalEvent(new EventId("submit"), new MockExternalContext());
+		flowExecution.signalEvent("submit", new MockExternalContext());
 		assertTrue(!flowExecutionListener.isExecuting());
 		assertEquals(2, flowExecutionListener.getEventsSignaledCount());
 		assertEquals(1, flowExecutionListener.getFlowNestingLevel());
 		assertEquals(4, flowExecutionListener.getTransitionCount());
-		flowExecution.signalEvent(new EventId("submit"), new MockExternalContext());
+		flowExecution.signalEvent("submit", new MockExternalContext());
 		assertTrue(!flowExecutionListener.isExecuting());
 		assertEquals(0, flowExecutionListener.getFlowNestingLevel());
 		assertEquals(4, flowExecutionListener.getEventsSignaledCount());
@@ -136,11 +135,11 @@ public class FlowExecutionImplTests extends TestCase {
 		assertNotNull(view);
 		assertEquals("viewName", view.getViewName());
 		for (int i = 0; i < 10; i++) {
-			view = (ApplicationView)flowExecution.signalEvent(new EventId("submit"), new MockExternalContext());
+			view = (ApplicationView)flowExecution.signalEvent("submit", new MockExternalContext());
 			assertEquals("viewName", view.getViewName());
 		}
 		assertTrue(flowExecution.isActive());
-		flowExecution.signalEvent(new EventId("finish"), new MockExternalContext());
+		flowExecution.signalEvent("finish", new MockExternalContext());
 		assertFalse(flowExecution.isActive());
 	}
 
@@ -194,7 +193,7 @@ public class FlowExecutionImplTests extends TestCase {
 		execution.start(null, context);
 		assertEquals("viewState1", execution.getActiveSession().getState().getId());
 		assertNotNull(execution.getActiveSession().getScope().get("items"));
-		execution.signalEvent(new EventId("event1"), context);
+		execution.signalEvent("event1", context);
 		assertTrue(!execution.isActive());
 	}
 
@@ -210,7 +209,7 @@ public class FlowExecutionImplTests extends TestCase {
 		execution.start(null, context);
 		assertEquals("viewState2", execution.getActiveSession().getState().getId());
 		assertNotNull(execution.getActiveSession().getScope().get("items"));
-		execution.signalEvent(new EventId("event2"), context);
+		execution.signalEvent("event2", context);
 		assertTrue(!execution.isActive());
 	}
 
