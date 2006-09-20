@@ -108,7 +108,7 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * @throws FlowExecutionException if an exception was thrown within a state
 	 * of the resumed flow execution during event processing
 	 */
-	public ViewSelection signalEvent(EventId eventId, ExternalContext context) throws FlowExecutionException;
+	public ViewSelection signalEvent(String eventId, ExternalContext context) throws FlowExecutionException;
 
 	/**
 	 * Refresh this flow execution, asking the current view selection to be

@@ -26,7 +26,6 @@ import org.springframework.webflow.engine.impl.FlowExecutionImpl;
 import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.test.MockExternalContext;
@@ -58,7 +57,7 @@ public class SubflowStateTests extends TestCase {
 		assertEquals("mySubFlow", flowExecution.getActiveSession().getDefinition().getId());
 		assertEquals("subFlowViewState", flowExecution.getActiveSession().getState().getId());
 		assertEquals("mySubFlowViewName", view.getViewName());
-		view = (ApplicationView)flowExecution.signalEvent(new EventId("submit"), new MockExternalContext());
+		view = (ApplicationView)flowExecution.signalEvent("submit", new MockExternalContext());
 		assertEquals("myParentFlowEndingViewName", view.getViewName());
 		assertTrue(!flowExecution.isActive());
 	}
@@ -101,7 +100,7 @@ public class SubflowStateTests extends TestCase {
 		assertEquals("subFlowViewState", flowExecution.getActiveSession().getState().getId());
 		assertEquals("mySubFlowViewName", view.getViewName());
 		assertEquals("attributeValue", flowExecution.getActiveSession().getScope().get("childInputAttribute"));
-		view = (ApplicationView)flowExecution.signalEvent(new EventId("submit"), new MockExternalContext());
+		view = (ApplicationView)flowExecution.signalEvent("submit", new MockExternalContext());
 		assertEquals("myParentFlowEndingViewName", view.getViewName());
 		assertTrue(!flowExecution.isActive());
 		assertEquals("attributeValue", view.getModel().get("parentOutputAttribute"));

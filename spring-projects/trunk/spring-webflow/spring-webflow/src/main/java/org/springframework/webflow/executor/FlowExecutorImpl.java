@@ -24,7 +24,6 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
-import org.springframework.webflow.execution.EventId;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionFactory;
 import org.springframework.webflow.execution.ViewSelection;
@@ -225,7 +224,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 			lock.lock();
 			try {
 				FlowExecution flowExecution = executionRepository.getFlowExecution(key);
-				ViewSelection selectedView = flowExecution.signalEvent(new EventId(eventId), context);
+				ViewSelection selectedView = flowExecution.signalEvent(eventId, context);
 				if (flowExecution.isActive()) {
 					// execution still active => store it in the repository
 					key = executionRepository.getNextKey(flowExecution, key);
