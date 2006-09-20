@@ -36,7 +36,10 @@ import org.springframework.webflow.definition.StateDefinition;
  * resource.
  * <p>
  * Note that flow execution listeners are registered with a flow execution when
- * that execution is created by a {@link FlowExecutionFactory factory}.
+ * that execution is created by a {@link FlowExecutionFactory factory} or
+ * restored by a {@link org.springframework.webflow.execution.repository.FlowExecutionRepository}.
+ * Typically a listener will not be registered with a flow execution <i>at
+ * runtime</i>, when the flow execution is already active.
  * 
  * @see FlowDefinition
  * @see StateDefinition
@@ -67,6 +70,7 @@ public interface FlowExecutionListener {
 	 * Called immediately after a start event is signaled, indicating a new
 	 * session of the flow is starting but has not yet entered its start state.
 	 * An exception may be thrown from this method to veto the start operation.
+	 * Any type of runtime exception can be used for this purpose.
 	 * @param context the source of the event
 	 * @param definition the flow for which a new session is starting
 	 * @param input a mutable input map to the starting flow session
