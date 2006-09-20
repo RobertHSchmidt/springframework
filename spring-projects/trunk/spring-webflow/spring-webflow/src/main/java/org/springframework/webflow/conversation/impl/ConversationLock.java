@@ -18,6 +18,7 @@ package org.springframework.webflow.conversation.impl;
 /**
  * A normalized interface for conversation locks, used to obtain exclusive
  * access to a conversation.
+ * 
  * @author Keith Donald
  */
 public interface ConversationLock {

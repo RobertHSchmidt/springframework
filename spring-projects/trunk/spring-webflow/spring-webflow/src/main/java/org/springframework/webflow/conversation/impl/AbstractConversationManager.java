@@ -43,14 +43,14 @@ public abstract class AbstractConversationManager implements ConversationManager
 	private UidGenerator conversationIdGenerator = new RandomGuidUidGenerator();
 
 	/**
-	 * Returns the configured generator for simple conversation ids.
+	 * Returns the configured generator for conversation ids.
 	 */
 	protected UidGenerator getConversationIdGenerator() {
 		return conversationIdGenerator;
 	}
 
 	/**
-	 * Sets the configured generator simple conversation ids.
+	 * Sets the configured generator for conversation ids.
 	 */
 	public void setConversationIdGenerator(UidGenerator uidGenerator) {
 		this.conversationIdGenerator = uidGenerator;
@@ -72,53 +72,99 @@ public abstract class AbstractConversationManager implements ConversationManager
 		return new ConversationProxy(id);
 	}
 
-	private ConversationLock getLock(ConversationId conversationId) {
+	// internal hooks called by ConversationProxy inner class
+	
+	private ConversationLock getLock(ConversationId conversationId) throws NoSuchConversationException {
 		assertValid(conversationId);
 		return getConversationEntry(conversationId).getLock();
 	}
 
-	private Object getAttribute(ConversationId conversationId, Object name) {
+	private Object getAttribute(ConversationId conversationId, Object name) throws NoSuchConversationException {
 		assertValid(conversationId);
 		return getConversationEntry(conversationId).getAttributes().get(name);
 	}
 
-	private Object putAttribute(ConversationId conversationId, Object name, Object value) {
+	private Object putAttribute(ConversationId conversationId, Object name, Object value)
+			throws NoSuchConversationException {
 		assertValid(conversationId);
 		return getConversationEntry(conversationId).getAttributes().put(name, value);
 	}
 
-	private Object removeAttribute(ConversationId conversationId, Object name) {
+	private Object removeAttribute(ConversationId conversationId, Object name) throws NoSuchConversationException {
 		assertValid(conversationId);
 		return getConversationEntry(conversationId).getAttributes().remove(name);
 	}
 
-	private void end(ConversationId conversationId) {
+	private void end(ConversationId conversationId) throws NoSuchConversationException {
 		assertValid(conversationId);
 		getConversationMap().remove(conversationId);
 		onEnd(conversationId);
 	}
+	
+	// internal helpers
 
-	protected void onBegin(ConversationId conversationId) {
-	}
-
-	protected void onEnd(ConversationId conversationId) {
-	}
-
-	protected void onUnlock(ConversationId conversationId) {
-	}
-
+	/**
+	 * Create a new conversation entry, to be stored in the conversation map
+	 * managed by this manager.
+	 * @param parameters descriptive parameters
+	 * @param id the id to assign
+	 * @return the conversation entry
+	 */
 	protected ConversationEntry createConversationEntry(ConversationParameters parameters, ConversationId id) {
 		return new ConversationEntry(id, parameters.getName(), parameters.getCaption(), parameters.getDescription());
 	}
 
-	protected ConversationEntry getConversationEntry(ConversationId conversationId) {
-		return ((ConversationEntry)getConversationMap().get(conversationId));
-	}
-
-	protected void assertValid(ConversationId conversationId) {
+	/**
+	 * Make sure given conversation id is valid, i.e. known in the conversation map.
+	 */
+	protected void assertValid(ConversationId conversationId) throws NoSuchConversationException {
 		if (!getConversationMap().containsKey(conversationId)) {
 			throw new NoSuchConversationException(conversationId);
 		}
+	}
+
+	/**
+	 * Returns the identified conversation entry.
+	 * @param conversationId the id to lookup
+	 * @return the conversation entry
+	 */
+	protected ConversationEntry getConversationEntry(ConversationId conversationId) {
+		return (ConversationEntry)getConversationMap().get(conversationId);
+	}
+
+	// hook methods for subclasses
+
+	/**
+	 * Hook method that is called each time a new conversation begins.
+	 * The default implementation is empty.
+	 * @param the newly genrated id for the conversation
+	 * @see #beginConversation(ConversationParameters)
+	 */
+	protected void onBegin(ConversationId conversationId) {
+	}
+
+	/**
+	 * Hook method that is called each time a conversation ends.
+	 * The default implementation is empty.
+	 * @param conversationId the id of the conversation that ended
+	 */
+	protected void onEnd(ConversationId conversationId) {
+	}
+	
+	/**
+	 * Hook method that is called each time a conversation is locked.
+	 * The default implemenation is empty.
+	 * @param conversationId the id of the conversation that was locked
+	 */
+	protected void onLock(ConversationId conversationId) {
+	}
+
+	/**
+	 * Hook method that is called each time a conversation is unlocked.
+	 * The default implemenation is empty.
+	 * @param conversationId the id of the conversation that was unlocked
+	 */
+	protected void onUnlock(ConversationId conversationId) {
 	}
 
 	/**
@@ -127,7 +173,7 @@ public abstract class AbstractConversationManager implements ConversationManager
 	protected abstract Map getConversationMap();
 
 	/**
-	 * A proxy to a keyed entry in the conversation map.
+	 * A proxy to a keyed {@link ConversationEntry entry} in the conversation map.
 	 * 
 	 * @author Keith Donald
 	 */
@@ -135,6 +181,9 @@ public abstract class AbstractConversationManager implements ConversationManager
 
 		private ConversationId conversationId;
 
+		/**
+		 * Create a conversation proxy for a conversation with given id.
+		 */
 		public ConversationProxy(ConversationId id) {
 			this.conversationId = id;
 		}
@@ -145,6 +194,7 @@ public abstract class AbstractConversationManager implements ConversationManager
 
 		public void lock() {
 			AbstractConversationManager.this.getLock(conversationId).lock();
+			AbstractConversationManager.this.onLock(conversationId);
 		}
 
 		public Object getAttribute(Object name) {
@@ -176,6 +226,7 @@ public abstract class AbstractConversationManager implements ConversationManager
 				AbstractConversationManager.this.getLock(conversationId).unlock();
 			}
 			catch (Exception e) {
+				// ignore
 			}
 			AbstractConversationManager.this.end(conversationId);
 		}

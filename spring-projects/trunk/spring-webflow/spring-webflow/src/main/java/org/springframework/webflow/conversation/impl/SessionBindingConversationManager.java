@@ -25,15 +25,13 @@ import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.core.collection.SharedAttributeMap;
 
 /**
- * <p>
  * Stateless conversation manager that puts all conversational state in the
  * {@link ExternalContext#getSessionMap() session map}.  Conversations 
  * are indexed in this map by their identifiers.
- * </p>
  * <p>
  * Supports rebinding conversation entries to the session on an unlock operation
  * to facilitate replication in a traditionally clustered environment.
- * </p>
+ * 
  * @author Keith Donald
  */
 public class SessionBindingConversationManager extends AbstractConversationManager {
@@ -46,16 +44,16 @@ public class SessionBindingConversationManager extends AbstractConversationManag
 	private int maxConversations;
 
 	/**
-	 * Creates a new session binding conversation service.
+	 * Creates a new session binding conversation manager.
 	 */
 	public SessionBindingConversationManager() {
 		this(-1);
 	}
 
 	/**
-	 * Creates a new session binding conversation service.
+	 * Creates a new session binding conversation manager.
 	 * @param maxConversations the maximum number of conversations that can be
-	 * active at once within this session.
+	 * active at once within a, or -1 if unlimited
 	 */
 	public SessionBindingConversationManager(int maxConversations) {
 		this.maxConversations = maxConversations;
@@ -85,7 +83,7 @@ public class SessionBindingConversationManager extends AbstractConversationManag
 		rebind(conversationId);
 	}
 
-	// helpers
+	// internal helpers
 	
 	private List getConversationIdList() {
 		SharedAttributeMap session = ExternalContextHolder.getExternalContext().getSessionMap();
@@ -99,17 +97,28 @@ public class SessionBindingConversationManager extends AbstractConversationManag
 		}
 	}
 
+	/**
+	 * End the oldest conversation stored in the session.
+	 */
 	private void endOldestConversation() {
 		ConversationId id = (ConversationId)getConversationIdList().get(0);
 		getConversationMap().remove(id);
 		getConversationIdList().remove(id);
 	}
 	
+	/**
+	 * Rebind identified conversation in the session to ensure proper
+	 * replication in a clustered environment.
+	 */
 	private void rebind(ConversationId conversationId) {
 		ConversationEntry entry = getConversationEntry(conversationId);
 		getConversationMap().put(conversationId, entry);
 	}
 
+	/**
+	 * Has the maximum number of allowed concurrent conversations in the session
+	 * been exceeded?
+	 */
 	private boolean maxExceeded() {
 		return maxConversations > 0 && getConversationIdList().size() > maxConversations;
 	}

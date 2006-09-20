@@ -44,14 +44,14 @@ public interface Conversation {
 	public void lock();
 
 	/**
-	 * Returns the conversation scope attribute with the specified name.
+	 * Returns the conversation attribute with the specified name.
 	 * @param name the attribute name
 	 * @return the attribute value
 	 */
 	public Object getAttribute(Object name);
 
 	/**
-	 * Puts a conversation attribute into this context (scope).
+	 * Puts a conversation attribute into this context.
 	 * @param name the attribute name
 	 * @param value the attribute value
 	 */

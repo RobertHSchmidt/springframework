@@ -40,6 +40,9 @@ import org.springframework.webflow.core.collection.SharedAttributeMap;
  */
 public class LocalConversationManager extends AbstractConversationManager implements Serializable {
 
+	/**
+	 * Session attribute that stores the UserConversationContext.
+	 */
 	private static final String USER_CONVERSATION_CONTEXT = "webflow.conversation.userContext";
 
 	/**
@@ -48,12 +51,11 @@ public class LocalConversationManager extends AbstractConversationManager implem
 	private Map conversations;
 
 	/**
-	 * The maximum number of active conversations allowed in a session.
+	 * The maximum number of active conversations allowed by this manager.
 	 */
 	private int maxConversations;
 
 	private static boolean utilConcurrentPresent;
-
 	static {
 		try {
 			Class.forName("EDU.oswego.cs.dl.util.concurrent.ReentrantLock");
@@ -65,16 +67,16 @@ public class LocalConversationManager extends AbstractConversationManager implem
 	}
 
 	/**
-	 * Creates a new local conversation service.
+	 * Creates a new local conversation manager.
 	 */
 	public LocalConversationManager() {
 		this(-1);
 	}
 
 	/**
-	 * Creates a new local conversation service.
+	 * Creates a new local conversation manager.
 	 * @param maxConversations the maximum number of conversations that can be
-	 * active at once within any session.
+	 * active at once, or -1 if not limited
 	 */
 	public LocalConversationManager(int maxConversations) {
 		this.maxConversations = maxConversations;
@@ -87,19 +89,19 @@ public class LocalConversationManager extends AbstractConversationManager implem
 
 	// overridden hooks
 
-	protected void onBegin(ConversationId conversationId) {
-		getUserContext().add(conversationId);
-		// end the oldest conversation if them maximum number of
-		// conversations has been exceeded
-		if (maxExceeded()) {
-			removeOldestConversation();
-		}
-	}
-
 	protected void assertValid(ConversationId conversationId) {
 		super.assertValid(conversationId);
 		if (!getUserContext().contains(conversationId)) {
 			throw new ConversationAccessException(conversationId);
+		}
+	}
+
+	protected void onBegin(ConversationId conversationId) {
+		getUserContext().add(conversationId);
+		// end the oldest conversation if the maximum number of
+		// conversations has been exceeded
+		if (maxExceeded()) {
+			removeOldestConversation();
 		}
 	}
 
@@ -117,6 +119,9 @@ public class LocalConversationManager extends AbstractConversationManager implem
 
 	// helpers
 
+	/**
+	 * Create the <tt>conversations</tt> map.
+	 */
 	private Map createConversations() {
 		if (JdkVersion.getMajorJavaVersion() >= JdkVersion.JAVA_15) {
 			return new java.util.concurrent.ConcurrentHashMap();
@@ -129,6 +134,11 @@ public class LocalConversationManager extends AbstractConversationManager implem
 		}
 	}
 
+	/**
+	 * Returns the UserConversationContext storing the conversations
+	 * managed by this manager. Sets up a new UserConversationContext object if
+	 * non can be found in the session.
+	 */
 	private UserConversationContext getUserContext() {
 		SharedAttributeMap session = ExternalContextHolder.getExternalContext().getSessionMap();
 		synchronized (session.getMutex()) {
@@ -141,10 +151,16 @@ public class LocalConversationManager extends AbstractConversationManager implem
 		}
 	}
 
+	/**
+	 * Has the maximum number of allowed concurrent conversations been exceeded?
+	 */
 	private boolean maxExceeded() {
 		return maxConversations > 0 && getUserContext().size() > maxConversations;
 	}
 
+	/**
+	 * Remove the oldest conversation from the map of managed conversations.
+	 */
 	private void removeOldestConversation() {
 		ConversationId conversationId = getUserContext().getFirst();
 		getConversationMap().remove(conversationId);

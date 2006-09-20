@@ -16,6 +16,8 @@
 package org.springframework.webflow.conversation.impl;
 
 
+import org.springframework.core.NestedRuntimeException;
+
 import EDU.oswego.cs.dl.util.concurrent.ReentrantLock;
 
 /**
@@ -35,7 +37,7 @@ class UtilConcurrentConversationLock implements ConversationLock {
 
 	/**
 	 * Acquires the lock.
-	 * @throws SystemInterruptedException if the lock cannot be acquired due to interruption.
+	 * @throws SystemInterruptedException if the lock cannot be acquired due to interruption
 	 */
 	public void lock() {
 		try {
@@ -51,5 +53,32 @@ class UtilConcurrentConversationLock implements ConversationLock {
 	 */
 	public void unlock() {
 		lock.release();
+	}
+	
+	/**
+	 * <code>Exception</code> indicating that some {@link Thread} was
+	 * {@link Thread#interrupt() interrupted} during processing and as
+	 * such processing was halted.
+	 * <p>
+	 * Only used to wrap the checked {@link InterruptedException java.lang.InterruptedException}.
+	 */
+	public static class SystemInterruptedException extends NestedRuntimeException {
+
+		/**
+		 * Creates a new <code>SystemInterruptedException</code>.
+		 * @param msg the <code>Exception</code> message
+		 */
+		public SystemInterruptedException(String msg) {
+			super(msg);
+		}
+
+		/**
+		 * Creates a new <code>SystemInterruptedException</code>.
+		 * @param msg the <code>Exception</code> message
+		 * @param cause the root cause of this <code>Exception</code>
+		 */
+		public SystemInterruptedException(String msg, Throwable cause) {
+			super(msg, cause);
+		}
 	}
 }
