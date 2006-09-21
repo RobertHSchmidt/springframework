@@ -165,7 +165,7 @@ filter.and(new WhitespaceWildcardsFilter("cn", cn));</programlisting>
 
       <programlisting>package com.example.dao;
 
-import net.sf.ldaptemplate.support.DistinguishedName;
+import org.springframework.ldap.support.DistinguishedName;
 import javax.naming.Name;
 
 public class PersonDaoImpl implements PersonDao {
