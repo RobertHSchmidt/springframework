@@ -18,7 +18,6 @@ package org.springframework.webflow.engine;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionException;
 
-
 /**
  * Thrown when no transition can be matched given the occurence of an event in
  * the context of a flow execution request.
@@ -65,7 +64,7 @@ public class NoMatchingTransitionException extends FlowExecutionException {
 
 	/**
 	 * Returns the event for the current request that did not trigger any
-	 * supported transition out of the set state.
+	 * supported transition.
 	 */
 	public Event getEvent() {
 		return event;

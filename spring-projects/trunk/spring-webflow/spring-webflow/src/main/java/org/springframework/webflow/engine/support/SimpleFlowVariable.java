@@ -25,7 +25,7 @@ import org.springframework.webflow.execution.ScopeType;
 
 /**
  * A trivial concrete flow variable subclass that creates new variable values
- * using java reflection.
+ * using Java reflection.
  * 
  * @author Keith Donald
  */
@@ -37,7 +37,7 @@ public class SimpleFlowVariable extends FlowVariable {
 	private Class variableClass;
 
 	/**
-	 * Creates a new flow variable.
+	 * Creates a new simple flow variable.
 	 * @param name the variable name
 	 * @param variableClass the concrete variable class
 	 */
@@ -46,7 +46,7 @@ public class SimpleFlowVariable extends FlowVariable {
 	}
 
 	/**
-	 * Creates a new flow variable.
+	 * Creates a new simple flow variable.
 	 * @param name the variable name
 	 * @param variableClass the concrete variable class
 	 * @param scope the variable scope

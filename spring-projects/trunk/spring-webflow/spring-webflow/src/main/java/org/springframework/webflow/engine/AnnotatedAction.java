@@ -38,7 +38,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class AnnotatedAction extends AnnotatedObject implements Action {
 
-	// well known properties
+	// well known attributes
 
 	/**
 	 * The action name attribute ("name").
@@ -129,7 +129,7 @@ public class AnnotatedAction extends AnnotatedObject implements Action {
 	/**
 	 * Sets the name of the action method to invoke when the target action is
 	 * executed.
-	 * @param method the action method name.
+	 * @param method the action method name
 	 */
 	public void setMethod(String method) {
 		getAttributeMap().put(METHOD_ATTRIBUTE, method);

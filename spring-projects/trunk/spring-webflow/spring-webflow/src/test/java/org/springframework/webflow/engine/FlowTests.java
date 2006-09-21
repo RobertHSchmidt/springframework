@@ -66,7 +66,7 @@ public class FlowTests extends TestCase {
 		assertEquals("State count wrong:", 2, flow.getStateCount());
 		assertTrue(flow.containsState("myState1"));
 		assertTrue(flow.containsState("myState2"));
-		State state = flow.getStateInternal("myState1");
+		State state = flow.getStateInstance("myState1");
 		assertEquals("Wrong flow:", "myFlow", state.getFlow().getId());
 		assertEquals("Wrong state:", "myState1", flow.getState("myState1").getId());
 		assertEquals("Wrong state:", "myState2", flow.getState("myState2").getId());
@@ -240,7 +240,7 @@ public class FlowTests extends TestCase {
 
 	public void testOnEventInvalidCurrentState() {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
-		context.setCurrentState(flow.getStateInternal("myState2"));
+		context.setCurrentState(flow.getStateInstance("myState2"));
 		Event event = new Event(this, "submit");
 		context.setLastEvent(event);
 		try {
@@ -254,7 +254,7 @@ public class FlowTests extends TestCase {
 
 	public void testOnEvent() {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
-		context.setCurrentState(flow.getStateInternal("myState1"));
+		context.setCurrentState(flow.getStateInstance("myState1"));
 		Event event = new Event(this, "submit");
 		context.setLastEvent(event);
 		assertTrue(context.getFlowExecutionContext().isActive());
@@ -265,7 +265,7 @@ public class FlowTests extends TestCase {
 
 	public void testOnEventGlobalTransition() {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
-		context.setCurrentState(flow.getStateInternal("myState1"));
+		context.setCurrentState(flow.getStateInstance("myState1"));
 		Event event = new Event(this, "globalEvent");
 		context.setLastEvent(event);
 		assertTrue(context.getFlowExecutionContext().isActive());
@@ -276,7 +276,7 @@ public class FlowTests extends TestCase {
 
 	public void testOnEventNoTransition() {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
-		context.setCurrentState(flow.getStateInternal("myState1"));
+		context.setCurrentState(flow.getStateInstance("myState1"));
 		Event event = new Event(this, "bogus");
 		context.setLastEvent(event);
 		try {
@@ -313,7 +313,7 @@ public class FlowTests extends TestCase {
 		flow.getExceptionHandlerSet().add(
 				new TransitionExecutingStateExceptionHandler().add(TestException.class, "myState2"));
 		MockRequestControlContext context = new MockRequestControlContext(flow);
-		context.setCurrentState(flow.getStateInternal("myState1"));
+		context.setCurrentState(flow.getStateInstance("myState1"));
 		FlowExecutionException e = new FlowExecutionException(flow.getId(), flow.getStartState().getId(), "Oops!",
 				new TestException());
 		ApplicationView selectedView = (ApplicationView)flow.handleException(e, context);

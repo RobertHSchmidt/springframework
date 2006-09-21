@@ -30,7 +30,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class NotTransitionCriteria implements TransitionCriteria, Serializable {
 
 	/**
-	 * The criteria to 'not'.
+	 * The criteria to negate.
 	 */
 	private TransitionCriteria criteria;
 	

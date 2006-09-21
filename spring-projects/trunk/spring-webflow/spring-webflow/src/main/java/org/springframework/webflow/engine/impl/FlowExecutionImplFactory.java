@@ -41,6 +41,7 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 
 	/**
 	 * System execution attributes that may influence flow execution behavior.
+	 * The default is an empty map.
 	 */
 	private AttributeMap executionAttributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
 
@@ -56,7 +57,7 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 
 	/**
 	 * Sets the strategy for loading listeners that should observe executions of
-	 * a flow definition. Allows full control over what listeners should apply
+	 * a flow definition. Allows full control over what listeners should apply.
 	 * for executions of a flow definition.
 	 */
 	public void setExecutionListenerLoader(FlowExecutionListenerLoader listenerLoader) {

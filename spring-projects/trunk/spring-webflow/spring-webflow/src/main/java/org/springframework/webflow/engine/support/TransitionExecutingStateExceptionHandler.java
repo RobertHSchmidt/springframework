@@ -31,9 +31,8 @@ import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.ViewSelection;
 
 /**
- * A flow state exception handler that maps the occurence of a specific type of
- * exception to a transition to a new
- * {@link org.springframework.webflow.engine.State}.
+ * A flow execution exception handler that maps the occurence of a specific type of
+ * exception to a transition to a new {@link org.springframework.webflow.engine.State}.
  * 
  * @author Keith Donald
  */
@@ -42,14 +41,14 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 	private static final Log logger = LogFactory.getLog(TransitionExecutingStateExceptionHandler.class);
 
 	/**
-	 * The name of the attribute to expose an handled state exception under in
+	 * The name of the attribute to expose a handled exception under in
 	 * request scope.
 	 */
 	public static final String STATE_EXCEPTION_ATTRIBUTE = "stateException";
 
 	/**
-	 * The name of the attribute to expose an handled state exception under in
-	 * request scope.
+	 * The name of the attribute to expose a root cause of a handled exception
+	 * under in request scope.
 	 */
 	public static final String ROOT_CAUSE_EXCEPTION_ATTRIBUTE = "rootCauseException";
 
@@ -76,6 +75,10 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 		return this;
 	}
 
+	/**
+	 * Returns the list of actions to execute when this handler handles an exception.
+	 * The returned list is mutable.
+	 */
 	public ActionList getActionList() {
 		return actionList;
 	}
@@ -158,14 +161,28 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 		}
 	}
 
-	private boolean isRootCause13(NestedRuntimeException t) {
-		return t.getCause() == null;
+	/**
+	 * Check if given exception is the root of the exception cause chain.
+	 * For use with JDK 1.3.
+	 */
+	private boolean isRootCause13(NestedRuntimeException e) {
+		return e.getCause() == null;
 	}
 
+	/**
+	 * Check if given exception is the root of the exception cause chain.
+	 * For use with JDK 1.4 or later.
+	 */
 	private boolean isRootCause14(Throwable t) {
 		return t.getCause() == null;
 	}
 
+	/**
+	 * Try to find a mapped target state id for given exception type. Will
+	 * also try to lookup using the class hierarchy of given exception type.
+	 * @param argumentType the exception type to lookup
+	 * @return the target state id, or null if not found
+	 */
 	private String findTargetStateId(Class argumentType) {
 		while (argumentType != null && argumentType.getClass() != Object.class) {
 			if (exceptionTargetStateMappings.containsKey(argumentType)) {
@@ -178,44 +195,47 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 		return null;
 	}
 
-	protected Throwable findRootCause(Throwable e) {
-		return new RootCauseResolver().findRootCause(e);
+	/**
+	 * Find the root cause of given throwable.
+	 */
+	protected Throwable findRootCause(Throwable t) {
+		if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_13) {
+			return findRootCause13(t);
+		}
+		else {
+			return findRootCause14(t);
+		}
 	}
 
-	private static class RootCauseResolver {
-		public Throwable findRootCause(Throwable e) {
-			if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_13) {
-				return findRootCause13(e);
-			}
-			else {
-				return findRootCause14(e);
-			}
-		}
-
-		private Throwable findRootCause13(Throwable e) {
-			if (e instanceof NestedRuntimeException) {
-				NestedRuntimeException nre = (NestedRuntimeException)e;
-				Throwable cause = e.getCause();
-				if (cause == null) {
-					return nre;
-				}
-				else {
-					return findRootCause13(cause);
-				}
-			}
-			else {
-				return e;
-			}
-		}
-
-		private Throwable findRootCause14(Throwable e) {
-			Throwable cause = e.getCause();
+	/**
+	 * Find the root cause of given throwable. For use on JDK 1.3.
+	 */
+	private Throwable findRootCause13(Throwable t) {
+		if (t instanceof NestedRuntimeException) {
+			NestedRuntimeException nre = (NestedRuntimeException)t;
+			Throwable cause = nre.getCause();
 			if (cause == null) {
-				return e;
+				return nre;
 			}
 			else {
-				return findRootCause14(cause);
+				return findRootCause13(cause);
 			}
+		}
+		else {
+			return t;
+		}
+	}
+
+	/**
+	 * Find the root cause of given throwable. For use on JDK 1.4 or later.
+	 */
+	private Throwable findRootCause14(Throwable e) {
+		Throwable cause = e.getCause();
+		if (cause == null) {
+			return e;
+		}
+		else {
+			return findRootCause14(cause);
 		}
 	}
 

@@ -54,6 +54,25 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		subflowSession = new MockFlowSession();
 		subflowSession.setParent(parentSession);
 	}
+	
+	public void testAttributeMapping() {
+		mapper.addInputAttribute("x");
+		mapper.addOutputAttribute("y");
+		
+		context.setActiveSession(parentSession);
+		context.getFlowScope().put("x", "xValue");
+		MutableAttributeMap input = mapper.createFlowInput(context);
+		assertEquals(1, input.size());
+		assertEquals("xValue", input.get("x"));
+		
+		parentSession.getScope().clear();
+
+		MutableAttributeMap subflowOutput = new LocalAttributeMap();
+		subflowOutput.put("y", "yValue");
+		mapper.mapFlowOutput(subflowOutput, context);
+		assertEquals(1, parentSession.getScope().size());
+		assertEquals("yValue", parentSession.getScope().get("y"));
+	}
 
 	public void testDirectMapping() {
 		mapper.addInputMapping(mapping.source("${flowScope.x}").target("${y}").value());

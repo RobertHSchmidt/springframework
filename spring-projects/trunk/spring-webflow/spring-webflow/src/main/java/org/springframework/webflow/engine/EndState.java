@@ -75,7 +75,7 @@ public class EndState extends State {
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
 	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
+	 * flow, e.g. because the id is not unique
 	 * @see State#State(Flow, String)
 	 * @see #setViewSelector(ViewSelector)
 	 * @see #setOutputMapper(AttributeMapper)
@@ -148,15 +148,15 @@ public class EndState extends State {
 	}
 
 	/**
-	 * Returns the subflow result event parameter map. Default implementation
-	 * returns an empty map. Subclasses may override.
+	 * Returns the subflow output map. This will invoke the output mapper (if any)
+	 * to map data available in the flow execution request context into a newly
+	 * creaed empty map.
 	 */
 	protected LocalAttributeMap createSessionOutput(RequestContext context) {
-		if (outputMapper == null) {
-			return new LocalAttributeMap();
-		}
 		LocalAttributeMap outputMap = new LocalAttributeMap();
-		outputMapper.map(context, outputMap, null);
+		if (outputMapper != null) {
+			outputMapper.map(context, outputMap, null);
+		}
 		return outputMap;
 	}
 

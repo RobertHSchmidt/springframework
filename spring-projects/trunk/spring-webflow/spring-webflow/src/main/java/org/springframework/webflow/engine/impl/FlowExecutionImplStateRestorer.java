@@ -63,7 +63,7 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 	}
 
 	/**
-	 * Sets the attributes to apply to flow executions created by this factory.
+	 * Sets the attributes to apply to restored flow executions.
 	 * Execution attributes may affect flow execution behavior.
 	 * @param executionAttributes flow execution system attributes
 	 */
@@ -74,7 +74,7 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 
 	/**
 	 * Sets the strategy for loading listeners that should observe executions of
-	 * a flow definition. Allows full control over what listeners should apply
+	 * a flow definition. Allows full control over what listeners should apply.
 	 * for executions of a flow definition.
 	 */
 	public void setExecutionListenerLoader(FlowExecutionListenerLoader executionListenerLoader) {
@@ -84,15 +84,16 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 
 	public FlowExecution restoreState(FlowExecution flowExecution, MutableAttributeMap conversationScope) {
 		FlowExecutionImpl impl = (FlowExecutionImpl)flowExecution;
+		// we should be able to find the root flow using the definition locator
 		Flow flow = (Flow)definitionLocator.getFlowDefinition(impl.getFlowId());
 		impl.setFlow(flow);
-		Iterator it = impl.getFlowSessions().iterator();
 		FlowSessionFlowDefinitionLocator locator = new FlowSessionFlowDefinitionLocator(flow, definitionLocator);
+		Iterator it = impl.getFlowSessions().iterator();
 		while (it.hasNext()) {
 			FlowSessionImpl session = (FlowSessionImpl)it.next();
 			Flow definition = (Flow)locator.getFlowDefinition(session.getFlowId());
 			session.setFlow(definition);
-			session.setState(definition.getStateInternal(session.getStateId()));
+			session.setState(definition.getStateInstance(session.getStateId()));
 		}
 		if (conversationScope == null) {
 			conversationScope = new LocalAttributeMap();
@@ -102,7 +103,7 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 		impl.setAttributes(executionAttributes);
 		return flowExecution;
 	}
-
+	
 	private static class FlowSessionFlowDefinitionLocator implements FlowDefinitionLocator {
 		private FlowDefinitionLocator flowLocator;
 
@@ -113,6 +114,7 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 			this.flowLocator = flowLocator;
 		}
 
+		//FIXME this won't find find all flows! e.g. an inline flow of a subflow...
 		public FlowDefinition getFlowDefinition(String id) {
 			if (rootFlow.getId().equals(id)) {
 				return rootFlow;

@@ -27,15 +27,22 @@ import org.springframework.webflow.execution.RequestContext;
  * Specifically, if the id of the last event that occured equals
  * {@link #getEventId()} this criteria will return true.
  * 
+ * @see RequestContext#getLastEvent()
+ * 
  * @author Erwin Vervaet
  * @author Keith Donald
  */
 public class EventIdTransitionCriteria implements TransitionCriteria, Serializable {
 
 	/**
-	 * The id of event to match.
+	 * The event id to match.
 	 */
 	private String eventId;
+	
+	/**
+	 * Whether or not to match case sensitively. Default is true.
+	 */
+	private boolean caseSensitive = true;
 
 	/**
 	 * Create a new event id matching criteria object.
@@ -47,10 +54,18 @@ public class EventIdTransitionCriteria implements TransitionCriteria, Serializab
 	}
 
 	/**
-	 * Returns the eventId to match.
+	 * Returns the event id to match.
 	 */
 	public String getEventId() {
 		return eventId;
+	}
+	
+	/**
+	 * Set whether or not the event id should be matched in a case sensitve
+	 * manner. Defaults to true.
+	 */
+	public void setCaseSensitive(boolean caseSensitive) {
+		this.caseSensitive = caseSensitive;
 	}
 
 	public boolean test(RequestContext context) {
@@ -58,7 +73,12 @@ public class EventIdTransitionCriteria implements TransitionCriteria, Serializab
 		if (lastEvent == null) {
 			return false;
 		}
-		return eventId.equalsIgnoreCase(lastEvent.getId());
+		if (caseSensitive) {
+			return eventId.equals(lastEvent.getId());
+		}
+		else {
+			return eventId.equalsIgnoreCase(lastEvent.getId());
+		}
 	}
 
 	public String toString() {

@@ -32,12 +32,11 @@ import org.springframework.webflow.execution.ViewSelection;
 public class DecisionState extends TransitionableState {
 
 	/**
-	 * Creates a new decision state with the supported set of transitions.
+	 * Creates a new decision state.
 	 * @param flow the owning flow
 	 * @param stateId the state identifier (must be unique to the flow)
 	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
-	 * @see TransitionableState#TransitionableState(Flow, String)
+	 * flow, e.g. because the id is not unique
 	 */
 	public DecisionState(Flow flow, String stateId) throws IllegalArgumentException {
 		super(flow, stateId);

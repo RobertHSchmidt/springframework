@@ -39,7 +39,7 @@ class FlowExecutionListeners {
 
 	/**
 	 * The list of listeners that should receive event callbacks during managed
-	 * flow executions (client sessions).
+	 * flow executions.
 	 */
 	private FlowExecutionListener[] listeners;
 
@@ -153,21 +153,21 @@ class FlowExecutionListeners {
 	}
 
 	/**
-	 * Notify all interested listeners that the flow execution was resumed.
-	 */
-	public void fireResumed(RequestContext context) {
-		for (int i = 0; i < listeners.length; i++) {
-			listeners[i].resumed(context);
-		}
-	}
-
-	/**
 	 * Notify all interested listeners that a flow session was paused in the
 	 * flow execution.
 	 */
 	public void firePaused(RequestContext context, ViewSelection selectedView) {
 		for (int i = 0; i < listeners.length; i++) {
 			listeners[i].paused(context, selectedView);
+		}
+	}
+
+	/**
+	 * Notify all interested listeners that the flow execution was resumed.
+	 */
+	public void fireResumed(RequestContext context) {
+		for (int i = 0; i < listeners.length; i++) {
+			listeners[i].resumed(context);
 		}
 	}
 

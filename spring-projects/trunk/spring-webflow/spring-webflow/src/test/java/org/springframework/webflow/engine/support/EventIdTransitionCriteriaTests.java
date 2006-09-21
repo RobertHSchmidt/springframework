@@ -27,7 +27,7 @@ public class EventIdTransitionCriteriaTests extends TestCase {
 		context.setLastEvent(new Event(this, "foo"));
 		assertEquals(true, c.test(context));
 		context.setLastEvent(new Event(this, "FOO"));
-		assertEquals(true, c.test(context));
+		assertEquals(false, c.test(context)); // case sensitive
 		context.setLastEvent(new Event(this, "bar"));
 		assertEquals(false, c.test(context));
 	}
@@ -41,13 +41,13 @@ public class EventIdTransitionCriteriaTests extends TestCase {
 	
 	public void testIllegalArg(){
 		try {
-			EventIdTransitionCriteria c = new EventIdTransitionCriteria(null);
+			new EventIdTransitionCriteria(null);
 			fail("was null");
 		} catch (IllegalArgumentException e) {
 			
 		}
 		try {
-			EventIdTransitionCriteria c = new EventIdTransitionCriteria("");
+			new EventIdTransitionCriteria("");
 			fail("was blank");
 		} catch (IllegalArgumentException e) {
 			

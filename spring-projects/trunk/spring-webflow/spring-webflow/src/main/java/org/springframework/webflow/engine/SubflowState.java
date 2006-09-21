@@ -62,13 +62,19 @@ public class SubflowState extends TransitionableState {
 	 * @param id the state identifier (must be unique to the flow)
 	 * @param subflow the subflow to spawn
 	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
-	 * @see TransitionableState#TransitionableState(Flow, String)
+	 * flow, e.g. because the id is not unique
 	 * @see #setAttributeMapper(FlowAttributeMapper)
 	 */
 	public SubflowState(Flow flow, String id, Flow subflow) throws IllegalArgumentException {
 		super(flow, id);
 		setSubflow(subflow);
+	}
+
+	/**
+	 * Returns the subflow spawned by this state.
+	 */
+	public Flow getSubflow() {
+		return subflow;
 	}
 
 	/**
@@ -78,13 +84,6 @@ public class SubflowState extends TransitionableState {
 	private void setSubflow(Flow subflow) {
 		Assert.notNull(subflow, "A subflow state must have a subflow; the subflow is required");
 		this.subflow = subflow;
-	}
-
-	/**
-	 * Returns the subflow spawned by this state.
-	 */
-	public Flow getSubflow() {
-		return subflow;
 	}
 
 	/**
@@ -126,7 +125,7 @@ public class SubflowState extends TransitionableState {
 	 * Create the input data map for the spawned subflow session. The returned
 	 * map will be passed to {@link Flow#start(RequestControlContext, LocalAttributeMap)}.
 	 */
-	private MutableAttributeMap createSubflowInput(RequestContext context) {
+	protected MutableAttributeMap createSubflowInput(RequestContext context) {
 		if (getAttributeMapper() != null) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Messaging the configured attribute mapper to map attributes "
@@ -167,7 +166,7 @@ public class SubflowState extends TransitionableState {
 		}
 		else {
 			if (logger.isDebugEnabled()) {
-				logger.debug("No attribute mapper is configured for the resuming state '" + getId()
+				logger.debug("No attribute mapper is configured for the resuming subflow state '" + getId()
 						+ "' -- As a result, no attributes of the ending flow will be passed to the resuming parent flow");
 			}
 		}

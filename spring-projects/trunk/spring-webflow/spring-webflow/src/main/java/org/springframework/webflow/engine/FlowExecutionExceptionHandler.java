@@ -18,9 +18,8 @@ package org.springframework.webflow.engine;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.ViewSelection;
 
-
 /**
- * A strategy for handling an exception that occurs in a state during the
+ * A strategy for handling an exception that occurs at runtime during the
  * execution of a flow definition.
  * 
  * @author Keith Donald

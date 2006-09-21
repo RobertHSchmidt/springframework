@@ -26,6 +26,11 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Keith Donald
  */
 public class WildcardTransitionCriteria implements TransitionCriteria, Serializable {
+	
+	/*
+	 * Implementation note: not located in webflow.execution.support package to
+	 * avoid a cyclic dependency between webflow.execution and webflow.execution.support. 
+	 */
 
 	/**
 	 * Event id value ("*") that will cause the transition to match on any

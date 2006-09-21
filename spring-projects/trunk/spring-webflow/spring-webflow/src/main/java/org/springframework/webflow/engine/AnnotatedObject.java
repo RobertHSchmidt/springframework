@@ -21,7 +21,7 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.Annotated;
 
 /**
- * A basee class for all objects in the web flow system that support annotation
+ * A base class for all objects in the web flow system that support annotation
  * using arbitrary properties. Mainly used to ensure consistent configuration of
  * properties for all annotated objects.
  * 
@@ -31,7 +31,7 @@ import org.springframework.webflow.definition.Annotated;
 public abstract class AnnotatedObject implements Annotated {
 
 	/**
-	 * The caption (property name ("caption"). A caption is also known as a
+	 * The caption property name ("caption"). A caption is also known as a
 	 * "short description" and may be used in a GUI tooltip.
 	 */
 	public static final String CAPTION_PROPERTY = "caption";

@@ -19,6 +19,7 @@ import java.io.Serializable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.binding.mapping.AttributeMapper;
@@ -35,18 +36,18 @@ import org.springframework.webflow.execution.support.FlowScopeExpression;
  * <p>
  * Two types of mappings may be configured, input mappings and output mappings:
  * <ol>
- * <li>Input mappings define the rules for mapping attributes in parent flow
- * scope to a spawning subflow.
+ * <li>Input mappings define the rules for mapping attributes in a parent flow
+ * to a spawning subflow.
  * <li>Output mappings define the rules for mapping attributes returned from an
- * ended subflow into the resuming parent flow scope.
+ * ended subflow into the resuming parent.
  * </ol>
  * <p>
- * The mappings defined using the above configuration properties fully support
+ * The mappings defined using the configuration properties fully support
  * bean property access. So an entry name in a mapping can either be "beanName"
  * or "beanName.propName". Nested property values are also supported
- * ("beanName.propName.propName"). When the <i>from</i> mapping string is
+ * ("beanName.propName.nestedPropName"). When the <i>from</i> mapping string is
  * enclosed in "${...}", it will be interpreted as an expression that will be
- * evaluated against the request execution context.
+ * evaluated against the flow execution request context.
  * 
  * @see org.springframework.webflow.execution.RequestContext
  * 
@@ -98,8 +99,9 @@ public class DefaultFlowAttributeMapper extends AbstractFlowAttributeMapper impl
 	}
 
 	/**
-	 * Adds a input mapping that maps a single attribute in parent flow scope
-	 * into subflow scope.
+	 * Adds an input mapping that maps a single attribute in parent <i>flow scope</i>
+	 * into the subflow input map. For instance: "x" will result in the "x" attribute
+	 * in parent flow scope being mapped into the subflow input map as "x".
 	 * @param inputAttributeName the attribute in flow scope to map into the
 	 * subflow
 	 * @return this, to support call chaining
@@ -111,8 +113,9 @@ public class DefaultFlowAttributeMapper extends AbstractFlowAttributeMapper impl
 	}
 
 	/**
-	 * Adds a collection of input mappings that map attributes in parent flow
-	 * scope into subflow scope.
+	 * Adds a collection of input mappings that map attributes in parent <i>flow
+	 * scope</i> into the subflow input map. For instance: "x" will result in the "x"
+	 * attribute in parent flow scope being mapped into the subflow input map as "x".
 	 * @param inputAttributeNames the attributes in flow scope to map into the
 	 * subflow
 	 */
@@ -147,19 +150,25 @@ public class DefaultFlowAttributeMapper extends AbstractFlowAttributeMapper impl
 
 	/**
 	 * Adds an output mapping that maps a single subflow output attribute into
-	 * the scope of the resuming parent flow.
+	 * the <i>flow scope</i> of the resuming parent flow. For instance: "y" will
+	 * result in the "y" attribute of the subflow output map being mapped into
+	 * the flowscope of the resuming parent flow as "y".
 	 * @param outputAttributeName the subflow output attribute to map into the
-	 * parent flow
+	 * parent flow scope
 	 * @return this, to support call chaining
 	 */
 	public DefaultFlowAttributeMapper addOutputAttribute(String outputAttributeName) {
-		outputMapper.addMapping(mapping().source(outputAttributeName).value());
+		Expression source = expressionParser.parseExpression(outputAttributeName);
+		PropertyExpression target = expressionParser.parsePropertyExpression(outputAttributeName);
+		outputMapper.addMapping(new Mapping(source, new FlowScopeExpression(target), null));
 		return this;
 	}
 
 	/**
 	 * Adds a collection of output mappings that map subflow output attributes
-	 * into the scope of the resuming parent flow.
+	 * into the scope of the resuming parent flow. For instance: "y" will
+	 * result in the "y" attribute of the subflow output map being mapped into
+	 * the flowscope of the resuming parent flow as "y".
 	 * @param outputAttributeNames the subflow output attributes to map into the
 	 * parent flow
 	 */
@@ -173,7 +182,7 @@ public class DefaultFlowAttributeMapper extends AbstractFlowAttributeMapper impl
 	}
 
 	/**
-	 * /** Returns a typed-array of configured input mappings.
+	 * Returns a typed-array of configured input mappings.
 	 * @return the configured input mappings
 	 */
 	public Mapping[] getInputMappings() {

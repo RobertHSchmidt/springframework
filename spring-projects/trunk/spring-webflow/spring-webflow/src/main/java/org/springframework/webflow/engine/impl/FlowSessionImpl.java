@@ -46,8 +46,7 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	/**
 	 * The flow definition (a singleton).
 	 * <p>
-	 * Transient to support restoration by the
-	 * {@link FlowExecutionImplStateRestorer}.
+	 * Transient to support restoration by the {@link FlowExecutionImplStateRestorer}.
 	 */
 	private transient Flow flow;
 
@@ -60,8 +59,7 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	/**
 	 * The current state of this flow session.
 	 * <p>
-	 * Transient to support restoration by the
-	 * {@link FlowExecutionImplStateRestorer}.
+	 * Transient to support restoration by the {@link FlowExecutionImplStateRestorer}.
 	 */
 	private transient State state;
 
@@ -93,7 +91,6 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	 * be called programmatically.
 	 */
 	public FlowSessionImpl() {
-
 	}
 
 	/**
@@ -151,11 +148,12 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	}
 
 	// package private setters for setting/updating internal state
+	// used by FlowExecutionImplStateRestorer
 
 	/**
 	 * Restores the definition of this flow session.
-	 * @see FlowExecutionImplStateRestorer
 	 * @param flow the flow sessions definition
+	 * @see FlowExecutionImplStateRestorer
 	 */
 	void setFlow(Flow flow) {
 		Assert.notNull(flow, "The flow is required");
@@ -165,9 +163,9 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 
 	/**
 	 * Set the current state of this flow session.
+	 * @param state the state that is currently active in this flow session
 	 * @see FlowExecutionImpl#setCurrentState(State)
 	 * @see FlowExecutionImplStateRestorer
-	 * @param state the state that is currently active in this flow session
 	 */
 	void setState(State state) {
 		Assert.notNull(state, "The state is required");
@@ -186,10 +184,16 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 		this.status = status;
 	}
 	
+	/**
+	 * Returns the id of the flow of this session.
+	 */
 	String getFlowId() {
 		return flowId;
 	}
 
+	/**
+	 * Returns the id of the current state of this session.
+	 */
 	String getStateId() {
 		return stateId;
 	}
