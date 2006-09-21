@@ -111,11 +111,11 @@ persistence between requests.
 						</xsd:annotation>
 						<xsd:simpleType>
 							<xsd:restriction base="xsd:string">
-								<xsd:enumeration value="default">
+								<xsd:enumeration value="simple">
 									<xsd:annotation>
 										<xsd:documentation>
 											<![CDATA[
-The default repository type.  Use of this strategy incurs minimal storage overhead but explicity prevents 
+The simple repository type.  Use of this strategy incurs minimal storage overhead but explicity prevents 
 resubmits using the browser back button.
 ]]>
 										</xsd:documentation>
