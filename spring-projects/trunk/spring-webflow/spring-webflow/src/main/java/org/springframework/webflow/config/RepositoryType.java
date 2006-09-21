@@ -29,7 +29,7 @@ public class RepositoryType extends StaticLabeledEnum {
 	/**
 	 * The 'default' flow execution repository type.
 	 */
-	public static RepositoryType DEFAULT = new RepositoryType(0, "Default");
+	public static RepositoryType SIMPLE = new RepositoryType(0, "Simple");
 
 	/**
 	 * The 'continuation' flow execution repository type.

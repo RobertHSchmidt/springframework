@@ -87,7 +87,7 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * The type of execution repository to configure with executors created by
 	 * this factory.
 	 */
-	private RepositoryType repositoryType = RepositoryType.DEFAULT;
+	private RepositoryType repositoryType = RepositoryType.SIMPLE;
 
 	/**
 	 * The flow executor this factory bean creates.
@@ -201,7 +201,7 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * @return the flow execution repository
 	 */
 	protected FlowExecutionRepository createExecutionRepository(FlowExecutionStateRestorer executionStateRestorer) {
-		if (repositoryType == RepositoryType.DEFAULT) {
+		if (repositoryType == RepositoryType.SIMPLE) {
 			return new SimpleFlowExecutionRepository(executionStateRestorer, conversationManager);
 		}
 		else if (repositoryType == RepositoryType.CONTINUATION) {
