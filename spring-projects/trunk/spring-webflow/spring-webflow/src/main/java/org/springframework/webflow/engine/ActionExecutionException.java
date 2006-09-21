@@ -47,8 +47,7 @@ public class ActionExecutionException extends FlowExecutionException {
 	}
 
 	/**
-	 * Create a new action execution exception that occured while a flow
-	 * execution was starting and before the start state was entered.
+	 * Create a new action execution exception.
 	 * @param flowId the current flow
 	 * @param stateId the current state (may be null)
 	 * @param action the action that generated an unrecoverable exception

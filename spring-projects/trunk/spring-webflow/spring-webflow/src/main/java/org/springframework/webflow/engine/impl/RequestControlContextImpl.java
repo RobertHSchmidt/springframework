@@ -54,7 +54,7 @@ import org.springframework.webflow.execution.ViewSelection;
  */
 class RequestControlContextImpl implements RequestControlContext {
 
-	protected static final Log logger = LogFactory.getLog(RequestControlContextImpl.class);
+	private static final Log logger = LogFactory.getLog(RequestControlContextImpl.class);
 
 	/**
 	 * The owning flow execution.
@@ -120,16 +120,16 @@ class RequestControlContextImpl implements RequestControlContext {
 		return flowExecution.getConversationScope();
 	}
 
-	public FlowExecutionContext getFlowExecutionContext() {
-		return flowExecution;
-	}
-
 	public ParameterMap getRequestParameters() {
 		return externalContext.getRequestParameterMap();
 	}
 
 	public ExternalContext getExternalContext() {
 		return externalContext;
+	}
+
+	public FlowExecutionContext getFlowExecutionContext() {
+		return flowExecution;
 	}
 
 	public Event getLastEvent() {
@@ -204,10 +204,6 @@ class RequestControlContextImpl implements RequestControlContext {
 		return selectedView;
 	}
 
-	public ViewSelection execute(Transition transition) {
-		return transition.execute(getCurrentStateInternal(), this);
-	}
-
 	public FlowSession endActiveFlowSession(MutableAttributeMap output) throws IllegalStateException {
 		FlowSession session = getFlowExecutionContext().getActiveSession();
 		getExecutionListeners().fireSessionEnding(this, session, output);
@@ -220,18 +216,40 @@ class RequestControlContextImpl implements RequestControlContext {
 		return session;
 	}
 
+	public ViewSelection execute(Transition transition) {
+		return transition.execute(getCurrentStateInternal(), this);
+	}
+	
+	// internal helpers
+
+	/**
+	 * Returns the execution listerns for the flow execution of
+	 * this request context.
+	 */
 	protected FlowExecutionListeners getExecutionListeners() {
 		return flowExecution.getListeners();
 	}
 
+	/**
+	 * Returns the active flow in the flow execution of this request
+	 * context.
+	 */
 	protected Flow getActiveFlowInternal() {
 		return (Flow)getActiveSession().getDefinition();
 	}
 
+	/**
+	 * Returns the current state in the flow execution of this request
+	 * context.
+	 */
 	protected State getCurrentStateInternal() {
 		return (State)getActiveSession().getState();
 	}
 
+	/**
+	 * Returns the active flow session in the flow execution of
+	 * this request context.
+	 */
 	protected FlowSessionImpl getActiveSession() {
 		return flowExecution.getActiveSessionInternal();
 	}

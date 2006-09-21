@@ -83,7 +83,7 @@ public class TransitionSet {
 
 	/**
 	 * Returns the size of this transition set.
-	 * @return the exception handler set size.
+	 * @return the exception handler set size
 	 */
 	public int size() {
 		return transitions.size();
@@ -113,9 +113,10 @@ public class TransitionSet {
 	}
 
 	/**
-	 * Gets a transition for given flow execution request context.
+	 * Gets a transition for given flow execution request context. The first
+	 * matching transition will be returned.
 	 * @param context a flow execution context
-	 * @return the transition, or null if not found
+	 * @return the transition, or null if no transition matches
 	 */
 	public Transition getTransition(RequestContext context) {
 		Iterator it = transitions.iterator();

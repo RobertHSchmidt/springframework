@@ -43,13 +43,12 @@ public interface ViewSelector {
 	/**
 	 * Will the primary selection returned by 'makeEntrySelection' for the given
 	 * request context be renderable in this request?
-	 * 
+	 * <p>
 	 * "Renderable" view selections typically can have 'render-actions' execute
 	 * before they are created. An example would be an ApplicationView that
 	 * forwards to a view template like a JSP. "Non-renderable" view selections
-	 * are things like a application view redirect--no render actually occurs, but
+	 * are things like a flow execution redirect--no render actually occurs, but
 	 * only a redirect--rendering happens on the new redirect request.
-	 * 
 	 * @param context the current request context of the executing flow
 	 * @return true if yes, false otherwise
 	 */

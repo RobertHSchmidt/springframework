@@ -22,14 +22,12 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewSelection;
 
 /**
- * <p>
- * A view state is a state in which a respose to be issued to the user, for
+ * A view state is a state that issues a response to the user, for
  * example, for soliciting form input.
- * </p>
  * <p>
  * To accomplish this, a <code>ViewState</code> makes a {@link ViewSelection},
  * which contains the necessary information to issue a suitable response.
- * </p>
+ * 
  * @see org.springframework.webflow.engine.ViewSelector
  * 
  * @author Keith Donald
@@ -52,7 +50,7 @@ public class ViewState extends TransitionableState {
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
 	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
+	 * flow, e.g. because the id is not unique
 	 */
 	public ViewState(Flow flow, String id) throws IllegalArgumentException {
 		super(flow, id);
@@ -97,6 +95,7 @@ public class ViewState extends TransitionableState {
 	 */
 	protected ViewSelection doEnter(RequestControlContext context) throws FlowExecutionException {
 		if (viewSelector.isEntrySelectionRenderable(context)) {
+			// the entry selection will be rendered!
 			renderActionList.execute(context);
 		}
 		return viewSelector.makeEntrySelection(context);

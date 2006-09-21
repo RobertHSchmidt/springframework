@@ -52,7 +52,7 @@ public abstract class FlowVariable extends AnnotatedObject implements Serializab
 	/**
 	 * Creates a new flow variable.
 	 * @param name the variable name
-	 * @param scope the variable scope type
+	 * @param scope the variable scope type, defaults to flow scope
 	 */
 	public FlowVariable(String name, ScopeType scope) {
 		Assert.hasText(name, "The variable name is required");
@@ -73,6 +73,8 @@ public abstract class FlowVariable extends AnnotatedObject implements Serializab
 	public ScopeType getScope() {
 		return scope;
 	}
+	
+	// name and scope based equality
 
 	public boolean equals(Object o) {
 		if (!(o instanceof FlowVariable)) {
@@ -87,7 +89,7 @@ public abstract class FlowVariable extends AnnotatedObject implements Serializab
 	}
 
 	/**
-	 * Creates a new instance of this flow variable in flow scope.
+	 * Creates a new instance of this flow variable in the configured scope.
 	 * @param context the flow execution request context
 	 */
 	public final void create(RequestContext context) {

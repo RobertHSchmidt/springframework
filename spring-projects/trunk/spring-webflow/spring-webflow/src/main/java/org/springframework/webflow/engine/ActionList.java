@@ -29,10 +29,11 @@ import org.springframework.webflow.execution.RequestContext;
  * that can execute groups of actions.
  * 
  * @see Flow#getStartActionList()
+ * @see Flow#getEndActionList()
  * @see State#getEntryActionList()
  * @see ActionState#getActionList()
  * @see TransitionableState#getExitActionList()
- * @see Flow#getEndActionList()
+ * @see ViewState#getRenderActionList()
  * 
  * @author Keith Donald
  */
@@ -114,7 +115,7 @@ public class ActionList {
 			return (AnnotatedAction)action;
 		}
 		else {
-			//wrap the action; no annotations will be available
+			// wrap the action; no annotations will be available
 			return new AnnotatedAction(action);
 		}
 	}

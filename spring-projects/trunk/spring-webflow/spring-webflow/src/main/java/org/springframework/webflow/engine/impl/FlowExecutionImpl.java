@@ -45,21 +45,18 @@ import org.springframework.webflow.execution.FlowSessionStatus;
 import org.springframework.webflow.execution.ViewSelection;
 
 /**
- * <p>
  * Default implementation of FlowExecution that uses a stack-based data
  * structure to manage spawned flow sessions. This class is closely coupled with
  * package-private <code>FlowSessionImpl</code> and
  * <code>RequestControlContextImpl</code>. The three classes work together to
  * form a complete flow execution implementation based on a finite state
  * machine.
- * </p>
  * <p>
  * This implementation of FlowExecution is serializable so it can be safely
  * stored in an HTTP session or other persistent store such as a file, database,
  * or client-side form field. Once deserialized, the
  * {@link FlowExecutionImplStateRestorer} strategy is expected to be used to
  * restore the execution to a usable state.
- * </p>
  * 
  * @see FlowExecutionImplFactory
  * @see FlowExecutionImplStateRestorer
@@ -75,8 +72,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * The execution's root flow; the top level flow that acts as the starting
 	 * point for this flow execution.
 	 * <p>
-	 * Transient to support restoration by the
-	 * {@link FlowExecutionImplStateRestorer}.
+	 * Transient to support restoration by the {@link FlowExecutionImplStateRestorer}.
 	 */
 	private transient Flow flow;
 
@@ -91,24 +87,21 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * A thread-safe listener list, holding listeners monitoring the lifecycle
 	 * of this flow execution.
 	 * <p>
-	 * Transient to support restoration by the
-	 * {@link FlowExecutionImplStateRestorer}.
+	 * Transient to support restoration by the {@link FlowExecutionImplStateRestorer}.
 	 */
 	private transient FlowExecutionListeners listeners;
 
 	/**
 	 * A data structure for attributes shared by all flow sessions.
 	 * <p>
-	 * Transient to support restoration by the
-	 * {@link FlowExecutionImplStateRestorer}.
+	 * Transient to support restoration by the {@link FlowExecutionImplStateRestorer}.
 	 */
 	private transient MutableAttributeMap conversationScope;
 
 	/**
 	 * A data structure for runtime system execution attributes.
 	 * <p>
-	 * Transient and package private to support restoration by the
-	 * {@link FlowExecutionImplStateRestorer}.
+	 * Transient to support restoration by the {@link FlowExecutionImplStateRestorer}.
 	 */
 	private transient AttributeMap attributes;
 
@@ -127,7 +120,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	/**
 	 * Create a new flow execution executing the provided flow. This constructor
-	 * is mainly used for testing
+	 * is mainly used for testing.
 	 * @param flow the root flow of this flow execution
 	 */
 	public FlowExecutionImpl(Flow flow) {
@@ -183,7 +176,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	public ViewSelection start(MutableAttributeMap input, ExternalContext externalContext)
 			throws FlowExecutionException {
 		Assert.state(!isActive(),
-				"This flow is already executing -- you cannot call 'start(ExternalContext)' more than once");
+				"This flow is already executing -- you cannot call 'start()' more than once");
 		RequestControlContext context = createControlContext(externalContext);
 		getListeners().fireRequestSubmitted(context);
 		try {
@@ -210,8 +203,8 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		try {
 			try {
 				resume(context);
-				Event event = new Event(externalContext, eventId, externalContext.getRequestParameterMap()
-						.asAttributeMap());
+				Event event =
+					new Event(externalContext, eventId, externalContext.getRequestParameterMap().asAttributeMap());
 				ViewSelection selectedView = context.signalEvent(event);
 				return pause(context, selectedView);
 			}
@@ -269,12 +262,13 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	/**
 	 * Pause this flow execution.
-	 * @param context the state request context
+	 * @param context the request control context
 	 * @param selectedView the initial selected view to render
 	 * @return the selected view to render
 	 */
 	protected ViewSelection pause(RequestControlContext context, ViewSelection selectedView) {
 		if (!isActive()) {
+			// view selected by an end state
 			return selectedView;
 		}
 		getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
@@ -295,9 +289,9 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * execution. First trys the set of exception handlers associated with the
 	 * offending state, then the handlers at the flow level.
 	 * @param exception the exception that occured
-	 * @param context the state context the exception occured in
-	 * @return the selected error view
-	 * @throws FlowExecutionException rethrows the exception it was not handled
+	 * @param context the request control context the exception occured in
+	 * @return the selected error view, never null
+	 * @throws FlowExecutionException rethrows the exception if it was not handled
 	 * at the state or flow level
 	 */
 	protected ViewSelection handleException(FlowExecutionException exception, RequestControlContext context)
@@ -321,10 +315,14 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		throw exception;
 	}
 
+	/**
+	 * Try to handle given exception using execution exception handlers registered
+	 * at the state level. Returns null if no handler handled the exception.
+	 */
 	private ViewSelection tryStateHandlers(FlowExecutionException exception, RequestControlContext context) {
 		ViewSelection selectedView = null;
 		if (exception.getStateId() != null) {
-			selectedView = getActiveFlow().getStateInternal(exception.getStateId()).handleException(exception, context);
+			selectedView = getActiveFlow().getStateInstance(exception.getStateId()).handleException(exception, context);
 			if (selectedView != null) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("State '" + exception.getStateId() + "' handled exception");
@@ -334,6 +332,10 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		return selectedView;
 	}
 
+	/**
+	 * Try to handle given exception using execution exception handlers registered
+	 * at the flow level. Returns null if no handler handled the exception.
+	 */
 	private ViewSelection tryFlowHandlers(FlowExecutionException exception, RequestControlContext context) {
 		ViewSelection selectedView = getActiveFlow().handleException(exception, context);
 		if (selectedView != null) {
@@ -344,14 +346,11 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		return selectedView;
 	}
 
-	// flow session management helpers
+	// internal helpers
 
 	/**
-	 * Create a flow execution control context for given event.
-	 * <p>
-	 * The default implementation uses the <code>FlowControlContextImpl</code>
-	 * class. Subclasses can override this to use a custom class.
-	 * @param externalContext the external context
+	 * Create a flow execution control context.
+	 * @param externalContext the external context triggering this request
 	 */
 	protected RequestControlContext createControlContext(ExternalContext externalContext) {
 		return new RequestControlContextImpl(this, externalContext);
@@ -375,8 +374,8 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	/**
-	 * Activate a new <code>FlowSession</code> for the flow definition with
-	 * the input provided. Pushes the new flow session onto the stack.
+	 * Activate a new <code>FlowSession</code> for the flow definition.
+	 * Pushes the new flow session onto the stack.
 	 * @param flow the flow definition
 	 * @return the new flow session
 	 */
@@ -410,6 +409,10 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		return new FlowSessionImpl(flow, parent);
 	}
 
+	/**
+	 * End the active flow session, popping it of the stack.
+	 * @return the ended session
+	 */
 	public FlowSession endActiveFlowSession() {
 		FlowSessionImpl endingSession = (FlowSessionImpl)flowSessions.removeLast();
 		endingSession.setStatus(FlowSessionStatus.ENDED);
@@ -429,7 +432,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	/**
-	 * Check that this flow execution is active and throw an exception if it's
+	 * Make sure that this flow execution is active and throw an exception if it's
 	 * not.
 	 */
 	private void assertActive() throws IllegalStateException {
@@ -439,10 +442,16 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 	}
 
+	/**
+	 * Returns the currently active flow.
+	 */
 	private Flow getActiveFlow() {
 		return (Flow)getActiveSessionInternal().getDefinition();
 	}
 
+	/**
+	 * Returns the current state of this flow execution.
+	 */
 	private State getCurrentState() {
 		return (State)getActiveSessionInternal().getState();
 	}
@@ -476,32 +485,51 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	// package private setters for restoring transient state
+	// used by FlowExecutionImplStateRestorer
 
+	/**
+	 * Restore the flow definition of this flow execution.
+	 */
 	void setFlow(Flow flow) {
 		Assert.notNull(flow, "The root flow definition is required");
 		this.flow = flow;
 		this.flowId = flow.getId();
 	}
 
+	/**
+	 * Restore the listeners of this flow execution.
+	 */
 	void setListeners(FlowExecutionListeners listeners) {
 		Assert.notNull(listeners, "The execution listener list is required");
 		this.listeners = listeners;
 	}
 
+	/**
+	 * Restore the execution attributes of this flow execution.
+	 */
 	void setAttributes(AttributeMap attributes) {
 		Assert.notNull(conversationScope, "The execution attribute map is required");
 		this.attributes = attributes;
 	}
 
+	/**
+	 * Restore conversation scope for this flow execution.
+	 */
 	void setConversationScope(MutableAttributeMap conversationScope) {
 		Assert.notNull(conversationScope, "The conversation scope map is required");
 		this.conversationScope = conversationScope;
 	}
 
+	/**
+	 * Returns the flow definition id of this flow execution.
+	 */
 	String getFlowId() {
 		return flowId;
 	}
 
+	/**
+	 * Returns the list of flow session maintained by this flow execution.
+	 */
 	List getFlowSessions() {
 		return flowSessions;
 	}

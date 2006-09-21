@@ -27,7 +27,7 @@ import org.springframework.webflow.execution.RequestContext;
  * Transition criteria that tests the value of an expression. The
  * expression is used to express a condition that guards transition
  * execution in a web flow. Expressions will be evaluated agains the request
- * context.
+ * context and should return a boolean result.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

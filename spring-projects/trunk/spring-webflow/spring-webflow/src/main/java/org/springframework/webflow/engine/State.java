@@ -80,11 +80,11 @@ public abstract class State extends AnnotatedObject implements StateDefinition {
 	/**
 	 * Creates a state for the provided <code>flow</code> identified by the
 	 * provided <code>id</code>. The id must be locally unique to the owning
-	 * flow. The flow state will be automatically added to the flow.
+	 * flow. The state will be automatically added to the flow.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
 	 * @throws IllegalArgumentException if this state cannot be added to the
-	 * flow
+	 * flow, for instance when the provided id is not unique in the owning flow
 	 * @see #getEntryActionList()
 	 * @see #getExceptionHandlerSet()
 	 */
@@ -93,7 +93,7 @@ public abstract class State extends AnnotatedObject implements StateDefinition {
 		setFlow(flow);
 	}
 
-	// implementing state definition
+	// implementing StateDefinition
 
 	public FlowDefinition getOwner() {
 		return flow;
@@ -130,12 +130,12 @@ public abstract class State extends AnnotatedObject implements StateDefinition {
 	 */
 	private void setId(String id) {
 		Assert.hasText(id, "This state must have a valid identifier");
-		Assert.isTrue(getFlow() == null, "You cannot change the id of a state which has already been added to a flow");
 		this.id = id;
 	}
 
 	/**
 	 * Returns the list of actions executed by this state when it is entered.
+	 * The returned list is mutable.
 	 * @return the state entry action list
 	 */
 	public ActionList getEntryActionList() {
@@ -163,6 +163,8 @@ public abstract class State extends AnnotatedObject implements StateDefinition {
 	public boolean isStartState() {
 		return flow.getStartState() == this;
 	}
+	
+	// id and flow based equality
 
 	public boolean equals(Object o) {
 		if (!(o instanceof State)) {
@@ -217,10 +219,8 @@ public abstract class State extends AnnotatedObject implements StateDefinition {
 	 * @param context the flow execution control context
 	 * @return the selected error view, or <code>null</code> if no handler
 	 * matched or returned a non-null view selection
-	 * @throws FlowExecutionException passed in, if it was not handled
 	 */
-	public ViewSelection handleException(FlowExecutionException exception, RequestControlContext context)
-			throws FlowExecutionException {
+	public ViewSelection handleException(FlowExecutionException exception, RequestControlContext context) {
 		return getExceptionHandlerSet().handleException(exception, context);
 	}
 

@@ -30,11 +30,19 @@ import org.springframework.webflow.execution.ViewSelection;
  */
 public final class NullViewSelector implements ViewSelector, Serializable {
 
+	/*
+	 * Implementation note: not located in webflow.execution.support package to
+	 * avoid a cyclic dependency between webflow.execution and webflow.execution.support. 
+	 */
+
 	/**
 	 * The shared singleton {@link NullViewSelector} instance. 
 	 */
 	public static final ViewSelector INSTANCE = new NullViewSelector();
 
+	/**
+	 * Private constructor since this is a singleton.
+	 */
 	private NullViewSelector() {
 	}
 

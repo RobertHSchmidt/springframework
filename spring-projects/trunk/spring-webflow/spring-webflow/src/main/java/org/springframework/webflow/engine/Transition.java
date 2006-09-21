@@ -32,7 +32,7 @@ import org.springframework.webflow.execution.ViewSelection;
  * When executed a transition takes a flow execution from its current state,
  * called the <i>source state</i>, to another state, called the </i>target
  * state</i>. A transition may become eligible for execution on the occurence
- * of {@link Event} from within a transitionable source state.
+ * of an {@link Event} from within a transitionable source state.
  * <p>
  * When an event occurs within this transition's source
  * <code>TransitionableState</code> the determination of the eligibility of
@@ -81,8 +81,7 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 
 	/**
 	 * Create a new transition that always matches and always executes,
-	 * transitioning to the target state calculated by the provided on
-	 * execution.
+	 * transitioning to the target provided on execution.
 	 * @param targetStateId the target state of the transition
 	 * @see #setMatchingCriteria(TransitionCriteria)
 	 * @see #setExecutionCriteria(TransitionCriteria)

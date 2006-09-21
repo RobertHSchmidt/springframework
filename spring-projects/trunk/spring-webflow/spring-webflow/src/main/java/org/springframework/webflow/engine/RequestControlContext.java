@@ -44,6 +44,7 @@ import org.springframework.webflow.execution.ViewSelection;
  * @see org.springframework.webflow.engine.Flow
  * @see org.springframework.webflow.engine.State
  * @see org.springframework.webflow.execution.FlowExecution
+ * @see FlowExecutionContext
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -79,8 +80,7 @@ public interface RequestControlContext extends RequestContext {
 
 	/**
 	 * Spawn a new flow session and activate it in the currently executing flow.
-	 * Also transitions the spawned flow to its start state, which may be
-	 * overridden by providing the optional state parameter. This method should
+	 * Also transitions the spawned flow to its start state. This method should
 	 * be called by clients that wish to spawn new flows, such as subflow
 	 * states.
 	 * @param flow the flow to start, its <code>start()</code> method will be
@@ -116,7 +116,7 @@ public interface RequestControlContext extends RequestContext {
 	 * <code>end()</code> method of the flow involved in the flow execution
 	 * will be called.
 	 * @param output output produced by the session that is eligible for mapping
-	 * by a resuming parent flow.
+	 * by a resuming parent flow
 	 * @return the ended session
 	 * @throws IllegalStateException when the flow execution is not active
 	 * @see Flow#end(RequestControlContext, MutableAttributeMap)
@@ -126,9 +126,9 @@ public interface RequestControlContext extends RequestContext {
 	/**
 	 * Execute this transition out of the current source state. Allows for
 	 * privileged execution of an arbitrary transition.
-	 * @see Transition#execute(State, RequestControlContext)
 	 * @param transition the transition
 	 * @return a new view selection
+	 * @see Transition#execute(State, RequestControlContext)
 	 */
 	public ViewSelection execute(Transition transition);
 

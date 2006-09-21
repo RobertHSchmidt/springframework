@@ -8,21 +8,21 @@
 		<bean-action bean="pojoAction" method="enumMethod">
 			<method-result name="result1" scope="request" />
 		</bean-action>
-		<transition on="created" to="actionState2" />
+		<transition on="Created" to="actionState2" />
 	</action-state>
 
 	<action-state id="actionState2">
 		<bean-action bean="pojoAction" method="enumMethod">
 			<method-result name="result2" scope="flow" />
 		</bean-action>
-		<transition on="created" to="actionState3" />
+		<transition on="Created" to="actionState3" />
 	</action-state>
 
 	<action-state id="actionState3">
 		<bean-action bean="pojoAction" method="enumMethod">
 			<method-result name="result3" scope="conversation" />
 		</bean-action>
-		<transition on="created" to="actionState4" />
+		<transition on="Created" to="actionState4" />
 	</action-state>
 
 	<action-state id="actionState4">

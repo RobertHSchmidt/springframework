@@ -19,7 +19,9 @@ import java.util.Map;
 
 import org.springframework.binding.expression.EvaluationException;
 import org.springframework.binding.expression.Expression;
+import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -27,8 +29,9 @@ import org.springframework.webflow.execution.RequestContext;
  * Expression evaluator that evaluates an expression in flow scope.
  * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
-public class FlowScopeExpression implements Expression {
+public class FlowScopeExpression implements PropertyExpression {
 
 	/**
 	 * The expression to evaluate.
@@ -37,7 +40,8 @@ public class FlowScopeExpression implements Expression {
 
 	/**
 	 * Create a new expression evaluator that executes given expression in 'flow
-	 * scope'.
+	 * scope'. When using this wrapper to set a property value, make sure the
+	 * given expression is a {@link PropertyExpression}}.
 	 * @param expression the nested evaluator to execute
 	 */
 	public FlowScopeExpression(Expression expression) {
@@ -63,6 +67,13 @@ public class FlowScopeExpression implements Expression {
 					"Only supports evaluation against a [RequestContext] or [AttributeMap] instance, but was a ["
 							+ target.getClass() + "]");
 		}
+	}
+	
+	public void setValue(Object target, Object value, Map setContext) throws EvaluationException {
+		Assert.isInstanceOf(PropertyExpression.class, expression,
+				"When a FlowScopeExpression is used to set a property value, the nested expression needs " +
+				"to be a PropertyExpression");
+		((PropertyExpression)expression).setValue(((RequestContext)target).getFlowScope(), value, setContext);
 	}
 
 	public String toString() {

@@ -105,7 +105,7 @@
 
 	<action-state id="actionState5">
 		<bean-action bean="pojoAction" method="enumMethod" />
-		<transition on="created" to="endState1" />
+		<transition on="Created" to="endState1" />
 		<transition on="starting" to="endState2" />
 	</action-state>
 

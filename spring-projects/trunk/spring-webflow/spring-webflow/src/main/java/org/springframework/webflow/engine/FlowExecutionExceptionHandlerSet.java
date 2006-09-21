@@ -28,6 +28,7 @@ import org.springframework.webflow.execution.ViewSelection;
  * A typed set of state exception handlers, mainly for use internally by
  * artifacts that can apply state exception handling logic.
  * 
+ * @see FlowExecutionExceptionHandler
  * @see Flow#getExceptionHandlerSet()
  * @see State#getExceptionHandlerSet()
  * 
@@ -85,7 +86,7 @@ public class FlowExecutionExceptionHandlerSet {
 
 	/**
 	 * Returns the size of this state exception handler set.
-	 * @return the exception handler set size.
+	 * @return the exception handler set size
 	 */
 	public int size() {
 		return exceptionHandlers.size();

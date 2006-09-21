@@ -81,7 +81,8 @@ public class ExternalRedirectSelector implements ViewSelector, Serializable {
 	}
 	
 	/**
-	 * Setup the expression evaluation context.
+	 * Setup the expression evaluation context. Default implementation
+	 * returns an empty map.
 	 */
 	protected Map getEvaluationContext(RequestContext context) {
 		return Collections.EMPTY_MAP;

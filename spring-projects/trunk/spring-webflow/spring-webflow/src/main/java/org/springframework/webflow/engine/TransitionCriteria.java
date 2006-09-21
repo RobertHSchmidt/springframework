@@ -30,7 +30,7 @@ import org.springframework.webflow.execution.RequestContext;
 public interface TransitionCriteria {
 
 	/**
-	 * Check if the transition should execute based on the given flow execution
+	 * Check if the transition should fire based on the given flow execution
 	 * request context.
 	 * @param context the flow execution request context
 	 * @return true if the transition should fire, false otherwise

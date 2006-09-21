@@ -27,7 +27,8 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * An ordered chain of <code>TransitionCriteria</code>. Iterates over each element
- * in the chain, continues until one returns false or the list is exhausted.
+ * in the chain, continues until one returns false or the list is exhausted. So
+ * in effect it will do a logical AND between the contained criteria.
  * 
  * @author Keith Donald
  */
@@ -83,7 +84,7 @@ public class TransitionCriteriaChain implements TransitionCriteria {
 	
 	/**
 	 * Create a transition criteria chain chaining given list of actions.
-	 * @param actions the actions (and there execution properties) to chain together
+	 * @param actions the actions (and their execution properties) to chain together
 	 */
 	public static TransitionCriteria criteriaChainFor(AnnotatedAction[] actions) {
 		if (actions == null || actions.length == 0) {

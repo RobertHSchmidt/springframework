@@ -123,8 +123,8 @@ public class ActionState extends TransitionableState {
 	 * Creates a new action state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
-	 * @throws IllegalArgumentException when this state cannot be added to given flow
-	 * @see TransitionableState#TransitionableState(Flow, String)
+	 * @throws IllegalArgumentException when this state cannot be added to given flow,
+	 * e.g. beasue the id is not unique
 	 * @see #getActionList()
 	 */
 	public ActionState(Flow flow, String id) throws IllegalArgumentException {
@@ -163,9 +163,8 @@ public class ActionState extends TransitionableState {
 	 * <p>
 	 * This implementation iterates over each configured <code>Action</code>
 	 * instance and executes it. Execution continues until an
-	 * <code>Action</code> returns a result event that matches a state
-	 * transition in this request context, or the set of all actions is
-	 * exhausted.
+	 * <code>Action</code> returns a result event that matches a transition in
+	 * this request context, or the set of all actions is exhausted.
 	 * @param context the control context for the currently executing flow, used
 	 * by this state to manipulate the flow execution
 	 * @return a view selection signaling that control should be returned to the
@@ -182,6 +181,7 @@ public class ActionState extends TransitionableState {
 			if (event != null) {
 				eventIds[executionCount] = event.getId();
 				try {
+					// will check both local state transitions and global transitions
 					return context.signalEvent(event);
 				}
 				catch (NoMatchingActionResultTransitionException e) {

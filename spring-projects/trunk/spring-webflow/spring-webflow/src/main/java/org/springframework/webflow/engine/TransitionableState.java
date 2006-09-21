@@ -49,7 +49,7 @@ public abstract class TransitionableState extends State implements Transitionabl
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
 	 * @throws IllegalArgumentException when this state cannot be added to given
-	 * flow
+	 * flow, for instance when the id is not unique
 	 * @see State#State(Flow, String)
 	 * @see #getTransitionSet()
 	 */
@@ -64,7 +64,7 @@ public abstract class TransitionableState extends State implements Transitionabl
 	}
 
 	/**
-	 * Returns the set of transitions.
+	 * Returns the set of transitions. The returned set is mutable.
 	 */
 	public TransitionSet getTransitionSet() {
 		return transitions;
@@ -90,6 +90,7 @@ public abstract class TransitionableState extends State implements Transitionabl
 
 	/**
 	 * Returns the list of actions executed by this state when it is exited.
+	 * The returned list is mutable.
 	 * @return the state exit action list
 	 */
 	public ActionList getExitActionList() {
@@ -100,7 +101,8 @@ public abstract class TransitionableState extends State implements Transitionabl
 
 	/**
 	 * Inform this state definition that an event was signaled in it. The
-	 * signaled event is the last event available in given request context ({@link RequestContext#getLastEvent()}).
+	 * signaled event is the last event available in given request context
+	 * ({@link RequestContext#getLastEvent()}).
 	 * @param context the flow execution control context
 	 * @return the selected view
 	 * @throws NoMatchingTransitionException when a matching transition cannot

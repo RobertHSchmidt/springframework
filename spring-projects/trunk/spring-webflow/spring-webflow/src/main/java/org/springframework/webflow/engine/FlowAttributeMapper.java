@@ -99,7 +99,7 @@ public interface FlowAttributeMapper {
 	 * Attributes set in the map returned by this method are availale
 	 * as input to the subflow when its session is spawned.
 	 * @param context the current request execution context, which gives access
-	 * to the parent flow scope, the request scope, any event parameters, etc.
+	 * to the parent flow scope, the request scope, any event parameters, etcetera
 	 * @return a map of attributes (name=value pairs) to pass as input to the
 	 * spawning subflow
 	 */

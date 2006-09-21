@@ -10,7 +10,7 @@
 		<evaluate-action expression="flowScope.bean.enumMethod()">
 			<evaluation-result name="sessionStatus" scope="flow"/>
 		</evaluate-action>
-		<transition on="created" to="actionState2" />
+		<transition on="Created" to="actionState2" />
 	</action-state>
 
 	<action-state id="actionState2">

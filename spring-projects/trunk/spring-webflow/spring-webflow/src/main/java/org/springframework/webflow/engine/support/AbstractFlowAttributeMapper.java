@@ -38,8 +38,8 @@ public abstract class AbstractFlowAttributeMapper implements FlowAttributeMapper
 
 	/**
 	 * Returns the input mapper to use to map attributes of a parent flow
-	 * {@link RequestContext} to a subflow input attribute {@link AttributeMap}.
-	 * @return the input mapper
+	 * {@link RequestContext} to a subflow input attribute {@link AttributeMap map}.
+	 * @return the input mapper, or null if none
 	 * @see #createFlowInput(RequestContext)
 	 */
 	protected abstract AttributeMapper getInputMapper();
@@ -47,7 +47,7 @@ public abstract class AbstractFlowAttributeMapper implements FlowAttributeMapper
 	/**
 	 * Returns the output mapper to use to map attributes from a subflow output
 	 * attribute map to the {@link RequestContext}.
-	 * @return the output mapper the output mapper
+	 * @return the output mapper, or null if none
 	 * @see #mapFlowOutput(AttributeMap, RequestContext)
 	 */
 	protected abstract AttributeMapper getOutputMapper();
@@ -74,6 +74,7 @@ public abstract class AbstractFlowAttributeMapper implements FlowAttributeMapper
 
 	/**
 	 * Returns a map of contextual data available during mapping.
+	 * This implementation just returns an empty map.
 	 */
 	protected Map getMappingContext(RequestContext context) {
 		return Collections.EMPTY_MAP;

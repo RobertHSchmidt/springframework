@@ -45,7 +45,7 @@ public class ActionExecutor {
 	 * @param context the flow execution request context
 	 * @return result of action execution
 	 * @throws ActionExecutionException if the action threw an exception while
-	 * executing
+	 * executing, the orginal exception is available as the cause if this exception
 	 */
 	public static Event execute(Action action, RequestContext context) throws ActionExecutionException {
 		try {
