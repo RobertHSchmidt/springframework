@@ -27,7 +27,7 @@ import org.springframework.core.enums.StaticLabeledEnum;
 public class RepositoryType extends StaticLabeledEnum {
 
 	/**
-	 * The 'default' flow execution repository type.
+	 * The 'simple' flow execution repository type.
 	 */
 	public static RepositoryType SIMPLE = new RepositoryType(0, "Simple");
 
@@ -46,6 +46,11 @@ public class RepositoryType extends StaticLabeledEnum {
 	 */
 	public static RepositoryType SINGLEKEY = new RepositoryType(3, "Single Key");
 
+	/**
+	 * The 'default' flow execution repository type.
+	 */
+	public static RepositoryType DEFAULT = new RepositoryType(4, "Default");
+	
 	/**
 	 * Private constructor because this is a typesafe enum!
 	 */

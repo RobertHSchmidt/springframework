@@ -100,7 +100,7 @@ The listeners eligible for observing the lifecycle of executions launched by thi
 							</xsd:annotation>
 						</xsd:element>
 					</xsd:sequence>
-					<xsd:attribute name="repository-type" default="continuation">
+					<xsd:attribute name="repository-type" default="simple">
 						<xsd:annotation>
 							<xsd:documentation>
 						<![CDATA[
@@ -211,9 +211,9 @@ Example: flow1,flow2,flow3.
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-A convienence attribute for the 'alwaysRedirectOnPause' execution attribute.  Will automatically set
-this attribute to true indicating that every time a flow execution pauses a browser redirect 
-should be performed.
+Sets the 'alwaysRedirectOnPause' execution attribute value.  'alwaysRedirectOnPause' allows 
+control over whether each time a flow execution pauses a browser redirect is performed.  If
+not specified the default value is 'true' unless explicitly set otherwise.
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
@@ -231,7 +231,17 @@ An attribute's type may be specified using the 'type' attribute.
 		</xsd:sequence>
 	</xsd:complexType>
 
-	<xsd:complexType name="alwaysRedirectOnPauseType" />
+	<xsd:complexType name="alwaysRedirectOnPauseType">
+		<xsd:attribute name="value" type="xsd:boolean" use="required">
+			<xsd:annotation>
+				<xsd:documentation>
+					<![CDATA[
+true = always redirect on pause; false = do not, only redirect when explicitly instructed by the flow definition.
+]]>
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
 
 	<xsd:complexType name="attributeType">
 		<xsd:attribute name="name" type="xsd:string" use="required">

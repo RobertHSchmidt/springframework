@@ -22,8 +22,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
-import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
@@ -34,8 +34,8 @@ import org.springframework.webflow.execution.factory.StaticFlowExecutionListener
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.continuation.ClientContinuationFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepository;
-import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
+import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepository;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 
@@ -67,7 +67,7 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	/**
 	 * Execution attributes to apply.
 	 */
-	private AttributeMap executionAttributes;
+	private MutableAttributeMap executionAttributes;
 	
 	/**
 	 * The loader that will determine which listeners to attach to flow definition executions. 
@@ -94,6 +94,11 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 */
 	private FlowExecutor flowExecutor;
 
+	/**
+	 * Spring Web Flow executor system defaults. 
+	 */
+	private FlowSystemDefaults defaults = new FlowSystemDefaults();
+	
 	/**
 	 * Sets the flow definition locator that will locate flow definitions needed
 	 * for execution. Typically also a {@link FlowDefinitionRegistry}.  Required.
@@ -179,6 +184,7 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 		Assert.notNull(definitionLocator, "The flow definition locator is required");
 		FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
 		FlowExecutionImplStateRestorer executionStateRestorer = new FlowExecutionImplStateRestorer(definitionLocator);
+		executionAttributes = defaults.applyExecutionAttributes(executionAttributes);
 		if (executionAttributes != null) {
 			executionFactory.setExecutionAttributes(executionAttributes);
 			executionStateRestorer.setExecutionAttributes(executionAttributes);
@@ -201,6 +207,7 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * @return the flow execution repository
 	 */
 	protected FlowExecutionRepository createExecutionRepository(FlowExecutionStateRestorer executionStateRestorer) {
+		repositoryType = defaults.applyIfNecessary(repositoryType);
 		if (repositoryType == RepositoryType.SIMPLE) {
 			return new SimpleFlowExecutionRepository(executionStateRestorer, conversationManager);
 		}
