@@ -22,6 +22,7 @@ import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionFactory;
+import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.factory.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
 
@@ -67,6 +68,7 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 
 	public FlowExecution createFlowExecution(FlowDefinition flowDefinition) {
 		Assert.isInstanceOf(Flow.class, flowDefinition, "Flow definition is of wrong type: ");
-		return new FlowExecutionImpl((Flow)flowDefinition, executionListenerLoader.getListeners(flowDefinition), executionAttributes);
+		FlowExecutionListener[] listeners = executionListenerLoader.getListeners(flowDefinition);
+		return new FlowExecutionImpl((Flow)flowDefinition, listeners, executionAttributes);
 	}
 }
