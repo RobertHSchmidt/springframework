@@ -107,11 +107,11 @@
          <void method="add"> 
           <object class="com.hello2morrow.sonar.core.architecturedescription.SubsystemNode"> 
            <void property="fullyQualifiedName"> 
-            <string>Spring Data Binding::Core</string> 
+            <string>Spring Data Binding::Collection</string> 
            </void> 
            <void property="includePackagePatternsCollection"> 
             <void method="add"> 
-             <string>org.springframework.binding.core</string> 
+             <string>org.springframework.binding.collection</string> 
             </void> 
            </void> 
           </object> 
