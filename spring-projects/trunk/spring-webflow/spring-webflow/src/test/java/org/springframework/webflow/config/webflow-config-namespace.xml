@@ -21,7 +21,9 @@
 		<flow:location path="classpath*:org/springframework/webflow/engine/builder/registry/flows/**/flow*.xml" />
 	</flow:registry>
 
-	<flow:executor id="defaultExecutor" registry-ref="withPathWithWildcards">
+	<flow:executor id="defaultExecutor" registry-ref="withPathWithWildcards"/>
+	
+	<flow:executor id="simpleExecutor" registry-ref="withPathWithWildcards" repository-type="simple">
 		<flow:execution-attributes>
 			<flow:attribute name="test" value="test" />
 			<flow:attribute name="test1" type="java.lang.Integer" value="1" />
@@ -29,6 +31,9 @@
 	</flow:executor>
 
 	<flow:executor id="continuationExecutor" registry-ref="withPathWithWildcards" repository-type="continuation">
+		<flow:execution-attributes>
+			<flow:alwaysRedirectOnPause value="true"/>
+		</flow:execution-attributes>
 		<flow:execution-listeners>
 			<flow:listener ref="listener1" />
 		</flow:execution-listeners>
