@@ -100,7 +100,7 @@ The listeners eligible for observing the lifecycle of executions launched by thi
 							</xsd:annotation>
 						</xsd:element>
 					</xsd:sequence>
-					<xsd:attribute name="repository-type" default="simple">
+					<xsd:attribute name="repository-type" default="continuation">
 						<xsd:annotation>
 							<xsd:documentation>
 						<![CDATA[
