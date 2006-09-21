@@ -25,6 +25,11 @@ package org.springframework.webflow.conversation;
  * <p>
  * Once begun, the conversation can be locked to obtain exclusive access to
  * manipulating it. Once the conversation is "done", it can be ended.
+ * <p>
+ * Note that the attributes associated with a conversation are not
+ * "conversation scope" as defined for a flow execution. They can be
+ * any attributes, possibly technical in nature, associated with the
+ * conversation.
  * 
  * @author Keith Donald
  */

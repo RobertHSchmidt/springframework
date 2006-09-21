@@ -17,26 +17,26 @@ package org.springframework.webflow.execution.repository.continuation;
 
 import java.io.Serializable;
 
-import org.springframework.core.NestedRuntimeException;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 
 /**
  * Thrown when no flow execution continuation exists within a continuation
- * group. This might occur if the continuation was expired or was explictly
- * invalidated but a client's browser page cache still references it.
+ * group with a particular id. This might occur if the continuation has expired
+ * or was explictly invalidated but a client's browser page cache still references it.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class ContinuationNotFoundException extends NestedRuntimeException {
+public class ContinuationNotFoundException extends FlowExecutionRepositoryException {
 
 	/**
-	 * The unique continuation identifier that was invalid.
+	 * The unique continuation identifier that was not found.
 	 */
 	private Serializable continuationId;
 
 	/**
 	 * Creates a continuation not found exception.
-	 * @param continuationId the invalid continuation id
+	 * @param continuationId the continuation id that could not be found
 	 */
 	public ContinuationNotFoundException(Serializable continuationId) {
 		super("No flow execution continuation could be found in this group with id '" + continuationId
@@ -44,7 +44,7 @@ public class ContinuationNotFoundException extends NestedRuntimeException {
 	}
 
 	/**
-	 * Returns the continuation id.
+	 * Returns the continuation id that could not be found.
 	 */
 	public Serializable getContinuationId() {
 		return continuationId;

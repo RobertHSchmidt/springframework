@@ -23,9 +23,12 @@ import org.springframework.webflow.execution.FlowExecution;
 
 /**
  * A factory that creates new instances of flow execution continuations based on
- * standard java serialization.
+ * standard Java serialization.
+ * 
+ * @see SerializedFlowExecutionContinuation
  * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
 public class SerializedFlowExecutionContinuationFactory implements FlowExecutionContinuationFactory {
 
@@ -63,10 +66,10 @@ public class SerializedFlowExecutionContinuationFactory implements FlowExecution
             }
         }
         catch (IOException e) {
-            throw new ContinuationUnmarshalException("This should not happen", e);
+            throw new ContinuationUnmarshalException("IO problem while creating a flow execution continuation", e);
         }
         catch (ClassNotFoundException e) {
-            throw new ContinuationUnmarshalException("This should not happen", e);
+            throw new ContinuationUnmarshalException("Class not found while creating a flow execution continuation", e);
         }
     }    
 }

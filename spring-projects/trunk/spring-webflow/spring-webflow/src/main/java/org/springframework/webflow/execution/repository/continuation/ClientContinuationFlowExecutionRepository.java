@@ -34,25 +34,24 @@ import org.springframework.webflow.execution.repository.support.AbstractConversa
 import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
 
 /**
- * <p>
  * Stores flow execution state client side, requiring no use of server-side
  * state.
- * </p>
  * <p>
  * More specifically, instead of putting {@link FlowExecution} objects in a
  * server-side store this repository <i>encodes</i> them directly into the
  * <code>continuationId</code> of the generated {@link FlowExecutionKey}.
  * When asked to load a flow execution by its key this repository decodes the
  * serialized <code>continuationId</code>, restoring the
- * {@link FlowExecution} object at the state it was when encoded.
- * </p>
+ * {@link FlowExecution} object at the state it was in when encoded.
  * <p>
  * Note: currently this repository implementation does not by default support
+ * <i>conversation management</i>. This has to consequences. First, there is no
  * <i>conversation invalidation after completion</i>, which enables automatic
- * prevention of duplicate submission after a conversation is completed. Support
- * for this requires tracking active conversations using a conversation service
- * backed by some centralized storage medium like a database table.
- * </p>
+ * prevention of duplicate submission after a conversation has completed.
+ * Secondly, The contents of <i>conversation scope</i> will not be maintained
+ * across requests. Support for these features requires tracking active
+ * conversations using a conversation service backed by some centralized storage
+ * medium like a database table.
  * <p>
  * Warning: storing state (a flow execution continuation) on the client entails
  * a certain security risk. This implementation does not provide a secure way of
@@ -63,12 +62,13 @@ import org.springframework.webflow.execution.repository.support.FlowExecutionSta
  * {@link #encode(FlowExecution)} and {@link #decode(String)}, implementing
  * them with a secure encoding/decoding algorithm, e.g. based on public/private
  * key encryption.
- * </p>
  * <p>
  * This class depends on the <code>Jakarta Commons Codec</code> library to do
  * <code>BASE64</code> encoding. Codec code must be available in the classpath
  * when using this implementation.
- * </p>
+ * 
+ * @see Base64
+ * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
@@ -88,7 +88,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 
 	/**
 	 * Creates a new client continuation repository.  Uses a 'no op' conversation manager by default.
-	 * @param executionStateRestorer the transient flow execution state restorer.
+	 * @param executionStateRestorer the transient flow execution state restorer
 	 */
 	public ClientContinuationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer) {
 		this(executionStateRestorer, new NoOpConversationManager());
@@ -124,6 +124,8 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 		FlowExecutionContinuation continuation = decode((String)getContinuationId(key));
 		try {
 			FlowExecution execution = continuation.unmarshal();
+			// the flox execution was deserialized so we need to restore transient
+			// state
 			return executionStateRestorer.restoreState(execution, getConversationScope(key));
 		}
 		catch (ContinuationUnmarshalException e) {
@@ -132,6 +134,8 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	}
 
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
+		// the flow execution state is already stored in the key, so
+		// there's nothing we need to do to store it
 		putConversationScope(key, flowExecution.getConversationScope());
 	}
 
@@ -140,7 +144,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	}
 
 	protected final Serializable parseContinuationId(String encodedId) {
-		// just return here, continuation decoding happens in get
+		// just return here, continuation decoding happens in getFlowExecution
 		return encodedId;
 	}
 
@@ -165,7 +169,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	 * Subclasses can override this to change the decoding algorithm. This class
 	 * just does a <code>BASE64</code> decoding and then deserializes the flow
 	 * execution.
-	 * @param encodedContinuation the encode flow execution data
+	 * @param encodedContinuation the encoded flow execution data
 	 * @return the decoded flow execution instance
 	 */
 	protected FlowExecutionContinuation decode(String encodedContinuation) {
@@ -174,13 +178,16 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	}
 
 	/**
-	 * Conversation service that doesn't do anything - the default.
+	 * Conversation manager that doesn't do anything - the default. Does not support
+	 * conversation scope or conversation invalidation.
+	 * 
 	 * @author Keith Donald
 	 */
 	private static class NoOpConversationManager implements ConversationManager {
 
-		private static final ConversationId conversationId = new SimpleConversationId("1");
-
+		/**
+		 * The single conversation managed by the manager.
+		 */
 		private static final NoOpConversation INSTANCE = new NoOpConversation();
 
 		public Conversation beginConversation(ConversationParameters conversationParameters)
@@ -193,29 +200,31 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 		}
 
 		public ConversationId parseConversationId(String encodedId) throws ConversationException {
-			return conversationId;
+			return NoOpConversation.ID;
 		}
 
 		private static class NoOpConversation implements Conversation {
+			
+			private static final ConversationId ID = new SimpleConversationId("1");
 
-			public void end() {
+			public ConversationId getId() {
+				return ID;
+			}
+
+			public void lock() {
 			}
 
 			public Object getAttribute(Object name) {
 				return CollectionUtils.EMPTY_ATTRIBUTE_MAP;
 			}
 
-			public ConversationId getId() {
-				return conversationId;
-			}
-
-			public void lock() {
-			}
-
 			public void putAttribute(Object name, Object value) {
 			}
 
 			public void removeAttribute(Object name) {
+			}
+
+			public void end() {
 			}
 
 			public void unlock() {

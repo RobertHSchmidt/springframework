@@ -28,36 +28,37 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.webflow.execution.FlowExecution;
 
 /**
- * A continuation implementation that is based on standard java serialization,
+ * A continuation implementation that is based on standard Java serialization,
  * created by a {@link SerializedFlowExecutionContinuationFactory}.
  * 
  * @see SerializedFlowExecutionContinuationFactory
  * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
 public class SerializedFlowExecutionContinuation extends FlowExecutionContinuation {
 
 	/**
 	 * The serialized flow execution.
 	 */
-	private byte[] data;
+	private byte[] flowExecutionData;
 
 	/**
-	 * Whether or not this flow execution array is compressed.
+	 * Whether or not the flow execution byte array is compressed.
 	 */
 	private boolean compressed;
 
 	/**
-	 * Creates a new serialized flow execution continuation.
+	 * Creates a new serialized flow execution continuation. This will marshall
+	 * given continuation into a serialized form.
 	 * @param flowExecution the flow execution
-	 * @param compress whether or not the execution should be compressed
+	 * @param compress whether or not the flow execution should be compressed
 	 */
 	public SerializedFlowExecutionContinuation(FlowExecution flowExecution, boolean compress) throws ContinuationCreationException{
-        byte [] data;
         try {
-            data = serialize(flowExecution);
+            flowExecutionData = serialize(flowExecution);
             if (compress) {
-                data = compress(data);
+                flowExecutionData = compress(flowExecutionData);
             }
         }
         catch (NotSerializableException e) {
@@ -69,12 +70,12 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
             throw new ContinuationCreationException(flowExecution,
                     "IOException thrown serializing flow execution -- this should not happen!", e);
         }
-		this.data = data;
 		this.compressed = compress;
 	}
 
 	/**
-	 * Returns whether or not this byte array is compressed.
+	 * Returns whether or not the flow execution data in this continuation
+	 * is compressed.
 	 */
 	public boolean isCompressed() {
 		return compressed;
@@ -82,7 +83,7 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 
 	public FlowExecution unmarshal() throws ContinuationUnmarshalException {
 		try {
-            return deserialize(getData(true));
+            return deserialize(getFlowExecutionData());
 		}
 		catch (IOException e) {
 			throw new ContinuationUnmarshalException(
@@ -92,15 +93,15 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 		catch (ClassNotFoundException e) {
 			throw new ContinuationUnmarshalException(
 					"ClassNotFoundException thrown deserializing the flow execution stored in this continuation -- "
-							+ "This should not happen! Make sure there are no classloader issues."
-							+ "For example, perhaps the Web Flow system is being loaded by a classloader "
-							+ "that is a parent of the classloader loading application classes?", e);
+					+ "This should not happen! Make sure there are no classloader issues."
+					+ "For example, perhaps the Web Flow system is being loaded by a classloader "
+					+ "that is a parent of the classloader loading application classes?", e);
 		}
 	}
 
 	public byte[] toByteArray() {
 		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream(data.length + 128);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream(flowExecutionData.length + 128);
 			ObjectOutputStream oos = new ObjectOutputStream(baos);
 			try {
 				oos.writeObject(this);
@@ -115,31 +116,30 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 			throw new IllegalStateException();
 		}
 	}
+	
+	// internal helpers
 
 	/**
-	 * Return the flow execution in its raw byte[] form. Will decompress if
-	 * requested.
-	 * @param decompress whether or not to decompress the byte[] array before
-	 * returning
+	 * Return the flow execution data in its raw byte[] form. Will decompress if
+	 * necessary.
 	 * @return the byte array
 	 * @throws IOException a problem occured with decompression
 	 */
-	public byte[] getData(boolean decompress) throws IOException {
-		if (isCompressed() && decompress) {
-			return decompress(data);
+	protected byte[] getFlowExecutionData() throws IOException {
+		if (isCompressed()) {
+			return decompress(flowExecutionData);
 		}
 		else {
-			return data;
+			return flowExecutionData;
 		}
 	}
 
     /**
-     * Internal helper method to serialize data. Override if a custom
+     * Internal helper method to serialize given flow execution. Override if a custom
      * serialization method is used.
-     * 
-     * @param flowExecution flow to serialize
-     * @return serialized flow data.
-     * @throws IOException passed through from stream.
+     * @param flowExecution flow execution to serialize
+     * @return serialized flow flow execution data
+     * @throws IOException when something goes wrong during during serialization
      */
     protected byte [] serialize(FlowExecution flowExecution) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(384);
@@ -155,13 +155,12 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
     }
     
     /**
-     * Internal helper method to deserialize data. Override if a custom
-     * serialization method is used.
-     * 
-     * @param data serialized flow data.
-     * @return Deserialized flow
-     * @throws IOException passed through from stream.
-     * @throws ClassNotFoundException passed from stream.
+     * Internal helper method to deserialize given flow execution data. Override
+     * if a custom serialization method is used.
+     * @param data serialized flow flow execution data
+     * @return deserialized flow execution
+     * @throws IOException when something goes wrong during deserialization
+     * @throws ClassNotFoundException when required classes cannot be loaded
      */
     protected FlowExecution deserialize(byte [] data) throws IOException, ClassNotFoundException {
         ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
@@ -174,7 +173,8 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
     }
     
     /**
-     * Internal helper method to compress given data using GZIP compression.
+     * Internal helper method to compress given flow execution data using
+     * GZIP compression.
      */
     protected byte[] compress(byte[] dataToCompress) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -190,7 +190,8 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
     }
     
 	/**
-	 * Internal helper method to decompress given data using GZIP decompression.
+	 * Internal helper method to decompress given flow execution data using
+	 * GZIP decompression.
 	 */
     protected byte[] decompress(byte[] dataToDecompress) throws IOException {
 		GZIPInputStream gzipin = new GZIPInputStream(new ByteArrayInputStream(dataToDecompress));

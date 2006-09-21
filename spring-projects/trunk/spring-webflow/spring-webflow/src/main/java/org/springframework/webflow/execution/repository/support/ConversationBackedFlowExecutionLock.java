@@ -44,7 +44,7 @@ class ConversationBackedFlowExecutionLock implements FlowExecutionLock {
 
 	/**
 	 * Creates a new conversation-backed flow execution lock.
-	 * @param conversation the conversation
+	 * @param conversation the conversation to lock
 	 */
 	public ConversationBackedFlowExecutionLock(Conversation conversation) {
 		this.conversation = conversation;
