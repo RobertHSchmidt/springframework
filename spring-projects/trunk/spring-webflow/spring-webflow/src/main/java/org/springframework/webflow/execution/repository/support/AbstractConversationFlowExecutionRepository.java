@@ -152,7 +152,7 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 		}
 		catch (ConversationException e) {
 			throw new BadlyFormattedFlowExecutionKeyException(encodedKey,
-					"Conversation id '" + keyParts[0] + "' contained in composite flow execution key '"
+					"The conversation id '" + keyParts[0] + "' contained in the composite flow execution key '"
 					+ encodedKey + "' is invalid", e);
 		}
 		
@@ -163,7 +163,7 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 		}
 		catch (FlowExecutionRepositoryException e) {
 			throw new BadlyFormattedFlowExecutionKeyException(encodedKey,
-					"Continuation id '" + keyParts[1] + "' contained in composite flow execution key '"
+					"The continuation id '" + keyParts[1] + "' contained in the composite flow execution key '"
 					+ encodedKey + "' is invalid", e);
 		}
 		
