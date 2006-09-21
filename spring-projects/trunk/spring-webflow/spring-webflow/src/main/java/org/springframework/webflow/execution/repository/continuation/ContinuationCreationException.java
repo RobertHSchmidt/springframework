@@ -15,8 +15,8 @@
  */
 package org.springframework.webflow.execution.repository.continuation;
 
-import org.springframework.core.NestedRuntimeException;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 
 /**
  * Thrown when a continuation snapshot could not be taken of flow execution
@@ -24,7 +24,7 @@ import org.springframework.webflow.execution.FlowExecution;
  * 
  * @author Keith Donald
  */
-public class ContinuationCreationException extends NestedRuntimeException {
+public class ContinuationCreationException extends FlowExecutionRepositoryException {
 
 	/**
 	 * The flow execution that could not be snapshotted.
@@ -42,7 +42,7 @@ public class ContinuationCreationException extends NestedRuntimeException {
 	}
 
 	/**
-	 * Returns the flow execution that could not be snapshooted.
+	 * Returns the flow execution that could not be snapshotted.
 	 */
 	public FlowExecution getFlowExecution() {
 		return flowExecution;

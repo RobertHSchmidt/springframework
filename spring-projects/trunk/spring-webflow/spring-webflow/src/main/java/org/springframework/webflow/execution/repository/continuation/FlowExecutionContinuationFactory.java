@@ -22,20 +22,24 @@ import org.springframework.webflow.execution.FlowExecution;
  * implementations.
  * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
 public interface FlowExecutionContinuationFactory {
 
 	/**
-	 * Creates a new flow execution continuation.
+	 * Creates a new flow execution continuation for given flow execution.
 	 * @param flowExecution the flow execution
 	 * @return the continuation
+	 * @throws ContinuationCreationException when the continuation cannot be created
 	 */
-	public FlowExecutionContinuation createContinuation(FlowExecution flowExecution) throws ContinuationCreationException;
+	public FlowExecutionContinuation createContinuation(FlowExecution flowExecution)
+			throws ContinuationCreationException;
 
 	/**
 	 * Creates a new flow execution continuation from the provided byte array.
 	 * @param bytes the flow execution byte array
 	 * @return the continuation
+	 * @throws ContinuationCreationException when the continuation cannot be created
 	 */
 	public FlowExecutionContinuation createContinuation(byte[] bytes) throws ContinuationCreationException;
 }

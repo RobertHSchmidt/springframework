@@ -26,20 +26,21 @@ import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 
 /**
- * Stores <i>exactly one</i> flow execution per conversation.
+ * Conversation manager based flow execution repository that stores
+ * <i>exactly one</i> flow execution per conversation.
  * <p>
- * It is important to note use of this repository <b>does not</b> allow for
- * duplicate submission in conjunction with browser navigational buttons (such
- * as the back button). Specifically, if you attempt to "go back" and resubmit,
+ * It is important to note that by default use of this repository <b>does not</b>
+ * allow for duplicate submission in conjunction with browser navigational buttons
+ * (such as the back button). Specifically, if you attempt to "go back" and resubmit,
  * the continuation id stored on the page in your browser history will <b>not</b>
  * match the continuation id of the flow execution entry and access to the
  * conversation will be disallowed. This is because the
  * <code>continuationId</code> changes on each request to consistently prevent
- * the possibility of duplicate submission.
+ * the possibility of duplicate submission ({@see {@link #setAlwaysGenerateNewNextKey(boolean)}}).
  * <p>
  * This repository is specifically designed to be 'simple': incurring minimal
  * resources and overhead, as only one {@link FlowExecution} is stored <i>per
- * user conversation</i>. This repository implementation should only be used
+ * conversation</i>. This repository implementation should only be used
  * when you do not have to support browser navigational button use, e.g. you
  * lock down the browser and require that all navigational events to be routed
  * explicitly through Spring Web Flow.
@@ -50,12 +51,12 @@ import org.springframework.webflow.util.UidGenerator;
 public class SimpleFlowExecutionRepository extends AbstractConversationFlowExecutionRepository {
 
 	/**
-	 * The flow execution entry attribute.
+	 * The conversation attribute holding the flow execution entry.
 	 */
 	private static final String FLOW_EXECUTION_ENTRY_ATTRIBUTE = "flowExecutionEntry";
 
 	/**
-	 * The strategy for restoring transient flow execution state after access
+	 * The strategy for restoring transient flow execution state after restoration
 	 * (if necessary).
 	 */
 	private FlowExecutionStateRestorer executionStateRestorer;
@@ -66,9 +67,9 @@ public class SimpleFlowExecutionRepository extends AbstractConversationFlowExecu
 	private UidGenerator continuationIdGenerator = new RandomGuidUidGenerator();
 
 	/**
-	 * Create a new repository using given state restorer and conversation manager.
-	 * @param executionStateRestorer
-	 * @param conversationManager
+	 * Create a new simple repository using given state restorer and conversation manager.
+	 * @param executionStateRestorer the flow execution state restoration strategy to use
+	 * @param conversationManager the conversation manager to use
 	 */
 	public SimpleFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer,
 			ConversationManager conversationManager) {
@@ -76,6 +77,9 @@ public class SimpleFlowExecutionRepository extends AbstractConversationFlowExecu
 		setExecutionStateRestorer(executionStateRestorer);
 	}
 
+	/**
+	 * Set the strategy for restoring transient flow execution state after restoration.
+	 */
 	protected void setExecutionStateRestorer(FlowExecutionStateRestorer executionStateRestorer) {
 		Assert.notNull(executionStateRestorer, "The flow execution state restorer is required");
 		this.executionStateRestorer = executionStateRestorer;
@@ -83,7 +87,7 @@ public class SimpleFlowExecutionRepository extends AbstractConversationFlowExecu
 
 	/**
 	 * Returns the uid generation strategy used to generate continuation
-	 * identifiers.
+	 * identifiers. Defaults to {@link RandomGuidUidGenerator}.
 	 */
 	public UidGenerator getContinuationIdGenerator() {
 		return continuationIdGenerator;
@@ -101,6 +105,8 @@ public class SimpleFlowExecutionRepository extends AbstractConversationFlowExecu
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
 		try {
 			FlowExecution execution = getEntry(key).access(getContinuationId(key));
+			// it could be that the entry was serialized out and read back in, so
+			// we need to restore transient flow execution state
 			return executionStateRestorer.restoreState(execution, getConversationScope(key));
 		}
 		catch (InvalidContinuationIdException e) {
@@ -121,18 +127,28 @@ public class SimpleFlowExecutionRepository extends AbstractConversationFlowExecu
 	protected Serializable parseContinuationId(String encodedId) {
 		return continuationIdGenerator.parseUid(encodedId);
 	}
+	
+	// internal helpers
 
+	/**
+	 * Lookup the entry for keyed flow execution in the governing conversation.
+	 */
 	private FlowExecutionEntry getEntry(FlowExecutionKey key) {
-		FlowExecutionEntry entry = (FlowExecutionEntry)getConversation(key)
-				.getAttribute(FLOW_EXECUTION_ENTRY_ATTRIBUTE);
+		FlowExecutionEntry entry =
+			(FlowExecutionEntry)getConversation(key).getAttribute(FLOW_EXECUTION_ENTRY_ATTRIBUTE);
 		if (entry == null) {
 			throw new IllegalStateException("No '" + FLOW_EXECUTION_ENTRY_ATTRIBUTE
-					+ "' attribute present in conversation scope: "
-					+ "possible programmer error--do not call get before calling put");
+					+ "' attribute present in the governing conversation: "
+					+ "possible programmer error -- do not call get before calling put");
 		}
 		return entry;
 	}
 
+	/**
+	 * Store given flow execution entry in the governing conversation using given key.
+	 * @param key the key to use
+	 * @param entry the entry to store
+	 */
 	private void putEntry(FlowExecutionKey key, FlowExecutionEntry entry) {
 		getConversation(key).putAttribute(FLOW_EXECUTION_ENTRY_ATTRIBUTE, entry);
 	}
@@ -156,7 +172,7 @@ public class SimpleFlowExecutionRepository extends AbstractConversationFlowExecu
 		private FlowExecution flowExecution;
 
 		/**
-		 * Creates a new flow execution entry
+		 * Creates a new flow execution entry.
 		 * @param continuationId the continuation id
 		 * @param flowExecution the flow execution
 		 */
@@ -165,6 +181,13 @@ public class SimpleFlowExecutionRepository extends AbstractConversationFlowExecu
 			this.flowExecution = flowExecution;
 		}
 
+		/**
+		 * Access the wrapped flow execution, using given continuation id as a <i>password</i>.
+		 * @param continuationId the continuation id to match
+		 * @return the flow execution
+		 * @throws InvalidContinuationIdException given continuation id does not match the
+		 * continuation id stored in this entry
+		 */
 		public FlowExecution access(Serializable continuationId) throws InvalidContinuationIdException {
 			if (!this.continuationId.equals(continuationId)) {
 				throw new InvalidContinuationIdException(continuationId);

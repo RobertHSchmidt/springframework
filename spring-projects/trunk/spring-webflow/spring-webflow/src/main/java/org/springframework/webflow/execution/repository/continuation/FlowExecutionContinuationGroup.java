@@ -37,7 +37,7 @@ class FlowExecutionContinuationGroup implements Serializable {
 
 	/**
 	 * An ordered list of continuation ids. Each continuation id represents an
-	 * pointer to a continuation in the map.  The first element is the oldest 
+	 * pointer to a continuation in the map. The first element is the oldest 
 	 * continuation and the last is the youngest. 
 	 */
 	private LinkedList continuationIds = new LinkedList();
@@ -45,19 +45,19 @@ class FlowExecutionContinuationGroup implements Serializable {
 	/**
 	 * The maximum number of continuations allowed in this group.
 	 */
-	private int maxContinuations;
+	private int maxContinuations = -1;
 
 	/**
 	 * Creates a new flow execution continuation group.
 	 * @param maxContinuations the maximum number of continuations that can be
-	 * stored in this group.
+	 * stored in this group, -1 for unlimited
 	 */                                                                            
 	public FlowExecutionContinuationGroup(int maxContinuations) {
 		this.maxContinuations = maxContinuations;
 	}
 	
 	/**
-	 * Returns the count of continuations in this repository.
+	 * Returns the count of continuations in this group.
 	 */
 	public int getContinuationCount() {
 		return continuationIds.size();
@@ -69,7 +69,7 @@ class FlowExecutionContinuationGroup implements Serializable {
 	 * @param id the continuation id
 	 * @return the continuation
 	 * @throws ContinuationNotFoundException if the id does not match a
-	 * continuation in this group.
+	 * continuation in this group
 	 */
 	public FlowExecutionContinuation get(Serializable id) throws ContinuationNotFoundException {
 		FlowExecutionContinuation continuation = (FlowExecutionContinuation)continuations.get(id);
@@ -79,6 +79,11 @@ class FlowExecutionContinuationGroup implements Serializable {
 		return continuation;
 	}
 
+	/**
+	 * Add a flow execution continuation with given id to this group.
+	 * @param continuationId the continuation id
+	 * @param continuation the continuation
+	 */
 	public void add(Serializable continuationId, FlowExecutionContinuation continuation) {
 		continuations.put(continuationId, continuation);
 		continuationIds.add(continuationId);
@@ -89,10 +94,17 @@ class FlowExecutionContinuationGroup implements Serializable {
 		}
 	}
 
+	/**
+	 * Has the maximum number of allowed continuations in this group been exceeded?
+	 * @return
+	 */
 	private boolean maxExceeded() {
 		return maxContinuations > 0 && continuationIds.size() > maxContinuations;
 	}
 
+	/**
+	 * Remove the olders continuation from this group.
+	 */
 	private void removeOldestContinuation() {
 		continuations.remove(continuationIds.removeFirst());
 	}
