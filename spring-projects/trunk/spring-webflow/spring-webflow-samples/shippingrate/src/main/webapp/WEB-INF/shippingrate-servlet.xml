@@ -15,11 +15,10 @@
 	-->
 	<bean name="/rates.htm" class="org.springframework.webflow.executor.mvc.FlowController">
 		<property name="flowExecutor" ref="flowExecutor" />
-		<property name="cacheSeconds" value="5" />
 	</bean>
 
 	<!-- Launches new flow executions and resumes existing executions -->
-	<flow:executor id="flowExecutor" registry-ref="flowRegistry" />
+	<flow:executor id="flowExecutor" registry-ref="flowRegistry" repository-type="simple"/>
 
 	<!-- Creates the registry of flow definitions for this application -->
 	<flow:registry id="flowRegistry">
