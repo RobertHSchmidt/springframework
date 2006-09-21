@@ -181,6 +181,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
+				// launch a flow session for the root flow
 				ViewSelection selectedView = context.start(flow, input);
 				return pause(context, selectedView);
 			}

@@ -19,6 +19,7 @@ import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
+import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 
 /**
  * Interface to be implemented by objects that wish to listen and respond to the
@@ -144,7 +145,8 @@ public interface FlowExecutionListener {
 	public void sessionEnded(RequestContext context, FlowSession session, AttributeMap output);
 	
 	/**
-	 * Called when an exception is thrown during a flow execution.
+	 * Called when an exception is thrown during a flow execution, before the
+	 * exception is handled by any registered {@link FlowExecutionExceptionHandler handler}.
 	 * @param context the source of the exception
 	 * @param exception the exception that occurred
 	 */
