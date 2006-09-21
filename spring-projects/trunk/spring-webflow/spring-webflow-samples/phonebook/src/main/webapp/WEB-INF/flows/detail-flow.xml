@@ -29,7 +29,7 @@
 				<mapping source="${requestParameters.id}" target="id" from="string" to="long" />
 			</input-mapper>
 		</attribute-mapper>
-		<transition on="finish" to="getDetails" />
+		<transition on="finish" to="displayDetails" />
 	</subflow-state>
 
 	<end-state id="finish" />
