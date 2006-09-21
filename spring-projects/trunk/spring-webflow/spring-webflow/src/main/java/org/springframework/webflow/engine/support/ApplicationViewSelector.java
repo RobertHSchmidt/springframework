@@ -54,7 +54,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	 * Flow execution attribute name that indicates that we should always
 	 * render an application view via a redirect.
 	 */
-	protected static final String ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE = "alwaysRedirectOnPause";
+	public static final String ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE = "alwaysRedirectOnPause";
 
 	/**
 	 * The view name to render.
