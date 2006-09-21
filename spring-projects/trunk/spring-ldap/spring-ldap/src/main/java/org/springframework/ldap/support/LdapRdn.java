@@ -16,15 +16,13 @@
 
 package org.springframework.ldap.support;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.ldap.BadLdapGrammarException;
 
 /**
@@ -34,7 +32,9 @@ import org.springframework.ldap.BadLdapGrammarException;
  * 
  * @author Adam Skogman
  */
-public class LdapRdn {
+public class LdapRdn implements Serializable {
+
+    private static final long serialVersionUID = -780587486437564890L;
 
     private String key;
 
@@ -45,8 +45,6 @@ public class LdapRdn {
     protected static final Pattern RDN_PATTERN = Pattern
             .compile("\\s*(\\p{Alnum}+)\\s*=\\s*((\\\\\\p{XDigit}{2}|\\\\.|[^\\\\])+?)\\s*");
 
-    private static final Log log = LogFactory.getLog(LdapRdn.class);
-    
     /**
      * Constructs a RDN from an ldap encoded rdn "foo=bar".
      * 
@@ -109,7 +107,8 @@ public class LdapRdn {
     /**
      * @param rdn
      *            The ldap rdn to parse
-     * @throws BadLdapGrammarException if any error occurs parsing the rdn.
+     * @throws BadLdapGrammarException
+     *             if any error occurs parsing the rdn.
      */
     protected void parseLdap(String rdn) throws BadLdapGrammarException {
 
@@ -196,7 +195,6 @@ public class LdapRdn {
             return key + "=" + valueUri.toString();
         } catch (URISyntaxException e) {
             // This should really never happen...
-            log.error("Failed to URL encode value " + value, e);
             return key + "=" + "value";
         }
     }
