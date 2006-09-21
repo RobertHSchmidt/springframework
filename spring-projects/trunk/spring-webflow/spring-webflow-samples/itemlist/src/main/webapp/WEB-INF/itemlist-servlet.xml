@@ -27,14 +27,6 @@
 	<!-- Launches new flow executions and resumes existing executions: Spring 1.2 config version -->
 	<bean id="flowExecutor" class="org.springframework.webflow.config.FlowExecutorFactoryBean">
 		<property name="definitionLocator" ref="flowRegistry"/>
-		<property name="executionAttributes">
-			<map>
-				<entry key="alwaysRedirectOnPause">
-					<value type="java.lang.Boolean">true</value>
-				</entry>
-			</map>
-		</property>
-		<property name="repositoryType" value="CONTINUATION"/>
 	</bean>
 	
 	<!-- Creates the registry of flow definitions for this application: Spring 1.2 config version -->	
