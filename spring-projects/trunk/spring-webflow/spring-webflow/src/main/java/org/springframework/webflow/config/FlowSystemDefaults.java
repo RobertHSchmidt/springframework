@@ -20,6 +20,7 @@ import java.io.Serializable;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.engine.support.ApplicationViewSelector;
 
 /**
  * Encapsulates overall flow system configuration defaults. Allows for
@@ -67,8 +68,8 @@ public class FlowSystemDefaults implements Serializable {
 		if (executionAttributes == null) {
 			executionAttributes = new LocalAttributeMap(1, 1);
 		}
-		if (!executionAttributes.contains("alwaysRedirectOnPause")) {
-			executionAttributes.put("alwaysRedirectOnPause", alwaysRedirectOnPause);
+		if (!executionAttributes.contains(ApplicationViewSelector.ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE)) {
+			executionAttributes.put(ApplicationViewSelector.ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE, alwaysRedirectOnPause);
 		}
 		return executionAttributes;
 	}
