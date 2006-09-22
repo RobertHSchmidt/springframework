@@ -8,19 +8,17 @@
 		<mapping source="id" target="flowScope.id" />
 	</input-mapper>
 
-	<start-state idref="getDetails" />
-
-	<action-state id="getDetails">
-		<bean-action bean="phonebook" method="getPerson">
-			<method-arguments>
-				<argument expression="flowScope.id" />
-			</method-arguments>
-			<method-result name="person" />
-		</bean-action>
-		<transition on="success" to="displayDetails" />
-	</action-state>
+	<start-state idref="displayDetails" />
 
 	<view-state id="displayDetails" view="details">
+		<render-actions>
+			<bean-action bean="phonebook" method="getPerson">
+				<method-arguments>
+					<argument expression="flowScope.id" />
+				</method-arguments>
+				<method-result name="person" />
+			</bean-action>
+		</render-actions>
 		<transition on="back" to="finish" />
 		<transition on="select" to="browseColleagueDetails" />
 	</view-state>
@@ -31,7 +29,7 @@
 				<mapping source="${requestParameters.id}" target="id" from="string" to="long" />
 			</input-mapper>
 		</attribute-mapper>
-		<transition on="finish" to="getDetails" />
+		<transition on="finish" to="displayDetails" />
 	</subflow-state>
 
 	<end-state id="finish" />

@@ -10,22 +10,20 @@
 		<entry-actions>
 			<action bean="formAction" method="setupForm"/>
 		</entry-actions>
-		<transition on="search" to="executeSearch">
+		<transition on="search" to="displayResults">
 			<action bean="formAction" method="bindAndValidate"/>
 		</transition>
 	</view-state>
 
-	<action-state id="executeSearch">
-		<bean-action bean="phonebook" method="search">
-			<method-arguments>
-				<argument expression="flowScope.searchCriteria"/>			
-			</method-arguments>
-			<method-result name="results"/>
-		</bean-action>
-		<transition on="success" to="displayResults"/>
-	</action-state>	
-	
 	<view-state id="displayResults" view="searchResults">
+		<render-actions>
+			<bean-action bean="phonebook" method="search">
+				<method-arguments>
+					<argument expression="flowScope.searchCriteria"/>			
+				</method-arguments>
+				<method-result name="results"/>
+			</bean-action>
+		</render-actions>
 		<transition on="newSearch" to="enterCriteria"/>
 		<transition on="select" to="browseDetails"/>
 	</view-state>
@@ -36,7 +34,7 @@
 				<mapping source="${requestParameters.id}" target="id" from="string" to="long"/>
 			</input-mapper>
 		</attribute-mapper>
-		<transition on="finish" to="executeSearch"/>
+		<transition on="finish" to="displayResults"/>
 	</subflow-state>
 
 	<import resource="search-flow-beans.xml"/>
