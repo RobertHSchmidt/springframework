@@ -83,6 +83,9 @@ public interface RequestControlContext extends RequestContext {
 	 * Also transitions the spawned flow to its start state. This method should
 	 * be called by clients that wish to spawn new flows, such as subflow
 	 * states.
+	 * <p>
+	 * This will start a new flow session in the current flow execution, which
+	 * is already active.
 	 * @param flow the flow to start, its <code>start()</code> method will be
 	 * called
 	 * @param input initial contents of the newly created flow session (may be
