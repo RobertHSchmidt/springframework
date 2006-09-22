@@ -89,12 +89,18 @@ public class DirContextAdapter implements DirContextOperations {
         this(null, null, null);
     }
 
+    /**
+     * Create a new adapter from the supplied dn.
+     * 
+     * @param dn
+     *            the dn.
+     */
     public DirContextAdapter(Name dn) {
         this(null, dn);
     }
 
     /**
-     * Create a new entry from the supplied attributes and dn.
+     * Create a new adapter from the supplied attributes and dn.
      * 
      * @param attrs
      *            the attributes.
@@ -105,6 +111,16 @@ public class DirContextAdapter implements DirContextOperations {
         this(attrs, dn, null);
     }
 
+    /**
+     * Create a new adapter from the supplied attributes, dn, and base.
+     * 
+     * @param attrs
+     *            the attributes.
+     * @param dn
+     *            the dn.
+     * @param base
+     *            the base name.
+     */
     public DirContextAdapter(Attributes attrs, Name dn, Name base) {
         if (attrs != null) {
             this.attrs = attrs;
@@ -124,10 +140,10 @@ public class DirContextAdapter implements DirContextOperations {
     }
 
     /**
-     * Constructor for cloning an existing entry.
+     * Constructor for cloning an existing adapter.
      * 
      * @param master
-     *            The object to be copied.
+     *            The adapter to be copied.
      */
     protected DirContextAdapter(DirContextAdapter master) {
         this.attrs = (Attributes) master.attrs.clone();
@@ -152,8 +168,6 @@ public class DirContextAdapter implements DirContextOperations {
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see org.springframework.ldap.support.DirContextOperations#isUpdateMode()
      */
     public boolean isUpdateMode() {
@@ -161,8 +175,6 @@ public class DirContextAdapter implements DirContextOperations {
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see org.springframework.ldap.support.DirContextOperations#getNamesOfModifiedAttributes()
      */
     public String[] getNamesOfModifiedAttributes() {
@@ -327,42 +339,65 @@ public class DirContextAdapter implements DirContextOperations {
     }
 
     /**
-     * Decide whether an attribute has changed or not.
+     * Compare the existing attribute <code>name</code> with the value in
+     * <code>value</code>.
+     * <p>
+     * Also handles the case where the value has been reset to the original
+     * value after a previous change. For example, changing <code>a</code> to
+     * <code>b</code> and then back to <code>a</code> again must result in
+     * this method returning <code>true</code> so the first change can be
+     * overwritten with the latest change.
+     * TODO Do the null checks on the value instead
      * 
      * @param name
-     *            Attribute name.
+     *            Name of the original attribute.
      * @param value
-     *            Attribute value.
-     * @return <code>true</code> if attribute has changed.
+     *            Value to check if it has been changed.
+     * @return true if there has been a change compared to original attribute,
+     *         or a previous update
      */
     private boolean isChanged(String name, Object value) {
-        Attribute a = attrs.get(name);
+        Attribute orig = attrs.get(name);
+        Attribute prev = updatedAttrs.get(name);
 
         // FALSE if both are null it is not changed
-        if (a == null && value == null) {
+        // TODO Also include prev in null check
+        if (orig == null && value == null) {
             return false;
         }
 
         // TRUE if existing value is null or does not contain one value
-        if (a == null || a.size() != 1) {
+        if (orig == null || orig.size() != 1) {
             return true;
         }
 
         // TRUE if existing value is not null and the new one is null
-        if (a != null && value == null) {
+        if (orig != null && value == null) {
             return true;
         }
 
         // TRUE if we can't access the value
         Object obj = null;
         try {
-            obj = a.get(0);
+            obj = orig.get(0);
         } catch (NamingException e) {
             return true;
         }
 
-        // TRUE if the value is not equal and all other tests has been performed
-        return !value.equals(obj);
+        if (prev == null) {
+            // TRUE if the value is not equal
+            return !value.equals(obj);
+        } else {
+            // TRUE if we can't access the value
+            Object prevObj = null;
+            try {
+                prevObj = prev.get(0);
+            } catch (NamingException e) {
+                return true;
+            }
+            // TRUE if the value is not equal
+            return !value.equals(obj) || !value.equals(prevObj);
+        }
     }
 
     /**
@@ -379,39 +414,59 @@ public class DirContextAdapter implements DirContextOperations {
     }
 
     /**
-     * Compare an existing attribute with name pName with value pValue. The
-     * order of the array must be the same order as the existing multivalued
-     * attribute.
+     * Compare the existing attribute <code>name</code> with the values on the
+     * array <code>values</code>. The order of the array must be the same
+     * order as the existing multivalued attribute.
+     * <p>
+     * Also handles the case where the values have been reset to the original
+     * values after a previous change. For example, changing
+     * <code>[a,b,c]</code> to <code>[a,b]</code> and then back to
+     * <code>[a,b,c]</code> again must result in this method returning
+     * <code>true</code> so the first change can be overwritten with the
+     * latest change.
      * 
      * @param name
+     *            Name of the original multi-valued attribute.
      * @param values
-     * @return true if it has changed
+     *            Array of values to check if they have been changed.
+     * @return true if there has been a change compared to original attribute,
+     *         or a previous update
      */
     private boolean isChanged(String name, Object[] values, boolean orderMatters) {
 
-        Attribute a = attrs.get(name);
+        Attribute orig = attrs.get(name);
+        Attribute prev = updatedAttrs.get(name);
 
         // values == null and values.length == 0 is treated the same way
         boolean emptyNewValue = (values == null || values.length == 0);
 
         // Setting to empty ---------------------
         if (emptyNewValue) {
-            // FALSE if both are null it is not changed (they both does not
-            // exist)
-            // TRUE if new value is null and old value exists (should be
+            // FALSE: if both are null, it is not changed (both don't exist)
+            // TRUE: if new value is null and old value exists (should be
             // removed)
-            return (a != null);
+            // TODO Also include prev in null check
+            // TODO Also check if there is a single null element
+            if (orig != null) {
+                return true;
+            }
+            return false;
         }
 
         // NOT setting to empty -------------------
 
         // TRUE if existing value is null
-        if (a == null) {
+        if (orig == null) {
             return true;
         }
 
-        // TRUE is different length
-        if (a.size() != values.length) {
+        // TRUE if different length compared to original attributes
+        if (orig.size() != values.length) {
+            return true;
+        }
+
+        // TRUE if different length compared to previously updated attributes
+        if (prev != null && prev.size() != values.length) {
             return true;
         }
 
@@ -419,8 +474,8 @@ public class DirContextAdapter implements DirContextOperations {
 
         // Order DOES matter, e.g. first names
         try {
-            for (int i = 0; i < a.size(); i++) {
-                Object obj = a.get(i);
+            for (int i = 0; i < orig.size(); i++) {
+                Object obj = orig.get(i);
                 // TRUE if one value is not equal
                 if (!(obj instanceof String)) {
                     return true;
@@ -473,8 +528,6 @@ public class DirContextAdapter implements DirContextOperations {
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see org.springframework.ldap.support.DirContextOperations#getStringAttribute(java.lang.String)
      */
     public String getStringAttribute(String name) {
@@ -482,8 +535,6 @@ public class DirContextAdapter implements DirContextOperations {
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see org.springframework.ldap.support.DirContextOperations#getObjectAttribute(java.lang.String)
      */
     public Object getObjectAttribute(String name) {
@@ -499,8 +550,6 @@ public class DirContextAdapter implements DirContextOperations {
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see org.springframework.ldap.support.DirContextOperations#setAttributeValue(java.lang.String,
      *      java.lang.Object)
      */
@@ -518,12 +567,9 @@ public class DirContextAdapter implements DirContextOperations {
             }
             updatedAttrs.put(attribute);
         }
-
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see org.springframework.ldap.support.DirContextOperations#setAttributeValues(java.lang.String,
      *      java.lang.Object[])
      */
@@ -532,8 +578,6 @@ public class DirContextAdapter implements DirContextOperations {
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see org.springframework.ldap.support.DirContextOperations#setAttributeValues(java.lang.String,
      *      java.lang.Object[], boolean)
      */
@@ -558,8 +602,6 @@ public class DirContextAdapter implements DirContextOperations {
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see org.springframework.ldap.support.DirContextOperations#update()
      */
     public void update() {
@@ -591,8 +633,6 @@ public class DirContextAdapter implements DirContextOperations {
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see org.springframework.ldap.support.DirContextOperations#getStringAttributes(java.lang.String)
      */
     public String[] getStringAttributes(String name) {
@@ -616,8 +656,6 @@ public class DirContextAdapter implements DirContextOperations {
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see org.springframework.ldap.support.DirContextOperations#getAttributeSortedStringSet(java.lang.String)
      */
     public SortedSet getAttributeSortedStringSet(String name) {
