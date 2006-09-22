@@ -39,20 +39,16 @@ import org.springframework.webflow.executor.support.FlowRequestHandler;
 import org.springframework.webflow.executor.support.RequestPathFlowExecutorArgumentExtractor;
 
 /**
- * <p>
  * Point of integration between Spring Web MVC and Spring Web Flow: a
  * {@link Controller} that routes incoming requests to one or more managed flow
  * executions.
- * </p>
  * <p>
  * Requests into the web flow system are handled by a {@link FlowExecutor},
  * which this class delegates to using a {@link FlowRequestHandler} helper.
  * Consult the JavaDoc of that class for more information on how requests are
  * processed.
- * </p>
  * <p>
  * Note: a single <code>FlowController</code> may execute all flows of your application.
- * </p>
  * <ul>
  * <li>By default, to have this controller launch a new flow execution
  * (conversation), have the client send a
@@ -83,7 +79,7 @@ import org.springframework.webflow.executor.support.RequestPathFlowExecutorArgum
  * strategy to allow for different types of controller parameterization, for
  * example perhaps in conjunction with a REST-style request mapper (see
  * {@link RequestPathFlowExecutorArgumentExtractor}).
- * </p> 
+ * 
  * @see org.springframework.webflow.executor.FlowExecutor
  * @see org.springframework.webflow.executor.support.FlowRequestHandler
  * @see org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor
@@ -100,8 +96,7 @@ public class FlowController extends AbstractController implements InitializingBe
 	private FlowExecutor flowExecutor;
 
 	/**
-	 * The strategy for extracting flow executor parameters from a request made
-	 * by an {@link ExternalContext}.
+	 * The strategy for extracting flow executor parameters from a request.
 	 */
 	private FlowExecutorArgumentExtractor argumentExtractor = new FlowExecutorArgumentExtractor();
 
@@ -134,6 +129,7 @@ public class FlowController extends AbstractController implements InitializingBe
 
 	/**
 	 * Returns the flow executor argument extractor used by this controller.
+	 * Defaults to {@link FlowExecutorArgumentExtractor}.
 	 * @return the argument extractor
 	 */
 	public FlowExecutorArgumentExtractor getArgumentExtractor() {
@@ -178,6 +174,7 @@ public class FlowController extends AbstractController implements InitializingBe
 	 * Factory method that creates a new helper for processing a request into
 	 * this flow controller. The handler is a basic template encapsulating
 	 * reusable flow execution request handling workflow.
+	 * This implementation just creates a new {@link FlowRequestHandler}.
 	 * @return the controller helper
 	 */
 	protected FlowRequestHandler createRequestHandler() {
@@ -200,10 +197,15 @@ public class FlowController extends AbstractController implements InitializingBe
 			argumentExtractor.put(response.getFlowExecutionContext(), model);
 			return new ModelAndView(view.getViewName(), model);
 		}
+		else if (response.isFlowDefinitionRedirect()) {
+			// restart the flow by redirecting to flow launch URL
+			String flowUrl = argumentExtractor.createFlowDefinitionUrl((FlowDefinitionRedirect)response.getViewSelection(), context);
+			return new ModelAndView(new RedirectView(flowUrl));
+		}
 		else if (response.isFlowExecutionRedirect()) {
 			// redirect to active flow execution URL
-			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(response.getFlowExecutionKey(), response
-					.getFlowExecutionContext(), context);
+			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(
+					response.getFlowExecutionKey(), response.getFlowExecutionContext(), context);
 			return new ModelAndView(new RedirectView(flowExecutionUrl));
 		}
 		else if (response.isExternalRedirect()) {
@@ -211,11 +213,6 @@ public class FlowController extends AbstractController implements InitializingBe
 			ExternalRedirect redirect = (ExternalRedirect)response.getViewSelection();
 			String externalUrl = argumentExtractor.createExternalUrl(redirect, response.getFlowExecutionKey(), context);
 			return new ModelAndView(new RedirectView(externalUrl));
-		}
-		else if (response.isFlowDefinitionRedirect()) {
-			// restart the flow by redirecting to flow launch URL
-			String flowUrl = argumentExtractor.createFlowUrl((FlowDefinitionRedirect)response.getViewSelection(), context);
-			return new ModelAndView(new RedirectView(flowUrl));
 		}
 		else if (response.isNull()) {
 			// no response to issue

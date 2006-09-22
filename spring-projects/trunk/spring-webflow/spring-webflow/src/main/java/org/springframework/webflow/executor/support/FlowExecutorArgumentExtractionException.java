@@ -18,7 +18,7 @@ package org.springframework.webflow.executor.support;
 import org.springframework.webflow.core.FlowException;
 
 /**
- * A runtime exception thrown by a flow executor argument extractor when an
+ * An exception thrown by a flow executor argument extractor when an
  * argument could not be extracted.
  * 
  * @see org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor
@@ -28,16 +28,16 @@ import org.springframework.webflow.core.FlowException;
 public class FlowExecutorArgumentExtractionException extends FlowException {
 
 	/**
-	 * Creates a new exception.
-	 * @param msg the message
+	 * Creates a new argument extraction exception.
+	 * @param msg a descriptive message
 	 */
 	public FlowExecutorArgumentExtractionException(String msg) {
 		super(msg);
 	}
 
 	/**
-	 * Creates a new exception.
-	 * @param msg the message
+	 * Creates a new argument extraction exception.
+	 * @param msg a descriptive message
 	 * @param cause the cause
 	 */
 	public FlowExecutorArgumentExtractionException(String msg, Throwable cause) {
