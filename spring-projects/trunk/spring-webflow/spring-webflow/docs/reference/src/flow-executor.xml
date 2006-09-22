@@ -151,7 +151,7 @@
 
         &lt;!-- Creates the registry of flow definitions for this application --&gt;
         &lt;flow:registry id="flowRegistry"&gt;
-            &lt;flow:location path="/WEB-INF/flows/**/**-flow.xml"/&gt;
+            &lt;flow:location path="/WEB-INF/flows/**/*-flow.xml"/&gt;
         &lt;/flow:registry&gt;
         
     &lt;/beans&gt;
@@ -208,7 +208,7 @@
         &lt;/flow:execution-listeners&gt;
     &lt;/flow-executor&gt;
 
-    &lt;!-- A FlowExecutionListener to observes the lifecycle of order-flow executions --&gt;
+    &lt;!-- A FlowExecutionListener to observe the lifecycle of order-flow executions --&gt;
     &lt;bean id="listener" class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener"/&gt;
 			</programlisting>
 	    	<para>
@@ -237,10 +237,11 @@
         &lt;/bean&gt;
         
         &lt;!-- Creates the registry of flow definitions for this application: Spring 1.2 config version --&gt;
-        &lt;bean id="flowRegistry" class="org.springframework.webflow.engine.builder.xml.XmlFlowRegistryFactoryBean"&gt;
+        &lt;bean id="flowRegistry"
+                 class="org.springframework.webflow.engine.builder.xml.XmlFlowRegistryFactoryBean"&gt;
             &lt;property name="flowLocations"&gt;
                 &lt;list&gt;
-                    &lt;value&gt;/WEB-INF/flows/**/**-flow.xml&lt;/value&gt;
+                    &lt;value&gt;/WEB-INF/flows/**/*-flow.xml&lt;/value&gt;
                 &lt;/list&gt;
             &lt;/property&gt;
         &lt;/bean&gt;
@@ -248,7 +249,7 @@
     &lt;/beans&gt;
 	        </programlisting>
 	    	<para>
-	    		This achieves similar semantics as the Spring 2.0 version in section 5.2.5.
+	    		This achieves similar semantics as the Spring 2.0 version above.
 	    		The 2.0 version is more concise, provides stronger validation, and encapsulates
 	    		internal details such as FactoryBean class names.   The 1.2 version is Spring 1.2 or >
 	    		compatible and digestable by Spring IDE 1.3.
@@ -284,7 +285,8 @@
     	<sect2 id="executor-portletmvc">
     		<title>A single portlet flow controller executing a flow within a Portlet</title>
 	    	<programlisting>
-    &lt;bean id="portletModeControllerMapping" class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
+    &lt;bean id="portletModeControllerMapping"
+             class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
         &lt;property name="portletModeMap">
             &lt;map&gt;
                 &lt;entry key="view" value-ref="flowController"/&gt;
@@ -301,7 +303,8 @@
     	<para>
     		This controller, exported for access with the configured portlet mode,
     		delegates to the configured flow executor for driving flow executions in a Spring Portlet 
-    		MVC environment (by default, an execution of the <literal>search-flow</literal>).
+    		MVC environment (by default, an execution of the <literal>search-flow</literal>
+    		will be launched).
     	</para>
    	</sect1>
 	<sect1 id="executor-parameterization">
@@ -405,8 +408,7 @@
 				The request-path based argument extractor strategy relies on executor arguments
 				being path elements as much as possible.  This results in friendlier REST-style URLs such
 				as <literal>http://host/app/myflow</literal> instead of
-				<literal>http://host/app?_flowId=myflow</literal>.  This strategy may become the 
-				default by the 1.0 final release (it is under consideration).
+				<literal>http://host/app?_flowId=myflow</literal>.
 			</para>
 	    	<sect3 id="executor-servletmvc-pathextractor">
     			<title>A flow controller with a request-path based argument extractor</title>
@@ -428,7 +430,7 @@
     		<sect3 id="executor-mvc-resume-form-buttons-requestpath">
    	 			<title>Resuming a flow execution - multiple form buttons</title>
 		    	<programlisting>
-    &lt;form action="${flowExecutionKey}" method="post"&gt;
+    &lt;form action="k/${flowExecutionKey}" method="post"&gt;
         ...
         &lt;input type="submit" class="button" name="_eventId_submit" value="Submit"&gt;
         &lt;input type="submit" class="button" name="_eventId_cancel" value="Cancel"&gt;
@@ -452,7 +454,8 @@
     &lt;/form-beans&gt;
 	    	
     &lt;action-mappings&gt;
-        &lt;action path="/flowAction" name="actionForm" scope="request" type="org.springframework.webflow.executor.struts.FlowAction"/&gt;
+        &lt;action path="/flowAction" name="actionForm" scope="request"
+                   type="org.springframework.webflow.executor.struts.FlowAction"/&gt;
     &lt;/action-mappings&gt;
 	    	</programlisting>
     	</sect2>		
@@ -510,47 +513,5 @@
     &lt;/h:form&gt;
 	    	</programlisting>
     	</sect2>
-    </sect1>
-    <sect1 id="samples">
-    	<title>Sample applications</title>
-    	<para>
-			It is recommended that you review the Spring Web Flow sample applications included in the 
-			release distribution for best-practice illustrations of the features of this framework.
-			A description of each sample is provided below:
-    	</para>
-    	<para>
-    		<orderedlist>
-    			<listitem>
-    				<para>Phonebook - the original sample demonstrating most features (including subflows).</para>
-    			</listitem>
-    			<listitem>
-    				<para>Sellitem - demonstrates a wizard with conditional transitions, flow scope, flow execution redirects, and continuations.</para>
-    			</listitem>
-    			<listitem>
-    				<para>Flowlauncher - demonstrates all the possible ways to launch and resume flows.</para>
-    			</listitem>
-    			<listitem>
-    				<para>Itemlist - demonstrates REST-style URLs and inline flows.</para>
-    			</listitem>
-    			<listitem>
-    				<para>Shippingrate - demonstrates Spring Web Flow together with Ajax technology.</para>
-    			</listitem>
-    			<listitem>
-    				<para>NumberGuess - demonstrates use of stateful middle-tier components to carry out business logic.</para>
-    			</listitem>
-    			<listitem>
-    				<para>Birthdate - demonstrates Struts integration and the MultiAction.</para>
-    			</listitem>
-    			<listitem>
-    				<para>Fileupload - demonstrates multipart file upload.</para>
-    			</listitem>
-    			<listitem>
-    				<para>Phonebook-Portlet - the phonebook sample in a Portlet environment (notice how the flow definitions do not change)</para>
-    			</listitem>
-    			<listitem>
-    				<para>Sellitem-JSF - the sellitem sample in a JSF environment (notice how the flow definition is more concise)</para>
-    			</listitem>
-    		</orderedlist>
-    	</para>
     </sect1>
 </chapter>
