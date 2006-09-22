@@ -27,25 +27,24 @@ import org.springframework.webflow.execution.ScopeType;
  * The return value is exposed as an attribute in a configured scope.
  * 
  * @see EvaluateAction
+ * @see AbstractBeanInvokingAction
  * 
  * @author Keith Donald
  */
 public class ActionResultExposer implements Serializable {
 
 	/**
-	 * The name of the attribute to index the return value of the invoked bean
-	 * method.
+	 * The name of the attribute to index the return value with.
 	 */
 	private String resultName;
 
 	/**
-	 * The scope of the attribute indexing the return value of the invoked bean
-	 * method.
+	 * The scope of the attribute indexing the return value.
 	 */
 	private ScopeType resultScope;
 
 	/**
-	 * Creates a new bean method result specification.
+	 * Creates a action result exposer
 	 * @param resultName the result name
 	 * @param resultScope the result scope
 	 */
@@ -57,16 +56,14 @@ public class ActionResultExposer implements Serializable {
 	}
 
 	/**
-	 * Returns name of the attribute to index the return value of the invoked
-	 * bean method.
+	 * Returns name of the attribute to index the return value with.
 	 */
 	public String getResultName() {
 		return resultName;
 	}
 
 	/**
-	 * Returns the scope the attribute indexing the return value of the invoked
-	 * bean method.
+	 * Returns the scope the attribute indexing the return value.
 	 */
 	public ScopeType getResultScope() {
 		return resultScope;

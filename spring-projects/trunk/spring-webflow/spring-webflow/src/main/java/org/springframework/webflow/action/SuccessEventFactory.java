@@ -20,12 +20,13 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.support.EventFactorySupport;
 
 /**
- * Default implementation of the resultObject-to-event adapter interface.
+ * Default implementation of the resultObject-to-event mapping interface.
  * Always returns the "success" event.
  * 
  * @author Keith Donald
  */
 public class SuccessEventFactory extends EventFactorySupport implements ResultEventFactory {
+	
 	public Event createResultEvent(Object source, Object resultObject, RequestContext context) {
 		return success(source, resultObject);
 	}

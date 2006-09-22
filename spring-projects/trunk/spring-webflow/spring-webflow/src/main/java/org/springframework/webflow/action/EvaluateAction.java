@@ -23,13 +23,11 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * <p>
  * An action that evaluates an expression and optionally exposes its result.
- * </p>
  * <p>
  * Delegates to a helper {@link ResultEventFactorySelector} strategy to determine how 
  * to map the evaluation result to an action outcome {@link Event}.
- * </p>
+ * 
  * @see Expression
  * @see ActionResultExposer
  * @see ResultEventFactorySelector
@@ -66,7 +64,7 @@ public class EvaluateAction extends AbstractAction {
 	 * Create a new evaluate action.
 	 * @param expression the expression to evaluate
 	 * @param evaluationResultExposer the strategy for how the expression result
-	 * will be exposed to the flow.
+	 * will be exposed to the flow
 	 */
 	public EvaluateAction(Expression expression, ActionResultExposer evaluationResultExposer) {
 		Assert.notNull(expression, "The expression this action should evaluate is required");
@@ -83,7 +81,8 @@ public class EvaluateAction extends AbstractAction {
 	}
 
 	/**
-	 * Template method subclasses may override to customize the expressin evaluation context.
+	 * Template method subclasses may override to customize the expressin
+	 * evaluation context. This implementation returns null.
 	 * @param context the request context
 	 * @return the evaluation context
 	 */

@@ -27,17 +27,14 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * <p>
  * An action that will execute an ordered chain of other actions when executed.
- * </p>
  * <p>
  * The event id of the last not-null result returned by the executed actions
  * will be used as the result event id of the composite action. Lacking that,
  * the action will return the "success" event.
- * </p>
  * <p>
- * The resulting composite Oevent will have an "actionResults" event attribute
- * with a List of all events returned by the executed action, including the null
+ * The resulting event will have an "actionResults" event attribute
+ * with a list of all events returned by the executed actions, including the null
  * events. This allows you to relate an executed action and its result event by
  * their index in the list.
  * <p>
@@ -47,7 +44,11 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class CompositeAction extends AbstractAction {
 
-	private static final String ACTION_RESULTS_ATTRIBUTE_NAME = "actionResults";
+	/**
+	 * The resulting event whill have an attribute of this name which holds a
+	 * list of all events returned by the executed actions. ("actionResults")
+	 */
+	public static final String ACTION_RESULTS_ATTRIBUTE_NAME = "actionResults";
 
 	/**
 	 * The actions to execute.

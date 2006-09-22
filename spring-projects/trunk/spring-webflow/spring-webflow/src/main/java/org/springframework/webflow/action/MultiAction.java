@@ -32,7 +32,7 @@ import org.springframework.webflow.util.DispatchMethodInvoker;
  * When this action is invoked, by default the <code>id</code> of the calling
  * action state state is treated as the action execution method name.
  * Alternatively, the execution method name may be explicitly specified as a
- * property of the calling action state.
+ * attribute of the calling action state.
  * <p>
  * For example, the following action state definition:
  * 
@@ -108,7 +108,7 @@ public class MultiAction extends AbstractAction {
 	}
 
 	/**
-	 * Sets the target of this multi action invocations.
+	 * Sets the target of this multi action's invocations.
 	 * @param target the target
 	 */
 	protected final void setTarget(Object target) {

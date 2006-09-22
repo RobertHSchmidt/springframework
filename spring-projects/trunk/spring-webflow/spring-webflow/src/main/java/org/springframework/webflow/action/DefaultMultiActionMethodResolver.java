@@ -16,6 +16,7 @@
 package org.springframework.webflow.action;
 
 import org.springframework.webflow.action.MultiAction.MethodResolver;
+import org.springframework.webflow.engine.AnnotatedAction;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -34,18 +35,16 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class DefaultMultiActionMethodResolver implements MethodResolver {
 
-	private static final String METHOD_ATTRIBUTE = "method";
-
 	public String resolveMethod(RequestContext context) {
-		String method = context.getAttributes().getString(METHOD_ATTRIBUTE);
+		String method = context.getAttributes().getString(AnnotatedAction.METHOD_ATTRIBUTE);
 		if (method == null) {
 			if (context.getCurrentState() != null) {
 				// default to the state id
 				method = context.getCurrentState().getId();
 			}
 			else {
-				throw new IllegalStateException("Unable to resolve action method; no '" + METHOD_ATTRIBUTE
-						+ "' context attribute set");
+				throw new IllegalStateException("Unable to resolve action method; no '" +
+						AnnotatedAction.METHOD_ATTRIBUTE + "' context attribute set");
 			}
 		}
 		return method;

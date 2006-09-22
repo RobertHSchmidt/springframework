@@ -98,6 +98,10 @@ public class FormObjectAccessor {
 		if (formObject != null) {
 			return formObject;
 		}
+		formObject = getCurrentFormObject(ScopeType.FLASH);
+		if (formObject != null) {
+			return formObject;
+		}
 		formObject = getCurrentFormObject(ScopeType.FLOW);
 		if (formObject != null) {
 			return formObject;
@@ -168,6 +172,10 @@ public class FormObjectAccessor {
 	 */
 	public Errors getCurrentFormErrors() {
 		Errors errors = getCurrentFormErrors(ScopeType.REQUEST);
+		if (errors != null) {
+			return errors;
+		}
+		errors = getCurrentFormErrors(ScopeType.FLASH);
 		if (errors != null) {
 			return errors;
 		}
