@@ -51,7 +51,7 @@ import org.springframework.webflow.definition.TransitionDefinition;
  * <p>
  * The {@link #getRequestScope() requestScope} property may be used as a store
  * for arbitrary data that should exist for the life of this object.
- * Request-scoped data, along with all data in
+ * Request-scoped data, along with all data in {@link #getFlashScope() flash scope},
  * {@link #getFlowScope() flow scope} and
  * {@link #getConversationScope() conversation scope} is available for exposing
  * to view templates via a {@link #getModel() model} property.
@@ -196,7 +196,7 @@ public interface RequestContext {
 	/**
 	 * Returns the data model capturing the state of this context, suitable for
 	 * exposing to clients (mostly web views). Typically the model will contain
-	 * the union of the data available in request, session and conversation
+	 * the union of the data available in request, flash, session and conversation
 	 * scope.
 	 * @return the model that can be exposed to a client view for rendering
 	 * purposes
