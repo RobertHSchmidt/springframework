@@ -3,7 +3,7 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
-	
+
 	<start-state idref="selectFile"/>
 	
 	<view-state id="selectFile" view="fileForm">
@@ -12,12 +12,9 @@
 
 	<action-state id="uploadFile">
 		<action bean="uploadAction" method="uploadFile"/>
-		<transition on="success" to="displayConfirmation"/>
-		<transition on="error" to="selectFile"/>
+		<transition on="success" to="selectFile">
+			<set attribute="fileUploaded" scope="flash" value="true"/>
+		</transition>
 	</action-state>
 	
-	<view-state id="displayConfirmation" view="confirmation">
-		<transition on="back" to="selectFile"/>
-	</view-state>
-
 </flow>
