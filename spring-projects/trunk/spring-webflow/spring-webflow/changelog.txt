@@ -31,11 +31,12 @@ General
 
 Package org.springframework.webflow.action
 * Added EvaluateAction for evaluating Expression objects against the RequestContext as part of Action execution.
-* Factored out generic ResultEventFactory and ResultEventFactorySelector helpers.
+* Added SetAction for setting attribute values in a configured scope on Action execution.
 * Added note about the "final" nature of FormAction's action methods.  In general, do not override action methods,
   instead have your flow call multiple methods in a chain or have your action method delegate to an explict overridable hook.
 * Added support for reinstalling custom property editors on FormAction.setupForm if necessary; for 
   example, because the errors collection was serialized and transient editors were lost.
+* Factored out generic ResultEventFactory and ResultEventFactorySelector helpers.
 * Collapsed default RC3 FormAction.createFormObject behavior into "loadFormObject" for simplictly and 
   renamed "loadFormObject" to simply "createFormObject" for consistency.  This leaves a single hook
   -- createFormObject -- to customize how the form object instance is created/retrieved.
@@ -102,7 +103,8 @@ Package org.springframework.webflow.engine
 * Removed support for XML DTD, removing spring-webflow.dtd.
 * Significantly enhanced in-line XML element and attribute documentation for benefit of .xsd users.
 * Reworked support for "bean invoking actions".  Introduced new <bean action/> tag.
-* Added support for <evaluate-action/> elements for evaluated arbitrary flow expressions as an action using OGNL.
+* Added support for <evaluate-action/> elements for evaluating arbitrary flow expressions as an action using OGNL.
+* Added support for <set/> elements for setting flow scope attributes as an action.
 * Added support for 'required' mappings.  A required mapping will report an error if its source expression evaluates to a null value.
 * Added 'renderActionList' property to ViewState, for executing behavior before a view selection is rendered. 
 * Added support for <render-actions> within a <view-state/> element, for executing behavior
@@ -136,6 +138,7 @@ Package org.springframework.webflow.execution
   attributes, and flow definition attributes.
 * Introduced FlowExecutionFactory for encapsulating the construction of a FlowExecution from a FlowDefinition.
 * Moved generic FlowExcutionFactory support code into "factory" subpackage.
+* Added new "flash" scope type for storing attributes for the duration of a request plus redirect.
 * Added support for "flow execution attributes" for setting system parameters that can affect flow execution.
 * Added support for listening to "exceptionThrown" events in a FlowExecution - see FlowExecutionListener.
 * Fixed inconsistency in continuation id parsing within ClientContinuationFlowExecutionRepository.
@@ -158,6 +161,7 @@ Package org.springframework.webflow.samples
   - "Always redirect on pause" (Sellitem, Itemlist)
   - "Bean actions" (Phonebook, Sellitem)
   - "Flow variables" and "Evaluate actions" (Numberguess)
+  - "Flash scope" and "Set" actions (Fileupload)
   Please review samples to see these features in action!
   
 Package org.springframework.webflow.test
