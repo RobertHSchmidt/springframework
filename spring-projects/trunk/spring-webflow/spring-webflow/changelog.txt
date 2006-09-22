@@ -128,6 +128,9 @@ Package org.springframework.webflow.engine
   DocumentBuilder factory logic.
    
 Package org.springframework.webflow.execution
+* Added support for "flow execution attributes" for setting system parameters that can affect flow execution.
+* Added new "flash" scope type for storing attributes for the duration of a request plus redirect.
+* Added support for listening to "exceptionThrown" events in a FlowExecution - see FlowExecutionListener.
 * Decoupled the central RequestContext interface from the flow execution engine implementation.
 * Renamed the "flow" property of FlowExecutionContext to "definition" for consistency.
 * Renamed the "flow" property of FlowSession to "definition" for consistency.
@@ -138,9 +141,6 @@ Package org.springframework.webflow.execution
   attributes, and flow definition attributes.
 * Introduced FlowExecutionFactory for encapsulating the construction of a FlowExecution from a FlowDefinition.
 * Moved generic FlowExcutionFactory support code into "factory" subpackage.
-* Added new "flash" scope type for storing attributes for the duration of a request plus redirect.
-* Added support for "flow execution attributes" for setting system parameters that can affect flow execution.
-* Added support for listening to "exceptionThrown" events in a FlowExecution - see FlowExecutionListener.
 * Fixed inconsistency in continuation id parsing within ClientContinuationFlowExecutionRepository.
 * Removed FlowExecutionRepositoryFactory abstraction, simplifying overall use of the
   FlowExecutionRepository subsystem.
