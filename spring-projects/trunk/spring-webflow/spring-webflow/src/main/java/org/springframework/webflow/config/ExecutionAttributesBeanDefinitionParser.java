@@ -27,6 +27,7 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
+import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.w3c.dom.Element;
 
 /**
@@ -47,8 +48,6 @@ class ExecutionAttributesBeanDefinitionParser extends AbstractSingleBeanDefiniti
 
 	private static final String VALUE = "value";
 
-	private static final String ALWAYS_REDIRECT_ON_PAUSE = "alwaysRedirectOnPause";
-
 	protected Class getBeanClass(Element element) {
 		return MapFactoryBean.class;
 	}
@@ -56,12 +55,12 @@ class ExecutionAttributesBeanDefinitionParser extends AbstractSingleBeanDefiniti
 	protected void doParse(Element element, BeanDefinitionBuilder definitionBuilder) {
 		List attributeElements = DomUtils.getChildElementsByTagName(element, ATTRIBUTE);
 		Map attributeMap = new ManagedMap(attributeElements.size());
-		addAttributes(attributeMap, attributeElements);
-		addSpecialAttributes(attributeMap, element);
+		putAttributes(attributeMap, attributeElements);
+		putSpecialAttributes(attributeMap, element);
 		definitionBuilder.addPropertyValue(SOURCE_MAP_PROPERTY, attributeMap);
 	}
 
-	private void addAttributes(Map attributeMap, List attributeElements) {
+	private void putAttributes(Map attributeMap, List attributeElements) {
 		for (Iterator i = attributeElements.iterator(); i.hasNext();) {
 			Element attributeElement = (Element)i.next();
 			String type = attributeElement.getAttribute(TYPE);
@@ -75,13 +74,14 @@ class ExecutionAttributesBeanDefinitionParser extends AbstractSingleBeanDefiniti
 		}
 	}
 
-	private void addSpecialAttributes(Map attributeMap, Element element) {
-		if (DomUtils.getChildElementByTagName(element, ALWAYS_REDIRECT_ON_PAUSE) != null) {
-			addAlwaysRedirectOnPauseAttribute(attributeMap);
-		}
+	private void putSpecialAttributes(Map attributeMap, Element element) {
+		putAlwaysRedirectOnPauseAttribute(attributeMap, DomUtils.getChildElementByTagName(element, ApplicationViewSelector.ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE));
 	}
 
-	private void addAlwaysRedirectOnPauseAttribute(Map attributeMap) {
-		attributeMap.put(ALWAYS_REDIRECT_ON_PAUSE, Boolean.TRUE);
+	private void putAlwaysRedirectOnPauseAttribute(Map attributeMap, Element element) {
+		if (element != null) {
+			Boolean value = Boolean.valueOf(element.getAttribute(VALUE));
+			attributeMap.put(ApplicationViewSelector.ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE, value);
+		}
 	}
 }
