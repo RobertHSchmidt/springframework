@@ -228,7 +228,7 @@
 Integration test report has been generated.
 The HTML report is ${target.itest.openldap.results.html.dir}/index.html
 		</echo>
-		<fail if="itests.openldap.failed" message="Integration tests failed" />
+		<fail if="itests.openldap.failed" message="Integration tests towards OpenLDAP failed" />
 	</target>
 
 </project>
