@@ -19,11 +19,7 @@
 	</bean>
 
 	<!-- Launches new flow executions and resumes existing executions. -->
-	<flow:executor id="flowExecutor" registry-ref="flowRegistry" repository-type="simple">
-		<flow:execution-attributes>
-			<flow:alwaysRedirectOnPause value="false"/>
-		</flow:execution-attributes>
-	</flow:executor>
+	<flow:executor id="flowExecutor" registry-ref="flowRegistry" repository-type="singlekey"/>
 
 	<!-- Creates the registry of flow definitions for this application -->
 	<flow:registry id="flowRegistry">
