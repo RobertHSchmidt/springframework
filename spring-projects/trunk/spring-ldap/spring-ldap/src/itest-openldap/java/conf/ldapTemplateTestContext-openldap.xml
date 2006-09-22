@@ -5,7 +5,7 @@
     
 	<bean id="placeholderConfig"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location" value="classpath:/conf/openLdap.properties" />
+		<property name="location" value="classpath:/conf/ldap-openldap.properties" />
 	</bean>
 	
 	<bean id="contextSource" class="org.springframework.ldap.support.LdapContextSource" >

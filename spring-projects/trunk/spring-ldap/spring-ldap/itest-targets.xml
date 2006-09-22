@@ -91,7 +91,7 @@
 
 		<!-- write out a test.properties file with common properties -->
 		<propertyfile file="${target.testclasses.dir}/test.properties" comment="Common unit/integration test properties">
-			<entry key="lastupate" type="date" value="now" />
+			<entry key="lastupdate" type="date" value="now" />
 		</propertyfile>
 
 	</target>
