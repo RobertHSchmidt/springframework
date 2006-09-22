@@ -80,12 +80,12 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	/**
 	 * The session data model ("flow scope").
 	 */
-	private LocalAttributeMap scope = new LocalAttributeMap();
+	private MutableAttributeMap scope = new LocalAttributeMap();
 
 	/**
-	 * The flash map.
+	 * The flash map ("flash scope").
 	 */
-	private LocalAttributeMap flashMap = new LocalAttributeMap();
+	private MutableAttributeMap flashMap = new LocalAttributeMap();
 
 	/**
 	 * The parent session of this session (may be <code>null</code> if this is
@@ -146,8 +146,8 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 		flowId = (String)in.readObject();
 		stateId = (String)in.readObject();
 		status = (FlowSessionStatus)in.readObject();
-		scope = (LocalAttributeMap)in.readObject();
-		flashMap = (LocalAttributeMap)in.readObject();
+		scope = (MutableAttributeMap)in.readObject();
+		flashMap = (MutableAttributeMap)in.readObject();
 		parent = (FlowSessionImpl)in.readObject();
 	}
 
