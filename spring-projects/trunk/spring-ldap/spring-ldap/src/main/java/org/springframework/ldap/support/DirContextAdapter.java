@@ -498,6 +498,34 @@ public class DirContextAdapter implements DirContextOperations {
             return true;
         }
 
+        if (prev != null) {
+            // Also check against updatedAttrs, since there night have been
+            // a previous update
+            try {
+                for (int i = 0; i < prev.size(); i++) {
+                    Object obj = prev.get(i);
+                    // TRUE if one value is not equal
+                    if (!(obj instanceof String)) {
+                        return true;
+                    }
+                    if (orderMatters) {
+                        // check only the string with same index
+                        if (!values[i].equals(obj)) {
+                            return true;
+                        }
+                    } else {
+                        // check all strings
+                        if (!ArrayUtils.contains(values, obj)) {
+                            return true;
+                        }
+                    }
+                }
+
+            } catch (NamingException e) {
+                // TRUE if we can't access the value
+                return true;
+            }
+        }        
         // FALSE since we have compared all values
         return false;
     }

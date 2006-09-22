@@ -25,6 +25,18 @@ public class DirContextAdapterBugTest extends TestCase {
         assertEquals(0, ctx.getModificationItems().length);
     }
 
+    public void testResetAttributeValuesSameLengthNotReportedAsModifications() {
+        BasicAttributes attrs = new BasicAttributes("myattr", "a");
+        attrs.get("myattr").add("b");
+        attrs.get("myattr").add("c");
+        UpdateAdapter ctx = new UpdateAdapter(attrs, new DistinguishedName());
+
+        ctx.setAttributeValues("myattr", new String[] { "a", "b", "d" });
+        ctx.setAttributeValues("myattr", new String[] { "a", "b", "c" });
+
+        assertEquals(0, ctx.getModificationItems().length);
+    }
+
     /**
      * This test starts with an array with a null value in it (because that's
      * how BasicAttributes will do it), changes to <code>[a]</code>, and then
