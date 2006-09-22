@@ -16,7 +16,7 @@
 	<property name="ldap.password" value="secret" />
 
 	<!-- Cannot import common-targets since itest-targets already does -->
-	<import file="${basedir}/itest-targets.xml" />
+	<import file="${basedir}/itest-openldap-targets.xml" />
 	<import file="${common.build.dir}/doc-targets.xml" />
 	<import file="${common.build.dir}/clover-targets.xml" />
 
