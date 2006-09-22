@@ -206,6 +206,17 @@
             				<entry>None</entry>
             				<entry>None</entry>
         	            </row>
+						<row>
+							<entry>Util</entry>
+            				<entry>
+            					Low level utilities used by all other parts of the system.
+            				</entry>
+            				<entry>
+            					util
+            				</entry>
+            				<entry>None</entry>
+            				<entry>None</entry>
+        	            </row>
             			<row>
             				<entry>Flow Definition</entry>
             				<entry>
@@ -236,7 +247,10 @@
             					FlowDefinitionRegistry,
             					FlowDefinitionLocator
             				</entry>
-            				<entry>Core</entry>
+            				<entry>
+            					Core,
+            					Flow Definition
+            				</entry>
         	       		</row>
            				<row>
             				<entry>External Context</entry>
@@ -254,7 +268,25 @@
             				<entry>
 								Core,
 								context.servlet requires Servlet API 2.3,
-								context.portlet requires Portlet API 1.0
+								context.portlet requires Portlet API 1.0 in addition to Servlet API 2.3
+            				</entry>
+        	       		</row>
+           				<row>
+            				<entry>Conversation</entry>
+            				<entry>
+            					Conversation state (data) management subsystem.
+            				</entry>
+            				<entry>
+            					conversation,
+            					conversation.impl
+            				</entry>
+            				<entry>
+            					ConversationManager
+            				</entry>
+            				<entry>
+								Core,
+								Util,
+								External Context
             				</entry>
         	       		</row>
            				<row>
@@ -272,7 +304,11 @@
             				<entry>
             					FlowExecution
             				</entry>
-            				<entry>Flow Definition</entry>
+            				<entry>
+            					Core,
+            					External Context,
+            					Flow Definition
+            				</entry>
         	       		</row>
            				<row>
             				<entry>Flow Execution Repository</entry>
@@ -289,8 +325,32 @@
             					FlowExecutionRepository
             				</entry>
             				<entry>
+            					Core,
+            					Util,
+            					Flow Definition,
+            					Conversation,
             					Flow Execution,
             					repository.continuation requires commons-codec 1.0 if using client continuations
+            				</entry>
+        	     		</row>
+           				<row>
+            				<entry>Action</entry>
+            				<entry>
+ 								Reusable action implementations.        				
+            				</entry>
+            				<entry>
+            					action
+            					action.portlet
+            				</entry>
+            				<entry>
+            					None
+            				</entry>
+            				<entry>
+            					Core,
+            					Util,
+            					Flow Definition,
+            					External Context,
+            					Flow Execution
             				</entry>
         	     		</row>
  					</tbody>
