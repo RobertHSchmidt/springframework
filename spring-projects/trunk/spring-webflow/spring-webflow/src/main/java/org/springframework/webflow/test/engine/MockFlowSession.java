@@ -85,7 +85,7 @@ public class MockFlowSession implements FlowSession {
 	}
 
 	public MutableAttributeMap getFlashMap() {
-		return scope;
+		return flashMap;
 	}
 
 	public FlowSessionStatus getStatus() {
