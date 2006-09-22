@@ -20,14 +20,16 @@ The description, subsystems, and source packages of each layer are summarized be
 </p>
 <h3>Execution Core Layer</h3>
 <p>
-Contains the central public Spring Web Flow API elements.  This includes element to model flow definitions 
+Contains the central public Spring Web Flow API elements.  This includes elements to model flow definitions 
 as well as execute those flow definitions.  As the "bottom layer", this layer defines key domain interfaces and is highly stable.
 </p>
 <h4>Subsystems</h4>
 <ol>
+<li>{@link org.springframework.webflow.core Core}
 <li>{@link org.springframework.webflow.definition Flow Definition}
 <li>{@link org.springframework.webflow.definition.registry Flow Definition Registry}
 <li>{@link org.springframework.webflow.context External Context}
+<li>{@link org.springframework.webflow.conversation Conversation}
 <li>{@link org.springframework.webflow.execution Flow Execution}
 <li>{@link org.springframework.webflow.execution.repository Flow Execution Repository}
 <li>{@link org.springframework.webflow.action Action}
@@ -36,8 +38,11 @@ as well as execute those flow definitions.  As the "bottom layer", this layer de
 </p>
 <h3>Executor Layer</h3>
 <p>
-Contains services called "flow executors" that drive the execution of flow definitions.  This layer defines the 
-core FlowExecutor service interface and implementation, as well as adaption code for executing flows in several specific environments.  Support for Spring MVC, Struts, and Java Server Faces (JSF) environments is housed here.  This layer depends on the stable Execution Core, but is not coupled to the more volatile Execution Engine implementation.
+Contains services called "flow executors" that drive the execution of flow definitions. This layer defines the 
+core FlowExecutor service interface and implementation, as well as adaption code for executing flows in several
+specific environments.  Support for Spring MVC, Struts, and Java Server Faces (JSF) environments is housed here.
+This layer depends on the stable Execution Core, but is not coupled to the more volatile Execution Engine
+implementation.
 </p>
 <h4>Subsystems</h4>
 <ol>
@@ -49,8 +54,9 @@ core FlowExecutor service interface and implementation, as well as adaption code
 <h3>Execution Engine Layer</h3>
 </p>
 <p>
-Contains concrete implementations of the stable Execution Core abstractions.  This layer defines the finite-state 
-machine that carries out runtime flow execution.  It also contains a builder subsystem for assembling flows from externalized resources such as XML files.
+Contains concrete implementations of the stable Execution Engine abstractions.  This layer defines the
+finite-state machine that carries out runtime flow execution. It also contains a builder subsystem for
+assembling flows from externalized resources such as XML files.
 </p>
 <h4>Subsystems</h4>
 <ol>
@@ -60,9 +66,9 @@ machine that carries out runtime flow execution.  It also contains a builder sub
 <h3>Test Layer</h3>
 </p>
 <p>
-Contains support code for testing flow executions.  Two types of support are provided: stubs for unit 
-testing engine artifacts, and base classes for writing flow execution integration tests.  This layer 
-is depends on the Execution Core and Execution Engine layers.
+Contains support code for testing flow executions. Two types of support are provided: stubs for unit 
+testing engine artifacts, and base classes for writing flow execution integration tests. This layer 
+depends on the Execution Core and Execution Engine layers.
 </p>
 <h4>Subsystems</h4>
 <ol>
@@ -73,7 +79,8 @@ is depends on the Execution Core and Execution Engine layers.
 </p>
 <h4>Subsystems</h4>
 <p>
-Contains support for configuring the flow executor engine using Spring.  A Spring 2.0 config schema is provided.  This is the top layer and depends on the Execution Core, Executor, and Execution Engine layers.
+Contains support for configuring the flow executor engine using Spring. A Spring 2.0 config schema is provided.
+This is the top layer and depends on the Execution Core, Executor, and Execution Engine layers.
 </p>
 <ol>
 <li>{@link org.springframework.webflow.config Spring Configuration Support}
