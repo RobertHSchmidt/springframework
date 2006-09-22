@@ -20,7 +20,8 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 
 /**
  * An enumeration of the core scope types of Spring Web Flow. Provides easy
- * access to each scope by <i>type</i> using {@link #getScope(RequestContext)()}.
+ * access to each scope by <i>type</i> using
+ * {@link #getScope(RequestContext)()}.
  * <p>
  * A "scope" defines a data structure for storing custom user attributes within
  * a flow execution. Different scope types have different semantics in terms of
@@ -43,12 +44,26 @@ public abstract class ScopeType extends StaticLabeledEnum {
 	};
 
 	/**
+	 * Constant indicating flash scope. Data in flash scope exists for the life
+	 * of a request and also survives a <i>single</i> redirect if one is issued
+	 * when the request ends on {@link FlowSessionStatus#PAUSED pause}. Data in
+	 * flash scope is removed after the
+	 * {@link FlowExecution#refresh(org.springframework.webflow.context.ExternalContext) refresh}
+	 * operation occurs on the redirect.
+	 */
+	public static final ScopeType FLASH = new ScopeType(1, "Flash") {
+		public MutableAttributeMap getScope(RequestContext context) {
+			return context.getFlashScope();
+		}
+	};
+
+	/**
 	 * Constant indicating flow scope. Data in flow scope is shared by all
 	 * artifacts of exactly one flow definition (actions, view, states, etc.)
 	 * and lives locally for the life of a executing flow session. When the flow
 	 * session ends any data in flow scope goes out of scope.
 	 */
-	public static final ScopeType FLOW = new ScopeType(1, "Flow") {
+	public static final ScopeType FLOW = new ScopeType(2, "Flow") {
 		public MutableAttributeMap getScope(RequestContext context) {
 			return context.getFlowScope();
 		}
@@ -61,7 +76,7 @@ public abstract class ScopeType extends StaticLabeledEnum {
 	 * conversation). When the overall execution ends, any data in conversation
 	 * scope goes out of scope.
 	 */
-	public static final ScopeType CONVERSATION = new ScopeType(2, "Conversation") {
+	public static final ScopeType CONVERSATION = new ScopeType(3, "Conversation") {
 		public MutableAttributeMap getScope(RequestContext context) {
 			return context.getConversationScope();
 		}

@@ -34,8 +34,8 @@ import org.springframework.webflow.definition.StateDefinition;
  * Initially it will be {@link FlowSessionStatus#CREATED} when a new execution
  * is started.
  * <p>
- * After passing through the {@link FlowSessionStatus#STARTING} status, the
- * flow session is activated (about to be manipulated) and its status becomes
+ * After passing through the {@link FlowSessionStatus#STARTING} status, the flow
+ * session is activated (about to be manipulated) and its status becomes
  * {@link FlowSessionStatus#ACTIVE}. In the case of a new execution session
  * activation happens immediately after creation to put the "root flow" at the
  * top of the stack and transition it to its start state.
@@ -86,10 +86,19 @@ public interface FlowSession {
 	public FlowSessionStatus getStatus();
 
 	/**
-	 * Return the session attributes; the basis for "flow scope".
+	 * Return this session's local attributes; the basis for "flow scope" (flow
+	 * session scope).
 	 * @return the flow scope attributes
 	 */
 	public MutableAttributeMap getScope();
+
+	/**
+	 * Returns the local "flash map". Attributes in this map are typically
+	 * cleared out when the execution is refreshed and this session is the
+	 * "active session", on "redirect on pause".
+	 * @return the flash map
+	 */
+	public MutableAttributeMap getFlashMap();
 
 	/**
 	 * Returns the parent flow session in the current flow execution, or
@@ -103,4 +112,5 @@ public interface FlowSession {
 	 * session.
 	 */
 	public boolean isRoot();
+
 }

@@ -240,6 +240,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			}
 		}
 		finally {
+			context.getFlashScope().clear();
 			getListeners().fireRequestProcessed(context);
 		}
 	}

@@ -112,6 +112,10 @@ class RequestControlContextImpl implements RequestControlContext {
 		return requestScope;
 	}
 
+	public MutableAttributeMap getFlashScope() {
+		return (MutableAttributeMap)flowExecution.getActiveSession().getFlashMap();
+	}
+
 	public MutableAttributeMap getFlowScope() {
 		return flowExecution.getActiveSession().getScope();
 	}
@@ -154,7 +158,7 @@ class RequestControlContextImpl implements RequestControlContext {
 	}
 
 	public AttributeMap getModel() {
-		return getConversationScope().union(getFlowScope()).union(getRequestScope());
+		return getConversationScope().union(getFlowScope()).union(getFlashScope()).union(getRequestScope());
 	}
 
 	// implementing RequestControlContext
@@ -219,36 +223,34 @@ class RequestControlContextImpl implements RequestControlContext {
 	public ViewSelection execute(Transition transition) {
 		return transition.execute(getCurrentStateInternal(), this);
 	}
-	
+
 	// internal helpers
 
 	/**
-	 * Returns the execution listerns for the flow execution of
-	 * this request context.
+	 * Returns the execution listerns for the flow execution of this request
+	 * context.
 	 */
 	protected FlowExecutionListeners getExecutionListeners() {
 		return flowExecution.getListeners();
 	}
 
 	/**
-	 * Returns the active flow in the flow execution of this request
-	 * context.
+	 * Returns the active flow in the flow execution of this request context.
 	 */
 	protected Flow getActiveFlowInternal() {
 		return (Flow)getActiveSession().getDefinition();
 	}
 
 	/**
-	 * Returns the current state in the flow execution of this request
-	 * context.
+	 * Returns the current state in the flow execution of this request context.
 	 */
 	protected State getCurrentStateInternal() {
 		return (State)getActiveSession().getState();
 	}
 
 	/**
-	 * Returns the active flow session in the flow execution of
-	 * this request context.
+	 * Returns the active flow session in the flow execution of this request
+	 * context.
 	 */
 	protected FlowSessionImpl getActiveSession() {
 		return flowExecution.getActiveSessionInternal();

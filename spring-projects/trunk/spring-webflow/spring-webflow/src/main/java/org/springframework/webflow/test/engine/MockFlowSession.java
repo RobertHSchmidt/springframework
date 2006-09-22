@@ -40,6 +40,8 @@ public class MockFlowSession implements FlowSession {
 
 	private MutableAttributeMap scope = new LocalAttributeMap();
 
+	private MutableAttributeMap flashMap = new LocalAttributeMap();
+
 	private FlowSession parent;
 
 	/**
@@ -79,6 +81,10 @@ public class MockFlowSession implements FlowSession {
 	}
 
 	public MutableAttributeMap getScope() {
+		return scope;
+	}
+
+	public MutableAttributeMap getFlashMap() {
 		return scope;
 	}
 
