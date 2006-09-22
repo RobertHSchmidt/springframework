@@ -4,13 +4,15 @@ http://www.springframework.org/ldap
 
 Changes in version 1.1.1 (xx.y.2006)
 -------------------------------------------
-* Added capability to use server-side controls in search.
+* Added capability to use server-side controls in search by introducing a
+  generic DirContextProcessor that is run before and after a search.
 
-* Added paged search result functionality.
+* Added paged search result functionality in PagedResultsRequestControl,
+  which is an implementation of DirContextProcessor.
 
 * Fixed problem with DirContextAdapter, where the wrong change was applied
-  when a change was followed by another change that reset the values to the
-  original.
+  when one change was followed by another change that reset the values to
+  the original.
 
 * LdapRdn is now Serializable.
 
