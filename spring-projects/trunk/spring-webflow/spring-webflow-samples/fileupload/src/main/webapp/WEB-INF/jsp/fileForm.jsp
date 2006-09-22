@@ -7,6 +7,9 @@
 	<h2>Select the file to upload</h2>
 	<hr>
 	<table>
+		<c:if test="${fileUploaded}">
+			<p>File uploaded succesfully.</p>		
+		</c:if>
 		<form name="submitForm" method="post" enctype="multipart/form-data">
 		<tr>
 			<td>
