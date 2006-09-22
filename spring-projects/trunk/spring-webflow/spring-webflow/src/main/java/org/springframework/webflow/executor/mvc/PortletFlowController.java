@@ -39,27 +39,23 @@ import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
 
 /**
- * <p>
  * Point of integration between Spring Portlet MVC and Spring Web Flow: a
  * {@link Controller} that routes incoming portlet requests to one or more
  * managed flow executions.
- * </p>
  * <p>
  * Requests into the web flow system are handled by a {@link FlowExecutor},
  * which this class delegates to. Consult the JavaDoc of that class for more
  * information on how requests are processed.
- * </p>
  * <p>
  * Note: a single <code>PortletFlowController</code> may execute all flows
  * within your application. See the <code>phonebook-portlet</code> sample
  * application for examples of the various strategies for launching and resuming
  * flow executions in a Portlet environment.
- * </p>
  * <p>
  * It is also possible to customize the {@link FlowExecutorArgumentExtractor}
  * strategy to allow for different types of controller parameterization, for
  * example perhaps in conjunction with a REST-style request mapper.
- * </p>
+ * 
  * @see org.springframework.webflow.executor.FlowExecutor
  * @see org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor
  * 
@@ -202,8 +198,9 @@ public class PortletFlowController extends AbstractController implements Initial
 				// is an "active" forward from a view-state (not end-state) --
 				// set the flow execution key render parameter to support
 				// browser refresh
-				response.setRenderParameter(argumentExtractor.getFlowExecutionKeyParameterName(), responseInstruction
-						.getFlowExecutionKey());
+				response.setRenderParameter(
+						argumentExtractor.getFlowExecutionKeyParameterName(),
+						responseInstruction.getFlowExecutionKey());
 			}
 			// cache response instruction for access during render phase of this
 			// portlet
@@ -212,8 +209,9 @@ public class PortletFlowController extends AbstractController implements Initial
 		else if (responseInstruction.isFlowExecutionRedirect()) {
 			// is a flow execution redirect: simply expose key parameter to
 			// support refresh during render phase
-			response.setRenderParameter(argumentExtractor.getFlowExecutionKeyParameterName(), responseInstruction
-					.getFlowExecutionKey());
+			response.setRenderParameter(
+					argumentExtractor.getFlowExecutionKeyParameterName(),
+					responseInstruction.getFlowExecutionKey());
 		}
 		else if (responseInstruction.isFlowDefinitionRedirect()) {
 			// set flow id render parameter to request that a new flow be
@@ -281,6 +279,7 @@ public class PortletFlowController extends AbstractController implements Initial
 			return new ModelAndView(forward.getViewName(), model);
 		}
 		else if (response.isNull()) {
+			// no response to issue
 			return null;
 		}
 		else {

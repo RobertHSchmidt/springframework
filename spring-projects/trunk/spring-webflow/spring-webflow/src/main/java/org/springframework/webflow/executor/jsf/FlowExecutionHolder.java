@@ -25,6 +25,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionKey;
 /**
  * A holder storing a reference to a flow execution and the key of that flow
  * execution if it has been (or is about to be) managed in a repository.
+ * 
  * @author Keith Donald
  */
 public class FlowExecutionHolder implements Serializable {

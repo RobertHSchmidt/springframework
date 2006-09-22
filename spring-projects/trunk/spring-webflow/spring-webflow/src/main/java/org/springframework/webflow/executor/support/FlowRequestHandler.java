@@ -25,7 +25,7 @@ import org.springframework.webflow.executor.ResponseInstruction;
 
 /**
  * An immutable helper for flow controllers that encapsulates reusable workflow
- * required to use launch and resume flow executions using a {@link FlowExecutor}.
+ * required to launch and resume flow executions using a {@link FlowExecutor}.
  * <p>
  * The {@link #handleFlowRequest(ExternalContext)} method is the central helper
  * operation and implements the following algorithm:
@@ -35,7 +35,7 @@ import org.springframework.webflow.executor.ResponseInstruction;
  * <li>If a valid flow execution id was extracted, signal an event in that
  * existing execution to resume it. The event to signal is determined by calling
  * the {@link FlowExecutorArgumentExtractor#extractEventId(ExternalContext)}
- * method.
+ * method. If no event can be extracted, the existing execution will be refreshed.
  * <li>If no flow execution id was extracted, launch a new flow execution. The
  * top-level flow definition for which an execution is created is determined by
  * extracting the flow id using the method
@@ -59,7 +59,8 @@ public class FlowRequestHandler {
 	private FlowExecutor flowExecutor;
 
 	/**
-	 * A helper for extracting arguments of flow executor operations.
+	 * A helper for extracting arguments of flow executor operations
+	 * from the external context.
 	 */
 	private FlowExecutorArgumentExtractor argumentExtractor;
 
@@ -75,7 +76,7 @@ public class FlowRequestHandler {
 	/**
 	 * Creates a new flow controller helper.
 	 * @param flowExecutor the flow executor to delegate to
-	 * @param argumentExtractor the flow executor argument extractor
+	 * @param argumentExtractor the flow executor argument extractor to use
 	 */
 	public FlowRequestHandler(FlowExecutor flowExecutor, FlowExecutorArgumentExtractor argumentExtractor) {
 		Assert.notNull(flowExecutor, "The flow executor is required");
@@ -92,7 +93,7 @@ public class FlowRequestHandler {
 	}
 
 	/**
-	 * Returns the argument extractor used by this helper.
+	 * Returns the flow executor argument extractor used by this helper.
 	 */
 	public FlowExecutorArgumentExtractor getArgumentExtractor() {
 		return argumentExtractor;

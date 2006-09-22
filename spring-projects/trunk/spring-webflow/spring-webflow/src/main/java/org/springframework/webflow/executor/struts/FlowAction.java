@@ -91,7 +91,6 @@ import org.springframework.webflow.executor.support.FlowRequestHandler;
  * enabling POJO-based binding and validation with Spring.
  * <p>
  * Other notes regarding Struts/Spring Web Flow integration:
- * <p>
  * <ul>
  * <li>Logical view names returned when <code>ViewStates</code> and
  * <code>EndStates</code> are entered are mapped to physical view templates
@@ -125,6 +124,7 @@ import org.springframework.webflow.executor.support.FlowRequestHandler;
  * @see org.springframework.webflow.executor.FlowExecutor
  * @see org.springframework.webflow.executor.support.FlowRequestHandler
  * @see org.springframework.web.struts.SpringBindingActionForm
+ * @see org.springframework.web.struts.DelegatingActionProxy
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -133,14 +133,14 @@ public class FlowAction extends ActionSupport {
 
 	/**
 	 * The flow executor will be retreived from the application context using
-	 * this bean name if no executor is explicitly set.
+	 * this bean name if no executor is explicitly set. ("flowExecutor")
 	 */
 	protected static final String FLOW_EXECUTOR_BEAN_NAME = "flowExecutor";
 
 	/**
 	 * The flow executor argument extractor will be retreived from the
 	 * application context using this bean name if no argument extractor is
-	 * explicitly set.
+	 * explicitly set. ("argumentExtractor")
 	 */
 	protected static final String FLOW_EXECUTOR_ARGUMENT_EXTRACTOR_BEAN_NAME = "argumentExtractor";
 
@@ -194,12 +194,9 @@ public class FlowAction extends ActionSupport {
 				setFlowExecutor((FlowExecutor)context.getBean(FLOW_EXECUTOR_BEAN_NAME, FlowExecutor.class));
 			}
 			else {
-				String message = "No '" + FLOW_EXECUTOR_BEAN_NAME
+				throw new IllegalStateException("No '" + FLOW_EXECUTOR_BEAN_NAME
 						+ "' bean definition could be found; to use Spring Web Flow with Struts you must "
-						+ "configure this FlowAction with either a FlowLocator "
-						+ "(exposing a registry of flow definitions) or a custom FlowExecutor "
-						+ "(allowing more configuration options)";
-				throw new IllegalStateException(message);
+						+ "configure this FlowAction with a FlowExecutor");
 			}
 		}
 		if (getArgumentExtractor() == null) {
@@ -208,6 +205,7 @@ public class FlowAction extends ActionSupport {
 						FLOW_EXECUTOR_ARGUMENT_EXTRACTOR_BEAN_NAME, FlowExecutorArgumentExtractor.class));
 			}
 			else {
+				// default
 				argumentExtractor = new FlowExecutorArgumentExtractor();
 			}
 		}
@@ -254,20 +252,20 @@ public class FlowAction extends ActionSupport {
 		}
 		else if (response.isFlowExecutionRedirect()) {
 			// redirect to active flow execution URL
-			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(response.getFlowExecutionKey(), response
-					.getFlowExecutionContext(), context);
+			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(
+					response.getFlowExecutionKey(), response.getFlowExecutionContext(), context);
 			return createRedirectForward(flowExecutionUrl, httpResponse);
+		}
+		else if (response.isFlowDefinitionRedirect()) {
+			// restart the flow by redirecting to flow launch URL
+			String flowUrl = argumentExtractor.createFlowDefinitionUrl((FlowDefinitionRedirect)response.getViewSelection(), context);
+			return createRedirectForward(flowUrl, httpResponse);
 		}
 		else if (response.isExternalRedirect()) {
 			// redirect to external URL
 			String externalUrl = argumentExtractor.createExternalUrl((ExternalRedirect)response.getViewSelection(),
 					response.getFlowExecutionKey(), context);
 			return createRedirectForward(externalUrl, httpResponse);
-		}
-		else if (response.isFlowDefinitionRedirect()) {
-			// restart the flow by redirecting to flow launch URL
-			String flowUrl = argumentExtractor.createFlowUrl((FlowDefinitionRedirect)response.getViewSelection(), context);
-			return createRedirectForward(flowUrl, httpResponse);
 		}
 		else if (response.isNull()) {
 			// no response to issue

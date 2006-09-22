@@ -21,8 +21,9 @@ import javax.faces.el.VariableResolver;
 
 /**
  * Custom variable resolver that resolves to a thread-bound FlowExecution object
- * for binding expressions prefixed with {@link #FLOW_SCOPE_VARIABLE} (e.g.
- * flowScope.myBean.myProperty)
+ * for binding expressions prefixed with {@link #FLOW_SCOPE_VARIABLE}. For instance
+ * "flowScope.myBean.myProperty".
+ * 
  * @author Colin Sampaleanu
  */
 public class FlowVariableResolver extends VariableResolver {

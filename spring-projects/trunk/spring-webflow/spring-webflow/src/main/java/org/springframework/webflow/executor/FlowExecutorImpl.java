@@ -70,9 +70,9 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
  * <td>inputMapper</td>
  * <td>The service responsible for mapping attributes of
  * {@link ExternalContext external contexts} that request to launch new
- * {@link FlowExecution flow executions}. After mapping, the target map is then
- * passed to the FlowExecution, exposing extern context attributes as input to
- * the flow during startup.</td>
+ * {@link FlowExecution flow executions}.
+ * After mapping, the target map is then passed to the FlowExecution, exposing
+ * external context attributes as input to the flow during startup.</td>
  * <td>A
  * {@link org.springframework.webflow.executor.RequestParameterInputMapper request parameter mapper},
  * which exposes all request parameters in to the flow execution for input
@@ -251,7 +251,6 @@ public class FlowExecutorImpl implements FlowExecutor {
 		ExternalContextHolder.setExternalContext(context);
 		try {
 			FlowExecutionKey key = executionRepository.parseFlowExecutionKey(flowExecutionKey);
-			// TODO should we lock here?
 			FlowExecutionLock lock = executionRepository.getLock(key);
 			// make sure we're the only one manipulating the flow execution
 			lock.lock();
@@ -273,7 +272,8 @@ public class FlowExecutorImpl implements FlowExecutor {
 
 	/**
 	 * Factory method that creates the input attribute map for a newly created
-	 * {@link FlowExecution}.
+	 * {@link FlowExecution}. This implementation uses the registered input mapper,
+	 * if any.
 	 * @param context the external context
 	 * @return the input map, or null if no input
 	 */

@@ -26,19 +26,22 @@ import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
  * Extracts flow executor arguments from the request path.
  * <p>
  * This allows for REST-style URLs to launch flows in the general format:
- * <code>http://${host}/${context path}/${dispatcher path}/${flowId}</code>
+ * <code>http://${host}/${context path}/${dispatcher path}/${flowId}</code>.
  * <p>
- * For example, the url
+ * For example, the URL
  * <code>http://localhost/springair/reservation/booking</code> would launch a
  * new execution of the <code>booking</code> flow, assuming a context path of
- * <code>/springair</code> and a servlet mapping of
- * <code>/reservation/*</code>.
+ * <code>/springair</code> and a servlet mapping of <code>/reservation/*</code>.
  * <p>
- * This also allows for URLS to resume flow execution in the format:
- * <code>http://${host}/${context path}/${dispatcher path}/${key delimiter}/${flowExecutionKey}</code>
- * 
+ * This also allows for URLs to resume flow executions in the format:
+ * <code>http://${host}/${context path}/${dispatcher path}/${key delimiter}/${flowExecutionKey}</code>.
+ * <p>
+ * For example, the URL
+ * <code>http://localhost/springair/reservation/k/ABC123XYZ</code> would
+ * resume flow execution "ABC123XYZ".
+ * <p>
  * Note: this implementation only works with <code>ExternalContext</code>
- * implementations that return a valid
+ * implementations that return valid
  * {@link ExternalContext#getRequestPathInfo()} such as the
  * {@link ServletExternalContext}.
  * 
@@ -46,29 +49,34 @@ import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
  */
 public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgumentExtractor {
 
+	/**
+	 * URL path seperator ("/").
+	 */
 	private static final char PATH_SEPARATOR_CHARACTER = '/';
 
+	/**
+	 * Default value of the flow execution key delimiter ("k").
+	 */
 	private static final String KEY_DELIMITER = "k";
 
 	/**
 	 * The delimiter that when present in the requestPathInfo indicates the
-	 * flowExecutionKey follows in the URL.
-	 * @see #extractFlowExecutionKey(ExternalContext)
+	 * flowExecutionKey follows in the URL. Defaults to {@link #KEY_DELIMITER}.
 	 */
 	private String keyDelimiter = KEY_DELIMITER;
 
 	/**
-	 * Returns the key delimiter
+	 * Returns the key delimiter. Defaults to {@link #KEY_DELIMITER}.
 	 * @return the key delimiter
 	 */
-	protected String getKeyDelimiter() {
+	public String getKeyDelimiter() {
 		return keyDelimiter;
 	}
 
 	/**
 	 * Sets the delimiter that when present in the requestPathInfo indicates the
-	 * flowExecutionKey follows in the URL.
-	 * @param keyDelimiter the key delimiter.
+	 * flowExecutionKey follows in the URL. Defaults to {@link #KEY_DELIMITER}.
+	 * @param keyDelimiter the key delimiter
 	 * @see #extractFlowExecutionKey(ExternalContext)
 	 */
 	public void setKeyDelimiter(String keyDelimiter) {
@@ -96,21 +104,21 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 		String requestPathInfo = getRequestPathInfo(context);
 		int index = requestPathInfo.indexOf(keyPath());
 		if (index != -1) {
-			return requestPathInfo.substring(index + keyPathLength());
+			return requestPathInfo.substring(index + keyPath().length());
 		}
 		else {
 			return super.extractFlowExecutionKey(context);
 		}
 	}
 
-	public String createFlowUrl(FlowDefinitionRedirect flowDefinitionRedirect, ExternalContext context) {
+	public String createFlowDefinitionUrl(FlowDefinitionRedirect flowDefinitionRedirect, ExternalContext context) {
 		StringBuffer flowUrl = new StringBuffer();
 		appendFlowExecutorPath(flowUrl, context);
 		flowUrl.append(PATH_SEPARATOR_CHARACTER);
 		flowUrl.append(flowDefinitionRedirect.getFlowDefinitionId());
 		if (!flowDefinitionRedirect.getExecutionInput().isEmpty()) {
 			flowUrl.append('?');
-			appendQueryParameters(flowDefinitionRedirect.getExecutionInput(), flowUrl);
+			appendQueryParameters(flowUrl, flowDefinitionRedirect.getExecutionInput());
 		}
 		return flowUrl.toString();
 	}
@@ -137,11 +145,10 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 		return requestPathInfo != null ? requestPathInfo : "";
 	}
 	
+	/**
+	 * Returns the flow execution key path in the request path info, e.g. "/k/".
+	 */
 	private String keyPath() {
 		return PATH_SEPARATOR_CHARACTER + keyDelimiter + PATH_SEPARATOR_CHARACTER;
-	}
-
-	private int keyPathLength() {
-		return keyDelimiter.length() + 2;
 	}
 }

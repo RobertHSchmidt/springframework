@@ -29,6 +29,19 @@ import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 /**
  * Immutable value object that provides clients with information about a
  * response to issue.
+ * <p>
+ * There are five different <i>types</i> of response instruction:
+ * <ul>
+ * <li>An {@link #isApplicationView() application view}.</li>
+ * <li>A {@link #isFlowExecutionRedirect() flow execution redirect}, showing
+ * an application view via a redirect that refreshes an ongoing flow
+ * execution.</li>
+ * <li>A {@link #isFlowDefinitionRedirect() flow definition redirect},
+ * launching an entirely new flow execution.</li>
+ * <li>An {@link #isExternalRedirect() external redirect}, redirecting
+ * to an external URL.</li>
+ * <li>A {@link #isNull() null view}, not showing a response at all.</li>
+ * </ul>
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -42,14 +55,14 @@ public class ResponseInstruction implements Serializable {
 	private String flowExecutionKey;
 
 	/**
+	 * Basic state info on the flow execution.
+	 */
+	private transient FlowExecutionContext flowExecutionContext;
+
+	/**
 	 * The view selection that was made.
 	 */
 	private ViewSelection viewSelection;
-
-	/**
-	 * Basic state info on flow execution.
-	 */
-	private transient FlowExecutionContext flowExecutionContext;
 
 	/**
 	 * Create a new response instruction for a paused flow execution.
@@ -65,8 +78,10 @@ public class ResponseInstruction implements Serializable {
 	}
 
 	/**
-	 * Create a new response instruction for an ended flow execution.
-	 * @param flowExecutionContext the current flow execution context
+	 * Create a new response instruction for an ended flow execution. No
+	 * flow execution key needs to be provided since the flow execution no longer
+	 * exists and cannot be referenced any longer.
+	 * @param flowExecutionContext the current flow execution context (inactive)
 	 * @param viewSelection the selected view
 	 */
 	public ResponseInstruction(FlowExecutionContext flowExecutionContext, ViewSelection viewSelection) {
@@ -92,7 +107,8 @@ public class ResponseInstruction implements Serializable {
 
 	/**
 	 * Returns the flow execution context representing the current state of the
-	 * execution.
+	 * execution. It could be that the returned flow execution is
+	 * {@link FlowExecutionContext#isActive() inactive}.
 	 */
 	public FlowExecutionContext getFlowExecutionContext() {
 		return flowExecutionContext;
@@ -106,22 +122,6 @@ public class ResponseInstruction implements Serializable {
 	}
 
 	/**
-	 * Returns true if this is a "null" response instruction, e.g.
-	 * no response needs to be rendered.
-	 */
-	public boolean isNull() {
-		return viewSelection == ViewSelection.NULL_VIEW;
-	}
-
-	/**
-	 * Returns true if this is an "application view" (forward) response
-	 * instruction.
-	 */
-	public boolean isApplicationView() {
-		return viewSelection instanceof ApplicationView;
-	}
-
-	/**
 	 * Returns true if this is an instruction to render an application view for
 	 * an "active" (in progress) flow execution.
 	 */
@@ -130,19 +130,21 @@ public class ResponseInstruction implements Serializable {
 	}
 
 	/**
-	 * Returns true if this is an instruction to render a view for
+	 * Returns true if this is an instruction to render an application view for
 	 * an "ended" (inactive) flow execution from an end state.
 	 */
 	public boolean isEndingView() {
 		return isApplicationView() && !flowExecutionContext.isActive();
 	}
+	
+	// response types
 
 	/**
-	 * Returns true if this is an instruction to launch an entirely new
-	 * (independent) flow execution.
+	 * Returns true if this is an "application view" (forward) response
+	 * instruction.
 	 */
-	public boolean isFlowDefinitionRedirect() {
-		return viewSelection instanceof FlowDefinitionRedirect;
+	public boolean isApplicationView() {
+		return viewSelection instanceof ApplicationView;
 	}
 
 	/**
@@ -154,11 +156,27 @@ public class ResponseInstruction implements Serializable {
 	}
 
 	/**
+	 * Returns true if this is an instruction to launch an entirely new
+	 * (independent) flow execution.
+	 */
+	public boolean isFlowDefinitionRedirect() {
+		return viewSelection instanceof FlowDefinitionRedirect;
+	}
+
+	/**
 	 * Returns true if this an instruction to perform a redirect to an external
 	 * URL.
 	 */
 	public boolean isExternalRedirect() {
 		return viewSelection instanceof ExternalRedirect;
+	}
+
+	/**
+	 * Returns true if this is a "null" response instruction, e.g.
+	 * no response needs to be rendered.
+	 */
+	public boolean isNull() {
+		return viewSelection == ViewSelection.NULL_VIEW;
 	}
 
 	public boolean equals(Object o) {

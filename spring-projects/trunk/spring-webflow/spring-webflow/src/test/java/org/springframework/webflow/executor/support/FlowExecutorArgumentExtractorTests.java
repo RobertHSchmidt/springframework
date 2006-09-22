@@ -99,7 +99,7 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows.htm");
 		FlowDefinitionRedirect redirect = new FlowDefinitionRedirect("flow", null);
-		String url = argumentExtractor.createFlowUrl(redirect, context);
+		String url = argumentExtractor.createFlowDefinitionUrl(redirect, context);
 		assertEquals("/app/flows.htm?_flowId=flow", url);
 	}
 
@@ -108,7 +108,7 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 		context.setDispatcherPath("/system");
 		context.setRequestPathInfo("/flows");
 		FlowDefinitionRedirect redirect = new FlowDefinitionRedirect("flow", null);
-		String url = argumentExtractor.createFlowUrl(redirect, context);
+		String url = argumentExtractor.createFlowDefinitionUrl(redirect, context);
 		assertEquals("/app/system?_flowId=flow", url);
 	}
 
@@ -119,7 +119,7 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 		input.put("foo", "bar");
 		input.put("baz", new Integer(3));
 		FlowDefinitionRedirect redirect = new FlowDefinitionRedirect("flow", input);
-		String url = argumentExtractor.createFlowUrl(redirect, context);
+		String url = argumentExtractor.createFlowDefinitionUrl(redirect, context);
 		assertEquals("/app/flows.htm?_flowId=flow&foo=bar&baz=3", url);
 	}
 

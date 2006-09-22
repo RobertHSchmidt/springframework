@@ -66,6 +66,7 @@ import org.springframework.webflow.executor.support.FlowExecutorArgumentExtracto
  * RESTORE_VIEW phase <em>save</em> the updated execution to the repository
  * using the new key generated in the BEFORE_RENDER_RESPONSE phase.
  * </ul>
+ * 
  * @author Colin Sampaleanu
  * @author Keith Donald
  */
@@ -224,7 +225,7 @@ public class FlowPhaseListener implements PhaseListener {
 			if (holder.needsSave()) {
 				saveFlowExecution(context, holder);
 			}
-			String url = argumentExtractor.createFlowUrl((FlowDefinitionRedirect)holder.getViewSelection(), context);
+			String url = argumentExtractor.createFlowDefinitionUrl((FlowDefinitionRedirect)holder.getViewSelection(), context);
 			sendRedirect(url, context);
 		}
 	}

@@ -33,8 +33,8 @@ import org.springframework.webflow.core.FlowException;
 public interface FlowExecutor {
 
 	/**
-	 * Launch a new execution of identified flow in the context of the current
-	 * external request.
+	 * Launch a new execution of identified flow definition in the context of
+	 * the current external client request.
 	 * @param flowDefinitionId the unique id of the flow definition to launch
 	 * @param context the external context representing the state of a request
 	 * into Spring Web Flow from an external system
@@ -45,7 +45,7 @@ public interface FlowExecutor {
 	public ResponseInstruction launch(String flowDefinitionId, ExternalContext context) throws FlowException;
 
 	/**
-	 * Resume a existing, paused flow execution by signaling an event against 
+	 * Resume an existing, paused flow execution by signaling an event against 
 	 * its current state.
 	 * @param flowExecutionKey the identifying key of a paused flow execution
 	 * that is waiting to resume on the occurrence of a user event
@@ -67,7 +67,7 @@ public interface FlowExecutor {
 	 * @param flowExecutionKey the identifying key of a paused flow execution
 	 * that is waiting to resume on the ocurrence of a user event
 	 * @param context the external context representing the state of a request
-	 * into Spring Web Flow from an external system.
+	 * into Spring Web Flow from an external system
 	 * @return the current response instruction
 	 * @throws FlowException if an exception occured retrieving the current
 	 * response instruction

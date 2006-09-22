@@ -18,6 +18,7 @@ package org.springframework.webflow.executor.jsf;
 /**
  * Interface to be implemented by objects that can map Web Flow view names to
  * JSF view identifiers.
+ * 
  * @author Colin Sampaleanu
  */
 public interface ViewIdMapper {
