@@ -44,7 +44,8 @@ import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
  * {@link ExternalRedirectSelector} that returns an {@link ExternalRedirect} to a
  * URL.</li>
  * <li>"flowRedirect:&lt;flowId&gt;" - will result in a
- * {@link FlowDefinitionRedirectSelector} that returns a {@link FlowDefinitionRedirect} to a flow.</li>
+ * {@link FlowDefinitionRedirectSelector} that returns a {@link FlowDefinitionRedirect} to a flow.
+ * The special <code>{this}</code> refers to the current ('this') flow definition id.</li>
  * <li>"bean:&lt;id&gt;" - will result in usage of a custom
  * <code>ViewSelector</code> bean implementation.</li>
  * </ul>

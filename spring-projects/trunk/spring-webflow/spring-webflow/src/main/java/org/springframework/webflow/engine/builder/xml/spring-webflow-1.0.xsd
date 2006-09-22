@@ -19,7 +19,7 @@ The unique identifier of this state; must be unique to this flow.
 			</xsd:annotation>
 		</xsd:attribute>
 	</xsd:complexType>
-	
+
 	<xsd:simpleType name="scopeType">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="request">
@@ -27,6 +27,15 @@ The unique identifier of this state; must be unique to this flow.
 					<xsd:documentation>
 						<![CDATA[
 Goes out of scope when a single call into this flow completes.
+]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="flash">
+				<xsd:annotation>
+					<xsd:documentation>
+						<![CDATA[
+Goes out of scope when this flow is refreshed via a "redirect on pause".
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
@@ -133,6 +142,23 @@ For example:
 The above example instructs this flow to invoke the "nextQuestion" method on the "interview" bean
 in flow scope.  After method invocation the method return value is exposed in the default
 scope under the name "question".
+]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element ref="set">
+				<xsd:annotation>
+					<xsd:documentation>
+						<![CDATA[
+Sets an attribute value in a scope.  Use this element when you need to set a variable value
+during the course of flow execution.
+
+For example:
+
+	<set attribute="fileUploaded" scope="flash" value="true"/>
+
+The above example instructs this flow to set the "fileUploaded" attribute in "flash scope" to "true".
+This action always returns a "success" event unless an exception is thrown.
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
@@ -573,14 +599,15 @@ of a non-singleton bean in the configured Bean Factory to use as the initial var
 This scope of this variable.  The available scope types are:
 
 1. request
-    - The variable goes out of scope when a call to start the flow completes.
-2. flow
-    - The variable goes out of scope when the flow session ends.  For example, if a
-      flow spawns another flow as a subflow and that subflow allocates flow-scoped
-      variables, those variables will be cleaned up when the subflow ends.
-3. conversation
-    - The variable goes out of scope when the overall conversation governing the 
-      flow execution ends.
+    - The variable goes out of scope when a call to start this flow completes.
+2. flash
+    - The variable goes out of scope when the execution refreshes this flow session,
+      on a "redirect on pause".
+3. flow
+    - The variable goes out of scope when this flow session ends.
+4. conversation
+    - The variable goes out of scope when the overall conversation governing this 
+      flow ends.
 	
 The 'default' value is flow scope.
 ]]>
@@ -972,13 +999,13 @@ under the attribute name 'itineraries'.
 The available scope types are:
 
 1. request
-	- The result goes out of scope when the call into the flow that invoked this method completes.
-2. flow
-	- The result goes out of scope when the flow session ends.  For example, if a
-	  flow spawns another flow as a subflow and that subflow invokes a method that 
-	  exposes a result in "flow scope", that result will be cleaned up when
-	  the subflow ends.
-3. conversation
+	- The result goes out of scope when the call into this flow that invoked this method completes.
+2. flash
+    - The result goes out of scope when the execution refreshes this flow session,
+      on a "redirect on pause".
+3. flow
+	- The result goes out of scope when this local flow session ends.
+4. conversation
 	- The result goes out of scope when the overall conversation governing this flow 
 	  execution ends.
 
@@ -1066,17 +1093,72 @@ under the name "question".
 The available scope types are:
 
 1. request
-	- The result goes out of scope when the call into the flow that evaluated this expression completes.
-2. flow
-	- The result goes out of scope when the flow session ends.  For example, if a
-	  flow spawns another flow as a subflow and that subflow invokes a method that 
-	  exposes a result in "flow scope", that result will be cleaned up when
-	  the subflow ends.
+	- The result goes out of scope when the call into this flow that evaluated this expression completes.
+2. flash
+    - The result goes out of scope when the execution refreshes the flow session,
+      on a "redirect on pause".
+3. flow
+	- The result goes out of scope when this local flow session ends.
 3. conversation
 	- The result goes out of scope when the overall conversation governing this flow 
 	  execution ends.
 
-The default value if not specified is request scope.     
+The default value if not specified is request scope.
+]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="set">
+		<xsd:complexType>
+			<xsd:attribute name="attribute" type="xsd:string" use="required">
+				<xsd:annotation>
+					<xsd:documentation>
+						<![CDATA[
+The name of the attribute to set.
+]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="scope" type="scopeType" default="default">
+				<xsd:annotation>
+					<xsd:documentation>
+						<![CDATA[
+The scope the attribute will be stored in.  The available scope types are:
+
+1. request
+	- The attribute goes out of scope when the call into this flow that evaluated
+	  this expression completes.
+2. flash
+    - The attribute goes out of scope when the execution refreshes the flow session,
+      on a "redirect on pause".
+3. flow
+	- The attribute goes out of scope when this local flow session ends.
+3. conversation
+	- The attribute goes out of scope when the overall conversation governing this flow 
+	  execution ends.
+
+The default value if not specified is request scope.
+]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="value" type="xsd:string" use="required">
+				<xsd:annotation>
+					<xsd:documentation>
+						<![CDATA[
+The attribute value.
+]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="type" type="xsd:string" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>
+						<![CDATA[
+The value type, used to trigger a from-string type conversion.
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
