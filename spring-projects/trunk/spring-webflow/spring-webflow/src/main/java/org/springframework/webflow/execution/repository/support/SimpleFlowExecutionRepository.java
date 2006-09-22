@@ -36,7 +36,7 @@ import org.springframework.webflow.util.UidGenerator;
  * match the continuation id of the flow execution entry and access to the
  * conversation will be disallowed. This is because the
  * <code>continuationId</code> changes on each request to consistently prevent
- * the possibility of duplicate submission ({@see {@link #setAlwaysGenerateNewNextKey(boolean)}}).
+ * the possibility of duplicate submission ({@link #setAlwaysGenerateNewNextKey(boolean)}).
  * <p>
  * This repository is specifically designed to be 'simple': incurring minimal
  * resources and overhead, as only one {@link FlowExecution} is stored <i>per

@@ -206,7 +206,7 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	 * @param key the flow execution key
 	 * @return the continuation group
 	 */
-	protected FlowExecutionContinuationGroup getContinuationGroup(FlowExecutionKey key) {
+	FlowExecutionContinuationGroup getContinuationGroup(FlowExecutionKey key) {
 		FlowExecutionContinuationGroup group =
 			(FlowExecutionContinuationGroup)getConversation(key).getAttribute(CONTINUATION_GROUP_ATTRIBUTE);
 		return group;
