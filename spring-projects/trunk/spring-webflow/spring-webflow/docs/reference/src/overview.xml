@@ -475,7 +475,7 @@
 						<row>
 							<entry>Struts</entry>
             				<entry>
-            					The integration between Spring Web Flow the Struts Classic framework.
+            					The integration between Spring Web Flow and the Struts Classic framework.
             				</entry>
             				<entry>
             					executor.struts
@@ -489,7 +489,7 @@
 						<row>
 							<entry>Java Server Faces (JSF)</entry>
             				<entry>
-            					The integration between Spring Web Flow the Java Server Faces framework.
+            					The integration between Spring Web Flow and the Java Server Faces framework.
             				</entry>
             				<entry>
             					executor.jsf
