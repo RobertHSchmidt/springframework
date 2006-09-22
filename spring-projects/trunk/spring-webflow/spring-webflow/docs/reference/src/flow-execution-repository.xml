@@ -52,7 +52,7 @@
     		Each time an active flow execution is <emphasis>paused</emphasis> it is saved out to a 
     		repository.  When the next request comes in for that flow execution, it is restored 
     		from the repository, <emphasis>resumed</emphasis>, and continued.  This process continues 
-    		until the flow execution reaches an end state, at which it is removed from the repository.
+    		until the flow execution reaches an end state, at which time it is removed from the repository.
     	</para>
     	<para>
     		This process is demonstrated over the next two graphics:
@@ -76,7 +76,7 @@
 				<imagedata fileref="images/flowexecution-restoration.png" format="PNG" align="center"/>
 			</imageobject>
 			<caption>
-				<para>Request two (2) - Paused flow execution restoration, Removal on end</para>
+				<para>Request two (2) - Paused flow execution restoration, removal on end</para>
 			</caption>
 		</mediaobject>    	
     </sect1>
@@ -141,7 +141,7 @@
     		When a flow execution reaches an end state it terminates.  If the flow execution was associated 
     		with a logical conversation that spanned more than on request, it is removed from the 
     		repository.  More specifically, the entire conversation is <emphasis>ended</emphasis>, 
-    		resulting in any flow executions associated with the conversation being purged.
+    		resulting in any flow execution continuations associated with the conversation being purged.
     	</para>
     	<para>
     		Once a conversation has been ended the conversation identifier is no longer valid
@@ -157,7 +157,8 @@
 		<sect2 id="repository-simple">
 			<title>Simple flow execution repository</title>
 			<para>
-				The simplest possible repository and the default implementation.  This repository
+				The simplest possible repository and the default implementation
+				(<literal>SimpleFlowExecutionRepository</literal>). This repository
 				stores <emphasis>exactly one</emphasis> flow execution instance per conversation
 				in the user's session, invalidating it when its end state is reached.
 				This repository implementation has been designed with minimal storage overhead in mind.
@@ -178,10 +179,10 @@
 		<sect2 id="repository-continuation">
 			<title>Continuation flow execution repository</title>
 			<para>
-				This repository is stores <emphasis>one to many</emphasis> flow
+				This repository (<literal>ContinuationFlowExecutionRepository</literal>) stores <emphasis>one to many</emphasis> flow
 				execution instances per conversation in the user's session, where each flow execution represents a 
 				paused and restorable state of the conversation at a point in time.  This repository implementation is
-				considerably more flexible than the default but incurs more storage overhead.
+				considerably more flexible than the simple one, but incurs more storage overhead.
 			</para>
 			<para>
  				It is important to understand that use of this repository allows resubmission when
@@ -192,7 +193,7 @@
 				time will be granted.
 			</para>
 			<para>
-				Like the default, this repository implementation provides support for <emphasis>conversation
+				Like the simple implementation, this repository implementation provides support for <emphasis>conversation
 				invalidation after completion</emphasis> where once a logical 
 				conversation completes (by one of its FlowExecutions reaching an end state),
 				the entire conversation is invalidated.  This prevents the possibility of
@@ -204,13 +205,14 @@
 				 but incurring more storage overhead.  This repository implementation should be
 				 considered when you do have to support browser navigational button use;
 				 for example, you cannot lock down the browser and have 
-				 all navigation events to be routed explicitly through Spring Web Flow.
+				 all navigation events routed explicitly through Spring Web Flow.
 			</para>
 		</sect2>
 		<sect2 id="repository-client">
 			<title>Client continuation flow execution repository</title>
 			<para>
-				This repository is entirely stateless and its use entails no server-side state.
+				This repository is entirely stateless and its use entails no server-side state
+				(<literal>ClientContinuationFlowExecutionRepository</literal>).
 			</para>
 			<para>
 				This is achieved by encoding a serialized flow execution directly into the
@@ -222,14 +224,15 @@
 				the state it was in when it was serialized.
 			</para>
 			<para>
- 		 		Note this repository implementation by default does not currently support
+ 		 		Note this repository implementation does not currently support
 				<emphasis>conversation invalidation after completion</emphasis>, as 
 				this capability requires tracking active conversations using some
 				form of centralized storage, like a database table.
 			</para>
 			<para>
 				Also note that storing state (a flow execution continuation) on the client
-				entails a certain security risk that should be evaluated.
+				entails a certain security risk that should be evaluated. Furthermore, it
+				puts practical constraints on the size of the flow execution.
 			</para>
 		</sect2>
 	</sect1>    

@@ -6,7 +6,7 @@
 		<para>
 			Once a flow has been defined any number of executions of it can be launched in parallel 
 			at runtime.  Execution of a flow is carried out by a dedicated system that 
-			is based internally on a state machine that runs atop the Java VM.  As the life of an
+			is based internally on a state machine that runs atop the Java VM.  As the life of a
 			flow execution can span more than one request into the server, this system 
 			is also responsible for persisting execution state across requests.
 		</para>
@@ -94,11 +94,11 @@
    		 		<emphasis>ended</emphasis>.
    		 	</para>
     		<para>
-   	 			Spring Web Flow gives you full control over the ability to observe the lifecycle of an 
+   	 			Spring Web Flow gives you the ability to observe the lifecycle of an 
     			executing flow by implementing a <literal>FlowExecutionListener</literal>.
     		</para>
     		<para>
-    			The different phases of a flow execution is shown graphically below:
+    			The different phases of a flow execution are shown graphically below:
 	    	</para>
 			<mediaobject>
 				<imageobject role="fo">
@@ -116,7 +116,7 @@
  	  	 	<title>Flow execution properties</title>
    	 		<para>
    	 			The Spring Web Flow flow execution implementation is <literal>org.springframework.webflow.engine.impl.FlowExecutionImpl</literal>,
-   	 			typically created by a <literal>FlowExecutionImplFactory</literal>.
+   	 			typically created by a <literal>FlowExecutionImplFactory</literal> (a <literal>FlowExecutionFactory</literal> implementation).
    	 			The configurable properties of this flow execution implementation are summarized below:
    		 	</para>
 	    	<table>
@@ -227,7 +227,8 @@
    						<entry>definition</entry>
 						<entry>
 							The definition of the flow execution.  The flow definition serves as
-							the blueprint for the program.  <emphasis>It may be helpful to think of a flow as like a <literal>Class</literal> and a 
+							the blueprint for the program.  <emphasis>It may be helpful to think of a flow
+							definition as like a <literal>Class</literal> and a 
 							flow execution as like an instance of that <literal>Class</literal></emphasis>.
 							This method may always be safely called.
 						</entry>
@@ -375,9 +376,6 @@
    						<entry>status</entry>
 						<entry>
 							A status indicator describing what the session is currently doing.
-							Valid values are <literal>CREATED</literal>, <literal>ACTIVE</literal>,
-							<literal>PAUSED</literal>, <literal>SUSPENDED</literal>, <literal>RESUMING</literal>,
-							<literal>ENDING</literal>, and <literal>ENDED</literal>.
 						</entry>
 						<entry>
 							<emphasis>1</emphasis>
@@ -441,7 +439,8 @@
     				<para>
     					Your own implementations of definitional artifacts used by a flow such as actions, 
 	    				attribute mappers, and exception handlers should be unit tested in isolation.
-	    				Spring Web Flow ships convenient stubs to assist with this.
+	    				Spring Web Flow ships convenient stubs to assist with this, for instance
+	    				<literal>MockRequestContext</literal>.
     				</para>
     			</listitem>
     			<listitem>
@@ -534,7 +533,7 @@
     					<para>
 							From the results page the user may select a result they wish to browse additional details on
 							or they may request a new search.  On select, the "detail" flow is spawned and 
-							when it finishes the search is re-executed.
+							when it finishes the search is re-executed and it's results redisplayed.
 	    				</para>
 	    			</listitem>
 	    		</orderedlist>
@@ -557,7 +556,7 @@
 	    			</listitem>
 	    			<listitem>
     					<para>
-							That on submit with invalid input, the <literal>searchCriteria</literal> view is selected.
+							That on submit with invalid input, the <literal>searchCriteria</literal> view is reselected.
 	    				</para>
 	    			</listitem>
 	    			<listitem>
@@ -674,7 +673,7 @@
 	    	<para>
 	    		With a well-written flow execution test passing that covers the controller behavior scenarios 
 	    		possible for your flow you have concrete evidence the flow will execute as expected when 
-	    		deployed in container.
+	    		deployed in a container.
 	    	</para>
 			<mediaobject>
 				<imageobject role="fo">
