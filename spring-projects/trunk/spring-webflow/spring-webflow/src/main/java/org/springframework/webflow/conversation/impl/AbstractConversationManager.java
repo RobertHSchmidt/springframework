@@ -112,7 +112,7 @@ public abstract class AbstractConversationManager implements ConversationManager
 	 * @param id the id to assign
 	 * @return the conversation entry
 	 */
-	protected ConversationEntry createConversationEntry(ConversationParameters parameters, ConversationId id) {
+	ConversationEntry createConversationEntry(ConversationParameters parameters, ConversationId id) {
 		return new ConversationEntry(id, parameters.getName(), parameters.getCaption(), parameters.getDescription());
 	}
 
@@ -130,7 +130,7 @@ public abstract class AbstractConversationManager implements ConversationManager
 	 * @param conversationId the id to lookup
 	 * @return the conversation entry
 	 */
-	protected ConversationEntry getConversationEntry(ConversationId conversationId) {
+	ConversationEntry getConversationEntry(ConversationId conversationId) {
 		return (ConversationEntry)getConversationMap().get(conversationId);
 	}
 
@@ -139,7 +139,7 @@ public abstract class AbstractConversationManager implements ConversationManager
 	/**
 	 * Hook method that is called each time a new conversation begins.
 	 * The default implementation is empty.
-	 * @param the newly genrated id for the conversation
+	 * @param conversationId the newly genrated id for the conversation
 	 * @see #beginConversation(ConversationParameters)
 	 */
 	protected void onBegin(ConversationId conversationId) {
@@ -171,12 +171,14 @@ public abstract class AbstractConversationManager implements ConversationManager
 
 	/**
 	 * Returns the Map of conversations used by this conversation manager.
-	 * The map will be used to store {@link ConversationEntry} objects.
+	 * The map will be used to store
+	 * {@link org.springframework.webflow.conversation.impl.ConversationEntry} objects.
 	 */
 	protected abstract Map getConversationMap();
 
 	/**
-	 * A proxy to a keyed {@link ConversationEntry entry} in the conversation map.
+	 * A proxy to a keyed {@link org.springframework.webflow.conversation.impl.ConversationEntry entry}
+	 * in the conversation map.
 	 * All calls on the proxy will be delegated to this conversation manager.
 	 * 
 	 * @author Keith Donald

@@ -33,7 +33,7 @@ public class CollectionUtils {
 	/**
 	 * The shared, singleton empty iterator instance.
 	 */
-	public static final EmptyIterator EMPTY_ITERATOR = new EmptyIterator();
+	public static final Iterator EMPTY_ITERATOR = new EmptyIterator();
 
 	/**
 	 * The shared, singleton empty attribute map instance.

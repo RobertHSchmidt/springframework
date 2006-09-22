@@ -249,7 +249,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * Returns the listener list.
 	 * @return the attached execution listeners.
 	 */
-	public FlowExecutionListeners getListeners() {
+	FlowExecutionListeners getListeners() {
 		return listeners;
 	}
 
@@ -362,7 +362,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * Returns the currently active flow session.
 	 * @throws IllegalStateException this execution is not active
 	 */
-	protected FlowSessionImpl getActiveSessionInternal() throws IllegalStateException {
+	FlowSessionImpl getActiveSessionInternal() throws IllegalStateException {
 		assertActive();
 		return (FlowSessionImpl)flowSessions.getLast();
 	}
@@ -407,7 +407,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * created flow session (may be null)
 	 * @return the newly created flow session
 	 */
-	protected FlowSessionImpl createFlowSession(Flow flow, FlowSessionImpl parent) {
+	FlowSessionImpl createFlowSession(Flow flow, FlowSessionImpl parent) {
 		return new FlowSessionImpl(flow, parent);
 	}
 

@@ -18,7 +18,6 @@ package org.springframework.webflow.engine;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.RequestContext;
@@ -123,7 +122,7 @@ public class SubflowState extends TransitionableState {
 
 	/**
 	 * Create the input data map for the spawned subflow session. The returned
-	 * map will be passed to {@link Flow#start(RequestControlContext, LocalAttributeMap)}.
+	 * map will be passed to {@link Flow#start(RequestControlContext, MutableAttributeMap)}.
 	 */
 	protected MutableAttributeMap createSubflowInput(RequestContext context) {
 		if (getAttributeMapper() != null) {
