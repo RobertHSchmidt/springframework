@@ -1,6 +1,25 @@
-Spring-LDAP CHANGELOG
-======================
+Spring LDAP CHANGELOG
+=====================
 http://www.springframework.org/ldap
+
+Changes in version 1.1.1 (xx.y.2006)
+-------------------------------------------
+* Added capability to use server-side controls in search.
+
+* Added paged search result functionality.
+
+* Fixed problem with DirContextAdapter, where the wrong change was applied
+  when a change was followed by another change that reset the values to the
+  original.
+
+* LdapRdn is now Serializable.
+
+* Fixed some incorrect package names in the Reference Manual.
+
+* DirContextAdapter.getNameInNamespace now returns the full DN, as spec says.
+
+* Separated integration tests that require OpenLDAP from the other integration
+  tests that run the in-JVM Apache DS server.
 
 Changes in version 1.1 (28.8.2006)
 -------------------------------------------
