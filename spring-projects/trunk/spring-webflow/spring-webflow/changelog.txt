@@ -2,7 +2,7 @@ SPRING WEB FLOW (SWF) CHANGELOG
 ===============================
 http://www.springframework.org
 
-Changes in version 1.0 RC4 (19.9.2006)
+Changes in version 1.0 RC4 (25.9.2006)
 --------------------------------------
 
 General
@@ -58,7 +58,11 @@ Package org.springframework.webflow.config
   of the flow execution engine.  See spring-webflow-config.xsd and sample applications for more information.
 * Introduced Spring 1.2 compatible FlowExecutorFactoryBean for easing configuration of the flow
   execution engine.  See itemlist sample for an example of how to use.
-
+* Introduced FlowSystemDefaults encapsulating system-wide default settings.  These defaults include:
+  - repositoryType = 'continuation'
+  - alwaysRedirectOnPause = 'true'
+  Defaults may be overridden on a flow executor basis.  The defaults themselves are also configurable.
+  
 Package org.springframework.webflow.core
 * Factored out "AttributeMap" interface and renamed default implementation to "LocalAttributeMap".
 * Factored out "ParameterMap" interface and renamed default implementation to "LocalParameterMap".
@@ -138,6 +142,7 @@ Package org.springframework.webflow.execution
 * Removed FlowExecutionRepositoryFactory abstraction, simplifying overall use of the
   FlowExecutionRepository subsystem.
 * Improved support for customization of FlowExecutionContinuation creation via the FlowExecutionContinuationFactory.
+* Event id-based transition matching expressions are now case sensitive.
   
 Package org.springframework.webflow.executor
 * Decoupled executor subsystem from the flow execution engine implementation and assumptions about engine defaults.
