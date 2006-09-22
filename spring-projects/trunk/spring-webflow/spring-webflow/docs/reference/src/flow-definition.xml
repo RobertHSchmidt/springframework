@@ -384,12 +384,12 @@
     state.getTransitionSet().add(...);
     state.getExitActionList().add(...);
           </programlisting>
+	        <para>
+	            A State is typically constructed by a <literal>FlowArtifactFactory</literal>, used by 
+	            a <literal>FlowBuilder</literal> during flow assembly.  The flow building subsystem is contained within the 
+	            <literal>org.springframework.webflow.engine.builder</literal> package.
+	        </para>
         </sect2>
-        <para>
-            A State is typically constructed by a <literal>FlowArtifactFactory</literal>, used by 
-            a <literal>FlowBuilder</literal> during flow assembly.  The flow building subsystem is contained within the 
-            <literal>org.springframework.webflow.engine.builder</literal> package.
-        </para>
     </sect1>
     <sect1 id="transition">
     	<title>TransitionDefinition</title>
@@ -449,9 +449,7 @@
 							<emphasis>0..*</emphasis>
 						</entry>
 						<entry>None</entry>
-       	           </row>
-          		</tbody>
-			  	<tbody>
+       	            </row>
            			<row>
            				<entry>matchingCriteria</entry>
 						<entry>The strategy that determines if the transition matches on an event occurrence.</entry>
@@ -459,9 +457,7 @@
 							<emphasis>1</emphasis>
 						</entry>
 						<entry>Always matches</entry>
-       	           </row>
-          		</tbody>
-				<tbody>
+       	            </row>
            			<row>
            				<entry>executionCriteria</entry>
 						<entry>The strategy that determines if the transition, once matched, is allowed to execute.</entry>
@@ -469,9 +465,7 @@
 							<emphasis>1</emphasis>
 						</entry>
 						<entry>Always allowed</entry>
-       	           </row>
-           	   </tbody>
-				<tbody>
+        	        </row>
            			<row>
            				<entry>targetStateId</entry>
 						<entry>The identifier of the target state of the transition.</entry>
@@ -865,21 +859,24 @@
 		       		</tgroup>
     		    </table> 	
     		</sect3>
-    		<para>
-    			The class diagram below shows the ViewState and the associated types used to carry
-    			out the view selection process:
-    		</para>
-			<mediaobject>
-				<imageobject role="fo">
-					<imagedata fileref="images/viewstate-classdiagram.png" format="PNG" align="center"/>
-				</imageobject>
-				<imageobject role="html">
-					<imagedata fileref="images/viewstate-classdiagram.png" format="PNG" align="center"/>
-				</imageobject>
-				<caption>
-					<para>ViewState class diagram</para>
-				</caption>
-			</mediaobject>
+    		<sect3>
+    			<title>ViewState class diagram</title>
+	    		<para>
+	    			The class diagram below shows the ViewState and the associated types used to carry
+	    			out the view selection process:
+	    		</para>
+				<mediaobject>
+					<imageobject role="fo">
+						<imagedata fileref="images/viewstate-classdiagram.png" format="PNG" align="center"/>
+					</imageobject>
+					<imageobject role="html">
+						<imagedata fileref="images/viewstate-classdiagram.png" format="PNG" align="center"/>
+					</imageobject>
+					<caption>
+						<para>ViewState class diagram</para>
+					</caption>
+				</mediaobject>
+    		</sect3>
     	    <sect3 id="viewStateXml">
     	    	<title>ViewState XML - application view selection</title>
     	    	<para>
@@ -1295,21 +1292,24 @@
 		       		</tgroup>
     		    </table> 	
 			</sect3>    		
-    		<para>
-    			The class diagram below shows the ActionState and the associated types used to carry
-    			out the action execution process:
-    		</para>
-			<mediaobject>
-				<imageobject role="fo">
-					<imagedata fileref="images/actionstate-classdiagram.jpg" format="JPEG" align="center"/>
-				</imageobject>
-				<imageobject role="html">
-					<imagedata fileref="images/actionstate-classdiagram.jpg" format="JPEG" align="center"/>
-				</imageobject>
-				<caption>
-					<para>ActionState class diagram</para>
-				</caption>
-			</mediaobject>
+			<sect3>
+				<title>ActionState class diagram</title>
+	    		<para>
+	    			The class diagram below shows the ActionState and the associated types used to carry
+	    			out the action execution process:
+	    		</para>
+				<mediaobject>
+					<imageobject role="fo">
+						<imagedata fileref="images/actionstate-classdiagram.jpg" format="JPEG" align="center"/>
+					</imageobject>
+					<imageobject role="html">
+						<imagedata fileref="images/actionstate-classdiagram.jpg" format="JPEG" align="center"/>
+					</imageobject>
+					<caption>
+						<para>ActionState class diagram</para>
+					</caption>
+				</mediaobject>
+			</sect3>
     	    <sect3 id="actionStateXml-simple">
     	    	<title>ActionState XML - simple action execution</title>
     	    	<para>
@@ -1956,9 +1956,7 @@
 								<emphasis>1</emphasis>
 							</entry>
 							<entry></entry>
-        	           </row>
-            	   </tbody>
-				  	<tbody>
+        	            </row>
             			<row>
               				<entry>attributeMapper</entry>
 							<entry>
@@ -2060,13 +2058,13 @@
     			    When the <literal>shipping</literal> flow ends, respond to the <literal>finish</literal> 
     			    result event by transitioning to the <literal>placeOrder</literal> state</emphasis>."
     			</para>
+	   			<para>
+	   				Note how the inner structure and behavior of the <literal>shipping</literal> flow is fully encapsulated within 
+	   				its own flow definition.  A flow calling another flow as a subflow can pass that flow input 
+	   				and capture its output, but it cannot see inside it.  Flows are <emphasis>black boxes</emphasis>.
+	   				Because any flow can be used as a subflow, it can be reused in other contexts without change.
+	   			</para>
 			</sect3>
-   			<para>
-   				Note how the inner structure and behavior of the <literal>shipping</literal> flow is fully encapsulated within 
-   				its own flow definition.  A flow calling another flow as a subflow can pass that flow input 
-   				and capture its output, but it cannot see inside it.  Flows are <emphasis>black boxes</emphasis>.
-   				Because any flow can be used as a subflow, it can be reused in other contexts without change.
-   			</para>
     	    <sect3 id="subflowStateJava">
     	    	<title>SubflowState API - input attributes</title>
     	    	<para>
@@ -2175,45 +2173,46 @@
 					These configurable properties are summarized below:
 				</para>
 			</sect3>
-	    	<table>
-    	        <title>EndState properties</title>
-        	    <tgroup cols="4">
-            	    <colspec colname="c1" colwidth="2*" />
-        			<colspec colname="c2" colwidth="4*" />
-    	            <colspec colname="c2" colwidth="2*" />
-	                <colspec colname="c2" colwidth="2*" />
-	                <thead>
-       		            <row>
-               		        <entry>Property name</entry>
-               				<entry>Description</entry>
-	                        <entry>Cardinality</entry>
-       		                <entry>Default value</entry>
-           				</row>
-		  			</thead>
-				  	<tbody>
-            			<row>
-            				<entry>viewSelector</entry>
-							<entry>The strategy that makes the ending view selection when this state is entered and the flow is a root flow.</entry>
-						    <entry>
-								<emphasis>0..1</emphasis>
-					       </entry>
-					       <entry>Null</entry>
-        	           </row>
-            	   </tbody>
-				  	<tbody>
-            			<row>
-              				<entry>outputMapper</entry>
-							<entry>
-								The service responsible for exposing flow output attributes, making those attributes eligible for output mapping by a calling flow.
-							</entry>
-						    <entry>
-								<emphasis>0..1</emphasis>
-							</entry>
-							<entry>None</entry>
-        	           </row>
-            	   </tbody>
-	          </tgroup>
-    	    </table>
+			<sect3 id="endState-properties">
+				<title>EndState Properties</title>
+		    	<table>
+	    	        <title>EndState properties</title>
+	        	    <tgroup cols="4">
+	            	    <colspec colname="c1" colwidth="2*" />
+	        			<colspec colname="c2" colwidth="4*" />
+	    	            <colspec colname="c2" colwidth="2*" />
+		                <colspec colname="c2" colwidth="2*" />
+		                <thead>
+	       		            <row>
+	               		        <entry>Property name</entry>
+	               				<entry>Description</entry>
+		                        <entry>Cardinality</entry>
+	       		                <entry>Default value</entry>
+	           				</row>
+			  			</thead>
+					  	<tbody>
+	            			<row>
+	            				<entry>viewSelector</entry>
+								<entry>The strategy that makes the ending view selection when this state is entered and the flow is a root flow.</entry>
+							    <entry>
+									<emphasis>0..1</emphasis>
+						       </entry>
+						       <entry>Null</entry>
+						    </row>
+	            			<row>
+	              				<entry>outputMapper</entry>
+								<entry>
+									The service responsible for exposing flow output attributes, making those attributes eligible for output mapping by a calling flow.
+								</entry>
+							    <entry>
+									<emphasis>0..1</emphasis>
+								</entry>
+								<entry>None</entry>
+	        	           </row>
+	            	   </tbody>
+		          </tgroup>
+	    	    </table>
+			</sect3>
     	    <sect3 id="endStateXml-flowDefinitionRedirect">
     	    	<title>EndState XML - redirect to flow after completion</title>
     	    	<para>
@@ -2318,13 +2317,13 @@
         }
     }	
     			</programlisting>
+	   			<para>
+	   			    Since this end-state does not make a view selection it is expected this flow will be always used 
+	   			    as a subflow.  When this flow ends, the calling parent flow is expected to respond to the 
+	   			    <literal>finish</literal> result, and may choose to map the <literal>shipping</literal> output 
+	   			    attribute into its own scope.
+	   			</para>
     		</sect3>
-   			<para>
-   			    Since this end-state does not make a view selection it is expected this flow will be always used 
-   			    as a subflow.  When this flow ends, the calling parent flow is expected to respond to the 
-   			    <literal>finish</literal> result, and may choose to map the <literal>shipping</literal> output 
-   			    attribute into its own scope.
-   			</para>
     	    <sect3 id="subflowStateXml-output">
     	    	<title>SubflowState XML - mapping an output attribute</title>
     	    	<para>
