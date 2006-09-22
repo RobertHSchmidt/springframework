@@ -42,13 +42,13 @@
     FlowExecutionFactory factory = ...
     FlowExecution execution = factory.createFlowExecution(definition);
  	  	 	</programlisting>
+			<para>
+				Once created, a new flow execution is initially inactive, waiting to be started.  Once 
+				started a flow execution becomes active by entering its <literal>startState</literal>.  
+				From there it continues executing until it enters a state where user input is required
+				to continue or it terminates.
+			</para>
  	  	</sect2>
-		<para>
-			Once created, a new flow execution is initially inactive, waiting to be started.  Once 
-			started a flow execution becomes active by entering its <literal>startState</literal>.  
-			From there it continues executing until it enters a state where user input is required
-			to continue or it terminates.
-		</para>
 	    <sect2 id="execution-start">
  	  	 	<title>Flow execution startup</title>
  	  	 	<programlisting>
@@ -56,24 +56,24 @@
     ExternalContext context = ...
     ViewSelection startingView = execution.start(input, context);
  	  	 	</programlisting>
+			<para>
+				When a flow execution reaches a state where input is required to continue it is said to have <emphasis>paused</emphasis>,
+				where it waits in that state for the input to be provided.  After pausing the 
+				<literal>ViewSelection</literal> returned is typically used to issue a response to the user
+				that provides a vehicle for collecting the required input.
+			</para>
+			<para>			
+				User input is provided by <emphasis>signaling an event</emphasis> that
+				<emphasis>resumes</emphasis> the flow execution by communicating what user action was taken.
+				Attributes of the signal event request form the basis for user input.  The flow execution 
+				resumes by consuming the event.
+			</para>
+			<para>
+				Once a flow execution has resumed it continues executing until it again enters a 
+				state where more input is needed or it terminates.  Once a flow execution has terminated
+				it becomes inactive and cannot be resumed.
+			</para>
  	  	</sect2>
-		<para>
-			When a flow execution reaches a state where input is required to continue it is said to have <emphasis>paused</emphasis>,
-			where it waits in that state for the input to be provided.  After pausing the 
-			<literal>ViewSelection</literal> returned is typically used to issue a response to the user
-			that provides a vehicle for collecting the required input.
-		</para>
-		<para>			
-			User input is provided by <emphasis>signaling an event</emphasis> that
-			<emphasis>resumes</emphasis> the flow execution by communicating what user action was taken.
-			Attributes of the signal event request form the basis for user input.  The flow execution 
-			resumes by consuming the event.
-		</para>
-		<para>
-			Once a flow execution has resumed it continues executing until it again enters a 
-			state where more input is needed or it terminates.  Once a flow execution has terminated
-			it becomes inactive and cannot be resumed.
-		</para>
 	    <sect2 id="execution-resume">
  	  	 	<title>Flow execution resume</title>
  	  	 	<programlisting>

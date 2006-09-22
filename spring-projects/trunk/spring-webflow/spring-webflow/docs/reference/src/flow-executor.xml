@@ -166,11 +166,11 @@
 	    	<programlisting>
     &lt;flow:executor id="flowExecutor" registry-ref="flowRegistry" repository-type="continuation"/>
 	    	</programlisting>
+	    	<para>
+	    		This executor is configured with a continuation-based repository that manages
+	    		continuation state in the user session.
+	    	</para>	
     	</sect2>		
-    	<para>
-    		This executor is configured with a continuation-based repository that manages
-    		continuation state in the user session.
-    	</para>	
     	<sect2 id="executor-custom-repo2">
     		<title>A flow executor using a client-side continuation-based execution repository</title>
 	    	<programlisting>
@@ -276,12 +276,12 @@
         &lt;property name="flowExecutor" ref="flowExecutor"/&gt;
     &lt;/bean&gt;
 	    	</programlisting>
+	    	<para>
+	    		This controller, exported at the context-relative <literal>/flowController.htm</literal> URL,
+	    		delegates to the configured flow executor for driving flow executions in a Spring Servlet 
+	    		MVC environment.
+	    	</para>
     	</sect2>
-    	<para>
-    		This controller, exported at the context-relative <literal>/flowController.htm</literal> URL,
-    		delegates to the configured flow executor for driving flow executions in a Spring Servlet 
-    		MVC environment.
-    	</para>
     	<sect2 id="executor-portletmvc">
     		<title>A single portlet flow controller executing a flow within a Portlet</title>
 	    	<programlisting>
@@ -299,13 +299,13 @@
         &lt;property name="defaultFlowId" ref="search-flow"/&gt;
     &lt;/bean&gt;
 	    	</programlisting>
+	    	<para>
+	    		This controller, exported for access with the configured portlet mode,
+	    		delegates to the configured flow executor for driving flow executions in a Spring Portlet 
+	    		MVC environment (by default, an execution of the <literal>search-flow</literal>
+	    		will be launched).
+	    	</para>
     	</sect2>
-    	<para>
-    		This controller, exported for access with the configured portlet mode,
-    		delegates to the configured flow executor for driving flow executions in a Spring Portlet 
-    		MVC environment (by default, an execution of the <literal>search-flow</literal>
-    		will be launched).
-    	</para>
    	</sect1>
 	<sect1 id="executor-parameterization">
 		<title>Flow executor parameterization</title>

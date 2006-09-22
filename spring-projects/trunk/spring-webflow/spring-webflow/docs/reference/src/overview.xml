@@ -607,19 +607,19 @@
  					</tbody>
 	    		</tgroup>
     		</table>
+			<para>
+				A package dependency noted as (optional) means that the
+				dependency is needed to compile the package but is optionally needed at runtime
+				(depending on your use of the package).  For example, use of Spring Web Flow 
+				in a Servlet environment entails use of the context.servlet package and requires the
+				Servlet API to be in the classpath, but not the Portlet API.
+			</para>
+			<para>
+				For the exact list of dependencies, as well as supported product usage configurations, 
+				see the SWF ivy dependency manager descriptor located within the SWF distribution
+				at <literal>spring-webflow/ivy.xml</literal>
+			</para>
 		</sect2>
-		<para>
-			A package dependency noted as (optional) means that the
-			dependency is needed to compile the package but is optionally needed at runtime
-			(depending on your use of the package).  For example, use of Spring Web Flow 
-			in a Servlet environment entails use of the context.servlet package and requires the
-			Servlet API to be in the classpath, but not the Portlet API.
-		</para>
-		<para>
-			For the exact list of dependencies, as well as supported product usage configurations, 
-			see the SWF ivy dependency manager descriptor located within the SWF distribution
-			at <literal>spring-webflow/ivy.xml</literal>
-		</para>
 	</sect1>
 	<sect1 id="introduction-support">
 		<title>Support</title>
