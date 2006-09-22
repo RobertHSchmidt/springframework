@@ -58,7 +58,7 @@ public class AttributeMapperAction extends AbstractAction {
 	}
 
 	protected Event doExecute(RequestContext context) throws Exception {
-		// map attributes from the request context to the request context
+		// map attributes from and to the request context
 		attributeMapper.map(context, context, getMappingContext(context));
 		return success();
 	}

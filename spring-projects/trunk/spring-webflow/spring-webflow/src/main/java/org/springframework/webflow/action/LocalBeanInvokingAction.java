@@ -46,7 +46,7 @@ class LocalBeanInvokingAction extends AbstractBeanInvokingAction implements Seri
 	}
 
 	/**
-	 * Returns the target bean to invoke.
+	 * Returns the target bean to invoke methods on.
 	 */
 	public Object getBean() {
 		return bean;

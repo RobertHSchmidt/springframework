@@ -18,8 +18,11 @@ package org.springframework.webflow.action;
 import java.lang.reflect.Method;
 
 /**
- * Helper strategy that selects the {@link ResultEventFactory} to use for
- * actions that invoke methods and produce result values.
+ * Helper that selects the {@link ResultEventFactory} to use for
+ * a particular result object.
+ * 
+ * @see EvaluateAction
+ * @see BeanInvokingActionFactory
  * 
  * @author Keith Donald
  */
@@ -38,17 +41,12 @@ public class ResultEventFactorySelector {
 
 	/**
 	 * Select the appropriate result event factory for attempts to invoke the
-	 * method.
+	 * given method.
 	 * @param method the method
 	 * @return the result event factory
 	 */
 	public ResultEventFactory forMethod(Method method) {
-		if (resultObjectBasedEventFactory.isMappedValueType(method.getReturnType())) {
-			return resultObjectBasedEventFactory;
-		}
-		else {
-			return successEventFactory;
-		}
+		return forType(method.getReturnType());
 	}
 
 	/**
@@ -57,7 +55,25 @@ public class ResultEventFactorySelector {
 	 * @return the result event factory
 	 */
 	public ResultEventFactory forResult(Object result) {
-		if (result != null && resultObjectBasedEventFactory.isMappedValueType(result.getClass())) {
+		if (result == null) {
+			return successEventFactory;
+		}
+		else {
+			return forType(result.getClass());
+		}
+	}
+	
+	/**
+	 * Select the appropriate result event factory for given result type.
+	 * This implementation returns {@link ResultObjectBasedEventFactory} if the
+	 * type is {@link ResultObjectBasedEventFactory#isMappedValueType(Class) mapped}
+	 * by that result event factory, otherwise {@link SuccessEventFactory} is
+	 * returned.
+	 * @param resultType the result type
+	 * @return the result event factory
+	 */
+	protected ResultEventFactory forType(Class resultType) {
+		if (resultObjectBasedEventFactory.isMappedValueType(resultType)) {
 			return resultObjectBasedEventFactory;
 		}
 		else {

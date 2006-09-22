@@ -45,12 +45,12 @@ public class SetPortletModeAction extends AbstractAction {
 
 	/**
 	 * The portlet mode to set can be specified in an action state action
-	 * property with this name ("portletMode").
+	 * attribute with this name ("portletMode").
 	 */
 	public static final String PORTLET_MODE_ATTRIBUTE = "portletMode";
 
 	/**
-	 * The default portlet mode.
+	 * The default portlet mode. Default is "view".
 	 */
 	private PortletMode portletMode = PortletMode.VIEW;
 
@@ -82,8 +82,8 @@ public class SetPortletModeAction extends AbstractAction {
 				+ ClassUtils.getShortName(this.getClass()) + "' can only work with 'PortletExternalContext': ");
 		PortletExternalContext portletContext = (PortletExternalContext)context.getExternalContext();
 		if (portletContext.getResponse() instanceof ActionResponse) {
-			PortletMode mode = (PortletMode)context.getAttributes().get(PORTLET_MODE_ATTRIBUTE, PortletMode.class,
-					getPortletMode());
+			PortletMode mode =
+				(PortletMode)context.getAttributes().get(PORTLET_MODE_ATTRIBUTE, PortletMode.class,	getPortletMode());
 			((ActionResponse)portletContext.getResponse()).setPortletMode(mode);
 			return success();
 		}
@@ -92,7 +92,8 @@ public class SetPortletModeAction extends AbstractAction {
 			// ActionResponse only, if this is not the case, it means that this
 			// action has been invoked directly in a RenderRequest
 			throw new IllegalStateException(
-					"SetPortletModeAction can only be invoked within a Action request -- make sure you are not invoking it in a RenderRequest");
+					"SetPortletModeAction can only be invoked within a Action request -- " +
+					"make sure you are not invoking it in a RenderRequest");
 		}
 	}
 }

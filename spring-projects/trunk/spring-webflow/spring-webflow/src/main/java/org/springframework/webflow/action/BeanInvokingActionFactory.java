@@ -25,13 +25,16 @@ import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Action;
 
 /**
- * A factory for {@link Action} instances that invoke methods on beans.
+ * A helper factory for {@link Action} instances that invoke methods on
+ * beans managed in a Spring bean factory.
  * <p>
  * This factory encapsulates the logic required to take an arbitrary
- * <code>java.lang.Object</code> method and adapt it to the {@link Action}
- * interface.
+ * <code>java.lang.Object</code> from a Spring bean factory and adapt
+ * a method on it to the {@link Action} interface. If bean you
+ * want to use is not managed in a Spring bean factory, consider
+ * subclassing {@link AbstractBeanInvokingAction} and using it directly.
  * 
- * @see org.springframework.webflow.action.LocalBeanInvokingAction
+ * @see AbstractBeanInvokingAction
  * 
  * @author Keith Donald
  */
@@ -44,7 +47,7 @@ public class BeanInvokingActionFactory {
 	private ResultEventFactorySelector resultEventFactorySelector = new ResultEventFactorySelector();
 
 	/**
-	 * Returns the strategy for calcuating the result event factory to configure
+	 * Returns the strategy for calculating the result event factory to configure
 	 * for each bean invoking action created by this factory.
 	 */
 	public ResultEventFactorySelector getResultEventFactorySelector() {
@@ -70,9 +73,9 @@ public class BeanInvokingActionFactory {
 	 * @param methodSignature the method to invoke on the bean when the action
 	 * is executed (required)
 	 * @param resultExposer the specification for what to do with the method
-	 * return value; may be null
+	 * return value (optional)
 	 * @param conversionService the conversion service to be used to convert
-	 * method parameters
+	 * method parameters (optional)
 	 * @param attributes attributes that may be used to affect the bean invoking
 	 * action's construction
 	 * @return the fully configured bean invoking action instance
@@ -81,21 +84,11 @@ public class BeanInvokingActionFactory {
 			ActionResultExposer resultExposer, ConversionService conversionService, AttributeMap attributes) {
 		Object bean = beanFactory.getBean(beanId);
 		AbstractBeanInvokingAction action = new LocalBeanInvokingAction(methodSignature, bean);
-		configureCommonProperties(action, methodSignature, resultExposer, bean.getClass(), conversionService);
-		return action;
-	}
-
-	// internal helpers
-
-	/**
-	 * Configure common properties of given bean invoking action.
-	 */
-	private void configureCommonProperties(AbstractBeanInvokingAction action, MethodSignature methodSignature,
-			ActionResultExposer resultSpecification, Class beanClass, ConversionService conversionService) {
-		action.setMethodResultExposer(resultSpecification);
-		Method method = new ClassMethodKey(beanClass, methodSignature.getMethodName(), methodSignature.getParameters()
+		action.setMethodResultExposer(resultExposer);
+		Method method = new ClassMethodKey(bean.getClass(), methodSignature.getMethodName(), methodSignature.getParameters()
 				.getTypesArray()).getMethod();
 		action.setResultEventFactory(resultEventFactorySelector.forMethod(method));
 		action.setConversionService(conversionService);
+		return action;
 	}
 }

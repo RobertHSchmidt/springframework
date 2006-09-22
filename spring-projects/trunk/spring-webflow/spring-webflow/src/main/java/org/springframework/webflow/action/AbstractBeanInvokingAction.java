@@ -16,6 +16,7 @@
 package org.springframework.webflow.action;
 
 import org.springframework.binding.convert.ConversionService;
+import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.binding.method.MethodInvoker;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.util.Assert;
@@ -31,9 +32,7 @@ import org.springframework.webflow.execution.RequestContext;
  * Subclasses are required to implement the {@link #getBean(RequestContext)}
  * method, returning the bean on which a method should be invoked.
  * 
- * @see MethodSignature
- * @see ActionResultExposer
- * @see ResultEventFactory
+ * @see BeanInvokingActionFactory
  * 
  * @author Keith Donald
  */
@@ -115,6 +114,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 	/**
 	 * Set the conversion service to perform type conversion of event parameters
 	 * to method arguments as neccessary.
+	 * Defaults to {@link DefaultConversionService}.
 	 */
 	public void setConversionService(ConversionService conversionService) {
 		methodInvoker.setConversionService(conversionService);
@@ -133,7 +133,7 @@ public abstract class AbstractBeanInvokingAction extends AbstractAction {
 		if (methodResultExposer != null) {
 			methodResultExposer.exposeResult(returnValue, context);
 		}
-		return getResultEventFactory().createResultEvent(bean, returnValue, context);
+		return resultEventFactory.createResultEvent(bean, returnValue, context);
 	}
 
 	// subclassing hooks

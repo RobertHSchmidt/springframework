@@ -21,7 +21,6 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.ClassUtils;
 import org.springframework.webflow.core.collection.AttributeMap;
-import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -71,7 +70,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * <p>
 	 * Keep in mind that this hook will only be invoked when this action is
 	 * deployed in a Spring application context since it uses the Spring
-	 * {@link InitializingBean} mechanism to trigger actionn initialisation.
+	 * {@link InitializingBean} mechanism to trigger action initialisation.
 	 */
 	protected void initAction() throws Exception {
 	}
@@ -192,7 +191,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 	 * @return the action result event
 	 */
 	protected Event result(String eventId, String resultAttributeName, Object resultAttributeValue) {
-		return result(eventId, CollectionUtils.singleEntryMap(resultAttributeName, resultAttributeValue));
+		return getEventFactorySupport().event(this, eventId, resultAttributeName, resultAttributeValue);
 	}
 
 	public final Event execute(RequestContext context) throws Exception {
@@ -224,7 +223,7 @@ public abstract class AbstractAction implements Action, InitializingBean {
 
 	/**
 	 * Internal helper to return the name of this action for logging
-	 * purposes. Defaults to the sort class name.
+	 * purposes. Defaults to the short class name.
 	 * @see ClassUtils#getShortName(java.lang.Class)
 	 */
 	protected String getActionNameForLogging() {

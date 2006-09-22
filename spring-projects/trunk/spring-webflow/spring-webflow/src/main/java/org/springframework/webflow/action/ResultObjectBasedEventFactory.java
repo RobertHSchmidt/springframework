@@ -34,13 +34,13 @@ import org.springframework.webflow.execution.support.EventFactorySupport;
  * <tr>
  * <td>null</td>
  * <td>{@link org.springframework.webflow.execution.support.EventFactorySupport#getNullEventId()}</td>
- * <td></td>
+ * <td>&nbsp;</td>
  * </tr>
  * <tr>
  * <td>{@link java.lang.Boolean} or boolean</td>
  * <td>{@link org.springframework.webflow.execution.support.EventFactorySupport#getYesEventId()}/
  * {@link org.springframework.webflow.execution.support.EventFactorySupport#getNoEventId()}</td>
- * <td></td>
+ * <td>&nbsp;</td>
  * </tr>
  * <tr>
  * <td>{@link org.springframework.core.enums.LabeledEnum}</td>
@@ -56,17 +56,18 @@ import org.springframework.webflow.execution.support.EventFactorySupport;
  * </tr>
  * <tr>
  * <td>{@link java.lang.String}</td>
- * <td>the string</td>
- * <td></td>
+ * <td>The string.</td>
+ * <td>&nbsp;</td>
  * </tr>
  * <tr>
  * <td>{@link org.springframework.webflow.execution.Event}</td>
- * <td>result object</td>
- * <td></td>
+ * <td>The resulting event object.</td>
+ * <td>&nbsp;</td>
  * </tr>
  * </table>
  * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
 public class ResultObjectBasedEventFactory extends EventFactorySupport implements ResultEventFactory {
 	
@@ -104,13 +105,17 @@ public class ResultObjectBasedEventFactory extends EventFactorySupport implement
 	 * event using special mapping rules.
 	 */
 	public boolean isMappedValueType(Class type) {
-		return isBoolean(type) || isJdk5Enum(type) || isLabeledEnum(type) || isString(type) || isEvent(type);
+		return isBoolean(type) || isLabeledEnum(type) || isJdk5Enum(type) || isString(type) || isEvent(type);
 	}
 	
 	// internal helpers to determine the 'type' of a class
 
 	private boolean isBoolean(Class type) {
 		return Boolean.class.equals(type) || boolean.class.equals(type);
+	}
+
+	private boolean isLabeledEnum(Class type) {
+		return LabeledEnum.class.isAssignableFrom(type);
 	}
 
 	private boolean isJdk5Enum(Class type) {
@@ -122,15 +127,11 @@ public class ResultObjectBasedEventFactory extends EventFactorySupport implement
 		}
 	}
 
-	private boolean isLabeledEnum(Class type) {
-		return LabeledEnum.class.isAssignableFrom(type);
-	}
-
 	private boolean isString(Class type) {
 		return String.class.equals(type);
 	}
 	
 	private boolean isEvent(Class type) {
-		return Event.class.equals(type);
+		return Event.class.isAssignableFrom(type);
 	}
 }
