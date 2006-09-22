@@ -87,6 +87,8 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * state and returning the starting view selection needed to issue an
 	 * initial user response. Typically called by a flow executor on behalf of a
 	 * browser client, but also from test code.
+	 * <p>
+	 * This will start the entire flow execution <i>from scratch</i>.
 	 * @param input input attributes to pass to the flow, which the flow may
 	 * choose to map into its scope
 	 * @param context the external context in which the starting event occured
