@@ -33,6 +33,7 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.binding.expression.support.CollectionAddingPropertyExpression;
+import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.Mapping;
@@ -47,6 +48,7 @@ import org.springframework.util.xml.DomUtils;
 import org.springframework.webflow.action.ActionResultExposer;
 import org.springframework.webflow.action.BeanInvokingActionFactory;
 import org.springframework.webflow.action.EvaluateAction;
+import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
@@ -88,9 +90,9 @@ import org.xml.sax.SAXException;
  *           xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
  *           xsi:schemaLocation=&quot;http://www.springframework.org/schema/webflow
  *                               http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd&quot;&gt;
- *                               
+ *                                
  *         &lt;!-- Define your states here --&gt;
- *         
+ *          
  *     &lt;/flow&gt;
  * </pre>
  * 
@@ -123,13 +125,13 @@ import org.xml.sax.SAXException;
  * <tr>
  * <td>flowServiceLocator</td>
  * <td>{@link BaseFlowServiceLocator}</td>
- * <td>The locator for externally managed services needed by the flow definition, 
- * such a service-layer beans.</td>
+ * <td>The locator for externally managed services needed by the flow
+ * definition, such a service-layer beans.</td>
  * </tr>
  * <tr>
  * <td>documentLoader</td>
  * <td>{@link DefaultDocumentLoader}</td>
- * <td>The loader for loading the flow definition resource XML document.  Allows 
+ * <td>The loader for loading the flow definition resource XML document. Allows
  * for customization of how the document is loaded.</td>
  * </tr>
  * </table>
@@ -171,6 +173,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String METHOD_RESULT_ELEMENT = "method-result";
 
 	private static final String EVALUATE_ACTION_ELEMENT = "evaluate-action";
+
+	private static final String SET_ELEMENT = "set";
+
+	private static final String ATTRIBUTE_ATTRIBUTE = "attribute";
 
 	private static final String EVALUATION_RESULT_ELEMENT = "evaluation-result";
 
@@ -315,8 +321,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	 * used for location relative loading of other resources.
 	 */
 	public void setLocation(Resource location) {
-		Assert.notNull(location,
-				"The resource location of the XML-based flow definition is required");
+		Assert.notNull(location, "The resource location of the XML-based flow definition is required");
 		this.location = location;
 	}
 
@@ -330,7 +335,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	// implementing FlowBuilder
-	
+
 	public void init(String id, AttributeMap attributes) throws FlowBuilderException {
 		localFlowServiceLocator = new LocalFlowServiceLocator(getFlowServiceLocator());
 		try {
@@ -391,7 +396,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	// implementing ResourceHolder
-	
+
 	public Resource getResource() {
 		return location;
 	}
@@ -674,6 +679,11 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		for (Iterator it = evaluateActionElements.iterator(); it.hasNext();) {
 			actions.add(parseAnnotatedEvaluateAction((Element)it.next()));
 		}
+		// parse set actions
+		List setActionElements = DomUtils.getChildElementsByTagName(element, SET_ELEMENT);
+		for (Iterator it = setActionElements.iterator(); it.hasNext();) {
+			actions.add(parseAnnotatedSetAction((Element)it.next()));
+		}
 		return (AnnotatedAction[])actions.toArray(new AnnotatedAction[actions.size()]);
 	}
 
@@ -775,6 +785,36 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 	}
 
+	private AnnotatedAction parseAnnotatedSetAction(Element element) {
+		AnnotatedAction annotated = new AnnotatedAction(parseSetAction(element));
+		return parseCommonProperties(element, annotated);
+	}
+
+	private Action parseSetAction(Element element) {
+		String attributeExpressionString = element.getAttribute(ATTRIBUTE_ATTRIBUTE);
+		PropertyExpression attributeExpression = getFlowServiceLocator().getExpressionParser()
+				.parsePropertyExpression(attributeExpressionString);
+		ScopeType scope = null;
+		if (element.hasAttribute(SCOPE_ATTRIBUTE) && !element.getAttribute(SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
+			scope = (ScopeType)fromStringTo(ScopeType.class).execute(element.getAttribute(SCOPE_ATTRIBUTE));
+		}
+		// TODO - real expressions
+		Object value = convertValueIfNecessary(element.getAttribute(VALUE_ATTRIBUTE), element);
+		Expression valueExpression = new StaticExpression(value);
+		return new SetAction(attributeExpression, (scope != null ? scope : ScopeType.REQUEST), valueExpression);
+	}
+
+	private Object convertValueIfNecessary(String encodedValue, Element element) {
+		// TODO - just a hack for now
+		if ("true".equals(encodedValue)) {
+			return Boolean.TRUE;
+		} else if ("false".equals(encodedValue)) {
+			return Boolean.FALSE;
+		} else {
+			return encodedValue;
+		}
+	}
+	
 	private BeanInvokingActionFactory getBeanInvokingActionFactory() {
 		return getFlowServiceLocator().getBeanInvokingActionFactory();
 	}

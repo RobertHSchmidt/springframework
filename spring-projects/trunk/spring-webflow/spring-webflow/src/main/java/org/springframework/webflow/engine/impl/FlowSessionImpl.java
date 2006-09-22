@@ -46,7 +46,8 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	/**
 	 * The flow definition (a singleton).
 	 * <p>
-	 * Transient to support restoration by the {@link FlowExecutionImplStateRestorer}.
+	 * Transient to support restoration by the
+	 * {@link FlowExecutionImplStateRestorer}.
 	 */
 	private transient Flow flow;
 
@@ -59,7 +60,8 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	/**
 	 * The current state of this flow session.
 	 * <p>
-	 * Transient to support restoration by the {@link FlowExecutionImplStateRestorer}.
+	 * Transient to support restoration by the
+	 * {@link FlowExecutionImplStateRestorer}.
 	 */
 	private transient State state;
 
@@ -86,8 +88,8 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	private LocalAttributeMap flashMap = new LocalAttributeMap();
 
 	/**
-	 * The parent session of this session (may be <code>null</code> if this is a root
-	 * session.)
+	 * The parent session of this session (may be <code>null</code> if this is
+	 * a root session.)
 	 */
 	private FlowSessionImpl parent;
 
@@ -129,7 +131,7 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	public MutableAttributeMap getFlashMap() {
 		return flashMap;
 	}
-	
+
 	public FlowSession getParent() {
 		return parent;
 	}
@@ -194,7 +196,7 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 		Assert.notNull(status, "The flow session status is requred");
 		this.status = status;
 	}
-	
+
 	/**
 	 * Returns the id of the flow of this session.
 	 */
@@ -210,7 +212,7 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("flow", flowId).append("state", stateId).append("scope", scope)
-				.toString();
+		return new ToStringCreator(this).append("flow", flowId).append("state", stateId).append("scope", scope).append(
+				"flashMap", flashMap).append("status", status).toString();
 	}
 }
