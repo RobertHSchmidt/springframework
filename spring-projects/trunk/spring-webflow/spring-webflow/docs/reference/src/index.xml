@@ -27,7 +27,6 @@
 				<surname>Vervaet</surname>
 			</author>
 		</authorgroup>
-
 		<legalnotice>
 			<para>
 				Copies of this document may be made for your own use and for
@@ -39,40 +38,33 @@
 		</legalnotice>
 	</bookinfo>
 
-	<toc />
-	
-	<dedication id="acknowledgements">
-		<title>History and acknowledgements</title>
+	<dedication>
+		<title>Sponsors</title>
 		<para>
-			The Spring Web Flow project has come a long way since it started in february of 2005.
+			<emphasis>Spring Web Flow would not be possible without the investment of its sponsors</emphasis>
 		</para>
 		<para>
-			The current Spring Web Flow project has it's roots in a much simpler web flow product
-			that was developed in late 2004 by Erwin Vervaet
-			(see http://www.ervacon.com/products/springwebflow/). On the 2nd of february 2005
-			Keith Donald contacted Erwin to see if he would be interested in promoting the Ervacon
-			Spring Web Flow project into an offical Spring Framework sub project. The rest is
-			history as they say.
-		</para>
-		<para>
-			Keith and Erwin put in countless hours and the project quickly matured into a feature
-			reach and stable web flow system. The <emphasis>PR5</emphasis> (Preview 5) release
-			proved to be a milestone, gaining widespread adoption, particularly for software in a
-			preview release. Further insights and enhancements have lead to the current Spring
-			Web Flow: an easy to use and extremely powerful web flow solution.
-		</para>
-		<para>
-			The Spring Web Flow project would not have been able to mature into the system it is
-			now without the help of several individuals and companies. Keith Donald is without
-			a doubt the driving force behind the product. Several of his Interface21 colleagues
-			also invested considerable time and expertise: Rob Harrop, Colin Sampaleanu, Juergen
-			Hoeller and Ben Hale deserve particular mention. The community that formed around
-			Spring Web Flow also deserves credit. Several community members provided valueable
-			input into the product: J.Enrique Ruiz, César Ordiñana, Steven Bazyl, Colin Yates
-			and Seth Ladd.
+			<inlinemediaobject>
+				<imageobject role="fo">
+					<imagedata fileref="images/logo-interface21.jpg" format="JPEG"/>
+				</imageobject>
+				<imageobject role="html">
+					<imagedata fileref="images/logo-interface21.jpg" format="JPEG"/>
+				</imageobject>
+			</inlinemediaobject>
+			<inlinemediaobject>
+				<imageobject role="fo">
+					<imagedata fileref="images/logo-ervacon.gif" format="GIF"/>
+				</imageobject>
+				<imageobject role="html">
+					<imagedata fileref="images/logo-ervacon.gif" format="GIF"/>
+				</imageobject>
+			</inlinemediaobject>
 		</para>
 	</dedication>
-
+	
+	<toc />
+	
 	&overview;
 	&flow-definition;
 	&flow-execution;
