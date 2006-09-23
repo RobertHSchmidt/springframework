@@ -16,7 +16,7 @@
 		<evaluate-action expression="flowScope.game.makeGuess(requestParameters.guess)">
 			<evaluation-result name="guessResult"/>
 		</evaluate-action>
-		<transition on="correct" to="showAnswer"/>
+		<transition on="CORRECT" to="showAnswer"/>
 		<transition on="*" to="enterGuess"/>
 	</action-state>
 	
