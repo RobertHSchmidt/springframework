@@ -13,7 +13,7 @@
 		<!-- global dependencies -->
 		<dependency org="org.apache" name="commons-logging" rev="1.1" />
 		<dependency org="org.apache" name="log4j" rev="1.2.13" />
-		<dependency org="org.ognl" name="ognl" rev="2.6.9" />
+		<dependency org="ognl.ognl" name="ognl" rev="2.6.9" />
 		<dependency org="org.springframework" name="spring-beans" rev="2.0-rc4" />
 		<dependency org="org.springframework" name="spring-context"	rev="2.0-rc4" />
 		<dependency org="org.springframework" name="spring-core" rev="2.0-rc4" />
