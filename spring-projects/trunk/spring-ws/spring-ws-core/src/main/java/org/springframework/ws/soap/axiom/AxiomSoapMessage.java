@@ -166,6 +166,10 @@ public class AxiomSoapMessage extends AbstractSoapMessage {
             }
         }
 
+        public void setId(String id) {
+            throw new UnsupportedOperationException("Axiom does not support setting the Content-ID of attachments.");
+        }
+
         public String getContentType() {
             try {
                 return part.getContentType();

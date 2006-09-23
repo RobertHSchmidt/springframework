@@ -18,14 +18,12 @@ package org.springframework.ws.soap.saaj;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import junit.framework.TestCase;
-
 import org.springframework.util.FileCopyUtils;
 import org.springframework.ws.soap.Attachment;
 
@@ -45,19 +43,22 @@ public class SaajAttachmentTest extends TestCase {
     protected void setUp() throws Exception {
         MessageFactory messageFactory = MessageFactory.newInstance();
         SOAPMessage saajMessage = messageFactory.createMessage();
-        this.saajAttachment = saajMessage.createAttachmentPart(CONTENTS, "text/plain");
-        this.saajAttachment.setContentId(CONTENT_ID);
+        saajAttachment = saajMessage.createAttachmentPart(CONTENTS, "text/plain");
+        saajAttachment.setContentId(CONTENT_ID);
         saajMessage.addAttachmentPart(saajAttachment);
         SaajSoapMessage saajSoapMessage = new SaajSoapMessage(saajMessage);
-        this.attachment = saajSoapMessage.getAttachment(CONTENT_ID);
+        attachment = saajSoapMessage.getAttachment(CONTENT_ID);
     }
 
     public void testGetSize() throws SOAPException {
         assertEquals("Invalid size", saajAttachment.getSize(), attachment.getSize());
     }
 
-    public void testGetContentId() {
+    public void testContentId() {
         assertEquals("Invalid content id", CONTENT_ID, attachment.getId());
+        String id = "123";
+        attachment.setId(id);
+        assertEquals("Invalid content id", id, attachment.getId());
     }
 
     public void testGetContentType() {

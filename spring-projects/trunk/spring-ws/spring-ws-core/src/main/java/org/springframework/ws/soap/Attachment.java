@@ -38,6 +38,14 @@ public interface Attachment {
     String getId();
 
     /**
+     * Sets the identifier of the attachment. Depending on the implementation used, this may be a MIME
+     * <code>Content-Id</code> header, a DIME ID, etc.
+     *
+     * @param id the new attachment identifier, or <code>null</code> if empty or not defined
+     */
+    void setId(String id);
+
+    /**
      * Returns the content type of the attachment.
      *
      * @return the content type, or <code>null</code> if empty or not defined
