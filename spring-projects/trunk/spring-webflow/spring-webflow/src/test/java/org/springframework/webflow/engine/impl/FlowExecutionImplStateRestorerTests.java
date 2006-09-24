@@ -63,7 +63,8 @@ public class FlowExecutionImplStateRestorerTests extends TestCase {
 		registrar.addLocation(new ClassPathResource("external-subflow.xml", getClass()));
 		registrar.registerFlowDefinitions(registry);
 		final Flow flow = (Flow)registry.getFlowDefinition("testFlow");
-
+		flowLocator = registry;
+		
 		FlowExecutionListener listener1 = new FlowExecutionListenerAdapter() {
 		};
 		final FlowExecutionListener[] listeners = new FlowExecutionListener[] { listener1 };
@@ -76,14 +77,6 @@ public class FlowExecutionImplStateRestorerTests extends TestCase {
 		conversationScope.put("baz", "bear");
 		flowExecution.setConversationScope(conversationScope);
 
-		flowLocator = new FlowDefinitionLocator() {
-			public FlowDefinition getFlowDefinition(String flowId) {
-				if (flow.getId().equals(flowId)) {
-					return flow;
-				}
-				throw new NoSuchFlowDefinitionException(flowId, null);
-			}
-		};
 		FlowExecutionListenerLoader listenerLoader = new FlowExecutionListenerLoader() {
 			public FlowExecutionListener[] getListeners(FlowDefinition flow) {
 				return listeners;
