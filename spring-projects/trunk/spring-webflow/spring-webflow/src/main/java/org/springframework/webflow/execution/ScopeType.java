@@ -45,11 +45,7 @@ public abstract class ScopeType extends StaticLabeledEnum {
 
 	/**
 	 * Constant indicating flash scope. Data in flash scope exists for the life
-	 * of a request and also survives a <i>single</i> redirect if one is issued
-	 * when the request ends on {@link FlowSessionStatus#PAUSED pause}. Data in
-	 * flash scope is removed after the
-	 * {@link FlowExecution#refresh(org.springframework.webflow.context.ExternalContext) refresh}
-	 * operation occurs on the redirect.
+	 * of two requests into Spring Web flow. Flash scope is subsequently cleared.
 	 */
 	public static final ScopeType FLASH = new ScopeType(1, "Flash") {
 		public MutableAttributeMap getScope(RequestContext context) {
