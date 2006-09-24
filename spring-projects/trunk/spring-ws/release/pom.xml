@@ -118,7 +118,7 @@
         <!-- O/X Mapping dependencies -->
         <!-- Castor -->
         <dependency>
-            <groupId>castor</groupId>
+            <groupId>org.codehaus.castor</groupId>
             <artifactId>castor</artifactId>
         </dependency>
         <!-- JAXB 2.0 -->
