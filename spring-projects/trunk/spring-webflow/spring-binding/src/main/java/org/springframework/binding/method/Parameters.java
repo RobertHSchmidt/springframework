@@ -123,8 +123,8 @@ public class Parameters implements Serializable {
 
 	/**
 	 * Return the parameter at the provided index.
-	 * @param index
-	 * @return
+	 * @param index the parameter index
+	 * @return the parameter at that index
 	 */
 	public Parameter getParameter(int index) {
 		return (Parameter)parameters.get(index);
