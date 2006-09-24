@@ -63,7 +63,7 @@ public class MethodInvocationException extends NestedRuntimeException {
 
 	/**
 	 * Returns the target root cause exception of the method invocation failure.
-	 * @returns the target throwable
+	 * @return the target throwable
 	 */
 	public Throwable getTargetException() {
 		if (getCause() instanceof InvocationTargetException) {
