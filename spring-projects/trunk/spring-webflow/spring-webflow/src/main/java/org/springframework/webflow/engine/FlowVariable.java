@@ -44,7 +44,7 @@ public abstract class FlowVariable extends AnnotatedObject implements Serializab
 	/**
 	 * Creates a new flow variable.
 	 * @param name the variable name
-	 * @param scope the variable scope type, defaults to flow scope
+	 * @param scope the variable scope type
 	 */
 	public FlowVariable(String name, ScopeType scope) {
 		Assert.hasText(name, "The variable name is required");
