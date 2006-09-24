@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -38,6 +37,11 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.util.Assert;
+import org.springframework.xml.transform.StaxResult;
+import org.springframework.xml.transform.StaxSource;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -45,10 +49,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
-
-import org.springframework.util.Assert;
-import org.springframework.xml.transform.StaxResult;
-import org.springframework.xml.transform.StaxSource;
 
 /**
  * Abstract implementation of the <code>Marshaller</code> and <code>Unmarshaller</code> interface. This implementation
@@ -58,6 +58,11 @@ import org.springframework.xml.transform.StaxSource;
  * @author Arjen Poutsma
  */
 public abstract class AbstractMarshaller implements Marshaller, Unmarshaller {
+
+    /**
+     * Logger available to subclasses.
+     */
+    protected final Log logger = LogFactory.getLog(getClass());
 
     private boolean validating = false;
 
@@ -171,8 +176,8 @@ public abstract class AbstractMarshaller implements Marshaller, Unmarshaller {
      */
     protected DocumentBuilderFactory createDocumentBuilderFactory() throws ParserConfigurationException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setValidating(this.validating);
-        factory.setNamespaceAware(this.namespaceAware);
+        factory.setValidating(validating);
+        factory.setNamespaceAware(namespaceAware);
         return factory;
     }
 
