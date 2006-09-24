@@ -21,26 +21,23 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.castor.mapping.BindingType;
+import org.castor.mapping.MappingUnmarshaller;
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.mapping.MappingException;
+import org.exolab.castor.mapping.MappingLoader;
+import org.exolab.castor.xml.ClassDescriptorResolverFactory;
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.UnmarshalHandler;
 import org.exolab.castor.xml.Unmarshaller;
+import org.exolab.castor.xml.XMLClassDescriptorResolver;
 import org.exolab.castor.xml.XMLException;
-import org.w3c.dom.Node;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.ext.LexicalHandler;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.oxm.AbstractMarshaller;
@@ -49,6 +46,12 @@ import org.springframework.xml.stream.StaxEventContentHandler;
 import org.springframework.xml.stream.StaxEventXmlReader;
 import org.springframework.xml.stream.StaxStreamContentHandler;
 import org.springframework.xml.stream.StaxStreamXmlReader;
+import org.w3c.dom.Node;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.ext.LexicalHandler;
 
 /**
  * Implementation of the <code>Marshaller</code> interface for Castor. By default, Castor does not require any further
@@ -78,11 +81,9 @@ public class CastorMarshaller extends AbstractMarshaller implements Initializing
 
     private String encoding;
 
-    private Mapping mapping;
-
-    private Unmarshaller unmarshaller;
-
     private Class targetClass;
+
+    private XMLClassDescriptorResolver classDescriptorResolver;
 
     /**
      * Returns the encoding to be used for stream access. If this property is not set, the default encoding is used.
@@ -90,7 +91,7 @@ public class CastorMarshaller extends AbstractMarshaller implements Initializing
      * @see #DEFAULT_ENCODING
      */
     private String getEncoding() {
-        return (encoding != null) ? encoding : DEFAULT_ENCODING;
+        return encoding != null ? encoding : DEFAULT_ENCODING;
     }
 
     /**
@@ -100,15 +101,6 @@ public class CastorMarshaller extends AbstractMarshaller implements Initializing
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
-    }
-
-    /**
-     * Sets the Castor mapping. If this property is set, the <code>mappingLocation</code> will be ignored.
-     *
-     * @see #setMappingLocation
-     */
-    public void setMapping(Mapping mapping) {
-        this.mapping = mapping;
     }
 
     /**
@@ -129,41 +121,42 @@ public class CastorMarshaller extends AbstractMarshaller implements Initializing
     }
 
     public final void afterPropertiesSet() throws IOException {
-        if ((mappingLocation != null || mapping != null) && targetClass != null) {
+        if (mappingLocation != null && targetClass != null) {
             throw new IllegalArgumentException("Cannot set both the 'mappingLocation' and 'targetClass' property. " +
                     "Set targetClass for unmarshalling a single class, and 'mappingLocation' for multiple classes'");
         }
-        if ((mappingLocation != null) && (mapping == null)) {
-            loadMapping();
-        }
-        if (mapping != null) {
-            try {
-                unmarshaller = new Unmarshaller(mapping);
+        if (logger.isInfoEnabled()) {
+            if (mappingLocation != null) {
+                logger.info("Configured using " + mappingLocation);
             }
-            catch (MappingException ex) {
-                throw new CastorSystemException("Could not load Castor mapping: " + ex.getMessage(), ex);
+            else if (targetClass != null) {
+                logger.info("Configured for target class [" + targetClass.getName() + "]");
+            }
+            else {
+                logger.info("Using default configuration");
             }
         }
-        else if (targetClass != null) {
-            unmarshaller = new Unmarshaller(targetClass);
-        }
-        else {
-            unmarshaller = new Unmarshaller();
-        }
-    }
-
-    private void loadMapping() throws IOException {
-        Mapping castorMapping = new Mapping();
-        InputStream inputStream = mappingLocation.getInputStream();
         try {
-            castorMapping.loadMapping(new InputSource(inputStream));
-            this.mapping = castorMapping;
+            createClassDescriptorResolver();
         }
         catch (MappingException ex) {
             throw new CastorSystemException("Could not load Castor mapping: " + ex.getMessage(), ex);
         }
-        finally {
-            inputStream.close();
+    }
+
+    private void createClassDescriptorResolver() throws MappingException, IOException {
+        classDescriptorResolver = (XMLClassDescriptorResolver) ClassDescriptorResolverFactory
+                .createClassDescriptorResolver(BindingType.XML);
+        if (mappingLocation != null) {
+            Mapping mapping = new Mapping();
+            mapping.loadMapping(new InputSource(mappingLocation.getInputStream()));
+            MappingUnmarshaller mappingUnmarshaller = new MappingUnmarshaller();
+            MappingLoader mappingLoader = mappingUnmarshaller.getMappingLoader(mapping, BindingType.XML);
+            classDescriptorResolver.setMappingLoader(mappingLoader);
+            classDescriptorResolver.setClassLoader(mapping.getClassLoader());
+        }
+        else if (targetClass != null) {
+            classDescriptorResolver.setClassLoader(targetClass.getClassLoader());
         }
     }
 
@@ -186,15 +179,22 @@ public class CastorMarshaller extends AbstractMarshaller implements Initializing
         return CastorUtils.convertXmlException(ex, marshalling);
     }
 
+    private Unmarshaller createUnmarshaller() {
+        Unmarshaller unmarshaller = null;
+        if (targetClass != null) {
+            unmarshaller = new Unmarshaller(targetClass);
+        }
+        else {
+            unmarshaller = new Unmarshaller();
+        }
+        unmarshaller.setResolver(classDescriptorResolver);
+        return unmarshaller;
+    }
+
     private void marshal(Object graph, Marshaller marshaller) {
         try {
-            if (mapping != null) {
-                marshaller.setMapping(mapping);
-            }
+            marshaller.setResolver(classDescriptorResolver);
             marshaller.marshal(graph);
-        }
-        catch (MappingException ex) {
-            throw new CastorSystemException("Could not load Castor mapping", ex);
         }
         catch (XMLException ex) {
             throw convertCastorException(ex, true);
@@ -240,7 +240,7 @@ public class CastorMarshaller extends AbstractMarshaller implements Initializing
 
     protected Object unmarshalDomNode(Node node) throws XmlMappingException {
         try {
-            return unmarshaller.unmarshal(node);
+            return createUnmarshaller().unmarshal(node);
         }
         catch (XMLException ex) {
             throw convertCastorException(ex, false);
@@ -269,7 +269,7 @@ public class CastorMarshaller extends AbstractMarshaller implements Initializing
 
     protected Object unmarshalSaxReader(XMLReader xmlReader, InputSource inputSource)
             throws XmlMappingException, IOException {
-        UnmarshalHandler unmarshalHandler = unmarshaller.createHandler();
+        UnmarshalHandler unmarshalHandler = createUnmarshaller().createHandler();
         try {
             ContentHandler contentHandler = Unmarshaller.getContentHandler(unmarshalHandler);
             xmlReader.setContentHandler(contentHandler);
@@ -283,7 +283,7 @@ public class CastorMarshaller extends AbstractMarshaller implements Initializing
 
     protected Object unmarshalInputStream(InputStream inputStream) throws XmlMappingException, IOException {
         try {
-            return unmarshaller.unmarshal(new InputSource(inputStream));
+            return createUnmarshaller().unmarshal(new InputSource(inputStream));
         }
         catch (XMLException ex) {
             throw convertCastorException(ex, false);
@@ -292,7 +292,7 @@ public class CastorMarshaller extends AbstractMarshaller implements Initializing
 
     protected Object unmarshalReader(Reader reader) throws XmlMappingException, IOException {
         try {
-            return unmarshaller.unmarshal(new InputSource(reader));
+            return createUnmarshaller().unmarshal(new InputSource(reader));
         }
         catch (XMLException ex) {
             throw convertCastorException(ex, false);

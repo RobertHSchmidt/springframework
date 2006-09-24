@@ -38,8 +38,6 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IMarshallingContext;
@@ -75,8 +73,6 @@ import org.xml.sax.ext.LexicalHandler;
  * @see org.jibx.runtime.IUnmarshallingContext
  */
 public class JibxMarshaller extends AbstractMarshaller implements InitializingBean {
-
-    private static final Log logger = LogFactory.getLog(JibxMarshaller.class);
 
     private Class targetClass;
 
