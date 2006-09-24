@@ -66,6 +66,7 @@ import org.springframework.webflow.engine.builder.FlowBuilderException;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.engine.builder.TextToViewSelector;
 import org.springframework.webflow.engine.support.BeanFactoryFlowVariable;
+import org.springframework.webflow.engine.support.BooleanExpressionTransitionCriteria;
 import org.springframework.webflow.engine.support.SimpleFlowVariable;
 import org.springframework.webflow.engine.support.TransitionCriteriaChain;
 import org.springframework.webflow.engine.support.TransitionExecutingStateExceptionHandler;
@@ -726,12 +727,11 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		if (methodArgumentsElement == null) {
 			return Parameters.NONE;
 		}
-		ExpressionParser parser = getLocalFlowServiceLocator().getExpressionParser();
 		Parameters parameters = new Parameters();
 		Iterator it = DomUtils.getChildElementsByTagName(methodArgumentsElement, ARGUMENT_ELEMENT).iterator();
 		while (it.hasNext()) {
 			Element argumentElement = (Element)it.next();
-			Expression name = parser.parseExpression(argumentElement.getAttribute(EXPRESSION_ATTRIBUTE));
+			Expression name = getExpressionParser().parseExpression(argumentElement.getAttribute(EXPRESSION_ATTRIBUTE));
 			Class type = null;
 			if (argumentElement.hasAttribute(PARAMETER_TYPE_ATTRIBUTE)) {
 				type = (Class)fromStringTo(Class.class).execute(argumentElement.getAttribute(PARAMETER_TYPE_ATTRIBUTE));
@@ -763,7 +763,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private Action parseEvaluateAction(Element element) {
 		String expressionString = element.getAttribute(EXPRESSION_ATTRIBUTE);
-		Expression expression = getFlowServiceLocator().getExpressionParser().parseExpression(expressionString);
+		Expression expression = getExpressionParser().parseExpression(expressionString);
 		return new EvaluateAction(expression, parseEvaluationResultExposer(element));
 	}
 
@@ -784,15 +784,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private Action parseSetAction(Element element) {
 		String attributeExpressionString = element.getAttribute(ATTRIBUTE_ATTRIBUTE);
-		PropertyExpression attributeExpression = getFlowServiceLocator().getExpressionParser().parsePropertyExpression(
+		PropertyExpression attributeExpression = getExpressionParser().parsePropertyExpression(
 				attributeExpressionString);
-		ExpressionParser parser = getFlowServiceLocator().getExpressionParser();
-		Expression valueExpression = parser.parseExpression(element.getAttribute(VALUE_ATTRIBUTE));
+		Expression valueExpression = getExpressionParser().parseExpression(element.getAttribute(VALUE_ATTRIBUTE));
 		return new SetAction(attributeExpression, parseScope(element, ScopeType.REQUEST), valueExpression);
-	}
-
-	private BeanInvokingActionFactory getBeanInvokingActionFactory() {
-		return getFlowServiceLocator().getBeanInvokingActionFactory();
 	}
 
 	private ScopeType parseScope(Element element, ScopeType defaultValue) {
@@ -866,8 +861,8 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private Transition parseThen(Element element) {
 		String targetStateId = element.getAttribute(THEN_ATTRIBUTE);
-		TransitionCriteria matchingCriteria = (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(
-				element.getAttribute(TEST_ATTRIBUTE));
+		Expression expression = getExpressionParser().parseExpression(element.getAttribute(TEST_ATTRIBUTE));
+		TransitionCriteria matchingCriteria = new BooleanExpressionTransitionCriteria(expression);
 		return getFlowArtifactFactory().createTransition(targetStateId, matchingCriteria, null, null);
 	}
 
@@ -1009,6 +1004,14 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	// utility
+
+	private BeanInvokingActionFactory getBeanInvokingActionFactory() {
+		return getFlowServiceLocator().getBeanInvokingActionFactory();
+	}
+
+	private ExpressionParser getExpressionParser() {
+		return getFlowServiceLocator().getExpressionParser();
+	}
 
 	/**
 	 * Utility method that returns the first child element identified by its

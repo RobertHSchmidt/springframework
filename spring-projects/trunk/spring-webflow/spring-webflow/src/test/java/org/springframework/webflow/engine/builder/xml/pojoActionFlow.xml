@@ -2,6 +2,8 @@
 <flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
 
+	<var name="bean" class="org.springframework.webflow.engine.builder.xml.TestPojo"/>
+	
 	<start-state idref="actionState1" />
 
 	<action-state id="actionState1">
@@ -50,9 +52,26 @@
 					parameter-type="org.springframework.webflow.execution.FlowSessionStatus" />
 			</method-arguments>
 		</bean-action>
-		<transition on="success" to="pause" />
+		<transition on="success" to="actionState7" />
 	</action-state>
 
+	<action-state id="actionState7">
+		<evaluate-action expression="flowScope.bean.flag">
+			<evaluation-result name="flag"/>
+		</evaluate-action>
+		<transition on="yes" to="evalFlag"/>
+		<transition on="no" to="evalFlag"/>
+	</action-state>
+	
+	<decision-state id="evalFlag">
+		<if test="requestScope.flag" then="end" else="actionState8"/>
+	</decision-state>
+	
+	<action-state id="actionState8">
+		<set attribute="bean.flag" scope="flow" value="true"/>
+		<transition on="success" to="actionState7"/>
+	</action-state>
+	
 	<view-state id="pause">
 		<transition on="resume" to="end" />
 	</view-state>

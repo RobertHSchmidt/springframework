@@ -19,6 +19,8 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.execution.FlowSessionStatus;
 
 public class TestPojo {
+	private boolean flag;
+	
 	public boolean booleanMethod() {
 		return true;
 	}
@@ -37,5 +39,13 @@ public class TestPojo {
 
 	public void methodWithArgumentTypeConversion(FlowSessionStatus status) {
 		Assert.isTrue(status == FlowSessionStatus.CREATED);
+	}
+
+	public boolean isFlag() {
+		return flag;
+	}
+
+	public void setFlag(boolean flag) {
+		this.flag = flag;
 	}
 }

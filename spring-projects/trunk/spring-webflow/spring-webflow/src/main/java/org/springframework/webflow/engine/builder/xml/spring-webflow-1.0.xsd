@@ -312,7 +312,7 @@ Examples:
 A simple boolean expression test, using the convenient 'if' element:
 
 <decision-state id="requiresShipping">
-	<if test="${flowScope.sale.shipping}" then="enterShippingDetails" else="processSale"/>
+	<if test="flowScope.sale.shipping" then="enterShippingDetails" else="processSale"/>
 </decision-state>
 ]]>
 							</xsd:documentation>
@@ -1182,7 +1182,7 @@ should execute.
 The most basic value is a static event id. For example:
 	<transition on="submit" to="state"/>
 
-Sophisticated transitional expressions are also supported. For example:
+Sophisticated transitional expressions are also supported when encased in ${brackets}. For example:
 	<transition on="${#result == 'submit' &;amp;&amp flowScope.attribute == 'foo'}" to="state"/>
 
 Custom transition criteria implementations can be referenced by id. For example:
