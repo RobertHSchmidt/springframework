@@ -56,7 +56,7 @@ public class SetAction extends AbstractAction {
 	 */
 	public SetAction(PropertyExpression attributeExpression, ScopeType scope, Expression valueExpression) {
 		Assert.notNull(attributeExpression, "The attribute expression is required");
-		Assert.notNull(scope, "The scope is required");
+		Assert.notNull(scope, "The scope type is required");
 		Assert.notNull(valueExpression, "The value expression is required");
 		this.attributeExpression = attributeExpression;
 		this.scope = scope;
