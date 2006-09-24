@@ -51,7 +51,7 @@ public class DefaultFlowServiceLocator extends BaseFlowServiceLocator {
 	 */
 	public DefaultFlowServiceLocator(FlowDefinitionRegistry subflowRegistry, BeanFactory beanFactory) {
 		Assert.notNull(subflowRegistry, "The subflow registry is required");
-		Assert.notNull(subflowRegistry, "The beanFactory is required");
+		Assert.notNull(beanFactory, "The beanFactory is required");
 		this.subflowRegistry = subflowRegistry;
 		this.beanFactory = beanFactory;
 	}

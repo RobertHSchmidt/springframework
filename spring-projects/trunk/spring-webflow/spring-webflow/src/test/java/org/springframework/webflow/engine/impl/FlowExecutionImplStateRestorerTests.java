@@ -22,17 +22,18 @@ import java.io.ObjectOutputStream;
 
 import junit.framework.TestCase;
 
+import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.builder.FlowAssembler;
-import org.springframework.webflow.engine.builder.xml.TestFlowServiceLocator;
-import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
-import org.springframework.webflow.engine.builder.xml.XmlFlowBuilderTests;
+import org.springframework.webflow.engine.builder.DefaultFlowServiceLocator;
+import org.springframework.webflow.engine.builder.xml.XmlFlowRegistrar;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 import org.springframework.webflow.execution.factory.FlowExecutionListenerLoader;
@@ -55,16 +56,18 @@ public class FlowExecutionImplStateRestorerTests extends TestCase {
 	private FlowExecutionImplStateRestorer stateRestorer;
 
 	protected void setUp() throws Exception {
-		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
-				new TestFlowServiceLocator());
-		FlowAssembler assembler = new FlowAssembler("testFlow", builder);
-		assembler.assembleFlow();
-		final Flow flow = builder.getFlow();
+		FlowDefinitionRegistry registry = new FlowDefinitionRegistryImpl();
+		XmlFlowRegistrar registrar = new XmlFlowRegistrar(new DefaultFlowServiceLocator(registry,
+				new StaticListableBeanFactory()));
+		registrar.addLocation(new ClassPathResource("testFlow.xml", getClass()));
+		registrar.addLocation(new ClassPathResource("external-subflow.xml", getClass()));
+		registrar.registerFlowDefinitions(registry);
+		final Flow flow = (Flow)registry.getFlowDefinition("testFlow");
 
 		FlowExecutionListener listener1 = new FlowExecutionListenerAdapter() {
 		};
 		final FlowExecutionListener[] listeners = new FlowExecutionListener[] { listener1 };
-		
+
 		MutableAttributeMap attributes = new LocalAttributeMap();
 		attributes.put("foo", "bar");
 		flowExecution = new FlowExecutionImpl(flow, listeners, attributes);
