@@ -478,9 +478,9 @@
         &lt;start-state idref="enterCriteria"/&gt;
     
         &lt;view-state id="enterCriteria" view="searchCriteria"&gt;
-            &lt;entry-actions&gt;
+            &lt;render-actions&gt;
                 &lt;action bean="formAction" method="setupForm"/&gt;
-            &lt;/entry-actions&gt;
+            &lt;/render-actions&gt;
             &lt;transition on="search" to="displayResults"&gt;
                 &lt;action bean="formAction" method="bindAndValidate"/&gt;
             &lt;/transition&gt;
