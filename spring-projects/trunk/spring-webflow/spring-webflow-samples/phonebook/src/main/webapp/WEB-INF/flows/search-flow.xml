@@ -7,9 +7,9 @@
 	<start-state idref="enterCriteria"/>
 
 	<view-state id="enterCriteria" view="searchCriteria">
-		<entry-actions>
+		<render-actions>
 			<action bean="formAction" method="setupForm"/>
-		</entry-actions>
+		</render-actions>
 		<transition on="search" to="displayResults">
 			<action bean="formAction" method="bindAndValidate"/>
 		</transition>
@@ -31,7 +31,7 @@
 	<subflow-state id="browseDetails" flow="detail-flow">
 		<attribute-mapper>
 			<input-mapper>
-				<mapping source="${requestParameters.id}" target="id" from="string" to="long"/>
+				<mapping source="requestParameters.id" target="id" from="string" to="long"/>
 			</input-mapper>
 		</attribute-mapper>
 		<transition on="finish" to="displayResults"/>
