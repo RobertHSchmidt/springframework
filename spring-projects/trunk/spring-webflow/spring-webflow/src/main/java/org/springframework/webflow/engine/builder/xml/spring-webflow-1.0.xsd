@@ -1117,7 +1117,7 @@ The default value if not specified is request scope.
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-The name of the attribute to set.
+The name of the attribute to set.  May be a nested path using Java beans notation (e.g. bean.property).
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
@@ -1126,7 +1126,7 @@ The name of the attribute to set.
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-The scope the attribute will be stored in.  The available scope types are:
+The scope the attribute value will be stored in.  The available scope types are:
 
 1. request
 	- The attribute goes out of scope when the call into this flow that evaluated
@@ -1149,16 +1149,7 @@ The default value if not specified is request scope.
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-The attribute value.
-]]>
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="type" type="xsd:string" use="optional">
-				<xsd:annotation>
-					<xsd:documentation>
-						<![CDATA[
-The value type, used to trigger a from-string type conversion.
+The attribute value expression.
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
@@ -1209,9 +1200,8 @@ converter that is installed.
 						<![CDATA[
 The exception type that should trigger execution of this transition.
 
-The value may be a fully-qualified class name (e.g. example.booking.ItineraryExpiredException) or 
-a short class name (e.g. ItineraryExpiredException).  Superclasses of the configured exception type
-match by default.
+The value must be a fully-qualified Exception class name (e.g. example.booking.ItineraryExpiredException).
+When an exception is thrown, superclasses of the configured exception class match by default.
 
 Use of this attribute results in an exception handler being attached to the object associated
 with this transition definition.  Use this attribute or the 'on' attribute, not both.
@@ -1857,5 +1847,5 @@ The contained in-line flow definition.
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-
+	
 </xsd:schema>
