@@ -2,5 +2,5 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.codehaus.castor</groupId>
   <artifactId>castor</artifactId>
-  <version>1.0.3-xml</version>
+  <version>1.0.3</version>
 </project>
