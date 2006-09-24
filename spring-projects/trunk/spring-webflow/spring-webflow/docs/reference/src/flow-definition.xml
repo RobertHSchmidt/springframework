@@ -766,12 +766,12 @@
               					Requests a redirect back to the ViewState at a unique <emphasis>flow execution URL</emphasis>.  
               					When this URL is accessed on subsequent requests an ApplicationView will be reconstituted and rendered.
               					The URL is refreshable while the flow execution remains active.
-								<para>        				
-              						Note: multiple flow execution URLs may be generated for a single logical user conversation.
+								<note>        				
+              						Multiple flow execution URLs may be generated for a single logical user conversation.
               						In that case each flow execution URL provides access to the conversation 
               						from a previous point (ViewState).  Accessing the URL refreshes the execution
               						from that point.
-              					</para>
+              					</note>
               				</entry>
  						</row>
             			<row>
@@ -1148,7 +1148,7 @@
     		<sect3>
     			<title>Action execution points</title>
     			<para>
-    			    As outlined, the <literal>ActionState</literal> is the central state type for invoking one 
+    			    As outlined, the <literal>ActionState</literal> is the dedicated state type for invoking one 
     			    or more actions and responding to their result to drive a state transition.  There are
     			    also other points within the lifecycle of a flow where a chain of actions can be executed.
     			    At all of these points the only requirement is that these actions implement the central
@@ -1612,10 +1612,10 @@
     			    <literal>shippingService</literal> returns true, transition to the <literal>enterShippingDetails</literal>
     			    state, otherwise transition to the <literal>placeOrder</literal> state</emphasis>."
     			</para>
-    			<para>
+    			<note>
     			    Note how the boolean return value of the <literal>isShippingRequired</literal> method is
     			    converted to the event identifiers <literal>yes</literal> or <literal>no</literal>.
-    			</para>
+    			</note>
     			<para>
     			    This conversion process is handled by the action adapter responsible for adapting the method on your 
     			    application object to the <literal>org.springframework.webflow.execution.Action</literal> interface.
@@ -1727,7 +1727,6 @@
               http://www.springframework.org/schema/webflow
               http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
         
-        ...
         
         &lt;action-state id="getNextInterviewQuestion"&gt;
             &lt;evaluate-action expression="flowScope.interview.nextQuestion()"/&gt;
@@ -1736,8 +1735,6 @@
             &lt;transition on="success" to="displayQuestion"/&gt;
         &lt;/action-state&gt;
 
-        ...
-        
     &lt;/flow&gt;
     			</programlisting>
     			<para>
@@ -1754,8 +1751,8 @@
     	    <sect3 id="actionStateXml-set">
     	    	<title>ActionState XML - set action</title>
     	    	<para>
-    	    	    The following example constructs an <literal>ActionState</literal> from
-    	    	    XML that on success executes an action that sets an attribute in "flash scope":
+    	    	    The next example constructs an <literal>ActionState</literal> from
+    	    	    XML that executes an action on a success transition that sets an attribute in "flash scope":
     	    	</para>
     	    	<programlisting>
     &lt;?xml version="1.0" encoding="UTF-8"?&gt;
@@ -1765,25 +1762,26 @@
               http://www.springframework.org/schema/webflow
               http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
         
-        ...
+        &lt;view-state id="selectFile" view="fileUploadForm"&gt;
+            &lt;transition on="submit" to="uploadFile"/&gt;
+        &lt;/view-state&gt;
         
         &lt;action-state id="uploadFile"&gt;
             &lt;action bean="uploadAction" method="uploadFile"/&gt;
-            &lt;transition on="success" to="selectAnotherFile"&gt;
+            &lt;transition on="success" to="selectFile"&gt;
                 &lt;set attribute="fileUploaded" scope="flash" value="true"/&gt;
             &lt;/transition&gt;
         &lt;/action-state&gt;
 
-        ...
-        
     &lt;/flow&gt;
     			</programlisting>
     			<para>
-    			    This state definition reads "<emphasis>invoke the <literal>uploadFile</literal> method
+    			    This flow definition reads "<emphasis>display the <literal>fileUploadForm</literal>.
+    			    On form <literal>submit</literal> invoke the <literal>uploadFile</literal> method
     			    on the <literal>uploadAction</literal>. On <literal>success</literal> allow the user 
-    			    to <literal>selectAnotherFile</literal> to upload, noting the last file was uploaded successfully by
+    			    to select another file to upload.  Report that the last file was uploaded successfully by
     			    setting the <literal>fileUploaded</literal> attribute in <literal>flash</literal> scope to
-    			    <literal>true</literal></emphasis>.
+    			    <literal>true</literal>.</emphasis>
     			</para>
     			<note>
     				Flash scoped attributes are preserved across two requests.
@@ -2105,12 +2103,12 @@
     			    When the <literal>shipping</literal> flow ends, respond to the <literal>finish</literal> 
     			    result event by transitioning to the <literal>placeOrder</literal> state</emphasis>."
     			</para>
-	   			<para>
-	   				Note how the inner structure and behavior of the <literal>shipping</literal> flow is fully encapsulated within 
+	   			<note>
+	   				The inner structure and behavior of the <literal>shipping</literal> flow is fully encapsulated within 
 	   				its own flow definition.  A flow calling another flow as a subflow can pass that flow input 
 	   				and capture its output, but it cannot see inside it.  Flows are <emphasis>black boxes</emphasis>.
 	   				Because any flow can be used as a subflow, it can be reused in other contexts without change.
-	   			</para>
+	   			</note>
 			</sect3>
     	    <sect3 id="subflowStateJava">
     	    	<title>SubflowState API - input attributes</title>
@@ -2163,10 +2161,10 @@
     			    map the <literal>shipping</literal> input attribute into <literal>flowScope</literal> under
     			    the name <literal>shipping</literal></emphasis>." 
     			</para>
-    			<para>
-    				Note: had this input mapping not been defined the shipping attribute made available as input 
+    			<note>
+    				Had this input mapping not been defined the shipping attribute made available as input 
     				to this flow by a calling parent flow or external client would have been ignored.
-    			</para>
+    			</note>
 			</sect3>
     	</sect2>
     	<sect2 id="endState">
@@ -2407,10 +2405,10 @@
     			    the <literal>finish</literal> result event by transitioning to
     			    the <literal>placeOrder</literal> state</emphasis>."
     			</para>
-    			<para>
-    				Note: had this output mapping not been defined the shipping attribute made available as output 
+    			<note>
+    				had this output mapping not been defined the shipping attribute made available as output 
     				to this flow by the ending subflow would have been ignored.
-    			</para>
+    			</note>
 			</sect3>   			
     	</sect2>
     </sect1>
