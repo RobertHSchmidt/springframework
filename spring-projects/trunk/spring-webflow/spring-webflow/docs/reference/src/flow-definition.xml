@@ -1783,7 +1783,7 @@
     			    on the <literal>uploadAction</literal>. On <literal>success</literal> allow the user 
     			    to <literal>selectAnotherFile</literal> to upload, noting the last file was uploaded successfully by
     			    setting the <literal>fileUploaded</literal> attribute in <literal>flash</literal> scope to
-    			    <literal>true</literal>.
+    			    <literal>true</literal></emphasis>.
     			</para>
     			<note>
     				Flash scoped attributes are preserved across two requests.
