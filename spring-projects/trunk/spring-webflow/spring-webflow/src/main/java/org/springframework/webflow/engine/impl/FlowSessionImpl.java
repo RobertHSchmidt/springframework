@@ -85,7 +85,7 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	/**
 	 * The flash map ("flash scope").
 	 */
-	private MutableAttributeMap flashMap = new LocalAttributeMap();
+	private MutableAttributeMap flashMap = new FlashMap();
 
 	/**
 	 * The parent session of this session (may be <code>null</code> if this is
@@ -211,6 +211,24 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 		return stateId;
 	}
 
+	/**
+	 * The special flash map clears itself every two requests.
+	 * 
+	 * @author Keith Donald
+	 */
+	private static class FlashMap extends LocalAttributeMap {
+		private int requestCount;
+		
+		public MutableAttributeMap clear() throws UnsupportedOperationException {
+			requestCount++;
+			if (requestCount == 2) {
+				super.clear();
+				requestCount = 0;
+			}
+			return this;
+		}
+	}
+	
 	public String toString() {
 		return new ToStringCreator(this).append("flow", flowId).append("state", stateId).append("scope", scope).append(
 				"flashMap", flashMap).append("status", status).toString();
