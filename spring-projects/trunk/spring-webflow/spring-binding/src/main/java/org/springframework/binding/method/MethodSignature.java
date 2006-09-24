@@ -21,7 +21,7 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
- * A specification for a <code>Method</code>, consisting of the methodName
+ * A specification for a <code>Method</code> consisting of the methodName
  * and an optional set of named arguments.
  * 
  * @author Keith Donald
@@ -39,8 +39,7 @@ public class MethodSignature implements Serializable {
 	private Parameters parameters;
 
 	/**
-	 * Creates a method key with no arguments
-	 * 
+	 * Creates a method key with no parameters
 	 * @param methodName the name of the method.
 	 */
 	public MethodSignature(String methodName) {
@@ -48,18 +47,18 @@ public class MethodSignature implements Serializable {
 	}
 
 	/**
-	 * Creates a method key with a single argument.
+	 * Creates a method key with a single parameter.
 	 * @param methodName the name of the method
-	 * @param parameter the method argument
+	 * @param parameter the method parameter
 	 */
 	public MethodSignature(String methodName, Parameter parameter) {
 		this(methodName, new Parameters(parameter));
 	}
 
 	/**
-	 * Creates a method key with a list of arguments.
+	 * Creates a method key with a list of parameters.
 	 * @param methodName the name of the method
-	 * @param parameters the method arguments
+	 * @param parameters the method parameters
 	 */
 	public MethodSignature(String methodName, Parameters parameters) {
 		Assert.notNull(methodName, "The method name is required");
