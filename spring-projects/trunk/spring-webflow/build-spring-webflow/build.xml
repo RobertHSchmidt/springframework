@@ -219,6 +219,7 @@ to see a list of all relevant targets.
 			<zipfileset dir="../spring-webflow/docs/reference/target" 
 			            prefix="${zip.toplevel.dir}/docs/reference">
 				<exclude name="**/html_single/**" />
+				<exclude name="**/pdf/images/**" />
 			</zipfileset>
 			<zipfileset dir="${target.dir}/repo" 
 			            prefix="${zip.toplevel.dir}/projects/repository" />
