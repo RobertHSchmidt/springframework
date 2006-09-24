@@ -396,10 +396,10 @@
         &lt;input type="submit" class="button" name="_eventId_cancel" value="Cancel"&gt;
     &lt;/form&gt;
 		    	</programlisting>
-	   		 	<para>
-	  	  			Note in this case the <literal>eventId</literal> is determined by parsing the parameter name of the 
+	   		 	<note>
+	  	  			In this case the <literal>eventId</literal> is determined by parsing the parameter name of the 
 	   		 		button that was pressed.
-		    	</para>
+		    	</note>
     		</sect3>
     	</sect2>
 		<sect2 id="executor-extraction-requestpath">
