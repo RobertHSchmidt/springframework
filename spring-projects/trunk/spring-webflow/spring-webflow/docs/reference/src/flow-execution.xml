@@ -417,9 +417,11 @@
 			which was spawned as a subflow from the <literal>Enter Seat Assignments</literal> state.		
 		</para>
 		<note>
-			Note how the active session status is <literal>paused</literal>, indicating the flow execution 
-			is currently waiting for user input to be provided to continue.  In this case, it is
-			expected the user will choose a seat for their flight.
+			<para>
+				Note how the active session status is <literal>paused</literal>, indicating the flow execution 
+				is currently waiting for user input to be provided to continue.  In this case, it is
+				expected the user will choose a seat for their flight.
+			</para>
 		</note>
     </sect1>	
 	<sect1 id="execution-testing">
@@ -453,9 +455,11 @@
     		</orderedlist>
     	</para>
     	<note>
-    		A flow execution integration test typically selects mock or stub implementations of application 
-    		services called by the flow, though it may also exercise production implementations.
-    		Both are useful, supported system test configurations.
+    		<para>
+	    		A flow execution integration test typically selects mock or stub implementations of application 
+	    		services called by the flow, though it may also exercise production implementations.
+   		 		Both are useful, supported system test configurations.
+   		 	</para>
     	</note>
 	    <sect2 id="execution-testing-example">
  	  	 	<title>Flow execution test example</title>

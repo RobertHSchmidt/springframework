@@ -164,16 +164,20 @@
 				This repository implementation has been designed with minimal storage overhead in mind.
 			</para>
 			<note>
-				It is important to understand that use of this repository consistently prevents
-				duplicate submission when using the back button.  If you attempt to go back
-				and resubmit, the continuation id stored in your browser history will not
-				match the current continuation id needed to access the flow execution and 
-				access will be disallowed.
+				<para>
+					It is important to understand that use of this repository consistently prevents
+					duplicate submission when using the back button.  If you attempt to go back
+					and resubmit, the continuation id stored in your browser history will not
+					match the current continuation id needed to access the flow execution and 
+					access will be disallowed.
+				</para>
 			</note>
 			<note>
-				This repository implementation should generally be used when you do not have to
-				support browser navigational button use; for example, when you lock down the browser and
-				require that all navigation events to be routed through Spring Web Flow.			
+				<para>
+					This repository implementation should generally be used when you do not have to
+					support browser navigational button use; for example, when you lock down the browser and
+					require that all navigation events to be routed through Spring Web Flow.
+				</para>
 			</note>
 		</sect2>
 		<sect2 id="repository-continuation">
@@ -185,12 +189,14 @@
 				considerably more flexible than the simple one, but incurs more storage overhead.
 			</para>
 			<note>
- 				It is important to understand that use of this repository allows resubmission when
- 				using the back button.  If you attempt to go back and resubmit while the conversation
- 				is active, the continuation id stored in your browser history will match the
-				continuation id of a previous flow execution in the repository.  Access to
-				that flow execution representing the state of the conversation at that point in
-				time will be granted.
+				<para>
+	 				It is important to understand that use of this repository allows resubmission when
+ 					using the back button.  If you attempt to go back and resubmit while the conversation
+ 					is active, the continuation id stored in your browser history will match the
+					continuation id of a previous flow execution in the repository.  Access to
+					that flow execution representing the state of the conversation at that point in
+					time will be granted.
+				</para>
 			</note>
 			<para>
 				Like the simple implementation, this repository implementation provides support for <emphasis>conversation
@@ -224,15 +230,19 @@
 				the state it was in when it was serialized.
 			</para>
 			<note>
- 		 		This repository implementation does not currently support
-				<emphasis>conversation invalidation after completion</emphasis>, as 
-				this capability requires tracking active conversations using some
-				form of centralized storage, like a database table.
+				<para>
+	 		 		This repository implementation does not currently support
+					<emphasis>conversation invalidation after completion</emphasis>, as 
+					this capability requires tracking active conversations using some
+					form of centralized storage, like a database table.
+				</para>
 			</note>
 			<note>
-				Storing state (a flow execution continuation) on the client
-				entails a certain security risk that should be evaluated. Furthermore, it
-				puts practical constraints on the size of the flow execution.
+				<para>
+					Storing state (a flow execution continuation) on the client
+					entails a certain security risk that should be evaluated. Furthermore, it
+					puts practical constraints on the size of the flow execution.
+				</para>
 			</note>
 		</sect2>
 	</sect1>    

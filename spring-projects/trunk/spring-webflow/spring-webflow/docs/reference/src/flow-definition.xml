@@ -766,11 +766,13 @@
               					Requests a redirect back to the ViewState at a unique <emphasis>flow execution URL</emphasis>.  
               					When this URL is accessed on subsequent requests an ApplicationView will be reconstituted and rendered.
               					The URL is refreshable while the flow execution remains active.
-								<note>        				
-              						Multiple flow execution URLs may be generated for a single logical user conversation.
-              						In that case each flow execution URL provides access to the conversation 
-              						from a previous point (ViewState).  Accessing the URL refreshes the execution
-              						from that point.
+								<note>
+									<para>        				
+    	          						Multiple flow execution URLs may be generated for a single logical user conversation.
+       		       						In that case each flow execution URL provides access to the conversation 
+       	   	    						from a previous point (ViewState).  Accessing the URL refreshes the execution
+           		   						from that point.
+              						</para>
               					</note>
               				</entry>
  						</row>
@@ -1613,8 +1615,10 @@
     			    state, otherwise transition to the <literal>placeOrder</literal> state</emphasis>."
     			</para>
     			<note>
-    			    Note how the boolean return value of the <literal>isShippingRequired</literal> method is
-    			    converted to the event identifiers <literal>yes</literal> or <literal>no</literal>.
+    				<para>
+	    			    Note how the boolean return value of the <literal>isShippingRequired</literal> method is
+    				    converted to the event identifiers <literal>yes</literal> or <literal>no</literal>.
+    				</para>
     			</note>
     			<para>
     			    This conversion process is handled by the action adapter responsible for adapting the method on your 
@@ -1784,7 +1788,7 @@
     			    <literal>true</literal>.</emphasis>
     			</para>
     			<note>
-    				Flash scoped attributes are preserved across two requests.
+    				<para>Flash scoped attributes are preserved across two requests.</para>
     			</note>
 			</sect3>
     		<sect3>
@@ -2104,10 +2108,12 @@
     			    result event by transitioning to the <literal>placeOrder</literal> state</emphasis>."
     			</para>
 	   			<note>
-	   				The inner structure and behavior of the <literal>shipping</literal> flow is fully encapsulated within 
-	   				its own flow definition.  A flow calling another flow as a subflow can pass that flow input 
-	   				and capture its output, but it cannot see inside it.  Flows are <emphasis>black boxes</emphasis>.
-	   				Because any flow can be used as a subflow, it can be reused in other contexts without change.
+	   				<para>
+		   				The inner structure and behavior of the <literal>shipping</literal> flow is fully encapsulated within 
+		   				its own flow definition.  A flow calling another flow as a subflow can pass that flow input 
+		   				and capture its output, but it cannot see inside it.  Flows are <emphasis>black boxes</emphasis>.
+		   				Because any flow can be used as a subflow, it can be reused in other contexts without change.
+		   			</para>
 	   			</note>
 			</sect3>
     	    <sect3 id="subflowStateJava">
@@ -2162,8 +2168,10 @@
     			    the name <literal>shipping</literal></emphasis>." 
     			</para>
     			<note>
-    				Had this input mapping not been defined the shipping attribute made available as input 
-    				to this flow by a calling parent flow or external client would have been ignored.
+    				<para>
+	    				Had this input mapping not been defined the shipping attribute made available as input 
+    					to this flow by a calling parent flow or external client would have been ignored.
+    				</para>
     			</note>
 			</sect3>
     	</sect2>
@@ -2406,8 +2414,10 @@
     			    the <literal>placeOrder</literal> state</emphasis>."
     			</para>
     			<note>
-    				had this output mapping not been defined the shipping attribute made available as output 
-    				to this flow by the ending subflow would have been ignored.
+    				<para>
+	    				Had this output mapping not been defined the shipping attribute made available as output 
+    					to this flow by the ending subflow would have been ignored.
+    				</para>
     			</note>
 			</sect3>   			
     	</sect2>
