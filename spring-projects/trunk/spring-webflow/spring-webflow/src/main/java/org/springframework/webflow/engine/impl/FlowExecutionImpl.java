@@ -536,18 +536,31 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		return flowSessions;
 	}
 	
+	/**
+	 * Are there any flow sessions in this flow execution?
+	 */
 	boolean hasSessions() {
 		return !flowSessions.isEmpty();
 	}
 
+	/**
+	 * Are there any sessions for sub flows in this flow execution?
+	 */
 	boolean hasSubflowSessions() {
 		return flowSessions.size() > 1;
 	}
 
+	/**
+	 * Returns the flow session for the root flow of this flow execution.
+	 */
 	FlowSessionImpl getRootSession() {
 		return (FlowSessionImpl)flowSessions.getFirst();
 	}
 
+	/**
+	 * Returns an iterator looping over the subflow sessions
+	 * in this flow execution.
+	 */
 	ListIterator getSubflowSessionIterator() {
 		return flowSessions.listIterator(flowSessions.size() - 2);
 	}
