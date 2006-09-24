@@ -481,61 +481,55 @@
             &lt;entry-actions&gt;
                 &lt;action bean="formAction" method="setupForm"/&gt;
             &lt;/entry-actions&gt;
-            &lt;transition on="search" to="executeSearch"&gt;
+            &lt;transition on="search" to="displayResults"&gt;
                 &lt;action bean="formAction" method="bindAndValidate"/&gt;
             &lt;/transition&gt;
         &lt;/view-state&gt;
     
-        &lt;action-state id="executeSearch"&gt;
-            &lt;bean-action bean="phonebook" method="search"&gt;
-                &lt;method-arguments&gt;
-                    &lt;argument expression="flowScope.searchCriteria"/&gt;
-                &lt;/method-arguments&gt;
-                &lt;method-result name="results"/&gt;
-            &lt;/bean-action&gt;
-            &lt;transition on="success" to="displayResults"/&gt;
-        &lt;/action-state&gt;
-    
         &lt;view-state id="displayResults" view="searchResults"&gt;
+            &lt;render-actions&gt;
+                &lt;bean-action bean="phonebook" method="search"&gt;
+                    &lt;method-arguments&gt;
+                        &lt;argument expression="flowScope.searchCriteria"/&gt;
+                    &lt;/method-arguments&gt;
+                    &lt;method-result name="results"/&gt;
+               &lt;/bean-action&gt;
+            &lt;/render-actions&gt;
             &lt;transition on="newSearch" to="enterCriteria"/&gt;
             &lt;transition on="select" to="browseDetails"/&gt;
         &lt;/view-state&gt;
-    
+	    
         &lt;subflow-state id="browseDetails" flow="detail-flow"&gt;
             &lt;attribute-mapper&gt;
                 &lt;input-mapper&gt;
-                    &lt;mapping source="${requestParameters.id}" target="id" from="string" to="long"/&gt;
+                    &lt;mapping source="requestParameters.id" target="id" from="string" to="long"/&gt;
                 &lt;/input-mapper&gt;
             &lt;/attribute-mapper&gt;
-            &lt;transition on="finish" to="executeSearch"/&gt;
+            &lt;transition on="finish" to="displayResults"/&gt;
         &lt;/subflow-state&gt;
     
     &lt;/flow>   		 	
    		 	</programlisting>
 			<para>
-				Above you see a flow with four (4) states that execute these behaviors, respectively:
+				Above you see a flow with three (3) states that execute these behaviors, respectively:
 			</para>
 			<para>
 	    		<orderedlist>
     				<listitem>
     					<para>
 							The first state <literal>enterCriteria</literal> displays a search criteria form so the user can enter who
-							they wish to search for.    					
+							he or she wishes to search for.    					
 	    				</para>
 	    			</listitem>
 	    			<listitem>
     					<para>
 							On form submit and successful data binding and validation the search is executed.
+					  		After search execution a results view is displayed.
 	    				</para>
 	    			</listitem>
 	    			<listitem>
     					<para>
-					  		After search execution, a results page is displayed.
-	    				</para>
-	    			</listitem>
-	    			<listitem>
-    					<para>
-							From the results page the user may select a result they wish to browse additional details on
+							From the results view the user may select a result they wish to browse additional details on
 							or they may request a new search.  On select, the "detail" flow is spawned and 
 							when it finishes the search is re-executed and it's results redisplayed.
 	    				</para>
