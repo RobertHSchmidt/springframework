@@ -15,14 +15,13 @@
  */
 package org.springframework.webflow.engine.impl;
 
-import java.util.Iterator;
+import java.util.ListIterator;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
-import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecution;
@@ -84,16 +83,27 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 
 	public FlowExecution restoreState(FlowExecution flowExecution, MutableAttributeMap conversationScope) {
 		FlowExecutionImpl impl = (FlowExecutionImpl)flowExecution;
-		// we should be able to find the root flow using the definition locator
 		Flow flow = (Flow)definitionLocator.getFlowDefinition(impl.getFlowId());
 		impl.setFlow(flow);
-		FlowSessionFlowDefinitionLocator locator = new FlowSessionFlowDefinitionLocator(flow, definitionLocator);
-		Iterator it = impl.getFlowSessions().iterator();
-		while (it.hasNext()) {
-			FlowSessionImpl session = (FlowSessionImpl)it.next();
-			Flow definition = (Flow)locator.getFlowDefinition(session.getFlowId());
-			session.setFlow(definition);
-			session.setState(definition.getStateInstance(session.getStateId()));
+		if (impl.hasSessions()) {
+			FlowSessionImpl root = impl.getRootSession();
+			root.setFlow(flow);
+			root.setState(flow.getStateInstance(root.getStateId()));
+			if (impl.hasSubflowSessions()) {
+				Flow parent = flow;
+				for (ListIterator it = impl.getSubflowSessionIterator(); it.hasNext();) {
+					FlowSessionImpl subflow = (FlowSessionImpl)it.next();
+					Flow definition;
+					if (parent.containsInlineFlow(subflow.getFlowId())) {
+						definition = parent.getInlineFlow(subflow.getFlowId());
+					} else {
+						definition = (Flow)definitionLocator.getFlowDefinition(subflow.getFlowId());
+					}
+					subflow.setFlow(definition);
+					subflow.setState(definition.getStateInstance(subflow.getStateId()));
+					parent = (Flow)subflow.getDefinition();
+				}
+			}
 		}
 		if (conversationScope == null) {
 			conversationScope = new LocalAttributeMap();
@@ -102,29 +112,5 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 		impl.setListeners(new FlowExecutionListeners(executionListenerLoader.getListeners(flow)));
 		impl.setAttributes(executionAttributes);
 		return flowExecution;
-	}
-	
-	private static class FlowSessionFlowDefinitionLocator implements FlowDefinitionLocator {
-		private FlowDefinitionLocator flowLocator;
-
-		private Flow rootFlow;
-
-		public FlowSessionFlowDefinitionLocator(Flow rootFlow, FlowDefinitionLocator flowLocator) {
-			this.rootFlow = rootFlow;
-			this.flowLocator = flowLocator;
-		}
-
-		//FIXME this won't find find all flows! e.g. an inline flow of a subflow...
-		public FlowDefinition getFlowDefinition(String id) {
-			if (rootFlow.getId().equals(id)) {
-				return rootFlow;
-			}
-			else if (rootFlow.containsInlineFlow(id)) {
-				return rootFlow.getInlineFlow(id);
-			}
-			else {
-				return flowLocator.getFlowDefinition(id);
-			}
-		}
-	}
+	}	
 }

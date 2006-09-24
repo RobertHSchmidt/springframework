@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -532,7 +532,24 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	/**
 	 * Returns the list of flow session maintained by this flow execution.
 	 */
-	List getFlowSessions() {
+	LinkedList getFlowSessions() {
 		return flowSessions;
 	}
+	
+	boolean hasSessions() {
+		return !flowSessions.isEmpty();
+	}
+
+	boolean hasSubflowSessions() {
+		return flowSessions.size() > 1;
+	}
+
+	FlowSessionImpl getRootSession() {
+		return (FlowSessionImpl)flowSessions.getFirst();
+	}
+
+	ListIterator getSubflowSessionIterator() {
+		return flowSessions.listIterator(flowSessions.size() - 2);
+	}
+
 }
