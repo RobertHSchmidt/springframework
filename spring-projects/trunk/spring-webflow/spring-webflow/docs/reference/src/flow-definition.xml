@@ -1010,9 +1010,9 @@
         &lt;start-state idref="displayPdf"/&gt;
 
         &lt;view-state id="displayPdf"&gt;
-            &lt;entry-actions&gt;
+            &lt;render-actions&gt;
                 &lt;action bean="pdfWriter" method="write"/&gt;
-            &lt;/entry-actions&gt;
+            &lt;/render-actions&gt;
         &lt;/view-state&gt;
 
         ...
@@ -1751,10 +1751,48 @@
     				business object in flow scope.
     			</para>
 			</sect3>
+    	    <sect3 id="actionStateXml-set">
+    	    	<title>ActionState XML - set action</title>
+    	    	<para>
+    	    	    The following example constructs an <literal>ActionState</literal> from
+    	    	    XML that on success executes an action that sets an attribute in "flash scope":
+    	    	</para>
+    	    	<programlisting>
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;flow xmlns="http://www.springframework.org/schema/webflow"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="
+              http://www.springframework.org/schema/webflow
+              http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
+        
+        ...
+        
+        &lt;action-state id="uploadFile"&gt;
+            &lt;action bean="uploadAction" method="uploadFile"/&gt;
+            &lt;transition on="success" to="selectAnotherFile"&gt;
+                &lt;set attribute="fileUploaded" scope="flash" value="true"/&gt;
+            &lt;/transition&gt;
+        &lt;/action-state&gt;
+
+        ...
+        
+    &lt;/flow&gt;
+    			</programlisting>
+    			<para>
+    			    This state definition reads "<emphasis>invoke the <literal>uploadFile</literal> method
+    			    on the <literal>uploadAction</literal>. On <literal>success</literal> allow the user 
+    			    to <literal>selectAnotherFile</literal> to upload, noting the last file was uploaded successfully by
+    			    setting the <literal>fileUploaded</literal> attribute in <literal>flash</literal> scope to
+    			    <literal>true</literal>.
+    			</para>
+    			<note>
+    				Flash scoped attributes are preserved across two requests.
+    			</note>
+			</sect3>
     		<sect3>
     			<title>When to use which kind of action?</title>
     			<para>
-    				Simple action, Multi action, bean action, evaluate action?  When to use one or the other?
+    				Simple action, Multi action, bean action, evaluate action, set?  When to use one or the other?
 	    		</para>
 	    		<table>
     	   			<title>
@@ -1802,10 +1840,19 @@
 									any other flow expression.
 								</entry>
 	        	   	        </row>	        	   	        
+            				<row>
+              					<entry>
+              						<literal>SetAction</literal>
+              					</entry>
+								<entry>
+									When you need to set an attribute in flow or other scope 
+									during the course of flow execution.
+								</entry>
+	        	   	        </row>	        	   	        
 	            		</tbody>
 		       		</tgroup>
     		    </table> 	
-    		</sect3>			
+    		</sect3>
     	</sect2>
     	<sect2 id="decisionState">
     		<title>DecisionState</title>
