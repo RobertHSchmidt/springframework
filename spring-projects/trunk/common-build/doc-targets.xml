@@ -48,12 +48,8 @@ to see a list of all relevant targets.
 				</not>
 			</condition>
 		</fail>
-	</target>
-
-	<target name="doc-pdf" depends="doc-prepare" description="Generate PDF reference documentation">
-		<mkdir dir="${docs.ref.target.dir}/pdf/images" />
-		<copy todir="${docs.ref.target.dir}/pdf/images">
-			<fileset dir="${docs.ref.src.dir}/images">
+		<copy todir="${docs.ref.target.dir}/images">
+			<fileset dir="${docs.ref.dir}/images">
 				<include name="*.gif" />
 				<include name="*.png" />
 				<include name="*.svg" />
@@ -66,7 +62,19 @@ to see a list of all relevant targets.
 				<include name="**/*.jpg" />
 			</fileset>
 		</copy>
+	</target>
 
+	<target name="doc-pdf" depends="doc-prepare" description="Generate PDF reference documentation">
+		<mkdir dir="${docs.ref.target.dir}/pdf/images" />
+		<copy todir="${docs.ref.target.dir}/pdf/images">
+			<fileset dir="${docs.ref.src.dir}/images">
+				<include name="*.gif" />
+				<include name="*.png" />
+				<include name="*.svg" />
+				<include name="*.jpg" />
+			</fileset>
+		</copy>
+		
 		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.dir}">
 			<classpath>
 				<fileset dir="${docs.ref.lib.dir}">
@@ -102,12 +110,6 @@ to see a list of all relevant targets.
 				<include name="*.svg" />
 				<include name="*.jpg" />
 			</fileset>
-			<fileset dir="${docs.ref.dir}/images">
-				<include name="**/*.gif" />
-				<include name="**/*.png" />
-				<include name="**/*.svg" />
-				<include name="**/*.jpg" />
-			</fileset>
 		</copy>
 		<copy todir="${docs.ref.target.dir}/html/styles" file="${docs.ref.dir}/styles/html.css"/>
 
@@ -132,12 +134,6 @@ to see a list of all relevant targets.
 				<include name="*.png" />
 				<include name="*.svg" />
 				<include name="*.jpg" />
-			</fileset>
-			<fileset dir="${docs.ref.dir}/images">
-				<include name="**/*.gif" />
-				<include name="**/*.png" />
-				<include name="**/*.svg" />
-				<include name="**/*.jpg" />
 			</fileset>
 		</copy>
 		<copy todir="${docs.ref.target.dir}/html_single/styles" file="${docs.ref.dir}/styles/html.css"/>
