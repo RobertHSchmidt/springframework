@@ -44,20 +44,13 @@ public abstract class FlowVariable extends AnnotatedObject implements Serializab
 	/**
 	 * Creates a new flow variable.
 	 * @param name the variable name
-	 */
-	public FlowVariable(String name) {
-		this(name, null);
-	}
-
-	/**
-	 * Creates a new flow variable.
-	 * @param name the variable name
 	 * @param scope the variable scope type, defaults to flow scope
 	 */
 	public FlowVariable(String name, ScopeType scope) {
 		Assert.hasText(name, "The variable name is required");
+		Assert.notNull(scope, "The variable scope type is required");
 		this.name = name;
-		this.scope = (scope != null ? scope : ScopeType.FLOW);
+		this.scope = scope;
 	}
 
 	/**
