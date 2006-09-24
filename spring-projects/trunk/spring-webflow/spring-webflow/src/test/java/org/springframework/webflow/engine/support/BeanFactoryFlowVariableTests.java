@@ -18,6 +18,7 @@ package org.springframework.webflow.engine.support;
 import junit.framework.TestCase;
 
 import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.test.engine.MockRequestContext;
 
 public class BeanFactoryFlowVariableTests extends TestCase {
@@ -26,7 +27,7 @@ public class BeanFactoryFlowVariableTests extends TestCase {
 	public void testCreateValidFlowVariable() {
 		StaticApplicationContext beanFactory = new StaticApplicationContext();
 		beanFactory.registerPrototype("bean", Object.class);
-		BeanFactoryFlowVariable variable = new BeanFactoryFlowVariable("var", "bean", beanFactory);
+		BeanFactoryFlowVariable variable = new BeanFactoryFlowVariable("var", "bean", beanFactory, ScopeType.FLOW);
 		variable.create(context);
 		context.getFlowScope().getRequired("var");
 	}

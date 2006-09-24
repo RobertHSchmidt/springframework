@@ -34,6 +34,7 @@ import org.springframework.webflow.engine.support.SimpleFlowVariable;
 import org.springframework.webflow.engine.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionException;
+import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.execution.TestAction;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.test.engine.MockRequestControlContext;
@@ -193,10 +194,10 @@ public class FlowTests extends TestCase {
 
 	public void testStartWithVariables() {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
-		flow.addVariable(new SimpleFlowVariable("var1", ArrayList.class));
+		flow.addVariable(new SimpleFlowVariable("var1", ArrayList.class, ScopeType.FLOW));
 		StaticApplicationContext beanFactory = new StaticApplicationContext();
 		beanFactory.registerPrototype("bean", ArrayList.class);
-		flow.addVariable(new BeanFactoryFlowVariable("var2", "bean", beanFactory));
+		flow.addVariable(new BeanFactoryFlowVariable("var2", "bean", beanFactory, ScopeType.FLOW));
 		flow.start(context, new LocalAttributeMap());
 		assertEquals(2, context.getFlowScope().size());
 		context.getFlowScope().getRequired("var1", ArrayList.class);

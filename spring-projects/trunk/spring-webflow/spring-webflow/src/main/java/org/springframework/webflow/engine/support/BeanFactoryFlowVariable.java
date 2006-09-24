@@ -44,17 +44,6 @@ public class BeanFactoryFlowVariable extends FlowVariable {
 	/**
 	 * Creates a new bean factory flow variable.
 	 * @param variableName the variable name
-	 * @param beanName the bean name
-	 * @param beanFactory the bean factory where initial variable values will be
-	 * obtained
-	 */
-	public BeanFactoryFlowVariable(String variableName, String beanName, BeanFactory beanFactory) {
-		this(variableName, beanName, beanFactory, null);
-	}
-
-	/**
-	 * Creates a new bean factory flow variable.
-	 * @param variableName the variable name
 	 * @param beanName the bean name, will default to the variable name if not specified
 	 * @param beanFactory the bean factory where initial variable values will be
 	 * obtained

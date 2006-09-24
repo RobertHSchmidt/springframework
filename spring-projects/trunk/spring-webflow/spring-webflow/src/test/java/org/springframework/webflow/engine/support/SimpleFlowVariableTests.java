@@ -25,13 +25,6 @@ import org.springframework.webflow.test.engine.MockRequestContext;
 public class SimpleFlowVariableTests extends TestCase {
 	private MockRequestContext context = new MockRequestContext();
 
-	public void testCreateValidFlowVariable() {
-		SimpleFlowVariable variable = new SimpleFlowVariable("var", ArrayList.class);
-		variable.create(context);
-		assertTrue(context.getFlowScope().contains("var"));
-		context.getFlowScope().getRequired("var", ArrayList.class);
-	}
-	
 	public void testCreateValidFlowVariableCustomScope() {
 		SimpleFlowVariable variable = new SimpleFlowVariable("var", ArrayList.class, ScopeType.REQUEST);
 		variable.create(context);
@@ -40,7 +33,7 @@ public class SimpleFlowVariableTests extends TestCase {
 	}
 	
 	public void testCreateVariableNoDefaultConstructor() {
-		SimpleFlowVariable variable = new SimpleFlowVariable("var", Integer.class);
+		SimpleFlowVariable variable = new SimpleFlowVariable("var", Integer.class, ScopeType.FLOW);
 		try {
 			variable.create(context);
 			fail("should have failed");

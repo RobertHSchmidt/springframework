@@ -33,7 +33,6 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.binding.expression.support.CollectionAddingPropertyExpression;
-import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.Mapping;
@@ -90,9 +89,9 @@ import org.xml.sax.SAXException;
  *           xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
  *           xsi:schemaLocation=&quot;http://www.springframework.org/schema/webflow
  *                               http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd&quot;&gt;
- *                                
+ *                                 
  *         &lt;!-- Define your states here --&gt;
- *          
+ *           
  *     &lt;/flow&gt;
  * </pre>
  * 
@@ -463,10 +462,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private FlowVariable parseVariable(Element element) {
-		ScopeType scope = null;
-		if (element.hasAttribute(SCOPE_ATTRIBUTE) && !element.getAttribute(SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
-			scope = (ScopeType)fromStringTo(ScopeType.class).execute(element.getAttribute(SCOPE_ATTRIBUTE));
-		}
+		ScopeType scope = parseScope(element, ScopeType.FLOW);
 		if (StringUtils.hasText(element.getAttribute(BEAN_ATTRIBUTE))) {
 			BeanFactory beanFactory = getLocalFlowServiceLocator().getBeanFactory();
 			return new BeanFactoryFlowVariable(element.getAttribute(NAME_ATTRIBUTE), element
@@ -757,11 +753,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private ActionResultExposer parseActionResultExposer(Element element) {
 		String resultName = element.getAttribute(NAME_ATTRIBUTE);
-		ScopeType resultScope = null;
-		if (element.hasAttribute(SCOPE_ATTRIBUTE) && !element.getAttribute(SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
-			resultScope = (ScopeType)fromStringTo(ScopeType.class).execute(element.getAttribute(SCOPE_ATTRIBUTE));
-		}
-		return new ActionResultExposer(resultName, (resultScope != null ? resultScope : ScopeType.REQUEST));
+		return new ActionResultExposer(resultName, parseScope(element, ScopeType.REQUEST));
 	}
 
 	private AnnotatedAction parseAnnotatedEvaluateAction(Element element) {
@@ -792,31 +784,23 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private Action parseSetAction(Element element) {
 		String attributeExpressionString = element.getAttribute(ATTRIBUTE_ATTRIBUTE);
-		PropertyExpression attributeExpression = getFlowServiceLocator().getExpressionParser()
-				.parsePropertyExpression(attributeExpressionString);
-		ScopeType scope = null;
-		if (element.hasAttribute(SCOPE_ATTRIBUTE) && !element.getAttribute(SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
-			scope = (ScopeType)fromStringTo(ScopeType.class).execute(element.getAttribute(SCOPE_ATTRIBUTE));
-		}
-		// TODO - real expressions
-		Object value = convertValueIfNecessary(element.getAttribute(VALUE_ATTRIBUTE), element);
-		Expression valueExpression = new StaticExpression(value);
-		return new SetAction(attributeExpression, (scope != null ? scope : ScopeType.REQUEST), valueExpression);
+		PropertyExpression attributeExpression = getFlowServiceLocator().getExpressionParser().parsePropertyExpression(
+				attributeExpressionString);
+		ExpressionParser parser = getFlowServiceLocator().getExpressionParser();
+		Expression valueExpression = parser.parseExpression(element.getAttribute(VALUE_ATTRIBUTE));
+		return new SetAction(attributeExpression, parseScope(element, ScopeType.REQUEST), valueExpression);
 	}
 
-	private Object convertValueIfNecessary(String encodedValue, Element element) {
-		// TODO - just a hack for now
-		if ("true".equals(encodedValue)) {
-			return Boolean.TRUE;
-		} else if ("false".equals(encodedValue)) {
-			return Boolean.FALSE;
-		} else {
-			return encodedValue;
-		}
-	}
-	
 	private BeanInvokingActionFactory getBeanInvokingActionFactory() {
 		return getFlowServiceLocator().getBeanInvokingActionFactory();
+	}
+
+	private ScopeType parseScope(Element element, ScopeType defaultValue) {
+		if (element.hasAttribute(SCOPE_ATTRIBUTE) && !element.getAttribute(SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
+			return (ScopeType)fromStringTo(ScopeType.class).execute(element.getAttribute(SCOPE_ATTRIBUTE));
+		} else {
+			return defaultValue;
+		}
 	}
 
 	private AttributeMap parseAttributes(Element element) {
