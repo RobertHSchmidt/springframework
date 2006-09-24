@@ -94,8 +94,8 @@ public interface FlowSession {
 
 	/**
 	 * Returns the local "flash map". Attributes in this map are cleared out
-	 * on the second request into Spring Web Flow, typically when the execution
-	 * is refreshed on "redirect on pause".
+	 * on the second request into Spring Web Flow, so they survive for
+	 * a "redirect on pause", but not after that.
 	 * @return the flash map
 	 */
 	public MutableAttributeMap getFlashMap();

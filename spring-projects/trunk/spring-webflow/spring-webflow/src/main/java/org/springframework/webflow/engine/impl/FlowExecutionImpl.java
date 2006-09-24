@@ -200,6 +200,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			logger.debug("Resuming this execution on user event '" + eventId + "'");
 		}
 		RequestControlContext context = createControlContext(externalContext);
+		context.getFlashScope().clear();
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
@@ -224,6 +225,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			logger.debug("Resuming this execution for refresh");
 		}
 		RequestControlContext context = createControlContext(externalContext);
+		context.getFlashScope().clear();
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
@@ -273,7 +275,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			return selectedView;
 		}
 		getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
-		context.getFlashScope().clear();
 		getListeners().firePaused(context, selectedView);
 		if (logger.isDebugEnabled()) {
 			if (selectedView != null) {
