@@ -397,8 +397,10 @@
     &lt;/form&gt;
 		    	</programlisting>
 	   		 	<note>
-	  	  			In this case the <literal>eventId</literal> is determined by parsing the parameter name of the 
-	   		 		button that was pressed.
+	   		 		<para>
+		  	  			In this case the <literal>eventId</literal> is determined by parsing the parameter name of the 
+		   		 		button that was pressed.
+		   		 	</para>
 		    	</note>
     		</sect3>
     	</sect2>
