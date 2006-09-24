@@ -83,6 +83,7 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 
 	public FlowExecution restoreState(FlowExecution flowExecution, MutableAttributeMap conversationScope) {
 		FlowExecutionImpl impl = (FlowExecutionImpl)flowExecution;
+		// the root flow should be a top-level flow visible by the flow def locator
 		Flow flow = (Flow)definitionLocator.getFlowDefinition(impl.getFlowId());
 		impl.setFlow(flow);
 		if (impl.hasSessions()) {
@@ -95,13 +96,15 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 					FlowSessionImpl subflow = (FlowSessionImpl)it.next();
 					Flow definition;
 					if (parent.containsInlineFlow(subflow.getFlowId())) {
+						// subflow is an inline flow of it's parent
 						definition = parent.getInlineFlow(subflow.getFlowId());
 					} else {
+						// subflow is a top-level flow
 						definition = (Flow)definitionLocator.getFlowDefinition(subflow.getFlowId());
 					}
 					subflow.setFlow(definition);
 					subflow.setState(definition.getStateInstance(subflow.getStateId()));
-					parent = (Flow)subflow.getDefinition();
+					parent = definition;
 				}
 			}
 		}
