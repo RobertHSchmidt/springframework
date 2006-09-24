@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springframework.ws</groupId>
     <artifactId>spring-ws</artifactId>
@@ -66,8 +67,10 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/springframework/spring-projects/trunk/spring-ws/</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/springframework/spring-projects/trunk/spring-ws/</developerConnection>
+        <connection>
+            scm:svn:https://svn.sourceforge.net/svnroot/springframework/spring-projects/trunk/spring-ws/</connection>
+        <developerConnection>
+            scm:svn:https://svn.sourceforge.net/svnroot/springframework/spring-projects/trunk/spring-ws/</developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/springframework/spring-projects/trunk/spring-ws/</url>
     </scm>
     <modules>
@@ -106,16 +109,6 @@
             <id>spring-ext</id>
             <name>Spring External Dependencies Repository</name>
             <url>https://svn.sourceforge.net/svnroot/springframework/repos/repo-ext/</url>
-        </repository>
-        <repository>
-            <id>Maven Snapshots</id>
-            <url>http://snapshots.maven.codehaus.org/maven2/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
         </repository>
     </repositories>
     <build>
@@ -456,12 +449,11 @@
                 <artifactId>xpp3</artifactId>
                 <version>1.1.3.4.O</version>
             </dependency>
-            <!-- O/X Mapping dependencies -->
-            <!-- Castor -->
+            <!-- O/X Mapping dependencies --><!-- Castor -->
             <dependency>
-                <groupId>castor</groupId>
+                <groupId>org.codehaus.castor</groupId>
                 <artifactId>castor</artifactId>
-                <version>1.0</version>
+                <version>1.0.3</version>
             </dependency>
             <!-- JAXB -->
             <dependency>
@@ -624,16 +616,16 @@
                 <version>1.1</version>
                 <exclusions>
                     <exclusion>
-                      <groupId>logkit</groupId>
-                      <artifactId>logkit</artifactId>
+                        <groupId>logkit</groupId>
+                        <artifactId>logkit</artifactId>
                     </exclusion>
                     <exclusion>
-                      <groupId>avalon-framework</groupId>
-                      <artifactId>avalon-framework</artifactId>
+                        <groupId>avalon-framework</groupId>
+                        <artifactId>avalon-framework</artifactId>
                     </exclusion>
                     <exclusion>
-                      <groupId>javax.servlet</groupId>
-                      <artifactId>servlet-api</artifactId>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>servlet-api</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
