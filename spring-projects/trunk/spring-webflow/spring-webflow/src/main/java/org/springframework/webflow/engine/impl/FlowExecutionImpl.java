@@ -240,7 +240,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			}
 		}
 		finally {
-			context.getFlashScope().clear();
 			getListeners().fireRequestProcessed(context);
 		}
 	}
@@ -274,6 +273,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			return selectedView;
 		}
 		getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
+		context.getFlashScope().clear();
 		getListeners().firePaused(context, selectedView);
 		if (logger.isDebugEnabled()) {
 			if (selectedView != null) {
