@@ -11,7 +11,13 @@
 
 	<dependencies defaultconf="global->default">
 		<!-- global dependencies -->
-		<dependency org="commons-logging" name="commons-logging" rev="1.1" />
+		<dependency org="commons-logging" name="commons-logging" rev="1.1">
+			<!-- There is a bug in the 1.1 POM so these optional dependencies must be explictly ignored -->
+			<exclude module="avalon-framework"/>
+			<exclude module="log4j"/>
+			<exclude module="logkit"/>
+			<exclude module="servlet-api"/>
+		</dependency>
 		<dependency org="ognl" name="ognl" rev="2.6.9" />
 		<dependency org="org.springframework" name="spring-beans" rev="2.0-rc4" />
 		<dependency org="org.springframework" name="spring-context"	rev="2.0-rc4" />
