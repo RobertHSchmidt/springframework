@@ -20,14 +20,15 @@ import java.util.HashMap;
 import org.springframework.binding.collection.SharedMapDecorator;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
-import org.springframework.webflow.core.collection.LocalParameterMap;
 import org.springframework.webflow.core.collection.LocalSharedAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.core.collection.SharedAttributeMap;
 
 /**
- * Mock implementation of the <code>ExternalContext</code> interface.
+ * Mock implementation of the {@link ExternalContext} interface.
+ * 
+ * @see ExternalContext
  * 
  * @author Keith Donald
  */
@@ -44,19 +45,22 @@ public class MockExternalContext implements ExternalContext {
 	private MutableAttributeMap requestMap = new LocalAttributeMap();
 
 	private SharedAttributeMap sessionMap = new LocalSharedAttributeMap(new SharedMapDecorator(new HashMap()));
+	
+	private SharedAttributeMap globalSessionMap = sessionMap;
 
 	private SharedAttributeMap applicationMap = new LocalSharedAttributeMap(new SharedMapDecorator(new HashMap()));
 
 	/**
 	 * Creates a mock external context with an empty request parameter map.
+	 * Allows for bean style usage.
 	 */
 	public MockExternalContext() {
-
 	}
 
 	/**
 	 * Creates a mock external context with the specified parameters in the
-	 * request parameter map.
+	 * request parameter map. All other properties of the external context
+	 * can be set using the appropriate setter.
 	 * @param requestParameterMap the request parameters
 	 */
 	public MockExternalContext(ParameterMap requestParameterMap) {
@@ -90,7 +94,7 @@ public class MockExternalContext implements ExternalContext {
 	}
 
 	public SharedAttributeMap getGlobalSessionMap() {
-		return sessionMap;
+		return globalSessionMap;
 	}
 	
 	public SharedAttributeMap getApplicationMap() {
@@ -99,34 +103,78 @@ public class MockExternalContext implements ExternalContext {
 
 	// helper setters
 
+	/**
+	 * Set the context path.
+	 * @see ExternalContext#getContextPath()
+	 */
 	public void setContextPath(String contextPath) {
 		this.contextPath = contextPath;
 	}
 	
+	/**
+	 * Set the dispatcher path.
+	 * @see ExternalContext#getDispatcherPath()
+	 */
 	public void setDispatcherPath(String dispatcherPath) {
 		this.dispatcherPath = dispatcherPath;
 	}
 
+	/**
+	 * Set the request path info.
+	 * @see ExternalContext#getRequestPathInfo()
+	 */
 	public void setRequestPathInfo(String requestPathInfo) {
 		this.requestPathInfo = requestPathInfo;
 	}
 
-	public void setRequestParameterMap(LocalParameterMap requestParameterMap) {
+	/**
+	 * Set the request parameter map.
+	 * @see ExternalContext#getRequestParameterMap()
+	 */
+	public void setRequestParameterMap(ParameterMap requestParameterMap) {
 		this.requestParameterMap = requestParameterMap;
 	}
 	
-	public void setRequestMap(LocalAttributeMap requestMap) {
+	/**
+	 * Set the request attribute map.
+	 * @see ExternalContext#getRequestMap()
+	 */
+	public void setRequestMap(MutableAttributeMap requestMap) {
 		this.requestMap = requestMap;
 	}
 
-	public void setSessionMap(LocalSharedAttributeMap sessionMap) {
+	/**
+	 * Set the session attribute map.
+	 * @see ExternalContext#getSessionMap()
+	 */
+	public void setSessionMap(SharedAttributeMap sessionMap) {
 		this.sessionMap = sessionMap;
 	}
-
-	public void setApplicationMap(LocalSharedAttributeMap applicationMap) {
-		this.applicationMap = applicationMap;
+	
+	/**
+	 * Set the global session attribute map. By default the session attribute
+	 * map and the global session attribute map are one and the same.
+	 * @see ExternalContext#getGlobalSessionMap()
+	 */
+	public void setGlobalSessionMap(SharedAttributeMap globalSessionMap) {
+		this.globalSessionMap = globalSessionMap;
 	}
 
+	/**
+	 * Set the application attribute map.
+	 * @see ExternalContext#getApplicationMap()
+	 */
+	public void setApplicationMap(SharedAttributeMap applicationMap) {
+		this.applicationMap = applicationMap;
+	}
+	
+	// convenience helpers
+
+	/**
+	 * Returns the request parameter map as a {@link MockParameterMap}
+	 * for convenient access in a unit test.
+	 * @see #getRequestParameterMap()
+	 */
 	public MockParameterMap getMockRequestParameterMap() {
 		return (MockParameterMap)requestParameterMap;
 	}

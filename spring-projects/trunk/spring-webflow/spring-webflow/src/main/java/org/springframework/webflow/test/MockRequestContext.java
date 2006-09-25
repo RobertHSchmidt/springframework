@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.test.engine;
+package org.springframework.webflow.test;
 
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
-import org.springframework.webflow.core.collection.LocalParameterMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.definition.FlowDefinition;
@@ -30,18 +29,10 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.test.MockExternalContext;
 
 /**
  * Mock implementation of the <code>RequestContext</code> interface to
- * facilitate standalone Action unit tests.
- * <p>
- * NOT intended to be used for anything but standalone unit tests. This is a
- * simple state holder, a <i>stub</i> implementation, at least if you follow <a
- * href="http://www.martinfowler.com/articles/mocksArentStubs.html">Martin
- * Fowler's</a> reasoning. This class is called <i>Mock</i>RequestContext to
- * be consistent with the naming convention in the rest of the Spring framework
- * (e.g. MockHttpServletRequest, ...).
+ * facilitate standalone flow artifact (e.g. action) unit tests.
  * 
  * @see org.springframework.webflow.execution.RequestContext
  * @see org.springframework.webflow.execution.Action
@@ -55,13 +46,13 @@ public class MockRequestContext implements RequestContext {
 
 	private ExternalContext externalContext = new MockExternalContext();
 
-	private LocalAttributeMap requestScope = new LocalAttributeMap();
+	private MutableAttributeMap requestScope = new LocalAttributeMap();
 
 	private Event lastEvent;
 
 	private Transition lastTransition;
 
-	private LocalAttributeMap attributes = new LocalAttributeMap();
+	private MutableAttributeMap attributes = new LocalAttributeMap();
 
 	/**
 	 * Creates a new mock request context with the following defaults:
@@ -71,10 +62,9 @@ public class MockRequestContext implements RequestContext {
 	 * <li>A mock external context with no request parameters set.
 	 * </ul>
 	 * To add request parameters to this request, use the
-	 * {@link #putRequestParameter(String, String) } method.
+	 * {@link #putRequestParameter(String, String)} method.
 	 */
 	public MockRequestContext() {
-
 	}
 
 	/**
@@ -84,7 +74,7 @@ public class MockRequestContext implements RequestContext {
 	 * <li>A mock external context with no request parameters set.
 	 * </ul>
 	 * To add request parameters to this request, use the
-	 * {@link #putRequestParameter(String, String) } method.
+	 * {@link #putRequestParameter(String, String)} method.
 	 */
 	public MockRequestContext(Flow flow) {
 		flowExecutionContext = new MockFlowExecutionContext(flow);
@@ -98,7 +88,7 @@ public class MockRequestContext implements RequestContext {
 	 * <li>A mock external context with the provided parameters set.
 	 * </ul>
 	 */
-	public MockRequestContext(LocalParameterMap requestParameterMap) {
+	public MockRequestContext(ParameterMap requestParameterMap) {
 		externalContext = new MockExternalContext(requestParameterMap);
 	}
 
@@ -157,7 +147,32 @@ public class MockRequestContext implements RequestContext {
 	}
 
 	public AttributeMap getModel() {
-		return getConversationScope().union(getFlowScope()).union(getRequestScope());
+		return getConversationScope().union(getFlowScope()).union(getFlashScope()).union(getRequestScope());
+	}
+	
+	// mutators
+
+	/**
+	 * Sets the active flow session of the executing flow associated with this
+	 * request. This will influence {@link #getActiveFlow()} and {@link #getCurrentState()},
+	 * as well as {@link #getFlowScope()} and {@link #getFlashScope()}.
+	 */
+	public void setActiveSession(FlowSession flowSession) {
+		getMockFlowExecutionContext().setActiveSession(flowSession);
+	}
+
+	/**
+	 * Sets the external context.
+	 */
+	public void setExternalContext(ExternalContext externalContext) {
+		this.externalContext = externalContext;
+	}
+
+	/**
+	 * Sets the flow execution context.
+	 */
+	public void setFlowExecutionContext(FlowExecutionContext flowExecutionContext) {
+		this.flowExecutionContext = flowExecutionContext;
 	}
 
 	/**
@@ -192,19 +207,16 @@ public class MockRequestContext implements RequestContext {
 	public void removeAttribute(String attributeName) {
 		attributes.remove(attributeName);
 	}
+		
+	// convenience accessors
 	
 	/**
-	 * Sets the flow execution context.
+	 * Returns the contained mutable context {@link AttributeMap attribute map}
+	 * allowing setting of mock context attributes.
+	 * @return the attribute map
 	 */
-	public void setFlowExecutionContext(FlowExecutionContext flowExecutionContext) {
-		this.flowExecutionContext = flowExecutionContext;
-	}
-
-	/**
-	 * Sets the external context.
-	 */
-	public void setExternalContext(ExternalContext externalContext) {
-		this.externalContext = externalContext;
+	public MutableAttributeMap getAttributeMap() {
+		return attributes;
 	}
 
 	/**
@@ -219,14 +231,6 @@ public class MockRequestContext implements RequestContext {
 	 */
 	public MockExternalContext getMockExternalContext() {
 		return (MockExternalContext)externalContext;
-	}
-
-	/**
-	 * Sets the active flow session of the executing flow associated with this
-	 * request.
-	 */
-	public void setActiveSession(FlowSession flowSession) {
-		getMockFlowExecutionContext().setActiveSession(flowSession);
 	}
 
 	/**
@@ -245,14 +249,5 @@ public class MockRequestContext implements RequestContext {
 	 */
 	public void putRequestParameter(String parameterName, String[] parameterValues) {
 		getMockExternalContext().putRequestParameter(parameterName, parameterValues);
-	}
-	
-	/**
-	 * Returns the contained mutable context {@link LocalAttributeMap} allowing setting of mock context 
-	 * attributes.
-	 * @return the attribute map
-	 */
-	public LocalAttributeMap getAttributeMap() {
-		return attributes;
 	}
 }

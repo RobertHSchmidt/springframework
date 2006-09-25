@@ -26,8 +26,8 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.ScopeType;
-import org.springframework.webflow.test.engine.MockFlowSession;
-import org.springframework.webflow.test.engine.MockRequestContext;
+import org.springframework.webflow.test.MockFlowSession;
+import org.springframework.webflow.test.MockRequestContext;
 
 /**
  * Test case for ParameterizableFlowAttributeMapper.

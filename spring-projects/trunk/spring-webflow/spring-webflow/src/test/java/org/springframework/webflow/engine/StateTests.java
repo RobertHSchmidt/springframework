@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.TestAction;
 import org.springframework.webflow.execution.ViewSelection;
-import org.springframework.webflow.test.engine.MockRequestControlContext;
+import org.springframework.webflow.test.MockRequestControlContext;
 
 /**
  * Tests that each of the Flow state types execute as expected when entered.

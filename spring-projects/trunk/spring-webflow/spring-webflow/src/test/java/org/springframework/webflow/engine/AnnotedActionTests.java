@@ -21,7 +21,7 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.TestAction;
-import org.springframework.webflow.test.engine.MockRequestContext;
+import org.springframework.webflow.test.MockRequestContext;
 
 public class AnnotedActionTests extends TestCase {
 

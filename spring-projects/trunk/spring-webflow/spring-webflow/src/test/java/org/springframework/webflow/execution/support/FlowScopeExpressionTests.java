@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
-import org.springframework.webflow.test.engine.MockRequestContext;
+import org.springframework.webflow.test.MockRequestContext;
 
 public class FlowScopeExpressionTests extends TestCase {
 

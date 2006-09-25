@@ -22,7 +22,7 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.test.engine.MockRequestContext;
+import org.springframework.webflow.test.MockRequestContext;
 
 /**
  * Unit tests for the CompositeAction class.

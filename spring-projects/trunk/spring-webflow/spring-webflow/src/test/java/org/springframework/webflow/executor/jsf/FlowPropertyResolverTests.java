@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 
 import org.easymock.MockControl;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.test.engine.MockFlowSession;
+import org.springframework.webflow.test.MockFlowSession;
 
 /**
  * @author Colin Sampaleanu

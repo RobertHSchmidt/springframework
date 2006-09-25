@@ -21,7 +21,7 @@ import org.springframework.binding.convert.ConversionException;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.test.engine.MockRequestContext;
+import org.springframework.webflow.test.MockRequestContext;
 
 /**
  * Test case for OgnlTransitionCriteriaCreator.

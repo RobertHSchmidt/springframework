@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.test.engine.MockRequestContext;
+import org.springframework.webflow.test.MockRequestContext;
 
 /**
  * Unit tests for the ActionTransitionCriteria class.

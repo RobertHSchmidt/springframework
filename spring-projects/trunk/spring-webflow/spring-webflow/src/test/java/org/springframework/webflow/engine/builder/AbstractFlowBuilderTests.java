@@ -32,7 +32,7 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.test.engine.MockRequestContext;
+import org.springframework.webflow.test.MockRequestContext;
 
 /**
  * Test Java based flow builder logic (subclasses of AbstractFlowBuilder).
