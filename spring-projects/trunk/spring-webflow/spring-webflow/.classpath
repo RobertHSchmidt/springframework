@@ -3,13 +3,11 @@
 	<classpathentry output="target/classes" kind="src" path="src/main/java"/>
 	<classpathentry output="target/test-classes" kind="src" path="src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/test/commons-beanutils.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-codec.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/concurrent.jar"/>
 	<classpathentry kind="lib" path="lib/test/easymock.jar"/>
 	<classpathentry kind="lib" path="lib/global/log4j.jar"/>
-	<classpathentry kind="lib" path="lib/buildtime/jmx-ri.jar"/>
 	<classpathentry kind="lib" path="lib/global/junit.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/myfaces-api.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/myfaces-impl.jar"/>
@@ -27,5 +25,6 @@
 	<classpathentry sourcepath="/spring/mock" kind="lib" path="lib/test/spring-mock.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/commons-digester.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-struts.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/commons-beanutils.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
