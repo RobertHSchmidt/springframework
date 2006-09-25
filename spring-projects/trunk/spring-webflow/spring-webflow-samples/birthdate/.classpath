@@ -17,10 +17,6 @@
 	<classpathentry kind="lib" path="lib/global/spring-web.jar"/>
 	<classpathentry sourcepath="/spring-webflow" kind="lib" path="lib/global/spring-webflow.jar"/>
 	<classpathentry kind="lib" path="lib/global/standard.jar"/>
-	<classpathentry kind="lib" path="lib/global/commons-beanutils.jar"/>
-	<classpathentry kind="lib" path="lib/global/commons-collections.jar"/>
-	<classpathentry kind="lib" path="lib/global/commons-digester.jar"/>
-	<classpathentry kind="lib" path="lib/global/commons-validator.jar"/>
 	<classpathentry kind="lib" path="lib/global/struts.jar"/>
 	<classpathentry kind="lib" path="lib/global/spring-struts.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
