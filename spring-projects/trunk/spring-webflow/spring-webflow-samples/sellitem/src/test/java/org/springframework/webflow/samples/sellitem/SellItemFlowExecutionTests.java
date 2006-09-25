@@ -3,9 +3,9 @@ package org.springframework.webflow.samples.sellitem;
 import org.easymock.MockControl;
 import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.execution.support.ApplicationView;
+import org.springframework.webflow.test.MockFlowServiceLocator;
 import org.springframework.webflow.test.MockParameterMap;
 import org.springframework.webflow.test.execution.AbstractXmlFlowExecutionTests;
-import org.springframework.webflow.test.execution.MockFlowServiceLocator;
 
 public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
