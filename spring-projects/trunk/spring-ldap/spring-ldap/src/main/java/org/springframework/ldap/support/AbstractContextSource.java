@@ -452,4 +452,8 @@ public abstract class AbstractContextSource implements ContextSource,
         }
 
     }
+
+    protected String[] getUrls() {
+        return urls;
+    }
 }
