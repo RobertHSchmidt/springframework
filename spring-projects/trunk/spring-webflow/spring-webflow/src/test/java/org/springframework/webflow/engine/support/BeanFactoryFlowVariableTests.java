@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.webflow.execution.ScopeType;
-import org.springframework.webflow.test.engine.MockRequestContext;
+import org.springframework.webflow.test.MockRequestContext;
 
 public class BeanFactoryFlowVariableTests extends TestCase {
 	private MockRequestContext context = new MockRequestContext();

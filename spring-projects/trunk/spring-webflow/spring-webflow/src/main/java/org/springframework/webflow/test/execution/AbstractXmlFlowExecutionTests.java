@@ -21,7 +21,7 @@ import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
 
 /**
- * Base class for flow integration tests that verify a XML flow definition
+ * Base class for flow integration tests that verify an XML flow definition
  * executes as expected.
  * <p>
  * Example usage:
@@ -53,6 +53,7 @@ import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
  * @author Keith Donald
  */
 public abstract class AbstractXmlFlowExecutionTests extends AbstractExternalizedFlowExecutionTests {
+	
 	protected final FlowBuilder createFlowBuilder(Resource resource, FlowServiceLocator flowServiceLocator) {
 		return new XmlFlowBuilder(resource, flowServiceLocator);
 	}

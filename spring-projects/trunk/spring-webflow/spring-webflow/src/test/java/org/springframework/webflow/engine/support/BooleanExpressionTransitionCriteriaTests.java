@@ -21,7 +21,7 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.test.engine.MockRequestContext;
+import org.springframework.webflow.test.MockRequestContext;
 
 public class BooleanExpressionTransitionCriteriaTests extends TestCase {
 	ExpressionParser parser = new DefaultExpressionParserFactory().getExpressionParser();

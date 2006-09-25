@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.test.engine.MockRequestControlContext;
+import org.springframework.webflow.test.MockRequestControlContext;
 
 /**
  * Tests that each of the Flow state types execute as expected when entered.

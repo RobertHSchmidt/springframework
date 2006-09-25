@@ -18,7 +18,7 @@ package org.springframework.webflow.action;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.test.engine.MockRequestContext;
+import org.springframework.webflow.test.MockRequestContext;
 
 public class SuccessEventFactoryTests extends TestCase {
 

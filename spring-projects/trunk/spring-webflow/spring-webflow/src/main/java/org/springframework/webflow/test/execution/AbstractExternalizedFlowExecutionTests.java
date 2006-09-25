@@ -30,10 +30,12 @@ import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.execution.FlowExecutionFactory;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
+import org.springframework.webflow.test.MockFlowServiceLocator;
 
 /**
  * Base class for flow integration tests that verify an externalized flow
- * definition executes as expected.
+ * definition executes as expected. Supports caching of the flow definition
+ * built from an externalized resource to speed up test execution.
  * 
  * @author Keith Donald
  */
@@ -45,11 +47,13 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	private static FlowDefinition cachedFlowDefinition;
 
 	/**
-	 * The flag indicating if the the flow definition built from an externalized
+	 * The flag indicating if the flow definition built from an externalized
 	 * resource as part of this test should be cached.
 	 */
-	private boolean cacheFlowDefinition;
-
+	private boolean cacheFlowDefinition = false;
+	
+	private FlowExecutionImplFactory flowExecutionFactory = new FlowExecutionImplFactory();
+	
 	/**
 	 * Returns if flow definition caching is turned on.
 	 */
@@ -58,8 +62,9 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	}
 
 	/**
-	 * Sets the flag indicating if the the flow definition built from an
+	 * Sets the flag indicating if the flow definition built from an
 	 * externalized resource as part of this test should be cached.
+	 * Default is false.
 	 */
 	protected void setCacheFlowDefinition(boolean cacheFlowDefinition) {
 		this.cacheFlowDefinition = cacheFlowDefinition;
@@ -72,7 +77,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * @param executionAttributes the system attributes to assign
 	 */
 	protected void setFlowExecutionAttributes(AttributeMap executionAttributes) {
-		getFlowExecutionImplFactory().setExecutionAttributes(executionAttributes);
+		flowExecutionFactory.setExecutionAttributes(executionAttributes);
 	}
 
 	/**
@@ -82,8 +87,12 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * @param executionListener the listener to attach
 	 */
 	protected void setFlowExecutionListener(FlowExecutionListener executionListener) {
-		getFlowExecutionImplFactory().setExecutionListenerLoader(
+		flowExecutionFactory.setExecutionListenerLoader(
 				new StaticFlowExecutionListenerLoader(executionListener));
+	}
+
+	protected final FlowExecutionFactory createFlowExecutionFactory() {
+		return flowExecutionFactory;
 	}
 
 	protected final FlowDefinition getFlowDefinition() {
@@ -98,18 +107,13 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 		return flow;
 	}
 
-	protected final FlowExecutionFactory createFlowExecutionFactory() {
-		return new FlowExecutionImplFactory();
-	}
-
 	/**
 	 * Returns the flow artifact factory to use during flow definition
 	 * construction time for accessing externally managed flow artifacts such as
 	 * actions and flows to be used as subflows.
 	 * <p>
-	 * Subclasses should override to return a specific flow artifact factory
-	 * implementation to support their flow execution test scenarios.
-	 * 
+	 * This implementation just creates a {@link MockFlowServiceLocator} and
+	 * populates it with services by calling {@link #registerMockServices(MockFlowServiceLocator)}.  
 	 * @return the flow artifact factory
 	 */
 	protected FlowServiceLocator createFlowServiceLocator() {
@@ -121,7 +125,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	/**
 	 * Template method called by {@link #createFlowServiceLocator()} to allow
 	 * registration of mock implementations of services needed to test the flow
-	 * execution. Useful when testing flow definition in execution in isolation
+	 * execution. Useful when testing flow definitions in execution in isolation
 	 * from flows and middle-tier services. Subclasses may override.
 	 * @param serviceRegistry the mock service registry (and locator)
 	 */
@@ -135,6 +139,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * executions should also be exercised by this test.
 	 * @param resource the flow definition resource
 	 * @return the built flow definition, ready for execution
+	 * @see #createFlowBuilder(Resource, FlowServiceLocator)
 	 */
 	protected final Flow createFlow(FlowDefinitionResource resource, FlowServiceLocator serviceLocator) {
 		FlowBuilder builder = createFlowBuilder(resource.getLocation(), serviceLocator);
@@ -142,25 +147,16 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 		return assembler.assembleFlow();
 	}
 
-	private FlowExecutionImplFactory getFlowExecutionImplFactory() {
-		return (FlowExecutionImplFactory)getFlowExecutionImplFactory();
-	}
-
 	/**
-	 * <p>
 	 * Returns the pointer to the resource that houses the definition of the
 	 * flow to be tested. Subclasses must implement.
-	 * </p>
 	 * <p>
 	 * Example usage:
-	 * 
 	 * <pre class="code">
 	 *     protected FlowDefinitionResource getFlowDefinitionResource() {
 	 * 	      return createFlowDefinitionResource(&quot;/WEB-INF/flows/order-flow.xml&quot;);
 	 *     }
 	 * </pre>
-	 * 
-	 * </p>
 	 * @return the flow definition resource
 	 */
 	protected abstract FlowDefinitionResource getFlowDefinitionResource();
@@ -187,7 +183,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 
 	/**
 	 * Convenient factory method that creates a {@link FlowDefinitionResource}
-	 * from a file. Typically called by subclasses overriding
+	 * from a file in a directory. Typically called by subclasses overriding
 	 * {@link #getFlowDefinitionResource()}.
 	 * @param fileDirectory the directory containing the file
 	 * @param fileName the short file name

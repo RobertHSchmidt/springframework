@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.test.engine;
+package org.springframework.webflow.test;
 
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.engine.Flow;
@@ -27,15 +27,8 @@ import org.springframework.webflow.execution.FlowSessionStatus;
 import org.springframework.webflow.execution.ViewSelection;
 
 /**
- * Mock implementation of the <code>FlowControlContext</code> interface to
+ * Mock implementation of the {@link RequestControlContext} interface to
  * facilitate standalone Flow and State unit tests.
- * <p>
- * NOT intended to be used for anything but standalone unit tests. This is a
- * simple state holder, a <i>stub</i> implementation, at least if you follow <a
- * href="http://www.martinfowler.com/articles/mocksArentStubs.html">Martin
- * Fowler's</a> reasoning. This class is called <i>Mock</i>FlowControlContext
- * to be consistent with the naming convention in the rest of the Spring
- * framework (e.g. MockHttpServletRequest, ...).
  * 
  * @see org.springframework.webflow.execution.RequestContext
  * @see org.springframework.webflow.execution.FlowSession
@@ -46,13 +39,23 @@ import org.springframework.webflow.execution.ViewSelection;
 public class MockRequestControlContext extends MockRequestContext implements RequestControlContext {
 
 	/**
-	 * Creates a new mock control context for controlling a mock execution of the
+	 * Creates a new mock request control context for controlling a mock execution of the
 	 * provided flow definition.
 	 */
 	public MockRequestControlContext(Flow rootFlow) {
 		super(rootFlow);
 	}
 	
+	// implementing RequestControlContext
+
+	public void setCurrentState(State state) {
+		State previousState = (State)getCurrentState();
+		getMockFlowExecutionContext().getMockActiveSession().setState(state);
+		if (previousState == null) {
+			getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.ACTIVE);
+		}
+	}
+
 	public ViewSelection start(Flow flow, MutableAttributeMap input) throws IllegalStateException {
 		getMockFlowExecutionContext().setActiveSession(new MockFlowSession(flow, input));
 		getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.STARTING);
@@ -72,14 +75,6 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 		endingSession.setStatus(FlowSessionStatus.ENDED);
 		getMockFlowExecutionContext().setActiveSession(null);
 		return endingSession;
-	}
-
-	public void setCurrentState(State state) {
-		getMockFlowExecutionContext().getMockActiveSession().setState(state);
-		State previousState = (State)getCurrentState();
-		if (previousState == null) {
-			getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.ACTIVE);
-		}
 	}
 
 	public ViewSelection execute(Transition transition) {

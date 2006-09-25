@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.test.engine;
+package org.springframework.webflow.test;
 
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -25,6 +25,8 @@ import org.springframework.webflow.execution.FlowSession;
 
 /**
  * A stub implementation of the flow execution context interface.
+ * 
+ * @see FlowExecutionContext
  * 
  * @author Keith Donald
  */
@@ -39,7 +41,7 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 	private MutableAttributeMap attributes = new LocalAttributeMap();
 
 	/**
-	 * Creates a new mock flow execution context--automatically installs a root
+	 * Creates a new mock flow execution context -- automatically installs a root
 	 * flow definition and active flow session.
 	 */
 	public MockFlowExecutionContext() {
@@ -84,6 +86,8 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 	public AttributeMap getAttributes() {
 		return attributes;
 	}
+	
+	// mutators
 
 	/**
 	 * Sets the top-level flow definition.
@@ -105,6 +109,8 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 	public void setConversationScope(MutableAttributeMap scope) {
 		this.conversationScope = scope;
 	}
+	
+	// convenience accessors
 
 	/**
 	 * Returns the mock active flow session.
@@ -114,10 +120,10 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 	}
 
 	/**
-	 * Returns the execution attribute map.
+	 * Returns the mutable execution attribute map.
 	 * @return the execution attribute map
 	 */
-	public MutableAttributeMap getMockAttributeMap() {
+	public MutableAttributeMap getAttributeMap() {
 		return attributes;
 	}
 	

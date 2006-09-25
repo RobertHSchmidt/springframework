@@ -21,7 +21,7 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.test.engine.MockRequestContext;
+import org.springframework.webflow.test.MockRequestContext;
 
 public class AbstractActionTests extends TestCase {
 	private TestAbstractAction action = new TestAbstractAction();

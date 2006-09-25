@@ -426,7 +426,7 @@
 		<sect2 id="layer-execution-test">
 			<title>The Test Layer</title>
 			<para>
-				Support for unit and system testing flow executions.
+				Support for unit testing flow artifacts and system testing flow executions.
 			</para>
 			<para>
 				Depends On: Execution Engine, Execution Core
@@ -455,7 +455,7 @@
 								Support for unit testing implementations such as Actions in isolation.		
             				</entry>
             				<entry>
-            					test.engine
+            					test
             				</entry> 
             				<entry>None</entry>
             				<entry>JUnit 3.8.1</entry>

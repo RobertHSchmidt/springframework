@@ -18,10 +18,13 @@ package org.springframework.webflow.test;
 import java.util.HashMap;
 
 import org.springframework.webflow.core.collection.LocalParameterMap;
+import org.springframework.webflow.core.collection.ParameterMap;
 
 /**
  * A extension of parameter map that allows for mutation of parameters. Useful
  * as a stub for testing.
+ * 
+ * @see ParameterMap
  * 
  * @author Keith Donald
  */

@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowSessionStatus;
-import org.springframework.webflow.test.engine.MockRequestContext;
+import org.springframework.webflow.test.MockRequestContext;
 
 public class ResultObjectEventFactoryTests extends TestCase {
 

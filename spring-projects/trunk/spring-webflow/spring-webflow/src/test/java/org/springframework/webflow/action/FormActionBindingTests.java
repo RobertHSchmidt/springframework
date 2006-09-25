@@ -21,7 +21,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.validation.Errors;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.test.engine.MockRequestContext;
+import org.springframework.webflow.test.MockRequestContext;
 
 /**
  * Unit test for the FormAction class, dealing with binding related issues.

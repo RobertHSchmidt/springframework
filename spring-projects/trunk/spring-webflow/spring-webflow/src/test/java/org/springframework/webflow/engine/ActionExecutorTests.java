@@ -21,8 +21,8 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowSessionStatus;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.TestAction;
-import org.springframework.webflow.test.engine.MockFlowSession;
-import org.springframework.webflow.test.engine.MockRequestContext;
+import org.springframework.webflow.test.MockFlowSession;
+import org.springframework.webflow.test.MockRequestContext;
 
 public class ActionExecutorTests extends TestCase {
 

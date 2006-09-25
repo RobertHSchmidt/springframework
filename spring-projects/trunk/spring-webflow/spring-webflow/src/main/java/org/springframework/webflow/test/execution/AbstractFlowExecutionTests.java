@@ -40,13 +40,11 @@ import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
- * <p>
  * Base class for integration tests that verify a flow executes as expected.
  * Flow execution tests captured by subclasses should test that a flow responds
  * to all supported transition criteria correctly, transitioning to the correct
  * states and producing the expected results on the occurence of possible
  * external (user) events.
- * </p>
  * <p>
  * More specifically, a typical flow execution test case will test:
  * <ul>
@@ -65,24 +63,22 @@ import org.springframework.webflow.test.MockExternalContext;
  * state or an end state) that the view selection returned to the client matches
  * what was expected and the current state of the flow matches what is expected.
  * </ul>
- * </p>
  * <p>
  * A flow execution test can effectively automate and validate the orchestration
  * required to drive an end-to-end business task that spans several steps
  * involving the user to complete. Such tests are a good way to test your system
  * top-down starting at the web-tier and pushing through all the way to the DB
  * without having to deploy to a servlet or portlet container. In addition, they
- * can be used to effectively test a flow's execution (the weblayer) standalone,
+ * can be used to effectively test a flow's execution (the web layer) standalone,
  * typically with a mock service layer. Both styles of testing are valuable and
  * supported.
- * </p>
+ * 
  * @author Keith Donald
  */
 public abstract class AbstractFlowExecutionTests extends TestCase {
 
 	/**
-	 * The flow execution running the flow when the test is active (runtime
-	 * object).
+	 * The factory that will create the flow execution to test.
 	 */
 	private FlowExecutionFactory flowExecutionFactory;
 
@@ -101,7 +97,8 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	/**
 	 * Gets the factory that will create the flow execution to test. This method
 	 * will create the factory if it is not already set.
-	 * @return the flow execution factory;
+	 * @return the flow execution factory
+	 * @see #createFlowExecutionFactory()
 	 */
 	protected FlowExecutionFactory getFlowExecutionFactory() {
 		if (flowExecutionFactory == null) {
@@ -111,29 +108,19 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	}
 
 	/**
-	 * Sets the factory that will create the flow execution to test. Subclasses
-	 * may call this before starting a flow execution to customize the flow
-	 * execution creation process.
-	 * @param flowExecutionFactory the flow execution factory
-	 */
-	protected void setFlowExecutionFactory(FlowExecutionFactory flowExecutionFactory) {
-		this.flowExecutionFactory = flowExecutionFactory;
-	}
-
-	/**
 	 * Start the flow execution to be tested.
 	 * <p>
 	 * Convenience operation that starts the execution with:
 	 * <ul>
 	 * <li>no input attributes
 	 * <li>an empty {@link MockExternalContext} with no environmental request
-	 * parameters set.
+	 * parameters set
 	 * </ul>
 	 * @return the view selection made as a result of starting the flow
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
-	 * @throws FlowExecutionException if an exception was thrown within a state
-	 * of the resumed flow execution during event processing
+	 * @throws FlowExecutionException if an exception was thrown while starting
+	 * the flow execution
 	 */
 	protected ViewSelection startFlow() throws FlowExecutionException {
 		return startFlow(null, new MockExternalContext());
@@ -147,11 +134,15 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * <li>the specified input attributes, eligible for mapping by the root
 	 * flow
 	 * <li>an empty {@link MockExternalContext} with no environmental request
-	 * parameters set.
+	 * parameters set
 	 * </ul>
+	 * @param input the flow execution input attributes eligible for mapping by
+	 * the root flow
 	 * @return the view selection made as a result of starting the flow
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
+	 * @throws FlowExecutionException if an exception was thrown while starting
+	 * the flow execution
 	 */
 	protected ViewSelection startFlow(MutableAttributeMap input) throws FlowExecutionException {
 		return startFlow(input, new MockExternalContext());
@@ -163,20 +154,20 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * This is the most flexible of the start methods. It allows you to specify:
 	 * <ol>
 	 * <li>a map of input attributes to pass to the flow execution, eligible
-	 * for mapping by the root flow definition.
+	 * for mapping by the root flow definition
 	 * <li>an external context that provides the flow execution being tested
-	 * access to the calling environment for this request.
+	 * access to the calling environment for this request
 	 * </ol>
 	 * @param input the flow execution input attributes eligible for mapping by
-	 * the root flow.
+	 * the root flow
 	 * @param context the external context providing information about the
 	 * caller's environment, used by the flow execution during the start
 	 * operation
 	 * @return the view selection made as a result of starting the flow
 	 * (returned when the first interactive state (a view state or end state) is
 	 * entered)
-	 * @throws FlowExecutionException if an exception was thrown within a state
-	 * of the resumed flow execution during event processing
+	 * @throws FlowExecutionException if an exception was thrown while starting
+	 * the flow execution
 	 */
 	protected ViewSelection startFlow(MutableAttributeMap input, ExternalContext context) throws FlowExecutionException {
 		flowExecution = getFlowExecutionFactory().createFlowExecution(getFlowDefinition());
@@ -212,7 +203,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * execution being tested.
 	 * <p>
 	 * Note: signaling an event will cause state transitions to occur in a chain
-	 * until control is returned to the caller. Control is returned once a
+	 * until control is returned to the caller. Control is returned once an
 	 * "interactive" state type is entered: either a view state when the flow is
 	 * paused or an end state when the flow terminates. Action states are
 	 * executed without returning control, as their result always triggers
@@ -252,18 +243,17 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 */
 	protected ViewSelection signalEvent(String eventId, ExternalContext context) throws FlowExecutionException {
 		Assert.state(flowExecution != null, "The flow execution to test is [null]; "
-				+ "you must start the flow execution before you can signal an event against it");
+				+ "you must start the flow execution before you can signal an event against it!");
 		return flowExecution.signalEvent(eventId, context);
 	}
 
 	/**
 	 * Refresh the flow execution being tested, asking the current view state
-	 * state to make a "refresh" view selection. This is idempotent operation
+	 * to make a "refresh" view selection. This is idempotent operation
 	 * that may be safely called on an active but currently paused execution.
 	 * Used to simulate a browser flow execution redirect.
 	 * @return the current view selection for this flow execution
-	 * @throws FlowExecutionException if an exception was thrown within a state
-	 * of the resumed flow execution during event processing
+	 * @throws FlowExecutionException if an exception was thrown during refresh
 	 */
 	protected ViewSelection refresh() throws FlowExecutionException {
 		return refresh(new MockExternalContext());
@@ -278,24 +268,25 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * caller's environment, used by the flow execution during the refresh
 	 * operation
 	 * @return the current view selection for this flow execution
-	 * @throws FlowExecutionException if an exception was thrown within a state
-	 * of the resumed flow execution during event processing
+	 * @throws FlowExecutionException if an exception was thrown during refresh
 	 */
 	protected ViewSelection refresh(ExternalContext context) throws FlowExecutionException {
 		Assert.state(flowExecution != null,
-				"The flow execution to test is [null]; you must start the flow execution before you can refresh it");
+				"The flow execution to test is [null]; you must start the flow execution before you can refresh it!");
 		return flowExecution.refresh(context);
 	}
+	
+	// convenience accessors
 
 	/**
 	 * Returns the flow execution context, providing information about the
 	 * ongoing flow execution being tested.
-	 * @return the flow execution
+	 * @return the flow execution context
 	 * @throws IllegalStateException the execution has not been started
 	 */
 	protected FlowExecutionContext getFlowExecutionContext() throws IllegalStateException {
 		Assert.state(flowExecution != null,
-				"The flow execution to test is [null]; you must start the flow execution before you can query it");
+				"The flow execution to test is [null]; you must start the flow execution before you can query it!");
 		return flowExecution;
 	}
 
@@ -315,7 +306,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * flow sessions.
 	 * @param attributeName the name of the attribute
 	 * @return the attribute value
-	 * @throws IllegalStateException if the attribute was not present.
+	 * @throws IllegalStateException if the attribute was not present
 	 */
 	protected Object getRequiredConversationAttribute(String attributeName) throws IllegalStateException {
 		return getFlowExecutionContext().getConversationScope().getRequired(attributeName);
@@ -328,7 +319,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param attributeName the name of the attribute
 	 * @return the attribute value
 	 * @throws IllegalStateException if the attribute was not present or not of
-	 * the required type.
+	 * the required type
 	 */
 	protected Object getRequiredConversationAttribute(String attributeName, Class requiredType)
 			throws IllegalStateException {
@@ -350,7 +341,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * present. Flow-scoped attributes are local to the active flow session.
 	 * @param attributeName the name of the attribute
 	 * @return the attribute value
-	 * @throws IllegalStateException if the attribute was not present.
+	 * @throws IllegalStateException if the attribute was not present
 	 */
 	protected Object getRequiredFlowAttribute(String attributeName) throws IllegalStateException {
 		return getFlowExecutionContext().getActiveSession().getScope().getRequired(attributeName);
@@ -363,11 +354,13 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param attributeName the name of the attribute
 	 * @return the attribute value
 	 * @throws IllegalStateException if the attribute was not present or was of
-	 * the wrong type.
+	 * the wrong type
 	 */
 	protected Object getRequiredFlowAttribute(String attributeName, Class requiredType) throws IllegalStateException {
 		return getFlowExecutionContext().getActiveSession().getScope().getRequired(attributeName, requiredType);
 	}
+	
+	// assert helpers
 
 	/**
 	 * Assert that the active flow session is for the flow with the provided id.
@@ -375,8 +368,8 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * in the tested flow execution
 	 */
 	protected void assertActiveFlowEquals(String expectedActiveFlowId) {
-		assertEquals("The active flow id '" + getFlowExecutionContext().getActiveSession().getDefinition()
-				+ "' does not equal the expected active flow '" + expectedActiveFlowId + "'", expectedActiveFlowId,
+		assertEquals("The active flow id '" + getFlowExecutionContext().getActiveSession().getDefinition().getId()
+				+ "' does not equal the expected active flow id '" + expectedActiveFlowId + "'", expectedActiveFlowId,
 				getFlowExecutionContext().getActiveSession().getDefinition().getId());
 	}
 
@@ -408,6 +401,70 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	}
 
 	/**
+	 * Assert that the view name equals the provided value.
+	 * @param expectedViewName the expected name
+	 * @param viewSelection the selected view
+	 */
+	protected void assertViewNameEquals(String expectedViewName, ApplicationView viewSelection) {
+		assertEquals("The view name is wrong:", expectedViewName, viewSelection.getViewName());
+	}
+
+	/**
+	 * Assert that the selected view contains the specified model attribute with
+	 * the provided expected value.
+	 * @param expectedValue the expected value
+	 * @param attributeName the attribute name (can be an expression)
+	 * @param viewSelection the selected view with a model attribute map to
+	 * assert against
+	 */
+	protected void assertModelAttributeEquals(Object expectedValue, String attributeName, ApplicationView viewSelection) {
+		assertEquals("The model attribute '" + attributeName + "' value is wrong:", expectedValue,
+				evaluateModelAttributeExpression(attributeName, viewSelection.getModel()));
+	}
+
+	/**
+	 * Assert that the selected view contains the specified collection model
+	 * attribute with the provided expected size.
+	 * @param expectedSize the expected size
+	 * @param attributeName the collection attribute name (can be an expression
+	 * @param viewSelection the selected view with a model attribute map to
+	 * assert against
+	 */
+	protected void assertModelAttributeCollectionSize(int expectedSize, String attributeName,
+			ApplicationView viewSelection) {
+		assertModelAttributeNotNull(attributeName, viewSelection);
+		Collection c = (Collection)evaluateModelAttributeExpression(attributeName, viewSelection.getModel());
+		assertEquals("The model attribute '" + attributeName + "' collection size is wrong:", expectedSize, c.size());
+	}
+
+	/**
+	 * Assert that the selected view contains the specified model attribute.
+	 * @param attributeName the attribute name (can be an expression)
+	 * @param viewSelection the selected view with a model attribute map to
+	 * assert against
+	 */
+	protected void assertModelAttributeNotNull(String attributeName, ApplicationView viewSelection) {
+		assertNotNull("The model attribute '" + attributeName + "' is null but should not be; model contents are "
+				+ StylerUtils.style(viewSelection.getModel()), evaluateModelAttributeExpression(attributeName,
+				viewSelection.getModel()));
+	}
+
+	/**
+	 * Assert that the selected view does not contain the specified model
+	 * attribute.
+	 * @param attributeName the attribute name (can be an expression)
+	 * @param viewSelection the selected view with a model attribute map to
+	 * assert against
+	 */
+	protected void assertModelAttributeNull(String attributeName, ApplicationView viewSelection) {
+		assertNull("The model attribute '" + attributeName + "' is not null but should be; model contents are "
+				+ StylerUtils.style(viewSelection.getModel()), evaluateModelAttributeExpression(attributeName,
+				viewSelection.getModel()));
+	}
+	
+	// other helpers
+
+	/**
 	 * Assert that the returned view selection is an instance of
 	 * {@link ApplicationView}.
 	 * @param viewSelection the view selection
@@ -419,22 +476,22 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 
 	/**
 	 * Assert that the returned view selection is an instance of
-	 * {@link FlowDefinitionRedirect}.
-	 * @param viewSelection the view selection
-	 */
-	protected FlowDefinitionRedirect flowDefinitionRedirect(ViewSelection viewSelection) {
-		Assert.isInstanceOf(FlowDefinitionRedirect.class, viewSelection, "Unexpected class of view selection: ");
-		return (FlowDefinitionRedirect)viewSelection;
-	}
-
-	/**
-	 * Assert that the returned view selection is an instance of
 	 * {@link FlowExecutionRedirect}.
 	 * @param viewSelection the view selection
 	 */
 	protected FlowExecutionRedirect flowExecutionRedirect(ViewSelection viewSelection) {
 		Assert.isInstanceOf(FlowExecutionRedirect.class, viewSelection, "Unexpected class of view selection: ");
 		return (FlowExecutionRedirect)viewSelection;
+	}
+
+	/**
+	 * Assert that the returned view selection is an instance of
+	 * {@link FlowDefinitionRedirect}.
+	 * @param viewSelection the view selection
+	 */
+	protected FlowDefinitionRedirect flowDefinitionRedirect(ViewSelection viewSelection) {
+		Assert.isInstanceOf(FlowDefinitionRedirect.class, viewSelection, "Unexpected class of view selection: ");
+		return (FlowDefinitionRedirect)viewSelection;
 	}
 
 	/**
@@ -452,71 +509,8 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * {@link ViewSelection#NULL_VIEW}.
 	 * @param viewSelection the view selection
 	 */
-	protected void assertNull(ViewSelection viewSelection) {
+	protected void nullView(ViewSelection viewSelection) {
 		assertEquals("Not the null view selection:", viewSelection, ViewSelection.NULL_VIEW);
-	}
-
-	/**
-	 * Assert that the view name equals the provided value.
-	 * @param expectedViewName the expected name
-	 * @param viewSelection the selected view with a model attribute map to
-	 * assert against
-	 */
-	protected void assertViewNameEquals(String expectedViewName, ApplicationView viewSelection) {
-		assertEquals("The view name is wrong:", expectedViewName, viewSelection.getViewName());
-	}
-
-	/**
-	 * Assert that the selected view contains the specified model attribute with
-	 * the provided expected value.
-	 * @param expectedValue the expected value
-	 * @param attributeName the attribute name
-	 * @param viewSelection the selected view with a model attribute map to
-	 * assert against
-	 */
-	protected void assertModelAttributeEquals(Object expectedValue, String attributeName, ApplicationView viewSelection) {
-		assertEquals("The model attribute '" + attributeName + "' value is wrong:", expectedValue,
-				evaluateModelAttributeExpression(attributeName, viewSelection.getModel()));
-	}
-
-	/**
-	 * Assert that the selected view contains the specified collection model
-	 * attribute with the provided expected size.
-	 * @param expectedSize the expected size
-	 * @param attributeName the collection attribute name
-	 * @param viewSelection the selected view with a model attribute map to
-	 * assert against
-	 */
-	protected void assertModelAttributeCollectionSize(int expectedSize, String attributeName,
-			ApplicationView viewSelection) {
-		assertModelAttributeNotNull(attributeName, viewSelection);
-		Collection c = (Collection)evaluateModelAttributeExpression(attributeName, viewSelection.getModel());
-		assertEquals("The model attribute '" + attributeName + "' collection size is wrong:", expectedSize, c.size());
-	}
-
-	/**
-	 * Assert that the selected view contains the specified model attribute.
-	 * @param attributeName the attribute name
-	 * @param viewSelection the selected view with a model attribute map to
-	 * assert against
-	 */
-	protected void assertModelAttributeNotNull(String attributeName, ApplicationView viewSelection) {
-		assertNotNull("The model attribute '" + attributeName + "' is null but should not be; model contents are "
-				+ StylerUtils.style(viewSelection.getModel()), evaluateModelAttributeExpression(attributeName,
-				viewSelection.getModel()));
-	}
-
-	/**
-	 * Assert that the selected view does not contain the specified model
-	 * attribute.
-	 * @param attributeName the attribute name
-	 * @param viewSelection the selected view with a model attribute map to
-	 * assert against
-	 */
-	protected void assertModelAttributeNull(String attributeName, ApplicationView viewSelection) {
-		assertNull("The model attribute '" + attributeName + "' is not null but should be; model contents are "
-				+ StylerUtils.style(viewSelection.getModel()), evaluateModelAttributeExpression(attributeName,
-				viewSelection.getModel()));
 	}
 
 	/**
@@ -525,7 +519,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param model the model map
 	 * @return the attribute expression value
 	 */
-	private Object evaluateModelAttributeExpression(String attributeName, Map model) {
+	protected Object evaluateModelAttributeExpression(String attributeName, Map model) {
 		return expressionParser.parseExpression(attributeName).evaluateAgainst(model, null);
 	}
 

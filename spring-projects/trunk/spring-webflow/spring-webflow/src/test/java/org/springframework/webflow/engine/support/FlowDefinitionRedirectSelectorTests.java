@@ -22,7 +22,7 @@ import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
-import org.springframework.webflow.test.engine.MockRequestContext;
+import org.springframework.webflow.test.MockRequestContext;
 
 public class FlowDefinitionRedirectSelectorTests extends TestCase {
 	ExpressionParser parser = new DefaultExpressionParserFactory().getExpressionParser();

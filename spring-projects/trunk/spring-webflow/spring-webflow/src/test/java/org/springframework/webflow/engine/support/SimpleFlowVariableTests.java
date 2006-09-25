@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.execution.ScopeType;
-import org.springframework.webflow.test.engine.MockRequestContext;
+import org.springframework.webflow.test.MockRequestContext;
 
 public class SimpleFlowVariableTests extends TestCase {
 	private MockRequestContext context = new MockRequestContext();

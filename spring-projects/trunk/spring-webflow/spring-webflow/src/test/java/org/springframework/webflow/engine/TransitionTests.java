@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.execution.TestAction;
-import org.springframework.webflow.test.engine.MockRequestControlContext;
+import org.springframework.webflow.test.MockRequestControlContext;
 
 public class TransitionTests extends TestCase {
 

@@ -37,7 +37,7 @@ import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.execution.TestAction;
 import org.springframework.webflow.execution.support.ApplicationView;
-import org.springframework.webflow.test.engine.MockRequestControlContext;
+import org.springframework.webflow.test.MockRequestControlContext;
 
 /**
  * Unit test for the Flow class.
