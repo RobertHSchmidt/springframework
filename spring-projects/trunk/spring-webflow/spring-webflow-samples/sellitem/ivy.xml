@@ -18,7 +18,7 @@
     <dependency org="org.springframework" name="spring-aop" rev="2.0-rc4"/>
     <dependency org="org.springframework" name="spring-dao" rev="2.0-rc4"/>
     <dependency org="org.springframework" name="spring-jdbc" rev="2.0-rc4"/>
-	<dependency org="org.hsqldb" name="hsqldb" rev="1.8.0.1"/>
+	<dependency org="hsqldb" name="hsqldb" rev="1.8.0.1"/>
 
 	<!-- build-time only dependencies -->
 	<dependency	org="javax.servlet" name="servlet-api" rev="2.4" conf="buildtime->default"/>
