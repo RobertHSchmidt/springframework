@@ -24,9 +24,9 @@ import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.samples.phonebook.domain.ArrayListPhoneBook;
+import org.springframework.webflow.test.MockFlowServiceLocator;
 import org.springframework.webflow.test.MockParameterMap;
 import org.springframework.webflow.test.execution.AbstractXmlFlowExecutionTests;
-import org.springframework.webflow.test.execution.MockFlowServiceLocator;
 
 public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
