@@ -16,7 +16,13 @@
 
   <dependencies	defaultconf="global->default">
 	<!--  global (core)	dependencies -->
-	<dependency org="commons-logging" name="commons-logging" rev="1.1" />
+	<dependency org="commons-logging" name="commons-logging" rev="1.1">
+		<!-- There is a bug in the 1.1 POM so these optional dependencies must be explictly ignored -->
+		<exclude module="avalon-framework"/>
+		<exclude module="log4j"/>
+		<exclude module="logkit"/>
+		<exclude module="servlet-api"/>
+	</dependency>
 	<dependency	org="commons-codec" name="commons-codec" rev="1.1"/>
 	<!-- Xerces and XML-apis are required only under JDK 1.4 for XSD support -->
 	<dependency	org="xerces" name="xercesImpl" rev="2.8.0"/>
