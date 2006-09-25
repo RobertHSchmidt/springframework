@@ -36,6 +36,8 @@
 	</resolvers>
 
 	<modules>
+		<module organisation="org.aopalliance" name="aopalliance" resolver="spring-repo-ext"/>
+	
 		<module organisation="org.springframework" name="spring-aop" resolver="spring-projects"/>
 		<module organisation="org.springframework" name="spring-beans" resolver="spring-projects"/>
        	<module organisation="org.springframework" name="spring-binding" resolver="spring-projects"/>
