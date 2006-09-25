@@ -36,10 +36,10 @@
 	<dependency	org="junit"	name="junit" rev="3.8.1"/>
 
 	<!-- spring	mvc	only dependencies -->
-	<dependency	org="org.springframework" name="spring-webmvc" rev="2.0-rc4" conf="buildtime,mvc->default"/>
+	<dependency	org="org.springframework" name="spring-webmvc" rev="2.0-rc4" conf="buildtime, mvc->default"/>
 
 	<!-- spring portlet mvc only dependencies -->
-	<dependency org="org.springframework" name="spring-portlet" rev="2.0-rc4" conf="buildtime,portlet->default"/>
+	<dependency org="org.springframework" name="spring-portlet" rev="2.0-rc4" conf="buildtime, portlet->default"/>
 
 	<!-- struts	only dependencies -->
 	<dependency	org="struts" name="struts" rev="1.2.9" conf="buildtime,struts->default">
