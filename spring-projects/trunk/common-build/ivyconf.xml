@@ -1,6 +1,6 @@
 <ivyconf>
 	<properties file="${ivy.conf.dir}/ivyconf.properties"/>
-	<conf defaultResolver="third-party"/>
+	<conf defaultResolver="maven2"/>
 	<resolvers>
 		<chain name="spring-projects" returnFirst="true">
 			<filesystem name="integration-repo">
@@ -24,21 +24,15 @@
 			</url>
 		</chain>
 
-		<chain name="third-party" returnFirst="true">
-
- 			<filesystem name="filesystem-repo">
-  				<ivy pattern="${repository.dir}/[organisation]/[module]/ivy-[revision].xml" /> 
-				<artifact pattern="${repository.dir}/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" /> 
-			</filesystem>
-
-			<url name="spring-repo-ext" m2compatible="true">
-				<ivy pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo-ext/[organisation]/[module]/ivy-[revision].xml" />
-				<artifact pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo-ext/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
-			</url>
-
-           	<ibiblio name="dotsrc-maven2-repo" checkconsistency="false" m2compatible="true" root="http://mirrors.dotsrc.org/maven2/"/>
-           	
+		<chain name="maven2" returnFirst="true">
+           	<ibiblio name="dotsrc-maven2-repo" checkconsistency="false" m2compatible="true" root="http://mirrors.dotsrc.org/maven2/"/>           	
 		</chain>
+
+		<url name="spring-repo-ext" m2compatible="true">
+			<ivy pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo-ext/[organisation]/[module]/ivy-[revision].xml" />
+			<artifact pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo-ext/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+		</url>
+		
 	</resolvers>
 
 	<modules>
