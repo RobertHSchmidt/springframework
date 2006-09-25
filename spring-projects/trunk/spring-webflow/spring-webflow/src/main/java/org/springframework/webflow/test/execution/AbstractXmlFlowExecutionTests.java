@@ -29,24 +29,24 @@ import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
  * <pre>
  * public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
  * 
- *	   protected FlowDefinitionResource getFlowDefinitionResource() {
+ *     protected FlowDefinitionResource getFlowDefinitionResource() {
  *         return createFlowDefinitionResource("src/main/webapp/WEB-INF/flows/search-flow.xml");
- *	   }
+ *     }
  * 
  *     public void testStartFlow() {
- * 	       startFlow();
- * 		   assertCurrentStateEquals(&quot;displaySearchCriteria&quot;);
- * 	   }
+ *         startFlow();
+ *         assertCurrentStateEquals(&quot;displaySearchCriteria&quot;);
+ *     }
  * 
- * 	   public void testDisplayCriteriaSubmitSuccess() {
- * 		   startFlow();
- * 		   MockParameterMap parameters = new MockParameterMap();
- * 		   parameters.put(&quot;firstName&quot;, &quot;Keith&quot;);
- * 		   parameters.put(&quot;lastName&quot;, &quot;Donald&quot;);
- * 		   ViewSelection view = signalEvent(&quot;search&quot;, parameters);
- * 		   assertCurrentStateEquals(&quot;displaySearchResults&quot;);
- * 		   assertModelAttributeCollectionSize(1, &quot;results&quot;, view);
- * 	   } 
+ *     public void testDisplayCriteriaSubmitSuccess() {
+ *         startFlow();
+ *         MockParameterMap parameters = new MockParameterMap();
+ *         parameters.put(&quot;firstName&quot;, &quot;Keith&quot;);
+ *         parameters.put(&quot;lastName&quot;, &quot;Donald&quot;);
+ *         ViewSelection view = signalEvent(&quot;search&quot;, parameters);
+ *         assertCurrentStateEquals(&quot;displaySearchResults&quot;);
+ *         assertModelAttributeCollectionSize(1, &quot;results&quot;, view);
+ *     } 
  * }
  * </pre>
  * 
