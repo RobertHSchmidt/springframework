@@ -43,7 +43,9 @@ public class FlowSystemDefaults implements Serializable {
 
 	/**
 	 * Overrides the alwaysRedirectOnPause execution attribute default.
+	 * Defaults to "true".
 	 * @param alwaysRedirectOnPause the new default value
+	 * @see ApplicationViewSelector#ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE
 	 */
 	public void setAlwaysRedirectOnPause(Boolean alwaysRedirectOnPause) {
 		this.alwaysRedirectOnPause = alwaysRedirectOnPause;
@@ -58,11 +60,11 @@ public class FlowSystemDefaults implements Serializable {
 	}
 
 	/**
-	 * Applys default execution attributes if necessary. Defaults will only
+	 * Applies default execution attributes if necessary. Defaults will only
 	 * apply in the case where the user did not configure a value, or explicitly
 	 * requested the 'default' value.
 	 * @param executionAttributes the user-configured execution attribute map
-	 * @return the map with defaults applied as appropriate.
+	 * @return the map with defaults applied as appropriate
 	 */
 	public MutableAttributeMap applyExecutionAttributes(MutableAttributeMap executionAttributes) {
 		if (executionAttributes == null) {
@@ -75,7 +77,7 @@ public class FlowSystemDefaults implements Serializable {
 	}
 
 	/**
-	 * Applys the default repository type if requested by the user.
+	 * Applies the default repository type if requested by the user.
 	 * @param selectedType the selected repository type (may be null if no
 	 * selection was made)
 	 * @return the repository type, with the default applied if necessary
