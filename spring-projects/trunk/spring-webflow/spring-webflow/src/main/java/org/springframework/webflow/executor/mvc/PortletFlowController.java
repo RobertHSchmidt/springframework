@@ -239,9 +239,8 @@ public class PortletFlowController extends AbstractController implements Initial
 	 */
 	private void exposeToRenderPhase(ResponseInstruction responseInstruction, ActionRequest request) {
 		PortletSession session = request.getPortletSession(false);
-		if (session != null) {
-			session.setAttribute(RESPONSE_INSTRUCTION_SESSION_ATTRIBUTE, responseInstruction);
-		}
+		Assert.notNull(session, "A PortletSession is required");
+		session.setAttribute(RESPONSE_INSTRUCTION_SESSION_ATTRIBUTE, responseInstruction);
 	}
 
 	/**
