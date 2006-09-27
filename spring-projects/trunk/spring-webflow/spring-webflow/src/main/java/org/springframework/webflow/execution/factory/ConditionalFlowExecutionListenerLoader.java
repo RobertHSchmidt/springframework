@@ -18,6 +18,8 @@ package org.springframework.webflow.execution.factory;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -92,6 +94,26 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 			criteria = new FlowExecutionListenerCriteriaFactory().allFlows();
 		}
 		conditional.add(criteria);
+	}
+	
+	/**
+	 * Set the list of flow execution listeners with corresponding criteria.
+	 * Allows for bean style configuration. The given map should have
+	 * {@link FlowExecutionListener} objects as keys and {@link FlowExecutionListenerCriteria}
+	 * objects as values. This will clear any listeners registered with
+	 * this object using the <tt>addListener</tt> methods
+	 * @param listeners the map of listeners and their corresponding criteria
+	 */
+	public void setListeners(Map listenersWithCriteria) {
+		removeAllListeners();
+		for (Iterator it = listenersWithCriteria.entrySet().iterator(); it.hasNext(); ) {
+			Entry entry = (Entry)it.next();
+			Assert.isInstanceOf(FlowExecutionListener.class, entry.getKey(),
+					"The key in the listeners map needs to be a FlowExecutionListener object");
+			Assert.isInstanceOf(FlowExecutionListenerCriteria.class, entry.getValue(),
+					"The value in the listeners map needs to be a FlowExecutionListenerCriteria object");
+			addListener((FlowExecutionListener)entry.getKey(), (FlowExecutionListenerCriteria)entry.getValue());
+		}
 	}
 
 	/**
