@@ -210,19 +210,18 @@ to see a list of all relevant targets.
 			<!-- important readme, license, and other text files -->
 			<zipfileset file="../spring-webflow/*.txt" prefix="${zip.toplevel.dir}" />
 			<!-- binary files -->
-			<zipfileset dir="../spring-webflow/target/dist/jars" prefix="${zip.toplevel.dir}" />
-			<zipfileset dir="../spring-webflow/target/dist/ivys" prefix="${zip.toplevel.dir}/ivys" />
 			<zipfileset dir="../spring-binding/target/dist/jars" prefix="${zip.toplevel.dir}" />
 			<zipfileset dir="../spring-binding/target/dist/ivys" prefix="${zip.toplevel.dir}/ivys" />
-			<zipfileset dir="../spring-webflow/target/javadocs" 
-			            prefix="${zip.toplevel.dir}/docs/api" />
-			<zipfileset dir="../spring-webflow/docs/reference/target" 
-			            prefix="${zip.toplevel.dir}/docs/reference">
+			<zipfileset dir="../spring-binding/target/javadocs"  prefix="${zip.toplevel.dir}/docs/api-binding" />
+			<zipfileset dir="../spring-webflow/target/dist/jars" prefix="${zip.toplevel.dir}" />
+			<zipfileset dir="../spring-webflow/target/dist/ivys" prefix="${zip.toplevel.dir}/ivys" />
+			<zipfileset dir="../spring-webflow/target/javadocs"  prefix="${zip.toplevel.dir}/docs/api" />
+			<zipfileset dir="../spring-webflow/docs/reference/target" prefix="${zip.toplevel.dir}/docs/reference">
 				<exclude name="**/html_single/**" />
 				<exclude name="**/pdf/images/**" />
 			</zipfileset>
-			<zipfileset dir="${target.dir}/repo" 
-			            prefix="${zip.toplevel.dir}/projects/repository" />
+			<zipfileset dir="../spring-webflow/docs" includes="upgrade-guide.pdf" prefix="${zip.toplevel.dir}/docs" />
+			<zipfileset dir="${target.dir}/repo" prefix="${zip.toplevel.dir}/projects/repository" />
 			<!-- project sources -->
 			<zipfileset dir="../.." prefix="${zip.toplevel.dir}/projects">
 				<selector refid="project.source.zip.includes" />
