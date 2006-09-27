@@ -25,9 +25,9 @@ import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.engine.support.ExternalRedirectSelector;
 import org.springframework.webflow.engine.support.FlowDefinitionRedirectSelector;
 import org.springframework.webflow.execution.support.ApplicationView;
-import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
+import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 
 /**
  * Converter that converts an encoded string representation of a view selector
