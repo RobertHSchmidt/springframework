@@ -227,6 +227,10 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 			}
 			return this;
 		}
+		
+		public String toString() {
+			return new ToStringCreator(this).append("requestCount", requestCount).append("contents", getMapInternal()).toString();
+		}
 	}
 	
 	public String toString() {
