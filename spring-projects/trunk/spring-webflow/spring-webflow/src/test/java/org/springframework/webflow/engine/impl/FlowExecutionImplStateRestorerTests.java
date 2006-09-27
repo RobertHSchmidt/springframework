@@ -30,7 +30,6 @@ import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
-import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.DefaultFlowServiceLocator;
 import org.springframework.webflow.engine.builder.xml.XmlFlowRegistrar;

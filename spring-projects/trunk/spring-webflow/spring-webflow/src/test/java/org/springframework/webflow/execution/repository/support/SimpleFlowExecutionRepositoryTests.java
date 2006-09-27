@@ -18,6 +18,7 @@ package org.springframework.webflow.execution.repository.support;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.context.ExternalContextHolder;
+import org.springframework.webflow.conversation.impl.LocalConversationManager;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
