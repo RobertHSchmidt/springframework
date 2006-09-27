@@ -79,9 +79,9 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 
 	/**
 	 * The type of execution repository to configure with executors created by
-	 * this factory.
+	 * this factory.  Optional.  Will fallback to default value if not set.
 	 */
-	private RepositoryType repositoryType = RepositoryType.CONTINUATION;
+	private RepositoryType repositoryType;
 
 	/**
 	 * The flow executor this factory bean creates.
