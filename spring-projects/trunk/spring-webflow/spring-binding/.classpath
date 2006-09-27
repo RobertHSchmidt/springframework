@@ -6,7 +6,7 @@
 	<classpathentry kind="lib" path="lib/test/easymock.jar"/>
 	<classpathentry kind="lib" path="lib/test/junit.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-logging.jar"/>
-	<classpathentry kind="lib" path="lib/global/log4j.jar"/>
+	<classpathentry kind="lib" path="lib/test/log4j.jar"/>
 	<classpathentry sourcepath="/spring/src" kind="lib" path="lib/global/spring-core.jar"/>
 	<classpathentry sourcepath="/spring/src" kind="lib" path="lib/global/spring-beans.jar"/>
 	<classpathentry kind="lib" path="lib/global/ognl.jar"/>
