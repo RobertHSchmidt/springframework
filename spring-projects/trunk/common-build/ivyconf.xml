@@ -21,7 +21,7 @@
 				<artifact pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
 			</url>
 
-			<!--if still not resolved, try snapshots -->
+			<!-- if still not resolved, try snapshots -->
 			<url name="spring-repo-snapshots" m2compatible="true">
 				<ivy pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo-snapshots/[organisation]/[module]/ivy-[revision].xml" />
 				<artifact pattern="https://svn.sourceforge.net/svnroot/springframework/repos/repo-snapshots/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
