@@ -80,7 +80,7 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 	 * bean style configuration.
 	 * @param executionAttributes flow execution system attributes
 	 */
-	public void setExecutionAttributes(Map executionAttributes) {
+	public void setExecutionAttributesMap(Map executionAttributes) {
 		Assert.notNull(executionAttributes, "The execution attributes map is required");
 		this.executionAttributes = new LocalAttributeMap(executionAttributes);
 	}
