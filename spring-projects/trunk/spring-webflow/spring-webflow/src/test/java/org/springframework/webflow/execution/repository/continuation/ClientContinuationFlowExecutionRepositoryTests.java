@@ -77,13 +77,6 @@ public class ClientContinuationFlowExecutionRepositoryTests extends TestCase {
 		repository.getFlowExecution(nextKey);
 	}
 
-	public void testGetNextKeyVerifyKeyStaysSame() {
-		repository.setAlwaysGenerateNewNextKey(false);
-		key = repository.generateKey(execution);
-		FlowExecutionKey nextKey = repository.getNextKey(execution, key);
-		assertSame(key, nextKey);
-	}
-
 	public void testRemove() {
 		testPutExecution();
 		repository.removeFlowExecution(key);
