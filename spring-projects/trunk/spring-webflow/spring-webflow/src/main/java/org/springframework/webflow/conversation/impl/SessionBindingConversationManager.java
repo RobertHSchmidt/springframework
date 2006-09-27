@@ -25,7 +25,7 @@ import org.springframework.webflow.util.UidGenerator;
  * 
  * @author Erwin Vervaet
  */
-public class SimpleConversationManager implements ConversationManager {
+public class SessionBindingConversationManager implements ConversationManager {
 
 	/**
 	 * Key of the session attribute holding the conversation container.

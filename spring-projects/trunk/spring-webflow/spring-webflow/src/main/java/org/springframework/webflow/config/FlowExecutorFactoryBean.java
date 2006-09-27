@@ -21,7 +21,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.webflow.conversation.ConversationManager;
-import org.springframework.webflow.conversation.impl.SimpleConversationManager;
+import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
@@ -75,7 +75,7 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * The conversation manager to be used by the flow execution repository to
 	 * store state associated with conversations driven by Spring Web Flow.
 	 */
-	private ConversationManager conversationManager = new SimpleConversationManager();
+	private ConversationManager conversationManager = new SessionBindingConversationManager();
 
 	/**
 	 * The type of execution repository to configure with executors created by
