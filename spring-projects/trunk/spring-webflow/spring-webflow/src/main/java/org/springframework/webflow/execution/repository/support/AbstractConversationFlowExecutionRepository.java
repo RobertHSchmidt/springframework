@@ -30,12 +30,11 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
-import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
 /**
- * A convenient base class for flow execution repository implementations that delegates
+ * A convenient base class for flow execution repository implementations that delegate
  * to a conversation service for managing conversations that govern the
  * persistent state of paused flow executions.
  * 
@@ -43,7 +42,7 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
  * 
  * @author Keith Donald
  */
-public abstract class AbstractConversationFlowExecutionRepository implements FlowExecutionRepository {
+public abstract class AbstractConversationFlowExecutionRepository extends AbstractFlowExecutionRepository {
 
 	/**
 	 * The conversation attribute holding conversation scope ("scope").
@@ -57,19 +56,13 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 	private ConversationManager conversationManager;
 
 	/**
-	 * The strategy for restoring transient flow execution state after
-	 * obtaining it from the governing conversation.
-	 */
-	private FlowExecutionStateRestorer executionStateRestorer;
-
-	/**
-	 * Creates a new flow execution repository.
+	 * Constructor for use in subclasses.
 	 * @param executionStateRestorer the transient flow execution state restorer
 	 * @param conversationManager the conversation manager to use
 	 */
 	protected AbstractConversationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer,
 			ConversationManager conversationManager) {
-		setExecutionStateRestorer(executionStateRestorer);
+		super(executionStateRestorer);
 		setConversationManager(conversationManager);
 	}
 
@@ -88,28 +81,7 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 		Assert.notNull(conversationManager, "The conversation manager is required");
 		this.conversationManager = conversationManager;
 	}
-	
-	/**
-	 * Returns the strategy for restoring transient flow execution state after
-	 * obtaining it from the governing conversation.
-	 * @return the transient flow execution state restorer
-	 */
-	protected FlowExecutionStateRestorer getExecutionStateRestorer() {
-		return executionStateRestorer;
-	}
-	
-	/**
-	 * Sets the strategy for restoring transient flow execution state after
-	 * obtaining it from the governing conversation.
-	 * @param executionStateRestorer the transient flow execution state restorer,
-	 * may not be null
-	 */
-	private void setExecutionStateRestorer(
-			FlowExecutionStateRestorer executionStateRestorer) {
-		Assert.notNull(executionStateRestorer, "The flow execution state restorer is required");
-		this.executionStateRestorer = executionStateRestorer;
-	}
-	
+		
 	public FlowExecutionKey generateKey(FlowExecution flowExecution) {
 		// we need to generate a key for a new flow execution, so a new conversation has
 		// started
