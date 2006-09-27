@@ -165,6 +165,14 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	public void setConversationManager(ConversationManager conversationManager) {
 		this.conversationManager = conversationManager;
 	}
+	
+	/**
+	 * Set system defaults that should be used.
+	 * @param defaults the defaults to use.
+	 */
+	public void setDefaults(FlowSystemDefaults defaults) {
+		this.defaults = defaults;
+	}
 
 	// implementing InitializingBean
 
@@ -222,22 +230,6 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 			throw new IllegalStateException("Cannot create execution repository - unsupported repository type "
 					+ repositoryType);
 		}
-	}
-
-	/**
-	 * Returns the type of flow execution repository created by this
-	 * factory.
-	 */
-	protected RepositoryType getRepositoryType() {
-		return repositoryType;
-	}
-
-	/**
-	 * Returns the strategy for managing conversations that should be configured
-	 * for flow executors created by this factory.
-	 */
-	protected ConversationManager getConversationManager() {
-		return conversationManager;
 	}
 
 	// implementing FactoryBean
