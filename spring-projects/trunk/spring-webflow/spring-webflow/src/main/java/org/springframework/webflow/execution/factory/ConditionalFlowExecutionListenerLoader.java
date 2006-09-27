@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.FlowExecutionListener;
 
@@ -99,9 +100,10 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 	/**
 	 * Set the list of flow execution listeners with corresponding criteria.
 	 * Allows for bean style configuration. The given map should have
-	 * {@link FlowExecutionListener} objects as keys and {@link FlowExecutionListenerCriteria}
+	 * {@link FlowExecutionListener} objects as keys and Strings ("*", "flowId",
+	 * "flowId1,flowId2") or {@link FlowExecutionListenerCriteria}
 	 * objects as values. This will clear any listeners registered with
-	 * this object using the <tt>addListener</tt> methods
+	 * this object using the <tt>addListener</tt> methods.
 	 * @param listeners the map of listeners and their corresponding criteria
 	 */
 	public void setListeners(Map listenersWithCriteria) {
@@ -109,10 +111,21 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 		for (Iterator it = listenersWithCriteria.entrySet().iterator(); it.hasNext(); ) {
 			Entry entry = (Entry)it.next();
 			Assert.isInstanceOf(FlowExecutionListener.class, entry.getKey(),
-					"The key in the listeners map needs to be a FlowExecutionListener object");
-			Assert.isInstanceOf(FlowExecutionListenerCriteria.class, entry.getValue(),
-					"The value in the listeners map needs to be a FlowExecutionListenerCriteria object");
-			addListener((FlowExecutionListener)entry.getKey(), (FlowExecutionListenerCriteria)entry.getValue());
+					"The key in the listenersWithCriteria map needs to be a FlowExecutionListener object");
+			FlowExecutionListener listener = (FlowExecutionListener)entry.getKey();
+			FlowExecutionListenerCriteria criteria = null;
+			if (entry.getValue() instanceof String) {
+				criteria = getCriteria((String)entry.getValue());
+			}
+			else if (entry.getValue() instanceof FlowExecutionListenerCriteria) {
+				criteria = (FlowExecutionListenerCriteria)entry.getValue();
+			}
+			else if (entry.getValue() != null) {
+				throw new IllegalArgumentException(
+						"The value in the listenersWithCriteria map needs to be a " +
+						"String or a FlowExecutionListenerCriteria object");
+			}
+			addListener(listener, criteria);
 		}
 	}
 
@@ -208,4 +221,19 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 		}
 		return null;
 	}
+	
+	/**
+	 * Decode given string value into one of the well known criteria types.
+	 * @see FlowExecutionListenerCriteriaFactory
+	 */
+	protected FlowExecutionListenerCriteria getCriteria(String value) {
+		if ("*".equals(value)) {
+			return new FlowExecutionListenerCriteriaFactory().allFlows();
+		}
+		else {
+			return new FlowExecutionListenerCriteriaFactory().flows(
+					StringUtils.commaDelimitedListToStringArray(value));
+		}
+	}
+
 }
