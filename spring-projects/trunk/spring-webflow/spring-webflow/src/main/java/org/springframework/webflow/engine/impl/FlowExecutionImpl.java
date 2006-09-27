@@ -190,7 +190,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			}
 		}
 		finally {
-			context.getFlashScope().clear();
 			getListeners().fireRequestProcessed(context);
 		}
 	}
@@ -215,7 +214,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			}
 		}
 		finally {
-			context.getFlashScope().clear();
 			getListeners().fireRequestProcessed(context);
 		}
 	}
@@ -242,7 +240,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			}
 		}
 		finally {
-			context.getFlashScope().clear();
 			getListeners().fireRequestProcessed(context);
 		}
 	}
@@ -275,6 +272,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			// view selected by an end state
 			return selectedView;
 		}
+		context.getFlashScope().clear();
 		getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
 		getListeners().firePaused(context, selectedView);
 		if (logger.isDebugEnabled()) {
