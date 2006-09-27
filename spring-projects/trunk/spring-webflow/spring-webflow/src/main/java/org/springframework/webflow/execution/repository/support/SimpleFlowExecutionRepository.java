@@ -56,11 +56,11 @@ public class SimpleFlowExecutionRepository extends AbstractConversationFlowExecu
 	private static final String FLOW_EXECUTION_ENTRY_ATTRIBUTE = "flowExecutionEntry";
 
 	/**
-	 * The strategy for restoring transient flow execution state after restoration
-	 * (if necessary).
+	 * Flag to indicate whether or not a new flow execution key should always be
+	 * generated before each put call. Default is true.
 	 */
-	private FlowExecutionStateRestorer executionStateRestorer;
-
+	private boolean alwaysGenerateNewNextKey = true;
+	
 	/**
 	 * The uid generation strategy to use.
 	 */
@@ -73,16 +73,24 @@ public class SimpleFlowExecutionRepository extends AbstractConversationFlowExecu
 	 */
 	public SimpleFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer,
 			ConversationManager conversationManager) {
-		super(conversationManager);
-		setExecutionStateRestorer(executionStateRestorer);
+		super(executionStateRestorer, conversationManager);
 	}
 
 	/**
-	 * Set the strategy for restoring transient flow execution state after restoration.
+	 * Returns whether or not a new flow execution key should always be
+	 * generated before each put call. Default is true.
 	 */
-	protected void setExecutionStateRestorer(FlowExecutionStateRestorer executionStateRestorer) {
-		Assert.notNull(executionStateRestorer, "The flow execution state restorer is required");
-		this.executionStateRestorer = executionStateRestorer;
+	protected boolean isAlwaysGenerateNewNextKey() {
+		return alwaysGenerateNewNextKey;
+	}
+
+	/**
+	 * Sets a flag indicating if a new {@link FlowExecutionKey} should always be
+	 * generated before each put call. By setting this to false a FlowExecution
+	 * can remain identified by the same key throughout its life.
+	 */
+	public void setAlwaysGenerateNewNextKey(boolean alwaysGenerateNewNextKey) {
+		this.alwaysGenerateNewNextKey = alwaysGenerateNewNextKey;
 	}
 
 	/**
@@ -102,12 +110,21 @@ public class SimpleFlowExecutionRepository extends AbstractConversationFlowExecu
 		this.continuationIdGenerator = continuationIdGenerator;
 	}
 
+	public FlowExecutionKey getNextKey(FlowExecution flowExecution, FlowExecutionKey previousKey) {
+		if (isAlwaysGenerateNewNextKey()) {
+			return super.getNextKey(flowExecution, previousKey);
+		}
+		else {
+			return previousKey;
+		}
+	}
+
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
 		try {
 			FlowExecution execution = getEntry(key).access(getContinuationId(key));
 			// it could be that the entry was serialized out and read back in, so
 			// we need to restore transient flow execution state
-			return executionStateRestorer.restoreState(execution, getConversationScope(key));
+			return getExecutionStateRestorer().restoreState(execution, getConversationScope(key));
 		}
 		catch (InvalidContinuationIdException e) {
 			throw new PermissionDeniedFlowExecutionAccessException(key, e);
