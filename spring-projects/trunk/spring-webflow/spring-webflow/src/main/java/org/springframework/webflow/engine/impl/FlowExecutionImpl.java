@@ -225,7 +225,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			logger.debug("Resuming this execution for refresh");
 		}
 		RequestControlContext context = createControlContext(externalContext);
-		context.getFlashScope().clear();
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
