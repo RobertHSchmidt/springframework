@@ -204,13 +204,6 @@ public class SessionBindingConversationManager implements ConversationManager {
 		}
 
 		public void end() {
-			try {
-				// release lock if necessary from this thread
-				lock.unlock();
-			}
-			catch (Exception e) {
-				// ignore
-			}			
 			container.removeConversation(getId());
 		}
 
