@@ -16,6 +16,7 @@
 package org.springframework.webflow.engine.impl;
 
 import java.util.ListIterator;
+import java.util.Map;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
@@ -71,6 +72,19 @@ public class FlowExecutionImplStateRestorer implements FlowExecutionStateRestore
 		this.executionAttributes = executionAttributes;
 	}
 
+	/**
+	 * Sets the attributes to apply to restored flow executions.
+	 * Execution attributes may affect flow execution behavior.
+	 * <p>
+	 * Convenience setter that takes a simple <code>java.util.Map</code> to ease
+	 * bean style configuration.
+	 * @param executionAttributes flow execution system attributes
+	 */
+	public void setExecutionAttributes(Map executionAttributes) {
+		Assert.notNull(executionAttributes, "The execution attributes map is required");
+		this.executionAttributes = new LocalAttributeMap(executionAttributes);
+	}
+	
 	/**
 	 * Sets the strategy for loading listeners that should observe executions of
 	 * a flow definition. Allows full control over what listeners should apply.

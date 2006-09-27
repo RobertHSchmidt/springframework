@@ -15,9 +15,12 @@
  */
 package org.springframework.webflow.engine.impl;
 
+import java.util.Map;
+
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.CollectionUtils;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecution;
@@ -54,6 +57,19 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 	public void setExecutionAttributes(AttributeMap executionAttributes) {
 		Assert.notNull(executionAttributes, "The execution attributes map is required");
 		this.executionAttributes = executionAttributes;
+	}
+	
+	/**
+	 * Sets the attributes to apply to flow executions created by this factory.
+	 * Execution attributes may affect flow execution behavior.
+	 * <p>
+	 * Convenience setter that takes a simple <code>java.util.Map</code> to ease
+	 * bean style configuration.
+	 * @param executionAttributes flow execution system attributes
+	 */
+	public void setExecutionAttributes(Map executionAttributes) {
+		Assert.notNull(executionAttributes, "The execution attributes map is required");
+		this.executionAttributes = new LocalAttributeMap(executionAttributes);
 	}
 
 	/**
