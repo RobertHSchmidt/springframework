@@ -81,12 +81,6 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	private FlowExecutionContinuationFactory continuationFactory = new SerializedFlowExecutionContinuationFactory();
 
 	/**
-	 * The strategy for restoring transient flow execution state after
-	 * unmarshaling.
-	 */
-	private FlowExecutionStateRestorer executionStateRestorer;
-
-	/**
 	 * Creates a new client continuation repository.  Uses a 'no op' conversation manager by default.
 	 * @param executionStateRestorer the transient flow execution state restorer
 	 */
@@ -96,13 +90,12 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	
 	/**
 	 * Creates a new client continuation repository.
-	 * @param executionStateRestorer the transient flow execution state restorer.
+	 * @param executionStateRestorer the transient flow execution state restorer
 	 * @param conversationManager the conversation manager for managing centralized conversational state
 	 */
 	public ClientContinuationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer,
 			ConversationManager conversationManager) {
-		super(conversationManager);
-		this.executionStateRestorer = executionStateRestorer;
+		super(executionStateRestorer, conversationManager);
 	}
 
 	/**
@@ -126,7 +119,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 			FlowExecution execution = continuation.unmarshal();
 			// the flox execution was deserialized so we need to restore transient
 			// state
-			return executionStateRestorer.restoreState(execution, getConversationScope(key));
+			return getExecutionStateRestorer().restoreState(execution, getConversationScope(key));
 		}
 		catch (ContinuationUnmarshalException e) {
 			throw new FlowExecutionRestorationFailureException(key, e);

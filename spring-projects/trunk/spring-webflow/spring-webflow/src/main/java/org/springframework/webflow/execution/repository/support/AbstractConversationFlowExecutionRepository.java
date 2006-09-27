@@ -35,7 +35,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryE
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
 /**
- * A convenient base class for flow execution repository implementations that delegate
+ * A convenient base class for flow execution repository implementations that delegates
  * to a conversation service for managing conversations that govern the
  * persistent state of paused flow executions.
  * 
@@ -51,40 +51,26 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 	private static final String SCOPE_ATTRIBUTE = "scope";
 
 	/**
-	 * Flag to indicate whether or not a new flow execution key should always be
-	 * generated before each put call. Default is true.
-	 */
-	private boolean alwaysGenerateNewNextKey = true;
-
-	/**
 	 * The conversation service to delegate to for managing conversations
 	 * initiated by this repository.
 	 */
 	private ConversationManager conversationManager;
 
 	/**
+	 * The strategy for restoring transient flow execution state after
+	 * obtaining it from the governing conversation.
+	 */
+	private FlowExecutionStateRestorer executionStateRestorer;
+
+	/**
 	 * Creates a new flow execution repository.
+	 * @param executionStateRestorer the transient flow execution state restorer
 	 * @param conversationManager the conversation manager to use
 	 */
-	protected AbstractConversationFlowExecutionRepository(ConversationManager conversationManager) {
+	protected AbstractConversationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer,
+			ConversationManager conversationManager) {
+		setExecutionStateRestorer(executionStateRestorer);
 		setConversationManager(conversationManager);
-	}
-
-	/**
-	 * Returns whether or not a new flow execution key should always be
-	 * generated before each put call. Default is true.
-	 */
-	protected boolean isAlwaysGenerateNewNextKey() {
-		return alwaysGenerateNewNextKey;
-	}
-
-	/**
-	 * Sets a flag indicating if a new {@link FlowExecutionKey} should always be
-	 * generated before each put call. By setting this to false a FlowExecution
-	 * can remain identified by the same key throughout its life.
-	 */
-	public void setAlwaysGenerateNewNextKey(boolean alwaysGenerateNewNextKey) {
-		this.alwaysGenerateNewNextKey = alwaysGenerateNewNextKey;
 	}
 
 	/**
@@ -102,7 +88,28 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 		Assert.notNull(conversationManager, "The conversation manager is required");
 		this.conversationManager = conversationManager;
 	}
-
+	
+	/**
+	 * Returns the strategy for restoring transient flow execution state after
+	 * obtaining it from the governing conversation.
+	 * @return the transient flow execution state restorer
+	 */
+	protected FlowExecutionStateRestorer getExecutionStateRestorer() {
+		return executionStateRestorer;
+	}
+	
+	/**
+	 * Sets the strategy for restoring transient flow execution state after
+	 * obtaining it from the governing conversation.
+	 * @param executionStateRestorer the transient flow execution state restorer,
+	 * may not be null
+	 */
+	private void setExecutionStateRestorer(
+			FlowExecutionStateRestorer executionStateRestorer) {
+		Assert.notNull(executionStateRestorer, "The flow execution state restorer is required");
+		this.executionStateRestorer = executionStateRestorer;
+	}
+	
 	public FlowExecutionKey generateKey(FlowExecution flowExecution) {
 		// we need to generate a key for a new flow execution, so a new conversation has
 		// started
@@ -113,15 +120,10 @@ public abstract class AbstractConversationFlowExecutionRepository implements Flo
 	}
 
 	public FlowExecutionKey getNextKey(FlowExecution flowExecution, FlowExecutionKey previousKey) {
-		if (isAlwaysGenerateNewNextKey()) {
-			CompositeFlowExecutionKey key = (CompositeFlowExecutionKey)previousKey;
-			// the conversation id remains the same for the life of the flow execution
-			// but the continuation id changes
-			return new CompositeFlowExecutionKey(key.getConversationId(), generateContinuationId(flowExecution));
-		}
-		else {
-			return previousKey;
-		}
+		CompositeFlowExecutionKey key = (CompositeFlowExecutionKey)previousKey;
+		// the conversation id remains the same for the life of the flow execution
+		// but the continuation id changes
+		return new CompositeFlowExecutionKey(key.getConversationId(), generateContinuationId(flowExecution));
 	}
 
 	public FlowExecutionLock getLock(FlowExecutionKey key) throws FlowExecutionRepositoryException {

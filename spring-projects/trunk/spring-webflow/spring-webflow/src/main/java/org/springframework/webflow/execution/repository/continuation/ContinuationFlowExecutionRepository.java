@@ -81,12 +81,6 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	private FlowExecutionContinuationFactory continuationFactory = new SerializedFlowExecutionContinuationFactory();
 
 	/**
-	 * The strategy for restoring transient flow execution state after
-	 * unmarshaling.
-	 */
-	private FlowExecutionStateRestorer executionStateRestorer;
-
-	/**
 	 * The uid generation strategy to use.
 	 */
 	private UidGenerator continuationIdGenerator = new RandomGuidUidGenerator();
@@ -104,16 +98,7 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	 */
 	public ContinuationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer,
 			ConversationManager conversationManager) {
-		super(conversationManager);
-		setExecutionStateRestorer(executionStateRestorer);
-	}
-
-	/**
-	 * Set the strategy for restoring transient flow execution state after restoration.
-	 */
-	protected void setExecutionStateRestorer(FlowExecutionStateRestorer executionStateRestorer) {
-		Assert.notNull(executionStateRestorer, "The flow execution state restorer is required");
-		this.executionStateRestorer = executionStateRestorer;
+		super(executionStateRestorer, conversationManager);
 	}
 
 	/**
@@ -172,7 +157,7 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 		try {
 			FlowExecution execution = continuation.unmarshal();
 			// flow execution was deserialized, so restore transient state
-			return executionStateRestorer.restoreState(execution, getConversationScope(key));
+			return getExecutionStateRestorer().restoreState(execution, getConversationScope(key));
 		}
 		catch (ContinuationUnmarshalException e) {
 			throw new FlowExecutionRestorationFailureException(key, e);
