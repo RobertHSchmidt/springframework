@@ -32,7 +32,7 @@
 
 	<flow:executor id="continuationExecutor" registry-ref="withPathWithWildcards" repository-type="continuation">
 		<flow:execution-attributes>
-			<flow:alwaysRedirectOnPause value="true"/>
+			<flow:alwaysRedirectOnPause value="false"/>
 		</flow:execution-attributes>
 		<flow:execution-listeners>
 			<flow:listener ref="listener1" />
@@ -45,8 +45,10 @@
 			<flow:listener ref="listener2" criteria="flow1, flow2, flow3" />
 		</flow:execution-listeners>
 	</flow:executor>
+	
+	<flow:executor id="singleKeyExecutor" registry-ref="withPathWithWildcards" repository-type="singlekey"/>
 
-	<bean id="listener1" class="org.springframework.webflow.config.TestFlowExecutionListener" />
-	<bean id="listener2" class="org.springframework.webflow.config.TestFlowExecutionListener" />
+	<bean id="listener1" class="org.springframework.webflow.execution.MockFlowExecutionListener" />
+	<bean id="listener2" class="org.springframework.webflow.execution.MockFlowExecutionListener" />
 
 </beans>
