@@ -232,7 +232,7 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 		}
 		else {
 			return new FlowExecutionListenerCriteriaFactory().flows(
-					StringUtils.commaDelimitedListToStringArray(value));
+					StringUtils.commaDelimitedListToStringArray(StringUtils.trimAllWhitespace(value)));
 		}
 	}
 
