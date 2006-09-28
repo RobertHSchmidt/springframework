@@ -52,7 +52,7 @@ public class TransitionTests extends TestCase {
 		ViewState source = new ViewState(flow, "source");
 		TestAction action = new TestAction();
 		source.getExitActionList().add(action);
-		ViewState target = new ViewState(flow, "target");
+		new ViewState(flow, "target");
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.setCurrentState(source);
 		t.execute(source, context);

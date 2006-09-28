@@ -37,7 +37,7 @@ public class EventTests extends TestCase {
 	
 	public void testEventNullSource() {
 		try {
-			Event event = new Event(null, "id");
+			new Event(null, "id");
 			fail("null source");
 		} catch (IllegalArgumentException e) {
 			
@@ -46,7 +46,7 @@ public class EventTests extends TestCase {
 
 	public void testEventNullId() {
 		try {
-			Event event = new Event(this, null);
+			new Event(this, null);
 			fail("null id");
 		} catch (IllegalArgumentException e) {
 			

@@ -69,12 +69,12 @@ public class ViewStateTests extends TestCase {
 		FlowExecution flowExecution = new FlowExecutionImpl(flow);
 		assertFalse(action.isExecuted());
 
-		ViewSelection view = flowExecution.start(null, new MockExternalContext());
+		flowExecution.start(null, new MockExternalContext());
 		assertEquals("viewState", flowExecution.getActiveSession().getState().getId());
 		assertFalse(action.isExecuted());
 		assertEquals(action.getExecutionCount(), 0);
 
-		view = flowExecution.refresh(new MockExternalContext());
+		flowExecution.refresh(new MockExternalContext());
 		assertEquals(action.getExecutionCount(), 1);
 	}
 

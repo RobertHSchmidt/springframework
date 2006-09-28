@@ -18,7 +18,7 @@ package org.springframework.webflow;
 import junit.framework.TestCase;
 
 /**
- * Keith likes to have these little cup & paste examples in the source
+ * Keith likes to have these little cut & paste examples in the source
  * repositories. If only he knew the power of code templates in Eclipse...
  */
 public class UnitTestTemplate extends TestCase {

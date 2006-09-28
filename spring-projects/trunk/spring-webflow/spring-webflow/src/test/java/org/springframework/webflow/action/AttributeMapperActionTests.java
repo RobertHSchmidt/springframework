@@ -53,7 +53,7 @@ public class AttributeMapperActionTests extends TestCase {
 	
 	public void testNullIllegalArgument() {
 		try {
-			AttributeMapperAction action = new AttributeMapperAction(null);
+			new AttributeMapperAction(null);
 			fail("Should've thrown illegal argument");
 		}
 		catch (IllegalArgumentException e) {

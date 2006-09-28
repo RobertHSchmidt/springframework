@@ -50,6 +50,7 @@ public class StateTests extends TestCase {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		state.enter(context);
 		assertEquals(state, context.getCurrentState());
+		assertTrue(entered);
 	}
 
 	public void testStateEnterWithEntryAction() {
@@ -59,6 +60,7 @@ public class StateTests extends TestCase {
 		state.enter(context);
 		assertEquals(state, context.getCurrentState());
 		assertTrue(action.isExecuted());
+		assertTrue(entered);
 		assertEquals(1, action.getExecutionCount());
 	}
 }
