@@ -80,7 +80,7 @@ public class SimpleFlowExecutionRepository extends AbstractConversationFlowExecu
 	 * Returns whether or not a new flow execution key should always be
 	 * generated before each put call. Default is true.
 	 */
-	protected boolean isAlwaysGenerateNewNextKey() {
+	public boolean isAlwaysGenerateNewNextKey() {
 		return alwaysGenerateNewNextKey;
 	}
 
