@@ -45,13 +45,15 @@ import org.springframework.webflow.execution.repository.support.FlowExecutionSta
  * {@link FlowExecution} object at the state it was in when encoded.
  * <p>
  * Note: currently this repository implementation does not by default support
- * <i>conversation management</i>. This has to consequences. First, there is no
+ * <i>conversation management</i>. This has two consequences. First, there is no
  * <i>conversation invalidation after completion</i>, which enables automatic
  * prevention of duplicate submission after a conversation has completed.
  * Secondly, The contents of <i>conversation scope</i> will not be maintained
  * across requests. Support for these features requires tracking active
  * conversations using a conversation service backed by some centralized storage
- * medium like a database table.
+ * medium like a database table. If you want to have proper conversation management,
+ * configure this class with an appropriate conversation manager (the default
+ * conversation manager used does nothing).
  * <p>
  * Warning: storing state (a flow execution continuation) on the client entails
  * a certain security risk. This implementation does not provide a secure way of
@@ -81,15 +83,17 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	private FlowExecutionContinuationFactory continuationFactory = new SerializedFlowExecutionContinuationFactory();
 
 	/**
-	 * Creates a new client continuation repository.  Uses a 'no op' conversation manager by default.
+	 * Creates a new client continuation repository. Uses a 'no op' conversation manager by default.
 	 * @param executionStateRestorer the transient flow execution state restorer
 	 */
 	public ClientContinuationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer) {
-		this(executionStateRestorer, new NoOpConversationManager());
+		super(executionStateRestorer, new NoOpConversationManager());
 	}
 	
 	/**
-	 * Creates a new client continuation repository.
+	 * Creates a new client continuation repository. Use this contructor when you want
+	 * to use a particular conversation manager, e.g. one that does proper conversation
+	 * management.
 	 * @param executionStateRestorer the transient flow execution state restorer
 	 * @param conversationManager the conversation manager for managing centralized conversational state
 	 */
@@ -114,6 +118,10 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
+		// note that the call to getConversationScope() below will try to obtain
+		// the conversation identified by the key, which will fail if that conversation
+		// is no longer managed by the conversation manager (i.e. it has expired)
+		
 		FlowExecutionContinuation continuation = decode((String)getContinuationId(key));
 		try {
 			FlowExecution execution = continuation.unmarshal();
@@ -127,6 +135,10 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	}
 
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
+		// note that the call to putConversationScope() below will try to obtain
+		// the conversation identified by the key, which will fail if that conversation
+		// is no longer managed by the conversation manager (i.e. it has expired)
+
 		// the flow execution state is already stored in the key, so
 		// there's nothing we need to do to store it
 		putConversationScope(key, flowExecution.getConversationScope());
