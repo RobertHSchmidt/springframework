@@ -116,7 +116,7 @@ public class SessionBindingConversationManager implements ConversationManager {
 		 * @param parameters descriptive parameters
 		 * @return the created conversation
 		 */
-		public Conversation createAndAddConversation(ConversationId id, ConversationParameters parameters) {
+		public synchronized Conversation createAndAddConversation(ConversationId id, ConversationParameters parameters) {
 			// conversation parameters are not used
 			ContainedConversation conversation = new ContainedConversation(this, id);
 			conversations.add(conversation);
@@ -134,7 +134,7 @@ public class SessionBindingConversationManager implements ConversationManager {
 		 * @throws NoSuchConversationException if the conversation cannot be
 		 * found
 		 */
-		public Conversation getConversation(ConversationId id) throws NoSuchConversationException {
+		public synchronized Conversation getConversation(ConversationId id) throws NoSuchConversationException {
 			for (Iterator it = conversations.iterator(); it.hasNext();) {
 				ContainedConversation conversation = (ContainedConversation)it.next();
 				if (conversation.getId().equals(id)) {
@@ -147,8 +147,14 @@ public class SessionBindingConversationManager implements ConversationManager {
 		/**
 		 * Remove identified conversation from this container.
 		 */
-		public void removeConversation(ConversationId id) {
-			conversations.remove(id);
+		public synchronized void removeConversation(ConversationId id) {
+			for (Iterator it = conversations.iterator(); it.hasNext();) {
+				ContainedConversation conversation = (ContainedConversation)it.next();
+				if (conversation.getId().equals(id)) {
+					it.remove();
+					break;
+				}
+			}
 		}
 
 		/**
