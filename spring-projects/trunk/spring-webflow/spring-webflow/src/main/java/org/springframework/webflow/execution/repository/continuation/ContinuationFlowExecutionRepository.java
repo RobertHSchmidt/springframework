@@ -172,7 +172,7 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	}
 
 	protected void onBegin(Conversation conversation) {
-		// setup a new continuation group fro the conversation
+		// setup a new continuation group for the conversation
 		FlowExecutionContinuationGroup continuationGroup = new FlowExecutionContinuationGroup(maxContinuations);
 		conversation.putAttribute(CONTINUATION_GROUP_ATTRIBUTE, continuationGroup);
 	}
