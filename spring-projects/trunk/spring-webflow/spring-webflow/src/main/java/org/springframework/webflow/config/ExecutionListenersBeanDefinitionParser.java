@@ -35,38 +35,42 @@ import org.w3c.dom.Element;
  * @author Ben Hale
  */
 class ExecutionListenersBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-
-	private static final String LISTENERS = "listeners";
 	
-	private static final String LISTENER = "listener";
+	// elements and attributes
+	
+	private static final String LISTENER_ELEMENT= "listener";
 
-	private static final String CRITERIA = "criteria";
+	// properties
 
-	private static final String REF = "ref";
+	private static final String LISTENERS_PROPERTY = "listeners";
+	
+	private static final String CRITERIA_ATTRIBUTE = "criteria";
+
+	private static final String REF_ATTRIBUTE = "ref";
 
 	protected Class getBeanClass(Element element) {
 		return ConditionalFlowExecutionListenerLoader.class;
 	}
 
 	protected void doParse(Element element, BeanDefinitionBuilder definitionBuilder) {
-		List listenerElements = DomUtils.getChildElementsByTagName(element, LISTENER);
-		definitionBuilder.addPropertyValue(LISTENERS, getListenersAndCriteria(listenerElements));
+		List listenerElements = DomUtils.getChildElementsByTagName(element, LISTENER_ELEMENT);
+		definitionBuilder.addPropertyValue(LISTENERS_PROPERTY, getListenersWithCriteria(listenerElements));
 	}
 
 	/**
-	 * Creates a map of listeners and their criteria.
-	 * @param listeners The list of listener elements from the bean definition
-	 * @return A map containing keys that are references to a given listeners
+	 * Creates a map of listeners with their associated criteria.
+	 * @param listeners the list of listener elements from the bean definition
+	 * @return a map containing keys that are references to given listeners
 	 * and values of string that represent the criteria
 	 */
-	private Map getListenersAndCriteria(List listeners) {
-		Map listenersAndCriteria = new ManagedMap(listeners.size());
+	private Map getListenersWithCriteria(List listeners) {
+		Map listenersWithCriteria = new ManagedMap(listeners.size());
 		for (Iterator i = listeners.iterator(); i.hasNext();) {
 			Element listenerElement = (Element)i.next();
-			RuntimeBeanReference ref = new RuntimeBeanReference(listenerElement.getAttribute(REF));
-			String criteria = listenerElement.getAttribute(CRITERIA);
-			listenersAndCriteria.put(ref, criteria);
+			RuntimeBeanReference ref = new RuntimeBeanReference(listenerElement.getAttribute(REF_ATTRIBUTE));
+			String criteria = listenerElement.getAttribute(CRITERIA_ATTRIBUTE);
+			listenersWithCriteria.put(ref, criteria);
 		}
-		return listenersAndCriteria;
+		return listenersWithCriteria;
 	}
 }
