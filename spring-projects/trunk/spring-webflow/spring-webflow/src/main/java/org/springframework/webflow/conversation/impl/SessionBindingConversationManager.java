@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -105,7 +106,7 @@ public class SessionBindingConversationManager implements ConversationManager {
 		 */
 		public ConversationContainer(int maxConversations) {
 			this.maxConversations = maxConversations;
-			this.conversations = new LinkedList();
+			this.conversations = new ArrayList();
 		}
 
 		/**
@@ -134,11 +135,13 @@ public class SessionBindingConversationManager implements ConversationManager {
 		 * found
 		 */
 		public Conversation getConversation(ConversationId id) throws NoSuchConversationException {
-			Conversation conversation = (Conversation)conversations.get(conversations.indexOf(id));
-			if (conversation == null) {
-				throw new NoSuchConversationException(id);
+			for (Iterator it = conversations.iterator(); it.hasNext();) {
+				ContainedConversation conversation = (ContainedConversation)it.next();
+				if (conversation.getId().equals(id)) {
+					return conversation;
+				}
 			}
-			return conversation;
+			throw new NoSuchConversationException(id);
 		}
 
 		/**
