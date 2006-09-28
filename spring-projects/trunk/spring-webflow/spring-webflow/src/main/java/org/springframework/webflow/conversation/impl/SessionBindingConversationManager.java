@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationException;
@@ -112,9 +114,18 @@ public class SessionBindingConversationManager implements ConversationManager {
 	 * contained conversations.
 	 */
 	private static class ConversationContainer implements Serializable {
+		
+		private static final Log logger = LogFactory.getLog(ConversationContainer.class);
 
+		/**
+		 * Maximum number of conversations in this container. -1 for
+		 * unlimited.
+		 */
 		private int maxConversations;
 
+		/**
+		 * The contained conversations. A list of {@link ContainedConversation} objects.
+		 */
 		private List conversations;
 
 		/**
@@ -135,7 +146,10 @@ public class SessionBindingConversationManager implements ConversationManager {
 		 * @return the created conversation
 		 */
 		public synchronized Conversation createAndAddConversation(ConversationId id, ConversationParameters parameters) {
-			// conversation parameters are not used
+			if (logger.isInfoEnabled()) {
+				logger.info("Creating new conversation '" + parameters + "' with id '" + id + "' " +
+						"and adding it to conversation container");
+			}
 			ContainedConversation conversation = new ContainedConversation(this, id);
 			conversations.add(conversation);
 			if (maxExceeded()) {
@@ -153,6 +167,9 @@ public class SessionBindingConversationManager implements ConversationManager {
 		 * found
 		 */
 		public synchronized Conversation getConversation(ConversationId id) throws NoSuchConversationException {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Getting conversation with id '" + id +"'");
+			}
 			for (Iterator it = conversations.iterator(); it.hasNext();) {
 				ContainedConversation conversation = (ContainedConversation)it.next();
 				if (conversation.getId().equals(id)) {
@@ -166,6 +183,9 @@ public class SessionBindingConversationManager implements ConversationManager {
 		 * Remove identified conversation from this container.
 		 */
 		public synchronized void removeConversation(ConversationId id) {
+			if (logger.isInfoEnabled()) {
+				logger.info("Removing conversation with id '" + id + "'");
+			}
 			for (Iterator it = conversations.iterator(); it.hasNext();) {
 				ContainedConversation conversation = (ContainedConversation)it.next();
 				if (conversation.getId().equals(id)) {
