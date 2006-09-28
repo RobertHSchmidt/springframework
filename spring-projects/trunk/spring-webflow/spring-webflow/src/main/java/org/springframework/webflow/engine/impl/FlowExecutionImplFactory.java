@@ -48,6 +48,15 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 	 * The default is an empty map.
 	 */
 	private AttributeMap executionAttributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
+	
+	/**
+	 * Returns the attributes to apply to flow executions created by this factory.
+	 * Execution attributes may affect flow execution behavior.
+	 * @return flow execution attributes
+	 */
+	public AttributeMap getExecutionAttributes() {
+		return executionAttributes;
+	}
 
 	/**
 	 * Sets the attributes to apply to flow executions created by this factory.
@@ -71,10 +80,19 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 		Assert.notNull(executionAttributes, "The execution attributes map is required");
 		this.executionAttributes = new LocalAttributeMap(executionAttributes);
 	}
+	
+	/**
+	 * Returns the strategy for loading listeners that should observe executions of
+	 * a flow definition. Allows full control over what listeners should apply
+	 * for executions of a flow definition.
+	 */
+	public FlowExecutionListenerLoader getExecutionListenerLoader() {
+		return executionListenerLoader;
+	}
 
 	/**
 	 * Sets the strategy for loading listeners that should observe executions of
-	 * a flow definition. Allows full control over what listeners should apply.
+	 * a flow definition. Allows full control over what listeners should apply
 	 * for executions of a flow definition.
 	 */
 	public void setExecutionListenerLoader(FlowExecutionListenerLoader listenerLoader) {
