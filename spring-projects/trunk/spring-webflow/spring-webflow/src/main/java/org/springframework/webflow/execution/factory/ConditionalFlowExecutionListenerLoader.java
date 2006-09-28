@@ -104,7 +104,7 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 	 * "flowId1,flowId2") or {@link FlowExecutionListenerCriteria}
 	 * objects as values. This will clear any listeners registered with
 	 * this object using the <tt>addListener</tt> methods.
-	 * @param listeners the map of listeners and their corresponding criteria
+	 * @param listenersWithCriteria the map of listeners and their corresponding criteria
 	 */
 	public void setListeners(Map listenersWithCriteria) {
 		removeAllListeners();
