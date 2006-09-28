@@ -62,9 +62,9 @@ class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 	}
 
 	/**
-	 * Returns the name of the registry detailed in the bean definition
-	 * @param element The element to extract the registry name from
-	 * @return The name of the registry
+	 * Returns the name of the registry detailed in the bean definition.
+	 * @param element the element to extract the registry name from
+	 * @return the name of the registry
 	 */
 	private String getRegistryRef(Element element) {
 		String registryRef = element.getAttribute(REGISTRY_REF_ATTRIBUTE);
@@ -76,14 +76,17 @@ class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	/**
 	 * Returns the name of the repository type enum field detailed in the bean
-	 * definition
-	 * @param element The element to extract the registry name from
-	 * @return The name of the registry
+	 * definition.
+	 * @param element the element to extract the repository type from
+	 * @return the type of the repository
 	 */
 	private String getRepositoryType(Element element) {
 		return element.getAttribute(REPOSITORY_TYPE_ATTRIBUTE).toUpperCase();
 	}
 
+	/**
+	 * Parse execution attribute definitions contained in given element.
+	 */
 	private void addExecutionAttributes(Element element, ParserContext parserContext,
 			BeanDefinitionBuilder definitionBuilder) {
 		Element attributesElement = DomUtils.getChildElementByTagName(element, EXECUTION_ATTRIBUTES_ELEMENT);
@@ -93,6 +96,9 @@ class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		}
 	}
 
+	/**
+	 * Parse execution listener definitions contained in given element.
+	 */
 	private void addExecutionListenerLoader(Element element, ParserContext parserContext,
 			BeanDefinitionBuilder definitionBuilder) {
 		Element listenersElement = DomUtils.getChildElementByTagName(element, EXECUTION_LISTENERS_ELEMENT);

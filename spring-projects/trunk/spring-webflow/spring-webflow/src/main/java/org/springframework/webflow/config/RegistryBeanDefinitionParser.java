@@ -33,28 +33,35 @@ import org.w3c.dom.Element;
  * @author Ben Hale
  */
 class RegistryBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+	
+	// elements and attributes
 
-	private static final String FLOW_LOCATIONS = "flowLocations";
+	private static final String LOCATION_ELEMENT = "location";
 
-	private static final String LOCATION = "location";
+	// properties
 
-	private static final String PATH = "path";
+	private static final String FLOW_LOCATIONS_PROPERTY = "flowLocations";
+
+	private static final String PATH_ATTRIBUTE = "path";
 
 	protected Class getBeanClass(Element element) {
 		return XmlFlowRegistryFactoryBean.class;
 	}
 
 	protected void doParse(Element element, BeanDefinitionBuilder definitionBuilder) {
-		List locationElements = DomUtils.getChildElementsByTagName(element, LOCATION);
+		List locationElements = DomUtils.getChildElementsByTagName(element, LOCATION_ELEMENT);
 		List locations = getLocations(locationElements);
-		definitionBuilder.addPropertyValue(FLOW_LOCATIONS, locations.toArray(new String[locations.size()]));
+		definitionBuilder.addPropertyValue(FLOW_LOCATIONS_PROPERTY, locations.toArray(new String[locations.size()]));
 	}
 
+	/**
+	 * Parse location definitions from given list of location elements.
+	 */
 	private List getLocations(List locationElements) {
 		List locations = new ArrayList(locationElements.size());
 		for (Iterator i = locationElements.iterator(); i.hasNext();) {
 			Element locationElement = (Element)i.next();
-			String path = locationElement.getAttribute(PATH);
+			String path = locationElement.getAttribute(PATH_ATTRIBUTE);
 			if (StringUtils.hasText(path)) {
 				locations.add(path);
 			}

@@ -19,24 +19,19 @@ import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
- * <p>
- * <code>NamespaceHandler</code> for the <code>webflow-config</code>
- * namespace.
- * </p>
+ * <code>NamespaceHandler</code> for the <code>webflow-config</code> namespace.
  * <p>
  * Provides {@link BeanDefinitionParser bean definition parsers} for the
- * <code>&lt;executor&gt;</code> and <code>&lt;registry&gt;</code> tags. A
- * <code>executor</code> tag can include a <code>execution-listeners</code>
+ * <code>&lt;executor&gt;</code> and <code>&lt;registry&gt;</code> tags. An
+ * <code>executor</code> tag can include an <code>execution-listeners</code>
  * tag and a <code>registry</code> tag can include <code>location</code>
  * tags.
- * </p>
  * <p>
  * Using the <code>executor</code> tag you can configure a
  * {@link FlowExecutorFactoryBean} that creates a
  * {@link org.springframework.webflow.executor.FlowExecutor}. The
  * <code>executor</code> tag allows you to specify the repository type and a
  * reference to a registry.
- * </p>
  * 
  * <pre class="code">
  *       &lt;flow:executor id=&quot;registry&quot; registry-ref=&quot;registry&quot; repository-type=&quot;continuation&quot; &gt;
@@ -53,7 +48,6 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * {@link org.springframework.webflow.engine.builder.xml.XmlFlowRegistryFactoryBean}
  * to create a registry for use by any number of <code>executor</code>s. The
  * <code>registry</code> tag supports in-line flow definition locations.
- * </p>
  * 
  * <pre class="code">
  *       &lt;flow:registry id=&quot;registry&quot;&gt;
@@ -65,6 +59,7 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * @author Ben Hale
  */
 public class WebFlowConfigNamespaceHandler extends NamespaceHandlerSupport {
+
 	public void init() {
 		registerBeanDefinitionParser("execution-attributes", new ExecutionAttributesBeanDefinitionParser());
 		registerBeanDefinitionParser("execution-listeners", new ExecutionListenersBeanDefinitionParser());
