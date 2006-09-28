@@ -143,6 +143,15 @@ public class FlowExecutorImpl implements FlowExecutor {
 	}
 
 	/**
+	 * Exposes the configured input mapper to subclasses and privileged
+	 * accessors.
+	 * @return the input mapper
+	 */
+	public AttributeMapper getInputMapper() {
+		return inputMapper;
+	}
+
+	/**
 	 * Set the service responsible for mapping attributes of an
 	 * {@link ExternalContext} to a new {@link FlowExecution} during the
 	 * {@link #launch(String, ExternalContext) launch flow} operation.
@@ -160,7 +169,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * privileged accessors.
 	 * @return the flow definition locator
 	 */
-	protected FlowDefinitionLocator getDefinitionLocator() {
+	public FlowDefinitionLocator getDefinitionLocator() {
 		return definitionLocator;
 	}
 
@@ -169,7 +178,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * accessors.
 	 * @return the execution factory
 	 */
-	protected FlowExecutionFactory getExecutionFactory() {
+	public FlowExecutionFactory getExecutionFactory() {
 		return executionFactory;
 	}
 
@@ -177,17 +186,8 @@ public class FlowExecutorImpl implements FlowExecutor {
 	 * Exposes the execution repository to subclasses and privileged accessors.
 	 * @return the execution repository
 	 */
-	protected FlowExecutionRepository getExecutionRepository() {
+	public FlowExecutionRepository getExecutionRepository() {
 		return executionRepository;
-	}
-
-	/**
-	 * Exposes the configured input mapper to subclasses and privileged
-	 * accessors.
-	 * @return the input mapper
-	 */
-	protected AttributeMapper getInputMapper() {
-		return inputMapper;
 	}
 
 	public ResponseInstruction launch(String flowDefinitionId, ExternalContext context) throws FlowException {
