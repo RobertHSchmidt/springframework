@@ -31,10 +31,11 @@ public class FlowNavigationHandlerParameterExtractorTests extends TestCase {
 	public void testExtractFlowIdWrongFormat() {
 		JsfExternalContext context = new JsfExternalContext(new MockFacesContext(), "action", "flow:foo");
 		try {
-			String flowId = extractor.extractFlowId(context);
+			extractor.extractFlowId(context);
+			fail();
 		}
 		catch (FlowExecutorArgumentExtractionException e) {
-
+			// expected
 		}
 	}
 

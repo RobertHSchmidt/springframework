@@ -38,7 +38,7 @@ public class MiscFlowExecutionTests extends TestCase {
 	public void testRequestScopePutInEntryAction() {
 		Flow parentFlow = new Flow("parent");
 		Flow flow = new Flow("test");
-		SubflowState parentState = new SubflowState(parentFlow, "parentState", flow);
+		new SubflowState(parentFlow, "parentState", flow);
 
 		ViewState state = new ViewState(flow, "view");
 		state.setViewSelector(new ApplicationViewSelector(new StaticExpression("myView")));

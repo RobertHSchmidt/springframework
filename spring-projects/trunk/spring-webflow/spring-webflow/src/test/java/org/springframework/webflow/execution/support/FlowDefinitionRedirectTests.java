@@ -37,7 +37,7 @@ public class FlowDefinitionRedirectTests extends TestCase {
 	
 	public void testNullParams() {
 		try {
-			FlowDefinitionRedirect redirect = new FlowDefinitionRedirect(null, null);
+			new FlowDefinitionRedirect(null, null);
 			fail("was null");
 		} catch (IllegalArgumentException e) {
 			

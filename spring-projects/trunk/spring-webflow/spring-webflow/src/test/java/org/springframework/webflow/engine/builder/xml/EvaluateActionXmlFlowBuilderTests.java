@@ -36,7 +36,7 @@ public class EvaluateActionXmlFlowBuilderTests extends TestCase {
 	}
 
 	public void testActionStateConfiguration() {
-		ActionState as1 = (ActionState)flow.getState("actionState1");
+		assertTrue(flow.getState("actionState1") instanceof ActionState);
 	}
 
 	public void testFlowExecution() {

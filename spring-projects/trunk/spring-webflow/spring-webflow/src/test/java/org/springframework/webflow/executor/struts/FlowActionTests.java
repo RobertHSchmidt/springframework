@@ -75,7 +75,7 @@ public class FlowActionTests extends TestCase {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setMethod("POST");
 		request.setContextPath("/app");
-		MockHttpServletResponse response = new MockHttpServletResponse();
+		new MockHttpServletResponse();
 		request.addParameter("_flowId", "simpleFlow");
 	}
 }
