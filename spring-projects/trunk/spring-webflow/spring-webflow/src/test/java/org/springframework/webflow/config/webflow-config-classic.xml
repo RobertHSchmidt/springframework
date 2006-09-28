@@ -7,8 +7,7 @@
            
 	<!-- a sample flow registry -->
 	
-	<bean id="flowRegistry"
-		class="org.springframework.webflow.engine.builder.xml.XmlFlowRegistryFactoryBean">
+	<bean id="flowRegistry" class="org.springframework.webflow.engine.builder.xml.XmlFlowRegistryFactoryBean">
 		<property name="flowLocations" value="classpath:test-flow.xml"/>
 	</bean>
 		
@@ -16,8 +15,7 @@
 	
 	<bean id="flowExecutionListener" class="org.springframework.webflow.execution.MockFlowExecutionListener"/>
 	
-	<bean id="executionListenerLoader"
-		class="org.springframework.webflow.execution.factory.ConditionalFlowExecutionListenerLoader">
+	<bean id="executionListenerLoader" class="org.springframework.webflow.execution.factory.ConditionalFlowExecutionListenerLoader">
 		<property name="listeners">
 			<map>
 				<entry key-ref="flowExecutionListener" value="*"/>
@@ -34,8 +32,6 @@
 	<bean id="conversationManager" class="org.springframework.webflow.conversation.impl.SessionBindingConversationManager">
 		<property name="maxConversations" value="5"/>
 	</bean>
-	
-	
 	
 	<!-- relatively simple flow controller definition using factory beans -->
 	
@@ -60,8 +56,6 @@
 			</bean>
 		</property>
 	</bean>
-    
-    
     
     <!-- very elaborate flow controller definition using straight low level bean definitions -->
     
