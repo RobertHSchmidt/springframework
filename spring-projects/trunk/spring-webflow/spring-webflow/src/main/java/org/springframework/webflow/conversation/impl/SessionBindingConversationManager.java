@@ -32,6 +32,7 @@ import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.conversation.ConversationParameters;
 import org.springframework.webflow.conversation.NoSuchConversationException;
+import org.springframework.webflow.core.collection.SharedAttributeMap;
 import org.springframework.webflow.util.RandomGuidUidGenerator;
 import org.springframework.webflow.util.UidGenerator;
 
@@ -94,13 +95,15 @@ public class SessionBindingConversationManager implements ConversationManager {
 	 * found.
 	 */
 	private ConversationContainer getConversationContainer() {
-		Map sessionMap = ExternalContextHolder.getExternalContext().getSessionMap().asMap();
-		ConversationContainer container = (ConversationContainer)sessionMap.get(CONVERSATION_CONTAINER_KEY);
-		if (container == null) {
-			container = new ConversationContainer(maxConversations);
-			sessionMap.put(CONVERSATION_CONTAINER_KEY, container);
+		SharedAttributeMap sessionMap = ExternalContextHolder.getExternalContext().getSessionMap();
+		synchronized (sessionMap.getMutex()) {
+			ConversationContainer container = (ConversationContainer)sessionMap.get(CONVERSATION_CONTAINER_KEY);
+			if (container == null) {
+				container = new ConversationContainer(maxConversations);
+				sessionMap.put(CONVERSATION_CONTAINER_KEY, container);
+			}
+			return container;
 		}
-		return container;
 	}
 
 	/**
