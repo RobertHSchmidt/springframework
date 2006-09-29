@@ -14,11 +14,13 @@
 	</action-state>
 
 	<action-state id="actionState2">
-		<evaluate-action expression="flowScope.sessionStatus.hashCode()"/>
+		<evaluate-action expression="flowScope.sessionStatus.hashCode()">
+			<evaluation-result name="hashCode"/>
+		</evaluate-action>
 		<transition on="success" to="pause" />
 	</action-state>
 	
-	<view-state id="pause">
+	<view-state id="pause" view="testView">
 		<transition on="resume" to="end" />
 	</view-state>
 
