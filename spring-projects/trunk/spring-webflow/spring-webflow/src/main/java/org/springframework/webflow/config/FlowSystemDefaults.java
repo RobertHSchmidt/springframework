@@ -34,7 +34,7 @@ public class FlowSystemDefaults implements Serializable {
 	/**
 	 * The default 'alwaysRedirectOnPause' execution attribute value.
 	 */
-	private Boolean alwaysRedirectOnPause = Boolean.TRUE;
+	private boolean alwaysRedirectOnPause = true;
 
 	/**
 	 * The default flow execution repository type.
@@ -42,12 +42,12 @@ public class FlowSystemDefaults implements Serializable {
 	private RepositoryType repositoryType = RepositoryType.CONTINUATION;
 
 	/**
-	 * Overrides the alwaysRedirectOnPause execution attribute default.
-	 * Defaults to "true".
+	 * Overrides the alwaysRedirectOnPause execution attribute default. Defaults
+	 * to "true".
 	 * @param alwaysRedirectOnPause the new default value
 	 * @see ApplicationViewSelector#ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE
 	 */
-	public void setAlwaysRedirectOnPause(Boolean alwaysRedirectOnPause) {
+	public void setAlwaysRedirectOnPause(boolean alwaysRedirectOnPause) {
 		this.alwaysRedirectOnPause = alwaysRedirectOnPause;
 	}
 
@@ -71,7 +71,8 @@ public class FlowSystemDefaults implements Serializable {
 			executionAttributes = new LocalAttributeMap(1, 1);
 		}
 		if (!executionAttributes.contains(ApplicationViewSelector.ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE)) {
-			executionAttributes.put(ApplicationViewSelector.ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE, alwaysRedirectOnPause);
+			executionAttributes.put(ApplicationViewSelector.ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE, Boolean
+					.valueOf(alwaysRedirectOnPause));
 		}
 		return executionAttributes;
 	}
