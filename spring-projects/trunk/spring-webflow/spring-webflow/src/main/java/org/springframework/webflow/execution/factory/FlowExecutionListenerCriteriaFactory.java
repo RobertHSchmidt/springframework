@@ -96,7 +96,7 @@ public class FlowExecutionListenerCriteriaFactory {
 		 * @param flowIds the flow ids to match
 		 */
 		public FlowIdFlowExecutionListenerCriteria(String[] flowIds) {
-			Assert.notEmpty(flowIds, "The flow id is required");
+			Assert.notEmpty(flowIds, "The flow id array is required");
 			this.flowIds = flowIds;
 		}
 
