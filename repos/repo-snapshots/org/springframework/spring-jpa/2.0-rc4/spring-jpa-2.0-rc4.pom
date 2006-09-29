@@ -60,12 +60,14 @@
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate</artifactId>
       <version>3.2.0.cr4</version>
+      <optional>true</optional>
     </dependency>
 <!-- Not currently in ibiblio maven repository -->
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
       <version>3.2.0.cr2</version>
+      <optional>true</optional>
     </dependency>
 <!-- Spring Dependencies -->
     <dependency>
