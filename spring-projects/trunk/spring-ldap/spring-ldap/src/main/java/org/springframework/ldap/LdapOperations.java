@@ -936,6 +936,40 @@ public interface LdapOperations {
             throws DataAccessException;
 
     /**
+     * Convenience method to get the specified attributes of a specified DN and
+     * automatically pass them to an AttributesMapper.
+     * 
+     * @param dn
+     *            The distinguished name to find.
+     * @param attributes
+     *            The names of the attributes to pass to the mapper.
+     * @param mapper
+     *            The AttributesMapper to use for mapping the found object.
+     * @return the object returned from the mapper.
+     * @throws DataAccessException
+     *             if any error occurs.
+     */
+    public Object lookup(Name dn, String[] attributes, AttributesMapper mapper)
+            throws DataAccessException;
+
+    /**
+     * Convenience method to get the specified attributes of a specified DN and
+     * automatically pass them to an AttributesMapper.
+     * 
+     * @param dn
+     *            The distinguished name to find.
+     * @param attributes
+     *            The names of the attributes to pass to the mapper.
+     * @param mapper
+     *            The AttributesMapper to use for mapping the found object.
+     * @return the object returned from the mapper.
+     * @throws DataAccessException
+     *             if any error occurs.
+     */
+    public Object lookup(String dn, String[] attributes, AttributesMapper mapper)
+            throws DataAccessException;
+
+    /**
      * Modify an entry in the LDAP tree using the supplied ModificationItems.
      * 
      * @param dn

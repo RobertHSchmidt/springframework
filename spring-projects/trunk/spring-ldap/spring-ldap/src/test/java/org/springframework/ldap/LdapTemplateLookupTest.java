@@ -134,6 +134,8 @@ public class LdapTemplateLookupTest extends TestCase {
                 .getReadOnlyContext(), dirContextMock);
     }
 
+    // Tests for lookup(name)
+
     public void testLookup() throws NamingException {
         expectGetReadOnlyContext();
 
@@ -192,6 +194,8 @@ public class LdapTemplateLookupTest extends TestCase {
 
         verify();
     }
+
+    // Tests for lookup(name, AttributesMapper)
 
     public void testLookup_AttributesMapper() throws Exception {
         expectGetReadOnlyContext();
@@ -259,6 +263,8 @@ public class LdapTemplateLookupTest extends TestCase {
         verify();
     }
 
+    // Tests for lookup(name, ContextMapper)
+
     public void testLookup_ContextMapper() throws Exception {
         expectGetReadOnlyContext();
 
@@ -324,5 +330,60 @@ public class LdapTemplateLookupTest extends TestCase {
         }
 
         verify();
+    }
+
+    // Tests for lookup(name, attributes, AttributesMapper)
+
+    public void testLookup_ReturnAttributes_AttributesMapper() throws Exception {
+        expectGetReadOnlyContext();
+
+        String[] attributeNames = new String[] { "cn" };
+
+        BasicAttributes expectedAttributes = new BasicAttributes();
+        expectedAttributes.put("cn", "Some Name");
+
+        dirContextControl.expectAndReturn(dirContextMock.getAttributes(
+                nameMock, attributeNames), expectedAttributes);
+        dirContextMock.close();
+
+        Object expected = new Object();
+        attributesMapperControl.expectAndReturn(attributesMapperMock
+                .mapFromAttributes(expectedAttributes), expected);
+
+        replay();
+
+        Object actual = tested.lookup(nameMock, attributeNames,
+                attributesMapperMock);
+
+        verify();
+
+        assertSame(expected, actual);
+    }
+
+    public void testLookup_String_ReturnAttributes_AttributesMapper()
+            throws Exception {
+        expectGetReadOnlyContext();
+
+        String[] attributeNames = new String[] { "cn" };
+
+        BasicAttributes expectedAttributes = new BasicAttributes();
+        expectedAttributes.put("cn", "Some Name");
+
+        dirContextControl.expectAndReturn(dirContextMock.getAttributes(
+                DEFAULT_BASE_STRING, attributeNames), expectedAttributes);
+        dirContextMock.close();
+
+        Object expected = new Object();
+        attributesMapperControl.expectAndReturn(attributesMapperMock
+                .mapFromAttributes(expectedAttributes), expected);
+
+        replay();
+
+        Object actual = tested.lookup(DEFAULT_BASE_STRING, attributeNames,
+                attributesMapperMock);
+
+        verify();
+
+        assertSame(expected, actual);
     }
 }

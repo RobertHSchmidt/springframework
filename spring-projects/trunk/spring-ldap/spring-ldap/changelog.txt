@@ -15,11 +15,13 @@ Changes in version 1.1.1 (xx.y.2006)
 * Fixed problem with DirContextAdapter, where the wrong change was applied
   when a change was followed by a reset to the original values.
 
+* DirContextAdapter.getNameInNamespace now returns the full DN, as spec says.
+
 * LdapRdn is now Serializable.
 
-* Fixed some incorrect package names in the Reference Manual.
+* Added lookup methods that take an array of return attribute names.
 
-* DirContextAdapter.getNameInNamespace now returns the full DN, as spec says.
+* Fixed some incorrect package names in the Reference Manual.
 
 * Separated integration tests that require OpenLDAP from the other integration
   tests that run the in-JVM Apache DS server.

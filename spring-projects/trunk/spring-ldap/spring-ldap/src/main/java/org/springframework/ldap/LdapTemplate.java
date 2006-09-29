@@ -300,8 +300,6 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
      *      java.lang.String, int, java.lang.String[],
      *      org.springframework.ldap.AttributesMapper)
@@ -313,8 +311,6 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
      *      java.lang.String, int, java.lang.String[],
      *      org.springframework.ldap.AttributesMapper)
@@ -366,8 +362,6 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
      *      java.lang.String, int, java.lang.String[],
      *      org.springframework.ldap.ContextMapper)
@@ -380,8 +374,6 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
      *      java.lang.String, int, java.lang.String[],
      *      org.springframework.ldap.ContextMapper)
@@ -526,8 +518,6 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see org.springframework.ldap.LdapOperations#list(java.lang.String,
      *      org.springframework.ldap.NameClassPairMapper)
      */
@@ -539,8 +529,6 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see org.springframework.ldap.LdapOperations#list(javax.naming.Name,
      *      org.springframework.ldap.NameClassPairMapper)
      */
@@ -765,6 +753,39 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
                     throws NamingException {
                 Object object = ctx.lookup(dn);
                 return mapper.mapFromContext(object);
+            }
+        });
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#lookup(javax.naming.Name,
+     *      java.lang.String[], org.springframework.ldap.AttributesMapper)
+     */
+    public Object lookup(final Name dn, final String[] attributes,
+            final AttributesMapper mapper) throws DataAccessException {
+
+        return executeReadOnly(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                Attributes filteredAttributes = ctx.getAttributes(dn,
+                        attributes);
+                return mapper.mapFromAttributes(filteredAttributes);
+            }
+        });
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#lookup(java.lang.String,
+     *      java.lang.String[], org.springframework.ldap.AttributesMapper)
+     */
+    public Object lookup(final String dn, final String[] attributes,
+            final AttributesMapper mapper) throws DataAccessException {
+        return executeReadOnly(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                Attributes filteredAttributes = ctx.getAttributes(dn,
+                        attributes);
+                return mapper.mapFromAttributes(filteredAttributes);
             }
         });
     }

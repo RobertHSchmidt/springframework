@@ -16,6 +16,8 @@
 
 package org.springframework.ldap;
 
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
 
 import org.springframework.ldap.AttributesMapper;
 import org.springframework.ldap.ContextMapper;
@@ -28,13 +30,15 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
  * Tests the lookup methods of LdapTemplate.
  * 
  * @author Mattias Arthursson
+ * @author Ulrik Sandberg
  */
 public class LdapTemplateLookupITest extends
         AbstractDependencyInjectionSpringContextTests {
+
     private LdapTemplate tested;
 
     protected String[] getConfigLocations() {
-        return new String[] { "/conf/ldapTemplateTestContext.xml"};
+        return new String[] { "/conf/ldapTemplateTestContext.xml" };
     }
 
     /**
@@ -72,6 +76,60 @@ public class LdapTemplateLookupITest extends
         assertEquals("Some Person2", person.getFullname());
         assertEquals("Person2", person.getLastname());
         assertEquals("Sweden, Company1, Some Person2", person.getDescription());
+    }
+
+    /**
+     * An {@link AttributesMapper} that only maps a subset of the full
+     * attributes list. Used in tests where the return attributes list has been
+     * limited.
+     * 
+     * @author Ulrik Sandberg
+     */
+    private final class SubsetPersonAttributesMapper implements
+            AttributesMapper {
+        /**
+         * Maps the <code>cn</code> attribute into a {@link Person} object.
+         * 
+         * @see org.springframework.ldap.AttributesMapper#mapFromAttributes(javax.naming.directory.Attributes)
+         */
+        public Object mapFromAttributes(Attributes attributes)
+                throws NamingException {
+            Person person = new Person();
+            person.setFullname((String) attributes.get("cn").get());
+            return person;
+        }
+    }
+
+    /**
+     * Verifies that only the subset is used when specifying a subset of the
+     * available attributes as return attributes.
+     */
+    public void testLookup_ReturnAttributes_AttributesMapper() {
+        AttributesMapper mapper = new SubsetPersonAttributesMapper();
+
+        Person person = (Person) tested.lookup(
+                "cn=Some Person2, ou=company1,c=Sweden,dc=jayway,dc=se",
+                new String[] { "cn" }, mapper);
+
+        assertEquals("Some Person2", person.getFullname());
+        assertNull("lastName should not be set", person.getLastname());
+        assertNull("description should not be set", person.getDescription());
+    }
+
+    /**
+     * Verifies that only the subset is used when specifying a subset of the
+     * available attributes as return attributes. Uses DistinguishedName instead
+     * of plain string as name.
+     */
+    public void testLookup_ReturnAttributes_AttributesMapper_DistinguishedName() {
+        AttributesMapper mapper = new SubsetPersonAttributesMapper();
+        Person person = (Person) tested.lookup(new DistinguishedName(
+                "cn=Some Person2, ou=company1,c=Sweden,dc=jayway,dc=se"),
+                new String[] { "cn" }, mapper);
+
+        assertEquals("Some Person2", person.getFullname());
+        assertNull("lastName should not be set", person.getLastname());
+        assertNull("description should not be set", person.getDescription());
     }
 
     /**
