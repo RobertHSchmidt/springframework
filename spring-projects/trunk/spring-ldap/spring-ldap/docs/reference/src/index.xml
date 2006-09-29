@@ -7,6 +7,7 @@
 <!ENTITY basic SYSTEM "basic.xml">
 <!ENTITY dirobjectfactory SYSTEM "dirobjectfactory.xml">
 <!ENTITY executors SYSTEM "executors.xml">
+<!ENTITY contextprocessor SYSTEM "contextprocessor.xml">
 <!ENTITY configuration SYSTEM "configuration.xml">
 ]>
 
@@ -16,8 +17,8 @@
 	<bookinfo>
 		<title>Spring LDAP</title>
 		<subtitle>Reference Documentation</subtitle>
-		<releaseinfo>Version 1.1</releaseinfo>
-		<pubdate>August 2006</pubdate>
+		<releaseinfo>Version 1.1.1</releaseinfo>
+		<pubdate>October 2006</pubdate>
 		<authorgroup>
 			<author>
 				<firstname>Mattias</firstname>
@@ -45,6 +46,7 @@
 	&basic;
 	&dirobjectfactory;
 	&executors;
+	&contextprocessor;
 	&configuration;
 	
 </book>

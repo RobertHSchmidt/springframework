@@ -189,13 +189,14 @@ public class PersonDaoImpl implements PersonDao {
 
       <para>The <emphasis>ldap</emphasis> package contains the central
       abstractions of the library. These abstractions include
-      AttributesMapper, ContextSource, and NameClassPairCallbackHandler. This
-      package also contains the central class LdapTemplate.</para>
+      AuthenticationSource, ContextSource, DirContextProcessor, and
+      NameClassPairCallbackHandler. This package also contains the central
+      class LdapTemplate, plus various mappers and executors.</para>
 
       <itemizedlist spacing="compact">
         <listitem>
           <para>Dependencies: spring-core, spring-beans, spring-context,
-          spring-dao, commons-logging (TBD)</para>
+          spring-dao, commons-logging</para>
         </listitem>
       </itemizedlist>
     </sect2>
@@ -209,7 +210,7 @@ public class PersonDaoImpl implements PersonDao {
 
       <itemizedlist spacing="compact">
         <listitem>
-          <para>Dependencies: ldap (TBD)</para>
+          <para>Dependencies: ldap</para>
         </listitem>
       </itemizedlist>
     </sect2>
@@ -217,14 +218,30 @@ public class PersonDaoImpl implements PersonDao {
     <sect2 id="ldap.support.authentication">
       <title>org.springframework.ldap.support.authentication</title>
 
-      <para>The <emphasis>support.authentication</emphasis> package contains an
-      implementation of the AuthenticationSource interface that can be used
+      <para>The <emphasis>support.authentication</emphasis> package contains
+      an implementation of the AuthenticationSource interface that can be used
       with <ulink url="http://www.acegisecurity.org/">Acegi
       Security</ulink>.</para>
 
       <itemizedlist spacing="compact">
         <listitem>
           <para>Dependencies: ldap, acegi-security (optional)</para>
+        </listitem>
+      </itemizedlist>
+    </sect2>
+
+    <sect2 id="ldap.support.control">
+      <title>org.springframework.ldap.support.control</title>
+
+      <para>The <emphasis>support.control</emphasis> package contains an
+      abstract implementation of the DirContextProcessor interface that can be
+      used as a basis for processing RequestControls and ResponseControls.
+      There is also a concrete implementation that handles paged search
+      results.</para>
+
+      <itemizedlist spacing="compact">
+        <listitem>
+          <para>Dependencies: ldap</para>
         </listitem>
       </itemizedlist>
     </sect2>
@@ -250,7 +267,7 @@ public class PersonDaoImpl implements PersonDao {
   <sect1 id="introduction-support">
     <title>Support</title>
 
-    <para>Spring LDAP 1.0.3 is supported on Spring 1.2.7 or later.</para>
+    <para>Spring LDAP 1.1.1 is supported on Spring 1.2.8 or later.</para>
 
     <para>The community support forum is located at <ulink
     url="http://forum.springframework.org">http://forum.springframework.org</ulink>.</para>
