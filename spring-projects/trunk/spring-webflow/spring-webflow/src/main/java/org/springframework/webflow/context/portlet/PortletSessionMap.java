@@ -71,7 +71,7 @@ public class PortletSessionMap extends StringKeyedMapAdapter implements SharedMa
 		if (session == null) {
 			return null;
 		}
-		Object value = session.getAttribute(key);
+		Object value = session.getAttribute(key, scope);
 		if (value instanceof HttpSessionMapBindingListener) {
 			// unwrap
 			return ((HttpSessionMapBindingListener)value).getListener();
@@ -84,10 +84,10 @@ public class PortletSessionMap extends StringKeyedMapAdapter implements SharedMa
 		PortletSession session = request.getPortletSession(true);
 		if (value instanceof AttributeMapBindingListener) {
 			// wrap
-			session.setAttribute(key, new HttpSessionMapBindingListener((AttributeMapBindingListener)value, this));
+			session.setAttribute(key, new HttpSessionMapBindingListener((AttributeMapBindingListener)value, this), scope);
 		}
 		else {
-			session.setAttribute(key, value);
+			session.setAttribute(key, value, scope);
 		}
 	}
 
@@ -106,7 +106,7 @@ public class PortletSessionMap extends StringKeyedMapAdapter implements SharedMa
 
 	public Object getMutex() {
 		PortletSession session = request.getPortletSession(true);
-		Object mutex = session.getAttribute(WebUtils.SESSION_MUTEX_ATTRIBUTE);
+		Object mutex = session.getAttribute(WebUtils.SESSION_MUTEX_ATTRIBUTE, scope);
 		return mutex != null ? mutex : session;
 	}
 }
