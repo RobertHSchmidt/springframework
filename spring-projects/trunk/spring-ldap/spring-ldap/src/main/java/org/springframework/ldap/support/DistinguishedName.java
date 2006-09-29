@@ -25,9 +25,9 @@ import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.naming.CompositeName;
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
-
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.ldap.BadLdapGrammarException;
@@ -122,10 +122,11 @@ public class DistinguishedName implements Name {
      */
     protected void parse(String path) {
         names = new LinkedList();
+        String tempPath = unmangleCompositeName(path);
 
-        if (!StringUtils.isBlank(path)) {
+        if (!StringUtils.isBlank(tempPath)) {
 
-            Matcher matcher = NAME_PATTERN.matcher(path);
+            Matcher matcher = NAME_PATTERN.matcher(tempPath);
 
             while (matcher.find()) {
                 String rdnString = matcher.group(1);
@@ -133,6 +134,25 @@ public class DistinguishedName implements Name {
                 names.add(0, name);
             }
         }
+    }
+
+    /**
+     * If path is surrounded by quotes, strip them. JNDI considers forward slash
+     * ('/') special, but LDAP doesn't. {@link CompositeName#toString()} tends
+     * to mangle a Name with a slash by surrounding it with quotes ('"').
+     * 
+     * @param path Path to check and possibly strip.
+     * @return A String with the possibly stripped path.
+     */
+    private String unmangleCompositeName(String path) {
+        String tempPath;
+        // Check if CompositeName has mangled the name with quotes
+        if (path.startsWith("\"") && path.endsWith("\"")) {
+            tempPath = path.substring(1, path.length() - 1);
+        } else {
+            tempPath = path;
+        }
+        return tempPath;
     }
 
     /**
