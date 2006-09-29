@@ -9,7 +9,7 @@
 		<xsd:documentation>
 			<![CDATA[
 Spring Web Flow Configuration Schema
-Authors: Ben Hale
+Authors: Keith Donald, Ben Hale
 
 Provides an easy was to configure a flow executor and an XML flow definition registry.
 ]]>
