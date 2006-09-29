@@ -18,7 +18,7 @@ package org.springframework.webflow.util;
 import junit.framework.TestCase;
 
 /**
- * Unit tests for DispatchMethodInvoker
+ * Unit tests for {@link DispatchMethodInvoker}.
  * 
  * @author Ben Hale
  */

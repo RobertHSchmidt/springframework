@@ -20,7 +20,11 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+/**
+ * Unit tests for {@link ApplicationView}.
+ */
 public class ApplicationViewTests extends TestCase {
+
 	public void testConstructAndAccess() {
 		Map model = new HashMap();
 		model.put("name", "value");

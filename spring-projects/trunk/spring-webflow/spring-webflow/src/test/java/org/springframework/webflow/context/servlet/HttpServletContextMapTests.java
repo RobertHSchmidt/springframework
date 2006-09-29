@@ -16,15 +16,18 @@
 package org.springframework.webflow.context.servlet;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import junit.framework.TestCase;
 
 import org.springframework.mock.web.MockServletContext;
 
 /**
- * Test case for the HttpServletContextMap class.
+ * Test case for the {@link HttpServletContextMap} class.
  * 
  * @author Ulrik Sandberg
+ * @author Erwin Vervaet
  */
 public class HttpServletContextMapTests extends TestCase {
 
@@ -68,8 +71,7 @@ public class HttpServletContextMapTests extends TestCase {
 	}
 
 	public void testContainsValue() {
-		tested.containsValue("SomeValue");
-		// TODO
+		assertTrue(tested.containsValue("SomeValue"));
 	}
 
 	public void testGet() {
@@ -91,27 +93,32 @@ public class HttpServletContextMapTests extends TestCase {
 	}
 
 	public void testPutAll() {
-		tested.putAll(new HashMap());
-		// TODO
+		Map otherMap = new HashMap();
+		otherMap.put("SomeOtherKey", "SomeOtherValue");
+		otherMap.put("SomeKey",	"SomeUpdatedValue");
+		tested.putAll(otherMap);
+		assertEquals("SomeOtherValue", tested.get("SomeOtherKey"));
+		assertEquals("SomeUpdatedValue", tested.get("SomeKey"));
 	}
 
 	public void testClear() {
 		tested.clear();
-		// TODO
+		assertTrue(tested.isEmpty());
 	}
 
 	public void testKeySet() {
-		tested.keySet();
-		// TODO
+		assertEquals(1, tested.keySet().size());
+		assertTrue(tested.keySet().contains("SomeKey"));
 	}
 
 	public void testValues() {
-		tested.values();
-		// TODO
+		assertEquals(1, tested.values().size());
+		assertTrue(tested.values().contains("SomeValue"));
 	}
 
 	public void testEntrySet() {
-		tested.entrySet();
-		// TODO
+		assertEquals(1, tested.entrySet().size());
+		assertEquals("SomeKey", ((Entry)tested.entrySet().iterator().next()).getKey());
+		assertEquals("SomeValue", ((Entry)tested.entrySet().iterator().next()).getValue());
 	}
 }

@@ -19,7 +19,11 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.expression.ExpressionParser;
 
+/**
+ * Unit tests for {@link DefaultExpressionParserFactory}.
+ */
 public class DefaultExpressionParserFactoryTests extends TestCase {
+	
 	public void testGetDefaultExpressionParser() {
 		DefaultExpressionParserFactory f = new DefaultExpressionParserFactory();
 		ExpressionParser parser = f.getExpressionParser();

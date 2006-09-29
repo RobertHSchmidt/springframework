@@ -32,6 +32,9 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
 import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
 import org.springframework.webflow.test.MockExternalContext;
 
+/**
+ * Unit tests for {@link ClientContinuationFlowExecutionRepository}.
+ */
 public class ClientContinuationFlowExecutionRepositoryTests extends TestCase {
 
 	private ClientContinuationFlowExecutionRepository repository;

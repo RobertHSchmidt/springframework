@@ -29,7 +29,8 @@ import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
- * Unit test for the bean factory bean invoking action.
+ * Unit test for the {@link LocalBeanInvokingAction}.
+ * 
  * @author Keith Donald
  */
 public class LocalBeanInvokingActionTests extends TestCase {

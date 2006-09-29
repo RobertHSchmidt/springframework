@@ -24,7 +24,11 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.test.MockRequestContext;
 
+/**
+ * Unit tests for {@link EvaluateAction}.
+ */
 public class EvaluateActionTests extends TestCase {
+
 	private ExpressionParser parser = new DefaultExpressionParserFactory().getExpressionParser();
 
 	private MockRequestContext context = new MockRequestContext();

@@ -17,6 +17,9 @@ package org.springframework.webflow.execution.support;
 
 import junit.framework.TestCase;
 
+/**
+ * Unit tests for {@link ExternalRedirect}.
+ */
 public class ExternalRedirectTests extends TestCase {
 
 	private ExternalRedirect redirect;

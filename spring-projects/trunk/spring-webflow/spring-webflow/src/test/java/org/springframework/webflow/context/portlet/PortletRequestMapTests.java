@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 import org.springframework.mock.web.portlet.MockPortletRequest;
 
 /**
- * Unit test for the PortletRequestMap class.
+ * Unit test for the {@link PortletRequestMap} class.
  * 
  * @author Ulrik Sandberg
  */

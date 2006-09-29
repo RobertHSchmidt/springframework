@@ -18,7 +18,11 @@ package org.springframework.webflow.execution;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 
+/**
+ * Test action for use in unit tests.
+ */
 public class TestAction extends AbstractAction {
+	
 	private Event result = new Event(this, "success");
 
 	private boolean executed;

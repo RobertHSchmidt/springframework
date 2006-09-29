@@ -22,8 +22,11 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-
+/**
+ * Unit tests for {@link LocalAttributeMap}.
+ */
 public class LocalAttributeMapTests extends TestCase {
+	
 	private LocalAttributeMap attributeMap = new LocalAttributeMap();
 
 	public void setUp() {

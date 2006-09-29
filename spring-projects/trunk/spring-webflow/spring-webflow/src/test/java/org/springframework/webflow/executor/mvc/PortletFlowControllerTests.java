@@ -33,7 +33,11 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepository;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 
+/**
+ * Unit tests for {@link PortletFlowController}.
+ */
 public class PortletFlowControllerTests extends TestCase {
+	
 	private PortletFlowController controller = new PortletFlowController();
 
 	public void setUp() {

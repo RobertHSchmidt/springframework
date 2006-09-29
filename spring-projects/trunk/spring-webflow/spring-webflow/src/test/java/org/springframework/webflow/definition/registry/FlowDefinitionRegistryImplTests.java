@@ -21,7 +21,11 @@ import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
 
+/**
+ * Unit tests for {@link FlowDefinitionRegistryImpl}.
+ */
 public class FlowDefinitionRegistryImplTests extends TestCase {
+	
 	private FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
 
 	private FlowDefinition fooFlow;

@@ -23,7 +23,11 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
 
+/**
+ * Unit tests for {@link AbstractAction}.
+ */
 public class AbstractActionTests extends TestCase {
+
 	private TestAbstractAction action = new TestAbstractAction();
 
 	public void testInitCallback() throws Exception {

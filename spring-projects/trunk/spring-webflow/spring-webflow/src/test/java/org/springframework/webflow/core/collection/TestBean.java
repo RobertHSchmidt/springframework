@@ -17,7 +17,11 @@ package org.springframework.webflow.core.collection;
 
 import java.io.Serializable;
 
+/**
+ * Test bean used in unit tests.
+ */
 public class TestBean implements Serializable {
+	
 	private int amount = 0;
 
 	public int getAmount() {

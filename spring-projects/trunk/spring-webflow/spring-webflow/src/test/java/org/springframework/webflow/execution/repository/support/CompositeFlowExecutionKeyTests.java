@@ -19,7 +19,11 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.conversation.impl.SimpleConversationId;
 
+/**
+ * Unit tests for {@link CompositeFlowExecutionKey}.
+ */
 public class CompositeFlowExecutionKeyTests extends TestCase {
+
 	public void testValidKey() {
 		CompositeFlowExecutionKey key = new CompositeFlowExecutionKey(new SimpleConversationId("foo"), "bar");
 		assertEquals("_cfoo_kbar", key.toString());

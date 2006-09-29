@@ -25,7 +25,7 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
- * Unit tests for the CompositeAction class.
+ * Unit tests for the {@link CompositeAction} class.
  * 
  * @author Ulrik Sandberg
  */

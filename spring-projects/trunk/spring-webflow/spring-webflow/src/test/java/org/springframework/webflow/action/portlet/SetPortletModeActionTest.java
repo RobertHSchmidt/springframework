@@ -26,7 +26,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
- * Unit test for the SetPortletModeAction class.
+ * Unit test for the {@link SetPortletModeAction} class.
  * 
  * @author Ulrik Sandberg
  */

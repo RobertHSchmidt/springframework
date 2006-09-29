@@ -26,7 +26,11 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.PropertyExpression;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 
+/**
+ * Unit tests for {@link WebFlowOgnlExpressionParser}.
+ */
 public class WebFlowOgnlExpressionParserTests extends TestCase {
+	
 	WebFlowOgnlExpressionParser parser = new WebFlowOgnlExpressionParser();
 
 	public void testEvalSimpleExpression() {

@@ -21,7 +21,6 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
 
-
 /**
  * Mock implementation of the <code>FlowExecutionListener</code> interface for
  * use in unit tests.

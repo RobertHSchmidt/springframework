@@ -19,6 +19,9 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.execution.Event;
 
+/**
+ * Unit tests for {@link EventFactorySupport}.
+ */
 public class EventFactorySupportTests extends TestCase {
 
 	private EventFactorySupport support = new EventFactorySupport();

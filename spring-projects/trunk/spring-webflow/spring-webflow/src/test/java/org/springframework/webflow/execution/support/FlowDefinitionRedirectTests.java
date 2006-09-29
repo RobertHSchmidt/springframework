@@ -20,7 +20,11 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+/**
+ * Unit tests for {@link FlowDefinitionRedirect}.
+ */
 public class FlowDefinitionRedirectTests extends TestCase {
+
 	public void testConstructAndAccess() {
 		Map input = new HashMap();
 		input.put("name", "value");

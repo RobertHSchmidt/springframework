@@ -21,6 +21,9 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowSessionStatus;
 import org.springframework.webflow.test.MockRequestContext;
 
+/**
+ * Unit tests for {@link ResultObjectBasedEventFactory}.
+ */
 public class ResultObjectEventFactoryTests extends TestCase {
 
 	private MockRequestContext context = new MockRequestContext();
