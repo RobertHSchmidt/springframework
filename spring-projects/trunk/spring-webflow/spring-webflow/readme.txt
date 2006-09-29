@@ -26,6 +26,7 @@ SWF release contents:
 
 "." contains Spring Web Flow distribution units (jars and source zip archives), readme, and copyright
 "docs" contains the Spring Web Flow reference manual and API Javadocs
+"ivys" contains Ivy dependency descriptors for Spring Web Flow and Spring Data Binding
 "projects" contains all buildable projects, including sample applications (each importable into Eclipse)
 "projects/common-build" contains the Ant 1.6 "common build system" used by all projects to compile/build/test
 "projects/repository" contains Spring Web Flow dependencies (dependent jars)
