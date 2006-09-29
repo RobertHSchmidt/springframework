@@ -20,6 +20,9 @@ import junit.framework.TestCase;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
+/**
+ * Unit tests for {@link SuccessEventFactory}.
+ */
 public class SuccessEventFactoryTests extends TestCase {
 
 	private MockRequestContext context = new MockRequestContext();

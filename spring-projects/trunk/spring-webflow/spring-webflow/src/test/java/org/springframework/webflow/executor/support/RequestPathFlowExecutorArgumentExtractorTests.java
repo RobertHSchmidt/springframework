@@ -25,7 +25,11 @@ import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 
+/**
+ * Unit tests for {@link RequestPathFlowExecutorArgumentExtractor}.
+ */
 public class RequestPathFlowExecutorArgumentExtractorTests extends TestCase {
+	
 	private MockExternalContext context = new MockExternalContext();
 
 	private RequestPathFlowExecutorArgumentExtractor argumentExtractor;

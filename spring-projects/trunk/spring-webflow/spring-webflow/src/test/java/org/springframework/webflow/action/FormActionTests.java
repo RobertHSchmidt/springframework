@@ -30,9 +30,7 @@ import org.springframework.webflow.test.MockParameterMap;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
- * Unit test for the FormAction class.
- * 
- * @see org.springframework.webflow.action.FormAction
+ * Unit test for the {@link FormAction} class.
  * 
  * @author Erwin Vervaet
  */

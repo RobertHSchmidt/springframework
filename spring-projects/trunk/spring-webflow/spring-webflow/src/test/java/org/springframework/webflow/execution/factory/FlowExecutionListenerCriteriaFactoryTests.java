@@ -19,6 +19,9 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.engine.Flow;
 
+/**
+ * Unit tests for {@link FlowExecutionListenerCriteriaFactory}.
+ */
 public class FlowExecutionListenerCriteriaFactoryTests extends TestCase {
 
 	private FlowExecutionListenerCriteriaFactory factory = new FlowExecutionListenerCriteriaFactory();

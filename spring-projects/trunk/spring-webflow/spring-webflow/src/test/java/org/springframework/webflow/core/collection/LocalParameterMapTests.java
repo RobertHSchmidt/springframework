@@ -23,7 +23,11 @@ import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Unit tests for {@link LocalParameterMap}.
+ */
 public class LocalParameterMapTests extends TestCase {
+
 	private LocalParameterMap parameterMap;
 
 	public void setUp() {

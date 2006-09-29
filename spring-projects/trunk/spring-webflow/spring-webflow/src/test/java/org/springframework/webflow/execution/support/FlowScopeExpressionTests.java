@@ -21,10 +21,10 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.test.MockRequestContext;
 
+/**
+ * Unit tests for {@link FlowScopeExpression}.
+ */
 public class FlowScopeExpressionTests extends TestCase {
-
-	protected void setUp() throws Exception {
-	}
 
 	public void testFlowScopeExpression() {
 		Expression exp = new DefaultExpressionParserFactory().getExpressionParser().parseExpression("foo");

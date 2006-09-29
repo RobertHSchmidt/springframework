@@ -25,7 +25,11 @@ import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 import org.springframework.webflow.util.DispatchMethodInvoker.MethodLookupException;
 
+/**
+ * Unit tests for {@link MultiAction}.
+ */
 public class MultiActionTests extends TestCase {
+	
 	private TestMultiAction action = new TestMultiAction();
 
 	private MockRequestContext context = new MockRequestContext();

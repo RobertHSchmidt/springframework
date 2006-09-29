@@ -32,7 +32,11 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepository;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 
+/**
+ * Unit tests for {@link FlowController}.
+ */
 public class FlowControllerTests extends TestCase {
+	
 	private FlowController controller = new FlowController();
 
 	public void setUp() {

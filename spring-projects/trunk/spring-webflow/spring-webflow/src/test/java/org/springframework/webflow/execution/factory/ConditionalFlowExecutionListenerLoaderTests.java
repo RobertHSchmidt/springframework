@@ -22,12 +22,12 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 
+/**
+ * Unit tests for {@link ConditionalFlowExecutionListenerLoader}.
+ */
 public class ConditionalFlowExecutionListenerLoaderTests extends TestCase {
 
 	private ConditionalFlowExecutionListenerLoader loader = new ConditionalFlowExecutionListenerLoader();
-
-	protected void setUp() throws Exception {
-	}
 
 	public void testAddListener() {
 		FlowExecutionListener l1 = new FlowExecutionListenerAdapter() {

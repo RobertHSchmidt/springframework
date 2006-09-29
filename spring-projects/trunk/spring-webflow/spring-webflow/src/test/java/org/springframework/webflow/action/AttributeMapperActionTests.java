@@ -23,9 +23,7 @@ import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
- * Unit test for the AttributeMapperAction.
- * 
- * @see org.springframework.webflow.action.AttributeMapperAction
+ * Unit test for the {@link AttributeMapperAction}.
  * 
  * @author Erwin Vervaet
  */

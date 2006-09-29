@@ -37,7 +37,11 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepository;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 
+/**
+ * Unit tests for {@link FlowAction}.
+ */
 public class FlowActionTests extends TestCase {
+	
 	private FlowAction action;
 
 	public void setUp() {

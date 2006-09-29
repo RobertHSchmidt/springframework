@@ -21,7 +21,11 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 
+/**
+ * Unit tests for {@link ServletExternalContext}.
+ */
 public class ServletExternalContextTests extends TestCase {
+	
 	private ServletExternalContext context = new ServletExternalContext(new MockServletContext(),
 			new MockHttpServletRequest(), new MockHttpServletResponse());
 	

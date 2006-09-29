@@ -21,7 +21,11 @@ import org.springframework.mock.web.portlet.MockPortletContext;
 import org.springframework.mock.web.portlet.MockPortletRequest;
 import org.springframework.mock.web.portlet.MockPortletResponse;
 
+/**
+ * Unit tests for {@link PortletExternalContext}.
+ */
 public class PortletExternalContextTests extends TestCase {
+	
 	private PortletExternalContext context = new PortletExternalContext(new MockPortletContext(),
 			new MockPortletRequest(), new MockPortletResponse());
 	

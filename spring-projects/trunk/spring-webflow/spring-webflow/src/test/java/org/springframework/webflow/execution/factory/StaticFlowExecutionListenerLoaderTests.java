@@ -21,12 +21,12 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 
+/**
+ * Unit tests for {@link StaticFlowExecutionListenerLoader}.
+ */
 public class StaticFlowExecutionListenerLoaderTests extends TestCase {
 
 	private FlowExecutionListenerLoader loader = StaticFlowExecutionListenerLoader.EMPTY_INSTANCE;
-
-	protected void setUp() throws Exception {
-	}
 
 	public void testEmptyListenerArray() {
 		assertEquals(0, loader.getListeners(new Flow("foo")).length);

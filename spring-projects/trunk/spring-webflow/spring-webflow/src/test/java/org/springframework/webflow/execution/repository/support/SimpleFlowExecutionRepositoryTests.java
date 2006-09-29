@@ -32,6 +32,9 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
 import org.springframework.webflow.execution.repository.PermissionDeniedFlowExecutionAccessException;
 import org.springframework.webflow.test.MockExternalContext;
 
+/**
+ * Unit tests for {@link SimpleFlowExecutionRepository}.
+ */
 public class SimpleFlowExecutionRepositoryTests extends TestCase {
 
 	private SimpleFlowExecutionRepository repository;

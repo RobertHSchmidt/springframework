@@ -27,6 +27,9 @@ import org.springframework.webflow.core.collection.AttributeMapBindingEvent;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.test.MockExternalContext;
 
+/**
+ * Unit tests for {@link UserConversationContext}.
+ */
 public class UserConversationContextTests extends TestCase {
 
 	private static final String USER_CONVERSATION_CONTEXT = "webflow.conversation.userContext";

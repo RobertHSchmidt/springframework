@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 import org.springframework.mock.web.portlet.MockPortletContext;
 
 /**
- * Unit test for the PortletContextMap class.
+ * Unit test for the {@link PortletContextMap} class.
  * 
  * @author Ulrik Sandberg
  */

@@ -23,7 +23,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.util.WebUtils;
 
 /**
- * Unit test for the PortletSessionMap class.
+ * Unit test for the {@link HttpSessionMap} class.
  * 
  * @author Ulrik Sandberg
  */

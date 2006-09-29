@@ -31,6 +31,9 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
 import org.springframework.webflow.test.MockExternalContext;
 
+/**
+ * Unit tests for {@link FlowRequestHandler}.
+ */
 public class FlowRequestHandlerTests extends TestCase {
 
 	private FlowRequestHandler handler;

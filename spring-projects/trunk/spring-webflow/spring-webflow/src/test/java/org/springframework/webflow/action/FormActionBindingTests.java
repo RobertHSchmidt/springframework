@@ -24,9 +24,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
- * Unit test for the FormAction class, dealing with binding related issues.
- * 
- * @see org.springframework.webflow.action.FormAction
+ * Unit test for the {@link FormAction} class, dealing with binding related issues.
  * 
  * @author Erwin Vervaet
  */
