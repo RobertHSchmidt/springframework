@@ -95,6 +95,15 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	private FlowExecution flowExecution;
 
 	/**
+	 * Set the expression parser responsible for parsing expression strings into
+	 * evaluatable expression objects.
+	 */
+	public void setExpressionParser(ExpressionParser expressionParser) {
+		Assert.notNull(expressionParser, "The expression parser is required");
+		this.expressionParser = expressionParser;
+	}
+
+	/**
 	 * Gets the factory that will create the flow execution to test. This method
 	 * will create the factory if it is not already set.
 	 * @return the flow execution factory
