@@ -18,12 +18,9 @@ package org.springframework.ldap.support;
 
 import java.util.Enumeration;
 
+import javax.naming.CompositeName;
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
-
-import org.springframework.ldap.support.DistinguishedName;
-import org.springframework.ldap.support.LdapRdn;
-
 
 import junit.framework.TestCase;
 
@@ -34,6 +31,12 @@ import com.gargoylesoftware.base.testing.EqualsTester;
  * @author Mattias Arthursson
  */
 public class DistinguishedNameTest extends TestCase {
+
+    public void testDistinguishedName_CompositeWithSlash() throws Exception {
+        Name testPath = new CompositeName("cn=foo\\/bar");
+        DistinguishedName path = new DistinguishedName(testPath.toString());
+        assertEquals("cn=foo/bar", path.toString());
+    }
 
     public void testDistinguishedName() {
 
@@ -157,6 +160,7 @@ public class DistinguishedNameTest extends TestCase {
 
         // a subclass with the same values as the original
         final Object subclassObject = new LdapRdn("cn", "john.doe") {
+            private static final long serialVersionUID = 1L;
         };
 
         new EqualsTester(originalObject, identicalObject, differentObject,
