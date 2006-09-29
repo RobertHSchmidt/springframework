@@ -25,7 +25,6 @@ import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.conversation.ConversationParameters;
 import org.springframework.webflow.conversation.NoSuchConversationException;
-import org.springframework.webflow.conversation.impl.SimpleConversationId;
 import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
@@ -210,7 +209,11 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 
 		private static class NoOpConversation implements Conversation {
 			
-			private static final ConversationId ID = new SimpleConversationId("1");
+			private static final ConversationId ID = new ConversationId() {
+				public String toString() {
+					return "NoOpConversation id";
+				}
+			};
 
 			public ConversationId getId() {
 				return ID;
