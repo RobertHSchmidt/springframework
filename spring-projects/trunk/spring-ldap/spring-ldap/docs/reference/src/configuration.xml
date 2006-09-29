@@ -7,7 +7,7 @@
 
     <para>There are several properties in <literal>AbstractContextSource</literal>
     (superclass of <literal>DirContextSource</literal> and <literal>LdapContextSource</literal>)
-     that can be used to modify its beahaviour.</para>
+     that can be used to modify its behaviour.</para>
 
     <sect2 id="dir-context-url">
       <title>LDAP Server URLs</title>
