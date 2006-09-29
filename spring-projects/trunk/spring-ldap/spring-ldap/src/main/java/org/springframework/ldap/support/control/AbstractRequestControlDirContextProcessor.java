@@ -36,9 +36,15 @@ public abstract class AbstractRequestControlDirContextProcessor implements
         DirContextProcessor {
 
     /**
-     * Get the existing RequestControls from the DirContext, call
+     * Get the existing RequestControls from the LdapContext, call
      * {@link #createRequestControl()} to get a new instance, build a new array
-     * of Controls and set it on the DirContext.
+     * of Controls and set it on the LdapContext.
+     * <p>
+     * The {@link Control} feature is specific for LDAP v3 and thus applies only
+     * to {@link LdapContext}. However, the generic DirContextProcessor
+     * mechanism used for calling <code>preProcess</code> and
+     * <code>postProcess</code> uses DirContext, since it also works for LDAP
+     * v2. This is the reason that DirContext has to be cast into LdapContext.
      * 
      * @param ctx
      *            an LdapContext instance.
