@@ -27,6 +27,7 @@ import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.execution.support.FlowScopeExpression;
 
@@ -77,6 +78,15 @@ public class DefaultFlowAttributeMapper extends AbstractFlowAttributeMapper impl
 	 * The mapper that maps attributes returned by an ended subflow.
 	 */
 	private DefaultAttributeMapper outputMapper = new DefaultAttributeMapper();
+
+	/**
+	 * Set the expression parser responsible for parsing expression strings into
+	 * evaluatable expression objects.
+	 */
+	public void setExpressionParser(ExpressionParser expressionParser) {
+		Assert.notNull(expressionParser, "The expression parser is required");
+		this.expressionParser = expressionParser;
+	}
 
 	/**
 	 * Adds a new input mapping. Use when you need full control over defining
