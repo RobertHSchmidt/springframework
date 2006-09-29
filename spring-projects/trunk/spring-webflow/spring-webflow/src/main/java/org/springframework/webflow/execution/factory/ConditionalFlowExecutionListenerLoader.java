@@ -231,8 +231,11 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 			return new FlowExecutionListenerCriteriaFactory().allFlows();
 		}
 		else {
-			return new FlowExecutionListenerCriteriaFactory().flows(
-					StringUtils.commaDelimitedListToStringArray(StringUtils.trimAllWhitespace(value)));
+			String[] flowIds = StringUtils.commaDelimitedListToStringArray(value);
+			for (int i = 0; i < flowIds.length; i++) {
+				flowIds[i] = flowIds[i].trim();
+			}
+			return new FlowExecutionListenerCriteriaFactory().flows(flowIds);
 		}
 	}
 
