@@ -40,6 +40,7 @@ import org.springframework.webflow.execution.FlowSessionStatus;
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
+ * @author Ben Hale
  */
 class FlowSessionImpl implements FlowSession, Externalizable {
 
@@ -85,7 +86,7 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	/**
 	 * The flash map ("flash scope").
 	 */
-	private MutableAttributeMap flashMap = new FlashMap();
+	private MutableAttributeMap flashMap = new LocalAttributeMap();
 
 	/**
 	 * The parent session of this session (may be <code>null</code> if this is
@@ -209,28 +210,6 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	 */
 	String getStateId() {
 		return stateId;
-	}
-
-	/**
-	 * The special flash map clears itself every two requests.
-	 * 
-	 * @author Keith Donald
-	 */
-	private static class FlashMap extends LocalAttributeMap {
-		private int requestCount;
-		
-		public MutableAttributeMap clear() throws UnsupportedOperationException {
-			requestCount++;
-			if (requestCount == 2) {
-				super.clear();
-				requestCount = 0;
-			}
-			return this;
-		}
-		
-		public String toString() {
-			return new ToStringCreator(this).append("requestCount", requestCount).append("contents", getMapInternal()).toString();
-		}
 	}
 	
 	public String toString() {
