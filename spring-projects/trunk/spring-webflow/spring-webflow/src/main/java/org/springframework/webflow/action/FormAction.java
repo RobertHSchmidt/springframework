@@ -526,17 +526,19 @@ public class FormAction extends MultiAction implements InitializingBean {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing setupForm");
 		}
+		// retrieve the form object, creating it if necessary
+		Object formObject = getFormObject(context);
 		// ensure the form object and errors collection is created and
 		// exposed to the flow
-		if (!formErrorsExposed(context)) {
+		if (!formErrorsExposed(context, formObject)) {
 			// initialize and expose a fresh errors instance to the flow with
 			// editors applied
-			initFormErrors(context, getFormObject(context));
+			initFormErrors(context, formObject);
 		}
 		else {
 			// reapply property editors against the existing errors instance
 			// if necessary
-			reinstallPropertyEditorsIfNecessary(context);
+			reinstallPropertyEditors(context);
 		}
 		return success();
 	}
@@ -878,10 +880,6 @@ public class FormAction extends MultiAction implements InitializingBean {
 		getFormObjectAccessor(context).putFormErrors(errors, getFormErrorsScope());
 	}
 
-	private boolean formErrorsExposed(RequestContext context) throws Exception {
-		return formErrorsExposed(context, getFormObject(context));
-	}
-
 	private boolean formErrorsExposed(RequestContext context, Object formObject) {
 		Errors errors = getFormObjectAccessor(context).getFormErrors(getFormObjectName(), getFormErrorsScope());
 		if (errors instanceof BindException) {
@@ -894,9 +892,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 							+ "' does NOT wrap the current form object " + formObject + " of class "
 							+ formObject.getClass()
 							+ "; instead this Errors instance unexpectedly wraps the target object " + be.getTarget()
-							+ " of class: " + be.getTarget().getClass() + ". "
-							+ "[Taking corrective action: overwriting the existing Errors instance with "
-							+ "an empty one for the current form object]");
+							+ " of class: " + be.getTarget().getClass() + ". ");
 				}
 				// fall through below
 				errors = null;
@@ -910,7 +906,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * necessary (e.g. they are not currently installed).
 	 * @param context the flow execution request context
 	 */
-	private void reinstallPropertyEditorsIfNecessary(RequestContext context) {
+	private void reinstallPropertyEditors(RequestContext context) {
 		BindException errors = (BindException)getFormObjectAccessor(context).getFormErrors(getFormObjectName(),
 				getFormErrorsScope());
 		registerPropertyEditors(getPropertyEditorRegistry(errors));
