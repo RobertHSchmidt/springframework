@@ -1788,7 +1788,10 @@
     			    <literal>true</literal>.</emphasis>
     			</para>
     			<note>
-    				<para>Flash scoped attributes are preserved across two requests.</para>
+    				<para>
+    					Flash scoped attributes are preserved untill the next event is signalled in
+    					the flow execution.
+    				</para>
     			</note>
 			</sect3>
     		<sect3>
