@@ -44,8 +44,8 @@ public abstract class ScopeType extends StaticLabeledEnum {
 	};
 
 	/**
-	 * Constant indicating flash scope. Data in flash scope exists for the life
-	 * of two requests into Spring Web flow. Flash scope is subsequently cleared.
+	 * Constant indicating flash scope. Data in flash scope exists untill the next
+	 * event is signalled. Flash scope is subsequently cleared.
 	 */
 	public static final ScopeType FLASH = new ScopeType(1, "Flash") {
 		public MutableAttributeMap getScope(RequestContext context) {

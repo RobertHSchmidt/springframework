@@ -99,8 +99,8 @@ public interface RequestContext {
 
 	/**
 	 * Returns a mutable accessor for accessing and/or setting attributes in
-	 * flash scope. <b>Flash scoped attributes exist for the duration of two
-	 * requests into Spring Web Flow (this request <i>and</i> the next).</b>
+	 * flash scope. <b>Flash scoped attributes exist untill the next event
+	 * is signalled in the flow execution.</b>
 	 * @return the flash scope
 	 */
 	public MutableAttributeMap getFlashScope();
