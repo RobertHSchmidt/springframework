@@ -41,6 +41,7 @@ import org.springframework.webflow.engine.builder.xml.XmlFlowBuilderTests;
 import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.engine.support.TransitionExecutingStateExceptionHandler;
+import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionListener;
@@ -55,6 +56,7 @@ import org.springframework.webflow.test.MockExternalContext;
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
+ * @author Ben Hale
  */
 public class FlowExecutionImplTests extends TestCase {
 
@@ -213,6 +215,14 @@ public class FlowExecutionImplTests extends TestCase {
 		assertTrue(!execution.isActive());
 	}
 
+	public void testFlashScope() {
+		FlowExecution execution = new FlowExecutionImpl(new FlashScopeFlow());
+		MockExternalContext context = new MockExternalContext();
+		execution.start(null, context);
+		execution.refresh(context);
+		execution.signalEvent("view", context);
+	}
+
 	public static TransitionCriteria onEvent(String event) {
 		return new EventIdTransitionCriteria(event);
 	}
@@ -223,5 +233,38 @@ public class FlowExecutionImplTests extends TestCase {
 
 	public static ViewSelector selectView(String viewName) {
 		return new ApplicationViewSelector(new StaticExpression(viewName));
+	}
+
+	private class FlashScopeFlow extends Flow {
+
+		public FlashScopeFlow() {
+			super("flashScopeFlow");
+
+			ActionState state1 = new ActionState(this, "action");
+			state1.getActionList().add(new Action() {
+				public Event execute(RequestContext context) throws Exception {
+					context.getFlashScope().put("flashScopedValue", "flashScopedValue");
+					return new Event(this, "success");
+				}
+			});
+			state1.getTransitionSet().add(new Transition("view"));
+
+			ViewState state2 = new ViewState(this, "view");
+			state2.getEntryActionList().add(new Action() {
+				public Event execute(RequestContext context) throws Exception {
+					assertTrue(context.getFlashScope().contains("flashScopedValue"));
+					return new Event(this, "success");
+				}
+			});
+			state2.getTransitionSet().add(new Transition("end"));
+
+			EndState state3 = new EndState(this, "end");
+			state3.getEntryActionList().add(new Action() {
+				public Event execute(RequestContext context) throws Exception {
+					assertFalse(context.getFlashScope().contains("flashScopedValue"));
+					return new Event(this, "success");
+				}
+			});
+		}
 	}
 }

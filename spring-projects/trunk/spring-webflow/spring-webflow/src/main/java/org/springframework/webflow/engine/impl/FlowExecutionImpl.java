@@ -63,6 +63,7 @@ import org.springframework.webflow.execution.ViewSelection;
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
+ * @author Ben Hale
  */
 public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
@@ -200,6 +201,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			logger.debug("Resuming this execution on user event '" + eventId + "'");
 		}
 		RequestControlContext context = createControlContext(externalContext);
+		context.getFlashScope().clear();
 		getListeners().fireRequestSubmitted(context);
 		try {
 			try {
@@ -233,7 +235,8 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 					throw new IllegalStateException("Current state is not a view state - cannot refresh; "
 							+ "perhaps an unhandled exception occured in another state?");
 				}
-				return ((ViewState)currentState).refresh(context);
+				ViewSelection selectedView = ((ViewState)currentState).refresh(context);
+				return pause(context, selectedView);
 			}
 			catch (FlowExecutionException e) {
 				return pause(context, handleException(e, context));
@@ -272,7 +275,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			// view selected by an end state
 			return selectedView;
 		}
-		context.getFlashScope().clear();
 		getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
 		getListeners().firePaused(context, selectedView);
 		if (logger.isDebugEnabled()) {
