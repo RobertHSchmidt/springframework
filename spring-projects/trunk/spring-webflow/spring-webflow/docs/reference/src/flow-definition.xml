@@ -1789,7 +1789,7 @@
     			</para>
     			<note>
     				<para>
-    					Flash scoped attributes are preserved untill the next event is signalled in
+    					Flash scoped attributes are preserved untill the next event is signaled in
     					the flow execution.
     				</para>
     			</note>

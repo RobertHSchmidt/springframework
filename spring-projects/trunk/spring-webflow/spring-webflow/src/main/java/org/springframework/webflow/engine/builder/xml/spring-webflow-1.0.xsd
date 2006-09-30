@@ -35,7 +35,7 @@ Goes out of scope when a single call into this flow completes.
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-Goes out of scope when the next event is signalled in this Flow.
+Goes out of scope when the next event is signaled in this Flow.
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
@@ -601,7 +601,7 @@ This scope of this variable.  The available scope types are:
 1. request
     - The variable goes out of scope when a call to start this flow completes.
 2. flash
-    - The variable goes out of scope when the next event is signalled.
+    - The variable goes out of scope when the next event is signaled.
 3. flow
     - The variable goes out of scope when this flow session ends.
 4. conversation
@@ -1000,7 +1000,7 @@ The available scope types are:
 1. request
 	- The result goes out of scope when the call into this flow that invoked this method completes.
 2. flash
-    - The result goes out of scope when the next event is signalled.
+    - The result goes out of scope when the next event is signaled.
 3. flow
 	- The result goes out of scope when this local flow session ends.
 4. conversation
@@ -1093,7 +1093,7 @@ The available scope types are:
 1. request
 	- The result goes out of scope when the call into this flow that evaluated this expression completes.
 2. flash
-    - The result goes out of scope when the next event is signalled.
+    - The result goes out of scope when the next event is signaled.
 3. flow
 	- The result goes out of scope when this local flow session ends.
 3. conversation
@@ -1129,7 +1129,7 @@ The scope the attribute value will be stored in.  The available scope types are:
 	- The attribute goes out of scope when the call into this flow that evaluated
 	  this expression completes.
 2. flash
-    - The attribute goes out of scope when the next event is signalled.
+    - The attribute goes out of scope when the next event is signaled.
 3. flow
 	- The attribute goes out of scope when this local flow session ends.
 3. conversation
