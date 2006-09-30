@@ -181,6 +181,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 		action.setFormObjectName("command");
 		action.setFormObjectClass(TestBean.class);
 		action.setFormObjectScope(ScopeType.FLOW);
+		action.setFormErrorsScope(ScopeType.FLOW);
 		context.setAttribute("method", "setupForm");
 
 		action.execute(context);
