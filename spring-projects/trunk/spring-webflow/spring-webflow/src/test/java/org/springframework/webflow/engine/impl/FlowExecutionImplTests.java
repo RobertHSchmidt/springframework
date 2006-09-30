@@ -220,6 +220,7 @@ public class FlowExecutionImplTests extends TestCase {
 		MockExternalContext context = new MockExternalContext();
 		execution.start(null, context);
 		execution.refresh(context);
+		execution.refresh(context);
 		execution.signalEvent("view", context);
 	}
 

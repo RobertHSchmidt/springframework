@@ -94,7 +94,7 @@ public interface FlowSession {
 
 	/**
 	 * Returns the local "flash map". Attributes in this map are cleared out
-	 * on the next event signalled in the flow execution, so they survive a refresh.
+	 * on the next event signaled in the flow execution, so they survive a refresh.
 	 * @return the flash map
 	 */
 	public MutableAttributeMap getFlashMap();

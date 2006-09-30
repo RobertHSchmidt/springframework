@@ -100,7 +100,7 @@ public interface RequestContext {
 	/**
 	 * Returns a mutable accessor for accessing and/or setting attributes in
 	 * flash scope. <b>Flash scoped attributes exist untill the next event
-	 * is signalled in the flow execution.</b>
+	 * is signaled in the flow execution.</b>
 	 * @return the flash scope
 	 */
 	public MutableAttributeMap getFlashScope();
