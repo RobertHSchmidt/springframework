@@ -98,16 +98,16 @@ import org.springframework.webflow.util.ReflectionUtils;
  * 
  * <pre>
  *     &lt;view-state id=&quot;displayCriteria&quot; view=&quot;searchCriteria&quot;&gt;
- *         &lt;entry-actions&gt;
- *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;setupForm&quot;/&gt;
- *         &lt;/entry-actions&gt;
+ *         &lt;render-actions&gt;
+ *             &lt;action bean=&quot;formAction&quot; method=&quot;setupForm&quot;/&gt;
+ *         &lt;/render-actions&gt;
  *         &lt;transition on=&quot;search&quot; to=&quot;executeSearch&quot;&gt;
- *             &lt;action bean=&quot;searchFormAction&quot; method=&quot;bindAndValidate&quot;/&gt;
+ *             &lt;action bean=&quot;formAction&quot; method=&quot;bindAndValidate&quot;/&gt;
  *         &lt;/transition&gt;
  *     &lt;/view-state&gt;
  *                                                                                
  *     &lt;action-state id=&quot;executeSearch&quot;&gt;
- *         &lt;action bean=&quot;searchFormAction&quot;/&gt;
+ *         &lt;action bean=&quot;formAction&quot; method=&quot;executeSearch&quot;/&gt;
  *         &lt;transition on=&quot;success&quot; to=&quot;displayResults&quot;/&gt;
  *     &lt;/action-state&gt;
  * </pre>
@@ -151,7 +151,7 @@ import org.springframework.webflow.util.ReflectionUtils;
  * <pre>
  * public Event setupReferenceData(RequestContext context) throws Exception {
  *     MutableAttributeMap requestScope = context.getRequestScope();
- *     requestScope.put(&quot;refData&quot;, referenceDataDao.getSupportingFormData());
+ *     requestScope.put(&quot;refData&quot;, lookupService2.getSupportingFormData());
  *     return success();
  * }
  * </pre>
@@ -321,9 +321,9 @@ public class FormAction extends MultiAction implements InitializingBean {
 
 	/**
 	 * The scope in which the form object errors holder should be exposed.
-	 * Default is {@link ScopeType#FLOW}.
+	 * Default is {@link ScopeType#REQUEST}.
 	 */
-	private ScopeType formErrorsScope = ScopeType.FLOW;
+	private ScopeType formErrorsScope = ScopeType.REQUEST;
 
 	/**
 	 * A centralized service for property editor registration, for applying type
@@ -405,31 +405,30 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 
 	/**
-	 * Get the scope in which the form object will be placed. Defaults to flow
-	 * scope.
+	 * Get the scope in which the form object will be placed.
 	 */
 	public ScopeType getFormObjectScope() {
 		return formObjectScope;
 	}
 
 	/**
-	 * Set the scope in which the form object will be placed.
+	 * Set the scope in which the form object will be placed.  The default 
+	 * if not set is {@link ScopeType#FLOW flow scope}.
 	 */
 	public void setFormObjectScope(ScopeType scopeType) {
 		this.formObjectScope = scopeType;
 	}
 
 	/**
-	 * Get the scope in which the Errors object will be placed. Defaults to
-	 * request scope.
+	 * Get the scope in which the Errors object will be placed.
 	 */
 	public ScopeType getFormErrorsScope() {
 		return formErrorsScope;
 	}
 
 	/**
-	 * Set the scope in which the Errors object will be placed. Defaults to
-	 * request scope.
+	 * Set the scope in which the Errors object will be placed.  The default 
+	 * if not set is {@link ScopeType#REQUEST request scope}.
 	 */
 	public void setFormErrorsScope(ScopeType errorsScope) {
 		this.formErrorsScope = errorsScope;
