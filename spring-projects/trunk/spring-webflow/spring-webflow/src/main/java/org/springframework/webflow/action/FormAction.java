@@ -239,10 +239,10 @@ import org.springframework.webflow.util.ReflectionUtils;
  * </tr>
  * <tr>
  * <td>formErrorsScope</td>
- * <td>{@link org.springframework.webflow.execution.ScopeType#FLOW flow}</td>
+ * <td>{@link org.springframework.webflow.execution.ScopeType#FLASH flash}</td>
  * <td>The scope in which the form object errors instance will be put. If put
- * in flow scope the errors will be cached and reused over the life of the flow.
- * Request scope will cause a new errors instance to be created each request.</td>
+ * in flash scope form errors will be cached until the next user event is signaled.
+* </td>
  * </tr>
  * <tr>
  * <td>propertyEditorRegistrar</td>
@@ -321,9 +321,9 @@ public class FormAction extends MultiAction implements InitializingBean {
 
 	/**
 	 * The scope in which the form object errors holder should be exposed.
-	 * Default is {@link ScopeType#FLOW}.
+	 * Default is {@link ScopeType#FLASH}.
 	 */
-	private ScopeType formErrorsScope = ScopeType.FLOW;
+	private ScopeType formErrorsScope = ScopeType.FLASH;
 
 	/**
 	 * A centralized service for property editor registration, for applying type
@@ -428,7 +428,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 
 	/**
 	 * Set the scope in which the Errors object will be placed.  The default 
-	 * if not set is {@link ScopeType#FLOW flow scope}.
+	 * if not set is {@link ScopeType#FLASH flash scope}.
 	 */
 	public void setFormErrorsScope(ScopeType errorsScope) {
 		this.formErrorsScope = errorsScope;
