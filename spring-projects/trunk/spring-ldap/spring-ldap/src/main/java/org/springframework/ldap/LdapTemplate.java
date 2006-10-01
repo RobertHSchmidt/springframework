@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
+import org.springframework.ldap.support.DirContextAdapter;
 import org.springframework.ldap.support.DistinguishedName;
 
 /**
@@ -786,6 +787,45 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
                 Attributes filteredAttributes = ctx.getAttributes(dn,
                         attributes);
                 return mapper.mapFromAttributes(filteredAttributes);
+            }
+        });
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#lookup(javax.naming.Name,
+     *      java.lang.String[], org.springframework.ldap.ContextMapper)
+     */
+    public Object lookup(final Name dn, final String[] attributes,
+            final ContextMapper mapper) throws DataAccessException {
+
+        return executeReadOnly(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                Attributes filteredAttributes = ctx.getAttributes(dn,
+                        attributes);
+                DirContextAdapter contextAdapter = new DirContextAdapter(
+                        filteredAttributes, dn);
+                return mapper.mapFromContext(contextAdapter);
+            }
+        });
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#lookup(java.lang.String,
+     *      java.lang.String[], org.springframework.ldap.ContextMapper)
+     */
+    public Object lookup(final String dn, final String[] attributes,
+            final ContextMapper mapper) throws DataAccessException {
+
+        return executeReadOnly(new ContextExecutor() {
+            public Object executeWithContext(DirContext ctx)
+                    throws NamingException {
+                Attributes filteredAttributes = ctx.getAttributes(dn,
+                        attributes);
+                DistinguishedName name = new DistinguishedName(dn);
+                DirContextAdapter contextAdapter = new DirContextAdapter(
+                        filteredAttributes, name);
+                return mapper.mapFromContext(contextAdapter);
             }
         });
     }

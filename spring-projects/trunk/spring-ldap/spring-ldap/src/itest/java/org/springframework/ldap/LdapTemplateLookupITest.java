@@ -19,9 +19,6 @@ package org.springframework.ldap;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 
-import org.springframework.ldap.AttributesMapper;
-import org.springframework.ldap.ContextMapper;
-import org.springframework.ldap.LdapTemplate;
 import org.springframework.ldap.support.DirContextAdapter;
 import org.springframework.ldap.support.DistinguishedName;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
@@ -89,6 +86,7 @@ public class LdapTemplateLookupITest extends
             AttributesMapper {
         /**
          * Maps the <code>cn</code> attribute into a {@link Person} object.
+         * Also verifies that the other attributes haven't been set.
          * 
          * @see org.springframework.ldap.AttributesMapper#mapFromAttributes(javax.naming.directory.Attributes)
          */
@@ -96,6 +94,9 @@ public class LdapTemplateLookupITest extends
                 throws NamingException {
             Person person = new Person();
             person.setFullname((String) attributes.get("cn").get());
+            assertNull("sn should be null", attributes.get("sn"));
+            assertNull("description should be null", attributes
+                    .get("description"));
             return person;
         }
     }
@@ -146,6 +147,22 @@ public class LdapTemplateLookupITest extends
         assertEquals("Some Person2", person.getFullname());
         assertEquals("Person2", person.getLastname());
         assertEquals("Sweden, Company1, Some Person2", person.getDescription());
+    }
+
+    /**
+     * Verifies that only the subset is used when specifying a subset of the
+     * available attributes as return attributes.
+     */
+    public void testLookup_ReturnAttributes_ContextMapper() {
+        ContextMapper mapper = new PersonContextMapper();
+
+        Person person = (Person) tested.lookup(
+                "cn=Some Person2, ou=company1,c=Sweden,dc=jayway,dc=se",
+                new String[] { "cn" }, mapper);
+
+        assertEquals("Some Person2", person.getFullname());
+        assertNull("lastName should not be set", person.getLastname());
+        assertNull("description should not be set", person.getDescription());
     }
 
     public void setTested(LdapTemplate tested) {
