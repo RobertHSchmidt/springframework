@@ -115,6 +115,11 @@ public class ViewState extends TransitionableState {
 		return viewSelector.makeRefreshSelection(context);
 	}
 
+	public ViewSelection reenter(RequestControlContext context) {
+		// on reentry due to a disallowed transition always re-render in this request
+		return refresh(context);
+	}
+
 	protected void appendToString(ToStringCreator creator) {
 		creator.append("viewSelector", viewSelector);
 		super.appendToString(creator);
