@@ -321,9 +321,9 @@ public class FormAction extends MultiAction implements InitializingBean {
 
 	/**
 	 * The scope in which the form object errors holder should be exposed.
-	 * Default is {@link ScopeType#REQUEST}.
+	 * Default is {@link ScopeType#FLOW}.
 	 */
-	private ScopeType formErrorsScope = ScopeType.REQUEST;
+	private ScopeType formErrorsScope = ScopeType.FLOW;
 
 	/**
 	 * A centralized service for property editor registration, for applying type
@@ -428,7 +428,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 
 	/**
 	 * Set the scope in which the Errors object will be placed.  The default 
-	 * if not set is {@link ScopeType#REQUEST request scope}.
+	 * if not set is {@link ScopeType#FLOW flow scope}.
 	 */
 	public void setFormErrorsScope(ScopeType errorsScope) {
 		this.formErrorsScope = errorsScope;
