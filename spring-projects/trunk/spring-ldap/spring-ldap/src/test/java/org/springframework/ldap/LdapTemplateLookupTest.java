@@ -26,6 +26,8 @@ import javax.naming.ldap.LdapContext;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
+import org.springframework.ldap.support.DirContextAdapter;
+import org.springframework.ldap.support.DistinguishedName;
 
 public class LdapTemplateLookupTest extends TestCase {
 
@@ -385,5 +387,67 @@ public class LdapTemplateLookupTest extends TestCase {
         verify();
 
         assertSame(expected, actual);
+    }
+
+    // Tests for lookup(name, attributes, ContextMapper)
+
+    public void testLookup_ReturnAttributes_ContextMapper() throws Exception {
+        expectGetReadOnlyContext();
+
+        String[] attributeNames = new String[] { "cn" };
+
+        BasicAttributes expectedAttributes = new BasicAttributes();
+        expectedAttributes.put("cn", "Some Name");
+
+        DistinguishedName name = new DistinguishedName(DEFAULT_BASE_STRING);
+        DirContextAdapter adapter = new DirContextAdapter(expectedAttributes,
+                name);
+
+        dirContextControl.expectAndReturn(dirContextMock.getAttributes(name,
+                attributeNames), expectedAttributes);
+        dirContextMock.close();
+
+        Object transformed = new Object();
+        contextMapperControl.expectAndReturn(contextMapperMock
+                .mapFromContext(adapter), transformed);
+
+        replay();
+
+        Object actual = tested.lookup(name, attributeNames, contextMapperMock);
+
+        verify();
+
+        assertSame(transformed, actual);
+    }
+
+    public void testLookup_String_ReturnAttributes_ContextMapper()
+            throws Exception {
+        expectGetReadOnlyContext();
+
+        String[] attributeNames = new String[] { "cn" };
+
+        BasicAttributes expectedAttributes = new BasicAttributes();
+        expectedAttributes.put("cn", "Some Name");
+
+        dirContextControl.expectAndReturn(dirContextMock.getAttributes(
+                DEFAULT_BASE_STRING, attributeNames), expectedAttributes);
+        dirContextMock.close();
+
+        DistinguishedName name = new DistinguishedName(DEFAULT_BASE_STRING);
+        DirContextAdapter adapter = new DirContextAdapter(expectedAttributes,
+                name);
+
+        Object transformed = new Object();
+        contextMapperControl.expectAndReturn(contextMapperMock
+                .mapFromContext(adapter), transformed);
+
+        replay();
+
+        Object actual = tested.lookup(DEFAULT_BASE_STRING, attributeNames,
+                contextMapperMock);
+
+        verify();
+
+        assertSame(transformed, actual);
     }
 }
