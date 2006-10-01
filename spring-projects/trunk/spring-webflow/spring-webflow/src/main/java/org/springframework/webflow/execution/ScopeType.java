@@ -45,7 +45,7 @@ public abstract class ScopeType extends StaticLabeledEnum {
 
 	/**
 	 * Constant indicating flash scope. Data in flash scope exists untill the next
-	 * event is signaled. Flash scope is subsequently cleared.
+	 * user event is signaled. Flash scope is subsequently cleared.
 	 */
 	public static final ScopeType FLASH = new ScopeType(1, "Flash") {
 		public MutableAttributeMap getScope(RequestContext context) {
