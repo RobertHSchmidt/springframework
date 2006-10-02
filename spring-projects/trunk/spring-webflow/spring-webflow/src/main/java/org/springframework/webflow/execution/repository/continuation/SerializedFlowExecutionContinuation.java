@@ -173,7 +173,7 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 	 * @throws IOException when something goes wrong during during serialization
 	 */
 	protected byte[] serialize(FlowExecution flowExecution) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream(384);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
 		ObjectOutputStream oos = new ObjectOutputStream(baos);
 		try {
 			oos.writeObject(flowExecution);
