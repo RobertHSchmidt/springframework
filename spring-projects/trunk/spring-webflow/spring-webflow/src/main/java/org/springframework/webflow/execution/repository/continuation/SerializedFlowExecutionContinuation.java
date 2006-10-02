@@ -17,9 +17,12 @@ package org.springframework.webflow.execution.repository.continuation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Externalizable;
 import java.io.IOException;
 import java.io.NotSerializableException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -36,7 +39,7 @@ import org.springframework.webflow.execution.FlowExecution;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class SerializedFlowExecutionContinuation extends FlowExecutionContinuation {
+public class SerializedFlowExecutionContinuation extends FlowExecutionContinuation implements Externalizable {
 
 	/**
 	 * The serialized flow execution.
@@ -49,33 +52,42 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 	private boolean compressed;
 
 	/**
+	 * Default constructor necessary for {@link Externalizable} custom
+	 * serialization semantics. Should not be called by application code.
+	 */
+	public SerializedFlowExecutionContinuation() {
+
+	}
+
+	/**
 	 * Creates a new serialized flow execution continuation. This will marshall
 	 * given continuation into a serialized form.
 	 * @param flowExecution the flow execution
 	 * @param compress whether or not the flow execution should be compressed
 	 */
-	public SerializedFlowExecutionContinuation(FlowExecution flowExecution, boolean compress) throws ContinuationCreationException{
-        try {
-            flowExecutionData = serialize(flowExecution);
-            if (compress) {
-                flowExecutionData = compress(flowExecutionData);
-            }
-        }
-        catch (NotSerializableException e) {
-            throw new ContinuationCreationException(flowExecution,
-                    "Could not serialize flow execution; make sure all objects stored in flow scope are serializable",
-                    e);
-        }
-        catch (IOException e) {
-            throw new ContinuationCreationException(flowExecution,
-                    "IOException thrown serializing flow execution -- this should not happen!", e);
-        }
+	public SerializedFlowExecutionContinuation(FlowExecution flowExecution, boolean compress)
+			throws ContinuationCreationException {
+		try {
+			flowExecutionData = serialize(flowExecution);
+			if (compress) {
+				flowExecutionData = compress(flowExecutionData);
+			}
+		}
+		catch (NotSerializableException e) {
+			throw new ContinuationCreationException(flowExecution,
+					"Could not serialize flow execution; make sure all objects stored in flow scope are serializable",
+					e);
+		}
+		catch (IOException e) {
+			throw new ContinuationCreationException(flowExecution,
+					"IOException thrown serializing flow execution -- this should not happen!", e);
+		}
 		this.compressed = compress;
 	}
 
 	/**
-	 * Returns whether or not the flow execution data in this continuation
-	 * is compressed.
+	 * Returns whether or not the flow execution data in this continuation is
+	 * compressed.
 	 */
 	public boolean isCompressed() {
 		return compressed;
@@ -83,7 +95,7 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 
 	public FlowExecution unmarshal() throws ContinuationUnmarshalException {
 		try {
-            return deserialize(getFlowExecutionData());
+			return deserialize(getFlowExecutionData());
 		}
 		catch (IOException e) {
 			throw new ContinuationUnmarshalException(
@@ -93,9 +105,9 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 		catch (ClassNotFoundException e) {
 			throw new ContinuationUnmarshalException(
 					"ClassNotFoundException thrown deserializing the flow execution stored in this continuation -- "
-					+ "This should not happen! Make sure there are no classloader issues."
-					+ "For example, perhaps the Web Flow system is being loaded by a classloader "
-					+ "that is a parent of the classloader loading application classes?", e);
+							+ "This should not happen! Make sure there are no classloader issues."
+							+ "For example, perhaps the Web Flow system is being loaded by a classloader "
+							+ "that is a parent of the classloader loading application classes?", e);
 		}
 	}
 
@@ -116,6 +128,25 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 			throw new IllegalStateException();
 		}
 	}
+
+	// implementing Externalizable for custom serialization
+	
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		// read length of data array
+		int length = in.readInt();
+		flowExecutionData = new byte[length];
+		// read in contents
+		in.read(flowExecutionData);
+		compressed = in.readBoolean();
+	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		// write out length first
+		out.writeInt(flowExecutionData.length);
+		// write out contents
+		out.write(flowExecutionData);
+		out.writeBoolean(compressed);
+	}
 	
 	// internal helpers
 
@@ -134,66 +165,66 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 		}
 	}
 
-    /**
-     * Internal helper method to serialize given flow execution. Override if a custom
-     * serialization method is used.
-     * @param flowExecution flow execution to serialize
-     * @return serialized flow flow execution data
-     * @throws IOException when something goes wrong during during serialization
-     */
-    protected byte [] serialize(FlowExecution flowExecution) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(384);
-        ObjectOutputStream oos = new ObjectOutputStream(baos);
-        try {
-            oos.writeObject(flowExecution);
-            oos.flush();
-            return baos.toByteArray();
-        }
-        finally {
-            oos.close();
-        }
-    }
-    
-    /**
-     * Internal helper method to deserialize given flow execution data. Override
-     * if a custom serialization method is used.
-     * @param data serialized flow flow execution data
-     * @return deserialized flow execution
-     * @throws IOException when something goes wrong during deserialization
-     * @throws ClassNotFoundException when required classes cannot be loaded
-     */
-    protected FlowExecution deserialize(byte [] data) throws IOException, ClassNotFoundException {
-        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
-        try {
-            return (FlowExecution)ois.readObject();
-        }
-        finally {
-            ois.close();
-        }
-    }
-    
-    /**
-     * Internal helper method to compress given flow execution data using
-     * GZIP compression.
-     */
-    protected byte[] compress(byte[] dataToCompress) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        GZIPOutputStream gzipos = new GZIPOutputStream(baos);
-        try {
-            gzipos.write(dataToCompress);
-            gzipos.flush();
-        }
-        finally {
-            gzipos.close();
-        }
-        return baos.toByteArray();
-    }
-    
 	/**
-	 * Internal helper method to decompress given flow execution data using
-	 * GZIP decompression.
+	 * Internal helper method to serialize given flow execution. Override if a
+	 * custom serialization method is used.
+	 * @param flowExecution flow execution to serialize
+	 * @return serialized flow flow execution data
+	 * @throws IOException when something goes wrong during during serialization
 	 */
-    protected byte[] decompress(byte[] dataToDecompress) throws IOException {
+	protected byte[] serialize(FlowExecution flowExecution) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream(384);
+		ObjectOutputStream oos = new ObjectOutputStream(baos);
+		try {
+			oos.writeObject(flowExecution);
+			oos.flush();
+			return baos.toByteArray();
+		}
+		finally {
+			oos.close();
+		}
+	}
+
+	/**
+	 * Internal helper method to deserialize given flow execution data. Override
+	 * if a custom serialization method is used.
+	 * @param data serialized flow flow execution data
+	 * @return deserialized flow execution
+	 * @throws IOException when something goes wrong during deserialization
+	 * @throws ClassNotFoundException when required classes cannot be loaded
+	 */
+	protected FlowExecution deserialize(byte[] data) throws IOException, ClassNotFoundException {
+		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
+		try {
+			return (FlowExecution)ois.readObject();
+		}
+		finally {
+			ois.close();
+		}
+	}
+
+	/**
+	 * Internal helper method to compress given flow execution data using GZIP
+	 * compression.
+	 */
+	protected byte[] compress(byte[] dataToCompress) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		GZIPOutputStream gzipos = new GZIPOutputStream(baos);
+		try {
+			gzipos.write(dataToCompress);
+			gzipos.flush();
+		}
+		finally {
+			gzipos.close();
+		}
+		return baos.toByteArray();
+	}
+
+	/**
+	 * Internal helper method to decompress given flow execution data using GZIP
+	 * decompression.
+	 */
+	protected byte[] decompress(byte[] dataToDecompress) throws IOException {
 		GZIPInputStream gzipin = new GZIPInputStream(new ByteArrayInputStream(dataToDecompress));
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
