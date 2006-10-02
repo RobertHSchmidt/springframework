@@ -113,7 +113,7 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 
 	public byte[] toByteArray() {
 		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream(flowExecutionData.length + 128);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream(flowExecutionData.length + 40);
 			ObjectOutputStream oos = new ObjectOutputStream(baos);
 			try {
 				oos.writeObject(this);
@@ -135,8 +135,8 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 		// read length of data array
 		int length = in.readInt();
 		flowExecutionData = new byte[length];
-		// read in contents
-		in.read(flowExecutionData);
+		// read in contents in full
+		in.readFully(flowExecutionData);
 		compressed = in.readBoolean();
 	}
 
