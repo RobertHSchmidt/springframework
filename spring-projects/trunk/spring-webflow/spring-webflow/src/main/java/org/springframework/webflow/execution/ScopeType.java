@@ -35,8 +35,8 @@ public abstract class ScopeType extends StaticLabeledEnum {
 
 	/**
 	 * The "request" scope type. Attributes placed in request scope exist for
-	 * the life current request into the flow execution. When the request ends
-	 * any attributes in request scope go out of scope.
+	 * the life of the current request into the flow execution. When the request
+	 * ends any attributes in request scope go out of scope.
 	 */
 	public static final ScopeType REQUEST = new ScopeType(0, "Request") {
 		public MutableAttributeMap getScope(RequestContext context) {
@@ -53,7 +53,6 @@ public abstract class ScopeType extends StaticLabeledEnum {
 	 * Flash scope is typically used to store messages that should be preserved
 	 * across refreshes of the next view state (for example, on a redirect and
 	 * any browser refreshes).
-	 * </p>
 	 */
 	public static final ScopeType FLASH = new ScopeType(1, "Flash") {
 		public MutableAttributeMap getScope(RequestContext context) {
