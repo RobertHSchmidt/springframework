@@ -56,12 +56,11 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 	 * serialization semantics. Should not be called by application code.
 	 */
 	public SerializedFlowExecutionContinuation() {
-
 	}
 
 	/**
 	 * Creates a new serialized flow execution continuation. This will marshall
-	 * given continuation into a serialized form.
+	 * given flow execution into a serialized continuation form.
 	 * @param flowExecution the flow execution
 	 * @param compress whether or not the flow execution should be compressed
 	 */
@@ -75,8 +74,8 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 		}
 		catch (NotSerializableException e) {
 			throw new ContinuationCreationException(flowExecution,
-					"Could not serialize flow execution; make sure all objects stored in flow scope are serializable",
-					e);
+					"Could not serialize flow execution; " +
+					"make sure all objects stored in flow or flash scope are serializable", e);
 		}
 		catch (IOException e) {
 			throw new ContinuationCreationException(flowExecution,
@@ -131,6 +130,14 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 
 	// implementing Externalizable for custom serialization
 	
+	public void writeExternal(ObjectOutput out) throws IOException {
+		// write out length first
+		out.writeInt(flowExecutionData.length);
+		// write out contents
+		out.write(flowExecutionData);
+		out.writeBoolean(compressed);
+	}
+
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		// read length of data array
 		int length = in.readInt();
@@ -138,14 +145,6 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 		// read in contents in full
 		in.readFully(flowExecutionData);
 		compressed = in.readBoolean();
-	}
-
-	public void writeExternal(ObjectOutput out) throws IOException {
-		// write out length first
-		out.writeInt(flowExecutionData.length);
-		// write out contents
-		out.write(flowExecutionData);
-		out.writeBoolean(compressed);
 	}
 	
 	// internal helpers
@@ -205,7 +204,7 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 
 	/**
 	 * Internal helper method to compress given flow execution data using GZIP
-	 * compression.
+	 * compression. Override if custom compression is desired.
 	 */
 	protected byte[] compress(byte[] dataToCompress) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -222,7 +221,7 @@ public class SerializedFlowExecutionContinuation extends FlowExecutionContinuati
 
 	/**
 	 * Internal helper method to decompress given flow execution data using GZIP
-	 * decompression.
+	 * decompression. Override if custom decompression is desired.
 	 */
 	protected byte[] decompress(byte[] dataToDecompress) throws IOException {
 		GZIPInputStream gzipin = new GZIPInputStream(new ByteArrayInputStream(dataToDecompress));
