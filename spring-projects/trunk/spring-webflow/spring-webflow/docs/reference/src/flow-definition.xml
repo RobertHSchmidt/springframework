@@ -1789,8 +1789,11 @@
     			</para>
     			<note>
     				<para>
-    					Flash scoped attributes are preserved untill the next event is signaled in
-    					the flow execution.
+    					Flash scoped attributes are preserved until the next user event is signaled into
+    					the flow execution.  In this example this means the <literal>fileUploaded</literal> 
+    					attribute is preserved across a redirect to the <literal>selectFile</literal> 
+    					view state and any subsequent browser refreshes.  Only when <literal>submit</literal>
+    					event is signaled will the flash scope be cleared.
     				</para>
     			</note>
 			</sect3>
