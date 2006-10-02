@@ -390,10 +390,12 @@
   <target name="statics.main">
     <mkdir dir="${target.artifacts.dir}" />
 
-    <!-- copy everything from the source dir, except java files. Do not filter. Files that need filtering should go in resources. -->
+    <!-- copy everything from the source dir, except java and javadoc files. Do not filter. Files that need filtering should go in resources. -->
     <copy todir="${target.classes.dir}">
       <fileset dir="${src.java.main.dir}">
         <exclude name="**/*.java" />
+        <exclude name="**/package.html"/>
+        <exclude name="**/overview.html"/>
       </fileset>
     </copy>
 
@@ -546,7 +548,7 @@
     <javac destdir="${target.classes.dir}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}" source="${javac.source}" target="${javac.target}">
       <src path="${src.java.main.dir}" />
       <src path="${target.gen.java.dir}" />
-      <classpath refid="compile.classpath" />
+   	  <classpath refid="compile.classpath" />
     </javac>
   </target>
 
