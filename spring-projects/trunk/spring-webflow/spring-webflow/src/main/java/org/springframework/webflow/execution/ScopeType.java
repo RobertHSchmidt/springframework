@@ -22,7 +22,7 @@ import org.springframework.webflow.definition.FlowDefinition;
 /**
  * An enumeration of the core scope types of Spring Web Flow. Provides easy
  * access to each scope by <i>type</i> using
- * {@link #getScope(RequestContext)()}.
+ * {@link #getScope(RequestContext)}.
  * <p>
  * A "scope" defines a data structure for storing custom user attributes within
  * a flow execution. Different scope types have different semantics in terms of

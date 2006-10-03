@@ -160,8 +160,8 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	 * @return true or false
 	 */
 	protected boolean alwaysRedirectOnPause(RequestContext context) {
-		return ((Boolean)context.getFlowExecutionContext().getAttributes().getBoolean(
-				ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE, Boolean.FALSE)).booleanValue();
+		return context.getFlowExecutionContext().getAttributes().getBoolean(
+				ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE, Boolean.FALSE).booleanValue();
 	}
 
 	public String toString() {

@@ -182,7 +182,7 @@ public class LocalParameterMap implements ParameterMap, Serializable {
 
 	public String[] getRequiredArray(String parameterName) throws IllegalArgumentException {
 		parameterAccessor.assertContainsKey(parameterName);
-		return (String[])getArray(parameterName);
+		return getArray(parameterName);
 	}
 
 	public Object[] getRequiredArray(String parameterName, Class targetElementType) throws IllegalArgumentException,
