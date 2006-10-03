@@ -153,8 +153,8 @@ public class SessionBindingConversationManager implements ConversationManager {
 			ContainedConversation conversation = new ContainedConversation(this, id);
 			conversations.add(conversation);
 			if (maxExceeded()) {
-				// remove oldest conversation
-				conversations.remove(0);
+				// end oldest conversation
+				((Conversation)conversations.get(0)).end();
 			}
 			return conversation;
 		}
