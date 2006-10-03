@@ -877,6 +877,7 @@ public class FormAction extends MultiAction implements InitializingBean {
             binder.setMessageCodesResolver(messageCodesResolver);
         }
         initBinder(context, binder);
+        registerPropertyEditors(binder);
         return binder;
     }
 
@@ -991,20 +992,23 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 
 	/**
-	 * Initialize the new binder instance. This hook allows for registration of
-	 * custom property editors for performing type conversion on binding, as
-	 * well as customization of other binder settings such as the
-	 * {@link DataBinder#getAllowedFields() allowed fields} and 
-	 * {@link DataBinder#getRequiredFields() required fields}. Called by
+	 * Initialize the new binder instance. This hook allows customization of
+     * binder settings such as the {@link DataBinder#getAllowedFields() allowed fields}
+     * and {@link DataBinder#getRequiredFields() required fields}. Called by
 	 * {@link #createBinder(RequestContext, Object)}
 	 * <p>
+     * Note that registration of custom property editors should be done in
+     * {@link #registerPropertyEditors(PropertyEditorRegistry)}, not here! This
+     * method will only be called when a new data binder is created, e.g. when
+     * {@link #bind(RequestContext) data binding} needs to be done. In other cases,
+     * e.g. {@link #setupForm(RequestContext) form setup}, it will <b>not</b> be
+     * called since no data binder is required.
 	 * @param context the action execution context, for accessing and setting
 	 * data in "flow scope" or "request scope"
 	 * @param binder new binder instance
 	 * @see #createBinder(RequestContext, Object)
 	 */
 	protected void initBinder(RequestContext context, DataBinder binder) {
-		registerPropertyEditors(binder);
 	}
 
 	/**
