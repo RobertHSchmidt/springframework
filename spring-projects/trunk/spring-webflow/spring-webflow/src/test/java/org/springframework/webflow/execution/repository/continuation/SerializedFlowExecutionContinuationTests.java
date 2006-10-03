@@ -40,7 +40,6 @@ public class SerializedFlowExecutionContinuationTests extends TestCase {
 		SerializedFlowExecutionContinuation c = new SerializedFlowExecutionContinuation(execution, true);
 		assertTrue(c.isCompressed());
 		byte[] array = c.toByteArray();
-		System.out.println(array.length);
 		execution = c.unmarshal();
 		
         ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(array));
