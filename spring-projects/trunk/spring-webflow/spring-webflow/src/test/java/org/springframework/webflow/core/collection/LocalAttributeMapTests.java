@@ -155,17 +155,17 @@ public class LocalAttributeMapTests extends TestCase {
 	}
 
 	public void testGetInteger() {
-		Integer i = (Integer)attributeMap.getInteger("integer");
+		Integer i = attributeMap.getInteger("integer");
 		assertEquals(new Integer(12345), i);
 	}
 
 	public void testGetIntegerNull() {
-		Integer i = (Integer)attributeMap.getInteger("bogus");
+		Integer i = attributeMap.getInteger("bogus");
 		assertNull(i);
 	}
 
 	public void testGetIntegerRequired() {
-		Integer i = (Integer)attributeMap.getRequiredInteger("integer");
+		Integer i = attributeMap.getRequiredInteger("integer");
 		assertEquals(new Integer(12345), i);
 	}
 
@@ -180,17 +180,17 @@ public class LocalAttributeMapTests extends TestCase {
 	}
 
 	public void testGetLong() {
-		Long i = (Long)attributeMap.getLong("long");
+		Long i = attributeMap.getLong("long");
 		assertEquals(new Long(12345), i);
 	}
 
 	public void testGetLongNull() {
-		Long i = (Long)attributeMap.getLong("bogus");
+		Long i = attributeMap.getLong("bogus");
 		assertNull(i);
 	}
 
 	public void testGetLongRequired() {
-		Long i = (Long)attributeMap.getRequiredLong("long");
+		Long i = attributeMap.getRequiredLong("long");
 		assertEquals(new Long(12345), i);
 	}
 
@@ -205,17 +205,17 @@ public class LocalAttributeMapTests extends TestCase {
 	}
 
 	public void testGetString() {
-		String i = (String)attributeMap.getString("string");
+		String i = attributeMap.getString("string");
 		assertEquals("A string", i);
 	}
 
 	public void testGetStringNull() {
-		String i = (String)attributeMap.getString("bogus");
+		String i = attributeMap.getString("bogus");
 		assertNull(i);
 	}
 
 	public void testGetStringRequired() {
-		String i = (String)attributeMap.getRequiredString("string");
+		String i = attributeMap.getRequiredString("string");
 		assertEquals("A string", i);
 	}
 
@@ -230,17 +230,17 @@ public class LocalAttributeMapTests extends TestCase {
 	}
 
 	public void testGetBoolean() {
-		Boolean i = (Boolean)attributeMap.getBoolean("boolean");
+		Boolean i = attributeMap.getBoolean("boolean");
 		assertEquals(Boolean.TRUE, i);
 	}
 
 	public void testGetBooleanNull() {
-		Boolean i = (Boolean)attributeMap.getBoolean("bogus");
+		Boolean i = attributeMap.getBoolean("bogus");
 		assertNull(i);
 	}
 
 	public void testGetBooleanRequired() {
-		Boolean i = (Boolean)attributeMap.getRequiredBoolean("boolean");
+		Boolean i = attributeMap.getRequiredBoolean("boolean");
 		assertEquals(Boolean.TRUE, i);
 	}
 

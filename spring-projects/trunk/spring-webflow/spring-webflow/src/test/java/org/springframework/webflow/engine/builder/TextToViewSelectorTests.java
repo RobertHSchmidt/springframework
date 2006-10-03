@@ -30,7 +30,7 @@ import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
- * Test case for TextToViewDescriptorCreator.
+ * Test case for ${link TextToViewSelector}.
  * 
  * @author Erwin Vervaet
  */
@@ -45,7 +45,7 @@ public class TextToViewSelectorTests extends TestCase {
 	}
 
 	public void testApplicationView() {
-		ViewSelector selector = (ViewSelector)viewSelector("myView", false);
+		ViewSelector selector = viewSelector("myView", false);
 		RequestContext context = getRequestContext();
 		ApplicationView view = (ApplicationView)selector.makeEntrySelection(context);
 		assertEquals("myView", view.getViewName());
@@ -53,7 +53,7 @@ public class TextToViewSelectorTests extends TestCase {
 	}
 
 	public void testFlowExecutionRedirect() {
-		ViewSelector selector = (ViewSelector)viewSelector("redirect:myView", false);
+		ViewSelector selector = viewSelector("redirect:myView", false);
 		RequestContext context = getRequestContext();
 		FlowExecutionRedirect redirect = (FlowExecutionRedirect)selector.makeEntrySelection(context);
 		assertSame(redirect, FlowExecutionRedirect.INSTANCE);
@@ -64,7 +64,7 @@ public class TextToViewSelectorTests extends TestCase {
 	}
 
 	public void testFlowRedirect() {
-		ViewSelector selector = (ViewSelector)viewSelector("flowRedirect:myFlow", true);
+		ViewSelector selector = viewSelector("flowRedirect:myFlow", true);
 		RequestContext context = getRequestContext();
 		FlowDefinitionRedirect redirect = (FlowDefinitionRedirect)selector.makeEntrySelection(context);
 		assertEquals("myFlow", redirect.getFlowDefinitionId());
@@ -72,7 +72,7 @@ public class TextToViewSelectorTests extends TestCase {
 	}
 
 	public void testFlowRedirectWithModel() {
-		ViewSelector selector = (ViewSelector)viewSelector(
+		ViewSelector selector = viewSelector(
 				"flowRedirect:myFlow?foo=${flowScope.foo}&bar=${requestScope.oven}", true);
 		RequestContext context = getRequestContext();
 		FlowDefinitionRedirect redirect = (FlowDefinitionRedirect)selector.makeEntrySelection(context);
@@ -83,7 +83,7 @@ public class TextToViewSelectorTests extends TestCase {
 	}
 
 	public void testExternalRedirect() {
-		ViewSelector selector = (ViewSelector)viewSelector(
+		ViewSelector selector = viewSelector(
 				"externalRedirect:myUrl.htm?foo=${flowScope.foo}&bar=${requestScope.oven}", true);
 		RequestContext context = getRequestContext();
 		ExternalRedirect view = (ExternalRedirect)selector.makeEntrySelection(context);

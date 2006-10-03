@@ -296,7 +296,7 @@ public class FormActionTests extends TestCase {
 		errors = new BindException(getFormObject(context), "test");
 		Errors testErrors = errors;
 		new FormObjectAccessor(context).putFormErrors(errors, action.getFormErrorsScope());
-		errors = (Errors)action.getFormErrors(context);
+		errors = action.getFormErrors(context);
 		assertSame(errors, testErrors);
 	}
 
@@ -451,7 +451,7 @@ public class FormActionTests extends TestCase {
 	}
 
 	private Errors getErrors(RequestContext context, String formObjectName) {
-		return (Errors)new FormObjectAccessor(context).getFormErrors(formObjectName, ScopeType.REQUEST);
+		return new FormObjectAccessor(context).getFormErrors(formObjectName, ScopeType.REQUEST);
 	}
 
 	private TestBean getFormObject(RequestContext context) {
