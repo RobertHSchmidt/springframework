@@ -204,12 +204,12 @@ public class LocalParameterMapTests extends TestCase {
 	}
 
 	public void testGetLong() {
-		Long value = (Long)parameterMap.getLong("integer");
+		Long value = parameterMap.getLong("integer");
 		assertEquals(new Long(12345), value);
 	}
 
 	public void testGetRequiredLong() {
-		Long value = (Long)parameterMap.getRequiredLong("integer");
+		Long value = parameterMap.getRequiredLong("integer");
 		assertEquals(new Long(12345), value);
 	}
 
@@ -219,12 +219,12 @@ public class LocalParameterMapTests extends TestCase {
 	}
 
 	public void testGetBoolean() {
-		Boolean value = (Boolean)parameterMap.getBoolean("boolean");
+		Boolean value = parameterMap.getBoolean("boolean");
 		assertEquals(Boolean.TRUE, value);
 	}
 
 	public void testGetRequiredBoolean() {
-		Boolean value = (Boolean)parameterMap.getRequiredBoolean("boolean");
+		Boolean value = parameterMap.getRequiredBoolean("boolean");
 		assertEquals(Boolean.TRUE, value);
 	}
 

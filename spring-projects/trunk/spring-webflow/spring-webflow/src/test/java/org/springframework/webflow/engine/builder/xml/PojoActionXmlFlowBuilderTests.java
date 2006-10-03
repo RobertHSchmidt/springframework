@@ -19,7 +19,6 @@ import junit.framework.TestCase;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.action.AbstractBeanInvokingAction;
-import org.springframework.webflow.action.ActionResultExposer;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowAssembler;
@@ -28,7 +27,11 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.test.MockExternalContext;
 
+/**
+ * Unit tests for {@link XmlFlowBuilder} dealing with POJO actions.
+ */
 public class PojoActionXmlFlowBuilderTests extends TestCase {
+	
 	private Flow flow;
 
 	protected void setUp() throws Exception {
@@ -42,16 +45,16 @@ public class PojoActionXmlFlowBuilderTests extends TestCase {
 		ActionState as1 = (ActionState)flow.getState("actionState1");
 		AbstractBeanInvokingAction targetAction = (AbstractBeanInvokingAction)as1.getActionList().getAnnotated(0)
 				.getTargetAction();
-		assertEquals(ScopeType.REQUEST, ((ActionResultExposer)targetAction.getMethodResultExposer()).getResultScope());
+		assertEquals(ScopeType.REQUEST, targetAction.getMethodResultExposer().getResultScope());
 		assertEquals(1, as1.getTransitionSet().size());
 
 		ActionState as2 = (ActionState)flow.getState("actionState2");
 		targetAction = (AbstractBeanInvokingAction)as2.getActionList().getAnnotated(0).getTargetAction();
-		assertEquals(ScopeType.FLOW, ((ActionResultExposer)targetAction.getMethodResultExposer()).getResultScope());
+		assertEquals(ScopeType.FLOW, targetAction.getMethodResultExposer().getResultScope());
 
 		ActionState as3 = (ActionState)flow.getState("actionState3");
 		targetAction = (AbstractBeanInvokingAction)as3.getActionList().getAnnotated(0).getTargetAction();
-		assertEquals(ScopeType.CONVERSATION, ((ActionResultExposer)targetAction.getMethodResultExposer()).getResultScope());
+		assertEquals(ScopeType.CONVERSATION, targetAction.getMethodResultExposer().getResultScope());
 
 		ActionState as4 = (ActionState)flow.getState("actionState4");
 		targetAction = (AbstractBeanInvokingAction)as4.getActionList().getAnnotated(0).getTargetAction();
