@@ -96,7 +96,6 @@ class FlowExecutionContinuationGroup implements Serializable {
 
 	/**
 	 * Has the maximum number of allowed continuations in this group been exceeded?
-	 * @return
 	 */
 	private boolean maxExceeded() {
 		return maxContinuations > 0 && continuationIds.size() > maxContinuations;

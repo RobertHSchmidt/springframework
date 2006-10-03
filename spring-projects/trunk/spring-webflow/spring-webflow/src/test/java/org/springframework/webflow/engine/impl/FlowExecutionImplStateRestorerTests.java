@@ -42,7 +42,7 @@ import org.springframework.webflow.test.MockParameterMap;
 /**
  * Test case for FlowExecutionStack.
  * 
- * @see org.springframework.webflow.engine.machine.FlowExecutionImpl
+ * @see FlowExecutionImpl
  * 
  * @author Erwin Vervaet
  */
