@@ -52,23 +52,23 @@ import org.springframework.webflow.util.ReflectionUtils;
  * {@link #getFormErrorsScope() form errors scope}, respectively. Also
  * {@link #registerPropertyEditors(PropertyEditorRegistry) installs} any custom
  * property editors for formatting form object field values. This action method
- * will return the success() event unless an exception is thrown. </li>
+ * will return the "success" event unless an exception is thrown. </li>
  * <li> {@link #bindAndValidate(RequestContext)} - Binds all incoming request
  * parameters to the form object and then validates the form object using a
  * {@link #setValidator(Validator) registered validator}. This action method
- * will return the success() event if there are no binding or validation errors,
- * otherwise it will return the error() event. </li>
+ * will return the "success" event if there are no binding or validation errors,
+ * otherwise it will return the "error" event. </li>
  * <li> {@link #bind(RequestContext)} - Binds all incoming request parameters to
  * the form object. No additional validation is performed. This action method
- * will return the success() event if there are no binding errors, otherwise it
- * will return the error() event. </li>
+ * will return the "success" event if there are no binding errors, otherwise it
+ * will return the "error" event. </li>
  * <li> {@link #validate(RequestContext)} - Validates the form object using a
  * registered validator. No data binding is performed. This action method will
- * return the success() event if there are no validation errors, otherwise it
- * will return the error() event. </li>
+ * return the "success" event if there are no validation errors, otherwise it
+ * will return the "error" event. </li>
  * <li> {@link #resetForm(RequestContext)} - Resets the form by reloading the
  * backing form object and reinstalling any custom property editors. Returns
- * success() on completion, an exception is thrown when a failure occurs. </li>
+ * "success" on completion, an exception is thrown when a failure occurs. </li>
  * </ul>
  * <p>
  * Since this is a multi-action a subclass could add any number of additional
@@ -78,7 +78,7 @@ import org.springframework.webflow.util.ReflectionUtils;
  * Using this action, it becomes very easy to implement form preparation and
  * submission logic in your flow. One way to do this follows:
  * <ol>
- * <li> Create a view state to display the form. In an entry action of that
+ * <li> Create a view state to display the form. In a render action of that
  * state, invoke {@link #setupForm(RequestContext) setupForm} to prepare the new
  * form for display. </li>
  * <li> On a matching "submit" transition execute an action that invokes
@@ -112,7 +112,6 @@ import org.springframework.webflow.util.ReflectionUtils;
  *     &lt;/action-state&gt;
  * </pre>
  * 
- * </p>
  * <p>
  * When you need additional flexibility consider splitting the view state above
  * acting as a single logical <i>form state</i> into multiple states. For
@@ -130,14 +129,18 @@ import org.springframework.webflow.util.ReflectionUtils;
  * instantiated transiently in memory or loaded from a database).</li>
  * <li>An optional hook method provided by this class is
  * {@link #initBinder(RequestContext, DataBinder) initBinder}. This is called
- * after a new data binder is created by any of the action execution methods. It
- * allows you to install any custom property editors required to format
- * richly-typed form object property values.
- * <p>
- * Note: consider setting an explicit
+ * after a new data binder is created by any of the action execution methods that
+ * require a data binder.
+ * <li>Another optional ook method is
+ * {@link #registerPropertyEditors(PropertyEditorRegistry)}. By overriding it
+ * you can register any required property editors for your form. Instead of
+ * overriding this method, consider setting an explicit
  * {@link org.springframework.beans.PropertyEditorRegistrar} strategy as a more
  * reusable way to encapsulate custom PropertyEditor installation logic.</li>
  * </ul>
+ * <li>Override {@link #validationEnabled(RequestContext)} to dynamically
+ * decide whether or not to do validation based on data available in the request
+ * context.
  * <p>
  * Note that this action does not provide a <i>referenceData()</i> hook method
  * similar to that of Spring MVC's <code>SimpleFormController</code>. If you
@@ -151,7 +154,7 @@ import org.springframework.webflow.util.ReflectionUtils;
  * <pre>
  * public Event setupReferenceData(RequestContext context) throws Exception {
  *     MutableAttributeMap requestScope = context.getRequestScope();
- *     requestScope.put(&quot;refData&quot;, lookupService2.getSupportingFormData());
+ *     requestScope.put(&quot;refData&quot;, lookupService.getSupportingFormData());
  *     return success();
  * }
  * </pre>
@@ -178,7 +181,7 @@ import org.springframework.webflow.util.ReflectionUtils;
  * <ul>
  * <li>If you don't want validation at all, just call
  * {@link #bind(RequestContext)} instead of
- * {@link #bindAndValidate(RequestContext)}.</li>
+ * {@link #bindAndValidate(RequestContext)} or don't register a validator.</li>
  * <li>If you want piecemeal validation, e.g. in a multi-page wizard, call
  * {@link #bindAndValidate(RequestContext)} or {@link #validate(RequestContext)}
  * and specify a {@link #VALIDATOR_METHOD_ATTRIBUTE validatorMethod} action
@@ -227,7 +230,7 @@ import org.springframework.webflow.util.ReflectionUtils;
  * <td>formObjectClass</td>
  * <td>null</td>
  * <td>The form object class for this action. An instance of this class will
- * get populated and validated.</td>
+ * get populated and validated. Required when using a validator.</td>
  * </tr>
  * <tr>
  * <td>formObjectScope</td>
@@ -242,14 +245,14 @@ import org.springframework.webflow.util.ReflectionUtils;
  * <td>{@link org.springframework.webflow.execution.ScopeType#FLASH flash}</td>
  * <td>The scope in which the form object errors instance will be put. If put
  * in flash scope form errors will be cached until the next user event is signaled.
-* </td>
+ * </td>
  * </tr>
  * <tr>
  * <td>propertyEditorRegistrar</td>
  * <td>null</td>
  * <td>The strategy used to register custom property editors with the data
  * binder. This is an alternative to overriding the
- * {@link #initBinder(RequestContext, DataBinder) initBinder} hook method. </td>
+ * {@link #registerPropertyEditors(PropertyEditorRegistry)} hook method. </td>
  * </tr>
  * <tr>
  * <td>validator</td>
@@ -551,7 +554,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * this method along with your own custom methods as part of a single action
 	 * chain. Alternatively, override the
 	 * {@link #doBind(RequestContext, DataBinder)} or
-	 * {@link #doValidate(RequestContext, DataBinder)} hooks.
+	 * {@link #doValidate(RequestContext, Object, Errors)} hooks.
 	 * @param context the action execution context, for accessing and setting
 	 * data in "flow scope" or "request scope"
 	 * @return "success" when binding and validation is successful, "error" if
@@ -862,8 +865,8 @@ public class FormAction extends MultiAction implements InitializingBean {
      * context. Can be overridden to plug in custom DataBinder subclasses.
      * <p>
      * Default implementation creates a standard WebDataBinder, and invokes
-     * {@link #initBinder(RequestContext, DataBinder)}. Note that initBinder
-     * will not be invoked if you override this method!
+     * {@link #initBinder(RequestContext, DataBinder)} and
+     * {@link #registerPropertyEditors(PropertyEditorRegistry)}.
      * @param context the action execution context, for accessing and setting
      * data in "flow scope" or "request scope"
      * @param formObject the form object to bind onto
