@@ -137,10 +137,10 @@ import org.springframework.webflow.util.ReflectionUtils;
  * overriding this method, consider setting an explicit
  * {@link org.springframework.beans.PropertyEditorRegistrar} strategy as a more
  * reusable way to encapsulate custom PropertyEditor installation logic.</li>
- * </ul>
  * <li>Override {@link #validationEnabled(RequestContext)} to dynamically
  * decide whether or not to do validation based on data available in the request
  * context.
+ * </ul>
  * <p>
  * Note that this action does not provide a <i>referenceData()</i> hook method
  * similar to that of Spring MVC's <code>SimpleFormController</code>. If you
