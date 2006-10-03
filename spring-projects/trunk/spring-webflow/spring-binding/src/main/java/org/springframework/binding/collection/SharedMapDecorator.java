@@ -15,6 +15,7 @@
  */
 package org.springframework.binding.collection;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +29,7 @@ import org.springframework.core.style.ToStringCreator;
  * 
  * @author Keith Donald
  */
-public class SharedMapDecorator implements SharedMap {
+public class SharedMapDecorator implements SharedMap, Serializable {
 
 	/**
 	 * The wrapped, target map.
