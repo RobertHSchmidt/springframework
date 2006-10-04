@@ -39,7 +39,7 @@
 
 	<!-- struts	only dependencies -->
 	<dependency	org="struts" name="struts" rev="1.2.9" conf="buildtime,struts->default"/>
-	<dependency	org="org.springframework" name="spring-struts" rev="2.0" conf="buildtime,struts-default"/>
+	<dependency	org="org.springframework" name="spring-struts" rev="2.0" conf="buildtime,struts->default"/>
 
     <!-- JSF-only dependencies -->
     <!-- note that at this time we depend on MyFaces, not JSF-RI -->
