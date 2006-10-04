@@ -16,6 +16,7 @@
 package org.springframework.webflow.config;
 
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
@@ -51,7 +52,7 @@ class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	private static final String REPOSITORY_TYPE_PROPERTY = "repositoryType";
 
-	protected BeanDefinition parseInternal(Element element, ParserContext parserContext) {
+	protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
 		BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder
 				.rootBeanDefinition(FlowExecutorFactoryBean.class);
 		definitionBuilder.addPropertyReference(DEFINITION_LOCATOR_PROPERTY, getRegistryRef(element));
