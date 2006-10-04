@@ -31,7 +31,7 @@ import org.springframework.webflow.test.MockRequestContext;
  */
 public class SetActionTests extends TestCase {
 	
-	private ExpressionParser parser = new DefaultExpressionParserFactory().getExpressionParser();
+	private ExpressionParser parser = DefaultExpressionParserFactory.getExpressionParser();
 
 	private MockRequestContext context = new MockRequestContext();
 

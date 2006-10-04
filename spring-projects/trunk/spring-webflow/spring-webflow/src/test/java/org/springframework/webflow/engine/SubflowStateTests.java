@@ -64,7 +64,7 @@ public class SubflowStateTests extends TestCase {
 
 	public void testSubFlowStateModelMapping() {
 		Flow subFlow = new Flow("mySubFlow");
-		MappingBuilder mapping = new MappingBuilder(new DefaultExpressionParserFactory().getExpressionParser());
+		MappingBuilder mapping = new MappingBuilder(DefaultExpressionParserFactory.getExpressionParser());
 		DefaultAttributeMapper inputMapper = new DefaultAttributeMapper();
 		inputMapper.addMapping(mapping.source("childInputAttribute").target("flowScope.childInputAttribute").value());
 		subFlow.setInputMapper(inputMapper);

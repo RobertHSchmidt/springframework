@@ -55,7 +55,7 @@ public class EndStateTests extends TestCase {
 	public void testEndStateTerminateFlowWithOutput() {
 		Flow flow = new Flow("myFlow");
 		DefaultAttributeMapper inputMapper = new DefaultAttributeMapper();
-		MappingBuilder mapping = new MappingBuilder(new DefaultExpressionParserFactory().getExpressionParser());
+		MappingBuilder mapping = new MappingBuilder(DefaultExpressionParserFactory.getExpressionParser());
 		inputMapper.addMapping(mapping.source("attr1").target("flowScope.attr1").value());
 		flow.setInputMapper(inputMapper);
 

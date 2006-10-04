@@ -29,7 +29,7 @@ import org.springframework.webflow.test.MockRequestContext;
  */
 public class AttributeMapperActionTests extends TestCase {
 
-	private MappingBuilder mappingBuilder = new MappingBuilder(new DefaultExpressionParserFactory()
+	private MappingBuilder mappingBuilder = new MappingBuilder(DefaultExpressionParserFactory
 			.getExpressionParser());
 
 	public void testMapping() throws Exception {

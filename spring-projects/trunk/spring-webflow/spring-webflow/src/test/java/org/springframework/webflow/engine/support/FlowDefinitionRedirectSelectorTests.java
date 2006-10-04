@@ -25,7 +25,7 @@ import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class FlowDefinitionRedirectSelectorTests extends TestCase {
-	ExpressionParser parser = new DefaultExpressionParserFactory().getExpressionParser();
+	ExpressionParser parser = DefaultExpressionParserFactory.getExpressionParser();
 
 	public void testMakeSelection() {
 		Expression exp = parser.parseExpression("${requestScope.flowIdVar}?a=b&c=${requestScope.bar}");

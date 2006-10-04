@@ -27,7 +27,7 @@ import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class ApplicationViewSelectorTests extends TestCase {
-	ExpressionParser parser = new DefaultExpressionParserFactory().getExpressionParser();
+	ExpressionParser parser = DefaultExpressionParserFactory.getExpressionParser();
 
 	public void testMakeSelection() {
 		Expression exp = parser.parseExpression("${requestScope.viewVar}");
