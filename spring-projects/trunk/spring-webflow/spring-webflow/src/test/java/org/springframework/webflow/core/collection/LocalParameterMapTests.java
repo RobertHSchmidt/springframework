@@ -15,12 +15,13 @@
  */
 package org.springframework.webflow.core.collection;
 
+import static org.easymock.EasyMock.createMock;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.easymock.MockControl;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -37,8 +38,7 @@ public class LocalParameterMapTests extends TestCase {
 		map.put("boolean", "true");
 		map.put("stringArray", new String[] { "1", "2", "3" });
 		map.put("emptyArray", new String[0]);
-		MockControl control = MockControl.createControl(MultipartFile.class);
-		map.put("multipartFile", control.getMock());
+		map.put("multipartFile", createMock(MultipartFile.class));
 		parameterMap = new LocalParameterMap(map);
 	}
 
