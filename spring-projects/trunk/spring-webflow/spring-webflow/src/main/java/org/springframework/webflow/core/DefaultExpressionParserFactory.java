@@ -18,7 +18,7 @@ package org.springframework.webflow.core;
 import org.springframework.binding.expression.ExpressionParser;
 
 /**
- * Helper static factory that creates instances of the default expression parser
+ * Static helper factory that creates instances of the default expression parser
  * used by Spring Web Flow when requested. Marked final with a private
  * constructor to prevent subclassing.
  * <p>
@@ -36,7 +36,6 @@ public final class DefaultExpressionParserFactory {
 
 	// static factory - not instantiable
 	private DefaultExpressionParserFactory() {
-
 	}
 
 	/**
@@ -62,13 +61,13 @@ public final class DefaultExpressionParserFactory {
 		} catch (ClassNotFoundException e) {
 			throw new IllegalStateException(
 					"Unable to load the default expression parser: OGNL could not be found in the classpath.  "
-							+ "Please add OGNL 2.x to your classpath or set the default ExpressionParser instance to something that is in the classpath.  "
-							+ "Details: " + e.getMessage());
+					+ "Please add OGNL 2.x to your classpath or set the default ExpressionParser instance to something that is in the classpath.  "
+					+ "Details: " + e.getMessage());
 		} catch (NoClassDefFoundError e) {
 			throw new IllegalStateException(
 					"Unable to construct the default expression parser: ognl.Ognl could not be instantiated.  "
-							+ "Please add OGNL 2.x to your classpath or set the default ExpressionParser instance to something that is in the classpath.  "
-							+ "Details: " + e);
+					+ "Please add OGNL 2.x to your classpath or set the default ExpressionParser instance to something that is in the classpath.  "
+					+ "Details: " + e);
 		}
 	}
 }
