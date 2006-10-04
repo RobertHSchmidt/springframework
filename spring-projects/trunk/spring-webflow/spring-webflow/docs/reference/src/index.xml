@@ -16,7 +16,7 @@
 		<title>Spring Web Flow</title>
 		<subtitle>Reference Documentation</subtitle>
 		<releaseinfo>Version 1.0 RC4</releaseinfo>
-		<pubdate>September 2006</pubdate>
+		<pubdate>October 2006</pubdate>
 		<authorgroup>
 			<author>
 				<firstname>Keith</firstname>
@@ -46,18 +46,18 @@
 		<para>
 			<inlinemediaobject>
 				<imageobject role="fo">
-					<imagedata fileref="images/logo-interface21.jpg" format="JPEG"/>
+					<imagedata fileref="images/logo-interface21.png" format="PNG"/>
 				</imageobject>
 				<imageobject role="html">
-					<imagedata fileref="images/logo-interface21.jpg" format="JPEG"/>
+					<imagedata fileref="images/logo-interface21.png" format="PNG"/>
 				</imageobject>
 			</inlinemediaobject>
 			<inlinemediaobject>
 				<imageobject role="fo">
-					<imagedata fileref="images/logo-ervacon.gif" format="GIF"/>
+					<imagedata fileref="images/logo-ervacon.png" format="PNG"/>
 				</imageobject>
 				<imageobject role="html">
-					<imagedata fileref="images/logo-ervacon.gif" format="GIF"/>
+					<imagedata fileref="images/logo-ervacon.png" format="PNG"/>
 				</imageobject>
 			</inlinemediaobject>
 		</para>
