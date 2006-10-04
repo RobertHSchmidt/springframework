@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry output="target/classes" kind="src" path="src/main/java"/>
-	<classpathentry output="target/test-classes" kind="src" path="src/test/java"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/buildtime/commons-beanutils.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-codec.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/commons-digester.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/concurrent.jar"/>
 	<classpathentry kind="lib" path="lib/test/easymock.jar"/>
@@ -14,17 +16,15 @@
 	<classpathentry kind="lib" path="lib/global/ognl.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/portlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/servlet-api.jar"/>
-	<classpathentry sourcepath="/spring-binding/src/main/java" kind="lib" path="lib/global/spring-binding.jar"/>
-	<classpathentry sourcepath="/spring/src" kind="lib" path="lib/global/spring-beans.jar"/>
-	<classpathentry sourcepath="/spring/src" kind="lib" path="lib/global/spring-context.jar"/>
-	<classpathentry sourcepath="/spring/src" kind="lib" path="lib/global/spring-core.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-binding.jar" sourcepath="/spring-binding/src/main/java"/>
+	<classpathentry kind="lib" path="lib/global/spring-beans.jar" sourcepath="/spring/src"/>
+	<classpathentry kind="lib" path="lib/global/spring-context.jar" sourcepath="/spring/src"/>
+	<classpathentry kind="lib" path="lib/global/spring-core.jar" sourcepath="/spring/src"/>
 	<classpathentry kind="lib" path="lib/buildtime/spring-portlet.jar"/>
-	<classpathentry sourcepath="/spring/src" kind="lib" path="lib/global/spring-web.jar"/>
-	<classpathentry sourcepath="/spring/src" kind="lib" path="lib/buildtime/spring-webmvc.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/spring-struts.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-web.jar" sourcepath="/spring/src"/>
+	<classpathentry kind="lib" path="lib/buildtime/spring-webmvc.jar" sourcepath="/spring/src"/>
 	<classpathentry kind="lib" path="lib/buildtime/struts.jar"/>
-	<classpathentry sourcepath="/spring/mock" kind="lib" path="lib/test/spring-mock.jar"/>
-	<classpathentry kind="lib" path="lib/buildtime/commons-digester.jar"/>
-	<classpathentry kind="lib" path="lib/global/spring-struts.jar"/>
-	<classpathentry kind="lib" path="lib/buildtime/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="lib/test/spring-mock.jar" sourcepath="/spring/mock"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
