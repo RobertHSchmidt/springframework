@@ -24,7 +24,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class BooleanExpressionTransitionCriteriaTests extends TestCase {
-	ExpressionParser parser = new DefaultExpressionParserFactory().getExpressionParser();
+	ExpressionParser parser = DefaultExpressionParserFactory.getExpressionParser();
 
 	public void testMatchCriteria() {
 		Expression exp = parser.parseExpression("${requestScope.flag}");

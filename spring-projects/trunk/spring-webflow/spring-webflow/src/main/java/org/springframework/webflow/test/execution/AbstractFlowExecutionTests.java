@@ -86,7 +86,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * The expression parser for parsing evaluatable model attribute
 	 * expressions.
 	 */
-	private ExpressionParser expressionParser = new DefaultExpressionParserFactory().getExpressionParser();
+	private ExpressionParser expressionParser = DefaultExpressionParserFactory.getExpressionParser();
 
 	/**
 	 * The flow execution running the flow when the test is active (runtime

@@ -18,50 +18,57 @@ package org.springframework.webflow.core;
 import org.springframework.binding.expression.ExpressionParser;
 
 /**
- * Factory that creates instances of the default expression parser used by
- * Spring Web Flow when requested.
+ * Helper static factory that creates instances of the default expression parser
+ * used by Spring Web Flow when requested. Marked final with a private
+ * constructor to prevent subclassing.
  * <p>
- * The default is an OGNL based expression parser. Also asserts that OGNL
- * is in the classpath when this class is loaded.
+ * The default is an OGNL based expression parser. Also asserts that OGNL is in
+ * the classpath when this class is loaded.
  * 
  * @author Keith Donald
  */
-public class DefaultExpressionParserFactory {
+public final class DefaultExpressionParserFactory {
 
-	private static ExpressionParser INSTANCE;
-	
 	/**
-	 * Returns the default expression parser. The returned expression parser
-	 * is a thread-safe object.
+	 * The singleton instance.
+	 */
+	private static ExpressionParser INSTANCE;
+
+	// static factory - not instantiable
+	private DefaultExpressionParserFactory() {
+
+	}
+
+	/**
+	 * Returns the default expression parser. The returned expression parser is
+	 * a thread-safe object.
 	 * @return the expression parser
 	 */
-	public synchronized ExpressionParser getExpressionParser() {
+	public static synchronized ExpressionParser getExpressionParser() {
 		if (INSTANCE == null) {
 			INSTANCE = createDefaultExpressionParser();
 		}
 		return INSTANCE;
 	}
-	
+
 	/**
 	 * Create the default expression parser.
 	 * @return the default expression parser
 	 */
-	private ExpressionParser createDefaultExpressionParser() {
+	private static ExpressionParser createDefaultExpressionParser() {
 		try {
 			Class.forName("ognl.Ognl");
 			return new WebFlowOgnlExpressionParser();
-		}
-		catch (ClassNotFoundException e) {
+		} catch (ClassNotFoundException e) {
 			throw new IllegalStateException(
 					"Unable to load the default expression parser: OGNL could not be found in the classpath.  "
-					+ "Please add OGNL 2.x to your classpath or set the default ExpressionParser instance to something that is in the classpath.  "
-					+ "Details: " + e.getMessage());
-		}
-		catch (NoClassDefFoundError e) {
+							+ "Please add OGNL 2.x to your classpath or set the default ExpressionParser instance to something that is in the classpath.  "
+							+ "Details: " + e.getMessage());
+		} catch (NoClassDefFoundError e) {
 			throw new IllegalStateException(
 					"Unable to construct the default expression parser: ognl.Ognl could not be instantiated.  "
-					+ "Please add OGNL 2.x to your classpath or set the default ExpressionParser instance to something that is in the classpath.  "
-					+ "Details: " + e);
+							+ "Please add OGNL 2.x to your classpath or set the default ExpressionParser instance to something that is in the classpath.  "
+							+ "Details: " + e);
 		}
 	}
 }

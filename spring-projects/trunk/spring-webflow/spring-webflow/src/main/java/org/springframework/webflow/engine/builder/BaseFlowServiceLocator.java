@@ -63,7 +63,7 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	 * The parser for parsing expression strings into evaluatable expression
 	 * objects.
 	 */
-	private ExpressionParser expressionParser = new DefaultExpressionParserFactory().getExpressionParser();
+	private ExpressionParser expressionParser = DefaultExpressionParserFactory.getExpressionParser();
 
 	/**
 	 * A conversion service that can convert between types.

@@ -27,7 +27,7 @@ import org.springframework.webflow.test.MockRequestContext;
 public class FlowScopeExpressionTests extends TestCase {
 
 	public void testFlowScopeExpression() {
-		Expression exp = new DefaultExpressionParserFactory().getExpressionParser().parseExpression("foo");
+		Expression exp = DefaultExpressionParserFactory.getExpressionParser().parseExpression("foo");
 		FlowScopeExpression flowExp = new FlowScopeExpression(exp);
 		MockRequestContext context = new MockRequestContext();
 		context.getFlowScope().put("foo", "bar");

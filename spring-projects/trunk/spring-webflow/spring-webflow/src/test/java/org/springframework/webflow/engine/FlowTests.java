@@ -206,7 +206,7 @@ public class FlowTests extends TestCase {
 
 	public void testStartWithMapper() {
 		DefaultAttributeMapper attributeMapper = new DefaultAttributeMapper();
-		MappingBuilder mapping = new MappingBuilder(new DefaultExpressionParserFactory().getExpressionParser());
+		MappingBuilder mapping = new MappingBuilder(DefaultExpressionParserFactory.getExpressionParser());
 		attributeMapper.addMapping(mapping.source("attr").target("flowScope.attr").value());
 		flow.setInputMapper(attributeMapper);
 		MockRequestControlContext context = new MockRequestControlContext(flow);
@@ -218,7 +218,7 @@ public class FlowTests extends TestCase {
 
 	public void testStartWithMapperButNoInput() {
 		DefaultAttributeMapper attributeMapper = new DefaultAttributeMapper();
-		MappingBuilder mapping = new MappingBuilder(new DefaultExpressionParserFactory().getExpressionParser());
+		MappingBuilder mapping = new MappingBuilder(DefaultExpressionParserFactory.getExpressionParser());
 		attributeMapper.addMapping(mapping.source("attr").target("flowScope.attr").value());
 		flow.setInputMapper(attributeMapper);
 		MockRequestControlContext context = new MockRequestControlContext(flow);
@@ -300,7 +300,7 @@ public class FlowTests extends TestCase {
 
 	public void testEndWithOutputMapper() {
 		DefaultAttributeMapper attributeMapper = new DefaultAttributeMapper();
-		MappingBuilder mapping = new MappingBuilder(new DefaultExpressionParserFactory().getExpressionParser());
+		MappingBuilder mapping = new MappingBuilder(DefaultExpressionParserFactory.getExpressionParser());
 		attributeMapper.addMapping(mapping.source("flowScope.attr").target("attr").value());
 		flow.setOutputMapper(attributeMapper);
 		MockRequestControlContext context = new MockRequestControlContext(flow);

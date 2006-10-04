@@ -67,7 +67,7 @@ public class DefaultFlowAttributeMapper extends AbstractFlowAttributeMapper impl
 	 * The expression parser that will parse input and output attribute
 	 * expressions.
 	 */
-	private ExpressionParser expressionParser = new DefaultExpressionParserFactory().getExpressionParser();
+	private ExpressionParser expressionParser = DefaultExpressionParserFactory.getExpressionParser();
 
 	/**
 	 * The mapper that maps attributes into a spawning subflow.

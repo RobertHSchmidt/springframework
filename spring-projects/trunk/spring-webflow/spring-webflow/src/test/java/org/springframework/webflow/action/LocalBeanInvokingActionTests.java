@@ -82,6 +82,6 @@ public class LocalBeanInvokingActionTests extends TestCase {
 	}
 
 	private Expression expression(String string) {
-		return new DefaultExpressionParserFactory().getExpressionParser().parseExpression(string);
+		return DefaultExpressionParserFactory.getExpressionParser().parseExpression(string);
 	}
 }

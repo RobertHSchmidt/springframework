@@ -63,7 +63,7 @@ public class FlowExecutionImplTests extends TestCase {
 	public void testFlowExecutionListener() {
 		Flow flow = new Flow("myFlow");
 		DefaultAttributeMapper inputMapper = new DefaultAttributeMapper();
-		MappingBuilder mapping = new MappingBuilder(new DefaultExpressionParserFactory().getExpressionParser());
+		MappingBuilder mapping = new MappingBuilder(DefaultExpressionParserFactory.getExpressionParser());
 		inputMapper.addMapping(mapping.source("name").target("flowScope.name").value());
 		flow.setInputMapper(inputMapper);
 		ActionState actionState = new ActionState(flow, "actionState");
