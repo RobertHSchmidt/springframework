@@ -1,4 +1,4 @@
-SPRING WEB FLOW 1.0 RC4 (September 2006)
+SPRING WEB FLOW 1.0 RC4 (October 2006)
 ----------------------------------------
 http://www.springframework.org/webflow
 http://forum.springframework.org
@@ -6,17 +6,18 @@ http://forum.springframework.org
 1. INTRODUCTION
 
 Spring Web Flow (SWF) is a product of the Spring community focused on the definition
-and execution of UI flow within a web application.
+and execution of user interface (UI) flow within a web application.
 
-The system allows you to capture logical page flows as self-contained modules that are
-reusable in different situations. The system is ideal for web applications that guide
-the user through controlled navigations that drive business processes.  These processes
-typically span HTTP requests and may be dynamic in nature.
+The system allows you to define a user's dialog with your application from 
+self-contained modules called "flows" that are reusable in different situations.
+Flows are ideal for guiding users through controlled navigations that drive business
+processes.  These processes typically span HTTP requests, have state, and
+may be dynamic in nature.
 
 SWF is a focused flow engine that integrates with existing frameworks like Spring MVC,
-Struts, and JSF, capable of capturing your application's page flow explicity in a
+Struts, and JSF, capable of capturing your application's control flow explicity in a
 declarative, reusable fashion.  SWF is a very powerful framework based on a finite-state
-machine for the definition and execution of web conversations.
+machine for the definition and execution of UI control flow.
 
 2. RELEASE INFO
 
@@ -80,7 +81,7 @@ The Spring Web Flow homepage is located at:
 There you will find resources such as a 'Quick Start' guide and a 'Frequently Asked Questions'
 section.
 
-Spring Web Flow support forums are located at:
+The Spring Web Flow support forums are located at:
 
 	http://forum.springframework.org
 	
