@@ -42,13 +42,13 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 
 	/**
 	 * The name of the attribute to expose a handled exception under in
-	 * request scope.
+	 * flash scope.
 	 */
 	public static final String STATE_EXCEPTION_ATTRIBUTE = "stateException";
 
 	/**
 	 * The name of the attribute to expose a root cause of a handled exception
-	 * under in request scope.
+	 * under in flash scope.
 	 */
 	public static final String ROOT_CAUSE_EXCEPTION_ATTRIBUTE = "rootCauseException";
 
