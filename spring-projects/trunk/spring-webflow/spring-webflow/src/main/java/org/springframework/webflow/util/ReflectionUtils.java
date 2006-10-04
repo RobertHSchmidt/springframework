@@ -30,23 +30,26 @@ public class ReflectionUtils {
 	/**
 	 * Invoke the specified {@link Method} against the supplied target object
 	 * with no arguments. The target object can be <code>null</code> when
-	 * invoking a static {@link Method}.
+	 * invoking a static {@link Method}. All exceptions are treated as fatal and will be
+     * converted to unchecked exceptions.
 	 * @see #invokeMethod(java.lang.reflect.Method, Object, Object[])
+     * @throws RuntimeException when something goes wrong invoking the method or
+     * when the method itself throws an exception
 	 */
-	public static Object invokeMethod(Method method, Object target) {
+	public static Object invokeMethod(Method method, Object target) throws RuntimeException {
 		return invokeMethod(method, target, null);
 	}
 
 	/**
 	 * Invoke the specified {@link Method} against the supplied target object
 	 * with the supplied arguments. The target object can be null when invoking a
-	 * static {@link Method}.
-	 * <p>
-	 * Thrown exceptions are handled via a call to
-	 * {@link #handleReflectionException(Exception)}.
+	 * static {@link Method}. All exceptions are treated as fatal and will be
+     * converted to unchecked exceptions.
 	 * @see #invokeMethod(java.lang.reflect.Method, Object, Object[])
+     * @throws RuntimeException when something goes wrong invoking the method or
+     * when the method itself throws an exception
 	 */
-	public static Object invokeMethod(Method method, Object target, Object[] args) {
+	public static Object invokeMethod(Method method, Object target, Object[] args) throws RuntimeException {
 		try {
 			return method.invoke(target, args);
 		}
