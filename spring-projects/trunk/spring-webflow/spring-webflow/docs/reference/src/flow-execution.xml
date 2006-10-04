@@ -702,13 +702,18 @@
         ...
         
         @Override
+        protected FlowDefinitionResource getFlowDefinitionResource() {
+            return createFlowDefinitionResource("src/main/webapp/WEB-INF/flows/search-flow.xml");
+        }
+        
+        @Override
         protected FlowServiceLocator createFlowServiceLocator() {
         
             // create a context to host our middle tier services
             ApplicationContext context =
                 new ClassPathXmlApplicationContext(new String[] {
                    "classpath:service-layer-config.xml",
-                   "classpath:dao-layer-config.xml"
+                   "classpath:data-access-layer-config.xml"
                 });
             
             // create a registry for our flow definitions being tested
@@ -717,7 +722,7 @@
             // initialize the service locator
             DefaultFlowServiceLocator locator = new DefaultFlowServiceLocator(registry, context);
             
-            // perform flow definition registration with the help of a registrar
+            // perform subflow definition registration with the help of a registrar
             XmlFlowRegistrar registrar = new XmlFlowRegistrar(locator);
             registrar.addResource(createFlowDefinitionResource("/WEB-INF/flows/search-flow.xml"));
             registrar.addResource(createFlowDefinitionResource("/WEB-INF/flows/detail-flow.xml"));
