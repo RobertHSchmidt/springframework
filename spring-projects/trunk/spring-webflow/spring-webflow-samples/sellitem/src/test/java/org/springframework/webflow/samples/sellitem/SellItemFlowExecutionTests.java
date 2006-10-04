@@ -56,7 +56,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		testSubmitCategoryFormWithShipping();
 
 		saleProcessor.process((Sale)getRequiredFlowAttribute("sale", Sale.class));
-		replay(saleProcessor);
+		EasyMock.replay(saleProcessor);
 		
 		MockParameterMap parameters = new MockParameterMap();
 		parameters.put("shippingType", "E");
@@ -65,7 +65,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		assertViewNameEquals("costOverview", selectedView);
 		assertFlowExecutionEnded();
 
-		verify(saleProcessor);
+		EasyMock.verify(saleProcessor);
 	}
 
 	@Override
