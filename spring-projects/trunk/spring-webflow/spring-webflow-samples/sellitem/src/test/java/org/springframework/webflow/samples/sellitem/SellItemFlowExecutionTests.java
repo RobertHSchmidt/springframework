@@ -1,6 +1,8 @@
 package org.springframework.webflow.samples.sellitem;
 
-import org.easymock.MockControl;
+import static org.easymock.EasyMock.*;
+
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.test.MockFlowServiceLocator;
@@ -10,8 +12,6 @@ import org.springframework.webflow.test.execution.AbstractXmlFlowExecutionTests;
 public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	private String flowDir = "src/main/webapp/WEB-INF/flows";
-
-	private MockControl saleProcessorControl;
 
 	private SaleProcessor saleProcessor;
 
@@ -57,8 +57,8 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		testSubmitCategoryFormWithShipping();
 
 		saleProcessor.process((Sale)getRequiredFlowAttribute("sale", Sale.class));
-		saleProcessorControl.replay();
-
+		replay(saleProcessor);
+		
 		MockParameterMap parameters = new MockParameterMap();
 		parameters.put("shippingType", "E");
 		parameters.put("shipDate", "12/06/2006");
@@ -66,13 +66,12 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		assertViewNameEquals("costOverview", selectedView);
 		assertFlowExecutionEnded();
 
-		saleProcessorControl.verify();
+		verify(saleProcessor);
 	}
 
 	@Override
 	protected void registerMockServices(MockFlowServiceLocator serviceRegistry) {
-		saleProcessorControl = MockControl.createControl(SaleProcessor.class);
-		saleProcessor = (SaleProcessor)saleProcessorControl.getMock();
+		saleProcessor = createMock(SaleProcessor.class);
 		serviceRegistry.registerBean("saleProcessor", saleProcessor);
 
 		// we'll use real shipping flow
