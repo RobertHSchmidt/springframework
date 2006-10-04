@@ -125,7 +125,9 @@ Package org.springframework.webflow.engine
   DocumentBuilder factory logic.
 * Fixed bug where flow execution restoration would fail when the active flow was an in-line flow
   of a subflow.
-     
+* TransitionExecutingStateExceptionHandler now exposes exceptions in flash scope now so they live through
+  a view redirect and any subsequent refreshes.
+       
 Package org.springframework.webflow.execution
 * Added support for "flow execution attributes" for setting system parameters that can affect flow execution.
 * Added new "flash" scope type for storing attributes for the duration of a request plus a redirect
