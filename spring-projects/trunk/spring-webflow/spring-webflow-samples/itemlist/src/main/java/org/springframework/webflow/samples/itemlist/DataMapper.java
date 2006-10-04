@@ -20,8 +20,9 @@ import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
 
 public class DataMapper extends DefaultAttributeMapper {
+
 	public DataMapper() {
-		MappingBuilder mapping = new MappingBuilder(new DefaultExpressionParserFactory().getExpressionParser());
+		MappingBuilder mapping = new MappingBuilder(DefaultExpressionParserFactory.getExpressionParser());
 		addMapping(mapping.source("requestParameters.data").target("flowScope.item").value());
 	}
 }
