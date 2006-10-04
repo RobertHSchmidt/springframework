@@ -238,7 +238,7 @@
         
         &lt;!-- Creates the registry of flow definitions for this application: Spring 1.2 config version --&gt;
         &lt;bean id="flowRegistry"
-              class="org.springframework.webflow.engine.builder.xml.XmlFlowRegistryFactoryBean"&gt;
+           class="org.springframework.webflow.engine.builder.xml.XmlFlowRegistryFactoryBean"&gt;
             &lt;property name="flowLocations"&gt;
                 &lt;list&gt;
                     &lt;value&gt;/WEB-INF/flows/**/*-flow.xml&lt;/value&gt;
@@ -457,7 +457,7 @@
 	    	
     &lt;action-mappings&gt;
         &lt;action path="/flowAction" name="actionForm" scope="request"
-                   type="org.springframework.webflow.executor.struts.FlowAction"/&gt;
+                type="org.springframework.webflow.executor.struts.FlowAction"/&gt;
     &lt;/action-mappings&gt;
 	    	</programlisting>
     	</sect2>		
