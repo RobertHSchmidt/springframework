@@ -15,11 +15,11 @@
  */
 package org.springframework.webflow.config;
 
+import junit.framework.TestCase;
+
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.webflow.executor.mvc.FlowController;
-
-import junit.framework.TestCase;
 
 /**
  * Test case that illustrates configuration of a FlowController and its
