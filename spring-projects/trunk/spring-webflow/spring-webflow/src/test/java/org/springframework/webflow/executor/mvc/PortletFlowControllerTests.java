@@ -23,7 +23,7 @@ import org.springframework.mock.web.portlet.MockPortletContext;
 import org.springframework.mock.web.portlet.MockRenderRequest;
 import org.springframework.mock.web.portlet.MockRenderResponse;
 import org.springframework.web.portlet.ModelAndView;
-import org.springframework.webflow.conversation.impl.LocalConversationManager;
+import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.engine.SimpleFlow;
@@ -47,7 +47,7 @@ public class PortletFlowControllerTests extends TestCase {
 		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(new SimpleFlow()));
 		FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
 		FlowExecutionRepository repository = new SimpleFlowExecutionRepository(new FlowExecutionImplStateRestorer(
-				registry), new LocalConversationManager(-1));
+				registry), new SessionBindingConversationManager());
 		controller.setFlowExecutor(new FlowExecutorImpl(registry, factory, repository));
 	}
 
