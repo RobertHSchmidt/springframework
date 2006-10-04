@@ -1,7 +1,6 @@
 package org.springframework.webflow.samples.sellitem;
 
-import static org.easymock.EasyMock.*;
-
+import org.easymock.EasyMock;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.execution.support.ApplicationView;
@@ -71,7 +70,7 @@ public class SellItemFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	@Override
 	protected void registerMockServices(MockFlowServiceLocator serviceRegistry) {
-		saleProcessor = createMock(SaleProcessor.class);
+		saleProcessor = EasyMock.createMock(SaleProcessor.class);
 		serviceRegistry.registerBean("saleProcessor", saleProcessor);
 
 		// we'll use real shipping flow
