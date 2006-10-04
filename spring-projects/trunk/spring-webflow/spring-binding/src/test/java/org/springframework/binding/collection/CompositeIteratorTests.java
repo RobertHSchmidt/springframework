@@ -20,8 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.springframework.binding.collection.CompositeIterator;
-
 import junit.framework.TestCase;
 
 /**

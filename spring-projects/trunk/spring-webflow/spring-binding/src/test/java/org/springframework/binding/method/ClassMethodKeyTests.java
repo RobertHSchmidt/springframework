@@ -57,7 +57,7 @@ public class ClassMethodKeyTests extends TestCase {
 	}
 
 	public void testGetMethodWithSingleNullAndUnclearMatch() throws Exception {
-		ClassMethodKey key = new ClassMethodKey(File.class, "listFiles", new Class[] { null });
+		new ClassMethodKey(File.class, "listFiles", new Class[] { null });
 	}
 
 	private static final Method safeGetMethod(Class type, String name, Class[] argTypes) {
