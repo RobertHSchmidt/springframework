@@ -2,7 +2,7 @@ SPRING WEB FLOW (SWF) CHANGELOG
 ===============================
 http://www.springframework.org
 
-Changes in version 1.0 RC4 (25.9.2006)
+Changes in version 1.0 RC4 (04.10.2006)
 --------------------------------------
 
 General
@@ -82,9 +82,6 @@ Package org.springframework.webflow.context
 Package org.springframework.webflow.conversation
 * Renamed ConversationService to ConversationManager.
 * Added SessionBindingConversationManager for storing conversations in the session map.
-* Added stateful LocalConversationManager for storing conversations in a local concurrent hash map
-  with session-based expiration support.
-* Fixed bug where ConversationEntry lock was not released on 'end'.
 * Fixed bug where an IllegalMonitorException could occur on implicit conversation unlock on 'end'.
 
 Package org.springframework.webflow.definition
@@ -104,7 +101,7 @@ Package org.springframework.webflow.engine
 * Significantly enhanced in-line XML element and attribute documentation for benefit of .xsd users.
 * Reworked support for "bean invoking actions".  Introduced new <bean action/> tag.
 * Added support for <evaluate-action/> elements for evaluating arbitrary flow expressions as an action using OGNL.
-* Added support for <set/> elements for setting flow scope attributes as an action.
+* Added support for <set/> elements for setting attributes in a scope type as an action.
 * Added support for 'required' mappings.  A required mapping will report an error if its source expression evaluates to a null value.
 * Added 'renderActionList' property to ViewState, for executing behavior before a view selection is rendered. 
 * Added support for <render-actions> within a <view-state/> element, for executing behavior
@@ -131,7 +128,9 @@ Package org.springframework.webflow.engine
      
 Package org.springframework.webflow.execution
 * Added support for "flow execution attributes" for setting system parameters that can affect flow execution.
-* Added new "flash" scope type for storing attributes for the duration of a request plus redirect.
+* Added new "flash" scope type for storing attributes for the duration of a request plus a redirect
+  and any subsequent view refreshes.  More specifically, flash is cleared when the next user event
+  is signaled.
 * Added support for listening to "exceptionThrown" events in a FlowExecution - see FlowExecutionListener.
 * Decoupled the central RequestContext interface from the flow execution engine implementation.
 * Renamed the "flow" property of FlowExecutionContext to "definition" for consistency.
