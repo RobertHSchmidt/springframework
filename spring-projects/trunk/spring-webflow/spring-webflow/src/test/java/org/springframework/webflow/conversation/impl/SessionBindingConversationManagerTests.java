@@ -99,6 +99,7 @@ public class SessionBindingConversationManagerTests extends TestCase {
 		ExternalContextHolder.setExternalContext(new MockExternalContext());
 		Conversation conversation1 = conversationManager.beginConversation(
 				new ConversationParameters("test", "test", "test"));
+		conversation1.lock();
 		assertNotNull(conversationManager.getConversation(conversation1.getId()));
 		Conversation conversation2 = conversationManager.beginConversation(
 				new ConversationParameters("test", "test", "test"));
@@ -107,6 +108,8 @@ public class SessionBindingConversationManagerTests extends TestCase {
 		Conversation conversation3 = conversationManager.beginConversation(
 				new ConversationParameters("test", "test", "test"));
 		try {
+			conversation1.end();
+			conversation1.unlock();
 			conversationManager.getConversation(conversation1.getId());
 			fail();
 		}
