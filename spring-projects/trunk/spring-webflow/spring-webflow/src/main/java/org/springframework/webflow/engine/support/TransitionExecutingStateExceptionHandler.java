@@ -91,13 +91,15 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 		if (logger.isDebugEnabled()) {
 			logger.debug("Handling state exception " + e);
 		}
-		context.getRequestScope().put(STATE_EXCEPTION_ATTRIBUTE, e);
+		// expose state exception in flash scope so it's available for response rendering
+		context.getFlashScope().put(STATE_EXCEPTION_ATTRIBUTE, e);
 		Throwable rootCause = findRootCause(e);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Exposing state exception root cause " + rootCause + " under attribute '"
 					+ ROOT_CAUSE_EXCEPTION_ATTRIBUTE + "'");
 		}
-		context.getRequestScope().put(ROOT_CAUSE_EXCEPTION_ATTRIBUTE, rootCause);
+		// expose root cause in flash scope so it's available for response rendering
+		context.getFlashScope().put(ROOT_CAUSE_EXCEPTION_ATTRIBUTE, rootCause);
 		actionList.execute(context);
 		return context.execute(new Transition(getTargetStateId(e)));
 	}
