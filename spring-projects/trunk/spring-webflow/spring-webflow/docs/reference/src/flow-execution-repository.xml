@@ -157,9 +157,8 @@
 		<sect2 id="repository-simple">
 			<title>Simple flow execution repository</title>
 			<para>
-				The simplest possible repository and the default implementation
-				(<literal>SimpleFlowExecutionRepository</literal>). This repository
-				stores <emphasis>exactly one</emphasis> flow execution instance per conversation
+				The simplest possible repository (<literal>SimpleFlowExecutionRepository</literal>).
+				This repository stores <emphasis>exactly one</emphasis> flow execution instance per conversation
 				in the user's session, invalidating it when its end state is reached.
 				This repository implementation has been designed with minimal storage overhead in mind.
 			</para>
