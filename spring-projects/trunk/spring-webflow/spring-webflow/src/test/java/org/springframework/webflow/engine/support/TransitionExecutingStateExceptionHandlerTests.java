@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.webflow.TestException;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.RequestControlContext;
@@ -28,6 +29,7 @@ import org.springframework.webflow.engine.impl.FlowExecutionImpl;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
+import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.test.MockExternalContext;
@@ -76,10 +78,10 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		handler.add(TestException.class, "end");
 		flow.getExceptionHandlerSet().add(handler);
 		FlowExecutionListener listener = new FlowExecutionListenerAdapter() {
-			public void requestProcessed(RequestContext context) {
-				assertTrue(context.getRequestScope().contains("stateException"));
-				assertTrue(context.getRequestScope().contains("rootCauseException"));
-				assertTrue(context.getRequestScope().get("rootCauseException") instanceof TestException);
+			public void sessionEnding(RequestContext context, FlowSession session, MutableAttributeMap output) {
+				assertTrue(context.getFlashScope().contains("stateException"));
+				assertTrue(context.getFlashScope().contains("rootCauseException"));
+				assertTrue(context.getFlashScope().get("rootCauseException") instanceof TestException);
 			}
 		};
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow, new FlowExecutionListener[] { listener }, null);
