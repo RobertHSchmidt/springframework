@@ -22,6 +22,6 @@
 		<property name="flowLocations" value="classpath:org/springframework/webflow/executor/flow.xml" />
 	</bean>
 
-	<bean id="conversationManager" class="org.springframework.webflow.conversation.impl.LocalConversationManager"/>
+	<bean id="conversationManager" class="org.springframework.webflow.conversation.impl.SessionBindingConversationManager"/>
 
 </beans>

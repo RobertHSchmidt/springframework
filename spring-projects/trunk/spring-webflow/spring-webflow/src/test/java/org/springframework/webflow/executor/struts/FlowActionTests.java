@@ -27,7 +27,7 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.web.struts.SpringBindingActionForm;
-import org.springframework.webflow.conversation.impl.LocalConversationManager;
+import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.engine.SimpleFlow;
@@ -58,7 +58,7 @@ public class FlowActionTests extends TestCase {
 		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(new SimpleFlow()));
 		FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
 		FlowExecutionRepository repository = new SimpleFlowExecutionRepository(new FlowExecutionImplStateRestorer(
-				registry), new LocalConversationManager(-1));
+				registry), new SessionBindingConversationManager());
 		action.setFlowExecutor(new FlowExecutorImpl(registry, factory, repository));
 
 		action.setServlet(new ActionServlet());
