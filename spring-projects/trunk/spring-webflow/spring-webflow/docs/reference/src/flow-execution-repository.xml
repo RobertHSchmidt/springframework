@@ -208,9 +208,7 @@
 				 This repository is more elaborate than the default repository, offering
 				 more power (by enabling multiple continuations to exist per conversation),
 				 but incurring more storage overhead.  This repository implementation should be
-				 considered when you do have to support browser navigational button use;
-				 for example, you cannot lock down the browser and have 
-				 all navigation events routed explicitly through Spring Web Flow.
+				 considered when you do have to support browser navigational button use.
 			</para>
 		</sect2>
 		<sect2 id="repository-client">
