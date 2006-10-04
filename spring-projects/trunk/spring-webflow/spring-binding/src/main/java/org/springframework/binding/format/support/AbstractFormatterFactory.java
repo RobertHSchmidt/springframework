@@ -22,8 +22,6 @@ import org.springframework.binding.format.FormatterFactory;
 import org.springframework.binding.format.Style;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.SimpleLocaleContext;
-import org.springframework.core.enums.LabeledEnumResolver;
-import org.springframework.core.enums.StaticLabeledEnumResolver;
 
 /**
  * Base class for formatter factories.
@@ -38,8 +36,6 @@ public abstract class AbstractFormatterFactory implements FormatterFactory {
 
 	private Style defaultTimeStyle = Style.MEDIUM;
 
-	private LabeledEnumResolver labeledEnumResolver = new StaticLabeledEnumResolver();
-
 	public void setLocaleContext(LocaleContext localeContext) {
 		this.localeContext = localeContext;
 	}
@@ -50,10 +46,6 @@ public abstract class AbstractFormatterFactory implements FormatterFactory {
 
 	public void setDefaultTimeStyle(Style defaultTimeStyle) {
 		this.defaultTimeStyle = defaultTimeStyle;
-	}
-
-	public void setLabeledEnumResolver(LabeledEnumResolver labeledEnumResolver) {
-		this.labeledEnumResolver = labeledEnumResolver;
 	}
 
 	protected Style getDefaultDateStyle() {
