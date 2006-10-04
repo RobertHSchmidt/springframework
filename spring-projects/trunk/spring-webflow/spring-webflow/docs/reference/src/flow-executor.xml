@@ -186,17 +186,17 @@
 			<programlisting>
     &lt;flow:executor id="flowExecutor" registry-ref="flowRegistry" repository-type="continuation"&gt;
         &lt;flow:execution-attributes&gt;
-            &lt;flow:alwaysRedirectOnPause/&gt;
+            &lt;flow:alwaysRedirectOnPause value="false"/&gt;
             &lt;flow:attribute name="foo" value="bar"/&gt;
         &lt;/flow:execution-attributes&gt;
     &lt;/flow-executor&gt;
 			</programlisting>
 	    	<para>
 	    		This executor is configured to set two flow execution system attributes
-	    		<literal>alwaysRedirectOnPause=true</literal> and <literal>foo=bar</literal>.
-	    		The <literal>alwaysRedirectOnPause</literal> attribute will trigger a 
-	    		flow execution redirect each time an execution pauses
-	    		(automatic <literal>POST+REDIRECT+GET</literal> behavior).
+	    		<literal>alwaysRedirectOnPause=false</literal> and <literal>foo=bar</literal>.
+	    		The <literal>alwaysRedirectOnPause</literal> attribute will disable 
+	    		the default behavior where a flow execution redirect occurs 
+	    		each time an execution pauses (automatic <literal>POST+REDIRECT+GET</literal> behavior).
 	    	</para>	
 		</sect2>
     	<sect2 id="executor-excution-listeners">
@@ -229,7 +229,7 @@
             &lt;property name="executionAttributes"&gt;
                 &lt;map&gt;
                     &lt;entry key="alwaysRedirectOnPause"&gt;
-                        &lt;value type="java.lang.Boolean"&gt;true&lt;/value&gt;
+                        &lt;value type="java.lang.Boolean"&gt;false&lt;/value&gt;
                     &lt;/entry&gt;
                 &lt;/map&gt;
             &lt;/property&gt;
@@ -238,7 +238,7 @@
         
         &lt;!-- Creates the registry of flow definitions for this application: Spring 1.2 config version --&gt;
         &lt;bean id="flowRegistry"
-                 class="org.springframework.webflow.engine.builder.xml.XmlFlowRegistryFactoryBean"&gt;
+              class="org.springframework.webflow.engine.builder.xml.XmlFlowRegistryFactoryBean"&gt;
             &lt;property name="flowLocations"&gt;
                 &lt;list&gt;
                     &lt;value&gt;/WEB-INF/flows/**/*-flow.xml&lt;/value&gt;
@@ -398,7 +398,7 @@
 		    	</programlisting>
 	   		 	<note>
 	   		 		<para>
-		  	  			In this case the <literal>eventId</literal> is determined by parsing the parameter name of the 
+		  	  			In this case the <literal>eventId</literal> is determined by parsing the name of the 
 		   		 		button that was pressed.
 		   		 	</para>
 		    	</note>
