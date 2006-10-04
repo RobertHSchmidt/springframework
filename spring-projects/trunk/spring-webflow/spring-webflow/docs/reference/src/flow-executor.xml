@@ -432,7 +432,7 @@
     		<sect3 id="executor-mvc-resume-form-buttons-requestpath">
    	 			<title>Resuming a flow execution - multiple form buttons</title>
 		    	<programlisting>
-    &lt;form action="k/${flowExecutionKey}" method="post"&gt;
+    &lt;form action="${flowExecutionKey}" method="post"&gt;
         ...
         &lt;input type="submit" class="button" name="_eventId_submit" value="Submit"&gt;
         &lt;input type="submit" class="button" name="_eventId_cancel" value="Cancel"&gt;
