@@ -21,7 +21,7 @@ import javax.faces.el.VariableResolver;
 
 import junit.framework.TestCase;
 
-import org.easymock.MockControl;
+import org.easymock.EasyMock;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.repository.FlowExecutionKey;
 
@@ -69,16 +69,15 @@ public class FlowVariableResolverTests extends TestCase {
 	}
 
 	public void testResolveVariableFlowScopeWithThreadLocal() {
-		MockControl flowExecutionControl = MockControl.createControl(FlowExecution.class);
-		FlowExecution flowExecutionMock = (FlowExecution)flowExecutionControl.getMock();
+		FlowExecution flowExecutionMock = (FlowExecution)EasyMock.createMock(FlowExecution.class);
 		FlowExecutionKey key = null;
 		FlowExecutionHolder holder = new FlowExecutionHolder(key, flowExecutionMock);
 		FlowExecutionHolderUtils.setFlowExecutionHolder(holder, mockFacesContext);
-		flowExecutionControl.replay();
+		EasyMock.replay(new Object[] { flowExecutionMock });
 
 		Object result = tested.resolveVariable(mockFacesContext, "flowScope");
 
-		flowExecutionControl.verify();
+		EasyMock.verify(new Object[] { flowExecutionMock });
 		assertFalse("resolved using delegate", variableResolver.resolvedUsingDelegate);
 		assertSame(flowExecutionMock, result);
 	}
