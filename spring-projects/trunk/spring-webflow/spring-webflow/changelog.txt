@@ -2,8 +2,14 @@ SPRING WEB FLOW (SWF) CHANGELOG
 ===============================
 http://www.springframework.org
 
+Changes in version 1.0 ()
+---------------------------------------
+
+Package org.springframework.webflow.engine.support
+* Renamed DefaultFlowAttributeMapper to ConfigurableFlowAttributeMapper for clarity and to avoid confusion.
+
 Changes in version 1.0 RC4 (04.10.2006)
---------------------------------------
+---------------------------------------
 
 General
 * Restructured codebase into distinct layers and subsystems upon in-depth SonarJ analysis of architecture.

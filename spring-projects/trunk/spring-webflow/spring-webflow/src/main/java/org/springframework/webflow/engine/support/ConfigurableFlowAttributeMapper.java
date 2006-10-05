@@ -56,7 +56,7 @@ import org.springframework.webflow.execution.support.FlowScopeExpression;
  * @author Keith Donald
  * @author Colin Sampaleanu
  */
-public class DefaultFlowAttributeMapper extends AbstractFlowAttributeMapper implements Serializable {
+public class ConfigurableFlowAttributeMapper extends AbstractFlowAttributeMapper implements Serializable {
 
 	/**
 	 * Logger, usable in subclasses.
@@ -94,7 +94,7 @@ public class DefaultFlowAttributeMapper extends AbstractFlowAttributeMapper impl
 	 * @param inputMapping the input mapping
 	 * @return this, to support call chaining
 	 */
-	public DefaultFlowAttributeMapper addInputMapping(Mapping inputMapping) {
+	public ConfigurableFlowAttributeMapper addInputMapping(Mapping inputMapping) {
 		inputMapper.addMapping(inputMapping);
 		return this;
 	}
@@ -116,7 +116,7 @@ public class DefaultFlowAttributeMapper extends AbstractFlowAttributeMapper impl
 	 * subflow
 	 * @return this, to support call chaining
 	 */
-	public DefaultFlowAttributeMapper addInputAttribute(String inputAttributeName) {
+	public ConfigurableFlowAttributeMapper addInputAttribute(String inputAttributeName) {
 		PropertyExpression expr = expressionParser.parsePropertyExpression(inputAttributeName);
 		inputMapper.addMapping(new Mapping(new FlowScopeExpression(expr), expr, null));
 		return this;
@@ -144,7 +144,7 @@ public class DefaultFlowAttributeMapper extends AbstractFlowAttributeMapper impl
 	 * @param outputMapping the output mapping
 	 * @return this, to support call chaining
 	 */
-	public DefaultFlowAttributeMapper addOutputMapping(Mapping outputMapping) {
+	public ConfigurableFlowAttributeMapper addOutputMapping(Mapping outputMapping) {
 		outputMapper.addMapping(outputMapping);
 		return this;	
 	}
@@ -167,7 +167,7 @@ public class DefaultFlowAttributeMapper extends AbstractFlowAttributeMapper impl
 	 * parent flow scope
 	 * @return this, to support call chaining
 	 */
-	public DefaultFlowAttributeMapper addOutputAttribute(String outputAttributeName) {
+	public ConfigurableFlowAttributeMapper addOutputAttribute(String outputAttributeName) {
 		Expression source = expressionParser.parseExpression(outputAttributeName);
 		PropertyExpression target = expressionParser.parsePropertyExpression(outputAttributeName);
 		outputMapper.addMapping(new Mapping(source, new FlowScopeExpression(target), null));
