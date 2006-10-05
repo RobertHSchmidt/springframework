@@ -17,7 +17,7 @@ package org.springframework.webflow.engine.support;
 
 import junit.framework.TestCase;
 
-import org.easymock.MockControl;
+import org.easymock.EasyMock;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
@@ -29,24 +29,14 @@ import org.springframework.webflow.test.MockRequestContext;
  */
 public class ActionTransitionCriteriaTests extends TestCase {
 
-	private MockControl actionControl;
-
 	private Action actionMock;
 
 	private ActionTransitionCriteria tested;
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		actionControl = MockControl.createControl(Action.class);
-		actionMock = (Action)actionControl.getMock();
+		actionMock = (Action)EasyMock.createMock(Action.class);
 		tested = new ActionTransitionCriteria(actionMock);
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		actionControl = null;
-		actionMock = null;
-		tested = null;
 	}
 
 	public void testGetTrueEventId() {
@@ -67,12 +57,10 @@ public class ActionTransitionCriteriaTests extends TestCase {
 
 	public void testTest() throws Exception {
 		MockRequestContext mockRequestContext = new MockRequestContext();
-		actionControl.expectAndReturn(actionMock.execute(mockRequestContext), new Event(this, "success"));
-		actionControl.replay();
-
+		EasyMock.expect(actionMock.execute(mockRequestContext)).andReturn(new Event(this, "success"));
+		EasyMock.replay(new Object[] { actionMock });
 		boolean result = tested.test(mockRequestContext);
-
-		actionControl.verify();
+		EasyMock.verify(new Object[] { actionMock });
 		assertEquals(true, result);
 	}
 }
