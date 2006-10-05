@@ -9,7 +9,12 @@
            http://www.springframework.org/schema/webflow-config/spring-webflow-config-1.0.xsd">
 
 	<!-- Launches new flow executions and resumes existing executions. -->	
-	<flow:executor id="flowExecutor" registry-ref="flowRegistry"/>
+	<flow:executor id="flowExecutor" registry-ref="flowRegistry">
+		<flow:execution-attributes>
+			<!-- execution redirects don't apply in a Portlet environment -->
+			<flow:alwaysRedirectOnPause value="false"/>
+		</flow:execution-attributes>
+	</flow:executor>
 	
 	<!-- Creates the registry of flow definitions for this application -->
 	<flow:registry id="flowRegistry">
