@@ -30,12 +30,12 @@ import org.springframework.webflow.execution.Action;
  * <p>
  * This factory encapsulates the logic required to take an arbitrary
  * <code>java.lang.Object</code> from a Spring bean factory and adapt
- * a method on it to the {@link Action} interface. If bean you
+ * a method on it to the {@link Action} interface. If the bean you
  * want to use is not managed in a Spring bean factory, consider
  * subclassing {@link AbstractBeanInvokingAction} and using it directly.
- * 
+ *
  * @see AbstractBeanInvokingAction
- * 
+ *
  * @author Keith Donald
  */
 public class BeanInvokingActionFactory {
