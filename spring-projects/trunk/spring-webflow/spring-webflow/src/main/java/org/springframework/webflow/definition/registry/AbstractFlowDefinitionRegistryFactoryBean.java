@@ -31,7 +31,7 @@ public abstract class AbstractFlowDefinitionRegistryFactoryBean implements Facto
 	/**
 	 * The registry to register flow definitions in.
 	 */
-	private FlowDefinitionRegistry registry = new FlowDefinitionRegistryImpl();
+	private FlowDefinitionRegistry registry = createFlowDefinitionRegistry();
 
 	/**
 	 * Sets the parent registry of the registry constructed by this factory
@@ -45,14 +45,14 @@ public abstract class AbstractFlowDefinitionRegistryFactoryBean implements Facto
 		registry.setParent(parent);
 	}
 
-	// implementing after properties set
+	// implementing InitializingBean
 
 	public final void afterPropertiesSet() throws Exception {
 		init();
 		doPopulate(registry);
 	}
 
-	// implementing factory bean
+	// implementing FactoryBean
 	
 	public Class getObjectType() {
 		return FlowDefinitionRegistry.class;
@@ -68,24 +68,36 @@ public abstract class AbstractFlowDefinitionRegistryFactoryBean implements Facto
 	}
 
 	/**
-	 * Returns the flow registry constructed by the factory bean.
+	 * Returns the flow definition registry constructed by the factory bean.
 	 */
-	protected FlowDefinitionRegistry getRegistry() {
+	public FlowDefinitionRegistry getRegistry() {
 		return registry;
 	}
 
 	// subclassing hooks
 	
 	/**
+	 * Create the flow definition registry to be populated in
+	 * {@link #doPopulate(FlowDefinitionRegistry)}. Subclasses can override
+	 * this method if they want to use a custom flow definition registry
+	 * implementation.
+	 */
+	protected FlowDefinitionRegistry createFlowDefinitionRegistry() {
+		return new FlowDefinitionRegistryImpl();
+	}
+	
+	/**
 	 * Template method subclasses may override to perform factory bean initialization 
-	 * logic before registry population.
+	 * logic before registry population. Will be called before
+	 * {@link #doPopulate(FlowDefinitionRegistry)}. The default implementation
+	 * is empty.
 	 */
 	protected void init() {
 	}
 	
 	/**
 	 * Template method subclasses must override to perform registry population.
-	 * @param registry the flow definition registry
+	 * @param registry the flow definition registry to populate
 	 */
 	protected abstract void doPopulate(FlowDefinitionRegistry registry);
 
