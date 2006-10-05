@@ -17,7 +17,7 @@ package org.springframework.webflow.action;
 
 import junit.framework.TestCase;
 
-import org.easymock.MockControl;
+import org.easymock.EasyMock;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
@@ -33,34 +33,23 @@ public class CompositeActionTests extends TestCase {
 
 	private CompositeAction tested;
 
-	private MockControl actionControl;
-
 	private Action actionMock;
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		actionControl = MockControl.createControl(Action.class);
-		actionMock = (Action)actionControl.getMock();
+		actionMock = (Action)EasyMock.createMock(Action.class);
 		Action[] actions = new Action[] { actionMock };
 		tested = new CompositeAction(actions);
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		actionControl = null;
-		actionMock = null;
-		tested = null;
 	}
 
 	public void testDoExecute() throws Exception {
 		MockRequestContext mockRequestContext = new MockRequestContext();
 		LocalAttributeMap attributes = new LocalAttributeMap();
 		attributes.put("some key", "some value");
-		actionControl
-				.expectAndReturn(actionMock.execute(mockRequestContext), new Event(this, "some event", attributes));
-		actionControl.replay();
+		EasyMock.expect(actionMock.execute(mockRequestContext)).andReturn(new Event(this, "some event", attributes));
+		EasyMock.replay(new Object[] { actionMock });
 		Event result = tested.doExecute(mockRequestContext);
-		actionControl.verify();
+		EasyMock.verify(new Object[] { actionMock });
 		assertEquals("some event", result.getId());
 		assertEquals(1, result.getAttributes().size());
 	}
@@ -68,20 +57,20 @@ public class CompositeActionTests extends TestCase {
 	public void testDoExecuteWithError() throws Exception {
 		tested.setStopOnError(true);
 		MockRequestContext mockRequestContext = new MockRequestContext();
-		actionControl.expectAndReturn(actionMock.execute(mockRequestContext), new Event(this, "error"));
-		actionControl.replay();
+		EasyMock.expect(actionMock.execute(mockRequestContext)).andReturn(new Event(this, "error"));
+		EasyMock.replay(new Object[] { actionMock });
 		Event result = tested.doExecute(mockRequestContext);
-		actionControl.verify();
+		EasyMock.verify(new Object[] { actionMock });
 		assertEquals("error", result.getId());
 	}
 
 	public void testDoExecuteWithNullResult() throws Exception {
 		tested.setStopOnError(true);
 		MockRequestContext mockRequestContext = new MockRequestContext();
-		actionControl.expectAndReturn(actionMock.execute(mockRequestContext), null);
-		actionControl.replay();
+		EasyMock.expect(actionMock.execute(mockRequestContext)).andReturn(null);
+		EasyMock.replay(new Object[] { actionMock });
 		Event result = tested.doExecute(mockRequestContext);
-		actionControl.verify();
+		EasyMock.verify(new Object[] { actionMock });
 		assertEquals("Expecting success since no check is performed if null result,", "success", result.getId());
 	}
 
