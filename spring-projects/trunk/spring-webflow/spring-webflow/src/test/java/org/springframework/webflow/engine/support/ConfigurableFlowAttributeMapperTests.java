@@ -30,13 +30,13 @@ import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
- * Test case for ParameterizableFlowAttributeMapper.
+ * Test case for {@link ConfigurableFlowAttributeMapper}.
  * 
  * @author Erwin Vervaet
  */
-public class DefaultFlowAttributeMapperTests extends TestCase {
+public class ConfigurableFlowAttributeMapperTests extends TestCase {
 
-	private DefaultFlowAttributeMapper mapper;
+	private ConfigurableFlowAttributeMapper mapper;
 
 	private MockRequestContext context;
 
@@ -47,7 +47,7 @@ public class DefaultFlowAttributeMapperTests extends TestCase {
 	private MappingBuilder mapping;
 
 	protected void setUp() throws Exception {
-		mapper = new DefaultFlowAttributeMapper();
+		mapper = new ConfigurableFlowAttributeMapper();
 		mapping = new MappingBuilder(new OgnlExpressionParser());
 		context = new MockRequestContext();
 		parentSession = new MockFlowSession();

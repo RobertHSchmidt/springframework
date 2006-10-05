@@ -17,6 +17,7 @@ package org.springframework.webflow.engine.builder.xml;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.engine.ActionState;
@@ -28,7 +29,7 @@ import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.builder.BaseFlowServiceLocator;
 import org.springframework.webflow.engine.builder.FlowArtifactLookupException;
 import org.springframework.webflow.engine.builder.FlowAssembler;
-import org.springframework.webflow.engine.support.DefaultFlowAttributeMapper;
+import org.springframework.webflow.engine.support.AbstractFlowAttributeMapper;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionException;
@@ -71,7 +72,14 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 		}
 	}
 
-	public static class CustomAttributeMapper extends DefaultFlowAttributeMapper {
+	public static class CustomAttributeMapper extends AbstractFlowAttributeMapper {
+		protected AttributeMapper getInputMapper() {
+			return null;
+		}
+		
+		protected AttributeMapper getOutputMapper() {
+			return null;
+		}
 	}
 
 	public static class CustomExceptionHandler implements FlowExecutionExceptionHandler {
