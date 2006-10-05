@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+	"http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<!-- ========================= VIEW DEFINITIONS ========================= -->
+
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass">
+			<value>org.springframework.web.servlet.view.JstlView</value>
+		</property>
+		<property name="prefix">
+			<value>/WEB-INF/jsp/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+
+	<!-- ========================= MAPPING DEFINITIONS ========================= -->
+
+	<!--
+		- This bean is an explicit URL mapper that is used by the DispatcherServlet.
+		- It is used instead of the default BeanNameUrlHandlerMapping.
+	-->
+	<bean id="urlMapping"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/search.htm">searchForm</prop>
+				<prop key="/details.htm">details</prop>
+				<prop key="/edit.htm">editForm</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- ========================= CONTROLLER DEFINITIONS ========================= -->
+
+	<bean id="searchForm"
+		class="org.springframework.ldap.samples.person.web.SearchForm">
+		<property name="personService" ref="personService" />
+	</bean>
+
+	<bean id="details"
+		class="org.springframework.ldap.samples.person.web.ShowDetails">
+		<property name="personService" ref="personService" />
+	</bean>
+
+	<bean id="editForm"
+		class="org.springframework.ldap.samples.person.web.EditForm">
+		<property name="personService" ref="personService" />
+		<property name="formView" value="editDetails" />
+		<property name="successView" value="showDetails" />
+		<property name="commandClass" value="org.springframework.ldap.samples.person.domain.Person" />
+		<property name="commandName" value="person" />
+		<property name="sessionForm" value="true" />
+	</bean>
+
+</beans>
