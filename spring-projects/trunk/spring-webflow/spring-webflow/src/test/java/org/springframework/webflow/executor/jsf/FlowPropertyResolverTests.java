@@ -22,7 +22,7 @@ import javax.faces.el.ReferenceSyntaxException;
 
 import junit.framework.TestCase;
 
-import org.easymock.MockControl;
+import org.easymock.EasyMock;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.test.MockFlowSession;
 
@@ -34,14 +34,11 @@ public class FlowPropertyResolverTests extends TestCase {
 
 	private FlowPropertyResolver resolver;
 
-	private MockControl flowExControl;
-
 	private FlowExecution flowEx;
 
 	protected void setUp() throws Exception {
 		resolver = new FlowPropertyResolver(new OriginalPropertyResolver());
-		flowExControl = MockControl.createControl(FlowExecution.class);
-		flowEx = (FlowExecution)flowExControl.getMock();
+		flowEx = (FlowExecution)EasyMock.createMock(FlowExecution.class);
 	}
 
 	protected void tearDown() throws Exception {
@@ -57,8 +54,8 @@ public class FlowPropertyResolverTests extends TestCase {
 		MockFlowSession flowSession = new MockFlowSession();
 		flowSession.getScope().put("name", "joe");
 		flowEx.getActiveSession();
-		flowExControl.setReturnValue(flowSession);
-		flowExControl.replay();
+		EasyMock.expectLastCall().andReturn(flowSession);
+		EasyMock.replay(new Object[] { flowEx });
 		Class type = resolver.getType(flowEx, "name");
 		assertTrue("returned type must match property type", type.equals(String.class));
 	}
@@ -77,8 +74,8 @@ public class FlowPropertyResolverTests extends TestCase {
 		MockFlowSession flowSession = new MockFlowSession();
 		flowSession.getScope().put("name", "joe");
 		flowEx.getActiveSession();
-		flowExControl.setReturnValue(flowSession);
-		flowExControl.replay();
+		EasyMock.expectLastCall().andReturn(flowSession);
+		EasyMock.replay(new Object[] { flowEx });
 		Object value = resolver.getValue(flowEx, "name");
 		assertTrue("must return expected property", value.equals("joe"));
 	}
@@ -96,8 +93,8 @@ public class FlowPropertyResolverTests extends TestCase {
 	public void testSetValueBaseProperty() {
 		MockFlowSession flowSession = new MockFlowSession();
 		flowEx.getActiveSession();
-		flowExControl.setReturnValue(flowSession);
-		flowExControl.replay();
+		EasyMock.expectLastCall().andReturn(flowSession);
+		EasyMock.replay(new Object[] { flowEx });
 		resolver.setValue(flowEx, "name", "joe");
 		assertTrue(flowSession.getScope().get("name").equals("joe"));
 	}
