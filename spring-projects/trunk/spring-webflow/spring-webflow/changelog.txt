@@ -5,6 +5,9 @@ http://www.springframework.org
 Changes in version 1.0 ()
 ---------------------------------------
 
+Package org.springframework.webflow.definition.registry
+* Added createFlowDefinitionRegistry hook method to AbstractFlowDefinitionRegistryFactoryBean.
+
 Package org.springframework.webflow.engine.support
 * Renamed DefaultFlowAttributeMapper to ConfigurableFlowAttributeMapper for clarity and to avoid confusion.
 
