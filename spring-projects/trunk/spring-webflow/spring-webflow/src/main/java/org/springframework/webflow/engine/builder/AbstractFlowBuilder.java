@@ -15,9 +15,6 @@
  */
 package org.springframework.webflow.engine.builder;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.binding.mapping.Mapping;
@@ -75,7 +72,7 @@ import org.springframework.webflow.execution.support.EventFactorySupport;
  * flow. These include a "get" <code>ActionState</code> (the start state), a
  * <code>ViewState</code> state, a "bind and validate"
  * <code>ActionState</code>, and an end marker state (<code>EndState</code>).
- * 
+ * <p>
  * The first state, an action state, will be assigned the indentifier
  * <code>getDetails</code>. This action state will automatically be
  * configured with the following defaults:
@@ -92,7 +89,7 @@ import org.springframework.webflow.execution.support.EventFactorySupport;
  * state added to a flow during the build process is treated as the start
  * state).
  * </ol>
- * 
+ * <p>
  * The second state, a view state, will be identified as
  * <code>displayDetails</code>. This view state will automatically be
  * configured with the following defaults:
@@ -109,7 +106,7 @@ import org.springframework.webflow.execution.support.EventFactorySupport;
  * <code>customerAction</code> <code>Action</code> implementation will be
  * executed.
  * </ol>
- * 
+ * <p>
  * The third state, an action state, will be indentified as
  * <code>bindAndValidate</code>. This action state will automatically be
  * configured with the following defaults:
@@ -126,10 +123,9 @@ import org.springframework.webflow.execution.support.EventFactorySupport;
  * transitioned to and the flow will terminate.
  * <li>An <code>error</code> transition back to the form view. This means if
  * the <code>Action</code> returns an <code>error</code> event, the <code>
- * displayDetails</code>
- * view state will be transitioned back to.
+ * displayDetails</code> view state will be transitioned back to.
  * </ol>
- * 
+ * <p>
  * The fourth and last state, an end state, will be indentified with the default
  * end state id <code>finish</code>. This end state is a marker that signals
  * the end of the flow. When entered, the flow session terminates, and if this
@@ -257,7 +253,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param entryActions the actions to execute when the state is entered
 	 * @param viewSelector the view selector that will make the view selection
 	 * when the state is entered
-	 * @param renderActions any 'view actions' to execute on state entry and
+	 * @param renderActions any 'render actions' to execute on state entry and
 	 * refresh; may be null
 	 * @param transitions the transitions (path) out of this state
 	 * @param exceptionHandlers any exception handlers to attach to the state
@@ -453,7 +449,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the fully constructed end state instance
 	 */
 	protected State addEndState(String stateId, String viewName) {
-		return getFlowArtifactFactory().createEndState(stateId, getFlow(), null, endingViewSelector(viewName), null,
+		return getFlowArtifactFactory().createEndState(stateId, getFlow(), null, viewSelector(viewName), null,
 				null, null);
 	}
 
@@ -466,7 +462,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @return the fully constructed end state instance
 	 */
 	protected State addEndState(String stateId, String viewName, AttributeMapper outputMapper) {
-		return getFlowArtifactFactory().createEndState(stateId, getFlow(), null, endingViewSelector(viewName),
+		return getFlowArtifactFactory().createEndState(stateId, getFlow(), null, viewSelector(viewName),
 				outputMapper, null, null);
 	}
 
@@ -492,39 +488,14 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	// helpers to create misc. flow artifacts
 
 	/**
-	 * Factory method that creates a view state view selector from an encoded
+	 * Factory method that creates a view selector from an encoded
 	 * view name. See {@link TextToViewSelector} for information on the
 	 * conversion rules.
 	 * @param viewName the encoded view selector
 	 * @return the view selector
 	 */
-	protected ViewSelector viewSelector(String viewName) {
-		return viewSelector(viewName, false);
-	}
-
-	/**
-	 * Factory method that creates a end state view selector from an encoded
-	 * view name. See {@link TextToViewSelector} for information on the
-	 * conversion rules.
-	 * @param viewName the encoded view selector
-	 * @return the view selector
-	 */
-	protected ViewSelector endingViewSelector(String viewName) {
-		return viewSelector(viewName, true);
-	}
-
-	/**
-	 * Internal helper that creates a view selector as requested by the
-	 * parameters.
-	 * @param viewName the encoded view selector
-	 * @param endStateView whether or not the view selector selects a view for
-	 * an end state
-	 * @return the view selector
-	 */
-	private ViewSelector viewSelector(String viewName, boolean endStateView) {
-		Map context = new HashMap(1, 1);
-		context.put(TextToViewSelector.END_STATE_VIEW_FLAG_PARAMETER, new Boolean(endStateView));
-		return (ViewSelector)fromStringTo(ViewSelector.class).execute(viewName, context);
+	public ViewSelector viewSelector(String viewName) {
+		return (ViewSelector)fromStringTo(ViewSelector.class).execute(viewName);
 	}
 
 	/**
@@ -589,8 +560,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	/**
 	 * Parses the expression string into a evaluatable {@link Expression}
 	 * object.
-	 * @param expressionString the expression string, e.g.
-	 * flowScope.order.number
+	 * @param expressionString the expression string, e.g. flowScope.order.number
 	 * @return the evaluatable expression
 	 */
 	protected Expression expression(String expressionString) {
@@ -605,13 +575,11 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * Encoded method signature format:
 	 * 
 	 * Method without arguments:
-	 * 
 	 * <pre>
 	 *       ${methodName}
 	 * </pre>
 	 * 
 	 * Method with arguments:
-	 * 
 	 * <pre>
 	 *       ${methodName}(${arg1}, ${arg2}, ${arg n})
 	 * </pre>
@@ -626,10 +594,10 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 
 	/**
 	 * Factory method for a {@link ActionResultExposer result exposer}. A
-	 * result exposer is used to expose a action result such as a method return
+	 * result exposer is used to expose an action result such as a method return
 	 * value or expression evaluation result to the calling flow.
 	 * @param resultName the result name
-	 * @return the result specification
+	 * @return the result exposer
 	 * @see #action(String, MethodSignature, ActionResultExposer)
 	 */
 	protected ActionResultExposer result(String resultName) {
@@ -638,11 +606,11 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 
 	/**
 	 * Factory method for a {@link ActionResultExposer result exposer}. A
-	 * result exposer is used to expose a action result such as a method return
+	 * result exposer is used to expose an action result such as a method return
 	 * value or expression evaluation result to the calling flow.
-	 * @param resultName the result name attribute
+	 * @param resultName the result name
 	 * @param resultScope the scope of the result
-	 * @return the result specification
+	 * @return the result exposer
 	 * @see #action(String, MethodSignature, ActionResultExposer)
 	 */
 	protected ActionResultExposer result(String resultName, ScopeType resultScope) {
@@ -663,7 +631,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 */
 	protected AnnotatedAction invoke(String methodName, MultiAction multiAction) throws FlowArtifactLookupException {
 		AnnotatedAction action = new AnnotatedAction(multiAction);
-		action.getAttributeMap().put(AnnotatedAction.METHOD_ATTRIBUTE, methodName);
+		action.setMethod(methodName);
 		return action;
 	}
 

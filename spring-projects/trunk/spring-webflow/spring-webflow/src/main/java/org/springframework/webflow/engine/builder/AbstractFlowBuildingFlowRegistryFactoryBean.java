@@ -29,16 +29,16 @@ import org.springframework.webflow.engine.State;
 import org.springframework.webflow.execution.Action;
 
 /**
+ * A base class for factory beans that create populated registries of flow
+ * definitions built using a {@link FlowBuilder}, typically a {@link BaseFlowBuilder}
+ * subclass. This base class will setup a {@link FlowServiceLocator} for
+ * use by the flow builder.
  * <p>
- * A base class for factory beans that created populated registries of flow
- * definitions built using a {@link FlowBuilder}.
- * </p>
- * <p>
- * Subclasses should override the {@link #doPopulate(FlowDefinitionRegistry)} to
- * perform the registry population logic, typically delegating to a
+ * Subclasses should override the {@link #doPopulate(FlowDefinitionRegistry)}
+ * template method to perform the registry population logic, typically delegating to a
  * {@link org.springframework.webflow.definition.registry.FlowDefinitionRegistrar}
  * strategy.
- * </p>
+ * 
  * @see org.springframework.webflow.definition.registry.FlowDefinitionRegistry
  * @see org.springframework.webflow.definition.registry.FlowDefinitionRegistrar
  * 
@@ -48,7 +48,7 @@ public abstract class AbstractFlowBuildingFlowRegistryFactoryBean extends Abstra
 		implements BeanFactoryAware, ResourceLoaderAware {
 
 	/**
-	 * The locator of services needed by the Flows built for inclusion in the
+	 * The locator of services needed by the flows built for inclusion in the
 	 * registry.
 	 */
 	private FlowServiceLocator flowServiceLocator;
@@ -87,11 +87,27 @@ public abstract class AbstractFlowBuildingFlowRegistryFactoryBean extends Abstra
 	private BeanFactory beanFactory;
 
 	/**
+	 * Returns the factory encapsulating the creation of central Flow artifacts
+	 * such as {@link Flow flows} and {@link State states}.
+	 */
+	protected FlowArtifactFactory getFlowArtifactFactory() {
+		return flowArtifactFactory;
+	}
+	
+	/**
 	 * Sets the factory encapsulating the creation of central Flow artifacts
 	 * such as {@link Flow flows} and {@link State states}.
 	 */
 	public void setFlowArtifactFactory(FlowArtifactFactory flowArtifactFactory) {
 		this.flowArtifactFactory = flowArtifactFactory;
+	}
+	
+	/**
+	 * Returns the factory for creating bean invoking actions, actions that adapt
+	 * methods on objects to the {@link Action} interface.
+	 */
+	protected BeanInvokingActionFactory getBeanInvokingActionFactory() {
+		return beanInvokingActionFactory;
 	}
 
 	/**
@@ -101,6 +117,14 @@ public abstract class AbstractFlowBuildingFlowRegistryFactoryBean extends Abstra
 	public void setBeanInvokingActionFactory(BeanInvokingActionFactory beanInvokingActionFactory) {
 		this.beanInvokingActionFactory = beanInvokingActionFactory;
 	}
+	
+	/**
+	 * Returns the expression parser responsible for parsing expression strings into
+	 * evaluatable expression objects.
+	 */
+	protected ExpressionParser getExpressionParser() {
+		return expressionParser;
+	}
 
 	/**
 	 * Set the expression parser responsible for parsing expression strings into
@@ -108,6 +132,14 @@ public abstract class AbstractFlowBuildingFlowRegistryFactoryBean extends Abstra
 	 */
 	public void setExpressionParser(ExpressionParser expressionParser) {
 		this.expressionParser = expressionParser;
+	}
+	
+	/**
+	 * Returns the conversion service to use to convert between types; typically
+	 * from string to a rich object type.
+	 */
+	protected ConversionService getConversionService() {
+		return conversionService;
 	}
 
 	/**
@@ -117,9 +149,27 @@ public abstract class AbstractFlowBuildingFlowRegistryFactoryBean extends Abstra
 	public void setConversionService(ConversionService conversionService) {
 		this.conversionService = conversionService;
 	}
+	
+	// implementing ResourceLoaderAware
+	
+	/**
+	 * Returns the injected resource loader.
+	 */
+	protected ResourceLoader getResourceLoader() {
+		return resourceLoader;
+	}
 
 	public void setResourceLoader(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
+	}
+	
+	// implementing BeanFactoryAware
+	
+	/**
+	 * Returns the bean factory managing this bean.
+	 */
+	protected BeanFactory getBeanFactory() {
+		return beanFactory;
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) {
@@ -136,11 +186,11 @@ public abstract class AbstractFlowBuildingFlowRegistryFactoryBean extends Abstra
 	/**
 	 * Factory method for creating the service locator used to locate webflow
 	 * services during flow assembly. Subclasses may override to customize the
-	 * configuration of the locator returned.
+	 * instantiation and configuration of the locator returned.
 	 * @return the service locator
 	 */
 	protected FlowServiceLocator createFlowServiceLocator() {
-		DefaultFlowServiceLocator serviceLocator = newDefaultFlowServiceLocator();
+		DefaultFlowServiceLocator serviceLocator = new DefaultFlowServiceLocator(getRegistry(), beanFactory);
 		if (flowArtifactFactory != null) {
 			serviceLocator.setFlowArtifactFactory(flowArtifactFactory);
 		}
@@ -160,28 +210,18 @@ public abstract class AbstractFlowBuildingFlowRegistryFactoryBean extends Abstra
 	}
 
 	/**
-	 * Template method for creating the default service locator used to locate
-	 * webflow services during flow assembly. Subclasses may override to
-	 * customize the implementation of the default locator returned.
-	 * @return the default service locator
-	 */
-	protected DefaultFlowServiceLocator newDefaultFlowServiceLocator() {
-		return new DefaultFlowServiceLocator(getRegistry(), beanFactory);
-	}
-
-	/**
-	 * Called after properties set but before registry population. Subclasses
-	 * may override to perform custom initialization.
+	 * Called after properties have been set on the service locator, but before
+	 * registry population. Subclasses may override to perform custom initialization
+	 * of the flow service locator.
 	 * @param flowServiceLocator the flow service locator to use to locate externally managed
-	 * services needed duringf flow building and assembly. Typically used by a
-	 * {@link org.springframework.webflow.definition.registry.FlowDefinitionRegistrar}.
+	 * services needed during flow building and assembly, typically used by a
+	 * {@link org.springframework.webflow.definition.registry.FlowDefinitionRegistrar}
 	 */
 	protected void init(FlowServiceLocator flowServiceLocator) {
-
 	}
 
 	/**
-	 * Returns the strategy for locating dependent artifacts when a Flow is
+	 * Returns the strategy for locating dependent artifacts when a flow is
 	 * being built. May be called by subclasses during
 	 * {@link #doPopulate(FlowDefinitionRegistry) registry population} to wire
 	 * in the service locator needed for flow assembly.

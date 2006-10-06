@@ -23,11 +23,9 @@ import org.springframework.webflow.execution.FlowExecutionException;
 /**
  * A flow artifact lookup exception is thrown when an artifact (such as a flow, state,
  * action, etc.) required by the webflow system cannot be obtained.
- * Can be used directly, but you are encouraged to create a specific subclass to
- * describe a specific kind of failure scenario.
  * <p>
  * Flow artifact lookup exceptions indicate unrecoverable problems with the flow
- * definition, e.g. a required state of a flow cannot be found. They're not used
+ * definition, e.g. a required action of a flow cannot be found. They're not used
  * to signal problems related to execution of a client request. A
  * {@link FlowExecutionException} is used for that.
  * 
@@ -49,7 +47,7 @@ public class FlowArtifactLookupException extends FlowException {
 	private Class artifactType;
 
 	/**
-	 * Create a new flow artifact exception.
+	 * Create a new flow artifact lookup exception.
 	 * @param artifactId the id of the artifact
 	 * @param artifactType the expected artifact type
 	 */
@@ -58,7 +56,7 @@ public class FlowArtifactLookupException extends FlowException {
 	}
 
 	/**
-	 * Create a new flow artifact exception.
+	 * Create a new flow artifact lookup exception.
 	 * @param artifactId the id of the artifact
 	 * @param artifactType the expected artifact type
 	 * @param cause the underlying cause of this exception
@@ -68,7 +66,7 @@ public class FlowArtifactLookupException extends FlowException {
 	}
 
 	/**
-	 * Create a new flow artifact exception.
+	 * Create a new flow artifact lookup exception.
 	 * @param artifactId the id of the artifact
 	 * @param artifactType the expected artifact type
 	 * @param message descriptive message
@@ -93,14 +91,14 @@ public class FlowArtifactLookupException extends FlowException {
 	}
 
 	/**
-	 * Returns the id of the service that cannot be found.
+	 * Returns the id of the artifact that cannot be found.
 	 */
 	public String getArtifactId() {
 		return artifactId;
 	}
 
 	/**
-	 * Returns the expected service type.
+	 * Returns the expected artifact type.
 	 */
 	public Class getArtifactType() {
 		return artifactType;

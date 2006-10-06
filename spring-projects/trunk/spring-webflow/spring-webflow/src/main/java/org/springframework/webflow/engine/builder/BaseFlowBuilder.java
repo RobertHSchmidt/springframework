@@ -27,6 +27,9 @@ import org.springframework.webflow.engine.Flow;
  * all optional parts of the FlowBuilder process as no-op methods. Subclasses
  * are only required to implement {@link #init(String, AttributeMap)} and
  * {@link #buildStates()}.
+ * <p>
+ * This class also provides a {@link FlowServiceLocator} for use by
+ * subclasses in the flow construction process.
  * 
  * @see org.springframework.webflow.engine.builder.FlowServiceLocator
  * 
@@ -55,7 +58,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	}
 
 	/**
-	 * Creates a flow builder using the locator to link in artifacts.
+	 * Creates a flow builder using the given locator to link in artifacts.
 	 * @param flowServiceLocator the locator for services needed by this builder to build its Flow
 	 */
 	protected BaseFlowBuilder(FlowServiceLocator flowServiceLocator) {
@@ -70,7 +73,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	}
 
 	/**
-	 * Sets the flow service locator.
+	 * Sets the flow service locator to use. Defaults to {@link BaseFlowServiceLocator}.
 	 */
 	public void setFlowServiceLocator(FlowServiceLocator flowServiceLocator) {
 		Assert.notNull(flowServiceLocator, "The flow service locator is required");
@@ -86,7 +89,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 		this.flow = flow;
 	}
 
-	public abstract void init(String id, AttributeMap attributes) throws FlowBuilderException;
+	public abstract void init(String flowId, AttributeMap attributes) throws FlowBuilderException;
 
 	public void buildVariables() throws FlowBuilderException {
 	}

@@ -18,11 +18,9 @@ package org.springframework.webflow.engine.builder.xml;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -64,7 +62,6 @@ import org.springframework.webflow.engine.builder.BaseFlowServiceLocator;
 import org.springframework.webflow.engine.builder.FlowArtifactFactory;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
-import org.springframework.webflow.engine.builder.TextToViewSelector;
 import org.springframework.webflow.engine.support.BeanFactoryFlowVariable;
 import org.springframework.webflow.engine.support.BooleanExpressionTransitionCriteria;
 import org.springframework.webflow.engine.support.SimpleFlowVariable;
@@ -571,7 +568,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private void parseAndAddViewState(Element element, Flow flow) {
 		getFlowArtifactFactory().createViewState(parseId(element), flow, parseEntryActions(element),
-				parseViewSelector(element, false), parseRenderActions(element), parseTransitions(element),
+				parseViewSelector(element), parseRenderActions(element), parseTransitions(element),
 				parseExceptionHandlers(element), parseExitActions(element), parseAttributes(element));
 	}
 
@@ -589,7 +586,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private void parseAndAddEndState(Element element, Flow flow) {
 		getFlowArtifactFactory().createEndState(parseId(element), flow, parseEntryActions(element),
-				parseViewSelector(element, true), parseOutputMapper(element), parseExceptionHandlers(element),
+				parseViewSelector(element), parseOutputMapper(element), parseExceptionHandlers(element),
 				parseAttributes(element));
 	}
 
@@ -648,11 +645,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				parseAttributes(element));
 	}
 
-	private ViewSelector parseViewSelector(Element element, boolean endStateView) {
+	private ViewSelector parseViewSelector(Element element) {
 		String viewName = element.getAttribute(VIEW_ATTRIBUTE);
-		Map context = new HashMap(1, 1);
-		context.put(TextToViewSelector.END_STATE_VIEW_FLAG_PARAMETER, new Boolean(endStateView));
-		return (ViewSelector)fromStringTo(ViewSelector.class).execute(viewName, context);
+		return (ViewSelector)fromStringTo(ViewSelector.class).execute(viewName);
 	}
 
 	private Flow parseSubflow(Element element) {

@@ -38,7 +38,8 @@ import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
  * given event id ({@link org.springframework.webflow.engine.support.EventIdTransitionCriteria})
  * </li>
  * <li>"${...}" - will result in a TransitionCriteria object that evaluates
- * given condition, expressed as an expression ({@link org.springframework.webflow.engine.support.BooleanExpressionTransitionCriteria})
+ * given condition, expressed as an expression
+ * ({@link org.springframework.webflow.engine.support.BooleanExpressionTransitionCriteria})
  * </li>
  * <li>"bean:&lt;id&gt;" - will result in usage of a custom TransitionCriteria
  * bean implementation.</li>
@@ -53,7 +54,7 @@ public class TextToTransitionCriteria extends AbstractConverter {
 
 	/**
 	 * Prefix used when the user wants to use a custom TransitionCriteria
-	 * implementation managed by a factory.
+	 * implementation managed by a bean factory.
 	 */
 	private static final String BEAN_PREFIX = "bean:";
 
@@ -64,8 +65,8 @@ public class TextToTransitionCriteria extends AbstractConverter {
 
 	/**
 	 * Create a new converter that converts strings to transition criteria
-	 * objects. The given conversion service of given locator will be used to do
-	 * all necessary internal conversion (e.g. parsing expression strings).
+	 * objects. Custom transition criteria will be looked up using given
+	 * service locator.
 	 */
 	public TextToTransitionCriteria(FlowServiceLocator flowServiceLocator) {
 		this.flowServiceLocator = flowServiceLocator;

@@ -31,13 +31,13 @@ import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.execution.Action;
 
 /**
- * A support interface used by FlowBuilders at configuration time. Acts as a
+ * A support interface used by flow builders at configuration time. Acts as a
  * "service locator" responsible for:
  * <ol>
- * <li> retrieving dependent (but externally managed) flow services needed to
+ * <li> Retrieving dependent (but externally managed) flow services needed to
  * configure flow and state definitions. Such services are usually hosted in a
  * backing registry and may be shared by multiple flows.
- * <li> providing access to abstract factories to create core flow definitional
+ * <li> Providing access to abstract factories to create core flow definitional
  * artifacts such as {@link Flow}, {@link State}, {@link Transition}, and
  * {@link AbstractBeanInvokingAction bean invoking actions}. These artifacts
  * are unique to each flow and are typically not shared.
@@ -45,17 +45,17 @@ import org.springframework.webflow.execution.Action;
  * <p>
  * In general, implementations of this interface act as facades to accessing and
  * creating flow artifacts during {@link FlowAssembler flow assembly}.
- * </p>
  * <p>
  * Finally, this interface also exposes access to generic infrastructure
  * services also needed by flow assemblers such as a {@link ConversionService}
  * and {@link ExpressionParser}.
- * </p>
+ * 
  * @see org.springframework.webflow.engine.builder.FlowBuilder
  * @see org.springframework.webflow.engine.builder.BaseFlowBuilder
  * @see org.springframework.webflow.engine.builder.FlowAssembler
  * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
 public interface FlowServiceLocator {
 
@@ -125,7 +125,7 @@ public interface FlowServiceLocator {
 	/**
 	 * Returns a generic bean (service) registry for accessing arbitrary beans.
 	 * @return the generic service registry
-	 * @throws UnsupportedOperationException when not supported by this factory
+	 * @throws UnsupportedOperationException when not supported by this locator
 	 */
 	public BeanFactory getBeanFactory() throws UnsupportedOperationException;
 
