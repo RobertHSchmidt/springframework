@@ -94,6 +94,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 	 */
 	public TextToViewSelector(FlowServiceLocator flowServiceLocator) {
 		this.flowServiceLocator = flowServiceLocator;
+		setConversionService(flowServiceLocator.getConversionService());
 	}
 
 	public Class[] getSourceClasses() {
