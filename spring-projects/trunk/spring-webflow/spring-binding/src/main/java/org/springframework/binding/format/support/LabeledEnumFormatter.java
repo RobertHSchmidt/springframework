@@ -43,7 +43,7 @@ public class LabeledEnumFormatter extends AbstractFormatter {
 
 	protected String doFormatValue(Object value) {
 		LabeledEnum labeledEnum = (LabeledEnum)value;
-		return (String)labeledEnum.getLabel();
+		return labeledEnum.getLabel();
 	}
 
 	protected Object doParseValue(String formattedString, Class targetClass) throws IllegalArgumentException {

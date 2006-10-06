@@ -19,9 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestBean {
+	
 	private boolean flag;
 
-	private List collection = new ArrayList();
+	private List list = new ArrayList();
 	
 	public boolean isFlag() {
 		return flag;
@@ -31,11 +32,11 @@ public class TestBean {
 		this.flag = flag;
 	}
 
-	public List getCollection() {
-		return collection;
+	public List getList() {
+		return list;
 	}
 	
-	public void setCollection(List collection) {
-		this.collection = collection;
+	public void setList(List list) {
+		this.list = list;
 	}
 }
