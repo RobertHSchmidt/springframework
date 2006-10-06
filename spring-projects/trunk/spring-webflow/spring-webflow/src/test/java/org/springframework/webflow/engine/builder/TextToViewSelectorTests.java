@@ -17,13 +17,16 @@ package org.springframework.webflow.engine.builder;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.engine.NullViewSelector;
 import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.execution.support.FlowExecutionRedirect;
+import org.springframework.webflow.test.MockFlowServiceLocator;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -33,12 +36,17 @@ import org.springframework.webflow.test.MockRequestContext;
  */
 public class TextToViewSelectorTests extends TestCase {
 
+	private MockFlowServiceLocator serviceLocator;
 	private TextToViewSelector converter;
 
 	public void setUp() {
-		BaseFlowServiceLocator flowArtifactFactory = new BaseFlowServiceLocator();
-		converter = new TextToViewSelector(flowArtifactFactory);
-		converter.setConversionService(flowArtifactFactory.getConversionService());
+		serviceLocator = new MockFlowServiceLocator();
+		converter = new TextToViewSelector(serviceLocator);
+	}
+	
+	public void testNullView() {
+		assertSame(NullViewSelector.INSTANCE, viewSelector(null));
+		assertSame(NullViewSelector.INSTANCE, viewSelector(""));
 	}
 
 	public void testApplicationView() {
@@ -85,6 +93,24 @@ public class TextToViewSelectorTests extends TestCase {
 		RequestContext context = getRequestContext();
 		ExternalRedirect view = (ExternalRedirect)selector.makeEntrySelection(context);
 		assertEquals("myUrl.htm?foo=bar&bar=mit", view.getUrl());
+	}
+	
+	public void testBean() {
+		ViewSelector myViewSelector = new ViewSelector() {
+			public boolean isEntrySelectionRenderable(RequestContext context) {
+				return true;
+			}
+			
+			public ViewSelection makeEntrySelection(RequestContext context) {
+				return null;
+			}
+			
+			public ViewSelection makeRefreshSelection(RequestContext context) {
+				return null;
+			}
+		};
+		serviceLocator.registerBean("myViewSelector", myViewSelector);
+		assertSame(myViewSelector, viewSelector("bean:myViewSelector"));
 	}
 
 	private RequestContext getRequestContext() {
