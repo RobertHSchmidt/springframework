@@ -74,7 +74,7 @@ public class MethodInvoker {
 		Parameters parameters = signature.getParameters();
 		Object[] arguments = new Object[parameters.size()];
 		for (int i = 0; i < parameters.size(); i++) {
-			Parameter parameter = (Parameter)parameters.getParameter(i);
+			Parameter parameter = parameters.getParameter(i);
 			Object argument = parameter.getName().evaluateAgainst(parameterValueSource, Collections.EMPTY_MAP);
 			arguments[i] = applyTypeConversion(argument, parameter.getType());
 		}

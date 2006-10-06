@@ -103,7 +103,7 @@ public class GenericConversionService implements ConversionService {
 	}
 
 	public ConversionExecutor[] getConversionExecutorsForSource(Class sourceClass) {
-		Map sourceTargetConverters = (Map)findConvertersForSource(sourceClass);
+		Map sourceTargetConverters = findConvertersForSource(sourceClass);
 		if (sourceTargetConverters.isEmpty()) {
 			if (parent != null) {
 				return parent.getConversionExecutorsForSource(sourceClass);
@@ -131,8 +131,8 @@ public class GenericConversionService implements ConversionService {
 		if (sourceClass.equals(targetClass)) {
 			return new ConversionExecutor(sourceClass, targetClass, new NoOpConverter(sourceClass, targetClass));
 		}
-		Map sourceTargetConverters = (Map)findConvertersForSource(sourceClass);
-		Converter converter = (Converter)findTargetConverter(sourceTargetConverters, targetClass);
+		Map sourceTargetConverters = findConvertersForSource(sourceClass);
+		Converter converter = findTargetConverter(sourceTargetConverters, targetClass);
 		if (converter != null) {
 			return new ConversionExecutor(sourceClass, targetClass, converter);
 		}

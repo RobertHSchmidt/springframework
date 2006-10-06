@@ -42,7 +42,7 @@ public class NumberFormatter extends AbstractFormatter {
 	protected String doFormatValue(Object number) {
 		if (this.numberFormat != null) {
 			// use NumberFormat for rendering value
-			return this.numberFormat.format((Number)number);
+			return this.numberFormat.format(number);
 		}
 		else {
 			// use toString method for rendering value
@@ -53,11 +53,11 @@ public class NumberFormatter extends AbstractFormatter {
 	protected Object doParseValue(String text, Class targetClass) throws IllegalArgumentException {
 		// use given NumberFormat for parsing text
 		if (this.numberFormat != null) {
-			return NumberUtils.parseNumber((String)text, targetClass, this.numberFormat);
+			return NumberUtils.parseNumber(text, targetClass, this.numberFormat);
 		}
 		// use default valueOf methods for parsing text
 		else {
-			return NumberUtils.parseNumber((String)text, targetClass);
+			return NumberUtils.parseNumber(text, targetClass);
 		}
 	}
 
