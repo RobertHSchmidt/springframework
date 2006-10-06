@@ -60,11 +60,12 @@ import org.springframework.webflow.engine.Flow;
  * sure to call init, followed by the build* methods, getFlow, and dispose
  * completely in that order.
  * <p>
- * This is an example of the classic GoF Builder pattern.
+ * This is an example of the classic GoF builder pattern.
  * 
+ * @see Flow
+ * @see org.springframework.webflow.engine.builder.FlowAssembler
  * @see org.springframework.webflow.engine.builder.AbstractFlowBuilder
  * @see org.springframework.webflow.engine.builder.xml.XmlFlowBuilder
- * @see org.springframework.webflow.engine.builder.FlowAssembler
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -74,11 +75,11 @@ public interface FlowBuilder {
 	/**
 	 * Initialize this builder. This could cause the builder to open a stream to
 	 * an externalized resource representing the flow definition, for example.
-	 * @param id the identifier to assign to the flow
+	 * @param flowId the identifier to assign to the flow
 	 * @param attributes custom attributes to assign to the flow
 	 * @throws FlowBuilderException an exception occured building the flow
 	 */
-	public void init(String id, AttributeMap attributes) throws FlowBuilderException;
+	public void init(String flowId, AttributeMap attributes) throws FlowBuilderException;
 
 	/**
 	 * Builds any variables initialized by the flow when it starts.
@@ -146,7 +147,7 @@ public interface FlowBuilder {
 	/**
 	 * Shutdown the builder, releasing any resources it holds. A new flow
 	 * construction process should start with another call to the
-	 * <code>init()</code> method.
+	 * {@link #init(String, AttributeMap)} method.
 	 */
 	public void dispose();
 }

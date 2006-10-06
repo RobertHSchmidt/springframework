@@ -37,10 +37,11 @@ import org.springframework.webflow.execution.Action;
  * {@link State states}, and {@link Transition transitions}.
  * <p>
  * This factory encapsulates the construction of each Flow implementation as
- * well as each core state type. Subclasses may customize how the core elements
+ * well as each core artifact type. Subclasses may customize how the core elements
  * are created, useful for plugging in custom implementations.
  * 
  * @author Keith Donald
+ * @author Erwin Vervaet
  */
 public class FlowArtifactFactory {
 
@@ -76,7 +77,7 @@ public class FlowArtifactFactory {
 	 * @param flow the flow that will own (contain) this state (required)
 	 * @param entryActions any state entry actions; may be null
 	 * @param viewSelector the state view selector strategy; may be null
-	 * @param renderActions any 'view actions' to execute on entry and refresh;
+	 * @param renderActions any 'render actions' to execute on entry and refresh;
 	 * may be null
 	 * @param transitions any transitions (paths) out of this state; may be null
 	 * @param exceptionHandlers any exception handlers; may be null

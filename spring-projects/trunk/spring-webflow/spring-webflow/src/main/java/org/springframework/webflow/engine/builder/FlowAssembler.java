@@ -107,7 +107,8 @@ public class FlowAssembler {
 
 	/**
 	 * Assembles the flow, directing the construction process by delegating to
-	 * the configured FlowBuilder.
+	 * the configured FlowBuilder. Every call to this method will assemble
+	 * the Flow instance.
 	 * <p>
 	 * This will drive the flow construction process as described in the
 	 * {@link FlowBuilder} JavaDoc, starting with builder initialisation using

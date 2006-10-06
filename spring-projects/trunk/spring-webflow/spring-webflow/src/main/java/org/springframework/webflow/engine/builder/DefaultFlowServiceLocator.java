@@ -28,6 +28,7 @@ import org.springframework.webflow.engine.Flow;
  * 
  * @see FlowDefinitionRegistry
  * @see FlowServiceLocator#getSubflow(String)
+ * @see BeanFactory
  * 
  * @author Keith Donald
  */
@@ -39,12 +40,12 @@ public class DefaultFlowServiceLocator extends BaseFlowServiceLocator {
 	private FlowDefinitionRegistry subflowRegistry;
 
 	/**
-	 * The Spring bean factory that manages configured flow artifacts.
+	 * The Spring bean factory used.
 	 */
 	private BeanFactory beanFactory;
 
 	/**
-	 * Creates a flow artifact factory that retrieves subflows from the provided
+	 * Creates a flow service locator that retrieves subflows from the provided
 	 * registry and additional artifacts from the provided bean factory.
 	 * @param subflowRegistry The registry for loading subflows
 	 * @param beanFactory The spring bean factory
@@ -56,15 +57,13 @@ public class DefaultFlowServiceLocator extends BaseFlowServiceLocator {
 		this.beanFactory = beanFactory;
 	}
 
-	// implementing FlowServiceLocator
-	
 	public Flow getSubflow(String id) throws FlowArtifactLookupException {
 		try {
 			return (Flow)subflowRegistry.getFlowDefinition(id);
 		}
 		catch (NoSuchFlowDefinitionException e) {
-			throw new FlowArtifactLookupException(id, Flow.class, "Could not locate subflow definition with id '" + id
-					+ "'", e);
+			throw new FlowArtifactLookupException(id, Flow.class,
+					"Could not locate subflow definition with id '" + id + "'", e);
 		}
 	}
 
@@ -72,6 +71,10 @@ public class DefaultFlowServiceLocator extends BaseFlowServiceLocator {
 		return beanFactory;
 	}
 
+	/**
+	 * Returns the flow definition registry used to lookup subflows.
+	 * @return the flow definition registry
+	 */
 	protected FlowDefinitionRegistry getSubflowRegistry() {
 		return subflowRegistry;
 	}	

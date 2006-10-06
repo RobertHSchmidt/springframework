@@ -113,7 +113,7 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 
 	/**
 	 * Set the resource loader to load file-based resources from string-encoded
-	 * paths.
+	 * paths. This is optional.
 	 */
 	public void setResourceLoader(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
@@ -121,7 +121,7 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 
 	public Flow getSubflow(String id) throws FlowArtifactLookupException {
 		throw new FlowArtifactLookupException(id, Flow.class,
-				"Subflow lookup is not supported by this artifact factory");
+				"Subflow lookup is not supported by this service locator");
 	}
 
 	public Action getAction(String id) throws FlowArtifactLookupException {
@@ -152,6 +152,14 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 		return beanInvokingActionFactory;
 	}
 
+	public BeanFactory getBeanFactory() throws UnsupportedOperationException {
+		throw new UnsupportedOperationException("Bean factory lookup is not supported by this service locator");
+	}
+
+	public ResourceLoader getResourceLoader() {
+		return resourceLoader;
+	}
+
 	public ExpressionParser getExpressionParser() {
 		return expressionParser;
 	}
@@ -159,14 +167,8 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	public ConversionService getConversionService() {
 		return conversionService;
 	}
-
-	public ResourceLoader getResourceLoader() {
-		return resourceLoader;
-	}
-
-	public BeanFactory getBeanFactory() throws UnsupportedOperationException {
-		throw new UnsupportedOperationException("Bean factory lookup is not supported by this service locator");
-	}
+	
+	// helpers for use by subclasses
 
 	/**
 	 * Helper method for determining if the configured bean factory contains the

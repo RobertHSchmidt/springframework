@@ -8,6 +8,11 @@ Changes in version 1.0 ()
 Package org.springframework.webflow.definition.registry
 * Added createFlowDefinitionRegistry hook method to AbstractFlowDefinitionRegistryFactoryBean.
 
+Package org.springframework.webflow.engine.builder
+* Removed END_STATE_VIEW_FLAG_PARAMETER from TextToViewSelector. As a result, the endingViewSelector
+  method of AbstractFlowBuilder was also removed.
+* Removed newDefaultFlowServiceLocator method from AbstractFlowBuildingFlowRegistryFactoryBean. 
+
 Package org.springframework.webflow.engine.support
 * Renamed DefaultFlowAttributeMapper to ConfigurableFlowAttributeMapper for clarity and to avoid confusion.
 

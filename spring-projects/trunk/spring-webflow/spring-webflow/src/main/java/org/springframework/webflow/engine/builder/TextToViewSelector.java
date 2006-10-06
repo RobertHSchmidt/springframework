@@ -35,17 +35,18 @@ import org.springframework.webflow.execution.support.FlowExecutionRedirect;
  * <p>
  * This converter supports the following encoded forms:
  * <ul>
+ * <li>empty - will result in a {@link NullViewSelector}.</li>
  * <li>"viewName" - will result in an {@link ApplicationViewSelector} that
  * returns an {@link ApplicationView} ViewSelection with the provided view name expression.</li>
- * <li>"redirect:&lt;viewName&gt;" - will result in a
+ * <li>"redirect:&lt;viewName&gt;" - will result in an
  * {@link ApplicationViewSelector} that returns an {@link FlowExecutionRedirect}
  * to a flow execution URL.</li>
- * <li>"externalRedirect:&lt;url&gt;" - will result in a
+ * <li>"externalRedirect:&lt;url&gt;" - will result in an
  * {@link ExternalRedirectSelector} that returns an {@link ExternalRedirect} to a
  * URL.</li>
  * <li>"flowRedirect:&lt;flowId&gt;" - will result in a
- * {@link FlowDefinitionRedirectSelector} that returns a {@link FlowDefinitionRedirect} to a flow.
- * The special <code>{this}</code> refers to the current ('this') flow definition id.</li>
+ * {@link FlowDefinitionRedirectSelector} that returns a {@link FlowDefinitionRedirect}
+ * to a flow.</li>
  * <li>"bean:&lt;id&gt;" - will result in usage of a custom
  * <code>ViewSelector</code> bean implementation.</li>
  * </ul>
@@ -59,32 +60,26 @@ import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 public class TextToViewSelector extends ConversionServiceAwareConverter {
 
 	/**
-	 * The name of the context parameter indicating whether or not the view selector
-	 * to create will select a view used in an end state.
-	 */
-	public static final String END_STATE_VIEW_FLAG_PARAMETER = "endStateView";
-
-	/**
 	 * Prefix used when the encoded view name wants to specify that a redirect
-	 * is required.
+	 * is required. ("redirect:")
 	 */
 	public static final String REDIRECT_PREFIX = "redirect:";
 
 	/**
 	 * Prefix used when the encoded view name wants to specify that a redirect
-	 * to an external URL is required.
+	 * to an external URL is required. ("externalRedirect:")
 	 */
 	public static final String EXTERNAL_REDIRECT_PREFIX = "externalRedirect:";
 
 	/**
 	 * Prefix used when the encoded view name wants to specify that a redirect
-	 * to a flow definition is requred.
+	 * to a flow definition is requred. ("flowRedirect:")
 	 */
 	public static final String FLOW_DEFINITION_REDIRECT_PREFIX = "flowRedirect:";
 
 	/**
 	 * Prefix used when the user wants to use a ViewSelector implementation
-	 * managed by a bean factory.
+	 * managed by a bean factory. ("bean:")
 	 */
 	private static final String BEAN_PREFIX = "bean:";
 
@@ -115,31 +110,21 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 			return NullViewSelector.INSTANCE;
 		}
 		else {
-			boolean endStateView = context.getRequiredBoolean(END_STATE_VIEW_FLAG_PARAMETER).booleanValue();
-			return convertEncodedViewSelector(encodedView, endStateView);
+			return convertEncodedViewSelector(encodedView);
 		}
 	}
 
 	/**
 	 * Convert given encoded view into an appropriate view selector.
 	 * @param encodedView the encoded view selector
-	 * @param endStateView indicates whether or not the returned view selector will be used to select
-	 * a view for an end state of a flow
 	 * @return the view selector
 	 */
-	protected ViewSelector convertEncodedViewSelector(String encodedView, boolean endStateView) {
+	protected ViewSelector convertEncodedViewSelector(String encodedView) {
 		if (encodedView.startsWith(REDIRECT_PREFIX)) {
 			String viewName = encodedView.substring(REDIRECT_PREFIX.length());
 			Expression viewNameExpr = (Expression)fromStringTo(Expression.class).execute(viewName);
-			if (endStateView) {
-				// the flow has ended so we can't use an 'in-flow' redirect
-				// just use the view as if it was an external redirect
-				return new ExternalRedirectSelector(viewNameExpr);
-			}
-			else {
-				// just show the application view using a redirect
-				return new ApplicationViewSelector(viewNameExpr, true);
-			}
+			// just show the application view using a redirect
+			return new ApplicationViewSelector(viewNameExpr, true);
 		}
 		else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
 			String externalUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());
