@@ -19,22 +19,28 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.webflow.engine.TransitionCriteria;
+import org.springframework.webflow.engine.WildcardTransitionCriteria;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.test.MockFlowServiceLocator;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
- * Test case for OgnlTransitionCriteriaCreator.
+ * Test case for {@link TextToTransitionCriteria}.
  */
 public class TextToTransitionCriteriaTests extends TestCase {
 
-	private TextToTransitionCriteria converter = new TextToTransitionCriteria(new BaseFlowServiceLocator());
+	private MockFlowServiceLocator serviceLocator = new MockFlowServiceLocator();
+	private TextToTransitionCriteria converter = new TextToTransitionCriteria(serviceLocator);
 
 	public void testAny() {
 		String expression = "*";
 		TransitionCriteria criterion = (TransitionCriteria)converter.convert(expression);
 		RequestContext ctx = getRequestContext();
 		assertTrue("Criterion should evaluate to true", criterion.test(ctx));
+		
+		assertSame(WildcardTransitionCriteria.INSTANCE, converter.convert("*"));
+		assertSame(WildcardTransitionCriteria.INSTANCE, converter.convert(""));
 	}
 
 	public void testStaticEventId() {
@@ -90,6 +96,17 @@ public class TextToTransitionCriteriaTests extends TestCase {
 		expression = "${#result == 'sample'}";
 		criterion = (TransitionCriteria)converter.convert(expression);
 		assertTrue("Criterion should evaluate to true", criterion.test(ctx));
+	}
+	
+	public void testBean() {
+		TransitionCriteria myTransitionCriteria = new TransitionCriteria() {
+			public boolean test(RequestContext context) {
+				return false;
+			}
+		};
+		serviceLocator.registerBean("myTransitionCriteria", myTransitionCriteria);
+		TransitionCriteria criteria = (TransitionCriteria)converter.convert("bean:myTransitionCriteria");
+		assertSame(myTransitionCriteria, criteria);
 	}
 
 	private RequestContext getRequestContext() {
