@@ -115,8 +115,10 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 			// just ignore, tracking last modified date not supported
 			return;
 		}
-		if (this.lastModified < calculateLastModified()) {
+		long calculatedLastModified = calculateLastModified();
+		if (this.lastModified < calculatedLastModified) {
 			assembleFlow();
+			this.lastModified = calculatedLastModified;
 		}
 	}
 
