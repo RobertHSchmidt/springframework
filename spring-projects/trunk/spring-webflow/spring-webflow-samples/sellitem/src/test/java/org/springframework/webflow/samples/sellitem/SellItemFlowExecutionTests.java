@@ -1,7 +1,6 @@
 package org.springframework.webflow.samples.sellitem;
 
 import org.easymock.EasyMock;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.test.MockFlowServiceLocator;
