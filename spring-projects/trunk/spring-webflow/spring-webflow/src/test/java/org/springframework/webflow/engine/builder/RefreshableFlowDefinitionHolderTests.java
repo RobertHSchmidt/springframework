@@ -16,15 +16,22 @@
 package org.springframework.webflow.engine.builder;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import junit.framework.TestCase;
 
+import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
+import org.springframework.webflow.util.ResourceHolder;
 
-public class RefreshableFlowHolderTests extends TestCase {
+/**
+ * Unit tests for {@link RefreshableFlowDefinitionHolder}.
+ */
+public class RefreshableFlowDefinitionHolderTests extends TestCase {
 
 	public void testNoRefreshOnNoChange() {
 		File parent = new File("src/test/java/org/springframework/webflow/engine/builder/xml");
@@ -46,4 +53,62 @@ public class RefreshableFlowHolderTests extends TestCase {
 		assertEquals(lastModified, holder.getLastModified());
 		assertSame(flow1, flow2);
 	}
+	
+	public void testReloadOnChange() throws Exception {
+		MockFlowBuilder mockFlowBuilder = new MockFlowBuilder();
+		FlowAssembler assembler = new FlowAssembler("mockFlow", mockFlowBuilder);
+		RefreshableFlowDefinitionHolder holder = new RefreshableFlowDefinitionHolder(assembler);
+
+		mockFlowBuilder.lastModified = 0L;
+		assertEquals(0, mockFlowBuilder.buildCallCount);
+		holder.getFlowDefinition();
+		assertEquals(1, mockFlowBuilder.buildCallCount);
+		holder.getFlowDefinition();
+		assertEquals(1, mockFlowBuilder.buildCallCount);
+		holder.getFlowDefinition();
+		assertEquals(1, mockFlowBuilder.buildCallCount);
+		mockFlowBuilder.lastModified = 10L;
+		holder.getFlowDefinition();
+		assertEquals(2, mockFlowBuilder.buildCallCount);
+		holder.getFlowDefinition();
+		assertEquals(2, mockFlowBuilder.buildCallCount);
+		holder.refresh();
+		assertEquals(3, mockFlowBuilder.buildCallCount);
+		holder.refresh();
+		assertEquals(4, mockFlowBuilder.buildCallCount);
+	}
+	
+	private class MockFlowBuilder extends AbstractFlowBuilder implements ResourceHolder {
+		
+		public int buildCallCount = 0;
+		public long lastModified = 0L;
+		
+		public void buildStates() throws FlowBuilderException {
+			addEndState("end");
+			buildCallCount++;
+		}
+		
+		public Resource getResource() {
+			return new AbstractResource() {
+				
+				public File getFile() throws IOException {
+					return new File("mock") {
+						public long lastModified() {
+							return lastModified;
+						}
+					};
+				}
+				
+				public String getDescription() {
+					return null;
+				}
+				
+				public InputStream getInputStream() throws IOException {
+					return null;
+				}
+			};
+		}
+	}
+	
+	
 }
