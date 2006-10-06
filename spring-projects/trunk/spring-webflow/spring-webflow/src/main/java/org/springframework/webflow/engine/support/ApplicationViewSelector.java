@@ -98,6 +98,13 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	public Expression getViewName() {
 		return viewName;
 	}
+	
+	/**
+	 * Returns if a redirect to the view should be done.
+	 */
+	public boolean isRedirect() {
+		return redirect;
+	}
 
 	public boolean isEntrySelectionRenderable(RequestContext context) {
 		return !shouldRedirect(context);
