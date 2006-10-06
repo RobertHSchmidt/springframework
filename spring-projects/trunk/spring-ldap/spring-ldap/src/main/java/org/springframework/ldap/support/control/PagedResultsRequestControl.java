@@ -17,6 +17,7 @@
 package org.springframework.ldap.support.control;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
@@ -129,6 +130,7 @@ public class PagedResultsRequestControl extends
     }
 
     private Object invokeMethod(String method, Class clazz, Object control) {
-        return ReflectionUtils.invokeMethod(method, clazz, control, null, null);
+        Method m = ReflectionUtils.findMethod(clazz, method, new Class[0]);
+        return ReflectionUtils.invokeMethod(m, control);
     }
 }

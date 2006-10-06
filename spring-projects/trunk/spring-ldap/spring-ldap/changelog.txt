@@ -26,6 +26,8 @@ Changes in version 1.1.1 (xx.y.2006)
 * Separated integration tests that require OpenLDAP from the other integration
   tests that run the in-JVM Apache DS server.
 
+* Upgraded Spring to 2.0.
+
 Changes in version 1.1 (28.8.2006)
 -------------------------------------------
 * Changed base package from net.sf.ldaptemplate to org.springframework.ldap
