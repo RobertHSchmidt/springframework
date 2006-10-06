@@ -29,9 +29,15 @@ import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.ViewState;
+import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
+import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.ViewSelection;
+import org.springframework.webflow.execution.support.ApplicationView;
+import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -58,6 +64,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 			}
 		};
 	}
+	
 	public void testDependencyLookup() {
 		TestMasterFlowBuilderLookupById master = new TestMasterFlowBuilderLookupById();
 		master.setFlowServiceLocator(new BaseFlowServiceLocator() {
@@ -209,5 +216,23 @@ public class AbstractFlowBuilderTests extends TestCase {
 		public Event foo(RequestContext context) {
 			return new Event(this, "success");
 		}
+	}
+	
+	public void testEndStateRefresh() {
+		FlowBuilder builder = new AbstractFlowBuilder() {
+			public void buildStates() throws FlowBuilderException {
+				addEndState("theEnd", "redirect:endView");
+			}
+		};
+		Flow testFlow = new FlowAssembler("testFlow", builder).assembleFlow();
+		assertTrue(testFlow.getStartState() instanceof EndState);
+		assertTrue(((EndState)testFlow.getStartState()).getViewSelector() instanceof ApplicationViewSelector);
+		assertTrue(((ApplicationViewSelector)((EndState)testFlow.getStartState()).getViewSelector()).isRedirect());
+		
+		FlowExecution execution = new FlowExecutionImplFactory().createFlowExecution(testFlow);
+		ViewSelection viewSelection = execution.start(null, new MockExternalContext());
+		assertTrue("redirect: should be ignored for end states", viewSelection instanceof ApplicationView);
+		assertEquals("endView", ((ApplicationView)viewSelection).getViewName());
+		assertFalse(execution.isActive());
 	}
 }
