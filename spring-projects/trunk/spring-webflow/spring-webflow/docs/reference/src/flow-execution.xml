@@ -78,7 +78,7 @@
  	  	 	<title>Flow execution resume</title>
  	  	 	<programlisting>
     ExternalContext context = ...
-    ViewSelection nextView = execution.resume("submit", context);
+    ViewSelection nextView = execution.signalEvent("submit", context);
     if (execution.isActive()) {
         // still active but paused
     } else {
