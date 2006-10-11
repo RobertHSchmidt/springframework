@@ -257,6 +257,9 @@ public class FlowExecutorImpl implements FlowExecutor {
 			try {
 				FlowExecution flowExecution = executionRepository.getFlowExecution(key);
 				ViewSelection selectedView = flowExecution.refresh(context);
+				// don't generate a new key for a refresh, just update
+				// the flow execution with it's existing key
+				executionRepository.putFlowExecution(key, flowExecution);
 				return new ResponseInstruction(key.toString(), flowExecution, selectedView);
 			}
 			finally {
