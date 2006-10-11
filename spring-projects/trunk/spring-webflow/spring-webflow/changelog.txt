@@ -18,6 +18,11 @@ Package org.springframework.webflow.engine.builder
 Package org.springframework.webflow.engine.support
 * Renamed DefaultFlowAttributeMapper to ConfigurableFlowAttributeMapper for clarity and to avoid confusion.
 
+Package org.springframework.webflow.executor
+* FlowExecutorImpl now updates the flow execution in the flow execution repository after a refresh,
+  without generating a new key. This ensures that side effects of render actions live beyond the
+  current request.
+
 Changes in version 1.0 RC4 (04.10.2006)
 ---------------------------------------
 
