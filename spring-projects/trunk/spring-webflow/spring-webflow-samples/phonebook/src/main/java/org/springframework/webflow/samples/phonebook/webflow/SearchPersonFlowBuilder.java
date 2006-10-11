@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2004 the original author or authors.
+ * Copyright 2002-2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.springframework.webflow.samples.phonebook.domain.SearchCriteriaValida
 /**
  * Java-based flow builder that searches for people in the phonebook. The flow
  * defined by this class is exactly the same as that defined in the
- * <code>search.xml</code> XML flow definition.
+ * <code>search-flow.xml</code> XML flow definition.
  * <p>
  * This encapsulates the page flow of searching for some people, selecting a
  * person you care about, and viewing their person's details and those of their
