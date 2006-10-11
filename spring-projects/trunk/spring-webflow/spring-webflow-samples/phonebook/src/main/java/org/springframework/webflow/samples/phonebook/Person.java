@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.samples.phonebook.domain;
+package org.springframework.webflow.samples.phonebook;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -18,7 +18,7 @@
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
-			classpath:org/springframework/webflow/samples/phonebook/domain/services-config.xml
+			classpath:org/springframework/webflow/samples/phonebook/stub/services-config.xml
 		</param-value>
 	</context-param>
 	

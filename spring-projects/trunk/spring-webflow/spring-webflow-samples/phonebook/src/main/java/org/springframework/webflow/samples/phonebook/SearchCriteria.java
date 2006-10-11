@@ -13,15 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.samples.phonebook.domain;
+package org.springframework.webflow.samples.phonebook;
 
-import java.util.List;
+import java.io.Serializable;
 
-public interface Phonebook {
+public class SearchCriteria implements Serializable {
 
-	public List<Person> search(SearchCriteria criteria);
+	private String firstName = "";
 
-	public Person getPerson(Long id);
+	private String lastName = "";
 
-	public Person getPerson(String userId);
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 }
