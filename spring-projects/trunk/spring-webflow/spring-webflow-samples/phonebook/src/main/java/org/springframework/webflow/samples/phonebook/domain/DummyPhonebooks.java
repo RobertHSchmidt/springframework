@@ -18,11 +18,11 @@ package org.springframework.webflow.samples.phonebook.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArrayListPhoneBook implements PhoneBook {
+public class DummyPhonebooks implements Phonebooks {
 
 	private List<Person> persons = new ArrayList<Person>();
 
-	public ArrayListPhoneBook() {
+	public DummyPhonebooks() {
 		// setup some test data
 		Person kd = new Person(1, "Keith", "Donald", "kdonald", "11111");
 		Person ev = new Person(2, "Erwin", "Vervaet", "klr8", "22222");

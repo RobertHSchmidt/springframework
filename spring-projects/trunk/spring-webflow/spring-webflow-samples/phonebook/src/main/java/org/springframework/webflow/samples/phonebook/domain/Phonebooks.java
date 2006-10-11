@@ -17,7 +17,7 @@ package org.springframework.webflow.samples.phonebook.domain;
 
 import java.util.List;
 
-public interface PhoneBook {
+public interface Phonebooks {
 
 	public List<Person> search(SearchCriteria criteria);
 
