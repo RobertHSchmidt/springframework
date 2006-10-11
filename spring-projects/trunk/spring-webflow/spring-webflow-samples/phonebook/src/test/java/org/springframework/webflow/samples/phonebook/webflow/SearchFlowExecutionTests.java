@@ -23,7 +23,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.support.ApplicationView;
-import org.springframework.webflow.samples.phonebook.domain.DummyPhonebooks;
+import org.springframework.webflow.samples.phonebook.domain.dummy.DummyPhonebook;
 import org.springframework.webflow.test.MockFlowServiceLocator;
 import org.springframework.webflow.test.MockParameterMap;
 import org.springframework.webflow.test.execution.AbstractXmlFlowExecutionTests;
@@ -88,6 +88,6 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		new EndState(mockDetailFlow, "finish");
 
 		serviceRegistry.registerSubflow(mockDetailFlow);
-		serviceRegistry.registerBean("phonebook", new DummyPhonebooks());
+		serviceRegistry.registerBean("phonebook", new DummyPhonebook());
 	}
 }

@@ -5,6 +5,6 @@
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-	<bean id="phonebook" class="org.springframework.webflow.samples.phonebook.domain.ArrayListPhoneBook"/>
+	<bean id="phonebook" class="org.springframework.webflow.samples.phonebook.domain.dummy.DummyPhonebook"/>
 	
 </beans>
