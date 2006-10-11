@@ -17,9 +17,10 @@ package org.springframework.binding.method;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -109,7 +110,7 @@ public class ClassMethodKey implements Serializable {
 						Class candidateType = candidateParameterTypes[j];
 						Class parameterType = parameterTypes[j];
 						if (parameterType != null) {
-							if (ClassUtils.isAssignable(candidateType, parameterType)) {
+							if (isAssignable(candidateType, parameterType)) {
 								numberOfCorrectArguments++;
 							}
 						}
@@ -168,6 +169,41 @@ public class ClassMethodKey implements Serializable {
 			}
 		}
 		return hash;
+	}
+
+	// internal helpers
+	
+	/**
+	 * Determine if the given target type is assignable from the given value
+	 * type, assuming setting by reflection. Considers primitive wrapper
+	 * classes as assignable to the corresponding primitive types.
+	 * <p>
+	 * NOTE: Pulled from ClassUtils in Spring 2.0 for 1.2.8 compatability.  Should
+	 * be collapsed when 1.2.9 is released.
+	 * @param targetType the target type
+	 * @param valueType	the value type that should be assigned to the target type
+	 * @return if the target type is assignable from the value type
+	 */
+	private static boolean isAssignable(Class targetType, Class valueType) {
+		return (targetType.isAssignableFrom(valueType) ||
+				targetType.equals(primitiveWrapperTypeMap.get(valueType)));
+	}
+
+	/**
+	 * Map with primitive wrapper type as key and corresponding primitive
+	 * type as value, for example: Integer.class -> int.class.
+	 */
+	private static final Map primitiveWrapperTypeMap = new HashMap(8);
+
+	static {
+		primitiveWrapperTypeMap.put(Boolean.class, boolean.class);
+		primitiveWrapperTypeMap.put(Byte.class, byte.class);
+		primitiveWrapperTypeMap.put(Character.class, char.class);
+		primitiveWrapperTypeMap.put(Double.class, double.class);
+		primitiveWrapperTypeMap.put(Float.class, float.class);
+		primitiveWrapperTypeMap.put(Integer.class, int.class);
+		primitiveWrapperTypeMap.put(Long.class, long.class);
+		primitiveWrapperTypeMap.put(Short.class, short.class);
 	}
 
 	public String toString() {
