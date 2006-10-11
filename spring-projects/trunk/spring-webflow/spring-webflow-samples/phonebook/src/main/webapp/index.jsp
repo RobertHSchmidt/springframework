@@ -5,11 +5,11 @@
 	<HEAD>
 	</HEAD>
 	<BODY>
-		<DIV align="left">Phone Book - A Spring Web Flow Sample</DIV>
+		<DIV align="left">Phonebook - A Spring Web Flow Sample</DIV>
 		<HR>
 		<DIV align="left">
 			<P>
-				<A href="phonebook.htm?_flowId=search-flow">Phone Book</A>
+				<A href="phonebook.htm?_flowId=search-flow">Phonebook</A>
 			</P>
 			<P>
 				This sample application illustrates core features of the web flow system.

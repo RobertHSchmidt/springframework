@@ -18,5 +18,4 @@
 </div>
 
 <div id="navigation">
-
 </div>
