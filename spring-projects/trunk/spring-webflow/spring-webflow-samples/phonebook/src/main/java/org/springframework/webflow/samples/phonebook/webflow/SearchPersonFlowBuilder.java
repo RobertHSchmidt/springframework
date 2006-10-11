@@ -23,8 +23,8 @@ import org.springframework.webflow.engine.builder.FlowBuilderException;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.engine.support.DefaultFlowAttributeMapper;
 import org.springframework.webflow.execution.ScopeType;
-import org.springframework.webflow.samples.phonebook.domain.SearchCriteria;
-import org.springframework.webflow.samples.phonebook.domain.SearchCriteriaValidator;
+import org.springframework.webflow.samples.phonebook.SearchCriteria;
+import org.springframework.webflow.samples.phonebook.SearchCriteriaValidator;
 
 /**
  * Java-based flow builder that searches for people in the phonebook. The flow

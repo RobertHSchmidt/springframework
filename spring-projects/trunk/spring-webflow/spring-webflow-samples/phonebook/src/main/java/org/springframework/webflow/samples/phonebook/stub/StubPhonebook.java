@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.samples.phonebook.domain.dummy;
+package org.springframework.webflow.samples.phonebook.stub;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.webflow.samples.phonebook.domain.Person;
-import org.springframework.webflow.samples.phonebook.domain.Phonebook;
-import org.springframework.webflow.samples.phonebook.domain.SearchCriteria;
+import org.springframework.webflow.samples.phonebook.Person;
+import org.springframework.webflow.samples.phonebook.Phonebook;
+import org.springframework.webflow.samples.phonebook.SearchCriteria;
 
-public class DummyPhonebook implements Phonebook {
+public class StubPhonebook implements Phonebook {
 
 	private List<Person> persons = new ArrayList<Person>();
 
-	public DummyPhonebook() {
+	public StubPhonebook() {
 		// setup some dummy test data
 		Person kd = new Person(1, "Keith", "Donald", "kdonald", "11111");
 		Person ev = new Person(2, "Erwin", "Vervaet", "klr8", "22222");
