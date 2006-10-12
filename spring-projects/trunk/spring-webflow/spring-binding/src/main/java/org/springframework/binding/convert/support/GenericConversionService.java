@@ -27,7 +27,6 @@ import java.util.Set;
 import org.springframework.binding.convert.ConversionContext;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
-import org.springframework.binding.convert.ConversionServiceAware;
 import org.springframework.binding.convert.Converter;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
