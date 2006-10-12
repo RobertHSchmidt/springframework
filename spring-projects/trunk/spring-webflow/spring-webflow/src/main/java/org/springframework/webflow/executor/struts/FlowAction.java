@@ -37,8 +37,9 @@ import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.ResponseInstruction;
-import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
+import org.springframework.webflow.executor.support.FlowExecutorArgumentHandler;
 import org.springframework.webflow.executor.support.FlowRequestHandler;
+import org.springframework.webflow.executor.support.RequestParameterFlowExecutorArgumentHandler;
 
 /**
  * Point of integration between Struts and Spring Web Flow: a Struts Action that
@@ -53,11 +54,11 @@ import org.springframework.webflow.executor.support.FlowRequestHandler;
  * <p>
  * <li>By default, to have this controller launch a new flow execution
  * (conversation), have the client send a
- * {@link FlowExecutorArgumentExtractor#getFlowIdParameterName()} request
+ * {@link FlowExecutorArgumentHandler#getFlowIdArgumentName()} request
  * parameter indicating the flow definition to launch.
  * <li>To have this controller participate in an existing flow execution
  * (conversation), have the client send a
- * {@link FlowExecutorArgumentExtractor#getFlowExecutionKeyParameterName()}
+ * {@link FlowExecutorArgumentHandler#getFlowExecutionKeyArgumentName()}
  * request parameter identifying the conversation to participate in.
  * <p>
  * On each request received by this action, a {@link StrutsExternalContext}
@@ -108,11 +109,11 @@ import org.springframework.webflow.executor.support.FlowRequestHandler;
  * first querying for a bean of instance {@link FlowExecutor} named
  * {@link #FLOW_EXECUTOR_BEAN_NAME}.</li>
  * <li>The
- * {@link org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor}
+ * {@link org.springframework.webflow.executor.support.FlowExecutorArgumentHandler}
  * used by the FlowAction can be configured in the root context using a bean of
- * name {@link #FLOW_EXECUTOR_ARGUMENT_EXTRACTOR_BEAN_NAME}. If not explicitly
+ * name {@link #FLOW_EXECUTOR_ARGUMENT_HANDLER_BEAN_NAME}. If not explicitly
  * specified it will default to a normal
- * {@link org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor}
+ * {@link org.springframework.webflow.executor.support.RequestParameterFlowExecutorArgumentHandler}
  * with standard configuration.</li>
  * </ul>
  * <p>
@@ -138,11 +139,11 @@ public class FlowAction extends ActionSupport {
 	protected static final String FLOW_EXECUTOR_BEAN_NAME = "flowExecutor";
 
 	/**
-	 * The flow executor argument extractor will be retreived from the
-	 * application context using this bean name if no argument extractor is
-	 * explicitly set. ("argumentExtractor")
+	 * The flow executor argument handler will be retreived from the
+	 * application context using this bean name if no argument handler is
+	 * explicitly set. ("argumentHandler")
 	 */
-	protected static final String FLOW_EXECUTOR_ARGUMENT_EXTRACTOR_BEAN_NAME = "argumentExtractor";
+	protected static final String FLOW_EXECUTOR_ARGUMENT_HANDLER_BEAN_NAME = "argumentHandler";
 
 	/**
 	 * The service responsible for launching and signaling Struts-originating
@@ -151,9 +152,9 @@ public class FlowAction extends ActionSupport {
 	private FlowExecutor flowExecutor;
 
 	/**
-	 * Delegate to extract flow executor parameters.
+	 * Delegate to handle flow executor arguments.
 	 */
-	private FlowExecutorArgumentExtractor argumentExtractor;
+	private FlowExecutorArgumentHandler argumentHandler;
 
 	/**
 	 * Returns the flow executor used by this controller.
@@ -172,19 +173,19 @@ public class FlowAction extends ActionSupport {
 	}
 
 	/**
-	 * Returns the flow executor argument extractor used by this controller.
-	 * @return the argument extractor
+	 * Returns the flow executor argument handler used by this controller.
+	 * @return the argument handler
 	 */
-	public FlowExecutorArgumentExtractor getArgumentExtractor() {
-		return argumentExtractor;
+	public FlowExecutorArgumentHandler getArgumentHandler() {
+		return argumentHandler;
 	}
 
 	/**
-	 * Sets the flow executor argument extractor to use.
-	 * @param argumentExtractor the fully configured argument extractor
+	 * Sets the flow executor argument handler to use.
+	 * @param argumentHandler the fully configured argument handler
 	 */
-	public void setArgumentExtractor(FlowExecutorArgumentExtractor argumentExtractor) {
-		this.argumentExtractor = argumentExtractor;
+	public void setArgumentHandler(FlowExecutorArgumentHandler argumentHandler) {
+		this.argumentHandler = argumentHandler;
 	}
 
 	protected void onInit() {
@@ -199,14 +200,14 @@ public class FlowAction extends ActionSupport {
 						+ "configure this FlowAction with a FlowExecutor");
 			}
 		}
-		if (getArgumentExtractor() == null) {
-			if (context.containsBean(FLOW_EXECUTOR_ARGUMENT_EXTRACTOR_BEAN_NAME)) {
-				setArgumentExtractor((FlowExecutorArgumentExtractor)context.getBean(
-						FLOW_EXECUTOR_ARGUMENT_EXTRACTOR_BEAN_NAME, FlowExecutorArgumentExtractor.class));
+		if (getArgumentHandler() == null) {
+			if (context.containsBean(FLOW_EXECUTOR_ARGUMENT_HANDLER_BEAN_NAME)) {
+				setArgumentHandler((FlowExecutorArgumentHandler)context.getBean(
+						FLOW_EXECUTOR_ARGUMENT_HANDLER_BEAN_NAME, FlowExecutorArgumentHandler.class));
 			}
 			else {
 				// default
-				argumentExtractor = new FlowExecutorArgumentExtractor();
+				argumentHandler = new RequestParameterFlowExecutorArgumentHandler();
 			}
 		}
 	}
@@ -224,7 +225,7 @@ public class FlowAction extends ActionSupport {
 	 * @return the controller helper
 	 */
 	protected FlowRequestHandler createRequestHandler() {
-		return new FlowRequestHandler(getFlowExecutor(), getArgumentExtractor());
+		return new FlowRequestHandler(getFlowExecutor(), getArgumentHandler());
 	}
 
 	/**
@@ -237,8 +238,8 @@ public class FlowAction extends ActionSupport {
 			// forward to a view as part of an active conversation
 			ApplicationView forward = (ApplicationView)response.getViewSelection();
 			Map model = new HashMap(forward.getModel());
-			argumentExtractor.put(response.getFlowExecutionKey(), model);
-			argumentExtractor.put(response.getFlowExecutionContext(), model);
+			argumentHandler.exposeFlowExecutionContext(
+					response.getFlowExecutionKey(), response.getFlowExecutionContext(), model);
 			WebUtils.exposeRequestAttributes(request, model);
 			if (form instanceof SpringBindingActionForm) {
 				SpringBindingActionForm bindingForm = (SpringBindingActionForm)form;
@@ -252,18 +253,18 @@ public class FlowAction extends ActionSupport {
 		}
 		else if (response.isFlowExecutionRedirect()) {
 			// redirect to active flow execution URL
-			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(
+			String flowExecutionUrl = argumentHandler.createFlowExecutionUrl(
 					response.getFlowExecutionKey(), response.getFlowExecutionContext(), context);
 			return createRedirectForward(flowExecutionUrl, httpResponse);
 		}
 		else if (response.isFlowDefinitionRedirect()) {
 			// restart the flow by redirecting to flow launch URL
-			String flowUrl = argumentExtractor.createFlowDefinitionUrl((FlowDefinitionRedirect)response.getViewSelection(), context);
+			String flowUrl = argumentHandler.createFlowDefinitionUrl((FlowDefinitionRedirect)response.getViewSelection(), context);
 			return createRedirectForward(flowUrl, httpResponse);
 		}
 		else if (response.isExternalRedirect()) {
 			// redirect to external URL
-			String externalUrl = argumentExtractor.createExternalUrl((ExternalRedirect)response.getViewSelection(),
+			String externalUrl = argumentHandler.createExternalUrl((ExternalRedirect)response.getViewSelection(),
 					response.getFlowExecutionKey(), context);
 			return createRedirectForward(externalUrl, httpResponse);
 		}

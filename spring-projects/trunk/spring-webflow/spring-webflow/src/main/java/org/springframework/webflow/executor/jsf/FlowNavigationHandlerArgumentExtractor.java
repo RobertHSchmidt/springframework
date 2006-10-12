@@ -19,15 +19,21 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractionException;
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
+import org.springframework.webflow.executor.support.RequestParameterFlowExecutorArgumentHandler;
 
 /**
- * An extension of {@link FlowExecutorArgumentExtractor} that is aware of JSF
- * outcomes that communicate requests to launch flow executions and signal event
- * in existing flow executions.
+ * An {@link FlowExecutorArgumentExtractor} that is aware of JSF
+ * outcomes that communicate requests to launch flow executions and
+ * signal event in existing flow executions.
  * 
  * @author Keith Donald
  */
-public class FlowNavigationHandlerArgumentExtractor extends FlowExecutorArgumentExtractor {
+public class FlowNavigationHandlerArgumentExtractor extends RequestParameterFlowExecutorArgumentHandler {
+	
+	/*
+	 * Implementation note: subclasses an FlowExecutorArgumentHandler but is really
+	 * just a FlowExecutorArgumentExtractor.
+	 */
 
 	/**
 	 * The default prefix of a outcome string that indicates a new flow should be launched.
@@ -54,10 +60,7 @@ public class FlowNavigationHandlerArgumentExtractor extends FlowExecutorArgument
 		return StringUtils.hasText(getOutcome(context)) || super.isEventIdPresent(context);
 	}
 
-	/*
-	 * Overidden to return the eventId from the action outcome string.
-	 * @see org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor#extractEventId(org.springframework.webflow.ExternalContext)
-	 */
+	// overidden to return the eventId from the action outcome string.
 	public String extractEventId(ExternalContext context) throws FlowExecutorArgumentExtractionException {
 		String outcome = getOutcome(context);
 		if (StringUtils.hasText(outcome)) {
@@ -78,10 +81,7 @@ public class FlowNavigationHandlerArgumentExtractor extends FlowExecutorArgument
 		}
 	}
 
-	/*
-	 * Overidden to return the flowId from a JSF outcome in format <code>flowId:${flowId}</code>
-	 * @see org.springframework.webflow.manager.support.FlowExecutionManagerParameterExtractor#extractFlowId(org.springframework.webflow.ExternalContext)
-	 */
+	// overidden to return the flowId from a JSF outcome in format <code>flowId:${flowId}</code>
 	public String extractFlowId(ExternalContext context) throws FlowExecutorArgumentExtractionException {
 		String outcome = getOutcome(context);
 		if (StringUtils.hasText(outcome)) {

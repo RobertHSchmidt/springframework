@@ -38,11 +38,11 @@ public class BeanConfigTests extends TestCase {
 	
 	public void testFlowControllerConfig() {
 		FlowController flowController = (FlowController)beanFactory.getBean("flowController");
-		assertEquals("test-flow", flowController.getArgumentExtractor().getDefaultFlowId());
+		assertEquals("test-flow", flowController.getArgumentHandler().getDefaultFlowId());
 	}
 	
 	public void testFlowControllerBeanConfig() {
 		FlowController flowController = (FlowController)beanFactory.getBean("flowController-bean");
-		assertEquals("test-flow", flowController.getArgumentExtractor().getDefaultFlowId());
+		assertEquals("test-flow", flowController.getArgumentHandler().getDefaultFlowId());
 	}
 }

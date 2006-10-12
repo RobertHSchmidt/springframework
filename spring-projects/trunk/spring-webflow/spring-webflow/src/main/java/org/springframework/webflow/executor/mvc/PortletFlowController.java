@@ -36,7 +36,8 @@ import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.ResponseInstruction;
-import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
+import org.springframework.webflow.executor.support.FlowExecutorArgumentHandler;
+import org.springframework.webflow.executor.support.RequestParameterFlowExecutorArgumentHandler;
 
 /**
  * Point of integration between Spring Portlet MVC and Spring Web Flow: a
@@ -52,12 +53,12 @@ import org.springframework.webflow.executor.support.FlowExecutorArgumentExtracto
  * application for examples of the various strategies for launching and resuming
  * flow executions in a Portlet environment.
  * <p>
- * It is also possible to customize the {@link FlowExecutorArgumentExtractor}
+ * It is also possible to customize the {@link FlowExecutorArgumentHandler}
  * strategy to allow for different types of controller parameterization, for
  * example perhaps in conjunction with a REST-style request mapper.
  * 
  * @see org.springframework.webflow.executor.FlowExecutor
- * @see org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor
+ * @see org.springframework.webflow.executor.support.FlowExecutorArgumentHandler
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -79,14 +80,14 @@ public class PortletFlowController extends AbstractController implements Initial
 	private FlowExecutor flowExecutor;
 
 	/**
-	 * Delegate for extracting flow executor arguments.
+	 * Delegate for handler flow executor arguments.
 	 */
-	private FlowExecutorArgumentExtractor argumentExtractor = new FlowExecutorArgumentExtractor();
+	private FlowExecutorArgumentHandler argumentHandler = new RequestParameterFlowExecutorArgumentHandler();
 
 	/**
 	 * Create a new portlet flow controller. Allows for bean style usage.
 	 * @see #setFlowExecutor(FlowExecutor)
-	 * @see #setArgumentExtractor(FlowExecutorArgumentExtractor)
+	 * @see #setArgumentHandler(FlowExecutorArgumentHandler)
 	 */
 	public PortletFlowController() {
 		// set the cache seconds property to 0 so no pages are cached by default
@@ -115,45 +116,45 @@ public class PortletFlowController extends AbstractController implements Initial
 	}
 
 	/**
-	 * Returns the flow executor argument extractor used by this controller.
-	 * @return the argument extractor
+	 * Returns the flow executor argument handler used by this controller.
+	 * @return the argument handler
 	 */
-	public FlowExecutorArgumentExtractor getArgumentExtractor() {
-		return argumentExtractor;
+	public FlowExecutorArgumentHandler getArgumentHandler() {
+		return argumentHandler;
 	}
 
 	/**
-	 * Sets the flow executor argument extractor to use.
-	 * @param argumentExtractor the fully configured argument extractor
+	 * Sets the flow executor argument handler to use.
+	 * @param argumentHandler the fully configured argument handler
 	 */
-	public void setArgumentExtractor(FlowExecutorArgumentExtractor argumentExtractor) {
-		this.argumentExtractor = argumentExtractor;
+	public void setArgumentHandler(FlowExecutorArgumentHandler argumentHandler) {
+		this.argumentHandler = argumentHandler;
 	}
 
 	/**
 	 * Sets the identifier of the default flow to launch if no flowId argument
-	 * can be extracted by the configured {@link FlowExecutorArgumentExtractor}
+	 * can be extracted by the configured {@link FlowExecutorArgumentHandler}
 	 * during render request processing.
 	 * <p>
 	 * This is a convenience method that sets the default flow id of the
-	 * controller's argument extractor. Don't use this when using
-	 * {@link #setArgumentExtractor(FlowExecutorArgumentExtractor)}.
+	 * controller's argument handler. Don't use this when using
+	 * {@link #setArgumentHandler(FlowExecutorArgumentHandler)}.
 	 */
 	public void setDefaultFlowId(String defaultFlowId) {
-		argumentExtractor.setDefaultFlowId(defaultFlowId);
+		argumentHandler.setDefaultFlowId(defaultFlowId);
 	}
 
 	public void afterPropertiesSet() {
 		Assert.notNull(flowExecutor, "The flow executor property is required");
-		Assert.notNull(argumentExtractor, "The argument extractor property is required");
+		Assert.notNull(argumentHandler, "The argument handler property is required");
 	}
 
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
 		PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
-		if (argumentExtractor.isFlowExecutionKeyPresent(context)) {
+		if (argumentHandler.isFlowExecutionKeyPresent(context)) {
 			// flowExecutionKey render param present: this is a request to
 			// render an active flow execution -- extract its key
-			String flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
+			String flowExecutionKey = argumentHandler.extractFlowExecutionKey(context);
 			// look for a cached response instruction in the session put there
 			// by the action request phase as part of an "active view" forward
 			ResponseInstruction responseInstruction = extractActionResponseInstruction(request);
@@ -175,7 +176,7 @@ public class PortletFlowController extends AbstractController implements Initial
 			if (responseInstruction == null) {
 				// no response instruction found in session - launch a new flow
 				// execution
-				String flowId = argumentExtractor.extractFlowId(context);
+				String flowId = argumentHandler.extractFlowId(context);
 				return toModelAndView(flowExecutor.launch(flowId, context));
 			}
 			else {
@@ -187,8 +188,8 @@ public class PortletFlowController extends AbstractController implements Initial
 
 	protected void handleActionRequestInternal(ActionRequest request, ActionResponse response) throws Exception {
 		PortletExternalContext context = new PortletExternalContext(getPortletContext(), request, response);
-		String flowExecutionKey = argumentExtractor.extractFlowExecutionKey(context);
-		String eventId = argumentExtractor.extractEventId(context);
+		String flowExecutionKey = argumentHandler.extractFlowExecutionKey(context);
+		String eventId = argumentHandler.extractEventId(context);
 		// signal the event against the flow execution, returning the next
 		// response instruction
 		ResponseInstruction responseInstruction = flowExecutor.resume(flowExecutionKey, eventId, context);
@@ -199,7 +200,7 @@ public class PortletFlowController extends AbstractController implements Initial
 				// set the flow execution key render parameter to support
 				// browser refresh
 				response.setRenderParameter(
-						argumentExtractor.getFlowExecutionKeyParameterName(),
+						argumentHandler.getFlowExecutionKeyArgumentName(),
 						responseInstruction.getFlowExecutionKey());
 			}
 			// cache response instruction for access during render phase of this
@@ -210,7 +211,7 @@ public class PortletFlowController extends AbstractController implements Initial
 			// is a flow execution redirect: simply expose key parameter to
 			// support refresh during render phase
 			response.setRenderParameter(
-					argumentExtractor.getFlowExecutionKeyParameterName(),
+					argumentHandler.getFlowExecutionKeyArgumentName(),
 					responseInstruction.getFlowExecutionKey());
 		}
 		else if (responseInstruction.isFlowDefinitionRedirect()) {
@@ -218,12 +219,12 @@ public class PortletFlowController extends AbstractController implements Initial
 			// launched within this portlet
 			FlowDefinitionRedirect redirect = (FlowDefinitionRedirect)responseInstruction.getViewSelection();
 			response.setRenderParameters(redirect.getExecutionInput());
-			response.setRenderParameter(argumentExtractor.getFlowIdParameterName(), redirect.getFlowDefinitionId());
+			response.setRenderParameter(argumentHandler.getFlowIdArgumentName(), redirect.getFlowDefinitionId());
 		}
 		else if (responseInstruction.isExternalRedirect()) {
 			// issue the redirect to the external URL
 			ExternalRedirect redirect = (ExternalRedirect)responseInstruction.getViewSelection();
-			String url = argumentExtractor.createExternalUrl(redirect, flowExecutionKey, context);
+			String url = argumentHandler.createExternalUrl(redirect, flowExecutionKey, context);
 			response.sendRedirect(url);
 		}
 		else {
@@ -273,8 +274,8 @@ public class PortletFlowController extends AbstractController implements Initial
 			// forward to a view as part of an active conversation
 			ApplicationView forward = (ApplicationView)response.getViewSelection();
 			Map model = new HashMap(forward.getModel());
-			argumentExtractor.put(response.getFlowExecutionKey(), model);
-			argumentExtractor.put(response.getFlowExecutionContext(), model);
+			argumentHandler.exposeFlowExecutionContext(
+					response.getFlowExecutionKey(), response.getFlowExecutionContext(), model);
 			return new ModelAndView(forward.getViewName(), model);
 		}
 		else if (response.isNull()) {
