@@ -27,35 +27,35 @@ import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 
 /**
- * Unit tests for {@link FlowExecutorArgumentExtractor}.
+ * Unit tests for {@link RequestParameterFlowExecutorArgumentHandler}.
  */
-public class FlowExecutorArgumentExtractorTests extends TestCase {
+public class RequestParameterFlowExecutorArgumentHandlerTests extends TestCase {
 	
 	private MockExternalContext context;
 
-	private FlowExecutorArgumentExtractor argumentExtractor;
+	private FlowExecutorArgumentHandler argumentHandler;
 
 	private String flowExecutionKey;
 
 	public void setUp() {
 		context = new MockExternalContext();
-		argumentExtractor = new FlowExecutorArgumentExtractor();
+		argumentHandler = new RequestParameterFlowExecutorArgumentHandler();
 		flowExecutionKey = "_c12345_k12345";
 	}
 
 	public void testExtractFlowId() {
 		context.putRequestParameter("_flowId", "flow");
-		assertEquals("flow", argumentExtractor.extractFlowId(context));
+		assertEquals("flow", argumentHandler.extractFlowId(context));
 	}
 
 	public void testExtractFlowIdDefault() {
-		argumentExtractor.setDefaultFlowId("flow");
-		assertEquals("flow", argumentExtractor.extractFlowId(new MockExternalContext()));
+		argumentHandler.setDefaultFlowId("flow");
+		assertEquals("flow", argumentHandler.extractFlowId(new MockExternalContext()));
 	}
 
 	public void testExtractFlowIdNoIdProvided() {
 		try {
-			argumentExtractor.extractFlowId(context);
+			argumentHandler.extractFlowId(context);
 			fail("no flow id provided");
 		}
 		catch (FlowExecutorArgumentExtractionException e) {
@@ -65,12 +65,12 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 
 	public void testExtractFlowExecutionId() {
 		context.putRequestParameter("_flowExecutionKey", "_c12345_k12345");
-		assertEquals(flowExecutionKey, argumentExtractor.extractFlowExecutionKey(context));
+		assertEquals(flowExecutionKey, argumentHandler.extractFlowExecutionKey(context));
 	}
 
 	public void testExtractFlowExecutionNoKeyProvided() {
 		try {
-			argumentExtractor.extractFlowExecutionKey(context);
+			argumentHandler.extractFlowExecutionKey(context);
 			fail("no flow execution key provided");
 		}
 		catch (FlowExecutorArgumentExtractionException e) {
@@ -80,18 +80,18 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 
 	public void testExtractEventId() {
 		context.putRequestParameter("_eventId", "submit");
-		assertEquals("submit", argumentExtractor.extractEventId(context));
+		assertEquals("submit", argumentHandler.extractEventId(context));
 	}
 
 	public void testExtractEventIdButtonNameFormat() {
 		context.putRequestParameter("_eventId_submit", "not important");
 		context.putRequestParameter("_somethingElse", "not important");
-		assertEquals("submit", argumentExtractor.extractEventId(context));
+		assertEquals("submit", argumentHandler.extractEventId(context));
 	}
 
 	public void testExtractEventIdNoIdProvided() {
 		try {
-			argumentExtractor.extractEventId(context);
+			argumentHandler.extractEventId(context);
 			fail("no event id provided");
 		}
 		catch (FlowExecutorArgumentExtractionException e) {
@@ -103,7 +103,7 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows.htm");
 		FlowDefinitionRedirect redirect = new FlowDefinitionRedirect("flow", null);
-		String url = argumentExtractor.createFlowDefinitionUrl(redirect, context);
+		String url = argumentHandler.createFlowDefinitionUrl(redirect, context);
 		assertEquals("/app/flows.htm?_flowId=flow", url);
 	}
 
@@ -112,7 +112,7 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 		context.setDispatcherPath("/system");
 		context.setRequestPathInfo("/flows");
 		FlowDefinitionRedirect redirect = new FlowDefinitionRedirect("flow", null);
-		String url = argumentExtractor.createFlowDefinitionUrl(redirect, context);
+		String url = argumentHandler.createFlowDefinitionUrl(redirect, context);
 		assertEquals("/app/system?_flowId=flow", url);
 	}
 
@@ -123,7 +123,7 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 		input.put("foo", "bar");
 		input.put("baz", new Integer(3));
 		FlowDefinitionRedirect redirect = new FlowDefinitionRedirect("flow", input);
-		String url = argumentExtractor.createFlowDefinitionUrl(redirect, context);
+		String url = argumentHandler.createFlowDefinitionUrl(redirect, context);
 		assertEquals("/app/flows.htm?_flowId=flow&foo=bar&baz=3", url);
 	}
 
@@ -131,7 +131,7 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows.htm");
 		FlowExecutionContext flowExecution = new MockFlowExecutionContext();
-		String url = argumentExtractor.createFlowExecutionUrl(flowExecutionKey, flowExecution, context);
+		String url = argumentHandler.createFlowExecutionUrl(flowExecutionKey, flowExecution, context);
 		assertEquals("/app/flows.htm?_flowExecutionKey=_c12345_k12345", url);
 	}
 
@@ -140,7 +140,7 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 		context.setDispatcherPath("/system");
 		context.setRequestPathInfo("/flows");
 		FlowExecutionContext flowExecution = new MockFlowExecutionContext();
-		String url = argumentExtractor.createFlowExecutionUrl(flowExecutionKey, flowExecution, context);
+		String url = argumentHandler.createFlowExecutionUrl(flowExecutionKey, flowExecution, context);
 		assertEquals("/app/system?_flowExecutionKey=_c12345_k12345", url);
 	}
 	
@@ -148,8 +148,8 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows.htm");
 		ExternalRedirect redirect = new ExternalRedirect("/a/url");
-		argumentExtractor.setRedirectContextRelative(false);
-		String url = argumentExtractor.createExternalUrl(redirect, flowExecutionKey, context);
+		argumentHandler.setRedirectContextRelative(false);
+		String url = argumentHandler.createExternalUrl(redirect, flowExecutionKey, context);
 		assertEquals("/a/url?_flowExecutionKey=_c12345_k12345", url);
 	}
 
@@ -157,7 +157,7 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows.htm");
 		ExternalRedirect redirect = new ExternalRedirect("/a/url");
-		String url = argumentExtractor.createExternalUrl(redirect, flowExecutionKey, context);
+		String url = argumentHandler.createExternalUrl(redirect, flowExecutionKey, context);
 		assertEquals("/app/a/url?_flowExecutionKey=_c12345_k12345", url);
 	}
 
@@ -165,7 +165,7 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows");
 		ExternalRedirect redirect = new ExternalRedirect("/a/url");
-		String url = argumentExtractor.createExternalUrl(redirect, null, context);
+		String url = argumentHandler.createExternalUrl(redirect, null, context);
 		assertEquals("/app/a/url", url);
 	}
 
@@ -173,12 +173,12 @@ public class FlowExecutorArgumentExtractorTests extends TestCase {
 		context.setContextPath("/app");
 		context.setDispatcherPath("/flows");
 		ExternalRedirect redirect = new ExternalRedirect("a/url");
-		String url = argumentExtractor.createExternalUrl(redirect, null, context);
+		String url = argumentHandler.createExternalUrl(redirect, null, context);
 		assertEquals("a/url", url);
 	}
 
 	public void testAccidentalParameterArraySubmit() {
 		context.putRequestParameter("_flowExecutionKey", new String[] { "_c12345_k12345", "_c12345_k12345" });
-		assertEquals(flowExecutionKey, argumentExtractor.extractFlowExecutionKey(context));
+		assertEquals(flowExecutionKey, argumentHandler.extractFlowExecutionKey(context));
 	}
 }

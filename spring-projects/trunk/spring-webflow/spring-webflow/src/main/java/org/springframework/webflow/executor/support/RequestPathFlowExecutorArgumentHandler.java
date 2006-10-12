@@ -23,7 +23,8 @@ import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 
 /**
- * Extracts flow executor arguments from the request path.
+ * Flow executor argument handler that extracts arguments from the request path
+ * and exposes them in the URL path.
  * <p>
  * This allows for REST-style URLs to launch flows in the general format:
  * <code>http://${host}/${context path}/${dispatcher path}/${flowId}</code>.
@@ -47,7 +48,7 @@ import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
  * 
  * @author Keith Donald
  */
-public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgumentExtractor {
+public class RequestPathFlowExecutorArgumentHandler extends RequestParameterFlowExecutorArgumentHandler {
 
 	/**
 	 * URL path seperator ("/").
@@ -66,7 +67,7 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 	private String keyDelimiter = KEY_DELIMITER;
 
 	/**
-	 * Returns the key delimiter. Defaults to {@link #KEY_DELIMITER}.
+	 * Returns the key delimiter. Defaults to "k".
 	 * @return the key delimiter
 	 */
 	public String getKeyDelimiter() {
@@ -75,7 +76,7 @@ public class RequestPathFlowExecutorArgumentExtractor extends FlowExecutorArgume
 
 	/**
 	 * Sets the delimiter that when present in the requestPathInfo indicates the
-	 * flowExecutionKey follows in the URL. Defaults to {@link #KEY_DELIMITER}.
+	 * flowExecutionKey follows in the URL. Defaults to "k".
 	 * @param keyDelimiter the key delimiter
 	 * @see #extractFlowExecutionKey(ExternalContext)
 	 */

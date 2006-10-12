@@ -34,9 +34,10 @@ import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.ResponseInstruction;
-import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
+import org.springframework.webflow.executor.support.FlowExecutorArgumentHandler;
 import org.springframework.webflow.executor.support.FlowRequestHandler;
-import org.springframework.webflow.executor.support.RequestPathFlowExecutorArgumentExtractor;
+import org.springframework.webflow.executor.support.RequestParameterFlowExecutorArgumentHandler;
+import org.springframework.webflow.executor.support.RequestPathFlowExecutorArgumentHandler;
 
 /**
  * Point of integration between Spring Web MVC and Spring Web Flow: a
@@ -52,11 +53,11 @@ import org.springframework.webflow.executor.support.RequestPathFlowExecutorArgum
  * <ul>
  * <li>By default, to have this controller launch a new flow execution
  * (conversation), have the client send a
- * {@link FlowExecutorArgumentExtractor#getFlowIdParameterName()} request
+ * {@link FlowExecutorArgumentHandler#getFlowIdArgumentName()} request
  * parameter indicating the flow definition to launch.
  * <li>To have this controller participate in an existing flow execution
  * (conversation), have the client send a
- * {@link FlowExecutorArgumentExtractor#getFlowExecutionKeyParameterName()}
+ * {@link FlowExecutorArgumentHandler#getFlowExecutionKeyArgumentName()}
  * request parameter identifying the conversation to participate in.
  * See the <code>flow-launcher</code> sample application for examples of the
  * various strategies for launching and resuming flow executions.
@@ -75,14 +76,14 @@ import org.springframework.webflow.executor.support.RequestPathFlowExecutorArgum
  *     &lt;/bean&gt;
  * </pre>
  * <p>
- * It is also possible to customize the {@link FlowExecutorArgumentExtractor}
+ * It is also possible to customize the {@link FlowExecutorArgumentHandler}
  * strategy to allow for different types of controller parameterization, for
  * example perhaps in conjunction with a REST-style request mapper (see
- * {@link RequestPathFlowExecutorArgumentExtractor}).
+ * {@link RequestPathFlowExecutorArgumentHandler}).
  * 
  * @see org.springframework.webflow.executor.FlowExecutor
  * @see org.springframework.webflow.executor.support.FlowRequestHandler
- * @see org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor
+ * @see org.springframework.webflow.executor.support.FlowExecutorArgumentHandler
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
@@ -96,14 +97,14 @@ public class FlowController extends AbstractController implements InitializingBe
 	private FlowExecutor flowExecutor;
 
 	/**
-	 * The strategy for extracting flow executor parameters from a request.
+	 * The strategy for handling flow executor parameters.
 	 */
-	private FlowExecutorArgumentExtractor argumentExtractor = new FlowExecutorArgumentExtractor();
+	private FlowExecutorArgumentHandler argumentHandler = new RequestParameterFlowExecutorArgumentHandler();
 
 	/**
 	 * Create a new flow controller. Allows bean style usage.
 	 * @see #setFlowExecutor(FlowExecutor)
-	 * @see #setArgumentExtractor(FlowExecutorArgumentExtractor)
+	 * @see #setArgumentHandler(FlowExecutorArgumentHandler)
 	 */
 	public FlowController() {
 		// set the cache seconds property to 0 so no pages are cached by default
@@ -128,39 +129,39 @@ public class FlowController extends AbstractController implements InitializingBe
 	}
 
 	/**
-	 * Returns the flow executor argument extractor used by this controller.
-	 * Defaults to {@link FlowExecutorArgumentExtractor}.
-	 * @return the argument extractor
+	 * Returns the flow executor argument handler used by this controller.
+	 * Defaults to {@link RequestParameterFlowExecutorArgumentHandler}.
+	 * @return the argument handler
 	 */
-	public FlowExecutorArgumentExtractor getArgumentExtractor() {
-		return argumentExtractor;
+	public FlowExecutorArgumentHandler getArgumentHandler() {
+		return argumentHandler;
 	}
 
 	/**
-	 * Sets the flow executor argument extractor to use. The default is
-	 * {@link FlowExecutorArgumentExtractor}.
-	 * @param argumentExtractor the fully configured argument extractor
+	 * Sets the flow executor argument handler to use. The default is
+	 * {@link RequestParameterFlowExecutorArgumentHandler}.
+	 * @param argumentHandler the fully configured argument handler
 	 */
-	public void setArgumentExtractor(FlowExecutorArgumentExtractor argumentExtractor) {
-		this.argumentExtractor = argumentExtractor;
+	public void setArgumentHandler(FlowExecutorArgumentHandler argumentHandler) {
+		this.argumentHandler = argumentHandler;
 	}
 
 	/**
 	 * Sets the identifier of the default flow to launch if no flowId argument
-	 * can be extracted by the configured {@link FlowExecutorArgumentExtractor}
+	 * can be extracted by the configured {@link FlowExecutorArgumentHandler}
 	 * during request processing.
 	 * <p>
 	 * This is a convenience method that sets the default flow id of the
-	 * controller's argument extractor. Don't use this when using
-	 * {@link #setArgumentExtractor(FlowExecutorArgumentExtractor)}.
+	 * controller's argument handler. Don't use this when using
+	 * {@link #setArgumentHandler(FlowExecutorArgumentHandler)}.
 	 */
 	public void setDefaultFlowId(String defaultFlowId) {
-		this.argumentExtractor.setDefaultFlowId(defaultFlowId);
+		this.argumentHandler.setDefaultFlowId(defaultFlowId);
 	}
 
 	public void afterPropertiesSet() {
 		Assert.notNull(flowExecutor, "The flow executor property is required");
-		Assert.notNull(argumentExtractor, "The argument extractor property is required");
+		Assert.notNull(argumentHandler, "The argument handler property is required");
 	}
 
 	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
@@ -178,7 +179,7 @@ public class FlowController extends AbstractController implements InitializingBe
 	 * @return the controller helper
 	 */
 	protected FlowRequestHandler createRequestHandler() {
-		return new FlowRequestHandler(getFlowExecutor(), getArgumentExtractor());
+		return new FlowRequestHandler(getFlowExecutor(), getArgumentHandler());
 	}
 
 	/**
@@ -193,25 +194,25 @@ public class FlowController extends AbstractController implements InitializingBe
 			// forward to a view as part of an active conversation
 			ApplicationView view = (ApplicationView)response.getViewSelection();
 			Map model = new HashMap(view.getModel());
-			argumentExtractor.put(response.getFlowExecutionKey(), model);
-			argumentExtractor.put(response.getFlowExecutionContext(), model);
+			argumentHandler.exposeFlowExecutionContext(
+					response.getFlowExecutionKey(), response.getFlowExecutionContext(), model);
 			return new ModelAndView(view.getViewName(), model);
 		}
 		else if (response.isFlowDefinitionRedirect()) {
 			// restart the flow by redirecting to flow launch URL
-			String flowUrl = argumentExtractor.createFlowDefinitionUrl((FlowDefinitionRedirect)response.getViewSelection(), context);
+			String flowUrl = argumentHandler.createFlowDefinitionUrl((FlowDefinitionRedirect)response.getViewSelection(), context);
 			return new ModelAndView(new RedirectView(flowUrl));
 		}
 		else if (response.isFlowExecutionRedirect()) {
 			// redirect to active flow execution URL
-			String flowExecutionUrl = argumentExtractor.createFlowExecutionUrl(
+			String flowExecutionUrl = argumentHandler.createFlowExecutionUrl(
 					response.getFlowExecutionKey(), response.getFlowExecutionContext(), context);
 			return new ModelAndView(new RedirectView(flowExecutionUrl));
 		}
 		else if (response.isExternalRedirect()) {
 			// redirect to external URL
 			ExternalRedirect redirect = (ExternalRedirect)response.getViewSelection();
-			String externalUrl = argumentExtractor.createExternalUrl(redirect, response.getFlowExecutionKey(), context);
+			String externalUrl = argumentHandler.createExternalUrl(redirect, response.getFlowExecutionKey(), context);
 			return new ModelAndView(new RedirectView(externalUrl));
 		}
 		else if (response.isNull()) {

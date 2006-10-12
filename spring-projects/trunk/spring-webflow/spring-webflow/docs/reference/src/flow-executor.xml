@@ -312,8 +312,12 @@
 		<para>
 			Spring Web Flow allows for full control over how flow executor method arguments such as the
 			<literal>flowDefinitionId</literal>, <literal>flowExecutionKey</literal>, and <literal>eventId</literal> 
-			are extracted from an incoming controller request with the <literal>org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor</literal>
-			strategy.
+			are extracted from an incoming controller request with the
+			<literal>org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor</literal>
+			strategy. Flow controller don't use this strategy directly but instead use a
+			<literal>org.springframework.webflow.executor.support.FlowExecutorArgumentHandler</literal>
+			implementation that takes care of both argument extraction and exposing arguments in
+			responses.
 		</para>
 		<para>
 			The next several examples illustrate strategies for parameterizing flow controllers 
@@ -408,7 +412,7 @@
 			<title>Request path based flow executor argument extraction</title>
 			<para>
 				The request-path based argument extractor strategy relies on executor arguments
-				being path elements as much as possible.  This results in friendlier REST-style URLs such
+				being path elements as much as possible. This results in friendlier REST-style URLs such
 				as <literal>http://host/app/myflow</literal> instead of
 				<literal>http://host/app?_flowId=myflow</literal>.
 			</para>
@@ -417,8 +421,8 @@
 	    		<programlisting>
     &lt;bean name="/flowController.htm" class="org.springframework.webflow.executor.mvc.FlowController"&gt;
         &lt;property name="flowExecutor" ref="flowExecutor"/&gt;
-        &lt;property name="argumentExtractor"&gt;
-            &lt;bean class="org.springframework.webflow.executor.support.RequestPathFlowExecutorArgumentExtractor"/&gt;
+        &lt;property name="argumentHandler"&gt;
+            &lt;bean class="org.springframework.webflow.executor.support.RequestPathFlowExecutorArgumentHandler"/&gt;
         &lt;/property&gt;        
     &lt;/bean&gt;
 		    	</programlisting>

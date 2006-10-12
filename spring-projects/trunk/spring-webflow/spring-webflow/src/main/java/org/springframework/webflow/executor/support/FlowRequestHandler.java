@@ -66,11 +66,11 @@ public class FlowRequestHandler {
 
 	/**
 	 * Creates a new flow controller helper. Will use the default
-	 * {@link FlowExecutorArgumentExtractor}.
+	 * {@link RequestParameterFlowExecutorArgumentHandler}.
 	 * @param flowExecutor the flow execution manager to delegate to
 	 */
 	public FlowRequestHandler(FlowExecutor flowExecutor) {
-		this(flowExecutor, new FlowExecutorArgumentExtractor());
+		this(flowExecutor, new RequestParameterFlowExecutorArgumentHandler());
 	}
 
 	/**

@@ -19,7 +19,8 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractionException;
 
-public class FlowNavigationHandlerParameterExtractorTests extends TestCase {
+public class FlowNavigationHandlerArgumentExtractorTests extends TestCase {
+	
 	private FlowNavigationHandlerArgumentExtractor extractor = new FlowNavigationHandlerArgumentExtractor();
 
 	public void testExtractFlowId() {

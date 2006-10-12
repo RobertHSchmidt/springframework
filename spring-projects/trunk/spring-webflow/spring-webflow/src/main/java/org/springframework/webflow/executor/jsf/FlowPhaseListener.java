@@ -42,7 +42,8 @@ import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 import org.springframework.webflow.execution.support.FlowExecutionRedirect;
-import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
+import org.springframework.webflow.executor.support.FlowExecutorArgumentHandler;
+import org.springframework.webflow.executor.support.RequestParameterFlowExecutorArgumentHandler;
 
 /**
  * JSF phase listener that is responsible for managing a {@link FlowExecution}
@@ -53,7 +54,7 @@ import org.springframework.webflow.executor.support.FlowExecutorArgumentExtracto
  * <ul>
  * <li>On BEFORE_RESTORE_VIEW, restore the {@link FlowExecution} the user is
  * participating in if a call to
- * {@link FlowExecutorArgumentExtractor#extractFlowExecutionKey(ExternalContext)}
+ * {@link FlowExecutorArgumentHandler#extractFlowExecutionKey(ExternalContext)}
  * returns a submitted flow execution identifier. Place the restored flow
  * execution in a holder that other JSF artifacts such as VariableResolvers,
  * PropertyResolvers, and NavigationHandlers may access during the request
@@ -78,9 +79,9 @@ public class FlowPhaseListener implements PhaseListener {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
-	 * A helper for extracting arguments needed by this flow executor.
+	 * A helper for handling arguments needed by this phase listener.
 	 */
-	private FlowExecutorArgumentExtractor argumentExtractor = new FlowExecutorArgumentExtractor();
+	private FlowExecutorArgumentHandler argumentHandler = new RequestParameterFlowExecutorArgumentHandler();
 
 	/**
 	 * Resolves selected Web Flow view names to JSF view ids.
@@ -88,17 +89,17 @@ public class FlowPhaseListener implements PhaseListener {
 	private ViewIdMapper viewIdMapper = new DefaultViewIdMapper();
 
 	/**
-	 * Returns the argument extractor used by this phase listener.
+	 * Returns the argument handler used by this phase listener.
 	 */
-	public FlowExecutorArgumentExtractor getArgumentExtractor() {
-		return argumentExtractor;
+	public FlowExecutorArgumentHandler getArgumentHandler() {
+		return argumentHandler;
 	}
 
 	/**
-	 * Sets the parameter extractor to use.
+	 * Sets the argument handler to use.
 	 */
-	public void setArgumentExtractor(FlowExecutorArgumentExtractor argumentExtractor) {
-		this.argumentExtractor = argumentExtractor;
+	public void setArgumentHandler(FlowExecutorArgumentHandler argumentHandler) {
+		this.argumentHandler = argumentHandler;
 	}
 
 	/**
@@ -150,14 +151,14 @@ public class FlowPhaseListener implements PhaseListener {
 
 	protected void restoreFlowExecution(FacesContext facesContext) {
 		JsfExternalContext context = new JsfExternalContext(facesContext);
-		if (argumentExtractor.isFlowExecutionKeyPresent(context)) {
+		if (argumentHandler.isFlowExecutionKeyPresent(context)) {
 			// restore flow execution from repository so it will be
 			// available to variable/property resolvers and the flow
 			// navigation handler (this could happen as part of a submission or
 			// flow execution redirect)
 			FlowExecutionRepository repository = getRepository(context);
-			FlowExecutionKey flowExecutionKey = repository.parseFlowExecutionKey(argumentExtractor
-					.extractFlowExecutionKey(context));
+			FlowExecutionKey flowExecutionKey = repository.parseFlowExecutionKey(
+					argumentHandler.extractFlowExecutionKey(context));
 			FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Loaded existing flow execution from repository with id '" + flowExecutionKey + "'");
@@ -165,10 +166,10 @@ public class FlowPhaseListener implements PhaseListener {
 			FlowExecutionHolderUtils.setFlowExecutionHolder(new FlowExecutionHolder(flowExecutionKey, flowExecution),
 					facesContext);
 		}
-		else if (argumentExtractor.isFlowIdPresent(context)) {
+		else if (argumentHandler.isFlowIdPresent(context)) {
 			// launch a new flow execution (this could happen as part of a flow
 			// redirect)
-			String flowId = argumentExtractor.extractFlowId(context);
+			String flowId = argumentHandler.extractFlowId(context);
 			FlowDefinition flowDefinition = getLocator(context).getFlowDefinition(flowId);
 			FlowExecution flowExecution = getFactory(context).createFlowExecution(flowDefinition);
 			FlowExecutionHolder holder = new FlowExecutionHolder(flowExecution);
@@ -209,7 +210,7 @@ public class FlowPhaseListener implements PhaseListener {
 			if (holder.needsSave()) {
 				saveFlowExecution(context, holder);
 			}
-			String url = argumentExtractor.createFlowExecutionUrl(holder.getFlowExecutionKey().toString(), holder
+			String url = argumentHandler.createFlowExecutionUrl(holder.getFlowExecutionKey().toString(), holder
 					.getFlowExecution(), context);
 			sendRedirect(url, context);
 		}
@@ -217,7 +218,7 @@ public class FlowPhaseListener implements PhaseListener {
 			if (holder.needsSave()) {
 				saveFlowExecution(context, holder);
 			}
-			String url = argumentExtractor.createExternalUrl((ExternalRedirect)holder.getViewSelection(), holder
+			String url = argumentHandler.createExternalUrl((ExternalRedirect)holder.getViewSelection(), holder
 					.getFlowExecutionKey().toString(), context);
 			sendRedirect(url, context);
 		}
@@ -225,7 +226,7 @@ public class FlowPhaseListener implements PhaseListener {
 			if (holder.needsSave()) {
 				saveFlowExecution(context, holder);
 			}
-			String url = argumentExtractor.createFlowDefinitionUrl((FlowDefinitionRedirect)holder.getViewSelection(), context);
+			String url = argumentHandler.createFlowDefinitionUrl((FlowDefinitionRedirect)holder.getViewSelection(), context);
 			sendRedirect(url, context);
 		}
 	}
@@ -237,8 +238,8 @@ public class FlowPhaseListener implements PhaseListener {
 			updateViewRoot(facesContext, viewIdMapper.mapViewId(forward.getViewName()));
 		}
 		Map requestMap = facesContext.getExternalContext().getRequestMap();
-		argumentExtractor.put(holder.getFlowExecutionKey().toString(), requestMap);
-		argumentExtractor.put(holder.getFlowExecution(), requestMap);
+		argumentHandler.exposeFlowExecutionContext(
+				holder.getFlowExecutionKey().toString(), holder.getFlowExecution(), requestMap);
 	}
 
 	private void updateViewRoot(FacesContext facesContext, String viewId) {

@@ -25,6 +25,15 @@ Package org.springframework.webflow.executor
   without generating a new key. This ensures that side effects of render actions live beyond the
   current request.
 
+Package org.springframework.webflow.executor.support
+* Refactored FlowExecutorArgumentExtractor into an interface and introduced FlowExecutorArgumentExposer
+  and FlowExecutorArgumentHandler. What the FlowExecutorArgumentExtractor used to be is now
+  RequestParameterFlowExecutorArgumentHandler. RequestPathFlowExecutorArgumentExtractor was renamed
+  to RequestPathFlowExecutorArgumentHandler.
+  The flow controllers (FlowController, FlowAction, PortletFlowController and FlowPhaseListener) now
+  use a FlowExecutorArgumentHandler instead of just a FlowExecutorArgumentExtractor. The corresponding
+  "argumentExtractor" properties of the flow controllers were renamed to "argumentHandler".
+
 Changes in version 1.0 RC4 (04.10.2006)
 ---------------------------------------
 
