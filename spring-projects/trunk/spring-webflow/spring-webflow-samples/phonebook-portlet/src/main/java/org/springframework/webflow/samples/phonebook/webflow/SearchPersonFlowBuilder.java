@@ -21,7 +21,7 @@ import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.builder.AbstractFlowBuilder;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
-import org.springframework.webflow.engine.support.DefaultFlowAttributeMapper;
+import org.springframework.webflow.engine.support.ConfigurableFlowAttributeMapper;
 import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.samples.phonebook.domain.SearchCriteria;
 import org.springframework.webflow.samples.phonebook.domain.SearchCriteriaValidator;
@@ -59,7 +59,7 @@ public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 				transition(on("newSearch"), to("enterCriteria")), transition(on(select()), to("browseDetails")) });
 
 		// view details for selected user id
-		DefaultFlowAttributeMapper idMapper = new DefaultFlowAttributeMapper();
+		ConfigurableFlowAttributeMapper idMapper = new ConfigurableFlowAttributeMapper();
 		idMapper.addInputMapping(mapping().source("requestParameters.id").target("id").from(String.class)
 				.to(Long.class).value());
 		addSubflowState("browseDetails", flow("detail-flow"), idMapper, transition(on(finish()), to("executeSearch")));
