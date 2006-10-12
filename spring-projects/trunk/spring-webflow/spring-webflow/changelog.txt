@@ -14,7 +14,9 @@ Package org.springframework.webflow.engine.builder
 * Removed newDefaultFlowServiceLocator method from AbstractFlowBuildingFlowRegistryFactoryBean. 
 * Fixed bug in RefreshableFlowDefinitionHolder. It was not correctly reloading flows when resources
   changed.
-
+* Added "input-attribute" and "output-attribute" convenience elements to "input-mapper" and 
+  "output-mapper" elements, respectively.
+  
 Package org.springframework.webflow.engine.support
 * Renamed DefaultFlowAttributeMapper to ConfigurableFlowAttributeMapper for clarity and to avoid confusion.
 
