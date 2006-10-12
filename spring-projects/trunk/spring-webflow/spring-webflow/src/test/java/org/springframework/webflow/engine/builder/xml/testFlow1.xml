@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  	  xsi:schemaLocation="
+  	      http://www.springframework.org/schema/webflow
+  	      http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
 
 	<attribute name="propInteger" value="12345" type="integer" />
 
@@ -71,11 +74,12 @@
 	<subflow-state id="subFlowState2" flow="subFlow2">
 		<attribute-mapper>
 			<input-mapper>
-				<mapping source="flowScope.attribute1" target="attribute1" required="true" />
+				<input-attribute name="attribute1"/>
 				<mapping source="flowScope.attribute3" target="attribute2" />
 				<mapping source="flowScope.attribute1" target="attribute4" />
 			</input-mapper>
 			<output-mapper>
+				<output-attribute name="attribute4"/>
 				<mapping source="attribute1" target="flowScope.attribute3" />
 				<mapping source="attribute4" target="flowScope.attribute1" />
 				<mapping source="attribute4" target-collection="flowScope.items" />

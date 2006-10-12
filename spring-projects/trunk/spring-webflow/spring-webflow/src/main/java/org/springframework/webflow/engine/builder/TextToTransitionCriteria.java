@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.engine.builder;
 
-import org.springframework.binding.collection.MapAccessor;
+import org.springframework.binding.convert.ConversionContext;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.binding.expression.Expression;
@@ -80,7 +80,7 @@ public class TextToTransitionCriteria extends AbstractConverter {
 		return new Class[] { TransitionCriteria.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass, MapAccessor context) throws Exception {
+	protected Object doConvert(Object source, Class targetClass, ConversionContext context) throws Exception {
 		String encodedCriteria = (String)source;
 		if (!StringUtils.hasText(encodedCriteria)
 				|| WildcardTransitionCriteria.WILDCARD_EVENT_ID.equals(encodedCriteria)) {

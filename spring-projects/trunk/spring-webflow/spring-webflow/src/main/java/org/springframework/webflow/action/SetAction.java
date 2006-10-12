@@ -15,10 +15,9 @@
  */
 package org.springframework.webflow.action;
 
-import java.util.Map;
-
+import org.springframework.binding.expression.EvaluationContext;
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.expression.PropertyExpression;
+import org.springframework.binding.expression.SettableExpression;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -36,7 +35,7 @@ public class SetAction extends AbstractAction {
 	/**
 	 * The property expression for setting the scoped attribute value.
 	 */
-	private PropertyExpression attributeExpression;
+	private SettableExpression attributeExpression;
 
 	/**
 	 * The target scope.
@@ -54,7 +53,7 @@ public class SetAction extends AbstractAction {
 	 * @param scope the target scope of the attribute
 	 * @param valueExpression the evaluatable attribute value expression
 	 */
-	public SetAction(PropertyExpression attributeExpression, ScopeType scope, Expression valueExpression) {
+	public SetAction(SettableExpression attributeExpression, ScopeType scope, Expression valueExpression) {
 		Assert.notNull(attributeExpression, "The attribute expression is required");
 		Assert.notNull(scope, "The scope type is required");
 		Assert.notNull(valueExpression, "The value expression is required");
@@ -64,10 +63,10 @@ public class SetAction extends AbstractAction {
 	}
 
 	protected Event doExecute(RequestContext context) throws Exception {
-		Map evaluationContext = getEvaluationContext(context);
-		Object value = valueExpression.evaluateAgainst(context, evaluationContext);
+		EvaluationContext evaluationContext = getEvaluationContext(context);
+		Object value = valueExpression.evaluate(context, evaluationContext);
 		MutableAttributeMap scopeMap = scope.getScope(context);
-		attributeExpression.setValue(scopeMap, value, evaluationContext);
+		attributeExpression.evaluateToSet(scopeMap, value, evaluationContext);
 		return success();
 	}
 
@@ -77,7 +76,7 @@ public class SetAction extends AbstractAction {
 	 * @param context the request context
 	 * @return the evaluation context
 	 */
-	protected Map getEvaluationContext(RequestContext context) {
+	protected EvaluationContext getEvaluationContext(RequestContext context) {
 		return null;
 	}
 }

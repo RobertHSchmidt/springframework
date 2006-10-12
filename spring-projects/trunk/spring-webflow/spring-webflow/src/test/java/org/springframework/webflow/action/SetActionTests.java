@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.binding.expression.PropertyExpression;
+import org.springframework.binding.expression.SettableExpression;
 import org.springframework.webflow.TestBean;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.execution.Event;
@@ -41,7 +41,7 @@ public class SetActionTests extends TestCase {
 	}
 
 	public void testExecuteSetAction() throws Exception {
-		PropertyExpression attr = parser.parsePropertyExpression("bean.executed");
+		SettableExpression attr = parser.parseSettableExpression("bean.executed");
 		Expression value = parser.parseExpression("true");
 		SetAction action = new SetAction(attr, ScopeType.FLOW, value);
 		Event outcome = action.execute(context);

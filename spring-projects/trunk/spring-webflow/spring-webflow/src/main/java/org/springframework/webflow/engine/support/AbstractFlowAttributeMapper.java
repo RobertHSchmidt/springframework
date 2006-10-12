@@ -16,10 +16,9 @@
 package org.springframework.webflow.engine.support;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.Map;
 
 import org.springframework.binding.mapping.AttributeMapper;
+import org.springframework.binding.mapping.MappingContext;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
@@ -74,9 +73,9 @@ public abstract class AbstractFlowAttributeMapper implements FlowAttributeMapper
 
 	/**
 	 * Returns a map of contextual data available during mapping.
-	 * This implementation just returns an empty map.
+	 * This implementation just returns null.
 	 */
-	protected Map getMappingContext(RequestContext context) {
-		return Collections.EMPTY_MAP;
+	protected MappingContext getMappingContext(RequestContext context) {
+		return null;
 	}
 }

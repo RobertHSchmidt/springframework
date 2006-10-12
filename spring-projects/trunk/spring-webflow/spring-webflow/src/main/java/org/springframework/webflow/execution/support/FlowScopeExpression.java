@@ -15,11 +15,10 @@
  */
 package org.springframework.webflow.execution.support;
 
-import java.util.Map;
-
+import org.springframework.binding.expression.EvaluationContext;
 import org.springframework.binding.expression.EvaluationException;
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.expression.PropertyExpression;
+import org.springframework.binding.expression.SettableExpression;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
@@ -31,7 +30,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowScopeExpression implements PropertyExpression {
+public class FlowScopeExpression implements SettableExpression {
 
 	/**
 	 * The expression to evaluate.
@@ -41,7 +40,7 @@ public class FlowScopeExpression implements PropertyExpression {
 	/**
 	 * Create a new expression evaluator that executes given expression in 'flow
 	 * scope'. When using this wrapper to set a property value, make sure the
-	 * given expression is a {@link PropertyExpression}}.
+	 * given expression is a {@link SettableExpression}}.
 	 * @param expression the nested evaluator to execute
 	 */
 	public FlowScopeExpression(Expression expression) {
@@ -55,12 +54,12 @@ public class FlowScopeExpression implements PropertyExpression {
 		return expression;
 	}
 
-	public Object evaluateAgainst(Object target, Map context) throws EvaluationException {
+	public Object evaluate(Object target, EvaluationContext context) throws EvaluationException {
 		if (target instanceof RequestContext) {
-			return expression.evaluateAgainst(((RequestContext)target).getFlowScope(), context);
+			return expression.evaluate(((RequestContext)target).getFlowScope(), context);
 		}
 		else if (target instanceof AttributeMap) {
-			return expression.evaluateAgainst(target, context);
+			return expression.evaluate(target, context);
 		}
 		else {
 			throw new IllegalArgumentException(
@@ -69,11 +68,11 @@ public class FlowScopeExpression implements PropertyExpression {
 		}
 	}
 	
-	public void setValue(Object target, Object value, Map setContext) throws EvaluationException {
-		Assert.isInstanceOf(PropertyExpression.class, expression,
+	public void evaluateToSet(Object target, Object value, EvaluationContext context) throws EvaluationException {
+		Assert.isInstanceOf(SettableExpression.class, expression,
 				"When a FlowScopeExpression is used to set a property value, the nested expression needs " +
-				"to be a PropertyExpression");
-		((PropertyExpression)expression).setValue(((RequestContext)target).getFlowScope(), value, setContext);
+				"to be a SettableExpression");
+		((SettableExpression)expression).evaluateToSet(((RequestContext)target).getFlowScope(), value, context);
 	}
 
 	public String toString() {

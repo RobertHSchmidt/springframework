@@ -69,9 +69,9 @@ import org.springframework.webflow.test.MockExternalContext;
  * involving the user to complete. Such tests are a good way to test your system
  * top-down starting at the web-tier and pushing through all the way to the DB
  * without having to deploy to a servlet or portlet container. In addition, they
- * can be used to effectively test a flow's execution (the web layer) standalone,
- * typically with a mock service layer. Both styles of testing are valuable and
- * supported.
+ * can be used to effectively test a flow's execution (the web layer)
+ * standalone, typically with a mock service layer. Both styles of testing are
+ * valuable and supported.
  * 
  * @author Keith Donald
  */
@@ -257,10 +257,10 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	}
 
 	/**
-	 * Refresh the flow execution being tested, asking the current view state
-	 * to make a "refresh" view selection. This is idempotent operation
-	 * that may be safely called on an active but currently paused execution.
-	 * Used to simulate a browser flow execution redirect.
+	 * Refresh the flow execution being tested, asking the current view state to
+	 * make a "refresh" view selection. This is idempotent operation that may be
+	 * safely called on an active but currently paused execution. Used to
+	 * simulate a browser flow execution redirect.
 	 * @return the current view selection for this flow execution
 	 * @throws FlowExecutionException if an exception was thrown during refresh
 	 */
@@ -284,7 +284,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 				"The flow execution to test is [null]; you must start the flow execution before you can refresh it!");
 		return flowExecution.refresh(context);
 	}
-	
+
 	// convenience accessors
 
 	/**
@@ -368,7 +368,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	protected Object getRequiredFlowAttribute(String attributeName, Class requiredType) throws IllegalStateException {
 		return getFlowExecutionContext().getActiveSession().getScope().getRequired(attributeName, requiredType);
 	}
-	
+
 	// assert helpers
 
 	/**
@@ -470,7 +470,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 				+ StylerUtils.style(viewSelection.getModel()), evaluateModelAttributeExpression(attributeName,
 				viewSelection.getModel()));
 	}
-	
+
 	// other helpers
 
 	/**
@@ -529,7 +529,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @return the attribute expression value
 	 */
 	protected Object evaluateModelAttributeExpression(String attributeName, Map model) {
-		return expressionParser.parseExpression(attributeName).evaluateAgainst(model, null);
+		return expressionParser.parseExpression(attributeName).evaluate(model, null);
 	}
 
 	/**

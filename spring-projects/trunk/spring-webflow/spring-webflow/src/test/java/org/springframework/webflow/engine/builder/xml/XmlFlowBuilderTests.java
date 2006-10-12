@@ -83,8 +83,10 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertTrue(actionState1.getTransitionSet().hasMatchingTransition(context));
 		Transition transition = actionState1.getRequiredTransition(context);
 		assertEquals("viewState1", getTargetStateId(transition));
-		//for some bizar reason this gives problems on some machines ("123.45"<>"12345")
-		//assertEquals(new BigDecimal("123.45"), transition.getAttributeMap().get("propBigDecimal"));
+		// for some bizar reason this gives problems on some machines
+		// ("123.45"<>"12345")
+		// assertEquals(new BigDecimal("123.45"),
+		// transition.getAttributeMap().get("propBigDecimal"));
 		context.setLastEvent(createEvent("action2Name.event2"));
 		assertTrue(actionState1.getTransitionSet().hasMatchingTransition(context));
 		transition = actionState1.getRequiredTransition(context);
@@ -97,8 +99,8 @@ public class XmlFlowBuilderTests extends TestCase {
 
 		ViewState viewState1 = (ViewState)flow.getState("viewState1");
 		assertNotNull(viewState1);
-		assertEquals("view1", (String)((ApplicationViewSelector)viewState1.getViewSelector()).getViewName()
-				.evaluateAgainst(null, null));
+		assertEquals("view1", (String)((ApplicationViewSelector)viewState1.getViewSelector()).getViewName().evaluate(
+				null, null));
 		assertEquals(1, viewState1.getTransitionSet().size());
 		assertEquals(1, viewState1.getRenderActionList().size());
 		context.setLastEvent(createEvent("event1"));
@@ -165,8 +167,8 @@ public class XmlFlowBuilderTests extends TestCase {
 
 		EndState endState1 = (EndState)flow.getState("endState1");
 		assertNotNull(endState1);
-		assertEquals("endView1", (String)((ApplicationViewSelector)endState1.getViewSelector()).getViewName()
-				.evaluateAgainst(null, null));
+		assertEquals("endView1", (String)((ApplicationViewSelector)endState1.getViewSelector()).getViewName().evaluate(
+				null, null));
 
 		EndState endState2 = (EndState)flow.getState("endState2");
 		assertNotNull(endState2);

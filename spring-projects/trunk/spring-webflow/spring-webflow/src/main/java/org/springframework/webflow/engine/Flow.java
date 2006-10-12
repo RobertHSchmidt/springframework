@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.engine;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -552,7 +551,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	public ViewSelection start(RequestControlContext context, MutableAttributeMap input) throws FlowExecutionException {
 		createVariables(context);
 		if (inputMapper != null) {
-			inputMapper.map(input, context, Collections.EMPTY_MAP);
+			inputMapper.map(input, context, null);
 		}
 		startActionList.execute(context);
 		return startState.enter(context);
@@ -603,7 +602,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	public void end(RequestControlContext context, MutableAttributeMap output) throws FlowExecutionException {
 		endActionList.execute(context);
 		if (outputMapper != null) {
-			outputMapper.map(context, output, Collections.EMPTY_MAP);
+			outputMapper.map(context, output, null);
 		}
 	}
 
