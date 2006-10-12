@@ -21,7 +21,7 @@ import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.builder.AbstractFlowBuilder;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
-import org.springframework.webflow.engine.support.DefaultFlowAttributeMapper;
+import org.springframework.webflow.engine.support.ConfigurableFlowAttributeMapper;
 
 /**
  * Java-based flow builder that builds the person details flow, exactly like it
@@ -53,7 +53,7 @@ class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 				transition(on(select()), to("browseColleagueDetails")) });
 
 		// view details for selected collegue
-		DefaultFlowAttributeMapper idMapper = new DefaultFlowAttributeMapper();
+		ConfigurableFlowAttributeMapper idMapper = new ConfigurableFlowAttributeMapper();
 		idMapper.addInputMapping(mapping().source("requestParameters.id").target("id").from(String.class)
 				.to(Long.class).value());
 		addSubflowState("browseColleagueDetails", getFlow(), idMapper, transition(on(finish()), to("getDetails")));
