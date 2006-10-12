@@ -19,8 +19,8 @@
 	-->
 	<bean id="flowController" class="org.springframework.webflow.executor.mvc.FlowController">
 		<property name="flowExecutor" ref="flowExecutor" />
-		<property name="argumentExtractor">
-			<bean class="org.springframework.webflow.executor.support.RequestPathFlowExecutorArgumentExtractor" />
+		<property name="argumentHandler">
+			<bean class="org.springframework.webflow.executor.support.RequestPathFlowExecutorArgumentHandler" />
 		</property>
 	</bean>
 
