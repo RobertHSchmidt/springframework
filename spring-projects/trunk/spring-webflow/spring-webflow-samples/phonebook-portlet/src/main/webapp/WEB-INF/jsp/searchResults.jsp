@@ -1,6 +1,6 @@
 <%@ include file="includeTop.jsp" %>
 
-<%@ page import="org.springframework.webflow.samples.phonebook.domain.Person" %>
+<%@ page import="org.springframework.webflow.samples.phonebook.Person" %>
 
 <div id="content">
 	<div id="insert">

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2004 the original author or authors.
+ * Copyright 2002-2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,13 @@ import org.springframework.webflow.engine.builder.FlowBuilderException;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.engine.support.ConfigurableFlowAttributeMapper;
 import org.springframework.webflow.execution.ScopeType;
-import org.springframework.webflow.samples.phonebook.domain.SearchCriteria;
-import org.springframework.webflow.samples.phonebook.domain.SearchCriteriaValidator;
+import org.springframework.webflow.samples.phonebook.SearchCriteria;
+import org.springframework.webflow.samples.phonebook.SearchCriteriaValidator;
 
 /**
  * Java-based flow builder that searches for people in the phonebook. The flow
  * defined by this class is exactly the same as that defined in the
- * <code>search.xml</code> XML flow definition.
+ * <code>search-flow.xml</code> XML flow definition.
  * <p>
  * This encapsulates the page flow of searching for some people, selecting a
  * person you care about, and viewing their person's details and those of their
@@ -37,7 +37,7 @@ import org.springframework.webflow.samples.phonebook.domain.SearchCriteriaValida
  * 
  * @author Keith Donald
  */
-public class SearchPersonFlowBuilder extends AbstractFlowBuilder {
+class SearchPersonFlowBuilder extends AbstractFlowBuilder {
 
 	public SearchPersonFlowBuilder(FlowServiceLocator flowServiceLocator) {
 		super(flowServiceLocator);

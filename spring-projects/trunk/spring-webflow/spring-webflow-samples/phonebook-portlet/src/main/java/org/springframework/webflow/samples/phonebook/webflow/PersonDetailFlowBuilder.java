@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2004 the original author or authors.
+ * Copyright 2002-2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.samples.phonebook.webflow;
 
+import org.springframework.binding.mapping.DefaultAttributeMapper;
+import org.springframework.binding.mapping.Mapping;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.builder.AbstractFlowBuilder;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
@@ -23,17 +25,22 @@ import org.springframework.webflow.engine.support.ConfigurableFlowAttributeMappe
 
 /**
  * Java-based flow builder that builds the person details flow, exactly like it
- * is defined in the <code>detail.xml</code> XML flow definition.
+ * is defined in the <code>detail-flow.xml</code> XML flow definition.
  * <p>
  * This encapsulates the page flow of viewing a person's details and their
  * collegues in a reusable, self-contained module.
  * 
  * @author Keith Donald
  */
-public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
+class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
 	public PersonDetailFlowBuilder(FlowServiceLocator flowServiceLocator) {
 		super(flowServiceLocator);
+	}
+
+	public void buildInputMapper() throws FlowBuilderException {
+		Mapping idMapping = mapping().source("id").target("flowScope.id").value();
+		getFlow().setInputMapper(new DefaultAttributeMapper().addMapping(idMapping));
 	}
 
 	public void buildStates() throws FlowBuilderException {
@@ -47,8 +54,8 @@ public class PersonDetailFlowBuilder extends AbstractFlowBuilder {
 
 		// view details for selected collegue
 		ConfigurableFlowAttributeMapper idMapper = new ConfigurableFlowAttributeMapper();
-		idMapper.addInputMapping(mapping().source("externalContext.requestParameterMap.id").target("id").from(
-				String.class).to(Long.class).value());
+		idMapper.addInputMapping(mapping().source("requestParameters.id").target("id").from(String.class)
+				.to(Long.class).value());
 		addSubflowState("browseColleagueDetails", getFlow(), idMapper, transition(on(finish()), to("getDetails")));
 
 		// end
