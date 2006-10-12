@@ -16,6 +16,7 @@
 package org.springframework.binding.expression.support;
 
 import java.util.Collections;
+import java.util.Map;
 
 import ognl.Ognl;
 import ognl.OgnlException;
@@ -67,20 +68,22 @@ class OgnlExpression implements SettableExpression {
 	}
 
 	public Object evaluate(Object target, EvaluationContext context) throws EvaluationException {
+		Assert.notNull(target, "The target object to evaluate is required");
+		Map contextAttributes = (context != null ? context.getAttributes() : Collections.EMPTY_MAP);
 		try {
-			Assert.notNull(target, "The target object to evaluate is required");
-			return Ognl.getValue(expression, (context != null ? context.getAttributes() : Collections.EMPTY_MAP), target);
+			return Ognl.getValue(expression, contextAttributes, target);
 		} catch (OgnlException e) {
-			throw new EvaluationException(new EvaluationAttempt(this, target, context.getAttributes()), e);
+			throw new EvaluationException(new EvaluationAttempt(this, target, contextAttributes), e);
 		}
 	}
 
 	public void evaluateToSet(Object target, Object value, EvaluationContext context) {
+		Assert.notNull(target, "The target object to evaluate is required");
+		Map contextAttributes = (context != null ? context.getAttributes() : Collections.EMPTY_MAP);
 		try {
-			Assert.notNull(target, "The target object is required");
-			Ognl.setValue(expression, (context != null ? context.getAttributes() : Collections.EMPTY_MAP), target, value);
+			Ognl.setValue(expression, contextAttributes, target, value);
 		} catch (OgnlException e) {
-			throw new EvaluationException(new SetValueAttempt(this, target, value, context.getAttributes()), e);
+			throw new EvaluationException(new SetValueAttempt(this, target, value, contextAttributes), e);
 		}
 	}
 
