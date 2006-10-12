@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.binding.convert;
+package org.springframework.binding.convert.support;
+
+import org.springframework.binding.convert.ConversionService;
 
 /**
  * Marker interface that denotes an object has a dependency on a conversion
