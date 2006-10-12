@@ -22,25 +22,26 @@ import ognl.PropertyAccessor;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ParserException;
-import org.springframework.binding.expression.PropertyExpression;
+import org.springframework.binding.expression.SettableExpression;
 
 /**
  * An expression parser that parses Ognl expressions.
+ * 
  * @author Keith Donald
  */
 public class OgnlExpressionParser extends AbstractExpressionParser {
 
 	protected Expression doParseExpression(String expressionString) throws ParserException {
+		return parseSettableExpression(expressionString);
+	}
+
+	public SettableExpression parseSettableExpression(String expressionString) throws ParserException {
 		try {
 			return new OgnlExpression(Ognl.parseExpression(expressionString));
 		}
 		catch (OgnlException e) {
 			throw new ParserException(expressionString, e);
 		}
-	}
-
-	public PropertyExpression parsePropertyExpression(String expressionString) throws ParserException {
-		return (PropertyExpression)doParseExpression(expressionString);
 	}
 
 	/**

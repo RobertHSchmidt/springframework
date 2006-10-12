@@ -21,7 +21,7 @@ import java.util.List;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.ParserException;
-import org.springframework.binding.expression.PropertyExpression;
+import org.springframework.binding.expression.SettableExpression;
 import org.springframework.util.StringUtils;
 
 /**
@@ -89,12 +89,10 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 		int suffixIndex = expressionString.indexOf(getExpressionSuffix(), prefixIndex);
 		if (suffixIndex == -1) {
 			return false;
-		}
-		else {
+		} else {
 			if (suffixIndex == prefixIndex + getExpressionPrefix().length()) {
 				return false;
-			}
-			else {
+			} else {
 				return true;
 			}
 		}
@@ -104,21 +102,24 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 		Expression[] expressions = parseExpressions(expressionString);
 		if (expressions.length == 1) {
 			return expressions[0];
-		}
-		else {
+		} else {
 			return new CompositeStringExpression(expressions);
 		}
 	}
 
-	/*
+	public abstract SettableExpression parseSettableExpression(String expressionString) throws ParserException,
+			UnsupportedOperationException;
+
+	/**
 	 * Helper that parses given expression string using the configured parser.
-	 * The expression string can contain any number of expressions, all
-	 * contained in "${...}" markers. For instance: "foo${expr0}bar${expr1}".
-	 * The static pieces of text will also be returned as Expressions that just
-	 * return that static piece of text. As a result, evaluating all returned
-	 * expressions and concating the results produces the complete evaluated
-	 * string. @param expressionString the expression string @return the parsed
-	 * expressions @throws ParserException when the expressions cannot be parsed
+	 * The expression string can contain any number of expressions all contained
+	 * in "${...}" markers. For instance: "foo${expr0}bar${expr1}". The static
+	 * pieces of text will also be returned as Expressions that just return that
+	 * static piece of text. As a result, evaluating all returned expressions
+	 * and concating the results produces the complete evaluated string.
+	 * @param expressionString the expression string
+	 * @return the parsed expressions
+	 * @throws ParserException when the expressions cannot be parsed
 	 */
 	private Expression[] parseExpressions(String expressionString) throws ParserException {
 		List expressions = new LinkedList();
@@ -137,40 +138,38 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 						throw new ParserException(expressionString, null, "No ending suffix '" + getExpressionSuffix()
 								+ "' for expression starting at character " + prefixIndex + ": "
 								+ expressionString.substring(prefixIndex));
-					}
-					else if (suffixIndex == prefixIndex + getExpressionPrefix().length()) {
+					} else if (suffixIndex == prefixIndex + getExpressionPrefix().length()) {
 						throw new ParserException(expressionString, null, "No expression defined within delimiter '"
 								+ getExpressionPrefix() + getExpressionSuffix() + "' at character " + prefixIndex);
-					}
-					else {
+					} else {
 						String expr = expressionString.substring(prefixIndex + getExpressionPrefix().length(),
 								suffixIndex);
 						expressions.add(doParseExpression(expr));
 						startIdx = suffixIndex + 1;
 					}
-				}
-				else {
+				} else {
 					if (startIdx == 0) {
 						// treat entire string as one expression
 						expressions.add(doParseExpression(expressionString));
-					}
-					else {
+					} else {
 						// no more ${expressions} found in string
 						expressions.add(new StaticExpression(expressionString.substring(startIdx)));
 					}
 					startIdx = expressionString.length();
 				}
 			}
-		}
-		else {
+		} else {
 			expressions.add(new StaticExpression(expressionString));
 		}
-		return (Expression[])expressions.toArray(new Expression[expressions.size()]);
+		return (Expression[]) expressions.toArray(new Expression[expressions.size()]);
 	}
 
+	/**
+	 * Template for parsing a filtered expression string. Subclasses should
+	 * override.
+	 * @param expressionString the expression string
+	 * @return the parsed expression
+	 */
 	protected abstract Expression doParseExpression(String expressionString);
-
-	public abstract PropertyExpression parsePropertyExpression(String expressionString) throws ParserException,
-			UnsupportedOperationException;
 
 }

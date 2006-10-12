@@ -15,13 +15,13 @@
  */
 package org.springframework.binding.expression.support;
 
-import java.util.Map;
-
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.BeansException;
 import org.springframework.binding.expression.EvaluationAttempt;
+import org.springframework.binding.expression.EvaluationContext;
 import org.springframework.binding.expression.EvaluationException;
-import org.springframework.binding.expression.PropertyExpression;
+import org.springframework.binding.expression.SetValueAttempt;
+import org.springframework.binding.expression.SettableExpression;
 import org.springframework.util.Assert;
 
 /**
@@ -29,7 +29,7 @@ import org.springframework.util.Assert;
  * 
  * @author Keith Donald
  */
-public class BeanWrapperExpression implements PropertyExpression {
+public class BeanWrapperExpression implements SettableExpression {
 
 	/**
 	 * The expression.
@@ -52,22 +52,22 @@ public class BeanWrapperExpression implements PropertyExpression {
 		return expression.equals(other.expression);
 	}
 
-	public Object evaluateAgainst(Object target, Map evaluationContext) throws EvaluationException {
+	public Object evaluate(Object target, EvaluationContext context) throws EvaluationException {
 		try {
 			return new BeanWrapperImpl(target).getPropertyValue(expression);
 		}
 		catch (BeansException e) {
-			throw new EvaluationException(new EvaluationAttempt(this, target, evaluationContext), e);
+			throw new EvaluationException(new EvaluationAttempt(this, target, null), e);
 		}
 	}
 
-	public void setValue(Object target, Object value, Map setContext) throws EvaluationException {
+	public void evaluateToSet(Object target, Object value, EvaluationContext context) throws EvaluationException {
 		try {
 			Assert.notNull(target, "The target object to evaluate is required");
 			new BeanWrapperImpl(target).setPropertyValue(expression, value);
 		}
 		catch (BeansException e) {
-			throw new EvaluationException(new EvaluationAttempt(this, target, setContext), e);
+			throw new EvaluationException(new SetValueAttempt(this, target, value, null), e);
 		}
 	}
 

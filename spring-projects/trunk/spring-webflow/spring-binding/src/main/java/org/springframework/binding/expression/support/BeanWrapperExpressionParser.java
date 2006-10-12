@@ -17,7 +17,7 @@ package org.springframework.binding.expression.support;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ParserException;
-import org.springframework.binding.expression.PropertyExpression;
+import org.springframework.binding.expression.SettableExpression;
 
 /**
  * An expression parser that parses bean wrapper expressions.
@@ -25,10 +25,10 @@ import org.springframework.binding.expression.PropertyExpression;
  */
 public class BeanWrapperExpressionParser extends AbstractExpressionParser {
 	protected Expression doParseExpression(String expressionString) throws ParserException {
-		return parsePropertyExpression(expressionString);
+		return parseSettableExpression(expressionString);
 	}
 
-	public PropertyExpression parsePropertyExpression(String expressionString) throws ParserException {
+	public SettableExpression parseSettableExpression(String expressionString) throws ParserException {
 		return new BeanWrapperExpression(expressionString);
 	}
 }

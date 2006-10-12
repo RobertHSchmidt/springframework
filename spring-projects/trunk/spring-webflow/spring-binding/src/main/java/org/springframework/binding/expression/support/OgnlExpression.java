@@ -15,16 +15,14 @@
  */
 package org.springframework.binding.expression.support;
 
-import java.util.Collections;
-import java.util.Map;
-
 import ognl.Ognl;
 import ognl.OgnlException;
 
 import org.springframework.binding.expression.EvaluationAttempt;
+import org.springframework.binding.expression.EvaluationContext;
 import org.springframework.binding.expression.EvaluationException;
-import org.springframework.binding.expression.PropertyExpression;
-import org.springframework.binding.expression.SetPropertyAttempt;
+import org.springframework.binding.expression.SetValueAttempt;
+import org.springframework.binding.expression.SettableExpression;
 import org.springframework.util.Assert;
 
 /**
@@ -36,7 +34,7 @@ import org.springframework.util.Assert;
  * 
  * @author Keith Donald
  */
-class OgnlExpression implements PropertyExpression {
+class OgnlExpression implements SettableExpression {
 
 	/**
 	 * The expression.
@@ -59,35 +57,27 @@ class OgnlExpression implements PropertyExpression {
 		if (!(o instanceof OgnlExpression)) {
 			return false;
 		}
-		// Ognl 2.6.7 expression objects apparently don't implement equals
-		// this always returns false, which is quite nasty
-		OgnlExpression other = (OgnlExpression)o;
+		// as late as Ognl 2.6.7, their expression objects don't implement equals
+		// so this always returns false
+		OgnlExpression other = (OgnlExpression) o;
 		return expression.equals(other.expression);
 	}
 
-	public Object evaluateAgainst(Object target, Map evaluationContext) throws EvaluationException {
+	public Object evaluate(Object target, EvaluationContext context) throws EvaluationException {
 		try {
 			Assert.notNull(target, "The target object to evaluate is required");
-			if (evaluationContext == null) {
-				evaluationContext = Collections.EMPTY_MAP;
-			}
-			return Ognl.getValue(expression, evaluationContext, target);
-		}
-		catch (OgnlException e) {
-			throw new EvaluationException(new EvaluationAttempt(this, target, evaluationContext), e);
+			return Ognl.getValue(expression, context.getAttributes(), target);
+		} catch (OgnlException e) {
+			throw new EvaluationException(new EvaluationAttempt(this, target, context.getAttributes()), e);
 		}
 	}
 
-	public void setValue(Object target, Object value, Map setContext) {
+	public void evaluateToSet(Object target, Object value, EvaluationContext context) {
 		try {
 			Assert.notNull(target, "The target object is required");
-			if (setContext == null) {
-				setContext = Collections.EMPTY_MAP;
-			}
-			Ognl.setValue(expression, setContext, target, value);
-		}
-		catch (OgnlException e) {
-			throw new EvaluationException(new SetPropertyAttempt(this, target, value, setContext), e);
+			Ognl.setValue(expression, context.getAttributes(), target, value);
+		} catch (OgnlException e) {
+			throw new EvaluationException(new SetValueAttempt(this, target, value, context.getAttributes()), e);
 		}
 	}
 

@@ -16,22 +16,20 @@
 package org.springframework.binding.expression.support;
 
 import java.util.Collection;
-import java.util.Map;
 
+import org.springframework.binding.expression.EvaluationContext;
 import org.springframework.binding.expression.EvaluationException;
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.expression.PropertyExpression;
-import org.springframework.binding.expression.SetPropertyAttempt;
+import org.springframework.binding.expression.SetValueAttempt;
+import org.springframework.binding.expression.SettableExpression;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
- * A property expression that can add an element to a collection when asked to
- * set its value.
- * 
+ * A settable expression that adds non-null values to a collection. 
  * @author Keith Donald
  */
-public class CollectionAddingPropertyExpression implements PropertyExpression {
+public class CollectionAddingPropertyExpression implements SettableExpression {
 
 	/**
 	 * The expression that resolves a mutable collection reference.
@@ -46,20 +44,21 @@ public class CollectionAddingPropertyExpression implements PropertyExpression {
 		this.collectionExpression = collectionExpression;
 	}
 
-	public void setValue(Object target, Object value, Map context) throws EvaluationException {
-		Object result = evaluateAgainst(target, context);
-		Assert.isInstanceOf(Collection.class, result, "Not a collection: ");
-		if (result == null) {
-			throw new EvaluationException(new SetPropertyAttempt(collectionExpression, target, value, context),
-					new IllegalArgumentException("The collection expression evaluated to a [null] reference"));
-		}
-		if (value != null) {
-			((Collection)result).add(value);
-		}
+	public Object evaluate(Object target, EvaluationContext context) throws EvaluationException {
+		return collectionExpression.evaluate(target, context);
 	}
 
-	public Object evaluateAgainst(Object target, Map context) throws EvaluationException {
-		return collectionExpression.evaluateAgainst(target, context);
+	public void evaluateToSet(Object target, Object value, EvaluationContext context) throws EvaluationException {
+		Object result = evaluate(target, context);
+		if (result == null) {
+			throw new EvaluationException(new SetValueAttempt(this, target, value, null),
+					new IllegalArgumentException("The collection expression evaluated to a [null] reference"));
+		}
+		Assert.isInstanceOf(Collection.class, result, "Not a collection: ");
+		if (value != null) {
+			// add the value to the collection
+			((Collection)result).add(value);
+		}
 	}
 
 	public String toString() {
