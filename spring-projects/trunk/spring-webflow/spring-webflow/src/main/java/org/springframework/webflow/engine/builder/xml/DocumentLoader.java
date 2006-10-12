@@ -33,7 +33,7 @@ public interface DocumentLoader {
 	/**
 	 * Load the XML-based document from the external resource.
 	 * @param resource the document resource
-	 * @return the loaded document
+	 * @return the loaded (parsed) document
 	 * @throws IOException an exception occured accessing the resource input stream
 	 * @throws ParserConfigurationException an exception occured building the document parser
 	 * @throws SAXException a error occured during document parsing

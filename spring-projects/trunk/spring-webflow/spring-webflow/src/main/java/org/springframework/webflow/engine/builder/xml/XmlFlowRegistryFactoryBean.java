@@ -83,14 +83,14 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowBuildingFlowRegistry
 	 * Sets the locations (resource file paths) pointing to XML-based flow
 	 * definitions.
 	 * <p>
-	 * When configuring as a spring bean definition, ANT-style resource
+	 * When configuring as a Spring bean definition, ANT-style resource
 	 * patterns/wildcards are also supported, taking advantage of Spring's built
 	 * in ResourceArrayPropertyEditor machinery.
 	 * <p>
 	 * For example:
 	 * 
 	 * <pre>
-	 *     &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.engine.builder.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+	 *     &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.engine.builder.xml.XmlFlowRegistryFactoryBean&quot;&gt;
 	 *         &lt;property name=&quot;flowLocations&quot;&gt; value=&quot;/WEB-INF/flows/*-flow.xml&quot;/&gt; 
 	 *     &lt;/bean&gt;
 	 * </pre>
@@ -98,7 +98,7 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowBuildingFlowRegistry
 	 * Another example:
 	 * 
 	 * <pre>
-	 *    &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.engine.builder.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+	 *    &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.engine.builder.xml.XmlFlowRegistryFactoryBean&quot;&gt;
 	 *          &lt;property name=&quot;flowLocations&quot;&gt; value=&quot;classpath*:/example/flows/*-flow.xml&quot;/&gt; 
 	 *    &lt;/bean&gt;
 	 * </pre>
@@ -112,11 +112,10 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowBuildingFlowRegistry
 	}
 
 	/**
-	 * Convenience method that allows for setting externalized flow definitions
+	 * Convenience method for setting externalized flow definitions
 	 * from a <code>java.util.Properties</code> map. Allows for more control
 	 * over the definition, including which <code>flowId</code> is assigned.
 	 * <p>
-	 * 
 	 * Each property key is the <code>flowId</code> and each property value is
 	 * the string encoded location of the externalized flow definition resource.
 	 * <p>
@@ -129,19 +128,16 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowBuildingFlowRegistry
 	 * For example:
 	 * 
 	 * <pre>
-	 *     &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.engine.builder.registry.XmlFlowRegistryFactoryBean&quot;&gt;
+	 *     &lt;bean id=&quot;flowRegistry&quot; class=&quot;org.springframework.webflow.engine.builder.xml.XmlFlowRegistryFactoryBean&quot;&gt;
 	 *         &lt;property name=&quot;flowDefinitions&quot;&gt;
 	 *             &lt;value&gt;
-	 *                 searchFlow=/WEB-INF/flows/search.xml
-	 *                 detailFlow=/WEB-INF/flows/detail.xml
+	 *                 searchFlow=/WEB-INF/flows/search-flow.xml
+	 *                 detailFlow=/WEB-INF/flows/detail-flow.xml
 	 *             &lt;/value&gt;
 	 *         &lt;/property&gt;
 	 *     &lt;/bean&gt;
 	 * </pre>
-	 * 
-	 * The flow id key and resource value is required. Flow attributes (e.g.
-	 * attr1) are optional.
-	 * @param flowDefinitions the flow definition, defined within a properties
+	 * @param flowDefinitions the flow definitions, defined within a properties
 	 * map
 	 */
 	public void setFlowDefinitions(Properties flowDefinitions) {
@@ -164,11 +160,15 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowBuildingFlowRegistry
 	}
 
 	protected void doPopulate(FlowDefinitionRegistry registry) {
-		addFlowDefinitionsFromPropertiesIfNecessary();
+		addFlowDefinitionsFromProperties();
 		getXmlFlowRegistrar().registerFlowDefinitions(registry);
 	}
 
-	private void addFlowDefinitionsFromPropertiesIfNecessary() {
+	/**
+	 * Add flow definitions configured using a property map to 
+	 * the flow definition registrar.
+	 */
+	private void addFlowDefinitionsFromProperties() {
 		if (flowDefinitions != null && flowDefinitions.size() > 0) {
 			List flows = new ArrayList(flowDefinitions.size());
 			Iterator it = flowDefinitions.entrySet().iterator();
@@ -176,10 +176,12 @@ public class XmlFlowRegistryFactoryBean extends AbstractFlowBuildingFlowRegistry
 				Map.Entry entry = (Map.Entry)it.next();
 				String flowId = (String)entry.getKey();
 				String location = (String)entry.getValue();
-				flows.add(new FlowDefinitionResource(flowId, getXmlFlowRegistrar().resource(location)));
+				Resource resource = getFlowServiceLocator().getResourceLoader().getResource(location);
+				flows.add(new FlowDefinitionResource(flowId, resource));
 			}
 			getXmlFlowRegistrar().addResources(
 					(FlowDefinitionResource[])flows.toArray(new FlowDefinitionResource[flows.size()]));
+			// cleanup
 			flowDefinitions = null;
 		}
 	}

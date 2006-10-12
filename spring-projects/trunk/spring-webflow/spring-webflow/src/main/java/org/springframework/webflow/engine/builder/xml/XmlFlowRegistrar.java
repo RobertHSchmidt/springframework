@@ -16,7 +16,6 @@
 package org.springframework.webflow.engine.builder.xml;
 
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.webflow.definition.registry.ExternalizedFlowDefinitionRegistrar;
 import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
@@ -27,30 +26,29 @@ import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.engine.builder.RefreshableFlowDefinitionHolder;
 
 /**
- * A flow registrar that populates a flow registry from flow definitions defined
- * within externalized XML resources. Typically used in conjunction with a
- * {@link XmlFlowRegistryFactoryBean} but may also be used standalone in
- * programmatic fashion.
+ * A flow definition registrar that populates a flow definition registry with
+ * flow definitions defined in externalized XML resources. Typically used in
+ * conjunction with a {@link XmlFlowRegistryFactoryBean} but may also be used
+ * standalone in programmatic fashion.
  * <p>
  * By default, a flow definition registered by this registrar will be assigned a
  * registry identifier equal to the filename of the underlying definition
  * resource, minus the filename extension. For example, a XML-based flow
  * definition defined in the file "flow1.xml" will be identified as "flow1" when
  * registered in a registry.
- * 
+ * <p>
  * Programmatic usage example:
- * </p>
  * 
  * <pre class="code">
  *     BeanFactory beanFactory = ...
- *     FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
+ *     FlowDefinitionRegistry registry = new FlowDefinitionRegistryImpl();
  *     FlowServiceLocator flowServiceLocator =
  *         new DefaultFlowServiceLocator(registry, beanFactory);
  *     XmlFlowRegistrar registrar = new XmlFlowRegistrar(flowServiceLocator);
  *     File parent = new File(&quot;src/webapp/WEB-INF&quot;);
  *     registrar.addLocation(new FileSystemResource(new File(parent, &quot;flow1.xml&quot;));
  *     registrar.addLocation(new FileSystemResource(new File(parent, &quot;flow2.xml&quot;));
- *     registrar.registerFlows(registry);
+ *     registrar.registerFlowDefinitions(registry);
  * </pre>
  * 
  * @author Keith Donald
@@ -73,17 +71,16 @@ public class XmlFlowRegistrar extends ExternalizedFlowDefinitionRegistrar {
 	private DocumentLoader documentLoader;
 
 	/**
-	 * Creates a new xml flow registrar. Protected constructor - if used, make
+	 * Creates a new XML flow registrar. Protected constructor - if used, make
 	 * sure the required {@link #flowServiceLocator} reference is set.
 	 */
 	protected XmlFlowRegistrar() {
-
 	}
 
 	/**
-	 * Creates a new xml flow registrar.
+	 * Creates a new XML flow registrar.
 	 * @param flowServiceLocator the locator needed to support flow definition
-	 * assembly.
+	 * assembly
 	 */
 	public XmlFlowRegistrar(FlowServiceLocator flowServiceLocator) {
 		setFlowServiceLocator(flowServiceLocator);
@@ -114,6 +111,13 @@ public class XmlFlowRegistrar extends ExternalizedFlowDefinitionRegistrar {
 	public void setDocumentLoader(DocumentLoader documentLoader) {
 		this.documentLoader = documentLoader;
 	}
+	
+	/**
+	 * Returns the loader of XML-based flow definition documents.
+	 */
+	public DocumentLoader getDocumentLoader() {
+		return documentLoader;
+	}
 
 	protected boolean isFlowDefinitionResource(Resource resource) {
 		return resource.getFilename().endsWith(XML_SUFFIX);
@@ -124,6 +128,8 @@ public class XmlFlowRegistrar extends ExternalizedFlowDefinitionRegistrar {
 		FlowAssembler assembler = new FlowAssembler(resource.getId(), resource.getAttributes(), builder);
 		return new RefreshableFlowDefinitionHolder(assembler);
 	}
+	
+	// hook methods
 
 	/**
 	 * Factory method that creates and fully initializes the XML-based flow
@@ -137,17 +143,5 @@ public class XmlFlowRegistrar extends ExternalizedFlowDefinitionRegistrar {
 			builder.setDocumentLoader(documentLoader);
 		}
 		return builder;
-	}
-
-	/**
-	 * Convenience factory method that converts the specified resource location
-	 * into a {@link Resource} object using the configured
-	 * {@link ResourceLoader} on the
-	 * {@link #getFlowServiceLocator() flow service locator}.
-	 * @param location the resource string
-	 * @return the resource
-	 */
-	public Resource resource(String location) {
-		return getFlowServiceLocator().getResourceLoader().getResource(location);
 	}
 }
