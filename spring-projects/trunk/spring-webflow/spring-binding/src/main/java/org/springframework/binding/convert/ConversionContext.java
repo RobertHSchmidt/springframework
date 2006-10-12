@@ -23,6 +23,9 @@ package org.springframework.binding.convert;
  * <ul>Providing operations for recording progress or 
  * errors during the type conversion process.
  * </ol>
+ * Empty for now; subclasses may define their own custom context behavior
+ * accessible by a converter with a downcast.
+ * 
  * @author Keith Donald
  */
 public interface ConversionContext {

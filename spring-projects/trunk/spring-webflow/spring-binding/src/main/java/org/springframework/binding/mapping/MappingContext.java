@@ -23,6 +23,9 @@ package org.springframework.binding.mapping;
  * <ul>Providing operations for recording progress or 
  * errors during the mapping process.
  * </ol>
+ * Empty for now; subclasses may define their own custom context behavior
+ * accessible by a mapper with a downcast.
+ * 
  * @author Keith Donald
  */
 public interface MappingContext {
