@@ -173,8 +173,16 @@ public class GenericConversionService implements ConversionService {
 		Object clazz = aliasMap.get(alias);
 		if (clazz != null) {
 			Assert.isInstanceOf(Class.class, clazz, "Not a Class alias '" + alias + "': ");
+			return (Class)clazz;
+		} else {
+			if (parent != null) {
+		    	// try parent service
+		        return parent.getClassByAlias(alias);
+			} else {
+				// alias does not index a class, return null
+				return null;
+			}
 		}
-		return (Class)clazz;
 	}
 
 	protected Map findConvertersForSource(Class sourceClass) {
