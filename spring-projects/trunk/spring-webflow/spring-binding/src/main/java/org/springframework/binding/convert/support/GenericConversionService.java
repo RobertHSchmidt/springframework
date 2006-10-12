@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.binding.convert.ConversionContext;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.Converter;
@@ -237,29 +236,5 @@ public class GenericConversionService implements ConversionService {
 
 	protected Map getAliasMap() {
 		return aliasMap;
-	}
-
-	public static class NoOpConverter extends AbstractConverter {
-
-		private Class sourceClass;
-
-		private Class targetClass;
-
-		public NoOpConverter(Class sourceClass, Class targetClass) {
-			this.sourceClass = sourceClass;
-			this.targetClass = targetClass;
-		}
-
-		protected Object doConvert(Object source, Class targetClass, ConversionContext context) throws Exception {
-			return source;
-		}
-
-		public Class[] getSourceClasses() {
-			return new Class[] { sourceClass };
-		}
-
-		public Class[] getTargetClasses() {
-			return new Class[] { targetClass };
-		}
 	}
 }
