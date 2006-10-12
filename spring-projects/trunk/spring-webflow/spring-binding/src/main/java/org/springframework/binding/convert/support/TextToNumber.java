@@ -18,7 +18,6 @@ package org.springframework.binding.convert.support;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.springframework.binding.collection.MapAccessor;
 import org.springframework.binding.convert.ConversionContext;
 import org.springframework.binding.format.FormatterFactory;
 import org.springframework.binding.format.support.SimpleFormatterFactory;
