@@ -18,6 +18,7 @@ package org.springframework.webflow.samples.phonebook;
 import java.util.List;
 
 public interface Phonebook {
+
 	public List<Person> search(SearchCriteria criteria);
 
 	public Person getPerson(Long id);
