@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2004 the original author or authors.
+ * Copyright 2002-2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,8 @@ import org.springframework.webflow.engine.builder.FlowServiceLocator;
  * 
  * @author Keith Donald
  */
-public class PhonebookFlowRegistrar implements FlowDefinitionRegistrar {
+class PhonebookFlowRegistrar implements FlowDefinitionRegistrar {
+	
 	private FlowServiceLocator serviceLocator;
 
 	public PhonebookFlowRegistrar(FlowServiceLocator serviceLocator) {
@@ -36,8 +37,8 @@ public class PhonebookFlowRegistrar implements FlowDefinitionRegistrar {
 	}
 
 	public void registerFlowDefinitions(FlowDefinitionRegistry registry) {
-		registry.registerFlowDefinition(assemble("search-flow", new SearchPersonFlowBuilder(serviceLocator)));
 		registry.registerFlowDefinition(assemble("detail-flow", new PersonDetailFlowBuilder(serviceLocator)));
+		registry.registerFlowDefinition(assemble("search-flow", new SearchPersonFlowBuilder(serviceLocator)));
 	}
 
 	private FlowDefinitionHolder assemble(String flowId, FlowBuilder flowBuilder) {
