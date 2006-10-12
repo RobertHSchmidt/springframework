@@ -15,7 +15,7 @@
  */
 package org.springframework.binding.method;
 
-import org.springframework.binding.collection.MapAccessor;
+import org.springframework.binding.convert.ConversionContext;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
@@ -64,7 +64,7 @@ public class TextToMethodSignature extends ConversionServiceAwareConverter {
 		return new Class[] { MethodSignature.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass, MapAccessor context) throws Exception {
+	protected Object doConvert(Object source, Class targetClass, ConversionContext context) throws Exception {
 		String encodedMethodKey = (String)source;
 		encodedMethodKey = encodedMethodKey.trim();
 		int openParan = encodedMethodKey.indexOf('(');

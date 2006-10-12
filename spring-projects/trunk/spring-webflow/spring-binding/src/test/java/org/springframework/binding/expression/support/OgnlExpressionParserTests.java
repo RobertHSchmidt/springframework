@@ -1,7 +1,5 @@
 package org.springframework.binding.expression.support;
 
-import java.util.Collections;
-
 import junit.framework.TestCase;
 
 import org.springframework.binding.expression.Expression;
@@ -16,7 +14,7 @@ public class OgnlExpressionParserTests extends TestCase {
 		String exp = "${flag}";
 		Expression e = parser.parseExpression(exp);
 		assertNotNull(e);
-		Boolean b = (Boolean)e.evaluateAgainst(bean, Collections.EMPTY_MAP);
+		Boolean b = (Boolean)e.evaluate(bean, null);
 		assertFalse(b.booleanValue());
 	}
 	
@@ -24,27 +22,27 @@ public class OgnlExpressionParserTests extends TestCase {
 		String exp = "flag";
 		Expression e = parser.parseExpression(exp);
 		assertNotNull(e);
-		Boolean b = (Boolean)e.evaluateAgainst(bean, Collections.EMPTY_MAP);
+		Boolean b = (Boolean)e.evaluate(bean, null);
 		assertFalse(b.booleanValue());
 	}
 	
 	public void testParseNull() {
 		Expression e = parser.parseExpression(null);
 		assertNotNull(e);
-		assertNull(e.evaluateAgainst(bean, Collections.EMPTY_MAP));
+		assertNull(e.evaluate(bean, null));
 	}
 	
 	public void testParseEmpty() {
 		Expression e = parser.parseExpression("");
 		assertNotNull(e);
-		assertEquals("", e.evaluateAgainst(bean, Collections.EMPTY_MAP));
+		assertEquals("", e.evaluate(bean, null));
 	}
 
 	public void testParseComposite() {
 		String exp = "hello ${flag} ${flag} ${flag}";
 		Expression e = parser.parseExpression(exp);
 		assertNotNull(e);
-		String str = (String)e.evaluateAgainst(bean, Collections.EMPTY_MAP);
+		String str = (String)e.evaluate(bean, null);
 		assertEquals("hello false false false", str);
 	}
 

@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
 
@@ -68,7 +67,7 @@ public class DefaultAttributeMapper implements AttributeMapper, Serializable {
 		return (Mapping[])mappings.toArray(new Mapping[mappings.size()]);
 	}
 
-	public void map(Object source, Object target, Map context) {
+	public void map(Object source, Object target, MappingContext context) {
 		if (mappings != null) {
 			Iterator it = mappings.iterator();
 			while (it.hasNext()) {

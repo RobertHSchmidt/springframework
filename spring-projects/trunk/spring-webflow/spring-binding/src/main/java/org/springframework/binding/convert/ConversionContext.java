@@ -13,26 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.binding.expression;
-
-import java.util.Map;
+package org.springframework.binding.convert;
 
 /**
  * A context object with two main responsibities:
  * <ol>
- * <ul>Exposing information to an expression to influence 
- * an evaluation attempt.
+ * <ul>Exposing information to a converter to influence 
+ * a type conversion attempt.
  * <ul>Providing operations for recording progress or 
- * errors during the expression evaluation process.
+ * errors during the type conversion process.
  * </ol>
  * @author Keith Donald
  */
-public interface EvaluationContext {
-
-	/**
-	 * Returns a map of attributes that can be used to influence expression evaluation.
-	 * @return the evaluation attributes
-	 */
-	public Map getAttributes();
+public interface ConversionContext {
 
 }

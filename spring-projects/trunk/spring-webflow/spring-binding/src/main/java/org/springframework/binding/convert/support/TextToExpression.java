@@ -15,10 +15,10 @@
  */
 package org.springframework.binding.convert.support;
 
-import org.springframework.binding.collection.MapAccessor;
+import org.springframework.binding.convert.ConversionContext;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.binding.expression.PropertyExpression;
+import org.springframework.binding.expression.SettableExpression;
 import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.util.Assert;
 
@@ -26,7 +26,7 @@ import org.springframework.util.Assert;
  * Converter that converts a String into an Expression object.
  * 
  * @see org.springframework.binding.expression.Expression
- * @see org.springframework.binding.expression.PropertyExpression
+ * @see org.springframework.binding.expression.SettableExpression
  * 
  * @author Erwin Vervaet
  */
@@ -58,10 +58,10 @@ public class TextToExpression extends AbstractConverter {
 	}
 
 	public Class[] getTargetClasses() {
-		return new Class[] { Expression.class, PropertyExpression.class };
+		return new Class[] { Expression.class, SettableExpression.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass, MapAccessor context) throws Exception {
+	protected Object doConvert(Object source, Class targetClass, ConversionContext context) throws Exception {
 		String expressionString = (String)source;
 		if (getExpressionParser().isDelimitedExpression(expressionString)) {
 			return getExpressionParser().parseExpression((String)source);

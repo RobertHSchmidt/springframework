@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.springframework.binding.collection.MapAccessor;
+import org.springframework.binding.convert.ConversionContext;
 import org.springframework.binding.format.FormatterFactory;
 import org.springframework.binding.format.support.SimpleFormatterFactory;
 
@@ -46,7 +47,7 @@ public class TextToNumber extends AbstractFormattingConverter {
 				BigInteger.class, BigDecimal.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass, MapAccessor context) throws Exception {
+	protected Object doConvert(Object source, Class targetClass, ConversionContext context) throws Exception {
 		return getFormatterFactory().getNumberFormatter(targetClass).parseValue((String)source, targetClass);
 	}
 }

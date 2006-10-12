@@ -15,6 +15,8 @@
  */
 package org.springframework.binding.expression.support;
 
+import java.util.Collections;
+
 import ognl.Ognl;
 import ognl.OgnlException;
 
@@ -57,7 +59,8 @@ class OgnlExpression implements SettableExpression {
 		if (!(o instanceof OgnlExpression)) {
 			return false;
 		}
-		// as late as Ognl 2.6.7, their expression objects don't implement equals
+		// as late as Ognl 2.6.7, their expression objects don't implement
+		// equals
 		// so this always returns false
 		OgnlExpression other = (OgnlExpression) o;
 		return expression.equals(other.expression);
@@ -66,7 +69,7 @@ class OgnlExpression implements SettableExpression {
 	public Object evaluate(Object target, EvaluationContext context) throws EvaluationException {
 		try {
 			Assert.notNull(target, "The target object to evaluate is required");
-			return Ognl.getValue(expression, context.getAttributes(), target);
+			return Ognl.getValue(expression, (context != null ? context.getAttributes() : Collections.EMPTY_MAP), target);
 		} catch (OgnlException e) {
 			throw new EvaluationException(new EvaluationAttempt(this, target, context.getAttributes()), e);
 		}
@@ -75,7 +78,7 @@ class OgnlExpression implements SettableExpression {
 	public void evaluateToSet(Object target, Object value, EvaluationContext context) {
 		try {
 			Assert.notNull(target, "The target object is required");
-			Ognl.setValue(expression, context.getAttributes(), target, value);
+			Ognl.setValue(expression, (context != null ? context.getAttributes() : Collections.EMPTY_MAP), target, value);
 		} catch (OgnlException e) {
 			throw new EvaluationException(new SetValueAttempt(this, target, value, context.getAttributes()), e);
 		}

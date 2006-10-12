@@ -15,8 +15,6 @@
  */
 package org.springframework.binding.convert;
 
-import java.util.Map;
-
 /**
  * A type converter converts objects from one type to another. They may support
  * conversion of multiple source types to multiple target types.
@@ -51,6 +49,6 @@ public interface Converter {
 	 * @return The converted object, an instance of the default target type
 	 * @throws ConversionException An exception occured during the conversion
 	 */
-	public Object convert(Object source, Class targetClass, Map context) throws ConversionException;
+	public Object convert(Object source, Class targetClass, ConversionContext context) throws ConversionException;
 
 }
