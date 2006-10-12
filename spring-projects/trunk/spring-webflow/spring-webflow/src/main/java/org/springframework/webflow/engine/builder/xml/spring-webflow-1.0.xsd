@@ -232,9 +232,7 @@ A flow variable definition.  Flow variables are automatically created when an ex
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
-The mapper that defines how to map input attributes provided to this flow at startup.
-<br>
-The following mapping characteristics apply:
+Maps input attributes provided to this flow at startup.  The following mapping characteristics apply:
 <ul>
 <li>The 'source' of each mapping is a Map containing all the input provided by the caller
 that launched this flow.
@@ -245,10 +243,10 @@ data structures such as 'flowScope'.
 For example:
 <pre>
     &lt;input-mapper&gt;
-        &lt;mapping source="clientInputAttribute" target="flowScope.myFlowAttribute"/&gt;
+        &lt;input-attribute name="id"/&gt;
     &lt;/input-mapper&gt;
 </pre>
-... maps the value of "clientInputAttribute" to the "myFlowAttribute" in this flow's scope.
+... maps the value of "id" input attribute to the "id" attribute in this flow's scope.
 ]]>
 						</xsd:documentation>
 					</xsd:annotation>
@@ -474,13 +472,13 @@ A rule that maps the value of a source expression to a property of a target data
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
-				<xsd:element ref="attribute-mapping">
+				<xsd:element ref="input-attribute">
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
-A rule that maps an attribute in a source attribute map to a target attribute map.
-This is a convenient form of the more flexible 'mapping' element for mapping attributes to and
-from scope types such as 'flow' scope.
+A rule that maps an input attribute in a source attribute map to a target attribute map.
+This is a convenient form of the more flexible 'mapping' element for mapping attributes between
+attribute maps.
 ]]>
 						</xsd:documentation>
 					</xsd:annotation>
@@ -554,13 +552,13 @@ evaluates to null an error will be reported.
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:element name="attribute-mapping">
+	<xsd:element name="input-attribute">
 		<xsd:complexType>
 			<xsd:attribute name="name" type="xsd:string" use="required">
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-The name of the attribute.
+The name of the input attribute.
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
@@ -569,7 +567,7 @@ The name of the attribute.
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-The scope the attribute.  If not specified the default scope type is used ('flow' by default).
+The scope of the input attribute.  If not specified the default scope type is used ('flow' by default).
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
@@ -578,8 +576,8 @@ The scope the attribute.  If not specified the default scope type is used ('flow
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-Whether or not this attribute mapping is a required mapping.  If marked required and the source 
-evaluates to null an error will be reported.
+Whether or not this input attribute is required.  If marked required and it evaluates to null
+an error will be reported.
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
@@ -1499,10 +1497,10 @@ For example:
 <pre>
     &lt;attribute-mapper&gt;
 	    &lt;input-mapper&gt;
-		    &lt;attribute-mapping name="myFlowAttribute"/&gt;
+		    &lt;input-attribute name="myFlowAttribute"/&gt;
     	&lt;/input-mapper&gt;
     	&lt;output-mapper&gt;
-    		&lt;attribute-mapping name="aSubflowOutputAttribute"/&gt;
+    		&lt;output-attribute name="aSubflowOutputAttribute"/&gt;
     	&lt;/output-mapper&gt;
     &lt;/attribute-mapper&gt;
 </pre>
@@ -1777,18 +1775,51 @@ A rule that maps the value of a source expression to a property of a target data
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
-				<xsd:element ref="attribute-mapping">
+				<xsd:element ref="output-attribute">
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
-A rule that maps an attribute in a source attribute map to a target attribute map.							
-This is a convenient form of the more flexible &lt;mapping/&gt; element for mapping attributes
-from a scope type such as 'flow scope'.
+A rule that maps an output attribute in a source attribute map to a target attribute map.
+This is a convenient form of the more flexible 'mapping' element for mapping attributes between
+attribute maps.
 ]]>
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
 			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="output-attribute">
+		<xsd:complexType>
+			<xsd:attribute name="name" type="xsd:string" use="required">
+				<xsd:annotation>
+					<xsd:documentation>
+						<![CDATA[
+The name of the output attribute.
+]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="scope" type="scopeType" default="default">
+				<xsd:annotation>
+					<xsd:documentation>
+						<![CDATA[
+The scope of the output attribute.  If not specified the default scope type is used ('flow' by default).
+]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="required" type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:documentation>
+						<![CDATA[
+Whether or not this output attribute is required.  If marked required and it evaluates to null
+an error will be reported.
+]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 
