@@ -43,13 +43,13 @@ public interface ExpressionParser {
 	/**
 	 * Parse the provided property expression string, returning an evaluator
 	 * capable of evaluating its value as well as setting its value.
-	 * @param expressionString the parseable property path expression
+	 * @param expressionString the parseable expression string
 	 * @return the evaluator for the parsed expression
 	 * @throws ParserException an exception occured during parsing
 	 * @throws UnsupportedOperationException this parser does not support
 	 * property expressions
 	 */
-	public PropertyExpression parsePropertyExpression(String expressionString) throws ParserException,
+	public SettableExpression parseSettableExpression(String expressionString) throws ParserException,
 			UnsupportedOperationException;
 
 }

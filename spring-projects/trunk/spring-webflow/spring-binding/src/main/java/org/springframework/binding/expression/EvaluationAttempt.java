@@ -22,49 +22,57 @@ import org.springframework.core.style.ToStringCreator;
 
 /**
  * A simple holder for information about an evaluation attempt.
- * 
- * @author Keith
+ * @author Keith Donald
  */
 public class EvaluationAttempt implements Serializable {
 
 	/**
-	 * The expression being evaluated.
+	 * The expression that attempted to evaluate.
 	 */
 	private Expression expression;
 
 	/**
-	 * The target object being evaluated on.
+	 * The target object being evaluated.
 	 */
 	private Object target;
 
 	/**
-	 * The evaluation context.
+	 * The evaluation attributes.
 	 */
-	private Map evaluationContext;
+	private Map evaluationAttributes;
 
 	/**
 	 * Create an evaluation attempt.
-	 * 
-	 * @param expression
-	 * @param target
-	 * @param evaluationContext
+	 * @param expression the expression that failed to evaluate
+	 * @param target the target of the expression
+	 * @param evaluationAttributes the attributes that might have affected
+	 *        evaluation behavior
 	 */
-	public EvaluationAttempt(Expression expression, Object target, Map evaluationContext) {
+	public EvaluationAttempt(Expression expression, Object target, Map evaluationAttributes) {
 		this.expression = expression;
 		this.target = target;
-		this.evaluationContext = evaluationContext;
+		this.evaluationAttributes = evaluationAttributes;
 	}
 
+	/**
+	 * Returns the expression that attempted to evaluate.
+	 */
 	public Expression getExpression() {
 		return expression;
 	}
 
+	/**
+	 * Returns the target object upon which evaluation was attempted.
+	 */
 	public Object getTarget() {
 		return target;
 	}
 
-	public Map getEvaluationContext() {
-		return evaluationContext;
+	/**
+	 * Returns attributes that may have influenced the evaluation process.
+	 */
+	public Map getEvaluationAttributes() {
+		return evaluationAttributes;
 	}
 
 	public String toString() {
@@ -72,6 +80,7 @@ public class EvaluationAttempt implements Serializable {
 	}
 
 	protected ToStringCreator createToString(ToStringCreator creator) {
-		return creator.append("expression", expression).append("target", target).append("context", evaluationContext);
+		return creator.append("expression", expression).append("target", target).append("evaluationAttributes",
+				evaluationAttributes);
 	}
 }

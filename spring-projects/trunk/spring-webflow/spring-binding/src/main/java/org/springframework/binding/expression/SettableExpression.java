@@ -15,36 +15,20 @@
  */
 package org.springframework.binding.expression;
 
-import java.util.Map;
-
-import org.springframework.core.style.ToStringCreator;
-
 /**
- * Records an attempt to set a property.
- * 
+ * An evaluator that is capable of setting a value on a target object at the
+ * path defined by this expression.
  * @author Keith Donald
  */
-public class SetPropertyAttempt extends EvaluationAttempt {
-
-	private Object value;
+public interface SettableExpression extends Expression {
 
 	/**
-	 * Creates a new set property attempt.
-	 * @param expression
-	 * @param target
-	 * @param value
-	 * @param setContext
+	 * Evaluate this expression against the target object to set its value to
+	 * the value provided.
+	 * @param target the target object
+	 * @param value the new value to be set
+	 * @param context the evaluation context
+	 * @throws EvaluationException an exception occured during evaluation.
 	 */
-	public SetPropertyAttempt(Expression expression, Object target, Object value, Map setContext) {
-		super(expression, target, setContext);
-		this.value = value;
-	}
-
-	public Object getValue() {
-		return value;
-	}
-
-	protected ToStringCreator createToString(ToStringCreator creator) {
-		return super.createToString(creator).append("value", value);
-	}
+	public void evaluateToSet(Object target, Object value, EvaluationContext context) throws EvaluationException;
 }

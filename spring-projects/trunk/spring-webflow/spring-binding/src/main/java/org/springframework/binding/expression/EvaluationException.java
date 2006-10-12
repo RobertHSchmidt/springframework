@@ -19,10 +19,13 @@ import org.springframework.core.NestedRuntimeException;
 
 /**
  * Indicates an expression evaluation failed.
- * 
  * @author Keith Donald
  */
 public class EvaluationException extends NestedRuntimeException {
+
+	/**
+	 * The evaluation attempt that failed. 
+	 */
 	private EvaluationAttempt evaluationAttempt;
 
 	/**
@@ -36,6 +39,9 @@ public class EvaluationException extends NestedRuntimeException {
 		this.evaluationAttempt = evaluationAttempt;
 	}
 
+	/**
+	 * Returns the evaluation attempt that failed.
+	 */
 	public EvaluationAttempt getEvaluationAttempt() {
 		return evaluationAttempt;
 	}

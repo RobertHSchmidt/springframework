@@ -15,8 +15,6 @@
  */
 package org.springframework.binding.expression;
 
-import java.util.Map;
-
 /**
  * Evaluates a single parsed expression of the provided input object in the
  * specified context. This provides a common abstraction for expression
@@ -27,11 +25,11 @@ public interface Expression {
 
 	/**
 	 * Evaluate the expression encapsulated by this evaluator against the
-	 * provided target object, returning the result of the evaluation.
-	 * @param target The expression target object
-	 * @param evaluationContext The expression evaluation context
+	 * provided target object and return the result of the evaluation.
+	 * @param target The target of the expression
+	 * @param context The expression evaluation context
 	 * @return the evaluation result
 	 * @throws EvaluationException an exception occured during evaluation.
 	 */
-	public Object evaluateAgainst(Object target, Map evaluationContext) throws EvaluationException;
+	public Object evaluate(Object target, EvaluationContext context) throws EvaluationException;
 }

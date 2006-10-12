@@ -15,8 +15,7 @@
  */
 package org.springframework.binding.expression.support;
 
-import java.util.Map;
-
+import org.springframework.binding.expression.EvaluationContext;
 import org.springframework.binding.expression.EvaluationException;
 import org.springframework.binding.expression.Expression;
 import org.springframework.util.ObjectUtils;
@@ -58,7 +57,7 @@ public class StaticExpression implements Expression {
 		return ObjectUtils.nullSafeEquals(value, other.value);
 	}
 
-	public Object evaluateAgainst(Object target, Map evaluationContext) throws EvaluationException {
+	public Object evaluate(Object target, EvaluationContext context) throws EvaluationException {
 		return value;
 	}
 
