@@ -210,7 +210,7 @@ public abstract class ExternalizedFlowDefinitionRegistrar implements FlowDefinit
 	}
 
 	/**
-	 * Template factory method sublcasses must override to return the holder for
+	 * Template factory method subclasses must override to return the holder for
 	 * the flow definition to be registered loaded from the specified resource.
 	 * @param resource the externalized resource
 	 * @return the flow definition holder
