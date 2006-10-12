@@ -16,7 +16,6 @@
 package org.springframework.binding.method;
 
 import java.lang.reflect.Method;
-import java.util.Collections;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -65,17 +64,17 @@ public class MethodInvoker {
 	 * @param signature the definition of the method to invoke, including the
 	 * method name and the method argument types
 	 * @param bean the bean to invoke
-	 * @param parameterValueSource the source for method parameter values
+	 * @param argumentSource the source for method arguments
 	 * @return the invoked method's return value
 	 * @throws MethodInvocationException the method could not be invoked
 	 */
-	public Object invoke(MethodSignature signature, Object bean, Object parameterValueSource)
+	public Object invoke(MethodSignature signature, Object bean, Object argumentSource)
 			throws MethodInvocationException {
 		Parameters parameters = signature.getParameters();
 		Object[] arguments = new Object[parameters.size()];
 		for (int i = 0; i < parameters.size(); i++) {
 			Parameter parameter = parameters.getParameter(i);
-			Object argument = parameter.getName().evaluateAgainst(parameterValueSource, Collections.EMPTY_MAP);
+			Object argument = parameter.getName().evaluate(argumentSource, null);
 			arguments[i] = applyTypeConversion(argument, parameter.getType());
 		}
 		Class[] parameterTypes = parameters.getTypesArray();

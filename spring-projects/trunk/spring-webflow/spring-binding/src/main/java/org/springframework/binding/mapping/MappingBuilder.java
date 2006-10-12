@@ -20,7 +20,7 @@ import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.binding.expression.PropertyExpression;
+import org.springframework.binding.expression.SettableExpression;
 import org.springframework.util.Assert;
 
 /**
@@ -31,7 +31,6 @@ import org.springframework.util.Assert;
  * 
  * <pre>
  * MappingBuilder mapping = new MappingBuilder();
- * 
  * Mapping result = mapping.source(&quot;foo&quot;).target(&quot;bar&quot;).from(String.class).to(Long.class).value();
  * </pre>
  * 
@@ -49,7 +48,7 @@ public class MappingBuilder {
 	/**
 	 * The target mapping property expression.
 	 */
-	private PropertyExpression targetExpression;
+	private SettableExpression targetExpression;
 
 	/**
 	 * The type of the object returned by evaluating the source expression.
@@ -112,7 +111,7 @@ public class MappingBuilder {
 	 * @return this, to support call-chaining
 	 */
 	public MappingBuilder target(String expressionString) {
-		targetExpression = (PropertyExpression)expressionParser.parseExpression(expressionString);
+		targetExpression = (SettableExpression)expressionParser.parseExpression(expressionString);
 		return this;
 	}
 
@@ -156,7 +155,7 @@ public class MappingBuilder {
 	public Mapping value() {
 		Assert.notNull(sourceExpression, "The source expression must be set at a minimum");
 		if (targetExpression == null) {
-			targetExpression = (PropertyExpression)sourceExpression;
+			targetExpression = (SettableExpression)sourceExpression;
 		}
 		ConversionExecutor typeConverter = null;
 		if (sourceType != null) {

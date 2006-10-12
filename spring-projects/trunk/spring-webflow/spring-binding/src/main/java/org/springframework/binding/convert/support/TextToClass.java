@@ -15,7 +15,7 @@
  */
 package org.springframework.binding.convert.support;
 
-import org.springframework.binding.collection.MapAccessor;
+import org.springframework.binding.convert.ConversionContext;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
@@ -39,7 +39,7 @@ public class TextToClass extends ConversionServiceAwareConverter {
 		return new Class[] { Class.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass, MapAccessor context) throws Exception {
+	protected Object doConvert(Object source, Class targetClass, ConversionContext context) throws Exception {
 		String text = (String)source;
 		if (StringUtils.hasText(text)) {
 			String classNameOrAlias = text.trim();

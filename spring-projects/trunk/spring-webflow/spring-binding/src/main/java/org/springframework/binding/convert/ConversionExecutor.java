@@ -16,8 +16,6 @@
 package org.springframework.binding.convert;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
@@ -82,7 +80,7 @@ public class ConversionExecutor implements Serializable {
 	 * @param source the source object to convert
 	 */
 	public Object execute(Object source) throws ConversionException {
-		return execute(source, Collections.EMPTY_MAP);
+		return execute(source, null);
 	}
 
 	/**
@@ -91,7 +89,7 @@ public class ConversionExecutor implements Serializable {
 	 * @param context the conversion context, useful for influencing the
 	 * behavior of the converter.
 	 */
-	public Object execute(Object source, Map context) throws ConversionException {
+	public Object execute(Object source, ConversionContext context) throws ConversionException {
 		if (source != null) {
 			Assert.isInstanceOf(sourceClass, source, "Not of source type: ");
 		}
