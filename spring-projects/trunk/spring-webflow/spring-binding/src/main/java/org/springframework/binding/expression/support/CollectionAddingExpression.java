@@ -29,7 +29,7 @@ import org.springframework.util.Assert;
  * A settable expression that adds non-null values to a collection. 
  * @author Keith Donald
  */
-public class CollectionAddingPropertyExpression implements SettableExpression {
+public class CollectionAddingExpression implements SettableExpression {
 
 	/**
 	 * The expression that resolves a mutable collection reference.
@@ -40,7 +40,7 @@ public class CollectionAddingPropertyExpression implements SettableExpression {
 	 * Creates a collection adding property expression.
 	 * @param collectionExpression the collection expression
 	 */
-	public CollectionAddingPropertyExpression(Expression collectionExpression) {
+	public CollectionAddingExpression(Expression collectionExpression) {
 		this.collectionExpression = collectionExpression;
 	}
 
