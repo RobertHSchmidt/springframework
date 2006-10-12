@@ -29,8 +29,8 @@ import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.binding.expression.PropertyExpression;
-import org.springframework.binding.expression.support.CollectionAddingPropertyExpression;
+import org.springframework.binding.expression.SettableExpression;
+import org.springframework.binding.expression.support.CollectionAddingExpression;
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.Mapping;
@@ -87,9 +87,9 @@ import org.xml.sax.SAXException;
  *           xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
  *           xsi:schemaLocation=&quot;http://www.springframework.org/schema/webflow
  *                               http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd&quot;&gt;
- *                                 
+ *                                  
  *         &lt;!-- Define your states here --&gt;
- *           
+ *            
  *     &lt;/flow&gt;
  * </pre>
  * 
@@ -337,15 +337,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		localFlowServiceLocator = new LocalFlowServiceLocator(getFlowServiceLocator());
 		try {
 			document = documentLoader.loadDocument(location);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new FlowBuilderException("Could not access the XML flow definition resource at " + location, e);
-		}
-		catch (ParserConfigurationException e) {
+		} catch (ParserConfigurationException e) {
 			throw new FlowBuilderException("Could not configure the parser to parse the XML flow definition at "
 					+ location, e);
-		}
-		catch (SAXException e) {
+		} catch (SAXException e) {
 			throw new FlowBuilderException("Could not parse the XML flow definition document at " + location, e);
 		}
 		setFlow(parseFlow(id, attributes, getDocumentElement()));
@@ -440,11 +437,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		List importElements = DomUtils.getChildElementsByTagName(flowElement, IMPORT_ELEMENT);
 		Resource[] resources = new Resource[importElements.size()];
 		for (int i = 0; i < importElements.size(); i++) {
-			Element importElement = (Element)importElements.get(i);
+			Element importElement = (Element) importElements.get(i);
 			try {
 				resources[i] = getLocation().createRelative(importElement.getAttribute(RESOURCE_ATTRIBUTE));
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				throw new FlowBuilderException("Could not access flow-relative artifact resource '"
 						+ importElement.getAttribute(RESOURCE_ATTRIBUTE) + "'", e);
 			}
@@ -455,7 +451,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private void parseAndAddFlowVariables(Element flowElement, Flow flow) {
 		List varElements = DomUtils.getChildElementsByTagName(flowElement, VAR_ELEMENT);
 		for (Iterator it = varElements.iterator(); it.hasNext();) {
-			flow.addVariable(parseVariable((Element)it.next()));
+			flow.addVariable(parseVariable((Element) it.next()));
 		}
 	}
 
@@ -465,13 +461,11 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			BeanFactory beanFactory = getLocalFlowServiceLocator().getBeanFactory();
 			return new BeanFactoryFlowVariable(element.getAttribute(NAME_ATTRIBUTE), element
 					.getAttribute(BEAN_ATTRIBUTE), beanFactory, scope);
-		}
-		else {
+		} else {
 			if (StringUtils.hasText(element.getAttribute(CLASS_ATTRIBUTE))) {
-				Class variableClass = (Class)fromStringTo(Class.class).execute(element.getAttribute(CLASS_ATTRIBUTE));
+				Class variableClass = (Class) fromStringTo(Class.class).execute(element.getAttribute(CLASS_ATTRIBUTE));
 				return new SimpleFlowVariable(element.getAttribute(NAME_ATTRIBUTE), variableClass, scope);
-			}
-			else {
+			} else {
 				BeanFactory beanFactory = getLocalFlowServiceLocator().getBeanFactory();
 				return new BeanFactoryFlowVariable(element.getAttribute(NAME_ATTRIBUTE), null, beanFactory, scope);
 			}
@@ -502,9 +496,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private void parseAndAddInlineFlowDefinitions(Element parentFlowElement, Flow flow) {
 		List inlineFlowElements = DomUtils.getChildElementsByTagName(parentFlowElement, INLINE_FLOW_ELEMENT);
 		for (Iterator it = inlineFlowElements.iterator(); it.hasNext();) {
-			Element inlineFlowElement = (Element)it.next();
+			Element inlineFlowElement = (Element) it.next();
 			String inlineFlowId = inlineFlowElement.getAttribute(ID_ATTRIBUTE);
-			Element flowElement = (Element)inlineFlowElement.getElementsByTagName(FLOW_ATTRIBUTE).item(0);
+			Element flowElement = (Element) inlineFlowElement.getElementsByTagName(FLOW_ATTRIBUTE).item(0);
 			Flow inlineFlow = parseFlow(inlineFlowId, null, flowElement);
 			buildInlineFlow(flowElement, inlineFlow);
 			flow.addInlineFlow(inlineFlow);
@@ -529,20 +523,16 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node node = nodeList.item(i);
 			if (node instanceof Element) {
-				Element stateElement = (Element)node;
+				Element stateElement = (Element) node;
 				if (ACTION_STATE_ELEMENT.equals(stateElement.getNodeName())) {
 					parseAndAddActionState(stateElement, flow);
-				}
-				else if (VIEW_STATE_ELEMENT.equals(stateElement.getNodeName())) {
+				} else if (VIEW_STATE_ELEMENT.equals(stateElement.getNodeName())) {
 					parseAndAddViewState(stateElement, flow);
-				}
-				else if (DECISION_STATE_ELEMENT.equals(stateElement.getNodeName())) {
+				} else if (DECISION_STATE_ELEMENT.equals(stateElement.getNodeName())) {
 					parseAndAddDecisionState(stateElement, flow);
-				}
-				else if (SUBFLOW_STATE_ELEMENT.equals(stateElement.getNodeName())) {
+				} else if (SUBFLOW_STATE_ELEMENT.equals(stateElement.getNodeName())) {
 					parseAndAddSubflowState(stateElement, flow);
-				}
-				else if (END_STATE_ELEMENT.equals(stateElement.getNodeName())) {
+				} else if (END_STATE_ELEMENT.equals(stateElement.getNodeName())) {
 					parseAndAddEndState(stateElement, flow);
 				}
 			}
@@ -598,8 +588,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		Element entryActionsElement = getChildElementByTagName(element, ENTRY_ACTIONS_ELEMENT);
 		if (entryActionsElement != null) {
 			return parseAnnotatedActions(entryActionsElement);
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
@@ -608,8 +597,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		Element renderActionsElement = getChildElementByTagName(element, RENDER_ACTIONS_ELEMENT);
 		if (renderActionsElement != null) {
 			return parseAnnotatedActions(renderActionsElement);
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
@@ -618,8 +606,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		Element exitActionsElement = getChildElementByTagName(element, EXIT_ACTIONS_ELEMENT);
 		if (exitActionsElement != null) {
 			return parseAnnotatedActions(exitActionsElement);
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
@@ -628,17 +615,17 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		List transitions = new LinkedList();
 		List transitionElements = DomUtils.getChildElementsByTagName(element, TRANSITION_ELEMENT);
 		for (Iterator it = transitionElements.iterator(); it.hasNext();) {
-			Element transitionElement = (Element)it.next();
+			Element transitionElement = (Element) it.next();
 			if (!StringUtils.hasText(transitionElement.getAttribute(ON_EXCEPTION_ATTRIBUTE))) {
 				transitions.add(parseTransition(transitionElement));
 			}
 		}
-		return (Transition[])transitions.toArray(new Transition[transitions.size()]);
+		return (Transition[]) transitions.toArray(new Transition[transitions.size()]);
 	}
 
 	private Transition parseTransition(Element element) {
 		String targetStateId = element.getAttribute(TO_ATTRIBUTE);
-		TransitionCriteria matchingCriteria = (TransitionCriteria)fromStringTo(TransitionCriteria.class).execute(
+		TransitionCriteria matchingCriteria = (TransitionCriteria) fromStringTo(TransitionCriteria.class).execute(
 				element.getAttribute(ON_ATTRIBUTE));
 		TransitionCriteria executionCriteria = TransitionCriteriaChain.criteriaChainFor(parseAnnotatedActions(element));
 		return getFlowArtifactFactory().createTransition(targetStateId, matchingCriteria, executionCriteria,
@@ -647,7 +634,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private ViewSelector parseViewSelector(Element element) {
 		String viewName = element.getAttribute(VIEW_ATTRIBUTE);
-		return (ViewSelector)fromStringTo(ViewSelector.class).execute(viewName);
+		return (ViewSelector) fromStringTo(ViewSelector.class).execute(viewName);
 	}
 
 	private Flow parseSubflow(Element element) {
@@ -659,24 +646,24 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		// parse standard actions
 		List actionElements = DomUtils.getChildElementsByTagName(element, ACTION_ELEMENT);
 		for (Iterator it = actionElements.iterator(); it.hasNext();) {
-			actions.add(parseAnnotatedAction((Element)it.next()));
+			actions.add(parseAnnotatedAction((Element) it.next()));
 		}
 		// parse bean invoking actions
 		List beanActionElements = DomUtils.getChildElementsByTagName(element, BEAN_ACTION_ELEMENT);
 		for (Iterator it = beanActionElements.iterator(); it.hasNext();) {
-			actions.add(parseAnnotatedBeanInvokingAction((Element)it.next()));
+			actions.add(parseAnnotatedBeanInvokingAction((Element) it.next()));
 		}
 		// parse evaluate actions
 		List evaluateActionElements = DomUtils.getChildElementsByTagName(element, EVALUATE_ACTION_ELEMENT);
 		for (Iterator it = evaluateActionElements.iterator(); it.hasNext();) {
-			actions.add(parseAnnotatedEvaluateAction((Element)it.next()));
+			actions.add(parseAnnotatedEvaluateAction((Element) it.next()));
 		}
 		// parse set actions
 		List setActionElements = DomUtils.getChildElementsByTagName(element, SET_ELEMENT);
 		for (Iterator it = setActionElements.iterator(); it.hasNext();) {
-			actions.add(parseAnnotatedSetAction((Element)it.next()));
+			actions.add(parseAnnotatedSetAction((Element) it.next()));
 		}
-		return (AnnotatedAction[])actions.toArray(new AnnotatedAction[actions.size()]);
+		return (AnnotatedAction[]) actions.toArray(new AnnotatedAction[actions.size()]);
 	}
 
 	private AnnotatedAction parseAnnotatedAction(Element element) {
@@ -725,11 +712,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		Parameters parameters = new Parameters();
 		Iterator it = DomUtils.getChildElementsByTagName(methodArgumentsElement, ARGUMENT_ELEMENT).iterator();
 		while (it.hasNext()) {
-			Element argumentElement = (Element)it.next();
+			Element argumentElement = (Element) it.next();
 			Expression name = getExpressionParser().parseExpression(argumentElement.getAttribute(EXPRESSION_ATTRIBUTE));
 			Class type = null;
 			if (argumentElement.hasAttribute(PARAMETER_TYPE_ATTRIBUTE)) {
-				type = (Class)fromStringTo(Class.class).execute(argumentElement.getAttribute(PARAMETER_TYPE_ATTRIBUTE));
+				type = (Class) fromStringTo(Class.class)
+						.execute(argumentElement.getAttribute(PARAMETER_TYPE_ATTRIBUTE));
 			}
 			parameters.add(new Parameter(type, name));
 		}
@@ -740,8 +728,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		Element resultElement = getChildElementByTagName(element, METHOD_RESULT_ELEMENT);
 		if (resultElement != null) {
 			return parseActionResultExposer(resultElement);
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
@@ -766,8 +753,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		Element resultElement = getChildElementByTagName(element, EVALUATION_RESULT_ELEMENT);
 		if (resultElement != null) {
 			return parseActionResultExposer(resultElement);
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
@@ -779,7 +765,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private Action parseSetAction(Element element) {
 		String attributeExpressionString = element.getAttribute(ATTRIBUTE_ATTRIBUTE);
-		PropertyExpression attributeExpression = getExpressionParser().parsePropertyExpression(
+		SettableExpression attributeExpression = getExpressionParser().parseSettableExpression(
 				attributeExpressionString);
 		Expression valueExpression = getExpressionParser().parseExpression(element.getAttribute(VALUE_ATTRIBUTE));
 		return new SetAction(attributeExpression, parseScope(element, ScopeType.REQUEST), valueExpression);
@@ -787,7 +773,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private ScopeType parseScope(Element element, ScopeType defaultValue) {
 		if (element.hasAttribute(SCOPE_ATTRIBUTE) && !element.getAttribute(SCOPE_ATTRIBUTE).equals(DEFAULT_VALUE)) {
-			return (ScopeType)fromStringTo(ScopeType.class).execute(element.getAttribute(SCOPE_ATTRIBUTE));
+			return (ScopeType) fromStringTo(ScopeType.class).execute(element.getAttribute(SCOPE_ATTRIBUTE));
 		} else {
 			return defaultValue;
 		}
@@ -797,7 +783,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		LocalAttributeMap attributes = new LocalAttributeMap();
 		List propertyElements = DomUtils.getChildElementsByTagName(element, ATTRIBUTE_ELEMENT);
 		for (int i = 0; i < propertyElements.size(); i++) {
-			parseAndSetAttribute((Element)propertyElements.get(i), attributes);
+			parseAndSetAttribute((Element) propertyElements.get(i), attributes);
 		}
 		return attributes;
 	}
@@ -807,11 +793,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		String value = null;
 		if (element.hasAttribute(VALUE_ATTRIBUTE)) {
 			value = element.getAttribute(VALUE_ATTRIBUTE);
-		}
-		else {
+		} else {
 			List valueElements = DomUtils.getChildElementsByTagName(element, VALUE_ELEMENT);
 			Assert.state(valueElements.size() == 1, "A property value should be specified for property '" + name + "'");
-			value = DomUtils.getTextValue((Element)valueElements.get(0));
+			value = DomUtils.getTextValue((Element) valueElements.get(0));
 		}
 		attributes.put(name, convertPropertyValue(element, value));
 	}
@@ -822,14 +807,12 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			if (executor != null) {
 				// convert string value to instance of aliased type
 				return executor.execute(stringValue);
-			}
-			else {
-				Class targetClass = (Class)fromStringTo(Class.class).execute(element.getAttribute(TYPE_ATTRIBUTE));
+			} else {
+				Class targetClass = (Class) fromStringTo(Class.class).execute(element.getAttribute(TYPE_ATTRIBUTE));
 				// convert string value to instance of target class
 				return fromStringTo(targetClass).execute(stringValue);
 			}
-		}
-		else {
+		} else {
 			return stringValue;
 		}
 	}
@@ -838,9 +821,9 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		List transitions = new LinkedList();
 		List transitionElements = DomUtils.getChildElementsByTagName(element, IF_ELEMENT);
 		for (Iterator it = transitionElements.iterator(); it.hasNext();) {
-			transitions.addAll(Arrays.asList(parseIf((Element)it.next())));
+			transitions.addAll(Arrays.asList(parseIf((Element) it.next())));
 		}
-		return (Transition[])transitions.toArray(new Transition[transitions.size()]);
+		return (Transition[]) transitions.toArray(new Transition[transitions.size()]);
 	}
 
 	private Transition[] parseIf(Element element) {
@@ -848,8 +831,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		if (StringUtils.hasText(element.getAttribute(ELSE_ATTRIBUTE))) {
 			Transition elseTransition = parseElse(element);
 			return new Transition[] { thenTransition, elseTransition };
-		}
-		else {
+		} else {
 			return new Transition[] { thenTransition };
 		}
 	}
@@ -873,8 +855,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		}
 		if (StringUtils.hasText(mapperElement.getAttribute(BEAN_ATTRIBUTE))) {
 			return getLocalFlowServiceLocator().getAttributeMapper(mapperElement.getAttribute(BEAN_ATTRIBUTE));
-		}
-		else {
+		} else {
 			return new ImmutableFlowAttributeMapper(parseInputMapper(mapperElement), parseOutputMapper(mapperElement));
 		}
 	}
@@ -895,25 +876,23 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		Iterator it = mappingElements.iterator();
 		ExpressionParser parser = getLocalFlowServiceLocator().getExpressionParser();
 		while (it.hasNext()) {
-			Element mappingElement = (Element)it.next();
+			Element mappingElement = (Element) it.next();
 			Expression source = parser.parseExpression(mappingElement.getAttribute(SOURCE_ATTRIBUTE));
-			PropertyExpression target = null;
+			SettableExpression target = null;
 			if (StringUtils.hasText(mappingElement.getAttribute(TARGET_ATTRIBUTE))) {
-				target = parser.parsePropertyExpression(mappingElement.getAttribute(TARGET_ATTRIBUTE));
-			}
-			else if (StringUtils.hasText(mappingElement.getAttribute(TARGET_COLLECTION_ATTRIBUTE))) {
-				target = new CollectionAddingPropertyExpression(parser.parsePropertyExpression(mappingElement
+				target = parser.parseSettableExpression(mappingElement.getAttribute(TARGET_ATTRIBUTE));
+			} else if (StringUtils.hasText(mappingElement.getAttribute(TARGET_COLLECTION_ATTRIBUTE))) {
+				target = new CollectionAddingExpression(parser.parseSettableExpression(mappingElement
 						.getAttribute(TARGET_COLLECTION_ATTRIBUTE)));
 			}
 			boolean required = false;
 			if (StringUtils.hasText(mappingElement.getAttribute(REQUIRED_ATTRIBUTE))) {
-				required = ((Boolean)fromStringTo(Boolean.class).execute(
+				required = ((Boolean) fromStringTo(Boolean.class).execute(
 						mappingElement.getAttribute(REQUIRED_ATTRIBUTE))).booleanValue();
 			}
 			if (required) {
 				mapper.addMapping(new RequiredMapping(source, target, parseTypeConverter(mappingElement)));
-			}
-			else {
+			} else {
 				mapper.addMapping(new Mapping(source, target, parseTypeConverter(mappingElement)));
 			}
 		}
@@ -927,12 +906,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			if (StringUtils.hasText(to)) {
 				ConversionService service = getLocalFlowServiceLocator().getConversionService();
 				return service.getConversionExecutor(service.getClassByAlias(from), service.getClassByAlias(to));
-			}
-			else {
+			} else {
 				throw new IllegalArgumentException("Use of the 'from' attribute requires use of the 'to' attribute");
 			}
-		}
-		else {
+		} else {
 			Assert.isTrue(!StringUtils.hasText(to), "Use of the 'to' attribute requires use of the 'from' attribute");
 		}
 		return null;
@@ -956,24 +933,23 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			if (globalTransitionsElement != null) {
 				transitionElements = DomUtils.getChildElementsByTagName(globalTransitionsElement, TRANSITION_ELEMENT);
 			}
-		}
-		else {
+		} else {
 			transitionElements = DomUtils.getChildElementsByTagName(element, TRANSITION_ELEMENT);
 		}
 		List exceptionHandlers = new LinkedList();
 		for (Iterator it = transitionElements.iterator(); it.hasNext();) {
-			Element transitionElement = (Element)it.next();
+			Element transitionElement = (Element) it.next();
 			if (StringUtils.hasText(transitionElement.getAttribute(ON_EXCEPTION_ATTRIBUTE))) {
 				exceptionHandlers.add(parseTransitionExecutingExceptionHandler(transitionElement));
 			}
 		}
-		return (FlowExecutionExceptionHandler[])exceptionHandlers
+		return (FlowExecutionExceptionHandler[]) exceptionHandlers
 				.toArray(new FlowExecutionExceptionHandler[exceptionHandlers.size()]);
 	}
 
 	private FlowExecutionExceptionHandler parseTransitionExecutingExceptionHandler(Element element) {
 		TransitionExecutingStateExceptionHandler handler = new TransitionExecutingStateExceptionHandler();
-		Class exceptionClass = (Class)fromStringTo(Class.class).execute(element.getAttribute(ON_EXCEPTION_ATTRIBUTE));
+		Class exceptionClass = (Class) fromStringTo(Class.class).execute(element.getAttribute(ON_EXCEPTION_ATTRIBUTE));
 		handler.add(exceptionClass, element.getAttribute(TO_ATTRIBUTE));
 		handler.getActionList().addAll(parseAnnotatedActions(element));
 		return handler;
@@ -983,10 +959,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		List exceptionHandlers = new LinkedList();
 		List handlerElements = DomUtils.getChildElementsByTagName(element, EXCEPTION_HANDLER_ELEMENT);
 		for (int i = 0; i < handlerElements.size(); i++) {
-			Element handlerElement = (Element)handlerElements.get(i);
+			Element handlerElement = (Element) handlerElements.get(i);
 			exceptionHandlers.add(parseCustomExceptionHandler(handlerElement));
 		}
-		return (FlowExecutionExceptionHandler[])exceptionHandlers
+		return (FlowExecutionExceptionHandler[]) exceptionHandlers
 				.toArray(new FlowExecutionExceptionHandler[exceptionHandlers.size()]);
 	}
 
@@ -1021,7 +997,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node node = nl.item(i);
 			if (node instanceof Element && nodeNameEquals(node, childEleName)) {
-				return (Element)node;
+				return (Element) node;
 			}
 		}
 		return null;

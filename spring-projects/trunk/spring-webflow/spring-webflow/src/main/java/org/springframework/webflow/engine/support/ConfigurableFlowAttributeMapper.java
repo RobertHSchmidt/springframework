@@ -21,7 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.binding.expression.PropertyExpression;
+import org.springframework.binding.expression.SettableExpression;
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.Mapping;
@@ -117,7 +117,7 @@ public class ConfigurableFlowAttributeMapper extends AbstractFlowAttributeMapper
 	 * @return this, to support call chaining
 	 */
 	public ConfigurableFlowAttributeMapper addInputAttribute(String inputAttributeName) {
-		PropertyExpression expr = expressionParser.parsePropertyExpression(inputAttributeName);
+		SettableExpression expr = expressionParser.parseSettableExpression(inputAttributeName);
 		inputMapper.addMapping(new Mapping(new FlowScopeExpression(expr), expr, null));
 		return this;
 	}
@@ -169,7 +169,7 @@ public class ConfigurableFlowAttributeMapper extends AbstractFlowAttributeMapper
 	 */
 	public ConfigurableFlowAttributeMapper addOutputAttribute(String outputAttributeName) {
 		Expression source = expressionParser.parseExpression(outputAttributeName);
-		PropertyExpression target = expressionParser.parsePropertyExpression(outputAttributeName);
+		SettableExpression target = expressionParser.parseSettableExpression(outputAttributeName);
 		outputMapper.addMapping(new Mapping(source, new FlowScopeExpression(target), null));
 		return this;
 	}

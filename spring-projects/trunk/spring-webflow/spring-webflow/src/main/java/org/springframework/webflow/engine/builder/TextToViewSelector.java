@@ -15,7 +15,7 @@
  */
 package org.springframework.webflow.engine.builder;
 
-import org.springframework.binding.collection.MapAccessor;
+import org.springframework.binding.convert.ConversionContext;
 import org.springframework.binding.convert.support.ConversionServiceAwareConverter;
 import org.springframework.binding.expression.Expression;
 import org.springframework.util.StringUtils;
@@ -105,7 +105,7 @@ public class TextToViewSelector extends ConversionServiceAwareConverter {
 		return new Class[] { ViewSelector.class };
 	}
 
-	protected Object doConvert(Object source, Class targetClass, MapAccessor context) throws Exception {
+	protected Object doConvert(Object source, Class targetClass, ConversionContext context) throws Exception {
 		String encodedView = (String)source;
 		if (!StringUtils.hasText(encodedView)) {
 			return NullViewSelector.INSTANCE;

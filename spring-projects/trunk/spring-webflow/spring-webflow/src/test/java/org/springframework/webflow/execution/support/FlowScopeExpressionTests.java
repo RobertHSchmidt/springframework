@@ -31,6 +31,6 @@ public class FlowScopeExpressionTests extends TestCase {
 		FlowScopeExpression flowExp = new FlowScopeExpression(exp);
 		MockRequestContext context = new MockRequestContext();
 		context.getFlowScope().put("foo", "bar");
-		assertEquals("bar", flowExp.evaluateAgainst(context, null));
+		assertEquals("bar", flowExp.evaluate(context, null));
 	}
 }

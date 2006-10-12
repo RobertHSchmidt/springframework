@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.engine.support;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,7 +56,7 @@ public class FlowDefinitionRedirectSelector implements ViewSelector {
 	}
 
 	public ViewSelection makeEntrySelection(RequestContext context) {
-		String encodedRedirect = (String)expression.evaluateAgainst(context, Collections.EMPTY_MAP);
+		String encodedRedirect = (String)expression.evaluate(context, null);
 		if (encodedRedirect == null) {
 			throw new IllegalStateException(
 					"Flow definition redirect expression evaluated to [null], the expression was " + expression);

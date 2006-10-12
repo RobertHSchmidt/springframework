@@ -15,8 +15,7 @@
  */
 package org.springframework.webflow.action;
 
-import java.util.Map;
-
+import org.springframework.binding.expression.EvaluationContext;
 import org.springframework.binding.expression.Expression;
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.Event;
@@ -73,7 +72,7 @@ public class EvaluateAction extends AbstractAction {
 	}
 
 	protected Event doExecute(RequestContext context) throws Exception {
-		Object result = expression.evaluateAgainst(context, getEvaluationContext(context));
+		Object result = expression.evaluate(context, getEvaluationContext(context));
 		if (evaluationResultExposer != null) {
 			evaluationResultExposer.exposeResult(result, context);
 		}
@@ -86,7 +85,7 @@ public class EvaluateAction extends AbstractAction {
 	 * @param context the request context
 	 * @return the evaluation context
 	 */
-	protected Map getEvaluationContext(RequestContext context) {
+	protected EvaluationContext getEvaluationContext(RequestContext context) {
 		return null;
 	}
 }

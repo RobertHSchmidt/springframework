@@ -15,10 +15,8 @@
  */
 package org.springframework.webflow.action;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.springframework.binding.mapping.AttributeMapper;
+import org.springframework.binding.mapping.MappingContext;
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -68,7 +66,7 @@ public class AttributeMapperAction extends AbstractAction {
 	 * The default implementation just returns an empty map. Subclasses can
 	 * override this if necessary.
 	 */
-	protected Map getMappingContext(RequestContext context) {
-		return Collections.EMPTY_MAP;
+	protected MappingContext getMappingContext(RequestContext context) {
+		return null;
 	}
 }

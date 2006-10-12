@@ -16,8 +16,6 @@
 package org.springframework.webflow.engine.support;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.Map;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.core.style.ToStringCreator;
@@ -72,20 +70,12 @@ public class ExternalRedirectSelector implements ViewSelector, Serializable {
 	}
 
 	public ViewSelection makeEntrySelection(RequestContext context) {
-		String url = (String)urlExpression.evaluateAgainst(context, getEvaluationContext(context));
+		String url = (String)urlExpression.evaluate(context, null);
 		return new ExternalRedirect(url);
 	}
 
 	public ViewSelection makeRefreshSelection(RequestContext context) {
 		return makeEntrySelection(context);
-	}
-	
-	/**
-	 * Setup the expression evaluation context. Default implementation
-	 * returns an empty map.
-	 */
-	protected Map getEvaluationContext(RequestContext context) {
-		return Collections.EMPTY_MAP;
 	}
 
 	public String toString() {

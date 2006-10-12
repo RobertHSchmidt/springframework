@@ -16,7 +16,6 @@
 package org.springframework.webflow.engine.support;
 
 import java.io.Serializable;
-import java.util.Collections;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.core.style.ToStringCreator;
@@ -51,8 +50,8 @@ import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 public class ApplicationViewSelector implements ViewSelector, Serializable {
 
 	/**
-	 * Flow execution attribute name that indicates that we should always
-	 * render an application view via a redirect.
+	 * Flow execution attribute name that indicates that we should always render
+	 * an application view via a redirect.
 	 */
 	public static final String ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE = "alwaysRedirectOnPause";
 
@@ -81,8 +80,8 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 
 	/**
 	 * Creates a application view selector that will make application view
-	 * selections requesting that the specified view be rendered.
-	 * No redirects will be done.
+	 * selections requesting that the specified view be rendered. No redirects
+	 * will be done.
 	 * @param viewName the view name expression
 	 * @param redirect indicates if a redirect to the view should be initiated
 	 */
@@ -98,7 +97,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	public Expression getViewName() {
 		return viewName;
 	}
-	
+
 	/**
 	 * Returns if a redirect to the view should be done.
 	 */
@@ -113,8 +112,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	public ViewSelection makeEntrySelection(RequestContext context) {
 		if (shouldRedirect(context)) {
 			return FlowExecutionRedirect.INSTANCE;
-		}
-		else {
+		} else {
 			return makeRefreshSelection(context);
 		}
 	}
@@ -122,13 +120,12 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	public ViewSelection makeRefreshSelection(RequestContext context) {
 		String viewName = resolveViewName(context);
 		if (!StringUtils.hasText(viewName)) {
-			throw new IllegalStateException(
-					"Resolved application view name was empty; programmer error! -- " +
-					"The expression that was evaluated against the request context was '" + getViewName() + "'");
+			throw new IllegalStateException("Resolved application view name was empty; programmer error! -- "
+					+ "The expression that was evaluated against the request context was '" + getViewName() + "'");
 		}
 		return createApplicationView(viewName, context);
 	}
-	
+
 	// internal helpers
 
 	/**
@@ -137,7 +134,7 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	 * @return the view name
 	 */
 	protected String resolveViewName(RequestContext context) {
-		return (String)getViewName().evaluateAgainst(context, Collections.EMPTY_MAP);
+		return (String) getViewName().evaluate(context, null);
 	}
 
 	/**
@@ -151,8 +148,8 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	}
 
 	/**
-	 * Determine whether or not a redirect should be used to render
-	 * the application view.
+	 * Determine whether or not a redirect should be used to render the
+	 * application view.
 	 * @param context the context
 	 * @return true or false
 	 */
@@ -167,8 +164,8 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	 * @return true or false
 	 */
 	protected boolean alwaysRedirectOnPause(RequestContext context) {
-		return context.getFlowExecutionContext().getAttributes().getBoolean(
-				ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE, Boolean.FALSE).booleanValue();
+		return context.getFlowExecutionContext().getAttributes().getBoolean(ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE,
+				Boolean.FALSE).booleanValue();
 	}
 
 	public String toString() {
