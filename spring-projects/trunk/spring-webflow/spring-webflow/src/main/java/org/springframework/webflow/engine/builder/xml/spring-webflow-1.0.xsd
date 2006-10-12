@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<xsd:schema xmlns="http://www.springframework.org/schema/webflow"
-            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	        targetNamespace="http://www.springframework.org/schema/webflow"
-	        version="1.0">
+<xsd:schema
+	xmlns="http://www.springframework.org/schema/webflow"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.springframework.org/schema/webflow"
+	version="1.0">
 
 	<xsd:annotation>
 		<xsd:documentation>
 			<![CDATA[
 Spring Web Flow 1.0 Schema
 Authors: Keith Donald, Erwin Vervaet
-
+<br>
 This Schema defines the Spring Web Flow (SWF) XML syntax.
-
+<br>
 The root "flow" element of this document defines exactly one flow definition.
 A flow definition is a blueprint for an executable task that involves a 
 single user (aka conversation or dialog).
-
+<br>
 A flow is composed of one or more states that form the steps of the flow.
 Each state executes behavior when entered. What behavior is executed is a
 function of the state's type. Core state types include view states,
 action states, subflow states, decision states, and end states.
-   
+<br>
 Each flow definition must specify exactly one start state.
 Events that occur in transitionable states drive state transitions.
 ]]>
