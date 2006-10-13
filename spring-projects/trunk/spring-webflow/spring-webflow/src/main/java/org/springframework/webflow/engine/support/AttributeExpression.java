@@ -30,6 +30,9 @@ import org.springframework.webflow.execution.ScopeType;
  * Expression evaluator that can evalute attribute maps and supported 
  * request context scope types.
  * 
+ * @see org.springframework.webflow.execution.RequestContext
+ * @see org.springframework.webflow.core.collection.AttributeMap
+ * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
@@ -44,10 +47,20 @@ public class AttributeExpression implements SettableExpression {
 	 * The scope type.
 	 */
 	private ScopeType scopeType;
+	
+	/**
+	 * Create a new expression evaluator that executes given expression in an
+	 * attribute map. When using this wrapper to set a property value, make
+	 * sure the given expression is a {@link SettableExpression}}.
+	 * @param expression the nested evaluator to execute
+	 */
+	public AttributeExpression(Expression expression) {
+		this(expression, null);
+	}
 
 	/**
 	 * Create a new expression evaluator that executes given expression in the
-	 * configured scope. When using this wrapper to set a property value, make
+	 * specified scope. When using this wrapper to set a property value, make
 	 * sure the given expression is a {@link SettableExpression}}.
 	 * @param expression the nested evaluator to execute
 	 * @param scopeType the scopeType
@@ -69,29 +82,33 @@ public class AttributeExpression implements SettableExpression {
 			RequestContext requestContext = (RequestContext)target;
 			AttributeMap scope = scopeType.getScope(requestContext);
 			return expression.evaluate(scope, context);
-		} else if (target instanceof AttributeMap) {
+		}
+		else if (target instanceof AttributeMap) {
 			return expression.evaluate(target, context);
-		} else {
+		}
+		else {
 			throw new IllegalArgumentException(
 					"Only supports evaluation against a [RequestContext] or [AttributeMap] instance, but was a ["
-							+ target.getClass() + "]");
+					+ target.getClass() + "]");
 		}
 	}
 
 	public void evaluateToSet(Object target, Object value, EvaluationContext context) throws EvaluationException {
 		Assert.isInstanceOf(SettableExpression.class, expression,
-				"When a ScopeExpression is used to set a property value, the nested expression needs "
-						+ "to be a SettableExpression");
+				"When an AttributeExpression is used to set a property value, the nested expression needs "
+				+ "to be a SettableExpression");
 		if (target instanceof RequestContext) {
 			RequestContext requestContext = (RequestContext)target;
 			MutableAttributeMap scope = scopeType.getScope(requestContext);
 			((SettableExpression)expression).evaluateToSet(scope, value, context);
-		} else if (target instanceof AttributeMap) {
+		}
+		else if (target instanceof AttributeMap) {
 			((SettableExpression)expression).evaluateToSet(target, value, context);
-		} else {
+		}
+		else {
 			throw new IllegalArgumentException(
 					"Only supports evaluation against a [RequestContext] or [AttributeMap] instance, but was a ["
-							+ target.getClass() + "]");
+					+ target.getClass() + "]");
 		}
 	}
 
