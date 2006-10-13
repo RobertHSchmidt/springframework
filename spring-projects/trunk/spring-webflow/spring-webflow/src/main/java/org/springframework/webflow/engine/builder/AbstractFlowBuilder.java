@@ -676,7 +676,7 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Creates a a target state resolver for the given state id expression.
+	 * Creates a target state resolver for the given state id expression.
 	 * @param targetStateIdExpression the target state id expression
 	 * @return the target state resolver
 	 */

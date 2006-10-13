@@ -17,7 +17,7 @@ Package org.springframework.webflow.engine
 * Added "input-attribute" and "output-attribute" convenience elements to "input-mapper" and 
   "output-mapper" elements, respectively.
 * Renamed DefaultFlowAttributeMapper to ConfigurableFlowAttributeMapper for clarity and to avoid confusion.
-* Restored TransitionTargetStateResolver to support dynamic transitions.
+* Restored TargetStateResolver to support dynamic transitions.
 
 Package org.springframework.webflow.executor
 * FlowExecutorImpl now updates the flow execution in the flow execution repository after a refresh,
