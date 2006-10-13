@@ -17,8 +17,6 @@ package org.springframework.webflow.engine.support;
 
 import java.io.Serializable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.SettableExpression;
@@ -56,11 +54,6 @@ import org.springframework.webflow.execution.ScopeType;
  * @author Colin Sampaleanu
  */
 public class ConfigurableFlowAttributeMapper extends AbstractFlowAttributeMapper implements Serializable {
-
-	/**
-	 * Logger, usable in subclasses.
-	 */
-	protected final Log logger = LogFactory.getLog(getClass());;
 
 	/**
 	 * The expression parser that will parse input and output attribute
