@@ -486,17 +486,8 @@ The identifier of the start state of this flow.  The start state is the point wh
 
 	<xsd:element name="input-mapper">
 		<xsd:complexType>
-			<xsd:choice maxOccurs="unbounded">
-				<xsd:element ref="mapping">
-					<xsd:annotation>
-						<xsd:documentation>
-							<![CDATA[
-A rule that maps the value of a source expression to a property of a target data structure.
-]]>
-						</xsd:documentation>
-					</xsd:annotation>
-				</xsd:element>
-				<xsd:element ref="input-attribute">
+			<xsd:sequence maxOccurs="unbounded">
+				<xsd:element ref="input-attribute" minOccurs="0">
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
@@ -507,7 +498,18 @@ attribute maps.
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
-			</xsd:choice>
+				<xsd:element ref="mapping" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>
+							<![CDATA[
+A rule that maps the value of a source expression to a property of a target data structure.
+Extremely flexible, allowing mapping of input attributes from any data structure with 
+support for type conversion.
+]]>
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
 
@@ -1789,17 +1791,8 @@ and may execute one or more actions before executing.
 
 	<xsd:element name="output-mapper">
 		<xsd:complexType>
-			<xsd:choice maxOccurs="unbounded">
-				<xsd:element ref="mapping">
-					<xsd:annotation>
-						<xsd:documentation>
-							<![CDATA[
-A rule that maps the value of a source expression to a property of a target data structure.
-]]>
-						</xsd:documentation>
-					</xsd:annotation>
-				</xsd:element>
-				<xsd:element ref="output-attribute">
+			<xsd:sequence maxOccurs="unbounded">
+				<xsd:element ref="output-attribute" minOccurs="0">
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
@@ -1810,7 +1803,18 @@ attribute maps.
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
-			</xsd:choice>
+				<xsd:element ref="mapping" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>
+							<![CDATA[
+A rule that maps the value of a source expression to a property of a target data structure.
+Extremely flexible, allowing mapping of output attributes from any data structure with 
+support for type conversion.
+]]>
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
 

@@ -74,7 +74,7 @@
 	<subflow-state id="subFlowState2" flow="subFlow2">
 		<attribute-mapper>
 			<input-mapper>
-				<input-attribute name="attribute1"/>
+				<input-attribute name="attribute1" required="true"/>
 				<mapping source="flowScope.attribute3" target="attribute2" />
 				<mapping source="flowScope.attribute1" target="attribute4" />
 			</input-mapper>

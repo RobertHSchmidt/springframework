@@ -134,7 +134,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertNotNull(subFlowState2.getAttributeMapper());
 		ImmutableFlowAttributeMapper mapper = (ImmutableFlowAttributeMapper)subFlowState2.getAttributeMapper();
 		assertEquals(3, ((DefaultAttributeMapper)mapper.getInputMapper()).getMappings().length);
-		assertEquals(3, ((DefaultAttributeMapper)mapper.getOutputMapper()).getMappings().length);
+		assertEquals(4, ((DefaultAttributeMapper)mapper.getOutputMapper()).getMappings().length);
 		assertTrue(((DefaultAttributeMapper)mapper.getInputMapper()).getMappings()[0] instanceof RequiredMapping);
 
 		assertEquals(1, subFlowState2.getTransitionSet().size());
