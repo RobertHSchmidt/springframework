@@ -1,66 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
+  <parent>
+    <artifactId>spring-ldap</artifactId>
+    <groupId>org.springframework.ldap</groupId>
+    <version>1.1.1-SNAPSHOT</version>
+  </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.springframework</groupId>
   <artifactId>spring-ldap</artifactId>
   <name>Spring LDAP</name>
-  <version>1.1</version>
+  <version>1.1.1-SNAPSHOT</version>
   <description>Spring LDAP </description>
-  <url>http://www.springframework.org</url>
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  <scm>
-    <connection>scm:svn:https://svn.sourceforge.net/svnroot/springframework</connection>
-    <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/springframework</developerConnection>
-    <tag>1.1</tag>
-    <url>http://svn.sourceforge.net/viewcvs.cgi/springframework/</url>
-  </scm>
-  <organization>
-    <name>Spring Framework</name>
-    <url>http://www.springframework.org/</url>
-  </organization>
+  <url>http://www.springframework.org/ldap</url>
+
   <dependencies>
 <!-- External Dependencies -->
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <version>1.0.4</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <version>2.1</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
       <version>3.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.sun</groupId>
+      <artifactId>ldapbp</artifactId>
+      <version>1.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.acegisecurity</groupId>
+      <artifactId>acegi-security</artifactId>
+      <version>1.0.1</version>
+      <optional>true</optional>
+      <scope>provided</scope>
     </dependency>
 <!-- Spring Dependencies -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
       <version>2.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
       <version>2.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
       <version>2.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-dao</artifactId>
       <version>2.0</version>
+      <scope>provided</scope>
+    </dependency>
+<!-- Test Dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <version>1.2_Java1.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>gsbase</groupId>
+      <artifactId>gsbase</artifactId>
+      <version>2.0.1</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
