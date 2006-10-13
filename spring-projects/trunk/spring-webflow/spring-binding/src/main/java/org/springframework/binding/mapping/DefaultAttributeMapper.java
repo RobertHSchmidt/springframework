@@ -40,19 +40,19 @@ public class DefaultAttributeMapper implements AttributeMapper, Serializable {
 
 	/**
 	 * Add a mapping to this mapper.
-	 * @param mapping the mapping to add.
+	 * @param mapping the mapping to add (as an AttributeMapper)
 	 * @return this, to support convenient call chaining.
 	 */
-	public DefaultAttributeMapper addMapping(Mapping mapping) {
+	public DefaultAttributeMapper addMapping(AttributeMapper mapping) {
 		mappings.add(mapping);
 		return this;
 	}
 
 	/**
 	 * Add a set of mappings.
-	 * @param mappings the mappings
+	 * @param mappings the mappings 
 	 */
-	public void addMappings(Mapping[] mappings) {
+	public void addMappings(AttributeMapper[] mappings) {
 		if (mappings == null) {
 			return;
 		}
@@ -63,15 +63,15 @@ public class DefaultAttributeMapper implements AttributeMapper, Serializable {
 	 * Returns this mapper's list of mappings.
 	 * @return the list of mappings
 	 */
-	public Mapping[] getMappings() {
-		return (Mapping[])mappings.toArray(new Mapping[mappings.size()]);
+	public AttributeMapper[] getMappings() {
+		return (AttributeMapper[])mappings.toArray(new AttributeMapper[mappings.size()]);
 	}
 
 	public void map(Object source, Object target, MappingContext context) {
 		if (mappings != null) {
 			Iterator it = mappings.iterator();
 			while (it.hasNext()) {
-				Mapping mapping = (Mapping)it.next();
+				AttributeMapper mapping = (AttributeMapper)it.next();
 				mapping.map(source, target, context);
 			}
 		}
