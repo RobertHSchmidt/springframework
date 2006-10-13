@@ -676,12 +676,12 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	}
 
 	/**
-	 * Simple method that returns the target state identifier of a transition.
-	 * @param targetStateId the target state id
-	 * @return the target state id
+	 * Creates a a target state resolver for the given state id expression.
+	 * @param targetStateIdExpression the target state id expression
+	 * @return the target state resolver
 	 */
-	protected TargetStateResolver to(String targetStateId) {
-		return (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(targetStateId);
+	protected TargetStateResolver to(String targetStateIdExpression) {
+		return (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(targetStateIdExpression);
 	}
 
 	/**
