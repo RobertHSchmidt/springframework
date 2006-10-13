@@ -17,6 +17,7 @@ package org.springframework.webflow.engine;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestControlContext;
@@ -31,7 +32,7 @@ public class DecisionStateTests extends TestCase {
 	public void testIfDecision() {
 		Flow flow = new Flow("flow");
 		DecisionState state = new DecisionState(flow, "decisionState");
-		state.getTransitionSet().add(new Transition(new EventIdTransitionCriteria("foo"), "target"));
+		state.getTransitionSet().add(new Transition(new EventIdTransitionCriteria("foo"), to("target")));
 		new EndState(flow, "target");
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.setLastEvent(new Event(this, "foo"));
@@ -42,8 +43,8 @@ public class DecisionStateTests extends TestCase {
 	public void testElseDecision() {
 		Flow flow = new Flow("flow");
 		DecisionState state = new DecisionState(flow, "decisionState");
-		state.getTransitionSet().add(new Transition(new EventIdTransitionCriteria("foo"), "invalid"));
-		state.getTransitionSet().add(new Transition("target"));
+		state.getTransitionSet().add(new Transition(new EventIdTransitionCriteria("foo"), to("invalid")));
+		state.getTransitionSet().add(new Transition(to("target")));
 		new EndState(flow, "target");
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.setLastEvent(new Event(this, "bogus"));
@@ -54,8 +55,8 @@ public class DecisionStateTests extends TestCase {
 	public void testNoMatching() {
 		Flow flow = new Flow("flow");
 		DecisionState state = new DecisionState(flow, "decisionState");
-		state.getTransitionSet().add(new Transition(new EventIdTransitionCriteria("foo"), "invalid"));
-		state.getTransitionSet().add(new Transition(new EventIdTransitionCriteria("bar"), "invalid"));
+		state.getTransitionSet().add(new Transition(new EventIdTransitionCriteria("foo"), to("invalid")));
+		state.getTransitionSet().add(new Transition(new EventIdTransitionCriteria("bar"), to("invalid")));
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.setLastEvent(new Event(this, "bogus"));
 		try {
@@ -65,5 +66,9 @@ public class DecisionStateTests extends TestCase {
 		catch (NoMatchingTransitionException e) {
 
 		}
+	}
+	
+	protected TargetStateResolver to(String stateId) {
+		return new DefaultTargetStateResolver(stateId);
 	}
 }

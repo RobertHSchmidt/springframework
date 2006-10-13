@@ -47,8 +47,14 @@ import org.springframework.webflow.execution.ViewSelection;
  * transition will <i>roll back</i> and reenter its source state. If the
  * execution criteria test succeeds this transition will execute and take the
  * flow to the transition's target state.
- * 
+ * <p>
+ * The target state of this transition is typically specified at configuration
+ * time using the target state id. If the target state of this transition needs
+ * to be calculated in a dynamic fashion at runtime, set a custom
+ * {@link TargetStateResolver}
+ *  
  * @see TransitionCriteria
+ * @see TargetStateResolver
  * @see TransitionableState
  * @see Flow
  * 
@@ -75,31 +81,36 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	private TransitionCriteria executionCriteria = WildcardTransitionCriteria.INSTANCE;
 
 	/**
-	 * The target state of the transition.
+	 * The resolver responsible for calculating the target state of this
+	 * transition.
 	 */
-	private String targetStateId;
+	private TargetStateResolver targetStateResolver;
 
 	/**
 	 * Create a new transition that always matches and always executes,
-	 * transitioning to the target provided on execution.
-	 * @param targetStateId the target state of the transition
+	 * transitioning to the target state calculated by the provided
+	 * targetStateResolver.
+	 * @param targetStateResolver the resolver of the target state of this
+	 * transition
 	 * @see #setMatchingCriteria(TransitionCriteria)
 	 * @see #setExecutionCriteria(TransitionCriteria)
 	 */
-	public Transition(String targetStateId) {
-		this(WildcardTransitionCriteria.INSTANCE, targetStateId);
+	public Transition(TargetStateResolver targetStateResolver) {
+		this(WildcardTransitionCriteria.INSTANCE, targetStateResolver);
 	}
 
 	/**
-	 * Create a new transition that matches on the given criteria and
-	 * transitions to the target state provided on execution.
-	 * @param targetStateId the target state of the transition
+	 * Create a new transition that matches on the specified criteria,
+	 * transitioning to the target state calculated by the provided
+	 * targetStateResolver.
+	 * @param matchingCriteria the criteria that matches this transition
+	 * @param targetStateResolver the resolver of the target state of this
+	 * transition
 	 * @see #setExecutionCriteria(TransitionCriteria)
 	 */
-	public Transition(TransitionCriteria matchingCriteria, String targetStateId) {
-		Assert.hasText(targetStateId, "The target state id is required");
-		this.targetStateId = targetStateId;
+	public Transition(TransitionCriteria matchingCriteria, TargetStateResolver targetStateResolver) {
 		setMatchingCriteria(matchingCriteria);
+		setTargetStateResolver(targetStateResolver);
 	}
 
 	// implementing transition definition
@@ -109,7 +120,7 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	}
 
 	public String getTargetStateId() {
-		return targetStateId;
+		return targetStateResolver.toString();
 	}
 
 	/**
@@ -151,6 +162,23 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	}
 
 	/**
+	 * Returns this transition's target state resolver.
+	 */
+	protected TargetStateResolver getTargetStateResolver() {
+		return targetStateResolver;
+	}
+
+	/**
+	 * Set this transition's target state resolver, to calculate what state to
+	 * transition to when this transition is executed.
+	 * @param targetStateResolver the target state resolver
+	 */
+	public void setTargetStateResolver(TargetStateResolver targetStateResolver) {
+		Assert.notNull(targetStateResolver, "The target state resolver is required");
+		this.targetStateResolver = targetStateResolver;
+	}
+
+	/**
 	 * Checks if this transition is elligible for execution given the state of
 	 * the provided flow execution request context.
 	 * @param context the flow execution request context
@@ -186,7 +214,7 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 					logger.debug("Executing " + this);
 				}
 			}
-			State targetState = (State)context.getActiveFlow().getState(targetStateId);
+			State targetState = targetStateResolver.resolveTargetState(this, sourceState, context);
 			context.setLastTransition(this);
 			// enter the target state (note: any exceptions are propagated)
 			selectedView = targetState.enter(context);
@@ -226,6 +254,6 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("on", getMatchingCriteria()).append("to", targetStateId).toString();
+		return new ToStringCreator(this).append("on", getMatchingCriteria()).append("to", getTargetStateResolver()).toString();
 	}
 }

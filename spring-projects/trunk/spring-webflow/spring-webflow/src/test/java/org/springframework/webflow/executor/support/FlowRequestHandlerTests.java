@@ -22,10 +22,12 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImp
 import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.engine.impl.FlowExecutionImplStateRestorer;
+import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepository;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.executor.ResponseInstruction;
@@ -44,7 +46,7 @@ public class FlowRequestHandlerTests extends TestCase {
 		FlowDefinitionRegistryImpl registry = new FlowDefinitionRegistryImpl();
 		Flow flow = new Flow("flow");
 		ViewState view = new ViewState(flow, "view");
-		view.getTransitionSet().add(new Transition("end"));
+		view.getTransitionSet().add(new Transition(to("end")));
 		new EndState(flow, "end");
 		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(flow));
 		FlowExecutorImpl executor = new FlowExecutorImpl(registry, new FlowExecutionImplFactory(),
@@ -89,5 +91,9 @@ public class FlowRequestHandlerTests extends TestCase {
 		assertTrue(response.getFlowExecutionContext().isActive());
 		assertEquals("flow", response.getFlowExecutionContext().getDefinition().getId());
 		assertEquals("view", response.getFlowExecutionContext().getActiveSession().getState().getId());
+	}
+	
+	protected TargetStateResolver to(String stateId) {
+		return new DefaultTargetStateResolver(stateId);
 	}
 }

@@ -23,6 +23,7 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.RequestControlContext;
+import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.impl.FlowExecutionImpl;
@@ -113,7 +114,7 @@ public class TransitionExecutingStateExceptionHandlerTests extends TestCase {
 		}
 	}
 
-	public static String  to(String stateId) {
-		return stateId;
+	protected TargetStateResolver to(String stateId) {
+		return new DefaultTargetStateResolver(stateId);
 	}
 }

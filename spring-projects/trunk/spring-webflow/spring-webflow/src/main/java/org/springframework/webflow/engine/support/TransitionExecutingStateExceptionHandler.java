@@ -23,9 +23,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.core.JdkVersion;
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 import org.springframework.webflow.engine.ActionList;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 import org.springframework.webflow.engine.RequestControlContext;
+import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.ViewSelection;
@@ -53,7 +55,7 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 	public static final String ROOT_CAUSE_EXCEPTION_ATTRIBUTE = "rootCauseException";
 
 	/**
-	 * The exceptionType->targetStateId map.
+	 * The exceptionType->targetStateResolver map.
 	 */
 	private Map exceptionTargetStateMappings = new HashMap();
 
@@ -71,10 +73,24 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 	 * statement
 	 */
 	public TransitionExecutingStateExceptionHandler add(Class exceptionClass, String targetStateId) {
-		exceptionTargetStateMappings.put(exceptionClass, targetStateId);
-		return this;
+		return add(exceptionClass, new DefaultTargetStateResolver(targetStateId));
 	}
 
+	/**
+	 * Adds a exception->state mapping to this handler.
+	 * @param exceptionClass the type of exception to map
+	 * @param targetStateResolver the resolver to calculate the state to
+	 * transition to if the specified type of exception is handled
+	 * @return this handler, to allow for adding multiple mappings in a single
+	 * statement
+	 */
+	public TransitionExecutingStateExceptionHandler add(Class exceptionClass, TargetStateResolver targetStateResolver) {
+		Assert.notNull(exceptionClass, "The exception class is required");
+		Assert.notNull(targetStateResolver, "The target state resolver is required");
+		exceptionTargetStateMappings.put(exceptionClass, targetStateResolver);
+		return this;
+	}
+	
 	/**
 	 * Returns the list of actions to execute when this handler handles an exception.
 	 * The returned list is mutable.
@@ -84,7 +100,7 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 	}
 
 	public boolean handles(FlowExecutionException e) {
-		return getTargetStateId(e) != null;
+		return getTargetStateResolver(e) != null;
 	}
 
 	public ViewSelection handle(FlowExecutionException e, RequestControlContext context) {
@@ -101,7 +117,7 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 		// expose root cause in flash scope so it's available for response rendering
 		context.getFlashScope().put(ROOT_CAUSE_EXCEPTION_ATTRIBUTE, rootCause);
 		actionList.execute(context);
-		return context.execute(new Transition(getTargetStateId(e)));
+		return context.execute(new Transition(getTargetStateResolver(e)));
 	}
 
 	// helpers
@@ -111,31 +127,31 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 	 * <code>null</code> if no mapping can be found for given exception. Will
 	 * try all exceptions in the exception cause chain.
 	 */
-	protected String getTargetStateId(FlowExecutionException e) {
+	protected TargetStateResolver getTargetStateResolver(FlowExecutionException e) {
 		if (JdkVersion.getMajorJavaVersion() == JdkVersion.JAVA_13) {
-			return getTargetStateId13(e);
+			return getTargetStateResolver13(e);
 		}
 		else {
-			return getTargetStateId14(e);
+			return getTargetStateResolver14(e);
 		}
 	}
 
 	/**
 	 * Internal getTargetState implementation for use with JDK 1.3.
 	 */
-	private String getTargetStateId13(NestedRuntimeException e) {
-		String targetStateId;
+	private TargetStateResolver getTargetStateResolver13(NestedRuntimeException e) {
+		TargetStateResolver targetStateResolver;
 		if (isRootCause13(e)) {
-			return findTargetStateId(e.getClass());
+			return findTargetStateResolver(e.getClass());
 		}
 		else {
-			targetStateId = (String)exceptionTargetStateMappings.get(e.getClass());
-			if (targetStateId != null) {
-				return targetStateId;
+			targetStateResolver = (TargetStateResolver)exceptionTargetStateMappings.get(e.getClass());
+			if (targetStateResolver != null) {
+				return targetStateResolver;
 			}
 			else {
 				if (e.getCause() instanceof NestedRuntimeException) {
-					return getTargetStateId13((NestedRuntimeException)e.getCause());
+					return getTargetStateResolver13((NestedRuntimeException)e.getCause());
 				}
 				else {
 					return null;
@@ -147,18 +163,18 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 	/**
 	 * Internal getTargetState implementation for use with JDK 1.4 or later.
 	 */
-	private String getTargetStateId14(Throwable t) {
-		String targetStateId;
+	private TargetStateResolver getTargetStateResolver14(Throwable t) {
+		TargetStateResolver targetStateResolver;
 		if (isRootCause14(t)) {
-			return findTargetStateId(t.getClass());
+			return findTargetStateResolver(t.getClass());
 		}
 		else {
-			targetStateId = (String)exceptionTargetStateMappings.get(t.getClass());
-			if (targetStateId != null) {
-				return targetStateId;
+			targetStateResolver = (TargetStateResolver)exceptionTargetStateMappings.get(t.getClass());
+			if (targetStateResolver != null) {
+				return targetStateResolver;
 			}
 			else {
-				return getTargetStateId14(t.getCause());
+				return getTargetStateResolver14(t.getCause());
 			}
 		}
 	}
@@ -183,12 +199,12 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 	 * Try to find a mapped target state id for given exception type. Will
 	 * also try to lookup using the class hierarchy of given exception type.
 	 * @param argumentType the exception type to lookup
-	 * @return the target state id, or null if not found
+	 * @return the target state id or null if not found
 	 */
-	private String findTargetStateId(Class argumentType) {
+	private TargetStateResolver findTargetStateResolver(Class argumentType) {
 		while (argumentType != null && argumentType.getClass() != Object.class) {
 			if (exceptionTargetStateMappings.containsKey(argumentType)) {
-				return (String)exceptionTargetStateMappings.get(argumentType);
+				return (TargetStateResolver)exceptionTargetStateMappings.get(argumentType);
 			}
 			else {
 				argumentType = argumentType.getSuperclass();

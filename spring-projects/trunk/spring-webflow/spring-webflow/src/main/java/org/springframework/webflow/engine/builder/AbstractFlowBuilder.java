@@ -32,6 +32,7 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 import org.springframework.webflow.engine.State;
+import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.ViewSelector;
@@ -353,8 +354,8 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	protected State addDecisionState(String stateId, TransitionCriteria decisionCriteria, String trueStateId,
 			String falseStateId) {
 		Transition thenTransition = getFlowArtifactFactory()
-				.createTransition(trueStateId, decisionCriteria, null, null);
-		Transition elseTransition = getFlowArtifactFactory().createTransition(falseStateId, null, null, null);
+				.createTransition(to(trueStateId), decisionCriteria, null, null);
+		Transition elseTransition = getFlowArtifactFactory().createTransition(to(falseStateId), null, null, null);
 		return getFlowArtifactFactory().createDecisionState(stateId, getFlow(), null,
 				new Transition[] { thenTransition, elseTransition }, null, null, null);
 	}
@@ -679,49 +680,49 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 	 * @param targetStateId the target state id
 	 * @return the target state id
 	 */
-	protected String to(String targetStateId) {
-		return targetStateId;
+	protected TargetStateResolver to(String targetStateId) {
+		return (TargetStateResolver)fromStringTo(TargetStateResolver.class).execute(targetStateId);
 	}
 
 	/**
 	 * Creates a new transition.
 	 * @param matchingCriteria the criteria that determines when the transition
 	 * matches
-	 * @param targetStateId the target state identifier
+	 * @param targetStateResolver the resolver of the transition's target state
 	 * @return the transition
 	 */
-	protected Transition transition(TransitionCriteria matchingCriteria, String targetStateId) {
-		return getFlowArtifactFactory().createTransition(targetStateId, matchingCriteria, null, null);
+	protected Transition transition(TransitionCriteria matchingCriteria, TargetStateResolver targetStateResolver) {
+		return getFlowArtifactFactory().createTransition(targetStateResolver, matchingCriteria, null, null);
 	}
 
 	/**
 	 * Creates a new transition.
 	 * @param matchingCriteria the criteria that determines when the transition
 	 * matches
-	 * @param targetStateId the target state identifier
+	 * @param targetStateResolver the resolver of the transition's target state
 	 * @param executionCriteria the criteria that determines if a matched
 	 * transition is allowed to execute
 	 * @return the transition
 	 */
-	protected Transition transition(TransitionCriteria matchingCriteria, String targetStateId,
+	protected Transition transition(TransitionCriteria matchingCriteria, TargetStateResolver targetStateResolver,
 			TransitionCriteria executionCriteria) {
-		return getFlowArtifactFactory().createTransition(targetStateId, matchingCriteria, executionCriteria, null);
+		return getFlowArtifactFactory().createTransition(targetStateResolver, matchingCriteria, executionCriteria, null);
 	}
 
 	/**
 	 * Creates a new transition.
 	 * @param matchingCriteria the criteria that determines when the transition
 	 * matches
-	 * @param targetStateId the target state identifier
+	 * @param targetStateResolver the resolver of the transition's target state
 	 * @param executionCriteria the criteria that determines if a matched
 	 * transition is allowed to execute
 	 * @param attributes transition attributes
 	 * @return the transition
 	 */
-	protected Transition transition(TransitionCriteria matchingCriteria, String targetStateId,
+	protected Transition transition(TransitionCriteria matchingCriteria, TargetStateResolver targetStateResolver,
 			TransitionCriteria executionCriteria, AttributeMap attributes) {
 		return getFlowArtifactFactory()
-				.createTransition(targetStateId, matchingCriteria, executionCriteria, attributes);
+				.createTransition(targetStateResolver, matchingCriteria, executionCriteria, attributes);
 	}
 
 	/**

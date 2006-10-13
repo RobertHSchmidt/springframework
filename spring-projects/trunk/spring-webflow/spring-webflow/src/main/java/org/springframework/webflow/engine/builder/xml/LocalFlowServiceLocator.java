@@ -26,6 +26,7 @@ import org.springframework.webflow.action.BeanInvokingActionFactory;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
+import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.engine.builder.FlowArtifactFactory;
@@ -121,6 +122,15 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		}
 		else {
 			return parent.getTransitionCriteria(id);
+		}
+	}
+
+	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactLookupException {
+		if (containsBean(id)) {
+			return (TargetStateResolver)getBean(id, TargetStateResolver.class);
+		}
+		else {
+			return parent.getTargetStateResolver(id);
 		}
 	}
 
