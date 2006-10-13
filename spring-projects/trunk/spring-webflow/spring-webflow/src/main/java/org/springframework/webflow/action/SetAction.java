@@ -33,7 +33,7 @@ import org.springframework.webflow.execution.ScopeType;
 public class SetAction extends AbstractAction {
 
 	/**
-	 * The property expression for setting the scoped attribute value.
+	 * The expression for setting the scoped attribute value.
 	 */
 	private SettableExpression attributeExpression;
 

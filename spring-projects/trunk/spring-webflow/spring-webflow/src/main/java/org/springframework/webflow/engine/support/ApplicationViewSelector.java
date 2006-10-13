@@ -112,7 +112,8 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	public ViewSelection makeEntrySelection(RequestContext context) {
 		if (shouldRedirect(context)) {
 			return FlowExecutionRedirect.INSTANCE;
-		} else {
+		}
+		else {
 			return makeRefreshSelection(context);
 		}
 	}
@@ -164,8 +165,8 @@ public class ApplicationViewSelector implements ViewSelector, Serializable {
 	 * @return true or false
 	 */
 	protected boolean alwaysRedirectOnPause(RequestContext context) {
-		return context.getFlowExecutionContext().getAttributes().getBoolean(ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE,
-				Boolean.FALSE).booleanValue();
+		return context.getFlowExecutionContext().getAttributes().getBoolean(
+				ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE, Boolean.FALSE).booleanValue();
 	}
 
 	public String toString() {
