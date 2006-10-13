@@ -486,8 +486,8 @@ The identifier of the start state of this flow.  The start state is the point wh
 
 	<xsd:element name="input-mapper">
 		<xsd:complexType>
-			<xsd:sequence maxOccurs="unbounded">
-				<xsd:element ref="input-attribute" minOccurs="0">
+			<xsd:sequence>
+				<xsd:element ref="input-attribute" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
@@ -498,7 +498,7 @@ attribute maps.
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
-				<xsd:element ref="mapping" minOccurs="0">
+				<xsd:element ref="mapping" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
@@ -1791,8 +1791,8 @@ and may execute one or more actions before executing.
 
 	<xsd:element name="output-mapper">
 		<xsd:complexType>
-			<xsd:sequence maxOccurs="unbounded">
-				<xsd:element ref="output-attribute" minOccurs="0">
+			<xsd:sequence>
+				<xsd:element ref="output-attribute" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
@@ -1803,7 +1803,7 @@ attribute maps.
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
-				<xsd:element ref="mapping" minOccurs="0">
+				<xsd:element ref="mapping" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
