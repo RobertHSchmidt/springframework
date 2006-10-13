@@ -63,7 +63,7 @@ public class BooleanExpressionTransitionCriteria implements TransitionCriteria {
 	}
 
 	/**
-	 * Setup a map with a few aliased values to make writing expression based
+	 * Setup a context with a few aliased values to make writing expression based
 	 * transition conditions a bit easier.
 	 */
 	protected EvaluationContext getEvaluationContext(RequestContext context) {

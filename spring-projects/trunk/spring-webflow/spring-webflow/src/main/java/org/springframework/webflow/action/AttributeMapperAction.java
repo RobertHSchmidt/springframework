@@ -62,8 +62,8 @@ public class AttributeMapperAction extends AbstractAction {
 	}
 
 	/**
-	 * Returns a map containing extra data available during attribute mapping.
-	 * The default implementation just returns an empty map. Subclasses can
+	 * Returns a context containing extra data available during attribute mapping.
+	 * The default implementation just returns null. Subclasses can
 	 * override this if necessary.
 	 */
 	protected MappingContext getMappingContext(RequestContext context) {
