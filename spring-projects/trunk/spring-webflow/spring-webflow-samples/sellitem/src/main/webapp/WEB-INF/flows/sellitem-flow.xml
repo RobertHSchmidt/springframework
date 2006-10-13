@@ -32,7 +32,7 @@
 	<subflow-state id="enterShippingDetails" flow="shipping-flow">
 		<attribute-mapper>
 			<input-mapper>
-				<mapping source="flowScope.sale" target="sale"/>
+				<input-attribute name="sale"/>
 			</input-mapper>
 		</attribute-mapper>
 		<transition on="finish" to="processSale"/>
