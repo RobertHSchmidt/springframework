@@ -51,11 +51,11 @@ import org.springframework.webflow.execution.ViewSelection;
  * The target state of this transition is typically specified at configuration
  * time in a static manner. If the target state of this transition needs to be
  * calculated in a dynamic fashion at runtime configure a {@link TargetStateResolver}
- * that supports such calcuations.
+ * that supports such calculations.
  * 
+ * @see TransitionableState
  * @see TransitionCriteria
  * @see TargetStateResolver
- * @see TransitionableState
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -69,7 +69,7 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 
 	/**
 	 * The criteria that determine whether or not this transition matches as
-	 * eligible for execution when an event occurs in the sourceState.
+	 * eligible for execution when an event occurs in the source state.
 	 */
 	private TransitionCriteria matchingCriteria;
 
@@ -102,7 +102,7 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	 * Create a new transition that matches on the specified criteria,
 	 * transitioning to the target state calculated by the provided
 	 * targetStateResolver.
-	 * @param matchingCriteria the criteria that matches this transition
+	 * @param matchingCriteria the criteria for matching this transition
 	 * @param targetStateResolver the resolver of the target state of this
 	 * transition
 	 * @see #setExecutionCriteria(TransitionCriteria)
@@ -223,7 +223,8 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 				selectedView = ((TransitionableState)sourceState).reenter(context);
 			}
 			else {
-				throw new IllegalStateException("Execution of '" + this + "' was blocked by '" + getExecutionCriteria()
+				throw new IllegalStateException(
+						"Execution of '" + this + "' was blocked by '" + getExecutionCriteria()
 						+ "', " + "; however, no source state is set at runtime.  "
 						+ "This is an illegal situation: check your flow definition.");
 			}

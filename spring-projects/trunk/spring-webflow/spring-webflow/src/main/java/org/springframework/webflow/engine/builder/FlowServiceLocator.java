@@ -95,7 +95,7 @@ public interface FlowServiceLocator {
 
 	/**
 	 * Returns the transition target state resolver with the specified id.
-	 * @param id the id
+	 * @param id the target state resolver id
 	 * @return the target state resolver
 	 * @throws FlowArtifactLookupException when no such resolver is found
 	 */

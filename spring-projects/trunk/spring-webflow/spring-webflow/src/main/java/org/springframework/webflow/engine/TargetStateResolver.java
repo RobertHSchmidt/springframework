@@ -28,7 +28,7 @@ public interface TargetStateResolver {
 
 	/**
 	 * Resolve the target state of the transition from the source state in the
-	 * current request context.
+	 * current request context. Should never return null.
 	 * @param transition the transition
 	 * @param sourceState the source state of the transition
 	 * @param context the current request context

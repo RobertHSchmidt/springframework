@@ -123,7 +123,7 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 	// helpers
 
 	/**
-	 * Find the mapped target state ID for given exception. Returns
+	 * Find the mapped target state resolver for given exception. Returns
 	 * <code>null</code> if no mapping can be found for given exception. Will
 	 * try all exceptions in the exception cause chain.
 	 */
@@ -137,7 +137,7 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 	}
 
 	/**
-	 * Internal getTargetState implementation for use with JDK 1.3.
+	 * Internal getTargetStateResolver implementation for use with JDK 1.3.
 	 */
 	private TargetStateResolver getTargetStateResolver13(NestedRuntimeException e) {
 		TargetStateResolver targetStateResolver;
@@ -161,7 +161,7 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 	}
 
 	/**
-	 * Internal getTargetState implementation for use with JDK 1.4 or later.
+	 * Internal getTargetStateResolver implementation for use with JDK 1.4 or later.
 	 */
 	private TargetStateResolver getTargetStateResolver14(Throwable t) {
 		TargetStateResolver targetStateResolver;
@@ -196,18 +196,18 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 	}
 
 	/**
-	 * Try to find a mapped target state id for given exception type. Will
+	 * Try to find a mapped target state resolver for given exception type. Will
 	 * also try to lookup using the class hierarchy of given exception type.
-	 * @param argumentType the exception type to lookup
+	 * @param exceptionType the exception type to lookup
 	 * @return the target state id or null if not found
 	 */
-	private TargetStateResolver findTargetStateResolver(Class argumentType) {
-		while (argumentType != null && argumentType.getClass() != Object.class) {
-			if (exceptionTargetStateMappings.containsKey(argumentType)) {
-				return (TargetStateResolver)exceptionTargetStateMappings.get(argumentType);
+	private TargetStateResolver findTargetStateResolver(Class exceptionType) {
+		while (exceptionType != null && exceptionType.getClass() != Object.class) {
+			if (exceptionTargetStateMappings.containsKey(exceptionType)) {
+				return (TargetStateResolver)exceptionTargetStateMappings.get(exceptionType);
 			}
 			else {
-				argumentType = argumentType.getSuperclass();
+				exceptionType = exceptionType.getSuperclass();
 			}
 		}
 		return null;

@@ -31,8 +31,11 @@ public interface TransitionDefinition extends Annotated {
 	public String getId();
 
 	/**
-	 * Returns the target state of this transition.
-	 * @return the target state
+	 * Returns an identification of the target state of this transition.
+	 * This could be an actual static state id or something more dynamic,
+	 * like a string representation of an expression evaluating the target
+	 * state id at flow execution time.
+	 * @return the target state identifier
 	 */
 	public String getTargetStateId();
 }
