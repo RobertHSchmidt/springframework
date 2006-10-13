@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.support;
+package org.springframework.webflow.engine.support;
 
 import junit.framework.TestCase;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
+import org.springframework.webflow.engine.support.AttributeExpression;
+import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
- * Unit tests for {@link FlowScopeExpression}.
+ * Unit tests for {@link AttributeExpression}.
  */
-public class FlowScopeExpressionTests extends TestCase {
+public class AttributeExpressionTests extends TestCase {
 
 	public void testFlowScopeExpression() {
 		Expression exp = DefaultExpressionParserFactory.getExpressionParser().parseExpression("foo");
-		FlowScopeExpression flowExp = new FlowScopeExpression(exp);
+		AttributeExpression flowExp = new AttributeExpression(exp, ScopeType.FLOW);
 		MockRequestContext context = new MockRequestContext();
 		context.getFlowScope().put("foo", "bar");
 		assertEquals("bar", flowExp.evaluate(context, null));

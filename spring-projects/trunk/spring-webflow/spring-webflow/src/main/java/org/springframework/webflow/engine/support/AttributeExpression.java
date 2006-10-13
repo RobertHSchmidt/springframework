@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.support;
+package org.springframework.webflow.engine.support;
 
 import org.springframework.binding.expression.EvaluationContext;
 import org.springframework.binding.expression.EvaluationException;
@@ -22,15 +22,18 @@ import org.springframework.binding.expression.SettableExpression;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.ScopeType;
 
 /**
- * Expression evaluator that evaluates an expression in flow scope.
+ * Expression evaluator that can evalute attribute maps and supported 
+ * request context scope types.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowScopeExpression implements SettableExpression {
+public class AttributeExpression implements SettableExpression {
 
 	/**
 	 * The expression to evaluate.
@@ -38,17 +41,24 @@ public class FlowScopeExpression implements SettableExpression {
 	private Expression expression;
 
 	/**
-	 * Create a new expression evaluator that executes given expression in 'flow
-	 * scope'. When using this wrapper to set a property value, make sure the
-	 * given expression is a {@link SettableExpression}}.
-	 * @param expression the nested evaluator to execute
+	 * The scope type.
 	 */
-	public FlowScopeExpression(Expression expression) {
+	private ScopeType scopeType;
+
+	/**
+	 * Create a new expression evaluator that executes given expression in the
+	 * configured scope. When using this wrapper to set a property value, make
+	 * sure the given expression is a {@link SettableExpression}}.
+	 * @param expression the nested evaluator to execute
+	 * @param scopeType the scopeType
+	 */
+	public AttributeExpression(Expression expression, ScopeType scopeType) {
 		this.expression = expression;
+		this.scopeType = scopeType;
 	}
 
 	/**
-	 * Returns the expression that will be evaluated in 'flow scope'.
+	 * Returns the expression that will be evaluated.
 	 */
 	protected Expression getExpression() {
 		return expression;
@@ -56,23 +66,33 @@ public class FlowScopeExpression implements SettableExpression {
 
 	public Object evaluate(Object target, EvaluationContext context) throws EvaluationException {
 		if (target instanceof RequestContext) {
-			return expression.evaluate(((RequestContext)target).getFlowScope(), context);
-		}
-		else if (target instanceof AttributeMap) {
+			RequestContext requestContext = (RequestContext)target;
+			AttributeMap scope = scopeType.getScope(requestContext);
+			return expression.evaluate(scope, context);
+		} else if (target instanceof AttributeMap) {
 			return expression.evaluate(target, context);
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException(
 					"Only supports evaluation against a [RequestContext] or [AttributeMap] instance, but was a ["
 							+ target.getClass() + "]");
 		}
 	}
-	
+
 	public void evaluateToSet(Object target, Object value, EvaluationContext context) throws EvaluationException {
 		Assert.isInstanceOf(SettableExpression.class, expression,
-				"When a FlowScopeExpression is used to set a property value, the nested expression needs " +
-				"to be a SettableExpression");
-		((SettableExpression)expression).evaluateToSet(((RequestContext)target).getFlowScope(), value, context);
+				"When a ScopeExpression is used to set a property value, the nested expression needs "
+						+ "to be a SettableExpression");
+		if (target instanceof RequestContext) {
+			RequestContext requestContext = (RequestContext)target;
+			MutableAttributeMap scope = scopeType.getScope(requestContext);
+			((SettableExpression)expression).evaluateToSet(scope, value, context);
+		} else if (target instanceof AttributeMap) {
+			((SettableExpression)expression).evaluateToSet(target, value, context);
+		} else {
+			throw new IllegalArgumentException(
+					"Only supports evaluation against a [RequestContext] or [AttributeMap] instance, but was a ["
+							+ target.getClass() + "]");
+		}
 	}
 
 	public String toString() {
