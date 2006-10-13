@@ -15,9 +15,8 @@
  */
 package org.springframework.webflow.samples.phonebook.webflow;
 
-import java.util.Map;
-
 import org.springframework.binding.mapping.AttributeMapper;
+import org.springframework.binding.mapping.MappingContext;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.engine.EndState;
@@ -80,7 +79,7 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 	protected void registerMockServices(MockFlowServiceLocator serviceRegistry) {
 		Flow mockDetailFlow = new Flow("detail-flow");
 		mockDetailFlow.setInputMapper(new AttributeMapper() {
-			public void map(Object source, Object target, Map context) {
+			public void map(Object source, Object target, MappingContext context) {
 				assertEquals("id of value 1 not provided as input by calling search flow", new Long(1), ((AttributeMap)source).get("id"));
 			}
 		});
