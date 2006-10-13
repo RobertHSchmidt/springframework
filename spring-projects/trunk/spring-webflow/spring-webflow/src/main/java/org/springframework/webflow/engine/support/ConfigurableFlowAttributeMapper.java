@@ -208,6 +208,14 @@ public class ConfigurableFlowAttributeMapper extends AbstractFlowAttributeMapper
 		return outputMapper.getMappings();
 	}
 
+	/**
+	 * Returns the configured expression parser. Can be used by subclasses that
+	 * build mappings.
+	 */
+	protected ExpressionParser getExpressionParser() {
+		return expressionParser;
+	}
+
 	protected AttributeMapper getInputMapper() {
 		return inputMapper;
 	}
