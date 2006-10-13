@@ -31,6 +31,9 @@ Package org.springframework.webflow.executor
   use a FlowExecutorArgumentHandler instead of just a FlowExecutorArgumentExtractor. The corresponding
   "argumentExtractor" properties of the flow controllers were renamed to "argumentHandler".
 
+Package org.springframework.webflow.test
+* Introduced createExternalContext hook method in AbstractFlowExecutionTests.
+
 Changes in version 1.0 RC4 (04.10.2006)
 ---------------------------------------
 

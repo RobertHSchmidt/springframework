@@ -64,7 +64,9 @@ public class MockExternalContext implements ExternalContext {
 	 * @param requestParameterMap the request parameters
 	 */
 	public MockExternalContext(ParameterMap requestParameterMap) {
-		this.requestParameterMap = requestParameterMap;
+		if (requestParameterMap != null) {
+			this.requestParameterMap = requestParameterMap;
+		}
 	}
 
 	// implementing external context
