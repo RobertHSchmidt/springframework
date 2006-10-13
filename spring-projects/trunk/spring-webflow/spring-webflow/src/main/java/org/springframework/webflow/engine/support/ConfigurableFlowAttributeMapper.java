@@ -25,7 +25,6 @@ import org.springframework.binding.expression.SettableExpression;
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.Mapping;
-import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
@@ -101,7 +100,7 @@ public class ConfigurableFlowAttributeMapper extends AbstractFlowAttributeMapper
 
 	/**
 	 * Adds a collection of input mappings. Use when you need full control over
-	 * defining how an subflow input attribute mapping will be perfomed.
+	 * defining how a subflow input attribute mapping will be perfomed.
 	 * @param inputMappings the input mappings
 	 */
 	public void addInputMappings(AttributeMapper[] inputMappings) {
@@ -207,15 +206,6 @@ public class ConfigurableFlowAttributeMapper extends AbstractFlowAttributeMapper
 	 */
 	public AttributeMapper[] getOutputMappings() {
 		return outputMapper.getMappings();
-	}
-
-	/**
-	 * Factory method that returns a mapping builder helper for building
-	 * {@link Mapping} objects.
-	 * @return the mapping builder
-	 */
-	protected MappingBuilder mappingBuilder() {
-		return new MappingBuilder(expressionParser);
 	}
 
 	protected AttributeMapper getInputMapper() {
