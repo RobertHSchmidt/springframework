@@ -115,6 +115,18 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 		}
 		return flowExecutionFactory;
 	}
+	
+	/**
+	 * Creates an ExternalContext instance. Defaults to using {@link MockExternalContext}.
+	 * Subclasses can override if they which to use another external context
+	 * implementation.
+	 * @param requestParameters request parameters to put into the
+	 * external context (optional)
+	 * @return a new ExternalContext instance
+	 */
+	protected ExternalContext createExternalContext(ParameterMap requestParameters) {
+		return new MockExternalContext(requestParameters);
+	}
 
 	/**
 	 * Start the flow execution to be tested.
@@ -122,7 +134,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * Convenience operation that starts the execution with:
 	 * <ul>
 	 * <li>no input attributes
-	 * <li>an empty {@link MockExternalContext} with no environmental request
+	 * <li>an empty {@link ExternalContext} with no environmental request
 	 * parameters set
 	 * </ul>
 	 * @return the view selection made as a result of starting the flow
@@ -132,7 +144,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * the flow execution
 	 */
 	protected ViewSelection startFlow() throws FlowExecutionException {
-		return startFlow(null, new MockExternalContext());
+		return startFlow(null, createExternalContext(null));
 	}
 
 	/**
@@ -142,7 +154,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * <ul>
 	 * <li>the specified input attributes, eligible for mapping by the root
 	 * flow
-	 * <li>an empty {@link MockExternalContext} with no environmental request
+	 * <li>an empty {@link ExternalContext} with no environmental request
 	 * parameters set
 	 * </ul>
 	 * @param input the flow execution input attributes eligible for mapping by
@@ -154,7 +166,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * the flow execution
 	 */
 	protected ViewSelection startFlow(MutableAttributeMap input) throws FlowExecutionException {
-		return startFlow(input, new MockExternalContext());
+		return startFlow(input, createExternalContext(null));
 	}
 
 	/**
@@ -191,7 +203,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * of the resumed flow execution during event processing
 	 */
 	protected ViewSelection signalEvent(String eventId) throws FlowExecutionException {
-		return signalEvent(eventId, new MockExternalContext());
+		return signalEvent(eventId, createExternalContext(null));
 	}
 
 	/**
@@ -204,7 +216,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * of the resumed flow execution during event processing
 	 */
 	protected ViewSelection signalEvent(String eventId, ParameterMap requestParameters) throws FlowExecutionException {
-		return signalEvent(eventId, new MockExternalContext(requestParameters));
+		return signalEvent(eventId, createExternalContext(requestParameters));
 	}
 
 	/**
@@ -265,7 +277,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @throws FlowExecutionException if an exception was thrown during refresh
 	 */
 	protected ViewSelection refresh() throws FlowExecutionException {
-		return refresh(new MockExternalContext());
+		return refresh(createExternalContext(null));
 	}
 
 	/**
