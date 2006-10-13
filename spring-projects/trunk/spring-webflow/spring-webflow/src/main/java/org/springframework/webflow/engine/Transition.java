@@ -49,14 +49,13 @@ import org.springframework.webflow.execution.ViewSelection;
  * flow to the transition's target state.
  * <p>
  * The target state of this transition is typically specified at configuration
- * time using the target state id. If the target state of this transition needs
- * to be calculated in a dynamic fashion at runtime, set a custom
- * {@link TargetStateResolver}
- *  
+ * time in a static manner. If the target state of this transition needs to be
+ * calculated in a dynamic fashion at runtime configure a {@link TargetStateResolver}
+ * that supports such calcuations.
+ * 
  * @see TransitionCriteria
  * @see TargetStateResolver
  * @see TransitionableState
- * @see Flow
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -196,8 +195,7 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	 * render the results of the transition execution
 	 * @throws FlowExecutionException when transition execution fails
 	 */
-	public ViewSelection execute(State sourceState, RequestControlContext context)
-			throws FlowExecutionException {
+	public ViewSelection execute(State sourceState, RequestControlContext context) throws FlowExecutionException {
 		ViewSelection selectedView;
 		if (canExecute(context)) {
 			if (sourceState != null) {
@@ -254,6 +252,7 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("on", getMatchingCriteria()).append("to", getTargetStateResolver()).toString();
+		return new ToStringCreator(this).append("on", getMatchingCriteria()).append("to", getTargetStateResolver())
+				.toString();
 	}
 }
