@@ -5,7 +5,7 @@
                           http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
 
 	<input-mapper>
-		<mapping source="id" target="flowScope.id" />
+		<input-attribute name="id"/>
 	</input-mapper>
 
 	<start-state idref="displayDetails" />
