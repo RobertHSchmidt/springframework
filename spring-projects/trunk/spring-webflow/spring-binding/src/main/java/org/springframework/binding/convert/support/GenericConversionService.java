@@ -101,6 +101,7 @@ public class GenericConversionService implements ConversionService {
 	}
 
 	public ConversionExecutor[] getConversionExecutorsForSource(Class sourceClass) {
+		Assert.notNull(sourceClass, "The source class to convert from is required");
 		Map sourceTargetConverters = findConvertersForSource(sourceClass);
 		if (sourceTargetConverters.isEmpty()) {
 			if (parent != null) {
@@ -123,6 +124,8 @@ public class GenericConversionService implements ConversionService {
 	}
 
 	public ConversionExecutor getConversionExecutor(Class sourceClass, Class targetClass) {
+		Assert.notNull(sourceClass, "The source class to convert from is required");
+		Assert.notNull(targetClass, "The target class to convert to is required");
 		if (this.sourceClassConverters == null || this.sourceClassConverters.isEmpty()) {
 			throw new IllegalStateException("No converters have been added to this service's registry");
 		}
@@ -147,6 +150,7 @@ public class GenericConversionService implements ConversionService {
 
 	public ConversionExecutor getConversionExecutorByTargetAlias(Class sourceClass, String alias)
 			throws IllegalArgumentException {
+		Assert.notNull(sourceClass, "The source class to convert from is required");
 		Assert.hasText(alias, "The target alias is required and must either be a type alias (e.g 'boolean') "
 				+ "or a generic converter alias (e.g. 'bean') ");
 		Object targetType = aliasMap.get(alias);
@@ -169,6 +173,7 @@ public class GenericConversionService implements ConversionService {
 	}
 
 	public Class getClassByAlias(String alias) {
+		Assert.hasText(alias, "The alias is required and must be a type alias (e.g 'boolean')");
 		Object clazz = aliasMap.get(alias);
 		if (clazz != null) {
 			Assert.isInstanceOf(Class.class, clazz, "Not a Class alias '" + alias + "': ");
