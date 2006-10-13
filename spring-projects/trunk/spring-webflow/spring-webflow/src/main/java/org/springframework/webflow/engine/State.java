@@ -108,7 +108,7 @@ public abstract class State extends AnnotatedObject implements StateDefinition {
 	/**
 	 * Returns the owning flow.
 	 */
-	protected Flow getFlow() {
+	public Flow getFlow() {
 		return flow;
 	}
 

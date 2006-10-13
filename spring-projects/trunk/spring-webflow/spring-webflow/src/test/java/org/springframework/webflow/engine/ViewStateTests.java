@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.webflow.engine.impl.FlowExecutionImpl;
 import org.springframework.webflow.engine.support.ApplicationViewSelector;
+import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.TestAction;
@@ -99,14 +100,14 @@ public class ViewStateTests extends TestCase {
 
 	}
 
-	protected static TransitionCriteria on(String event) {
+	protected TransitionCriteria on(String event) {
 		return new EventIdTransitionCriteria(event);
 	}
 
-	protected static String to(String stateId) {
-		return stateId;
+	protected TargetStateResolver to(String stateId) {
+		return new DefaultTargetStateResolver(stateId);
 	}
-
+	
 	public static ViewSelector view(String viewName) {
 		return new ApplicationViewSelector(new StaticExpression(viewName));
 	}

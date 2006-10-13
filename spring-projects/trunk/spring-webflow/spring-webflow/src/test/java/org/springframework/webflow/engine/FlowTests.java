@@ -29,6 +29,7 @@ import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.engine.support.BeanFactoryFlowVariable;
+import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.engine.support.SimpleFlowVariable;
 import org.springframework.webflow.engine.support.TransitionExecutingStateExceptionHandler;
@@ -172,7 +173,7 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testAddGlobalTransition() {
-		Transition t = new Transition("myState2");
+		Transition t = new Transition(to("myState2"));
 		flow.getGlobalTransitionSet().add(t);
 		assertSame(t, flow.getGlobalTransitionSet().toArray()[1]);
 	}
@@ -335,11 +336,11 @@ public class FlowTests extends TestCase {
 		}
 	}
 
-	public static TransitionCriteria on(String eventId) {
+	public TransitionCriteria on(String eventId) {
 		return new EventIdTransitionCriteria(eventId);
 	}
 
-	public static String to(String stateId) {
-		return stateId;
+	protected TargetStateResolver to(String stateId) {
+		return new DefaultTargetStateResolver(stateId);
 	}
 }

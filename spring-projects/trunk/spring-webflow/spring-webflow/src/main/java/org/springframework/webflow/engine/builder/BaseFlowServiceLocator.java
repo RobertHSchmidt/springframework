@@ -32,6 +32,7 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 import org.springframework.webflow.engine.State;
+import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.execution.Action;
@@ -136,6 +137,10 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 		return (TransitionCriteria)getBean(id, TransitionCriteria.class);
 	}
 
+	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactLookupException {
+		return (TargetStateResolver)getBean(id, TargetStateResolver.class);
+	}
+
 	public ViewSelector getViewSelector(String id) throws FlowArtifactLookupException {
 		return (ViewSelector)getBean(id, ViewSelector.class);
 	}
@@ -238,6 +243,7 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	 */
 	protected void addWebFlowConverters(GenericConversionService conversionService) {
 		conversionService.addConverter(new TextToTransitionCriteria(this));
+		conversionService.addConverter(new TextToTargetStateResolver(this));
 		conversionService.addConverter(new TextToViewSelector(this));
 		conversionService.addConverter(new TextToExpression(getExpressionParser()));
 		conversionService.addConverter(new TextToMethodSignature(conversionService));

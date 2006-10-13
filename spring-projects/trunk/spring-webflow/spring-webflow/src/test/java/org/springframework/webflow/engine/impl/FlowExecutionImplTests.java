@@ -28,6 +28,7 @@ import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.SubflowState;
+import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.ViewSelector;
@@ -39,6 +40,7 @@ import org.springframework.webflow.engine.builder.xml.TestFlowServiceLocator;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilderTests;
 import org.springframework.webflow.engine.support.ApplicationViewSelector;
+import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.engine.support.TransitionExecutingStateExceptionHandler;
 import org.springframework.webflow.execution.Action;
@@ -228,10 +230,10 @@ public class FlowExecutionImplTests extends TestCase {
 		return new EventIdTransitionCriteria(event);
 	}
 
-	public static String toState(String stateId) {
-		return stateId;
+	protected TargetStateResolver toState(String stateId) {
+		return new DefaultTargetStateResolver(stateId);
 	}
-
+	
 	public static ViewSelector selectView(String viewName) {
 		return new ApplicationViewSelector(new StaticExpression(viewName));
 	}
@@ -248,7 +250,7 @@ public class FlowExecutionImplTests extends TestCase {
 					return new Event(this, "success");
 				}
 			});
-			state1.getTransitionSet().add(new Transition("view"));
+			state1.getTransitionSet().add(new Transition(toState("view")));
 
 			ViewState state2 = new ViewState(this, "view");
 			state2.getEntryActionList().add(new Action() {
@@ -257,7 +259,7 @@ public class FlowExecutionImplTests extends TestCase {
 					return new Event(this, "success");
 				}
 			});
-			state2.getTransitionSet().add(new Transition("end"));
+			state2.getTransitionSet().add(new Transition(toState("end")));
 
 			EndState state3 = new EndState(this, "end");
 			state3.getEntryActionList().add(new Action() {

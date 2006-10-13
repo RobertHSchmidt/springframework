@@ -25,6 +25,7 @@ import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.SubflowState;
+import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.TransitionableState;
@@ -226,7 +227,7 @@ public class FlowArtifactFactory {
 	 * flow to another. This method is an atomic operation that returns a fully
 	 * initialized transition. It encapsulates the selection of the transition
 	 * implementation as well as the transition assembly.
-	 * @param targetStateId the target state of the transition (required)
+	 * @param targetStateResolver the resolver of the target state of the transition (required)
 	 * @param matchingCriteria the criteria that matches the transition; may be
 	 * null
 	 * @param executionCriteria the criteria that governs execution of the
@@ -237,9 +238,9 @@ public class FlowArtifactFactory {
 	 * @throws FlowArtifactLookupException an exception occured creating the
 	 * transition
 	 */
-	public Transition createTransition(String targetStateId, TransitionCriteria matchingCriteria,
+	public Transition createTransition(TargetStateResolver targetStateResolver, TransitionCriteria matchingCriteria,
 			TransitionCriteria executionCriteria, AttributeMap attributes) throws FlowArtifactLookupException {
-		Transition transition = new Transition(targetStateId);
+		Transition transition = new Transition(targetStateResolver);
 		if (matchingCriteria != null) {
 			transition.setMatchingCriteria(matchingCriteria);
 		}
