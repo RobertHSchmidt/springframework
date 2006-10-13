@@ -5,7 +5,7 @@
                           http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
 
 	<input-mapper>
-		<mapping source="sale" target="flowScope.sale"/>
+		<input-attribute name="sale"/>
 	</input-mapper>
 
 	<start-state idref="enterShippingDetails"/>
