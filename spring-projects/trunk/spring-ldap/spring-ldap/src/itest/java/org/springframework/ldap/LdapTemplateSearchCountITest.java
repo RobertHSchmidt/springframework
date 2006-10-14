@@ -32,7 +32,7 @@ import org.springframework.ldap.support.DistinguishedName;
  * Use DDSteps in order to get data-driven tests - use the same method over and
  * over with data from Excel. The instance variables base, filter and
  * expectedResults are automatically filled with new data for each row specified
- * in LdapTemplateITest.xls. See ddsteps.org for more information.
+ * in LdapTemplateSearchCountITest.xls. See ddsteps.org for more information.
  * 
  * @author Mattias Arthursson
  */
