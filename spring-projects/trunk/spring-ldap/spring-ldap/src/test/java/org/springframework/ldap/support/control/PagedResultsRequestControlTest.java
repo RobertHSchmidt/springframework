@@ -12,6 +12,7 @@ import org.easymock.MockControl;
 import com.sun.jndi.ldap.Ber;
 import com.sun.jndi.ldap.BerDecoder;
 import com.sun.jndi.ldap.BerEncoder;
+import com.sun.jndi.ldap.ctl.DirSyncResponseControl;
 import com.sun.jndi.ldap.ctl.PagedResultsControl;
 import com.sun.jndi.ldap.ctl.PagedResultsResponseControl;
 
@@ -65,9 +66,12 @@ public class PagedResultsRequestControlTest extends TestCase {
     }
 
     public void testPostProcess() throws Exception {
+        int resultSize = 50;
+        byte pageSize = 8;
+
         byte[] value = new byte[1];
-        value[0] = 8;
-        byte[] cookie = encodeValue(20, value);
+        value[0] = pageSize;
+        byte[] cookie = encodeValue(resultSize, value);
         PagedResultsResponseControl control = new PagedResultsResponseControl(
                 "dummy", true, cookie);
 
@@ -75,7 +79,6 @@ public class PagedResultsRequestControlTest extends TestCase {
                 .getResponseControls(), new Control[] { control });
 
         PagedResultsRequestControl tested = new PagedResultsRequestControl(20);
-        tested.setForceComSunPagedResultsControl(true);
 
         replay();
 
@@ -84,7 +87,37 @@ public class PagedResultsRequestControlTest extends TestCase {
         verify();
 
         PagedResultsCookie returnedCookie = tested.getCookie();
-        assertEquals(value[0], returnedCookie.getCookie()[0]);
+        assertEquals(8, returnedCookie.getCookie()[0]);
+        assertEquals(20, tested.getPageSize());
+        assertEquals(50, tested.getResultSize());
+    }
+
+    public void testPostProcess_InvalidResponseControl() throws Exception {
+        int resultSize = 50;
+        byte pageSize = 8;
+
+        byte[] value = new byte[1];
+        value[0] = pageSize;
+        byte[] cookie = encodeDirSyncValue(resultSize, value);
+        
+        // Using another response control to verify that it is ignored
+        DirSyncResponseControl control = new DirSyncResponseControl(
+                "dummy", true, cookie);
+
+        ldapContextControl.expectAndDefaultReturn(ldapContextMock
+                .getResponseControls(), new Control[] { control });
+
+        PagedResultsRequestControl tested = new PagedResultsRequestControl(20);
+
+        replay();
+
+        tested.postProcess(ldapContextMock);
+
+        verify();
+
+        assertNull(tested.getCookie());
+        assertEquals(20, tested.getPageSize());
+        assertEquals(0, tested.getResultSize());
     }
 
     public void testBerDecoding() throws Exception {
@@ -114,6 +147,24 @@ public class PagedResultsRequestControlTest extends TestCase {
 
         ber.beginSeq(Ber.ASN_SEQUENCE | Ber.ASN_CONSTRUCTOR);
         ber.encodeInt(pageSize);
+        ber.encodeOctetString(cookie, Ber.ASN_OCTET_STR);
+        ber.endSeq();
+
+        return ber.getTrimmedBuf();
+    }
+
+    /**
+     * Encode a value suitable for the DirSyncResponseControl used in a test.
+     */
+    private byte[] encodeDirSyncValue(int pageSize, byte[] cookie)
+            throws IOException {
+
+        // build the ASN.1 encoding
+        BerEncoder ber = new BerEncoder(10 + cookie.length);
+
+        ber.beginSeq(Ber.ASN_SEQUENCE | Ber.ASN_CONSTRUCTOR);
+        ber.encodeInt(1); // flag
+        ber.encodeInt(pageSize); // maxReturnLength
         ber.encodeOctetString(cookie, Ber.ASN_OCTET_STR);
         ber.endSeq();
 

@@ -21,6 +21,8 @@ import javax.naming.directory.DirContext;
 import javax.naming.ldap.Control;
 import javax.naming.ldap.LdapContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.ldap.DirContextProcessor;
 
 /**
@@ -34,6 +36,8 @@ import org.springframework.ldap.DirContextProcessor;
  */
 public abstract class AbstractRequestControlDirContextProcessor implements
         DirContextProcessor {
+    protected Log log = LogFactory
+            .getLog(AbstractRequestControlDirContextProcessor.class);
 
     /**
      * Get the existing RequestControls from the LdapContext, call

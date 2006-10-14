@@ -39,9 +39,11 @@ import com.sun.jndi.ldap.ctl.PagedResultsResponseControl;
 public class PagedResultsRequestControl extends
         AbstractRequestControlDirContextProcessor {
 
-    private static final String JAVA5_RESPONSE_CONTROL = "javax.naming.ldap.PagedResultsResponseControl";
+    private static final Class DEFAULT_RESPONSE_CONTROL = PagedResultsResponseControl.class;
 
     private static final boolean CRITICAL_CONTROL = true;
+
+    private static final String JAVA5_RESPONSE_CONTROL = "javax.naming.ldap.PagedResultsResponseControl";
 
     private int pageSize;
 
@@ -49,7 +51,11 @@ public class PagedResultsRequestControl extends
 
     private int resultSize;
 
-    private boolean forceComSunPagedResultsControl = false;
+    private Class responseControlClass = DEFAULT_RESPONSE_CONTROL;
+
+    private Class fallbackResponseControlClass;
+
+    private Class currentResponseControlClass;
 
     public PagedResultsRequestControl(int pageSize) {
         this(pageSize, null);
@@ -58,6 +64,7 @@ public class PagedResultsRequestControl extends
     public PagedResultsRequestControl(int pageSize, PagedResultsCookie cookie) {
         this.pageSize = pageSize;
         this.cookie = cookie;
+        fallbackResponseControlClass = loadFallbackResponseControlClass();
     }
 
     public PagedResultsCookie getCookie() {
@@ -72,13 +79,15 @@ public class PagedResultsRequestControl extends
         return resultSize;
     }
 
-    public boolean isForceComSunPagedResultsControl() {
-        return forceComSunPagedResultsControl;
-    }
-
-    public void setForceComSunPagedResultsControl(
-            boolean forceComSunPagedResultsControl) {
-        this.forceComSunPagedResultsControl = forceComSunPagedResultsControl;
+    /**
+     * Set the class of the expected ResponseControl for the paged results
+     * response. The default is {@link PagedResultsResponseControl}.
+     * 
+     * @param responseControlClass
+     *            Class of the expected response control.
+     */
+    public void setResponseControlClass(Class responseControlClass) {
+        this.responseControlClass = responseControlClass;
     }
 
     /*
@@ -102,31 +111,60 @@ public class PagedResultsRequestControl extends
      * @see org.springframework.ldap.DirContextProcessor#postProcess(javax.naming.directory.DirContext)
      */
     public void postProcess(DirContext ctx) throws NamingException {
+        // initialize from property
+        currentResponseControlClass = responseControlClass;
+        
         LdapContext ldapContext = (LdapContext) ctx;
         Control[] responseControls = ldapContext.getResponseControls();
 
-        // Use Java5 version if available, unless forced to skip it
-        Class clazz = PagedResultsResponseControl.class;
-        if (!forceComSunPagedResultsControl) {
-            try {
-                clazz = Class.forName(JAVA5_RESPONSE_CONTROL);
-            } catch (ClassNotFoundException e) {
-                clazz = PagedResultsResponseControl.class;
-            }
-        }
-
         // Go through response controls and get info, regardless of class
         for (int i = 0; i < responseControls.length; i++) {
-            if (responseControls[i].getClass().isAssignableFrom(clazz)) {
-                Object control = responseControls[i];
-                byte[] result = (byte[]) invokeMethod("getCookie", clazz,
-                        control);
+            Control responseControl = responseControls[i];
+            
+            // check for match, try fallback otherwise
+            if (isPagedResultsResponseControl(responseControl)) {
+                Object control = responseControl;
+                byte[] result = (byte[]) invokeMethod("getCookie",
+                        currentResponseControlClass, control);
                 this.cookie = new PagedResultsCookie(result);
                 Integer wrapper = (Integer) invokeMethod("getResultSize",
-                        clazz, control);
+                        currentResponseControlClass, control);
                 this.resultSize = wrapper.intValue();
             }
         }
+    }
+
+    /**
+     * Check if the given control matches a paged results response control.
+     * Try the fallback class from Java5 if there is no match. Set the
+     * {@link #currentResponseControlClass} to the fallback if it matches.
+     * 
+     * @param responseControl the control to check for a match
+     * @return whether the control is a paged results response control
+     */
+    private boolean isPagedResultsResponseControl(Control responseControl) {
+        if (responseControl.getClass().isAssignableFrom(currentResponseControlClass)) {
+            return true;
+        }
+        if (fallbackResponseControlClass != null
+                && responseControl.getClass().isAssignableFrom(
+                        fallbackResponseControlClass)) {
+            currentResponseControlClass = fallbackResponseControlClass;
+            return true;
+        }
+        return false;
+    }
+
+    private Class loadFallbackResponseControlClass() {
+        Class fallbackResponseControlClass = null;
+        try {
+            fallbackResponseControlClass = Class
+                    .forName(JAVA5_RESPONSE_CONTROL);
+        } catch (ClassNotFoundException e) {
+            log.debug("Could not load Java5 response control class "
+                    + JAVA5_RESPONSE_CONTROL);
+        }
+        return fallbackResponseControlClass;
     }
 
     private Object invokeMethod(String method, Class clazz, Object control) {
