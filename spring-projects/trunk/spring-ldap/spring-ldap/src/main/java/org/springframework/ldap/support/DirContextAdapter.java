@@ -499,7 +499,7 @@ public class DirContextAdapter implements DirContextOperations {
         }
 
         if (prev != null) {
-            // Also check against updatedAttrs, since there night have been
+            // Also check against updatedAttrs, since there might have been
             // a previous update
             try {
                 for (int i = 0; i < prev.size(); i++) {
