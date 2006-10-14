@@ -18,6 +18,7 @@ package org.springframework.webflow.engine.support;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.engine.AnnotatedAction;
@@ -37,7 +38,7 @@ public class TransitionCriteriaChain implements TransitionCriteria {
 	/**
 	 * The ordered chain of TransitionCriteria objects.
 	 */
-	private LinkedList criteriaChain = new LinkedList();
+	private List criteriaChain = new LinkedList();
 
 	/**
 	 * Creates an initially empty transition criteria chain. 
