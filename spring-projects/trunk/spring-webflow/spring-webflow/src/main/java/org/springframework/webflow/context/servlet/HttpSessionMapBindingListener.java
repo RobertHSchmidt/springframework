@@ -26,7 +26,7 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 
 /**
  * Helper class that adapts a generic {@link AttributeMapBindingListener} to a
- * http-specific {@link HttpSessionBindingListener}. Calls will be forwarded to
+ * HTTP specific {@link HttpSessionBindingListener}. Calls will be forwarded to
  * the wrapped listener.
  * 
  * @author Keith Donald
