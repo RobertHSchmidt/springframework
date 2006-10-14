@@ -31,6 +31,7 @@ import javax.naming.directory.DirContext;
 import org.apache.directory.server.core.configuration.ShutdownConfiguration;
 import org.apache.directory.server.jndi.ServerContextFactory;
 import org.apache.directory.server.protocol.shared.store.LdifFileLoader;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ldap.ContextSource;
 import org.springframework.ldap.support.DefaultDirObjectFactory;
@@ -43,7 +44,7 @@ import org.springframework.ldap.support.DistinguishedName;
  * @author Mattias Arthursson
  * 
  */
-public class LdapServerManager implements InitializingBean {
+public class LdapServerManager implements InitializingBean, DisposableBean {
 
     private ContextSource contextSource;
 
@@ -51,7 +52,7 @@ public class LdapServerManager implements InitializingBean {
         this.contextSource = contextSource;
     }
 
-    public void shutdown() throws NamingException {
+    public void destroy() throws Exception {
         Properties env = new Properties();
         env.setProperty(Context.INITIAL_CONTEXT_FACTORY,
                 ServerContextFactory.class.getName());
