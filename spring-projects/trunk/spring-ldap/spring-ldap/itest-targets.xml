@@ -61,7 +61,7 @@
 	<property name="target.itestresults.dir" location="${target.dir}/itest-reports" />
 
 	<!-- itest resources get copied into target itest classes dir with filtering -->
-	<property name="src.itest.resources.dir" location="${src.etc.dir}/itest-resources" />
+	<property name="src.itest.resources.dir" location="${src.dir}/itest/resources" />
 
 	<!-- default wildcard for finding JUnit tests
 		the convention is that our JUnit test classes have XXXTests-style names -->
