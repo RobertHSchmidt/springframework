@@ -20,7 +20,11 @@ import java.util.Hashtable;
 
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
+import javax.naming.ldap.ControlFactory;
 import javax.naming.ldap.InitialLdapContext;
+import javax.naming.ldap.LdapContext;
+
+import com.sun.jndi.ldap.ctl.ResponseControlFactory;
 
 /**
  * ContextSource implementation which creates an <code>InitialLdapContext</code>
@@ -35,9 +39,19 @@ import javax.naming.ldap.InitialLdapContext;
  */
 public class LdapContextSource extends AbstractContextSource {
 
+    private static final Class DEFAULT_RESPONSE_CONTROL_FACTORY = ResponseControlFactory.class;
+
+    private Class responseControlFactory = DEFAULT_RESPONSE_CONTROL_FACTORY;
+
+    protected Hashtable getAnonymousEnv() {
+        Hashtable env = super.getAnonymousEnv();
+        env
+                .put(LdapContext.CONTROL_FACTORIES, responseControlFactory
+                        .getName() + ".trasig");
+        return env;
+    }
+
     /*
-     * (non-Javadoc)
-     * 
      * @see org.springframework.ldap.support.AbstractContextSource#getDirContextInstance(java.util.Hashtable)
      */
     protected DirContext getDirContextInstance(Hashtable environment)
@@ -45,4 +59,34 @@ public class LdapContextSource extends AbstractContextSource {
         return new InitialLdapContext(environment, null);
     }
 
+    /**
+     * Set the ResponseControlFactory to use. Default is
+     * {@link com.sun.jndi.ldap.ctl.ResponseControlFactory}. The specified
+     * class needs to be an implementation of
+     * {@link javax.naming.ldap.ControlFactory}.
+     * 
+     * @param responseControlFactory
+     *            the ResponseControlFactory to be used. Null means reset to the
+     *            default.
+     */
+    public void setResponseControlFactory(Class responseControlFactory) {
+        if (responseControlFactory == null) {
+            this.responseControlFactory = DEFAULT_RESPONSE_CONTROL_FACTORY;
+        } else if (ControlFactory.class
+                .isAssignableFrom(responseControlFactory)) {
+            this.responseControlFactory = responseControlFactory;
+        } else {
+            throw new IllegalArgumentException(
+                    "Invalid ReponseControlFactory: " + responseControlFactory
+                            + " is not an implementation of "
+                            + ControlFactory.class.getName());
+        }
+    }
+
+    /**
+     * @return the current ResponseControlFactory.
+     */
+    Class getResponseControlFactory() {
+        return responseControlFactory;
+    }
 }
