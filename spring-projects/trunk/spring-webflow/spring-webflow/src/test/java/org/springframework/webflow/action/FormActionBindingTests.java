@@ -103,8 +103,11 @@ public class FormActionBindingTests extends TestCase {
 		
 		TestBean formObject = (TestBean)
 			new FormObjectAccessor(context).getFormObject("formObject", ScopeType.FLOW);
+		errors = new FormObjectAccessor(context).getFormErrors("formObject", ScopeType.FLASH);
 		assertNotNull(formObject);
 		assertEquals(new Long(1), formObject.getProp());
+		assertEquals(new Long(1), errors.getFieldValue("prop"));
 		assertEquals("value", formObject.otherProp);
+		assertEquals("value", errors.getFieldValue("otherProp"));
 	}
 }
