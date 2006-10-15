@@ -19,8 +19,11 @@ import junit.framework.TestCase;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -33,6 +36,7 @@ public class FormActionBindingTests extends TestCase {
 	public static class TestBean {
 
 		private Long prop;
+		public String otherProp;
 
 		public Long getProp() {
 			return prop;
@@ -64,5 +68,43 @@ public class FormActionBindingTests extends TestCase {
 		assertEquals(1, formActionErrors.getErrorCount());
 		assertEquals(0, formActionErrors.getGlobalErrorCount());
 		assertEquals(1, formActionErrors.getFieldErrorCount("prop"));
+	}
+	
+	public void testFieldBinding() throws Exception {
+		FormAction formAction = new FormAction() {
+			protected Object createFormObject(RequestContext context) throws Exception {
+				TestBean res = new TestBean();
+				res.setProp(new Long(-1));
+				res.otherProp = "initialValue";
+				return res;
+			}
+			
+			protected void initBinder(RequestContext context, DataBinder binder) {
+				binder.initDirectFieldAccess();
+			}
+		};
+		formAction.setFormObjectName("formObject");
+		
+		MockRequestContext context = new MockRequestContext();
+		
+		context.setAttribute("method", "setupForm");
+		formAction.execute(context);
+		Errors errors = new FormObjectAccessor(context).getFormErrors("formObject", ScopeType.FLASH);
+		assertNotNull(errors);
+		assertEquals(new Long(-1), errors.getFieldValue("prop"));
+		
+		//this fails because of SWF-193
+		assertEquals("initialValue", errors.getFieldValue("otherProp"));
+		
+		context.putRequestParameter("prop", "1");
+		context.putRequestParameter("otherProp", "value");
+		context.setAttribute("method", "bind");
+		formAction.execute(context);
+		
+		TestBean formObject = (TestBean)
+			new FormObjectAccessor(context).getFormObject("formObject", ScopeType.FLOW);
+		assertNotNull(formObject);
+		assertEquals(new Long(1), formObject.getProp());
+		assertEquals("value", formObject.otherProp);
 	}
 }
