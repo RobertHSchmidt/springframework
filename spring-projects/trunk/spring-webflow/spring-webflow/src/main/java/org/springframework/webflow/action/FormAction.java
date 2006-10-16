@@ -129,8 +129,7 @@ import org.springframework.webflow.util.ReflectionUtils;
  * instantiated transiently in memory or loaded from a database).</li>
  * <li>An optional hook method provided by this class is
  * {@link #initBinder(RequestContext, DataBinder) initBinder}. This is called
- * after a new data binder is created by any of the action execution methods that
- * require a data binder.
+ * after a new data binder is created.
  * <li>Another optional ook method is
  * {@link #registerPropertyEditors(PropertyEditorRegistry)}. By overriding it
  * you can register any required property editors for your form. Instead of
@@ -332,7 +331,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	/**
 	 * A centralized service for property editor registration, for applying type
 	 * conversion during form object data binding. Can be used as an alternative
-     * to overriding {@link #initBinder(RequestContext, DataBinder)}.
+     * to overriding {@link #registerPropertyEditors(PropertyEditorRegistry)}.
 	 */
 	private PropertyEditorRegistrar propertyEditorRegistrar;
 
@@ -451,7 +450,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	/**
 	 * Set a property editor registration strategy for this action's data
 	 * binders. This is an alternative to overriding the
-     * {@link #initBinder(RequestContext, DataBinder)} method.
+     * {@link #registerPropertyEditors(PropertyEditorRegistry)} method.
 	 */
 	public void setPropertyEditorRegistrar(PropertyEditorRegistrar propertyEditorRegistrar) {
 		this.propertyEditorRegistrar = propertyEditorRegistrar;
@@ -639,7 +638,6 @@ public class FormAction extends MultiAction implements InitializingBean {
 			Object formObject = getFormObject(context);
             Errors errors = getFormErrors(context);
 			doValidate(context, formObject, errors);
-			putFormErrors(context, errors);
 			return errors.hasErrors() ? error() : success();
 		}
 		else {
@@ -677,7 +675,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	// internal helpers
 
 	/**
-	 * Create the new form object and set it in the configured
+	 * Create the new form object and put it in the configured
 	 * {@link #getFormObjectScope() scope}.
 	 * @param context the flow execution request context
 	 * @return the new form object
@@ -711,12 +709,11 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @param context the current flow execution request context
 	 * @param formObject the form object for which errors will be tracked
 	 */
-	private BindException initFormErrors(RequestContext context, Object formObject) {
+	private Errors initFormErrors(RequestContext context, Object formObject) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Creating new form errors for object with name '" + getFormObjectName() + "'");
 		}
-		BindException errors = new BindException(formObject, getFormObjectName()); 
-		registerPropertyEditors(getPropertyEditorRegistry(errors));
+		Errors errors = createBinder(context, formObject).getErrors(); 
 		putFormErrors(context, errors);
 		return errors;
 	}
