@@ -1206,12 +1206,11 @@ with this transition definition.  Use this attribute or the 'on' attribute, not 
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="to" type="xsd:IDREF" use="required">
+			<xsd:attribute name="to" type="xsd:string" use="required">
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-The id of the target state of this transition.  The value of this attribute is a static
-state identifier (e.g. to="displayForm").  The state id must exist in this document.
+The id of the target state of this transition.
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
