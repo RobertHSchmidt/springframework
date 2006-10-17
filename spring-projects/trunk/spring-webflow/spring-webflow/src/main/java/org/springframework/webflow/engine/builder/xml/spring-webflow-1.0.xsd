@@ -194,7 +194,7 @@ This action always returns a "success" event unless an exception is thrown.
 			<xsd:documentation>
 				<![CDATA[
 Defines exactly one flow definition.  A flow is composed of one or more states
-that define the steps of a task.  One of those steps is the startState, which defines
+that define the steps of a task.  One of those steps is the start state, which defines
 the starting point of the task.
 <br>
 A flow may also exhibit the following characteristics:
@@ -317,7 +317,7 @@ from the paused view-state by signaling an input event.
 <br>
 Once paused a view-state may be 'refreshed' by the user, for example, when the 
 browser refresh button is clicked.  A refresh causes the response to be reissued, 
-at which control goes back to the user.
+at which point control goes back to the user.
 <br>
 A view state may be configured with one or more &lt;render-action/&gt; elements.  Render
 actions are executed before the view is rendered.  Such actions are often
@@ -422,7 +422,7 @@ For the output mapper the following mapping characteristics apply:
 <li>The 'source' of each mapping is this flow execution's RequestContext, exposing access to 
 internal data structures such as 'flowScope'.
 <li>The 'target' of each mapping is the flow output map that will contain the output returned to the
-caller that terminated this flow.
+caller that launched this flow.
 </ul>
 <br>  
 For example:
@@ -667,7 +667,7 @@ The value of this attribute; a short-cut alternative to an explicit child 'value
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-This name of this variable, used as the index of the variable value set in the configured scope.
+The name of this variable, used as the index of the variable value set in the configured scope.
 <br>
 When specified without the 'class' or 'bean' attributes, this name is also used as the bean name
 of a non-singleton bean in the configured Bean Factory to use as the initial variable value.
@@ -819,7 +819,7 @@ This is similar to the &lt;ref bean="myBean"/&gt; notation of the Spring beans D
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-An optional name qualifier for this bean action. When specified this action will
+An optional name qualifier for this action. When specified this action will
 qualify execution result event identifiers by this name.  For example, if this
 action is named "placeOrder" and signals a "success" result event after execution,
 the fully qualified result event the flow can respond to would be "placeOrder.success".
@@ -876,6 +876,15 @@ As an example:
 	<xsd:element name="bean-action">
 		<xsd:complexType>
 			<xsd:sequence>
+				<xsd:element ref="attribute" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>
+							<![CDATA[
+An attribute describing this bean action.
+]]>
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element ref="method-arguments" minOccurs="0">
 					<xsd:annotation>
 						<xsd:documentation>
@@ -892,15 +901,6 @@ The order of the argument expression list is significant.
 						<xsd:documentation>
 							<![CDATA[
 The rule for how the return value of the invoked bean method should be exposed to the flow.
-]]>
-						</xsd:documentation>
-					</xsd:annotation>
-				</xsd:element>
-				<xsd:element ref="attribute" minOccurs="0" maxOccurs="unbounded">
-					<xsd:annotation>
-						<xsd:documentation>
-							<![CDATA[
-An attribute describing this bean action.
 ]]>
 						</xsd:documentation>
 					</xsd:annotation>
@@ -1055,6 +1055,15 @@ If not specified the default scope type is used ('request' by default).
 	<xsd:element name="evaluate-action">
 		<xsd:complexType>
 			<xsd:sequence>
+				<xsd:element ref="attribute" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>
+							<![CDATA[
+An attribute describing this bean action.
+]]>
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element ref="evaluation-result" minOccurs="0">
 					<xsd:annotation>
 						<xsd:documentation>
@@ -1112,6 +1121,17 @@ If not specified the default scope type is used ('request' by default).
 
 	<xsd:element name="set">
 		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="attribute" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>
+							<![CDATA[
+An attribute describing this bean action.
+]]>
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
 			<xsd:attribute name="attribute" type="xsd:string" use="required">
 				<xsd:annotation>
 					<xsd:documentation>
@@ -1127,7 +1147,7 @@ The name of the attribute to set.  May be a nested path using Java beans notatio
 						<![CDATA[
 The scope the attribute value will be stored in.  The available scope types are:
 <ol>
-<li>request - The attribute goes out of scope when the call into this flow that evaluated this expression completes.
+<li>request - The attribute goes out of scope when the call into this flow that sets the attribute completes.
 <li>flash - The attribute goes out of scope when the next user event is signaled.
 <li>flow - The attribute goes out of scope when this local flow session ends.
 <li>conversation - The attribute goes out of scope when the overall conversation governing this flow execution ends.
@@ -1210,7 +1230,13 @@ with this transition definition.  Use this attribute or the 'on' attribute, not 
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-The id of the target state of this transition.
+The target state to transition to.
+<br>
+The value of this attribute may be a static state identifier (e.g. to="displayForm")
+or an expression to be evaluated at runtime against the request context
+(e.g. to="${flowScope.previousViewState}"). Custom target state resolvers implementations
+can be referenced by id (e.g. to="bean:myCustomTargetStateResolver"). The
+exact interpretation of this attribute value depends on the installed TextToTargetStateResolver.
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
@@ -1304,7 +1330,7 @@ This value may also be a view name expression evaluated against the request cont
 </pre>
 Use of the "redirect:" prefix indicates this view state should trigger a redirect to a 
 unique "flow execution URL".  This causes the application view to render on the
-the redirected request to that URL.  This allows browsers to refresh a specific
+redirected request to that URL.  This allows browsers to refresh a specific
 state of the conversation while it remains active:
 <pre>
 	redirect:priceForm
@@ -1452,7 +1478,9 @@ The state to transition to if the boolean expression is true.
 <br>
 The value of this attribute may be a static state identifier (e.g. then="displayForm")
 or an expression to be evaluated at runtime against the request context
-(e.g. then="${flowScope.previousViewState}").
+(e.g. then="${flowScope.previousViewState}"). Custom target state resolvers implementations
+can be referenced by id (e.g. to="bean:myCustomTargetStateResolver"). The
+exact interpretation of this attribute value depends on the installed TextToTargetStateResolver.
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
@@ -1465,7 +1493,9 @@ The state to transition to if the boolean expression is false (optional).
 
 The value of this attribute may be a static state identifier (e.g. else="displayForm")
 or an expression to be evaluated at runtime against the request context
-(e.g. else="${flowScope.previousViewState}").
+(e.g. else="${flowScope.previousViewState}"). Custom target state resolvers implementations
+can be referenced by id (e.g. to="bean:myCustomTargetStateResolver"). The
+exact interpretation of this attribute value depends on the installed TextToTargetStateResolver.
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
@@ -1683,7 +1713,7 @@ For the output mapper the following mapping characteristics apply:
 <li>The 'source' of each mapping is this flow execution's RequestContext, exposing access to 
 internal data structures such as 'flowScope'.
 <li>The 'target' of each mapping is the flow output map that will contain the output returned to the
-caller that terminated this flow.
+caller that launched this flow.
 </ul>
 <br>  
 For example:
