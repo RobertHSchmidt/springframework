@@ -44,7 +44,13 @@ import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
  * Note: this implementation only works with <code>ExternalContext</code>
  * implementations that return valid
  * {@link ExternalContext#getRequestPathInfo()} such as the
- * {@link ServletExternalContext}.
+ * {@link ServletExternalContext}. Furthermore, it assumes that the controller
+ * handling flow requests is not identified using request path information.
+ * For instance, mapping the dispatcher to "*.html" in web.xml would work since
+ * in this case the flow controller will be identified as part of the dispatcher
+ * name (e.g. "flows.html"). Mapping the dispatcher to "/html/*" in web.xml
+ * will not work since that would require the flow controller to be identified
+ * by the extra request path information (e.g. "/html/flows").
  * 
  * @author Keith Donald
  */
@@ -136,6 +142,11 @@ public class RequestPathFlowExecutorArgumentHandler extends RequestParameterFlow
 	}
 
 	// internal helpers
+	
+	protected void appendFlowExecutorPath(StringBuffer url, ExternalContext context) {
+		url.append(context.getContextPath());
+		url.append(context.getDispatcherPath());
+	}
 
 	/**
 	 * Returns the request path info for given external context. Never returns

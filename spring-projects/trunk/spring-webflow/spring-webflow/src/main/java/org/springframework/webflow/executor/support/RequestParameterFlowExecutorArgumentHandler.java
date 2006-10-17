@@ -219,6 +219,9 @@ public class RequestParameterFlowExecutorArgumentHandler extends FlowExecutorArg
 	protected void appendFlowExecutorPath(StringBuffer url, ExternalContext context) {
 		url.append(context.getContextPath());
 		url.append(context.getDispatcherPath());
+		if (context.getRequestPathInfo() != null) {
+			url.append(context.getRequestPathInfo());
+		}
 	}
 
 	/**
