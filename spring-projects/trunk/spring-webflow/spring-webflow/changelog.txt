@@ -5,6 +5,9 @@ http://www.springframework.org
 Changes in version 1.0 (16.10.2006)
 ---------------------------------------
 
+Package org.springframework.webflow.action
+* Fixed bug in FormAction where the binder was not properly initialized in all cases (SWF-193).
+
 Package org.springframework.webflow.definition.registry
 * Added createFlowDefinitionRegistry hook method to AbstractFlowDefinitionRegistryFactoryBean.
 
