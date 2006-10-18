@@ -18,6 +18,7 @@ package org.springframework.webflow.engine.support;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.util.Assert;
+import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
@@ -56,7 +57,7 @@ public class DefaultTargetStateResolver implements TargetStateResolver {
 
 	public State resolveTargetState(Transition transition, State sourceState, RequestContext context) {
 		String stateId = String.valueOf(targetStateIdExpression.evaluate(context, null));
-		return sourceState.getFlow().getStateInstance(stateId);
+		return ((Flow)context.getActiveFlow()).getStateInstance(stateId);
 	}
 
 	public String toString() {
