@@ -17,6 +17,9 @@ Changes in version 1.1.1 (xx.y.2006)
 
 * DirContextAdapter.getNameInNamespace now returns the full DN, as spec says.
 
+* Spec says a distinguished name should be able to have multi-valued RDNs
+  separated by a '+' sign, like "cn=Rod+sn=Johnson", for example. Fixed.
+
 * LdapRdn is now Serializable.
 
 * Added lookup methods that take an array of return attribute names.
