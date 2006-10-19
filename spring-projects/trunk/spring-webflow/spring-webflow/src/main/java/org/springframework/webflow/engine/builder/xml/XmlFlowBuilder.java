@@ -663,26 +663,32 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private AnnotatedAction[] parseAnnotatedActions(Element element) {
 		List actions = new LinkedList();
-		// parse standard actions
-		List actionElements = DomUtils.getChildElementsByTagName(element, ACTION_ELEMENT);
-		for (Iterator it = actionElements.iterator(); it.hasNext();) {
-			actions.add(parseAnnotatedAction((Element)it.next()));
+		
+		NodeList childNodeList = element.getChildNodes();
+		for (int i=0; i < childNodeList.getLength(); i++) {
+			Node childNode = childNodeList.item(i);
+			if (!(childNode instanceof Element)) {
+				continue;
+			}
+			
+			if (DomUtils.nodeNameEquals(childNode, ACTION_ELEMENT)) {
+				// parse standard action
+				actions.add(parseAnnotatedAction((Element)childNode));
+			}
+			else if (DomUtils.nodeNameEquals(childNode, BEAN_ACTION_ELEMENT)) {
+				// parse bean invoking action
+				actions.add(parseAnnotatedBeanInvokingAction((Element)childNode));
+			}
+			else if (DomUtils.nodeNameEquals(childNode, EVALUATE_ACTION_ELEMENT)) {
+				// parse evaluate action
+				actions.add(parseAnnotatedEvaluateAction((Element)childNode));
+			}
+			else if (DomUtils.nodeNameEquals(childNode, SET_ELEMENT)) {
+				// parse set action
+				actions.add(parseAnnotatedSetAction((Element)childNode));
+			}
 		}
-		// parse bean invoking actions
-		List beanActionElements = DomUtils.getChildElementsByTagName(element, BEAN_ACTION_ELEMENT);
-		for (Iterator it = beanActionElements.iterator(); it.hasNext();) {
-			actions.add(parseAnnotatedBeanInvokingAction((Element)it.next()));
-		}
-		// parse evaluate actions
-		List evaluateActionElements = DomUtils.getChildElementsByTagName(element, EVALUATE_ACTION_ELEMENT);
-		for (Iterator it = evaluateActionElements.iterator(); it.hasNext();) {
-			actions.add(parseAnnotatedEvaluateAction((Element)it.next()));
-		}
-		// parse set actions
-		List setActionElements = DomUtils.getChildElementsByTagName(element, SET_ELEMENT);
-		for (Iterator it = setActionElements.iterator(); it.hasNext();) {
-			actions.add(parseAnnotatedSetAction((Element)it.next()));
-		}
+		
 		return (AnnotatedAction[])actions.toArray(new AnnotatedAction[actions.size()]);
 	}
 
