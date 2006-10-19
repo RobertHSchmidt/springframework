@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.engine.builder.xml;
 
+import java.math.BigDecimal;
+
 import junit.framework.TestCase;
 
 import org.springframework.binding.mapping.DefaultAttributeMapper;
@@ -83,10 +85,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertTrue(actionState1.getTransitionSet().hasMatchingTransition(context));
 		Transition transition = actionState1.getRequiredTransition(context);
 		assertEquals("viewState1", getTargetStateId(transition));
-		// for some bizar reason this gives problems on some machines
-		// ("123.45"<>"12345")
-		// assertEquals(new BigDecimal("123.45"),
-		// transition.getAttributeMap().get("propBigDecimal"));
+		assertEquals(new BigDecimal("123.45"), transition.getAttributeMap().get("propBigDecimal"));
 		context.setLastEvent(createEvent("action2Name.event2"));
 		assertTrue(actionState1.getTransitionSet().hasMatchingTransition(context));
 		transition = actionState1.getRequiredTransition(context);
