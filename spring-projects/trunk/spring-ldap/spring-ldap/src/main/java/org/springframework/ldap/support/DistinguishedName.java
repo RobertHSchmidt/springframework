@@ -22,8 +22,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.naming.CompositeName;
 import javax.naming.InvalidNameException;
@@ -31,6 +29,10 @@ import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.ldap.BadLdapGrammarException;
+import org.springframework.ldap.support.parser.DefaultDnParserFactory;
+import org.springframework.ldap.support.parser.DnParser;
+import org.springframework.ldap.support.parser.ParseException;
+import org.springframework.ldap.support.parser.TokenMgrError;
 
 /**
  * Default implementation of a Name corresponding to an LDAP path. A
@@ -68,9 +70,6 @@ public class DistinguishedName implements Name {
 
     private LinkedList names;
 
-    protected static final Pattern NAME_PATTERN = Pattern
-            .compile("(.*?[^\\\\])(,|;|$)");
-
     /**
      * Construct a new DistinguishedName with no components.
      */
@@ -85,7 +84,11 @@ public class DistinguishedName implements Name {
      *            a String corresponding to a (syntactically) valid LDAP path.
      */
     public DistinguishedName(String path) {
-        parse(path);
+        if (StringUtils.isBlank(path)) {
+            names = new LinkedList();
+        } else {
+            parse(path);
+        }
     }
 
     /**
@@ -121,19 +124,17 @@ public class DistinguishedName implements Name {
      *            the LDAP path to parse.
      */
     protected void parse(String path) {
-        names = new LinkedList();
-        String tempPath = unmangleCompositeName(path);
-
-        if (!StringUtils.isBlank(tempPath)) {
-
-            Matcher matcher = NAME_PATTERN.matcher(tempPath);
-
-            while (matcher.find()) {
-                String rdnString = matcher.group(1);
-                LdapRdn name = new LdapRdn(rdnString);
-                names.add(0, name);
-            }
+        DnParser parser = DefaultDnParserFactory
+                .createDnParser(unmangleCompositeName(path));
+        DistinguishedName dn;
+        try {
+            dn = parser.dn();
+        } catch (ParseException e) {
+            throw new BadLdapGrammarException("Failed to parse DN", e);
+        } catch (TokenMgrError e) {
+            throw new BadLdapGrammarException("Failed to parse DN", e);
         }
+        this.names = dn.names;
     }
 
     /**
@@ -141,7 +142,8 @@ public class DistinguishedName implements Name {
      * ('/') special, but LDAP doesn't. {@link CompositeName#toString()} tends
      * to mangle a Name with a slash by surrounding it with quotes ('"').
      * 
-     * @param path Path to check and possibly strip.
+     * @param path
+     *            Path to check and possibly strip.
      * @return A String with the possibly stripped path.
      */
     private String unmangleCompositeName(String path) {
@@ -586,5 +588,13 @@ public class DistinguishedName implements Name {
 
     public void add(String key, String value) {
         names.add(new LdapRdn(key, value));
+    }
+
+    public void add(LdapRdn rdn) {
+        names.add(rdn);
+    }
+
+    public void add(int idx, LdapRdn rdn) {
+        names.add(idx, rdn);
     }
 }

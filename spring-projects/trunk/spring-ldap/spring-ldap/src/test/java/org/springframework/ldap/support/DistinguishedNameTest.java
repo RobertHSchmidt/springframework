@@ -42,26 +42,28 @@ public class DistinguishedNameTest extends TestCase {
 
         String testPath = "cn=foo\\,bar,OU=FOO\\,bar , OU=foo\\;bar;OU=foo\\;bar"
                 + " ; ou=foo\\,,ou=foo\\,;ou=foo\\;;ou=foo\\,;ou=bar\\,";
+        System.out.println(testPath);
+        
         DistinguishedName path = new DistinguishedName(testPath);
 
-        assertEquals("cn", path.getLdapRdn(8).getKey());
-        assertEquals("foo,bar", path.getLdapRdn(8).getValue());
-        assertEquals("ou", path.getLdapRdn(7).getKey());
-        assertEquals("FOO,bar", path.getLdapRdn(7).getValue());
-        assertEquals("ou", path.getLdapRdn(6).getKey());
-        assertEquals("foo;bar", path.getLdapRdn(6).getValue());
-        assertEquals("ou", path.getLdapRdn(5).getKey());
-        assertEquals("foo;bar", path.getLdapRdn(5).getValue());
-        assertEquals("ou", path.getLdapRdn(4).getKey());
-        assertEquals("foo,", path.getLdapRdn(4).getValue());
-        assertEquals("ou", path.getLdapRdn(3).getKey());
-        assertEquals("foo,", path.getLdapRdn(3).getValue());
-        assertEquals("ou", path.getLdapRdn(2).getKey());
-        assertEquals("foo;", path.getLdapRdn(2).getValue());
-        assertEquals("ou", path.getLdapRdn(1).getKey());
-        assertEquals("foo,", path.getLdapRdn(1).getValue());
-        assertEquals("ou", path.getLdapRdn(0).getKey());
-        assertEquals("bar,", path.getLdapRdn(0).getValue());
+        assertEquals("cn", path.getLdapRdn(8).getComponent().getKey());
+        assertEquals("foo,bar", path.getLdapRdn(8).getComponent().getValue());
+        assertEquals("ou", path.getLdapRdn(7).getComponent().getKey());
+        assertEquals("FOO,bar", path.getLdapRdn(7).getComponent().getValue());
+        assertEquals("ou", path.getLdapRdn(6).getComponent().getKey());
+        assertEquals("foo;bar", path.getLdapRdn(6).getComponent().getValue());
+        assertEquals("ou", path.getLdapRdn(5).getComponent().getKey());
+        assertEquals("foo;bar", path.getLdapRdn(5).getComponent().getValue());
+        assertEquals("ou", path.getLdapRdn(4).getComponent().getKey());
+        assertEquals("foo,", path.getLdapRdn(4).getComponent().getValue());
+        assertEquals("ou", path.getLdapRdn(3).getComponent().getKey());
+        assertEquals("foo,", path.getLdapRdn(3).getComponent().getValue());
+        assertEquals("ou", path.getLdapRdn(2).getComponent().getKey());
+        assertEquals("foo;", path.getLdapRdn(2).getComponent().getValue());
+        assertEquals("ou", path.getLdapRdn(1).getComponent().getKey());
+        assertEquals("foo,", path.getLdapRdn(1).getComponent().getValue());
+        assertEquals("ou", path.getLdapRdn(0).getComponent().getKey());
+        assertEquals("bar,", path.getLdapRdn(0).getComponent().getValue());
     }
 
     public void testRemove() throws InvalidNameException {

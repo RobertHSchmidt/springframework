@@ -76,4 +76,11 @@ The HTML report is ${target.testresults.html.dir}/index.html
 		<fail if="tests.failed" message="Unit tests failed" />
 	</target>
 
+	<target name="gen.main">
+		<mkdir dir="${target.gen.java.dir}/org/springframework/ldap/support/parser" />
+		
+		<javacc javacchome="${javacc.home.dir}" target="${src.javacc.dir}/DnParserImpl.jj" outputdirectory="${target.gen.java.dir}/org/springframework/ldap/support/parser" />
+		
+	</target>
+
 </project>
