@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="sandbox" default="dist">
+<project name="spring-ldap-sandbox" default="dist">
 
 	<property file="build.properties" />
 	<property file="project.properties" />
