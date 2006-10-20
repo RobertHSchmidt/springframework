@@ -46,6 +46,7 @@
 	<dependency org="gsbase" name="gsbase" rev="2.0.1" conf="test->default"/>
 	<dependency org="junit" name="junit" rev="3.8.1" conf="test->default"/>
 	<dependency org="junit-addons" name="junit-addons" rev="1.4" conf="test->default"/>
+	<dependency org="junitperf" name="junitperf" rev="1.8" conf="test->default"/>
 	<dependency org="easymock" name="easymock" rev="1.2_Java1.3" conf="test->default"/>
 	<dependency org="ehcache" name="ehcache" rev="1.1" conf="test->default" />
 	<dependency org="net.sf.ehcache" name="ehcache-constructs" rev="0.6" conf="test->default" />
