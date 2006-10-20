@@ -38,8 +38,7 @@ import org.springframework.webflow.execution.Action;
  * Searches flow-local registries first before querying the global, externally
  * managed flow service locator.
  * <p>
- * Internal helper class of the
- * {@link org.springframework.webflow.engine.builder.xml.XmlFlowBuilder}.
+ * Internal helper class of the {@link org.springframework.webflow.engine.builder.xml.XmlFlowBuilder}.
  * Package private to highlight it's non-public nature.
  * 
  * @see org.springframework.webflow.engine.builder.xml.XmlFlowBuilder
@@ -67,13 +66,45 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 	}
 
 	/**
-	 * Push a new registry onto the stack
+	 * Push a new registry onto the stack.
 	 * @param registry the local registry
 	 */
 	public void push(LocalFlowServiceRegistry registry) {
 		registry.init(this, parent);
 		localRegistries.push(registry);
 	}
+
+	/**
+	 * Pop a registry off the stack.
+	 */
+	public LocalFlowServiceRegistry pop() {
+		return (LocalFlowServiceRegistry)localRegistries.pop();
+	}
+	
+	/**
+	 * Pops all registries off the stack until the stack is empty.
+	 */
+	public void diposeOfAnyRegistries() {
+		while (!localRegistries.isEmpty()) {
+			pop();
+		}
+	}
+
+	/**
+	 * Returns the top registry on the stack
+	 */
+	public LocalFlowServiceRegistry top() {
+		return (LocalFlowServiceRegistry)localRegistries.peek();
+	}
+
+	/**
+	 * Returns true if this locator has no local registries.
+	 */
+	public boolean isEmpty() {
+		return localRegistries.isEmpty();
+	}
+
+	// implementing FlowServiceLocator
 
 	public Flow getSubflow(String id) throws FlowArtifactLookupException {
 		Flow currentFlow = getCurrentFlow();
@@ -85,7 +116,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		if (currentFlow.containsInlineFlow(id)) {
 			return currentFlow.getInlineFlow(id);
 		}
-		// check externally managed toplevel flows
+		// check externally managed top-level flows
 		return parent.getSubflow(id);
 	}
 
@@ -104,15 +135,6 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		}
 		else {
 			return parent.getAttributeMapper(id);
-		}
-	}
-
-	public FlowExecutionExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
-		if (containsBean(id)) {
-			return (FlowExecutionExceptionHandler)getBean(id, FlowExecutionExceptionHandler.class);
-		}
-		else {
-			return parent.getExceptionHandler(id);
 		}
 	}
 
@@ -143,6 +165,15 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		}
 	}
 
+	public FlowExecutionExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
+		if (containsBean(id)) {
+			return (FlowExecutionExceptionHandler)getBean(id, FlowExecutionExceptionHandler.class);
+		}
+		else {
+			return parent.getExceptionHandler(id);
+		}
+	}
+
 	public FlowArtifactFactory getFlowArtifactFactory() {
 		return parent.getFlowArtifactFactory();
 	}
@@ -151,59 +182,35 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		return parent.getBeanInvokingActionFactory();
 	}
 
-	public ConversionService getConversionService() {
-		return parent.getConversionService();
-	}
-
-	public ExpressionParser getExpressionParser() {
-		return parent.getExpressionParser();
+	public BeanFactory getBeanFactory() {
+		return top().getContext();
 	}
 
 	public ResourceLoader getResourceLoader() {
 		return parent.getResourceLoader();
 	}
 
-	public BeanFactory getBeanFactory() {
-		return top().getContext();
+	public ExpressionParser getExpressionParser() {
+		return parent.getExpressionParser();
 	}
 
-	/**
-	 * Pop a registry off the stack
-	 */
-	public LocalFlowServiceRegistry pop() {
-		return (LocalFlowServiceRegistry)localRegistries.pop();
+	public ConversionService getConversionService() {
+		return parent.getConversionService();
 	}
 
-	/**
-	 * Pops all registries off the stack until the stack is empty.
-	 */
-	public void diposeOfAnyRegistries() {
-		while (!localRegistries.isEmpty()) {
-			pop();
-		}
-	}
-
-	/**
-	 * Returns the top registry on the stack
-	 */
-	public LocalFlowServiceRegistry top() {
-		return (LocalFlowServiceRegistry)localRegistries.peek();
-	}
-
-	/**
-	 * Returns true if this locator has no local registries.
-	 */
-	public boolean isEmpty() {
-		return localRegistries.isEmpty();
-	}
+	// internal helpers
 
 	/**
 	 * Returns the flow for the registry at the top of the stack.
 	 */
-	public Flow getCurrentFlow() {
+	protected Flow getCurrentFlow() {
 		return top().getFlow();
 	}
 
+	/**
+	 * Does this flow local service locator contain a bean defintion
+	 * for given id?
+	 */
 	protected boolean containsBean(String id) {
 		if (localRegistries.isEmpty()) {
 			return false;
@@ -213,7 +220,10 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		}
 	}
 
-	protected Object getBean(String id, Class artifactType) {
+	/**
+	 * Get the identified bean and make sure it is of the required type.
+	 */
+	protected Object getBean(String id, Class artifactType) throws FlowArtifactLookupException {
 		try {
 			return getBeanFactory().getBean(id, artifactType);
 		}

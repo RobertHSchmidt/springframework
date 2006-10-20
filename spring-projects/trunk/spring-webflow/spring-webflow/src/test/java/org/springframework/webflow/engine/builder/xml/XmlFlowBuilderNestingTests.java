@@ -58,8 +58,7 @@ public class XmlFlowBuilderNestingTests extends TestCase {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow2.xml", getClass()));
 		builder
 				.setFlowServiceLocator(new DefaultFlowServiceLocator(new FlowDefinitionRegistryImpl(), parentBeanFactory));
-		new FlowAssembler("testFlow2", builder).assembleFlow();
-		this.flow = builder.getFlow();
+		this.flow = new FlowAssembler("testFlow2", builder).assembleFlow();
 		this.testService = (TestService)parentContext.getBean("testService");
 	}
 

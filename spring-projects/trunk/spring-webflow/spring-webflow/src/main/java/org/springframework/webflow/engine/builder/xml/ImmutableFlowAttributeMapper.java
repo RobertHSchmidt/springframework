@@ -36,7 +36,7 @@ final class ImmutableFlowAttributeMapper extends AbstractFlowAttributeMapper imp
 	private final AttributeMapper outputMapper;
 
 	/**
-	 * Create a new flow attribute mapper using given mapping strategies
+	 * Create a new flow attribute mapper using given mapping strategies.
 	 * @param inputMapper the input mapping strategy
 	 * @param outputMapper the output mapping strategy
 	 */
