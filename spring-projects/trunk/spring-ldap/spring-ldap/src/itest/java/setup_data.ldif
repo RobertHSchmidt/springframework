@@ -61,11 +61,11 @@ sn: Person
 description: Sweden, Company2, Some Person
 telephoneNumber: Some Person Phone
 
-dn: cn=Some Person,ou=company1,c=Norway,dc=jayway,dc=se
+dn: cn=Multivalued Rdn+sn=Rdn,ou=company1,c=Norway,dc=jayway,dc=se
 objectclass: top
 objectclass: person
-cn: Some Person
-sn: Person
-description: Norway, Company1, Some Person
-telephoneNumber: Some Person Phone
+cn: Multivalued Rdn
+sn: Rdn
+description: Norway, Company1, Multivalued Rdn+Rdn
+telephoneNumber: Multivalued Rdn Phone
 
