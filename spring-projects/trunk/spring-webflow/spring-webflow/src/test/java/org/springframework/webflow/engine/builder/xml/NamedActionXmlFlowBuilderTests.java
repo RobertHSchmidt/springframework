@@ -36,17 +36,23 @@ public class NamedActionXmlFlowBuilderTests extends AbstractXmlFlowExecutionTest
 				new ClassPathResource("namedActionFlow.xml", NamedActionXmlFlowBuilderTests.class));
 	}
 	
+	private int executionOrderCounter = 0;
+	
 	private Action aAction;
 	private int aActionExecutionCount = 0;
+	private int aActionExecutionOrder;
 	private Object bBean;
 	private int bBeanExecutionCount = 0;
+	private int bBeanExecutionOrder;
 	private Action cAction;
 	private int cActionExecutionCount = 0;
+	private int cActionExecutionOrder;
 	
 	protected void setUp() throws Exception {
 		aAction = new AbstractAction() {
 			protected Event doExecute(RequestContext context) throws Exception {
 				aActionExecutionCount++;
+				aActionExecutionOrder = executionOrderCounter++;
 				return success();
 			}
 		};
@@ -54,6 +60,7 @@ public class NamedActionXmlFlowBuilderTests extends AbstractXmlFlowExecutionTest
 		cAction = new AbstractAction() {
 			protected Event doExecute(RequestContext context) throws Exception {
 				cActionExecutionCount++;
+				cActionExecutionOrder = executionOrderCounter++;
 				return success();
 			}
 		};
@@ -65,12 +72,15 @@ public class NamedActionXmlFlowBuilderTests extends AbstractXmlFlowExecutionTest
 		serviceRegistry.registerBean("cAction", cAction);
 	}
 	
-	public void testActionExecution() {
+	public void testActionExecutionOrder() {
 		startFlow();
 		assertFlowExecutionEnded();
 		assertEquals(1, aActionExecutionCount);
+		assertEquals(0, aActionExecutionOrder);
 		assertEquals(1, bBeanExecutionCount);
+		assertEquals(1, bBeanExecutionOrder);
 		assertEquals(1, cActionExecutionCount);
+		assertEquals(2, cActionExecutionOrder);
 	}
 
 	public static class TestBean {
@@ -81,6 +91,7 @@ public class NamedActionXmlFlowBuilderTests extends AbstractXmlFlowExecutionTest
 		}
 		public void b() {
 			testCase.bBeanExecutionCount++;
+			testCase.bBeanExecutionOrder = testCase.executionOrderCounter++;
 		}
 	}
 }
