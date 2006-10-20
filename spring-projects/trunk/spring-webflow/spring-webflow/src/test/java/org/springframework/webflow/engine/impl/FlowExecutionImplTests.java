@@ -191,8 +191,7 @@ public class FlowExecutionImplTests extends TestCase {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow1.xml", XmlFlowBuilderTests.class),
 				new TestFlowServiceLocator());
 		FlowAssembler assembler = new FlowAssembler("testFlow1", builder);
-		assembler.assembleFlow();
-		FlowExecution execution = new FlowExecutionImpl(builder.getFlow());
+		FlowExecution execution = new FlowExecutionImpl(assembler.assembleFlow());
 		MockExternalContext context = new MockExternalContext();
 		execution.start(null, context);
 		assertEquals("viewState1", execution.getActiveSession().getState().getId());
@@ -207,8 +206,7 @@ public class FlowExecutionImplTests extends TestCase {
 		LocalAttributeMap attributes = new LocalAttributeMap();
 		attributes.put("scenario2", Boolean.TRUE);
 		FlowAssembler assembler = new FlowAssembler("testFlow1", attributes, builder);
-		assembler.assembleFlow();
-		FlowExecution execution = new FlowExecutionImpl(builder.getFlow());
+		FlowExecution execution = new FlowExecutionImpl(assembler.assembleFlow());
 		MockExternalContext context = new MockExternalContext();
 		execution.start(null, context);
 		assertEquals("viewState2", execution.getActiveSession().getState().getId());

@@ -33,14 +33,14 @@ import org.springframework.webflow.engine.builder.FlowServiceLocator;
  * Package private to highlight it's non-public nature.
  * 
  * @see org.springframework.webflow.engine.builder.xml.XmlFlowBuilder
+ * @see org.springframework.webflow.engine.builder.xml.LocalFlowServiceLocator
  * 
  * @author Keith Donald
  */
 class LocalFlowServiceRegistry {
 
-	
 	/**
-	 * The flow for which this registry is for (and scoped by).
+	 * The flow this registry is for (and scoped by).
 	 */
 	private Flow flow;
 
@@ -55,21 +55,33 @@ class LocalFlowServiceRegistry {
 	private GenericApplicationContext context;
 
 	/**
-	 * Create new registry
+	 * Create a new registry, loading artifact definitions from
+	 * given resources.
+	 * @param flow the flow this registry is for (and scoped by)
+	 * @param resources the registry resource definitions
 	 */
 	public LocalFlowServiceRegistry(Flow flow, Resource[] resources) {
 		this.flow = flow;
 		this.resources = resources;
 	}
 
+	/**
+	 * Returns the flow this registry is for (and scoped by).
+	 */
 	public Flow getFlow() {
 		return flow;
 	}
 
+	/**
+	 * Returns the resources defining registry artifacts.
+	 */
 	public Resource[] getResources() {
 		return resources;
 	}
 
+	/**
+	 * Retuns the application context holding registry artifacts.
+	 */
 	public ApplicationContext getContext() {
 		return context;
 	}
@@ -86,7 +98,7 @@ class LocalFlowServiceRegistry {
 				parent = rootFactory.getBeanFactory();
 			}
 			catch (UnsupportedOperationException e) {
-
+				// can't link to a parent
 			}
 		}
 		else {
@@ -97,6 +109,13 @@ class LocalFlowServiceRegistry {
 		context.refresh();
 	}
 
+	/**
+	 * Create the flow local application context.
+	 * @param parent the parent application context
+	 * @param rootFactory the root service locator, used to obtain a resource
+	 * loader
+	 * @return the flow local application context
+	 */
 	private GenericApplicationContext createLocalFlowContext(BeanFactory parent, FlowServiceLocator rootFactory) {
 		if (parent instanceof WebApplicationContext) {
 			GenericWebApplicationContext context = new GenericWebApplicationContext();

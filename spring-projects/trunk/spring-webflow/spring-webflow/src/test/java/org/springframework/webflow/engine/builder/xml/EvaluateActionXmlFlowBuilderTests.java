@@ -33,8 +33,7 @@ public class EvaluateActionXmlFlowBuilderTests extends TestCase {
 	protected void setUp() throws Exception {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("evaluateActionFlow.xml",
 				XmlFlowBuilderTests.class), new TestFlowServiceLocator());
-		new FlowAssembler("evaluateActionFlow", builder).assembleFlow();
-		flow = builder.getFlow();
+		flow = new FlowAssembler("evaluateActionFlow", builder).assembleFlow();
 	}
 
 	public void testActionStateConfiguration() {

@@ -37,8 +37,7 @@ public class PojoActionXmlFlowBuilderTests extends TestCase {
 	protected void setUp() throws Exception {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("pojoActionFlow.xml",
 				XmlFlowBuilderTests.class), new TestFlowServiceLocator());
-		new FlowAssembler("pojoActionFlow", builder).assembleFlow();
-		flow = builder.getFlow();
+		flow = new FlowAssembler("pojoActionFlow", builder).assembleFlow();
 	}
 
 	public void testActionStateConfiguration() {

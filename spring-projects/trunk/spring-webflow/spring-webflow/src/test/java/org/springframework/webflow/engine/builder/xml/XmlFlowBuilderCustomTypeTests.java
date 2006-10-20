@@ -51,8 +51,7 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 		XmlFlowBuilder builder = new XmlFlowBuilder(new ClassPathResource("testFlow3.xml",
 				XmlFlowBuilderCustomTypeTests.class), new CustomFlowArtifactFactory());
 		FlowAssembler assembler = new FlowAssembler("testFlow3", builder);
-		assembler.assembleFlow();
-		flow = builder.getFlow();
+		flow = assembler.assembleFlow();
 	}
 
 	public void testBuildResult() {
