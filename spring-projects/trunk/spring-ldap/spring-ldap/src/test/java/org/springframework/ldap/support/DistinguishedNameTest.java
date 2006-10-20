@@ -27,6 +27,8 @@ import junit.framework.TestCase;
 import com.gargoylesoftware.base.testing.EqualsTester;
 
 /**
+ * Unit tests for the {@link DistinguishedName} class.
+ * 
  * @author Adam Skogman
  * @author Mattias Arthursson
  */
@@ -43,7 +45,7 @@ public class DistinguishedNameTest extends TestCase {
         String testPath = "cn=foo\\,bar,OU=FOO\\,bar , OU=foo\\;bar;OU=foo\\;bar"
                 + " ; ou=foo\\,,ou=foo\\,;ou=foo\\;;ou=foo\\,;ou=bar\\,";
         System.out.println(testPath);
-        
+
         DistinguishedName path = new DistinguishedName(testPath);
 
         assertEquals("cn", path.getLdapRdn(8).getComponent().getKey());
@@ -74,11 +76,12 @@ public class DistinguishedNameTest extends TestCase {
         path.remove(1);
         path.remove(3);
 
-        assertEquals("cn=john.doe, ou=Some Company, ou=G, ou=M", path.toString());
+        assertEquals("cn=john.doe, ou=Some Company, ou=G, ou=M", path
+                .toString());
     }
 
     /**
-     * Test parsing and toSting
+     * Tests parsing and toString.
      */
     public void testContains() {
 
@@ -103,7 +106,6 @@ public class DistinguishedNameTest extends TestCase {
 
         assertFalse("Does not contain MIG", pathE1.contains(migpath));
         assertFalse("Does not contain MIG", pathE2.contains(migpath));
-
     }
 
     public void testAppend() {
@@ -150,25 +152,6 @@ public class DistinguishedNameTest extends TestCase {
                 subclassObject);
     }
 
-    public void testEquals_DistinguishedName() throws Exception {
-        // original object
-        final Object originalObject = new LdapRdn("cn", "john.doe");
-
-        // another object that has the same values as the original
-        final Object identicalObject = new LdapRdn("cn", "john.doe");
-
-        // another object with different values
-        final Object differentObject = new LdapRdn("cn", "john.svensson");
-
-        // a subclass with the same values as the original
-        final Object subclassObject = new LdapRdn("cn", "john.doe") {
-            private static final long serialVersionUID = 1L;
-        };
-
-        new EqualsTester(originalObject, identicalObject, differentObject,
-                subclassObject);
-    }
-
     public void testClone() {
 
         DistinguishedName path1 = new DistinguishedName(
@@ -204,7 +187,8 @@ public class DistinguishedNameTest extends TestCase {
 
         DistinguishedName path2 = new DistinguishedName(
                 "uid=mtah.test, ou=people, ou=EU, o=example.com");
-        DistinguishedName ending2 = new DistinguishedName("ou=EU, o=example.com");
+        DistinguishedName ending2 = new DistinguishedName(
+                "ou=EU, o=example.com");
 
         assertFalse(path1.endsWith(ending1));
         assertFalse(path2.endsWith(ending2));
@@ -382,5 +366,12 @@ public class DistinguishedNameTest extends TestCase {
         String url = path.toUrl();
 
         assertEquals("dc=jayway,dc=se", url);
+    }
+
+    public void testMultiValueRdn() throws Exception {
+        DistinguishedName path = new DistinguishedName(
+                "firstName=Rod+lastName=Johnson,ou=UK,dc=interface21,dc=com");
+        assertEquals(4, path.size());
+        assertEquals("firstname=Rod+lastname=Johnson", path.get(3));
     }
 }

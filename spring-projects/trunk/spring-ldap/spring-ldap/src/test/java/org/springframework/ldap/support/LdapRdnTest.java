@@ -16,13 +16,11 @@
 
 package org.springframework.ldap.support;
 
-import java.util.Iterator;
-import java.util.List;
+import junit.framework.TestCase;
 
 import org.springframework.ldap.BadLdapGrammarException;
-import org.springframework.ldap.support.LdapRdn;
 
-import junit.framework.TestCase;
+import com.gargoylesoftware.base.testing.EqualsTester;
 
 /**
  * Unit test for the LdapRdn class.
@@ -143,5 +141,24 @@ public class LdapRdnTest extends TestCase {
         assertEquals("cn=John Doe", rdn.getComponent(0).encodeLdap());
         assertEquals("sn=Doe", rdn.getComponent(1).encodeLdap());
         assertEquals("cn=John Doe+sn=Doe", rdn.getLdapEncoded());
+    }
+
+    public void testEquals() throws Exception {
+        // original object
+        final Object originalObject = new LdapRdn("cn", "john.doe");
+
+        // another object that has the same values as the original
+        final Object identicalObject = new LdapRdn("cn", "john.doe");
+
+        // another object with different values
+        final Object differentObject = new LdapRdn("cn", "john.svensson");
+
+        // a subclass with the same values as the original
+        final Object subclassObject = new LdapRdn("cn", "john.doe") {
+            private static final long serialVersionUID = 1L;
+        };
+
+        new EqualsTester(originalObject, identicalObject, differentObject,
+                subclassObject);
     }
 }
