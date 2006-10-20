@@ -2,6 +2,13 @@ Spring LDAP CHANGELOG
 =====================
 http://www.springframework.org/ldap
 
+http://www.ietf.org/rfc/rfc2251.txt
+http://www.ietf.org/rfc/rfc2252.txt
+http://www.ietf.org/rfc/rfc2253.txt
+http://www.ietf.org/rfc/rfc2254.txt
+http://www.ietf.org/rfc/rfc2255.txt
+http://www.ietf.org/rfc/rfc2256.txt
+
 Changes in version 1.1.1 (xx.y.2006)
 -------------------------------------------
 * Added generic DirContextProcessor that is run before and after a search.
@@ -15,10 +22,15 @@ Changes in version 1.1.1 (xx.y.2006)
 * Fixed problem with DirContextAdapter, where the wrong change was applied
   when a change was followed by a reset to the original values.
 
-* DirContextAdapter.getNameInNamespace now returns the full DN, as spec says.
+* DirContextAdapter.getNameInNamespace now returns the full DN, as per the
+  documentation for javax.naming.Context.
 
-* Spec says a distinguished name should be able to have multi-valued RDNs
-  separated by a '+' sign, like "cn=Rod+sn=Johnson", for example. Fixed.
+* The parsing of DistinguishedName has been changed from using regexp to
+  a JavaCC parser, which means improved performance (5-6 times faster) and
+  better error messages.
+
+* DistinguishedName now supports multi-valued RDNs separated by a '+' sign,
+  like "cn=Rod+sn=Johnson", for example. All according to spec 2253.
 
 * LdapRdn is now Serializable.
 
