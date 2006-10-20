@@ -55,8 +55,8 @@ public class DnParserImpl implements DnParser{
 
 PARSER_END(DnParserImpl)
 
-TOKEN: {<#ALPHA: ["a"-"z", "A"-"Z"] > }
-TOKEN: {<#DIGIT: ["0"-"9"]> }
+TOKEN: { <#ALPHA: ["a"-"z", "A"-"Z"] > }
+TOKEN: { <#DIGIT: ["0"-"9"]> }
 TOKEN: { <#STRINGCHAR: ~[",","=","\r","+","<",">","#",";","\\","\""]> }
 TOKEN: { <#STRINGENDCHAR: ~[",","=","\r","+","<",">","#",";","\\","\""," "]> }
 TOKEN: { <#SPECIAL: [",","=","\r","+","<",">","#",";"]> }
@@ -81,14 +81,9 @@ TOKEN: { <#STRINGEND: (<STRINGENDCHAR> | <PAIR> | <ESCAPEDSPACE>)> }
 	<SPACE: " ">
 }
 
-<HEX_S> TOKEN:
+<ATTRVALUE_S> TOKEN:
 {
-	<HEX: <HEXCHAR> <HEXCHAR>>
-}
-
-<ATTVALUE_S> TOKEN:
-{
-	<ATTVALUE: 
+	<ATTRVALUE: 
 		(<QUOTECHAR> (<STRINGCHAR> | <SPECIAL> | <PAIR>)+ <QUOTECHAR>
 		|
 		<HASHCHAR> (<HEXPAIR>)+
@@ -102,6 +97,16 @@ TOKEN: { <#STRINGEND: (<STRINGENDCHAR> | <PAIR> | <ESCAPEDSPACE>)> }
 	<SPACED_EQUALS: (<SPACE>)* "=" (<SPACE>)*>
 }
 
+/**
+ * input -> dn
+ * dn -> rdn ( ( "," | ";" ) rdn )*
+ * rdn -> attributeTypeAndValue ( "+" attributeTypeAndValue )*
+ * attributeTypeAndValue ->
+ *    ( <SPACE> )* AttributeType SpacedEquals AttributeValue ( <SPACE> )*
+ * SpacedEquals -> <SPACED_EQUALS>
+ * AttributeType -> <LDAP_OID> | <ATTRIBUTE_TYPE_STRING>
+ * AttributeValue -> <ATTRVALUE>
+ */
 void input() :
 {
 }
@@ -155,6 +160,6 @@ String AttributeType():
 String AttributeValue(): 
 {Token t;}
 {
-	{token_source.SwitchTo(ATTVALUE_S);} t = <ATTVALUE> {token_source.SwitchTo(DEFAULT);} 
+	{token_source.SwitchTo(ATTRVALUE_S);} t = <ATTRVALUE> {token_source.SwitchTo(DEFAULT);} 
 	{return t.image.toString();}
 }
