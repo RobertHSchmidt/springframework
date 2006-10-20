@@ -43,7 +43,7 @@ public class LdapTemplatePagedSearchITest extends
 
     private static final String BASE_STRING = "dc=jayway,dc=se";
 
-    private static final String FILTER_STRING = "(&(objectclass=person)(cn=Some Person*))";
+    private static final String FILTER_STRING = "(&(objectclass=person))";
 
     protected String[] getConfigLocations() {
         return new String[] { "/conf/ldapTemplateTestContext-openldap.xml" };
@@ -98,7 +98,7 @@ public class LdapTemplatePagedSearchITest extends
         person = (Person) list.get(3);
         assertEquals("Sweden, Company2, Some Person", person.getDescription());
         person = (Person) list.get(4);
-        assertEquals("Norway, Company1, Some Person", person.getDescription());
+        assertEquals("Norway, Company1, Multivalued Rdn+Rdn", person.getDescription());
     }
 
     public void setTested(LdapTemplate tested) {
