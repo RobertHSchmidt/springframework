@@ -33,6 +33,7 @@ import org.springframework.ldap.support.parser.DefaultDnParserFactory;
 import org.springframework.ldap.support.parser.DnParser;
 import org.springframework.ldap.support.parser.ParseException;
 import org.springframework.ldap.support.parser.TokenMgrError;
+import org.springframework.ldap.support.util.ListComparator;
 
 /**
  * Default implementation of a Name corresponding to an LDAP path. A
@@ -57,8 +58,6 @@ import org.springframework.ldap.support.parser.TokenMgrError;
  * path.append(new DistinguishedName(helpdesk.getSomeSuffix()));
  * String dn = path.toString();
  * </pre>
- * 
- * TODO: Implement compareTo().
  * 
  * @author Adam Skogman
  * @author Mattias Arthursson
@@ -366,9 +365,17 @@ public class DistinguishedName implements Name {
         return this.getClass().hashCode() ^ getNames().hashCode();
     }
 
-    public int compareTo(Object o) {
-        // TODO: Implement this.
-        return 0;
+    /**
+     * Compare this instance to another object. Note that the comparison is done
+     * in order of significance, so the most significant Rdn is compared first,
+     * then the second and so on.
+     * 
+     * @see javax.naming.Name#compareTo(java.lang.Object)
+     */
+    public int compareTo(Object obj) {
+        DistinguishedName that = (DistinguishedName) obj;
+        ListComparator comparator = new ListComparator();
+        return comparator.compare(this.names, that.names);
     }
 
     public int size() {
@@ -586,14 +593,36 @@ public class DistinguishedName implements Name {
         return (LdapRdn) getNames().removeLast();
     }
 
+    /**
+     * Add a new LdapRdn using the supplied key and value.
+     * 
+     * @param key
+     *            the key of the LdapRdn.
+     * @param value
+     *            the value of the LdapRdn.
+     */
     public void add(String key, String value) {
         names.add(new LdapRdn(key, value));
     }
 
+    /**
+     * Add the supplied LdapRdn last in the list of Rdns.
+     * 
+     * @param rdn
+     *            the LdapRdn to add.
+     */
     public void add(LdapRdn rdn) {
         names.add(rdn);
     }
 
+    /**
+     * Add the supplied LdapRdn att the specified index.
+     * 
+     * @param idx
+     *            the index at which to add the LdapRdn.
+     * @param rdn
+     *            the LdapRdn to add.
+     */
     public void add(int idx, LdapRdn rdn) {
         names.add(idx, rdn);
     }

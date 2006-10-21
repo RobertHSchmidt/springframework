@@ -374,4 +374,65 @@ public class DistinguishedNameTest extends TestCase {
         assertEquals(4, path.size());
         assertEquals("firstname=Rod+lastname=Johnson", path.get(3));
     }
+
+    public void testCompareTo_Equals() throws Exception {
+        DistinguishedName name1 = new DistinguishedName(
+                "cn=john doe, ou=Some company, c=SE");
+        DistinguishedName name2 = new DistinguishedName(
+                "cn=john doe, ou=Some company, c=SE");
+
+        int result = name1.compareTo(name2);
+        assertEquals(0, result);
+    }
+
+    public void testCompareTo_Less() throws Exception {
+        DistinguishedName name1 = new DistinguishedName(
+                "cn=john doe, ou=Some company, c=DK");
+        DistinguishedName name2 = new DistinguishedName(
+                "cn=john doe, ou=Some company, c=SE");
+
+        int result = name1.compareTo(name2);
+        assertTrue(result < 0);
+    }
+
+    public void testCompareTo_Less_MoreSignificant() throws Exception {
+        DistinguishedName name1 = new DistinguishedName(
+                "an=john doe, ou=Some company, c=DK");
+        DistinguishedName name2 = new DistinguishedName(
+                "cn=john doe, ou=Some company, c=SE");
+
+        int result = name1.compareTo(name2);
+        assertTrue(result < 0);
+    }
+
+    public void testCompareTo_Greater() throws Exception {
+        DistinguishedName name1 = new DistinguishedName(
+                "cn=john doe, ou=Some company, c=SE");
+        DistinguishedName name2 = new DistinguishedName(
+                "cn=john doe, ou=Some company, c=DK");
+
+        int result = name1.compareTo(name2);
+        assertTrue(result > 0);
+    }
+
+    public void testCompareTo_Longer() throws Exception {
+        DistinguishedName name1 = new DistinguishedName(
+                "leaf=someleaf, cn=john doe, ou=Some company, c=SE");
+        DistinguishedName name2 = new DistinguishedName(
+                "cn=john doe, ou=Some company, c=SE");
+
+        int result = name1.compareTo(name2);
+        assertTrue(result > 0);
+    }
+
+    public void testCompareTo_Shorter() throws Exception {
+        DistinguishedName name1 = new DistinguishedName(
+                "cn=john doe, ou=Some company, c=SE");
+        DistinguishedName name2 = new DistinguishedName(
+                "leaf=someleaf, cn=john doe, ou=Some company, c=SE");
+
+        int result = name1.compareTo(name2);
+        assertTrue(result < 0);
+    }
+
 }
