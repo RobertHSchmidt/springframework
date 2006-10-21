@@ -222,18 +222,14 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
 
         NamingEnumeration results = null;
         try {
-            if (processor != null) {
-                processor.preProcess(ctx);
-            }
+            processor.preProcess(ctx);
             results = se.executeSearch(ctx);
 
             while (results.hasMore()) {
                 NameClassPair result = (NameClassPair) results.next();
                 handler.handleNameClassPair(result);
             }
-            if (processor != null) {
-                processor.postProcess(ctx);
-            }
+            processor.postProcess(ctx);
         } catch (NameNotFoundException e) {
             // The base context was not found, which basically means
             // that the search did not return any results. Just clean up and
@@ -273,7 +269,16 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
      *             found.
      */
     public void search(SearchExecutor se, NameClassPairCallbackHandler handler) {
-        search(se, handler, null);
+        search(se, handler, new DirContextProcessor() {
+            public void postProcess(DirContext ctx) throws NamingException {
+                // Do nothing
+            }
+
+            public void preProcess(DirContext ctx) throws NamingException {
+                // Do nothing
+            }
+
+        });
     }
 
     /*
