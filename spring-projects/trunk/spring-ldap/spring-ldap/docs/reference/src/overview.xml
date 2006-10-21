@@ -123,7 +123,7 @@ public class PersonDaoImpl implements PersonDao {
 
     <itemizedlist spacing="compact">
       <listitem>
-        <para>spring-ldap (the spring-ldap library)</para>
+        <para>spring-ldap (the Spring LDAP library)</para>
       </listitem>
 
       <listitem>
@@ -137,11 +137,6 @@ public class PersonDaoImpl implements PersonDao {
       </listitem>
 
       <listitem>
-        <para>spring-context (adds the ability for application objects to
-        obtain resources using a consistent API)</para>
-      </listitem>
-
-      <listitem>
         <para>spring-dao (exception hierarchy enabling sophisticated error
         handling independent of the data access approach in use)</para>
       </listitem>
@@ -150,10 +145,38 @@ public class PersonDaoImpl implements PersonDao {
         <para>commons-logging (a simple logging facade, used
         internally)</para>
       </listitem>
+
+      <listitem>
+        <para>commons-lang (misc utilities, used internally)</para>
+      </listitem>
+
+      <listitem>
+        <para>commons-collections (tools for working with collections, used
+        internally)</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>If your application is wired up using the Spring ApplicationContext,
+    you also need:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>spring-context (adds the ability for application objects to
+        obtain resources using a consistent API)</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>If you use the <literal>AcegiAuthenticationSource</literal>, you
+    also need:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>acegi-security</para>
+      </listitem>
     </itemizedlist>
 
     <para>Set up the required beans in your Spring context file and inject the
-    <literal>LdapTemplate</literal> to your data-access object:</para>
+    <literal>LdapTemplate</literal> into your data access object:</para>
 
     <informalexample>
       <programlisting>&lt;beans&gt;
@@ -168,6 +191,10 @@ public class PersonDaoImpl implements PersonDao {
    &lt;bean id="ldapTemplate" class="org.springframework.ldap.LdapTemplate"&gt;
       &lt;constructor-arg ref="contextSource" /&gt;
    &lt;/bean&gt;
+
+   &lt;bean id="myDataAccessObject" class="com.example.MyDataAccessObject"&gt;
+      &lt;property name="ldapTemplate" ref="ldapTemplate" /&gt;
+   &lt;/bean&gt;
    ...
 &lt;/beans&gt;</programlisting>
     </informalexample>
@@ -178,11 +205,13 @@ public class PersonDaoImpl implements PersonDao {
 
     <para>This section provides an overview of the logical package structure
     of the Spring LDAP codebase. The dependencies for each package are clearly
-    noted. A package dependency noted as (optional) means that the dependency
-    is needed to compile the package but is optionally needed at runtime
-    (depending on your use of the package). For example, use of Spring LDAP
-    together with Acegi Security entails use of the
-    <literal>org.acegisecurity</literal> package.</para>
+    noted. A package dependency noted as <emphasis>(optional)</emphasis> means
+    that the dependency is needed to compile the package but is optionally
+    needed at runtime (depending on your use of the package). For example, use
+    of Spring LDAP together with Acegi Security entails use of the
+    <literal>org.acegisecurity</literal> package. Cyclic package dependencies
+    are noted with <emphasis>(cycle)</emphasis>. These are candidates for
+    removal in future releases.</para>
 
     <sect2 id="ldap">
       <title>org.springframework.ldap</title>
@@ -195,8 +224,8 @@ public class PersonDaoImpl implements PersonDao {
 
       <itemizedlist spacing="compact">
         <listitem>
-          <para>Dependencies: spring-core, spring-beans, spring-context,
-          spring-dao, commons-logging</para>
+          <para>Dependencies: ldap.support (cycle), spring-beans, spring-dao,
+          commons-lang, commons-logging</para>
         </listitem>
       </itemizedlist>
     </sect2>
@@ -210,7 +239,9 @@ public class PersonDaoImpl implements PersonDao {
 
       <itemizedlist spacing="compact">
         <listitem>
-          <para>Dependencies: ldap</para>
+          <para>Dependencies: ldap, ldap.support.parser (cycle),
+          ldap.support.util, spring-core, spring-beans, commons-lang,
+          commons-collections, commons-logging</para>
         </listitem>
       </itemizedlist>
     </sect2>
@@ -225,7 +256,8 @@ public class PersonDaoImpl implements PersonDao {
 
       <itemizedlist spacing="compact">
         <listitem>
-          <para>Dependencies: ldap, acegi-security (optional)</para>
+          <para>Dependencies: ldap, acegi-security (optional), spring-beans,
+          commons-lang, commons-logging</para>
         </listitem>
       </itemizedlist>
     </sect2>
@@ -237,11 +269,13 @@ public class PersonDaoImpl implements PersonDao {
       abstract implementation of the DirContextProcessor interface that can be
       used as a basis for processing RequestControls and ResponseControls.
       There is also a concrete implementation that handles paged search
-      results.</para>
+      results. The <ulink url="http://java.sun.com/products/jndi/">LDAP
+      Booster Pack</ulink> is used to get support for controls.</para>
 
       <itemizedlist spacing="compact">
         <listitem>
-          <para>Dependencies: ldap</para>
+          <para>Dependencies: ldap, LDAP booster pack, spring-core,
+          commons-logging</para>
         </listitem>
       </itemizedlist>
     </sect2>
@@ -254,22 +288,52 @@ public class PersonDaoImpl implements PersonDao {
 
       <itemizedlist spacing="compact">
         <listitem>
-          <para>Dependencies: commons-lang</para>
+          <para>Dependencies: ldap.support, commons-lang</para>
         </listitem>
       </itemizedlist>
     </sect2>
 
-    <para>For the exact list of dependencies, see the Spring LDAP Ivy
-    dependency manager descriptor located within the Spring LDAP distribution
-    at <literal>spring-ldap/ivy.xml</literal></para>
+    <sect2 id="ldap.support.parser">
+      <title>org.springframework.ldap.support.parser</title>
+
+      <para>The <emphasis>support.parser</emphasis> package contains classes
+      defining a parser RFC2253-compliant Distinguished Names to be used
+      internally by DistinguishedName and LdapRdn.</para>
+
+      <itemizedlist spacing="compact">
+        <listitem>
+          <para>Dependencies: ldap.support</para>
+        </listitem>
+      </itemizedlist>
+    </sect2>
+
+    <sect2 id="ldap.support.util">
+      <title>org.springframework.ldap.support.util</title>
+
+      <para>The <emphasis>support.util</emphasis> package contains utility
+      classes that are used internally.</para>
+
+      <itemizedlist spacing="compact">
+        <listitem>
+          <para>Dependencies: none</para>
+        </listitem>
+      </itemizedlist>
+    </sect2>
+
+    <para>For the exact list of dependencies, see the Spring LDAP <ulink
+    url="http://jayasoft.org/ivy">Ivy</ulink> dependency manager descriptor
+    located within the Spring LDAP distribution at
+    <literal>spring-ldap/ivy.xml</literal></para>
   </sect1>
 
   <sect1 id="introduction-support">
     <title>Support</title>
 
-    <para>Spring LDAP 1.1.1 is supported on Spring 1.2.8 or later.</para>
+    <para>Spring LDAP 1.1.1 is supported on Spring 2.0 or later.</para>
 
     <para>The community support forum is located at <ulink
-    url="http://forum.springframework.org">http://forum.springframework.org</ulink>.</para>
+    url="http://forum.springframework.org">http://forum.springframework.org</ulink>,
+    and the project web page is <ulink
+    url="http://www.springframework.org/ldap">http://www.springframework.org/ldap</ulink>.</para>
   </sect1>
 </chapter>
