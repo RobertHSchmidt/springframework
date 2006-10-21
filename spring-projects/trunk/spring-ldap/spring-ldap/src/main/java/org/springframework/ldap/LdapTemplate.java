@@ -189,6 +189,48 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
         search(se, handler);
     }
 
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
+     *      java.lang.String, javax.naming.directory.SearchControls,
+     *      org.springframework.ldap.NameClassPairCallbackHandler,
+     *      org.springframework.ldap.DirContextProcessor)
+     */
+    public void search(final Name base, final String filter,
+            final SearchControls controls,
+            NameClassPairCallbackHandler handler, DirContextProcessor processor) {
+
+        // Create a SearchExecutor to perform the search.
+        SearchExecutor se = new SearchExecutor() {
+            public NamingEnumeration executeSearch(DirContext ctx)
+                    throws NamingException {
+                return ctx.search(base, filter, controls);
+            }
+        };
+
+        search(se, handler, processor);
+    }
+
+    /*
+     * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
+     *      java.lang.String, javax.naming.directory.SearchControls,
+     *      org.springframework.ldap.NameClassPairCallbackHandler,
+     *      org.springframework.ldap.DirContextProcessor)
+     */
+    public void search(final String base, final String filter,
+            final SearchControls controls,
+            NameClassPairCallbackHandler handler, DirContextProcessor processor) {
+
+        // Create a SearchExecutor to perform the search.
+        SearchExecutor se = new SearchExecutor() {
+            public NamingEnumeration executeSearch(DirContext ctx)
+                    throws NamingException {
+                return ctx.search(base, filter, controls);
+            }
+        };
+
+        search(se, handler, processor);
+    }
+
     /**
      * Perform a search operation, such as a search(), list() or listBindings().
      * This method handles all the plumbing; getting a readonly context; looping

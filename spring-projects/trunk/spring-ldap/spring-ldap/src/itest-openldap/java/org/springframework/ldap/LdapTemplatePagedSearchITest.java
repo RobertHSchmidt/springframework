@@ -39,11 +39,15 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 public class LdapTemplatePagedSearchITest extends
         AbstractDependencyInjectionSpringContextTests {
 
-    private LdapTemplate tested;
-
     private static final String BASE_STRING = "dc=jayway,dc=se";
 
     private static final String FILTER_STRING = "(&(objectclass=person))";
+    
+    private LdapTemplate tested;
+
+    private CollectingNameClassPairCallbackHandler callbackHandler;
+
+    private SearchControls searchControls;
 
     protected String[] getConfigLocations() {
         return new String[] { "/conf/ldapTemplateTestContext-openldap.xml" };
@@ -51,25 +55,26 @@ public class LdapTemplatePagedSearchITest extends
 
     protected void onSetUp() throws Exception {
         super.onSetUp();
+        PersonAttributesMapper mapper = new PersonAttributesMapper();
+        callbackHandler = tested.new AttributesMapperCallbackHandler(mapper);
+        searchControls = new SearchControls();
+        searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
     }
 
     protected void onTearDown() throws Exception {
         super.onTearDown();
+        callbackHandler = null;
+        tested = null;
+        searchControls = null;
     }
 
     public void testSearch_PagedResult() {
         SearchExecutor searchExecutor = new SearchExecutor() {
             public NamingEnumeration executeSearch(DirContext ctx)
                     throws NamingException {
-                SearchControls searchControls = new SearchControls();
-                searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
                 return ctx.search(BASE_STRING, FILTER_STRING, searchControls);
             }
         };
-        PersonAttributesMapper mapper = new PersonAttributesMapper();
-        CollectingNameClassPairCallbackHandler callbackHandler = tested.new AttributesMapperCallbackHandler(
-                mapper);
-
         Person person;
         List list;
         PagedResultsCookie cookie;
@@ -98,7 +103,43 @@ public class LdapTemplatePagedSearchITest extends
         person = (Person) list.get(3);
         assertEquals("Sweden, Company2, Some Person", person.getDescription());
         person = (Person) list.get(4);
-        assertEquals("Norway, Company1, Multivalued Rdn+Rdn", person.getDescription());
+        assertEquals("Norway, Company1, Multivalued Rdn+Rdn", person
+                .getDescription());
+    }
+
+    public void testSearch_PagedResult_ConvenienceMethod() {
+        Person person;
+        List list;
+        PagedResultsCookie cookie;
+        PagedResultsRequestControl requestControl;
+
+        // Prepare for first search
+        requestControl = new PagedResultsRequestControl(3);
+        tested.search(BASE_STRING, FILTER_STRING, searchControls,
+                callbackHandler, requestControl);
+        cookie = requestControl.getCookie();
+        assertNotNull("Cookie should not be null yet", cookie.getCookie());
+        list = callbackHandler.getList();
+        assertEquals(3, list.size());
+        person = (Person) list.get(0);
+        assertEquals("Sweden, Company1, Some Person", person.getDescription());
+        person = (Person) list.get(1);
+        assertEquals("Sweden, Company1, Some Person2", person.getDescription());
+        person = (Person) list.get(2);
+        assertEquals("Sweden, Company1, Some Person3", person.getDescription());
+
+        // Prepare for second and last search
+        requestControl = new PagedResultsRequestControl(3, cookie);
+        tested.search(BASE_STRING, FILTER_STRING, searchControls,
+                callbackHandler, requestControl);
+        cookie = requestControl.getCookie();
+        assertNull("Cookie should be null now", cookie.getCookie());
+        assertEquals(5, list.size());
+        person = (Person) list.get(3);
+        assertEquals("Sweden, Company2, Some Person", person.getDescription());
+        person = (Person) list.get(4);
+        assertEquals("Norway, Company1, Multivalued Rdn+Rdn", person
+                .getDescription());
     }
 
     public void setTested(LdapTemplate tested) {

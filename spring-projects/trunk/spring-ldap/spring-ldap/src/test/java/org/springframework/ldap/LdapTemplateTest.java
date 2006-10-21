@@ -84,6 +84,7 @@ public class LdapTemplateTest extends TestCase {
     private LdapTemplate tested;
 
     private MockControl dirContextProcessorControl;
+
     private DirContextProcessor dirContextProcessorMock;
 
     protected void setUp() throws Exception {
@@ -133,8 +134,10 @@ public class LdapTemplateTest extends TestCase {
         searchExecutorControl = MockControl.createControl(SearchExecutor.class);
         searchExecutorMock = (SearchExecutor) searchExecutorControl.getMock();
 
-        dirContextProcessorControl = MockControl.createControl(DirContextProcessor.class);
-        dirContextProcessorMock = (DirContextProcessor) dirContextProcessorControl.getMock();
+        dirContextProcessorControl = MockControl
+                .createControl(DirContextProcessor.class);
+        dirContextProcessorMock = (DirContextProcessor) dirContextProcessorControl
+                .getMock();
 
         tested = new LdapTemplate(contextSourceMock);
         tested.setExceptionTranslator(exceptionTranslatorMock);
@@ -387,6 +390,64 @@ public class LdapTemplateTest extends TestCase {
         } catch (EntryNotFoundException expected) {
             assertSame(expectedException, expected);
         }
+
+        verify();
+    }
+
+    public void testSearch_CallbackHandler_DirContextProcessor()
+            throws NamingException {
+        expectGetReadOnlyContext();
+
+        SearchControls controls = new SearchControls();
+        controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        controls.setReturningObjFlag(false);
+
+        SearchResult searchResult = new SearchResult("", new Object(),
+                new BasicAttributes());
+
+        dirContextProcessorMock.preProcess(dirContextMock);
+
+        setupSearchAndNamingEnumeration(controls, searchResult);
+
+        handlerMock.handleNameClassPair(searchResult);
+
+        dirContextProcessorMock.postProcess(dirContextMock);
+
+        dirContextMock.close();
+
+        replay();
+
+        tested.search(nameMock, "(ou=somevalue)", controls, handlerMock,
+                dirContextProcessorMock);
+
+        verify();
+    }
+
+    public void testSearch_String_CallbackHandler_DirContextProcessor()
+            throws NamingException {
+        expectGetReadOnlyContext();
+
+        SearchControls controls = new SearchControls();
+        controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        controls.setReturningObjFlag(false);
+
+        SearchResult searchResult = new SearchResult("", new Object(),
+                new BasicAttributes());
+
+        dirContextProcessorMock.preProcess(dirContextMock);
+
+        setupStringSearchAndNamingEnumeration(controls, searchResult);
+
+        handlerMock.handleNameClassPair(searchResult);
+
+        dirContextProcessorMock.postProcess(dirContextMock);
+
+        dirContextMock.close();
+
+        replay();
+
+        tested.search(DEFAULT_BASE_STRING, "(ou=somevalue)", controls,
+                handlerMock, dirContextProcessorMock);
 
         verify();
     }
@@ -1106,11 +1167,11 @@ public class LdapTemplateTest extends TestCase {
         dirContextMock.unbind(subListDn);
         dirContextMock.unbind(listDn);
         dirContextMock.close();
-        
+
         // Caused by creating a DistinguishedName from a Name
         nameControl.expectAndReturn(nameMock.size(), 1, 2);
         nameControl.expectAndReturn(nameMock.get(0), "o=example.com");
-        
+
         replay();
 
         tested.unbind(nameMock, true);
@@ -1298,7 +1359,7 @@ public class LdapTemplateTest extends TestCase {
         SearchResult searchResult = new SearchResult(null, null, null);
 
         dirContextProcessorMock.preProcess(dirContextMock);
-        
+
         searchExecutorControl.expectAndReturn(searchExecutorMock
                 .executeSearch(dirContextMock), namingEnumerationMock);
 
@@ -1323,7 +1384,8 @@ public class LdapTemplateTest extends TestCase {
         verify();
     }
 
-    public void testDoSearch_DirContextProcessor_NamingException() throws Exception {
+    public void testDoSearch_DirContextProcessor_NamingException()
+            throws Exception {
         expectGetReadOnlyContext();
 
         dirContextProcessorMock.preProcess(dirContextMock);
@@ -1340,7 +1402,8 @@ public class LdapTemplateTest extends TestCase {
         replay();
 
         try {
-            tested.search(searchExecutorMock, handlerMock, dirContextProcessorMock);
+            tested.search(searchExecutorMock, handlerMock,
+                    dirContextProcessorMock);
             fail("EntryNotFoundException expected");
         } catch (EntryNotFoundException expected) {
             assertTrue(true);
