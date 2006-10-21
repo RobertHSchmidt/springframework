@@ -1,4 +1,4 @@
-Spring-LDAP 1.1 (Aug 2006)
+Spring-LDAP 1.1.1 (Oct 2006)
 -----------------------------
 http://www.springframework.org/ldap
 
@@ -18,6 +18,11 @@ In addition to this, Spring-LDAP provides Exception translation from NamingExcep
 to DataAccessExceptions, as well as several utilities for working with filters, LDAP
 paths and Attributes.
 
+The DirContextProcessor interface provides the programmer with the possibility to
+get callbacks before and after a search, which enables things like processing of
+the LDAPv3 feature of RequestControls and ResponseControls. An abstract base class
+that simplifies this is provided, as is a full implementation of PagedSearchResult.
+
 2. RELEASE INFO
 
 Spring-LDAP requires J2SE 1.4. J2SE 1.4 is required for building.
@@ -26,6 +31,7 @@ J2EE 1.4 (Servlet 2.3, JSP 1.2) is required for running the example.
 The Spring-LDAP release comes in three different distributables:
 * spring-ldap-bin-x.x.zip
   ** readme.txt - this readme file.
+  ** license.txt - terms and conditions for use, reproduction and distribution
   ** dist/spring-ldap-x.x.jar - the library
   ** dist/spring-ldap-src-x.x.zip - the source code of the library
   ** dist/ivys - ivy configuration
@@ -34,6 +40,7 @@ The Spring-LDAP release comes in three different distributables:
   
 * spring-ldap-bin-with-dependencies-x.x.zip
   ** readme.txt - this readme file.
+  ** license.txt - terms and conditions for use, reproduction and distribution
   ** dist/spring-ldap-x.x.jar - the library
   ** dist/spring-ldap-src-x.x.zip - the source code of the library
   ** dist/ivys - ivy configuration
@@ -43,6 +50,7 @@ The Spring-LDAP release comes in three different distributables:
   
 * spring-ldap-buildable-x.x.zip
   ** readme.txt - this readme file.
+  ** license.txt - terms and conditions for use, reproduction and distribution
   ** common-build - the ant 1.6 "common build system" used by all spring-ldap projects to compile/build/test
   ** spring-ldap/build-spring-ldap - master build files to produce this release archive
   ** spring-ldap/spring-ldap - project sources
