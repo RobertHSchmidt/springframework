@@ -97,8 +97,10 @@ public class LdapRdnTest extends TestCase {
         LdapRdn rdn = new LdapRdn("ou=Clerical / Secretarial Staff");
 
         assertEquals("ou", rdn.getComponent().getKey());
-        assertEquals("Clerical / Secretarial Staff", rdn.getComponent().getValue());
-        assertEquals("ou=Clerical / Secretarial Staff", rdn.getComponent().getLdapEncoded());
+        assertEquals("Clerical / Secretarial Staff", rdn.getComponent()
+                .getValue());
+        assertEquals("ou=Clerical / Secretarial Staff", rdn.getComponent()
+                .getLdapEncoded());
     }
 
     public void testLdapRdn_parse_quoteInKey() {
@@ -135,8 +137,8 @@ public class LdapRdnTest extends TestCase {
         LdapRdn rdn = new LdapRdn("o = my organization ");
         assertEquals("o=my%20organization", rdn.encodeUrl());
     }
-    
-    public void testLdapRdn_Parse_MultipleComponents(){
+
+    public void testLdapRdn_Parse_MultipleComponents() {
         LdapRdn rdn = new LdapRdn("cn=John Doe+sn=Doe");
         assertEquals("cn=John Doe", rdn.getComponent(0).encodeLdap());
         assertEquals("sn=Doe", rdn.getComponent(1).encodeLdap());
@@ -160,5 +162,53 @@ public class LdapRdnTest extends TestCase {
 
         new EqualsTester(originalObject, identicalObject, differentObject,
                 subclassObject);
+    }
+
+    public void testCompareTo_Equals() throws Exception {
+        LdapRdn rdn1 = new LdapRdn("cn=john doe");
+        LdapRdn rdn2 = new LdapRdn("cn=john doe");
+
+        int result = rdn1.compareTo(rdn2);
+        assertEquals(0, result);
+    }
+
+    public void testCompareTo_EqualsComplex() throws Exception {
+        LdapRdn rdn1 = new LdapRdn("cn=john doe+sn=doe");
+        LdapRdn rdn2 = new LdapRdn("cn=john doe+sn=doe");
+
+        int result = rdn1.compareTo(rdn2);
+        assertEquals(0, result);
+    }
+
+    public void testCompareTo_Less() {
+        LdapRdn rdn1 = new LdapRdn("cn=john doe+sn=doe");
+        LdapRdn rdn2 = new LdapRdn("cn=john doe+tn=doe");
+
+        int result = rdn1.compareTo(rdn2);
+        assertTrue(result < 0);
+    }
+
+    public void testCompareTo_Greater() {
+        LdapRdn rdn1 = new LdapRdn("cn=john doe+sn=doe");
+        LdapRdn rdn2 = new LdapRdn("cn=john doe+an=doe");
+
+        int result = rdn1.compareTo(rdn2);
+        assertTrue(result > 0);
+    }
+
+    public void testCompareTo_Shorter() {
+        LdapRdn rdn1 = new LdapRdn("cn=john doe+sn=doe");
+        LdapRdn rdn2 = new LdapRdn("cn=john doe+sn=doe+description=tjo");
+
+        int result = rdn1.compareTo(rdn2);
+        assertTrue(result < 0);
+    }
+
+    public void testCompareTo_Longer() {
+        LdapRdn rdn1 = new LdapRdn("cn=john doe+sn=doe+description=tjo");
+        LdapRdn rdn2 = new LdapRdn("cn=john doe+sn=doe");
+
+        int result = rdn1.compareTo(rdn2);
+        assertTrue(result > 0);
     }
 }
