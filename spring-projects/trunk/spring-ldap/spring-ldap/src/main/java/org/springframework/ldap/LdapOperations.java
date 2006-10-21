@@ -158,6 +158,49 @@ public interface LdapOperations {
 
     /**
      * Search for all objects matching the supplied filter. Each SearchResult is
+     * supplied to the specified NameClassPairCallbackHandler. The SearchScope
+     * specified in the supplied SearchControls will be used in the search. Note
+     * that if you are using a ContextMapper, the returningObjFlag needs to be
+     * set to true in the SearchControls. The given DirContextProcessor will be
+     * called before and after the search.
+     * 
+     * @param base
+     *            The base DN where the search should begin.
+     * @param filter
+     *            The filter to use in the search.
+     * @param controls
+     *            The SearchControls to use in the search.
+     * @param handler
+     *            The NameClassPairCallbackHandler to supply the SearchResults
+     *            to.
+     * @param processor
+     *            The DirContextProcessor to use before and after the search.
+     */
+    public void search(Name base, String filter, SearchControls controls,
+            NameClassPairCallbackHandler handler, DirContextProcessor processor);
+
+    /**
+     * Search for all objects matching the supplied filter. See
+     * {@link #search(Name, String, SearchControls, NameClassPairCallbackHandler, DirContextProcessor)}
+     * for details.
+     * 
+     * @param base
+     *            The base DN where the search should begin.
+     * @param filter
+     *            The filter to use in the search.
+     * @param controls
+     *            The SearchControls to use in the search.
+     * @param handler
+     *            The NameClassPairCallbackHandler to supply the SearchResults
+     *            to.
+     * @param processor
+     *            The DirContextProcessor to use before and after the search.
+     */
+    public void search(String base, String filter, SearchControls controls,
+            NameClassPairCallbackHandler handler, DirContextProcessor processor);
+
+    /**
+     * Search for all objects matching the supplied filter. Each SearchResult is
      * supplied to the specified NameClassPairCallbackHandler. Use the specified
      * values for search scope and return objects flag.
      * 
