@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.ldap.support.util;
+package org.springframework.ldap.util;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.springframework.ldap.util.ListComparator;
 
 import junit.framework.TestCase;
 
