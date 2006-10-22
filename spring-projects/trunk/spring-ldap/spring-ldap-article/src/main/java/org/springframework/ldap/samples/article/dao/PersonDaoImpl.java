@@ -174,9 +174,9 @@ public class PersonDaoImpl implements PersonDao {
             context.getDn());
          Person person = new Person();
          person.setCountry(dn
-            .getLdapRdn(0).getValue());
+            .getLdapRdn(0).getComponent().getValue());
          person.setCompany(dn
-            .getLdapRdn(1).getValue());
+            .getLdapRdn(1).getComponent().getValue());
          person.setFullName(context
             .getStringAttribute("cn"));
          person.setLastName(context
