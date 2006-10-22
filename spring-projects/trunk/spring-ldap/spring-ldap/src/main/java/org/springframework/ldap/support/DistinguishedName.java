@@ -33,7 +33,7 @@ import org.springframework.ldap.support.parser.DefaultDnParserFactory;
 import org.springframework.ldap.support.parser.DnParser;
 import org.springframework.ldap.support.parser.ParseException;
 import org.springframework.ldap.support.parser.TokenMgrError;
-import org.springframework.ldap.support.util.ListComparator;
+import org.springframework.ldap.util.ListComparator;
 
 /**
  * Default implementation of a Name corresponding to an LDAP path. A
