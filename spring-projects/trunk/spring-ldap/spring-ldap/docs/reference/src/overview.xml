@@ -307,10 +307,10 @@ public class PersonDaoImpl implements PersonDao {
       </itemizedlist>
     </sect2>
 
-    <sect2 id="ldap.support.util">
-      <title>org.springframework.ldap.support.util</title>
+    <sect2 id="ldap.util">
+      <title>org.springframework.ldap.util</title>
 
-      <para>The <emphasis>support.util</emphasis> package contains utility
+      <para>The <emphasis>util</emphasis> package contains utility
       classes that are used internally.</para>
 
       <itemizedlist spacing="compact">
@@ -320,7 +320,7 @@ public class PersonDaoImpl implements PersonDao {
       </itemizedlist>
     </sect2>
 
-    <para>For the exact list of dependencies, see the Spring LDAP <ulink
+    <para>For the exact list of jar dependencies, see the Spring LDAP <ulink
     url="http://jayasoft.org/ivy">Ivy</ulink> dependency manager descriptor
     located within the Spring LDAP distribution at
     <literal>spring-ldap/ivy.xml</literal></para>
