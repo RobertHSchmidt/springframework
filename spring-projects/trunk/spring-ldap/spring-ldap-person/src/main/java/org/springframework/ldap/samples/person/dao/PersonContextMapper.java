@@ -37,8 +37,8 @@ public class PersonContextMapper implements ContextMapper {
         DirContextOperations dirContext = (DirContextOperations) ctx;
         DistinguishedName dn = new DistinguishedName(dirContext.getDn());
         Person person = new Person();
-        person.setCountry(dn.getLdapRdn(0).getValue());
-        person.setCompany(dn.getLdapRdn(1).getValue());
+        person.setCountry(dn.getLdapRdn(0).getComponent().getValue());
+        person.setCompany(dn.getLdapRdn(1).getComponent().getValue());
         person.setFullName(dirContext.getStringAttribute("cn"));
         person.setLastName(dirContext.getStringAttribute("sn"));
         person.setDescription(dirContext.getStringAttribute("description"));
