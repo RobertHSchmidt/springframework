@@ -5,8 +5,8 @@
 		<title>Introduction</title>
 		<para>
 			Spring Web Flow allows developers to build reusable, self-contained controller modules
-			called flows.  A flow is a blueprint for a user task (or dialog)
-			that drives the execution of application code to complete a business goal.
+			called flows.  A flow defines a user dialog that responds to user events to drive
+			the execution of application code to complete a business goal.
 		</para>
 		<para>
 			Flows are defined declaratively using a rich domain-specific language (DSL) 
@@ -14,7 +14,7 @@
 			forms of this language are provided.
 		</para>
 		<para>
-			This chapter documents Spring Web Flow's core flow definition language.  You'll
+			This chapter documents Spring Web Flow's core flow definition language.  You will
 			learn the core domain constructs of the system and how those constructs are
 			representable in an externalized XML form.
 		</para>
@@ -23,7 +23,7 @@
     	<title>FlowDefinition</title>
     	<para>
     		A flow definition is a instance of <literal>org.springframework.webflow.definition.FlowDefinition</literal>.
-    		This is the central domain artifact representing the definition of a task.
+    		This is the central domain artifact representing the definition of a user dialog or task.
 		</para>
 		<para>
     		A flow definition consists of a set of one or more states, where each state defines a step in
@@ -36,6 +36,20 @@
 			that defines the starting point of the flow. Optionally, a flow can have one or more end states
 			defining the ending points of the flow.
     	</para>
+    	<para>
+    		The definition of a simple flow to carry out a search process is shown below:
+    	</para>
+		<mediaobject>
+			<imageobject role="fo">
+				<imagedata fileref="images/flow-search.png" format="PNG" align="center"/>
+			</imageobject>
+			<imageobject role="html">
+				<imagedata fileref="images/flow-search.png" format="PNG" align="center"/>
+			</imageobject>
+			<caption>
+				<para>Search Flow</para>
+			</caption>
+		</mediaobject>
     	<para>
     		The default <literal>FlowDefinition</literal> implementation in Spring Web Flow is
     		<literal>org.springframework.webflow.engine.Flow</literal>.  Its configurable properties are
@@ -339,8 +353,8 @@
           </tgroup>
         </table>
         <para>
-            Below is a high-level example of how these common TransitionableState properties can be configured in XML form
-            or directly in Java code.
+            Below is a mock flow definition snippet showing how properties may be configured for 
+            a TransitionableState in XML and in Java code:
         </para>
         <sect2 id="state-xml">
         	<title>XML-based state template</title>
@@ -401,8 +415,8 @@
     	    Recall that all TransitionableStates have a set of one or more transitions, each defining a 
     	    path to another state in the flow (or a recursive path back to the same state).
     	    When a transitionable state is entered it executes a behavior.
-    	    For example, a transitionable state called "Display Form" may display a form to the user.
-    	    The outcome of the state's execution, called an event, is used to drive execution of 
+    	    For example, a transitionable state called "Display Form" may display a form to the user
+    	    and wait for user input.  The outcome of the state's execution, called an event, is used to drive execution of 
     	    one of the state's transitions.  For example, the user may press the form submit button which
     	    signals a <emphasis>submit</emphasis> event that matches the transition to
     	    the "Process Submit" state.
@@ -467,8 +481,12 @@
 						<entry>Always allowed</entry>
         	        </row>
            			<row>
-           				<entry>targetStateId</entry>
-						<entry>The identifier of the target state of the transition.</entry>
+           				<entry>targetStateResolver</entry>
+						<entry>
+							The strategy that resolves the target state of the transition.
+							Most transitions always resolve to the same target state.
+							This strategy allows for dynamic resolution.
+						</entry>
 					    <entry>
 							<emphasis>1</emphasis>
 						</entry>
@@ -485,8 +503,8 @@
         	<title>Transition XML template</title>
        	    <programlisting>
     &lt;transition on="event" to="targetState"&gt;
-        &lt;attribute .../&gt;
-        &lt;action ../&gt; &lt;!-- execution criteria --&gt;
+        &lt;attribute ... /&gt;       
+        &lt;action ... /&gt;
     &lt;/transition&gt;
          	</programlisting>
         </sect2>
@@ -500,9 +518,11 @@
          	</programlisting>
         </sect2>
         <sect2 id="transition-actioncriteria">
-        	<title>Action transition criteria</title>
+        	<title>Action transition execution criteria</title>
          	<para>
-         		In the XML example note the support for the <literal>action</literal> element within the <literal>transition</literal> element.
+         		<note>
+	         		In the XML transition template above note the support for the <literal>action</literal> element within the <literal>transition</literal> element.
+	         	</note>
          	</para>
          	<para>
          		A transition may be configured with one or more actions that execute <emphasis>before</emphasis> the transition itself
@@ -510,8 +530,22 @@
          		actions do not complete successfully the transition will <emphasis>not</emphasis> be allowed.
          		This <emphasis>action transition criteria</emphasis> makes it possible to execute arbitrary logic
          		after a transition is matched but before it is executed.  This is useful when you want to execute 
-         		event post-processing logic.  A good example is executing data binding and validation behavior 
+         		event post-processing logic.  A good example is executing form data binding and validation behavior 
          		after a form submit event.
+         	</para>
+        </sect2>
+        <sect2 id="transition-dynamic">
+        	<title>Dynamic transitions</title>
+        	<para>
+	        	A transition's target state resolver can be configured to dynamically calculate the 
+    	    	target state.  For example:
+    	    </para>
+       	    <programlisting>
+    &lt;transition on="back" to="${flowScope.lastStateId}" /&gt;
+         	</programlisting>
+         	<para>
+         		This will transition the flow to the state resolved by evaluating the
+         		<literal>flowScope.lastStateId</literal> expression.
          	</para>
         </sect2>
         <sect2 id="transition-global">

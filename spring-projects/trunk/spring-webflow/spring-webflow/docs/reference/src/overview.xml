@@ -133,19 +133,19 @@
 	<sect1 id="introduction-structure-layer-description">
 		<title>Layer descriptions</title>
 		<para>
-			This section provides a description of each layer including subsystems and dependencies. The
-			structure of a layer is clarified using a table that details the following elements:
+			Each layer is partitioned into one or more subsystems that together 
+			carry out the layer's role within the overall system.  This section notes
+			the purpose of each layer and describes each subsystem in the following format:
 		</para>
 		<itemizedlist spacing="compact">
 			<listitem>
 				<para>
-					<emphasis>Subsystem name</emphasis> - The name of the layer subsystem.
+					<emphasis>Subsystem name</emphasis> - The name of a layer subsystem.
 				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<emphasis>Description</emphasis> - Provides a high level description of the contents
-					of the subsystem.
+					<emphasis>Description</emphasis> - The purpose of the subsystem.
 				</para>
 			</listitem>
 			<listitem>
@@ -274,7 +274,9 @@
            				<row>
             				<entry>Conversation</entry>
             				<entry>
-            					Conversation state (data) management subsystem.
+            					Manages the creation and cleanup of conversational state.  Used by 
+            					the execution repository system to begin new user conversations and 
+            					track execution state.
             				</entry>
             				<entry>
             					conversation,
@@ -339,7 +341,7 @@
  								Reusable action implementations.        				
             				</entry>
             				<entry>
-            					action
+            					action,
             					action.portlet
             				</entry>
             				<entry>
@@ -567,7 +569,8 @@
 		<sect2 id="layer-config">
 			<title>The System Configuration Layer (Top Layer)</title>
 			<para>
-				The top-most layer for configuring the overall Spring Web Flow system.
+				The top-most layer for configuring the overall Spring Web Flow system for use 
+				within an application.  As the top layer, this layer depends on the most.
 			</para>
 			<para>
 				Depends On: Executor, Execution Engine, Execution Core
@@ -608,16 +611,17 @@
 	    		</tgroup>
     		</table>
 			<para>
-				A package dependency noted as (optional) means that the
-				dependency is needed to compile the package but is optionally needed at runtime
-				(depending on your use of the package).  For example, use of Spring Web Flow 
-				in a Servlet environment entails use of the context.servlet package and requires the
-				Servlet API to be in the classpath, but not the Portlet API.
+				<note>
+					As described above, some subsystem packages are optional depending on your use of the
+					subsystem.  For example, use of Spring Web Flow	in a Servlet environment entails use of
+					the <literal>ExternalContext</literal> context.servlet package which requires the
+					Servlet API to be in the classpath.  In this case the context.portlet package is not 
+					used and the Portlet API is not required.
+				</note>
 			</para>
 			<para>
 				For the exact list of dependencies, as well as supported product usage configurations, 
-				see the SWF ivy dependency manager descriptor located within the SWF distribution
-				at <literal>spring-webflow/ivy.xml</literal>
+				see the Ivy dependency manager descriptor located within the SWF distribution.
 			</para>
 		</sect2>
 	</sect1>
@@ -625,10 +629,10 @@
 		<title>Support</title>
 		<para>
 			Spring Web Flow is supported on Spring Framework 1.2.7 or > for the 1.x series and 
-			supported on 2.0 RC4 or > for the 2.x series.
+			supported on 2.0 or > for the 2.x series.
 		</para>
 		<para>
-			XML-based flow building requires Xerces or JDK 1.5 (for XSD support).
+			XML-based flow building requires Xerces 2 or JDK 5.0 (for XSD support).
 		</para>
 		<para>
 			The Spring Web Flow Portlet integration requires Spring Portlet MVC 2.0.
