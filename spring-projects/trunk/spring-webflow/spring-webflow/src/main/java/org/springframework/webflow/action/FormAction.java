@@ -759,7 +759,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	private void reinstallPropertyEditors(RequestContext context) {
 		BindException errors = (BindException)
             getFormObjectAccessor(context).getFormErrors(getFormObjectName(), getFormErrorsScope());
-		registerPropertyEditors(getPropertyEditorRegistry(errors));
+		registerPropertyEditors(context, getPropertyEditorRegistry(errors));
 	}
 
     /**
@@ -877,7 +877,7 @@ public class FormAction extends MultiAction implements InitializingBean {
             binder.setMessageCodesResolver(messageCodesResolver);
         }
         initBinder(context, binder);
-        registerPropertyEditors(binder);
+        registerPropertyEditors(context, binder);
         return binder;
     }
 
@@ -1009,6 +1009,28 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * @see #createBinder(RequestContext, Object)
 	 */
 	protected void initBinder(RequestContext context, DataBinder binder) {
+	}
+
+	/**
+	 * Register custom editors to perform type conversion on fields of your form
+	 * object during data binding and form display. This method is called on
+	 * form errors initialization and
+	 * {@link #initBinder(RequestContext, DataBinder) data binder} initialization.
+	 * <p>
+	 * Property editors give you full control over how objects are transformed
+	 * to and from a formatted String form for display on a user interface such
+	 * as a HTML page.
+	 * <p>
+	 * This default implementation will call the
+	 * {@link #registerPropertyEditors(PropertyEditorRegistry) simpler form} of
+	 * the method not taking a <tt>RequestContext</tt>.
+	 * @param context the action execution context, for accessing and setting
+	 * data in "flow scope" or "request scope"
+	 * @param registry the property editor registry to register editors in
+	 * @see #registerPropertyEditors(PropertyEditorRegistry)
+	 */
+	protected void registerPropertyEditors(RequestContext context, PropertyEditorRegistry registry) {
+		registerPropertyEditors(registry);
 	}
 
 	/**
