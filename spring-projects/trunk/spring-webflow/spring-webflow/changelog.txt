@@ -2,7 +2,7 @@ SPRING WEB FLOW (SWF) CHANGELOG
 ===============================
 http://www.springframework.org
 
-Changes in version 1.0 (16.10.2006)
+Changes in version 1.0 (24.10.2006)
 ---------------------------------------
 
 Package org.springframework.webflow.action

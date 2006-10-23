@@ -1,4 +1,4 @@
-SPRING WEB FLOW 1.0 RC4 (October 2006)
+SPRING WEB FLOW 1.0 (October 2006)
 ----------------------------------------
 http://www.springframework.org/webflow
 http://forum.springframework.org
@@ -21,15 +21,18 @@ machine for the definition and execution of UI control flow.
 
 2. RELEASE INFO
 
-Spring Web Flow requires J2SE 1.3 and J2EE 1.3 (Servlet 2.3, JSP 1.2).  J2SE 1.5 is required for building.
+Spring Web Flow requires J2SE 1.3 and J2EE 1.3 (Servlet 2.3) or > to run.
+
+J2SE 5.0 with Ant 1.6 and Ivy 1.3 or > is required to build.  A compatible version of Ivy
+is shipped with this release.
 
 SWF release contents:
 
 "." contains Spring Web Flow distribution units (jars and source zip archives), readme, and copyright
 "docs" contains the Spring Web Flow reference manual and API Javadocs
-"ivys" contains Ivy dependency descriptors for Spring Web Flow and Spring Data Binding
+"ivys" contains Ivy dependency descriptors for the Spring Web Flow and Spring Data Binding projects
 "projects" contains all buildable projects, including sample applications (each importable into Eclipse)
-"projects/common-build" contains the Ant 1.6 "common build system" used by all projects to compile/build/test
+"projects/common-build" contains the Ant-based "common build system" used by all projects to compile/build/test
 "projects/repository" contains Spring Web Flow dependencies (dependent jars)
 "projects/spring-webflow/build-spring-webflow" contains the master build file used to build all Spring Web Flow projects
 "projects/spring-webflow/spring-binding" contains buildable Spring Data Binding project sources, an internal library used by SWF
@@ -46,13 +49,13 @@ The following distinct jar files are included in the distribution. This list
 specifies the respective contents and third-party dependencies. Libraries in [brackets] are
 optional, i.e. just necessary for certain functionality.
 
-* spring-webflow-1.0-rc4.jar
+* spring-webflow-1.0.jar
 - Contents: The Spring Web Flow system
 - Dependencies: Commons Logging, spring-beans, spring-core, spring-context, spring-web, spring-binding, OGNL
                 [Log4J, Commons Codec, Xerces, XML APIs, spring-webmvc, spring-mock, JUnit, Servlet API,
                  Portlet API, JMX, Struts, JSF]
               
-* spring-binding-1.0-rc4.jar
+* spring-binding-1.0.jar
 - Contents: The Spring Data Binding framework, an internal library used by SWF
 - Dependencies: Commons Logging, spring-beans, spring-core, spring-context
                 [Log4J]
