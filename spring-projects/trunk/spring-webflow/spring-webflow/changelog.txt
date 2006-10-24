@@ -33,7 +33,9 @@ Package org.springframework.webflow.executor
   The flow controllers (FlowController, FlowAction, PortletFlowController and FlowPhaseListener) now
   use a FlowExecutorArgumentHandler instead of just a FlowExecutorArgumentExtractor. The corresponding
   "argumentExtractor" properties of the flow controllers were renamed to "argumentHandler".
-
+* Fixed bug in FlowPhaseListener where flow execution was being saved twice on redirects out of the 
+  control of the JSF lifecycle due to obeying response complete lifecycle semantics incorrectly (SWF 181).
+  
 Package org.springframework.webflow.test
 * Introduced createExternalContext hook method in AbstractFlowExecutionTests.
 
