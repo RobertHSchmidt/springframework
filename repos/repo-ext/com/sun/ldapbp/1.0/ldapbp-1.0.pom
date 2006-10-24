@@ -8,5 +8,7 @@
     <description>
         Sun LDAP Booster pack
     </description>
+    <dependencies>
+    </dependencies>
 </project>
 
