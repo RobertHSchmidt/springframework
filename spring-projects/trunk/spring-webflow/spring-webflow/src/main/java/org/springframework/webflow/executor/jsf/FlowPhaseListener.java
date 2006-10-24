@@ -137,16 +137,18 @@ public class FlowPhaseListener implements PhaseListener {
 		if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
 			try {
 				if (FlowExecutionHolderUtils.isFlowExecutionChanged(event.getFacesContext())) {
-					saveFlowExecution(getCurrentContext(), FlowExecutionHolderUtils.getFlowExecutionHolder(event.getFacesContext()));
+					saveFlowExecution(getCurrentContext(), FlowExecutionHolderUtils.getFlowExecutionHolder(event
+							.getFacesContext()));
 				}
-			} finally {
+			}
+			finally {
 				ExternalContextHolder.setExternalContext(null);
 			}
 		}
 	}
 
 	private JsfExternalContext getCurrentContext() {
-		return (JsfExternalContext)ExternalContextHolder.getExternalContext();
+		return (JsfExternalContext) ExternalContextHolder.getExternalContext();
 	}
 
 	protected void restoreFlowExecution(FacesContext facesContext) {
@@ -157,8 +159,8 @@ public class FlowPhaseListener implements PhaseListener {
 			// navigation handler (this could happen as part of a submission or
 			// flow execution redirect)
 			FlowExecutionRepository repository = getRepository(context);
-			FlowExecutionKey flowExecutionKey = repository.parseFlowExecutionKey(
-					argumentHandler.extractFlowExecutionKey(context));
+			FlowExecutionKey flowExecutionKey = repository.parseFlowExecutionKey(argumentHandler
+					.extractFlowExecutionKey(context));
 			FlowExecution flowExecution = repository.getFlowExecution(flowExecutionKey);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Loaded existing flow execution from repository with id '" + flowExecutionKey + "'");
@@ -212,25 +214,28 @@ public class FlowPhaseListener implements PhaseListener {
 			sendRedirect(url, context);
 		}
 		else if (selectedView instanceof ExternalRedirect) {
-			String url = argumentHandler.createExternalUrl((ExternalRedirect)holder.getViewSelection(), holder
-					.getFlowExecutionKey().toString(), context);
+			String flowExecutionKey = holder.getFlowExecution().isActive() ? holder.getFlowExecutionKey().toString()
+					: null;
+			String url = argumentHandler.createExternalUrl((ExternalRedirect) holder.getViewSelection(),
+					flowExecutionKey, context);
 			sendRedirect(url, context);
 		}
 		else if (selectedView instanceof FlowDefinitionRedirect) {
-			String url = argumentHandler.createFlowDefinitionUrl((FlowDefinitionRedirect)holder.getViewSelection(), context);
+			String url = argumentHandler.createFlowDefinitionUrl((FlowDefinitionRedirect) holder.getViewSelection(),
+					context);
 			sendRedirect(url, context);
 		}
 	}
 
 	protected void prepareApplicationView(FacesContext facesContext, FlowExecutionHolder holder) {
-		ApplicationView forward = (ApplicationView)holder.getViewSelection();
+		ApplicationView forward = (ApplicationView) holder.getViewSelection();
 		if (forward != null) {
 			putInto(facesContext.getExternalContext().getRequestMap(), forward.getModel());
 			updateViewRoot(facesContext, viewIdMapper.mapViewId(forward.getViewName()));
 		}
 		Map requestMap = facesContext.getExternalContext().getRequestMap();
-		argumentHandler.exposeFlowExecutionContext(
-				holder.getFlowExecutionKey().toString(), holder.getFlowExecution(), requestMap);
+		argumentHandler.exposeFlowExecutionContext(holder.getFlowExecutionKey().toString(), holder.getFlowExecution(),
+				requestMap);
 	}
 
 	private void updateViewRoot(FacesContext facesContext, String viewId) {
@@ -308,7 +313,7 @@ public class FlowPhaseListener implements PhaseListener {
 			// support putAll remove after it's fixed in MyFaces
 			Iterator it = map.entrySet().iterator();
 			while (it.hasNext()) {
-				Map.Entry entry = (Map.Entry)it.next();
+				Map.Entry entry = (Map.Entry) it.next();
 				targetMap.put(entry.getKey(), entry.getValue());
 			}
 		}
