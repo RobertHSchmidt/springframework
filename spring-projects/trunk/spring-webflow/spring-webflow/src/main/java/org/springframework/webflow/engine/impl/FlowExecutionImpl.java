@@ -564,7 +564,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * in this flow execution.
 	 */
 	ListIterator getSubflowSessionIterator() {
-		return flowSessions.listIterator(flowSessions.size() - 2);
+		return flowSessions.listIterator(1);
 	}
 
 }
