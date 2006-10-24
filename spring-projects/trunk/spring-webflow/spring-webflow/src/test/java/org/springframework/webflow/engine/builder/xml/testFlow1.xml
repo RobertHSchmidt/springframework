@@ -30,7 +30,7 @@
 		</action>
 		<action name="action2Name" bean="action2" />
 		<transition on="event1" to="viewState1">
-			<attribute name="propBigDecimal" value="123.45" type="bigDecimal" />
+			<attribute name="propBigDecimal" value="12345" type="bigDecimal" />
 		</transition>
 		<transition on="event2" to="actionState2" />
 		<transition on="action2Name.event2" to="viewState2" />
