@@ -84,7 +84,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		assertTrue(actionState1.getTransitionSet().hasMatchingTransition(context));
 		Transition transition = actionState1.getRequiredTransition(context);
 		assertEquals("viewState1", getTargetStateId(transition));
-		assertEquals(new BigDecimal("123.45"), transition.getAttributeMap().get("propBigDecimal"));
+		assertEquals(new BigDecimal("12345"), transition.getAttributeMap().get("propBigDecimal"));
 		context.setLastEvent(createEvent("action2Name.event2"));
 		assertTrue(actionState1.getTransitionSet().hasMatchingTransition(context));
 		transition = actionState1.getRequiredTransition(context);

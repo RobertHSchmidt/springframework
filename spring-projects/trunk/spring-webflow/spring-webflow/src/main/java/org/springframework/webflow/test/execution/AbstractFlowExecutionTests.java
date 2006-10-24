@@ -28,6 +28,7 @@ import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowExecutionException;
@@ -545,11 +546,15 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	}
 
 	/**
-	 * Abstract factory method to create the flow execution factory. Subclasses
-	 * must implement.
+	 * Factory method to create the flow execution factory. Subclasses
+	 * could override this if they want to use a custom flow execution factory.
+	 * The default implementation just returns a {@link FlowExecutionImplFactory}
+	 * instance.
 	 * @return the flow execution factory
 	 */
-	protected abstract FlowExecutionFactory createFlowExecutionFactory();
+	protected FlowExecutionFactory createFlowExecutionFactory() {
+		return new FlowExecutionImplFactory();
+	}
 
 	/**
 	 * Returns the flow definition to be tested. Subclasses must implement.

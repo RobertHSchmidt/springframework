@@ -19,10 +19,8 @@ import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.builder.AbstractFlowBuilder;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
-import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.FlowExecutionFactory;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.support.ApplicationView;
@@ -36,10 +34,6 @@ import org.springframework.webflow.test.execution.AbstractFlowExecutionTests;
 public class DefaultTargetStateResolverTests extends AbstractFlowExecutionTests {
 	
 	private boolean fail = false;
-	
-	protected FlowExecutionFactory createFlowExecutionFactory() {
-		return new FlowExecutionImplFactory();
-	}
 	
 	protected FlowDefinition getFlowDefinition() {
 		return new FlowAssembler("testFlow", new TestFlowBuilder()).assembleFlow();

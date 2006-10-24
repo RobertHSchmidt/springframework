@@ -27,7 +27,6 @@ import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
-import org.springframework.webflow.execution.FlowExecutionFactory;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
 import org.springframework.webflow.test.MockFlowServiceLocator;
@@ -52,7 +51,13 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 */
 	private boolean cacheFlowDefinition = false;
 	
-	private FlowExecutionImplFactory flowExecutionFactory = new FlowExecutionImplFactory();
+	/**
+	 * Internal helper that return the flow execution factory used by the
+	 * test cast to a {@link FlowExecutionImplFactory}.
+	 */
+	private FlowExecutionImplFactory getFlowExecutionImplFactory() {
+		return (FlowExecutionImplFactory)getFlowExecutionFactory();
+	}
 	
 	/**
 	 * Returns if flow definition caching is turned on.
@@ -77,7 +82,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * @param executionAttributes the system attributes to assign
 	 */
 	protected void setFlowExecutionAttributes(AttributeMap executionAttributes) {
-		flowExecutionFactory.setExecutionAttributes(executionAttributes);
+		getFlowExecutionImplFactory().setExecutionAttributes(executionAttributes);
 	}
 
 	/**
@@ -87,12 +92,8 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * @param executionListener the listener to attach
 	 */
 	protected void setFlowExecutionListener(FlowExecutionListener executionListener) {
-		flowExecutionFactory.setExecutionListenerLoader(
+		getFlowExecutionImplFactory().setExecutionListenerLoader(
 				new StaticFlowExecutionListenerLoader(executionListener));
-	}
-
-	protected final FlowExecutionFactory createFlowExecutionFactory() {
-		return flowExecutionFactory;
 	}
 
 	protected final FlowDefinition getFlowDefinition() {
