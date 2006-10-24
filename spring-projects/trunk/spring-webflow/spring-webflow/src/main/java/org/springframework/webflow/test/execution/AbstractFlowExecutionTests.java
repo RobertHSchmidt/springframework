@@ -30,7 +30,6 @@ import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionFactory;
 import org.springframework.webflow.execution.ViewSelection;
@@ -301,12 +300,11 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	// convenience accessors
 
 	/**
-	 * Returns the flow execution context, providing information about the
-	 * ongoing flow execution being tested.
-	 * @return the flow execution context
+	 * Returns the flow execution being tested.
+	 * @return the flow execution
 	 * @throws IllegalStateException the execution has not been started
 	 */
-	protected FlowExecutionContext getFlowExecutionContext() throws IllegalStateException {
+	protected FlowExecution getFlowExecution() throws IllegalStateException {
 		Assert.state(flowExecution != null,
 				"The flow execution to test is [null]; you must start the flow execution before you can query it!");
 		return flowExecution;
@@ -319,7 +317,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @return the attribute value
 	 */
 	protected Object getConversationAttribute(String attributeName) {
-		return getFlowExecutionContext().getConversationScope().get(attributeName);
+		return getFlowExecution().getConversationScope().get(attributeName);
 	}
 
 	/**
@@ -331,7 +329,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @throws IllegalStateException if the attribute was not present
 	 */
 	protected Object getRequiredConversationAttribute(String attributeName) throws IllegalStateException {
-		return getFlowExecutionContext().getConversationScope().getRequired(attributeName);
+		return getFlowExecution().getConversationScope().getRequired(attributeName);
 	}
 
 	/**
@@ -345,7 +343,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 */
 	protected Object getRequiredConversationAttribute(String attributeName, Class requiredType)
 			throws IllegalStateException {
-		return getFlowExecutionContext().getConversationScope().getRequired(attributeName, requiredType);
+		return getFlowExecution().getConversationScope().getRequired(attributeName, requiredType);
 	}
 
 	/**
@@ -355,7 +353,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @return the attribute value
 	 */
 	protected Object getFlowAttribute(String attributeName) {
-		return getFlowExecutionContext().getActiveSession().getScope().get(attributeName);
+		return getFlowExecution().getActiveSession().getScope().get(attributeName);
 	}
 
 	/**
@@ -366,7 +364,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @throws IllegalStateException if the attribute was not present
 	 */
 	protected Object getRequiredFlowAttribute(String attributeName) throws IllegalStateException {
-		return getFlowExecutionContext().getActiveSession().getScope().getRequired(attributeName);
+		return getFlowExecution().getActiveSession().getScope().getRequired(attributeName);
 	}
 
 	/**
@@ -379,7 +377,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * the wrong type
 	 */
 	protected Object getRequiredFlowAttribute(String attributeName, Class requiredType) throws IllegalStateException {
-		return getFlowExecutionContext().getActiveSession().getScope().getRequired(attributeName, requiredType);
+		return getFlowExecution().getActiveSession().getScope().getRequired(attributeName, requiredType);
 	}
 
 	// assert helpers
@@ -390,9 +388,9 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * in the tested flow execution
 	 */
 	protected void assertActiveFlowEquals(String expectedActiveFlowId) {
-		assertEquals("The active flow id '" + getFlowExecutionContext().getActiveSession().getDefinition().getId()
+		assertEquals("The active flow id '" + getFlowExecution().getActiveSession().getDefinition().getId()
 				+ "' does not equal the expected active flow id '" + expectedActiveFlowId + "'", expectedActiveFlowId,
-				getFlowExecutionContext().getActiveSession().getDefinition().getId());
+				getFlowExecution().getActiveSession().getDefinition().getId());
 	}
 
 	/**
@@ -400,7 +398,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * ended and has been started.
 	 */
 	protected void assertFlowExecutionActive() {
-		assertTrue("The flow execution is not active but it should be", getFlowExecutionContext().isActive());
+		assertTrue("The flow execution is not active but it should be", getFlowExecution().isActive());
 	}
 
 	/**
@@ -408,7 +406,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * active.
 	 */
 	protected void assertFlowExecutionEnded() {
-		assertTrue("The flow execution is still active but it should have ended", !getFlowExecutionContext().isActive());
+		assertTrue("The flow execution is still active but it should have ended", !getFlowExecution().isActive());
 	}
 
 	/**
@@ -417,9 +415,9 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param expectedCurrentStateId the expected current state
 	 */
 	protected void assertCurrentStateEquals(String expectedCurrentStateId) {
-		assertEquals("The current state '" + getFlowExecutionContext().getActiveSession().getState().getId()
+		assertEquals("The current state '" + getFlowExecution().getActiveSession().getState().getId()
 				+ "' does not equal the expected state '" + expectedCurrentStateId + "'", expectedCurrentStateId,
-				getFlowExecutionContext().getActiveSession().getState().getId());
+				getFlowExecution().getActiveSession().getState().getId());
 	}
 
 	/**
@@ -554,6 +552,17 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 */
 	protected FlowExecutionFactory createFlowExecutionFactory() {
 		return new FlowExecutionImplFactory();
+	}
+	
+	/**
+	 * Directly update the flow execution used by the test by setting
+	 * it to given flow execution. Use this if you have somehow manipulated
+	 * the flow execution being tested and want to continue the test
+	 * with another flow execution.
+	 * @param flowExecution the flow execution to use
+	 */
+	protected void updateFlowExecution(FlowExecution flowExecution) {
+		this.flowExecution = flowExecution;
 	}
 
 	/**
