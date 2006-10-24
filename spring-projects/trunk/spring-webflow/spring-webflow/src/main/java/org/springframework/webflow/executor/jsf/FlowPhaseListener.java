@@ -207,25 +207,16 @@ public class FlowPhaseListener implements PhaseListener {
 			prepareApplicationView(context.getFacesContext(), holder);
 		}
 		else if (selectedView instanceof FlowExecutionRedirect) {
-			if (holder.needsSave()) {
-				saveFlowExecution(context, holder);
-			}
 			String url = argumentHandler.createFlowExecutionUrl(holder.getFlowExecutionKey().toString(), holder
 					.getFlowExecution(), context);
 			sendRedirect(url, context);
 		}
 		else if (selectedView instanceof ExternalRedirect) {
-			if (holder.needsSave()) {
-				saveFlowExecution(context, holder);
-			}
 			String url = argumentHandler.createExternalUrl((ExternalRedirect)holder.getViewSelection(), holder
 					.getFlowExecutionKey().toString(), context);
 			sendRedirect(url, context);
 		}
 		else if (selectedView instanceof FlowDefinitionRedirect) {
-			if (holder.needsSave()) {
-				saveFlowExecution(context, holder);
-			}
 			String url = argumentHandler.createFlowDefinitionUrl((FlowDefinitionRedirect)holder.getViewSelection(), context);
 			sendRedirect(url, context);
 		}
