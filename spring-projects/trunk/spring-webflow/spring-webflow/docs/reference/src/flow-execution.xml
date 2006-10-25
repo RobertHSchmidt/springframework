@@ -467,6 +467,20 @@
    	 			To help illustrate testing a flow execution, first consider the following flow definition
    	 			to search a phonebook for contacts:
    		 	</para>
+			<mediaobject>
+				<imageobject role="fo">
+					<imagedata fileref="images/flow-search.png" format="PNG" align="center"/>
+				</imageobject>
+				<imageobject role="html">
+					<imagedata fileref="images/flow-search.png" format="PNG" align="center"/>
+				</imageobject>
+				<caption>
+					<para>Phonebook Search Flow - State Diagram</para>
+				</caption>
+			</mediaobject>
+   	 		<para>
+   	 			The corresponding XML-based flow definition implementation:
+   		 	</para>					 	
    		 	<programlisting>
     &lt;?xml version="1.0" encoding="UTF-8"?&gt;
     &lt;flow xmlns="http://www.springframework.org/schema/webflow"
