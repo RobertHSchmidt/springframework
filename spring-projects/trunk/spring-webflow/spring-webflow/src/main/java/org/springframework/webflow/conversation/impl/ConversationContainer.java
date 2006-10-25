@@ -31,6 +31,10 @@ import org.springframework.webflow.conversation.NoSuchConversationException;
  * Container for conversations that is stored in the session. When the
  * session expires this container will go with it, implicitly expiring all
  * contained conversations.
+ * <p>
+ * This is an internal helper class of the {@link SessionBindingConversationManager}.
+ * 
+ * @author Erwin Vervaet
  */
 class ConversationContainer implements Serializable {
 	
