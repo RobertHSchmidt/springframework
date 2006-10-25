@@ -5,19 +5,19 @@ http://forum.springframework.org
 
 1. INTRODUCTION
 
-Spring Web Flow (SWF) is a product of the Spring community focused on the definition
+Spring Web Flow (SWF) is a component of the Spring Framework's web stack focused on the definition
 and execution of user interface (UI) flow within a web application.
 
-The system allows you to define the user dialogs of your application from 
-self-contained modules called "flows" that are reusable in different situations.
-Flows are ideal for guiding users through controlled navigations that drive business
-processes.  These processes typically span HTTP requests, have state, and
-may be dynamic in nature.
+The system allows you to capture a logical flow of your web application as a self-contained module
+that can be reused in different situations. Such a flow guides a single user through the implementation
+of a business task, and represents a single user conversation. Flows often execute across HTTP requests,
+have state, exhibit transactional characteristics, and may be dynamic and/or long-running in nature.
 
-SWF is a focused flow engine that integrates with existing frameworks like Spring MVC,
-Struts, and JSF, capable of capturing your application's control flow explicity in a
-declarative, reusable fashion.  SWF is a very powerful framework based on a finite-state
-machine for the definition and execution of UI control flow.
+Spring Web Flow exists at a higher level of abstraction, integrating as a self-contained flow engine
+within base frameworks such as Struts, Spring MVC, Portlet MVC, and JSF. SWF provides you the
+capability to capture your application's UI flow explicitly in a declarative, portable,
+and manageable fashion. SWF is a powerful controller framework based on a finite-state machine,
+fully addressing the "C" in MVC. 
 
 2. RELEASE INFO
 
