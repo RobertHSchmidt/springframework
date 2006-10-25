@@ -392,6 +392,17 @@
 							<emphasis>1</emphasis>
 						</entry>
 					</row>
+					<row>
+   						<entry>flashMap</entry>
+						<entry>
+							A data map that forms the basis for <emphasis>flash scope</emphasis>.
+							Attributes placed in this map will be retained until the next 
+							external user event is signaled in the session.
+						</entry>
+						<entry>
+							<emphasis>1</emphasis>
+						</entry>
+					</row>					
 				</tbody>
 			</tgroup>
 		</table>
@@ -423,7 +434,54 @@
 				expected the user will choose a seat for their flight.
 			</para>
 		</note>
-    </sect1>	
+    </sect1>
+   	<sect1 id="execution-scopes">
+		<title>Flow execution scopes</title>
+		<para>
+			As alluded to, a flow execution manages several containers called <emphasis>scopes</emphasis>,
+			which allow arbitrary attributes to be stored for a period of time.  There are four scope 
+			types, each with different storage management semantics:
+		</para>
+    	<table>
+			<title>Flow execution scope types</title>
+            <tgroup cols="2">
+   	            <colspec colname="c1" colwidth="2*" />
+                <colspec colname="c2" colwidth="4*" />
+       	        <thead>
+	                <row>
+           	            <entry>Scope type name</entry>
+               	        <entry>Management Semantics</entry>
+       	            </row>
+				</thead>
+				<tbody>
+					<row>
+           				<entry>request</entry>
+						<entry>
+							Eligible for garbage collection when a single call into the flow execution completes.
+						</entry>
+					</row>
+					<row>
+   						<entry>flash</entry>
+						<entry>
+							Cleared when the next user event is signaled into the flow session; eligible for garbage collection when the flow session ends.
+						</entry>
+					</row>
+					<row>
+   						<entry>flow</entry>
+						<entry>
+							Eligible for garbage collection when the flow session ends.						
+						</entry>
+					</row>
+					<row>
+   						<entry>conversation</entry>
+						<entry>
+							Eligible for garbage collection when the root session of the governing flow execution (logical conversation) ends.					
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</sect1>
 	<sect1 id="execution-testing">
 		<title>Flow execution testing</title>
 		<para>
