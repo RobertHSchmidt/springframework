@@ -23,6 +23,12 @@
       <version>2.1</version>
     </dependency>
     <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <version>2.4</version>
@@ -58,5 +64,21 @@
       <artifactId>spring-support</artifactId>
       <version>2.0</version>
     </dependency>
+<!-- Test Dependencies -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-mock</artifactId>
+      <version>2.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
+
+  <build>
+    <testSourceDirectory>src/itest/java</testSourceDirectory>
+    <testResources>
+      <testResource>
+        <directory>src/itest/java</directory>
+      </testResource>
+    </testResources>
+  </build>
 </project>
