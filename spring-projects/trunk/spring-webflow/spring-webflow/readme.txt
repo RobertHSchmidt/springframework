@@ -8,7 +8,7 @@ http://forum.springframework.org
 Spring Web Flow (SWF) is a product of the Spring community focused on the definition
 and execution of user interface (UI) flow within a web application.
 
-The system allows you to define a user's dialog with your application from 
+The system allows you to define the user dialogs of your application from 
 self-contained modules called "flows" that are reusable in different situations.
 Flows are ideal for guiding users through controlled navigations that drive business
 processes.  These processes typically span HTTP requests, have state, and
