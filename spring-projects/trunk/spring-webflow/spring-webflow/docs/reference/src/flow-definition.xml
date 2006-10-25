@@ -520,13 +520,11 @@
         <sect2 id="transition-actioncriteria">
         	<title>Action transition execution criteria</title>
          	<para>
-         		<note>
-	         		In the XML transition template above note the support for the <literal>action</literal> element within the <literal>transition</literal> element.
-	         	</note>
+         		In the XML transition template above note the support for the <literal>action</literal> element within the <literal>transition</literal> element.
          	</para>
          	<para>
          		A transition may be configured with one or more actions that execute <emphasis>before</emphasis> the transition itself
-         		executes, as part of the <literal>executionCriteria</literal>.  If one or more of these
+         		executes as <literal>executionCriteria</literal>.  If one or more of these
          		actions do not complete successfully the transition will <emphasis>not</emphasis> be allowed.
          		This <emphasis>action transition criteria</emphasis> makes it possible to execute arbitrary logic
          		after a transition is matched but before it is executed.  This is useful when you want to execute 
@@ -1263,9 +1261,11 @@
 		       		</tgroup>
     		    </table>
     		    <para>
-    		    	A limitation of these other points in a flow where actions can be executed is that they do not
-    		    	provide full control to deal with the action result events, for instance by selecting an appropriate
-    		    	transition. If you need such control, you'll have to execute the action from within an action state.
+    		    	<note>
+    		    	The above other points in a flow where actions may be executed do not
+    		    	allow you to execute a state transition in response to the action result event.
+    		    	If you need such flow control you must execute the action from within an action state.
+					</note>
     		    </para>	
     		</sect3>
     		<sect3>
@@ -1969,6 +1969,7 @@
     			    state, otherwise transition to the <literal>placeOrder</literal> state</emphasis>."
     			</para>
     			<para>
+    				<note>
     			    <emphasis>Caution</emphasis>: flow definitions should <emphasis>not</emphasis> be vehicles for 
     			    business logic.  In this case the decision made was controller logic, reasoning on a
     			    pre-calculated value to decide what step of the flow to transition to next.  That is the kind of logic that 
@@ -1976,6 +1977,7 @@
     			    the business rule defining how shipping status is calculated is a misuse.
     			    Instead, push such a calculation into application code where it belongs and <emphasis>instruct</emphasis>
     			    the flow to invoke that code using an action.
+    			    </note>
     			</para>
 			</sect3>
     	</sect2>
@@ -2193,7 +2195,7 @@
               http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd"&gt;
 
         &lt;input-mapper&gt;
-            &lt;mapping source="shipping" target="flowScope.shipping"/&gt;
+            &lt;input-attribute name="shipping"/&gt;
         &lt;/input-mapper&gt;
         
         ...
@@ -2201,7 +2203,7 @@
     &lt;/flow&gt;
     			</programlisting>
     			<para>
-    			    This input mapper declaration reads "<emphasis>when a new execution of this flow starts
+    			    This short-form input mapper declaration reads "<emphasis>when a new execution of this flow starts
     			    map the <literal>shipping</literal> input attribute into <literal>flowScope</literal> under
     			    the name <literal>shipping</literal></emphasis>." 
     			</para>
@@ -2380,7 +2382,7 @@
         
         &lt;end-state id="finish"&gt;
             &lt;output-mapper&gt;
-                &lt;mapping source="flowScope.shipping" target="shipping"/&gt;
+                &lt;output-attribute name="shipping"/&gt;
             &lt;/output-mapper&gt;
         &lt;/end-state&gt;
         
@@ -2434,7 +2436,7 @@
         &lt;subflow-state id="enterShippingDetails" flow="shipping"&gt;
             &lt;attribute-mapper&gt;
                 &lt;output-mapper&gt;
-                    &lt;mapping source="shipping" target="flowScope.shipping"/&gt;
+                    &lt;output-attribute name="shipping"/&gt;
                 &lt;/output-mapper&gt;
             &lt;/attribute-mapper&gt;
             &lt;transition on="finish" to="placeOrder"/>
