@@ -158,19 +158,20 @@
 	        </programlisting>
 	    	<para>
 	    		This instructs Spring to create a flow executor that can execute all XML-based flow definitions 
-    			contained within the <literal>/WEB-INF/flows</literal> directory.
+    			contained within the <literal>/WEB-INF/flows</literal> directory. The default flow execution 
+    			repository, <literal>continuation</literal>, is used.
     		</para>
     	</sect2>
     	<sect2 id="executor-custom-repo">
-    		<title>A flow executor using a continuation-based execution repository</title>
+    		<title>A flow executor using a simple execution repository</title>
 	    	<programlisting>
-    &lt;flow:executor id="flowExecutor" registry-ref="flowRegistry" repository-type="continuation"/>
+    &lt;flow:executor id="flowExecutor" registry-ref="flowRegistry" repository-type="simple"/>
 	    	</programlisting>
 	    	<para>
-	    		This executor is configured with a continuation-based repository that manages
-	    		continuation state in the user session.
+	    		This executor is configured with a simple repository that manages
+	    		execution state in the user session.
 	    	</para>	
-    	</sect2>		
+    	</sect2>
     	<sect2 id="executor-custom-repo2">
     		<title>A flow executor using a client-side continuation-based execution repository</title>
 	    	<programlisting>
@@ -181,6 +182,17 @@
     			continuation state to the client using no server-side state.
 	    	</para>	
     	</sect2>		
+    	<sect2 id="executor-custom-repo3">
+    		<title>A flow executor using a single key execution repository</title>
+	    	<programlisting>
+    &lt;flow:executor id="flowExecutor" registry-ref="flowRegistry" repository-type="singleKey"/>
+	    	</programlisting>
+	    	<para>
+	    		This executor is configured with a simple repository that assigns a single 
+	    		flow execution key per conversation.  The key, once assigned, never changes
+	    		for the duration of the conversation.
+	    	</para>	
+    	</sect2>
     	<sect2 id="executor-excution-attributes">
     		<title>A flow executor setting system execution attributes</title>
 			<programlisting>
@@ -194,10 +206,16 @@
 	    	<para>
 	    		This executor is configured to set two flow execution system attributes
 	    		<literal>alwaysRedirectOnPause=false</literal> and <literal>foo=bar</literal>.
-	    		The <literal>alwaysRedirectOnPause</literal> attribute will disable 
-	    		the default behavior where a flow execution redirect occurs 
-	    		each time an execution pauses (automatic <literal>POST+REDIRECT+GET</literal> behavior).
-	    	</para>	
+	    	</para>
+	    	<para>
+	    		<note>
+	    		The <literal>alwaysRedirectOnPause</literal> attribute determines if 
+	    		a flow execution redirect occurs automatically each time an execution pauses
+	    		(automated <literal>POST+REDIRECT+GET</literal> behavior).
+	    		Setting this attribute to false will disable the <emphasis>default 'true' behavior</emphasis>
+	    		where a flow execution redirect always occurs on pause.
+	    		</note>
+	    	</para>
 		</sect2>
     	<sect2 id="executor-excution-listeners">
     		<title>A flow executor setting custom execution listeners</title>
@@ -314,17 +332,19 @@
 			<literal>flowDefinitionId</literal>, <literal>flowExecutionKey</literal>, and <literal>eventId</literal> 
 			are extracted from an incoming controller request with the
 			<literal>org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor</literal>
-			strategy. Flow controller don't use this strategy directly but instead use a
-			<literal>org.springframework.webflow.executor.support.FlowExecutorArgumentHandler</literal>
-			implementation that takes care of both argument extraction and exposing arguments in
-			responses.
+			strategy.
+			<note>
+			The various flow controllers typically do not use this strategy directly but instead use a
+			convenient <literal>FlowExecutorArgumentHandler</literal> implementation that takes care
+			of argument extraction as well as exposing responsibilities (in callback URLs).
+			</note>
 		</para>
 		<para>
 			The next several examples illustrate strategies for parameterizing flow controllers 
 			from the browser to launch and resume flow executions:
 		</para>
 		<sect2 id="executor-parmeterization-default">
-			<title>Parameter-based flow executor argument extraction</title>
+			<title>Request parameter-based flow executor argument extraction</title>
 			<para>
 				The default executor argument extractor strategy is request-parameter based.
 				The default request parameters are:
@@ -347,11 +367,11 @@
 					    </row>
             			<row>
               				<entry>_flowExecutionKey</entry>
-							<entry>The flow execution key, needed to resume an existing flow execution</entry>
+							<entry>The flow execution key, needed to resume and refresh an existing flow execution.</entry>
 					    </row>
             			<row>
               				<entry>_eventId</entry>
-							<entry>The id of an event that occured, needed to resume an existing flow execution</entry>
+							<entry>The id of an event that occured, needed to resume an existing flow execution.</entry>
 					    </row>					    
             	   </tbody>
 	          </tgroup>
@@ -407,6 +427,12 @@
 		   		 	</para>
 		    	</note>
     		</sect3>
+   		 	<sect3 id="executor-mvc-refresh">
+   		 		<title>Refreshing a flow execution</title>
+	   		 	<programlisting>
+    &lt;a href="flowController.htm?_flowExecutionKey=${flowExecutionKey}"&gt;Refresh&lt;/a&gt;
+	    		</programlisting>
+	    	</sect3>    		
     	</sect2>
 		<sect2 id="executor-extraction-requestpath">
 			<title>Request path based flow executor argument extraction</title>
@@ -442,7 +468,13 @@
         &lt;input type="submit" class="button" name="_eventId_cancel" value="Cancel"&gt;
     &lt;/form&gt;
 		    	</programlisting>
-    		</sect3>   		 	
+    		</sect3>
+   		 	<sect3 id="executor-mvc-refresh-requestpath">
+   		 		<title>Refreshing a flow execution</title>
+	   		 	<programlisting>
+    &lt;a href="flowController/k/${flowExecutionKey}"&gt;Refresh&lt;/a&gt;
+	    		</programlisting>
+	    	</sect3>    		   		 	
 		</sect2>    	
 	</sect1>	
 	<sect1 id="executor-struts">

@@ -13,7 +13,7 @@
 			Many of these flow executions span multiple requests into the server and therefore 
 			must be saved so they can be resumed on subsequent requests.  This presents technical
 			challenges, as there must exist a stable mechanism for a new request to be associated
-			with an existing execution in a state that matches what the user expects.  This problem 
+			with an existing execution in the view state that matches what the user expects.  This problem 
 			is more difficult when you consider that many applications require use of browser
 			navigational buttons and their use involves updating local history without 
 			notifying the server.
@@ -209,6 +209,7 @@
 				 more power (by enabling multiple continuations to exist per conversation),
 				 but incurring more storage overhead.  This repository implementation should be
 				 considered when you do have to support browser navigational button use.
+				 This implementation is the default.
 			</para>
 		</sect2>
 		<sect2 id="repository-client">
