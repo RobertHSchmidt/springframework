@@ -37,7 +37,7 @@
 			defining the ending points of the flow.
     	</para>
     	<para>
-    		An example definition of a simple flow to carry out a search process is shown below:
+    		An example definition of a simple flow to carry out a search process is shown graphically below:
     	</para>
 		<mediaobject>
 			<imageobject role="fo">
@@ -718,7 +718,7 @@
     				</listitem>
     				<listitem>
     					<para>
-	    				    After some 'think time' the user submits an input event to resume the flow execution 
+	    				    After some 'think time' the user signals an input event to resume the flow execution 
     					    from the 'paused' point.
     					</para>
     				</listitem>
