@@ -61,7 +61,7 @@
 			base frameworks	such as Struts, Spring MVC, Portlet MVC, and JSF.
 			SWF	provides you the capability to capture your
 			application's UI flow explicitly in a declarative, 
-			highly-portable, and highly-manageable fashion.  SWF is 
+			portable, and manageable fashion.  SWF is 
 			a powerful controller framework based on a finite-state machine,
 			fully addressing the "C" in MVC.
 		</para>
@@ -628,7 +628,7 @@
 	<sect1 id="introduction-support">
 		<title>Support</title>
 		<para>
-			Spring Web Flow is supported on Spring Framework 1.2.7 or > for the 1.x series and 
+			Spring Web Flow 1.0 is supported on Spring Framework 1.2.7 or > for the 1.x series and 
 			supported on 2.0 or > for the 2.x series.
 		</para>
 		<para>
