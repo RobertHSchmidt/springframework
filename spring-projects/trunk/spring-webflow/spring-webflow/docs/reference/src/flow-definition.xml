@@ -861,7 +861,7 @@
 								<entry>
 									Returns an ApplicationView referencing a logical <literal>viewName</literal> to render and containing a
 									<literal>modelMap</literal> with the application data needed by the rendering process
-									(by default, this map contains the union of the attributes in flow and request scope).
+									(by default, this map contains the union of the data scopes such flow, flash, and request scope).
 									Supports setting a <literal>redirect</literal> flag that triggers
 									a browser redirect to the selected view using a <literal>FlowExecutionRedirect</literal>.
 									The default implementation.
@@ -1113,10 +1113,8 @@
     			<para>
     			   This reads "<emphasis>when this flow starts enter the <literal>displayForm</literal> state
     			   to execute the <literal>setupForm</literal> and <literal>loadFormReferenceData</literal> methods
-    			   before rendering the <literal>form</literal> view.
-    			   On a user <literal>submit</literal> transition to the <literal>saveForm</literal> state
-    			   if the <literal>bindAndValidate</literal> method on the <literal>formAction</literal>
-    			   executes successfully.</emphasis>"
+    			   before rendering the <literal>form</literal> view. On <literal>submit</literal>,
+    			   transition to the <literal>saveForm</literal> state if the <literal>bindAndValidate</literal> method executes successfully.</emphasis>"
     			</para>
 			</sect3>
     	</sect2>
