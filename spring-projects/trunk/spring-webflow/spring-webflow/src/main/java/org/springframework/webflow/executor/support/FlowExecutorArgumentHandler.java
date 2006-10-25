@@ -284,6 +284,13 @@ public abstract class FlowExecutorArgumentHandler implements FlowExecutorArgumen
 
 	public abstract String extractEventId(ExternalContext context) throws FlowExecutorArgumentExtractionException;
 
+	public void exposeFlowExecutionContext(String flowExecutionKey, FlowExecutionContext context, Map model) {
+		if (flowExecutionKey != null) {
+			model.put(getFlowExecutionKeyAttributeName(), flowExecutionKey);
+		}
+		model.put(getFlowExecutionContextAttributeName(), context);
+	}
+
 	public abstract String createFlowDefinitionUrl(FlowDefinitionRedirect flowDefinitionRedirect,
 			ExternalContext context);
 
@@ -291,13 +298,6 @@ public abstract class FlowExecutorArgumentHandler implements FlowExecutorArgumen
 			ExternalContext context);
 
 	public abstract String createExternalUrl(ExternalRedirect redirect, String flowExecutionKey, ExternalContext context);
-
-	public void exposeFlowExecutionContext(String flowExecutionKey, FlowExecutionContext context, Map model) {
-		if (flowExecutionKey != null) {
-			model.put(getFlowExecutionKeyAttributeName(), flowExecutionKey);
-		}
-		model.put(getFlowExecutionContextAttributeName(), context);
-	}
 
 	// helpers for use in subclasses
 
