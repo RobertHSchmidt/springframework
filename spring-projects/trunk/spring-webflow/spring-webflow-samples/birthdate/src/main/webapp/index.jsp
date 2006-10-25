@@ -19,10 +19,10 @@
 			<P>
 				This sample application demonstrates the use of the FormAction: a multi-action.
 				It also shows you how to use a multi-action to group all actions executed by a flow
-				in a single class!
+				in a single class.
 			</P>
 			<P>
-				This sample also demonstrates Spring Web Flow's Struts integration</P>
+				This sample also demonstrates Spring Web Flow's Struts integration.</P>
 			<P>
 				Finally, the sample also uses JSTL in conjunction with flows.
 			</P>
