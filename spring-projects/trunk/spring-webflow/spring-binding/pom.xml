@@ -4,8 +4,8 @@
   <groupId>org.springframework</groupId>
   <artifactId>spring-binding</artifactId>
   <name>Spring Binding</name>
-  <version>1.0-rc4</version>
-  <description>Spring binding framework</description>
+  <version>1.0</version>
+  <description>Spring Data Binding Framework</description>
   <url>http://www.springframework.org</url>
   <licenses>
     <license>
@@ -17,7 +17,7 @@
   <scm>
     <connection>scm:svn:https://svn.sourceforge.net/svnroot/springframework</connection>
     <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/springframework</developerConnection>
-    <tag>1.0-rc4</tag>
+    <tag>1.0</tag>
     <url>http://svn.sourceforge.net/viewcvs.cgi/springframework/</url>
   </scm>
   <organization>
@@ -25,23 +25,16 @@
     <url>http://www.springframework.org/</url>
   </organization>
   <dependencies>
-<!-- External Dependencies -->
+    <!-- External Dependencies -->
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <version>1.0.4</version>
     </dependency>
     <dependency>
-      <groupId>easymock</groupId>
-      <artifactId>easymock</artifactId>
-      <version>2.2</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
+      <groupId>ognl</groupId>
+      <artifactId>ognl</artifactId>
+      <version>2.6.9</version>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
@@ -50,12 +43,7 @@
       <scope>runtime</scope>
       <optional>true</optional>
     </dependency>
-    <dependency>
-      <groupId>ognl</groupId>
-      <artifactId>ognl</artifactId>
-      <version>2.6.9</version>
-    </dependency>
-<!-- Spring Dependencies -->
+    <!-- Spring Dependencies -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
@@ -71,5 +59,18 @@
       <artifactId>spring-core</artifactId>
       <version>2.0</version>
     </dependency>
+   <!-- Test Dependencies -->
+    <dependency>
+      <groupId>easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <version>2.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>        
   </dependencies>
 </project>
