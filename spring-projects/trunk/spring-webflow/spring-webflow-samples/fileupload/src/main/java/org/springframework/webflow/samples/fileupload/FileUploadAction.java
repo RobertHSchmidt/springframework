@@ -24,7 +24,13 @@ public class FileUploadAction extends AbstractAction {
 
 	protected Event doExecute(RequestContext context) throws Exception {
 		MultipartFile file = context.getRequestParameters().getRequiredMultipartFile("file");
-		context.getRequestScope().put("file", file.getBytes());
-		return success();
+		if (file.getSize() > 0) {
+			// data was uploaded
+			context.getFlashScope().put("file", new String(file.getBytes()));
+			return success();
+		}
+		else {
+			return error();
+		}
 	}
 }

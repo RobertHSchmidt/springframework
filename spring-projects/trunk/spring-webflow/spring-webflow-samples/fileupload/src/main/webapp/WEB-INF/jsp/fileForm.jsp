@@ -8,7 +8,10 @@
 	<hr>
 	<table>
 		<c:if test="${fileUploaded}">
-			<p>File uploaded succesfully.</p>		
+			<p>File uploaded succesfully.</p>
+			<c:if test="${!empty(file)}">
+				<pre style="border: solid 1px;">${file}</pre>
+			</c:if>
 		</c:if>
 		<form name="submitForm" method="post" enctype="multipart/form-data">
 		<tr>
