@@ -28,6 +28,10 @@ import org.springframework.webflow.conversation.ConversationId;
 /**
  * Internal {@link Conversation} implementation used by the conversation
  * container.
+ * <p>
+ * This is an internal helper class of the {@link SessionBindingConversationManager}.
+ * 
+ * @author Erwin Vervaet
  */
 class ContainedConversation implements Conversation, Serializable {
 
