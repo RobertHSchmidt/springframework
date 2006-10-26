@@ -2,8 +2,15 @@ SPRING WEB FLOW (SWF) CHANGELOG
 ===============================
 http://www.springframework.org
 
+Changes in version 1.0.1 ()
+-----------------------------------
+
+Package org.springframework.webflow.execution.factory
+* The getHolder method on ConditionalFlowExecutionListenerLoader is now private. It has a package
+  private return type, so there is no use in it being protected.
+
 Changes in version 1.0 (25.10.2006)
----------------------------------------
+-----------------------------------
 
 Package org.springframework.webflow.action
 * Fixed bug in FormAction where the binder was not properly initialized in all cases (SWF-193).
