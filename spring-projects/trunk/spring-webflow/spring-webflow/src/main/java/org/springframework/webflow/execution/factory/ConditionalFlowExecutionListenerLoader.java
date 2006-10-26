@@ -211,7 +211,7 @@ public class ConditionalFlowExecutionListenerLoader implements FlowExecutionList
 	 * @param listener the listener
 	 * @return the holder, or null if not found
 	 */
-	protected ConditionalFlowExecutionListenerHolder getHolder(FlowExecutionListener listener) {
+	private ConditionalFlowExecutionListenerHolder getHolder(FlowExecutionListener listener) {
 		Iterator it = listeners.iterator();
 		while (it.hasNext()) {
 			ConditionalFlowExecutionListenerHolder next = (ConditionalFlowExecutionListenerHolder)it.next();
