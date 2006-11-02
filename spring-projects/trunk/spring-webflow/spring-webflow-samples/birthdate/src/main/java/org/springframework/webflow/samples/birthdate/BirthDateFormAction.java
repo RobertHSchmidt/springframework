@@ -20,8 +20,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.springframework.beans.PropertyEditorRegistry;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.validation.DataBinder;
 import org.springframework.webflow.action.FormAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -42,11 +42,11 @@ public class BirthDateFormAction extends FormAction {
 		setFormObjectScope(ScopeType.FLOW);
 		setValidator(new BirthDateValidator());
 	}
-
-	protected void initBinder(RequestContext context, DataBinder binder) {
+	
+	protected void registerPropertyEditors(PropertyEditorRegistry registry) {
 		// register a custom property editor to handle the date input
 		SimpleDateFormat dateFormat = new SimpleDateFormat(BIRTH_DATE_PATTERN);
-		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
+		registry.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
 	}
 
 	/*
