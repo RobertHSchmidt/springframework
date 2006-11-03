@@ -5,6 +5,10 @@ http://www.springframework.org
 Changes in version 1.0.1 ()
 -----------------------------------
 
+Package org.springframework.webflow.engine
+* The methods getMatchingCriteria, getExecututionCriteria, getTargetStateResolver, and canExecute
+  of the Transition class have been made public (SWF-209).
+
 Package org.springframework.webflow.execution.factory
 * The getHolder method on ConditionalFlowExecutionListenerLoader is now private. It has a package
   private return type, so there is no use in it being protected.
