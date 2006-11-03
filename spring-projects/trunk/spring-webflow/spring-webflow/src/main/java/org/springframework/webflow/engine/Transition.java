@@ -127,7 +127,7 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	 * matches as eligible for execution.
 	 * @return the transition matching criteria
 	 */
-	protected TransitionCriteria getMatchingCriteria() {
+	public TransitionCriteria getMatchingCriteria() {
 		return matchingCriteria;
 	}
 
@@ -146,7 +146,7 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	 * matched, should complete execution or should <i>roll back</i>.
 	 * @return the transition execution criteria
 	 */
-	protected TransitionCriteria getExecutionCriteria() {
+	public TransitionCriteria getExecutionCriteria() {
 		return executionCriteria;
 	}
 
@@ -163,7 +163,7 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	/**
 	 * Returns this transition's target state resolver.
 	 */
-	protected TargetStateResolver getTargetStateResolver() {
+	public TargetStateResolver getTargetStateResolver() {
 		return targetStateResolver;
 	}
 
@@ -185,6 +185,17 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	 */
 	public boolean matches(RequestContext context) {
 		return matchingCriteria.test(context);
+	}
+
+	/**
+	 * Checks if this transition can complete its execution or should be rolled
+	 * back, given the state of the flow execution request context.
+	 * @param context the flow execution request context
+	 * @return true if this transition can complete execution, false if it
+	 * should roll back
+	 */
+	public boolean canExecute(RequestContext context) {
+		return executionCriteria.test(context);
 	}
 
 	/**
@@ -239,17 +250,6 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 			}
 		}
 		return selectedView;
-	}
-
-	/**
-	 * Checks if this transition can complete its execution or should be rolled
-	 * back, given the state of the flow execution request context.
-	 * @param context the flow execution request context
-	 * @return true if this transition can complete execution, false if it
-	 * should roll back
-	 */
-	protected boolean canExecute(RequestContext context) {
-		return executionCriteria.test(context);
 	}
 
 	public String toString() {
