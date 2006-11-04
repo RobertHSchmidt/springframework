@@ -88,7 +88,7 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	/**
 	 * The maximum number of continuations that can be active per conversation.
 	 */
-	private int maxContinuations;
+	private int maxContinuations = -1;
 
 	/**
 	 * Create a new continuation based flow execution repository using given state
