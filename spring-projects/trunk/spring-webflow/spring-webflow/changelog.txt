@@ -13,6 +13,10 @@ Package org.springframework.webflow.execution.factory
 * The getHolder method on ConditionalFlowExecutionListenerLoader is now private. It has a package
   private return type, so there is no use in it being protected.
 
+Package org.springframework.webflow.execution.repository
+* Fix a bug in FlowExecutionContinuationGroup. It was not correctly handling an update of a
+  continuation (SWF-211).
+
 Changes in version 1.0 (25.10.2006)
 -----------------------------------
 
