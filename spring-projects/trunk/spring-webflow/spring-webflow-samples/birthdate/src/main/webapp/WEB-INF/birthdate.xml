@@ -4,19 +4,17 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
                           
-	<start-state idref="setupForm" />
-
-	<!--
-		Prepare to display a new form.  Initializes the backing "form object" and installs property 
-		editors to format form field values.
-	-->
-	<action-state id="setupForm">
-		<action bean="formAction" method="setupForm" />
-		<transition on="success" to="enterBirthdate" />
-	</action-state>
+	<start-state idref="enterBirthdate" />
 
 	<!-- Display the first input form view -->
 	<view-state id="enterBirthdate" view="birthdateForm">
+		<!--
+			Prepare to display a new form.  Initializes the backing "form object" and installs property 
+			editors to format form field values.
+		-->
+		<render-actions>
+			<action bean="formAction" method="setupForm" />
+		</render-actions>
 		<transition on="submit" to="processBirthdateFormSubmit" />
 	</view-state>
 
