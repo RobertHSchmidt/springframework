@@ -86,6 +86,9 @@ class FlowExecutionContinuationGroup implements Serializable {
 	 */
 	public void add(Serializable continuationId, FlowExecutionContinuation continuation) {
 		continuations.put(continuationId, continuation);
+		if (continuationIds.contains(continuationId)) {
+			continuationIds.remove(continuationId);
+		}
 		continuationIds.add(continuationId);
 		// remove the oldest continuation if them maximium number of
 		// continuations has been exceeded
