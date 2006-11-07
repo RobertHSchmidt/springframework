@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:flow="http://www.springframework.org/schema/webflow-config"
-       xsi:schemaLocation="
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:flow="http://www.springframework.org/schema/webflow-config"
+	xsi:schemaLocation="
            http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
            http://www.springframework.org/schema/webflow-config
            http://www.springframework.org/schema/webflow-config/spring-webflow-config-1.0.xsd">
+
 
 	<!-- Launches new flow executions and resumes existing executions -->
 	<flow:executor id="flowExecutor" registry-ref="flowRegistry">
@@ -21,6 +22,7 @@
 	</flow:registry>
 
 	<!-- Observes the lifecycle of sellitem-flow executions -->
-	<bean id="listener" class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener" />
+	<bean id="listener"
+		class="org.springframework.webflow.samples.sellitem.SellItemFlowExecutionListener" />
 
 </beans>
