@@ -1,6 +1,6 @@
 <ivy-module version="1.0">
 	<info organisation="org.springframework"
-		module="spring"
+		module="spring-src"
 		revision="2.0"
 		status="release"
 		publication="20061003140456"
