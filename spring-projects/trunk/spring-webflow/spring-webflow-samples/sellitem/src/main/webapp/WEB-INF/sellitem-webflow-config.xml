@@ -18,7 +18,7 @@
 
 	<!-- Creates the registry of flow definitions for this application -->
 	<flow:registry id="flowRegistry">
-		<flow:location path="/WEB-INF/flows/**-flow.xml" />
+		<flow:location path="/WEB-INF/flows/**/*-flow.xml" />
 	</flow:registry>
 
 	<!-- Observes the lifecycle of sellitem-flow executions -->
