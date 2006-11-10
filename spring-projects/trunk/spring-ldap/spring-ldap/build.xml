@@ -20,6 +20,11 @@
 	<import file="${common.build.dir}/doc-targets.xml" />
 	<import file="${common.build.dir}/clover-targets.xml" />
 
+	<!-- extend common-build with source capability -->
+	<target name="build.prepare.make.config.dirs" depends="common-targets.build.prepare.make.config.dirs">
+		<mkdir dir="${lib.dir}/source" />
+	</target>
+
 	<!--
 		Overridden to create test report and run integration tests as well.
 	-->
