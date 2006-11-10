@@ -7,6 +7,7 @@
 	<bean id="formAction" class="org.springframework.webflow.action.FormAction">
 		<property name="formObjectClass" value="org.springframework.webflow.samples.sellitem.Sale"/>
 		<property name="formObjectScope" value="CONVERSATION"/>
+		<property name="formErrorsScope" value="CONVERSATION"/>
 		<property name="validator">
 			<bean class="org.springframework.webflow.samples.sellitem.SaleValidator"/>
 		</property>
