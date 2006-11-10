@@ -14,4 +14,9 @@
 	<import file="${common.build.dir}/common-targets.xml" />
 	<import file="${common.build.dir}/tomcat-targets.xml" />
 
+	<!-- extend common-build with source capability -->
+	<target name="build.prepare.make.config.dirs" depends="common-targets.build.prepare.make.config.dirs">
+		<mkdir dir="${lib.dir}/source" />
+	</target>
+
 </project>
