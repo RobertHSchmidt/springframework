@@ -29,7 +29,7 @@
 		<if test="${conversationScope.sale.shipping}" then="enterShippingDetails" else="processSale"/>
 	</decision-state>
 
-	<subflow-state id="enterShippingDetails" flow="shipping-flow-conversation-scope">
+	<subflow-state id="enterShippingDetails" flow="shipping-conversation-scope-flow">
 		<transition on="finish" to="processSale"/>
 	</subflow-state>
 	
