@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.ldap.support.parser;
+package org.springframework.ldap.support;
 
-import org.springframework.ldap.support.DistinguishedName;
-import org.springframework.ldap.support.LdapRdn;
 
 /**
  * A parser for RFC2253-compliant Distinguished Names.

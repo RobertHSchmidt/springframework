@@ -43,7 +43,7 @@ options {
 
 PARSER_BEGIN(DnParserImpl)
 
-package org.springframework.ldap.support.parser;
+package org.springframework.ldap.support;
 
 import org.springframework.ldap.support.LdapRdn;
 import org.springframework.ldap.support.LdapRdnComponent;
