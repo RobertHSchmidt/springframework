@@ -32,7 +32,7 @@ import org.springframework.util.Assert;
  */
 public final class ExternalContextHolder {
 
-	private static ThreadLocal externalContextHolder = new InheritableThreadLocal();
+	private static ThreadLocal externalContextHolder = new ThreadLocal();
 
 	/**
 	 * Associate the given ExternalContext with the current thread.

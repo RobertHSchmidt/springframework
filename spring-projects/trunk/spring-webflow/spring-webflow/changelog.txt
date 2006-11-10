@@ -5,6 +5,9 @@ http://www.springframework.org
 Changes in version 1.0.1 ()
 -----------------------------------
 
+Package org.springframework.webflow.context
+* ExternalContextHolder now uses a ThreadLocal instead of an InheritableThreadLocal (SWF-206).
+
 Package org.springframework.webflow.engine
 * The methods getMatchingCriteria, getExecututionCriteria, getTargetStateResolver, and canExecute
   of the Transition class have been made public (SWF-209).
