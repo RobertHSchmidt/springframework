@@ -23,10 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.ldap.BadLdapGrammarException;
-import org.springframework.ldap.support.parser.DefaultDnParserFactory;
-import org.springframework.ldap.support.parser.DnParser;
-import org.springframework.ldap.support.parser.ParseException;
-import org.springframework.ldap.support.parser.TokenMgrError;
 import org.springframework.ldap.util.ListComparator;
 
 /**
