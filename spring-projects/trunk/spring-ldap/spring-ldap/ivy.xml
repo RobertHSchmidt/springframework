@@ -26,7 +26,7 @@
 	<dependency org="org.springframework" name="spring-core" rev="2.0"/>
 	<dependency org="org.springframework" name="spring-context" rev="2.0"/>
 	<dependency org="org.springframework" name="spring-dao" rev="2.0"/>
-	<dependency org="org.springframework" name="spring" rev="2.0" conf="source->source">
+	<dependency org="org.springframework" name="spring-src" rev="2.0" conf="source->source">
 		<artifact name="spring-src" type="zip"/>
 	</dependency>
 	<dependency org="com.sun" name="ldapbp" rev="1.0" />
