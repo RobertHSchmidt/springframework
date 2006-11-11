@@ -28,6 +28,14 @@ import org.springframework.webflow.util.UidGenerator;
 /**
  * Simple implementation of a conversation manager that stores conversations in
  * the session attribute map.
+ * <p>
+ * Using the {@link #setMaxConversations(int) maxConversations} property, you can
+ * limit the number of concurrently active conversations allowed in a single
+ * session. If the default is exceeded, the conversation manager will automatically
+ * end the oldest conversation. The default is 5, which should be fine for most
+ * situations. Set it to -1 for no limit. Setting maxConversations to 1 allows
+ * easy resource cleanup in situations where there should only be one active
+ * conversation per session.
  * 
  * @author Erwin Vervaet
  */
@@ -37,7 +45,7 @@ public class SessionBindingConversationManager implements ConversationManager {
 	 * Key of the session attribute holding the conversation container.
 	 */
 	private static final String CONVERSATION_CONTAINER_KEY = "webflow.conversation.container";
-
+	
 	/**
 	 * The conversation uid generation strategy to use.
 	 */
@@ -45,8 +53,18 @@ public class SessionBindingConversationManager implements ConversationManager {
 
 	/**
 	 * The maximum number of active conversations allowed in a session.
+	 * The default is 5. This is high enough for most practical situations and low enough
+	 * to avoid excessive resource usage or easy denial of service attacks.
 	 */
-	private int maxConversations = -1;
+	private int maxConversations = 5;
+	
+	/**
+	 * Returns the used generator for conversation ids. Defaults to
+	 * {@link RandomGuidUidGenerator}.
+	 */
+	public UidGenerator getConversationIdGenerator() {
+		return conversationIdGenerator;
+	}
 
 	/**
 	 * Sets the configured generator for conversation ids.
@@ -54,10 +72,18 @@ public class SessionBindingConversationManager implements ConversationManager {
 	public void setConversationIdGenerator(UidGenerator uidGenerator) {
 		this.conversationIdGenerator = uidGenerator;
 	}
+	
+	/**
+	 * Returns the maximum number of allowed concurrent conversations. The
+	 * default is 5.
+	 */
+	public int getMaxConversations() {
+		return maxConversations;
+	}
 
 	/**
 	 * Set the maximum number of allowed concurrent conversations. Set to -1 for
-	 * no limit.
+	 * no limit. The default is 5.
 	 */
 	public void setMaxConversations(int maxConversations) {
 		this.maxConversations = maxConversations;
