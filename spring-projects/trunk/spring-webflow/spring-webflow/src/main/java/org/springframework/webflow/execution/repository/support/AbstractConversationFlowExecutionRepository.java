@@ -69,7 +69,7 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	/**
 	 * Returns the configured conversation manager.
 	 */
-	protected ConversationManager getConversationManager() {
+	public ConversationManager getConversationManager() {
 		return conversationManager;
 	}
 
