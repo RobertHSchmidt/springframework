@@ -20,6 +20,7 @@ import java.util.Map;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
 import org.springframework.webflow.core.collection.AttributeMap;
@@ -84,12 +85,18 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * store state associated with conversations driven by Spring Web Flow.
 	 */
 	private ConversationManager conversationManager = new SessionBindingConversationManager();
-
+	
 	/**
 	 * The type of execution repository to configure with executors created by
 	 * this factory.  Optional.  Will fallback to default value if not set.
 	 */
 	private RepositoryType repositoryType;
+	
+	/**
+	 * The maximum number of allowed continuations for a single conversation.
+	 * Only used when the repository type is {@link RepositoryType#CONTINUATION}.
+	 */
+	private Integer maxContinuations;
 
 	/**
 	 * The flow executor this factory bean creates.
@@ -162,6 +169,16 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	public void setRepositoryType(RepositoryType repositoryType) {
 		this.repositoryType = repositoryType;
 	}
+	
+	/**
+	 * Set the maximum number of continuation snapshots allowed for a single
+	 * conversation when using the {@link RepositoryType#CONTINUATION continuation}
+	 * flow execution repository.
+	 * @see ContinuationFlowExecutionRepository#setMaxContinuations(int)
+	 */
+	public void setMaxContinuations(int maxContinuations) {
+		this.maxContinuations = new Integer(maxContinuations);
+	}
 
 	/**
 	 * Sets the strategy for managing conversations that should be configured
@@ -169,9 +186,26 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * <p>
 	 * The conversation manager is used by the flow execution repository
 	 * subsystem to begin and end new conversations that store execution state.
+	 * <p>
+	 * By default, a {@link SessionBindingConversationManager} is used. Do not
+	 * use {@link #setMaxConversations(int)} when using this method.
 	 */
 	public void setConversationManager(ConversationManager conversationManager) {
 		this.conversationManager = conversationManager;
+	}
+	
+	/**
+	 * Set the maximum number of allowed concurrent conversations in the session. This
+	 * is a convenience setter to allow easy configuration of the maxConversations
+	 * property of the default {@link SessionBindingConversationManager}. Do not use
+	 * this when using {@link #setConversationManager(ConversationManager)}.
+	 * @see SessionBindingConversationManager#setMaxConversations(int)
+	 */
+	public void setMaxConversations(int maxConversations) {
+		Assert.isInstanceOf(SessionBindingConversationManager.class, conversationManager,
+				"Only use setMaxConversations() when using the default conversation manager: " +
+				ClassUtils.getShortName(SessionBindingConversationManager.class));
+		((SessionBindingConversationManager)conversationManager).setMaxConversations(maxConversations);
 	}
 	
 	/**
@@ -269,7 +303,12 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 			return new SimpleFlowExecutionRepository(executionStateRestorer, conversationManager);
 		}
 		else if (repositoryType == RepositoryType.CONTINUATION) {
-			return new ContinuationFlowExecutionRepository(executionStateRestorer, conversationManager);
+			ContinuationFlowExecutionRepository repo =
+				new ContinuationFlowExecutionRepository(executionStateRestorer, conversationManager);
+			if (maxContinuations != null) {
+				repo.setMaxContinuations(maxContinuations.intValue());
+			}
+			return repo;
 		}
 		else if (repositoryType == RepositoryType.CLIENT) {
 			return new ClientContinuationFlowExecutionRepository(executionStateRestorer, conversationManager);

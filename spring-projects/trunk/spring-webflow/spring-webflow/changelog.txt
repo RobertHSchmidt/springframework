@@ -5,6 +5,9 @@ http://www.springframework.org
 Changes in version 1.0.1 ()
 -----------------------------------
 
+Package org.springframework.webflow.config
+* Added setMaxConversations and setMaxContinuations methods to FlowExecutorFactoryBean.
+
 Package org.springframework.webflow.context
 * ExternalContextHolder now uses a ThreadLocal instead of an InheritableThreadLocal (SWF-206).
 
@@ -26,6 +29,7 @@ Package org.springframework.webflow.execution.repository
   continuation (SWF-211).
 * The default value for the maxContinuations property of the ContinuationFlowExecutionRepository
   is now 30. It used to be -1 (unlimited).
+* Method getConversationManager of AbstractConversationFlowExecutionRepository is now public.
 
 Changes in version 1.0 (25.10.2006)
 -----------------------------------
