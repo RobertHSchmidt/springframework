@@ -87,8 +87,11 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 
 	/**
 	 * The maximum number of continuations that can be active per conversation.
+	 * The default is 30, which is high enough not to interfere with the user experience
+	 * of normal users using the back button, but low enough to avoid excessive
+	 * resource usage or easy denial of service attacks.
 	 */
-	private int maxContinuations = -1;
+	private int maxContinuations = 30;
 
 	/**
 	 * Create a new continuation based flow execution repository using given state
@@ -146,7 +149,7 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 
 	/**
 	 * Sets the maximum number of continuations allowed per conversation in this
-	 * repository. Use -1 for unlimited.
+	 * repository. Use -1 for unlimited. The default is 30.
 	 */
 	public void setMaxContinuations(int maxContinuations) {
 		this.maxContinuations = maxContinuations;
