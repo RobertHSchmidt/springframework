@@ -43,6 +43,6 @@
 	<classpathentry kind="lib" path="lib/test/junit-addons.jar"/>
 	<classpathentry kind="lib" path="lib/test/DDSteps.jar"/>
 	<classpathentry kind="lib" path="lib/global/ldapbp.jar"/>
-	<classpathentry kind="lib" path="lib/global/spring-ldap.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/spring-ldap"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
