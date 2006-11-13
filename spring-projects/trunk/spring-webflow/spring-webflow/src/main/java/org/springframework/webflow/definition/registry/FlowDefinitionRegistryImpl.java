@@ -20,6 +20,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.definition.FlowDefinition;
@@ -33,6 +35,8 @@ import org.springframework.webflow.definition.FlowDefinition;
  * @author Keith Donald
  */
 public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
+	
+	private final Log logger = LogFactory.getLog(FlowDefinitionRegistryImpl.class);
 
 	/**
 	 * The map of loaded Flow definitions maintained in this registry.
@@ -60,6 +64,9 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 	}
 
 	public void refresh() throws FlowDefinitionConstructionException {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Refreshing flow definition registry '" + this + "'");
+		}
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		try {
 			// workaround for JMX
@@ -88,6 +95,9 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 
 	public void refresh(String flowId)
 			throws NoSuchFlowDefinitionException, FlowDefinitionConstructionException {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Refreshing flow '" + flowId + "' in flow definition registry '" + this + "'");
+		}
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		try {
 			// workaround for JMX
@@ -141,6 +151,10 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 
 	public void registerFlowDefinition(FlowDefinitionHolder flowHolder) {
 		Assert.notNull(flowHolder, "The flow definition holder to register is required");
+		if (logger.isDebugEnabled()) {
+			logger.debug("Registering flow definition with id '" + flowHolder.getFlowDefinitionId() +
+					"' in flow definition registry '" + this + "'");
+		}
 		index(flowHolder);
 	}
 
@@ -151,6 +165,10 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 	 */
 	public void removeFlowDefinition(String id) {
 		Assert.hasText(id, "The flow id is required");
+		if (logger.isDebugEnabled()) {
+			logger.debug("Removing flow definition with id '" + id +
+					"' from flow definition registry '" + this + "'");
+		}
 		flowDefinitions.remove(id);
 	}
 	

@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.engine.builder;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.CollectionUtils;
@@ -39,6 +41,8 @@ import org.springframework.webflow.engine.Flow;
  * @author Erwin Vervaet
  */
 public class FlowAssembler {
+	
+	private final Log logger = LogFactory.getLog(FlowAssembler.class);
 
 	/**
 	 * The identifier to assign to the flow.
@@ -118,6 +122,10 @@ public class FlowAssembler {
 	 * @throws FlowBuilderException when flow assembly fails
 	 */
 	public Flow assembleFlow() throws FlowBuilderException {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Assembling flow definition with id '" + flowId + "' using flow builder '" +
+					flowBuilder + "'; externally assigned flow attributes are '" + flowAttributes + "'");
+		}
 		try {
 			flowBuilder.init(flowId, flowAttributes);
 			directAssembly();
