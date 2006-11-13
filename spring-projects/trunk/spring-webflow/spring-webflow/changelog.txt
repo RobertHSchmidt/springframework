@@ -16,9 +16,13 @@ Package org.springframework.webflow.conversation
   now 5. It used to be -1 (unlimited).
 * Added getConversationIdGenerator and getMaxConversations methods to SessionBindingConversationManager.
 
+Package org.springframework.webflow.definition
+* Added debug logging to FlowDefinitionRegistryImpl.
+
 Package org.springframework.webflow.engine
 * The methods getMatchingCriteria, getExecututionCriteria, getTargetStateResolver, and canExecute
   of the Transition class have been made public (SWF-209).
+* Added debug logging to FlowAssembler and RefreshableFlowDefinitionHolder.
 
 Package org.springframework.webflow.execution.factory
 * The getHolder method on ConditionalFlowExecutionListenerLoader is now private. It has a package

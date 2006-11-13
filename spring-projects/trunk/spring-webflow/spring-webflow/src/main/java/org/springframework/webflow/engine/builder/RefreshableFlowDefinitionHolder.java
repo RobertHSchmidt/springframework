@@ -17,6 +17,8 @@ package org.springframework.webflow.engine.builder;
 
 import java.io.IOException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
@@ -42,6 +44,8 @@ import org.springframework.webflow.util.ResourceHolder;
  * @author Keith Donald
  */
 public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
+	
+	private final Log logger = LogFactory.getLog(RefreshableFlowDefinitionHolder.class);
 
 	/**
 	 * The flow definition assembled by this assembler.
@@ -117,6 +121,10 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 		}
 		long calculatedLastModified = calculateLastModified();
 		if (this.lastModified < calculatedLastModified) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Resource modification detected, reloading flow definition with id '" +
+						assembler.getFlowId() + "'");
+			}
 			assembleFlow();
 			this.lastModified = calculatedLastModified;
 		}
@@ -130,6 +138,10 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 	protected long calculateLastModified() {
 		if (getFlowBuilder() instanceof ResourceHolder) {
 			Resource resource = ((ResourceHolder)getFlowBuilder()).getResource();
+			if (logger.isDebugEnabled()) {
+				logger.debug(
+						"Calculating last modified timestamp for flow definition resource '" + resource + "'");
+			}
 			try {
 				return resource.getFile().lastModified();
 			}
@@ -153,6 +165,9 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 	 * FlowAssembler (director).
 	 */
 	protected void assembleFlow() throws FlowBuilderException {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Assembling flow definition with id '" + assembler.getFlowId() + "'");
+		}
 		try {
 			assembling = true;
 			flowDefinition = assembler.assembleFlow();
