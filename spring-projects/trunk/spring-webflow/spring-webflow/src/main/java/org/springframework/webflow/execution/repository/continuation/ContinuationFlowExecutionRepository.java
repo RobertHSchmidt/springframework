@@ -156,6 +156,10 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	}
 	
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Getting flow execution with key '" + key + "'");
+		}
+
 		FlowExecutionContinuation continuation = getContinuation(key);
 		try {
 			FlowExecution execution = continuation.unmarshal();
@@ -168,6 +172,10 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	}
 
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Putting flow execution '" + flowExecution + "' into repository with key '" + key + "'");
+		}
+
 		FlowExecutionContinuationGroup continuationGroup = getContinuationGroup(key);
 		FlowExecutionContinuation continuation = continuationFactory.createContinuation(flowExecution);
 		continuationGroup.add(getContinuationId(key), continuation);
