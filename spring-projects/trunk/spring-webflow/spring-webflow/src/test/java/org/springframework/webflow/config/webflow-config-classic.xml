@@ -71,7 +71,9 @@
 				<property name="executionAttributesMap">
 					<map>
 						<entry key="foo" value="bar"/>
-						<entry key="alwaysRedirectOnPause" value="true"/>
+						<entry key="alwaysRedirectOnPause">
+							<value type="java.lang.Boolean">true</value>
+						</entry>
 					</map>
 				</property>
 				<property name="executionListenerLoader" ref="executionListenerLoader"/>
@@ -87,7 +89,9 @@
 				<property name="executionAttributesMap">
 					<map>
 						<entry key="foo" value="bar"/>
-						<entry key="alwaysRedirectOnPause" value="true"/>
+						<entry key="alwaysRedirectOnPause">
+							<value type="java.lang.Boolean">true</value>
+						</entry>
 					</map>
 				</property>
 				<property name="executionListenerLoader" ref="executionListenerLoader"/>
