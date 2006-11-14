@@ -20,6 +20,7 @@ import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.binding.method.MethodSignature;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.action.AbstractBeanInvokingAction;
 import org.springframework.webflow.action.ActionResultExposer;
 import org.springframework.webflow.action.BeanInvokingActionFactory;
@@ -858,6 +859,10 @@ public abstract class AbstractFlowBuilder extends BaseFlowBuilder {
 		MappingBuilder mapping = new MappingBuilder(getFlowServiceLocator().getExpressionParser());
 		mapping.setConversionService(getFlowServiceLocator().getConversionService());
 		return mapping;
+	}
+	
+	public String toString() {
+		return new ToStringCreator(this).toString();
 	}
 
 	// internal helpers
