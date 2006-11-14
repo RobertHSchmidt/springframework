@@ -36,7 +36,7 @@ import org.springframework.webflow.definition.FlowDefinition;
  */
 public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 	
-	private final Log logger = LogFactory.getLog(FlowDefinitionRegistryImpl.class);
+	private static final Log logger = LogFactory.getLog(FlowDefinitionRegistryImpl.class);
 
 	/**
 	 * The map of loaded Flow definitions maintained in this registry.
