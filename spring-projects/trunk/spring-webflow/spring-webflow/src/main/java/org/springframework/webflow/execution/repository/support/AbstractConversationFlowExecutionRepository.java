@@ -17,6 +17,8 @@ package org.springframework.webflow.execution.repository.support;
 
 import java.io.Serializable;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationException;
@@ -43,6 +45,11 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
  * @author Keith Donald
  */
 public abstract class AbstractConversationFlowExecutionRepository extends AbstractFlowExecutionRepository {
+	
+	/**
+	 * Logger, usable in subclasses
+	 */
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	/**
 	 * The conversation attribute holding conversation scope ("scope").
@@ -88,14 +95,25 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 		ConversationParameters parameters = createConversationParameters(flowExecution);
 		Conversation conversation = conversationManager.beginConversation(parameters);
 		onBegin(conversation);
-		return new CompositeFlowExecutionKey(conversation.getId(), generateContinuationId(flowExecution));
+		FlowExecutionKey key =
+			new CompositeFlowExecutionKey(conversation.getId(), generateContinuationId(flowExecution));
+		if (logger.isDebugEnabled()) {
+			logger.debug("Generated new key for flow execution '" + flowExecution + "': '" + key + "'");
+		}
+		return key;
 	}
 
 	public FlowExecutionKey getNextKey(FlowExecution flowExecution, FlowExecutionKey previousKey) {
 		CompositeFlowExecutionKey key = (CompositeFlowExecutionKey)previousKey;
 		// the conversation id remains the same for the life of the flow execution
 		// but the continuation id changes
-		return new CompositeFlowExecutionKey(key.getConversationId(), generateContinuationId(flowExecution));
+		FlowExecutionKey nextKey =
+			new CompositeFlowExecutionKey(key.getConversationId(), generateContinuationId(flowExecution));
+		if (logger.isDebugEnabled()) {
+			logger.debug("Generated next key for flow execution '" + flowExecution + "': '" + nextKey + "'; " +
+					"previous key was '" + key + "'");
+		}
+		return nextKey;
 	}
 
 	public FlowExecutionLock getLock(FlowExecutionKey key) throws FlowExecutionRepositoryException {
