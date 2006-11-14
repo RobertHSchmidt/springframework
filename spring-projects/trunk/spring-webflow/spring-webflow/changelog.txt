@@ -22,7 +22,7 @@ Package org.springframework.webflow.definition
 Package org.springframework.webflow.engine
 * The methods getMatchingCriteria, getExecututionCriteria, getTargetStateResolver, and canExecute
   of the Transition class have been made public (SWF-209).
-* Added debug logging to FlowAssembler and RefreshableFlowDefinitionHolder.
+* Added debug logging to FlowAssembler, RefreshableFlowDefinitionHolder and FlowExecutionImplFactory.
 * The "alwaysRedirectOnPause" flow execution attribute value can now also be a String.
 
 Package org.springframework.webflow.execution.factory
@@ -35,6 +35,9 @@ Package org.springframework.webflow.execution.repository
 * The default value for the maxContinuations property of the ContinuationFlowExecutionRepository
   is now 30. It used to be -1 (unlimited).
 * Method getConversationManager of AbstractConversationFlowExecutionRepository is now public.
+
+Package org.springframework.webflow.executor
+* Added debug logging to FlowExecutorImpl.
 
 Changes in version 1.0 (25.10.2006)
 -----------------------------------
