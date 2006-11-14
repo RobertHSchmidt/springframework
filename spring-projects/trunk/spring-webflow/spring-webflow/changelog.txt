@@ -24,6 +24,7 @@ Package org.springframework.webflow.engine
   of the Transition class have been made public (SWF-209).
 * Added debug logging to FlowAssembler, RefreshableFlowDefinitionHolder and FlowExecutionImplFactory.
 * The "alwaysRedirectOnPause" flow execution attribute value can now also be a String.
+* Added toString implementations to XmlFlowBuilder and AbstractFlowBuilder.
 
 Package org.springframework.webflow.execution.factory
 * The getHolder method on ConditionalFlowExecutionListenerLoader is now private. It has a package
@@ -35,6 +36,7 @@ Package org.springframework.webflow.execution.repository
 * The default value for the maxContinuations property of the ContinuationFlowExecutionRepository
   is now 30. It used to be -1 (unlimited).
 * Method getConversationManager of AbstractConversationFlowExecutionRepository is now public.
+* Added debug logging to the FlowExecutionRepository implementations.
 
 Package org.springframework.webflow.executor
 * Added debug logging to FlowExecutorImpl.

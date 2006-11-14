@@ -117,6 +117,9 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	}
 
 	public FlowExecutionLock getLock(FlowExecutionKey key) throws FlowExecutionRepositoryException {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Getting lock for flow execution with key '" + key + "'");
+		}
 		// lock the entire conversation
 		return new ConversationBackedFlowExecutionLock(getConversation(key));
 	}
@@ -127,6 +130,10 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 			throws FlowExecutionRepositoryException;
 
 	public void removeFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Removing flow execution with key '" + key + "' from repository");
+		}
+		
 		// end the governing conversation
 		Conversation conversation = getConversation(key);
 		conversation.end();
@@ -135,6 +142,7 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 
 	public FlowExecutionKey parseFlowExecutionKey(String encodedKey) throws FlowExecutionRepositoryException {
 		Assert.hasText(encodedKey, "The string encoded flow execution key is required");
+		
 		String[] keyParts = CompositeFlowExecutionKey.keyParts(encodedKey);
 		
 		// parse out the conversation id
@@ -157,6 +165,11 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 			throw new BadlyFormattedFlowExecutionKeyException(encodedKey,
 					"The continuation id '" + keyParts[1] + "' contained in the composite flow execution key '"
 					+ encodedKey + "' is invalid", e);
+		}
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("Parsed encoded flow execution key '" + encodedKey + "', extracted conversation id '"
+					+ conversationId + "' and continuation id '" + continuationId + "'");
 		}
 		
 		return new CompositeFlowExecutionKey(conversationId, continuationId);

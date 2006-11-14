@@ -117,6 +117,10 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Getting flow execution with key '" + key + "'");
+		}
+		
 		// note that the call to getConversationScope() below will try to obtain
 		// the conversation identified by the key, which will fail if that conversation
 		// is no longer managed by the conversation manager (i.e. it has expired)
@@ -134,6 +138,10 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	}
 
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Putting flow execution '" + flowExecution + "' into repository with key '" + key + "'");
+		}
+		
 		// note that the call to putConversationScope() below will try to obtain
 		// the conversation identified by the key, which will fail if that conversation
 		// is no longer managed by the conversation manager (i.e. it has expired)

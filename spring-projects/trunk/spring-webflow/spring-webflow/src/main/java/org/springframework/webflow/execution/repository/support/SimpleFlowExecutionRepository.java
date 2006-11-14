@@ -120,6 +120,10 @@ public class SimpleFlowExecutionRepository extends AbstractConversationFlowExecu
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Getting flow execution with key '" + key + "'");
+		}
+
 		try {
 			FlowExecution execution = getEntry(key).access(getContinuationId(key));
 			// it could be that the entry was serialized out and read back in, so
@@ -132,6 +136,10 @@ public class SimpleFlowExecutionRepository extends AbstractConversationFlowExecu
 	}
 
 	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Putting flow execution '" + flowExecution + "' into repository with key '" + key + "'");
+		}
+
 		FlowExecutionEntry entry = new FlowExecutionEntry(getContinuationId(key), flowExecution);
 		putEntry(key, entry);
 		putConversationScope(key, flowExecution.getConversationScope());
