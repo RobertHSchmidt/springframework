@@ -39,6 +39,7 @@ import org.springframework.binding.method.MethodSignature;
 import org.springframework.binding.method.Parameter;
 import org.springframework.binding.method.Parameters;
 import org.springframework.core.io.Resource;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
@@ -307,6 +308,10 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	public void setDocumentLoader(DocumentLoader documentLoader) {
 		Assert.notNull(documentLoader, "The XML document loader is required");
 		this.documentLoader = documentLoader;
+	}
+
+	public String toString() {
+		return new ToStringCreator(this).append("location", location).toString();
 	}
 
 	// implementing FlowBuilder
