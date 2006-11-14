@@ -42,7 +42,7 @@ import org.springframework.webflow.engine.Flow;
  */
 public class FlowAssembler {
 	
-	private final Log logger = LogFactory.getLog(FlowAssembler.class);
+	private static final Log logger = LogFactory.getLog(FlowAssembler.class);
 
 	/**
 	 * The identifier to assign to the flow.

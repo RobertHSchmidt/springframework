@@ -45,7 +45,7 @@ import org.springframework.webflow.util.ResourceHolder;
  */
 public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 	
-	private final Log logger = LogFactory.getLog(RefreshableFlowDefinitionHolder.class);
+	private static final Log logger = LogFactory.getLog(RefreshableFlowDefinitionHolder.class);
 
 	/**
 	 * The flow definition assembled by this assembler.
