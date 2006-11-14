@@ -23,6 +23,7 @@ Package org.springframework.webflow.engine
 * The methods getMatchingCriteria, getExecututionCriteria, getTargetStateResolver, and canExecute
   of the Transition class have been made public (SWF-209).
 * Added debug logging to FlowAssembler and RefreshableFlowDefinitionHolder.
+* The "alwaysRedirectOnPause" flow execution attribute value can now also be a String.
 
 Package org.springframework.webflow.execution.factory
 * The getHolder method on ConditionalFlowExecutionListenerLoader is now private. It has a package
