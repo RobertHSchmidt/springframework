@@ -96,7 +96,7 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 	public void refresh(String flowId)
 			throws NoSuchFlowDefinitionException, FlowDefinitionConstructionException {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Refreshing flow '" + flowId + "' in flow definition registry '" + this + "'");
+			logger.debug("Refreshing flow with id '" + flowId + "'");
 		}
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		try {
@@ -119,6 +119,9 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 			throws NoSuchFlowDefinitionException, FlowDefinitionConstructionException {
 		Assert.hasText(id,
 				"Unable to load a flow definition: no flow id was provided.  Please provide a valid flow identifier.");
+		if (logger.isDebugEnabled()) {
+			logger.debug("Getting flow definition with id '" + id + "'");
+		}
 		try {
 			return getFlowDefinitionHolder(id).getFlowDefinition();
 		}
@@ -134,6 +137,9 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 	// implementing FlowDefinitionRegistry
 	
 	public void setParent(FlowDefinitionRegistry parent) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Setting parent flow definition registry to '" + parent + "'");
+		}
 		this.parent = parent;
 	}
 	
@@ -152,8 +158,7 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 	public void registerFlowDefinition(FlowDefinitionHolder flowHolder) {
 		Assert.notNull(flowHolder, "The flow definition holder to register is required");
 		if (logger.isDebugEnabled()) {
-			logger.debug("Registering flow definition with id '" + flowHolder.getFlowDefinitionId() +
-					"' in flow definition registry '" + this + "'");
+			logger.debug("Registering flow definition with id '" + flowHolder.getFlowDefinitionId() + "'");
 		}
 		index(flowHolder);
 	}
@@ -166,8 +171,7 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 	public void removeFlowDefinition(String id) {
 		Assert.hasText(id, "The flow id is required");
 		if (logger.isDebugEnabled()) {
-			logger.debug("Removing flow definition with id '" + id +
-					"' from flow definition registry '" + this + "'");
+			logger.debug("Removing flow definition with id '" + id + "'");
 		}
 		flowDefinitions.remove(id);
 	}

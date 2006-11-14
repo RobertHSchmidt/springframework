@@ -17,6 +17,8 @@ package org.springframework.webflow.engine.impl;
 
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.CollectionUtils;
@@ -36,6 +38,8 @@ import org.springframework.webflow.execution.factory.StaticFlowExecutionListener
  * @author Keith Donald
  */
 public class FlowExecutionImplFactory implements FlowExecutionFactory {
+	
+	private static final Log logger = LogFactory.getLog(FlowExecutionImplFactory.class);
 
 	/**
 	 * The strategy for loading listeners that should observe executions of a
@@ -102,6 +106,9 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 
 	public FlowExecution createFlowExecution(FlowDefinition flowDefinition) {
 		Assert.isInstanceOf(Flow.class, flowDefinition, "Flow definition is of wrong type: ");
+		if (logger.isDebugEnabled()) {
+			logger.debug("Creating flow execution for flow definition with id '" + flowDefinition.getId() + "'");
+		}
 		FlowExecutionListener[] listeners = executionListenerLoader.getListeners(flowDefinition);
 		return new FlowExecutionImpl((Flow)flowDefinition, listeners, executionAttributes);
 	}

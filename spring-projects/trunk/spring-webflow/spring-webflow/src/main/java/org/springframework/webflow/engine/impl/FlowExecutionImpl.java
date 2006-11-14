@@ -178,6 +178,9 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			throws FlowExecutionException {
 		Assert.state(!isActive(),
 				"This flow is already executing -- you cannot call 'start()' more than once");
+		if (logger.isDebugEnabled()) {
+			logger.debug("Starting execution with input '" + input + "'");
+		}
 		RequestControlContext context = createControlContext(externalContext);
 		getListeners().fireRequestSubmitted(context);
 		try {
@@ -198,7 +201,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	public ViewSelection signalEvent(String eventId, ExternalContext externalContext) throws FlowExecutionException {
 		assertActive();
 		if (logger.isDebugEnabled()) {
-			logger.debug("Resuming this execution on user event '" + eventId + "'");
+			logger.debug("Resuming execution on user event '" + eventId + "'");
 		}
 		RequestControlContext context = createControlContext(externalContext);
 		context.getFlashScope().clear();
@@ -223,7 +226,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	public ViewSelection refresh(ExternalContext externalContext) throws FlowExecutionException {
 		assertActive();
 		if (logger.isDebugEnabled()) {
-			logger.debug("Resuming this execution for refresh");
+			logger.debug("Resuming execution for refresh");
 		}
 		RequestControlContext context = createControlContext(externalContext);
 		getListeners().fireRequestSubmitted(context);
