@@ -40,12 +40,20 @@ public class SetActionTests extends TestCase {
 		context.getFlowScope().put("bean", new TestBean());
 	}
 
-	public void testExecuteSetAction() throws Exception {
+	public void testSetActionWithBooleanValue() throws Exception {
 		SettableExpression attr = parser.parseSettableExpression("bean.executed");
 		Expression value = parser.parseExpression("true");
 		SetAction action = new SetAction(attr, ScopeType.FLOW, value);
 		Event outcome = action.execute(context);
 		assertEquals("success", outcome.getId());
 		assertEquals(true, ((TestBean)context.getFlowScope().get("bean")).executed);
+	}
+	
+	public void testSetActionWithStringValue() throws Exception {
+		SettableExpression attr = parser.parseSettableExpression("backState");
+		Expression value = parser.parseExpression("'otherState'"); // ${'otherState'} also works
+		SetAction action = new SetAction(attr, ScopeType.FLOW, value);
+		assertEquals("success", action.execute(context).getId());
+		assertEquals("otherState", context.getFlowScope().get("backState"));
 	}
 }
