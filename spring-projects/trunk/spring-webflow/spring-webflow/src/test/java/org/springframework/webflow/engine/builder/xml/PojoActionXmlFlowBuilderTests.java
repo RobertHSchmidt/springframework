@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.action.AbstractBeanInvokingAction;
 import org.springframework.webflow.engine.ActionState;
+import org.springframework.webflow.engine.AnnotatedAction;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
@@ -73,11 +74,23 @@ public class PojoActionXmlFlowBuilderTests extends TestCase {
 		assertEquals("methodWithArgumentTypeConversion", targetAction.getMethodSignature().getMethodName());
 		assertEquals(1, targetAction.getMethodSignature().getParameters().size());
 		assertEquals(null, targetAction.getMethodResultExposer());
+		
+		ActionState as7 = (ActionState)flow.getState("actionState7");
+		AnnotatedAction aa = as7.getActionList().getAnnotated(0);
+		assertEquals("evaluator", aa.getName());
+		
+		ActionState as8 = (ActionState)flow.getState("actionState8");
+		aa = as8.getActionList().getAnnotated(0);
+		assertEquals("setter", aa.getName());
 	}
 	
 	public void testFlowExecution() {
 		FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
 		FlowExecution execution = factory.createFlowExecution(flow);
 		execution.start(null, new MockExternalContext());
+		assertTrue(execution.isActive());
+		assertEquals("pause", execution.getActiveSession().getState().getId());
+		execution.signalEvent("resume", new MockExternalContext());
+		assertFalse(execution.isActive());
 	}
 }

@@ -25,6 +25,7 @@ Package org.springframework.webflow.engine
 * Added debug logging to FlowAssembler, RefreshableFlowDefinitionHolder and FlowExecutionImplFactory.
 * The "alwaysRedirectOnPause" flow execution attribute value can now also be a String.
 * Added toString implementations to XmlFlowBuilder and AbstractFlowBuilder.
+* Added support for the "name" attribute to the <set> and <evaluate-action> elements in the flow XML.
 
 Package org.springframework.webflow.execution.factory
 * The getHolder method on ConditionalFlowExecutionListenerLoader is now private. It has a package
