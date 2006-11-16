@@ -21,6 +21,7 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.SettableExpression;
 import org.springframework.webflow.TestBean;
+import org.springframework.webflow.TestBeanWithMap;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.ScopeType;
@@ -35,12 +36,9 @@ public class SetActionTests extends TestCase {
 
 	private MockRequestContext context = new MockRequestContext();
 
-	protected void setUp() throws Exception {
-		context.getFlowScope().put("foo", "bar");
-		context.getFlowScope().put("bean", new TestBean());
-	}
-
 	public void testSetActionWithBooleanValue() throws Exception {
+		context.getFlowScope().put("bean", new TestBean());
+		
 		SettableExpression attr = parser.parseSettableExpression("bean.executed");
 		Expression value = parser.parseExpression("true");
 		SetAction action = new SetAction(attr, ScopeType.FLOW, value);
@@ -55,5 +53,18 @@ public class SetActionTests extends TestCase {
 		SetAction action = new SetAction(attr, ScopeType.FLOW, value);
 		assertEquals("success", action.execute(context).getId());
 		assertEquals("otherState", context.getFlowScope().get("backState"));
+	}
+	
+	public void testSetActionWithValueFromMap() throws Exception {
+		TestBeanWithMap beanWithMap = new TestBeanWithMap();
+		beanWithMap.getMap().put("key1", "value1");
+		beanWithMap.getMap().put("key2", "value2");
+		context.getFlowScope().put("beanWithMap", beanWithMap);
+		
+		SettableExpression attr = parser.parseSettableExpression("key");
+		Expression value = parser.parseExpression("${flowScope.beanWithMap.map['key1']}");
+		SetAction action = new SetAction(attr, ScopeType.FLASH, value);
+		assertEquals("success", action.execute(context).getId());
+		assertEquals("value1", context.getFlashScope().get("key"));
 	}
 }
