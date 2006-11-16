@@ -3,12 +3,12 @@
 	xmlns="http://www.springframework.org/schema/webflow"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	targetNamespace="http://www.springframework.org/schema/webflow"
-	version="1.0">
+	version="1.0.1">
 
 	<xsd:annotation>
 		<xsd:documentation>
 			<![CDATA[
-Spring Web Flow 1.0 Schema
+Spring Web Flow 1.0.1 Schema
 Authors: Keith Donald, Erwin Vervaet
 <br>
 This Schema defines the Spring Web Flow (SWF) XML syntax.
