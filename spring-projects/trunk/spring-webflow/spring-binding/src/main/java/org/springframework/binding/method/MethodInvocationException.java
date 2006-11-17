@@ -28,9 +28,9 @@ import org.springframework.core.style.StylerUtils;
 public class MethodInvocationException extends NestedRuntimeException {
 
 	/**
-	 * The method key.
+	 * The method signature.
 	 */
-	private ClassMethodKey methodKey;
+	private MethodSignature methodSignature;
 
 	/**
 	 * The method invocation argument values.
@@ -40,23 +40,23 @@ public class MethodInvocationException extends NestedRuntimeException {
 	/**
 	 * Signals that the method with the specified signature could not be invoked
 	 * with the provided arguments.
-	 * @param methodKey the method signature
+	 * @param methodSignature the method signature
 	 * @param arguments the arguments
 	 * @param cause the root cause
 	 */
-	public MethodInvocationException(ClassMethodKey methodKey, Object[] arguments, Exception cause) {
-		super("Unable to invoke method " + methodKey + " with arguments " + StylerUtils.style(arguments), cause);
+	public MethodInvocationException(MethodSignature methodSignature, Object[] arguments, Exception cause) {
+		super("Unable to invoke method " + methodSignature + " with arguments " + StylerUtils.style(arguments), cause);
 	}
 
 	/**
 	 * Returns the invoked method's signature.
 	 */
-	public ClassMethodKey getMethodKey() {
-		return methodKey;
+	public MethodSignature getMethodSignature() {
+		return methodSignature;
 	}
 
 	/**
-	 * Returns the method invocation arguments;
+	 * Returns the method invocation arguments.
 	 */
 	public Object[] getArguments() {
 		return arguments;

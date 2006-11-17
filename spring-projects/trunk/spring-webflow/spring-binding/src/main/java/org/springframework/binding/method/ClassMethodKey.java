@@ -24,24 +24,24 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.ObjectUtils;
 
 /**
- * A class method signature.
+ * A key for class method signature. Internal helper of the {@link MethodInvoker}.
  * 
  * @author Keith Donald
  */
-public class ClassMethodKey implements Serializable {
-
+class ClassMethodKey implements Serializable {
+	
 	/**
 	 * The class the method is a member of.
 	 */
 	private Class type;
 
 	/**
-	 * The name of the method.
+	 * The methods defined signature.
 	 */
-	private String methodName;
+	private MethodSignature signature;
 
 	/**
-	 * The method's parameter types.
+	 * The method's actual parameter types.
 	 */
 	private Class[] parameterTypes;
 
@@ -53,37 +53,53 @@ public class ClassMethodKey implements Serializable {
 	/**
 	 * Create a new class method key.
 	 * @param type the class the method is a member of
-	 * @param methodName the method name
-	 * @param parameterTypes the method parameter types
+	 * @param signature the method signature
 	 */
-	public ClassMethodKey(Class type, String methodName, Class[] parameterTypes) {
+	public ClassMethodKey(Class type, MethodSignature signature, Class[] parameterTypes) {
 		this.type = type;
-		this.methodName = methodName;
+		this.signature = signature;
 		this.parameterTypes = parameterTypes;
 	}
-
+	
+	/**
+	 * Return the class the method is a member of.
+	 */
 	public Class getType() {
 		return type;
 	}
 
-	public String getMethodName() {
-		return methodName;
+	/**
+	 * Returns the methods signature.
+	 */
+	public MethodSignature getSignature() {
+		return signature;
 	}
 
+	/**
+	 * Returns the method's parameters type.
+	 */
 	public Class[] getParameterTypes() {
 		return parameterTypes;
 	}
 
+	/**
+	 * Returns the keyed method.
+	 */
 	public Method getMethod() throws InvalidMethodSignatureException {
 		if (method == null) {
 			method = resolveMethod();
 		}
 		return method;
 	}
+	
+	// internal helpres
 
+	/**
+	 * Resolve the keyed method.
+	 */
 	protected Method resolveMethod() throws InvalidMethodSignatureException {
 		try {
-			return type.getMethod(getMethodName(), getParameterTypes());
+			return type.getMethod(getSignature().getMethodName(), getParameterTypes());
 		}
 		catch (NoSuchMethodException e) {
 			Method method = findMethodConsiderAssignableParameterTypes();
@@ -91,15 +107,18 @@ public class ClassMethodKey implements Serializable {
 				return method;
 			}
 			else {
-				throw new InvalidMethodSignatureException(this, e);
+				throw new InvalidMethodSignatureException(getSignature(), e);
 			}
 		}
 	}
 
+	/**
+	 * Find the keyed method using 'relaxed' typing.
+	 */
 	protected Method findMethodConsiderAssignableParameterTypes() {
 		Method[] candidateMethods = getType().getMethods();
 		for (int i = 0; i < candidateMethods.length; i++) {
-			if (candidateMethods[i].getName().equals(getMethodName())) {
+			if (candidateMethods[i].getName().equals(getSignature().getMethodName())) {
 				// Check if the method has the correct number of parameters.
 				Class[] candidateParameterTypes = candidateMethods[i].getParameterTypes();
 				if (candidateParameterTypes.length == getParameterTypes().length) {
@@ -134,7 +153,7 @@ public class ClassMethodKey implements Serializable {
 			return false;
 		}
 		ClassMethodKey other = (ClassMethodKey)obj;
-		return type.equals(other.type) && methodName.equals(other.methodName)
+		return type.equals(other.type) && signature.equals(other.signature)
 				&& argumentTypesEqual(other.parameterTypes);
 	}
 
@@ -154,7 +173,7 @@ public class ClassMethodKey implements Serializable {
 	}
 
 	public int hashCode() {
-		return type.hashCode() + methodName.hashCode() + argumentTypesHash();
+		return type.hashCode() + signature.hashCode() + argumentTypesHash();
 	}
 
 	private int argumentTypesHash() {
@@ -207,7 +226,7 @@ public class ClassMethodKey implements Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("class", type).append("methodName", methodName).append("parameterTypes",
+		return new ToStringCreator(this).append("class", type).append("signature", signature).append("parameterTypes",
 				parameterTypes).toString();
 	}
 }
