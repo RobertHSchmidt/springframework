@@ -226,7 +226,7 @@ public class GenericConversionService implements ConversionService {
 	
 	// internal helpers
 
-	protected Map findConvertersForSource(Class sourceClass) {
+	private Map findConvertersForSource(Class sourceClass) {
 		LinkedList classQueue = new LinkedList();
 		classQueue.addFirst(sourceClass);
 		while (!classQueue.isEmpty()) {
@@ -267,6 +267,8 @@ public class GenericConversionService implements ConversionService {
 		}
 		return null;
 	}
+	
+	// subclassing support
 
 	protected Map getSourceClassConverters() {
 		return sourceClassConverters;
