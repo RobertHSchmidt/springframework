@@ -109,6 +109,16 @@ public class GenericConversionService implements ConversionService {
 	}
 
 	/**
+	 * Add given converter with an alias to the conversion service. If the
+	 * converter is {@link ConversionServiceAware}, it will get the conversion
+	 * service injected.
+	 */
+	public void addConverter(Converter converter, String alias) {
+		aliasMap.put(alias, converter);
+		addConverter(converter);
+	}
+
+	/**
 	 * Add an alias for given target type.
 	 */
 	public void addAlias(String alias, Class targetType) {
@@ -201,11 +211,13 @@ public class GenericConversionService implements ConversionService {
 		if (clazz != null) {
 			Assert.isInstanceOf(Class.class, clazz, "Not a Class alias '" + alias + "': ");
 			return (Class)clazz;
-		} else {
+		}
+		else {
 			if (parent != null) {
 		    	// try parent service
 		        return parent.getClassByAlias(alias);
-			} else {
+			}
+			else {
 				// alias does not index a class, return null
 				return null;
 			}
