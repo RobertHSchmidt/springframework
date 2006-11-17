@@ -22,7 +22,10 @@ import junit.framework.TestCase;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 
-public class CollectionAddingPropertyExpressionTests extends TestCase {
+/**
+ * Unit tests for {@link org.springframework.binding.expression.support.CollectionAddingExpression}.
+ */
+public class CollectionAddingExpressionTests extends TestCase {
 
 	ExpressionParser parser = new BeanWrapperExpressionParser();
 
@@ -51,8 +54,8 @@ public class CollectionAddingPropertyExpressionTests extends TestCase {
 		try {
 			colExp.evaluateToSet(bean, "1", null);
 			fail("not a collection");
-		} catch (IllegalArgumentException e) {
-			
+		}
+		catch (IllegalArgumentException e) {
 		}
 	}
 	
