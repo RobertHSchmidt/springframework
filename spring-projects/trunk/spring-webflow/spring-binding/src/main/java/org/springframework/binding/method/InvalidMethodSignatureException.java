@@ -26,12 +26,11 @@ import org.springframework.core.NestedRuntimeException;
 public class InvalidMethodSignatureException extends NestedRuntimeException {
 
 	/**
-	 * Creates an exception for the specified class method key with the
-	 * specified root cause.
-	 * @param signature the class method key defining the method signature
+	 * Creates an exception signaling an invalid method signature
+	 * @param signature the method signature
 	 * @param cause the cause
 	 */
-	public InvalidMethodSignatureException(ClassMethodKey signature, Exception cause) {
+	public InvalidMethodSignatureException(MethodSignature signature, Exception cause) {
 		super("Could not resolve method with signature " + signature, cause);
 	}
 }

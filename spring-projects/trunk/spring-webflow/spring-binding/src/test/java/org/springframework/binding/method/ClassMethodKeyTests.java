@@ -31,32 +31,36 @@ public class ClassMethodKeyTests extends TestCase {
 
 	private static final Method LIST_FILENAME_FILTER = safeGetMethod(File.class, "list",
 			new Class[] { FilenameFilter.class });
+	
+	private MethodSignature toSignature(String signature) {
+		return (MethodSignature)new TextToMethodSignature().convert(signature);
+	}
 
 	public void testGetMethodWithNoArgs() throws Exception {
-		ClassMethodKey key = new ClassMethodKey(File.class, "list", new Class[0]);
+		ClassMethodKey key = new ClassMethodKey(File.class, toSignature("list"), new Class[0]);
 		Method m = key.getMethod();
 		assertEquals(LIST_NO_ARGS, m);
 	}
 
 	public void testGetMoreGenericMethod() throws Exception {
-		ClassMethodKey key = new ClassMethodKey(Object.class, "equals", new Class[] { Long.class });
+		ClassMethodKey key = new ClassMethodKey(Object.class, toSignature("equals"), new Class[] { Long.class });
 		assertEquals(safeGetMethod(Object.class, "equals", new Class[] { Object.class }), key.getMethod());
 	}
 
 	public void testGetMethodWithSingleArg() throws Exception {
-		ClassMethodKey key = new ClassMethodKey(File.class, "list", new Class[] { FilenameFilter.class });
+		ClassMethodKey key = new ClassMethodKey(File.class, toSignature("list"), new Class[] { FilenameFilter.class });
 		Method m = key.getMethod();
 		assertEquals(LIST_FILENAME_FILTER, m);
 	}
 
 	public void testGetMethodWithSingleNullArgAndValidMatch() throws Exception {
-		ClassMethodKey key = new ClassMethodKey(File.class, "list", new Class[] { null });
+		ClassMethodKey key = new ClassMethodKey(File.class, toSignature("list"), new Class[] { null });
 		Method m = key.getMethod();
 		assertEquals(LIST_FILENAME_FILTER, m);
 	}
 
 	public void testGetMethodWithSingleNullAndUnclearMatch() throws Exception {
-		new ClassMethodKey(File.class, "listFiles", new Class[] { null });
+		new ClassMethodKey(File.class, toSignature("listFiles"), new Class[] { null });
 	}
 
 	private static final Method safeGetMethod(Class type, String name, Class[] argTypes) {

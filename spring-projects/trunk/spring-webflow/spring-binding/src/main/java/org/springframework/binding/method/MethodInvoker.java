@@ -85,7 +85,7 @@ public class MethodInvoker {
 				}
 			}
 		}
-		ClassMethodKey key = new ClassMethodKey(bean.getClass(), signature.getMethodName(), parameterTypes);
+		ClassMethodKey key = new ClassMethodKey(bean.getClass(), signature, parameterTypes);
 		try {
 			Method method = (Method)methodCache.get(key);
 			if (logger.isDebugEnabled()) {
@@ -100,7 +100,7 @@ public class MethodInvoker {
 			return returnValue;
 		}
 		catch (Exception e) {
-			throw new MethodInvocationException(key, arguments, e);
+			throw new MethodInvocationException(signature, arguments, e);
 		}
 	}
 
