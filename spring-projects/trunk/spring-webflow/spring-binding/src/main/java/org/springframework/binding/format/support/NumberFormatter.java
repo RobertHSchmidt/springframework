@@ -24,16 +24,32 @@ import org.springframework.util.NumberUtils;
 /**
  * Converts from various
  * <code>Number<code> specializations to <code>String</code> and back.
+ * 
  * @author Keith Donald
  */
 public class NumberFormatter extends AbstractFormatter {
 
 	private NumberFormat numberFormat;
+	
+	/**
+	 * Default constructor.
+	 */
+	public NumberFormatter() {
+	}
 
+	/**
+	 * Create a new number formatter.
+	 * @param numberFormat the number format to use
+	 */
 	public NumberFormatter(NumberFormat numberFormat) {
 		this.numberFormat = numberFormat;
 	}
 
+	/**
+	 * Create a new number formatter.
+	 * @param numberFormat the number format to use
+	 * @param allowEmpty should this formatter allow empty input arguments?
+	 */
 	public NumberFormatter(NumberFormat numberFormat, boolean allowEmpty) {
 		super(allowEmpty);
 		this.numberFormat = numberFormat;
@@ -60,6 +76,8 @@ public class NumberFormatter extends AbstractFormatter {
 			return NumberUtils.parseNumber(text, targetClass);
 		}
 	}
+	
+	// convenience methods
 
 	public Short parseShort(String formattedString) throws InvalidFormatException {
 		return (Short)parseValue(formattedString, Short.class);

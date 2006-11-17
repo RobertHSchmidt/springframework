@@ -23,8 +23,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
- * Base template class for all formatters (also implements type converter for
- * those who need general type conversion.)
+ * Abstract base class for all formatters.
+ * 
  * @author Keith Donald
  */
 public abstract class AbstractFormatter implements Formatter {
@@ -48,6 +48,13 @@ public abstract class AbstractFormatter implements Formatter {
 		this.allowEmpty = allowEmpty;
 	}
 
+	/**
+	 * Allow formatting of empty (null or blank) values?
+	 */
+	public boolean isAllowEmpty() {
+		return allowEmpty;
+	}
+
 	public final String formatValue(Object value) {
 		if (allowEmpty && isEmpty(value)) {
 			return getEmptyFormattedValue();
@@ -55,7 +62,7 @@ public abstract class AbstractFormatter implements Formatter {
 		Assert.isTrue(!isEmpty(value), "Object to format cannot be empty");
 		return doFormatValue(value);
 	}
-
+	
 	/**
 	 * Template method subclasses should override to encapsulate formatting
 	 * logic.
@@ -64,16 +71,14 @@ public abstract class AbstractFormatter implements Formatter {
 	 */
 	protected abstract String doFormatValue(Object value);
 
+	/**
+	 * Returns the formatted form of an empty value. Default implementation
+	 * just returns the empty string.
+	 */
 	protected String getEmptyFormattedValue() {
 		return "";
 	}
 
-	/**
-	 * Template method subclasses should override to encapsulate parsing logic.
-	 * @param formattedString the formatted string to parse
-	 * @return the parsed value
-	 * @throws InvalidFormatException an exception occured parsing
-	 */
 	public final Object parseValue(String formattedString, Class targetClass) throws InvalidFormatException {
 		try {
 			if (allowEmpty && isEmpty(formattedString)) {
@@ -86,17 +91,35 @@ public abstract class AbstractFormatter implements Formatter {
 		}
 	}
 
+	/**
+	 * Template method subclasses should override to encapsulate parsing logic.
+	 * @param formattedString the formatted string to parse
+	 * @return the parsed value
+	 * @throws InvalidFormatException an exception occured parsing
+	 * @throws ParseException when parse exceptions occur
+	 */
+	protected abstract Object doParseValue(String formattedString, Class targetClass) throws InvalidFormatException,
+			ParseException;
+
+	/**
+	 * Returns the empty value (resulting from parsing an empty input string).
+	 * This default implementation just returns null.
+	 */
 	protected Object getEmptyValue() {
 		return null;
 	}
 
+	/**
+	 * Returns the expected string format for the given target class.
+	 * The default implementation just returns null.
+	 */
 	protected String getExpectedFormat(Class targetClass) {
 		return null;
 	}
 
-	protected abstract Object doParseValue(String formattedString, Class targetClass) throws InvalidFormatException,
-			ParseException;
-
+	/**
+	 * Is given object <i>empty</i> (null or empty string)?
+	 */
 	protected boolean isEmpty(Object o) {
 		if (o == null) {
 			return true;
@@ -107,9 +130,5 @@ public abstract class AbstractFormatter implements Formatter {
 		else {
 			return false;
 		}
-	}
-
-	public boolean isAllowEmpty() {
-		return allowEmpty;
 	}
 }

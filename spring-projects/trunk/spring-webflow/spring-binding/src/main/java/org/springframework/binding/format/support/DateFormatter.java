@@ -23,6 +23,7 @@ import org.springframework.binding.format.InvalidFormatException;
 
 /**
  * Formatter that formats date objects.
+ * 
  * @author Keith Donald
  */
 public class DateFormatter extends AbstractFormatter {
@@ -32,17 +33,16 @@ public class DateFormatter extends AbstractFormatter {
 	/**
 	 * Constructs a date formatter that will delegate to the specified date
 	 * format.
-	 * @param dateFormat
+	 * @param dateFormat the date format to use
 	 */
 	public DateFormatter(DateFormat dateFormat) {
-		super();
 		this.dateFormat = dateFormat;
 	}
 
 	/**
 	 * Constructs a date formatter that will delegate to the specified date
 	 * format.
-	 * @param dateFormat
+	 * @param dateFormat the date format to use
 	 * @param allowEmpty should this formatter allow empty input arguments?
 	 */
 	public DateFormatter(DateFormat dateFormat, boolean allowEmpty) {
@@ -60,6 +60,9 @@ public class DateFormatter extends AbstractFormatter {
 		return dateFormat.parse(formattedString);
 	}
 
+	/**
+	 * Convenience method to parse a date.
+	 */
 	public Date parseDate(String formattedString) throws InvalidFormatException {
 		return (Date)parseValue(formattedString, Date.class);
 	}
