@@ -20,34 +20,34 @@ package org.springframework.binding.convert;
  * conversion of multiple source types to multiple target types.
  * <p>
  * Implementations of this interface are thread-safe.
+ * 
  * @author Keith Donald
  */
 public interface Converter {
 
 	/**
 	 * The source classes this converter can convert from.
-	 * @return The supported source classes.
+	 * @return the supported source classes
 	 */
 	public Class[] getSourceClasses();
 
 	/**
 	 * The target classes this converter can convert to.
-	 * @return The supported target classes.
+	 * @return the supported target classes
 	 */
 	public Class[] getTargetClasses();
 
 	/**
 	 * Convert the provided source object argument to an instance of the
 	 * specified target class.
-	 * 
 	 * @param source the source object to convert, its class must be one of the
 	 * supported <code>sourceClasses</code>
 	 * @param targetClass the target class to convert the source to, must be one
 	 * of the supported <code>targetClasses</code>
 	 * @param context an optional conversion context that may be used to
-	 * influence the conversion process.
-	 * @return The converted object, an instance of the default target type
-	 * @throws ConversionException An exception occured during the conversion
+	 * influence the conversion process
+	 * @return the converted object, an instance of the target type
+	 * @throws ConversionException an exception occured during the conversion
 	 */
 	public Object convert(Object source, Class targetClass, ConversionContext context) throws ConversionException;
 

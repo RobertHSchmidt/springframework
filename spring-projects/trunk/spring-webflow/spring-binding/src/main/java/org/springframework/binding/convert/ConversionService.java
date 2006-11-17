@@ -31,12 +31,11 @@ public interface ConversionService {
 	 * <p>
 	 * The returned ConversionExecutor is thread-safe and may safely be cached
 	 * for use in client code.
-	 * 
-	 * @param sourceClass The source class to convert from
-	 * @param targetClass The target class to convert to
-	 * @return The executor that can execute instance conversion
-	 * @throws ConversionException An exception occured retrieving a converter
-	 * for the source-to-target pair.
+	 * @param sourceClass the source class to convert from
+	 * @param targetClass the target class to convert to
+	 * @return the executor that can execute instance conversion, never null
+	 * @throws ConversionException an exception occured retrieving a converter
+	 * for the source-to-target pair
 	 */
 	public ConversionExecutor getConversionExecutor(Class sourceClass, Class targetClass) throws ConversionException;
 
@@ -44,11 +43,12 @@ public interface ConversionService {
 	 * Return a conversion executor command object capable of converting source
 	 * objects of the specified <code>sourceClass</code> to target objects of
 	 * the type associated with the specified alias.
-	 * 
 	 * @param sourceClass the sourceClass
 	 * @param targetAlias the target alias, may also be the fully qualified
 	 * target class name
-	 * @return the conversion executor
+	 * @return the conversion executor, or null if no suitable converter can be found
+	 * @throws ConversionException an exception occured retrieving a converter
+	 * for the source-to-target pair
 	 */
 	public ConversionExecutor getConversionExecutorByTargetAlias(Class sourceClass, String targetAlias)
 			throws ConversionException;
@@ -58,13 +58,14 @@ public interface ConversionService {
 	 * the the specified <code>sourceClass</code>.
 	 * @param sourceClass the source class to convert from
 	 * @return the matching conversion executors
+	 * @throws ConversionException an exception occured retrieving the converters
 	 */
 	public ConversionExecutor[] getConversionExecutorsForSource(Class sourceClass) throws ConversionException;
 
 	/**
 	 * Return the class with the specified alias.
 	 * @param alias the class alias
-	 * @return the class
+	 * @return the class, or null if not aliased
 	 */
 	public Class getClassByAlias(String alias) throws ConversionException;
 

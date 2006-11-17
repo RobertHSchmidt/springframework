@@ -19,6 +19,7 @@ import org.springframework.core.NestedRuntimeException;
 
 /**
  * Base class for exceptions thrown by the type conversion system.
+ * 
  * @author Keith Donald
  */
 public class ConversionException extends NestedRuntimeException {
@@ -35,8 +36,8 @@ public class ConversionException extends NestedRuntimeException {
 
 	/**
 	 * Creates a new conversion exception.
-	 * @param value
-	 * @param targetClass
+	 * @param value the value we tried to convert
+	 * @param targetClass the target type
 	 */
 	public ConversionException(Object value, Class targetClass) {
 		super("Unable to convert value '" + value + "' of type '" + (value != null ? value.getClass().getName() : null)
@@ -47,9 +48,9 @@ public class ConversionException extends NestedRuntimeException {
 
 	/**
 	 * Creates a new conversion exception.
-	 * @param value
-	 * @param targetClass
-	 * @param cause
+	 * @param value the value we tried to convert
+	 * @param targetClass the target type
+	 * @param cause underlying cause of this exception
 	 */
 	public ConversionException(Object value, Class targetClass, Throwable cause) {
 		super("Unable to convert value '" + value + "' of type '" + (value != null ? value.getClass().getName() : null)
@@ -60,27 +61,26 @@ public class ConversionException extends NestedRuntimeException {
 
 	/**
 	 * Creates a new conversion exception.
-	 * @param value
-	 * @param targetClass
-	 * @param cause
-	 * @param message
+	 * @param value the value we tried to convert
+	 * @param targetClass the target type
+	 * @param message a descriptive message
+	 * @param cause underlying cause of this exception
 	 */
-	public ConversionException(Object value, Class targetClass, Throwable cause, String message) {
+	public ConversionException(Object value, Class targetClass, String message, Throwable cause) {
 		super(message, cause);
 		this.value = value;
 		this.targetClass = targetClass;
 	}
 
 	/**
-	 * Returns the source value
-	 * @return the source value
+	 * Returns the value we tried to convert.
 	 */
 	public Object getValue() {
 		return value;
 	}
 
 	/**
-	 * @return Returns the targetClass.
+	 * Returns the target type.
 	 */
 	public Class getTargetClass() {
 		return targetClass;

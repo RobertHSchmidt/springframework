@@ -24,8 +24,8 @@ import org.springframework.binding.convert.ConversionService;
 import org.springframework.util.Assert;
 
 /**
- * Default, local implementation of a conversion service deployable within a
- * Spring bean factory.
+ * Registers all 'from string' converters known to a conversion service with
+ * a Spring bean factory.
  * <p>
  * Acts as bean factory post processor, registering property editor adapters for
  * each supported conversion with a <code>java.lang.String sourceClass</code>.
@@ -37,6 +37,10 @@ public class CustomConverterConfigurer implements BeanFactoryPostProcessor, Init
 
 	private ConversionService conversionService;
 
+	/**
+	 * Create a new configurer.
+	 * @param conversionService the conversion service to take converters from
+	 */
 	public void setConversionService(ConversionService conversionService) {
 		this.conversionService = conversionService;
 	}

@@ -36,6 +36,9 @@ public class DefaultConversionService extends GenericConversionService {
 		addDefaultConverters();
 	}
 
+	/**
+	 * Add all default converters to the conversion service.
+	 */
 	protected void addDefaultConverters() {
 		addConverter(new TextToClass());
 		addConverter(new TextToNumber(new SimpleFormatterFactory()));

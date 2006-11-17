@@ -26,6 +26,7 @@ import org.springframework.util.Assert;
  * <p>
  * Specifically, encapsulates knowledge about how to convert source objects to a
  * specific target type using a specific converter.
+ * 
  * @author Keith Donald
  */
 public class ConversionExecutor implements Serializable {
@@ -47,8 +48,9 @@ public class ConversionExecutor implements Serializable {
 
 	/**
 	 * Creates a conversion executor.
-	 * @param converter The converter that will perform the conversion.
-	 * @param targetClass The target type that the converter will convert to.
+	 * @param sourceClass the source type that the converter will convert from
+	 * @param targetClass the target type that the converter will convert to
+	 * @param converter the converter that will perform the conversion
 	 */
 	public ConversionExecutor(Class sourceClass, Class targetClass, Converter converter) {
 		Assert.notNull(sourceClass, "The source class is required");
@@ -61,7 +63,7 @@ public class ConversionExecutor implements Serializable {
 
 	/**
 	 * Returns the source class of conversions performed by this executor.
-	 * @return the source class.
+	 * @return the source class
 	 */
 	public Class getSourceClass() {
 		return sourceClass;
@@ -69,7 +71,7 @@ public class ConversionExecutor implements Serializable {
 
 	/**
 	 * Returns the target class of conversions performed by this executor.
-	 * @return the target class.
+	 * @return the target class
 	 */
 	public Class getTargetClass() {
 		return targetClass;
@@ -87,7 +89,7 @@ public class ConversionExecutor implements Serializable {
 	 * Execute the conversion for the provided source object.
 	 * @param source the source object to convert
 	 * @param context the conversion context, useful for influencing the
-	 * behavior of the converter.
+	 * behavior of the converter
 	 */
 	public Object execute(Object source, ConversionContext context) throws ConversionException {
 		if (source != null) {

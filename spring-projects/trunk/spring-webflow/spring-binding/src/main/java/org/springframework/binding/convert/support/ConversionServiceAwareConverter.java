@@ -32,14 +32,23 @@ public abstract class ConversionServiceAwareConverter extends AbstractConverter 
 	 */
 	private ConversionService conversionService;
 
+	/**
+	 * Default constructor, expectes to conversion service to be injected
+	 * using {@link #setConversionService(ConversionService)}.
+	 */
 	protected ConversionServiceAwareConverter() {
-
 	}
 
+	/**
+	 * Create a converter using given conversion service.
+	 */
 	protected ConversionServiceAwareConverter(ConversionService conversionService) {
 		setConversionService(conversionService);
 	}
 
+	/**
+	 * Returns the conversion service used.
+	 */
 	public ConversionService getConversionService() {
 		if (conversionService == null) {
 			throw new IllegalStateException("Conversion service not yet set: set it first before calling this method");
@@ -55,7 +64,7 @@ public abstract class ConversionServiceAwareConverter extends AbstractConverter 
 	 * Returns a conversion executor capable of converting string objects to the
 	 * specified target class.
 	 * @param targetClass the target class
-	 * @return the conversion executor
+	 * @return the conversion executor, never null
 	 */
 	protected ConversionExecutor fromStringTo(Class targetClass) {
 		return getConversionService().getConversionExecutor(String.class, targetClass);
@@ -77,7 +86,7 @@ public abstract class ConversionServiceAwareConverter extends AbstractConverter 
 	 * class to another.
 	 * @param sourceClass the source class to convert from
 	 * @param targetClass the target class to convert to
-	 * @return the conversion executor
+	 * @return the conversion executor, never null
 	 */
 	protected ConversionExecutor converterFor(Class sourceClass, Class targetClass) {
 		return getConversionService().getConversionExecutor(sourceClass, targetClass);
@@ -85,11 +94,11 @@ public abstract class ConversionServiceAwareConverter extends AbstractConverter 
 
 	/**
 	 * Helper that parsers the given expression string into an expression, using
-	 * the installed String->Expression converter.
+	 * the installed String-&gt;Expression converter.
 	 * @param expressionString the expression string to parse
 	 * @return the parsed, evaluatable expression
 	 */
 	protected Expression parseExpression(String expressionString) {
-		return (Expression)converterFor(String.class, Expression.class).execute(expressionString);
+		return (Expression)fromStringTo(Expression.class).execute(expressionString);
 	}
 }

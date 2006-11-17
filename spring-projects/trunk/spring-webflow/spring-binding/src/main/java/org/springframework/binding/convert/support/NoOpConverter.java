@@ -28,6 +28,9 @@ class NoOpConverter extends AbstractConverter {
 
 	private Class targetClass;
 
+	/**
+	 * Create a "no op" converter from given source to given target class.
+	 */
 	public NoOpConverter(Class sourceClass, Class targetClass) {
 		this.sourceClass = sourceClass;
 		this.targetClass = targetClass;
