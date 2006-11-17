@@ -26,7 +26,8 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
- * A settable expression that adds non-null values to a collection. 
+ * A settable expression that adds non-null values to a collection.
+ *  
  * @author Keith Donald
  */
 public class CollectionAddingExpression implements SettableExpression {

@@ -18,7 +18,8 @@ package org.springframework.binding.expression;
 import org.springframework.core.NestedRuntimeException;
 
 /**
- * Base class for exceptions thrown by expression parsing system.
+ * Base class for exceptions thrown during expression parsing.
+ * 
  * @author Keith Donald
  */
 public class ParserException extends NestedRuntimeException {
@@ -29,21 +30,21 @@ public class ParserException extends NestedRuntimeException {
 	private String expressionString;
 
 	/**
-	 * Creates a new parser exception.
-	 * @param expressionString
-	 * @param cause
+	 * Creates a new expression parsing exception.
+	 * @param expressionString the expression string that could not be parsed
+	 * @param cause the underlying cause of this exception
 	 */
 	public ParserException(String expressionString, Throwable cause) {
-		this(expressionString, cause, "Unable to parse expression string '" + expressionString + "'");
+		this(expressionString, "Unable to parse expression string '" + expressionString + "'", cause);
 	}
 
 	/**
-	 * Creates a new parser exception.
-	 * @param expressionString
-	 * @param cause
-	 * @param message
+	 * Creates a new expression parsing exception.
+	 * @param expressionString the expression string that could not be parsed
+	 * @param message a descriptive message
+	 * @param cause the underlying cause of this exception
 	 */
-	public ParserException(String expressionString, Throwable cause, String message) {
+	public ParserException(String expressionString, String message, Throwable cause) {
 		super(message, cause);
 		this.expressionString = expressionString;
 	}

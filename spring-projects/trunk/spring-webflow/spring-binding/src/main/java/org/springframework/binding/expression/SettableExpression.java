@@ -18,6 +18,7 @@ package org.springframework.binding.expression;
 /**
  * An evaluator that is capable of setting a value on a target object at the
  * path defined by this expression.
+ * 
  * @author Keith Donald
  */
 public interface SettableExpression extends Expression {
@@ -28,7 +29,7 @@ public interface SettableExpression extends Expression {
 	 * @param target the target object
 	 * @param value the new value to be set
 	 * @param context the evaluation context
-	 * @throws EvaluationException an exception occured during evaluation.
+	 * @throws EvaluationException an exception occured during evaluation
 	 */
 	public void evaluateToSet(Object target, Object value, EvaluationContext context) throws EvaluationException;
 }

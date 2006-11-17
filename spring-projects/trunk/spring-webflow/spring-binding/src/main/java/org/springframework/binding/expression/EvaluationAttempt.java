@@ -16,12 +16,12 @@
 package org.springframework.binding.expression;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import org.springframework.core.style.ToStringCreator;
 
 /**
  * A simple holder for information about an evaluation attempt.
+ * 
  * @author Keith Donald
  */
 public class EvaluationAttempt implements Serializable {
@@ -37,21 +37,20 @@ public class EvaluationAttempt implements Serializable {
 	private Object target;
 
 	/**
-	 * The evaluation attributes.
+	 * The evaluation context.
 	 */
-	private Map evaluationAttributes;
+	private EvaluationContext context;
 
 	/**
 	 * Create an evaluation attempt.
 	 * @param expression the expression that failed to evaluate
 	 * @param target the target of the expression
-	 * @param evaluationAttributes the attributes that might have affected
-	 *        evaluation behavior
+	 * @param context the context attributes that might have affected evaluation behavior
 	 */
-	public EvaluationAttempt(Expression expression, Object target, Map evaluationAttributes) {
+	public EvaluationAttempt(Expression expression, Object target, EvaluationContext context) {
 		this.expression = expression;
 		this.target = target;
-		this.evaluationAttributes = evaluationAttributes;
+		this.context = context;
 	}
 
 	/**
@@ -69,10 +68,10 @@ public class EvaluationAttempt implements Serializable {
 	}
 
 	/**
-	 * Returns attributes that may have influenced the evaluation process.
+	 * Returns context attributes that may have influenced the evaluation process.
 	 */
-	public Map getEvaluationAttributes() {
-		return evaluationAttributes;
+	public EvaluationContext getContext() {
+		return context;
 	}
 
 	public String toString() {
@@ -80,7 +79,7 @@ public class EvaluationAttempt implements Serializable {
 	}
 
 	protected ToStringCreator createToString(ToStringCreator creator) {
-		return creator.append("expression", expression).append("target", target).append("evaluationAttributes",
-				evaluationAttributes);
+		return creator.append("expression", expression).append("target", target).append("context",
+				context);
 	}
 }

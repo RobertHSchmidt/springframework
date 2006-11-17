@@ -19,6 +19,7 @@ import org.springframework.core.NestedRuntimeException;
 
 /**
  * Indicates an expression evaluation failed.
+ * 
  * @author Keith Donald
  */
 public class EvaluationException extends NestedRuntimeException {
@@ -30,8 +31,8 @@ public class EvaluationException extends NestedRuntimeException {
 
 	/**
 	 * Creates a new evaluation exception.
-	 * @param evaluationAttempt
-	 * @param cause
+	 * @param evaluationAttempt the evaluation attempt that failed
+	 * @param cause the underlying cause of this exception
 	 */
 	public EvaluationException(EvaluationAttempt evaluationAttempt, Throwable cause) {
 		super("Expression " + evaluationAttempt

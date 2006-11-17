@@ -15,12 +15,11 @@
  */
 package org.springframework.binding.expression;
 
-import java.util.Map;
-
 import org.springframework.core.style.ToStringCreator;
 
 /**
  * Records an attempt to set an expression value.
+ * 
  * @author Keith Donald
  */
 public class SetValueAttempt extends EvaluationAttempt {
@@ -34,11 +33,11 @@ public class SetValueAttempt extends EvaluationAttempt {
 	 * Creates a new set attempt.
 	 * @param expression the settable expression
 	 * @param target the target of the expression
-	 * @param value the value that attempted to be set
-	 * @param evaluationAttributes attributes that may have influenced the evaluation and set process
+	 * @param value the value that was attempted to be set
+	 * @param context context attributes that may have influenced the evaluation and set process
 	 */
-	public SetValueAttempt(SettableExpression expression, Object target, Object value, Map evaluationAttributes) {
-		super(expression, target, evaluationAttributes);
+	public SetValueAttempt(SettableExpression expression, Object target, Object value, EvaluationContext context) {
+		super(expression, target, context);
 		this.value = value;
 	}
 

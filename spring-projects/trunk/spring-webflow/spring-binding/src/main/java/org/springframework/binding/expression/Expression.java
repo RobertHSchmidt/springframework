@@ -16,9 +16,10 @@
 package org.springframework.binding.expression;
 
 /**
- * Evaluates a single parsed expression of the provided input object in the
+ * Evaluates a single parsed expression on the provided input object in the
  * specified context. This provides a common abstraction for expression
  * evaluation independent of any language like OGNL or Spring's BeanWrapper.
+ * 
  * @author Keith Donald
  */
 public interface Expression {
@@ -26,10 +27,10 @@ public interface Expression {
 	/**
 	 * Evaluate the expression encapsulated by this evaluator against the
 	 * provided target object and return the result of the evaluation.
-	 * @param target The target of the expression
-	 * @param context The expression evaluation context
+	 * @param target the target of the expression
+	 * @param context the expression evaluation context
 	 * @return the evaluation result
-	 * @throws EvaluationException an exception occured during evaluation.
+	 * @throws EvaluationException an exception occured during evaluation
 	 */
 	public Object evaluate(Object target, EvaluationContext context) throws EvaluationException;
 }

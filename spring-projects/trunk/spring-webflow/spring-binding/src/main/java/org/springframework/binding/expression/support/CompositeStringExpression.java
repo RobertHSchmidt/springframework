@@ -35,7 +35,7 @@ public class CompositeStringExpression implements Expression {
 	/**
 	 * Creates a new composite string expression.
 	 * @param expressions the ordered set of expressions that when evaluated
-	 * will have their results stringed together to build the composite string.
+	 * will have their results stringed together to build the composite string
 	 */
 	public CompositeStringExpression(Expression[] expressions) {
 		this.expressions = expressions;
