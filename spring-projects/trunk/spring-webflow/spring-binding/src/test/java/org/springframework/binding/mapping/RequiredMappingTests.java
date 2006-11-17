@@ -21,7 +21,11 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.expression.support.OgnlExpressionParser;
 
+/**
+ * Unit tests for the {@link org.springframework.binding.mapping.RequiredMapping}.
+ */
 public class RequiredMappingTests extends TestCase {
+	
 	public void testRequired() {
 		MappingBuilder builder = new MappingBuilder(new OgnlExpressionParser());
 		Mapping mapping = builder.source("foo").target("bar").required().value();
@@ -40,8 +44,8 @@ public class RequiredMappingTests extends TestCase {
 		HashMap target = new HashMap();
 		try {
 			mapping.map(source, target, null);
-		} catch (RequiredMappingException e) {
-			
+		}
+		catch (RequiredMappingException e) {
 		}
 	}
 
@@ -52,8 +56,8 @@ public class RequiredMappingTests extends TestCase {
 		HashMap target = new HashMap();
 		try {
 			mapping.map(source, target, null);
-		} catch (RequiredMappingException e) {
-			
+		}
+		catch (RequiredMappingException e) {
 		}
 	}
 
