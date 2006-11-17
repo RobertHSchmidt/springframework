@@ -28,8 +28,8 @@ public interface AttributeMapper {
 
 	/**
 	 * Map data from a source object to a target object.
-	 * @param source The source
-	 * @param target The target
+	 * @param source the source
+	 * @param target the target
 	 * @param context the mapping context
 	 */
 	public void map(Object source, Object target, MappingContext context);

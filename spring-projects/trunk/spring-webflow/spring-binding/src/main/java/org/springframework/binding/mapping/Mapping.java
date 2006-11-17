@@ -15,8 +15,6 @@
  */
 package org.springframework.binding.mapping;
 
-import java.io.Serializable;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.convert.ConversionExecutor;
@@ -30,11 +28,12 @@ import org.springframework.util.Assert;
  * the result of evaluating an expression on a source object to a property on a
  * target object, optionally applying a type conversion during the mapping
  * process.
+ * 
  * @author Keith Donald
  */
-public class Mapping implements AttributeMapper, Serializable {
+public class Mapping implements AttributeMapper {
 
-	protected static final Log logger = LogFactory.getLog(Mapping.class);
+	private static final Log logger = LogFactory.getLog(Mapping.class);
 
 	/**
 	 * The source expression to evaluate against a source object to map from.

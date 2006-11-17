@@ -15,7 +15,6 @@
  */
 package org.springframework.binding.mapping;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -31,7 +30,7 @@ import org.springframework.core.style.ToStringCreator;
  * @author Keith Donald
  * @author Colin Sampaleanu
  */
-public class DefaultAttributeMapper implements AttributeMapper, Serializable {
+public class DefaultAttributeMapper implements AttributeMapper {
 
 	/**
 	 * The ordered list of mappings to apply.
@@ -41,7 +40,7 @@ public class DefaultAttributeMapper implements AttributeMapper, Serializable {
 	/**
 	 * Add a mapping to this mapper.
 	 * @param mapping the mapping to add (as an AttributeMapper)
-	 * @return this, to support convenient call chaining.
+	 * @return this, to support convenient call chaining
 	 */
 	public DefaultAttributeMapper addMapping(AttributeMapper mapping) {
 		mappings.add(mapping);

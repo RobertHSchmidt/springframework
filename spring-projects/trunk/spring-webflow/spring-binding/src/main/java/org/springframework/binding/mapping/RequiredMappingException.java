@@ -17,9 +17,15 @@ package org.springframework.binding.mapping;
 
 /**
  * Thrown when a required mapping could not be performed.
+ * 
  * @author Keith Donald
  */
 public class RequiredMappingException extends IllegalStateException {
+	
+	/**
+	 * Create a new required mapping exception.
+	 * @param message a descriptive message
+	 */
 	public RequiredMappingException(String message) {
 		super(message);
 	}

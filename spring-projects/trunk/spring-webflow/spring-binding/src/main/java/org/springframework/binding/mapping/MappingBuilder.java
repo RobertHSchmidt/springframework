@@ -36,9 +36,20 @@ import org.springframework.util.Assert;
  * 
  * Calling the {@link #value()} result method clears out this builder's state so
  * it can be reused to build another mapping.
+ * 
  * @author Keith Donald
  */
 public class MappingBuilder {
+
+	/**
+	 * The expression string parser.
+	 */
+	private ExpressionParser expressionParser;
+
+	/**
+	 * The conversion service for applying type conversions.
+	 */
+	private ConversionService conversionService = new DefaultConversionService();
 
 	/**
 	 * The source mapping expression.
@@ -46,7 +57,7 @@ public class MappingBuilder {
 	private Expression sourceExpression;
 
 	/**
-	 * The target mapping property expression.
+	 * The target mapping settable expression.
 	 */
 	private SettableExpression targetExpression;
 
@@ -61,16 +72,6 @@ public class MappingBuilder {
 	private Class targetType;
 
 	/**
-	 * The expression string parser.
-	 */
-	private ExpressionParser expressionParser;
-
-	/**
-	 * The conversion service for applying type conversions.
-	 */
-	private ConversionService conversionService = new DefaultConversionService();
-
-	/**
 	 * Whether or not the built mapping is a required mapping.
 	 */
 	private boolean required;
@@ -78,7 +79,7 @@ public class MappingBuilder {
 	/**
 	 * Creates a mapping builder that uses the expression parser to parse
 	 * attribute mapping expressions.
-	 * @param expressionParser the expression parser.
+	 * @param expressionParser the expression parser
 	 */
 	public MappingBuilder(ExpressionParser expressionParser) {
 		Assert.notNull(expressionParser, "The expression parser is required");
@@ -147,7 +148,7 @@ public class MappingBuilder {
 	}
 	
 	/**
-	 * The logical GOF builder getResult method, returning a fully constructed
+	 * The logical GoF builder getResult method, returning a fully constructed
 	 * Mapping from the configured pieces. Once called, the state of this
 	 * builder is nulled out to support building a new mapping object again.
 	 * @return the mapping result
@@ -165,14 +166,22 @@ public class MappingBuilder {
 		Mapping result;
 		if (required) {
 			result = new RequiredMapping(sourceExpression, targetExpression, typeConverter);
-		} else {
+		}
+		else {
 			result = new Mapping(sourceExpression, targetExpression, typeConverter);
 		}
+		reset();
+		return result;
+	}
+	
+	/**
+	 * Reset this mapping builder.
+	 */
+	public void reset() {
 		sourceExpression = null;
 		targetExpression = null;
 		sourceType = null;
 		targetType = null;
 		required = false;
-		return result;
 	}
 }
