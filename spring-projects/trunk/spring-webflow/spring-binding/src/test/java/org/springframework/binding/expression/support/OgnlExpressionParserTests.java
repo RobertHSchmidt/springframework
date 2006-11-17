@@ -20,7 +20,11 @@ import junit.framework.TestCase;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ParserException;
 
+/**
+ * Unit tests for {@link org.springframework.binding.expression.support.OgnlExpressionParser}.
+ */
 public class OgnlExpressionParserTests extends TestCase {
+
 	private OgnlExpressionParser parser = new OgnlExpressionParser();
 
 	private TestBean bean = new TestBean();
@@ -66,8 +70,8 @@ public class OgnlExpressionParserTests extends TestCase {
 		try {
 			parser.parseExpression(exp);
 			fail("Should've failed - not intended use");
-		} catch (ParserException e) {
-			
+		}
+		catch (ParserException e) {
 		}
 	}
 
@@ -76,8 +80,8 @@ public class OgnlExpressionParserTests extends TestCase {
 			String exp = "hello ${flag} ${abcd defg";
 			parser.parseExpression(exp);
 			fail("Should've failed - not intended use");
-		} catch (ParserException e) {
-			
+		}
+		catch (ParserException e) {
 		}
 	}
 	
@@ -86,8 +90,8 @@ public class OgnlExpressionParserTests extends TestCase {
 			String exp = "hello ${flag} ${}";
 			parser.parseExpression(exp);
 			fail("Should've failed - not intended use");
-		} catch (ParserException e) {
-			
+		}
+		catch (ParserException e) {
 		}
 	}
 
