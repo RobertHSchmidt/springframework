@@ -25,6 +25,7 @@ import java.util.Map;
  * <ul>Providing operations for recording progress or 
  * errors during the expression evaluation process.
  * </ol>
+ * 
  * @author Keith Donald
  */
 public interface EvaluationContext {

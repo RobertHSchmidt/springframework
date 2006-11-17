@@ -47,7 +47,7 @@ public class OgnlExpressionParser extends AbstractExpressionParser {
 	/**
 	 * Add a property access strategy for the given class.
 	 * @param clazz the class that contains properties needing access
-	 * @param propertyAccessor the property access strategy.
+	 * @param propertyAccessor the property access strategy
 	 */
 	public void addPropertyAccessor(Class clazz, PropertyAccessor propertyAccessor) {
 		OgnlRuntime.setPropertyAccessor(clazz, propertyAccessor);

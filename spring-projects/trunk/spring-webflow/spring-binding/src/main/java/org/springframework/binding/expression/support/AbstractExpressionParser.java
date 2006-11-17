@@ -25,7 +25,8 @@ import org.springframework.binding.expression.SettableExpression;
 import org.springframework.util.StringUtils;
 
 /**
- * An expression parser that parses Ognl expressions.
+ * Abstract base class for expression parsers.
+ * 
  * @author Keith Donald
  */
 public abstract class AbstractExpressionParser implements ExpressionParser {
@@ -51,7 +52,7 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 	private String expressionSuffix = DEFAULT_EXPRESSION_SUFFIX;
 
 	/**
-	 * Returns the configured expression delimiter prefix.
+	 * Returns the configured expression delimiter prefix. Defaults to "${".
 	 */
 	public String getExpressionPrefix() {
 		return expressionPrefix;
@@ -65,7 +66,7 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 	}
 
 	/**
-	 * Returns the expression delimiter suffix.
+	 * Returns the expression delimiter suffix. Defaults to "}".
 	 */
 	public String getExpressionSuffix() {
 		return expressionSuffix;
@@ -89,10 +90,12 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 		int suffixIndex = expressionString.indexOf(getExpressionSuffix(), prefixIndex);
 		if (suffixIndex == -1) {
 			return false;
-		} else {
+		}
+		else {
 			if (suffixIndex == prefixIndex + getExpressionPrefix().length()) {
 				return false;
-			} else {
+			}
+			else {
 				return true;
 			}
 		}
@@ -102,7 +105,8 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 		Expression[] expressions = parseExpressions(expressionString);
 		if (expressions.length == 1) {
 			return expressions[0];
-		} else {
+		}
+		else {
 			return new CompositeStringExpression(expressions);
 		}
 	}
@@ -135,37 +139,43 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 					}
 					int suffixIndex = expressionString.indexOf(getExpressionSuffix(), prefixIndex);
 					if (suffixIndex == -1) {
-						throw new ParserException(expressionString, null, "No ending suffix '" + getExpressionSuffix()
+						throw new ParserException(expressionString, "No ending suffix '" + getExpressionSuffix()
 								+ "' for expression starting at character " + prefixIndex + ": "
-								+ expressionString.substring(prefixIndex));
-					} else if (suffixIndex == prefixIndex + getExpressionPrefix().length()) {
-						throw new ParserException(expressionString, null, "No expression defined within delimiter '"
-								+ getExpressionPrefix() + getExpressionSuffix() + "' at character " + prefixIndex);
-					} else {
+								+ expressionString.substring(prefixIndex), null);
+					}
+					else if (suffixIndex == prefixIndex + getExpressionPrefix().length()) {
+						throw new ParserException(expressionString, "No expression defined within delimiter '"
+								+ getExpressionPrefix() + getExpressionSuffix() + "' at character " + prefixIndex,
+								null);
+					}
+					else {
 						String expr = expressionString.substring(prefixIndex + getExpressionPrefix().length(),
 								suffixIndex);
 						expressions.add(doParseExpression(expr));
 						startIdx = suffixIndex + 1;
 					}
-				} else {
+				}
+				else {
 					if (startIdx == 0) {
 						// treat entire string as one expression
 						expressions.add(doParseExpression(expressionString));
-					} else {
+					}
+					else {
 						// no more ${expressions} found in string
 						expressions.add(new StaticExpression(expressionString.substring(startIdx)));
 					}
 					startIdx = expressionString.length();
 				}
 			}
-		} else {
+		}
+		else {
 			expressions.add(new StaticExpression(expressionString));
 		}
 		return (Expression[]) expressions.toArray(new Expression[expressions.size()]);
 	}
 
 	/**
-	 * Template for parsing a filtered expression string. Subclasses should
+	 * Template method for parsing a filtered expression string. Subclasses should
 	 * override.
 	 * @param expressionString the expression string
 	 * @return the parsed expression

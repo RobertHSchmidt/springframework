@@ -21,8 +21,9 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.util.ObjectUtils;
 
 /**
- * A simple expression evaluator that just returns the expression itself as the
- * result of each evaluation.
+ * A simple expression evaluator that just returns a fixed result on each
+ * evaluation.
+ * 
  * @author Keith Donald
  */
 public class StaticExpression implements Expression {
@@ -33,8 +34,8 @@ public class StaticExpression implements Expression {
 	private Object value;
 
 	/**
-	 * Create a static evaluator for the value expression.
-	 * @param value the value expression
+	 * Create a static evaluator for the given value.
+	 * @param value the value
 	 */
 	public StaticExpression(Object value) {
 		this.value = value;

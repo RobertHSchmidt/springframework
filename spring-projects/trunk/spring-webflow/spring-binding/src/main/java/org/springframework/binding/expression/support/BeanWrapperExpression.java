@@ -25,11 +25,11 @@ import org.springframework.binding.expression.SettableExpression;
 import org.springframework.util.Assert;
 
 /**
- * An expression evaluator that uses the spring bean wrapper.
+ * An expression evaluator that uses the Spring bean wrapper.
  * 
  * @author Keith Donald
  */
-public class BeanWrapperExpression implements SettableExpression {
+class BeanWrapperExpression implements SettableExpression {
 
 	/**
 	 * The expression.
@@ -57,7 +57,7 @@ public class BeanWrapperExpression implements SettableExpression {
 			return new BeanWrapperImpl(target).getPropertyValue(expression);
 		}
 		catch (BeansException e) {
-			throw new EvaluationException(new EvaluationAttempt(this, target, null), e);
+			throw new EvaluationException(new EvaluationAttempt(this, target, context), e);
 		}
 	}
 
@@ -67,7 +67,7 @@ public class BeanWrapperExpression implements SettableExpression {
 			new BeanWrapperImpl(target).setPropertyValue(expression, value);
 		}
 		catch (BeansException e) {
-			throw new EvaluationException(new SetValueAttempt(this, target, value, null), e);
+			throw new EvaluationException(new SetValueAttempt(this, target, value, context), e);
 		}
 	}
 
