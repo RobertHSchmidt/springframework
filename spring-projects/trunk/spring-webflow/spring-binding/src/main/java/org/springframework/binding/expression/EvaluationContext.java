@@ -20,9 +20,9 @@ import java.util.Map;
 /**
  * A context object with two main responsibities:
  * <ol>
- * <ul>Exposing information to an expression to influence 
+ * <li>Exposing information to an expression to influence 
  * an evaluation attempt.
- * <ul>Providing operations for recording progress or 
+ * <li>Providing operations for recording progress or 
  * errors during the expression evaluation process.
  * </ol>
  * 
