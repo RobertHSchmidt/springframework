@@ -75,8 +75,8 @@ public class TextToMethodSignature extends ConversionServiceAwareConverter {
 			String methodName = encodedMethodKey.substring(0, openParan);
 			int closeParan = encodedMethodKey.lastIndexOf(')');
 			if (closeParan == -1) {
-				throw new ConversionException(encodedMethodKey, MethodSignature.class, null,
-						"Syntax error: No close parenthesis specified for method parameter list");
+				throw new ConversionException(encodedMethodKey, MethodSignature.class,
+						"Syntax error: No close parenthesis specified for method parameter list", null);
 			}
 			String delimParamList = encodedMethodKey.substring(openParan + 1, closeParan);
 			String[] paramArray = StringUtils.commaDelimitedListToStringArray(delimParamList);

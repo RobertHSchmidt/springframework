@@ -23,6 +23,7 @@ import org.springframework.util.StringUtils;
 /**
  * Converts a textual representation of a class object to a <code>Class</code>
  * instance.
+ * 
  * @author Keith Donald
  */
 public class TextToClass extends ConversionServiceAwareConverter {
@@ -47,8 +48,9 @@ public class TextToClass extends ConversionServiceAwareConverter {
 				return ClassUtils.forName(text.substring(CLASS_PREFIX.length()));
 			}
 			else if (classNameOrAlias.startsWith(ALIAS_PREFIX)) {
-				Class clazz = getConversionService().getClassByAlias(text);
-				Assert.notNull(clazz, "No class found associated with type alias '" + classNameOrAlias + "'");
+				String alias = text.substring(ALIAS_PREFIX.length());
+				Class clazz = getConversionService().getClassByAlias(alias);
+				Assert.notNull(clazz, "No class found associated with type alias '" + alias + "'");
 				return clazz;
 			}
 			else {

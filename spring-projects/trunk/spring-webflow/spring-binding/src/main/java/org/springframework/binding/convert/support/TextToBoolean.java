@@ -19,8 +19,9 @@ import org.springframework.binding.convert.ConversionContext;
 import org.springframework.util.StringUtils;
 
 /**
- * Converts a textual representation of a class object to a <code>Class</code>
+ * Converts a textual representation of a boolean object to a <code>Boolean</code>
  * instance.
+ * 
  * @author Keith Donald
  */
 public class TextToBoolean extends AbstractConverter {
@@ -45,10 +46,19 @@ public class TextToBoolean extends AbstractConverter {
 
 	private String falseString;
 
+	/**
+	 * Default constructor. No special true or false strings are considered.
+	 */
 	public TextToBoolean() {
-
+		this(null, null);
 	}
 
+	/**
+	 * Create a text to boolean converter. Take given <i>special</i> string representations
+	 * of true and false into account.
+	 * @param trueString special true string to consider
+	 * @param falseString special false string to consider
+	 */
 	public TextToBoolean(String trueString, String falseString) {
 		this.trueString = trueString;
 		this.falseString = falseString;

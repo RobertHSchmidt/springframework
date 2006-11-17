@@ -25,14 +25,22 @@ import org.springframework.binding.format.support.SimpleFormatterFactory;
 /**
  * Converts textual representations of numbers to a <code>Number</code>
  * specialization. Delegates to a synchronized formatter to parse text strings.
+ * 
  * @author Keith Donald
  */
 public class TextToNumber extends AbstractFormattingConverter {
 
+	/**
+	 * Default constructor that uses a {@link SimpleFormatterFactory}.
+	 */
 	public TextToNumber() {
 		super(new SimpleFormatterFactory());
 	}
 
+	/**
+	 * Create a string to number converter using given formatter factory.
+	 * @param formatterFactory the factory to use
+	 */
 	public TextToNumber(FormatterFactory formatterFactory) {
 		super(formatterFactory);
 	}

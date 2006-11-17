@@ -21,6 +21,7 @@ import org.springframework.binding.format.FormatterFactory;
  * A converter that delegates to a formatter to perform the conversion.
  * Formatters are typically not thread safe, so we use a FormatterFactory that
  * is expected to provide us with thread-safe instances as necessary.
+ * 
  * @author Keith Donald
  */
 public abstract class AbstractFormattingConverter extends AbstractConverter {
@@ -32,7 +33,7 @@ public abstract class AbstractFormattingConverter extends AbstractConverter {
 
 	/**
 	 * Creates a new converter that delegates to a formatter.
-	 * @param formatterFactory
+	 * @param formatterFactory the factory to use
 	 */
 	protected AbstractFormattingConverter(FormatterFactory formatterFactory) {
 		setFormatterFactory(formatterFactory);

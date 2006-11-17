@@ -32,7 +32,8 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * Base implementation of a conversion service.
+ * Base implementation of a conversion service. Initially empty, e.g. no converters
+ * are registered by default.
  * 
  * @author Keith Donald
  */
@@ -57,10 +58,25 @@ public class GenericConversionService implements ConversionService {
 	 */
 	private ConversionService parent;
 
+	/**
+	 * Returns the parent of this conversion service. Could be null.
+	 */
+	public ConversionService getParent() {
+		return parent;
+	}
+
+	/**
+	 * Set the parent of this conversion service. This is optional.
+	 */
 	public void setParent(ConversionService parent) {
 		this.parent = parent;
 	}
 
+	/**
+	 * Add given converter to this conversion service. If the converter is
+	 * {@link ConversionServiceAware}, it will get the conversion service
+	 * injected.
+	 */
 	public void addConverter(Converter converter) {
 		Class[] sourceClasses = converter.getSourceClasses();
 		Class[] targetClasses = converter.getTargetClasses();
@@ -81,21 +97,28 @@ public class GenericConversionService implements ConversionService {
 		}
 	}
 
-	public void addConverter(Converter converter, String alias) {
-		aliasMap.put(alias, converter);
-		addConverter(converter);
-	}
-
+	/**
+	 * Add all given converters. If the converters are
+	 * {@link ConversionServiceAware}, they will get the conversion service
+	 * injected.
+	 */
 	public void addConverters(Converter[] converters) {
 		for (int i = 0; i < converters.length; i++) {
 			addConverter(converters[i]);
 		}
 	}
 
+	/**
+	 * Add an alias for given target type.
+	 */
 	public void addAlias(String alias, Class targetType) {
 		aliasMap.put(alias, targetType);
 	}
 
+	/**
+	 * Generate a conventions based alias for given target type. For instance,
+	 * "java.lang.Boolean" will get the "boolean" alias.
+	 */
 	public void addDefaultAlias(Class targetType) {
 		addAlias(StringUtils.uncapitalize(ClassUtils.getShortName(targetType)), targetType);
 	}
@@ -188,6 +211,8 @@ public class GenericConversionService implements ConversionService {
 			}
 		}
 	}
+	
+	// internal helpers
 
 	protected Map findConvertersForSource(Class sourceClass) {
 		LinkedList classQueue = new LinkedList();
@@ -229,10 +254,6 @@ public class GenericConversionService implements ConversionService {
 			}
 		}
 		return null;
-	}
-
-	public ConversionService getParent() {
-		return parent;
 	}
 
 	protected Map getSourceClassConverters() {
