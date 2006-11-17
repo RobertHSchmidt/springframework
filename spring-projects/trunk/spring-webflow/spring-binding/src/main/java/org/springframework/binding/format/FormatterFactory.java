@@ -15,25 +15,30 @@
  */
 package org.springframework.binding.format;
 
+import java.text.Format;
+
 /**
  * Source for shared and commonly used <code>Formatters</code>.
  * <p>
  * Formatters are typically not thread safe as <code>Format</code> objects
  * aren't thread safe: so implementations of this service should take care to
  * synchronize them as neccessary.
+ * 
+ * @see Format
+ * 
  * @author Keith Donald
  */
 public interface FormatterFactory {
 
 	/**
-	 * Returns a date formatter for the encoded date format
+	 * Returns a date formatter for the encoded date format.
 	 * @param encodedFormat the format
 	 * @return the formatter
 	 */
 	public Formatter getDateFormatter(String encodedFormat);
 
 	/**
-	 * Returns the default date format for the current locale
+	 * Returns the default date format for the current locale.
 	 * @return the date formatter
 	 */
 	public Formatter getDateFormatter();
@@ -46,7 +51,7 @@ public interface FormatterFactory {
 	public Formatter getDateFormatter(Style style);
 
 	/**
-	 * Returns the default date/time format for the current locale
+	 * Returns the default date/time format for the current locale.
 	 * @return the date/time formatter
 	 */
 	public Formatter getDateTimeFormatter();
@@ -60,7 +65,7 @@ public interface FormatterFactory {
 	public Formatter getDateTimeFormatter(Style dateStyle, Style timeStyle);
 
 	/**
-	 * Returns the default time format for the current locale
+	 * Returns the default time format for the current locale.
 	 * @return the time formatter
 	 */
 	public Formatter getTimeFormatter();
@@ -80,13 +85,13 @@ public interface FormatterFactory {
 	public Formatter getNumberFormatter(Class numberClass);
 
 	/**
-	 * Returns a percent number formatter
+	 * Returns a percent number formatter.
 	 * @return the percent formatter
 	 */
 	public Formatter getPercentFormatter();
 
 	/**
-	 * Returns a currency number formatter
+	 * Returns a currency number formatter.
 	 * @return the currency formatter
 	 */
 	public Formatter getCurrencyFormatter();

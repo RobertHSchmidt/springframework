@@ -20,7 +20,8 @@ import java.beans.PropertyEditorSupport;
 import org.springframework.binding.format.Formatter;
 
 /**
- * Adapts a formatter to the property editor interface.
+ * Adapts a formatter to the property editor contract.
+ * 
  * @author Keith Donald
  */
 public class FormatterPropertyEditor extends PropertyEditorSupport {
@@ -45,9 +46,8 @@ public class FormatterPropertyEditor extends PropertyEditorSupport {
 
 	/**
 	 * Creates a formatter property editor.
-	 * 
 	 * @param formatter the formatter to adapt
-	 * @param targetClass the target class for "setAsText" conversions.
+	 * @param targetClass the target class for "setAsText" conversions
 	 */
 	public FormatterPropertyEditor(Formatter formatter, Class targetClass) {
 		this.formatter = formatter;

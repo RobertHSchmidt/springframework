@@ -23,19 +23,30 @@ import org.springframework.util.Assert;
 
 /**
  * Converts from string to a <cod>LabeledEnum</code> instance and back.
+ * 
  * @author Keith Donald
  */
 public class LabeledEnumFormatter extends AbstractFormatter {
 
 	private LabeledEnumResolver labeledEnumResolver = StaticLabeledEnumResolver.instance();
 
+	/**
+	 * Default constructor.
+	 */
 	public LabeledEnumFormatter() {
 	}
 
+	/**
+	 * Create a new LabeledEnum formatter.
+	 * @param allowEmpty should this formatter allow empty input arguments?
+	 */
 	public LabeledEnumFormatter(boolean allowEmpty) {
 		super(allowEmpty);
 	}
 
+	/**
+	 * Set the LabeledEnumResolver used. Defaults to {@link StaticLabeledEnumResolver}.
+	 */
 	public void setLabeledEnumResolver(LabeledEnumResolver labeledEnumResolver) {
 		Assert.notNull(labeledEnumResolver, "The labeled enum resolver is required");
 		this.labeledEnumResolver = labeledEnumResolver;
@@ -56,6 +67,9 @@ public class LabeledEnumFormatter extends AbstractFormatter {
 		return labeledEnum;
 	}
 
+	/**
+	 * Convenience method to parse a LabeledEnum.
+	 */
 	public LabeledEnum parseLabeledEnum(String formattedString, Class enumClass) throws InvalidFormatException {
 		return (LabeledEnum)parseValue(formattedString, enumClass);
 	}

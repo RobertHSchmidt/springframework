@@ -22,7 +22,7 @@ import org.springframework.binding.format.Formatter;
 import org.springframework.binding.format.Style;
 
 /**
- * FormatterLocator that caches Formatters in thread-local storage.
+ * Simple FormatterFactory implementation.
  * 
  * @author Keith Donald
  */

@@ -36,28 +36,47 @@ public abstract class AbstractFormatterFactory implements FormatterFactory {
 
 	private Style defaultTimeStyle = Style.MEDIUM;
 
+	/**
+	 * Set's the locale context used. Defaults to a SimpleLocaleContext holding
+	 * the system default locale.
+	 */
 	public void setLocaleContext(LocaleContext localeContext) {
 		this.localeContext = localeContext;
 	}
 
-	public void setDefaultDateStyle(Style defaultDateStyle) {
-		this.defaultDateStyle = defaultDateStyle;
+	/**
+	 * Returns the locale in use.
+	 */
+	protected Locale getLocale() {
+		return localeContext.getLocale();
 	}
 
-	public void setDefaultTimeStyle(Style defaultTimeStyle) {
-		this.defaultTimeStyle = defaultTimeStyle;
-	}
-
+	/**
+	 * Returns the default date style. Defaults to {@link Style#MEDIUM}.
+	 */
 	protected Style getDefaultDateStyle() {
 		return defaultDateStyle;
 	}
 
-	protected Style getDefaultTimeStyle() {
+	/**
+	 * Set the default date style.
+	 */
+	public void setDefaultDateStyle(Style defaultDateStyle) {
+		this.defaultDateStyle = defaultDateStyle;
+	}
+
+	/**
+	 * Returns the default time style. Defaults to {@link Style#MEDIUM}.
+	 */
+	public Style getDefaultTimeStyle() {
 		return defaultTimeStyle;
 	}
 
-	protected Locale getLocale() {
-		return localeContext.getLocale();
+	/**
+	 * Set the default time style.
+	 */
+	public void setDefaultTimeStyle(Style defaultTimeStyle) {
+		this.defaultTimeStyle = defaultTimeStyle;
 	}
 
 	public Formatter getDateFormatter() {

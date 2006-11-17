@@ -31,6 +31,9 @@ public class Style extends StaticLabeledEnum {
 
 	public static final Style SHORT = new Style(3, "Short");
 
+	/**
+	 * Private constructor since this is a type-safe enum.
+	 */
 	private Style(int code, String label) {
 		super(code, label);
 	}
