@@ -29,25 +29,25 @@ import org.springframework.util.Assert;
 public class MethodSignature implements Serializable {
 
 	/**
-	 * The name of the method, e.g execute
+	 * The name of the method, e.g "execute".
 	 */
 	private String methodName;
 
 	/**
-	 * The parameter types of the method, e.g int param1
+	 * The parameter types of the method, e.g "int param1".
 	 */
 	private Parameters parameters;
 
 	/**
-	 * Creates a method key with no parameters
-	 * @param methodName the name of the method.
+	 * Creates a method signature with no parameters.
+	 * @param methodName the name of the method
 	 */
 	public MethodSignature(String methodName) {
 		this(methodName, Parameters.NONE);
 	}
 
 	/**
-	 * Creates a method key with a single parameter.
+	 * Creates a method signature with a single parameter.
 	 * @param methodName the name of the method
 	 * @param parameter the method parameter
 	 */
@@ -56,7 +56,7 @@ public class MethodSignature implements Serializable {
 	}
 
 	/**
-	 * Creates a method key with a list of parameters.
+	 * Creates a method signature with a list of parameters.
 	 * @param methodName the name of the method
 	 * @param parameters the method parameters
 	 */
@@ -67,12 +67,18 @@ public class MethodSignature implements Serializable {
 		this.parameters = parameters;
 	}
 
-	public Parameters getParameters() {
-		return parameters;
-	}
-
+	/**
+	 * Returns the method name.
+	 */
 	public String getMethodName() {
 		return methodName;
+	}
+
+	/**
+	 * Returns the method parameters.
+	 */
+	public Parameters getParameters() {
+		return parameters;
 	}
 
 	public boolean equals(Object obj) {

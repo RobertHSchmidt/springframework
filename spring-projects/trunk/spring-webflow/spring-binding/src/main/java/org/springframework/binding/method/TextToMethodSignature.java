@@ -23,7 +23,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * Converter that takes an encoded string representation and produces a
- * corresponding <code>MethodKey</code> object.
+ * corresponding <code>MethodSignature</code> object.
  * <p>
  * This converter supports the following encoded forms:
  * <ul>
@@ -34,7 +34,7 @@ import org.springframework.util.StringUtils;
  * delimited by a comma. In this example, the method has two parameters. The
  * type is either the fully-qualified class of the argument OR a known type
  * alias. The name is the logical name of the argument, which is used during
- * data binding to retrieve the argument value.
+ * data binding to retrieve the argument value. </li>
  * </ul>
  * 
  * @see MethodSignature
@@ -44,13 +44,14 @@ import org.springframework.util.StringUtils;
 public class TextToMethodSignature extends ConversionServiceAwareConverter {
 
 	/**
-	 * Create a new converter that converts strings to MethodKey objects.
+	 * Create a new converter that converts strings to MethodSignature objects.
 	 */
 	public TextToMethodSignature() {
 	}
 
 	/**
-	 * Create a new converter that converts strings to MethodKey objects.
+	 * Create a new converter that converts strings to MethodSignature objects.
+	 * @param conversionService the conversion service to use
 	 */
 	public TextToMethodSignature(ConversionService conversionService) {
 		super(conversionService);
