@@ -22,6 +22,7 @@ import org.springframework.core.style.StylerUtils;
 
 /**
  * Base class for exceptions that report a method invocation failure.
+ * 
  * @author Keith Donald
  */
 public class MethodInvocationException extends NestedRuntimeException {
@@ -39,7 +40,7 @@ public class MethodInvocationException extends NestedRuntimeException {
 	/**
 	 * Signals that the method with the specified signature could not be invoked
 	 * with the provided arguments.
-	 * @param methodKey the method sig
+	 * @param methodKey the method signature
 	 * @param arguments the arguments
 	 * @param cause the root cause
 	 */

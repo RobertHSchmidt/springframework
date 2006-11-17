@@ -48,7 +48,7 @@ public class Parameters implements Serializable {
 	}
 
 	/**
-	 * Create an parameter list with the specified size.
+	 * Create a parameter list with the specified size.
 	 * @param size the size
 	 */
 	public Parameters(int size) {
@@ -56,7 +56,7 @@ public class Parameters implements Serializable {
 	}
 
 	/**
-	 * Create an parameter list with one parameter.
+	 * Create a parameter list with one parameter.
 	 * @param parameter the single parameter
 	 */
 	public Parameters(Parameter parameter) {
@@ -65,7 +65,7 @@ public class Parameters implements Serializable {
 	}
 
 	/**
-	 * Create an parameter list from the parameter array.
+	 * Create a parameter list from the parameter array.
 	 * @param parameters the parameters
 	 */
 	public Parameters(Parameter[] parameters) {
@@ -84,7 +84,6 @@ public class Parameters implements Serializable {
 	/**
 	 * Add new parameters to this list.
 	 * @param parameters the parameters
-	 * @return the parameters
 	 */
 	public boolean addAll(Parameter[] parameters) {
 		return this.parameters.addAll(Arrays.asList(parameters));

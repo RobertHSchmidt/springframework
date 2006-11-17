@@ -33,7 +33,7 @@ import org.springframework.util.CachingMapDecorator;
  */
 public class MethodInvoker {
 
-	protected static final Log logger = LogFactory.getLog(MethodInvoker.class);
+	private static final Log logger = LogFactory.getLog(MethodInvoker.class);
 
 	/**
 	 * Conversion service for converting arguments to the neccessary type if
@@ -60,7 +60,6 @@ public class MethodInvoker {
 	/**
 	 * Invoke the method on the bean provided. Argument values are pulled from
 	 * the provided argument source.
-	 * 
 	 * @param signature the definition of the method to invoke, including the
 	 * method name and the method argument types
 	 * @param bean the bean to invoke

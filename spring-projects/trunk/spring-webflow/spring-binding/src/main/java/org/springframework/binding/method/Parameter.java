@@ -53,10 +53,16 @@ public class Parameter implements Serializable {
 		this.name = name;
 	}
 
+	/**
+	 * Returns the parameter type.
+	 */
 	public Class getType() {
 		return type;
 	}
 
+	/**
+	 * Returns the method name.
+	 */
 	public Expression getName() {
 		return name;
 	}
