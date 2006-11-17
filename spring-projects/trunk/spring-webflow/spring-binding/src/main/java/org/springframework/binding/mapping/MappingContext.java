@@ -18,9 +18,9 @@ package org.springframework.binding.mapping;
 /**
  * A context object with two main responsibities:
  * <ol>
- * <ul>Exposing information to a mapper to influence 
+ * <li>Exposing information to a mapper to influence 
  * a mapping attempt.
- * <ul>Providing operations for recording progress or 
+ * <li>Providing operations for recording progress or 
  * errors during the mapping process.
  * </ol>
  * Empty for now; subclasses may define their own custom context behavior

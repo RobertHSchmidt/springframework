@@ -18,9 +18,9 @@ package org.springframework.binding.convert;
 /**
  * A context object with two main responsibities:
  * <ol>
- * <ul>Exposing information to a converter to influence 
+ * <li>Exposing information to a converter to influence 
  * a type conversion attempt.
- * <ul>Providing operations for recording progress or 
+ * <li>Providing operations for recording progress or 
  * errors during the type conversion process.
  * </ol>
  * Empty for now; subclasses may define their own custom context behavior
