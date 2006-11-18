@@ -452,6 +452,142 @@ public class LdapTemplateTest extends TestCase {
         verify();
     }
 
+    public void testSearch_String_AttributesMapper_DirContextProcessor()
+            throws NamingException {
+        expectGetReadOnlyContext();
+
+        SearchControls controls = new SearchControls();
+        controls.setSearchScope(1);
+        controls.setReturningObjFlag(false);
+
+        BasicAttributes expectedAttributes = new BasicAttributes();
+        SearchResult searchResult = new SearchResult("", null,
+                expectedAttributes);
+
+        dirContextProcessorMock.preProcess(dirContextMock);
+        setupStringSearchAndNamingEnumeration(controls, searchResult);
+
+        Object expectedResult = new Object();
+        attributesMapperControl.expectAndReturn(attributesMapperMock
+                .mapFromAttributes(expectedAttributes), expectedResult);
+
+        dirContextProcessorMock.postProcess(dirContextMock);
+        dirContextMock.close();
+
+        replay();
+
+        List list = tested.search(DEFAULT_BASE_STRING, "(ou=somevalue)",
+                controls, attributesMapperMock, dirContextProcessorMock);
+
+        verify();
+
+        assertNotNull(list);
+        assertEquals(1, list.size());
+        assertSame(expectedResult, list.get(0));
+    }
+
+    public void testSearch_Name_AttributesMapper_DirContextProcessor()
+            throws NamingException {
+        expectGetReadOnlyContext();
+
+        SearchControls controls = new SearchControls();
+        controls.setSearchScope(1);
+        controls.setReturningObjFlag(false);
+
+        BasicAttributes expectedAttributes = new BasicAttributes();
+        SearchResult searchResult = new SearchResult("", null,
+                expectedAttributes);
+
+        dirContextProcessorMock.preProcess(dirContextMock);
+        setupSearchAndNamingEnumeration(controls, searchResult);
+
+        Object expectedResult = new Object();
+        attributesMapperControl.expectAndReturn(attributesMapperMock
+                .mapFromAttributes(expectedAttributes), expectedResult);
+
+        dirContextProcessorMock.postProcess(dirContextMock);
+        dirContextMock.close();
+
+        replay();
+
+        List list = tested.search(nameMock, "(ou=somevalue)", controls,
+                attributesMapperMock, dirContextProcessorMock);
+
+        verify();
+
+        assertNotNull(list);
+        assertEquals(1, list.size());
+        assertSame(expectedResult, list.get(0));
+    }
+
+    public void testSearch_String_SearchControls_ContextMapper_DirContextProcessor()
+            throws Exception {
+        expectGetReadOnlyContext();
+
+        SearchControls controls = new SearchControls();
+        controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        controls.setReturningObjFlag(true);
+
+        Object expectedObject = new Object();
+        SearchResult searchResult = new SearchResult("", expectedObject,
+                new BasicAttributes());
+
+        dirContextProcessorMock.preProcess(dirContextMock);
+        setupStringSearchAndNamingEnumeration(controls, searchResult);
+
+        Object expectedResult = expectedObject;
+        contextMapperControl.expectAndReturn(contextMapperMock
+                .mapFromContext(expectedObject), expectedResult);
+
+        dirContextProcessorMock.postProcess(dirContextMock);
+        dirContextMock.close();
+
+        replay();
+
+        List list = tested.search(DEFAULT_BASE_STRING, "(ou=somevalue)",
+                controls, contextMapperMock, dirContextProcessorMock);
+
+        verify();
+
+        assertNotNull(list);
+        assertEquals(1, list.size());
+        assertSame(expectedResult, list.get(0));
+    }
+
+    public void testSearch_Name_SearchControls_ContextMapper_DirContextProcessor()
+            throws Exception {
+        expectGetReadOnlyContext();
+
+        SearchControls controls = new SearchControls();
+        controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        controls.setReturningObjFlag(true);
+
+        Object expectedObject = new Object();
+        SearchResult searchResult = new SearchResult("", expectedObject,
+                new BasicAttributes());
+
+        dirContextProcessorMock.preProcess(dirContextMock);
+        setupSearchAndNamingEnumeration(controls, searchResult);
+
+        Object expectedResult = expectedObject;
+        contextMapperControl.expectAndReturn(contextMapperMock
+                .mapFromContext(expectedObject), expectedResult);
+
+        dirContextProcessorMock.postProcess(dirContextMock);
+        dirContextMock.close();
+
+        replay();
+
+        List list = tested.search(nameMock, "(ou=somevalue)",
+                controls, contextMapperMock, dirContextProcessorMock);
+
+        verify();
+
+        assertNotNull(list);
+        assertEquals(1, list.size());
+        assertSame(expectedResult, list.get(0));
+    }
+
     public void testSearch_AttributesMapper_ReturningAttrs()
             throws NamingException {
         expectGetReadOnlyContext();
