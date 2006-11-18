@@ -12,10 +12,10 @@ http://www.ietf.org/rfc/rfc2696.txt
 
 Changes in version 1.1.1 (xx.y.2006)
 -------------------------------------------
-* Added generic DirContextProcessor that is run before and after a search.
-
 * Added capability to use server-side controls in search by leveraging
   DirContextProcessor.
+
+* Added generic DirContextProcessor that is run before and after a search.
 
 * Added paged search result functionality in PagedResultsRequestControl,
   which is an implementation of DirContextProcessor.
@@ -23,7 +23,7 @@ Changes in version 1.1.1 (xx.y.2006)
 * Fixed problem with DirContextAdapter, where the wrong change was applied
   when a change was followed by a reset to the original values.
 
-* DirContextAdapter.getNameInNamespace now returns the full DN, as per the
+* DirContextAdapter.getNameInNamespace() now returns the full DN, as per the
   documentation for javax.naming.Context.
 
 * The parsing of DistinguishedName has been changed from using regexp to
@@ -37,12 +37,14 @@ Changes in version 1.1.1 (xx.y.2006)
 
 * Added lookup methods that take an array of return attribute names.
 
+* Made DistinguishedName.EMPTY_NAME an immutable DistinguishedName instance.
+
 * Fixed some incorrect package names in the Reference Manual.
 
 * Separated integration tests that require OpenLDAP from the other integration
   tests that run the in-JVM Apache DS server.
 
-* Upgraded Spring to 2.0.
+* Upgraded Spring to 2.0 internally. Spring 1.2.8 is still supported.
 
 Changes in version 1.1 (28.8.2006)
 -------------------------------------------
