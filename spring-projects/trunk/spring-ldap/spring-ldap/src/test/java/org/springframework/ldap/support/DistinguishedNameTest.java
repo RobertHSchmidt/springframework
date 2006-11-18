@@ -40,6 +40,16 @@ public class DistinguishedNameTest extends TestCase {
         assertEquals("cn=foo/bar", path.toString());
     }
 
+    public void testEmptyPathImmutable() throws Exception {
+        DistinguishedName emptyPath = DistinguishedName.EMPTY_PATH;
+        try {
+            emptyPath.add("cn=John Doe");
+            fail("UnsupportedOperationException expected");
+        } catch (UnsupportedOperationException expected) {
+            assertTrue(true);
+        }
+    }
+
     public void testDistinguishedName() {
 
         String testPath = "cn=foo\\,bar,OU=FOO\\,bar , OU=foo\\;bar;OU=foo\\;bar"
