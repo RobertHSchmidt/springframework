@@ -61,9 +61,13 @@ import org.springframework.ldap.util.ListComparator;
 public class DistinguishedName implements Name {
     private static final long serialVersionUID = 3514344371999042586L;
 
-    public static final DistinguishedName EMPTY_PATH = new DistinguishedName();
+    /**
+     * An empty, unmodifiable DistinguishedName.
+     */
+    public static final DistinguishedName EMPTY_PATH = new DistinguishedName(
+            Collections.EMPTY_LIST);
 
-    private LinkedList names;
+    private List names;
 
     /**
      * Construct a new DistinguishedName with no components.
@@ -93,7 +97,7 @@ public class DistinguishedName implements Name {
      * @param list
      *            the components that this instance will consist of.
      */
-    public DistinguishedName(LinkedList list) {
+    public DistinguishedName(List list) {
         this.names = list;
     }
 
@@ -168,7 +172,7 @@ public class DistinguishedName implements Name {
      * 
      * @return the list of LdapRdns that this DistinguishedName consists of.
      */
-    public LinkedList getNames() {
+    public List getNames() {
         return names;
     }
 
@@ -299,7 +303,7 @@ public class DistinguishedName implements Name {
     public void prepend(DistinguishedName path) {
         ListIterator i = path.getNames().listIterator(path.getNames().size());
         while (i.hasPrevious()) {
-            getNames().addFirst(i.previous());
+            names.add(0, i.previous());
         }
     }
 
@@ -309,7 +313,7 @@ public class DistinguishedName implements Name {
      * @return the removed entry.
      */
     public LdapRdn removeFirst() {
-        return (LdapRdn) getNames().removeFirst();
+        return (LdapRdn) names.remove(0);
     }
 
     /**
@@ -586,7 +590,7 @@ public class DistinguishedName implements Name {
      * @return the removed LdapRdn.
      */
     public LdapRdn removeLast() {
-        return (LdapRdn) getNames().removeLast();
+        return (LdapRdn) names.remove(names.size() - 1);
     }
 
     /**
