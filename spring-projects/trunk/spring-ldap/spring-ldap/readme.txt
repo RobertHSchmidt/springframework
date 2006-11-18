@@ -1,4 +1,4 @@
-Spring-LDAP 1.1.1 (Oct 2006)
+Spring-LDAP 1.1.1 (Nov 2006)
 -----------------------------
 http://www.springframework.org/ldap
 
@@ -52,6 +52,7 @@ The Spring-LDAP release comes in three different distributables:
   ** readme.txt - this readme file.
   ** license.txt - terms and conditions for use, reproduction and distribution
   ** common-build - the ant 1.6 "common build system" used by all spring-ldap projects to compile/build/test
+  ** repository - build artifacts that are not available from public repositories
   ** spring-ldap/build-spring-ldap - master build files to produce this release archive
   ** spring-ldap/spring-ldap - project sources
   ** spring-ldap/spring-ldap-person - a sample web project.
