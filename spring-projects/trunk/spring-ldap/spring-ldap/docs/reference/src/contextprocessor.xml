@@ -209,10 +209,18 @@ public class MyCoolRequestControl extends AbstractRequestControlDirContextProces
    }</programlisting>
     </example>
 
-    <para>Important to note here is that we use the same
+    <para>
+    <note>Important to note here is that we use the same
     <literal>CollectingNameClassPairCallbackHandler</literal> for both
     searches. This means that the results are appended to the same list. The
     second batch of two are added to the first three, giving a total of five
-    after the second search.</para>
+    after the second search.
+    </note>
+    <note>When using the <literal>PagedResultsRequestControl</literal> it is imperative
+    that you keep track of the cookie returned from an operation and supply the same
+    instance to subsequent calls. This means that your Dao method will typically need to
+    wrap the result list together with the cookie in the value returned to the higher tiers. 
+    </note></para>
+    
   </sect1>
 </chapter>
