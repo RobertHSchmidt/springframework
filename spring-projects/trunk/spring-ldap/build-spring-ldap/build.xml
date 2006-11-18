@@ -25,6 +25,7 @@
   <selector id="project.source.zip.includes">
     <or>
       <filename name="common-build/**" />
+      <filename name="repository/**" />
       <and>
         <or>
           <filename name="build-spring-ldap/**"/>
@@ -225,6 +226,7 @@
   	  <zipfileset file="../spring-ldap/readme.txt"/>
       <zipfileset file="../spring-ldap/license.txt"/>
       <zipfileset dir="../../common-build" prefix="common-build"/>
+      <zipfileset dir="../../repository" prefix="repository"/>
     </zip>
   </target>
   
