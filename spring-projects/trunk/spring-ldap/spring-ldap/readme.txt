@@ -25,7 +25,7 @@ that simplifies this is provided, as is a full implementation of PagedSearchResu
 
 2. RELEASE INFO
 
-Spring-LDAP requires J2SE 1.4. J2SE 1.4 is required for building.
+Spring-LDAP requires J2SE 1.4. J2SE 1.4, and javacc version 4.0 is required for building.
 J2EE 1.4 (Servlet 2.3, JSP 1.2) is required for running the example.
 
 The Spring-LDAP release comes in three different distributables:
