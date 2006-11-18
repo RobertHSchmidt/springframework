@@ -24,6 +24,9 @@
 		<dependency org="org.springframework" name="spring-web" rev="2.0" />
 		<dependency org="org.springframework" name="spring-webmvc" rev="2.0" />
 		<dependency org="org.acegisecurity" name="acegi-security" rev="1.0.1" />
+		<dependency org="org.acegisecurity" name="acegi-security-src" rev="1.0.1" conf="source->source">
+			<artifact name="acegi-security-src" type="zip"/>
+		</dependency>
 	    <!-- kind of nasty, acegi needs some 1.2.7 stuff, so we override with newer! -->
 		<dependency	org="org.springframework" name="spring-jdbc" rev="2.0" />
 		<dependency	org="org.springframework" name="spring-remoting" rev="2.0" />

@@ -32,6 +32,27 @@
 
 	<bean id="ldapAuthenticator" class="org.acegisecurity.providers.ldap.authenticator.BindAuthenticator">
 		<constructor-arg ref="contextFactory" />
+		<property name="userSearch" ref="ldapUserSearch" />
+		<property name="userDetailsMapper" ref="userDetailsMapper" />
+	</bean>
+	
+	<bean id="ldapAuthoritiesPopulator" class="org.acegisecurity.providers.ldap.populator.DefaultLdapAuthoritiesPopulator">
+		<constructor-arg ref="contextFactory" />
+		<constructor-arg value="ou=groups" />
+		<property name="groupSearchFilter" value="(uniqueMember={0})" />
+	</bean>
+
+	<bean id="userDetailsMapper" class="org.acegisecurity.userdetails.ldap.LdapUserDetailsMapper" />
+
+	<!-- =================================================================================== -->
+	<!--
+		Replace the above ldapAuthenticator, ldapAuthoritiesPopulator, and userDetailsMapper
+		with the following in order to use the 'description' attribute as a role attribute
+		instead of adding/removing DNs from groups.
+	-->
+	<!--
+	<bean id="ldapAuthenticator" class="org.acegisecurity.providers.ldap.authenticator.BindAuthenticator">
+		<constructor-arg ref="contextFactory" />
 		<property name="userAttributes" value="description" />
 		<property name="userSearch" ref="ldapUserSearch" />
 		<property name="userDetailsMapper" ref="userDetailsMapper" />
@@ -40,11 +61,14 @@
 	<bean id="ldapAuthoritiesPopulator" class="org.acegisecurity.providers.ldap.populator.DefaultLdapAuthoritiesPopulator">
 		<constructor-arg ref="contextFactory" />
 		<constructor-arg value="" />
+		<constructor-arg value="ou=groups" />
 	</bean>
 
 	<bean id="userDetailsMapper" class="org.acegisecurity.userdetails.ldap.LdapUserDetailsMapper">
 		<property name="roleAttributes" value="description" />
 	</bean>
+	-->
+	<!-- =================================================================================== -->
 	
 	<bean id="contextFactory" class="org.acegisecurity.ldap.DefaultInitialDirContextFactory">
 		<constructor-arg value="ldap://localhost:389/dc=jayway,dc=se" />
