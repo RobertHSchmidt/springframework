@@ -17,6 +17,7 @@
 package org.springframework.ldap.support.control;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import javax.naming.NamingException;
@@ -113,14 +114,14 @@ public class PagedResultsRequestControl extends
     public void postProcess(DirContext ctx) throws NamingException {
         // initialize from property
         currentResponseControlClass = responseControlClass;
-        
+
         LdapContext ldapContext = (LdapContext) ctx;
         Control[] responseControls = ldapContext.getResponseControls();
 
         // Go through response controls and get info, regardless of class
         for (int i = 0; i < responseControls.length; i++) {
             Control responseControl = responseControls[i];
-            
+
             // check for match, try fallback otherwise
             if (isPagedResultsResponseControl(responseControl)) {
                 Object control = responseControl;
@@ -135,15 +136,17 @@ public class PagedResultsRequestControl extends
     }
 
     /**
-     * Check if the given control matches a paged results response control.
-     * Try the fallback class from Java5 if there is no match. Set the
+     * Check if the given control matches a paged results response control. Try
+     * the fallback class from Java5 if there is no match. Set the
      * {@link #currentResponseControlClass} to the fallback if it matches.
      * 
-     * @param responseControl the control to check for a match
+     * @param responseControl
+     *            the control to check for a match
      * @return whether the control is a paged results response control
      */
     private boolean isPagedResultsResponseControl(Control responseControl) {
-        if (responseControl.getClass().isAssignableFrom(currentResponseControlClass)) {
+        if (responseControl.getClass().isAssignableFrom(
+                currentResponseControlClass)) {
             return true;
         }
         if (fallbackResponseControlClass != null
@@ -168,7 +171,30 @@ public class PagedResultsRequestControl extends
     }
 
     private Object invokeMethod(String method, Class clazz, Object control) {
-        Method m = ReflectionUtils.findMethod(clazz, method, new Class[0]);
-        return ReflectionUtils.invokeMethod(m, control);
+        // For Spring 2.0 ReflectionUtils could be used for all of this, but
+        // since we still want to support the 1.2 branch we do it manually and
+        // only use the stuff present in 1.2.8.
+        Method actualMethod = null;
+        Object retval = null;
+        try {
+            actualMethod = clazz.getMethod(method, new Class[0]);
+        } catch (SecurityException e) {
+            ReflectionUtils.handleReflectionException(e);
+        } catch (NoSuchMethodException e) {
+            ReflectionUtils.handleReflectionException(e);
+        }
+
+        try {
+            retval = actualMethod.invoke(control, new Object[0]);
+        } catch (IllegalArgumentException e) {
+            ReflectionUtils.handleReflectionException(e);
+        } catch (IllegalAccessException e) {
+            ReflectionUtils.handleReflectionException(e);
+        } catch (InvocationTargetException e) {
+            ReflectionUtils.handleReflectionException(e);
+        }
+
+        // Retval will be set unless an exception has been thrown.
+        return retval;
     }
 }
