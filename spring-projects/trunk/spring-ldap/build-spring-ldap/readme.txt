@@ -2,7 +2,7 @@ This is where the master build to create releases of spring-ldap resides.
 
 To build a new release:
 
-1. If you have ivy installed, make sure it is version 1.3.1 or higher.
+1. If you have ivy installed, make sure it is version 1.4 or higher.
    (check your ANT_HOME/lib for ivy-xxx.jar - if it is too old a version,
     remove it or replace it with the one in ../common-build/lib).
 
