@@ -239,8 +239,8 @@ public class PersonDaoImpl implements PersonDao {
 
       <itemizedlist spacing="compact">
         <listitem>
-          <para>Dependencies: ldap, ldap.support.parser (cycle),
-          ldap.support.util, spring-core, spring-beans, commons-lang,
+          <para>Dependencies: ldap,
+          ldap.util, spring-core, spring-beans, commons-lang,
           commons-collections, commons-logging</para>
         </listitem>
       </itemizedlist>
@@ -289,20 +289,6 @@ public class PersonDaoImpl implements PersonDao {
       <itemizedlist spacing="compact">
         <listitem>
           <para>Dependencies: ldap.support, commons-lang</para>
-        </listitem>
-      </itemizedlist>
-    </sect2>
-
-    <sect2 id="ldap.support.parser">
-      <title>org.springframework.ldap.support.parser</title>
-
-      <para>The <emphasis>support.parser</emphasis> package contains classes
-      defining a parser RFC2253-compliant Distinguished Names to be used
-      internally by DistinguishedName and LdapRdn.</para>
-
-      <itemizedlist spacing="compact">
-        <listitem>
-          <para>Dependencies: ldap.support</para>
         </listitem>
       </itemizedlist>
     </sect2>

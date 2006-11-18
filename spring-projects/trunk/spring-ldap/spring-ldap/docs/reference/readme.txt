@@ -7,6 +7,7 @@ project reference documentation.
 To generate project documentation, execute one of the following
 build targets:
 
+* doc-all        - generate documentation in all supported formats
 * doc-pdf        - generate the PDF documentation
 * doc-html       - generate the HTML documentation
 * doc-htmlsingle - generate single page HTML documentation

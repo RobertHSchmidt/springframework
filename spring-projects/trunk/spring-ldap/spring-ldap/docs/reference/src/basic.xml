@@ -141,7 +141,15 @@ filter.and(new EqualsFilter("objectclass", "person"));
 filter.and(new WhitespaceWildcardsFilter("cn", cn));</programlisting>
     </example>
 
-    <para></para>
+    <para>
+    	<note>
+    		In addition to simplifying building of complex search filters,
+    		the <literal>Filter</literal> classes also provide proper escaping
+    		of any unsafe characters. This prevents &quot;ldap injection&quot;,
+    		where a user might use such characters to inject unwanted operations
+    		into your LDAP operations.
+    	</note>
+    </para>
   </sect1>
 
   <sect1>
@@ -156,7 +164,11 @@ filter.and(new WhitespaceWildcardsFilter("cn", cn));</programlisting>
     <literal>Name</literal> interface: <literal>DistinguishedName</literal>.
     Using this class will greatly simplify building distinguished names,
     especially considering the sometimes complex rules regarding escapings and
-    encodings. The following example illustrates how
+    encodings. As with the <literal>Filter</literal> classes this helps preventing
+    potentially malicious data being injected into your LDAP operations.
+    </para>
+    <para>
+    The following example illustrates how
     <literal>DistinguishedName</literal> can be used to dynamically construct
     a distinguished name:</para>
 

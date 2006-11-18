@@ -39,13 +39,23 @@
     custom <literal>SearchExecutor</literal>:</para>
 
     <informalexample>
-      <programlisting>public void search(final Name base, final String filter,
-   final SearchControls controls,
-   NameClassPairCallbackHandler handler, DirContextProcessor processor)
+      <programlisting>public void search(Name base, String filter,
+   SearchControls controls, NameClassPairCallbackHandler handler, DirContextProcessor processor)
 
-public void search(final String base, final String filter,
-   final SearchControls controls,
-   NameClassPairCallbackHandler handler, DirContextProcessor processor)</programlisting>
+public void search(String base, String filter,
+   SearchControls controls, NameClassPairCallbackHandler handler, DirContextProcessor processor)
+   
+public void search(Name base, String filter,
+   SearchControls controls, AttributesMapper mapper, DirContextProcessor processor)
+   
+public void search(String base, String filter,
+   SearchControls controls, AttributesMapper mapper, DirContextProcessor processor)
+   
+public void search(Name base, String filter,
+   SearchControls controls, ContextMapper mapper, DirContextProcessor processor)
+
+public void search(String base, String filter,
+   SearchControls controls, ContextMapper mapper, DirContextProcessor processor)</programlisting>
     </informalexample>
   </sect1>
 
