@@ -86,7 +86,7 @@ public class PersonDaoImpl implements PersonDao {
       Name dn = buildDn(p);
       DirContextAdapter context = new DirContextAdapter(dn);
 
-      <emphasis>context.setAttributeValues("objectclass", new String[] {"top", "person"});
+      <emphasis role="bold">context.setAttributeValues("objectclass", new String[] {"top", "person"});
       context.setAttributeValue("cn", p.getFullname());
       context.setAttributeValue("sn", p.getLastname());
       context.setAttributeValue("description", p.getDescription());</emphasis>
@@ -126,7 +126,7 @@ public class PersonDaoImpl implements PersonDao {
       Name dn = buildDn(p);
       DirContextAdapter context = (DirContextAdapter)ldapTemplate.lookup(dn);
 
-      <emphasis>context.setAttributeValues("objectclass", new String[] {"top", "person"});
+      <emphasis role="bold">context.setAttributeValues("objectclass", new String[] {"top", "person"});
       context.setAttributeValue("cn", p.getFullname());
       context.setAttributeValue("sn", p.getLastname());
       context.setAttributeValue("description", p.getDescription());</emphasis>
