@@ -18,8 +18,10 @@ package org.springframework.ldap.samples.person.web;
 import javax.servlet.http.HttpServletRequest;
 
 
+import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.ldap.samples.person.domain.Person;
 import org.springframework.ldap.samples.person.service.PersonService;
+import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 /**
@@ -45,5 +47,9 @@ public class EditForm extends SimpleFormController {
 
     public void setPersonService(PersonService personService) {
         this.personService = personService;
+    }
+    
+    protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
+        binder.registerCustomEditor(String[].class, new StringArrayPropertyEditor());
     }
 }

@@ -73,7 +73,7 @@ public class PersonServiceImplTest extends TestCase {
         replay();
 
         tested.create("Sweden", "Some company", "Some Person", "Person",
-                "Some description");
+                new String[] { "Some description" });
 
         verify();
     }
@@ -84,7 +84,7 @@ public class PersonServiceImplTest extends TestCase {
         person.setCompany("Some company");
         person.setFullName("Some Person");
         person.setLastName("Person");
-        person.setDescription("Some description");
+        person.setDescription(new String[] { "Some description" });
         return person;
     }
 
