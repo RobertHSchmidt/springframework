@@ -558,7 +558,7 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
         assureReturnObjFlagSet(controls);
         ContextMapperCallbackHandler handler = new ContextMapperCallbackHandler(
                 mapper);
-        search(base, filter, controls, handler);
+        search(base, filter, controls, handler, processor);
 
         return handler.getList();
     }
@@ -576,7 +576,7 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
         assureReturnObjFlagSet(controls);
         ContextMapperCallbackHandler handler = new ContextMapperCallbackHandler(
                 mapper);
-        search(base, filter, controls, handler);
+        search(base, filter, controls, handler, processor);
 
         return handler.getList();
     }
