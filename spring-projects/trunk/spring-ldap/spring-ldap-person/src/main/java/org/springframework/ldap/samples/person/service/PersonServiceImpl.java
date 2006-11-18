@@ -32,7 +32,7 @@ public class PersonServiceImpl implements PersonService {
     private PersonDao personDao;
 
     public void create(String country, String company, String fullname,
-            String lastname, String description) {
+            String lastname, String[] description) {
 
         Person person = new Person();
         person.setCountry(country);

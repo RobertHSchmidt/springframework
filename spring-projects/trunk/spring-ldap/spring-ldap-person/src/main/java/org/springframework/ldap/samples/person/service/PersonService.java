@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.springframework.ldap.samples.person.domain.Person;
 
-
 /**
  * Example interface for a Person service.
  * 
@@ -29,13 +28,13 @@ import org.springframework.ldap.samples.person.domain.Person;
 public interface PersonService {
 
     public void create(String country, String company, String fullname,
-            String lastname, String description);
-    
+            String lastname, String[] description);
+
     public void update(Person person);
-    
+
     public void delete(Person person);
-    
+
     public Person findByPrimaryKey(String country, String company, String name);
-    
+
     public List findAll();
 }

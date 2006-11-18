@@ -43,8 +43,7 @@ import org.springframework.ldap.samples.person.domain.Person;
  * contrast this implementation with that of
  * {@link org.springframework.ldap.samples.person.dao.PersonDaoImpl}.
  * 
- * @author Ulrik Sandberg
- * TODO Add search method so we can use a search page
+ * @author Ulrik Sandberg TODO Add search method so we can use a search page
  */
 public class TraditionalPersonDaoImpl implements PersonDao {
 
@@ -124,7 +123,8 @@ public class TraditionalPersonDaoImpl implements PersonDao {
     }
 
     /*
-     * @see org.springframework.ldap.samples.person.dao.PersonDao#findByPrimaryKey(java.lang.String, java.lang.String, java.lang.String)
+     * @see org.springframework.ldap.samples.person.dao.PersonDao#findByPrimaryKey(java.lang.String,
+     *      java.lang.String, java.lang.String)
      */
     public Person findByPrimaryKey(String country, String company,
             String fullname) {
@@ -181,7 +181,12 @@ public class TraditionalPersonDaoImpl implements PersonDao {
         Person person = new Person();
         person.setFullName((String) attributes.get("cn").get());
         person.setLastName((String) attributes.get("sn").get());
-        person.setDescription((String) attributes.get("description").get());
+        Attribute descriptionAttribute = attributes.get("description");
+        String[] description = new String[descriptionAttribute.size()];
+        for (int i = 0; i < description.length; i++) {
+            description[i] = (String) descriptionAttribute.get(i);
+        }
+        person.setDescription(description);
         person.setPhone((String) attributes.get("telephoneNumber").get());
         String countryMarker = ",c=";
         String country = dn.substring(dn.lastIndexOf(countryMarker)

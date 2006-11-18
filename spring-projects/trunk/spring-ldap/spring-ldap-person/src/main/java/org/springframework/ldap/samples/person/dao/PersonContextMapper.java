@@ -41,7 +41,7 @@ public class PersonContextMapper implements ContextMapper {
         person.setCompany(dn.getLdapRdn(1).getComponent().getValue());
         person.setFullName(dirContext.getStringAttribute("cn"));
         person.setLastName(dirContext.getStringAttribute("sn"));
-        person.setDescription(dirContext.getStringAttribute("description"));
+        person.setDescription(dirContext.getStringAttributes("description"));
         person.setPhone(dirContext.getStringAttribute("telephoneNumber"));
 
         return person;

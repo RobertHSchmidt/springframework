@@ -21,7 +21,11 @@
 	</tr>
 	<tr>
 		<th align="right">Description:</th>
-		<td><c:out value="${person.description}" /></td>
+		<td>
+		<c:forEach items="${person.description}" var="description">
+		<c:out value="${description}" /> <br />
+		</c:forEach>
+		</td>
 	</tr>
 	<tr>
 		<td colspan="2">

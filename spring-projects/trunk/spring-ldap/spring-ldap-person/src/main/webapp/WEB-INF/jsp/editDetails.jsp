@@ -36,6 +36,9 @@
 		</spring:bind>
 	</tr>
 	<tr>
+		<td colspan="2">(Input each entry separated by &quot;,&quot;)</td>
+	</tr>
+	<tr>
 		<td colspan="2">
 			<c:url var="backUrl" value="/details.htm">
 				<c:param name="name">

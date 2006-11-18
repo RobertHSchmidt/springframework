@@ -29,7 +29,7 @@ public class Person {
 
     private String lastName;
 
-    private String description;
+    private String[] description;
 
     private String country;
 
@@ -37,11 +37,11 @@ public class Person {
 
     private String phone;
 
-    public String getDescription() {
+    public String[] getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(String[] description) {
         this.description = description;
     }
 
@@ -76,11 +76,11 @@ public class Person {
     public void setCountry(String country) {
         this.country = country;
     }
-    
+
     public String getPhone() {
         return phone;
     }
-    
+
     public void setPhone(String phone) {
         this.phone = phone;
     }

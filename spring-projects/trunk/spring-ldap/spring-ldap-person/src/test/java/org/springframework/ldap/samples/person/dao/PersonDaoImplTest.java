@@ -18,9 +18,12 @@ package org.springframework.ldap.samples.person.dao;
 import java.util.Collections;
 import java.util.List;
 
+import javax.naming.directory.ModificationItem;
+
 import junit.framework.TestCase;
 import org.springframework.ldap.ContextMapper;
 import org.springframework.ldap.LdapOperations;
+import org.springframework.ldap.support.DirContextAdapter;
 import org.springframework.ldap.support.DirContextOperations;
 import org.springframework.ldap.support.DistinguishedName;
 
@@ -68,7 +71,8 @@ public class PersonDaoImplTest extends TestCase {
         person = new Person();
 
         tested = new PersonDaoImpl() {
-            DirContextOperations getContextToBind(Person p) {
+            DirContextOperations setAttributes(DirContextOperations adapter,
+                    Person p) {
                 assertSame(person, p);
                 return dirContextOperationsMock;
             }
@@ -145,8 +149,15 @@ public class PersonDaoImplTest extends TestCase {
      * 'org.springframework.ldap.samples.person.dao.PersonDaoImpl.update(Person)'
      */
     public void testUpdate() {
-        ldapOperationsMock.rebind(DistinguishedName.EMPTY_PATH,
-                dirContextOperationsMock, null);
+        ldapOperationsControl
+                .expectAndReturn(ldapOperationsMock
+                        .lookup(DistinguishedName.EMPTY_PATH),
+                        dirContextOperationsMock);
+        ModificationItem[] modificationItems = new ModificationItem[0];
+        dirContextOperationsControl.expectAndReturn(dirContextOperationsMock
+                .getModificationItems(), modificationItems);
+        ldapOperationsMock.modifyAttributes(DistinguishedName.EMPTY_PATH,
+                modificationItems);
 
         replay();
 

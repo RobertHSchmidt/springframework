@@ -55,13 +55,13 @@ public class PersonDaoImpl implements PersonDao {
         return dn;
     }
 
-    DirContextOperations getContextToBind(Person person) {
-        DirContextAdapter adapter = new DirContextAdapter();
+    DirContextOperations setAttributes(DirContextOperations adapter,
+            Person person) {
         adapter.setAttributeValues("objectclass", new String[] { "top",
                 "person" });
         adapter.setAttributeValue("cn", person.getFullName());
         adapter.setAttributeValue("sn", person.getLastName());
-        adapter.setAttributeValue("description", person.getDescription());
+        adapter.setAttributeValues("description", person.getDescription());
         adapter.setAttributeValue("telephoneNumber", person.getPhone());
         return adapter;
     }
@@ -71,11 +71,15 @@ public class PersonDaoImpl implements PersonDao {
     }
 
     public void create(Person person) {
-        ldapOperations.bind(buildDn(person), getContextToBind(person), null);
+        ldapOperations.bind(buildDn(person), setAttributes(
+                new DirContextAdapter(), person), null);
     }
 
     public void update(Person person) {
-        ldapOperations.rebind(buildDn(person), getContextToBind(person), null);
+        DirContextOperations ctx = (DirContextOperations) ldapOperations
+                .lookup(buildDn(person));
+        ldapOperations.modifyAttributes(buildDn(person), setAttributes(ctx,
+                person).getModificationItems());
     }
 
     public void delete(Person person) {
