@@ -40,6 +40,7 @@ public class PersonAttributesMapper implements AttributesMapper {
         Person person = new Person();
         person.setFullname((String) attributes.get("cn").get());
         person.setLastname((String) attributes.get("sn").get());
+        person.setPhone((String) attributes.get("telephoneNumber").get());
         person.setDescription((String) attributes.get("description").get());
         return person;
     }

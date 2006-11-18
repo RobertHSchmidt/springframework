@@ -53,19 +53,19 @@ public class AcegiAuthenticationSourceITest extends
     public void testGetPrincipalAndCredentials() {
         Authentication authentication = ldapAuthProvider
                 .authenticate(new UsernamePasswordAuthenticationToken(
-                        "Some Person3", "secretpassword"));
+                        "Some Person3", "password"));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         AcegiAuthenticationSource tested = new AcegiAuthenticationSource();
         assertEquals("cn=Some Person3,ou=company1,c=Sweden,dc=jayway,dc=se",
                 tested.getPrincipal());
-        assertEquals("secretpassword", tested.getCredentials());
+        assertEquals("password", tested.getCredentials());
     }
 
     public void testSearchIndiviualAuthentication() {
         Authentication authentication = ldapAuthProvider
                 .authenticate(new UsernamePasswordAuthenticationToken(
-                        "Some Person3", "secretpassword"));
+                        "Some Person3", "password"));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         List result = ldapTemplate.search("dc=jayway,dc=se",
