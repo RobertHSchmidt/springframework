@@ -187,4 +187,12 @@ public class LdapRdn implements Serializable, Comparable {
         return this.getClass().hashCode() ^ getComponents().hashCode();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return getLdapEncoded();
+    }
 }
