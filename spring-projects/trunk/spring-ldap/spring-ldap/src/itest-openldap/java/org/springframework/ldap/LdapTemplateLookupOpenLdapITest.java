@@ -24,18 +24,18 @@ import org.springframework.ldap.support.DistinguishedName;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
 /**
- * Tests the lookup methods of LdapTemplate.
+ * Tests the lookup methods of LdapTemplate on OpenLdap.
  * 
  * @author Mattias Arthursson
  * @author Ulrik Sandberg
  */
-public class LdapTemplateLookupITest extends
+public class LdapTemplateLookupOpenLdapITest extends
         AbstractDependencyInjectionSpringContextTests {
 
     private LdapTemplate tested;
 
     protected String[] getConfigLocations() {
-        return new String[] { "/conf/ldapTemplateTestContext.xml" };
+        return new String[] { "/conf/ldapTemplateTestContext-openldap.xml" };
     }
 
     /**
@@ -168,10 +168,8 @@ public class LdapTemplateLookupITest extends
     /**
      * Verifies that we can lookup an entry that has a multi-valued rdn, which
      * means more than one attribute is part of the relative DN for the entry.
-     * 
-     * TODO Enable test when ApacheDS supports multi-valued rdns.
      */
-    public void DISABLED_testLookup_MultiValuedRdn() {
+    public void testLookup_MultiValuedRdn() {
         AttributesMapper mapper = new PersonAttributesMapper();
         Person person = (Person) tested
                 .lookup(
@@ -180,22 +178,20 @@ public class LdapTemplateLookupITest extends
 
         assertEquals("Some Person", person.getFullname());
         assertEquals("Person", person.getLastname());
-        assertEquals("Norway, Company1, Some Person2", person.getDescription());
+        assertEquals("Norway, Company1, Some Person+Person", person.getDescription());
     }
 
     /**
      * Verifies that we can lookup an entry that has a multi-valued rdn, which
      * means more than one attribute is part of the relative DN for the entry.
-     * 
-     * TODO Enable test when ApacheDS supports multi-valued rdns.
      */
-    public void DISABLED_testLookup_MultiValuedRdn_DirContextAdapter() {
+    public void testLookup_MultiValuedRdn_DirContextAdapter() {
         DirContextAdapter result = (DirContextAdapter) tested
                 .lookup("cn=Some Person+sn=Person, ou=company1,c=Norway,dc=jayway,dc=se");
 
         assertEquals("Some Person", result.getStringAttribute("cn"));
         assertEquals("Person", result.getStringAttribute("sn"));
-        assertEquals("Norway, Company1, Some Person", result
+        assertEquals("Norway, Company1, Some Person+Person", result
                 .getStringAttribute("description"));
     }
 

@@ -42,7 +42,7 @@ public class LdapTemplatePagedSearchITest extends
     private static final String BASE_STRING = "dc=jayway,dc=se";
 
     private static final String FILTER_STRING = "(&(objectclass=person))";
-    
+
     private LdapTemplate tested;
 
     private CollectingNameClassPairCallbackHandler callbackHandler;
@@ -88,11 +88,14 @@ public class LdapTemplatePagedSearchITest extends
         list = callbackHandler.getList();
         assertEquals(3, list.size());
         person = (Person) list.get(0);
-        assertEquals("Sweden, Company1, Some Person", person.getDescription());
+        assertEquals("Some Person", person.getFullname());
+        assertEquals("+46 555-123456", person.getPhone());
         person = (Person) list.get(1);
-        assertEquals("Sweden, Company1, Some Person2", person.getDescription());
+        assertEquals("Some Person2", person.getFullname());
+        assertEquals("+46 555-654321", person.getPhone());
         person = (Person) list.get(2);
-        assertEquals("Sweden, Company1, Some Person3", person.getDescription());
+        assertEquals("Some Person3", person.getFullname());
+        assertEquals("+46 555-123654", person.getPhone());
 
         // Prepare for second and last search
         requestControl = new PagedResultsRequestControl(3, cookie);
@@ -101,10 +104,11 @@ public class LdapTemplatePagedSearchITest extends
         assertNull("Cookie should be null now", cookie.getCookie());
         assertEquals(5, list.size());
         person = (Person) list.get(3);
-        assertEquals("Sweden, Company2, Some Person", person.getDescription());
+        assertEquals("Some Person", person.getFullname());
+        assertEquals("+46 555-456321", person.getPhone());
         person = (Person) list.get(4);
-        assertEquals("Norway, Company1, Multivalued Rdn+Rdn", person
-                .getDescription());
+        assertEquals("Some Person", person.getFullname());
+        assertEquals("+45 555-654123", person.getPhone());
     }
 
     public void testSearch_PagedResult_ConvenienceMethod() {
@@ -122,11 +126,11 @@ public class LdapTemplatePagedSearchITest extends
         list = callbackHandler.getList();
         assertEquals(3, list.size());
         person = (Person) list.get(0);
-        assertEquals("Sweden, Company1, Some Person", person.getDescription());
+        assertEquals("Some Person", person.getFullname());
         person = (Person) list.get(1);
-        assertEquals("Sweden, Company1, Some Person2", person.getDescription());
+        assertEquals("Some Person2", person.getFullname());
         person = (Person) list.get(2);
-        assertEquals("Sweden, Company1, Some Person3", person.getDescription());
+        assertEquals("Some Person3", person.getFullname());
 
         // Prepare for second and last search
         requestControl = new PagedResultsRequestControl(3, cookie);
@@ -136,10 +140,9 @@ public class LdapTemplatePagedSearchITest extends
         assertNull("Cookie should be null now", cookie.getCookie());
         assertEquals(5, list.size());
         person = (Person) list.get(3);
-        assertEquals("Sweden, Company2, Some Person", person.getDescription());
+        assertEquals("Some Person", person.getFullname());
         person = (Person) list.get(4);
-        assertEquals("Norway, Company1, Multivalued Rdn+Rdn", person
-                .getDescription());
+        assertEquals("Some Person", person.getFullname());
     }
 
     public void setTested(LdapTemplate tested) {

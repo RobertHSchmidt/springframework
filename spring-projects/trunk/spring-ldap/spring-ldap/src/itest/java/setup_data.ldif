@@ -1,3 +1,24 @@
+dn: ou=groups,dc=jayway,dc=se
+objectclass: top
+objectclass: organizationalUnit
+ou: groups
+
+dn: cn=ROLE_USER,ou=groups,dc=jayway,dc=se
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: ROLE_USER
+uniqueMember: cn=Some Person,ou=company1,c=Sweden,dc=jayway,dc=se
+uniqueMember: cn=Some Person2,ou=company1,c=Sweden,dc=jayway,dc=se
+uniqueMember: cn=Some Person,ou=company1,c=Norway,dc=jayway,dc=se
+uniqueMember: cn=Some Person,ou=company2,c=Sweden,dc=jayway,dc=se
+uniqueMember: cn=Some Person3,ou=company1,c=Sweden,dc=jayway,dc=se
+
+dn: cn=ROLE_ADMIN,ou=groups,dc=jayway,dc=se
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: ROLE_ADMIN
+uniqueMember: cn=Some Person2,ou=company1,c=Sweden,dc=jayway,dc=se
+
 dn: c=Sweden,dc=jayway,dc=se
 objectclass: top
 objectclass: country
@@ -31,41 +52,59 @@ description: First company in Norway
 dn: cn=Some Person,ou=company1,c=Sweden,dc=jayway,dc=se
 objectclass: top
 objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+uid: some.person
+userPassword: password
 cn: Some Person
 sn: Person
 description: Sweden, Company1, Some Person
-telephoneNumber: Some Person Phone
+telephoneNumber: +46 555-123456
 
 dn: cn=Some Person2,ou=company1,c=Sweden,dc=jayway,dc=se
 objectclass: top
 objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+uid: some.person2
+userPassword: password
 cn: Some Person2
 sn: Person2
 description: Sweden, Company1, Some Person2
-telephoneNumber: Some Person2 Phone
+telephoneNumber: +46 555-654321
 
 dn: cn=Some Person3,ou=company1,c=Sweden,dc=jayway,dc=se
 objectclass: top
 objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+uid: some.person3
+userPassword: password
 cn: Some Person3
 sn: Person3
 description: Sweden, Company1, Some Person3
-telephoneNumber: Some Person3 Phone
-userPassword: secretpassword
+telephoneNumber: +46 555-123654
 
 dn: cn=Some Person,ou=company2,c=Sweden,dc=jayway,dc=se
 objectclass: top
 objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+uid: some.person4
+userPassword: password
 cn: Some Person
 sn: Person
 description: Sweden, Company2, Some Person
-telephoneNumber: Some Person Phone
+telephoneNumber: +46 555-456321
 
-dn: cn=Multivalued Rdn+sn=Rdn,ou=company1,c=Norway,dc=jayway,dc=se
+dn: cn=Some Person+sn=Person,ou=company1,c=Norway,dc=jayway,dc=se
 objectclass: top
 objectclass: person
-cn: Multivalued Rdn
-sn: Rdn
-description: Norway, Company1, Multivalued Rdn+Rdn
-telephoneNumber: Multivalued Rdn Phone
-
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+uid: some.norwegian
+userPassword: password
+cn: Some Person
+sn: Person
+description: Norway, Company1, Some Person+Person
+telephoneNumber: +45 555-654123

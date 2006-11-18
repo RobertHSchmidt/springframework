@@ -24,7 +24,6 @@ import org.springframework.ldap.support.DirContextAdapter;
  * illustration purposes.
  * 
  * @author Mattias Arthursson
- * 
  */
 public class PersonContextMapper implements ContextMapper {
 
@@ -36,6 +35,7 @@ public class PersonContextMapper implements ContextMapper {
         Person person = new Person();
         person.setFullname(adapter.getStringAttribute("cn"));
         person.setLastname(adapter.getStringAttribute("sn"));
+        person.setPhone(adapter.getStringAttribute("telephoneNumber"));
         person.setDescription(adapter.getStringAttribute("description"));
         return person;
     }

@@ -20,7 +20,6 @@ package org.springframework.ldap;
  * Dummy bean to be used in the LdapTemplate integration tests.
  * 
  * @author Mattias Arthursson
- * 
  */
 public class Person {
     private String fullname;
@@ -28,6 +27,8 @@ public class Person {
     private String lastname;
 
     private String description;
+
+    private String phone;
 
     public String getDescription() {
         return description;
@@ -51,5 +52,13 @@ public class Person {
 
     public void setLastname(String lastname) {
         this.lastname = lastname;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

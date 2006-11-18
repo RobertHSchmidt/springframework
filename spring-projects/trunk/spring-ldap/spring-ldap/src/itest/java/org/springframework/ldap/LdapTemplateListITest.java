@@ -43,7 +43,7 @@ public class LdapTemplateListITest extends
             "telephoneNumber" };
 
     private static final String[] ALL_VALUES = { "Some Person", "Person",
-            "Sweden, Company2, Some Person", "Some Person Phone" };
+            "Sweden, Company2, Some Person", "+46 555-456321" };
 
     protected String[] getConfigLocations() {
         return new String[] { "/conf/ldapTemplateTestContext.xml" };
@@ -89,54 +89,58 @@ public class LdapTemplateListITest extends
 
     public void testList() {
         List list = tested.list(BASE_STRING);
-        assertEquals(2, list.size());
-        assertEquals("c=Sweden", list.get(0));
-        assertEquals("c=Norway", list.get(1));
+        assertEquals(3, list.size());
+        assertEquals("ou=groups", list.get(0));
+        assertEquals("c=Sweden", list.get(1));
+        assertEquals("c=Norway", list.get(2));
     }
 
     public void testList_Name() {
         List list = tested.list(BASE_NAME);
-        assertEquals(2, list.size());
-        assertEquals("c=Sweden", list.get(0));
-        assertEquals("c=Norway", list.get(1));
+        assertEquals(3, list.size());
+        assertEquals("ou=groups", list.get(0));
+        assertEquals("c=Sweden", list.get(1));
+        assertEquals("c=Norway", list.get(2));
     }
 
     public void testList_Handler() throws Exception {
         CountNameClassPairCallbackHandler handler = new CountNameClassPairCallbackHandler();
         tested.list(BASE_STRING, handler);
-        assertEquals(2, handler.getNoOfRows());
+        assertEquals(3, handler.getNoOfRows());
     }
 
     public void testList_Name_Handler() throws Exception {
         CountNameClassPairCallbackHandler handler = new CountNameClassPairCallbackHandler();
         tested.list(BASE_NAME, handler);
-        assertEquals(2, handler.getNoOfRows());
+        assertEquals(3, handler.getNoOfRows());
     }
 
     public void testListBindings() {
         List list = tested.listBindings(BASE_STRING);
-        assertEquals(2, list.size());
-        assertEquals("c=Sweden", list.get(0));
-        assertEquals("c=Norway", list.get(1));
+        assertEquals(3, list.size());
+        assertEquals("ou=groups", list.get(0));
+        assertEquals("c=Sweden", list.get(1));
+        assertEquals("c=Norway", list.get(2));
     }
 
     public void testListBindings_Name() {
         List list = tested.listBindings(BASE_NAME);
-        assertEquals(2, list.size());
-        assertEquals("c=Sweden", list.get(0));
-        assertEquals("c=Norway", list.get(1));
+        assertEquals(3, list.size());
+        assertEquals("ou=groups", list.get(0));
+        assertEquals("c=Sweden", list.get(1));
+        assertEquals("c=Norway", list.get(2));
     }
 
     public void testListBindings_Handler() throws Exception {
         CountNameClassPairCallbackHandler handler = new CountNameClassPairCallbackHandler();
         tested.listBindings(BASE_STRING, handler);
-        assertEquals(2, handler.getNoOfRows());
+        assertEquals(3, handler.getNoOfRows());
     }
 
     public void testListBindings_Name_Handler() throws Exception {
         CountNameClassPairCallbackHandler handler = new CountNameClassPairCallbackHandler();
         tested.listBindings(BASE_NAME, handler);
-        assertEquals(2, handler.getNoOfRows());
+        assertEquals(3, handler.getNoOfRows());
     }
 
     public void setTested(LdapTemplate tested) {
