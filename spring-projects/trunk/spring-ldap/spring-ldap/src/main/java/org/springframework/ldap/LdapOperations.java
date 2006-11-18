@@ -180,6 +180,116 @@ public interface LdapOperations {
             NameClassPairCallbackHandler handler, DirContextProcessor processor);
 
     /**
+     * Search for all objects matching the supplied filter. The Attributes in
+     * each SearchResult is supplied to the specified AttributesMapper. The
+     * SearchScope specified in the supplied SearchControls will be used in the
+     * search. The given DirContextProcessor will be called before and after the
+     * search.
+     * 
+     * @param base
+     *            The base DN where the search should begin.
+     * @param filter
+     *            The filter to use in the search.
+     * @param controls
+     *            The SearchControls to use in the search.
+     * @param mapper
+     *            The AttributesMapper to use for translating each entry.
+     * @param processor
+     *            The DirContextProcessor to use before and after the search.
+     * @return a List containing all entries received from the AttributesMapper.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
+     */
+    public List search(String base, String filter, SearchControls controls,
+            AttributesMapper mapper, DirContextProcessor processor);
+
+    /**
+     * Search for all objects matching the supplied filter. The Attributes in
+     * each SearchResult is supplied to the specified AttributesMapper. The
+     * SearchScope specified in the supplied SearchControls will be used in the
+     * search. The given DirContextProcessor will be called before and after the
+     * search.
+     * 
+     * @param base
+     *            The base DN where the search should begin.
+     * @param filter
+     *            The filter to use in the search.
+     * @param controls
+     *            The SearchControls to use in the search.
+     * @param mapper
+     *            The AttributesMapper to use for translating each entry.
+     * @param processor
+     *            The DirContextProcessor to use before and after the search.
+     * @return a List containing all entries received from the AttributesMapper.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
+     */
+    public List search(Name base, String filter, SearchControls controls,
+            AttributesMapper mapper, DirContextProcessor processor);
+
+    /**
+     * Search for all objects matching the supplied filter. The Object returned
+     * in each SearchResult is supplied to the specified ContextMapper. The
+     * SearchScope specified in the supplied SearchControls will be used in the
+     * search. The given DirContextProcessor will be called before and after the
+     * search.
+     * 
+     * @param base
+     *            The base DN where the search should begin.
+     * @param filter
+     *            The filter to use in the search.
+     * @param controls
+     *            The SearchControls to use in the search. If the returnObjFlag
+     *            is not set in the SearchControls, this method will set it
+     *            automatically, as this is required for the ContextMapper to
+     *            work.
+     * @param mapper
+     *            The ContextMapper to use for translating each entry.
+     * @param processor
+     *            The DirContextProcessor to use before and after the search.
+     * @return a List containing all entries received from the ContextMapper.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
+     */
+    public List search(String base, String filter, SearchControls controls,
+            ContextMapper mapper, DirContextProcessor processor);
+
+    /**
+     * Search for all objects matching the supplied filter. The Object returned
+     * in each SearchResult is supplied to the specified ContextMapper. The
+     * SearchScope specified in the supplied SearchControls will be used in the
+     * search. The given DirContextProcessor will be called before and after the
+     * search.
+     * 
+     * @param base
+     *            The base DN where the search should begin.
+     * @param filter
+     *            The filter to use in the search.
+     * @param controls
+     *            The SearchControls to use in the search. If the returnObjFlag
+     *            is not set in the SearchControls, this method will set it
+     *            automatically, as this is required for the ContextMapper to
+     *            work.
+     * @param mapper
+     *            The ContextMapper to use for translating each entry.
+     * @param processor
+     *            The DirContextProcessor to use before and after the search.
+     * @return a List containing all entries received from the ContextMapper.
+     * @throws DataAccessException
+     *             if any error occurs. Note that a NameNotFoundException will
+     *             be ignored. Instead this is interpreted that no entries were
+     *             found.
+     */
+    public List search(Name base, String filter, SearchControls controls,
+            ContextMapper mapper, DirContextProcessor processor);
+
+    /**
      * Search for all objects matching the supplied filter. See
      * {@link #search(Name, String, SearchControls, NameClassPairCallbackHandler, DirContextProcessor)}
      * for details.

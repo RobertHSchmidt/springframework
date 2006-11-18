@@ -311,16 +311,7 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
      *             found.
      */
     public void search(SearchExecutor se, NameClassPairCallbackHandler handler) {
-        search(se, handler, new DirContextProcessor() {
-            public void postProcess(DirContext ctx) throws NamingException {
-                // Do nothing
-            }
-
-            public void preProcess(DirContext ctx) throws NamingException {
-                // Do nothing
-            }
-
-        });
+        search(se, handler, new NullDirContextProcessor());
     }
 
     /*
@@ -481,12 +472,8 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     public List search(String base, String filter, SearchControls controls,
             ContextMapper mapper) {
 
-        assureReturnObjFlagSet(controls);
-        ContextMapperCallbackHandler handler = new ContextMapperCallbackHandler(
-                mapper);
-        search(base, filter, controls, handler);
-
-        return handler.getList();
+        return search(base, filter, controls, mapper,
+                new NullDirContextProcessor());
     }
 
     /*
@@ -497,12 +484,8 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     public List search(Name base, String filter, SearchControls controls,
             ContextMapper mapper) {
 
-        assureReturnObjFlagSet(controls);
-        ContextMapperCallbackHandler handler = new ContextMapperCallbackHandler(
-                mapper);
-        search(base, filter, controls, handler);
-
-        return handler.getList();
+        return search(base, filter, controls, mapper,
+                new NullDirContextProcessor());
     }
 
     /*
@@ -513,11 +496,8 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
     public List search(Name base, String filter, SearchControls controls,
             AttributesMapper mapper) {
 
-        AttributesMapperCallbackHandler handler = new AttributesMapperCallbackHandler(
-                mapper);
-        search(base, filter, controls, handler);
-
-        return handler.getList();
+        return search(base, filter, controls, mapper,
+                new NullDirContextProcessor());
     }
 
     /*
@@ -527,8 +507,74 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
      */
     public List search(String base, String filter, SearchControls controls,
             AttributesMapper mapper) {
+        return search(base, filter, controls, mapper,
+                new NullDirContextProcessor());
+    }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
+     *      java.lang.String, javax.naming.directory.SearchControls,
+     *      org.springframework.ldap.AttributesMapper,
+     *      org.springframework.ldap.DirContextProcessor)
+     */
+    public List search(String base, String filter, SearchControls controls,
+            AttributesMapper mapper, DirContextProcessor processor) {
         AttributesMapperCallbackHandler handler = new AttributesMapperCallbackHandler(
+                mapper);
+        search(base, filter, controls, handler, processor);
+
+        return handler.getList();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
+     *      java.lang.String, javax.naming.directory.SearchControls,
+     *      org.springframework.ldap.AttributesMapper,
+     *      org.springframework.ldap.DirContextProcessor)
+     */
+    public List search(Name base, String filter, SearchControls controls,
+            AttributesMapper mapper, DirContextProcessor processor) {
+        AttributesMapperCallbackHandler handler = new AttributesMapperCallbackHandler(
+                mapper);
+        search(base, filter, controls, handler, processor);
+
+        return handler.getList();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.ldap.LdapOperations#search(java.lang.String,
+     *      java.lang.String, javax.naming.directory.SearchControls,
+     *      org.springframework.ldap.ContextMapper,
+     *      org.springframework.ldap.DirContextProcessor)
+     */
+    public List search(String base, String filter, SearchControls controls,
+            ContextMapper mapper, DirContextProcessor processor) {
+        assureReturnObjFlagSet(controls);
+        ContextMapperCallbackHandler handler = new ContextMapperCallbackHandler(
+                mapper);
+        search(base, filter, controls, handler);
+
+        return handler.getList();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.ldap.LdapOperations#search(javax.naming.Name,
+     *      java.lang.String, javax.naming.directory.SearchControls,
+     *      org.springframework.ldap.ContextMapper,
+     *      org.springframework.ldap.DirContextProcessor)
+     */
+    public List search(Name base, String filter, SearchControls controls,
+            ContextMapper mapper, DirContextProcessor processor) {
+        assureReturnObjFlagSet(controls);
+        ContextMapperCallbackHandler handler = new ContextMapperCallbackHandler(
                 mapper);
         search(base, filter, controls, handler);
 
@@ -1218,6 +1264,16 @@ public class LdapTemplate implements LdapOperations, InitializingBean {
             log.info("The returnObjFlag of supplied SearchControls is not set"
                     + " but a ContextMapper is used - setting flag to true");
             controls.setReturningObjFlag(true);
+        }
+    }
+
+    private final class NullDirContextProcessor implements DirContextProcessor {
+        public void postProcess(DirContext ctx) throws NamingException {
+            // Do nothing
+        }
+
+        public void preProcess(DirContext ctx) throws NamingException {
+            // Do nothing
         }
     }
 
