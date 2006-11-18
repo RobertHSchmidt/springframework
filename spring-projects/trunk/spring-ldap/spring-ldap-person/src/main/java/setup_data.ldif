@@ -1,3 +1,24 @@
+dn: ou=groups,dc=jayway,dc=se
+objectclass: top
+objectclass: organizationalUnit
+ou: groups
+
+dn: cn=USER,ou=groups,dc=jayway,dc=se
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: USER
+uniqueMember: cn=Some Person,ou=company1,c=Sweden,dc=jayway,dc=se
+uniqueMember: cn=Some Person2,ou=company1,c=Sweden,dc=jayway,dc=se
+uniqueMember: cn=Some Person,ou=company1,c=Norway,dc=jayway,dc=se
+uniqueMember: cn=Some Person,ou=company2,c=Sweden,dc=jayway,dc=se
+uniqueMember: cn=Some Person3,ou=company1,c=Sweden,dc=jayway,dc=se
+
+dn: cn=ADMIN,ou=groups,dc=jayway,dc=se
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: ADMIN
+uniqueMember: cn=Some Person2,ou=company1,c=Sweden,dc=jayway,dc=se
+
 dn: c=Sweden,dc=jayway,dc=se
 objectclass: top
 objectclass: country
@@ -87,4 +108,4 @@ userPassword: password
 cn: Some Person
 sn: Person
 description: USER
-telephoneNumber: +45 555-456321
+telephoneNumber: +45 555-654123
