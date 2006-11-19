@@ -1,0 +1,44 @@
+build-spring-ldap
+=================
+
+* Update release number in project.properties
+
+  release.version=1.1
+
+spring-ldap
+===========
+
+* Update release number in project.properties
+
+  project.base.version=1.1
+  project.version=${project.base.version}
+  ivy.status=release
+  
+* Update release number in reference manual (docs/reference/src/index.xml)
+
+  	<bookinfo>
+		<title>Spring LDAP</title>
+		<subtitle>Reference Documentation</subtitle>
+		<releaseinfo>Version 1.1</releaseinfo>
+
+* Update release number in readme.txt
+
+  Spring-LDAP 1.1 (Aug 2006)
+
+General
+=======
+
+* Update changelog with changes, including upgraded libraries
+
+* Synchronize and commit changes, including .* files
+
+* Run clean-all from build-spring-ldap
+
+* Clean integration-repo
+
+* Clean Ivy cache
+
+* Run all tests, including integration tests
+
+* Run the sample spring-ldap-person
+

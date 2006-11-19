@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.springframework</groupId>
+  <artifactId>spring-ldap</artifactId>
+  <name>Spring LDAP</name>
+  <version>1.1</version>
+  <description>
+		Spring LDAP is a library to simplify LDAP programming in
+		Java, built on the same principles as Spring JDBC.
+		
+		The LdapTemplate class encapsulates all the plumbing work
+		involved in traditional LDAP programming, such as creating
+		contexts, looping through NamingEnumerations, handling
+		Exceptions and cleaning up resources. This leaves the programmer
+		to handle the important stuff - where to find data (DNs and
+		Filters) and what to do with it (map to and from domain objects,
+		bind, modify, unbind, etc.), in the same way that JdbcTemplate
+		relieves the programmer from everything but the actual SQL and
+		how the data maps to the domain model.
+
+		In addition to this, LdapTemplate provides Exception translation
+		from NamingExceptions to DataAccessExceptions, as well as
+		several utilities for working with filters, LDAP paths and
+		Attributes.
+  </description>
+  <url>http://www.springframework.org/ldap</url>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:svn:https://svn.sourceforge.net/svnroot/springframework</connection>
+    <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/springframework</developerConnection>
+    <tag>1.1</tag>
+    <url>http://svn.sourceforge.net/viewcvs.cgi/springframework/</url>
+  </scm>
+  <organization>
+    <name>Spring Framework</name>
+    <url>http://www.springframework.org/</url>
+  </organization>
+  <dependencies>
+<!-- External Dependencies -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.0.4</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.1</version>
+    </dependency>
+<!-- Spring Dependencies -->
+    <dependency>
+      <groupId>org.acegisecurity</groupId>
+      <artifactId>acegi-security</artifactId>
+      <version>1.0.1</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-dao</artifactId>
+      <version>2.0</version>
+    </dependency>
+  </dependencies>
+</project>
