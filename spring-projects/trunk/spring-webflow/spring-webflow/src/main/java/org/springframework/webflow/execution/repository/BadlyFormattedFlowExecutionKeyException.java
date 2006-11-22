@@ -17,7 +17,7 @@ package org.springframework.webflow.execution.repository;
 
 /**
  * Thrown when an encoded flow execution key is badly formatted and could not be
- * parsed. We debated calling this the <tt>FuckedUpFlowExecutionKeyException</tt>.
+ * parsed.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
