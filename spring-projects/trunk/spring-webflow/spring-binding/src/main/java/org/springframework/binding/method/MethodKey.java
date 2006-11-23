@@ -37,13 +37,12 @@ public class MethodKey implements Serializable {
 	private Class declaredType;
 
 	/**
-	 * The method name;
+	 * The method name.
 	 */
 	private String methodName;
 
 	/**
-	 * The method's actual parameter types. Optional, if not specified the
-	 * signature's parameter types are used.
+	 * The method's actual parameter types.
 	 */
 	private Class[] parameterTypes;
 
@@ -53,7 +52,7 @@ public class MethodKey implements Serializable {
 	private transient Method method;
 
 	/**
-	 * Create a new class method key.
+	 * Create a new method key.
 	 * @param declaredType the class the method is a member of
 	 * @param methodName the method name
 	 * @param parameterTypes the method's parameter types, or <code>null</code>
@@ -75,7 +74,7 @@ public class MethodKey implements Serializable {
 	}
 
 	/**
-	 * Returns the method name
+	 * Returns the method name.
 	 */
 	public String getMethodName() {
 		return methodName;

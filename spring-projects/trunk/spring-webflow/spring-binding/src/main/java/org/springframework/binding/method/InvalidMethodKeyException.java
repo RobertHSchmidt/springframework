@@ -31,7 +31,7 @@ public class InvalidMethodKeyException extends NestedRuntimeException {
 	private MethodKey methodKey;
 	
 	/**
-	 * Creates an exception signaling an invalid method signature
+	 * Creates an exception signaling an invalid method signature.
 	 * @param methodKey the class method key
 	 * @param cause the cause
 	 */
