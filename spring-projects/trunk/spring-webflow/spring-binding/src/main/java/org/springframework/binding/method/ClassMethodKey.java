@@ -92,7 +92,7 @@ public class ClassMethodKey implements Serializable {
 		return method;
 	}
 	
-	// internal helpres
+	// internal helpers
 
 	/**
 	 * Resolve the keyed method.
