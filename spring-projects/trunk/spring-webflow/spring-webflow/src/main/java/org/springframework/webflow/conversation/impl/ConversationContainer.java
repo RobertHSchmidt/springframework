@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationParameters;
@@ -38,8 +36,6 @@ import org.springframework.webflow.conversation.NoSuchConversationException;
  */
 class ConversationContainer implements Serializable {
 	
-	private static final Log logger = LogFactory.getLog(ConversationContainer.class);
-
 	/**
 	 * Maximum number of conversations in this container. -1 for
 	 * unlimited.
@@ -69,10 +65,6 @@ class ConversationContainer implements Serializable {
 	 * @return the created conversation
 	 */
 	public synchronized Conversation createAndAddConversation(ConversationId id, ConversationParameters parameters) {
-		if (logger.isInfoEnabled()) {
-			logger.info("Creating new conversation '" + parameters + "' with id '" + id + "' " +
-					"and adding it to conversation container");
-		}
 		ContainedConversation conversation = new ContainedConversation(this, id);
 		conversations.add(conversation);
 		if (maxExceeded()) {
@@ -90,9 +82,6 @@ class ConversationContainer implements Serializable {
 	 * found
 	 */
 	public synchronized Conversation getConversation(ConversationId id) throws NoSuchConversationException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Getting conversation with id '" + id +"'");
-		}
 		for (Iterator it = conversations.iterator(); it.hasNext();) {
 			ContainedConversation conversation = (ContainedConversation)it.next();
 			if (conversation.getId().equals(id)) {
@@ -106,9 +95,6 @@ class ConversationContainer implements Serializable {
 	 * Remove identified conversation from this container.
 	 */
 	public synchronized void removeConversation(ConversationId id) {
-		if (logger.isInfoEnabled()) {
-			logger.info("Removing conversation with id '" + id + "'");
-		}
 		for (Iterator it = conversations.iterator(); it.hasNext();) {
 			ContainedConversation conversation = (ContainedConversation)it.next();
 			if (conversation.getId().equals(id)) {

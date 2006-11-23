@@ -22,6 +22,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationId;
 
@@ -34,6 +36,8 @@ import org.springframework.webflow.conversation.ConversationId;
  * @author Erwin Vervaet
  */
 class ContainedConversation implements Conversation, Serializable {
+
+	private static final Log logger = LogFactory.getLog(SessionBindingConversationManager.class);
 
 	private ConversationContainer container;
 
@@ -60,6 +64,9 @@ class ContainedConversation implements Conversation, Serializable {
 	}
 
 	public void lock() {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Locking conversation " + id);
+		}			
 		lock.lock();
 	}
 
@@ -76,10 +83,16 @@ class ContainedConversation implements Conversation, Serializable {
 	}
 
 	public void end() {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Ending conversation " + id);
+		}		
 		container.removeConversation(getId());
 	}
 
 	public void unlock() {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Unlocking conversation " + id);
+		}				
 		lock.unlock();
 	}
 
