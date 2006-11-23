@@ -28,7 +28,7 @@ import org.springframework.util.ObjectUtils;
  * 
  * @author Keith Donald
  */
-class ClassMethodKey implements Serializable {
+public class ClassMethodKey implements Serializable {
 	
 	/**
 	 * The class the method is a member of.
