@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.conversation.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationException;
@@ -40,6 +42,8 @@ import org.springframework.webflow.util.UidGenerator;
  * @author Erwin Vervaet
  */
 public class SessionBindingConversationManager implements ConversationManager {
+
+	private static final Log logger = LogFactory.getLog(SessionBindingConversationManager.class);
 
 	/**
 	 * Key of the session attribute holding the conversation container.
@@ -91,10 +95,16 @@ public class SessionBindingConversationManager implements ConversationManager {
 
 	public Conversation beginConversation(ConversationParameters conversationParameters) throws ConversationException {
 		ConversationId conversationId = new SimpleConversationId(conversationIdGenerator.generateUid());
+		if (logger.isDebugEnabled()) {
+			logger.debug("Beginning conversation " + conversationParameters + "; unique conversation id = " + conversationId);
+		}		
 		return getConversationContainer().createAndAddConversation(conversationId, conversationParameters);
 	}
 
 	public Conversation getConversation(ConversationId id) throws ConversationException {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Getting conversation " + id);
+		}
 		return getConversationContainer().getConversation(id);
 	}
 
