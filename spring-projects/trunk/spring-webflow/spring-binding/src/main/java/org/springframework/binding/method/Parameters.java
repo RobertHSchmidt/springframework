@@ -21,8 +21,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.springframework.core.style.ToStringCreator;
-
 /**
  * An ordered list of method parameters.
  * 
@@ -98,7 +96,7 @@ public class Parameters implements Serializable {
 	}
 
 	/**
-	 * Get an array for each parameter type.
+	 * Get an array containing each parameter type.
 	 * @return the types
 	 */
 	public Class[] getTypesArray() {
@@ -124,8 +122,9 @@ public class Parameters implements Serializable {
 	 * Return the parameter at the provided index.
 	 * @param index the parameter index
 	 * @return the parameter at that index
+	 * @throws IndexOutOfBoundsException if the provided index is out of bounds
 	 */
-	public Parameter getParameter(int index) {
+	public Parameter getParameter(int index) throws IndexOutOfBoundsException {
 		return (Parameter)parameters.get(index);
 	}
 
