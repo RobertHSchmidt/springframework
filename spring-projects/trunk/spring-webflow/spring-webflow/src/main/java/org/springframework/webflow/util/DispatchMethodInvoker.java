@@ -24,7 +24,6 @@ import org.springframework.binding.method.MethodKey;
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.util.Assert;
 import org.springframework.util.CachingMapDecorator;
-import org.springframework.util.ClassUtils;
 
 /**
  * Invoker and cache for dispatch methods that all share the same target object.
@@ -51,7 +50,7 @@ public class DispatchMethodInvoker {
 	 */
 	private Map methodCache = new CachingMapDecorator() {
 		public Object create(Object key) {
-			String methodName = (String) key;
+			String methodName = (String)key;
 			try {
 				return new MethodKey(target.getClass(), methodName, parameterTypes).getMethod();
 			}
@@ -104,14 +103,13 @@ public class DispatchMethodInvoker {
 			return dispatchMethod.invoke(target, arguments);
 		}
 		catch (InvocationTargetException e) {
-			// the invoced method threw an exception; have it propagate to the
-			// caller
+			// the invoked method threw an exception; have it propagate to the caller
 			Throwable t = e.getTargetException();
 			if (t instanceof Exception) {
-				throw (Exception) e.getTargetException();
+				throw (Exception)e.getTargetException();
 			}
 			else {
-				throw (Error) e.getTargetException();
+				throw (Error)e.getTargetException();
 			}
 		}
 	}
@@ -124,7 +122,7 @@ public class DispatchMethodInvoker {
 	 * @throws MethodLookupException when the method cannot be resolved
 	 */
 	private Method getDispatchMethod(String methodName) throws MethodLookupException {
-		return (Method) methodCache.get(methodName);
+		return (Method)methodCache.get(methodName);
 	}
 
 	/**

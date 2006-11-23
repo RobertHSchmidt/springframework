@@ -83,7 +83,7 @@ class ContainedConversation implements Conversation, Serializable {
 
 	public void removeAttribute(Object name) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Removing conversation attribute '" + name);
+			logger.debug("Removing conversation attribute '" + name + "'");
 		}			
 		attributes.remove(name);
 	}

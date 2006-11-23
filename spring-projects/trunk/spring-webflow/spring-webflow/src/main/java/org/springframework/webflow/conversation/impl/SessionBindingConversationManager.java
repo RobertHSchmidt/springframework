@@ -96,7 +96,8 @@ public class SessionBindingConversationManager implements ConversationManager {
 	public Conversation beginConversation(ConversationParameters conversationParameters) throws ConversationException {
 		ConversationId conversationId = new SimpleConversationId(conversationIdGenerator.generateUid());
 		if (logger.isDebugEnabled()) {
-			logger.debug("Beginning conversation " + conversationParameters + "; unique conversation id = " + conversationId);
+			logger.debug("Beginning conversation " + conversationParameters +
+					"; unique conversation id = " + conversationId);
 		}		
 		return getConversationContainer().createAndAddConversation(conversationId, conversationParameters);
 	}

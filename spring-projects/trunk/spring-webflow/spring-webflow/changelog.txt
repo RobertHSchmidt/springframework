@@ -15,6 +15,7 @@ Package org.springframework.webflow.conversation
 * The default value of the maxConversations property of the SessionBindingConversationManager is
   now 5. It used to be -1 (unlimited).
 * Added getConversationIdGenerator and getMaxConversations methods to SessionBindingConversationManager.
+* Reduced log level from INFO to DEBUG.
 
 Package org.springframework.webflow.definition
 * Added debug logging to FlowDefinitionRegistryImpl.
