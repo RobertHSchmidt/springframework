@@ -41,7 +41,8 @@ public class ClassMethodKey implements Serializable {
 	private MethodSignature signature;
 
 	/**
-	 * The method's actual parameter types.
+	 * The method's actual parameter types.  Optional, if not specified the
+	 * signature's parameter types are used.
 	 */
 	private Class[] parameterTypes;
 
@@ -53,7 +54,19 @@ public class ClassMethodKey implements Serializable {
 	/**
 	 * Create a new class method key.
 	 * @param type the class the method is a member of
+	 */
+	public ClassMethodKey(Class type, MethodSignature signature) {
+		this.type = type;
+		this.signature = signature;
+	}
+	
+	/**
+	 * Create a new class method key.
+	 * @param type the class the method is a member of
 	 * @param signature the method signature
+	 * @param parameterTypes the method's parameter types for when types
+	 * are to be specified directly because they were not known at the time
+	 * of signature construction
 	 */
 	public ClassMethodKey(Class type, MethodSignature signature, Class[] parameterTypes) {
 		this.type = type;
@@ -69,21 +82,25 @@ public class ClassMethodKey implements Serializable {
 	}
 
 	/**
-	 * Returns the methods signature.
+	 * Returns the method signature.
 	 */
 	public MethodSignature getSignature() {
 		return signature;
 	}
 
 	/**
-	 * Returns the method's parameters type.
+	 * Returns the method parameter types.
 	 */
 	public Class[] getParameterTypes() {
-		return parameterTypes;
+		if (parameterTypes != null) {
+			return signature.getParameters().getTypesArray();
+		} else {
+			return parameterTypes;
+		}
 	}
 
 	/**
-	 * Returns the keyed method.
+	 * Returns the keyed method, resolving it if necessary via reflection.
 	 */
 	public Method getMethod() throws InvalidMethodSignatureException {
 		if (method == null) {
