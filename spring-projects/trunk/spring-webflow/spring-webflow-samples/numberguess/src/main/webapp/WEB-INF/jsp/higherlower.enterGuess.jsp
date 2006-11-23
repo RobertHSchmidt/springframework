@@ -13,7 +13,7 @@
 			</tr>
 			<tr class="readOnly">
 				<td>Your last guess was:</td>
-				<td><b><i>${game.result}</b></i></td>
+				<td><b><i>${game.result}</i></b></td>
 			</tr>
 		    <tr>
 		    	<td>Guess:</td>
