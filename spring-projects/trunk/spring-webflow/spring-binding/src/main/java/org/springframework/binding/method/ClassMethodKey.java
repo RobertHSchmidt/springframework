@@ -54,6 +54,7 @@ public class ClassMethodKey implements Serializable {
 	/**
 	 * Create a new class method key.
 	 * @param type the class the method is a member of
+	 * @signature the method signature with parameter types specified.
 	 */
 	public ClassMethodKey(Class type, MethodSignature signature) {
 		this.type = type;
