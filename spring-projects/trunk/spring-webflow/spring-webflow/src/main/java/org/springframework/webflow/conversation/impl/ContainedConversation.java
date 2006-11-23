@@ -75,10 +75,16 @@ class ContainedConversation implements Conversation, Serializable {
 	}
 
 	public void putAttribute(Object name, Object value) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Putting conversation attribute '" + name + "' with value " + value);
+		}			
 		attributes.put(name, value);
 	}
 
 	public void removeAttribute(Object name) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Removing conversation attribute '" + name);
+		}			
 		attributes.remove(name);
 	}
 
