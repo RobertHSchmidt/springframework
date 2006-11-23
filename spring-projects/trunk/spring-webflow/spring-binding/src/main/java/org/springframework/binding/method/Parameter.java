@@ -17,6 +17,7 @@ package org.springframework.binding.method;
 
 import java.io.Serializable;
 
+import org.springframework.binding.expression.EvaluationContext;
 import org.springframework.binding.expression.Expression;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
@@ -26,7 +27,7 @@ import org.springframework.util.ObjectUtils;
  * A named method parameter. Each parameter has an identifying name and is of a
  * specified type (class).
  * 
- * @author Keith
+ * @author Keith Donald
  */
 public class Parameter implements Serializable {
 
@@ -42,10 +43,10 @@ public class Parameter implements Serializable {
 	private Expression name;
 
 	/**
-	 * Create a new named parameter definition.
-	 * 
-	 * @param type the type
-	 * @param name the name
+	 * Create a new named parameter definition.  Named parameters are capable of resolving 
+	 * parameter values (arguments) from argument sources.
+	 * @param type the type the parameter type, may be null
+	 * @param name the name the method argument expression (required)
 	 */
 	public Parameter(Class type, Expression name) {
 		Assert.notNull(name, "The parameter name expression is required");
@@ -67,11 +68,22 @@ public class Parameter implements Serializable {
 		return name;
 	}
 
+	/**
+	 * Evaluate this method parameter against the provided argument source,
+	 * returning a single method argument value.
+	 * @param argumentSource the meyhod argument source
+	 * @param context the evaluation context
+	 * @return the method argument value
+	 */
+	public Object evaluateArgument(Object argumentSource, EvaluationContext context) {
+		return name.evaluate(argumentSource, context);
+	}
+
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Parameter)) {
 			return false;
 		}
-		Parameter other = (Parameter)obj;
+		Parameter other = (Parameter) obj;
 		return ObjectUtils.nullSafeEquals(type, other.type) && name.equals(other.name);
 	}
 

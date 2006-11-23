@@ -21,8 +21,10 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 
 /**
- * A specification for a <code>Method</code> consisting of the methodName
- * and an optional set of named arguments.
+ * A specification for a method consisting of the methodName and an optional set
+ * of named arguments. This class provides the ability to resolve a method with
+ * parameters and evaluate its argument values as part of a
+ * {@link MethodInvoker method invoker attempt}.
  * 
  * @author Keith Donald
  */
@@ -85,7 +87,7 @@ public class MethodSignature implements Serializable {
 		if (!(obj instanceof MethodSignature)) {
 			return false;
 		}
-		MethodSignature other = (MethodSignature)obj;
+		MethodSignature other = (MethodSignature) obj;
 		return methodName.equals(methodName) && parameters.equals(other.parameters);
 	}
 

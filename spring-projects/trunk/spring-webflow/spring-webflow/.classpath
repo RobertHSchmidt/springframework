@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/spring-binding"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/buildtime/commons-beanutils.jar"/>
 	<classpathentry kind="lib" path="lib/global/commons-codec.jar"/>
@@ -16,7 +17,6 @@
 	<classpathentry kind="lib" path="lib/global/ognl.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/portlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/servlet-api.jar"/>
-	<classpathentry kind="lib" path="lib/global/spring-binding.jar" sourcepath="/spring-binding/src/main/java"/>
 	<classpathentry kind="lib" path="lib/global/spring-beans.jar" sourcepath="/spring/src"/>
 	<classpathentry kind="lib" path="lib/global/spring-context.jar" sourcepath="/spring/src"/>
 	<classpathentry kind="lib" path="lib/global/spring-core.jar" sourcepath="/spring/src"/>

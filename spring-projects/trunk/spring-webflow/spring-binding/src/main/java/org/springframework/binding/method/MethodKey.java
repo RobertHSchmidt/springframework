@@ -20,28 +20,29 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 
 /**
- * A key for class method signature. Internal helper of the {@link MethodInvoker}.
+ * A helper for resolving and caching a Java method by reflection.
  * 
  * @author Keith Donald
  */
-public class ClassMethodKey implements Serializable {
-	
+public class MethodKey implements Serializable {
+
 	/**
 	 * The class the method is a member of.
 	 */
-	private Class type;
+	private Class declaredType;
 
 	/**
-	 * The methods defined signature.
+	 * The method name;
 	 */
-	private MethodSignature signature;
+	private String methodName;
 
 	/**
-	 * The method's actual parameter types.  Optional, if not specified the
+	 * The method's actual parameter types. Optional, if not specified the
 	 * signature's parameter types are used.
 	 */
 	private Class[] parameterTypes;
@@ -53,71 +54,58 @@ public class ClassMethodKey implements Serializable {
 
 	/**
 	 * Create a new class method key.
-	 * @param type the class the method is a member of
-	 * @signature the method signature with parameter types specified.
+	 * @param declaredType the class the method is a member of
+	 * @param methodName the method name
+	 * @param parameterTypes the method's parameter types, or <code>null</code>
+	 * if the method has no parameters
 	 */
-	public ClassMethodKey(Class type, MethodSignature signature) {
-		this.type = type;
-		this.signature = signature;
-	}
-	
-	/**
-	 * Create a new class method key.
-	 * @param type the class the method is a member of
-	 * @param signature the method signature
-	 * @param parameterTypes the method's parameter types for when types
-	 * are to be specified directly because they were not known at the time
-	 * of signature construction
-	 */
-	public ClassMethodKey(Class type, MethodSignature signature, Class[] parameterTypes) {
-		this.type = type;
-		this.signature = signature;
+	public MethodKey(Class declaredType, String methodName, Class[] parameterTypes) {
+		Assert.notNull(declaredType, "The method's declared type is required");
+		Assert.notNull(methodName, "The method name is required");
+		this.declaredType = declaredType;
+		this.methodName = methodName;
 		this.parameterTypes = parameterTypes;
-	}
-	
-	/**
-	 * Return the class the method is a member of.
-	 */
-	public Class getType() {
-		return type;
 	}
 
 	/**
-	 * Returns the method signature.
+	 * Return the class the method is a member of.
 	 */
-	public MethodSignature getSignature() {
-		return signature;
+	public Class getDeclaredType() {
+		return declaredType;
+	}
+
+	/**
+	 * Returns the method name
+	 */
+	public String getMethodName() {
+		return methodName;
 	}
 
 	/**
 	 * Returns the method parameter types.
 	 */
 	public Class[] getParameterTypes() {
-		if (parameterTypes != null) {
-			return signature.getParameters().getTypesArray();
-		} else {
-			return parameterTypes;
-		}
+		return parameterTypes;
 	}
 
 	/**
 	 * Returns the keyed method, resolving it if necessary via reflection.
 	 */
-	public Method getMethod() throws InvalidMethodSignatureException {
+	public Method getMethod() throws InvalidMethodKeyException {
 		if (method == null) {
 			method = resolveMethod();
 		}
 		return method;
 	}
-	
+
 	// internal helpers
 
 	/**
 	 * Resolve the keyed method.
 	 */
-	protected Method resolveMethod() throws InvalidMethodSignatureException {
+	protected Method resolveMethod() throws InvalidMethodKeyException {
 		try {
-			return type.getMethod(getSignature().getMethodName(), getParameterTypes());
+			return declaredType.getMethod(methodName, getParameterTypes());
 		}
 		catch (NoSuchMethodException e) {
 			Method method = findMethodConsiderAssignableParameterTypes();
@@ -125,7 +113,7 @@ public class ClassMethodKey implements Serializable {
 				return method;
 			}
 			else {
-				throw new InvalidMethodSignatureException(getSignature(), e);
+				throw new InvalidMethodKeyException(this, e);
 			}
 		}
 	}
@@ -134,9 +122,9 @@ public class ClassMethodKey implements Serializable {
 	 * Find the keyed method using 'relaxed' typing.
 	 */
 	protected Method findMethodConsiderAssignableParameterTypes() {
-		Method[] candidateMethods = getType().getMethods();
+		Method[] candidateMethods = getDeclaredType().getMethods();
 		for (int i = 0; i < candidateMethods.length; i++) {
-			if (candidateMethods[i].getName().equals(getSignature().getMethodName())) {
+			if (candidateMethods[i].getName().equals(methodName)) {
 				// Check if the method has the correct number of parameters.
 				Class[] candidateParameterTypes = candidateMethods[i].getParameterTypes();
 				if (candidateParameterTypes.length == getParameterTypes().length) {
@@ -167,15 +155,15 @@ public class ClassMethodKey implements Serializable {
 	}
 
 	public boolean equals(Object obj) {
-		if (!(obj instanceof ClassMethodKey)) {
+		if (!(obj instanceof MethodKey)) {
 			return false;
 		}
-		ClassMethodKey other = (ClassMethodKey)obj;
-		return type.equals(other.type) && signature.equals(other.signature)
-				&& argumentTypesEqual(other.parameterTypes);
+		MethodKey other = (MethodKey) obj;
+		return declaredType.equals(other.declaredType) && methodName.equals(other.methodName)
+				&& parameterTypesEqual(other.parameterTypes);
 	}
 
-	private boolean argumentTypesEqual(Class[] other) {
+	private boolean parameterTypesEqual(Class[] other) {
 		if (parameterTypes == other) {
 			return true;
 		}
@@ -191,10 +179,10 @@ public class ClassMethodKey implements Serializable {
 	}
 
 	public int hashCode() {
-		return type.hashCode() + signature.hashCode() + argumentTypesHash();
+		return declaredType.hashCode() + methodName.hashCode() + parameterTypesHash();
 	}
 
-	private int argumentTypesHash() {
+	private int parameterTypesHash() {
 		if (parameterTypes == null) {
 			return 0;
 		}
@@ -209,26 +197,25 @@ public class ClassMethodKey implements Serializable {
 	}
 
 	// internal helpers
-	
+
 	/**
 	 * Determine if the given target type is assignable from the given value
-	 * type, assuming setting by reflection. Considers primitive wrapper
-	 * classes as assignable to the corresponding primitive types.
-	 * <p>
-	 * NOTE: Pulled from ClassUtils in Spring 2.0 for 1.2.8 compatability.  Should
-	 * be collapsed when 1.2.9 is released.
+	 * type, assuming setting by reflection. Considers primitive wrapper classes
+	 * as assignable to the corresponding primitive types. <p> NOTE: Pulled from
+	 * ClassUtils in Spring 2.0 for 1.2.8 compatability. Should be collapsed
+	 * when 1.2.9 is released.
 	 * @param targetType the target type
-	 * @param valueType	the value type that should be assigned to the target type
+	 * @param valueType the value type that should be assigned to the target
+	 * type
 	 * @return if the target type is assignable from the value type
 	 */
 	private static boolean isAssignable(Class targetType, Class valueType) {
-		return (targetType.isAssignableFrom(valueType) ||
-				targetType.equals(primitiveWrapperTypeMap.get(valueType)));
+		return (targetType.isAssignableFrom(valueType) || targetType.equals(primitiveWrapperTypeMap.get(valueType)));
 	}
 
 	/**
-	 * Map with primitive wrapper type as key and corresponding primitive
-	 * type as value, for example: Integer.class -> int.class.
+	 * Map with primitive wrapper type as key and corresponding primitive type
+	 * as value, for example: Integer.class -> int.class.
 	 */
 	private static final Map primitiveWrapperTypeMap = new HashMap(8);
 
@@ -244,7 +231,22 @@ public class ClassMethodKey implements Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("class", type).append("signature", signature).append("parameterTypes",
-				parameterTypes).toString();
+		return methodName + "(" + parameterTypesString() + ")";
 	}
+
+	/**
+	 * Convenience method that returns the parameter types describing the
+	 * signature of the method as a string.
+	 */
+	private String parameterTypesString() {
+		StringBuffer parameterTypesString = new StringBuffer();
+		for (int i = 0; i < parameterTypes.length; i++) {
+			parameterTypesString.append(ClassUtils.getShortName(parameterTypes[i]));
+			if (i < parameterTypes.length - 1) {
+				parameterTypesString.append(',');
+			}
+		}
+		return parameterTypesString.toString();
+	}
+
 }
