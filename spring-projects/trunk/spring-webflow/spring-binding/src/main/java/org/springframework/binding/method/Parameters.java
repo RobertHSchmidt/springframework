@@ -142,6 +142,6 @@ public class Parameters implements Serializable {
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("parameters", parameters).toString();
+		return parameters.toString();
 	}
 }

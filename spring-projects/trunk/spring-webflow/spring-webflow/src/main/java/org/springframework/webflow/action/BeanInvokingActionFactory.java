@@ -15,27 +15,23 @@
  */
 package org.springframework.webflow.action;
 
-import java.lang.reflect.Method;
-
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionService;
-import org.springframework.binding.method.ClassMethodKey;
+import org.springframework.binding.method.MethodKey;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Action;
 
 /**
- * A helper factory for {@link Action} instances that invoke methods on
- * beans managed in a Spring bean factory.
- * <p>
- * This factory encapsulates the logic required to take an arbitrary
- * <code>java.lang.Object</code> from a Spring bean factory and adapt
- * a method on it to the {@link Action} interface. If the bean you
- * want to use is not managed in a Spring bean factory, consider
+ * A helper factory for {@link Action} instances that invoke methods on beans
+ * managed in a Spring bean factory. <p> This factory encapsulates the logic
+ * required to take an arbitrary <code>java.lang.Object</code> from a Spring
+ * bean factory and adapt a method on it to the {@link Action} interface. If the
+ * bean you want to use is not managed in a Spring bean factory, consider
  * subclassing {@link AbstractBeanInvokingAction} and using it directly.
- *
+ * 
  * @see AbstractBeanInvokingAction
- *
+ * 
  * @author Keith Donald
  */
 public class BeanInvokingActionFactory {
@@ -47,8 +43,8 @@ public class BeanInvokingActionFactory {
 	private ResultEventFactorySelector resultEventFactorySelector = new ResultEventFactorySelector();
 
 	/**
-	 * Returns the strategy for calculating the result event factory to configure
-	 * for each bean invoking action created by this factory.
+	 * Returns the strategy for calculating the result event factory to
+	 * configure for each bean invoking action created by this factory.
 	 */
 	public ResultEventFactorySelector getResultEventFactorySelector() {
 		return resultEventFactorySelector;
@@ -85,8 +81,9 @@ public class BeanInvokingActionFactory {
 		Object bean = beanFactory.getBean(beanId);
 		AbstractBeanInvokingAction action = new LocalBeanInvokingAction(methodSignature, bean);
 		action.setMethodResultExposer(resultExposer);
-		Method method = new ClassMethodKey(bean.getClass(), methodSignature).getMethod();
-		action.setResultEventFactory(resultEventFactorySelector.forMethod(method));
+		MethodKey methodKey = new MethodKey(bean.getClass(), methodSignature.getMethodName(), methodSignature
+				.getParameters().getTypesArray());
+		action.setResultEventFactory(resultEventFactorySelector.forMethod(methodKey.getMethod()));
 		action.setConversionService(conversionService);
 		return action;
 	}

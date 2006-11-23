@@ -19,8 +19,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import org.springframework.binding.method.ClassMethodKey;
-import org.springframework.binding.method.InvalidMethodSignatureException;
+import org.springframework.binding.method.InvalidMethodKeyException;
+import org.springframework.binding.method.MethodKey;
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.util.Assert;
 import org.springframework.util.CachingMapDecorator;
@@ -51,13 +51,12 @@ public class DispatchMethodInvoker {
 	 */
 	private Map methodCache = new CachingMapDecorator() {
 		public Object create(Object key) {
-			String methodName = (String)key;
+			String methodName = (String) key;
 			try {
-				return new ClassMethodKey(target.getClass(), methodName, parameterTypes).getMethod();
+				return new MethodKey(target.getClass(), methodName, parameterTypes).getMethod();
 			}
-			catch (InvalidMethodSignatureException e) {
-				throw new MethodLookupException("Unable to resolve dispatch method with name '" + methodName
-						+ "' and signature '" + getSignatureString(methodName)
+			catch (InvalidMethodKeyException e) {
+				throw new MethodLookupException("Unable to resolve dispatch method " + e.getMethodKey()
 						+ "'; make sure the method name is correct and such a method is defined on targetClass "
 						+ target.getClass().getName(), e);
 			}
@@ -75,14 +74,14 @@ public class DispatchMethodInvoker {
 		this.target = target;
 		this.parameterTypes = parameterTypes;
 	}
-	
+
 	/**
 	 * Returns the target object method calls are dispatched to.
 	 */
 	public Object getTarget() {
 		return target;
 	}
-	
+
 	/**
 	 * Returns the parameter types defining the argument signature of the
 	 * dispatch methods.
@@ -105,13 +104,14 @@ public class DispatchMethodInvoker {
 			return dispatchMethod.invoke(target, arguments);
 		}
 		catch (InvocationTargetException e) {
-			// the invoced method threw an exception; have it propagate to the caller
+			// the invoced method threw an exception; have it propagate to the
+			// caller
 			Throwable t = e.getTargetException();
 			if (t instanceof Exception) {
-				throw (Exception)e.getTargetException();
+				throw (Exception) e.getTargetException();
 			}
 			else {
-				throw (Error)e.getTargetException();
+				throw (Error) e.getTargetException();
 			}
 		}
 	}
@@ -124,30 +124,7 @@ public class DispatchMethodInvoker {
 	 * @throws MethodLookupException when the method cannot be resolved
 	 */
 	private Method getDispatchMethod(String methodName) throws MethodLookupException {
-		return (Method)methodCache.get(methodName);
-	}
-
-	/**
-	 * Returns the signature of the dispatch methods invoked by this class.
-	 * @param methodName name of the dispatch method
-	 */
-	private String getSignatureString(String methodName) {
-		return methodName + "(" + getParameterTypesString() + ");";
-	}
-
-	/**
-	 * Convenience method that returns the parameter types describing the
-	 * signature of the dispatch method as a string.
-	 */
-	private String getParameterTypesString() {
-		StringBuffer parameterTypesString = new StringBuffer();
-		for (int i = 0; i < parameterTypes.length; i++) {
-			parameterTypesString.append(ClassUtils.getShortName(parameterTypes[i]));
-			if (i < parameterTypes.length - 1) {
-				parameterTypesString.append(',');
-			}
-		}
-		return parameterTypesString.toString();
+		return (Method) methodCache.get(methodName);
 	}
 
 	/**

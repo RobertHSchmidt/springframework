@@ -49,7 +49,7 @@ public class MethodInvokerTests extends TestCase {
 			fail();
 		}
 		catch (MethodInvocationException e) {
-			assertTrue(e.getTargetException() instanceof InvalidMethodSignatureException);
+			assertTrue(e.getTargetException() instanceof InvalidMethodKeyException);
 		}
 	}
 

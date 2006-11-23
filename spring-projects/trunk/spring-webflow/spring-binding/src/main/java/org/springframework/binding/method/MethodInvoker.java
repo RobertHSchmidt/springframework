@@ -46,7 +46,7 @@ public class MethodInvoker {
 	 */
 	private CachingMapDecorator methodCache = new CachingMapDecorator(true) {
 		public Object create(Object key) {
-			return ((ClassMethodKey)key).getMethod();
+			return ((MethodKey) key).getMethod();
 		}
 	};
 
@@ -73,7 +73,7 @@ public class MethodInvoker {
 		Object[] arguments = new Object[parameters.size()];
 		for (int i = 0; i < parameters.size(); i++) {
 			Parameter parameter = parameters.getParameter(i);
-			Object argument = parameter.getName().evaluate(argumentSource, null);
+			Object argument = parameter.evaluateArgument(argumentSource, null);
 			arguments[i] = applyTypeConversion(argument, parameter.getType());
 		}
 		Class[] parameterTypes = parameters.getTypesArray();
@@ -85,9 +85,9 @@ public class MethodInvoker {
 				}
 			}
 		}
-		ClassMethodKey key = new ClassMethodKey(bean.getClass(), signature, parameterTypes);
+		MethodKey key = new MethodKey(bean.getClass(), signature.getMethodName(), parameterTypes);
 		try {
-			Method method = (Method)methodCache.get(key);
+			Method method = (Method) methodCache.get(key);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Invoking method with signature [" + key + "] with arguments "
 						+ StylerUtils.style(arguments) + " on bean [" + bean + "]");
@@ -95,7 +95,7 @@ public class MethodInvoker {
 			}
 			Object returnValue = method.invoke(bean, arguments);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Invoked method with signature [" + key + "]' returned value [" + returnValue + "]");
+				logger.debug("Invoked method with signature [" + key + "] returned value [" + returnValue + "]");
 			}
 			return returnValue;
 		}
