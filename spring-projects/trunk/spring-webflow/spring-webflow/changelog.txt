@@ -2,7 +2,7 @@ SPRING WEB FLOW (SWF) CHANGELOG
 ===============================
 http://www.springframework.org
 
-Changes in version 1.0.1 ()
+Changes in version 1.0.1 (03.12.2006)
 -----------------------------------
 
 Package org.springframework.webflow.config
@@ -41,6 +41,9 @@ Package org.springframework.webflow.execution.repository
 
 Package org.springframework.webflow.executor
 * Added debug logging to FlowExecutorImpl.
+
+Package org.springframework.webflow.samples
+* Made sample projects Eclipse Dynamic Web Projects for easy deployment from Eclipse.
 
 Changes in version 1.0 (25.10.2006)
 -----------------------------------
