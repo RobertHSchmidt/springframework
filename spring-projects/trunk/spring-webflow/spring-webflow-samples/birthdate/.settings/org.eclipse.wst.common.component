@@ -42,9 +42,6 @@
 <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/swf-birthdate/lib/global/commons-codec.jar">
 <dependency-type>uses</dependency-type>
 </dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/swf-birthdate/lib/global/xml-apis.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
 <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/swf-birthdate/lib/global/commons-beanutils.jar">
 <dependency-type>uses</dependency-type>
 </dependent-module>
@@ -64,9 +61,6 @@
 <dependency-type>uses</dependency-type>
 </dependent-module>
 <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/swf-birthdate/lib/global/commons-validator.jar">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/swf-birthdate/lib/global/commons-logging.jar">
 <dependency-type>uses</dependency-type>
 </dependent-module>
 <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/swf-birthdate/lib/global/commons-fileupload.jar">
