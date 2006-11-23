@@ -85,8 +85,7 @@ public class BeanInvokingActionFactory {
 		Object bean = beanFactory.getBean(beanId);
 		AbstractBeanInvokingAction action = new LocalBeanInvokingAction(methodSignature, bean);
 		action.setMethodResultExposer(resultExposer);
-		Method method = new ClassMethodKey(bean.getClass(), methodSignature.getMethodName(), methodSignature.getParameters()
-				.getTypesArray()).getMethod();
+		Method method = new ClassMethodKey(bean.getClass(), methodSignature).getMethod();
 		action.setResultEventFactory(resultEventFactorySelector.forMethod(method));
 		action.setConversionService(conversionService);
 		return action;
