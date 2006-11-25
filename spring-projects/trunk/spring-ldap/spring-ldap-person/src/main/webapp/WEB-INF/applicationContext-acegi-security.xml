@@ -127,9 +127,7 @@
 			<value>
 				CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
 				PATTERN_TYPE_APACHE_ANT
-				/search.htm*=ROLE_USER
-				/details.htm*=ROLE_USER
-				/edit.htm*=ROLE_ADMIN
+				/ldaptemplate.htm*=ROLE_USER
 			</value>
 		</property>
 	</bean>

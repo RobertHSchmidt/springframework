@@ -1,52 +1,52 @@
-<%@ include file="include.jsp"%>
+<%@ include file="includeTop.jsp" %>
 
-<h3>Details for <c:out value="${person.fullName}" /></h3>
-
-<table cellspacing="2" cellpadding="4">
-	<tr>
-		<th align="right">Full Name:</th>
-		<td><c:out value="${person.fullName}" /></td>
-	</tr>
-	<tr>
-		<th align="right">Company:</th>
-		<td><c:out value="${person.company}" /></td>
-	</tr>
-	<tr>
-		<th align="right">Country:</th>
-		<td><c:out value="${person.country}" /></td>
-	</tr>
-	<tr>
-		<th align="right">Phone:</th>
-		<td><c:out value="${person.phone}" /></td>
-	</tr>
-	<tr>
-		<th align="right">Description:</th>
-		<td>
-		<c:forEach items="${person.description}" var="description">
-		<c:out value="${description}" /> <br />
-		</c:forEach>
-		</td>
-	</tr>
-	<tr>
-		<td colspan="2">
-			<form>
-				<c:url var="editUrl" value="/edit.htm">
-					<c:param name="name">
-						<c:out value="${person.fullName}" />
-					</c:param>
-					<c:param name="company">
-						<c:out value="${person.company}" />
-					</c:param>
-					<c:param name="country">
-						<c:out value="${person.country}" />
-					</c:param>
-				</c:url>
-				<input type="button" value="Edit"
-					onclick="document.location='<c:out value="${editUrl}"/>'" />
-				&nbsp;
-				<input type="button" value="Back"
-					onclick="document.location='<c:url value="/search.htm"/>'" />
-			</form>
-		</td>
-	</tr>
-</table>
+<div id="content">
+	<div id="insert">
+		<img src="images/webflow-logo.jpg"/>
+	</div>
+	<form action="ldaptemplate.htm" method="post">
+	<table>
+		<tr>
+			<td>Person Details</td>
+		</tr>
+		<tr>
+			<td colpan="2"><hr></td>
+		</tr>
+		<tr>
+			<td><b>Name</b></td>
+			<td>${person.fullName}</td>
+		</tr>
+		<tr>
+			<td><b>Company</b></td>
+			<td>${person.company}</td>
+		</tr>
+		<tr>
+			<td><b>Country</B></td>
+			<td>${person.country}</td>
+		</tr>
+		<tr>
+			<td><b>Phone</b></td>
+			<td>${person.phone}</td>
+		</tr>
+		<%--
+		<tr>
+			<td colspan="2">
+				<br>
+				<b>Description:</b>
+				<br>
+				<c:forEach var="item" items="${person.description}">
+					${item}<br>
+				</c:forEach>				
+			</td>
+		</tr>
+		 --%>
+		<tr>
+			<td colspan="2" class="buttonBar">
+				<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">
+				<input type="submit" class="button" name="_eventId_edit" value="Edit">
+				<input type="submit" class="button" name="_eventId_back" value="Back">
+			</td>
+		</tr>
+	</table>
+	</form>
+</div>

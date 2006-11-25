@@ -18,6 +18,7 @@ package org.springframework.ldap.samples.person.dao;
 import java.util.List;
 
 import org.springframework.ldap.samples.person.domain.Person;
+import org.springframework.ldap.samples.person.domain.SearchCriteria;
 
 
 /**
@@ -36,4 +37,6 @@ public interface PersonDao {
     public Person findByPrimaryKey(String country, String company, String fullname);
     
     public List findAll();
+    
+    public List find(SearchCriteria criteria);
 }

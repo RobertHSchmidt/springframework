@@ -1,35 +1,60 @@
-<%@ include file="include.jsp"%>
+<%@ include file="includeTop.jsp" %>
 
-<h3>The following Persons have been found</h3>
-
-<table cellspacing="2" cellpadding="4">
-	<tr>
-		<th align="left">Full Name</th>
-		<th align="left">Company</th>
-		<th align="left">Country</th>
-	</tr>
-	<c:forEach var="person" items="${persons}">
+<div id="content">
+	<div id="insert">
+		<img src="images/webflow-logo.jpg"/>
+	</div>
+	<form action="ldaptemplate.htm" method="post">
+	<table>
 		<tr>
-			<td><a
-				href="<c:url value="/details.htm">
-	<c:param name="name"><c:out value="${person.fullName}" /></c:param>
-	<c:param name="company"><c:out value="${person.company}" /></c:param>
-	<c:param name="country"><c:out value="${person.country}" /></c:param>
-	</c:url>"><c:out
-				value="${person.fullName}" /></a></td>
-			<td><c:out value="${person.company}" /></td>
-			<td><c:out value="${person.country}" /></td>
+			<td>
+				Search Results
+			</td>
 		</tr>
-	</c:forEach>
-	<tr>
-		<td colspan="3">
-		<form><input type="button" value="Refresh"
-			onclick="document.location='<c:url value="/search.htm"/>'" /></form>
-		</td>
-	</tr>
-	<tr>
-		<td colspan="2">
-			<a href="<c:url value="logoff.jsp"/>">Logoff</a> user <authz:authentication operation="username"/>
-		</td>
-	</tr>
-</table>
+		<tr>
+			<td>
+				<hr>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table border="1">
+					<tr>
+						<th>Name</th>
+						<th>Company</th>
+						<th>Country</th>
+						<th>Phone</th>
+					</tr>
+					<c:forEach var="person" items="${results}">
+						<tr>
+							<td>
+								<c:url var="url" value="ldaptemplate.htm">
+									<c:param name="_flowExecutionKey" value="${flowExecutionKey}" />
+									<c:param name="_eventId" value="select" />
+									<c:param name="name" value="${person.fullName}" />
+									<c:param name="company" value="${person.company}" />
+									<c:param name="country" value="${person.country}" />
+								</c:url>
+								<a href="${url}">
+									${person.fullName}
+								</a>
+							</td>
+							<td>${person.company}</td>
+							<td>${person.country}</td>
+							<td>${person.phone}</td>
+						</tr>
+					</c:forEach>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td class="buttonBar">
+				<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">
+				<input type="submit" class="button" name="_eventId_newSearch" value="New Search">
+			</td>
+		</tr>
+	</table>
+	</form>
+</div>
+
+<%@ include file="includeBottom.jsp" %>

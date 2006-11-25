@@ -15,16 +15,26 @@
  */
 package org.springframework.ldap.samples.person.dao;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
-import org.springframework.ldap.samples.person.domain.Person;
-
+import org.apache.commons.lang.StringUtils;
+import org.springframework.ldap.CollectingNameClassPairCallbackHandler;
 import org.springframework.ldap.ContextMapper;
 import org.springframework.ldap.LdapOperations;
+import org.springframework.ldap.LdapTemplate;
+import org.springframework.ldap.samples.person.domain.Person;
+import org.springframework.ldap.samples.person.domain.SearchCriteria;
 import org.springframework.ldap.support.DirContextAdapter;
 import org.springframework.ldap.support.DirContextOperations;
 import org.springframework.ldap.support.DistinguishedName;
+import org.springframework.ldap.support.LdapRdn;
+import org.springframework.ldap.support.filter.AndFilter;
 import org.springframework.ldap.support.filter.EqualsFilter;
+import org.springframework.ldap.support.filter.Filter;
+import org.springframework.ldap.support.filter.WhitespaceWildcardsFilter;
 
 /**
  * Default implementation of PersonDao. This implementation uses
@@ -101,6 +111,14 @@ public class PersonDaoImpl implements PersonDao {
         dn.add("cn", fullname);
 
         return (Person) ldapOperations.lookup(dn, getContextMapper());
+    }
+
+    public List find(SearchCriteria criteria) {
+        AndFilter andFilter = new AndFilter();
+        andFilter.and(new EqualsFilter("objectclass", "person"));
+        andFilter.and(new WhitespaceWildcardsFilter("cn", criteria.getName()));
+        return ldapOperations.search(DistinguishedName.EMPTY_PATH, andFilter
+                .encode(), getContextMapper());
     }
 
     public void setLdapOperations(LdapOperations ldapOperations) {

@@ -35,6 +35,7 @@ import org.springframework.ldap.support.DirContextOperations;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.ldap.samples.person.domain.Person;
+import org.springframework.ldap.samples.person.domain.SearchCriteria;
 
 /**
  * Traditional implementation of PersonDao. This implementation uses the basic
@@ -145,6 +146,13 @@ public class TraditionalPersonDaoImpl implements PersonDao {
                 }
             }
         }
+    }
+
+    /*
+     * @see org.springframework.ldap.samples.person.dao.PersonDao#find(org.springframework.ldap.samples.person.domain.SearchCriteria)
+     */
+    public List find(SearchCriteria criteria) {
+        return null;
     }
 
     private String buildDn(String country, String company, String fullname) {
