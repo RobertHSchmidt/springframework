@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springframework.ldap.samples.person.dao.PersonDao;
 import org.springframework.ldap.samples.person.domain.Person;
+import org.springframework.ldap.samples.person.domain.SearchCriteria;
 import org.springframework.ldap.samples.person.service.PersonServiceImpl;
 
 /**
@@ -112,11 +113,6 @@ public class PersonServiceImplTest extends TestCase {
         verify();
     }
 
-    /*
-     * Test method for
-     * 'org.springframework.ldap.samples.person.service.PersonServiceImpl.findByPrimaryKey(String,
-     * String, String)'
-     */
     public void testFindByPrimaryKey() {
         Person person = new Person();
 
@@ -133,10 +129,6 @@ public class PersonServiceImplTest extends TestCase {
         assertSame(person, result);
     }
 
-    /*
-     * Test method for
-     * 'org.springframework.ldap.samples.person.service.PersonServiceImpl.findAll()'
-     */
     public void testFindAll() {
         List expected = Collections.singletonList(null);
 
@@ -151,4 +143,20 @@ public class PersonServiceImplTest extends TestCase {
         assertSame(expected, actual);
     }
 
+    public void testFind() {
+        List expected = Collections.singletonList(null);
+
+        SearchCriteria criteria = new SearchCriteria();
+        criteria.setName("some");
+        personDaoControl
+                .expectAndReturn(personDaoMock.find(criteria), expected);
+
+        replay();
+
+        List actual = tested.find(criteria);
+
+        verify();
+
+        assertSame(expected, actual);
+    }
 }

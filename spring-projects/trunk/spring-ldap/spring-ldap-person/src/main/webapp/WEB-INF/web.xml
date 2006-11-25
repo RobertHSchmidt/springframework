@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 
-<web-app id="LdapTemplateExample">
+<web-app id="LdapTemplateExample" 
+xmlns="http://java.sun.com/xml/ns/j2ee"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+version="2.4">
 	<display-name>LdapTemplate Example</display-name>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
@@ -28,6 +31,13 @@
 	<servlet>
 		<servlet-name>ldaptemplate</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>
+				/WEB-INF/ldaptemplate-servlet.xml
+				/WEB-INF/ldaptemplate-webflow-config.xml
+			</param-value>
+		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
@@ -37,8 +47,4 @@
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
-	<taglib>
-		<taglib-uri>http://java.sun.com/jstl/core</taglib-uri>
-		<taglib-location>/WEB-INF/tld/c.tld</taglib-location>
-	</taglib>
 </web-app>

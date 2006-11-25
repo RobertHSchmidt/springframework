@@ -21,15 +21,14 @@ import java.util.List;
 import javax.naming.directory.ModificationItem;
 
 import junit.framework.TestCase;
-import org.springframework.ldap.ContextMapper;
-import org.springframework.ldap.LdapOperations;
-import org.springframework.ldap.support.DirContextAdapter;
-import org.springframework.ldap.support.DirContextOperations;
-import org.springframework.ldap.support.DistinguishedName;
 
 import org.easymock.MockControl;
-import org.springframework.ldap.samples.person.dao.PersonDaoImpl;
+import org.springframework.ldap.ContextMapper;
+import org.springframework.ldap.LdapOperations;
 import org.springframework.ldap.samples.person.domain.Person;
+import org.springframework.ldap.samples.person.domain.SearchCriteria;
+import org.springframework.ldap.support.DirContextOperations;
+import org.springframework.ldap.support.DistinguishedName;
 
 /**
  * Unit tests for the PersonDaoImpl class.
@@ -129,10 +128,6 @@ public class PersonDaoImplTest extends TestCase {
         assertEquals("cn=Some Person, ou=Some company, c=Sweden", dn.toString());
     }
 
-    /*
-     * Test method for
-     * 'org.springframework.ldap.samples.person.dao.PersonDaoImpl.create(Person)'
-     */
     public void testCreate() {
         ldapOperationsMock.bind(DistinguishedName.EMPTY_PATH,
                 dirContextOperationsMock, null);
@@ -144,10 +139,6 @@ public class PersonDaoImplTest extends TestCase {
         verify();
     }
 
-    /*
-     * Test method for
-     * 'org.springframework.ldap.samples.person.dao.PersonDaoImpl.update(Person)'
-     */
     public void testUpdate() {
         ldapOperationsControl
                 .expectAndReturn(ldapOperationsMock
@@ -167,10 +158,6 @@ public class PersonDaoImplTest extends TestCase {
 
     }
 
-    /*
-     * Test method for
-     * 'org.springframework.ldap.samples.person.dao.PersonDaoImpl.delete(Person)'
-     */
     public void testDelete() {
         ldapOperationsMock.unbind(DistinguishedName.EMPTY_PATH);
 
@@ -181,10 +168,6 @@ public class PersonDaoImplTest extends TestCase {
         verify();
     }
 
-    /*
-     * Test method for
-     * 'org.springframework.ldap.samples.person.dao.PersonDaoImpl.findAll()'
-     */
     public void testFindAll() {
         List expectedList = Collections.singletonList(null);
         ldapOperationsControl.expectAndReturn(ldapOperationsMock.search(
@@ -200,11 +183,6 @@ public class PersonDaoImplTest extends TestCase {
         assertSame(expectedList, result);
     }
 
-    /*
-     * Test method for
-     * 'org.springframework.ldap.samples.person.dao.PersonDaoImpl.findByPrimaryKey(String,
-     * String, String)'
-     */
     public void testFindByPrimaryKey() {
         DistinguishedName dn = new DistinguishedName(
                 "cn=Some Person, ou=Some company, c=Sweden");
@@ -223,4 +201,21 @@ public class PersonDaoImplTest extends TestCase {
 
     }
 
+    public void testFind_Name() {
+        List expectedList = Collections.singletonList(null);
+        ldapOperationsControl.expectAndReturn(ldapOperationsMock.search(
+                DistinguishedName.EMPTY_PATH,
+                "(&(objectclass=person)(cn=*some*))", contextMapperMock),
+                expectedList);
+
+        replay();
+
+        SearchCriteria criteria = new SearchCriteria();
+        criteria.setName("some");
+        List result = tested.find(criteria);
+
+        verify();
+
+        assertSame(expectedList, result);
+    }
 }

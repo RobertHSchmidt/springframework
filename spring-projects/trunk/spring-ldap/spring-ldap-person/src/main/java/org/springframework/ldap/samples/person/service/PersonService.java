@@ -18,6 +18,7 @@ package org.springframework.ldap.samples.person.service;
 import java.util.List;
 
 import org.springframework.ldap.samples.person.domain.Person;
+import org.springframework.ldap.samples.person.domain.SearchCriteria;
 
 /**
  * Example interface for a Person service.
@@ -35,6 +36,8 @@ public interface PersonService {
     public void delete(Person person);
 
     public Person findByPrimaryKey(String country, String company, String name);
+
+    public List find(SearchCriteria criteria);
 
     public List findAll();
 }

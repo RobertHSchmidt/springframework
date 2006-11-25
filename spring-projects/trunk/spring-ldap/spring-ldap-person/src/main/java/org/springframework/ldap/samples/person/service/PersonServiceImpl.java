@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.springframework.ldap.samples.person.dao.PersonDao;
 import org.springframework.ldap.samples.person.domain.Person;
+import org.springframework.ldap.samples.person.domain.SearchCriteria;
 
 
 /**
@@ -58,6 +59,10 @@ public class PersonServiceImpl implements PersonService {
 
     public List findAll() {
         return personDao.findAll();
+    }
+    
+    public List find(SearchCriteria criteria) {
+        return personDao.find(criteria);
     }
 
     public void setPersonDao(PersonDao personDao) {
