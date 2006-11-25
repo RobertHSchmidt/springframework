@@ -16,6 +16,9 @@
 
 package org.springframework.ldap.support.control;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.sun.jndi.ldap.ctl.PagedResultsControl;
 
 /**
@@ -46,5 +49,29 @@ public class PagedResultsCookie {
      */
     public byte[] getCookie() {
         return cookie;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj) {
+        if (obj != null && this.getClass().equals(obj.getClass())) {
+            PagedResultsCookie that = (PagedResultsCookie) obj;
+            return new EqualsBuilder().append(this.cookie, that.cookie)
+                    .isEquals();
+        }
+
+        return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        return new HashCodeBuilder().append(this.cookie).toHashCode();
     }
 }
