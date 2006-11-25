@@ -11,6 +11,10 @@
 	<classpathentry kind="lib" path="lib/global/spring-beans.jar" sourcepath="lib/source/spring-src.zip"/>
 	<classpathentry kind="lib" path="lib/global/spring-context.jar" sourcepath="lib/source/spring-src.zip"/>
 	<classpathentry kind="lib" path="lib/global/spring-dao.jar" sourcepath="lib/source/spring-src.zip"/>
+	<classpathentry kind="lib" path="lib/global/spring-webflow.jar" sourcepath="lib/source/spring-webflow-src.zip"/>
+	<classpathentry kind="lib" path="lib/global/spring-binding.jar" sourcepath="lib/source/spring-binding-src.zip"/>
+	<classpathentry kind="lib" path="lib/global/ognl.jar"/>
+	<classpathentry kind="lib" path="lib/test/gsbase.jar"/>
 	<classpathentry kind="src" output="target/itest-classes" path="src/itest/java"/>
 	<classpathentry kind="lib" path="lib/test/spring-mock.jar" sourcepath="lib/source/spring-src.zip"/>
 	<classpathentry kind="lib" path="lib/global/commons-lang.jar" sourcepath="lib/source/commons-lang-src.zip"/>
