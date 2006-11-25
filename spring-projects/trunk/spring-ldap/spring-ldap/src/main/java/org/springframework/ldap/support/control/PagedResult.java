@@ -53,7 +53,7 @@ public class PagedResult {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public boolean equals(Object obj) {
-        if (obj != null && PagedResult.class.equals(obj.getClass())) {
+        if (obj != null && this.getClass().equals(obj.getClass())) {
             PagedResult that = (PagedResult) obj;
             return new EqualsBuilder().append(this.resultList, that.resultList)
                     .append(this.cookie, that.cookie).isEquals();
