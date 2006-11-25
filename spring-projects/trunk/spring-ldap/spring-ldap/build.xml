@@ -95,10 +95,10 @@ The HTML report is ${target.testresults.html.dir}/index.html
 		<taskdef name="jdiff" classname="jdiff.JDiffAntTask" classpath="${JDIFF_HOME}/lib/antjdiff.jar" />
 
 		<jdiff destdir="${target.dir}/jdiff_report">
-			<old name="Spring LDAP 1.1">
-				<dirset dir="${build.home}/spring-ldap-1.1/src/main/java" includes="org/**" />
+			<old name="Spring LDAP 1.1.1">
+				<dirset dir="${build.home}/spring-ldap-1.1.1/src/main/java" includes="org/**" />
 			</old>
-			<new name="Spring LDAP 1.1.1">
+			<new name="Spring LDAP 1.2">
 				<dirset dir="${src.java.main.dir}" includes="org/**" />
 			</new>
 		</jdiff>
@@ -115,11 +115,11 @@ The HTML report is ${target.testresults.html.dir}/index.html
 		<property name="JDIFF_HOME" location="${build.home}/jdiff" />
 		<property name="target.jdiff.reports.dir" location="${target.dir}/jdiff"/>
 
-		<property name="old.dir" location="${build.home}/spring-ldap-1.1" />
+		<property name="old.dir" location="${build.home}/spring-ldap-1.1.1" />
 		<property name="old.src.dir" location="${old.dir}/src/main/java" />
 		<property name="old.packages" value="org.springframework.ldap.*" />
 		<property name="project.old.title" value="Spring LDAP" />
-		<property name="project.old.version" value="1.1" />
+		<property name="project.old.version" value="1.1.1" />
 		<property name="target.javadocs.old.dir" location="${target.dir}/javadocs.old" />
 
 		<property name="new.src.dir" location="${src.java.main.dir}" />
