@@ -16,6 +16,7 @@
 
 package org.springframework.ldap.support.control;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -39,7 +40,7 @@ public class PagedResultsCookie {
      *            the cookie returned by a PagedResultsResponseControl.
      */
     public PagedResultsCookie(byte[] cookie) {
-        this.cookie = cookie;
+        this.cookie = ArrayUtils.clone(cookie);
     }
 
     /**
@@ -48,7 +49,7 @@ public class PagedResultsCookie {
      * @return the cookie.
      */
     public byte[] getCookie() {
-        return cookie;
+        return ArrayUtils.clone(cookie);
     }
 
     /*
