@@ -1,44 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <flow xmlns="http://www.springframework.org/schema/webflow"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
 
-	<start-state idref="enterCriteria"/>
+	<start-state idref="enterCriteria" />
 
 	<view-state id="enterCriteria" view="searchForm">
 		<render-actions>
-			<action bean="formAction" method="setupForm"/>
+			<action bean="formAction" method="setupForm" />
 		</render-actions>
-		<transition on="search" to="displayResults">
-			<action bean="formAction" method="bindAndValidate"/>
+		<transition on="search" to="performSearch">
+			<action bean="formAction" method="bindAndValidate" />
 		</transition>
 	</view-state>
 
-	<view-state id="displayResults" view="searchResult">
-		<render-actions>
-			<bean-action bean="personService" method="find">
-				<method-arguments>
-					<argument expression="flowScope.searchCriteria"/>			
-				</method-arguments>
-				<method-result name="results"/>
-			</bean-action>
-		</render-actions>
-		<transition on="newSearch" to="enterCriteria"/>
-		<transition on="select" to="browseDetails"/>
-	</view-state>
+	<action-state id="performSearch">
+		<bean-action bean="personService" method="find">
+			<method-arguments>
+				<argument expression="flowScope.searchCriteria" />
+			</method-arguments>
+			<method-result name="results" scope="flow" />
+		</bean-action>
+		<transition to="finish" />
+	</action-state>
 
-	<subflow-state id="browseDetails" flow="detail-flow">
-		<attribute-mapper>
-			<input-mapper>
-				<mapping source="requestParameters.name" target="name"/>
-				<mapping source="requestParameters.company" target="company"/>
-				<mapping source="requestParameters.country" target="country"/>
-			</input-mapper>
-		</attribute-mapper>
-		<transition on="finish" to="displayResults"/>
-	</subflow-state>
+	<end-state id="finish">
+		<output-mapper>
+			<output-attribute name="results" />
+		</output-mapper>
+	</end-state>
 
-	<import resource="search-flow-beans.xml"/>
-	
+	<import resource="search-flow-beans.xml" />
+
 </flow>

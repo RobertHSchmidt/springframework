@@ -50,7 +50,7 @@
 			<!-- get updated form data back into person object -->
 			<action bean="editAction" method="bindAndValidate"/>
 
-			<!-- update person in database -->
+			<!-- update database with person in flowScope-->
 			<bean-action bean="personService" method="update">
 				<method-arguments>
 					<argument expression="flowScope.person" />
