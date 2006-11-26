@@ -1,3 +1,3 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
+<%@ include file="includeTop.jsp" %>
 
-<a href="<c:url value="/ldaptemplate.htm?_flowId=search-flow" />">Enter application "ldaptemplate-person"</a>
+<a href="<c:url value="/ldaptemplate.htm?_flowId=personmanager-flow" />">Enter application "ldaptemplate-person"</a>

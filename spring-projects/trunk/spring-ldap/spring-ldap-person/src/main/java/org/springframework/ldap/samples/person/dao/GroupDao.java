@@ -17,26 +17,24 @@ package org.springframework.ldap.samples.person.dao;
 
 import java.util.List;
 
-import org.springframework.ldap.samples.person.domain.Person;
+import org.springframework.ldap.samples.person.domain.Group;
 import org.springframework.ldap.samples.person.domain.SearchCriteria;
 
-
 /**
- * Data Access Object interface for the Person entity.
+ * Data Access Object interface for the Group entity.
  * 
- * @author Mattias Arthursson
  * @author Ulrik Sandberg
  */
-public interface PersonDao {
-    public void create(Person person);
+public interface GroupDao {
+    public void create(Group group);
 
-    public void update(Person person);
+    public void update(Group group);
 
-    public void delete(Person person);
-    
-    public Person findByPrimaryKey(String country, String company, String fullname);
-    
+    public void delete(Group group);
+
+    public Group findByPrimaryKey(String name);
+
     public List findAll();
-    
+
     public List find(SearchCriteria criteria);
 }

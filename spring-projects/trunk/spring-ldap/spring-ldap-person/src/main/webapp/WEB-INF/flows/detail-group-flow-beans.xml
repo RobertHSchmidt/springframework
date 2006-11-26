@@ -4,10 +4,10 @@
                            http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<!-- Detail form action that setups the form and processes form submissions -->
-	<bean id="editPersonFormAction" class="org.springframework.webflow.action.FormAction">
-		<property name="formObjectClass" value="org.springframework.ldap.samples.person.domain.Person"/>
+	<bean id="editGroupFormAction" class="org.springframework.webflow.action.FormAction">
+		<property name="formObjectClass" value="org.springframework.ldap.samples.person.domain.Group"/>
 		<property name="validator">
-			<bean class="org.springframework.ldap.samples.person.domain.PersonValidator"/>
+			<bean class="org.springframework.ldap.samples.person.domain.GroupValidator"/>
 		</property>
 	</bean>
 	

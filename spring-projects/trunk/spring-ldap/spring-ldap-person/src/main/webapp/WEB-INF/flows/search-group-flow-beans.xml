@@ -4,7 +4,7 @@
                            http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<!-- Search form action that setups the form and processes form submissions -->
-	<bean id="searchPersonFormAction" class="org.springframework.webflow.action.FormAction">
+	<bean id="searchGroupFormAction" class="org.springframework.webflow.action.FormAction">
 		<property name="formObjectClass" value="org.springframework.ldap.samples.person.domain.SearchCriteria"/>
 		<property name="validator">
 			<bean class="org.springframework.ldap.samples.person.domain.SearchCriteriaValidator"/>

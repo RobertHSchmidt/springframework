@@ -6,31 +6,31 @@
 
 	<start-state idref="enterCriteria" />
 
-	<view-state id="enterCriteria" view="searchForm">
+	<view-state id="enterCriteria" view="searchGroupForm">
 		<render-actions>
-			<action bean="searchPersonFormAction" method="setupForm" />
+			<action bean="searchGroupFormAction" method="setupForm" />
 		</render-actions>
 		<transition on="search" to="performSearch">
-			<action bean="searchPersonFormAction" method="bindAndValidate" />
+			<action bean="searchGroupFormAction" method="bindAndValidate" />
 		</transition>
 	</view-state>
 
 	<action-state id="performSearch">
-		<bean-action bean="personService" method="find">
+		<bean-action bean="groupService" method="find">
 			<method-arguments>
 				<argument expression="flowScope.searchCriteria" />
 			</method-arguments>
-			<method-result name="results" scope="flow" />
+			<method-result name="groups" scope="flow" />
 		</bean-action>
 		<transition to="finish" />
 	</action-state>
 
 	<end-state id="finish">
 		<output-mapper>
-			<output-attribute name="results" />
+			<output-attribute name="groups" />
 		</output-mapper>
 	</end-state>
 
-	<import resource="search-flow-beans.xml" />
+	<import resource="search-group-flow-beans.xml" />
 
 </flow>
