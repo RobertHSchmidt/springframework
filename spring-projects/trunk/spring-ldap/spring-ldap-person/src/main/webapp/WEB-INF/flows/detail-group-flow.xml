@@ -6,22 +6,18 @@
 
 	<input-mapper>
 		<input-attribute name="name"/>
-		<input-attribute name="company"/>
-		<input-attribute name="country"/>
 	</input-mapper>
 
 	<start-state idref="displayDetails" />
 
-	<view-state id="displayDetails" view="showDetails">
+	<view-state id="displayDetails" view="showGroupDetails">
 		<render-actions>
-			<!-- get a person to work with -->
-			<bean-action bean="personService" method="findByPrimaryKey">
+			<!-- get a group to work with -->
+			<bean-action bean="groupService" method="findByPrimaryKey">
 				<method-arguments>
-					<argument expression="flowScope.country" />
-					<argument expression="flowScope.company" />
 					<argument expression="flowScope.name" />
 				</method-arguments>
-				<method-result name="person" />
+				<method-result name="group" />
 			</bean-action>
 		</render-actions>
 
@@ -29,31 +25,29 @@
 		<transition on="edit" to="editDetails" />
 	</view-state>
 
-	<view-state id="editDetails" view="editDetails">
+	<view-state id="editDetails" view="editGroupDetails">
 		<render-actions>
-			<!-- get a person to work with -->
-			<bean-action bean="personService" method="findByPrimaryKey">
+			<!-- get a group to work with -->
+			<bean-action bean="groupService" method="findByPrimaryKey">
 				<method-arguments>
-					<argument expression="flowScope.country" />
-					<argument expression="flowScope.company" />
 					<argument expression="flowScope.name" />
 				</method-arguments>
-				<method-result name="person" scope="flow" />
+				<method-result name="group" scope="flow" />
 			</bean-action>
 
-			<!-- setup form with person -->
-			<action bean="editPersonFormAction" method="setupForm"/>
+			<!-- setup form with group -->
+			<action bean="editGroupFormAction" method="setupForm"/>
 		</render-actions>
 
 		<transition on="cancel" to="displayDetails" />
 		<transition on="submit" to="displayDetails">
-			<!-- get updated form data back into person object -->
-			<action bean="editPersonFormAction" method="bindAndValidate"/>
+			<!-- get updated form data back into group object -->
+			<action bean="editGroupFormAction" method="bindAndValidate"/>
 
-			<!-- update database with person in flowScope-->
-			<bean-action bean="personService" method="update">
+			<!-- update database with group in flowScope-->
+			<bean-action bean="groupService" method="update">
 				<method-arguments>
-					<argument expression="flowScope.person" />
+					<argument expression="flowScope.group" />
 				</method-arguments>
 			</bean-action>
 		</transition>
@@ -61,6 +55,6 @@
 
 	<end-state id="finish" />
 
-	<import resource="detail-flow-beans.xml"/>
+	<import resource="detail-group-flow-beans.xml"/>
 
 </flow>

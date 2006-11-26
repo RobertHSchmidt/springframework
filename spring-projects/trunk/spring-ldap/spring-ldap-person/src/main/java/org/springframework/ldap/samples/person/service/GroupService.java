@@ -13,30 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.ldap.samples.person.dao;
+package org.springframework.ldap.samples.person.service;
 
 import java.util.List;
 
-import org.springframework.ldap.samples.person.domain.Person;
+import org.springframework.ldap.samples.person.domain.Group;
 import org.springframework.ldap.samples.person.domain.SearchCriteria;
 
-
 /**
- * Data Access Object interface for the Person entity.
+ * Example interface for a Group service.
  * 
- * @author Mattias Arthursson
  * @author Ulrik Sandberg
  */
-public interface PersonDao {
-    public void create(Person person);
+public interface GroupService {
 
-    public void update(Person person);
+    public void create(String name, List members);
 
-    public void delete(Person person);
-    
-    public Person findByPrimaryKey(String country, String company, String fullname);
-    
-    public List findAll();
-    
+    public void update(Group group);
+
+    public void delete(Group group);
+
+    public Group findByPrimaryKey(String name);
+
     public List find(SearchCriteria criteria);
+
+    public List findAll();
 }

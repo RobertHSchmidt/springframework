@@ -4,15 +4,15 @@
 	<div id="insert">
 		<img src="images/webflow-logo.jpg"/>
 	</div>
-	<form:form commandName="person" method="post">
+	<form:form commandName="group" method="post">
 	<table>
 		<tr>
-			<td>Edit Person Details</td>
+			<td>Edit Group Details</td>
 		</tr>
 		<tr>
 			<td colspan="2"><hr></td>
 		</tr>
-		<spring:hasBindErrors name="person">
+		<spring:hasBindErrors name="group">
 		<tr>
 			<td colspan="2">
 				<div class="error">Please check form for invalid input</div>
@@ -21,32 +21,16 @@
 		</spring:hasBindErrors>
 		<tr>
 			<td><b>Name</b></td>
-			<td><form:input path="fullName" /></td>
+			<td><form:input path="name" /></td>
 		</tr>
-		<tr>
-			<td><b>Company</b></td>
-			<td><form:input path="company" /></td>
-		</tr>
-		<tr>
-			<td><b>Country</B></td>
-			<td><form:input path="country" /></td>
-		</tr>
-		<tr>
-			<td><b>Phone</b></td>
-			<td><form:input path="phone" /></td>
-		</tr>
-		<%--
 		<tr>
 			<td colspan="2">
 				<br>
-				<b>Description:</b>
+				<b>Members:</b>
 				<br>
-				<c:forEach var="item" items="${description}">
-					${item}<br>
-				</c:forEach>
+				<form:select path="members" size="5" multiple="true" items="${group.members}" />
 			</td>
 		</tr>
-		 --%>
 		<tr>
 			<td colspan="2" class="buttonBar">
 				<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">

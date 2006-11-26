@@ -25,18 +25,17 @@ import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springframework.ldap.ContextMapper;
 import org.springframework.ldap.LdapOperations;
-import org.springframework.ldap.samples.person.domain.Person;
+import org.springframework.ldap.samples.person.domain.Group;
 import org.springframework.ldap.samples.person.domain.SearchCriteria;
 import org.springframework.ldap.support.DirContextOperations;
 import org.springframework.ldap.support.DistinguishedName;
 
 /**
- * Unit tests for the PersonDaoImpl class.
+ * Unit tests for the GroupDaoImpl class.
  * 
- * @author Mattias Arthursson
  * @author Ulrik Sandberg
  */
-public class PersonDaoImplTest extends TestCase {
+public class GroupDaoImplTest extends TestCase {
 
     private MockControl ldapOperationsControl;
 
@@ -50,9 +49,9 @@ public class PersonDaoImplTest extends TestCase {
 
     private ContextMapper contextMapperMock;
 
-    private PersonDaoImpl tested;
+    private GroupDaoImpl tested;
 
-    private Person person;
+    private Group group;
 
     protected void setUp() throws Exception {
         super.setUp();
@@ -67,17 +66,17 @@ public class PersonDaoImplTest extends TestCase {
         contextMapperControl = MockControl.createControl(ContextMapper.class);
         contextMapperMock = (ContextMapper) contextMapperControl.getMock();
 
-        person = new Person();
+        group = new Group();
 
-        tested = new PersonDaoImpl() {
+        tested = new GroupDaoImpl() {
             DirContextOperations setAttributes(DirContextOperations adapter,
-                    Person p) {
-                assertSame(person, p);
+                    Group p) {
+                assertSame(group, p);
                 return dirContextOperationsMock;
             }
 
-            DistinguishedName buildDn(Person p) {
-                assertSame(person, p);
+            DistinguishedName buildDn(Group p) {
+                assertSame(group, p);
                 return DistinguishedName.EMPTY_PATH;
             }
 
@@ -100,7 +99,7 @@ public class PersonDaoImplTest extends TestCase {
         contextMapperControl = null;
         contextMapperMock = null;
 
-        person = null;
+        group = null;
         tested = null;
     }
 
@@ -117,15 +116,13 @@ public class PersonDaoImplTest extends TestCase {
     }
 
     public void testBuildDn() {
-        tested = new PersonDaoImpl();
-        Person person = new Person();
-        person.setCountry("Sweden");
-        person.setCompany("Some company");
-        person.setFullName("Some Person");
+        tested = new GroupDaoImpl();
+        Group group = new Group();
+        group.setName("Some Group");
 
-        DistinguishedName dn = tested.buildDn(person);
+        DistinguishedName dn = tested.buildDn(group);
 
-        assertEquals("cn=Some Person, ou=Some company, c=Sweden", dn.toString());
+        assertEquals("cn=Some Group, ou=groups", dn.toString());
     }
 
     public void testCreate() {
@@ -134,7 +131,7 @@ public class PersonDaoImplTest extends TestCase {
 
         replay();
 
-        tested.create(person);
+        tested.create(group);
 
         verify();
     }
@@ -152,7 +149,7 @@ public class PersonDaoImplTest extends TestCase {
 
         replay();
 
-        tested.update(person);
+        tested.update(group);
 
         verify();
 
@@ -163,7 +160,7 @@ public class PersonDaoImplTest extends TestCase {
 
         replay();
 
-        tested.delete(person);
+        tested.delete(group);
 
         verify();
     }
@@ -171,7 +168,7 @@ public class PersonDaoImplTest extends TestCase {
     public void testFindAll() {
         List expectedList = Collections.singletonList(null);
         ldapOperationsControl.expectAndReturn(ldapOperationsMock.search(
-                DistinguishedName.EMPTY_PATH, "(objectclass=person)",
+                DistinguishedName.EMPTY_PATH, "(objectclass=groupOfUniqueNames)",
                 contextMapperMock), expectedList);
 
         replay();
@@ -185,27 +182,25 @@ public class PersonDaoImplTest extends TestCase {
 
     public void testFindByPrimaryKey() {
         DistinguishedName dn = new DistinguishedName(
-                "cn=Some Person, ou=Some company, c=Sweden");
+                "cn=Some Group, ou=groups");
 
         ldapOperationsControl.expectAndReturn(ldapOperationsMock.lookup(dn,
-                contextMapperMock), person);
+                contextMapperMock), group);
 
         replay();
 
-        Person result = tested.findByPrimaryKey("Sweden", "Some company",
-                "Some Person");
+        Group result = tested.findByPrimaryKey("Some Group");
 
         verify();
 
-        assertSame(person, result);
-
+        assertSame(group, result);
     }
 
     public void testFind_Name() {
         List expectedList = Collections.singletonList(null);
         ldapOperationsControl.expectAndReturn(ldapOperationsMock.search(
                 DistinguishedName.EMPTY_PATH,
-                "(&(objectclass=person)(cn=*some*))", contextMapperMock),
+                "(&(objectclass=groupOfUniqueNames)(cn=*some*))", contextMapperMock),
                 expectedList);
 
         replay();

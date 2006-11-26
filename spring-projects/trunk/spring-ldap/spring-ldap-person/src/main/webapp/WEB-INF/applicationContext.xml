@@ -54,6 +54,11 @@
 		<property name="base" value="dc=jayway,dc=se" />
 	</bean>
 
+	<bean id="groupDao"
+		class="org.springframework.ldap.samples.person.dao.GroupDaoImpl">
+		<property name="ldapOperations" ref="ldapOperations" />
+	</bean>
+
 	<bean id="personService"
 		class="org.springframework.ldap.samples.person.service.PersonServiceImpl">
 		<property name="personDao" ref="personDao" />
@@ -61,5 +66,10 @@
 		<!--
 		<property name="personDao" ref="traditionalPersonDao" />
 		-->
+	</bean>
+
+	<bean id="groupService"
+		class="org.springframework.ldap.samples.person.service.GroupServiceImpl">
+		<property name="groupDao" ref="groupDao" />
 	</bean>
 </beans>

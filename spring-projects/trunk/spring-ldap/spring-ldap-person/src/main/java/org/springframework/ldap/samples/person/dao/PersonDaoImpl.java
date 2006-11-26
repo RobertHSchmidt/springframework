@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2005-2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +15,17 @@
  */
 package org.springframework.ldap.samples.person.dao;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.ldap.CollectingNameClassPairCallbackHandler;
 import org.springframework.ldap.ContextMapper;
 import org.springframework.ldap.LdapOperations;
-import org.springframework.ldap.LdapTemplate;
 import org.springframework.ldap.samples.person.domain.Person;
 import org.springframework.ldap.samples.person.domain.SearchCriteria;
 import org.springframework.ldap.support.DirContextAdapter;
 import org.springframework.ldap.support.DirContextOperations;
 import org.springframework.ldap.support.DistinguishedName;
-import org.springframework.ldap.support.LdapRdn;
 import org.springframework.ldap.support.filter.AndFilter;
 import org.springframework.ldap.support.filter.EqualsFilter;
-import org.springframework.ldap.support.filter.Filter;
 import org.springframework.ldap.support.filter.WhitespaceWildcardsFilter;
 
 /**

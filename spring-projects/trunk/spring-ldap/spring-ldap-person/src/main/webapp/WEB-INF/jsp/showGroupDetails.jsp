@@ -7,39 +7,25 @@
 	<form action="ldaptemplate.htm" method="post">
 	<table>
 		<tr>
-			<td>Person Details</td>
+			<td>Group Details</td>
 		</tr>
 		<tr>
 			<td colpan="2"><hr></td>
 		</tr>
 		<tr>
 			<td><b>Name</b></td>
-			<td>${person.fullName}</td>
+			<td>${group.name}</td>
 		</tr>
-		<tr>
-			<td><b>Company</b></td>
-			<td>${person.company}</td>
-		</tr>
-		<tr>
-			<td><b>Country</B></td>
-			<td>${person.country}</td>
-		</tr>
-		<tr>
-			<td><b>Phone</b></td>
-			<td>${person.phone}</td>
-		</tr>
-		<%--
 		<tr>
 			<td colspan="2">
 				<br>
-				<b>Description:</b>
+				<b>Members:</b>
 				<br>
-				<c:forEach var="item" items="${person.description}">
-					${item}<br>
-				</c:forEach>				
+				<c:forEach var="item" items="${group.members}">
+					${item}<br/>
+				</c:forEach>
 			</td>
 		</tr>
-		 --%>
 		<tr>
 			<td colspan="2" class="buttonBar">
 				<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">
