@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
+
+	<start-state idref="findPerson"/>
+
+	<subflow-state id="findPerson" flow="search-flow">
+		<attribute-mapper>
+			<output-mapper>
+				<output-attribute name="results" />
+			</output-mapper>
+		</attribute-mapper>
+		<transition on="finish" to="displayResults"/>
+	</subflow-state>
+
+	<view-state id="displayResults" view="searchResult">
+		<transition on="newSearch" to="findPerson"/>
+		<transition on="select" to="browseDetails"/>
+	</view-state>
+
+	<subflow-state id="browseDetails" flow="detail-flow">
+		<attribute-mapper>
+			<input-mapper>
+				<mapping source="requestParameters.name" target="name"/>
+				<mapping source="requestParameters.company" target="company"/>
+				<mapping source="requestParameters.country" target="country"/>
+			</input-mapper>
+		</attribute-mapper>
+		<transition on="finish" to="displayResults"/>
+	</subflow-state>
+	
+</flow>
