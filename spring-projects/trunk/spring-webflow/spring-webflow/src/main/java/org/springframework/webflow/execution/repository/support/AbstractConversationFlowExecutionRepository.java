@@ -246,7 +246,7 @@ public abstract class AbstractConversationFlowExecutionRepository extends Abstra
 	/**
 	 * Returns the "conversation scope" for the flow execution with the
 	 * key provided. This is mainly useful for reinitialisation of a flow execution
-	 * ofter restoration from the repository.
+	 * after restoration from the repository.
 	 * @param key the flow execution key
 	 * @return the execution's conversation scope
 	 */

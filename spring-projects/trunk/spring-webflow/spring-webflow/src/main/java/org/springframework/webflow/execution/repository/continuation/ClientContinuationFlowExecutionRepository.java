@@ -128,7 +128,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 		FlowExecutionContinuation continuation = decode((String)getContinuationId(key));
 		try {
 			FlowExecution execution = continuation.unmarshal();
-			// the flox execution was deserialized so we need to restore transient
+			// the flow execution was deserialized so we need to restore transient
 			// state
 			return getExecutionStateRestorer().restoreState(execution, getConversationScope(key));
 		}
