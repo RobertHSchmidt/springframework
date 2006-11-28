@@ -1,0 +1,115 @@
+<project name="spring-dev" default="javadoc" >
+	
+	<property file="build.properties"/>
+	<property file="project.properties"/>
+	
+    <!-- ================================= 
+          target: agent-jar              
+         ================================= -->
+    <target name="agent-jar" depends="" description="creates the agent jar">
+        <jar destfile="jpa-agent.jar">
+			<fileset dir="target/classes">
+				<include name="**/InstrumentationSavingAgent*"/>
+        	</fileset>
+        	<manifest>
+        		<attribute name="Premain-Class" value="org.springframework.instrument.classloading.InstrumentationSavingAgent"/>
+        	</manifest>
+        </jar>
+    </target>
+
+	<path id="all-libs">
+
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar"/>
+			<exclude name="aspectj/aspectjtools.jar"/>
+		</fileset>
+
+	</path>
+	         
+	<target name="javadoc" description="Generate framework Javadocs">
+
+		<delete dir="${javadoc.dir}" failonerror="false"/>
+		<mkdir dir="${javadoc.dir}"/>
+
+		<javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}" windowtitle="Spring Java Config API"
+				source="1.5" access="package" author="true" version="true" use="true"
+				defaultexcludes="true" 
+				header='&lt;a href=\"http://www.springframework.org/\" target=\"_top\"&gt;The Spring Framework&lt;/a&gt;'>
+			<arg value="-breakiterator"/>
+			<arg value="-J-Xmx128m"/>
+			<arg value="-J-XX:MaxPermSize=128m"/>
+			<arg value="${javadoc.proxyhost}"/>
+			<arg value="${javadoc.proxyport}"/>
+			<doctitle><![CDATA[<h1>Spring Java Config API</h1>]]></doctitle>
+			<bottom><![CDATA[<i>Copyright &copy; 2006 <a href="http://www.interface21.com/" target="_top">Interface21</a>.</i>]]></bottom>
+			<classpath refid="all-libs"/>
+			
+			<packageset dir="${src.dir}">
+				<include name="org/springframework/asm/**"/>			
+				<include name="org/springframework/beans/factory/**"/>
+				<include name="org/springframework/context/java/**"/>				
+			</packageset>
+
+			<link href="http://java.sun.com/j2ee/1.4/docs/api"/>
+			<link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
+			<link href="http://static.springframework.org/spring/docs/2.0.x/api"/>			
+
+		</javadoc>
+
+	</target>
+
+
+	<target name="clean" description="Clean all output dirs (dist, javadocs, classes, test-classes, etc)">
+
+		<delete dir="${target.classes.dir}"/>
+		<delete dir="${target.mockclasses.dir}"/>
+		<delete dir="${target.testclasses.dir}"/>
+		<delete dir="${target.tigertestclasses.dir}"/>
+		<delete dir="${target.clover.dir}"/>
+		<delete dir="${target.junit.reports.dir}"/>
+		<delete dir="${target.junit.summary.dir}"/>
+		<delete dir="${target.release.dir}"/>
+		<delete dir="${target.otherclasses.dir}"/>
+
+		<!-- Just kill target dir (it's safer). No need at this point to keep it. -->
+		<delete dir="${target.dir}"/>
+
+		<delete dir="${dist.dir}"/>
+		<delete dir="${javadoc.dir}"/>
+
+	</target>
+	
+		<target name="build" description="Compile JDK 1.5 source files">
+
+		<javac destdir="${target.classes.dir}" source="1.5" target="1.5" debug="${debug}"
+				deprecation="false" optimize="false" failonerror="true">
+			<src path="${src.dir}"/>
+			<classpath refid="all-libs"/>
+		</javac>
+
+	</target>
+
+	<target name="fulljar" description="Create full JAR file with all classes">
+
+		<delete file="${dist.dir}/spring-java-config.jar"/>
+
+		<jar jarfile="${dist.dir}/spring-java-config.jar">
+			<fileset dir="${target.classes.dir}">
+			<!--
+				<include name="META-INF/**"/>
+				-->
+				<include name="org/springframework/asm/**"/>
+			    <include name="org/springframework/beans/factory/**"/>
+			   <include name="org/springframework/context/java/**"/>				
+				<!-- exclude content of spring-aspects.jar -->
+				<exclude name="org/springframework/orm/**"/>
+				<exclude name="org/springframework/sca/**"/>				
+			</fileset>
+			<manifest>
+				<attribute name="Implementation-Title" value="${spring-title}"/>
+				<attribute name="Implementation-Version" value="${spring-version}"/>
+			</manifest>
+		</jar>
+
+	</target>	         
+</project>
