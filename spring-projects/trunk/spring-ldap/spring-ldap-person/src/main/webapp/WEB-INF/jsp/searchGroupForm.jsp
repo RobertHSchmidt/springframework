@@ -7,7 +7,7 @@
 	<form:form commandName="searchCriteria" method="post">
 	<table>
 		<tr>
-			<td>Search Criteria</td>
+			<td>Group Search</td>
 		</tr>
 		<tr>
 			<td colspan="2">
@@ -22,7 +22,7 @@
 		</tr>
 		</spring:hasBindErrors>
 		<tr>
-			<td>Name (or part of name)</td>
+			<td>Name</td>
 			<td>
 				<form:input path="name" />
 			</td>

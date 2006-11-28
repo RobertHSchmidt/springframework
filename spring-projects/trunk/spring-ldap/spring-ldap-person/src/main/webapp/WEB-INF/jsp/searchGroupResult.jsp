@@ -8,7 +8,7 @@
 	<table>
 		<tr>
 			<td>
-				Search Results
+				Matching Groups
 			</td>
 		</tr>
 		<tr>
