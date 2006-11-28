@@ -16,6 +16,7 @@
 package org.springframework.ldap.samples.person.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.ldap.samples.person.domain.Group;
 import org.springframework.ldap.samples.person.domain.SearchCriteria;
@@ -27,7 +28,7 @@ import org.springframework.ldap.samples.person.domain.SearchCriteria;
  */
 public interface GroupService {
 
-    public void create(String name, List members);
+    public void create(String name, Set members);
 
     public void update(Group group);
 

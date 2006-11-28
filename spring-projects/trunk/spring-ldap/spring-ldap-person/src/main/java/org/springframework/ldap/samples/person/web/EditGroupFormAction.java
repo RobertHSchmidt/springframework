@@ -18,6 +18,8 @@ package org.springframework.ldap.samples.person.web;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.ldap.samples.person.domain.Group;
@@ -59,6 +61,24 @@ public class EditGroupFormAction extends FormAction {
     }
 
     /**
+     * Add the member in the <code>member</code> property to the form object
+     * <code>members</code> property.
+     * 
+     * @param context
+     *            RequestContext with parameters and attributes.
+     * @return The <code>success</code> event if member was added successfully
+     * @throws Exception
+     *             if an unexpected error occurs
+     */
+    public Event add(RequestContext context) throws Exception {
+        Group group = (Group) getFormObject(context);
+        Set members = group.getMembers();
+        String member = (String) context.getRequestParameters().get("member");
+        members.add(member);
+        return success();
+    }
+
+    /**
      * Removes the members in the <code>selectedMembers</code> property from
      * the form object <code>members</code> property.
      * 
@@ -71,13 +91,13 @@ public class EditGroupFormAction extends FormAction {
      */
     public Event remove(RequestContext context) throws Exception {
         Group group = (Group) getFormObject(context);
-        Collection members = group.getMembers();
+        Set members = group.getMembers();
         String[] selectedMembers = (String[]) context.getRequestParameters()
-                .getArray("selectedMembers", String.class);
+                .getArray("selectedMembers");
         List membersToRemove = Arrays.asList(selectedMembers);
         Collection adjustedMembers = CollectionUtils.subtract(members,
                 membersToRemove);
-        group.setMembers(adjustedMembers);
+        group.setMembers(new TreeSet(adjustedMembers));
         return success();
     }
 }

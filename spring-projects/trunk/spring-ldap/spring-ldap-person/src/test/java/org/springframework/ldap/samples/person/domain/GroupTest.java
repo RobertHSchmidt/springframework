@@ -16,7 +16,7 @@
 package org.springframework.ldap.samples.person.domain;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -30,8 +30,8 @@ import com.gargoylesoftware.base.testing.EqualsTester;
 public class GroupTest extends TestCase {
 
     public void testEquals() {
-        List members = Collections.singletonList("some dn");
-        List differentMembers = Collections.singletonList("other dn");
+        Set members = Collections.singleton("some dn");
+        Set differentMembers = Collections.singleton("other dn");
         Group original = new Group();
         original.setName("some name");
         original.setMembers(members);

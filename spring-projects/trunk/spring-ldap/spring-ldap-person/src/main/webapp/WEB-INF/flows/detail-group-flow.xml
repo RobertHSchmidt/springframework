@@ -33,6 +33,8 @@
 			<action bean="editGroupFormAction" method="resetForm"/>
 		</transition>
 
+		<transition on="add" to="findMember" />
+
 		<transition on="remove" to="editDetails">
 			<action bean="editGroupFormAction" method="bind"/>
 			<action bean="editGroupFormAction" method="remove"/>
@@ -46,6 +48,22 @@
 				</method-arguments>
 			</bean-action>
 		</transition>
+	</view-state>
+
+	<subflow-state id="findMember" flow="search-flow">
+		<attribute-mapper>
+			<output-mapper>
+				<output-attribute name="results" scope="flash"/>
+			</output-mapper>
+		</attribute-mapper>
+		<transition on="finish" to="displayAddCandidates"/>
+	</subflow-state>
+
+	<view-state id="displayAddCandidates" view="showAddCandidates">
+		<transition on="select" to="editDetails">
+			<action bean="editGroupFormAction" method="add" />
+		</transition>
+		<transition on="newSearch" to="findMember" />
 	</view-state>
 
 	<end-state id="finish" />
