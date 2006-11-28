@@ -16,7 +16,7 @@
 package org.springframework.ldap.samples.person.domain;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -31,13 +31,13 @@ public class Group implements Serializable {
 
     private String name;
 
-    private Collection members;
+    private Set members;
 
-    public Collection getMembers() {
+    public Set getMembers() {
         return members;
     }
 
-    public void setMembers(Collection members) {
+    public void setMembers(Set members) {
         this.members = members;
     }
 

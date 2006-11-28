@@ -15,9 +15,8 @@
  */
 package org.springframework.ldap.samples.person.dao;
 
-import org.springframework.ldap.samples.person.domain.Person;
-
 import org.springframework.ldap.ContextMapper;
+import org.springframework.ldap.samples.person.domain.Person;
 import org.springframework.ldap.support.DirContextOperations;
 import org.springframework.ldap.support.DistinguishedName;
 
@@ -37,6 +36,9 @@ public class PersonContextMapper implements ContextMapper {
         DirContextOperations dirContext = (DirContextOperations) ctx;
         DistinguishedName dn = new DistinguishedName(dirContext.getDn());
         Person person = new Person();
+        DistinguishedName dnWithBase = new DistinguishedName(dn);
+        dnWithBase.prepend(new DistinguishedName("dc=jayway, dc=se"));
+        person.setDn(dnWithBase.encode());
         person.setCountry(dn.getLdapRdn(0).getComponent().getValue());
         person.setCompany(dn.getLdapRdn(1).getComponent().getValue());
         person.setFullName(dirContext.getStringAttribute("cn"));

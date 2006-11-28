@@ -16,6 +16,7 @@
 package org.springframework.ldap.samples.person.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.ldap.samples.person.dao.GroupDao;
 import org.springframework.ldap.samples.person.domain.Group;
@@ -30,11 +31,15 @@ public class GroupServiceImpl implements GroupService {
 
     private GroupDao groupDao;
 
+    public void setGroupDao(GroupDao groupDao) {
+        this.groupDao = groupDao;
+    }
+
     /*
      * @see org.springframework.ldap.samples.person.service.GroupService#create(java.lang.String,
-     *      java.util.List)
+     *      java.util.Set)
      */
-    public void create(String name, List members) {
+    public void create(String name, Set members) {
 
         Group group = new Group();
         group.setName(name);
@@ -76,9 +81,5 @@ public class GroupServiceImpl implements GroupService {
      */
     public List find(SearchCriteria criteria) {
         return groupDao.find(criteria);
-    }
-
-    public void setGroupDao(GroupDao groupDao) {
-        this.groupDao = groupDao;
     }
 }

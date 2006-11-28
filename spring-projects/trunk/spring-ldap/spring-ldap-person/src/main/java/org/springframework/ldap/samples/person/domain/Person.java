@@ -19,6 +19,7 @@ import java.io.Serializable;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.springframework.core.style.ToStringCreator;
 
 /**
  * Simple class representing a single person.
@@ -28,6 +29,12 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  */
 public class Person implements Serializable {
     private static final long serialVersionUID = -8953862790009843528L;
+
+    /**
+     * Needed when adding persons to groups, since groups require
+     * full distinguished names of their members.
+     */
+    private String dn;
 
     private String fullName;
 
@@ -41,12 +48,12 @@ public class Person implements Serializable {
 
     private String phone;
 
-    public String[] getDescription() {
-        return description;
+    public String getDn() {
+        return dn;
     }
 
-    public void setDescription(String[] description) {
-        this.description = description;
+    public void setDn(String dn) {
+        this.dn = dn;
     }
 
     public String getFullName() {
@@ -65,12 +72,12 @@ public class Person implements Serializable {
         this.lastName = lastName;
     }
 
-    public String getCompany() {
-        return company;
+    public String[] getDescription() {
+        return description;
     }
 
-    public void setCompany(String company) {
-        this.company = company;
+    public void setDescription(String[] description) {
+        this.description = description;
     }
 
     public String getCountry() {
@@ -79,6 +86,14 @@ public class Person implements Serializable {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
     }
 
     public String getPhone() {
@@ -98,5 +113,9 @@ public class Person implements Serializable {
 
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
+    }
+    
+    public String toString() {
+        return new ToStringCreator(this).toString();
     }
 }

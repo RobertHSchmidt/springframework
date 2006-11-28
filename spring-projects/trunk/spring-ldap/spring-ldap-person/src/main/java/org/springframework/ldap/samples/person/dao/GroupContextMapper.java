@@ -16,6 +16,8 @@
 package org.springframework.ldap.samples.person.dao;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.TreeSet;
 
 import org.springframework.ldap.ContextMapper;
 import org.springframework.ldap.samples.person.domain.Group;
@@ -38,8 +40,9 @@ public class GroupContextMapper implements ContextMapper {
         group.setName(dirContext.getStringAttribute("cn"));
         String[] membersArray = dirContext.getStringAttributes("uniqueMember");
         if (membersArray != null) {
-            group.setMembers(Arrays.asList(membersArray));
-        }        
+            List list = Arrays.asList(membersArray);
+            group.setMembers(new TreeSet(list));
+        }
         return group;
     }
 }
