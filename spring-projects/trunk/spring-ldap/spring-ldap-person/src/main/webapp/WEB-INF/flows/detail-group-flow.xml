@@ -11,15 +11,14 @@
 	<start-state idref="displayDetails" />
 
 	<view-state id="displayDetails" view="showGroupDetails">
-		<render-actions>
-			<!-- get a group to work with -->
+		<entry-actions>
 			<bean-action bean="groupService" method="findByPrimaryKey">
 				<method-arguments>
 					<argument expression="flowScope.name" />
 				</method-arguments>
-				<method-result name="group" />
+				<method-result name="group" scope="flash" />
 			</bean-action>
-		</render-actions>
+		</entry-actions>
 
 		<transition on="back" to="finish" />
 		<transition on="edit" to="editDetails" />
@@ -27,24 +26,20 @@
 
 	<view-state id="editDetails" view="editGroupDetails">
 		<render-actions>
-			<!-- get a group to work with -->
-			<bean-action bean="groupService" method="findByPrimaryKey">
-				<method-arguments>
-					<argument expression="flowScope.name" />
-				</method-arguments>
-				<method-result name="group" scope="flow" />
-			</bean-action>
-
-			<!-- setup form with group -->
 			<action bean="editGroupFormAction" method="setupForm"/>
 		</render-actions>
 
-		<transition on="cancel" to="displayDetails" />
-		<transition on="submit" to="displayDetails">
-			<!-- get updated form data back into group object -->
-			<action bean="editGroupFormAction" method="bindAndValidate"/>
+		<transition on="cancel" to="displayDetails">
+			<action bean="editGroupFormAction" method="resetForm"/>
+		</transition>
 
-			<!-- update database with group in flowScope-->
+		<transition on="remove" to="editDetails">
+			<action bean="editGroupFormAction" method="bind"/>
+			<action bean="editGroupFormAction" method="remove"/>
+		</transition>
+
+		<transition on="submit" to="displayDetails">
+			<action bean="editGroupFormAction" method="bindAndValidate"/>
 			<bean-action bean="groupService" method="update">
 				<method-arguments>
 					<argument expression="flowScope.group" />

@@ -28,18 +28,10 @@
 			<td><b>Phone</b></td>
 			<td>${person.phone}</td>
 		</tr>
-		<%--
 		<tr>
-			<td colspan="2">
-				<br>
-				<b>Description:</b>
-				<br>
-				<c:forEach var="item" items="${person.description}">
-					${item}<br>
-				</c:forEach>				
-			</td>
+			<td><b>Description</b></td>
+			<td>${person.description}</td>
 		</tr>
-		 --%>
 		<tr>
 			<td colspan="2" class="buttonBar">
 				<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">

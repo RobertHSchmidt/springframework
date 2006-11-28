@@ -28,7 +28,27 @@
 				<br>
 				<b>Members:</b>
 				<br>
-				<form:select path="members" size="5" multiple="true" items="${group.members}" />
+				<select name="selectedMembers" size="4" multiple="true">
+					<c:forEach var="item" items="${group.members}">
+						<option value="${item}">${item}</option>
+					</c:forEach>
+				</select>
+			</td>
+			<td>
+               	<table>
+               		<tr>
+               			<td align="center">
+				        	<input type="submit" class="button" name="_eventId_add"
+								value="Add..." />
+		                </td>
+		            </tr>
+		            <tr>
+		                <td align="center">
+				        	<input type="submit" class="button" name="_eventId_remove"
+								value="Remove" />
+		                </td>
+	                </tr>
+                </table>
 			</td>
 		</tr>
 		<tr>

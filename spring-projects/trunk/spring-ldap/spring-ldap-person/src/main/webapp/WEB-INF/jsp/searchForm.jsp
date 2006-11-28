@@ -7,7 +7,7 @@
 	<form:form commandName="searchCriteria" method="post">
 	<table>
 		<tr>
-			<td>Search Criteria</td>
+			<td>Person Search</td>
 		</tr>
 		<tr>
 			<td colspan="2">
