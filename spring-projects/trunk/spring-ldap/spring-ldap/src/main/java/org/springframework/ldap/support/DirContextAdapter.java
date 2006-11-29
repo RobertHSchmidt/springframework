@@ -346,8 +346,8 @@ public class DirContextAdapter implements DirContextOperations {
      * value after a previous change. For example, changing <code>a</code> to
      * <code>b</code> and then back to <code>a</code> again must result in
      * this method returning <code>true</code> so the first change can be
-     * overwritten with the latest change.
-     * TODO Do the null checks on the value instead
+     * overwritten with the latest change. TODO Do the null checks on the value
+     * instead
      * 
      * @param name
      *            Name of the original attribute.
@@ -525,7 +525,7 @@ public class DirContextAdapter implements DirContextOperations {
                 // TRUE if we can't access the value
                 return true;
             }
-        }        
+        }
         // FALSE since we have compared all values
         return false;
     }
@@ -1156,7 +1156,9 @@ public class DirContextAdapter implements DirContextOperations {
      * @see javax.naming.Context#getNameInNamespace()
      */
     public String getNameInNamespace() {
-        return dn.toString();
+        DistinguishedName result = new DistinguishedName(dn);
+        result.prepend(base);
+        return result.toString();
     }
 
     /*
@@ -1165,9 +1167,7 @@ public class DirContextAdapter implements DirContextOperations {
      * @see org.springframework.ldap.support.DirContextOperations#getDn()
      */
     public Name getDn() {
-        DistinguishedName retval = new DistinguishedName(dn);
-        retval.removeFirst(base);
-        return retval;
+        return dn;
     }
 
     /*

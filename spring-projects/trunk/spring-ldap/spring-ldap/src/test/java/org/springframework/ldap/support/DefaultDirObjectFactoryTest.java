@@ -23,7 +23,6 @@ import javax.naming.directory.BasicAttributes;
 
 import junit.framework.TestCase;
 
-
 import org.easymock.MockControl;
 import org.springframework.ldap.support.DefaultDirObjectFactory;
 import org.springframework.ldap.support.DirContextAdapter;
@@ -40,11 +39,18 @@ public class DefaultDirObjectFactoryTest extends TestCase {
 
     private DefaultDirObjectFactory tested;
 
+    private MockControl contextControl2;
+
+    private Context contextMock2;
+
     protected void setUp() throws Exception {
         super.setUp();
 
         contextControl = MockControl.createControl(Context.class);
         contextMock = (Context) contextControl.getMock();
+
+        contextControl2 = MockControl.createControl(Context.class);
+        contextMock2 = (Context) contextControl2.getMock();
 
         tested = new DefaultDirObjectFactory();
     }
@@ -55,15 +61,20 @@ public class DefaultDirObjectFactoryTest extends TestCase {
         contextControl = null;
         contextMock = null;
 
+        contextControl2 = null;
+        contextMock2 = null;
+
         tested = null;
     }
 
     protected void replay() {
         contextControl.replay();
+        contextControl2.replay();
     }
 
     protected void verify() {
         contextControl.verify();
+        contextControl2.verify();
     }
 
     public void testGetObjectInstance() throws Exception {
@@ -124,21 +135,23 @@ public class DefaultDirObjectFactoryTest extends TestCase {
     public void testGetObjectInstance_BaseSet() throws Exception {
         BasicAttributes expectedAttributes = new BasicAttributes();
         expectedAttributes.put("someAttribute", "someValue");
-        Hashtable env = new Hashtable();
-        env.put(DefaultDirObjectFactory.JNDI_ENV_BASE_PATH_KEY,
-                new DistinguishedName("dc=jayway,dc=se"));
 
+        contextControl2.expectAndReturn(contextMock2.getNameInNamespace(),
+                "dc=jayway, dc=se");
         contextMock.close();
 
         replay();
 
         DirContextAdapter adapter = (DirContextAdapter) tested
-                .getObjectInstance(contextMock, DN, null, env,
+                .getObjectInstance(contextMock, new DistinguishedName(
+                        "ou=some unit"), contextMock2, new Hashtable(),
                         expectedAttributes);
 
         verify();
 
         assertEquals("ou=some unit", adapter.getDn().toString());
+        assertEquals("ou=some unit, dc=jayway, dc=se", adapter
+                .getNameInNamespace());
         assertEquals(expectedAttributes, adapter.getAttributes());
     }
 }

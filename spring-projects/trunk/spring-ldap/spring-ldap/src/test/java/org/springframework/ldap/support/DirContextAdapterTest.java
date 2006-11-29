@@ -169,19 +169,20 @@ public class DirContextAdapterTest extends TestCase {
         DirContextAdapter tested = new DirContextAdapter(null, DUMMY_NAME,
                 BASE_NAME);
         Name result = tested.getDn();
-        assertEquals("c=SE", result.toString());
+        assertEquals(DUMMY_NAME, result);
     }
 
-    public void testGetNameInNamespace(){
+    public void testGetNameInNamespace() {
         DirContextAdapter tested = new DirContextAdapter(DUMMY_NAME);
         String result = tested.getNameInNamespace();
-        assertEquals(DUMMY_NAME.toString(), result);        
+        assertEquals(DUMMY_NAME.toString(), result);
     }
-    
-    public void testGetNameInNamespace_BasePath(){
-        DirContextAdapter tested = new DirContextAdapter(null, DUMMY_NAME, BASE_NAME);
+
+    public void testGetNameInNamespace_BasePath() {
+        DirContextAdapter tested = new DirContextAdapter(null,
+                new DistinguishedName("c=SE"), BASE_NAME);
         String result = tested.getNameInNamespace();
-        assertEquals(DUMMY_NAME.toString(), result);        
+        assertEquals(DUMMY_NAME.toString(), result);
     }
 
     public void testAddMultiAttributes() throws Exception {
