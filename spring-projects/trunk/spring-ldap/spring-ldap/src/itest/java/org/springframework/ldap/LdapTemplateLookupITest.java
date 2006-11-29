@@ -46,6 +46,8 @@ public class LdapTemplateLookupITest extends
         DirContextAdapter result = (DirContextAdapter) tested
                 .lookup("cn=Some Person2, ou=company1,c=Sweden,dc=jayway,dc=se");
 
+        assertEquals("cn=Some Person2, ou=company1, c=Sweden, dc=jayway, dc=se", result.getDn().toString());
+        assertEquals("cn=Some Person2, ou=company1, c=Sweden, dc=jayway, dc=se", result.getNameInNamespace());
         assertEquals("Some Person2", result.getStringAttribute("cn"));
         assertEquals("Person2", result.getStringAttribute("sn"));
         assertEquals("Sweden, Company1, Some Person2", result

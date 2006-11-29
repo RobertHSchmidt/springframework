@@ -16,7 +16,6 @@
 
 package org.springframework.ldap;
 
-
 import org.springframework.ldap.EntryNotFoundException;
 import org.springframework.ldap.LdapTemplate;
 import org.springframework.ldap.support.CountNameClassPairCallbackHandler;
@@ -53,9 +52,12 @@ public class LdapTemplateBaseSuffixITest extends
                 .getStringAttribute("description"));
         assertEquals("cn=Some Person2, ou=company1, c=Sweden", result.getDn()
                 .toString());
+        assertEquals(
+                "cn=Some Person2, ou=company1, c=Sweden, dc=jayway, dc=se",
+                result.getNameInNamespace());
     }
-    
-    public void testSearch_Plain(){
+
+    public void testSearch_Plain() {
         CountNameClassPairCallbackHandler handler = new CountNameClassPairCallbackHandler();
 
         tested.search("", "(objectclass=person)", handler);

@@ -51,8 +51,14 @@ public class DefaultDirObjectFactory implements DirObjectFactory {
             Hashtable environment, Attributes attrs) throws Exception {
 
         try {
+            String nameInNamespace = null;
+            if (nameCtx != null) {
+                nameInNamespace = nameCtx.getNameInNamespace();
+            } else {
+                nameInNamespace = "";
+            }
             DirContextAdapter dirContextAdapter = new DirContextAdapter(attrs,
-                    name, (Name) environment.get(JNDI_ENV_BASE_PATH_KEY));
+                    name, new DistinguishedName(nameInNamespace));
             dirContextAdapter.setUpdateMode(true);
 
             return dirContextAdapter;
@@ -64,6 +70,7 @@ public class DefaultDirObjectFactory implements DirObjectFactory {
             // order to correctly clean up and return the connection to the pool
             // when we're finished with the surrounding operation.
             if (obj instanceof Context) {
+
                 Context ctx = (Context) obj;
                 try {
                     ctx.close();
