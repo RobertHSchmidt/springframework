@@ -36,16 +36,12 @@ public class DefaultDirObjectFactory implements DirObjectFactory {
      */
     public static final String JNDI_ENV_BASE_PATH_KEY = "org.springframework.ldap.base.path";
 
-    /**
-     * Creates a DirContextAdapter from the supplied arguments.
+    /*
+     * (non-Javadoc)
      * 
-     * @param obj
-     * @param name
-     * @param nameCtx
-     * @param environment
-     * @param attrs
-     * @return a new DirContextAdapter from the attributes and name.
-     * @throws Exception
+     * @see javax.naming.spi.DirObjectFactory#getObjectInstance(java.lang.Object,
+     *      javax.naming.Name, javax.naming.Context, java.util.Hashtable,
+     *      javax.naming.directory.Attributes)
      */
     public Object getObjectInstance(Object obj, Name name, Context nameCtx,
             Hashtable environment, Attributes attrs) throws Exception {
@@ -82,15 +78,11 @@ public class DefaultDirObjectFactory implements DirObjectFactory {
         }
     }
 
-    /**
-     * Returns null.
+    /*
+     * (non-Javadoc)
      * 
-     * @param obj
-     * @param name
-     * @param nameCtx
-     * @param environment
-     * @return null.
-     * @throws Exception
+     * @see javax.naming.spi.ObjectFactory#getObjectInstance(java.lang.Object,
+     *      javax.naming.Name, javax.naming.Context, java.util.Hashtable)
      */
     public Object getObjectInstance(Object obj, Name name, Context nameCtx,
             Hashtable environment) throws Exception {
