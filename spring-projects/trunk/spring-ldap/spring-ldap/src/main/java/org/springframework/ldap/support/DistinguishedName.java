@@ -287,18 +287,36 @@ public class DistinguishedName implements Name {
     }
 
     /**
-     * Add a LDAP path first
+     * Add an LDAP path last in this DistinguishedName. E.g.:
+     * 
+     * <pre>
+     * DistinguishedName name1 = new DistinguishedName(&quot;c=SE, dc=jayway, dc=se&quot;);
+     * DistinguishedName name2 = new DistinguishedName(&quot;ou=people&quot;);
+     * name1.append(name2);
+     * </pre>
+     * 
+     * will result in <code>ou=people, c=SE, dc=jayway, dc=se</code>
      * 
      * @param path
+     *            the path to append.
      */
     public void append(DistinguishedName path) {
         getNames().addAll(path.getNames());
     }
 
     /**
-     * Add a LDAP path first
+     * Add an LDAP path first in this DistinguishedName. E.g.:
+     * 
+     * <pre>
+     * DistinguishedName name1 = new DistinguishedName(&quot;ou=people&quot;);
+     * DistinguishedName name2 = new DistinguishedName(&quot;c=SE, dc=jayway, dc=se&quot;);
+     * name1.prepend(name2);
+     * </pre>
+     * 
+     * will result in <code>ou=people, c=SE, dc=jayway, dc=se</code>
      * 
      * @param path
+     *            the path to prepend.
      */
     public void prepend(DistinguishedName path) {
         ListIterator i = path.getNames().listIterator(path.getNames().size());
