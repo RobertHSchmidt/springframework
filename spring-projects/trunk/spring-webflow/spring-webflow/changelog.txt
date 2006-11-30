@@ -6,7 +6,12 @@ Changes in version 1.0.1 (03.12.2006)
 -----------------------------------
 
 Package org.springframework.webflow.config
-* Added setMaxConversations and setMaxContinuations methods to FlowExecutorFactoryBean.
+* Added get/setMaxConversations and get/setMaxContinuations methods to FlowExecutorFactoryBean.
+* Fixed bug in FlowExecutorFactoryBean where the ClientContinuationFlowExecutionRepository was being
+  configured with the SessionBindingConversationManager by default (SWF-216).
+* The conversationManager argument of the createExecutionRepository hook method in the
+  FlowExecutorFactoryBean is now possibly null. Review your implementation if you were overriding
+  this method!
 
 Package org.springframework.webflow.context
 * ExternalContextHolder now uses a ThreadLocal instead of an InheritableThreadLocal (SWF-206).
