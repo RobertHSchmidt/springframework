@@ -20,7 +20,6 @@ import java.util.Map;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
 import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
 import org.springframework.webflow.core.collection.AttributeMap;
@@ -84,7 +83,12 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * The conversation manager to be used by the flow execution repository to
 	 * store state associated with conversations driven by Spring Web Flow.
 	 */
-	private ConversationManager conversationManager = new SessionBindingConversationManager();
+	private ConversationManager conversationManager;
+	
+	/**
+	 * The maximum number of allowed concurrent conversations in the session.
+	 */
+	private Integer maxConversations;
 	
 	/**
 	 * The type of execution repository to configure with executors created by
@@ -179,6 +183,17 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	public void setMaxContinuations(int maxContinuations) {
 		this.maxContinuations = new Integer(maxContinuations);
 	}
+	
+	/**
+	 * Returns the configured maximum number of continuation snapshots allowed
+	 * for a single conversation when using the
+	 * {@link RepositoryType#CONTINUATION continuation} flow execution repository.
+	 * @return the configured value or null if the user did not explicitly
+	 * specify a value and wants to use the default
+	 */
+	protected Integer getMaxContinuations() {
+		return maxContinuations;
+	}
 
 	/**
 	 * Sets the strategy for managing conversations that should be configured
@@ -202,10 +217,19 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * @see SessionBindingConversationManager#setMaxConversations(int)
 	 */
 	public void setMaxConversations(int maxConversations) {
-		Assert.isInstanceOf(SessionBindingConversationManager.class, conversationManager,
-				"Only use setMaxConversations() when using the default conversation manager: " +
-				ClassUtils.getShortName(SessionBindingConversationManager.class));
-		((SessionBindingConversationManager)conversationManager).setMaxConversations(maxConversations);
+		this.maxConversations = new Integer(maxConversations);
+	}
+	
+	/**
+	 * Returns the configured maximum number of allowed concurrent conversations
+	 * in the session. Will only be used when using the default conversation manager,
+	 * e.g. when no explicit conversation manager has been configured using
+	 * {@link #setConversationManager(ConversationManager)}.
+	 * @return the configured value or null if the user did not explicitly 
+	 * specify a value and wants to use the default
+	 */
+	protected Integer getMaxConversations() {
+		return maxConversations;
 	}
 	
 	/**
@@ -245,6 +269,20 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	}
 
 	// subclassing hook methods
+	
+	/**
+	 * Create the conversation manager to be used in the default case, e.g. when no
+	 * explicit conversation manager has been configured using
+	 * {@link #setConversationManager(ConversationManager)}.
+	 * @return the default conversation manager
+	 */
+	protected ConversationManager createDefaultConversationManager() {
+		SessionBindingConversationManager conversationManager = new SessionBindingConversationManager();
+		if (getMaxConversations() != null) {
+			conversationManager.setMaxConversations(getMaxConversations().intValue());
+		}
+		return conversationManager;
+	}
     
     /**
      * Create the flow execution factory to be used by the executor produced by this
@@ -293,29 +331,43 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
      * @param repositoryType a hint indicating what type of repository to create
 	 * @param executionStateRestorer the execution state restorer strategy to be used by
      * the repository
-     * @param conversationManager the conversation manager to use
+     * @param conversationManager the conversation manager specified by the user,
+     * could be null in which case the default conversation manager should be used
 	 * @return a new flow execution repository instance
 	 */
 	protected FlowExecutionRepository createExecutionRepository(
             RepositoryType repositoryType, FlowExecutionStateRestorer executionStateRestorer,
             ConversationManager conversationManager) {
+		// determine the conversation manager to use
+		ConversationManager conversationManagerToUse = conversationManager;
+		if (conversationManagerToUse == null) {
+			conversationManagerToUse = createDefaultConversationManager();
+		}
+		
 		if (repositoryType == RepositoryType.SIMPLE) {
-			return new SimpleFlowExecutionRepository(executionStateRestorer, conversationManager);
+			return new SimpleFlowExecutionRepository(executionStateRestorer, conversationManagerToUse);
 		}
 		else if (repositoryType == RepositoryType.CONTINUATION) {
 			ContinuationFlowExecutionRepository repo =
-				new ContinuationFlowExecutionRepository(executionStateRestorer, conversationManager);
-			if (maxContinuations != null) {
-				repo.setMaxContinuations(maxContinuations.intValue());
+				new ContinuationFlowExecutionRepository(executionStateRestorer, conversationManagerToUse);
+			if (getMaxContinuations() != null) {
+				repo.setMaxContinuations(getMaxContinuations().intValue());
 			}
 			return repo;
 		}
 		else if (repositoryType == RepositoryType.CLIENT) {
-			return new ClientContinuationFlowExecutionRepository(executionStateRestorer, conversationManager);
+			if (conversationManager == null) {
+				// use the default no-op conversation manager
+				return new ClientContinuationFlowExecutionRepository(executionStateRestorer);
+			}
+			else {
+				// use the conversation manager specified by the user
+				return new ClientContinuationFlowExecutionRepository(executionStateRestorer, conversationManager);
+			}
 		}
 		else if (repositoryType == RepositoryType.SINGLEKEY) {
 			SimpleFlowExecutionRepository repository = new SimpleFlowExecutionRepository(executionStateRestorer,
-					conversationManager);
+					conversationManagerToUse);
 			repository.setAlwaysGenerateNewNextKey(false);
 			return repository;
 		}
