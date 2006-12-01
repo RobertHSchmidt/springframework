@@ -13,6 +13,7 @@
 		<property name="urls" value="${urls}" />
 		<property name="userName" value="${userName}" />
 		<property name="password" value="${password}" />
+		<property name="base" value="${base}" />
 		<property name="dirObjectFactory" value="org.springframework.ldap.support.DefaultDirObjectFactory" />
 	</bean>
 	
