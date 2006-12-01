@@ -69,7 +69,8 @@ public class PersonDaoImpl implements PersonDao {
     }
 
     ContextMapper getContextMapper() {
-        return new PersonContextMapper();
+        PersonContextMapper personContextMapper = new PersonContextMapper();
+        return personContextMapper;
     }
 
     public void create(Person person) {
