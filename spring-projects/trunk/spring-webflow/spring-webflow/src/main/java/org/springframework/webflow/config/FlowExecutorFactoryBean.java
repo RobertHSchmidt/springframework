@@ -273,7 +273,8 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	/**
 	 * Create the conversation manager to be used in the default case, e.g. when no
 	 * explicit conversation manager has been configured using
-	 * {@link #setConversationManager(ConversationManager)}.
+	 * {@link #setConversationManager(ConversationManager)}. This implementation
+	 * return a {@link SessionBindingConversationManager}.
 	 * @return the default conversation manager
 	 */
 	protected ConversationManager createDefaultConversationManager() {
@@ -338,24 +339,7 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	protected FlowExecutionRepository createExecutionRepository(
             RepositoryType repositoryType, FlowExecutionStateRestorer executionStateRestorer,
             ConversationManager conversationManager) {
-		// determine the conversation manager to use
-		ConversationManager conversationManagerToUse = conversationManager;
-		if (conversationManagerToUse == null) {
-			conversationManagerToUse = createDefaultConversationManager();
-		}
-		
-		if (repositoryType == RepositoryType.SIMPLE) {
-			return new SimpleFlowExecutionRepository(executionStateRestorer, conversationManagerToUse);
-		}
-		else if (repositoryType == RepositoryType.CONTINUATION) {
-			ContinuationFlowExecutionRepository repo =
-				new ContinuationFlowExecutionRepository(executionStateRestorer, conversationManagerToUse);
-			if (getMaxContinuations() != null) {
-				repo.setMaxContinuations(getMaxContinuations().intValue());
-			}
-			return repo;
-		}
-		else if (repositoryType == RepositoryType.CLIENT) {
+		if (repositoryType == RepositoryType.CLIENT) {
 			if (conversationManager == null) {
 				// use the default no-op conversation manager
 				return new ClientContinuationFlowExecutionRepository(executionStateRestorer);
@@ -365,15 +349,34 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 				return new ClientContinuationFlowExecutionRepository(executionStateRestorer, conversationManager);
 			}
 		}
-		else if (repositoryType == RepositoryType.SINGLEKEY) {
-			SimpleFlowExecutionRepository repository = new SimpleFlowExecutionRepository(executionStateRestorer,
-					conversationManagerToUse);
-			repository.setAlwaysGenerateNewNextKey(false);
-			return repository;
-		}
 		else {
-			throw new IllegalStateException("Cannot create execution repository - unsupported repository type "
-					+ repositoryType);
+			// determine the conversation manager to use
+			ConversationManager conversationManagerToUse = conversationManager;
+			if (conversationManagerToUse == null) {
+				conversationManagerToUse = createDefaultConversationManager();
+			}
+			
+			if (repositoryType == RepositoryType.SIMPLE) {
+				return new SimpleFlowExecutionRepository(executionStateRestorer, conversationManagerToUse);
+			}
+			else if (repositoryType == RepositoryType.CONTINUATION) {
+				ContinuationFlowExecutionRepository repository =
+					new ContinuationFlowExecutionRepository(executionStateRestorer, conversationManagerToUse);
+				if (getMaxContinuations() != null) {
+					repository.setMaxContinuations(getMaxContinuations().intValue());
+				}
+				return repository;
+			}
+			else if (repositoryType == RepositoryType.SINGLEKEY) {
+				SimpleFlowExecutionRepository repository = new SimpleFlowExecutionRepository(
+						executionStateRestorer, conversationManagerToUse);
+				repository.setAlwaysGenerateNewNextKey(false);
+				return repository;
+			}
+			else {
+				throw new IllegalStateException("Cannot create execution repository - unsupported repository type "
+						+ repositoryType);
+			}
 		}
 	}
     

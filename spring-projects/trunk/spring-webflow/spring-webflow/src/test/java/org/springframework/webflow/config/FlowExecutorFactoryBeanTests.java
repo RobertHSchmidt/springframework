@@ -76,25 +76,25 @@ public class FlowExecutorFactoryBeanTests extends TestCase {
 	}
 	
 	public void testRepoConfiguration() throws Exception {
-		ConversationManager cm = new SessionBindingConversationManager();
+		ConversationManager cm = new CustomConversationManager();
 		
 		SimpleFlowExecutionRepository simple =
 			(SimpleFlowExecutionRepository)setupRepo(RepositoryType.SIMPLE, cm);
-		assertTrue(simple.getConversationManager() instanceof SessionBindingConversationManager);
+		assertTrue(simple.getConversationManager() instanceof CustomConversationManager);
 		assertTrue(simple.isAlwaysGenerateNewNextKey());
 		
 		SimpleFlowExecutionRepository singleKey =
 			(SimpleFlowExecutionRepository)setupRepo(RepositoryType.SINGLEKEY, cm);
-		assertTrue(singleKey.getConversationManager() instanceof SessionBindingConversationManager);
+		assertTrue(singleKey.getConversationManager() instanceof CustomConversationManager);
 		assertFalse(singleKey.isAlwaysGenerateNewNextKey());
 		
 		ContinuationFlowExecutionRepository continuation =
 			(ContinuationFlowExecutionRepository)setupRepo(RepositoryType.CONTINUATION, cm);
-		assertTrue(continuation.getConversationManager() instanceof SessionBindingConversationManager);
+		assertTrue(continuation.getConversationManager() instanceof CustomConversationManager);
 		
 		ClientContinuationFlowExecutionRepository client =
 			(ClientContinuationFlowExecutionRepository)setupRepo(RepositoryType.CLIENT, cm);
-		assertTrue(client.getConversationManager() instanceof SessionBindingConversationManager);
+		assertTrue(client.getConversationManager() instanceof CustomConversationManager);
 	}
 		
 	private FlowExecutionRepository setupRepo(
@@ -111,4 +111,6 @@ public class FlowExecutorFactoryBeanTests extends TestCase {
 		return flowExecutor.getExecutionRepository();
 	}
 
+	private static class CustomConversationManager extends SessionBindingConversationManager {
+	}
 }
