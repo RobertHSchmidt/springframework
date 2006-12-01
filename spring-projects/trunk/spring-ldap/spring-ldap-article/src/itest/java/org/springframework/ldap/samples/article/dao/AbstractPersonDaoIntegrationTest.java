@@ -50,7 +50,7 @@ public abstract class AbstractPersonDaoIntegrationTest
       person.setLastName("Person");
       person
          .setDescription("Sweden, Company1, Some Person");
-      person.setPhone("Some Person Phone");
+      person.setPhone("+46 555-123456");
    }
 
    protected void onTearDown() throws Exception {
