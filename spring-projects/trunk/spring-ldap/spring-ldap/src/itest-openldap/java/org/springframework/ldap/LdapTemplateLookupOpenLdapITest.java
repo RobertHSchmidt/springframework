@@ -189,14 +189,23 @@ public class LdapTemplateLookupOpenLdapITest extends
                 .getStringAttribute("description"));
     }
 
-    /**
-     * Verifies that we can lookup an entry that has a multi-valued rdn, which
-     * means more than one attribute is part of the relative DN for the entry.
-     */
-    public void testLookup_DirContextAdapter_GetNameInNamespace() {
+    public void testLookup_GetNameInNamespace_Plain() {
+        DirContextAdapter result = (DirContextAdapter) tested
+                .lookup("cn=Some Person2, ou=company1,c=Sweden");
+
+        assertEquals("cn=Some Person2, ou=company1, c=Sweden", result.getDn()
+                .toString());
+        assertEquals(
+                "cn=Some Person2, ou=company1, c=Sweden, dc=jayway, dc=se",
+                result.getNameInNamespace());
+    }
+
+    public void testLookup_GetNameInNamespace_MultiRdn() {
         DirContextAdapter result = (DirContextAdapter) tested
                 .lookup("cn=Some Person+sn=Person, ou=company1,c=Norway");
 
+        assertEquals("cn=Some Person+sn=Person, ou=company1, c=Norway", result
+                .getDn().toString());
         assertEquals(
                 "cn=Some Person+sn=Person, ou=company1, c=Norway, dc=jayway, dc=se",
                 result.getNameInNamespace());
