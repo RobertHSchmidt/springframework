@@ -15,10 +15,15 @@
  */
 package org.springframework.ldap.samples.person.dao;
 
+import javax.naming.NamingException;
+
 import org.springframework.ldap.ContextMapper;
+import org.springframework.ldap.DefaultNamingExceptionTranslator;
+import org.springframework.ldap.NamingExceptionTranslator;
 import org.springframework.ldap.samples.person.domain.Person;
 import org.springframework.ldap.support.DirContextOperations;
 import org.springframework.ldap.support.DistinguishedName;
+import org.springframework.util.Assert;
 
 /**
  * Maps from DirContextOperations (DirContextAdapters, really) to Person
@@ -32,13 +37,22 @@ import org.springframework.ldap.support.DistinguishedName;
  */
 public class PersonContextMapper implements ContextMapper {
 
+    private NamingExceptionTranslator exceptionTranslator = new DefaultNamingExceptionTranslator();
+
     public Object mapFromContext(Object ctx) {
+        Assert.notNull(exceptionTranslator, "exceptionTranslator must be set");
         DirContextOperations dirContext = (DirContextOperations) ctx;
         DistinguishedName dn = new DistinguishedName(dirContext.getDn());
+        String fullDn;
+        try {
+            fullDn = dirContext.getNameInNamespace();
+        } catch (NamingException e) {
+            throw exceptionTranslator.translate(e);
+        }
         Person person = new Person();
         DistinguishedName dnWithBase = new DistinguishedName(dn);
         dnWithBase.prepend(new DistinguishedName("dc=jayway, dc=se"));
-        person.setDn(dnWithBase.encode());
+        person.setDn(fullDn);
         person.setCountry(dn.getLdapRdn(0).getComponent().getValue());
         person.setCompany(dn.getLdapRdn(1).getComponent().getValue());
         person.setFullName(dirContext.getStringAttribute("cn"));
@@ -47,5 +61,10 @@ public class PersonContextMapper implements ContextMapper {
         person.setPhone(dirContext.getStringAttribute("telephoneNumber"));
 
         return person;
+    }
+
+    public void setExceptionTranslator(
+            NamingExceptionTranslator exceptionTranslator) {
+        this.exceptionTranslator = exceptionTranslator;
     }
 }
