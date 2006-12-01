@@ -17,11 +17,13 @@ package org.springframework.ldap;
 
 import java.util.List;
 
+import javax.naming.Name;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
 
+import org.springframework.ldap.support.DistinguishedName;
 import org.springframework.ldap.support.control.PagedResultsCookie;
 import org.springframework.ldap.support.control.PagedResultsRequestControl;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
@@ -39,7 +41,7 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 public class LdapTemplatePagedSearchITest extends
         AbstractDependencyInjectionSpringContextTests {
 
-    private static final String BASE_STRING = "dc=jayway,dc=se";
+    private static final Name BASE = DistinguishedName.EMPTY_PATH;
 
     private static final String FILTER_STRING = "(&(objectclass=person))";
 
@@ -72,7 +74,7 @@ public class LdapTemplatePagedSearchITest extends
         SearchExecutor searchExecutor = new SearchExecutor() {
             public NamingEnumeration executeSearch(DirContext ctx)
                     throws NamingException {
-                return ctx.search(BASE_STRING, FILTER_STRING, searchControls);
+                return ctx.search(BASE, FILTER_STRING, searchControls);
             }
         };
         Person person;
@@ -119,7 +121,7 @@ public class LdapTemplatePagedSearchITest extends
 
         // Prepare for first search
         requestControl = new PagedResultsRequestControl(3);
-        tested.search(BASE_STRING, FILTER_STRING, searchControls,
+        tested.search(BASE, FILTER_STRING, searchControls,
                 callbackHandler, requestControl);
         cookie = requestControl.getCookie();
         assertNotNull("Cookie should not be null yet", cookie.getCookie());
@@ -134,7 +136,7 @@ public class LdapTemplatePagedSearchITest extends
 
         // Prepare for second and last search
         requestControl = new PagedResultsRequestControl(3, cookie);
-        tested.search(BASE_STRING, FILTER_STRING, searchControls,
+        tested.search(BASE, FILTER_STRING, searchControls,
                 callbackHandler, requestControl);
         cookie = requestControl.getCookie();
         assertNull("Cookie should be null now", cookie.getCookie());
