@@ -63,12 +63,6 @@ public class SearchFlowExecutionTest extends AbstractXmlFlowExecutionTests {
         assertFlowExecutionEnded();
     }
 
-    public void testCriteriaSubmitError() {
-        startFlow();
-        signalEvent("search");
-        assertCurrentStateEquals("enterCriteria");
-    }
-
     /*
      * @see org.springframework.webflow.test.execution.AbstractExternalizedFlowExecutionTests#getFlowDefinitionResource()
      */
