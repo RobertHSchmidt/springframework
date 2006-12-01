@@ -44,7 +44,7 @@ public class LdapTemplateLookupOpenLdapITest extends
      */
     public void testLookup_Plain() {
         DirContextAdapter result = (DirContextAdapter) tested
-                .lookup("cn=Some Person2, ou=company1,c=Sweden,dc=jayway,dc=se");
+                .lookup("cn=Some Person2, ou=company1,c=Sweden");
 
         assertEquals("Some Person2", result.getStringAttribute("cn"));
         assertEquals("Person2", result.getStringAttribute("sn"));
@@ -56,7 +56,7 @@ public class LdapTemplateLookupOpenLdapITest extends
         AttributesMapper mapper = new PersonAttributesMapper();
         Person person = (Person) tested
                 .lookup(
-                        "cn=Some Person2, ou=company1,c=Sweden,dc=jayway,dc=se",
+                        "cn=Some Person2, ou=company1,c=Sweden",
                         mapper);
 
         assertEquals("Some Person2", person.getFullname());
@@ -67,7 +67,7 @@ public class LdapTemplateLookupOpenLdapITest extends
     public void testLookup_AttributesMapper_DistinguishedName() {
         AttributesMapper mapper = new PersonAttributesMapper();
         Person person = (Person) tested.lookup(new DistinguishedName(
-                "cn=Some Person2, ou=company1,c=Sweden,dc=jayway,dc=se"),
+                "cn=Some Person2, ou=company1,c=Sweden"),
                 mapper);
 
         assertEquals("Some Person2", person.getFullname());
@@ -109,7 +109,7 @@ public class LdapTemplateLookupOpenLdapITest extends
         AttributesMapper mapper = new SubsetPersonAttributesMapper();
 
         Person person = (Person) tested.lookup(
-                "cn=Some Person2, ou=company1,c=Sweden,dc=jayway,dc=se",
+                "cn=Some Person2, ou=company1,c=Sweden",
                 new String[] { "cn" }, mapper);
 
         assertEquals("Some Person2", person.getFullname());
@@ -125,7 +125,7 @@ public class LdapTemplateLookupOpenLdapITest extends
     public void testLookup_ReturnAttributes_AttributesMapper_DistinguishedName() {
         AttributesMapper mapper = new SubsetPersonAttributesMapper();
         Person person = (Person) tested.lookup(new DistinguishedName(
-                "cn=Some Person2, ou=company1,c=Sweden,dc=jayway,dc=se"),
+                "cn=Some Person2, ou=company1,c=Sweden"),
                 new String[] { "cn" }, mapper);
 
         assertEquals("Some Person2", person.getFullname());
@@ -141,7 +141,7 @@ public class LdapTemplateLookupOpenLdapITest extends
         ContextMapper mapper = new PersonContextMapper();
         Person person = (Person) tested
                 .lookup(
-                        "cn=Some Person2, ou=company1,c=Sweden,dc=jayway,dc=se",
+                        "cn=Some Person2, ou=company1,c=Sweden",
                         mapper);
 
         assertEquals("Some Person2", person.getFullname());
@@ -157,7 +157,7 @@ public class LdapTemplateLookupOpenLdapITest extends
         ContextMapper mapper = new PersonContextMapper();
 
         Person person = (Person) tested.lookup(
-                "cn=Some Person2, ou=company1,c=Sweden,dc=jayway,dc=se",
+                "cn=Some Person2, ou=company1,c=Sweden",
                 new String[] { "cn" }, mapper);
 
         assertEquals("Some Person2", person.getFullname());
@@ -173,7 +173,7 @@ public class LdapTemplateLookupOpenLdapITest extends
         AttributesMapper mapper = new PersonAttributesMapper();
         Person person = (Person) tested
                 .lookup(
-                        "cn=Some Person+sn=Person, ou=company1,c=Norway,dc=jayway,dc=se",
+                        "cn=Some Person+sn=Person, ou=company1,c=Norway",
                         mapper);
 
         assertEquals("Some Person", person.getFullname());
@@ -187,7 +187,7 @@ public class LdapTemplateLookupOpenLdapITest extends
      */
     public void testLookup_MultiValuedRdn_DirContextAdapter() {
         DirContextAdapter result = (DirContextAdapter) tested
-                .lookup("cn=Some Person+sn=Person, ou=company1,c=Norway,dc=jayway,dc=se");
+                .lookup("cn=Some Person+sn=Person, ou=company1,c=Norway");
 
         assertEquals("Some Person", result.getStringAttribute("cn"));
         assertEquals("Person", result.getStringAttribute("sn"));
