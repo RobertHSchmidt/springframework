@@ -15,6 +15,12 @@ Changes in version 1.1.2 (1.12.2006)
 * Fixed problem with DirContextAdapter.getNameInNameSpace. Now it really
   returns the full DN.
 
+* There is now a wrapper class called PagedResult, which can be used to
+  wrap the resulting list and the PagedResultsCookie after using
+  PagedResultsRequestControl.
+
+* The actual cookie in PagedResultsCookie is now immutable.
+
 * The person sample is now a Spring WebFlow application, where the user
   can manage persons and standard LDAP access groups.
 
