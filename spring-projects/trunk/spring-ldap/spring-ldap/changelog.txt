@@ -10,6 +10,16 @@ http://www.ietf.org/rfc/rfc2255.txt
 http://www.ietf.org/rfc/rfc2256.txt
 http://www.ietf.org/rfc/rfc2696.txt
 
+Changes in version 1.1.2 (1.12.2006)
+-------------------------------------------
+* Fixed problem with DirContextAdapter.getNameInNameSpace. Now it really
+  returns the full DN.
+
+* The person sample is now a Spring WebFlow application, where the user
+  can manage persons and standard LDAP access groups.
+
+* Improved javadoc for DefaultDirObjectFactory and DistinguishedName.
+
 Changes in version 1.1.1 (18.11.2006)
 -------------------------------------------
 * Added capability to use server-side controls in search by leveraging
