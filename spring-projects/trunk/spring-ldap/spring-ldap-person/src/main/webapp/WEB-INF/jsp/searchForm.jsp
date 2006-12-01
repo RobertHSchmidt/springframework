@@ -22,7 +22,7 @@
 		</tr>
 		</spring:hasBindErrors>
 		<tr>
-			<td>Name (or part of name)</td>
+			<td>Name</td>
 			<td>
 				<form:input path="name" />
 			</td>
@@ -35,6 +35,7 @@
 		<tr>
 			<td colspan="2" class="buttonBar">
 				<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">
+				<input type="submit" class="button" name="_eventId_cancel" value="Menu">
 				<input type="submit" class="button" name="_eventId_search" value="Search">
 			</td>
 		</tr>		

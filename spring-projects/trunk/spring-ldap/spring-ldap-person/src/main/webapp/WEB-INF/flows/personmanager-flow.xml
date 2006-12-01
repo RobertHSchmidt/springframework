@@ -18,6 +18,7 @@
 			</output-mapper>
 		</attribute-mapper>
 		<transition on="finish" to="displayResults"/>
+		<transition on="cancel" to="displayMenu"/>
 	</subflow-state>
 
 	<view-state id="displayResults" view="searchResult">
@@ -43,6 +44,7 @@
 			</output-mapper>
 		</attribute-mapper>
 		<transition on="finish" to="displayGroupResults"/>
+		<transition on="cancel" to="displayMenu"/>
 	</subflow-state>
 
 	<view-state id="displayGroupResults" view="searchGroupResult">

@@ -10,6 +10,7 @@
 		<render-actions>
 			<action bean="searchPersonFormAction" method="setupForm" />
 		</render-actions>
+		<transition on="cancel" to="cancel" />
 		<transition on="search" to="performSearch">
 			<action bean="searchPersonFormAction" method="bindAndValidate" />
 		</transition>
@@ -30,6 +31,8 @@
 			<output-attribute name="results" />
 		</output-mapper>
 	</end-state>
+
+	<end-state id="cancel" />
 
 	<import resource="search-flow-beans.xml" />
 
