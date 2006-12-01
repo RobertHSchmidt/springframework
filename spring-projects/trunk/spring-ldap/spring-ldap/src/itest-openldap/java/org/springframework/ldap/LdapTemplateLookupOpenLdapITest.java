@@ -54,10 +54,8 @@ public class LdapTemplateLookupOpenLdapITest extends
 
     public void testLookup_AttributesMapper() {
         AttributesMapper mapper = new PersonAttributesMapper();
-        Person person = (Person) tested
-                .lookup(
-                        "cn=Some Person2, ou=company1,c=Sweden",
-                        mapper);
+        Person person = (Person) tested.lookup(
+                "cn=Some Person2, ou=company1,c=Sweden", mapper);
 
         assertEquals("Some Person2", person.getFullname());
         assertEquals("Person2", person.getLastname());
@@ -67,8 +65,7 @@ public class LdapTemplateLookupOpenLdapITest extends
     public void testLookup_AttributesMapper_DistinguishedName() {
         AttributesMapper mapper = new PersonAttributesMapper();
         Person person = (Person) tested.lookup(new DistinguishedName(
-                "cn=Some Person2, ou=company1,c=Sweden"),
-                mapper);
+                "cn=Some Person2, ou=company1,c=Sweden"), mapper);
 
         assertEquals("Some Person2", person.getFullname());
         assertEquals("Person2", person.getLastname());
@@ -109,8 +106,8 @@ public class LdapTemplateLookupOpenLdapITest extends
         AttributesMapper mapper = new SubsetPersonAttributesMapper();
 
         Person person = (Person) tested.lookup(
-                "cn=Some Person2, ou=company1,c=Sweden",
-                new String[] { "cn" }, mapper);
+                "cn=Some Person2, ou=company1,c=Sweden", new String[] { "cn" },
+                mapper);
 
         assertEquals("Some Person2", person.getFullname());
         assertNull("lastName should not be set", person.getLastname());
@@ -139,10 +136,8 @@ public class LdapTemplateLookupOpenLdapITest extends
      */
     public void testLookup_ContextMapper() {
         ContextMapper mapper = new PersonContextMapper();
-        Person person = (Person) tested
-                .lookup(
-                        "cn=Some Person2, ou=company1,c=Sweden",
-                        mapper);
+        Person person = (Person) tested.lookup(
+                "cn=Some Person2, ou=company1,c=Sweden", mapper);
 
         assertEquals("Some Person2", person.getFullname());
         assertEquals("Person2", person.getLastname());
@@ -157,8 +152,8 @@ public class LdapTemplateLookupOpenLdapITest extends
         ContextMapper mapper = new PersonContextMapper();
 
         Person person = (Person) tested.lookup(
-                "cn=Some Person2, ou=company1,c=Sweden",
-                new String[] { "cn" }, mapper);
+                "cn=Some Person2, ou=company1,c=Sweden", new String[] { "cn" },
+                mapper);
 
         assertEquals("Some Person2", person.getFullname());
         assertNull("lastName should not be set", person.getLastname());
@@ -171,14 +166,13 @@ public class LdapTemplateLookupOpenLdapITest extends
      */
     public void testLookup_MultiValuedRdn() {
         AttributesMapper mapper = new PersonAttributesMapper();
-        Person person = (Person) tested
-                .lookup(
-                        "cn=Some Person+sn=Person, ou=company1,c=Norway",
-                        mapper);
+        Person person = (Person) tested.lookup(
+                "cn=Some Person+sn=Person, ou=company1,c=Norway", mapper);
 
         assertEquals("Some Person", person.getFullname());
         assertEquals("Person", person.getLastname());
-        assertEquals("Norway, Company1, Some Person+Person", person.getDescription());
+        assertEquals("Norway, Company1, Some Person+Person", person
+                .getDescription());
     }
 
     /**
@@ -193,6 +187,19 @@ public class LdapTemplateLookupOpenLdapITest extends
         assertEquals("Person", result.getStringAttribute("sn"));
         assertEquals("Norway, Company1, Some Person+Person", result
                 .getStringAttribute("description"));
+    }
+
+    /**
+     * Verifies that we can lookup an entry that has a multi-valued rdn, which
+     * means more than one attribute is part of the relative DN for the entry.
+     */
+    public void testLookup_DirContextAdapter_GetNameInNamespace() {
+        DirContextAdapter result = (DirContextAdapter) tested
+                .lookup("cn=Some Person+sn=Person, ou=company1,c=Norway");
+
+        assertEquals(
+                "cn=Some Person+sn=Person, ou=company1, c=Norway, dc=jayway, dc=se",
+                result.getNameInNamespace());
     }
 
     public void setTested(LdapTemplate tested) {
