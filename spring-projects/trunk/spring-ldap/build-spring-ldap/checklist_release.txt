@@ -40,5 +40,10 @@ General
 
 * Run all tests, including integration tests
 
-* Run the sample spring-ldap-person
+* Run the sample spring-ldap-person in a web container
 
+* Run the sample spring-ldap-article integration tests
+
+* Run doc-all from spring-ldap
+
+* Run release from build-spring-ldap
