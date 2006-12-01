@@ -32,7 +32,7 @@ public class LdapTemplateContextExecutorTest extends
     private LdapTemplate tested;
 
     protected String[] getConfigLocations() {
-        return new String[] { "/conf/ldapTemplateBaseSuffixTestContext.xml" };
+        return new String[] { "/conf/ldapTemplateTestContext.xml" };
     }
 
     protected void onSetUp() throws Exception {

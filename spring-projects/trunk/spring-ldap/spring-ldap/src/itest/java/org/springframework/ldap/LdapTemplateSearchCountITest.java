@@ -51,7 +51,7 @@ public class LdapTemplateSearchCountITest extends DDStepsSpringTestCase {
     private LdapTemplate tested;
 
     protected String[] getConfigLocations() {
-        return new String[] { "/conf/ldapTemplateTestContext.xml" };
+        return new String[] { "/conf/ldapTemplateNoBaseSuffixTestContext.xml" };
     }
 
     public void testSearch_Count() {
