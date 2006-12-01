@@ -26,6 +26,8 @@ Changes in version 1.1.2 (1.12.2006)
 
 * Improved javadoc for DefaultDirObjectFactory and DistinguishedName.
 
+* Upgraded Spring to 2.0.1 internally. Spring 1.2.8 is still supported.
+
 Changes in version 1.1.1 (18.11.2006)
 -------------------------------------------
 * Added capability to use server-side controls in search by leveraging
