@@ -4,7 +4,7 @@
                            http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<!-- Detail form action that setups the form and processes form submissions -->
-	<bean id="editPersonFormAction" class="org.springframework.webflow.action.FormAction">
+	<bean id="editPersonFormAction" class="org.springframework.ldap.samples.person.web.EditPersonFormAction">
 		<property name="formObjectClass" value="org.springframework.ldap.samples.person.domain.Person"/>
 		<property name="validator">
 			<bean class="org.springframework.ldap.samples.person.domain.PersonValidator"/>
