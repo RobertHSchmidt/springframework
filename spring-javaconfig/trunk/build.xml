@@ -1,37 +1,28 @@
-<project name="spring-dev" default="javadoc" >
+<project name="spring-dev" default="" >
 	
 	<property file="build.properties"/>
 	<property file="project.properties"/>
 	
-    <!-- ================================= 
-          target: agent-jar              
-         ================================= -->
-    <target name="agent-jar" depends="" description="creates the agent jar">
-        <jar destfile="jpa-agent.jar">
-			<fileset dir="target/classes">
-				<include name="**/InstrumentationSavingAgent*"/>
-        	</fileset>
-        	<manifest>
-        		<attribute name="Premain-Class" value="org.springframework.instrument.classloading.InstrumentationSavingAgent"/>
-        	</manifest>
-        </jar>
-    </target>
-
 	<path id="all-libs">
 
 		<fileset dir="${lib.dir}">
 			<include name="**/*.jar"/>
-			<exclude name="aspectj/aspectjtools.jar"/>
 		</fileset>
 
 	</path>
-	         
+
+	<target name="initdist" description="Initialize the distribution directory">
+
+		<mkdir dir="${dist.dir}"/>
+
+	</target>
+		         
 	<target name="javadoc" description="Generate framework Javadocs">
 
 		<delete dir="${javadoc.dir}" failonerror="false"/>
 		<mkdir dir="${javadoc.dir}"/>
 
-		<javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}" windowtitle="Spring Java Config API"
+		<javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}" windowtitle="Spring JavaConfig API"
 				source="1.5" access="package" author="true" version="true" use="true"
 				defaultexcludes="true" 
 				header='&lt;a href=\"http://www.springframework.org/\" target=\"_top\"&gt;The Spring Framework&lt;/a&gt;'>
@@ -40,7 +31,7 @@
 			<arg value="-J-XX:MaxPermSize=128m"/>
 			<arg value="${javadoc.proxyhost}"/>
 			<arg value="${javadoc.proxyport}"/>
-			<doctitle><![CDATA[<h1>Spring Java Config API</h1>]]></doctitle>
+			<doctitle><![CDATA[<h1>Spring JavaConfig API</h1>]]></doctitle>
 			<bottom><![CDATA[<i>Copyright &copy; 2006 <a href="http://www.interface21.com/" target="_top">Interface21</a>.</i>]]></bottom>
 			<classpath refid="all-libs"/>
 			
@@ -52,7 +43,18 @@
 
 			<link href="http://java.sun.com/j2ee/1.4/docs/api"/>
 			<link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
-			<link href="http://static.springframework.org/spring/docs/2.0.x/api"/>			
+			<link href="http://static.springframework.org/spring/docs/2.0.x/api"/>
+			<link href="http://asm.objectweb.org/asm223/javadoc/user"/>
+			<link href="http://jakarta.apache.org/commons/collections/apidocs-COLLECTIONS_3_0/"/>
+			<link href="http://jakarta.apache.org/commons/dbcp/apidocs/"/>
+			<!--
+			<link href="http://www.hibernate.org/hib_docs/v3/api"/>			
+			-->
+			<link href="http://cglib.sourceforge.net/apidocs"/>		
+			<link href="http://portals.apache.org/pluto/multiproject/portlet-api/apidocs/"/>
+			<link href="http://logging.apache.org/log4j/docs/api/"/>
+			<link href="http://jakarta.apache.org/commons/logging/apidocs/"/>
+						
 
 		</javadoc>
 
@@ -79,8 +81,8 @@
 
 	</target>
 	
-		<target name="build" description="Compile JDK 1.5 source files">
-
+	<target name="build" depends="initdist" description="Compile JDK 1.5 source files">
+		<mkdir dir="${target.classes.dir}"/>
 		<javac destdir="${target.classes.dir}" source="1.5" target="1.5" debug="${debug}"
 				deprecation="false" optimize="false" failonerror="true">
 			<src path="${src.dir}"/>
@@ -89,11 +91,11 @@
 
 	</target>
 
-	<target name="fulljar" description="Create full JAR file with all classes">
+	<target name="fulljar" depends="build" description="Create full JAR file with all classes">
 
-		<delete file="${dist.dir}/spring-java-config.jar"/>
+		<delete file="${dist.dir}/spring-javaconfig.jar"/>
 
-		<jar jarfile="${dist.dir}/spring-java-config.jar">
+		<jar jarfile="${dist.dir}/spring-javaconfig.jar">
 			<fileset dir="${target.classes.dir}">
 			<!--
 				<include name="META-INF/**"/>
