@@ -35,6 +35,10 @@
 			<td><b>Phone</b></td>
 			<td><form:input path="phone" /></td>
 		</tr>
+		<tr>
+			<td><b>Description</b></td>
+			<td><form:input path="description" /></td>
+		</tr>
 		<%--
 		<tr>
 			<td colspan="2">

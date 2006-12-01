@@ -15,20 +15,36 @@
  */
 package org.springframework.ldap.samples.person.domain;
 
-import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+/**
+ * Validates search chriteria.
+ * 
+ * @author Ulrik Sandberg
+ * 
+ */
 public class SearchCriteriaValidator implements Validator {
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.validation.Validator#supports(java.lang.Class)
+     */
     public boolean supports(Class clazz) {
         return clazz.equals(SearchCriteria.class);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.validation.Validator#validate(java.lang.Object,
+     *      org.springframework.validation.Errors)
+     */
     public void validate(Object obj, Errors errors) {
-        SearchCriteria query = (SearchCriteria) obj;
-        if (!StringUtils.hasText(query.getName())) {
-            errors.reject("noCriteria", "Please provide some query criteria!");
-        }
+        // SearchCriteria query = (SearchCriteria) obj;
+        // if (!StringUtils.hasText(query.getName())) {
+        // errors.reject("noCriteria", "Please provide some query criteria!");
+        // }
     }
 }

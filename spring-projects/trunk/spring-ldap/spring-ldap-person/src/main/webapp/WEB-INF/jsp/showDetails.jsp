@@ -30,7 +30,11 @@
 		</tr>
 		<tr>
 			<td><b>Description</b></td>
-			<td>${person.description}</td>
+			<td align="top">
+				<c:forEach var="description" items="${person.description}">
+					${description} <br />
+				</c:forEach>
+			</td>
 		</tr>
 		<tr>
 			<td colspan="2" class="buttonBar">
