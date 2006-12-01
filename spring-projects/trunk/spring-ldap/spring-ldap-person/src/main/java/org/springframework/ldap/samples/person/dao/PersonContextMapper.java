@@ -50,8 +50,6 @@ public class PersonContextMapper implements ContextMapper {
             throw exceptionTranslator.translate(e);
         }
         Person person = new Person();
-        DistinguishedName dnWithBase = new DistinguishedName(dn);
-        dnWithBase.prepend(new DistinguishedName("dc=jayway, dc=se"));
         person.setDn(fullDn);
         person.setCountry(dn.getLdapRdn(0).getComponent().getValue());
         person.setCompany(dn.getLdapRdn(1).getComponent().getValue());
