@@ -52,7 +52,7 @@ public class LdapTemplateSearchResultITest extends
     private static final String[] ALL_VALUES = { "Some Person2", "Person2",
             "Sweden, Company1, Some Person2", "+46 555-654321" };
 
-    private static final String BASE_STRING = "dc=jayway,dc=se";
+    private static final String BASE_STRING = "";
 
     private static final String FILTER_STRING = "(&(objectclass=person)(sn=Person2))";
 

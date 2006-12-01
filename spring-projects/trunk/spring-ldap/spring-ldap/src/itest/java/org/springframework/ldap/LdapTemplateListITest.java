@@ -17,8 +17,6 @@ package org.springframework.ldap;
 
 import java.util.List;
 
-import javax.naming.Name;
-
 import org.springframework.ldap.support.CountNameClassPairCallbackHandler;
 import org.springframework.ldap.support.DistinguishedName;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
@@ -35,9 +33,10 @@ public class LdapTemplateListITest extends
 
     private AttributeCheckContextMapper contextMapper;
 
-    private static final String BASE_STRING = "dc=jayway,dc=se";
+    private static final String BASE_STRING = "";
 
-    private static final Name BASE_NAME = new DistinguishedName(BASE_STRING);
+    private static final DistinguishedName BASE_NAME = new DistinguishedName(
+            BASE_STRING);
 
     private static final String[] ALL_ATTRIBUTES = { "cn", "sn", "description",
             "telephoneNumber" };
@@ -64,7 +63,7 @@ public class LdapTemplateListITest extends
     public void testListBindings_ContextMapper() {
         contextMapper.setExpectedAttributes(ALL_ATTRIBUTES);
         contextMapper.setExpectedValues(ALL_VALUES);
-        List list = tested.listBindings("ou=company2,c=Sweden," + BASE_STRING,
+        List list = tested.listBindings("ou=company2,c=Sweden" + BASE_STRING,
                 contextMapper);
         assertEquals(1, list.size());
     }
@@ -72,14 +71,16 @@ public class LdapTemplateListITest extends
     public void testListBindings_ContextMapper_Name() {
         contextMapper.setExpectedAttributes(ALL_ATTRIBUTES);
         contextMapper.setExpectedValues(ALL_VALUES);
-        List list = tested.listBindings(new DistinguishedName(
-                "ou=company2,c=Sweden," + BASE_STRING), contextMapper);
+        DistinguishedName dn = new DistinguishedName("ou=company2,c=Sweden");
+        dn.append(BASE_NAME);
+        List list = tested.listBindings(dn, contextMapper);
         assertEquals(1, list.size());
     }
 
     public void testListBindings_ContextMapper_MapToPersons() {
-        List list = tested.listBindings("ou=company1,c=Sweden," + BASE_STRING,
-                new PersonContextMapper());
+        DistinguishedName dn = new DistinguishedName("ou=company1,c=Sweden");
+        dn.append(BASE_NAME);
+        List list = tested.listBindings(dn, new PersonContextMapper());
         assertEquals(3, list.size());
         String personClass = "org.springframework.ldap.Person";
         assertEquals(personClass, list.get(0).getClass().getName());

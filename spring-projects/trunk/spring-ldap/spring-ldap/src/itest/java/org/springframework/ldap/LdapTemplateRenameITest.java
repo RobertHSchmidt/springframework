@@ -37,9 +37,9 @@ public class LdapTemplateRenameITest extends
         AbstractDependencyInjectionSpringContextTests {
     private LdapTemplate tested;
 
-    private static String DN = "cn=Some Person6,ou=company1,c=Sweden,dc=jayway,dc=se";
+    private static String DN = "cn=Some Person6,ou=company1,c=Sweden";
 
-    private static String NEWDN = "cn=Some Person6,ou=company2,c=Sweden,dc=jayway,dc=se";
+    private static String NEWDN = "cn=Some Person6,ou=company2,c=Sweden";
 
     protected String[] getConfigLocations() {
         return new String[] { "/conf/ldapTemplateTestContext.xml" };

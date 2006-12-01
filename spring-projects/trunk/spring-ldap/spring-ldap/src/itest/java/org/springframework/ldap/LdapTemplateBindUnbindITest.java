@@ -42,7 +42,7 @@ public class LdapTemplateBindUnbindITest extends
         AbstractDependencyInjectionSpringContextTests {
     private LdapTemplate tested;
 
-    private static String DN = "cn=Some Person4,ou=company1,c=Sweden,dc=jayway,dc=se";
+    private static String DN = "cn=Some Person4,ou=company1,c=Sweden";
 
     protected String[] getConfigLocations() {
         return new String[] { "/conf/ldapTemplateTestContext.xml" };

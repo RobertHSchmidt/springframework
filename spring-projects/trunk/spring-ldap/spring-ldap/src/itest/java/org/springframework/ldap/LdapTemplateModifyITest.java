@@ -48,8 +48,8 @@ public class LdapTemplateModifyITest extends
         AbstractDependencyInjectionSpringContextTests {
     private LdapTemplate tested;
 
-    private static String PERSON4_DN = "cn=Some Person4,ou=company1,c=Sweden,dc=jayway,dc=se";
-    private static String PERSON5_DN = "cn=Some Person5,ou=company1,c=Sweden,dc=jayway,dc=se";
+    private static String PERSON4_DN = "cn=Some Person4,ou=company1,c=Sweden";
+    private static String PERSON5_DN = "cn=Some Person5,ou=company1,c=Sweden";
 
     protected String[] getConfigLocations() {
         return new String[] { "/conf/ldapTemplateTestContext.xml" };
