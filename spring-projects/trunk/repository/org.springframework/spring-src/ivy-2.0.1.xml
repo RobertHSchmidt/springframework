@@ -1,9 +1,9 @@
 <ivy-module version="1.0">
 	<info organisation="org.springframework"
 		module="spring-src"
-		revision="2.0"
+		revision="2.0.1"
 		status="release"
-		publication="20061003140456"
+		publication="20061123091300"
 		default="true"
 	/>
 	<configurations>
