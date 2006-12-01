@@ -13,6 +13,7 @@
 		<transition on="search" to="performSearch">
 			<action bean="searchGroupFormAction" method="bindAndValidate" />
 		</transition>
+		<transition on="cancel" to="cancel"/>
 	</view-state>
 
 	<action-state id="performSearch">
@@ -30,6 +31,8 @@
 			<output-attribute name="groups" />
 		</output-mapper>
 	</end-state>
+
+	<end-state id="cancel" />
 
 	<import resource="search-group-flow-beans.xml" />
 

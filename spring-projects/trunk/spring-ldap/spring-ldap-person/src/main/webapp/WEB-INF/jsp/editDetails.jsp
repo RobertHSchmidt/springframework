@@ -39,18 +39,6 @@
 			<td><b>Description</b></td>
 			<td><form:input path="description" /></td>
 		</tr>
-		<%--
-		<tr>
-			<td colspan="2">
-				<br>
-				<b>Description:</b>
-				<br>
-				<c:forEach var="item" items="${description}">
-					${item}<br>
-				</c:forEach>
-			</td>
-		</tr>
-		 --%>
 		<tr>
 			<td colspan="2" class="buttonBar">
 				<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">
