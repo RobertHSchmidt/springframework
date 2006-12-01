@@ -4,8 +4,8 @@
 	<classpathentry kind="src" path="integration-test"/>
 	<classpathentry kind="src" path="src/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/spring"/>
 	<classpathentry kind="lib" path="lib/asm-2.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/asm-commons-2.2.2.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/spring"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
