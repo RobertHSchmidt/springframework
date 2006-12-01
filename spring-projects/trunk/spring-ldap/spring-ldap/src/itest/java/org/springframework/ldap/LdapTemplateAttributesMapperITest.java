@@ -38,7 +38,7 @@ public class LdapTemplateAttributesMapperITest extends
 
     public void testSearch_AttributeMapper() throws Exception {
         AttributesMapper mapper = new PersonAttributesMapper();
-        List result = tested.search("ou=company1,c=Sweden,dc=jayway,dc=se",
+        List result = tested.search("ou=company1,c=Sweden",
                 "(&(objectclass=person)(sn=Person2))", mapper);
 
         assertEquals(1, result.size());

@@ -43,7 +43,7 @@ public class LdapTemplateContextMapperITest extends
      */
     public void testSearch_ContextMapper() {
         ContextMapper mapper = new PersonContextMapper();
-        List result = tested.search("ou=company1,c=Sweden,dc=jayway,dc=se",
+        List result = tested.search("ou=company1,c=Sweden",
                 "(&(objectclass=person)(sn=Person2))", mapper);
 
         assertEquals(1, result.size());

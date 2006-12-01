@@ -34,7 +34,7 @@ public class LdapTemplateRecursiveDeleteITest extends
     private LdapTemplate tested;
 
     private static DistinguishedName DN = new DistinguishedName(
-            "cn=Some Person5,ou=company1,c=Sweden,dc=jayway,dc=se");
+            "cn=Some Person5,ou=company1,c=Sweden");
 
     private DistinguishedName firstSubDn;
 
