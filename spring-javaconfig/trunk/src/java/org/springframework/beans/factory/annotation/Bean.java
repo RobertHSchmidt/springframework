@@ -96,5 +96,11 @@ public @interface Bean {
 	String[] dependsOn() default {};
 
 	Meta[] meta() default {};
+	
+	/**
+	 * Allow the bean to be overriden in XML or other non-Java configuration
+	 * @return whether overriding of this bean is allowed
+	 */
+	boolean allowOverriding() default false;
 
 }

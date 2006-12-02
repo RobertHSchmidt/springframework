@@ -20,8 +20,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import net.sf.cglib.proxy.Callback;
@@ -44,6 +46,7 @@ import org.springframework.beans.factory.annotation.Configuration;
 import org.springframework.beans.factory.annotation.DependencyCheck;
 import org.springframework.beans.factory.annotation.Lazy;
 import org.springframework.beans.factory.annotation.Scope;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.CompositePropertySource;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -55,6 +58,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
+import org.springframework.util.ReflectionUtils.MethodFilter;
 
 /**
  * Class that processes Configuration beans.
@@ -192,6 +196,7 @@ public class ConfigurationProcessor {
 
 		generateBeanDefinitions(configurerBeanName, configClass);
 	}
+	
 
 	/**
 	 * Modify metadata by emitting new bean definitions based on the bean
@@ -206,11 +211,28 @@ public class ConfigurationProcessor {
 		for (ConfigurationListener cl : configurationListenerRegistry.getConfigurationListeners()) {
 			cl.configurationClass(owningBeanFactory, childFactory, configurerBeanName, configurerClass);
 		}
+		
+		// Only want to consider most specific bean creation method, in the case of overrides
+		final Set<String> noArgMethodsSeen = new HashSet<String>();
 
 		ReflectionUtils.doWithMethods(configurerClass, new MethodCallback() {
 			public void doWith(Method m) throws IllegalArgumentException, IllegalAccessException {
 				Bean beanAnnotation = findBeanAnnotation(m, configurerClass);
-				if (beanAnnotation != null) {
+				if (beanAnnotation != null && !noArgMethodsSeen.contains(m.getName())) {
+					
+					// If the bean already exists in the factory, don't emit a bean definition
+					// This may or may not be legal, depending on whether the @Bean annotation
+					// allows overriding
+					if (owningBeanFactory.containsBean(m.getName())) {
+						if (!beanAnnotation.allowOverriding()) {
+							throw new IllegalStateException("Already have a bean with name '" + m.getName() + "'");
+						}
+						else {
+							// Don't emit a bean definition
+							return;
+						}
+					}					
+					noArgMethodsSeen.add(m.getName());
 					generateBeanDefinitionFromBeanCreationMethod(owningBeanFactory, configurerBeanName,
 							configurerClass, m, beanAnnotation);// , cca);
 				}
@@ -369,7 +391,22 @@ public class ConfigurationProcessor {
 					// rather than through the BeanFactory
 					childFactory.recordRequestForBeanName(m.getName());
 				}
-				Object originallyCreatedBean = mp.invokeSuper(o, args);
+				
+				// Get raw result of @Bean method or get bean from factory if it is overriden
+				Object originallyCreatedBean = null;
+				BeanDefinition beanDef = owningBeanFactory.getBeanDefinition(m.getName());
+				if (beanDef instanceof RootBeanDefinition) {
+					RootBeanDefinition rbdef = (RootBeanDefinition) beanDef;
+					if (rbdef.getFactoryBeanName() == null) {
+						// We have a regular bean definition already in the factory:
+						// use that instead of the @Bean method
+						originallyCreatedBean = owningBeanFactory.getBean(m.getName());
+					}
+				}
+				if (originallyCreatedBean == null) {
+					originallyCreatedBean = mp.invokeSuper(o, args);
+				}
+				
 				if (!configurationListenerRegistry.getConfigurationListeners().isEmpty()) {
 					// We know we have advisors that may affect this object
 					// Prepare to proxy it
