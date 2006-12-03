@@ -44,6 +44,7 @@ import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Bean;
 import org.springframework.beans.factory.annotation.Configuration;
 import org.springframework.beans.factory.annotation.DependencyCheck;
+import org.springframework.beans.factory.annotation.ExternalBean;
 import org.springframework.beans.factory.annotation.Lazy;
 import org.springframework.beans.factory.annotation.Scope;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -58,7 +59,6 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
-import org.springframework.util.ReflectionUtils.MethodFilter;
 
 /**
  * Class that processes Configuration beans.
@@ -148,7 +148,8 @@ public class ConfigurationProcessor {
 		public String lastRequestedBeanName() {
 			return names().empty() ? null : names().peek();
 		}
-	} // class BeanNameTrackingDefaultListableBeanFactory
+	} 	// class BeanNameTrackingDefaultListableBeanFactory
+	
 
 	public ConfigurationProcessor(ConfigurableApplicationContext ac, ConfigurationListenerRegistry clr) {
 		init(ac.getBeanFactory(), clr);
@@ -285,7 +286,11 @@ public class ConfigurationProcessor {
 		enhancer.setSuperclass(configurationClass);
 
 		enhancer.setCallbackFilter(BEAN_CREATION_METHOD_CALLBACK_FILTER);
-		enhancer.setCallbackTypes(new Class[] { NoOp.class, BeanMethodMethodInterceptor.class });
+		enhancer.setCallbackTypes(new Class[] { 
+				NoOp.class, 
+				BeanMethodMethodInterceptor.class,
+				ExternalBeanMethodMethodInterceptor.class
+		});
 		enhancer.setUseFactory(false);
 		// TODO can we generate a method to expose each private bean field here?
 		// Otherwise may need to generate a static or instance map, with
@@ -293,8 +298,11 @@ public class ConfigurationProcessor {
 		// Listeners don't get callback on this also
 
 		Class configurationSubclass = enhancer.createClass();
-		Enhancer.registerCallbacks(configurationSubclass, new Callback[] { NoOp.INSTANCE,
-				new BeanMethodMethodInterceptor() });
+		Enhancer.registerCallbacks(configurationSubclass, new Callback[] { 
+					NoOp.INSTANCE,
+					new BeanMethodMethodInterceptor(),
+					new ExternalBeanMethodMethodInterceptor()
+				});
 
 		return configurationSubclass;
 	}
@@ -311,6 +319,9 @@ public class ConfigurationProcessor {
 			}
 			if (isBeanDefinitionMethod(m, m.getDeclaringClass())) {
 				return 1;
+			}
+			if (AnnotationUtils.findAnnotation(m, ExternalBean.class) != null) {
+				return 2;
 			}
 			return 0;
 		}
@@ -452,6 +463,16 @@ public class ConfigurationProcessor {
 					childFactory.pop();
 				}
 			}
+		}
+	}
+	
+	/**
+	 * MethodInterceptor that returns the result of a getBean() call for an external bean.
+	 */
+	private class ExternalBeanMethodMethodInterceptor implements MethodInterceptor {
+		
+		public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
+			return owningBeanFactory.getBean(m.getName());
 		}
 	}
 
