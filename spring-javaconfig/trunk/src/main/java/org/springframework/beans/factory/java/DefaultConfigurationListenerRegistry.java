@@ -28,6 +28,7 @@ public class DefaultConfigurationListenerRegistry implements ConfigurationListen
 	private List<ConfigurationListener> configurationListeners = new LinkedList<ConfigurationListener>();
 	
 	public DefaultConfigurationListenerRegistry() {
+		registerConfigurationListener(new AutoBeanConfigurationListener());
 		registerConfigurationListener(new HotSwapConfigurationListener());
 		registerConfigurationListener(new SpringAdvisorConfigurationListener());
 		registerConfigurationListener(new SpringAdviceConfigurationListener());

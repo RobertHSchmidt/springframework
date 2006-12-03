@@ -40,6 +40,7 @@ import org.springframework.aop.interceptor.ExposeInvocationInterceptor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.AutoBean;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Bean;
 import org.springframework.beans.factory.annotation.Configuration;
@@ -320,7 +321,8 @@ public class ConfigurationProcessor {
 			if (isBeanDefinitionMethod(m, m.getDeclaringClass())) {
 				return 1;
 			}
-			if (AnnotationUtils.findAnnotation(m, ExternalBean.class) != null) {
+			if (AnnotationUtils.findAnnotation(m, ExternalBean.class) != null ||
+					AnnotationUtils.findAnnotation(m, AutoBean.class) != null) {
 				return 2;
 			}
 			return 0;
