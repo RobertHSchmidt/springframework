@@ -37,6 +37,7 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.DummyFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
+import org.springframework.beans.factory.annotation.AutoBean;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Bean;
 import org.springframework.beans.factory.annotation.Configuration;
@@ -933,6 +934,57 @@ public class ConfigurationProcessorTests extends TestCase {
 		assertNotNull("Advised object should have still been autowired", husband.getWife());
 	}
 	
+	
+	public abstract static class ValidAutoBeanTest extends ConfigurationSupport {
+		@Bean
+		public TestBean rod() {
+			TestBean rod = new TestBean();
+			rod.setName("Rod");
+			//rod.setSpouse(kerry());
+			return rod;
+		}
+		
+		@AutoBean public abstract TestBean kerry();
+	}
+	
+	public void testValidAutoBean() {
+		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		configurationProcessor.process(ValidAutoBeanTest.class);
+		
+		TestBean kerry = (TestBean) bf.getBean("kerry");
+		assertEquals("AutoBean was autowired", "Rod", kerry.getSpouse().getName());
+		
+		// TODO will not work due to ordering: document?
+		// An @Bean can't always depend on an autobean
+//		TestBean rod = (TestBean) bf.getBean("rod");
+//		assertNotNull(rod.getSpouse());
+//		assertSame(rod, rod.getSpouse().getSpouse());
+	}
+	
+	public abstract static class InvalidAutoBeanTest extends ConfigurationSupport {
+		@Bean
+		public TestBean rod() {
+			TestBean rod = new TestBean();
+			rod.setSpouse(kerry());
+			return rod;
+		}
+		
+		// Invalid, as it's on an interface type
+		@AutoBean public abstract ITestBean kerry();
+	}
+	
+	public void testInvalidAutoBean() {
+		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		try {
+			configurationProcessor.process(InvalidAutoBeanTest.class);
+			fail();
+		}
+		catch (BeanDefinitionStoreException ex) {
+			
+		}
+	}
 	
 	public static class RequiresProperty extends ConfigurationSupport {
 		@Bean
