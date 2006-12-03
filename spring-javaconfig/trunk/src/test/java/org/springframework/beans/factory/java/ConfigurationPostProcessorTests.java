@@ -41,6 +41,7 @@ import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Bean;
 import org.springframework.beans.factory.annotation.Configuration;
+import org.springframework.beans.factory.annotation.ExternalBean;
 import org.springframework.beans.factory.annotation.SpringAdvice;
 import org.springframework.beans.factory.java.ConfigurationProcessorTests.BaseConfiguration;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -525,4 +526,78 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		assertEquals(2, CountAspect.counter);
 	}
 
+	@Configuration
+	public static class LegalOverrideConfiguration {
+		@Bean 
+		public TestBean bob() {
+			TestBean bob = new TestBean();
+			bob.setSpouse(ann());
+			return bob;
+		}
+		
+		@Bean(allowOverriding=true)
+		public TestBean ann() {
+			return new TestBean();
+		}
+	}
+	
+	public void testLegalOverride() {
+		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext("org/springframework/beans/factory/java/legalOverride.xml");
+		TestBean bob = (TestBean) bf.getBean("bob");
+		assertTrue(bf.containsBean("ann"));
+		assertEquals("Property value must have come from XML override, not @Bean method",
+				"Ann", bob.getSpouse().getName());
+	}
+	
+	@Configuration
+	public static class IllegalOverrideConfiguration {
+		@Bean 
+		public TestBean bob() {
+			TestBean bob = new TestBean();
+			bob.setSpouse(ann());
+			return bob;
+		}
+		
+		// Does not allow overriding
+		@Bean
+		public TestBean ann() {
+			return new TestBean();
+		}
+	}
+	
+	
+	public void testIllegalOverride() {
+		try {
+			ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
+				"org/springframework/beans/factory/java/illegalOverride.xml");
+			bf.getBean("ann");
+			fail();
+		}
+		catch (IllegalStateException ex) {
+			// Ok
+		}
+	}
+	
+	@Configuration
+	public static abstract class ExternalBeanConfiguration {
+		@Bean 
+		public TestBean bob() {
+			TestBean bob = new TestBean();
+			bob.setSpouse(ann());
+			return bob;
+		}
+		
+		// Will be taken from XML
+		@ExternalBean
+		public abstract TestBean ann();
+	}
+	
+	public void testExternalBean() {
+		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
+				"org/springframework/beans/factory/java/externalBean.xml");
+		TestBean bob = (TestBean) bf.getBean("bob");
+		assertTrue(bf.containsBean("ann"));
+		assertEquals("External bean must have been satisfied",
+				"Ann", bob.getSpouse().getName());
+	}
 }
