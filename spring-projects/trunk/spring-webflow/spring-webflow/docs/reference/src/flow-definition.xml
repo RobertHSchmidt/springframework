@@ -1685,10 +1685,6 @@
 	           				    <entry>this.getLabel()</entry>
 	           				</row>
 	           				<row>
-	           				    <entry>null</entry>
-	           				    <entry>null</entry>
-	           				</row>
-	           				<row>
 	           				    <entry>org.springframework.webflow.execution.Event</entry>
 	           				    <entry>this.getId()</entry>
 	           				</row>
