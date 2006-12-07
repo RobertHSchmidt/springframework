@@ -32,17 +32,25 @@ import org.springframework.core.enums.ShortCodedLabeledEnum;
 public class DefaultConversionServiceTests extends TestCase {
 	
 	public void testOverrideConverter() {
-		Converter customConverter = new TextToClass() {};
+		Converter customConverter = new TextToBoolean("ja", "nee");
 		
 		DefaultConversionService service = new DefaultConversionService();
 		
-		assertNotSame(customConverter,
-				service.getConversionExecutor(String.class, Class.class).getConverter());
+		ConversionExecutor executor = service.getConversionExecutor(String.class, Boolean.class);
+		assertNotSame(customConverter, executor.getConverter());
+		try {
+			executor.execute("ja");
+			fail();
+		}
+		catch (ConversionException e) {
+			// expected
+		}
 		
 		service.addConverter(customConverter);
 		
-		assertSame(customConverter,
-				service.getConversionExecutor(String.class, Class.class).getConverter());
+		executor = service.getConversionExecutor(String.class, Boolean.class);
+		assertSame(customConverter, executor.getConverter());
+		assertTrue(((Boolean)executor.execute("ja")).booleanValue());
 	}
 
 	public void testTargetClassNotSupported() {
