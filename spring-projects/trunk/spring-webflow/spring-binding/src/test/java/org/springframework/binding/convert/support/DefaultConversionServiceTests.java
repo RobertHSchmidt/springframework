@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
+import org.springframework.binding.convert.Converter;
 import org.springframework.core.enums.ShortCodedLabeledEnum;
 
 /**
@@ -29,6 +30,20 @@ import org.springframework.core.enums.ShortCodedLabeledEnum;
  * @author Keith Donald
  */
 public class DefaultConversionServiceTests extends TestCase {
+	
+	public void testOverrideConverter() {
+		Converter customConverter = new TextToClass() {};
+		
+		DefaultConversionService service = new DefaultConversionService();
+		
+		assertNotSame(customConverter,
+				service.getConversionExecutor(String.class, Class.class).getConverter());
+		
+		service.addConverter(customConverter);
+		
+		assertSame(customConverter,
+				service.getConversionExecutor(String.class, Class.class).getConverter());
+	}
 
 	public void testTargetClassNotSupported() {
 		DefaultConversionService service = new DefaultConversionService();
