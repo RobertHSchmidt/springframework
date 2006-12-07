@@ -76,6 +76,14 @@ public class ConversionExecutor implements Serializable {
 	public Class getTargetClass() {
 		return targetClass;
 	}
+	
+	/**
+	 * Returns the converter that will perform the conversion.
+	 * @return the converter
+	 */
+	public Converter getConverter() {
+		return converter;
+	}
 
 	/**
 	 * Execute the conversion for the provided source object.
