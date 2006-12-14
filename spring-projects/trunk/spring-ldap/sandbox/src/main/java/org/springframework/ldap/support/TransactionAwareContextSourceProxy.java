@@ -47,7 +47,7 @@ public class TransactionAwareContextSourceProxy implements ContextSource {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    private static class TransactionAwareDirContextInvocationHandler implements
+    static class TransactionAwareDirContextInvocationHandler implements
             InvocationHandler {
         private DirContext target;
 
@@ -84,13 +84,14 @@ public class TransactionAwareContextSourceProxy implements ContextSource {
 
         private void doCloseConnection(DirContext context,
                 ContextSource contextSource) throws NamingException {
-            DirContext transactionContext = (DirContext) TransactionSynchronizationManager
+            DirContextHolder transactionContextHolder = (DirContextHolder) TransactionSynchronizationManager
                     .getResource(contextSource);
-            if (transactionContext != context) {
-                // This is not the transactional context - we should close it.
+            if (transactionContextHolder == null
+                    || transactionContextHolder.getCtx() != context) {
+                // This is not the transactional context or the transaction is
+                // no longer active - we should close it.
                 context.close();
             }
         }
-
     }
 }
