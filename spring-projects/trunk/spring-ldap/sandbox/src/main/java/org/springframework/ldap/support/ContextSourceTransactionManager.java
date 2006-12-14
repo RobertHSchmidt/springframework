@@ -1,5 +1,6 @@
 package org.springframework.ldap.support;
 
+import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 
 import org.springframework.ldap.ContextSource;
@@ -22,23 +23,6 @@ public class ContextSourceTransactionManager extends
         return contextSource;
     }
 
-    protected void doBegin(Object transaction, TransactionDefinition definition)
-            throws TransactionException {
-        ContextSourceTransactionObject txObject = (ContextSourceTransactionObject) transaction;
-
-        if (txObject.getContextHolder() == null) {
-            DirContext newCtx = getContextSource().getReadOnlyContext();
-            txObject.setContextHolder(new DirContextHolder(newCtx));
-            TransactionSynchronizationManager.bindResource(getContextSource(),
-                    newCtx);
-        }
-    }
-
-    protected void doCommit(DefaultTransactionStatus status)
-            throws TransactionException {
-        // Nothing much to do here.
-    }
-
     protected Object doGetTransaction() throws TransactionException {
         DirContextHolder contextHolder = (DirContextHolder) TransactionSynchronizationManager
                 .getResource(this.contextSource);
@@ -47,13 +31,44 @@ public class ContextSourceTransactionManager extends
         return txObject;
     }
 
+    protected void doBegin(Object transaction, TransactionDefinition definition)
+            throws TransactionException {
+        ContextSourceTransactionObject txObject = (ContextSourceTransactionObject) transaction;
+
+        if (txObject.getContextHolder() == null) {
+            DirContext newCtx = getContextSource().getReadOnlyContext();
+            DirContextHolder contextHolder = new DirContextHolder(newCtx);
+
+            txObject.setContextHolder(contextHolder);
+            TransactionSynchronizationManager.bindResource(getContextSource(),
+                    contextHolder);
+        }
+    }
+
+    protected void doCommit(DefaultTransactionStatus status)
+            throws TransactionException {
+        // Nothing much to do here.
+    }
+
     protected void doRollback(DefaultTransactionStatus status)
             throws TransactionException {
         // Perform compensating transaction cleanup using information stored in
         // ContextHolder.
     }
 
-    private class ContextSourceTransactionObject {
+    protected void doCleanupAfterCompletion(Object transaction) {
+        ContextSourceTransactionObject txObject = (ContextSourceTransactionObject) transaction;
+        TransactionSynchronizationManager.unbindResource(contextSource);
+        DirContext ctx = txObject.getContextHolder().getCtx();
+
+        try {
+            ctx.close();
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static class ContextSourceTransactionObject {
         private DirContextHolder contextHolder;
 
         public ContextSourceTransactionObject(DirContextHolder contextHolder) {
