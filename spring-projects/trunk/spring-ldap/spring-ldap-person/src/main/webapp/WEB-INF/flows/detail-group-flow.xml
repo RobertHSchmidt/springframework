@@ -56,6 +56,7 @@
 				<output-attribute name="results" scope="flash"/>
 			</output-mapper>
 		</attribute-mapper>
+		<transition on="cancel" to="displayAddCandidates"/>
 		<transition on="finish" to="displayAddCandidates"/>
 	</subflow-state>
 

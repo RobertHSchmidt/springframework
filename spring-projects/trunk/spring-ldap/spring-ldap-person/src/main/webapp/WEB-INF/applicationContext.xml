@@ -54,6 +54,14 @@
 		<property name="base" value="dc=jayway,dc=se" />
 	</bean>
 
+	<bean id="dummyPersonDao"
+		class="org.springframework.ldap.samples.person.dao.DummyPersonDao">
+	</bean>
+
+	<bean id="dummyGroupDao"
+		class="org.springframework.ldap.samples.person.dao.DummyGroupDao">
+	</bean>
+
 	<bean id="groupDao"
 		class="org.springframework.ldap.samples.person.dao.GroupDaoImpl">
 		<property name="ldapOperations" ref="ldapOperations" />
@@ -62,8 +70,9 @@
 	<bean id="personService"
 		class="org.springframework.ldap.samples.person.service.PersonServiceImpl">
 		<property name="personDao" ref="personDao" />
-		<!-- Use this to try the traditional implementation -->
+		<!-- Replace with this to use the dummy or the traditional implementation -->
 		<!--
+		<property name="personDao" ref="dummyPersonDao" />
 		<property name="personDao" ref="traditionalPersonDao" />
 		-->
 	</bean>
@@ -71,5 +80,9 @@
 	<bean id="groupService"
 		class="org.springframework.ldap.samples.person.service.GroupServiceImpl">
 		<property name="groupDao" ref="groupDao" />
+		<!-- Replace with this to use the dummy implementation -->
+		<!--
+		<property name="groupDao" ref="dummyGroupDao" />
+		-->
 	</bean>
 </beans>

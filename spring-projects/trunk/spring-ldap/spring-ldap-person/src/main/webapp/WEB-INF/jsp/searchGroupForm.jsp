@@ -35,8 +35,8 @@
 		<tr>
 			<td colspan="2" class="buttonBar">
 				<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">
-				<input type="submit" class="button" name="_eventId_cancel" value="Menu">
 				<input type="submit" class="button" name="_eventId_search" value="Search">
+				<input type="submit" class="button" name="_eventId_cancel" value="Cancel">
 			</td>
 		</tr>		
 	</table>

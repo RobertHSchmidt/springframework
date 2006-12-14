@@ -21,7 +21,7 @@
 		</spring:hasBindErrors>
 		<tr>
 			<td><b>Name</b></td>
-			<td><form:input path="name" /></td>
+			<td><form:input path="name" disabled="true" /></td>
 		</tr>
 		<tr>
 			<td colspan="2">
