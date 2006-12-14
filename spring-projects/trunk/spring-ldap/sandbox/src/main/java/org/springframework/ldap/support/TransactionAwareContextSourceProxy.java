@@ -23,12 +23,17 @@ public class TransactionAwareContextSourceProxy implements ContextSource {
     public DirContext getReadOnlyContext() throws DataAccessException {
         DirContextHolder contextHolder = (DirContextHolder) TransactionSynchronizationManager
                 .getResource(target);
-        DirContext ctx = contextHolder.getCtx();
-        if (contextHolder != null && ctx == null) {
+        DirContext ctx = null;
+
+        if (contextHolder != null) {
+            ctx = contextHolder.getCtx();
+        }
+
+        if (ctx == null) {
             ctx = target.getReadOnlyContext();
-            contextHolder.setCtx(ctx);
-            TransactionSynchronizationManager.bindResource(target,
-                    contextHolder);
+            if (contextHolder != null) {
+                contextHolder.setCtx(ctx);
+            }
         }
         return getTransactionAwareDirContextProxy(ctx, target);
     }
