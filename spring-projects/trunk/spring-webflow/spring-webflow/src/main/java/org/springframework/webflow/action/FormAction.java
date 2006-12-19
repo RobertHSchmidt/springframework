@@ -591,7 +591,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	/**
 	 * Bind incoming request parameters to allowed fields of the form object.
 	 * <p>
-	 * NOTE: This is action method is not designed to be overidden and might
+	 * NOTE: This action method is not designed to be overidden and might
 	 * become <code>final</code> in a future version of Spring Web Flow. If
 	 * you need to execute custom data binding logic have your flow call this
 	 * method along with your own custom methods as part of a single action
@@ -617,7 +617,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	/**
 	 * Validate the form object by invoking the validator if configured.
 	 * <p>
-	 * NOTE: This is action method is not designed to be overidden and might
+	 * NOTE: This action method is not designed to be overidden and might
 	 * become <code>final</code> in a future version of Spring Web Flow. If
 	 * you need to execute custom validation logic have your flow call this
 	 * method along with your own custom methods as part of a single action
@@ -657,7 +657,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * Resets the form by clearing out the form object in the specified scope
 	 * and recreating it.
 	 * <p>
-	 * NOTE: This is action method is not designed to be overidden and might
+	 * NOTE: This action method is not designed to be overidden and might
 	 * become <code>final</code> in a future version of Spring Web Flow. If
 	 * you need to execute custom reset logic have your flow call this method
 	 * along with your own custom methods as part of a single action chain.
@@ -820,7 +820,7 @@ public class FormAction extends MultiAction implements InitializingBean {
      * @return the form object
      * @throws Exception when an unrecoverable exception occurs
      */
-    protected final Object getFormObject(RequestContext context) throws Exception {
+    protected Object getFormObject(RequestContext context) throws Exception {
         FormObjectAccessor accessor = getFormObjectAccessor(context);
         Object formObject = accessor.getFormObject(getFormObjectName(), getFormObjectScope());
         if (formObject == null) {
@@ -849,7 +849,7 @@ public class FormAction extends MultiAction implements InitializingBean {
      * @return the form errors
      * @throws Exception when an unrecoverable exception occurs
      */
-    protected final Errors getFormErrors(RequestContext context) throws Exception {
+    protected Errors getFormErrors(RequestContext context) throws Exception {
         Object formObject = getFormObject(context);
         if (!formErrorsExposed(context, formObject)) {
             initFormErrors(context, formObject);

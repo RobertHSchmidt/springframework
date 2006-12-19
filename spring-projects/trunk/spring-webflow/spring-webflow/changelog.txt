@@ -2,8 +2,11 @@ SPRING WEB FLOW (SWF) CHANGELOG
 ===============================
 http://www.springframework.org
 
-Changes in version 1.0.1 (03.12.2006)
------------------------------------
+Changes in version 1.0.1 ()
+-------------------------------------
+
+Package org.springframework.webflow.action
+* FormAction methods getFormObject and getFormErrors are no longer final (SWF-222).
 
 Package org.springframework.webflow.config
 * Added get/setMaxConversations and get/setMaxContinuations methods to FlowExecutorFactoryBean.
