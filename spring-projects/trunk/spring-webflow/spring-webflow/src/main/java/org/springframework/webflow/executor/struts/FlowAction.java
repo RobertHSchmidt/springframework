@@ -259,13 +259,14 @@ public class FlowAction extends ActionSupport {
 		}
 		else if (response.isFlowDefinitionRedirect()) {
 			// restart the flow by redirecting to flow launch URL
-			String flowUrl = argumentHandler.createFlowDefinitionUrl((FlowDefinitionRedirect)response.getViewSelection(), context);
+			String flowUrl = argumentHandler.createFlowDefinitionUrl(
+					(FlowDefinitionRedirect)response.getViewSelection(), context);
 			return createRedirectForward(flowUrl, httpResponse);
 		}
 		else if (response.isExternalRedirect()) {
 			// redirect to external URL
-			String externalUrl = argumentHandler.createExternalUrl((ExternalRedirect)response.getViewSelection(),
-					response.getFlowExecutionKey(), context);
+			String externalUrl = argumentHandler.createExternalUrl(
+					(ExternalRedirect)response.getViewSelection(), response.getFlowExecutionKey(), context);
 			return createRedirectForward(externalUrl, httpResponse);
 		}
 		else if (response.isNull()) {
