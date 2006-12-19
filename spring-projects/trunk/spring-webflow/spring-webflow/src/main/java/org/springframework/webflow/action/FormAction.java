@@ -530,16 +530,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 		}
 		// retrieve the form object, creating it if necessary
 		Object formObject = getFormObject(context);
-		// ensure the form errors collection is created and exposed to the flow
-		if (!formErrorsExposed(context, formObject)) {
-			// initialize and expose a fresh errors instance to the flow with
-			// editors applied
-			initFormErrors(context, formObject);
-		}
-		else {
-			// reapply property editors against the existing errors instance
-			reinstallPropertyEditors(context);
-		}
+		ensureFormErrorsExposed(context, formObject);
 		return success();
 	}
 
@@ -727,16 +718,45 @@ public class FormAction extends MultiAction implements InitializingBean {
 		}
 		getFormObjectAccessor(context).putFormErrors(errors, getFormErrorsScope());
 	}
+	
+	/**
+	 * Make sure a valid Errors instance for given form object is exposed
+	 * in given context.
+	 */
+	private void ensureFormErrorsExposed(RequestContext context, Object formObject) {
+		if (!formErrorsExposed(context)) {
+			// initialize and expose a fresh errors instance to the flow with
+			// editors applied
+			initFormErrors(context, formObject);
+		}
+		else {
+			// reusing an existing errors instance
+			if (formErrorsValid(context, formObject)) {
+				// reapply property editors against the existing errors instance
+				reinstallPropertyEditors(context);
+			}
+			else {
+				// create a new errors instance, but copy over error information
+				recreateFormErrors(context, formObject);
+			}
+		}
+	}
 
     /**
-     * Check if there is a <i>valid</i> Errors instance available in given
+     * Check if there is an Errors instance available in given
      * context for given form object.
      */
-	private boolean formErrorsExposed(RequestContext context, Object formObject) {
+	private boolean formErrorsExposed(RequestContext context) {
+		return getFormObjectAccessor(context).getFormErrors(getFormObjectName(), getFormErrorsScope()) != null;
+	}
+	
+	/**
+	 * Check if the Errors instance available in given context is valid for
+	 * given form object.
+	 */
+	private boolean formErrorsValid(RequestContext context, Object formObject) {
 		Errors errors = getFormObjectAccessor(context).getFormErrors(getFormObjectName(), getFormErrorsScope());
 		if (errors instanceof BindException) {
-			// make sure the existing form errors are consistent with the form
-			// object
 			BindException be = (BindException)errors;
 			if (be.getTarget() != formObject) {
 				if (logger.isInfoEnabled()) {
@@ -746,12 +766,27 @@ public class FormAction extends MultiAction implements InitializingBean {
 							+ "; instead this Errors instance unexpectedly wraps the target object '" + be.getTarget()
 							+ "' of class: " + be.getTarget().getClass() + ". ");
 				}
-                return false; // a new Errors instance will be created
+				return false;
+			}
+			else {
+				return true;
 			}
 		}
-		return errors != null;
+		else {
+			return true;
+		}
 	}
-
+	
+	/**
+	 * Create a new Errors instance wrapping given form object in given context, copying over
+	 * all error information available in the existing Errors instance in the context.
+	 */
+	private void recreateFormErrors(RequestContext context, Object formObject) {
+		Errors existingErrors = getFormObjectAccessor(context).getFormErrors(getFormObjectName(), getFormErrorsScope());
+		Errors newErrors = initFormErrors(context, formObject);
+		newErrors.addAllErrors(existingErrors);
+	}
+	
 	/**
 	 * Re-registers property editors against the current form errors instance.
 	 * @param context the flow execution request context
@@ -851,9 +886,7 @@ public class FormAction extends MultiAction implements InitializingBean {
      */
     protected Errors getFormErrors(RequestContext context) throws Exception {
         Object formObject = getFormObject(context);
-        if (!formErrorsExposed(context, formObject)) {
-            initFormErrors(context, formObject);
-        }
+        ensureFormErrorsExposed(context, formObject);
         return getFormObjectAccessor(context).getFormErrors(getFormObjectName(), getFormErrorsScope());
     }
 
