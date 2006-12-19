@@ -82,6 +82,7 @@ public interface FlowExecutionListener {
 	 * Called when a new flow session has started. At this point the start state
 	 * has been entered.
 	 * @param context the source of the event
+	 * @param session the session that was started
 	 */
 	public void sessionStarted(RequestContext context, FlowSession session);
 
