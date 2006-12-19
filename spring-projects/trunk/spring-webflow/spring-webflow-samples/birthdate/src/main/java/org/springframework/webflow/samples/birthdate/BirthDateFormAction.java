@@ -35,14 +35,14 @@ public class BirthDateFormAction extends FormAction {
 	private static final String AGE_NAME = "age";
 
 	public BirthDateFormAction() {
-		// tell the superclass about the form object and validator we want to
-		// use you could also do this in the application context XML ofcourse
+		// tell the superclass about the form object and validator we want to use
+		// you could also do this in the application context XML ofcourse
 		setFormObjectName("birthDate");
 		setFormObjectClass(BirthDate.class);
 		setFormObjectScope(ScopeType.FLOW);
 		setValidator(new BirthDateValidator());
 	}
-	
+
 	protected void registerPropertyEditors(PropertyEditorRegistry registry) {
 		// register a custom property editor to handle the date input
 		SimpleDateFormat dateFormat = new SimpleDateFormat(BIRTH_DATE_PATTERN);
