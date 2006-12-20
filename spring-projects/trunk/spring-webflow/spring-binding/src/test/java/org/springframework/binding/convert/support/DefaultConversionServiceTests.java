@@ -57,7 +57,7 @@ public class DefaultConversionServiceTests extends TestCase {
 		DefaultConversionService service = new DefaultConversionService();
 		try {
 			service.getConversionExecutor(String.class, HashMap.class);
-			fail("Should have thrown an ise");
+			fail("Should have thrown an exception");
 		}
 		catch (IllegalArgumentException e) {
 		}
