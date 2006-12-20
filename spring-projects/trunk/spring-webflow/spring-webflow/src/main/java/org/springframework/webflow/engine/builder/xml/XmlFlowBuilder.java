@@ -455,7 +455,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	}
 
 	private boolean isFlowElement(Element flowElement) {
-		return FLOW_ELEMENT.equals(flowElement.getTagName());
+		return nodeNameEquals(flowElement, FLOW_ELEMENT);
 	}
 
 	private void initLocalServiceRegistry(Element flowElement, Flow flow) {
