@@ -11,7 +11,7 @@
 	<classpathentry kind="lib" path="lib/buildtime/concurrent.jar"/>
 	<classpathentry kind="lib" path="lib/test/easymock.jar"/>
 	<classpathentry kind="lib" path="lib/test/log4j.jar"/>
-	<classpathentry kind="lib" path="lib/global/junit.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/junit.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/myfaces-api.jar"/>
 	<classpathentry kind="lib" path="lib/buildtime/myfaces-impl.jar"/>
 	<classpathentry kind="lib" path="lib/global/ognl.jar"/>
