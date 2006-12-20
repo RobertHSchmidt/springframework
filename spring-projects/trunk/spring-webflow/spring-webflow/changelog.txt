@@ -5,6 +5,10 @@ http://www.springframework.org
 Changes in version 1.0.1 ()
 -------------------------------------
 
+General
+* In Ivy, JUnit is no longer a default dependency. There is now a new 'testing' configuration that
+  includes JUnit as a dependency (SWF-213).
+
 Package org.springframework.webflow.action
 * FormAction methods getFormObject and getFormErrors are no longer final (SWF-222).
 * When FormAction detects that the existing Errors instance is invalid, it will now copy over

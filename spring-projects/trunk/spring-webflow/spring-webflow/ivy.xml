@@ -8,12 +8,14 @@
 		<conf name="global" visibility="private" />
 		<conf name="buildtime" visibility="private" />
 		<conf name="test" visibility="private" />
+
 		<!-- public webflow configurations other projects may use -->
 		<conf name="default" extends="mvc" />
 		<conf name="mvc" visibility="public" extends="global" />
 		<conf name="portlet" visibility="public" extends="mvc" />
 		<conf name="struts" visibility="public" extends="global" />
 		<conf name="jsf" visibility="public" extends="global" />
+		<conf name="testing" visibility="public" extends="global" />
 	</configurations>
 
 	<dependencies defaultconf="global->default">
@@ -31,7 +33,9 @@
 		<dependency org="org.springframework" name="spring-core" rev="2.0" />
 		<dependency org="org.springframework" name="spring-context" rev="2.0" />
 		<dependency org="org.springframework" name="spring-web" rev="2.0" />
-		<dependency org="junit" name="junit" rev="3.8.1" />
+		
+		<!-- testing support only dependencies -->
+		<dependency org="junit" name="junit" rev="3.8.1" conf="buildtime, testing->default" />
 
 		<!-- spring mvc only dependencies -->
 		<dependency org="org.springframework" name="spring-webmvc" rev="2.0" conf="buildtime, mvc->default" />
