@@ -7,6 +7,8 @@ Changes in version 1.0.1 ()
 
 Package org.springframework.webflow.action
 * FormAction methods getFormObject and getFormErrors are no longer final (SWF-222).
+* When FormAction detects that the existing Errors instance is invalid, it will now copy over
+  existing field and object errors to the newly created Errors instance (SWF-219).
 
 Package org.springframework.webflow.config
 * Added get/setMaxConversations and get/setMaxContinuations methods to FlowExecutorFactoryBean.
