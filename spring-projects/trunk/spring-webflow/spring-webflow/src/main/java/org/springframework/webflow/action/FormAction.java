@@ -738,6 +738,11 @@ public class FormAction extends MultiAction implements InitializingBean {
 			else {
 				// the existing errors instance seems to be invalid
 				// initialize a new errors instance, but copy over error information
+				if (logger.isInfoEnabled()) {
+					logger.info("Fixing inconsistent Errors instance: initializing a new Errors instance " +
+							"wrapping from object '" + formObject + "' in scope '" + getFormErrorsScope() +
+							"' and copying over all existing error information.");
+				}
 				Errors invalidExistingErrors =
 					getFormObjectAccessor(context).getFormErrors(getFormObjectName(), getFormErrorsScope());
 				Errors newErrors = initFormErrors(context, formObject);
@@ -768,7 +773,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 							+ "' does NOT wrap the current form object '" + formObject + "' of class "
 							+ formObject.getClass()
 							+ "; instead this Errors instance unexpectedly wraps the target object '" + be.getTarget()
-							+ "' of class: " + be.getTarget().getClass() + ". ");
+							+ "' of class: " + be.getTarget().getClass() + ".");
 				}
 				return false;
 			}
