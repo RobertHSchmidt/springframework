@@ -512,7 +512,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * custom property editors for formatting form object values in UI controls
 	 * such as text fields.
 	 * <p>
-	 * NOTE: This is action method is not designed to be overidden and might
+	 * NOTE: This action method is not designed to be overidden and might
 	 * become <code>final</code> in a future version of Spring Web Flow. If
 	 * you need to execute custom form setup logic have your flow call this
 	 * method along with your own custom methods as part of a single action
@@ -567,7 +567,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 		}
 		else {
 			if (logger.isDebugEnabled()) {
-				if (validator == null) {
+				if (getValidator() == null) {
 					logger.debug("No validator is configured, no validation will occur after binding");
 				}
 				else {
@@ -633,7 +633,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 		}
 		else {
 			if (logger.isDebugEnabled()) {
-				if (validator == null) {
+				if (getValidator() == null) {
 					logger.debug("No validator is configured, no validation will occur");
 				}
 				else {
@@ -720,7 +720,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 	
 	/**
-	 * Make sure a valid Errors instance for given form object is exposed
+	 * Make sure a <i>valid</i> Errors instance for given form object is exposed
 	 * in given context.
 	 */
 	private void ensureFormErrorsExposed(RequestContext context, Object formObject) {
@@ -730,14 +730,18 @@ public class FormAction extends MultiAction implements InitializingBean {
 			initFormErrors(context, formObject);
 		}
 		else {
-			// reusing an existing errors instance
+			// trying to reuse an existing errors instance
 			if (formErrorsValid(context, formObject)) {
 				// reapply property editors against the existing errors instance
 				reinstallPropertyEditors(context);
 			}
 			else {
-				// create a new errors instance, but copy over error information
-				recreateFormErrors(context, formObject);
+				// the existing errors instance seems to be invalid
+				// initialize a new errors instance, but copy over error information
+				Errors invalidExistingErrors =
+					getFormObjectAccessor(context).getFormErrors(getFormObjectName(), getFormErrorsScope());
+				Errors newErrors = initFormErrors(context, formObject);
+				newErrors.addAllErrors(invalidExistingErrors);
 			}
 		}
 	}
@@ -775,16 +779,6 @@ public class FormAction extends MultiAction implements InitializingBean {
 		else {
 			return true;
 		}
-	}
-	
-	/**
-	 * Create a new Errors instance wrapping given form object in given context, copying over
-	 * all error information available in the existing Errors instance in the context.
-	 */
-	private void recreateFormErrors(RequestContext context, Object formObject) {
-		Errors existingErrors = getFormObjectAccessor(context).getFormErrors(getFormObjectName(), getFormErrorsScope());
-		Errors newErrors = initFormErrors(context, formObject);
-		newErrors.addAllErrors(existingErrors);
 	}
 	
 	/**
@@ -901,6 +895,7 @@ public class FormAction extends MultiAction implements InitializingBean {
      * data in "flow scope" or "request scope"
      * @param formObject the form object to bind onto
      * @return the new binder instance
+     * @see WebDataBinder
      * @see #initBinder(RequestContext, DataBinder)
      * @see #setMessageCodesResolver(MessageCodesResolver)
      */
@@ -1025,17 +1020,15 @@ public class FormAction extends MultiAction implements InitializingBean {
 	}
 
 	/**
-	 * Initialize the new binder instance. This hook allows customization of
-     * binder settings such as the {@link DataBinder#getAllowedFields() allowed fields}
-     * and {@link DataBinder#getRequiredFields() required fields}. Called by
-	 * {@link #createBinder(RequestContext, Object)}
+	 * Initialize a new binder instance. This hook allows customization of
+     * binder settings such as the {@link DataBinder#getAllowedFields() allowed fields},
+     * {@link DataBinder#getRequiredFields() required fields} and
+     * {@link DataBinder#initDirectFieldAccess() direct field access}. Called by
+	 * {@link #createBinder(RequestContext, Object)}.
 	 * <p>
      * Note that registration of custom property editors should be done in
      * {@link #registerPropertyEditors(PropertyEditorRegistry)}, not here! This
-     * method will only be called when a new data binder is created, e.g. when
-     * {@link #bind(RequestContext) data binding} needs to be done. In other cases,
-     * e.g. {@link #setupForm(RequestContext) form setup}, it will <b>not</b> be
-     * called since no data binder is required.
+     * method will only be called when a <b>new</b> data binder is created.
 	 * @param context the action execution context, for accessing and setting
 	 * data in "flow scope" or "request scope"
 	 * @param binder new binder instance
@@ -1056,7 +1049,7 @@ public class FormAction extends MultiAction implements InitializingBean {
 	 * <p>
 	 * This default implementation will call the
 	 * {@link #registerPropertyEditors(PropertyEditorRegistry) simpler form} of
-	 * the method not taking a <tt>RequestContext</tt>.
+	 * the method not taking a <tt>RequestContext</tt> parameter.
 	 * @param context the action execution context, for accessing and setting
 	 * data in "flow scope" or "request scope"
 	 * @param registry the property editor registry to register editors in
