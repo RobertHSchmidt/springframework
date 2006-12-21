@@ -43,6 +43,7 @@ Package org.springframework.webflow.engine
 * Added toString implementations to XmlFlowBuilder and AbstractFlowBuilder.
 * Added support for the "name" attribute to the <set> and <evaluate-action> elements in the flow XML.
 * Fixed bug in method isFlowElement of XmlFlowBuilder to make it namespace-aware (SWF-226).
+* TransitionExecutingStateExceptionHandler now does full logging of the exceptions that it handles.
 
 Package org.springframework.webflow.execution.factory
 * The getHolder method on ConditionalFlowExecutionListenerLoader is now private. It has a package
