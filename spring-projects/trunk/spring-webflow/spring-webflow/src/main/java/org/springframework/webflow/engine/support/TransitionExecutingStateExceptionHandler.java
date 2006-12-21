@@ -105,7 +105,7 @@ public class TransitionExecutingStateExceptionHandler implements FlowExecutionEx
 
 	public ViewSelection handle(FlowExecutionException e, RequestControlContext context) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Handling state exception " + e);
+			logger.debug("Handling state exception " + e, e);
 		}
 		// expose state exception in flash scope so it's available for response rendering
 		context.getFlashScope().put(STATE_EXCEPTION_ATTRIBUTE, e);
