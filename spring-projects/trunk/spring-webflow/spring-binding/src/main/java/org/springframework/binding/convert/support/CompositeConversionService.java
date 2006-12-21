@@ -22,6 +22,7 @@ import java.util.Set;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
+import org.springframework.util.Assert;
 
 /**
  * A conversion service that delegates to an ordered chain of other conversion
@@ -39,6 +40,7 @@ public class CompositeConversionService implements ConversionService {
 	 * @param conversionServices the conversion services in the chain
 	 */
 	public CompositeConversionService(ConversionService[] conversionServices) {
+		Assert.notNull(conversionServices, "The conversion services chain is required");
 		this.chain = conversionServices;
 	}
 	
