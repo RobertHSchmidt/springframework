@@ -18,6 +18,7 @@ package org.springframework.webflow.engine.builder;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionService;
+import org.springframework.binding.convert.support.CompositeConversionService;
 import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.binding.convert.support.GenericConversionService;
 import org.springframework.binding.convert.support.TextToExpression;
@@ -220,21 +221,18 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 
 	/**
 	 * Setup a conversion service used by this flow service locator.
-	 * @param parent the parent of the conversion service that will be created;
-	 * optional
+	 * @param userConversionService a user supplied conversion service
 	 * @return the newly created conversion service
 	 */
-	protected ConversionService createConversionService(ConversionService parent) {
-		if (parent != null) {
-			GenericConversionService conversionService = new GenericConversionService();
-			addWebFlowConverters(conversionService);
-			conversionService.setParent(parent);
-			return conversionService;
+	protected ConversionService createConversionService(ConversionService userConversionService) {
+		DefaultConversionService defaultConversionService = new DefaultConversionService();
+		addWebFlowConverters(defaultConversionService);
+		if (userConversionService != null) {
+			return new CompositeConversionService(
+					new ConversionService[] { userConversionService, defaultConversionService});
 		}
 		else {
-			DefaultConversionService conversionService = new DefaultConversionService();
-			addWebFlowConverters(conversionService);
-			return conversionService;
+			return defaultConversionService;
 		}
 	}
 
