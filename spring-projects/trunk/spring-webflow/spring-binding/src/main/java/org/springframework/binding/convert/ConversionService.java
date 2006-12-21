@@ -17,7 +17,7 @@ package org.springframework.binding.convert;
 
 /**
  * A service interface for retrieving type conversion executors. The returned
- * command object is thread-safe and may be safely cached for use by client
+ * command objects are thread-safe and may be safely cached for use by client
  * code.
  * 
  * @author Keith Donald
@@ -37,7 +37,8 @@ public interface ConversionService {
 	 * @throws ConversionException an exception occured retrieving a converter
 	 * for the source-to-target pair
 	 */
-	public ConversionExecutor getConversionExecutor(Class sourceClass, Class targetClass) throws ConversionException;
+	public ConversionExecutor getConversionExecutor(Class sourceClass, Class targetClass)
+			throws ConversionException;
 
 	/**
 	 * Return a conversion executor command object capable of converting source
@@ -46,7 +47,7 @@ public interface ConversionService {
 	 * @param sourceClass the sourceClass
 	 * @param targetAlias the target alias, may also be the fully qualified
 	 * target class name
-	 * @return the conversion executor, or null if no suitable converter can be found
+	 * @return the conversion executor, or null if the alias cannot be found
 	 * @throws ConversionException an exception occured retrieving a converter
 	 * for the source-to-target pair
 	 */
@@ -60,12 +61,14 @@ public interface ConversionService {
 	 * @return the matching conversion executors
 	 * @throws ConversionException an exception occured retrieving the converters
 	 */
-	public ConversionExecutor[] getConversionExecutorsForSource(Class sourceClass) throws ConversionException;
+	public ConversionExecutor[] getConversionExecutorsForSource(Class sourceClass)
+			throws ConversionException;
 
 	/**
 	 * Return the class with the specified alias.
 	 * @param alias the class alias
 	 * @return the class, or null if not aliased
+	 * @throws ConversionException when an error occurs looking up the class by alias
 	 */
 	public Class getClassByAlias(String alias) throws ConversionException;
 
