@@ -45,8 +45,7 @@ public interface ConversionService {
 	 * objects of the specified <code>sourceClass</code> to target objects of
 	 * the type associated with the specified alias.
 	 * @param sourceClass the sourceClass
-	 * @param targetAlias the target alias, may also be the fully qualified
-	 * target class name
+	 * @param targetAlias the target alias
 	 * @return the conversion executor, or null if the alias cannot be found
 	 * @throws ConversionException an exception occured retrieving a converter
 	 * for the source-to-target pair
