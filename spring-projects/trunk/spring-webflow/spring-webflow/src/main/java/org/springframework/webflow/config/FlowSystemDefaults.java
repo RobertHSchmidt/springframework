@@ -71,8 +71,8 @@ public class FlowSystemDefaults implements Serializable {
 			executionAttributes = new LocalAttributeMap(1, 1);
 		}
 		if (!executionAttributes.contains(ApplicationViewSelector.ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE)) {
-			executionAttributes.put(ApplicationViewSelector.ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE, Boolean
-					.valueOf(alwaysRedirectOnPause));
+			executionAttributes.put(ApplicationViewSelector.ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE,
+					new Boolean(alwaysRedirectOnPause));
 		}
 		return executionAttributes;
 	}

@@ -21,6 +21,7 @@ Package org.springframework.webflow.config
 * The conversationManager argument of the createExecutionRepository hook method in the
   FlowExecutorFactoryBean is now possibly null. Review your implementation if you were overriding
   this method!
+* Fixed JDK 1.3 compatibility issue in FlowSystemDefaults (SWF-227).
 
 Package org.springframework.webflow.context
 * ExternalContextHolder now uses a ThreadLocal instead of an InheritableThreadLocal (SWF-206).
