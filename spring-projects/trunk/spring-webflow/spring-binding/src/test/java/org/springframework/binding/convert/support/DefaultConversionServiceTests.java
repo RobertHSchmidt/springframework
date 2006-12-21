@@ -59,7 +59,7 @@ public class DefaultConversionServiceTests extends TestCase {
 			service.getConversionExecutor(String.class, HashMap.class);
 			fail("Should have thrown an exception");
 		}
-		catch (IllegalArgumentException e) {
+		catch (ConversionException e) {
 		}
 	}
 

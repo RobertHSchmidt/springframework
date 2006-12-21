@@ -23,6 +23,11 @@ import org.springframework.core.NestedRuntimeException;
  * @author Keith Donald
  */
 public class ConversionException extends NestedRuntimeException {
+	
+	/**
+	 * The source type we tried to convert from
+	 */
+	private Class sourceClass;
 
 	/**
 	 * The value we tried to convert.
@@ -70,6 +75,26 @@ public class ConversionException extends NestedRuntimeException {
 		super(message, cause);
 		this.value = value;
 		this.targetClass = targetClass;
+	}
+	
+	/**
+	 * Creates a new conversion exception.
+	 * @param sourceClass the source type
+	 * @param targetClass the target type
+	 * @param message a descriptive message
+	 */
+	public ConversionException(Class sourceClass, Class targetClass, String message) {
+		super(message);
+		this.sourceClass = sourceClass;
+		this.value = null; // not available
+		this.targetClass = targetClass;
+	}
+	
+	/**
+	 * Returns the source type.
+	 */
+	public Class getSourceClass() {
+		return sourceClass;
 	}
 
 	/**

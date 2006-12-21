@@ -22,7 +22,9 @@ import org.springframework.binding.format.support.SimpleFormatterFactory;
 import org.springframework.core.enums.LabeledEnum;
 
 /**
- * Default, local implementation of a conversion service.
+ * Default, local implementation of a conversion service. Will automatically
+ * register <i>from string</i> converters for a number of standard Java
+ * types like Class, Number, Boolean and so on.
  * 
  * @author Keith Donald
  */
