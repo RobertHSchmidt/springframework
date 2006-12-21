@@ -440,7 +440,7 @@ For example:
 					<xsd:annotation>
 						<xsd:documentation>
 							<![CDATA[
-Defines a state exception handler to handle one or more exceptions that may occur during the
+Defines an exception handler to handle one or more exceptions that may occur during the
 execution of this flow definition. Exception handlers may be attached at the state or flow level.
 ]]>
 						</xsd:documentation>
@@ -775,7 +775,7 @@ regardless of what transition is executed.
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-Defines a state exception handler to handle one or more exceptions that may occur during the
+Defines an exception handler to handle one or more exceptions that may occur during the
 execution of this flow definition. Exception handlers may be attached at the state or flow level.
 ]]>
 								</xsd:documentation>
@@ -1355,7 +1355,7 @@ regardless of what transition is executed.
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-Defines a state exception handler to handle one or more exceptions that may occur during the
+Defines an exception handler to handle one or more exceptions that may occur during the
 execution of this flow definition. Exception handlers may be attached at the state or flow level.
 ]]>
 								</xsd:documentation>
@@ -1492,7 +1492,7 @@ regardless of what transition is executed.
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-Defines a state exception handler to handle one or more exceptions that may occur during the
+Defines an exception handler to handle one or more exceptions that may occur during the
 execution of this flow definition. Exception handlers may be attached at the state or flow level.
 ]]>
 								</xsd:documentation>
@@ -1641,7 +1641,7 @@ regardless of what transition is executed.
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-Defines a state exception handler to handle one or more exceptions that may occur during the
+Defines an exception handler to handle one or more exceptions that may occur during the
 execution of this flow definition. Exception handlers may be attached at the state or flow level.
 ]]>
 								</xsd:documentation>
@@ -1783,7 +1783,7 @@ For example:
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
-Defines a state exception handler to handle one or more exceptions that may occur during the
+Defines an exception handler to handle one or more exceptions that may occur during the
 execution of this flow definition. Exception handlers may be attached at the state or flow level.
 ]]>
 								</xsd:documentation>
