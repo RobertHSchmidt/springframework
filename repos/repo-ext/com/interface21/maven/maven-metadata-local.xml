@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <plugins>
+    <plugin>
+      <name>External Report Plugin</name>
+      <prefix>external-report</prefix>
+      <artifactId>maven-external-report-plugin</artifactId>
+    </plugin>
+  </plugins>
+</metadata>
