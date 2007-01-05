@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.sun.xml.wss</groupId>
+    <artifactId>xws-security</artifactId>
+    <version>2.0-fcs</version>
+    <name>XML and Web Services Security</name>
+    <description>
+        Part of the Java Web Services Developer Pack 2.0
+    </description>
+    <url>https://xwss.dev.java.net/</url>
+    <distributionManagement>
+        <downloadUrl>http://java.sun.com/webservices/downloads/webservicespack.html</downloadUrl>
+    </distributionManagement>
+    <dependencies>
+        <dependency>
+            <groupId>javax.xml.soap</groupId>
+            <artifactId>saaj-api</artifactId>
+            <version>1.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.messaging.saaj</groupId>
+            <artifactId>saaj-impl</artifactId>
+            <version>1.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml</groupId>
+            <artifactId>xmldsig</artifactId>
+            <version>1.0.1</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+</project>
