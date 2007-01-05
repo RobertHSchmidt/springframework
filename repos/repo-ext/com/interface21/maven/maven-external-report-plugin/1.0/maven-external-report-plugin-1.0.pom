@@ -1,0 +1,33 @@
+<?xml version="1.0"?><project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.interface21.maven</groupId>
+  <artifactId>maven-external-report-plugin</artifactId>
+  <packaging>maven-plugin</packaging>
+  <name>External Report Plugin</name>
+  <version>1.0</version>
+  <url>http://www.interface21.com</url>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-impl</artifactId>
+      <version>2.0.4</version>
+    </dependency>
+  </dependencies>
+  <distributionManagement>
+    <status>deployed</status>
+  </distributionManagement>
+  <properties>
+    <maven.test.failure.ignore>true</maven.test.failure.ignore>
+  </properties>
+</project>
