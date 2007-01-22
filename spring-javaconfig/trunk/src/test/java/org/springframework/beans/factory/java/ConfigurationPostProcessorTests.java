@@ -176,6 +176,28 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		// proxied.getName();
 		proxied.getLocation();
 	}
+	
+	public void testAbstractBeanDefinition() throws Exception {
+		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
+				"/org/springframework/beans/factory/java/abstractDef.xml");
+		
+		// there should be two, nothing more!
+		assertEquals(2, bf.getBeanDefinitionCount());
+		assertFalse(AbstractConfig.testBeanCreated);
+	}
+	
+	@Configuration
+	public static class AbstractConfig {
+		
+		public static boolean testBeanCreated = false;
+		
+		@Bean
+		public TestBean testBean() {
+			// this should never occur
+			testBeanCreated = true;
+			return new TestBean();
+		}
+	}
 
 	@Configuration
 	public static class InjectedConfig {

@@ -65,10 +65,14 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 		String[] beanNames = beanFactory.getBeanDefinitionNames();
 		for (int i = 0; i < beanNames.length; i++) {
 			BeanDefinition bd = beanFactory.getBeanDefinition(beanNames[i]);
-			if (bd instanceof RootBeanDefinition) {
+			if (bd instanceof RootBeanDefinition && isEligibleForConfigurationProcessing(bd)) {
 				RootBeanDefinition rbd = (RootBeanDefinition) bd;
 				ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(beanFactory,
 						configurationListenerRegistry);
+				
+				
+				
+				
 				Class clazz = null;
 
 				if (rbd.hasBeanClass())
@@ -98,6 +102,20 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 			}
 		}
 	}
+	/**
+	 * Determines if the given bean definition is eligible for configuration
+	 * processsing by a ConfigurationProcessor. Abstract beans are not eligible
+	 * for configuration processing; they have no class name. We might include other
+	 * cases too in the future.
+	 */
+	private boolean isEligibleForConfigurationProcessing(BeanDefinition def) {
+		if (def.isAbstract()) {
+			return false;
+		}
+		
+		return true;
+	}
+
 
 	/**
 	 * Guarantee to execute before any other BeanFactoryPostProcessors
