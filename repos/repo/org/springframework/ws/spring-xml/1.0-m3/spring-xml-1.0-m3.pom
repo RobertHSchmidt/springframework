@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+  <parent>
+    <artifactId>spring-ws</artifactId>
+    <groupId>org.springframework.ws</groupId>
+    <version>1.0-m3</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>spring-xml</artifactId>
+  <name>Spring XML</name>
+  <version>1.0-m3</version>
+  <description>Various XML support classes for Spring Web Services</description>
+  <dependencies>
+    <dependency>
+      <groupId>stax</groupId>
+      <artifactId>stax-api</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.woodstox</groupId>
+      <artifactId>wstx-asl</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <distributionManagement>
+    <status>deployed</status>
+  </distributionManagement>
+</project>
