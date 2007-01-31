@@ -18,11 +18,6 @@
       <artifactId>saaj-api</artifactId>
       <version>1.2</version>
     </dependency>
-    <dependency>
-      <groupId>com.sun.xml.fastinfoset</groupId>
-      <artifactId>FastInfoset</artifactId>
-      <version>1.1.1</version>
-    </dependency>
   </dependencies>
 </project>
 
