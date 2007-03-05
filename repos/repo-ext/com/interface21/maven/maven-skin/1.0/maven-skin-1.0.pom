@@ -1,0 +1,11 @@
+<?xml version="1.0"?><project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.interface21.maven</groupId>
+  <artifactId>maven-skin</artifactId>
+  <name>Interface21 Site Skin</name>
+  <version>1.0</version>
+  <url>http://www.interface21.com</url>
+  <distributionManagement>
+    <status>deployed</status>
+  </distributionManagement>
+</project>
