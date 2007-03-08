@@ -73,15 +73,22 @@ table.bodyTable {
     margin: 1em 0 1em 1.5em;
 }
 
+table.bodyTable th {
+    color: #5F6C30;
+    background-color: #E5EEC4;
+    font-weight: bold;
+}
+
 table.bodyTable tr, table.bodyTable td {
     padding: 2px 5px;
     border: 1px solid #CDDE8E;
 }
 
-table.bodyTable th {
+dt {
     color: #5F6C30;
-    background-color: #E5EEC4;
     font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 0.25em;
 }
 
 /*
