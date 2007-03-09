@@ -10,6 +10,7 @@
   <packaging>maven-plugin</packaging>
   <name>Maven OSGi Plugin</name>
   <version>0.8.0-20061102.022735-9</version>
+  <repositories>
     <repository>
       <id>spring-ext</id>
       <name>Spring External Dependencies Repository</name>
@@ -17,6 +18,7 @@
         https://svn.sourceforge.net/svnroot/springframework/repos/repo-ext/
       </url>
     </repository>
+  </repositories>
   <pluginRepositories>
     <pluginRepository>
       <id>spring-ext</id>
