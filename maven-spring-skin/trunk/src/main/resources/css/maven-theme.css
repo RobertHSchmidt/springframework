@@ -95,18 +95,21 @@ dt {
 Page layout blocks / IDs
 */
 #banner {
-    background-color: #86AEA5;
-    height: 73px;
+    min-height: 77px;
+    background: url(../images/banner.gif) top right no-repeat;
+    background-color: #718935; // 31430F;// 86AEA5;
+}
+
+* html #banner {
+	/* IE only */
+	height: 77px;
 }
 
 #bannerLeft {
     width: 524px;
-    height: 73px;
-}
-
-#bannerLeft a:hover {
-    width: 524px;
-    height: 73px;
+    display: block;
+    color: white;
+    text-decoration: none;
 }
 
 #bannerRight img {
@@ -195,9 +198,18 @@ Page layout blocks / IDs
 
 #footer {
     padding: 0;
-    border-collapse: separate;
+    margin-top: 0.5em;
     background-color: #BACE87;
     border-top: 1px solid #434320;
     border-bottom: 1px solid #434320;
     font-size: 0.85em;
+}
+
+#poweredBy img {
+  display: inline;
+  border: none;
+}
+
+#poweredBy {
+  margin-top: 8px;
 }
