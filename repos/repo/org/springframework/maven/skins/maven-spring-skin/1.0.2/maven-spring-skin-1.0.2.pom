@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.springframework.maven.skins</groupId>
+  <artifactId>maven-spring-skin</artifactId>
+  <name>Maven Spring Skin</name>
+  <version>1.0.2</version>
+  <description>A Maven2 Skin that resembles the layout of www.springframework.org</description>
+  <developers>
+    <developer>
+      <id>poutsma</id>
+      <name>Arjen Poutsma</name>
+      <email>apoutsma at interface21.com</email>
+      <organization>Interface21</organization>
+      <organizationUrl>http://www.interface21.com</organizationUrl>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/maven-spring-skin/trunk</connection>
+    <developerConnection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/maven-spring-skin/trunk</developerConnection>
+    <url>http://svn.sourceforge.net/viewvc/springframework/maven-spring-skin/</url>
+  </scm>
+  <distributionManagement>
+    <repository>
+      <id>local</id>
+      <url>file:///Users/arjen/Projects/Spring/repos/repo</url>
+    </repository>
+    <status>deployed</status>
+  </distributionManagement>
+</project>
