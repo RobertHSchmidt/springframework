@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<antlib>
-	<taskdef name="s3" classname="org.springframework.aws.SimpleStorageService" />
-</antlib>
