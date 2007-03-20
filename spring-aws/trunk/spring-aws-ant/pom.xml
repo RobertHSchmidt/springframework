@@ -1,11 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.springframework.aws</groupId>
 	<artifactId>spring-aws-ant</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>Amazon Web Services Ant Tasks</name>
 	<url>http://www.springframework.org</url>
 	<inceptionYear>2007</inceptionYear>
@@ -17,13 +15,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>
-			scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-aws/trunk
-		</connection>
-		<developerConnection>
-			scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-aws/trunk
-		</developerConnection>
-		<url>http://fisheye3.cenqua.com/browse/springframework/spring-aws/trunk</url>
+		<connection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-aws/tags/spring-aws-ant-1.0</connection>
+		<developerConnection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-aws/tags/spring-aws-ant-1.0</developerConnection>
+		<url>http://fisheye3.cenqua.com/browse/springframework/spring-aws/tags/spring-aws-ant-1.0</url>
 	</scm>
 	<build>
 		<plugins>
