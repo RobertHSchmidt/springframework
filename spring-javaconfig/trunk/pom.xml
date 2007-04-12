@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.springframework</groupId>
   <artifactId>spring-javaconfig</artifactId>
-  <version>1.0-M1</version>
+  <version>1.0-M2-SNAPSHOT</version>
   <name>Spring JavaConfig</name>
   <url>http://www.springframework.org/javaconfig</url>
   <description>
@@ -16,18 +16,15 @@
   <!-- Basic configuration: JIRA, SCM, CI, devs etc. -->
   <!-- ============================================= -->
 
-  <!-- 
   <issueManagement>
     <system>JIRA</system>
-    <url>
-      http://opensource.atlassian.com/projects/spring/browse/JavaConfig
-    </url>
+    <url>http://opensource.atlassian.com/projects/spring/browse/SJC</url>
   </issueManagement>
 
 
   <ciManagement>
     <system>continuum</system>
-    <url>https://build.springframework.org/continuum/servlet/continuum</url>
+    <url>http://build.springframework.org:8085/bamboo/browse/SJC</url>
     <notifiers>
       <notifier>
         <type>mail</type>
@@ -37,7 +34,6 @@
       </notifier>
     </notifiers>
   </ciManagement>
-   -->
   <scm>
     <connection>
       scm:svn:https://svn.sourceforge.net/svnroot/springframework/spring-javaconfig/trunk
@@ -118,38 +114,59 @@ limitations under the License.
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
-      <version>2.0</version>
+      <version>2.0.4</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>2.0</version>
+      <version>2.0.4</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>2.0</version>
+      <version>2.0.4</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
-      <version>2.0</version>
+      <version>2.0.4</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-portlet</artifactId>
-      <version>2.0</version>
+      <version>2.0.4</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-remoting</artifactId>
-      <version>2.0</version>
+      <version>2.0.4</version>
+      <scope>provided</scope>
+    </dependency>        
+    
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-support</artifactId>
+      <version>2.0.4</version>
+      <scope>provided</scope>
+    </dependency>        
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>2.0.4</version>
+      <scope>provided</scope>
+    </dependency>        
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>2.0.4</version>
       <scope>provided</scope>
     </dependency>        
            
@@ -181,9 +198,23 @@ limitations under the License.
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-hibernate3</artifactId>
-      <version>2.0</version>
+      <version>2.0.4</version>
       <scope>provided</scope>
     </dependency>    
+    
+	<dependency>
+      <groupId>org.hibernate</groupId>
+	  <artifactId>hibernate</artifactId>
+      <version>3.2.2.ga</version>
+      <exclusions>
+        <exclusion>
+          <groupId>cglib</groupId>
+          <artifactId>cglib</artifactId>
+        </exclusion>
+      </exclusions>
+      <optional>true</optional>
+	</dependency>   
+    
     <!-- 
     <dependency>
       <groupId>asm</groupId>
@@ -239,7 +270,7 @@ limitations under the License.
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-mock</artifactId>
-      <version>2.0</version>
+      <version>2.0.4</version>
       <scope>test</scope>
     </dependency>    
   </dependencies>
