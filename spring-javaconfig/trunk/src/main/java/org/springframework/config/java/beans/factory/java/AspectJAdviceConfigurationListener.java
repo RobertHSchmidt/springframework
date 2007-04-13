@@ -27,7 +27,7 @@ import org.springframework.aop.aspectj.annotation.NotAnAtAspectException;
 import org.springframework.aop.aspectj.annotation.ReflectiveAspectJAdvisorFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.config.java.beans.factory.annotation.Configuration;
+import org.springframework.config.java.annotation.Configuration;
 
 
 /**

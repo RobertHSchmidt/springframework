@@ -26,8 +26,8 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.BeanCurrentlyInCreationException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.config.java.beans.factory.annotation.Bean;
-import org.springframework.config.java.beans.factory.annotation.SpringAdvisor;
+import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.SpringAdvisor;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**

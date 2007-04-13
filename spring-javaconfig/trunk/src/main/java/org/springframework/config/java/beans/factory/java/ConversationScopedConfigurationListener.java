@@ -27,8 +27,8 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.beans.factory.annotation.Bean;
-import org.springframework.config.java.beans.factory.annotation.Scope;
+import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Scope;
 
 /**
  * ConfigurationListener implementations that understands annotations for 

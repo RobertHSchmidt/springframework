@@ -24,8 +24,8 @@ import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.target.HotSwappableTargetSource;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.config.java.beans.factory.annotation.Bean;
-import org.springframework.config.java.beans.factory.annotation.HotSwappable;
+import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.HotSwappable;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**

@@ -39,8 +39,8 @@ import org.springframework.util.ClassUtils;
  * self-invocation.
  * 
  * @see org.springframework.config.java.beans.factory.java.ConfigurationProcessor
- * @see org.springframework.config.java.beans.factory.annotation.Bean
- * @see org.springframework.config.java.beans.factory.annotation.Configuration
+ * @see org.springframework.config.java.annotation.Bean
+ * @see org.springframework.config.java.annotation.Configuration
  * @author Rod Johnson
  */
 public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ordered {
