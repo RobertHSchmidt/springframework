@@ -1,4 +1,4 @@
-package org.springframework.beans.factory.java;
+package org.springframework.config.java.java;
 
 import javax.sql.DataSource;
 
@@ -6,10 +6,13 @@ import junit.framework.TestCase;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.annotation.Bean;
-import org.springframework.beans.factory.annotation.Configuration;
-import org.springframework.beans.factory.java.template.AbstractHibernateConfiguration;
-import org.springframework.beans.factory.java.template.HibernateOptions;
+import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.support.ConfigurationListenerRegistry;
+import org.springframework.config.java.support.ConfigurationProcessor;
+import org.springframework.config.java.support.DefaultConfigurationListenerRegistry;
+import org.springframework.config.java.template.AbstractHibernateConfiguration;
+import org.springframework.config.java.template.HibernateOptions;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;

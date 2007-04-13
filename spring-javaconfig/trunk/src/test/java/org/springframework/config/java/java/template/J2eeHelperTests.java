@@ -1,4 +1,4 @@
-package org.springframework.beans.factory.java.template;
+package org.springframework.config.java.java.template;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -13,12 +13,14 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.annotation.Bean;
-import org.springframework.beans.factory.annotation.Configuration;
-import org.springframework.beans.factory.java.ConfigurationListenerRegistry;
-import org.springframework.beans.factory.java.ConfigurationProcessor;
-import org.springframework.beans.factory.java.DefaultConfigurationListenerRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.support.ConfigurationListenerRegistry;
+import org.springframework.config.java.support.ConfigurationProcessor;
+import org.springframework.config.java.support.DefaultConfigurationListenerRegistry;
+import org.springframework.config.java.template.AbstractTransactionalConfiguration;
+import org.springframework.config.java.template.J2eeHelper;
 import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;

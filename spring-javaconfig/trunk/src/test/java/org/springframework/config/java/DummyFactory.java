@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.beans.factory;
+package org.springframework.config.java;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.TestBean;
@@ -72,7 +72,7 @@ public class DummyFactory
 
 	/**
 	 * Return if the bean managed by this factory is a singleton.
-	 * @see org.springframework.beans.factory.FactoryBean#isSingleton()
+	 * @see org.springframework.config.java.testing.config.java.beans.factory.FactoryBean#isSingleton()
 	 */
 	public boolean isSingleton() {
 		return this.singleton;
@@ -141,7 +141,7 @@ public class DummyFactory
 	/**
 	 * Return the managed object, supporting both singleton
 	 * and prototype mode.
-	 * @see org.springframework.beans.factory.FactoryBean#getObject()
+	 * @see org.springframework.config.java.testing.config.java.beans.factory.FactoryBean#getObject()
 	 */
 	public Object getObject() throws BeansException {
 		if (isSingleton()) {

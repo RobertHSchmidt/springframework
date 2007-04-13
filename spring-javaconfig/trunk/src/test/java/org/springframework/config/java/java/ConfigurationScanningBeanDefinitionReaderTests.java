@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.beans.factory.java;
+package org.springframework.config.java.java;
 
 import junit.framework.TestCase;
 
 import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.annotation.Configuration;
-import org.springframework.beans.factory.annotation.Lazy;
-import org.springframework.beans.factory.support.AbstractClassScanningBeanDefinitionReader;
-import org.springframework.beans.factory.support.ConfigurationClassScanningBeanDefinitionReader;
+import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.annotation.Lazy;
+import org.springframework.config.java.parsing.AbstractClassScanningBeanDefinitionReader;
+import org.springframework.config.java.parsing.ConfigurationClassScanningBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,8 +100,8 @@ public class ConfigurationScanningBeanDefinitionReaderTests extends TestCase {
 
 	public void testReadClassByName() throws Exception {
 		assertEquals(4, reader.loadBeanDefinitions(new String[] {
-				"org.springframework.beans.factory.java.ConfigurationScanningBeanDefinitionReaderTests$ComplexConfiguration",
-				"org.springframework.beans.factory.java.ConfigurationScanningBeanDefinitionReaderTests$SimpleConfiguration" }));
+				"org.springframework.config.java.testing.config.java.support.ConfigurationScanningBeanDefinitionReaderTests$ComplexConfiguration",
+				"org.springframework.config.java.testing.config.java.support.ConfigurationScanningBeanDefinitionReaderTests$SimpleConfiguration" }));
 	}
 
 }

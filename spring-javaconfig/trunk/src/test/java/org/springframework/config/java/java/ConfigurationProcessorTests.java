@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.beans.factory.java;
+package org.springframework.config.java.java;
 
 import java.awt.Point;
 import java.lang.reflect.Method;
@@ -34,18 +34,21 @@ import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.DummyFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
-import org.springframework.beans.factory.annotation.AutoBean;
 import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.annotation.Bean;
-import org.springframework.beans.factory.annotation.Configuration;
-import org.springframework.beans.factory.annotation.HotSwappable;
-import org.springframework.beans.factory.annotation.Lazy;
-import org.springframework.beans.factory.annotation.Scope;
-import org.springframework.beans.factory.java.template.ConfigurationSupport;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.config.java.DummyFactory;
+import org.springframework.config.java.annotation.AutoBean;
+import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.annotation.HotSwappable;
+import org.springframework.config.java.annotation.Lazy;
+import org.springframework.config.java.annotation.Scope;
+import org.springframework.config.java.support.ConfigurationListenerRegistry;
+import org.springframework.config.java.support.ConfigurationProcessor;
+import org.springframework.config.java.support.DefaultConfigurationListenerRegistry;
+import org.springframework.config.java.template.ConfigurationSupport;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractApplicationContext;
