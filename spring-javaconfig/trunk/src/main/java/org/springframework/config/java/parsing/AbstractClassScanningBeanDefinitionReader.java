@@ -21,6 +21,8 @@ import java.io.InputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.support.AbstractBeanDefinitionReader;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -47,7 +49,7 @@ import org.springframework.util.StringUtils;
  * @author Rod Johnson
  */
 public abstract class AbstractClassScanningBeanDefinitionReader extends AbstractBeanDefinitionReader {
-	
+
 	/**
 	 * Convert the / form to the . form
 	 * @param className
@@ -56,7 +58,7 @@ public abstract class AbstractClassScanningBeanDefinitionReader extends Abstract
 	public static String convertInternalClassNameToLoadableClassName(String className) {
 		return className.replace('/', '.');
 	}
-	
+
 	/**
 	 * @param className
 	 * @return
@@ -82,17 +84,17 @@ public abstract class AbstractClassScanningBeanDefinitionReader extends Abstract
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.springframework.config.java.parsing.BeanDefinitionReader#loadBeanDefinitions(org.springframework.config.java.core.io.Resource)
+	 * @see org.springframework.config.java.testing.config.java.parsing.BeanDefinitionReader#loadBeanDefinitions(org.springframework.config.java.testing.config.java.core.io.Resource)
 	 */
 	public int loadBeanDefinitions(Resource resource) throws BeanDefinitionStoreException {
 
 		String name = resource.getFilename();
-		
-//		try {
-//			System.out.println("Filename=" + resource.getFile());
-//		}
-//		catch (IOException e) {}
-		
+
+		// try {
+		// System.out.println("Filename=" + resource.getFile());
+		// }
+		// catch (IOException e) {}
+
 		if (log.isDebugEnabled())
 			log.debug("loading definition from " + resource);
 
@@ -110,7 +112,8 @@ public abstract class AbstractClassScanningBeanDefinitionReader extends Abstract
 					if (log.isDebugEnabled())
 						log.debug(className + " considered as class FQN");
 
-					Resource classResource = classpathResourceLoader.getResource(convertLoadableClassNameToInternalClassName(className).concat(CLASS_EXT));
+					Resource classResource = classpathResourceLoader.getResource(convertLoadableClassNameToInternalClassName(
+						className).concat(CLASS_EXT));
 					// if we find the resource, move on
 					if (classResource.exists())
 						return searchClass(classResource);
@@ -125,7 +128,6 @@ public abstract class AbstractClassScanningBeanDefinitionReader extends Abstract
 		return 0;
 	}
 
-	
 	/**
 	 * Can't really judge if we have a class or not based on a name. It can be
 	 * outside a package and have only one letter which is lowercase.
@@ -135,12 +137,12 @@ public abstract class AbstractClassScanningBeanDefinitionReader extends Abstract
 	 */
 	protected boolean isFQN(String className) {
 		boolean result = (StringUtils.hasText(className) && Character.isJavaIdentifierStart(className.codePointAt(0)));
-		
-		/* TODO: improve classname validation
-		for (int i = 1; i < className.length() && result; i++) {
-			result &= Character.isJavaIdentifierPart(className.codePointAt(i));
-		}
-		*/
+
+		/*
+		 * TODO: improve classname validation for (int i = 1; i <
+		 * className.length() && result; i++) { result &=
+		 * Character.isJavaIdentifierPart(className.codePointAt(i)); }
+		 */
 		return result;
 	}
 
@@ -166,14 +168,13 @@ public abstract class AbstractClassScanningBeanDefinitionReader extends Abstract
 	protected Class loadClass(String className) {
 		try {
 			// transform name to binary form
-			return Class.forName(convertInternalClassNameToLoadableClassName(className), 
-					false, ClassUtils.getDefaultClassLoader());
+			return Class.forName(convertInternalClassNameToLoadableClassName(className), false,
+				ClassUtils.getDefaultClassLoader());
 		}
 		catch (ClassNotFoundException ex) {
 			throw new BeanDefinitionStoreException(className + " could not be loaded", ex);
 		}
 	}
-	
 
 	/**
 	 * A component class or component factory class has been found. Process it,

@@ -16,16 +16,15 @@
 
 package org.springframework.config.java.propertysource;
 
-
 /**
  * @author Rod Johnson
- *
+ * 
  */
 // TODO should this extend BeansException or a subclass?
 public class PropertyDefinitionException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private final String name;
 
 	/**
@@ -36,11 +35,9 @@ public class PropertyDefinitionException extends RuntimeException {
 		super(message);
 		this.name = name;
 	}
-	
+
 	public String getPropertyName() {
 		return this.name;
 	}
-	
-	
 
 }

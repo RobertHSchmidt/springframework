@@ -25,23 +25,25 @@ import org.objectweb.asm.commons.EmptyVisitor;
  * @author Costin Leau
  */
 public abstract class AbstractClassTestingTypeFilter implements TypeFilter {
-	
+
 	protected final Log log = LogFactory.getLog(getClass());
 
 	/**
-	 * ASM class visitor which looks only for the classname and implemented types. 
-	 * Inner classes are not handled by the visitor but by the lookup class.
+	 * ASM class visitor which looks only for the classname and implemented
+	 * types. Inner classes are not handled by the visitor but by the lookup
+	 * class.
 	 */
 	public static class ClassNameAndTypesReadingVisitor extends EmptyVisitor {
-		
+
 		private String name;
+
 		private String superName;
+
 		private String[] interfaces;
 
-		public void visit(int version, int access, String name, String signature, 
-				String supername, String[] interfaces) {
-//			if (log.isTraceEnabled())
-//				log.trace("found classname " + name);
+		public void visit(int version, int access, String name, String signature, String supername, String[] interfaces) {
+			// if (log.isTraceEnabled())
+			// log.trace("found classname " + name);
 			this.name = AbstractClassScanningBeanDefinitionReader.convertInternalClassNameToLoadableClassName(name);
 			this.superName = AbstractClassScanningBeanDefinitionReader.convertInternalClassNameToLoadableClassName(supername);
 			this.interfaces = interfaces;
@@ -49,28 +51,28 @@ public abstract class AbstractClassTestingTypeFilter implements TypeFilter {
 				interfaces[i] = AbstractClassScanningBeanDefinitionReader.convertInternalClassNameToLoadableClassName(interfaces[i]);
 			}
 		}
-		
+
 		/**
 		 * @return the name
 		 */
 		public String getClassName() {
 			return name;
 		}
-		
+
 		/**
 		 * @return the superName
 		 */
 		public String getSuperName() {
 			return superName;
 		}
-		
+
 		/**
 		 * @return the interfaces
 		 */
 		public String[] getInterfaceNames() {
 			return interfaces;
 		}
-		
+
 		// TODO go through regular path
 		public Class loadClass() {
 			try {
@@ -82,7 +84,7 @@ public abstract class AbstractClassTestingTypeFilter implements TypeFilter {
 			}
 		}
 	}
-	
+
 	public final boolean match(ClassReader cr) {
 		ClassNameAndTypesReadingVisitor v = new ClassNameAndTypesReadingVisitor();
 		cr.accept(v, false);
@@ -94,5 +96,5 @@ public abstract class AbstractClassTestingTypeFilter implements TypeFilter {
 	 * @return
 	 */
 	protected abstract boolean match(ClassNameAndTypesReadingVisitor v);
-	
+
 }

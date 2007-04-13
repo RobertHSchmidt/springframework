@@ -18,7 +18,7 @@ package org.springframework.config.java.propertysource;
 
 /**
  * @author Rod Johnson
- *
+ * 
  */
 public abstract class AbstractStringBasedPropertySource implements PropertySource {
 
@@ -29,8 +29,9 @@ public abstract class AbstractStringBasedPropertySource implements PropertySourc
 	public abstract String getString(String name) throws PropertyDefinitionException;
 
 	public Object getObject(String name, Class requiredType) throws PropertyDefinitionException {
-		String rawValue = getString(name);		
-		// TODO do proper type conversion using Spring property editors, not this horrible hack
+		String rawValue = getString(name);
+		// TODO do proper type conversion using Spring property editors, not
+		// this horrible hack
 		if (requiredType == String.class) {
 			return rawValue;
 		}
@@ -39,8 +40,5 @@ public abstract class AbstractStringBasedPropertySource implements PropertySourc
 		}
 		throw new UnsupportedOperationException("Property conversion not yet implemented");
 	}
-
-
-	
 
 }

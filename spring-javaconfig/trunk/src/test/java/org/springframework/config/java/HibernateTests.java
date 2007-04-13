@@ -44,14 +44,14 @@ public class HibernateTests extends TestCase {
 	
 	
 	@Configuration(defaultAutowire = Autowire.BY_TYPE)
-	@HibernateOptions(propertiesLocation="org/springframework/beans/factory/java/template/hib1.properties",
+	@HibernateOptions(propertiesLocation="org/springframework/config/java/template/hib1.properties",
 			showSql=true,
 			configClasses={Person.class})
-			////configLocations={"org/springframework/beans/factory/java/Person.hbm.xml"},
+			////configLocations={"org/springframework/config/java/Person.hbm.xml"},
 	public static class HibernateTestConfig1 extends AbstractHibernateConfiguration {
 		
 		public HibernateTestConfig1() {
-			super("org/springframework/beans/factory/java/Person.hbm.xml");
+			super("org/springframework/config/java/Person.hbm.xml");
 		}
 
 		@Override

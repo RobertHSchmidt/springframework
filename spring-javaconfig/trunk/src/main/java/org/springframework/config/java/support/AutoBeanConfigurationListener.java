@@ -28,8 +28,9 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**
- * Configuration listener that registers autowired bean definitions
- * in the factory for @AutoBean methods.
+ * Configuration listener that registers autowired bean definitions in the
+ * factory for
+ * @AutoBean methods.
  * 
  * @author Rod Johnson
  */
@@ -39,25 +40,22 @@ public class AutoBeanConfigurationListener extends ConfigurationListenerSupport 
 	public boolean understands(Class configurerClass) {
 		return configurerClass.isAnnotationPresent(Configuration.class);
 	}
-	
+
 	@Override
-	public void otherMethod(ConfigurableListableBeanFactory beanFactory, 
-				DefaultListableBeanFactory childBeanFactory, 
-				String configurerBeanName, 
-				Class configurerClass, 
-				Method m) {
+	public void otherMethod(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+			String configurerBeanName, Class configurerClass, Method m) {
 		AutoBean autoBean = AnnotationUtils.findAnnotation(m, AutoBean.class);
 		if (autoBean != null) {
 			// Create a bean definition for this class
 			if (m.getReturnType().isInterface()) {
-				throw new BeanDefinitionStoreException("Cannot use AutoBean of interface type " + m.getReturnType() +
-						": don't know what class to instantiate; processing @AutoBean method " + m);
+				throw new BeanDefinitionStoreException("Cannot use AutoBean of interface type " + m.getReturnType()
+						+ ": don't know what class to instantiate; processing @AutoBean method " + m);
 			}
-			
-			// TODO unsafe assumption: how do we get to be 
+
+			// TODO unsafe assumption: how do we get to be
 			// able to add bean definitions
 			BeanDefinitionRegistry bdr = (BeanDefinitionRegistry) beanFactory;
-			
+
 			RootBeanDefinition bd = new RootBeanDefinition(m.getReturnType());
 			bd.setAutowireMode(autoBean.autowire().value());
 			if (Modifier.isPublic(m.getModifiers())) {

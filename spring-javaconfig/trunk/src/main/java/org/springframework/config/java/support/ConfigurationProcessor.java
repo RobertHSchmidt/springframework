@@ -78,7 +78,7 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
  * configuration methods and classes.
  * 
  * @author Rod Johnson
- * @see org.springframework.config.java.support.ConfigurationListener
+ * @see org.springframework.config.java.testing.config.java.support.ConfigurationListener
  */
 public class ConfigurationProcessor {
 
@@ -149,8 +149,7 @@ public class ConfigurationProcessor {
 		public String lastRequestedBeanName() {
 			return names().empty() ? null : names().peek();
 		}
-	} 	// class BeanNameTrackingDefaultListableBeanFactory
-	
+	} // class BeanNameTrackingDefaultListableBeanFactory
 
 	public ConfigurationProcessor(ConfigurableApplicationContext ac, ConfigurationListenerRegistry clr) {
 		init(ac.getBeanFactory(), clr);
@@ -194,11 +193,10 @@ public class ConfigurationProcessor {
 		String configurerBeanName = configClass.getName();
 		Class<?> configSubclass = createConfigurationSubclass(configClass);
 		((DefaultListableBeanFactory) owningBeanFactory).registerBeanDefinition(configurerBeanName,
-				new RootBeanDefinition(configSubclass));
+			new RootBeanDefinition(configSubclass));
 
 		generateBeanDefinitions(configurerBeanName, configClass);
 	}
-	
 
 	/**
 	 * Modify metadata by emitting new bean definitions based on the bean
@@ -213,17 +211,20 @@ public class ConfigurationProcessor {
 		for (ConfigurationListener cl : configurationListenerRegistry.getConfigurationListeners()) {
 			cl.configurationClass(owningBeanFactory, childFactory, configurerBeanName, configurerClass);
 		}
-		
-		// Only want to consider most specific bean creation method, in the case of overrides
+
+		// Only want to consider most specific bean creation method, in the case
+		// of overrides
 		final Set<String> noArgMethodsSeen = new HashSet<String>();
 
 		ReflectionUtils.doWithMethods(configurerClass, new MethodCallback() {
 			public void doWith(Method m) throws IllegalArgumentException, IllegalAccessException {
 				Bean beanAnnotation = findBeanAnnotation(m, configurerClass);
 				if (beanAnnotation != null && !noArgMethodsSeen.contains(m.getName())) {
-					
-					// If the bean already exists in the factory, don't emit a bean definition
-					// This may or may not be legal, depending on whether the @Bean annotation
+
+					// If the bean already exists in the factory, don't emit a
+					// bean definition
+					// This may or may not be legal, depending on whether the
+					// @Bean annotation
 					// allows overriding
 					if (owningBeanFactory.containsBean(m.getName())) {
 						if (!beanAnnotation.allowOverriding()) {
@@ -233,10 +234,10 @@ public class ConfigurationProcessor {
 							// Don't emit a bean definition
 							return;
 						}
-					}					
+					}
 					noArgMethodsSeen.add(m.getName());
 					generateBeanDefinitionFromBeanCreationMethod(owningBeanFactory, configurerBeanName,
-							configurerClass, m, beanAnnotation);// , cca);
+						configurerClass, m, beanAnnotation);// , cca);
 				}
 				else {
 					for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
@@ -275,23 +276,19 @@ public class ConfigurationProcessor {
 	 * Create a new subclass of the given configuration class
 	 * 
 	 * @param configurationClass class with Configuration attribute or otherwise
-	 *            indicated as a configuration class
+	 * indicated as a configuration class
 	 * @return subclass of this class that will behave correctly with AOP
-	 *         weaving and singleton caching. For example, the original class
-	 *         will return a new instance on every call to a bean() method that
-	 *         has singleton scope. The subclass will cache that, and also
-	 *         perform AOP weaving.
+	 * weaving and singleton caching. For example, the original class will
+	 * return a new instance on every call to a bean() method that has singleton
+	 * scope. The subclass will cache that, and also perform AOP weaving.
 	 */
 	public Class createConfigurationSubclass(Class<?> configurationClass) {
 		Enhancer enhancer = new Enhancer();
 		enhancer.setSuperclass(configurationClass);
 
 		enhancer.setCallbackFilter(BEAN_CREATION_METHOD_CALLBACK_FILTER);
-		enhancer.setCallbackTypes(new Class[] { 
-				NoOp.class, 
-				BeanMethodMethodInterceptor.class,
-				ExternalBeanMethodMethodInterceptor.class
-		});
+		enhancer.setCallbackTypes(new Class[] { NoOp.class, BeanMethodMethodInterceptor.class,
+				ExternalBeanMethodMethodInterceptor.class });
 		enhancer.setUseFactory(false);
 		// TODO can we generate a method to expose each private bean field here?
 		// Otherwise may need to generate a static or instance map, with
@@ -299,11 +296,8 @@ public class ConfigurationProcessor {
 		// Listeners don't get callback on this also
 
 		Class configurationSubclass = enhancer.createClass();
-		Enhancer.registerCallbacks(configurationSubclass, new Callback[] { 
-					NoOp.INSTANCE,
-					new BeanMethodMethodInterceptor(),
-					new ExternalBeanMethodMethodInterceptor()
-				});
+		Enhancer.registerCallbacks(configurationSubclass, new Callback[] { NoOp.INSTANCE,
+				new BeanMethodMethodInterceptor(), new ExternalBeanMethodMethodInterceptor() });
 
 		return configurationSubclass;
 	}
@@ -321,8 +315,8 @@ public class ConfigurationProcessor {
 			if (isBeanDefinitionMethod(m, m.getDeclaringClass())) {
 				return 1;
 			}
-			if (AnnotationUtils.findAnnotation(m, ExternalBean.class) != null ||
-					AnnotationUtils.findAnnotation(m, AutoBean.class) != null) {
+			if (AnnotationUtils.findAnnotation(m, ExternalBean.class) != null
+					|| AnnotationUtils.findAnnotation(m, AutoBean.class) != null) {
 				return 2;
 			}
 			return 0;
@@ -404,14 +398,16 @@ public class ConfigurationProcessor {
 					// rather than through the BeanFactory
 					childFactory.recordRequestForBeanName(m.getName());
 				}
-				
-				// Get raw result of @Bean method or get bean from factory if it is overriden
+
+				// Get raw result of @Bean method or get bean from factory if it
+				// is overriden
 				Object originallyCreatedBean = null;
 				BeanDefinition beanDef = owningBeanFactory.getBeanDefinition(m.getName());
 				if (beanDef instanceof RootBeanDefinition) {
 					RootBeanDefinition rbdef = (RootBeanDefinition) beanDef;
 					if (rbdef.getFactoryBeanName() == null) {
-						// We have a regular bean definition already in the factory:
+						// We have a regular bean definition already in the
+						// factory:
 						// use that instead of the @Bean method
 						originallyCreatedBean = owningBeanFactory.getBean(m.getName());
 					}
@@ -419,7 +415,7 @@ public class ConfigurationProcessor {
 				if (originallyCreatedBean == null) {
 					originallyCreatedBean = mp.invokeSuper(o, args);
 				}
-				
+
 				if (!configurationListenerRegistry.getConfigurationListeners().isEmpty()) {
 					// We know we have advisors that may affect this object
 					// Prepare to proxy it
@@ -438,7 +434,7 @@ public class ConfigurationProcessor {
 					for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
 						customized = customized
 								|| cml.processBeanMethodReturnValue(owningBeanFactory, childFactory,
-										originallyCreatedBean, m, pf);
+									originallyCreatedBean, m, pf);
 					}
 
 					// Only proxy if we know that advisors apply to this bean
@@ -467,12 +463,13 @@ public class ConfigurationProcessor {
 			}
 		}
 	}
-	
+
 	/**
-	 * MethodInterceptor that returns the result of a getBean() call for an external bean.
+	 * MethodInterceptor that returns the result of a getBean() call for an
+	 * external bean.
 	 */
 	private class ExternalBeanMethodMethodInterceptor implements MethodInterceptor {
-		
+
 		public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
 			return owningBeanFactory.getBean(m.getName());
 		}
@@ -551,7 +548,7 @@ public class ConfigurationProcessor {
 		rbd.setFactoryBeanName(configurerBeanName);
 		rbd.setFactoryMethodName(beanCreationMethod.getName());
 		copyAttributes(beanCreationMethod.getName(), beanAnnotation,
-				(Configuration) configurerClass.getAnnotation(Configuration.class), rbd, beanFactory);
+			(Configuration) configurerClass.getAnnotation(Configuration.class), rbd, beanFactory);
 		rbd.setResourceDescription("Bean creation method " + beanCreationMethod.getName() + " in class "
 				+ beanCreationMethod.getDeclaringClass().getName());
 
@@ -561,7 +558,7 @@ public class ConfigurationProcessor {
 
 		for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
 			cml.beanCreationMethod(beanDefinitionRegistration, beanFactory, childFactory, configurerBeanName,
-					configurerClass, beanCreationMethod, beanAnnotation);
+				configurerClass, beanCreationMethod, beanAnnotation);
 		}
 
 		// Not currently used
@@ -574,7 +571,7 @@ public class ConfigurationProcessor {
 		}
 		else {
 			((BeanDefinitionRegistry) beanFactory).registerBeanDefinition(beanDefinitionRegistration.name,
-					beanDefinitionRegistration.rbd);
+				beanDefinitionRegistration.rbd);
 		}
 	}
 
@@ -656,8 +653,7 @@ public class ConfigurationProcessor {
 	 * @param beanName name of the bean we're creating (not the factory bean)
 	 * @param beanAnnotation bean annotationName
 	 * @param configuration configuration annotationName on the configuration
-	 *            class. Sets defaults. May be null as this annotationName is
-	 *            not required.
+	 * class. Sets defaults. May be null as this annotationName is not required.
 	 * @param rbd bean definition, in Spring IoC container internal metadata
 	 * @param beanFactory bean factory we are executing in
 	 */

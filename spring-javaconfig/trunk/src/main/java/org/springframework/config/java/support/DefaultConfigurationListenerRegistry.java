@@ -24,9 +24,9 @@ import java.util.List;
  * @author Rod Johnson
  */
 public class DefaultConfigurationListenerRegistry implements ConfigurationListenerRegistry {
-	
+
 	private List<ConfigurationListener> configurationListeners = new LinkedList<ConfigurationListener>();
-	
+
 	public DefaultConfigurationListenerRegistry() {
 		registerConfigurationListener(new AutoBeanConfigurationListener());
 		registerConfigurationListener(new HotSwapConfigurationListener());
@@ -35,7 +35,6 @@ public class DefaultConfigurationListenerRegistry implements ConfigurationListen
 		registerConfigurationListener(new AspectJAdviceConfigurationListener());
 		registerConfigurationListener(new ConversationScopedConfigurationListener());
 	}
-
 
 	public void registerConfigurationListener(ConfigurationListener listener) {
 		this.configurationListeners.add(listener);

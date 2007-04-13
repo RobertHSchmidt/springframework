@@ -9,10 +9,10 @@
 	-->
 
 	<bean 
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessor" />
+		class="org.springframework.config.java.support.ConfigurationPostProcessor" />
 		
 	<bean 
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessorTests$FactoryBeanConfig" />
+		class="org.springframework.config.java.ConfigurationPostProcessorTests$FactoryBeanConfig" />
 	
 	
 </beans>

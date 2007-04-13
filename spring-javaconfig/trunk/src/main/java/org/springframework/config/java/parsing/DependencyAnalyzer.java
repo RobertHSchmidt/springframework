@@ -23,36 +23,36 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.beans.FatalBeanException;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.util.StringUtils;
 
 /**
  * @author Rod Johnson
  */
 public class DependencyAnalyzer extends AbstractClassTestingTypeFilter {
-	
+
 	private final Set<Class> dependencies = new HashSet<Class>();
-	
+
 	private final Set<Class> unsatisfiedDependencies = new HashSet<Class>();
-	
+
 	private final Set<String> excludeNamespaces = new HashSet<String>();
-	
+
 	private final BeanDefinitionRegistry beanDefinitionRegistry;
 
 	private Set<Class> allClasses;
-	
-	public DependencyAnalyzer(BeanDefinitionRegistry beanDefinitionRegistry,
-			Set<Class> allClasses,
-			Class ...entryPoints) {
+
+	public DependencyAnalyzer(BeanDefinitionRegistry beanDefinitionRegistry, Set<Class> allClasses,
+			Class... entryPoints) {
 		this.beanDefinitionRegistry = beanDefinitionRegistry;
 		this.allClasses = allClasses;
 		for (Class what : entryPoints) {
 			analyze(what);
 		}
-		
+
 		excludeNamespaces.add("oracle");
 		excludeNamespaces.add("java");
 	}
-	
+
 	@Override
 	protected boolean match(ClassNameAndTypesReadingVisitor v) {
 		// We have actual classes
@@ -64,15 +64,14 @@ public class DependencyAnalyzer extends AbstractClassTestingTypeFilter {
 		}
 		return false;
 	}
-	
-	
+
 	public void analyze(Class what) {
-		//System.out.println("Analyzing " + what);
-		
+		// System.out.println("Analyzing " + what);
+
 		PropertyDescriptor[] pds = getPropertyDescriptors(what);
-		
+
 		// TODO use Cachedintrospections results?
-		for (PropertyDescriptor pd : pds) {			
+		for (PropertyDescriptor pd : pds) {
 			process(pd);
 		}
 	}
@@ -81,7 +80,7 @@ public class DependencyAnalyzer extends AbstractClassTestingTypeFilter {
 	 * @return
 	 */
 	private PropertyDescriptor[] getPropertyDescriptors(Class what) {
-//		 TODO use Cachedintrospections results?
+		// TODO use Cachedintrospections results?
 		try {
 			return Introspector.getBeanInfo(what).getPropertyDescriptors();
 		}
@@ -94,26 +93,22 @@ public class DependencyAnalyzer extends AbstractClassTestingTypeFilter {
 	 * @param pd
 	 */
 	private void process(PropertyDescriptor pd) {
-		//System.out.println(pd.getName());
+		// System.out.println(pd.getName());
 		// TODO if it contains such a bean.
 		// Compose with an environmental scanner for session factory
 		// etc.
-		
+
 		// TODO how to resolve ambiguity? THROW helpful exception,
 		// generating both BDs?
-		
+
 		// Really need a @Scope annotation, at least it's rarer
 		// OR in external metadata: scope?
-		
+
 		// Use aspectj type expression?
-		
-		if (
-				pd.getPropertyType() == null ||
-				dependencies.contains(pd.getPropertyType()) || 
-				containsBeanOfType(pd.getPropertyType(), this.beanDefinitionRegistry) ||
-				pd.getPropertyType().isPrimitive() ||
-				isExcluded(pd.getPropertyType())
-			) {
+
+		if (pd.getPropertyType() == null || dependencies.contains(pd.getPropertyType())
+				|| containsBeanOfType(pd.getPropertyType(), this.beanDefinitionRegistry)
+				|| pd.getPropertyType().isPrimitive() || isExcluded(pd.getPropertyType())) {
 			return;
 		}
 		else if (pd.getPropertyType().isInterface()) {
@@ -132,9 +127,9 @@ public class DependencyAnalyzer extends AbstractClassTestingTypeFilter {
 			analyze(pd.getPropertyType());
 		}
 	}
-	
+
 	// TODO need to combine with test/other config to help in resolution
-	
+
 	private Class findUniqueImplementation(Class intf) {
 		Set<Class> implClasses = new HashSet<Class>();
 		for (Class c : allClasses) {
@@ -145,22 +140,23 @@ public class DependencyAnalyzer extends AbstractClassTestingTypeFilter {
 		if (implClasses.size() == 1) {
 			return implClasses.iterator().next();
 		}
-		System.out.println("Not unique: " + intf.getName() + " resolves to: " + 
-				StringUtils.collectionToCommaDelimitedString(implClasses));
+		System.out.println("Not unique: " + intf.getName() + " resolves to: "
+				+ StringUtils.collectionToCommaDelimitedString(implClasses));
 		return null;
 	}
-	
+
 	/**
 	 * @param propertyType
 	 * @return
 	 */
 	protected boolean isExcluded(Class<?> propertyType) {
-		//return propertyType.getName().startsWith("org.springframework.config.java");
-		return isInExcludedNamespace(propertyType) ||
-			(propertyType.getName().startsWith("org.springframework.config.java") &&
-					!propertyType.getName().startsWith("org.springframework.config.java.samp")) ||
-					
-			propertyType.isArray();
+		// return
+		// propertyType.getName().startsWith("org.springframework.config.java.testing.config.java");
+		return isInExcludedNamespace(propertyType)
+				|| (propertyType.getName().startsWith("org.springframework.config.java.testing.config.java") && !propertyType.getName().startsWith(
+					"org.springframework.config.java.testing.config.java.samp")) ||
+
+				propertyType.isArray();
 	}
 
 	/**
@@ -178,10 +174,10 @@ public class DependencyAnalyzer extends AbstractClassTestingTypeFilter {
 
 	public static boolean containsBeanOfType(Class typeRequired, BeanDefinitionRegistry bdr) {
 		// TODO needs to check interfaces also
-		//return bdr.;
+		// return bdr.;
 		return false;
 	}
-	
+
 	// TODO needs explicit configuration: how to know if there
 	// is a default? Log warning?
 
@@ -191,7 +187,7 @@ public class DependencyAnalyzer extends AbstractClassTestingTypeFilter {
 	public Set<Class> getDependencies() {
 		return dependencies;
 	}
-	
+
 	// TODO probably return component name and property
 	public Set<Class> getUnsatisfiedDependencies() {
 		return unsatisfiedDependencies;

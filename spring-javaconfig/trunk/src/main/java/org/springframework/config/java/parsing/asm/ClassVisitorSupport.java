@@ -23,23 +23,22 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 
 /**
- * ASM ClassVistor interested only in methods.
- * Also useful as a base class. 
+ * ASM ClassVistor interested only in methods. Also useful as a base class.
  * @author Rod Johnson
- *
+ * 
  */
 public class ClassVisitorSupport implements ClassVisitor {
 
 	public void visit(int arg0, int arg1, String arg2, String arg3, String arg4, String[] arg5) {
-		
+
 	}
 
 	public void visitSource(String arg0, String arg1) {
-		
+
 	}
 
 	public void visitOuterClass(String arg0, String arg1, String arg2) {
-		
+
 	}
 
 	public AnnotationVisitor visitAnnotation(String arg0, boolean arg1) {
@@ -48,22 +47,22 @@ public class ClassVisitorSupport implements ClassVisitor {
 	}
 
 	public void visitAttribute(Attribute arg0) {
-		
+
 	}
 
 	public void visitInnerClass(String arg0, String arg1, String arg2, int arg3) {
-		
+
 	}
 
 	public FieldVisitor visitField(int arg0, String arg1, String arg2, String arg3, Object arg4) {
 		return null;
 	}
-	
+
 	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 		return null;
 	}
 
-	public void visitEnd() {		
+	public void visitEnd() {
 	}
-	
+
 }

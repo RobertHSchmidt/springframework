@@ -9,10 +9,10 @@
 	-->
 
 	<bean 
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessor" />
+		class="org.springframework.config.java.support.ConfigurationPostProcessor" />
 		
 	<bean 
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessorTests$InjectedConfig" >
+		class="org.springframework.config.java.ConfigurationPostProcessorTests$InjectedConfig" >
 		<property name="age" value="33" />
 		</bean>
 	

@@ -26,14 +26,14 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 
 /**
- * Convenient base class for implementation of the ConfigurationListener interface,
- * offer no op implementations of all methods.
+ * Convenient base class for implementation of the ConfigurationListener
+ * interface, offer no op implementations of all methods.
  * 
  * @author Rod Johnson
- *
+ * 
  */
 public class ConfigurationListenerSupport implements ConfigurationListener {
-	
+
 	protected final Log log = LogFactory.getLog(getClass());
 
 	public boolean understands(Class configurerClass) {
@@ -41,21 +41,20 @@ public class ConfigurationListenerSupport implements ConfigurationListener {
 	}
 
 	public void configurationClass(ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childBeanFactory,
-			String configurerBeanName, Class configurerClass) {
+			DefaultListableBeanFactory childBeanFactory, String configurerBeanName, Class configurerClass) {
 	}
 
-	public void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration, 
-			ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childBeanFactory,
-			String configurerBeanName, Class configurerClass, Method m,
-			Bean beanAnnotation) {
+	public void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
+			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
 	}
 
-	public void otherMethod(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory, String configurerBeanName, Class configurerClass, Method m) {
+	public void otherMethod(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+			String configurerBeanName, Class configurerClass, Method m) {
 	}
 
-	public boolean processBeanMethodReturnValue(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory, Object originallyCreatedBean, Method method, ProxyFactory pf) {
+	public boolean processBeanMethodReturnValue(ConfigurableListableBeanFactory beanFactory,
+			DefaultListableBeanFactory childBeanFactory, Object originallyCreatedBean, Method method, ProxyFactory pf) {
 		return false;
 	}
 }

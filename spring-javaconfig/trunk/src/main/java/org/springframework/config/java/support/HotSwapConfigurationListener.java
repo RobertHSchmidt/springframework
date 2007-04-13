@@ -29,31 +29,27 @@ import org.springframework.config.java.annotation.HotSwappable;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**
- * ConfigurationListener implementations that understands classes for 
- * hot swapping.
+ * ConfigurationListener implementations that understands classes for hot
+ * swapping.
  * 
  * @author Rod Johnson
  */
 public class HotSwapConfigurationListener extends ConfigurationListenerSupport {
-	
+
 	private List<Method> hotswapMethods = new LinkedList<Method>();
-	
+
 	@Override
-	public void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration, 
-			ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childBeanFactory,
-			String configurerBeanName, Class configurerClass, Method m,
-			Bean beanAnnotation) {
+	public void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
+			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
 		if (AnnotationUtils.findAnnotation(m, HotSwappable.class) != null) {
 			hotswapMethods.add(m);
 		}
 	}
 
 	@Override
-	public boolean processBeanMethodReturnValue(
-			ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childBeanFactory,
-			Object originallyCreatedBean, Method method, ProxyFactory pf) {
+	public boolean processBeanMethodReturnValue(ConfigurableListableBeanFactory beanFactory,
+			DefaultListableBeanFactory childBeanFactory, Object originallyCreatedBean, Method method, ProxyFactory pf) {
 		if (hotswapMethods.contains(method)) {
 			HotSwappableTargetSource hsts = new HotSwappableTargetSource(originallyCreatedBean);
 			pf.setTargetSource(hsts);

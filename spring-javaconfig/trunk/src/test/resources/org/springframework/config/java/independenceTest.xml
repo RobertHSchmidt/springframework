@@ -10,13 +10,13 @@
 	-->
 
 	<bean 
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessor" />
+		class="org.springframework.config.java.support.ConfigurationPostProcessor" />
 		
 	<bean 
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessorTests$Advised1" />
+		class="org.springframework.config.java.ConfigurationPostProcessorTests$Advised1" />
 	
 	<bean 
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessorTests$Advised2" />
+		class="org.springframework.config.java.ConfigurationPostProcessorTests$Advised2" />
 	
 	<bean id="realJohannes" class="org.springframework.beans.TestBean" >
 			<property name="age" value="29" />

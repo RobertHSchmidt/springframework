@@ -22,20 +22,22 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
  * Annotation representing a Spring IoC dependency check status.
  * 
  * @author Rod Johnson
- * @see org.springframework.config.java.parsing.AbstractBeanDefinition
+ * @see org.springframework.config.java.testing.config.java.parsing.AbstractBeanDefinition
  */
 public enum DependencyCheck {
-	
-	UNSPECIFIED(-1),
-	NONE(AbstractBeanDefinition.DEPENDENCY_CHECK_NONE),
-	SIMPLE(AbstractBeanDefinition.DEPENDENCY_CHECK_SIMPLE),
-	OBJECTS(AbstractBeanDefinition.DEPENDENCY_CHECK_OBJECTS),
-	ALL(AbstractBeanDefinition.DEPENDENCY_CHECK_ALL);
+
+	UNSPECIFIED(-1), NONE(AbstractBeanDefinition.DEPENDENCY_CHECK_NONE), SIMPLE(
+			AbstractBeanDefinition.DEPENDENCY_CHECK_SIMPLE), OBJECTS(AbstractBeanDefinition.DEPENDENCY_CHECK_OBJECTS), ALL(
+			AbstractBeanDefinition.DEPENDENCY_CHECK_ALL);
 
 	private final int value;
 
-	DependencyCheck(int value) { this.value = value; }
-	
-	public int value() { return value; }
+	DependencyCheck(int value) {
+		this.value = value;
+	}
+
+	public int value() {
+		return value;
+	}
 
 }

@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.commons.EmptyVisitor;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.config.java.parsing.AbstractClassTestingTypeFilter.ClassNameAndTypesReadingVisitor;
 import org.springframework.util.ClassUtils;
 
@@ -34,23 +35,23 @@ import org.springframework.util.ClassUtils;
 public abstract class AbstractAsmClassScanningBeanDefinitionReader extends AbstractClassScanningBeanDefinitionReader {
 
 	private final List<TypeFilter> typeFilters = new LinkedList<TypeFilter>();
-	
+
 	/**
 	 * @param beanFactory
 	 */
 	public AbstractAsmClassScanningBeanDefinitionReader(BeanDefinitionRegistry beanFactory) {
 		super(beanFactory);
 	}
-	
+
 	public void addTypeFilter(TypeFilter tf) {
 		this.typeFilters.add(tf);
 	}
-	
+
 	/**
 	 * 
 	 * @param classReader ASM ClassReader for the class
-	 * @return true if this class is a component or component factory class and thus
-	 * of interest to us
+	 * @return true if this class is a component or component factory class and
+	 * thus of interest to us
 	 */
 	protected boolean isComponentOrFactoryClass(ClassReader classReader) {
 		for (TypeFilter tf : typeFilters) {
@@ -60,8 +61,7 @@ public abstract class AbstractAsmClassScanningBeanDefinitionReader extends Abstr
 		}
 		return false;
 	}
-		
-	
+
 	protected class InnerClasses extends EmptyVisitor {
 		private List<String> innerClasses = createList();
 
@@ -83,12 +83,11 @@ public abstract class AbstractAsmClassScanningBeanDefinitionReader extends Abstr
 		protected List<String> createList() {
 			return new ArrayList<String>();
 		}
-		
+
 		public List<String> getInnerClassNames() {
 			return innerClasses;
 		}
 	}
-
 
 	/**
 	 * Search the given stream for class information. ASM library is used to
@@ -104,32 +103,33 @@ public abstract class AbstractAsmClassScanningBeanDefinitionReader extends Abstr
 		try {
 			int count = 0;
 			ClassReader classReader = new ClassReader(stream);
-			
+
 			ClassNameAndTypesReadingVisitor nameReader = new ClassNameAndTypesReadingVisitor();
 			classReader.accept(nameReader, true);
 			if (isComponentOrFactoryClass(classReader)) {
 				count++;
 				if (log.isDebugEnabled())
 					log.debug("found matching annotation; loading class + " + nameReader.getClassName());
-				
+
 				Class clazz = loadClass(nameReader.getClassName());
-				//System.out.println(nameReader.getClassName() + "; " + clazz);
+				// System.out.println(nameReader.getClassName() + "; " + clazz);
 				processComponentOrFactoryClass(clazz);
 			}
 			// check inner classes
-			InnerClasses classes = new InnerClasses(convertLoadableClassNameToInternalClassName(nameReader.getClassName()));
+			InnerClasses classes = new InnerClasses(
+					convertLoadableClassNameToInternalClassName(nameReader.getClassName()));
 			classReader.accept(classes, true);
-	
+
 			for (String innerClassName : classes.getInnerClassNames()) {
 				if (log.isDebugEnabled())
 					log.debug("loading inner class " + innerClassName);
-	
+
 				// transform to realName
 				String realName = innerClassName.concat(CLASS_EXT);
-				//System.out.println("realname='" + realName + "'");
+				// System.out.println("realname='" + realName + "'");
 				count += searchClass(ClassUtils.getDefaultClassLoader().getResourceAsStream(realName));
 			}
-	
+
 			return count;
 		}
 		finally {

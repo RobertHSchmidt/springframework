@@ -31,35 +31,31 @@ import org.springframework.config.java.annotation.SpringAdvisor;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**
- * Configuration listener to process Spring Advisors, which must be beans.
- * This does not involve the use of the AspectJ pointcut language.
+ * Configuration listener to process Spring Advisors, which must be beans. This
+ * does not involve the use of the AspectJ pointcut language.
  * 
  * @author Rod Johnson
  */
 public class SpringAdvisorConfigurationListener extends ConfigurationListenerSupport {
-	
- 	private List<String> advisorBeanNames = new LinkedList<String>();
- 	
- 	@Override
-	public void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration, 
-			ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childBeanFactory,
-			String configurerBeanName, Class configurerClass, Method m,
-			Bean beanAnnotation) {
-		
+
+	private List<String> advisorBeanNames = new LinkedList<String>();
+
+	@Override
+	public void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
+			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
+
 		if (AnnotationUtils.findAnnotation(m, SpringAdvisor.class) != null) {
 			if (!Advisor.class.isAssignableFrom(m.getReturnType())) {
-				throw new IllegalArgumentException(m  + " is annotated with Advisor, but does not return Advisor");
+				throw new IllegalArgumentException(m + " is annotated with Advisor, but does not return Advisor");
 			}
 			advisorBeanNames.add(m.getName());
-		}		
+		}
 	}
 
- 	@Override
-	public boolean processBeanMethodReturnValue(
-			ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childFactory,
-			Object originallyCreatedBean, Method method, ProxyFactory pf) {
+	@Override
+	public boolean processBeanMethodReturnValue(ConfigurableListableBeanFactory beanFactory,
+			DefaultListableBeanFactory childFactory, Object originallyCreatedBean, Method method, ProxyFactory pf) {
 		for (String advisorName : advisorBeanNames) {
 			try {
 				Advisor advisor = (Advisor) childFactory.getBean(advisorName);
@@ -70,7 +66,7 @@ public class SpringAdvisorConfigurationListener extends ConfigurationListenerSup
 			catch (BeanCurrentlyInCreationException ex) {
 				// If the advisor could affect a bean it depends on,
 				// warn and skip
-				//log.warn("Skipping advisor", ex);
+				// log.warn("Skipping advisor", ex);
 			}
 		}
 		return false;

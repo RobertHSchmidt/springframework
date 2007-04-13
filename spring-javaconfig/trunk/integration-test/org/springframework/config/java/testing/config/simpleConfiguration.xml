@@ -3,7 +3,7 @@
 
 <beans>
 	<bean
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessor" />
+		class="org.springframework.config.java.support.ConfigurationPostProcessor" />
 
-	<bean class="org.springframework.SimpleConfiguration" />
+	<bean class="org.springframework.config.java.testing.SimpleConfiguration" />
 </beans>

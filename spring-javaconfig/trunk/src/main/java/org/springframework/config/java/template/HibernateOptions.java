@@ -7,15 +7,15 @@ import java.lang.annotation.RetentionPolicy;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 public @interface HibernateOptions {
-	
+
 	boolean showSql() default false;
-	
-	//boolean createAndDropSchema() default false;
-	
+
+	// boolean createAndDropSchema() default false;
+
 	String propertiesLocation();
 
 	String[] configLocations() default {};
-	
+
 	Class[] configClasses();
 
 }

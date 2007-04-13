@@ -21,14 +21,14 @@ import org.objectweb.asm.AnnotationVisitor;
 /**
  * Convenient no op superclass for AnnotationVisitor
  * @author Rod Johnson
- *
+ * 
  */
 public class AnnotationVisitorSupport implements AnnotationVisitor {
-	
-	public void visit(String name, Object value) {					
+
+	public void visit(String name, Object value) {
 	}
 
-	public void visitEnum(String name, String desc, String value) {					
+	public void visitEnum(String name, String desc, String value) {
 	}
 
 	public AnnotationVisitor visitAnnotation(String name, String desc) {
@@ -39,6 +39,6 @@ public class AnnotationVisitorSupport implements AnnotationVisitor {
 		return null;
 	}
 
-	public void visitEnd() {					
+	public void visitEnd() {
 	}
 }

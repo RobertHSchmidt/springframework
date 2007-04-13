@@ -5,7 +5,7 @@
 <beans>
 
 	<bean 
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessor" />
+		class="org.springframework.config.java.support.ConfigurationPostProcessor" />
 		
 	<bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
 	
@@ -22,12 +22,12 @@
 		class="org.springframework.aop.framework.CountingBeforeAdvice" />
 		
 	<bean 
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessorTests$PostProcessedConfig" >
+		class="org.springframework.config.java.ConfigurationPostProcessorTests$PostProcessedConfig" >
 		
 	</bean>
 	
 	<bean id="externalNotAdvisedByAspectWithinConfig"
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessorTests$AdvisedByConfig" />
+		class="org.springframework.config.java.ConfigurationPostProcessorTests$AdvisedByConfig" />
 	
 	
 </beans>

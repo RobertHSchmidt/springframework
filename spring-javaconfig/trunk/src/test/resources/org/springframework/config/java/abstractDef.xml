@@ -5,8 +5,8 @@
 <beans>
 
 	<bean id="postProcessor"
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessor" />
+		class="org.springframework.config.java.support.ConfigurationPostProcessor" />
 		
-	<bean id="abstractBean" class="org.springframework.beans.factory.java.ConfigurationPostProcessTests$AbstractConfig" abstract="true"/>
+	<bean id="abstractBean" class="org.springframework.config.java.ConfigurationPostProcessTests$AbstractConfig" abstract="true"/>
 	
 </beans>

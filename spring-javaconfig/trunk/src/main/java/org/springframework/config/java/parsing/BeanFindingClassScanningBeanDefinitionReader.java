@@ -17,6 +17,7 @@ package org.springframework.config.java.parsing;
 
 import java.lang.reflect.Modifier;
 
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
 /**
  * Finds beans and creates definitions.
@@ -24,32 +25,33 @@ import java.lang.reflect.Modifier;
  * @author Rod Johnson
  */
 public class BeanFindingClassScanningBeanDefinitionReader extends AbstractAsmClassScanningBeanDefinitionReader {
-	
+
 	/**
 	 * @param bdr
 	 */
 	public BeanFindingClassScanningBeanDefinitionReader(BeanDefinitionRegistry bdr, TypeFilter classFilter) {
 		super(bdr);
 	}
-	
 
-//	@Override
-//	protected boolean isComponentOrFactoryClass(ClassReader classReader) {
-//		ClassNameAndTypesReadingVisitor cnr = new ClassNameAndTypesReadingVisitor();
-//		classReader.accept(cnr, false);
-//		System.out.println(cnr.getName());
-//		System.out.println(StringUtils.arrayToCommaDelimitedString(cnr.getInterfaces()));
-//		return false;
-//	}
+	// @Override
+	// protected boolean isComponentOrFactoryClass(ClassReader classReader) {
+	// ClassNameAndTypesReadingVisitor cnr = new
+	// ClassNameAndTypesReadingVisitor();
+	// classReader.accept(cnr, false);
+	// System.out.println(cnr.getName());
+	// System.out.println(StringUtils.arrayToCommaDelimitedString(cnr.getInterfaces()));
+	// return false;
+	// }
 
 	// TODO where does dependency checking go?
-	
+
 	// Can we call our own load on dependent classes?
 	// Or do we do dep checking late?
-	// can call processComponentOrFactoryClass, but then that eagerly instantiates...
+	// can call processComponentOrFactoryClass, but then that eagerly
+	// instantiates...
 	// or do we just rely on finding them all and using reflection?
 	// or an annotation!?
-	
+
 	@Override
 	protected void processComponentOrFactoryClass(Class clazz) {
 		// TODO need naming strategy

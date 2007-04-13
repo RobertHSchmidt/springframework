@@ -15,12 +15,12 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration(defaultAutowire = Autowire.BY_TYPE)
 public abstract class AbstractMvcConfiguration extends ConfigurationSupport {
-	
+
 	@Bean
 	public ViewResolver defaultViewResolver() {
 		return jspResolver();
 	}
-	
+
 	protected ViewResolver jspResolver() {
 		InternalResourceViewResolver ivr = new InternalResourceViewResolver();
 		ivr.setSuffix(".jsp");
@@ -33,16 +33,15 @@ public abstract class AbstractMvcConfiguration extends ConfigurationSupport {
 		// TODO order value is one always
 		throw new UnsupportedOperationException();
 	}
-	
+
 	// TODO Annotation handler mapping
-	
-	
-	
+
 	@Bean
 	@Url("/foo/bar.html")
 	public Controller myController() {
 		return new Controller() {
-			public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+			public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response)
+					throws Exception {
 				return null;
 			}
 		};

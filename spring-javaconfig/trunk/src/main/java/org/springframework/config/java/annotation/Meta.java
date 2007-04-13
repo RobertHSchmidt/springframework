@@ -18,5 +18,6 @@ package org.springframework.config.java.annotation;
 
 public @interface Meta {
 	String name();
+
 	String value();
 }

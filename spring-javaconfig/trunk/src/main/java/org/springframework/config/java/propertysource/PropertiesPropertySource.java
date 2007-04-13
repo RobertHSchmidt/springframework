@@ -20,12 +20,12 @@ import java.util.Properties;
 
 /**
  * @author Rod Johnson
- *
+ * 
  */
 public class PropertiesPropertySource extends AbstractStringBasedPropertySource {
-	
+
 	private Properties properties;
-	
+
 	/**
 	 * @param properties
 	 */
@@ -41,7 +41,5 @@ public class PropertiesPropertySource extends AbstractStringBasedPropertySource 
 		}
 		return value;
 	}
-
-	
 
 }

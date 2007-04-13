@@ -22,15 +22,15 @@ import org.objectweb.asm.ClassReader;
  * 
  * @author Costin Leau
  * @author Rod Johnson
- *
+ * 
  */
 public interface TypeFilter {
-	
+
 	static final TypeFilter TRUE = new TypeFilter() {
 		public boolean match(ClassReader cr) {
 			return true;
 		}
 	};
-	
+
 	boolean match(ClassReader cr);
 }

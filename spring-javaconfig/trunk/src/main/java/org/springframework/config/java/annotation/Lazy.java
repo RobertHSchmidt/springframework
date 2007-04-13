@@ -17,17 +17,19 @@
 package org.springframework.config.java.annotation;
 
 public enum Lazy {
-	
-	UNSPECIFIED(-1),
-	FALSE(0),
-	TRUE(1);
+
+	UNSPECIFIED(-1), FALSE(0), TRUE(1);
 
 	private final int value;
 
-	Lazy(int value) { this.value = value; }
-	
-	public int value() { return value; }
-	
+	Lazy(int value) {
+		this.value = value;
+	}
+
+	public int value() {
+		return value;
+	}
+
 	public boolean booleanValue() {
 		return this == TRUE;
 	}

@@ -11,10 +11,10 @@
 	-->
 
 	<bean 
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessor" />
+		class="org.springframework.config.java.support.ConfigurationPostProcessor" />
 		
 	<bean 
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessorTests$ExternalBeanConfiguration" 
+		class="org.springframework.config.java.ConfigurationPostProcessorTests$ExternalBeanConfiguration" 
 	/>
 	
 	<bean id="ann" 

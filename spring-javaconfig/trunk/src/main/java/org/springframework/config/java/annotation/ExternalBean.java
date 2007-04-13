@@ -22,8 +22,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation used to indicate an external bean, that must
- * be supplied by the environment.
+ * Annotation used to indicate an external bean, that must be supplied by the
+ * environment.
  * @author Rod Johnson
  */
 @Retention(RetentionPolicy.RUNTIME)

@@ -16,19 +16,21 @@
 package org.springframework.config.java.parsing;
 
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Configuration;
 
 /**
  * ASM {@link http://asm.objectweb.org} based annotationName bean definition
  * reader. This implementation will read the bytecode directly to find more
  * information about each class read. ASM will be used as much as possible in
- * order to unnecessary class loading.
+ * order to avoid unnecessary class loading.
  * 
  * @author Costin Leau
  * @author Rod Johnson
  */
 public class ConfigurationClassScanningBeanDefinitionReader extends AbstractAsmClassScanningBeanDefinitionReader {
-	
+
 	public ConfigurationClassScanningBeanDefinitionReader(BeanDefinitionRegistry beanFactory) {
 		super(beanFactory);
 		addTypeFilter(new AnnotationTypeFilter(Configuration.class));

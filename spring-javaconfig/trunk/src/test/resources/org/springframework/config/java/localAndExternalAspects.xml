@@ -8,18 +8,18 @@
 	<aop:aspectj-autoproxy proxy-target-class="true" />
 
 	<bean 
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessor" />
+		class="org.springframework.config.java.support.ConfigurationPostProcessor" />
 		
 	
 	<bean 
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessorTests$PostProcessedConfig" >
+		class="org.springframework.config.java.ConfigurationPostProcessorTests$PostProcessedConfig" >
 		
 	</bean>
 	
 	<!-- 
 	<bean id="externalNotAdvisedByAspectWithinConfig"
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessorTests$AdvisedByConfig" />
+		class="org.springframework.config.java.support.ConfigurationPostProcessorTests$AdvisedByConfig" />
 	-->
-	<bean id="countAspect" class="org.springframework.beans.factory.java.ConfigurationPostProcessorTests$CountAspect" />
+	<bean id="countAspect" class="org.springframework.config.java.ConfigurationPostProcessorTests$CountAspect" />
 	
 </beans>

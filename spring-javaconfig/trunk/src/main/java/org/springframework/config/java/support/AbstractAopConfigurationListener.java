@@ -31,19 +31,18 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.Ordered;
 
 /**
- * ConfigurationMethodListener that saves up pointcuts,
- * adding advices if necessary to a ProxyFactory.
+ * ConfigurationMethodListener that saves up pointcuts, adding advices if
+ * necessary to a ProxyFactory.
  * 
  * @author Rod Johnson
  */
 public abstract class AbstractAopConfigurationListener extends ConfigurationListenerSupport {
-	
- 	/**
- 	 * Map from advice bean names in child factory to
- 	 * Pointcut definition.
- 	 */
- 	private Map<String, Pointcut> pointcuts = new HashMap<String,Pointcut>();
- 	
+
+	/**
+	 * Map from advice bean names in child factory to Pointcut definition.
+	 */
+	private Map<String, Pointcut> pointcuts = new HashMap<String, Pointcut>();
+
 	/**
 	 * Add an advice with the given pointcut
 	 * @param adviceName bean name of the advice in the child factory
@@ -51,28 +50,25 @@ public abstract class AbstractAopConfigurationListener extends ConfigurationList
 	 * @param childBeanFactory child factory
 	 */
 	protected void addAdvice(String adviceName, Pointcut pc, DefaultListableBeanFactory childBeanFactory) {
-		//childBeanFactory.registerBeanDefinition(adviceName, rbd);
+		// childBeanFactory.registerBeanDefinition(adviceName, rbd);
 		pointcuts.put(adviceName, pc);
 	}
-	
+
 	protected void addAdvice(String adviceName, Pointcut pc, Advice advice, DefaultListableBeanFactory childBeanFactory) {
 		childBeanFactory.registerSingleton(adviceName, advice);
 		pointcuts.put(adviceName, pc);
 	}
-	
 
 	@Override
-	public boolean processBeanMethodReturnValue(
-			ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childFactory,
-			Object originallyCreatedBean, Method method, ProxyFactory pf) {
+	public boolean processBeanMethodReturnValue(ConfigurableListableBeanFactory beanFactory,
+			DefaultListableBeanFactory childFactory, Object originallyCreatedBean, Method method, ProxyFactory pf) {
 		int added = 0;
 		for (String adviceName : pointcuts.keySet()) {
 			Pointcut pc = pointcuts.get(adviceName);
 			if (AopUtils.canApply(pc, originallyCreatedBean.getClass())) {
 				Advice advice = (Advice) childFactory.getBean(adviceName);
 				DefaultPointcutAdvisor a = new DefaultPointcutAdvisor(pc, advice);
-				
+
 				// Order advisors if necessary
 				if (pc instanceof Ordered) {
 					a.setOrder(((Ordered) pc).getOrder());
@@ -88,7 +84,9 @@ public abstract class AbstractAopConfigurationListener extends ConfigurationList
 							break;
 						}
 					}
-					//System.out.println("Have order value of " + a.getOrder() + "; insertionPos =" + insertionPos + " count=" + pf.getAdvisors().length);
+					// System.out.println("Have order value of " + a.getOrder()
+					// + "; insertionPos =" + insertionPos + " count=" +
+					// pf.getAdvisors().length);
 					pf.addAdvisor(insertionPos, a);
 				}
 				else {

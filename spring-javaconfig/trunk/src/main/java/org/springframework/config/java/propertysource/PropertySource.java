@@ -21,18 +21,18 @@ package org.springframework.config.java.propertysource;
  * @author Rod Johnson
  */
 public interface PropertySource {
-	
+
 	int getInt(String name) throws PropertyDefinitionException;
-	
+
 	String getString(String name) throws PropertyDefinitionException;
-	
+
 	/**
 	 * 
 	 * @param name
 	 * @param requiredType
 	 * @return
-	 * @throws PropertyDefinitionException if the property is not in the required
-	 * format or the value is not found
+	 * @throws PropertyDefinitionException if the property is not in the
+	 * required format or the value is not found
 	 */
 	// TODO parameterize
 	Object getObject(String name, Class requiredType) throws PropertyDefinitionException;

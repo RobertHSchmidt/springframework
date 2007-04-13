@@ -18,7 +18,7 @@ public class GetterInvocationFindingClassVisitorTests extends TestCase {
 		MethodVisitor mv = null;// new MethodVisitor();
 		// TODO use spring resource loading
 		ResourceLoader rl = new DefaultResourceLoader();
-		String location = "classpath:org/springframework/beans/factory/java/ConfigurationProcessorTests$RequiresProperty.class";
+		String location = "classpath:org/springframework/config/java/ConfigurationProcessorTests$RequiresProperty.class";
 		InputStream is = //ConfigurationPostProcessorTests.class.getResourceAsStream(classPath);
 			rl.getResource(location).getInputStream();
 		assertNotNull(location);

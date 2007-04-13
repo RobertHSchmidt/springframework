@@ -21,16 +21,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.springframework.beans.factory.annotation.Autowire;
+
 /**
- * Annotation used to indicate a bean that is automatically
- * instantiated and autowired.
- * This annotation is used on abstract methods.
+ * Annotation used to indicate a bean that is automatically instantiated and
+ * autowired. This annotation is used on abstract methods.
+ * 
  * @author Rod Johnson
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface AutoBean {
-	
+
 	Autowire autowire() default Autowire.BY_TYPE;
 
 }
