@@ -1,4 +1,4 @@
-package org.springframework.beans.factory.java.analysis;
+package org.springframework.config.java.java.analysis;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.MethodVisitor;
+import org.springframework.config.java.support.analysis.GetterInvocationFindingClassVisitor;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 

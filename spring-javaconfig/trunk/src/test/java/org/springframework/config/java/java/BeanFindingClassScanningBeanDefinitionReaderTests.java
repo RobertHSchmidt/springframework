@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.beans.factory.java;
+package org.springframework.config.java.java;
 
 import junit.framework.TestCase;
 
-import org.springframework.beans.factory.support.AssignableTypeFilter;
-import org.springframework.beans.factory.support.BeanFindingClassScanningBeanDefinitionReader;
-import org.springframework.beans.factory.support.ClassListBuilder;
-import org.springframework.beans.factory.support.DependencyAnalyzer;
-import org.springframework.beans.factory.support.TypeFilter;
+import org.springframework.config.java.parsing.AssignableTypeFilter;
+import org.springframework.config.java.parsing.BeanFindingClassScanningBeanDefinitionReader;
+import org.springframework.config.java.parsing.ClassListBuilder;
+import org.springframework.config.java.parsing.DependencyAnalyzer;
+import org.springframework.config.java.parsing.TypeFilter;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.web.servlet.mvc.Controller;

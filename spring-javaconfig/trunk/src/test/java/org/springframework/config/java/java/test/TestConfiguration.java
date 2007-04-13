@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.beans.factory.java.test;
+package org.springframework.config.java.java.test;
 
-import org.springframework.beans.factory.annotation.Configuration;
+import org.springframework.config.java.annotation.Configuration;
 
 /**
  * @author Costin Leau

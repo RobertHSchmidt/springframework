@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.beans.factory.java;
+package org.springframework.config.java.java;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,11 +36,14 @@ import org.springframework.beans.DependsOnTestBean;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.annotation.Bean;
-import org.springframework.beans.factory.annotation.Configuration;
-import org.springframework.beans.factory.annotation.DependencyCheck;
-import org.springframework.beans.factory.annotation.Scope;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.annotation.DependencyCheck;
+import org.springframework.config.java.annotation.Scope;
+import org.springframework.config.java.support.ConfigurationListenerRegistry;
+import org.springframework.config.java.support.ConfigurationProcessor;
+import org.springframework.config.java.support.DefaultConfigurationListenerRegistry;
 
 /**
  * 

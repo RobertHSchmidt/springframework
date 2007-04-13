@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.beans.factory.java;
+package org.springframework.config.java.java;
 
 import java.awt.Point;
 import java.lang.reflect.Method;
@@ -39,11 +39,11 @@ import org.springframework.beans.IOther;
 import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.annotation.Bean;
-import org.springframework.beans.factory.annotation.Configuration;
-import org.springframework.beans.factory.annotation.ExternalBean;
-import org.springframework.beans.factory.annotation.SpringAdvice;
-import org.springframework.beans.factory.java.ConfigurationProcessorTests.BaseConfiguration;
+import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.annotation.ExternalBean;
+import org.springframework.config.java.annotation.SpringAdvice;
+import org.springframework.config.java.java.ConfigurationProcessorTests.BaseConfiguration;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -353,7 +353,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		}
 
 		/**
-		 * @see org.springframework.beans.factory.FactoryBean#getObject()
+		 * @see org.springframework.config.java.testing.config.java.beans.factory.FactoryBean#getObject()
 		 */
 		public Object getObject() throws Exception {
 			TestBean tb = new TestBean();
@@ -362,14 +362,14 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		}
 
 		/**
-		 * @see org.springframework.beans.factory.FactoryBean#getObjectType()
+		 * @see org.springframework.config.java.testing.config.java.beans.factory.FactoryBean#getObjectType()
 		 */
 		public Class getObjectType() {
 			return TestBean.class;
 		}
 
 		/**
-		 * @see org.springframework.beans.factory.FactoryBean#isSingleton()
+		 * @see org.springframework.config.java.testing.config.java.beans.factory.FactoryBean#isSingleton()
 		 */
 		public boolean isSingleton() {
 			return true;
