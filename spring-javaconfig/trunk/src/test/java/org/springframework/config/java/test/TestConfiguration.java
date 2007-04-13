@@ -13,15 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.java;
+package org.springframework.config.java.test;
+
+import org.springframework.config.java.annotation.Configuration;
 
 /**
  * @author Costin Leau
- *
+ * 
  */
-public class ClassWithInvalidDependencies extends foo.bar.Class {
-	public Extra getExtra(Super zuper)
-	{
-		return new NoOp();
+@Configuration
+public class TestConfiguration {
+	@Configuration
+	public static class InnerConfiguration {
+
 	}
+
+	@Configuration
+	public class AnotherConfiguration {
+
+	}
+
 }

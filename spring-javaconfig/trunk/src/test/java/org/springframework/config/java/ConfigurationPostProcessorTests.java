@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.java;
+package org.springframework.config.java;
 
 import java.awt.Point;
 import java.lang.reflect.Method;
@@ -39,11 +39,11 @@ import org.springframework.beans.IOther;
 import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.config.java.ConfigurationProcessorTests.BaseConfiguration;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.SpringAdvice;
-import org.springframework.config.java.java.ConfigurationProcessorTests.BaseConfiguration;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**

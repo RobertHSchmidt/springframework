@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.java;
+package org.springframework.config.java;
 
 import java.lang.reflect.Method;
 
@@ -26,10 +26,10 @@ import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.aop.framework.Advised;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.config.java.AspectJConfigurationProcessorTests.CountingConfiguration;
+import org.springframework.config.java.AspectJConfigurationProcessorTests.SingletonCountingAdvice;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.SpringAdvice;
-import org.springframework.config.java.java.AspectJConfigurationProcessorTests.CountingConfiguration;
-import org.springframework.config.java.java.AspectJConfigurationProcessorTests.SingletonCountingAdvice;
 import org.springframework.config.java.support.ConfigurationListenerRegistry;
 import org.springframework.config.java.support.ConfigurationProcessor;
 import org.springframework.config.java.support.DefaultConfigurationListenerRegistry;

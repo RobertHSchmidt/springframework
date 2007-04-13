@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.java;
+package org.springframework.config.java;
 
 import java.awt.Point;
 import java.lang.reflect.Method;
@@ -38,7 +38,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.config.java.DummyFactory;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
