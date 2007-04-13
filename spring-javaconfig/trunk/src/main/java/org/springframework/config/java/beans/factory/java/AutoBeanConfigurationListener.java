@@ -23,8 +23,8 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.beans.factory.annotation.AutoBean;
-import org.springframework.config.java.beans.factory.annotation.Configuration;
+import org.springframework.config.java.annotation.AutoBean;
+import org.springframework.config.java.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**

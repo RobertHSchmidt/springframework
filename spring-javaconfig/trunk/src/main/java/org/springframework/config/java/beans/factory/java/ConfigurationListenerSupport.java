@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.config.java.beans.factory.annotation.Bean;
+import org.springframework.config.java.annotation.Bean;
 
 /**
  * Convenient base class for implementation of the ConfigurationListener interface,

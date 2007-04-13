@@ -26,8 +26,8 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.aop.framework.ProxyFactory;
-import org.springframework.config.java.support.asm.ClassVisitorSupport;
-import org.springframework.config.java.support.asm.MethodVisitorSupport;
+import org.springframework.config.java.parsing.asm.ClassVisitorSupport;
+import org.springframework.config.java.parsing.asm.MethodVisitorSupport;
 import org.springframework.util.StringUtils;
 
 /**

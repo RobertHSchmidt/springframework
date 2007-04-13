@@ -22,7 +22,7 @@ import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.beans.factory.annotation.Bean;
+import org.springframework.config.java.annotation.Bean;
 
 /**
  * SPI interface that allows extension of a ConfigurationProcessor.
