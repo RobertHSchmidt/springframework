@@ -13,40 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.config.java.support;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import java.util.List;
 
 /**
- * Finds beans.
- * TODO really want to abstract this so it is not a BeanDefinitionReader
- * 
+ * Interface holding a registry of configuration listeners that
+ * are used to react to annotations in configuration classes.
  * @author Rod Johnson
  */
-public class ClassListBuilder extends AbstractAsmClassScanningBeanDefinitionReader {
-	
-	
-	private Set<Class> classesFound = new HashSet<Class>();
-	
-	/**
-	 * @param bdr
-	 */
-	public ClassListBuilder(BeanDefinitionRegistry bdr) {
-		super(bdr);
-	}
-	
-	@Override
-	protected void processComponentOrFactoryClass(Class clazz) {
-		classesFound.add(clazz);
-	}
-	
-	/**
-	 * @return the classesFound
-	 */
-	public Set<Class> getClassesFound() {
-		return classesFound;
-	}
+public interface ConfigurationListenerRegistry {
 
+	List<ConfigurationListener> getConfigurationListeners();
+	
 }
