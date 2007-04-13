@@ -16,22 +16,26 @@
 
 package org.springframework.config.java.support.analysis;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.springframework.config.java.parsing.asm.ClassVisitorSupport;
-import org.springframework.config.java.parsing.asm.MethodVisitorSupport;
+import org.objectweb.asm.commons.EmptyVisitor;
 
 /**
- * ASM ClassVistor implementation that saves getter methods invoked
+ * ASM ClassVistor implementation that saves getter methods invoked.
+ * 
  * @author Rod Johnson
  * 
  */
-public class GetterInvocationFindingClassVisitor extends ClassVisitorSupport {
+public class GetterInvocationFindingClassVisitor extends EmptyVisitor {
+
+	private static final Log log = LogFactory.getLog(GetterInvocationFindingClassVisitor.class);
 
 	/**
 	 * Key = bean creation method name value = list of getters invoked on the
@@ -41,10 +45,8 @@ public class GetterInvocationFindingClassVisitor extends ClassVisitorSupport {
 	private Map<String, List<String>> getterInvocations = new HashMap<String, List<String>>();
 
 	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-		// System.out.println(arg0);
-		System.out.println("visiting method " + name);
-		// System.out.println(signature);
-		// System.out.println(returnType);
+		if (log.isTraceEnabled())
+			log.trace("visiting method " + name);
 
 		MethodVisitor mv = new GetterFindingMethodVisitor(name);
 
@@ -63,28 +65,34 @@ public class GetterInvocationFindingClassVisitor extends ClassVisitorSupport {
 		return mv;
 	}
 
-	private class GetterFindingMethodVisitor extends MethodVisitorSupport {
+	private class GetterFindingMethodVisitor extends EmptyVisitor {
 
 		private final String methodName;
 
-		private List<String> gettersInvoked = new LinkedList<String>();
+		private List<String> gettersInvoked = new ArrayList<String>();
+
+		private boolean trace;
 
 		public GetterFindingMethodVisitor(String methodName) {
 			this.methodName = methodName;
+			trace = log.isTraceEnabled();
 		}
 
 		@Override
 		public void visitMethodInsn(int opcode, String owner, String name, String desc) {
 			if (name.startsWith("get")) {
-				System.out.println("***** gotcha: ");
-				System.out.println("opcode=" + opcode + "; owner=" + owner + "; name=" + name + "; desc=" + desc);
 				gettersInvoked.add(name);
+				if (trace) {
+					log.trace("opcode=" + opcode + "; owner=" + owner + "; name=" + name + "; desc=" + desc);
+				}
+
 			}
 		}
 
 		@Override
 		public void visitInsn(int opCode) {
-			System.out.println("opCode=" + opCode + ", return=" + Opcodes.RETURN);
+			if (trace)
+				log.trace("opCode=" + opCode + ", return=" + Opcodes.RETURN);
 		}
 
 		@Override
