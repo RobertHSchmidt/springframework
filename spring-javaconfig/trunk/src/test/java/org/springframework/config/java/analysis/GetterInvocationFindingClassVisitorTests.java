@@ -1,4 +1,4 @@
-package org.springframework.config.java.java.analysis;
+package org.springframework.config.java.analysis;
 
 import java.io.IOException;
 import java.io.InputStream;

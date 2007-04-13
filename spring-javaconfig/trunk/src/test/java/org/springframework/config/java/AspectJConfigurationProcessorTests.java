@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.java;
+package org.springframework.config.java;
 
 import java.util.HashMap;
 import java.util.HashSet;

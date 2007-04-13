@@ -1,4 +1,4 @@
-package org.springframework.config.java.java;
+package org.springframework.config.java;
 
 public class Person {
 	

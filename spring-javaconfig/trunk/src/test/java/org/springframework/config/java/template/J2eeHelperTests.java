@@ -1,4 +1,4 @@
-package org.springframework.config.java.java.template;
+package org.springframework.config.java.template;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
