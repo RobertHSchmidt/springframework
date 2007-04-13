@@ -16,9 +16,9 @@
 package org.springframework;
 
 import org.springframework.Worker.JobTitle;
-import org.springframework.beans.factory.annotation.Bean;
-import org.springframework.beans.factory.annotation.Configuration;
-import org.springframework.beans.factory.java.template.ConfigurationSupport;
+import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.template.ConfigurationSupport;
 
 /**
  * @author Costin Leau

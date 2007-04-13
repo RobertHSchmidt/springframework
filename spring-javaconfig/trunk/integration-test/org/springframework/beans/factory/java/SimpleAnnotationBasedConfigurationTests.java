@@ -22,8 +22,8 @@ import junit.framework.TestCase;
 
 import org.springframework.Company;
 import org.springframework.SimpleConfiguration;
+import org.springframework.config.java.context.AnnotationApplicationContext;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.java.AnnotationApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
