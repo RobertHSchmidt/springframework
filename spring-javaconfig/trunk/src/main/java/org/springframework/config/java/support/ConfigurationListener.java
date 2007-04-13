@@ -26,31 +26,31 @@ import org.springframework.config.java.annotation.Bean;
 
 /**
  * SPI interface that allows extension of a ConfigurationProcessor.
- * ConfigurationMethodListener instances are notified about the processing of configuration classes
- * and the processing of methods they contain. 
+ * ConfigurationMethodListener instances are notified about the processing of
+ * configuration classes and the processing of methods they contain.
  * Implementations should be thread safe.
  * 
  * @author Rod Johnson
  */
 public interface ConfigurationListener {
-	
+
 	/**
 	 * Does this configurer understand the given configuration class, which
 	 * isn't a regular configuration class.
-	 * @param configurerClass candidate configuration class 
+	 * @param configurerClass candidate configuration class
 	 * @return whether this class is understood by this configurer
 	 */
 	boolean understands(Class configurerClass);
-	
-	void configurationClass(ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childBeanFactory,
+
+	void configurationClass(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
 			String configurerBeanName, Class configurerClass);
 
 	/**
 	 * React to the BeanDefinition and possibly customize it or change its name
-	 * @param beanDefinitionRegistration bean definition registration information
-	 * @param beanFactory factory owning the configuration class. This method will 
-	 * be called before beans are instantiated, so other objects may not be
+	 * @param beanDefinitionRegistration bean definition registration
+	 * information
+	 * @param beanFactory factory owning the configuration class. This method
+	 * will be called before beans are instantiated, so other objects may not be
 	 * available.
 	 * @param childBeanFactory child bean factory available for internal use,
 	 * such as for registering infrastructural beans
@@ -60,18 +60,16 @@ public interface ConfigurationListener {
 	 * @param beanAnnotation bean annotation on the configuration method, which
 	 * will not be null.
 	 */
-	void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration, 
-			ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childBeanFactory,
-			String configurerBeanName, Class configurerClass, Method m,
-			Bean beanAnnotation);
+	void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
+			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation);
 
 	/**
-	 * React to the encountering of a non bean definition method on the configurer
-	 * class. Non bean definition methods (with Bean annotations) may be significant
-	 * to some configuration classes.
-	 * @param beanFactory factory owning the configuration class. This method will 
-	 * be called before beans are instantiated, so other objects may not be
+	 * React to the encountering of a non bean definition method on the
+	 * configurer class. Non bean definition methods (with Bean annotations) may
+	 * be significant to some configuration classes.
+	 * @param beanFactory factory owning the configuration class. This method
+	 * will be called before beans are instantiated, so other objects may not be
 	 * available.
 	 * @param childBeanFactory child bean factory available for internal use,
 	 * such as for registering infrastructural beans
@@ -79,8 +77,7 @@ public interface ConfigurationListener {
 	 * @param configurerClass configurer class
 	 * @param m method on configurer class
 	 */
-	void otherMethod(ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childBeanFactory,
+	void otherMethod(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
 			String configurerBeanName, Class configurerClass, Method m);
 
 	/**
@@ -88,14 +85,12 @@ public interface ConfigurationListener {
 	 * @param originallyCreatedBean
 	 * @param method
 	 * @param pf simply don't modify it if necessary
-	 * @return whether or not the proxy was changed. If all listeners
-	 * return false, the return value may not need to be proxied.
+	 * @return whether or not the proxy was changed. If all listeners return
+	 * false, the return value may not need to be proxied.
 	 */
 	boolean processBeanMethodReturnValue(ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childBeanFactory,
-			Object originallyCreatedBean, Method method, ProxyFactory pf);
-	
-	
+			DefaultListableBeanFactory childBeanFactory, Object originallyCreatedBean, Method method, ProxyFactory pf);
+
 	/**
 	 * Class to hold BeanDefinition, name and any other information, to allow
 	 * configuration listeners to customize the registration, change its name,
@@ -103,9 +98,11 @@ public interface ConfigurationListener {
 	 */
 	class BeanDefinitionRegistration {
 		public RootBeanDefinition rbd;
+
 		public String name;
+
 		public boolean hide;
-		
+
 		public BeanDefinitionRegistration(RootBeanDefinition rbd, String name) {
 			this.rbd = rbd;
 			this.name = name;

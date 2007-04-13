@@ -8,7 +8,7 @@
 <hibernate-mapping>
 
     <class
-        name="org.springframework.beans.factory.java.Person"
+        name="org.springframework.config.java.Person"
         table="T_PERSON"
         >
 

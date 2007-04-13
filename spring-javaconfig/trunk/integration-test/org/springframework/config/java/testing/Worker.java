@@ -17,7 +17,7 @@ package org.springframework.config.java.testing;
 
 import java.util.Date;
 
-import org.springframework.beans.factory.java.Person;
+import org.springframework.config.java.Person;
 
 /**
  * @author Costin Leau

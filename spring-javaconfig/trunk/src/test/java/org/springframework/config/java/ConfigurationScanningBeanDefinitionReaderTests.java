@@ -82,26 +82,26 @@ public class ConfigurationScanningBeanDefinitionReaderTests extends TestCase {
 	public void testReadClass() throws Exception {
 		assertEquals(
 				3,
-				reader.loadBeanDefinitions("/org/springframework/beans/factory/java/ConfigurationScanningBeanDefinitionReaderTests$ComplexConfiguration.class"));
+				reader.loadBeanDefinitions("/org/springframework/config/java/ConfigurationScanningBeanDefinitionReaderTests$ComplexConfiguration.class"));
 		// registry.refresh();
 	}
 
 	public void testReadInnerClass() throws Exception {
 		assertEquals(
 				4,
-				reader.loadBeanDefinitions("/org/springframework/beans/factory/java/ConfigurationScanningBeanDefinitionReaderTests.class"));
+				reader.loadBeanDefinitions("/org/springframework/config/java/ConfigurationScanningBeanDefinitionReaderTests.class"));
 	}
 
-	public void tstReadClasses() throws Exception {
+	public void testReadClasses() throws Exception {
 		assertEquals(
 				4,
-				reader.loadBeanDefinitions("/org/springframework/beans/factory/**/ConfigurationScanningBeanDefinitionReaderTests.class"));
+				reader.loadBeanDefinitions("/org/springframework/config/**/ConfigurationScanningBeanDefinitionReaderTests.class"));
 	}
 
 	public void testReadClassByName() throws Exception {
 		assertEquals(4, reader.loadBeanDefinitions(new String[] {
-				"org.springframework.config.java.testing.config.java.support.ConfigurationScanningBeanDefinitionReaderTests$ComplexConfiguration",
-				"org.springframework.config.java.testing.config.java.support.ConfigurationScanningBeanDefinitionReaderTests$SimpleConfiguration" }));
+				"org.springframework.config.java.ConfigurationScanningBeanDefinitionReaderTests$ComplexConfiguration",
+				"org.springframework.config.java.ConfigurationScanningBeanDefinitionReaderTests$SimpleConfiguration" }));
 	}
 
 }

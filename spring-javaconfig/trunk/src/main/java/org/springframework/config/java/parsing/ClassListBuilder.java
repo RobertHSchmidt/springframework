@@ -18,30 +18,30 @@ package org.springframework.config.java.parsing;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
 /**
- * Finds beans.
- * TODO really want to abstract this so it is not a BeanDefinitionReader
+ * Finds beans. TODO really want to abstract this so it is not a
+ * BeanDefinitionReader
  * 
  * @author Rod Johnson
  */
 public class ClassListBuilder extends AbstractAsmClassScanningBeanDefinitionReader {
-	
-	
+
 	private Set<Class> classesFound = new HashSet<Class>();
-	
+
 	/**
 	 * @param bdr
 	 */
 	public ClassListBuilder(BeanDefinitionRegistry bdr) {
 		super(bdr);
 	}
-	
+
 	@Override
 	protected void processComponentOrFactoryClass(Class clazz) {
 		classesFound.add(clazz);
 	}
-	
+
 	/**
 	 * @return the classesFound
 	 */

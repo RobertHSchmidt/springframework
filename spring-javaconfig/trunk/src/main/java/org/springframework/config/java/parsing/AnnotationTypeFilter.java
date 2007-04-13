@@ -29,9 +29,9 @@ import org.objectweb.asm.commons.EmptyVisitor;
  * @author Rod Johnson
  */
 public class AnnotationTypeFilter implements TypeFilter {
-	
+
 	private final Class<? extends Annotation> annotationClass;
-	
+
 	/**
 	 * @param annotationClass
 	 */
@@ -61,7 +61,7 @@ public class AnnotationTypeFilter implements TypeFilter {
 		protected List<String> createList() {
 			return new ArrayList<String>();
 		}
-		
+
 		/**
 		 * @return the annotations
 		 */
@@ -69,7 +69,7 @@ public class AnnotationTypeFilter implements TypeFilter {
 			return annotations;
 		}
 	}
-	
+
 	public boolean match(ClassReader classReader) {
 		AnnotationReader annotationReader = new AnnotationReader();
 		// track innerClasses

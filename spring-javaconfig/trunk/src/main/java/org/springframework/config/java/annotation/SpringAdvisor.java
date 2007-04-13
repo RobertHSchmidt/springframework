@@ -22,12 +22,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Additional annotation to be added to Bean annotation to mark an advisor.
- * An advisor will typically be a hidden bean.
+ * Additional annotation to be added to Bean annotation to mark an advisor. An
+ * advisor will typically be a hidden bean.
  * @author Rod Johnson
- * @see org.springframework.config.java.annotation.Bean
+ * @see org.springframework.config.java.testing.config.java.annotation.Bean
  */
-@Target({ElementType.METHOD, ElementType.FIELD})
+@Target( { ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SpringAdvisor {
 

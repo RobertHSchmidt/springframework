@@ -21,12 +21,12 @@ import java.util.List;
 
 /**
  * @author Rod Johnson
- *
+ * 
  */
 public class CompositePropertySource extends AbstractPropertySource {
-	
+
 	private List<PropertySource> propertySources = new LinkedList<PropertySource>();
-	
+
 	public void add(PropertySource ps) {
 		this.propertySources.add(ps);
 	}

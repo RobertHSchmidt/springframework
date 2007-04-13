@@ -18,7 +18,7 @@ package org.springframework.config.java.propertysource;
 
 /**
  * @author Rod Johnson
- *
+ * 
  */
 public abstract class AbstractPropertySource implements PropertySource {
 
@@ -31,6 +31,5 @@ public abstract class AbstractPropertySource implements PropertySource {
 	}
 
 	public abstract Object getObject(String name, Class requiredType);
-	
 
 }

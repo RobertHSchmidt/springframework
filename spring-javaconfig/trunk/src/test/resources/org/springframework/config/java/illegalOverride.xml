@@ -6,10 +6,10 @@
 
 
 	<bean 
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessor" />
+		class="org.springframework.config.java.support.ConfigurationPostProcessor" />
 		
 	<bean 
-		class="org.springframework.beans.factory.java.ConfigurationPostProcessorTests$IllegalOverrideConfiguration" 
+		class="org.springframework.config.java.ConfigurationPostProcessorTests$IllegalOverrideConfiguration" 
 	/>
 	
 	<bean id="ann" 

@@ -38,9 +38,9 @@ import org.springframework.util.ClassUtils;
  * definition to be a generated subclass that caches singletons on
  * self-invocation.
  * 
- * @see org.springframework.config.java.support.ConfigurationProcessor
- * @see org.springframework.config.java.annotation.Bean
- * @see org.springframework.config.java.annotation.Configuration
+ * @see org.springframework.config.java.testing.config.java.support.ConfigurationProcessor
+ * @see org.springframework.config.java.testing.config.java.annotation.Bean
+ * @see org.springframework.config.java.testing.config.java.annotation.Configuration
  * @author Rod Johnson
  */
 public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ordered {
@@ -69,10 +69,7 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 				RootBeanDefinition rbd = (RootBeanDefinition) bd;
 				ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(beanFactory,
 						configurationListenerRegistry);
-				
-				
-				
-				
+
 				Class clazz = null;
 
 				if (rbd.hasBeanClass())
@@ -80,7 +77,7 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 				else {
 					// load the class (changes in the lazy loading code part of
 					// spring core)
-					
+
 					// TODO: add support for factory-method beans
 					if (rbd.getBeanClassName() != null) {
 						try {
@@ -102,20 +99,20 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 			}
 		}
 	}
-	/**
+
+	/**
 	 * Determines if the given bean definition is eligible for configuration
 	 * processsing by a ConfigurationProcessor. Abstract beans are not eligible
-	 * for configuration processing; they have no class name. We might include other
-	 * cases too in the future.
+	 * for configuration processing; they have no class name. We might include
+	 * other cases too in the future.
 	 */
 	private boolean isEligibleForConfigurationProcessing(BeanDefinition def) {
 		if (def.isAbstract()) {
 			return false;
 		}
-		
+
 		return true;
 	}
-
 
 	/**
 	 * Guarantee to execute before any other BeanFactoryPostProcessors

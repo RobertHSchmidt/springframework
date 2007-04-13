@@ -22,29 +22,29 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation containing the pointcut for a Spring advice.
- * This can either contain an AspectJ expression or a 
- * value.
- * TODO pluggable languages? Probably better to standardize on AspectJ
+ * Annotation containing the pointcut for a Spring advice. This can either
+ * contain an AspectJ expression or a value.
  * 
  * @author Rod Johnson
  */
-@Target({ElementType.METHOD, ElementType.FIELD})
+
+// TODO pluggable languages? Probably better to standardize on AspectJ
+@Target( { ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SpringAdvice {
-	
+
 	/**
 	 * AspectJ pointcut expression value
 	 * @return
 	 */
 	String value() default "";
-	
+
 	/**
 	 * If this is true, the value will be discarded
 	 * @return
 	 */
 	boolean matchAll() default false;
-	
+
 	// String lang() default "AJ";
 
 }

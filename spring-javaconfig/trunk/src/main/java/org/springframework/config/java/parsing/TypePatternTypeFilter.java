@@ -21,9 +21,9 @@ import org.springframework.aop.aspectj.TypePatternClassFilter;
  * @author Rod Johnson
  */
 public class TypePatternTypeFilter extends AbstractClassTestingTypeFilter {
-	
+
 	private final TypePatternClassFilter typePatternClassFilter;
-	
+
 	/**
 	 * 
 	 */

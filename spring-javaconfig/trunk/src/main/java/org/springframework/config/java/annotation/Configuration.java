@@ -25,41 +25,38 @@ import java.lang.annotation.Target;
 import org.springframework.beans.factory.annotation.Autowire;
 
 /**
- * Annotation for a configuration class.
- * This annotation  is not required, however its use is
- * recommended to improve configuration processing performance.
- * Holds similar information to that held in the 
- * default values of a bean factory. Note however that the
- * information here is not used to populate the defaults
- * of the owning bean factory, which would affect other
- * configurations. In the style of the Java configuration
- * mechanism generally, each Java configuration class
- * is kept isolated.
+ * Annotation for a configuration class. This annotation is not required,
+ * however its use is recommended to improve configuration processing
+ * performance. Holds similar information to that held in the default values of
+ * a bean factory. Note however that the information here is not used to
+ * populate the defaults of the owning bean factory, which would affect other
+ * configurations. In the style of the Java configuration mechanism generally,
+ * each Java configuration class is kept isolated.
  * 
  * @author Rod Johnson
  * 
  */
-@Target({ElementType.TYPE})
+@Target( { ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Configuration {
-	
+
 	/**
 	 * TODO idea is to allow different variants, such as test, production etc.
 	 * Default will always match
 	 * @return
 	 */
 	String[] names() default "";
-	
+
 	Autowire defaultAutowire() default Autowire.INHERITED;
-	
+
 	DependencyCheck defaultDependencyCheck() default DependencyCheck.UNSPECIFIED;
-	
+
 	Lazy defaultLazy() default Lazy.UNSPECIFIED;
-	
+
 	/**
 	 * Do we autowire with aspects from the enclosing factory scope?
 	 */
 	boolean useFactoryAspects() default false;
-	
+
 }

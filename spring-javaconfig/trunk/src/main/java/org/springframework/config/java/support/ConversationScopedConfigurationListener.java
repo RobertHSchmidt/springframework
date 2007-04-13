@@ -31,61 +31,61 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Scope;
 
 /**
- * ConfigurationListener implementations that understands annotations for 
+ * ConfigurationListener implementations that understands annotations for
  * conversational scopes.
  * 
  * @author Rod Johnson
  */
 public class ConversationScopedConfigurationListener extends ConfigurationListenerSupport {
-	
+
 	public static final String SCOPE_MAP_BEAN_NAME = "scopeMap";
-	
+
 	public static final String SCOPE_IDENTIFIER_RESOLVER_BEAN_NAME = "scopeIdentifierResolver";
-	
+
 	private static final String PROTOTYPE_PREFIX = "_prototype_";
-	
+
 	/**
-	 * Change the bean definition name. 
-	 * Create a new singleton bean definition of type ScopedProxyFactoryBean that "wraps"
-	 * the original, prototype, bean definition.
-	 * Require the presence of a scope map
+	 * Change the bean definition name. Create a new singleton bean definition
+	 * of type ScopedProxyFactoryBean that "wraps" the original, prototype, bean
+	 * definition. Require the presence of a scope map
 	 */
 	@Override
-	public void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration, 
-			ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childBeanFactory,
-			String configurerBeanName, Class configurerClass, Method m,
-			Bean beanAnnotation) {
+	public void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
+			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
 		if (beanAnnotation.scope() == Scope.CONVERSATIONAL) {
-			
+
 			beanDefinitionRegistration.rbd.setSingleton(false);
 			// Hide the bean definition
-			//beanDefinitionRegistration.hide = true;
-			
+			// beanDefinitionRegistration.hide = true;
+
 			String publicName = beanDefinitionRegistration.name;
-			
+
 			beanDefinitionRegistration.name = PROTOTYPE_PREFIX + beanDefinitionRegistration.name;
-			
+
 			if (!beanFactory.containsBean(SCOPE_MAP_BEAN_NAME)) {
-				throw new BeanDefinitionStoreException("Must declare bean with name '" + SCOPE_MAP_BEAN_NAME + "' to use conversational scoping");
+				throw new BeanDefinitionStoreException("Must declare bean with name '" + SCOPE_MAP_BEAN_NAME
+						+ "' to use conversational scoping");
 			}
 
-//			if (beanFactory.containsBean(SCOPE_IDENTIFIER_RESOLVER_BEAN_NAME)) {
-//				sts.setScopeIdentifierResolver((ScopeIdentifierResolver) createDelegate(ScopeIdentifierResolver.class, beanFactory, SCOPE_IDENTIFIER_RESOLVER_BEAN_NAME)); 
-//			}
-//			
+			// if
+			// (beanFactory.containsBean(SCOPE_IDENTIFIER_RESOLVER_BEAN_NAME)) {
+			// sts.setScopeIdentifierResolver((ScopeIdentifierResolver)
+			// createDelegate(ScopeIdentifierResolver.class, beanFactory,
+			// SCOPE_IDENTIFIER_RESOLVER_BEAN_NAME));
+			// }
+			//			
 
 			// Register new proxy that delegates to old bean
 			RootBeanDefinition tsbd = new RootBeanDefinition(ScopedProxyFactoryBean.class);
 			MutablePropertyValues pvs = new MutablePropertyValues();
-			pvs.addPropertyValue(new PropertyValue("targetBeanName", beanDefinitionRegistration.name)).
-				addPropertyValue(new PropertyValue("scopeMap", new RuntimeBeanReference(SCOPE_MAP_BEAN_NAME))).
-				addPropertyValue(new PropertyValue("scopeIdentifierResolver", new RuntimeBeanReference(SCOPE_IDENTIFIER_RESOLVER_BEAN_NAME)));
-			tsbd.setPropertyValues(pvs);			
-			((BeanDefinitionRegistry) beanFactory).registerBeanDefinition(publicName, tsbd);	
+			pvs.addPropertyValue(new PropertyValue("targetBeanName", beanDefinitionRegistration.name)).addPropertyValue(
+				new PropertyValue("scopeMap", new RuntimeBeanReference(SCOPE_MAP_BEAN_NAME))).addPropertyValue(
+				new PropertyValue("scopeIdentifierResolver", new RuntimeBeanReference(
+						SCOPE_IDENTIFIER_RESOLVER_BEAN_NAME)));
+			tsbd.setPropertyValues(pvs);
+			((BeanDefinitionRegistry) beanFactory).registerBeanDefinition(publicName, tsbd);
 		}
 	}
-	
-	
 
 }

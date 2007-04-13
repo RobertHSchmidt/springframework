@@ -16,22 +16,23 @@
 
 package org.springframework.config.java.annotation;
 
-
 /**
  * Annotation reflecting the scope of a bean definition.
  * @author Rod Johnson
- *
+ * 
  */
 public enum Scope {
-	
-	SINGLETON(0),
-	PROTOTYPE(1),
-	CONVERSATIONAL(2);
-	
+
+	SINGLETON(0), PROTOTYPE(1), CONVERSATIONAL(2);
+
 	private final int value;
 
-	Scope(int value) { this.value = value; }
-	
-	public int value() { return value; }
+	Scope(int value) {
+		this.value = value;
+	}
+
+	public int value() {
+		return value;
+	}
 
 }

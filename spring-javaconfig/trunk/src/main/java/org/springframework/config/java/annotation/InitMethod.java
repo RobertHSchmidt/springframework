@@ -22,18 +22,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /*
- * Does this make sense? You could invoke it in code
- * Destroy method *does* make sense.
- * TODO evaluate this: Want to make it pluggable?
+ * Does this make sense? You could invoke it in code Destroy method *does* make
+ * sense. TODO evaluate this: Want to make it pluggable?
  */
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface InitMethod {
-	
+
 	String name();
 
 }

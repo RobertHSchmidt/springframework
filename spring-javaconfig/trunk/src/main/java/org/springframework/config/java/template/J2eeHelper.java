@@ -7,11 +7,11 @@ import org.springframework.ejb.access.LocalStatelessSessionProxyFactoryBean;
 import org.springframework.jndi.JndiObjectFactoryBean;
 
 public abstract class J2eeHelper {
-	
+
 	public static Object jndiObject(String jndiName) {
 		return jndiObject(jndiName, null);
 	}
-	
+
 	public static Object jndiObject(String jndiName, Class proxyInterface) {
 		JndiObjectFactoryBean jofb = new JndiObjectFactoryBean();
 		jofb.setJndiName(jndiName);
@@ -26,7 +26,7 @@ public abstract class J2eeHelper {
 		}
 		return jofb.getObject();
 	}
-	
+
 	public static LocalStatelessSessionProxyFactoryBean localEjbClient(String jndiName, Class businessInterface) {
 		// TODO convert to return actual object
 		LocalStatelessSessionProxyFactoryBean lsspfb = new LocalStatelessSessionProxyFactoryBean();

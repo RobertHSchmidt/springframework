@@ -29,42 +29,40 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Configuration;
 
-
 /**
  * Configuration listener that processes AspectJ aspects.
  * 
  * @author Rod Johnson
- * @see org.springframework.config.java.aop.aspectj.annotation.AspectJAdvisorFactory
+ * @see org.springframework.config.java.testing.config.java.aop.aspectj.annotation.AspectJAdvisorFactory
  */
 public class AspectJAdviceConfigurationListener extends AbstractAopConfigurationListener {
 
 	private AspectJAdvisorFactory aspectJAdvisorFactory = new ReflectiveAspectJAdvisorFactory();
-	
+
 	@Override
 	public boolean understands(Class configurerClass) {
 		// Needs to be a configuration class to be automatically picked up.
 		// Otherwise would pick up external aspects.
-		return aspectJAdvisorFactory.isAspect(configurerClass) &&
-			configurerClass.isAnnotationPresent(Configuration.class);
+		return aspectJAdvisorFactory.isAspect(configurerClass)
+				&& configurerClass.isAnnotationPresent(Configuration.class);
 	}
-	
+
 	/**
 	 * Check whether inheritance hierarchy is consistent
 	 */
 	@Override
-	public void configurationClass(ConfigurableListableBeanFactory beanFactory, 
-			DefaultListableBeanFactory childBeanFactory, String configurerBeanName, 
-			Class configurerClass) {
+	public void configurationClass(ConfigurableListableBeanFactory beanFactory,
+			DefaultListableBeanFactory childBeanFactory, String configurerBeanName, Class configurerClass) {
 		if (aspectJAdvisorFactory.isAspect(configurerClass)) {
 			aspectJAdvisorFactory.validate(configurerClass);
 		}
 	}
-	
+
 	@Override
 	public void otherMethod(ConfigurableListableBeanFactory beanFactory,
-			final DefaultListableBeanFactory childBeanFactory,
-			String configurerBeanName, final Class configurerClass, Method aspectJAdviceMethod) {
-		
+			final DefaultListableBeanFactory childBeanFactory, String configurerBeanName, final Class configurerClass,
+			Method aspectJAdviceMethod) {
+
 		try {
 			// If it's a valid aspect, we'll continue in this method
 			// Using validate() rather than isAspect() ensures that illegal
@@ -76,32 +74,30 @@ public class AspectJAdviceConfigurationListener extends AbstractAopConfiguration
 			// Nothing to do
 			return;
 		}
-		
+
 		int declarationOrderInAspect = 0;
 		String aspectName = "aspectName";
-		Advisor pa = aspectJAdvisorFactory.getAdvisor(/*configurerClass, */aspectJAdviceMethod, 
-				//new PrototypeAspectInstanceFactory(childBeanFactory, getConfigurerBeanName(configurerClass)));
-				new BeanFactoryAspectInstanceFactory(childBeanFactory, getConfigurerBeanName(configurerClass), configurerClass),
-				declarationOrderInAspect,
-				aspectName);
-		
+		Advisor pa = aspectJAdvisorFactory.getAdvisor(/* configurerClass, */aspectJAdviceMethod,
+		// new PrototypeAspectInstanceFactory(childBeanFactory,
+		// getConfigurerBeanName(configurerClass)));
+			new BeanFactoryAspectInstanceFactory(childBeanFactory, getConfigurerBeanName(configurerClass),
+					configurerClass), declarationOrderInAspect, aspectName);
+
 		// TODO should handle introductions also?
 		if (pa != null && (pa instanceof PointcutAdvisor)) {
 			String adviceName = aspectJAdviceMethod.getName();
-			
+
 			Advice advice = pa.getAdvice();
-			
-			// TODO this is required to cover named pointcuts, but seems a bit hacky
+
+			// TODO this is required to cover named pointcuts, but seems a bit
+			// hacky
 			if (advice == null) {
 				return;
 			}
-			
-			
+
 			addAdvice(adviceName, ((PointcutAdvisor) pa).getPointcut(), advice, childBeanFactory);
 		}
 	}
-
-
 
 	/**
 	 * Get the bean name of this configurer class.
@@ -111,5 +107,5 @@ public class AspectJAdviceConfigurationListener extends AbstractAopConfiguration
 	protected String getConfigurerBeanName(Class configClass) {
 		return configClass.getName();
 	}
-	
+
 }

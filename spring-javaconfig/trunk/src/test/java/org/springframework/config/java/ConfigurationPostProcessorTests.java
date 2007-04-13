@@ -54,7 +54,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 
 	public void testSingleton() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"/org/springframework/beans/factory/java/test.xml");
+				"/org/springframework/config/java/test.xml");
 
 		ITestBean tb = (ITestBean) bf.getBean("tom");
 		assertEquals("tom", tb.getName());
@@ -72,7 +72,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 
 	public void testInjectedConfig() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"/org/springframework/beans/factory/java/injectedTest.xml");
+				"/org/springframework/config/java/injectedTest.xml");
 
 		ITestBean tb = (ITestBean) bf.getBean("testBean");
 		assertEquals("Injected age returned", 33, tb.getAge());
@@ -84,7 +84,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 	 */
 	public void testReverseInjectionWithAutowire() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"/org/springframework/beans/factory/java/reverseInjection.xml");
+				"/org/springframework/config/java/reverseInjection.xml");
 
 		DependsOnTestBean tb = (DependsOnTestBean) bf.getBean("dependsOnTestBean");
 		assertNotNull(tb.tb);
@@ -93,7 +93,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 
 	public void testReverseInjectionExplicit() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"/org/springframework/beans/factory/java/reverseInjection.xml");
+				"/org/springframework/config/java/reverseInjection.xml");
 
 		DependsOnTestBean tb = (DependsOnTestBean) bf.getBean("dependsOnTestBeanExplicit");
 		assertNotNull(tb.tb);
@@ -102,7 +102,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 
 	public void testProxiedPrototype() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"/org/springframework/beans/factory/java/test.xml");
+				"/org/springframework/config/java/test.xml");
 
 		ITestBean tb = (ITestBean) bf.getBean("prototype");
 		assertEquals("prototype", tb.getName());
@@ -121,7 +121,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 
 	public void testNonProxiedPrototype() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"/org/springframework/beans/factory/java/test.xml");
+				"/org/springframework/config/java/test.xml");
 
 		Point tb = (Point) bf.getBean("prototypePoint");
 		// assertEquals(3, tb.);
@@ -142,7 +142,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 
 	public void testPointcut() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"/org/springframework/beans/factory/java/test.xml");
+				"/org/springframework/config/java/test.xml");
 		IOther becky = (IOther) bf.getBean("becky");
 
 		assertEquals("No advisors put in factory", 0, bf.getBeanNamesForType(Advisor.class).length);
@@ -163,7 +163,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 
 	public void testProgrammaticProxyCreation() throws Exception {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"/org/springframework/beans/factory/java/test.xml");
+				"/org/springframework/config/java/test.xml");
 
 		Point proxied = (Point) bf.getBean("proxied");
 		// ITestBean tom = (ITestBean) bf.getBean("tom");
@@ -179,7 +179,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 	
 	public void testAbstractBeanDefinition() throws Exception {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"/org/springframework/beans/factory/java/abstractDef.xml");
+				"/org/springframework/config/java/abstractDef.xml");
 		
 		// there should be two, nothing more!
 		assertEquals(2, bf.getBeanDefinitionCount());
@@ -323,7 +323,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 
 	public void testFactoryBean() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"/org/springframework/beans/factory/java/myfactory.xml");
+				"/org/springframework/config/java/myfactory.xml");
 
 		ITestBean tb = (ITestBean) bf.getBean("factoryCreatedTestBean");
 		assertEquals("jenny", tb.getName());
@@ -407,7 +407,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 
 	public void testAspectsAreIndependent() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"/org/springframework/beans/factory/java/independenceTest.xml");
+				"/org/springframework/config/java/independenceTest.xml");
 
 		TestBean realJohannes = (TestBean) bf.getBean("realJohannes");
 		assertFalse(AopUtils.isAopProxy(realJohannes));
@@ -494,7 +494,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 
 	public void testBeanNamePostProcessorAppliesToBeansFromConfig() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"/org/springframework/beans/factory/java/beanNamePostProcessor.xml");
+				"/org/springframework/config/java/beanNamePostProcessor.xml");
 
 		ITestBean adrian = (ITestBean) bf.getBean("adrian");
 		assertFalse(AopUtils.isAopProxy(adrian));
@@ -510,7 +510,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 
 	public void testAspectIsLocalToConfig() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"/org/springframework/beans/factory/java/beanNamePostProcessor.xml");
+				"/org/springframework/config/java/beanNamePostProcessor.xml");
 
 		AdvisedByConfig advisedByConfig = (AdvisedByConfig) bf.getBean("advisedByConfig");
 		AdvisedByConfig notAdvisedByConfig = (AdvisedByConfig) bf.getBean("externalNotAdvisedByAspectWithinConfig");
@@ -527,7 +527,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 	// TODO: check behavior with Spring 2.0.1
 	public void testLocalAndExternalAspects() throws Exception {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"/org/springframework/beans/factory/java/localAndExternalAspects.xml");
+				"/org/springframework/config/java/localAndExternalAspects.xml");
 
 		System.out.println(Arrays.toString(bf.getBeanDefinitionNames()));
 		Object bean = bf.getBean("advisedByConfig");
@@ -564,7 +564,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 	}
 	
 	public void testLegalOverride() {
-		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext("org/springframework/beans/factory/java/legalOverride.xml");
+		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext("org/springframework/config/java/legalOverride.xml");
 		TestBean bob = (TestBean) bf.getBean("bob");
 		assertTrue(bf.containsBean("ann"));
 		assertEquals("Property value must have come from XML override, not @Bean method",
@@ -591,7 +591,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 	public void testIllegalOverride() {
 		try {
 			ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"org/springframework/beans/factory/java/illegalOverride.xml");
+				"org/springframework/config/java/illegalOverride.xml");
 			bf.getBean("ann");
 			fail();
 		}
@@ -616,7 +616,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 	
 	public void testExternalBean() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"org/springframework/beans/factory/java/externalBean.xml");
+				"org/springframework/config/java/externalBean.xml");
 		TestBean bob = (TestBean) bf.getBean("bob");
 		assertTrue(bf.containsBean("ann"));
 		assertEquals("External bean must have been satisfied",

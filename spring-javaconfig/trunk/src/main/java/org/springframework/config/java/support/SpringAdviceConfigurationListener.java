@@ -29,10 +29,8 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
 
 /**
- * Configuration class to create a Spring Advisor containing
- * an AspectJ pointcut and the Spring advice returned by the method.
- * Usage:
- * <code>
+ * Configuration class to create a Spring Advisor containing an AspectJ pointcut
+ * and the Spring advice returned by the method. Usage: <code>
  * @SpringAdvice("expression")
  * protected Advice returnsSpringAdvice() { ... }
  * </code>
@@ -46,33 +44,32 @@ import org.springframework.core.annotation.Order;
  * @author Rod Johnson
  */
 public class SpringAdviceConfigurationListener extends AbstractAopConfigurationListener {
-		
+
 	@Override
-	public void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration, 
-			ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childBeanFactory,
-			String configurerBeanName, Class configurerClass, Method m,
-			Bean beanAnnotation) {
-		
+	public void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
+			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
+
 		SpringAdvice springAdvice = AnnotationUtils.findAnnotation(m, SpringAdvice.class);
 		if (springAdvice == null) {
 			return;
 		}
-		
+
 		log.debug("Found advice method " + m);
 
-//		// Create a bean definition from the method
+		// // Create a bean definition from the method
 		// Already added, so don't need this
-//		RootBeanDefinition rbd = new RootBeanDefinition(m.getReturnType());
-//		rbd.setFactoryBeanName(configurerBeanName);
-//		rbd.setFactoryMethodName(m.getName());
-//		copyAttributes(springAdvice, rbd);
-//		
-//		rbd.setResourceDescription("Advice method " + m.getName() + " in class " + 
-//				m.getDeclaringClass().getName());
-//		
+		// RootBeanDefinition rbd = new RootBeanDefinition(m.getReturnType());
+		// rbd.setFactoryBeanName(configurerBeanName);
+		// rbd.setFactoryMethodName(m.getName());
+		// copyAttributes(springAdvice, rbd);
+		//		
+		// rbd.setResourceDescription("Advice method " + m.getName() + " in
+		// class " +
+		// m.getDeclaringClass().getName());
+		//		
 		String adviceName = m.getName();
-	
+
 		Pointcut pc;
 		if (springAdvice.matchAll()) {
 			pc = Pointcut.TRUE;
@@ -82,7 +79,6 @@ public class SpringAdviceConfigurationListener extends AbstractAopConfigurationL
 		}
 		addAdvice(adviceName, pc, childBeanFactory);
 	}
-
 
 	protected Pointcut createSpringPointcut(SpringAdvice ann, Method method) {
 		AspectJExpressionPointcut ajexp;
@@ -98,15 +94,15 @@ public class SpringAdviceConfigurationListener extends AbstractAopConfigurationL
 	}
 
 	/**
-	 * Special pointcut used to add Ordered interface implementation to
-	 * regular AspectJ expression pointcut
-	 * TODO consider moving into AspectJ expression pointcut to handle precedence
-	 *
+	 * Special pointcut used to add Ordered interface implementation to regular
+	 * AspectJ expression pointcut TODO consider moving into AspectJ expression
+	 * pointcut to handle precedence
+	 * 
 	 */
 	private class OrderedAspectJExpressionPointcut extends AspectJExpressionPointcut implements Ordered {
-		
+
 		private final int order;
-		
+
 		public OrderedAspectJExpressionPointcut(int order) {
 			this.order = order;
 		}
