@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.springframework.beans.factory.java;
+package org.springframework.config;
 
 import java.util.Arrays;
 
 import junit.framework.TestCase;
 
-import org.springframework.Company;
-import org.springframework.SimpleConfiguration;
 import org.springframework.config.java.context.AnnotationApplicationContext;
+import org.springframework.config.java.testing.Company;
+import org.springframework.config.java.testing.SimpleConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
