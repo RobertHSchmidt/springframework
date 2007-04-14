@@ -25,7 +25,8 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.EmptyVisitor;
 
 /**
- * Matches classes with a given annotation.
+ * Annotation filter: matches classes with a given annotation.
+ * 
  * @author Rod Johnson
  */
 public class AnnotationTypeFilter implements TypeFilter {
@@ -41,7 +42,7 @@ public class AnnotationTypeFilter implements TypeFilter {
 
 	/**
 	 * ASM annotation visitor used for reading innerClasses without loading the
-	 * class. The reader is simplified at considers only the innerClasses
+	 * class. The reader is simplified and considers only the innerClasses
 	 * description and not their value.
 	 */
 	public static class AnnotationReader extends EmptyVisitor {

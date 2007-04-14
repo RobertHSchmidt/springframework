@@ -29,14 +29,14 @@ import org.springframework.context.support.AbstractRefreshableApplicationContext
 import org.springframework.core.io.Resource;
 
 /**
- * Convenient superclass for ApplicationContext implementations that reads bean
- * definitions from available classes.
+ * Convenient superclass for ApplicationContext implementations that read bean
+ * definitions from class bytecode.
  * 
  * <p>
  * This class registers each bean definition with the DefaultListableBeanFactory
  * superclass, and relies on the latter's implementation of the BeanFactory
- * interface. It supports singletons, prototypes, and references to either of
- * these kinds of bean.
+ * interface. It supports singletons, prototypes, and references to both kinds
+ * of bean.
  * 
  * @author Costin Leau
  * 

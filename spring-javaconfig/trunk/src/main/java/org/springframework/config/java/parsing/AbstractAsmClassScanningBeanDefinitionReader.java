@@ -19,14 +19,12 @@ package org.springframework.config.java.parsing;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.commons.EmptyVisitor;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.config.java.parsing.AbstractClassTestingTypeFilter.ClassNameAndTypesReadingVisitor;
-import org.springframework.util.ClassUtils;
+import org.springframework.config.java.util.ClassUtils;
 
 /**
  * @author Costin Leau
@@ -34,7 +32,9 @@ import org.springframework.util.ClassUtils;
  */
 public abstract class AbstractAsmClassScanningBeanDefinitionReader extends AbstractClassScanningBeanDefinitionReader {
 
-	private final List<TypeFilter> typeFilters = new LinkedList<TypeFilter>();
+	private final List<TypeFilter> typeFilters = new ArrayList<TypeFilter>();
+
+	private static final String DOLLAR = "$";
 
 	/**
 	 * @param beanFactory
@@ -69,7 +69,7 @@ public abstract class AbstractAsmClassScanningBeanDefinitionReader extends Abstr
 
 		public InnerClasses(String outerName) {
 			// add nested classname separator
-			this.enclosingClass = outerName.concat("$");
+			this.enclosingClass = outerName.concat(DOLLAR);
 		}
 
 		// TODO: consider access also
@@ -102,32 +102,31 @@ public abstract class AbstractAsmClassScanningBeanDefinitionReader extends Abstr
 	protected int searchClass(InputStream stream) throws IOException {
 		try {
 			int count = 0;
+			boolean debug = log.isDebugEnabled();
+
 			ClassReader classReader = new ClassReader(stream);
 
-			ClassNameAndTypesReadingVisitor nameReader = new ClassNameAndTypesReadingVisitor();
+			ClassNameVisitor nameReader = new ClassNameVisitor();
 			classReader.accept(nameReader, true);
 			if (isComponentOrFactoryClass(classReader)) {
 				count++;
-				if (log.isDebugEnabled())
+				if (debug)
 					log.debug("found matching annotation; loading class + " + nameReader.getClassName());
 
 				Class clazz = loadClass(nameReader.getClassName());
-				// System.out.println(nameReader.getClassName() + "; " + clazz);
 				processComponentOrFactoryClass(clazz);
 			}
 			// check inner classes
-			InnerClasses classes = new InnerClasses(
-					convertLoadableClassNameToInternalClassName(nameReader.getClassName()));
+			InnerClasses classes = new InnerClasses(ClassUtils.classNameLoadableToInternal(nameReader.getClassName()));
 			classReader.accept(classes, true);
 
 			for (String innerClassName : classes.getInnerClassNames()) {
-				if (log.isDebugEnabled())
+				if (debug)
 					log.debug("loading inner class " + innerClassName);
 
 				// transform to realName
-				String realName = innerClassName.concat(CLASS_EXT);
-				// System.out.println("realname='" + realName + "'");
-				count += searchClass(ClassUtils.getDefaultClassLoader().getResourceAsStream(realName));
+				String realName = innerClassName.concat(ClassUtils.CLASS_EXT);
+				count += searchClass(getResourceLoader().getClassLoader().getResourceAsStream(realName));
 			}
 
 			return count;

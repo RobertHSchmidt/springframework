@@ -37,7 +37,8 @@ public class ConfigurationClassScanningBeanDefinitionReader extends AbstractAsmC
 	}
 
 	protected void processComponentOrFactoryClass(Class clazz) {
-		System.out.println(clazz);
+		if (log.isDebugEnabled())
+			log.debug("processing class " + clazz);
 		BeanDefinition definition = new RootBeanDefinition(clazz);
 		getBeanFactory().registerBeanDefinition(clazz.getName(), definition);
 	}
