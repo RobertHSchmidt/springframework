@@ -8,7 +8,6 @@ import junit.framework.TestCase;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.MethodVisitor;
-import org.springframework.config.java.support.analysis.GetterInvocationFindingClassVisitor;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.support.analysis;
+package org.springframework.config.java.analysis;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +28,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.EmptyVisitor;
 
 /**
- * ASM ClassVistor implementation that saves getter methods invoked.
+ * ASM ClassVisitor implementation that saves getter methods invoked.
  * 
  * @author Rod Johnson
  * 

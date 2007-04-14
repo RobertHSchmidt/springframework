@@ -23,10 +23,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinitionReader;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.config.java.util.ClassUtils;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -38,48 +36,23 @@ import org.springframework.util.StringUtils;
  * <li>pattern :(/org/package/*.class)
  * </ul>
  * 
- * The underlying classloader is used to load the classes from URL, jars or
- * folders. TODO: consider visibility restrictions (private and default could be
- * excluded)
+ * The underlying classLoader is used to load the classes from URL, jars or
+ * folders.
  * 
- * TODO: annotationName inheritance is considered according to jsr250
- * (classlevel annotationName apply only on the declaring class).
  * 
  * @author Costin Leau
  * @author Rod Johnson
  */
+// TODO: consider visibility restrictions (private and default could be excluded
+// TODO: annotationName inheritance is considered according to jsr250
+// classlevel annotationName apply only on the declaring class).
 public abstract class AbstractClassScanningBeanDefinitionReader extends AbstractBeanDefinitionReader {
-
-	/**
-	 * Convert the / form to the . form
-	 * @param className
-	 * @return
-	 */
-	public static String convertInternalClassNameToLoadableClassName(String className) {
-		return className.replace('/', '.');
-	}
-
-	/**
-	 * @param className
-	 * @return
-	 */
-	public static String convertLoadableClassNameToInternalClassName(String className) {
-		return className.replace('.', '/');
-	}
-
-	protected static final String CLASS_EXT = ".class";
 
 	protected final Log log = LogFactory.getLog(getClass());
 
 	public AbstractClassScanningBeanDefinitionReader(BeanDefinitionRegistry beanFactory) {
 		super(beanFactory);
 	}
-
-	/**
-	 * Used to load FQN resources (in case the existing resourceLoader is
-	 * different)
-	 */
-	private ResourceLoader classpathResourceLoader = new DefaultResourceLoader();
 
 	/*
 	 * (non-Javadoc)
@@ -90,30 +63,24 @@ public abstract class AbstractClassScanningBeanDefinitionReader extends Abstract
 
 		String name = resource.getFilename();
 
-		// try {
-		// System.out.println("Filename=" + resource.getFile());
-		// }
-		// catch (IOException e) {}
-
 		if (log.isDebugEnabled())
 			log.debug("loading definition from " + resource);
 
 		try {
 			// check if it's a class file
-			if (name.endsWith(CLASS_EXT)) {
+			if (name.endsWith(ClassUtils.CLASS_EXT)) {
 				if (log.isDebugEnabled())
 					log.debug(name + " ends w/ class extension - considered as class resources");
 				return searchClass(resource);
 			}
 			else {
 				// verify if it's a FQN
-				String className = resource.getFilename();
-				if (isFQN(className)) {
+				if (isFQN(name)) {
 					if (log.isDebugEnabled())
-						log.debug(className + " considered as class FQN");
+						log.debug(name + " considered as class FQN");
 
-					Resource classResource = classpathResourceLoader.getResource(convertLoadableClassNameToInternalClassName(
-						className).concat(CLASS_EXT));
+					Resource classResource = getResourceLoader().getResource(
+						ClassUtils.classNameLoadableToInternal(name).concat(ClassUtils.CLASS_EXT));
 					// if we find the resource, move on
 					if (classResource.exists())
 						return searchClass(classResource);
@@ -137,12 +104,6 @@ public abstract class AbstractClassScanningBeanDefinitionReader extends Abstract
 	 */
 	protected boolean isFQN(String className) {
 		boolean result = (StringUtils.hasText(className) && Character.isJavaIdentifierStart(className.codePointAt(0)));
-
-		/*
-		 * TODO: improve classname validation for (int i = 1; i <
-		 * className.length() && result; i++) { result &=
-		 * Character.isJavaIdentifierPart(className.codePointAt(i)); }
-		 */
 		return result;
 	}
 
@@ -168,8 +129,8 @@ public abstract class AbstractClassScanningBeanDefinitionReader extends Abstract
 	protected Class loadClass(String className) {
 		try {
 			// transform name to binary form
-			return Class.forName(convertInternalClassNameToLoadableClassName(className), false,
-				ClassUtils.getDefaultClassLoader());
+			return Class.forName(ClassUtils.classNameInternalToLoadable(className), false,
+				getResourceLoader().getClassLoader());
 		}
 		catch (ClassNotFoundException ex) {
 			throw new BeanDefinitionStoreException(className + " could not be loaded", ex);
