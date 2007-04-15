@@ -18,46 +18,28 @@ package org.springframework.config.java.support;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
-
-import net.sf.cglib.proxy.Callback;
-import net.sf.cglib.proxy.CallbackFilter;
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
-import net.sf.cglib.proxy.NoOp;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.aop.framework.ProxyFactory;
-import org.springframework.aop.interceptor.ExposeInvocationInterceptor;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.DependencyCheck;
-import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.Scope;
-import org.springframework.config.java.propertysource.CompositePropertySource;
+import org.springframework.config.java.support.cglib.CglibConfigurationEnhancer;
+import org.springframework.config.java.util.ClassUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 
@@ -78,7 +60,7 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
  * configuration methods and classes.
  * 
  * @author Rod Johnson
- * @see org.springframework.config.java.testing.config.java.support.ConfigurationListener
+ * @see org.springframework.config.java.support.ConfigurationListener
  */
 public class ConfigurationProcessor {
 
@@ -99,64 +81,10 @@ public class ConfigurationProcessor {
 
 	private ConfigurationListenerRegistry configurationListenerRegistry;
 
-	private ResourceLoader resourceLoader = new DefaultResourceLoader();
-
-	// TODO finish strategy for using this
-	private CompositePropertySource propertySource = new CompositePropertySource();
-
-	/**
-	 * Subclass of DefaultListableBeanFactory that keeps track of calls to
-	 * getBean() to allow for context-sensitive behaviour in
-	 * BeanMethodMethodInterceptor.
-	 */
-	private static class BeanNameTrackingDefaultListableBeanFactory extends DefaultListableBeanFactory {
-
-		private static ThreadLocal<Stack<String>> namesHolder = new ThreadLocal<Stack<String>>() {
-			@Override
-			protected Stack<String> initialValue() {
-				return new Stack<String>();
-			}
-		};
-
-		private static Stack<String> names() {
-			return (Stack<String>) namesHolder.get();
-		}
-
-		public BeanNameTrackingDefaultListableBeanFactory(BeanFactory parent) {
-			super(parent);
-		}
-
-		@Override
-		public Object getBean(String name) throws BeansException {
-			recordRequestForBeanName(name);
-			try {
-				Object result = super.getBean(name);
-				return result;
-			}
-			finally {
-				pop();
-			}
-		}
-
-		public void recordRequestForBeanName(String name) {
-			names().push(name);
-		}
-
-		private String pop() {
-			return names().pop();
-		}
-
-		public String lastRequestedBeanName() {
-			return names().empty() ? null : names().peek();
-		}
-	} // class BeanNameTrackingDefaultListableBeanFactory
+	private BytecodeConfigurationEnhancer configurationEnhancer;
 
 	public ConfigurationProcessor(ConfigurableApplicationContext ac, ConfigurationListenerRegistry clr) {
 		init(ac.getBeanFactory(), clr);
-	}
-
-	public void setResourceLoader(ResourceLoader resourceLoader) {
-		this.resourceLoader = resourceLoader;
 	}
 
 	/**
@@ -170,8 +98,10 @@ public class ConfigurationProcessor {
 
 	private void init(ConfigurableListableBeanFactory bdr, ConfigurationListenerRegistry clr) {
 		owningBeanFactory = bdr;
-		childFactory = new BeanNameTrackingDefaultListableBeanFactory(owningBeanFactory);
 		this.configurationListenerRegistry = clr;
+		// TODO: costin - this item should be shared
+		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(owningBeanFactory);
+		this.configurationEnhancer = new CglibConfigurationEnhancer(bdr, childFactory, configurationListenerRegistry);
 	}
 
 	/**
@@ -189,9 +119,9 @@ public class ConfigurationProcessor {
 			throw new BeanDefinitionStoreException("Configuration class " + configClass.getName() + " my not be final");
 		}
 
-		// TODO fix
+		// TODO fix (read name from annotation)
 		String configurerBeanName = configClass.getName();
-		Class<?> configSubclass = createConfigurationSubclass(configClass);
+		Class<?> configSubclass = configurationEnhancer.enhanceConfiguration(configClass);
 		((DefaultListableBeanFactory) owningBeanFactory).registerBeanDefinition(configurerBeanName,
 			new RootBeanDefinition(configSubclass));
 
@@ -218,7 +148,7 @@ public class ConfigurationProcessor {
 
 		ReflectionUtils.doWithMethods(configurerClass, new MethodCallback() {
 			public void doWith(Method m) throws IllegalArgumentException, IllegalAccessException {
-				Bean beanAnnotation = findBeanAnnotation(m, configurerClass);
+				Bean beanAnnotation = AnnotationUtils.findAnnotation(m, Bean.class);
 				if (beanAnnotation != null && !noArgMethodsSeen.contains(m.getName())) {
 
 					// If the bean already exists in the factory, don't emit a
@@ -247,22 +177,6 @@ public class ConfigurationProcessor {
 			}
 		});
 
-		// TODO do we need this?
-		// , ReflectionUtils.DECLARED_METHODS);
-
-		// Now process fields.
-		// Use ReflectionUtils2 to go up tree with private fields
-		// ReflectionUtils2.doWithFields(configurerClass, new
-		// ReflectionUtils2.FieldCallback() {
-		// public void doWith(Field f) throws IllegalArgumentException,
-		// IllegalAccessException {
-		// if (f.getAnnotation(Bean.class) != null) {
-		// generateBeanDefinitionFromBeanField(owningBeanFactory,
-		// configurerBeanName, configurerClass, f);
-		// }
-		// };
-		// });
-
 		// Find inner aspect classes
 		// TODO: need to go up tree? ReflectionUtils.doWithClasses
 		for (Class innerClass : configurerClass.getDeclaredClasses()) {
@@ -272,220 +186,9 @@ public class ConfigurationProcessor {
 		}
 	}
 
-	/**
-	 * Create a new subclass of the given configuration class
-	 * 
-	 * @param configurationClass class with Configuration attribute or otherwise
-	 * indicated as a configuration class
-	 * @return subclass of this class that will behave correctly with AOP
-	 * weaving and singleton caching. For example, the original class will
-	 * return a new instance on every call to a bean() method that has singleton
-	 * scope. The subclass will cache that, and also perform AOP weaving.
-	 */
-	public Class createConfigurationSubclass(Class<?> configurationClass) {
-		Enhancer enhancer = new Enhancer();
-		enhancer.setSuperclass(configurationClass);
-
-		enhancer.setCallbackFilter(BEAN_CREATION_METHOD_CALLBACK_FILTER);
-		enhancer.setCallbackTypes(new Class[] { NoOp.class, BeanMethodMethodInterceptor.class,
-				ExternalBeanMethodMethodInterceptor.class });
-		enhancer.setUseFactory(false);
-		// TODO can we generate a method to expose each private bean field here?
-		// Otherwise may need to generate a static or instance map, with
-		// multiple get() methods
-		// Listeners don't get callback on this also
-
-		Class configurationSubclass = enhancer.createClass();
-		Enhancer.registerCallbacks(configurationSubclass, new Callback[] { NoOp.INSTANCE,
-				new BeanMethodMethodInterceptor(), new ExternalBeanMethodMethodInterceptor() });
-
-		return configurationSubclass;
-	}
-
-	/**
-	 * Intercept only bean creation methods
-	 */
-	private static CallbackFilter BEAN_CREATION_METHOD_CALLBACK_FILTER = new CallbackFilter() {
-
-		public int accept(Method m) {
-			// We don't intercept non-public methods like finalize
-			if (!Modifier.isPublic(m.getModifiers())) {
-				return 0;
-			}
-			if (isBeanDefinitionMethod(m, m.getDeclaringClass())) {
-				return 1;
-			}
-			if (AnnotationUtils.findAnnotation(m, ExternalBean.class) != null
-					|| AnnotationUtils.findAnnotation(m, AutoBean.class) != null) {
-				return 2;
-			}
-			return 0;
-		}
-	};
-
-	/**
-	 * CGLIB MethodInterceptor that applies to methods on the configuration
-	 * instance. Purpose: subclass configuration to ensure that singleton
-	 * methods return the same object on subsequent invocations, including
-	 * self-invocation. Do need one of these per intercepted class.
-	 */
-	private class BeanMethodMethodInterceptor implements MethodInterceptor {
-		private Map<Method, Object> singletons = new HashMap<Method, Object>();
-
-		public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
-			Bean ann = findBeanAnnotation(m, o.getClass());
-			if (ann == null) {
-				// Not a bean, don't change the method implementation
-				return mp.invokeSuper(o, args);
-			}
-			else {
-				return returnWrappedResultMayBeCached(o, m, args, mp, ann.scope() == Scope.SINGLETON);
-			}
-		}
-
-		private Object returnWrappedResultMayBeCached(Object o, Method m, Object[] args, MethodProxy mp,
-				boolean useCache) throws Throwable {
-			if (!useCache) {
-				return wrapResult(o, args, m, mp);
-			}
-
-			// Cache result, for singleton style behaviour,
-			// where the bean creation method always returns the same value
-			synchronized (o) {
-				Object cached = singletons.get(m);
-				if (cached == null) {
-					cached = wrapResult(o, args, m, mp);
-					singletons.put(m, cached);
-				}
-				return cached;
-			}
-		}
-
-		/**
-		 * Wrap the result of a bean definition method in a Spring AOP proxy if
-		 * there are advisors in the current factory that would apply to it.
-		 * Note that the advisors may have been added explicitly by the user or
-		 * may have resulted from Advisor generation on this class processing a
-		 * Pointcut annotationName
-		 * 
-		 * @param o
-		 * @param args
-		 * @param mp
-		 * @return
-		 * @throws Throwable
-		 */
-		private Object wrapResult(Object o, Object[] args, Method m, MethodProxy mp) throws Throwable {
-
-			// If we are in our first call to getBean() with this name and were
-			// not
-			// called by the factory (which would have tracked the call), call
-			// the factory
-			// to get the bean. We need to do this to ensure that lifecycle
-			// callbacks are invoked,
-			// so that calls made within a factory method in otherBean() style
-			// still
-			// get fully configured objects.
-			String lastRequestedBeanName = childFactory.lastRequestedBeanName();
-			if (lastRequestedBeanName != null && !m.getName().equals(lastRequestedBeanName)) {
-				return childFactory.getBean(m.getName());
-			}
-
-			try {
-				if (lastRequestedBeanName == null) {
-					// Remember the getBean() method we're now executing,
-					// if we were invoked from within the factory method in the
-					// configuration class
-					// rather than through the BeanFactory
-					childFactory.recordRequestForBeanName(m.getName());
-				}
-
-				// Get raw result of @Bean method or get bean from factory if it
-				// is overriden
-				Object originallyCreatedBean = null;
-				BeanDefinition beanDef = owningBeanFactory.getBeanDefinition(m.getName());
-				if (beanDef instanceof RootBeanDefinition) {
-					RootBeanDefinition rbdef = (RootBeanDefinition) beanDef;
-					if (rbdef.getFactoryBeanName() == null) {
-						// We have a regular bean definition already in the
-						// factory:
-						// use that instead of the @Bean method
-						originallyCreatedBean = owningBeanFactory.getBean(m.getName());
-					}
-				}
-				if (originallyCreatedBean == null) {
-					originallyCreatedBean = mp.invokeSuper(o, args);
-				}
-
-				if (!configurationListenerRegistry.getConfigurationListeners().isEmpty()) {
-					// We know we have advisors that may affect this object
-					// Prepare to proxy it
-					ProxyFactory pf;
-					if (shouldProxyBeanCreationMethod(m, o.getClass())) {
-						pf = new ProxyFactory(originallyCreatedBean);
-						pf.setProxyTargetClass(true);
-					}
-					else {
-						pf = new ProxyFactory(new Class[] { m.getReturnType() });
-						pf.setProxyTargetClass(false);
-						pf.setTarget(originallyCreatedBean);
-					}
-
-					boolean customized = false;
-					for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
-						customized = customized
-								|| cml.processBeanMethodReturnValue(owningBeanFactory, childFactory,
-									originallyCreatedBean, m, pf);
-					}
-
-					// Only proxy if we know that advisors apply to this bean
-					if (customized || pf.getAdvisors().length > 0) {
-						// Ensure that AspectJ pointcuts will work
-						pf.addAdvice(0, ExposeInvocationInterceptor.INSTANCE);
-						if (pf.isProxyTargetClass() && Modifier.isFinal(m.getReturnType().getModifiers())) {
-							throw new BeanDefinitionStoreException(m + " is eligible for proxying target class "
-									+ "but return type " + m.getReturnType().getName() + " is final");
-						}
-						return pf.getProxy();
-					}
-					else {
-						return originallyCreatedBean;
-					}
-				}
-				else {
-					// There can be no advisors
-					return originallyCreatedBean;
-				}
-			}
-			finally {
-				if (lastRequestedBeanName == null) {
-					childFactory.pop();
-				}
-			}
-		}
-	}
-
-	/**
-	 * MethodInterceptor that returns the result of a getBean() call for an
-	 * external bean.
-	 */
-	private class ExternalBeanMethodMethodInterceptor implements MethodInterceptor {
-
-		public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
-			return owningBeanFactory.getBean(m.getName());
-		}
-	}
-
-	/**
-	 * Use CGLIB only if the return type isn't an interface
-	 * 
-	 * @param m
-	 * @param c
-	 * @return
-	 */
-	private boolean shouldProxyBeanCreationMethod(Method m, Class<?> c) {
-		Bean bean = findBeanAnnotation(m, c);
-		// TODO need to consider autowiring enabled at factory level
-		return !m.getReturnType().isInterface() || bean.autowire().isAutowire();
+	// TODO (Costin): get this out - multiple processing seems to happen
+	public Class enhanceConfiguration(Class configurationClass) {
+		return configurationEnhancer.enhanceConfiguration(configurationClass);
 	}
 
 	/**
@@ -495,33 +198,14 @@ public class ConfigurationProcessor {
 	 * @return
 	 */
 	private static Collection<Method> beanCreationMethods(Class<?> configurationClass) {
-		Collection<Method> beanCreationMethods = new LinkedList<Method>();
+		Collection<Method> beanCreationMethods = new ArrayList<Method>();
 		Method[] publicMethods = configurationClass.getMethods();
 		for (int i = 0; i < publicMethods.length; i++) {
-			if (isBeanDefinitionMethod(publicMethods[i], configurationClass)) {
+			if (ClassUtils.hasAnnotation(publicMethods[i], Bean.class)) {
 				beanCreationMethods.add(publicMethods[i]);
 			}
 		}
 		return beanCreationMethods;
-	}
-
-	protected static boolean isBeanDefinitionMethod(Method m, Class<?> c) {
-		return findBeanAnnotation(m, c) != null;
-	}
-
-	/**
-	 * Annotations on methods are not inherited by default, so we need to handle
-	 * this explicitly
-	 * 
-	 * @param m
-	 * @param c
-	 * @return
-	 */
-	protected static Bean findBeanAnnotation(Method m, Class<?> c) {
-		// TODO: what is C used for ?
-		// previous method - findMethodAnnotation (refactored in AnnotationUtils
-		// rev 1.3)
-		return AnnotationUtils.findAnnotation(m, Bean.class);
 	}
 
 	protected boolean isConfigurationClass(Class<?> candidateConfigurationClass) {
@@ -648,7 +332,7 @@ public class ConfigurationProcessor {
 	}
 
 	/**
-	 * Copy from bean annotationName into bean definition
+	 * Create the bean definition based on the annotation properties.
 	 * 
 	 * @param beanName name of the bean we're creating (not the factory bean)
 	 * @param beanAnnotation bean annotationName
@@ -657,7 +341,7 @@ public class ConfigurationProcessor {
 	 * @param rbd bean definition, in Spring IoC container internal metadata
 	 * @param beanFactory bean factory we are executing in
 	 */
-	private static void copyAttributes(String beanName, Bean beanAnnotation, Configuration configuration,
+	private void copyAttributes(String beanName, Bean beanAnnotation, Configuration configuration,
 			RootBeanDefinition rbd, ConfigurableListableBeanFactory beanFactory) {
 		rbd.setSingleton(beanAnnotation.scope() == Scope.SINGLETON);
 
