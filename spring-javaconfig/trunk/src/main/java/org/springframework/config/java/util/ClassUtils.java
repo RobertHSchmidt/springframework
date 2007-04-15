@@ -15,6 +15,12 @@
  */
 package org.springframework.config.java.util;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.Assert;
+
 /**
  * Convenience utility class used for translating common encountered code into
  * one-liners.
@@ -51,4 +57,17 @@ public abstract class ClassUtils {
 		return className.replace(DOT, SLASH);
 	}
 
+	/**
+	 * Check if the given method has the given annotation.
+	 * 
+	 * @param method
+	 * @param a
+	 * @return
+	 */
+	public static boolean hasAnnotation(Method method, Class<? extends Annotation> a) {
+		Assert.notNull(method, "method is required");
+		Assert.notNull(a, "annotation is required");
+
+		return (AnnotationUtils.findAnnotation(method, a) != null);
+	}
 }

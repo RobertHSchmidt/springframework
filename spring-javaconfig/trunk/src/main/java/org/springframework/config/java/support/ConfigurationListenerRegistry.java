@@ -21,6 +21,7 @@ import java.util.List;
 /**
  * Interface holding a registry of configuration listeners that are used to
  * react to annotations in configuration classes.
+ * 
  * @author Rod Johnson
  */
 public interface ConfigurationListenerRegistry {

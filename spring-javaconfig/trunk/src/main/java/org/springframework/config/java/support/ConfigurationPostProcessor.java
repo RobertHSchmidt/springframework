@@ -38,9 +38,9 @@ import org.springframework.util.ClassUtils;
  * definition to be a generated subclass that caches singletons on
  * self-invocation.
  * 
- * @see org.springframework.config.java.testing.config.java.support.ConfigurationProcessor
- * @see org.springframework.config.java.testing.config.java.annotation.Bean
- * @see org.springframework.config.java.testing.config.java.annotation.Configuration
+ * @see org.springframework.config.java.support.ConfigurationProcessor
+ * @see org.springframework.config.java.annotation.Bean
+ * @see org.springframework.config.java.annotation.Configuration
  * @author Rod Johnson
  */
 public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ordered {
@@ -91,7 +91,7 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 				// TODO set resourceLoader
 				if (configurationProcessor.isConfigurationClass(clazz)) {
 					configurationProcessor.generateBeanDefinitions(beanNames[i], clazz);
-					rbd.setBeanClass(configurationProcessor.createConfigurationSubclass(clazz));
+					rbd.setBeanClass(configurationProcessor.enhanceConfiguration(clazz));
 				}
 				else {
 					log.debug("Bean with name '" + beanNames[i] + "' is not a configurer");

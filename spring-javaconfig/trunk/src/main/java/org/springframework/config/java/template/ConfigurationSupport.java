@@ -22,9 +22,6 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.propertysource.CompositePropertySource;
-import org.springframework.context.ResourceLoaderAware;
-import org.springframework.core.io.ResourceLoader;
 
 /**
  * Convenient base class for Configurations, allowing easy lookup of beans in
@@ -33,11 +30,9 @@ import org.springframework.core.io.ResourceLoader;
  * @author Rod Johnson
  */
 @Configuration
-public class ConfigurationSupport extends CompositePropertySource implements BeanFactoryAware, ResourceLoaderAware {
+public class ConfigurationSupport implements BeanFactoryAware {
 
 	private BeanFactory beanFactory;
-
-	private ResourceLoader resourceLoader;
 
 	// TODO inject properties in here
 
@@ -47,10 +42,6 @@ public class ConfigurationSupport extends CompositePropertySource implements Bea
 
 	protected BeanFactory getBeanFactory() {
 		return beanFactory;
-	}
-
-	public void setResourceLoader(ResourceLoader resourceLoader) {
-		this.resourceLoader = resourceLoader;
 	}
 
 	public Object getBean(String beanName) {
