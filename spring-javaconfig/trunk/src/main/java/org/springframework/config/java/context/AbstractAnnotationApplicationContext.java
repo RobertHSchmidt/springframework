@@ -23,7 +23,7 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.parsing.AbstractClassScanningBeanDefinitionReader;
 import org.springframework.config.java.parsing.ConfigurationClassScanningBeanDefinitionReader;
-import org.springframework.config.java.support.ConfigurationPostProcessor;
+import org.springframework.config.java.process.ConfigurationPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.core.io.Resource;

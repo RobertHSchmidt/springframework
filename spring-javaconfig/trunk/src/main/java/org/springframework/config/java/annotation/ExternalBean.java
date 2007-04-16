@@ -24,6 +24,9 @@ import java.lang.annotation.Target;
 /**
  * Annotation used to indicate an external bean, that must be supplied by the
  * environment.
+ * 
+ * <p/> Useful for injecting beans defined in a (parent) XML application context.
+ * 
  * @author Rod Johnson
  */
 @Retention(RetentionPolicy.RUNTIME)

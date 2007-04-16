@@ -25,7 +25,6 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.support.ConfigurationListenerSupport;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**

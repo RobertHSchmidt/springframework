@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.support;
+package org.springframework.config.java.process;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,9 +23,10 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.ConfigurationListenerRegistry;
+import org.springframework.config.java.listener.ConfigurationListenerRegistry;
+import org.springframework.config.java.listener.DefaultConfigurationListenerRegistry;
+import org.springframework.config.java.util.ClassUtils;
 import org.springframework.core.Ordered;
-import org.springframework.util.ClassUtils;
 
 /**
  * Post processor for use in a bean factory that can process multiple
@@ -39,7 +40,7 @@ import org.springframework.util.ClassUtils;
  * definition to be a generated subclass that caches singletons on
  * self-invocation.
  * 
- * @see org.springframework.config.java.support.ConfigurationProcessor
+ * @see org.springframework.config.java.process.ConfigurationProcessor
  * @see org.springframework.config.java.annotation.Bean
  * @see org.springframework.config.java.annotation.Configuration
  * @author Rod Johnson
@@ -82,7 +83,7 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 					// TODO: add support for factory-method beans
 					if (rbd.getBeanClassName() != null) {
 						try {
-							clazz = ClassUtils.forName(rbd.getBeanClassName());
+							clazz = org.springframework.util.ClassUtils.forName(rbd.getBeanClassName());
 						}
 						catch (ClassNotFoundException e) {
 							throw new IllegalArgumentException("invalid bean class" + rbd.getBeanClassName());
@@ -90,9 +91,9 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 					}
 				}
 				// TODO set resourceLoader
-				if (configurationProcessor.isConfigurationClass(clazz)) {
+				if (ClassUtils.isConfigurationClass(clazz, configurationListenerRegistry)) {
 					configurationProcessor.generateBeanDefinitions(beanNames[i], clazz);
-					rbd.setBeanClass(configurationProcessor.enhanceConfiguration(clazz));
+					rbd.setBeanClass(configurationProcessor.getConfigurationEnhancer().enhanceConfiguration(clazz));
 				}
 				else {
 					log.debug("Bean with name '" + beanNames[i] + "' is not a configurer");

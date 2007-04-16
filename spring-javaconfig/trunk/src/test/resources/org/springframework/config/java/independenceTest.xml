@@ -10,7 +10,7 @@
 	-->
 
 	<bean 
-		class="org.springframework.config.java.support.ConfigurationPostProcessor" />
+		class="org.springframework.config.java.process.ConfigurationPostProcessor" />
 		
 	<bean 
 		class="org.springframework.config.java.ConfigurationPostProcessorTests$Advised1" />

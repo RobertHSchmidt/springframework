@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.support;
+package org.springframework.config.java.listener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.config.java.ConfigurationListener;
-import org.springframework.config.java.ConfigurationListenerRegistry;
-import org.springframework.config.java.listener.AspectJAdviceConfigurationListener;
-import org.springframework.config.java.listener.AutoBeanConfigurationListener;
-import org.springframework.config.java.listener.ConversationScopedConfigurationListener;
-import org.springframework.config.java.listener.HotSwapConfigurationListener;
-import org.springframework.config.java.listener.SpringAdviceConfigurationListener;
-import org.springframework.config.java.listener.SpringAdvisorConfigurationListener;
+import org.springframework.config.java.listener.aop.AspectJAdviceConfigurationListener;
+import org.springframework.config.java.listener.aop.SpringAdviceConfigurationListener;
+import org.springframework.config.java.listener.aop.SpringAdvisorConfigurationListener;
+import org.springframework.config.java.listener.aop.targetsource.HotSwapConfigurationListener;
+
 
 /**
  * Default ConfigurationListenerRegistry implementation.

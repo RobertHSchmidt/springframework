@@ -29,9 +29,10 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.AspectJConfigurationProcessorTests.CountingConfiguration;
 import org.springframework.config.java.AspectJConfigurationProcessorTests.SingletonCountingAdvice;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.SpringAdvice;
-import org.springframework.config.java.support.ConfigurationProcessor;
-import org.springframework.config.java.support.DefaultConfigurationListenerRegistry;
+import org.springframework.config.java.annotation.aop.SpringAdvice;
+import org.springframework.config.java.listener.ConfigurationListenerRegistry;
+import org.springframework.config.java.listener.DefaultConfigurationListenerRegistry;
+import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.core.annotation.Order;
 
 /**

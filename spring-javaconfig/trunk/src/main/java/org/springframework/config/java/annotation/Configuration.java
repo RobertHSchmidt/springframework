@@ -42,7 +42,7 @@ import org.springframework.beans.factory.annotation.Autowire;
 public @interface Configuration {
 
 	/**
-	 * TODO idea is to allow different variants, such as test, production etc.
+	 * Configuration name. Allow different variants, such as test, production etc.
 	 * Default will always match
 	 * @return
 	 */

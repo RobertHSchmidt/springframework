@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.annotation;
+package org.springframework.config.java.listener;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.List;
 
-@Target( { ElementType.METHOD, ElementType.FIELD })
-@Retention(RetentionPolicy.RUNTIME)
-public @interface HotSwappable {
+
+
+/**
+ * Interface holding a registry of configuration listeners that are used to
+ * react to annotations in configuration classes.
+ * 
+ * @author Rod Johnson
+ */
+public interface ConfigurationListenerRegistry {
+
+	List<ConfigurationListener> getConfigurationListeners();
 
 }

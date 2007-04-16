@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java;
+package org.springframework.config.java.annotation.aop.targesource;
 
-import java.util.List;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
+import org.springframework.aop.target.HotSwappableTargetSource;
 
 /**
- * Interface holding a registry of configuration listeners that are used to
- * react to annotations in configuration classes.
+ * Annotation indicating hot swappable beans.
+ * 
+ * The beans created will be automatically wrapped with {@link HotSwappableTargetSource}.
  * 
  * @author Rod Johnson
+ *
  */
-public interface ConfigurationListenerRegistry {
-
-	List<ConfigurationListener> getConfigurationListeners();
+@Target( { ElementType.METHOD, ElementType.FIELD })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface HotSwappable {
 
 }

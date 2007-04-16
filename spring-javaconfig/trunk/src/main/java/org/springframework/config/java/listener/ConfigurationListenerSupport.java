@@ -17,48 +17,44 @@
 package org.springframework.config.java.listener;
 
 import java.lang.reflect.Method;
-import java.util.LinkedList;
-import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.framework.ProxyFactory;
-import org.springframework.aop.target.HotSwappableTargetSource;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.config.java.ConfigurationListener;
-import org.springframework.config.java.ConfigurationListener.BeanDefinitionRegistration;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.HotSwappable;
-import org.springframework.config.java.support.ConfigurationListenerSupport;
-import org.springframework.core.annotation.AnnotationUtils;
 
 /**
- * ConfigurationListener implementations that understands classes for hot
- * swapping.
+ * Convenient base class for implementation of the ConfigurationListener
+ * interface, offer no op implementations of all methods.
  * 
  * @author Rod Johnson
+ * 
  */
-public class HotSwapConfigurationListener extends ConfigurationListenerSupport {
+public class ConfigurationListenerSupport implements ConfigurationListener {
 
-	private List<Method> hotswapMethods = new LinkedList<Method>();
+	protected final Log log = LogFactory.getLog(getClass());
 
-	@Override
-	public void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
-			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
-			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
-		if (AnnotationUtils.findAnnotation(m, HotSwappable.class) != null) {
-			hotswapMethods.add(m);
-		}
-	}
-
-	@Override
-	public boolean processBeanMethodReturnValue(ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childBeanFactory, Object originallyCreatedBean, Method method, ProxyFactory pf) {
-		if (hotswapMethods.contains(method)) {
-			HotSwappableTargetSource hsts = new HotSwappableTargetSource(originallyCreatedBean);
-			pf.setTargetSource(hsts);
-			return true;
-		}
+	public boolean understands(Class configurerClass) {
 		return false;
 	}
 
+	public void configurationClass(ConfigurableListableBeanFactory beanFactory,
+			DefaultListableBeanFactory childBeanFactory, String configurerBeanName, Class configurerClass) {
+	}
+
+	public void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
+			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
+	}
+
+	public void otherMethod(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+			String configurerBeanName, Class configurerClass, Method m) {
+	}
+
+	public boolean processBeanMethodReturnValue(ConfigurableListableBeanFactory beanFactory,
+			DefaultListableBeanFactory childBeanFactory, Object originallyCreatedBean, Method method, ProxyFactory pf) {
+		return false;
+	}
 }

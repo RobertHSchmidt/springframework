@@ -1,0 +1,19 @@
+SPRING JAVACONFIG CHANGELOG
+===========================
+http://springframework.org/javaconfig
+
+
+Changes in version 1.0-M2 (2007-04-xx)
+--------------------------------------
+General
+* added root package org.springframework.config.java
+* refactored classes and restructured packages
+* moved unused/incomplete classses and packages to src/test folder
+
+org.springframework.config.java.annotation
+* @ExternalBean added to allow injection of an already defined bean
+
+
+Changes in version 1.0-M1 (2006-11-28)
+--------------------------------------
+* Initial release
