@@ -36,6 +36,8 @@ import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.Scope;
 import org.springframework.config.java.listener.ConfigurationListener;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
+import org.springframework.config.java.process.naming.BeanNamingStrategy;
+import org.springframework.config.java.process.naming.ChainedStrategy;
 import org.springframework.config.java.support.BytecodeConfigurationEnhancer;
 import org.springframework.config.java.support.cglib.CglibConfigurationEnhancer;
 import org.springframework.config.java.support.factory.BeanNameTrackingDefaultListableBeanFactory;
@@ -50,8 +52,8 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
  * Class that processes Configuration beans.
  * <p>
  * A Configuration bean contains bean definition methods annotated with the Bean
- * annotationName. The Configuration class itself may optionally be annotated
- * with a Configuration annotationName setting global defaults.
+ * annotation. The Configuration class itself may optionally be annotated with a
+ * Configuration annotation setting global defaults.
  * <p>
  * Bean creation methods may be public or protected.
  * <p>
@@ -86,6 +88,8 @@ public class ConfigurationProcessor {
 
 	private BytecodeConfigurationEnhancer configurationEnhancer;
 
+	private BeanNamingStrategy beanNamingStrategy;
+
 	public ConfigurationProcessor(ConfigurableApplicationContext ac, ConfigurationListenerRegistry clr) {
 		init(ac.getBeanFactory(), clr);
 	}
@@ -105,6 +109,10 @@ public class ConfigurationProcessor {
 		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(owningBeanFactory);
 		// TODO: this should be pluggable
 		this.configurationEnhancer = new CglibConfigurationEnhancer(bdr, childFactory, configurationListenerRegistry);
+
+		// default naming strategy
+		if (this.beanNamingStrategy == null)
+			this.beanNamingStrategy = new ChainedStrategy();
 	}
 
 	/**
@@ -122,8 +130,8 @@ public class ConfigurationProcessor {
 			throw new BeanDefinitionStoreException("Configuration class " + configClass.getName() + " my not be final");
 		}
 
-		// TODO fix (read name from annotation)
 		String configurerBeanName = configClass.getName();
+
 		Class<?> configSubclass = configurationEnhancer.enhanceConfiguration(configClass);
 		((DefaultListableBeanFactory) owningBeanFactory).registerBeanDefinition(configurerBeanName,
 			new RootBeanDefinition(configSubclass));
@@ -191,7 +199,9 @@ public class ConfigurationProcessor {
 
 	protected void generateBeanDefinitionFromBeanCreationMethod(ConfigurableListableBeanFactory beanFactory,
 			String configurerBeanName, Class<?> configurerClass, Method beanCreationMethod, Bean beanAnnotation) {
-		log.debug("Found bean creation method " + beanCreationMethod);
+
+		if (log.isDebugEnabled())
+			log.debug("Found bean creation method " + beanCreationMethod);
 
 		validateBeanCreationMethod(beanCreationMethod);
 
@@ -199,13 +209,20 @@ public class ConfigurationProcessor {
 		RootBeanDefinition rbd = new RootBeanDefinition(beanCreationMethod.getReturnType());
 		rbd.setFactoryBeanName(configurerBeanName);
 		rbd.setFactoryMethodName(beanCreationMethod.getName());
-		copyAttributes(beanCreationMethod.getName(), beanAnnotation,
-			(Configuration) configurerClass.getAnnotation(Configuration.class), rbd, beanFactory);
+
+		Configuration config = configurerClass.getAnnotation(Configuration.class);
+		String beanName = beanNamingStrategy.getBeanName(beanCreationMethod, config);
+
+		if (log.isDebugEnabled())
+			log.debug("Creating future bean " + beanName);
+		
+		copyAttributes(beanName, beanAnnotation, config, rbd, beanFactory);
+
 		rbd.setResourceDescription("Bean creation method " + beanCreationMethod.getName() + " in class "
 				+ beanCreationMethod.getDeclaringClass().getName());
 
 		ConfigurationListener.BeanDefinitionRegistration beanDefinitionRegistration = new ConfigurationListener.BeanDefinitionRegistration(
-				rbd, beanCreationMethod.getName());
+				rbd, beanName);
 		beanDefinitionRegistration.hide = !Modifier.isPublic(beanCreationMethod.getModifiers());
 
 		for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
@@ -225,6 +242,89 @@ public class ConfigurationProcessor {
 			((BeanDefinitionRegistry) beanFactory).registerBeanDefinition(beanDefinitionRegistration.name,
 				beanDefinitionRegistration.rbd);
 		}
+	}
+
+	protected void validateBeanCreationMethod(Method beanCreationMethod) throws BeanDefinitionStoreException {
+		if (Modifier.isFinal(beanCreationMethod.getModifiers())) {
+			throw new BeanDefinitionStoreException("Bean creation method " + beanCreationMethod.getName()
+					+ " may not be final");
+		}
+		if (beanCreationMethod.getReturnType() == Void.TYPE) {
+			throw new BeanDefinitionStoreException("Bean creation method " + beanCreationMethod.getName()
+					+ " may not have void return");
+		}
+	}
+
+	/**
+	 * Create the bean definition based on the annotation properties.
+	 * 
+	 * @param beanName name of the bean we're creating (not the factory bean)
+	 * @param beanAnnotation bean annotation
+	 * @param configuration configuration on the configuration class. Sets
+	 * defaults. May be null as this annotation is not required.
+	 * @param rbd bean definition, in Spring IoC container internal metadata
+	 * @param beanFactory bean factory we are executing in
+	 */
+	protected void copyAttributes(String beanName, Bean beanAnnotation, Configuration configuration,
+			RootBeanDefinition rbd, ConfigurableListableBeanFactory beanFactory) {
+
+		// singleton/scope
+		rbd.setSingleton(beanAnnotation.scope() == Scope.SINGLETON);
+
+		// depends-on
+		rbd.setDependsOn(beanAnnotation.dependsOn());
+
+		// aliases
+		for (String alias : beanAnnotation.aliases()) {
+			beanFactory.registerAlias(beanName, alias);
+		}
+
+		// lifecycle methods
+		if (StringUtils.hasText(beanAnnotation.initMethodName())) {
+			rbd.setInitMethodName(beanAnnotation.initMethodName());
+		}
+
+		if (StringUtils.hasText(beanAnnotation.destroyMethodName())) {
+			rbd.setDestroyMethodName(beanAnnotation.destroyMethodName());
+		}
+
+		// configuration, fallback methods
+
+		if (beanAnnotation.dependencyCheck() != DependencyCheck.UNSPECIFIED) {
+			rbd.setDependencyCheck(beanAnnotation.dependencyCheck().value());
+		}
+		else if (configuration != null && configuration.defaultDependencyCheck() != DependencyCheck.UNSPECIFIED) {
+			rbd.setDependencyCheck(configuration.defaultDependencyCheck().value());
+		}
+
+		if (beanAnnotation.lazy() != Lazy.UNSPECIFIED) {
+			rbd.setLazyInit(beanAnnotation.lazy().booleanValue());
+		}
+		else if (configuration != null && configuration.defaultLazy() != Lazy.UNSPECIFIED) {
+			rbd.setLazyInit(configuration.defaultLazy().booleanValue());
+		}
+
+		if (beanAnnotation.autowire() != Autowire.INHERITED) {
+			rbd.setAutowireMode(beanAnnotation.autowire().value());
+		}
+		else if (configuration != null && configuration.defaultAutowire() != Autowire.INHERITED) {
+			rbd.setAutowireMode(configuration.defaultAutowire().value());
+		}
+
+	}
+
+	public BytecodeConfigurationEnhancer getConfigurationEnhancer() {
+		return configurationEnhancer;
+	}
+
+	/**
+	 * Indicate the naming strategy used for creating the bean names during
+	 * processing.
+	 * 
+	 * @param beanNamingStrategy bean naming strategy implementation
+	 */
+	public void setBeanNamingStrategy(BeanNamingStrategy beanNamingStrategy) {
+		this.beanNamingStrategy = beanNamingStrategy;
 	}
 
 	/**
@@ -288,65 +388,4 @@ public class ConfigurationProcessor {
 	// className = StringUtils.replace(className, ".", "/");
 	// return className + ".class";
 	// }
-	protected void validateBeanCreationMethod(Method beanCreationMethod) throws BeanDefinitionStoreException {
-		if (Modifier.isFinal(beanCreationMethod.getModifiers())) {
-			throw new BeanDefinitionStoreException("Bean creation method " + beanCreationMethod.getName()
-					+ " may not be final");
-		}
-		if (beanCreationMethod.getReturnType() == Void.TYPE) {
-			throw new BeanDefinitionStoreException("Bean creation method " + beanCreationMethod.getName()
-					+ " may not have void return");
-		}
-	}
-
-	/**
-	 * Create the bean definition based on the annotation properties.
-	 * 
-	 * @param beanName name of the bean we're creating (not the factory bean)
-	 * @param beanAnnotation bean annotationName
-	 * @param configuration configuration annotationName on the configuration
-	 * class. Sets defaults. May be null as this annotationName is not required.
-	 * @param rbd bean definition, in Spring IoC container internal metadata
-	 * @param beanFactory bean factory we are executing in
-	 */
-	protected void copyAttributes(String beanName, Bean beanAnnotation, Configuration configuration,
-			RootBeanDefinition rbd, ConfigurableListableBeanFactory beanFactory) {
-		rbd.setSingleton(beanAnnotation.scope() == Scope.SINGLETON);
-
-		if (beanAnnotation.lazy() != Lazy.UNSPECIFIED) {
-			rbd.setLazyInit(beanAnnotation.lazy().booleanValue());
-		}
-		else if (configuration != null && configuration.defaultLazy() != Lazy.UNSPECIFIED) {
-			rbd.setLazyInit(configuration.defaultLazy().booleanValue());
-		}
-
-		if (beanAnnotation.autowire() != Autowire.INHERITED) {
-			rbd.setAutowireMode(beanAnnotation.autowire().value());
-		}
-		else if (configuration != null && configuration.defaultAutowire() != Autowire.INHERITED) {
-			rbd.setAutowireMode(configuration.defaultAutowire().value());
-		}
-
-		if (StringUtils.hasText(beanAnnotation.initMethodName())) {
-			rbd.setInitMethodName(beanAnnotation.initMethodName());
-		}
-		if (StringUtils.hasText(beanAnnotation.destroyMethodName())) {
-			rbd.setDestroyMethodName(beanAnnotation.destroyMethodName());
-		}
-		if (beanAnnotation.dependencyCheck() != DependencyCheck.UNSPECIFIED) {
-			rbd.setDependencyCheck(beanAnnotation.dependencyCheck().value());
-		}
-		else if (configuration != null && configuration.defaultDependencyCheck() != DependencyCheck.UNSPECIFIED) {
-			rbd.setDependencyCheck(configuration.defaultDependencyCheck().value());
-		}
-		rbd.setDependsOn(beanAnnotation.dependsOn());
-		for (String alias : beanAnnotation.aliases()) {
-			beanFactory.registerAlias(beanName, alias);
-		}
-	}
-
-	public BytecodeConfigurationEnhancer getConfigurationEnhancer() {
-		return configurationEnhancer;
-	}
-
 }

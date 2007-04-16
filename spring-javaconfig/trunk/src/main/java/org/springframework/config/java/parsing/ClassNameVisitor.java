@@ -64,7 +64,6 @@ public class ClassNameVisitor extends EmptyVisitor {
 		return interfaces;
 	}
 
-	// TODO go through regular path
 	public Class loadClass() {
 		try {
 			Class theClass = Class.forName(getClassName(), false, getClass().getClassLoader());

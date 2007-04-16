@@ -44,7 +44,7 @@ public class ConfigurationScanningBeanDefinitionReaderTests extends TestCase {
 
 		@Configuration
 		private class DeepConfiguration {
-			@Configuration(names = { "foo", "bar" })
+			@Configuration(names = { "test", "database" })
 			private class VeryDeepConfiguration {
 				public void anonymousClass() {
 					new InnerConfiguration() {

@@ -97,10 +97,10 @@ public class SpringAdviceConfigurationListener extends AbstractAopConfigurationL
 
 	/**
 	 * Special pointcut used to add Ordered interface implementation to regular
-	 * AspectJ expression pointcut TODO consider moving into AspectJ expression
-	 * pointcut to handle precedence
+	 * AspectJ expression pointcut pointcut to handle precedence
 	 * 
 	 */
+	// TODO consider moving into AspectJ expression
 	private class OrderedAspectJExpressionPointcut extends AspectJExpressionPointcut implements Ordered {
 
 		private final int order;
