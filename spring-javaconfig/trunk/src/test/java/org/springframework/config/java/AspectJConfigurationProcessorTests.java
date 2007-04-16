@@ -41,7 +41,6 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.DependencyCheck;
 import org.springframework.config.java.annotation.Scope;
-import org.springframework.config.java.support.ConfigurationListenerRegistry;
 import org.springframework.config.java.support.ConfigurationProcessor;
 import org.springframework.config.java.support.DefaultConfigurationListenerRegistry;
 

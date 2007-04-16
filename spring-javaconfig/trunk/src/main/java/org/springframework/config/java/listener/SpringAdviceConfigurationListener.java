@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.support;
+package org.springframework.config.java.listener;
 
 import java.lang.reflect.Method;
 
@@ -22,6 +22,8 @@ import org.springframework.aop.Pointcut;
 import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.config.java.ConfigurationListener;
+import org.springframework.config.java.ConfigurationListener.BeanDefinitionRegistration;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.SpringAdvice;
 import org.springframework.core.Ordered;

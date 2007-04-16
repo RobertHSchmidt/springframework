@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.support;
+package org.springframework.config.java;
 
 import java.lang.reflect.Method;
 

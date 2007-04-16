@@ -8,7 +8,6 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.support.ConfigurationListenerRegistry;
 import org.springframework.config.java.support.ConfigurationProcessor;
 import org.springframework.config.java.support.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.template.AbstractHibernateConfiguration;

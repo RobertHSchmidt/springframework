@@ -16,8 +16,17 @@
 
 package org.springframework.config.java.support;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.config.java.ConfigurationListener;
+import org.springframework.config.java.ConfigurationListenerRegistry;
+import org.springframework.config.java.listener.AspectJAdviceConfigurationListener;
+import org.springframework.config.java.listener.AutoBeanConfigurationListener;
+import org.springframework.config.java.listener.ConversationScopedConfigurationListener;
+import org.springframework.config.java.listener.HotSwapConfigurationListener;
+import org.springframework.config.java.listener.SpringAdviceConfigurationListener;
+import org.springframework.config.java.listener.SpringAdvisorConfigurationListener;
 
 /**
  * Default ConfigurationListenerRegistry implementation.
@@ -25,7 +34,7 @@ import java.util.List;
  */
 public class DefaultConfigurationListenerRegistry implements ConfigurationListenerRegistry {
 
-	private List<ConfigurationListener> configurationListeners = new LinkedList<ConfigurationListener>();
+	private List<ConfigurationListener> configurationListeners = new ArrayList<ConfigurationListener>();
 
 	public DefaultConfigurationListenerRegistry() {
 		registerConfigurationListener(new AutoBeanConfigurationListener());
