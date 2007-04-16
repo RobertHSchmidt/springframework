@@ -10,9 +10,11 @@ General
 * refactored classes and restructured packages
 * moved unused/incomplete classses and packages to src/test folder
 
-org.springframework.config.java.annotation
-* @ExternalBean added to allow injection of an already defined bean
+Package org.springframework.config.java.annotation
+* annotation @ExternalBean added to allow injection of an already defined bean
 
+Package org.springframework.config.java.process.naming
+* new naming strategy for bean name creation added
 
 Changes in version 1.0-M1 (2006-11-28)
 --------------------------------------
