@@ -43,7 +43,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.Scope;
-import org.springframework.config.java.annotation.aop.targesource.HotSwappable;
+import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
 import org.springframework.config.java.listener.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
