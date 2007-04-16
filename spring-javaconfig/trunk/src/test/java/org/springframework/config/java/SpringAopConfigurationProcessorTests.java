@@ -30,8 +30,8 @@ import org.springframework.config.java.AspectJConfigurationProcessorTests.Counti
 import org.springframework.config.java.AspectJConfigurationProcessorTests.SingletonCountingAdvice;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.aop.SpringAdvice;
-import org.springframework.config.java.listener.ConfigurationListenerRegistry;
-import org.springframework.config.java.listener.DefaultConfigurationListenerRegistry;
+import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
+import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.core.annotation.Order;
 

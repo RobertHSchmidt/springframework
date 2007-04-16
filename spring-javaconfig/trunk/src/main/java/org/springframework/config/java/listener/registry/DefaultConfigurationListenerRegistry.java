@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.listener;
+package org.springframework.config.java.listener.registry;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.config.java.listener.AutoBeanConfigurationListener;
+import org.springframework.config.java.listener.ConfigurationListener;
+import org.springframework.config.java.listener.ConversationScopedConfigurationListener;
 import org.springframework.config.java.listener.aop.AspectJAdviceConfigurationListener;
 import org.springframework.config.java.listener.aop.SpringAdviceConfigurationListener;
 import org.springframework.config.java.listener.aop.SpringAdvisorConfigurationListener;
