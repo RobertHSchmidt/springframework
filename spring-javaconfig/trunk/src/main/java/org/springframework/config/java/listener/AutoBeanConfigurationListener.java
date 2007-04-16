@@ -26,6 +26,7 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.Assert;
 
 /**
  * Configuration listener that registers autowired bean definitions in the
@@ -52,8 +53,10 @@ public class AutoBeanConfigurationListener extends ConfigurationListenerSupport 
 						+ ": don't know what class to instantiate; processing @AutoBean method " + m);
 			}
 
-			// TODO unsafe assumption: how do we get to be
-			// able to add bean definitions
+
+			// make sure the cast actually works
+			Assert.isInstanceOf(BeanDefinitionRegistry.class, beanFactory);
+				
 			BeanDefinitionRegistry bdr = (BeanDefinitionRegistry) beanFactory;
 
 			RootBeanDefinition bd = new RootBeanDefinition(m.getReturnType());

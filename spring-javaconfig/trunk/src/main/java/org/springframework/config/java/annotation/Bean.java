@@ -72,6 +72,12 @@ import org.springframework.beans.factory.annotation.Autowire;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Bean {
+	
+	/**
+	 * Bean name. By default it's empty, leaving naming strategies to generate
+	 * one during processing.
+	 */
+	String name() default "";
 
 	/**
 	 * Bean aliases.
@@ -98,7 +104,7 @@ public @interface Bean {
 
 	/**
 	 * Bean init method name. Normally this is not needed, as the initialization
-	 * (with parameterization) can be done directly through java code. 
+	 * (with parameterization) can be done directly through java code.
 	 */
 	String initMethodName() default "";
 
@@ -113,7 +119,7 @@ public @interface Bean {
 	DependencyCheck dependencyCheck() default DependencyCheck.UNSPECIFIED;
 
 	/**
-	 * Beans on which the current bean depends on. 
+	 * Beans on which the current bean depends on.
 	 */
 	String[] dependsOn() default {};
 

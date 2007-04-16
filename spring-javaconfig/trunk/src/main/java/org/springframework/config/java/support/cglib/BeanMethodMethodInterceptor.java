@@ -101,7 +101,7 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 	 * there are advisors in the current factory that would apply to it. Note
 	 * that the advisors may have been added explicitly by the user or may have
 	 * resulted from Advisor generation on this class processing a Pointcut
-	 * annotationName
+	 * annotation
 	 * 
 	 * @param o
 	 * @param args

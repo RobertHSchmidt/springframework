@@ -43,9 +43,9 @@ import org.springframework.util.StringUtils;
  * @author Costin Leau
  * @author Rod Johnson
  */
-// TODO: consider visibility restrictions (private and default could be excluded
-// TODO: annotationName inheritance is considered according to jsr250
-// classlevel annotationName apply only on the declaring class).
+// TODO: consider visibility restrictions (private and default could be excluded)
+// TODO: annotation inheritance is considered according to jsr250
+// classlevel annotation apply only on the declaring class).
 public abstract class AbstractClassScanningBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
 	protected final Log log = LogFactory.getLog(getClass());

@@ -43,7 +43,7 @@ public @interface Configuration {
 
 	/**
 	 * Configuration name. Allow different variants, such as test, production
-	 * etc. Default will always match
+	 * etc. Default will always match.
 	 * @return
 	 */
 	String[] names() default "";

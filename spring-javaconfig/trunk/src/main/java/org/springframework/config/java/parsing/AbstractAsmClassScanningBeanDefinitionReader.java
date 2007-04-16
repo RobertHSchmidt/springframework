@@ -27,6 +27,8 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.config.java.util.ClassUtils;
 
 /**
+ * ASM based based definition reader.
+ * 
  * @author Costin Leau
  * @author Rod Johnson
  */
@@ -72,7 +74,6 @@ public abstract class AbstractAsmClassScanningBeanDefinitionReader extends Abstr
 			this.enclosingClass = outerName.concat(DOLLAR);
 		}
 
-		// TODO: consider access also
 		public void visitInnerClass(String name, String outerName, String innerName, int access) {
 
 			if (name.contains(enclosingClass)) {
