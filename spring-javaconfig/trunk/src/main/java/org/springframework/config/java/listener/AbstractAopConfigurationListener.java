@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.support;
+package org.springframework.config.java.listener;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -28,6 +28,7 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.config.java.support.ConfigurationListenerSupport;
 import org.springframework.core.Ordered;
 
 /**

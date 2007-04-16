@@ -31,6 +31,9 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.config.java.BytecodeConfigurationEnhancer;
+import org.springframework.config.java.ConfigurationListener;
+import org.springframework.config.java.ConfigurationListenerRegistry;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.DependencyCheck;
@@ -60,7 +63,7 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
  * configuration methods and classes.
  * 
  * @author Rod Johnson
- * @see org.springframework.config.java.support.ConfigurationListener
+ * @see org.springframework.config.java.ConfigurationListener
  */
 public class ConfigurationProcessor {
 

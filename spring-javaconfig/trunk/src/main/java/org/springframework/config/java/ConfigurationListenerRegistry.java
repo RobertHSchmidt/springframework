@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.support;
+package org.springframework.config.java;
 
 import java.util.List;
+
 
 /**
  * Interface holding a registry of configuration listeners that are used to

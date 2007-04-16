@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.config.java.ConfigurationListener;
 import org.springframework.config.java.annotation.Bean;
 
 /**
