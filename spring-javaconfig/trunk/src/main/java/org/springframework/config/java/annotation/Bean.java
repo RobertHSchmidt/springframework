@@ -65,8 +65,8 @@ import org.springframework.beans.factory.annotation.Autowire;
  * behaviour of the owning factory as a whole.
  * @author Rod Johnson
  * 
- * @see org.springframework.config.java.testing.config.java.propertysource.BeanDefinition
- * @see org.springframework.config.java.testing.config.java.annotation.Configuration
+ * @see org.springframework.config.java.propertysource.BeanDefinition
+ * @see org.springframework.config.java.annotation.Configuration
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

@@ -21,9 +21,9 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.NoOp;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.config.java.BytecodeConfigurationEnhancer;
-import org.springframework.config.java.ConfigurationListenerRegistry;
-import org.springframework.config.java.support.BeanNameTrackingDefaultListableBeanFactory;
+import org.springframework.config.java.listener.ConfigurationListenerRegistry;
+import org.springframework.config.java.support.BytecodeConfigurationEnhancer;
+import org.springframework.config.java.support.factory.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.util.Assert;
 
 /**
@@ -38,6 +38,10 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 
 	private static final Class[] CALLBACK_TYPES = new Class[] { NoOp.class, BeanMethodMethodInterceptor.class,
 			ExternalBeanMethodMethodInterceptor.class };
+	
+	static final int NO_OP_CALLBACK_INDEX = 0;
+	static final int BEAN_CALLBACK_INDEX = 1;
+	static final int EXTERNAL_BEAN_CALLBACK_INDEX = 2;
 
 	private final ConfigurableListableBeanFactory owningBeanFactory;
 

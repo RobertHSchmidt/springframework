@@ -29,11 +29,11 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.ConfigurationListener;
-import org.springframework.config.java.ConfigurationListenerRegistry;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Scope;
-import org.springframework.config.java.support.BeanNameTrackingDefaultListableBeanFactory;
+import org.springframework.config.java.listener.ConfigurationListener;
+import org.springframework.config.java.listener.ConfigurationListenerRegistry;
+import org.springframework.config.java.support.factory.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 

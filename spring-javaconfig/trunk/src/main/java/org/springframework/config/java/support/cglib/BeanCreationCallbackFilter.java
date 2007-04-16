@@ -37,14 +37,14 @@ public class BeanCreationCallbackFilter implements CallbackFilter {
 	public int accept(Method m) {
 		// We don't intercept non-public methods like finalize
 		if (!Modifier.isPublic(m.getModifiers())) {
-			return 0;
+			return CglibConfigurationEnhancer.NO_OP_CALLBACK_INDEX;
 		}
 		if (ClassUtils.hasAnnotation(m, Bean.class)) {
-			return 1;
+			return CglibConfigurationEnhancer.BEAN_CALLBACK_INDEX;
 		}
 		if (ClassUtils.hasAnnotation(m, ExternalBean.class) || ClassUtils.hasAnnotation(m, AutoBean.class)) {
-			return 2;
+			return CglibConfigurationEnhancer.EXTERNAL_BEAN_CALLBACK_INDEX;
 		}
-		return 0;
+		return CglibConfigurationEnhancer.NO_OP_CALLBACK_INDEX;
 	}
 }

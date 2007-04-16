@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.listener;
+package org.springframework.config.java.listener.aop;
 
 import java.lang.reflect.Method;
 

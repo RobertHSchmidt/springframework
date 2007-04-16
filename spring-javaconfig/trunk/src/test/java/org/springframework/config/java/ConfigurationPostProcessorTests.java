@@ -43,7 +43,7 @@ import org.springframework.config.java.ConfigurationProcessorTests.BaseConfigura
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
-import org.springframework.config.java.annotation.SpringAdvice;
+import org.springframework.config.java.annotation.aop.SpringAdvice;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**

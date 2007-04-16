@@ -17,7 +17,13 @@ package org.springframework.config.java.util;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
 
+import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.listener.ConfigurationListener;
+import org.springframework.config.java.listener.ConfigurationListenerRegistry;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
@@ -70,4 +76,51 @@ public abstract class ClassUtils {
 
 		return (AnnotationUtils.findAnnotation(method, a) != null);
 	}
+
+	/**
+	 * Find all bean creation methods in the given configuration class. It looks for
+	 * {@link Bean} annotation on public methods.
+	 * 
+	 * @param configurationClass
+	 * @return
+	 */
+	public static Collection<Method> getBeanCreationMethods(Class<?> configurationClass) {
+		Assert.notNull(configurationClass);
+		
+		Collection<Method> beanCreationMethods = new ArrayList<Method>();
+		Method[] publicMethods = configurationClass.getMethods();
+		for (int i = 0; i < publicMethods.length; i++) {
+			if (hasAnnotation(publicMethods[i], Bean.class)) {
+				beanCreationMethods.add(publicMethods[i]);
+			}
+		}
+		return beanCreationMethods;
+	}
+
+	/**
+	 * Check if the given class is a configuration.
+	 * 
+	 * Additionaly, a listener registry is checked against the class.
+	 * 
+	 * @param candidateConfigurationClass
+	 * @param registry
+	 * @return
+	 */
+	public static boolean isConfigurationClass(Class<?> candidateConfigurationClass,
+			ConfigurationListenerRegistry registry) {
+		
+		Assert.notNull(candidateConfigurationClass);
+		if (candidateConfigurationClass.isAnnotationPresent(Configuration.class)
+				|| !getBeanCreationMethods(candidateConfigurationClass).isEmpty()) {
+			return true;
+		}
+		if (registry != null)
+			for (ConfigurationListener cl : registry.getConfigurationListeners()) {
+				if (cl.understands(candidateConfigurationClass)) {
+					return true;
+				}
+			}
+		return false;
+	}
+
 }

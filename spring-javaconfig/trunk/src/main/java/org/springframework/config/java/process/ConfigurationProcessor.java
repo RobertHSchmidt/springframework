@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.support;
+package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,15 +29,16 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.BytecodeConfigurationEnhancer;
-import org.springframework.config.java.ConfigurationListener;
-import org.springframework.config.java.ConfigurationListenerRegistry;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.DependencyCheck;
 import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.Scope;
+import org.springframework.config.java.listener.ConfigurationListener;
+import org.springframework.config.java.listener.ConfigurationListenerRegistry;
+import org.springframework.config.java.support.BytecodeConfigurationEnhancer;
 import org.springframework.config.java.support.cglib.CglibConfigurationEnhancer;
+import org.springframework.config.java.support.factory.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -63,7 +62,7 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
  * configuration methods and classes.
  * 
  * @author Rod Johnson
- * @see org.springframework.config.java.ConfigurationListener
+ * @see org.springframework.config.java.listener.ConfigurationListener
  */
 public class ConfigurationProcessor {
 
@@ -99,11 +98,11 @@ public class ConfigurationProcessor {
 		init(bdr, clr);
 	}
 
-	private void init(ConfigurableListableBeanFactory bdr, ConfigurationListenerRegistry clr) {
-		owningBeanFactory = bdr;
+	protected void init(ConfigurableListableBeanFactory bdr, ConfigurationListenerRegistry clr) {
+		this.owningBeanFactory = bdr;
 		this.configurationListenerRegistry = clr;
-		// TODO: costin - this item should be shared
 		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(owningBeanFactory);
+		// TODO: this should be pluggable
 		this.configurationEnhancer = new CglibConfigurationEnhancer(bdr, childFactory, configurationListenerRegistry);
 	}
 
@@ -113,7 +112,7 @@ public class ConfigurationProcessor {
 	 * @param configObject
 	 */
 	public void process(Class<?> configClass) throws BeanDefinitionStoreException {
-		if (!isConfigurationClass(configClass)) {
+		if (!ClassUtils.isConfigurationClass(configClass, configurationListenerRegistry)) {
 			throw new BeanDefinitionStoreException(configClass.getName()
 					+ " contains no Bean creation methods or Aspect methods");
 		}
@@ -189,42 +188,7 @@ public class ConfigurationProcessor {
 		}
 	}
 
-	// TODO (Costin): get this out - multiple processing seems to happen
-	public Class enhanceConfiguration(Class configurationClass) {
-		return configurationEnhancer.enhanceConfiguration(configurationClass);
-	}
-
-	/**
-	 * Find all bean creation methods in the given configuration class
-	 * 
-	 * @param configurationClass
-	 * @return
-	 */
-	private static Collection<Method> beanCreationMethods(Class<?> configurationClass) {
-		Collection<Method> beanCreationMethods = new ArrayList<Method>();
-		Method[] publicMethods = configurationClass.getMethods();
-		for (int i = 0; i < publicMethods.length; i++) {
-			if (ClassUtils.hasAnnotation(publicMethods[i], Bean.class)) {
-				beanCreationMethods.add(publicMethods[i]);
-			}
-		}
-		return beanCreationMethods;
-	}
-
-	protected boolean isConfigurationClass(Class<?> candidateConfigurationClass) {
-		if (candidateConfigurationClass.isAnnotationPresent(Configuration.class)
-				|| !beanCreationMethods(candidateConfigurationClass).isEmpty()) {
-			return true;
-		}
-		for (ConfigurationListener cl : configurationListenerRegistry.getConfigurationListeners()) {
-			if (cl.understands(candidateConfigurationClass)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private void generateBeanDefinitionFromBeanCreationMethod(ConfigurableListableBeanFactory beanFactory,
+	protected void generateBeanDefinitionFromBeanCreationMethod(ConfigurableListableBeanFactory beanFactory,
 			String configurerBeanName, Class<?> configurerClass, Method beanCreationMethod, Bean beanAnnotation) {
 		log.debug("Found bean creation method " + beanCreationMethod);
 
@@ -323,7 +287,7 @@ public class ConfigurationProcessor {
 	// className = StringUtils.replace(className, ".", "/");
 	// return className + ".class";
 	// }
-	private void validateBeanCreationMethod(Method beanCreationMethod) throws BeanDefinitionStoreException {
+	protected void validateBeanCreationMethod(Method beanCreationMethod) throws BeanDefinitionStoreException {
 		if (Modifier.isFinal(beanCreationMethod.getModifiers())) {
 			throw new BeanDefinitionStoreException("Bean creation method " + beanCreationMethod.getName()
 					+ " may not be final");
@@ -344,7 +308,7 @@ public class ConfigurationProcessor {
 	 * @param rbd bean definition, in Spring IoC container internal metadata
 	 * @param beanFactory bean factory we are executing in
 	 */
-	private void copyAttributes(String beanName, Bean beanAnnotation, Configuration configuration,
+	protected void copyAttributes(String beanName, Bean beanAnnotation, Configuration configuration,
 			RootBeanDefinition rbd, ConfigurableListableBeanFactory beanFactory) {
 		rbd.setSingleton(beanAnnotation.scope() == Scope.SINGLETON);
 
@@ -378,6 +342,10 @@ public class ConfigurationProcessor {
 		for (String alias : beanAnnotation.aliases()) {
 			beanFactory.registerAlias(beanName, alias);
 		}
+	}
+
+	public BytecodeConfigurationEnhancer getConfigurationEnhancer() {
+		return configurationEnhancer;
 	}
 
 }
