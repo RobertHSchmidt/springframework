@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.listener;
+package org.springframework.config.java.listener.registry;
 
 import java.util.List;
+
+import org.springframework.config.java.listener.ConfigurationListener;
 
 
 

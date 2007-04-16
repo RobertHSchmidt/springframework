@@ -16,6 +16,12 @@
 
 package org.springframework.config.java.annotation;
 
+/**
+ * Lazy instantiation options. 
+ * 
+ * @author Rod Johnson
+ *
+ */
 public enum Lazy {
 
 	UNSPECIFIED(-1), FALSE(0), TRUE(1);

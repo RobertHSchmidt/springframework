@@ -18,6 +18,7 @@ package org.springframework.config.java.annotation;
 
 /**
  * Annotation reflecting the scope of a bean definition.
+ * 
  * @author Rod Johnson
  * 
  */

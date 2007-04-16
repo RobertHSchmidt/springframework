@@ -63,15 +63,19 @@ import org.springframework.beans.factory.annotation.Autowire;
  * meaning it won't be visible to other definitions. This is particularly useful
  * for Spring AOP Advisors or AspectJ aspects, which might otherwise alter
  * behaviour of the owning factory as a whole.
+ * 
+ * 
  * @author Rod Johnson
  * 
- * @see org.springframework.config.java.propertysource.BeanDefinition
  * @see org.springframework.config.java.annotation.Configuration
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Bean {
 
+	/**
+	 * Bean aliases.
+	 */
 	String[] aliases() default {};
 
 	/**
@@ -80,21 +84,42 @@ public @interface Bean {
 	 */
 	Scope scope() default Scope.SINGLETON;
 
+	/**
+	 * Bean autowire strategy.
+	 */
 	Autowire autowire() default Autowire.INHERITED;
 
+	/**
+	 * Bean lazy strategy.
+	 */
 	Lazy lazy() default Lazy.UNSPECIFIED;
 
 	boolean noproxy() default false;
 
-	// TODO do we need this?
+	/**
+	 * Bean init method name. Normally this is not needed, as the initialization
+	 * (with parameterization) can be done directly through java code. 
+	 */
 	String initMethodName() default "";
 
+	/**
+	 * Bean destroy method name.
+	 */
 	String destroyMethodName() default "";
 
+	/**
+	 * Bean dependency check strategy.
+	 */
 	DependencyCheck dependencyCheck() default DependencyCheck.UNSPECIFIED;
 
+	/**
+	 * Beans on which the current bean depends on. 
+	 */
 	String[] dependsOn() default {};
 
+	/**
+	 * Metadata for the current bean.
+	 */
 	Meta[] meta() default {};
 
 	/**

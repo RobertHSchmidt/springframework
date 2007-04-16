@@ -23,8 +23,8 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.listener.ConfigurationListenerRegistry;
-import org.springframework.config.java.listener.DefaultConfigurationListenerRegistry;
+import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
+import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.core.Ordered;
 

@@ -21,7 +21,7 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.NoOp;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.config.java.listener.ConfigurationListenerRegistry;
+import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.support.BytecodeConfigurationEnhancer;
 import org.springframework.config.java.support.factory.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.util.Assert;

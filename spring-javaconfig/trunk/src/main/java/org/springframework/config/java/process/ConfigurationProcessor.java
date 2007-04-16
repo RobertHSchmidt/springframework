@@ -35,7 +35,7 @@ import org.springframework.config.java.annotation.DependencyCheck;
 import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.Scope;
 import org.springframework.config.java.listener.ConfigurationListener;
-import org.springframework.config.java.listener.ConfigurationListenerRegistry;
+import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.support.BytecodeConfigurationEnhancer;
 import org.springframework.config.java.support.cglib.CglibConfigurationEnhancer;
 import org.springframework.config.java.support.factory.BeanNameTrackingDefaultListableBeanFactory;
@@ -43,6 +43,7 @@ import org.springframework.config.java.util.ClassUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 
 /**
@@ -326,10 +327,10 @@ public class ConfigurationProcessor {
 			rbd.setAutowireMode(configuration.defaultAutowire().value());
 		}
 
-		if (beanAnnotation.initMethodName().length() != 0) {
+		if (StringUtils.hasText(beanAnnotation.initMethodName())) {
 			rbd.setInitMethodName(beanAnnotation.initMethodName());
 		}
-		if (beanAnnotation.destroyMethodName().length() != 0) {
+		if (StringUtils.hasText(beanAnnotation.destroyMethodName())) {
 			rbd.setDestroyMethodName(beanAnnotation.destroyMethodName());
 		}
 		if (beanAnnotation.dependencyCheck() != DependencyCheck.UNSPECIFIED) {

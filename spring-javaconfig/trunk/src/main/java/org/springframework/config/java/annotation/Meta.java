@@ -16,6 +16,12 @@
 
 package org.springframework.config.java.annotation;
 
+/**
+ * Bean metadata annotation.
+ * 
+ * @author Rod Johnson
+ *
+ */
 public @interface Meta {
 	String name();
 

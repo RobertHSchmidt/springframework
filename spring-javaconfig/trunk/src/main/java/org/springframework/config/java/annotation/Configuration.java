@@ -42,16 +42,36 @@ import org.springframework.beans.factory.annotation.Autowire;
 public @interface Configuration {
 
 	/**
-	 * Configuration name. Allow different variants, such as test, production etc.
-	 * Default will always match
+	 * Configuration name. Allow different variants, such as test, production
+	 * etc. Default will always match
 	 * @return
 	 */
 	String[] names() default "";
 
+	/**
+	 * Specifies the default autowiring strategy.
+	 * 
+	 * @see Autowire
+	 * @return
+	 */
 	Autowire defaultAutowire() default Autowire.INHERITED;
 
+	/**
+	 * Dependency check strategy. By default, the dependency check is
+	 * unspecified, that is the default Spring option will apply. In most
+	 * cases, it means no dependency check will be done.
+	 * 
+	 * @see DependencyCheck
+	 * @return
+	 */
 	DependencyCheck defaultDependencyCheck() default DependencyCheck.UNSPECIFIED;
 
+	/**
+	 * Bean instantiation strategy. By default, it is unspecified.
+	 * 
+	 * @see Lazy
+	 * @return
+	 */
 	Lazy defaultLazy() default Lazy.UNSPECIFIED;
 
 	/**
