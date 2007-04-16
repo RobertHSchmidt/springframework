@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.annotation.aop.targesource;
+package org.springframework.config.java.annotation.aop.targetsource;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
