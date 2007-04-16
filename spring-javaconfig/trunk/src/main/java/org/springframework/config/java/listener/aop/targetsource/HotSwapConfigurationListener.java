@@ -25,7 +25,7 @@ import org.springframework.aop.target.HotSwappableTargetSource;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.aop.targesource.HotSwappable;
+import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
 import org.springframework.config.java.listener.ConfigurationListenerSupport;
 import org.springframework.core.annotation.AnnotationUtils;
 
