@@ -92,7 +92,7 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 				}
 				// TODO set resourceLoader
 				if (ClassUtils.isConfigurationClass(clazz, configurationListenerRegistry)) {
-					configurationProcessor.generateBeanDefinitions(beanNames[i], clazz);
+					configurationProcessor.generateBeanDefinitions(beanNames[i], null, clazz);
 					rbd.setBeanClass(configurationProcessor.getConfigurationEnhancer().enhanceConfiguration(clazz));
 				}
 				else {
