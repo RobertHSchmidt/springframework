@@ -36,7 +36,7 @@ public class ConfigurationListenerSupport implements ConfigurationListener {
 
 	protected final Log log = LogFactory.getLog(getClass());
 
-	public boolean understands(Class configurerClass) {
+	public boolean understands(Class<?> configurerClass) {
 		return false;
 	}
 

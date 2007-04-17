@@ -40,10 +40,10 @@ public interface ConfigurationListener {
 	 * @param configurerClass candidate configuration class
 	 * @return whether this class is understood by this configurer
 	 */
-	boolean understands(Class configurerClass);
+	boolean understands(Class<?> configurerClass);
 
 	void configurationClass(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
-			String configurerBeanName, Class configurerClass);
+			String configurerBeanName, Class<?> configurerClass);
 
 	/**
 	 * React to the BeanDefinition and possibly customize it or change its name
@@ -62,7 +62,7 @@ public interface ConfigurationListener {
 	 */
 	void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
 			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
-			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation);
+			String configurerBeanName, Class<?> configurerClass, Method m, Bean beanAnnotation);
 
 	/**
 	 * React to the encountering of a non bean definition method on the
@@ -78,7 +78,7 @@ public interface ConfigurationListener {
 	 * @param m method on configurer class
 	 */
 	void otherMethod(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
-			String configurerBeanName, Class configurerClass, Method m);
+			String configurerBeanName, Class<?> configurerClass, Method m);
 
 	/**
 	 * Help to process the return value of a bean definition.

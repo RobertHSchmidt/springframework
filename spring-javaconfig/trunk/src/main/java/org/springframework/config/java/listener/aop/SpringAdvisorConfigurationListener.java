@@ -28,9 +28,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.aop.SpringAdvisor;
-import org.springframework.config.java.listener.ConfigurationListener;
 import org.springframework.config.java.listener.ConfigurationListenerSupport;
-import org.springframework.config.java.listener.ConfigurationListener.BeanDefinitionRegistration;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**

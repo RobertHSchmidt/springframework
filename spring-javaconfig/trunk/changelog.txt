@@ -13,8 +13,14 @@ General
 Package org.springframework.config.java.annotation
 * annotation @ExternalBean added to allow injection of an already defined bean
 
+Package org.springframework.config.java.process
+* ConfigurationProcessor accepts configuration instances
+
 Package org.springframework.config.java.process.naming
 * new naming strategy for bean name creation added
+
+Package org.springframework.config.java.support
+* BytecodeConfigurationEnhancer allows a backing configuration instance not just a 'static' class
 
 Changes in version 1.0-M1 (2006-11-28)
 --------------------------------------

@@ -15,15 +15,22 @@
  */
 package org.springframework.config.java.support.cglib;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+
 import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.CallbackFilter;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.NoOp;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.config.java.annotation.AutoBean;
+import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.support.BytecodeConfigurationEnhancer;
 import org.springframework.config.java.support.factory.BeanNameTrackingDefaultListableBeanFactory;
+import org.springframework.config.java.util.ClassUtils;
 import org.springframework.util.Assert;
 
 /**
@@ -34,14 +41,40 @@ import org.springframework.util.Assert;
  */
 public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer {
 
+	/**
+	 * 
+	 * Intercept only bean creation methods.
+	 * 
+	 * @author Rod Johnson
+	 * 
+	 */
+	private static class BeanCreationCallbackFilter implements CallbackFilter {
+
+		public int accept(Method m) {
+			// We don't intercept non-public methods like finalize
+			if (!Modifier.isPublic(m.getModifiers())) {
+				return CglibConfigurationEnhancer.NO_OP_CALLBACK_INDEX;
+			}
+			if (ClassUtils.hasAnnotation(m, Bean.class)) {
+				return CglibConfigurationEnhancer.BEAN_CALLBACK_INDEX;
+			}
+			if (ClassUtils.hasAnnotation(m, ExternalBean.class) || ClassUtils.hasAnnotation(m, AutoBean.class)) {
+				return CglibConfigurationEnhancer.EXTERNAL_BEAN_CALLBACK_INDEX;
+			}
+			return CglibConfigurationEnhancer.NO_OP_CALLBACK_INDEX;
+		}
+	}
+
 	private static final CallbackFilter BEAN_CREATION_METHOD_CALLBACK_FILTER = new BeanCreationCallbackFilter();
 
 	private static final Class[] CALLBACK_TYPES = new Class[] { NoOp.class, BeanMethodMethodInterceptor.class,
 			ExternalBeanMethodMethodInterceptor.class };
-	
-	static final int NO_OP_CALLBACK_INDEX = 0;
-	static final int BEAN_CALLBACK_INDEX = 1;
-	static final int EXTERNAL_BEAN_CALLBACK_INDEX = 2;
+
+	private static final int NO_OP_CALLBACK_INDEX = 0;
+
+	private static final int BEAN_CALLBACK_INDEX = 1;
+
+	private static final int EXTERNAL_BEAN_CALLBACK_INDEX = 2;
 
 	private final ConfigurableListableBeanFactory owningBeanFactory;
 
@@ -54,7 +87,7 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 	public CglibConfigurationEnhancer(ConfigurableListableBeanFactory owningBeanFactory,
 			BeanNameTrackingDefaultListableBeanFactory childFactory,
 			ConfigurationListenerRegistry configurationListenerRegistry) {
-		
+
 		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
 		Assert.notNull(configurationListenerRegistry, "configurationListenerRegistry is required");
 		this.owningBeanFactory = owningBeanFactory;
@@ -64,11 +97,14 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 		EXTERNAL_BEAN_CALLBACK_INSTANCE = new ExternalBeanMethodMethodInterceptor(owningBeanFactory);
 	}
 
+
 	/*
 	 * (non-Javadoc)
-	 * @see org.springframework.config.java.support.BytecodeConfigurationEnhancer#enhanceConfiguration(java.lang.Class)
+	 * @see org.springframework.config.java.support.BytecodeConfigurationEnhancer#enhanceConfiguration(java.lang.Object, java.lang.Class)
 	 */
-	public Class enhanceConfiguration(Class configurationClass) {
+	public <T> Class<? extends T> enhanceConfiguration(T configurationInstance, Class<T> configurationClass) {
+		Assert.notNull(configurationClass, "configuration class required");
+
 		Enhancer enhancer = new Enhancer();
 		enhancer.setSuperclass(configurationClass);
 		enhancer.setUseFactory(false);
@@ -81,14 +117,14 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 		// multiple get() methods
 		// Listeners don't get callback on this also
 
-		Class configurationSubclass = enhancer.createClass();
+		Class<?> configurationSubclass = enhancer.createClass();
 
 		Enhancer.registerCallbacks(configurationSubclass, new Callback[] { NoOp.INSTANCE,
 				// TODO: can this be shared also?
-				new BeanMethodMethodInterceptor(owningBeanFactory, childFactory, configurationListenerRegistry),
+				new BeanMethodMethodInterceptor(owningBeanFactory, childFactory, configurationListenerRegistry, configurationInstance),
 				EXTERNAL_BEAN_CALLBACK_INSTANCE });
 
-		return configurationSubclass;
+		return configurationSubclass.asSubclass(configurationClass);
 
 	}
 
