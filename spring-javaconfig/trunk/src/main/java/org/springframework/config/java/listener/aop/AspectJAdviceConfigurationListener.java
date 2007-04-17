@@ -40,7 +40,7 @@ public class AspectJAdviceConfigurationListener extends AbstractAopConfiguration
 	private AspectJAdvisorFactory aspectJAdvisorFactory = new ReflectiveAspectJAdvisorFactory();
 
 	@Override
-	public boolean understands(Class configurerClass) {
+	public boolean understands(Class<?> configurerClass) {
 		// Needs to be a configuration class to be automatically picked up.
 		// Otherwise would pick up external aspects.
 		return aspectJAdvisorFactory.isAspect(configurerClass)

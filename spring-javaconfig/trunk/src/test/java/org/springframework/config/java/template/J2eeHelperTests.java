@@ -19,8 +19,6 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
-import org.springframework.config.java.template.AbstractTransactionalConfiguration;
-import org.springframework.config.java.template.J2eeHelper;
 import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;

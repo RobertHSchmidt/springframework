@@ -38,7 +38,7 @@ import org.springframework.util.Assert;
 public class AutoBeanConfigurationListener extends ConfigurationListenerSupport {
 
 	@Override
-	public boolean understands(Class configurerClass) {
+	public boolean understands(Class<?> configurerClass) {
 		return configurerClass.isAnnotationPresent(Configuration.class);
 	}
 

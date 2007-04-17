@@ -72,7 +72,7 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 				ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(beanFactory,
 						configurationListenerRegistry);
 
-				Class clazz = null;
+				Class<?> clazz = null;
 
 				if (rbd.hasBeanClass())
 					clazz = rbd.getBeanClass();
@@ -93,7 +93,7 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 				// TODO set resourceLoader
 				if (ClassUtils.isConfigurationClass(clazz, configurationListenerRegistry)) {
 					configurationProcessor.generateBeanDefinitions(beanNames[i], null, clazz);
-					rbd.setBeanClass(configurationProcessor.getConfigurationEnhancer().enhanceConfiguration(clazz));
+					rbd.setBeanClass(configurationProcessor.getConfigurationEnhancer().enhanceConfiguration(null, clazz));
 				}
 				else {
 					log.debug("Bean with name '" + beanNames[i] + "' is not a configurer");

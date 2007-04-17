@@ -39,9 +39,11 @@ import org.springframework.util.Assert;
 
 /**
  * CGLIB MethodInterceptor that applies to methods on the configuration
- * instance. Purpose: subclass configuration to ensure that singleton methods
- * return the same object on subsequent invocations, including self-invocation.
- * Do need one of these per intercepted class.
+ * instance.
+ * 
+ * Purpose: subclass configuration to ensure that singleton methods return the
+ * same object on subsequent invocations, including self-invocation. Do need one
+ * of these per intercepted class.
  * 
  * @author Rod Johnson
  */
@@ -55,9 +57,11 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 
 	private Map<Method, Object> singletons = new HashMap<Method, Object>();
 
+	private Object configurationInstance;
+
 	public BeanMethodMethodInterceptor(ConfigurableListableBeanFactory owningBeanFactory,
 			BeanNameTrackingDefaultListableBeanFactory childFactory,
-			ConfigurationListenerRegistry configurationListenerRegistry) {
+			ConfigurationListenerRegistry configurationListenerRegistry, Object configurationInstance) {
 
 		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
 		Assert.notNull(configurationListenerRegistry, "configurationListenerRegistry is required");
@@ -65,12 +69,14 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 		this.owningBeanFactory = owningBeanFactory;
 		this.childTrackingFactory = childFactory;
 		this.configurationListenerRegistry = configurationListenerRegistry;
+		this.configurationInstance = configurationInstance;
 	}
 
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
 		Bean ann = AnnotationUtils.findAnnotation(m, Bean.class);
 		if (ann == null) {
-			// Not a bean, don't change the method implementation
+			// normally this branch will not be invoked since the callback is
+			// already filtered when CGLib was set up.
 			return mp.invokeSuper(o, args);
 		}
 		else {
@@ -80,6 +86,7 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 
 	private Object returnWrappedResultMayBeCached(Object o, Method m, Object[] args, MethodProxy mp, boolean useCache)
 			throws Throwable {
+
 		if (!useCache) {
 			return wrapResult(o, args, m, mp);
 		}
@@ -93,6 +100,18 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 				singletons.put(m, cached);
 			}
 			return cached;
+
+			// FIXME: use owning context singleton map
+			// String singletonName = "" + m.hashCode();
+			//
+			// if (!owningBeanFactory.containsSingleton(singletonName)) {
+			// Object shouldBeCached = wrapResult(o, args, m, mp);
+			// owningBeanFactory.registerSingleton(singletonName,
+			// shouldBeCached);
+			// return shouldBeCached;
+			// }
+			//			
+			// return owningBeanFactory.getSingleton(singletonName);
 		}
 	}
 
@@ -109,6 +128,7 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 	 * @return
 	 * @throws Throwable
 	 */
+	// FIXME: add method bean name resulted from naming strategy
 	private Object wrapResult(Object o, Object[] args, Method m, MethodProxy mp) throws Throwable {
 
 		// If we are in our first call to getBean() with this name and were
@@ -148,7 +168,10 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 				}
 			}
 			if (originallyCreatedBean == null) {
-				originallyCreatedBean = mp.invokeSuper(o, args);
+				if (configurationInstance != null)
+					originallyCreatedBean = mp.invoke(configurationInstance, args);
+				else
+					originallyCreatedBean = mp.invokeSuper(o, args);
 			}
 
 			if (!configurationListenerRegistry.getConfigurationListeners().isEmpty()) {

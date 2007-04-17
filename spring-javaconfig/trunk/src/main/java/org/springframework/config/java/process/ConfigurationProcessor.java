@@ -44,7 +44,6 @@ import org.springframework.config.java.support.factory.BeanNameTrackingDefaultLi
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
@@ -155,7 +154,7 @@ public class ConfigurationProcessor {
 	 * @param configClass the configuration class (if any)
 	 * @throws BeanDefinitionStoreException if no bean definitions are found
 	 */
-	protected void process(Object configInstance, Class configClass) throws BeanDefinitionStoreException {
+	protected void process(Object configInstance, Class<?> configClass) throws BeanDefinitionStoreException {
 		if (configInstance != null && configClass != null)
 			throw new IllegalArgumentException(
 					"either an object instance or class should be used as a configuration; not both!");
@@ -175,12 +174,29 @@ public class ConfigurationProcessor {
 			throw new BeanDefinitionStoreException("Configuration class " + configClass.getName() + " my not be final");
 		}
 
+		// create a bean from the configuration class/instance
+		RootBeanDefinition configurationBeanDefinition = new RootBeanDefinition();
+
+		// a. produce a bean name based on the class name
 		String configBeanName = configClass.getName();
 
-		Class<?> configSubclass = configurationEnhancer.enhanceConfiguration(configClass);
-		((DefaultListableBeanFactory) owningBeanFactory).registerBeanDefinition(configBeanName, new RootBeanDefinition(
-				configSubclass));
+		// b. otherwise, enhance the class
+		Class<?> configSubclass = configurationEnhancer.enhanceConfiguration(null, configClass);
 
+		// c1. if we have an instance register it directly as a singleton
+		if (configInstance != null)
+			((DefaultListableBeanFactory) owningBeanFactory).registerSingleton(configBeanName, configInstance);
+
+
+		// c2. no instance, let Spring instantiate everything
+		else {
+			configurationBeanDefinition.setBeanClass(configSubclass);
+			configurationBeanDefinition.setResourceDescription("configuration bean definition");
+
+			((DefaultListableBeanFactory) owningBeanFactory).registerBeanDefinition(configBeanName,
+				configurationBeanDefinition);
+		}
+		
 		generateBeanDefinitions(configBeanName, configInstance, configClass);
 
 	}
@@ -193,7 +209,8 @@ public class ConfigurationProcessor {
 	 * @param configInstance configurer instance (if any)
 	 * @param configClass class of the configurer bean instance
 	 */
-	public void generateBeanDefinitions(final String configBeanName, final Object configInstance, final Class<?> configClass) {
+	public void generateBeanDefinitions(final String configBeanName, final Object configInstance,
+			final Class<?> configClass) {
 
 		// Callback listeners
 		for (ConfigurationListener cl : configurationListenerRegistry.getConfigurationListeners()) {
@@ -221,7 +238,6 @@ public class ConfigurationProcessor {
 					// @Bean annotation
 					// allows overriding
 
-
 					if (owningBeanFactory.containsBean(beanName)) {
 						if (!beanAnnotation.allowOverriding()) {
 							throw new IllegalStateException("Already have a bean with name '" + m.getName() + "'");
@@ -232,8 +248,8 @@ public class ConfigurationProcessor {
 						}
 					}
 					noArgMethodsSeen.add(beanName);
-					generateBeanDefinitionFromBeanCreationMethod(owningBeanFactory, configBeanName, configInstance,
-						configClass, beanName, m, beanAnnotation);// , cca);
+					generateBeanDefinitionFromBeanCreationMethod(owningBeanFactory, configBeanName, configClass,
+						beanName, m, beanAnnotation);// , cca);
 				}
 				else {
 					for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
@@ -263,8 +279,8 @@ public class ConfigurationProcessor {
 	 * method.
 	 */
 	protected void generateBeanDefinitionFromBeanCreationMethod(ConfigurableListableBeanFactory beanFactory,
-			String configurerBeanName, Object configInstance, Class<?> configurerClass, String beanName,
-			Method beanCreationMethod, Bean beanAnnotation) {
+			String configurerBeanName, Class<?> configurerClass, String beanName, Method beanCreationMethod,
+			Bean beanAnnotation) {
 
 		if (log.isDebugEnabled())
 			log.debug("Found bean creation method " + beanCreationMethod);
@@ -272,9 +288,11 @@ public class ConfigurationProcessor {
 		validateBeanCreationMethod(beanCreationMethod);
 
 		// Create a bean definition from the method
+
 		RootBeanDefinition rbd = new RootBeanDefinition(beanCreationMethod.getReturnType());
-		rbd.setFactoryBeanName(configurerBeanName);
+
 		rbd.setFactoryMethodName(beanCreationMethod.getName());
+		rbd.setFactoryBeanName(configurerBeanName);
 
 		Configuration config = configurerClass.getAnnotation(Configuration.class);
 
@@ -288,9 +306,6 @@ public class ConfigurationProcessor {
 		builder.append(beanCreationMethod.getName());
 		builder.append(" in class ");
 		builder.append(beanCreationMethod.getDeclaringClass().getName());
-
-		if (configInstance != null)
-			builder.append(" w/ instance ").append(ObjectUtils.getIdentityHexString(configInstance));
 
 		rbd.setResourceDescription(builder.toString());
 

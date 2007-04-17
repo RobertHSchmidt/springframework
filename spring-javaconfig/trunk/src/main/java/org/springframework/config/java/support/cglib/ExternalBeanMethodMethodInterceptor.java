@@ -39,6 +39,7 @@ public class ExternalBeanMethodMethodInterceptor implements MethodInterceptor {
 		this.owningBeanFactory = owningBeanFactory;
 	}
 
+	// FIXME: add bean naming strategy
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
 		return owningBeanFactory.getBean(m.getName());
 	}
