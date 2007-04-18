@@ -25,8 +25,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
  * BeanFactory which keeps track of getBean() calls.
  * 
  * <p/> Subclass of DefaultListableBeanFactory that keeps track of calls to
- * getBean() to allow for context-sensitive behaviour in
- * BeanMethodMethodInterceptor.
+ * getBean() to allow for context-sensitive behaviour.
  * 
  * @author Rod Johnson
  * 

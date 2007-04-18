@@ -15,7 +15,9 @@
  */
 package org.springframework.config.java.process.naming;
 
-import org.springframework.config.java.process.naming.MethodNameStrategy.Prefix;
+import org.springframework.config.java.naming.BeanNamingStrategy;
+import org.springframework.config.java.naming.MethodNameStrategy;
+import org.springframework.config.java.naming.MethodNameStrategy.Prefix;
 
 /**
  * @author Costin Leau
@@ -29,18 +31,18 @@ public class MethodNameStrategyTests extends AbstractNamingStrategyTests {
 	}
 
 	public void testDefaultConfiguration() {
-		assertEquals(sampleMethod.getName(), strategy.getBeanName(sampleMethod, null));
+		assertEquals(sampleMethod.getName(), strategy.getBeanName(sampleMethod));
 	}
 
 	public void testClass() {
 		((MethodNameStrategy) strategy).setPrefix(Prefix.CLASS);
 		assertEquals(AbstractNamingStrategyTests.class.getSimpleName().concat(".setUp"),
-			strategy.getBeanName(sampleMethod, null));
+			strategy.getBeanName(sampleMethod));
 	}
 
 	public void testFQN() {
 		((MethodNameStrategy) strategy).setPrefix(Prefix.FQN);
-		assertEquals(AbstractNamingStrategyTests.class.getName().concat(".setUp"), strategy.getBeanName(sampleMethod, null));
+		assertEquals(AbstractNamingStrategyTests.class.getName().concat(".setUp"), strategy.getBeanName(sampleMethod));
 	}
 
 }

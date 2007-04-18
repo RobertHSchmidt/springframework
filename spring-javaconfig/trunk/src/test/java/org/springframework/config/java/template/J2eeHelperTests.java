@@ -48,7 +48,7 @@ public class J2eeHelperTests extends TestCase {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(
 				bf, clr);
-		configurationProcessor.process(J2eeTxConfig.class);
+		configurationProcessor.processClass(J2eeTxConfig.class);
 
 		PlatformTransactionManager ptm = (PlatformTransactionManager) bf
 				.getBean("transactionManager");
@@ -72,7 +72,7 @@ public class J2eeHelperTests extends TestCase {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(
 				bf, clr);
-		configurationProcessor.process(TestTxConfig.class);
+		configurationProcessor.processClass(TestTxConfig.class);
 		
 		Object result = bf.getBean(AbstractTransactionalConfiguration.TRANSACTION_MANAGER_BEAN_NAME);
 		if (result instanceof Advised) {
@@ -99,7 +99,7 @@ public class J2eeHelperTests extends TestCase {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(
 				bf, clr);
-		configurationProcessor.process(TestHsqlConfig.class);
+		configurationProcessor.processClass(TestHsqlConfig.class);
 		
 		MyDao myDao = (MyDao) bf.getBean("myDao");
 		assertEquals(0, myDao.runCount() );

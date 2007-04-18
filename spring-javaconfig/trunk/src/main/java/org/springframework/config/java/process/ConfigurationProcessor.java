@@ -24,28 +24,25 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.annotation.DependencyCheck;
-import org.springframework.config.java.annotation.Lazy;
-import org.springframework.config.java.annotation.Scope;
 import org.springframework.config.java.listener.ConfigurationListener;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
-import org.springframework.config.java.process.naming.BeanNamingStrategy;
-import org.springframework.config.java.process.naming.ChainedStrategy;
+import org.springframework.config.java.naming.BeanNamingStrategy;
+import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.config.java.support.BytecodeConfigurationEnhancer;
 import org.springframework.config.java.support.cglib.CglibConfigurationEnhancer;
 import org.springframework.config.java.support.factory.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 
 /**
@@ -112,123 +109,108 @@ public class ConfigurationProcessor {
 		this.owningBeanFactory = bdr;
 		this.configurationListenerRegistry = clr;
 		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(owningBeanFactory);
-		// TODO: this should be pluggable
-		this.configurationEnhancer = new CglibConfigurationEnhancer(bdr, childFactory, configurationListenerRegistry);
 
 		// default naming strategy
 		if (this.beanNamingStrategy == null)
-			this.beanNamingStrategy = new ChainedStrategy();
+			this.beanNamingStrategy = new MethodNameStrategy();
+
+		// TODO: this should be pluggable but has to be a prototype since it
+		// depends on the childFactory instance
+		CglibConfigurationEnhancer enhancer = new CglibConfigurationEnhancer(bdr, childFactory,
+				configurationListenerRegistry);
+		enhancer.setBeanNamingStrategy(beanNamingStrategy);
+
+		this.configurationEnhancer = enhancer;
 	}
 
 	/**
-	 * Generate bean definitions from a configuration class.
+	 * Generate bean definitions from a rough configuration class.
 	 * 
-	 * @param configClass class containing
+	 * <p/> Normally this method is used internally on inner classes however, it
+	 * is possible to use it directly on classes that haven't been manually
+	 * declared in the enclosing bean factory.
+	 * 
+	 * @param configurationClass class containing
 	 * @Configurable or
 	 * @Bean annotation
 	 * @throws BeanDefinitionStoreException if no bean definitions are found
 	 */
-	public void process(Class<?> configClass) throws BeanDefinitionStoreException {
-		process(null, configClass);
-	}
+	public int processClass(Class<?> configurationClass) throws BeanDefinitionStoreException {
+		if (!ProcessUtils.validateConfigurationClass(configurationClass, configurationListenerRegistry))
+			return 0;
 
-	/**
-	 * Generate bean definitions from a configuration instance.
-	 * 
-	 * @param configObject object instance containing
-	 * @Configurable or
-	 * @Bean annotation
-	 * @throws BeanDefinitionStoreException if no bean definitions are found
-	 */
-	public void process(Object configObject) throws BeanDefinitionStoreException {
-		process(configObject, null);
+		// register the configuration as a bean to allow Spring to use it for
+		// creating the actual objects
 
-	}
-
-	/**
-	 * Actual processing method. Handled both instance and class cases. Only one
-	 * parameter should be not-null.
-	 * 
-	 * 
-	 * @param configInstance the configuration instance (if any)
-	 * @param configClass the configuration class (if any)
-	 * @throws BeanDefinitionStoreException if no bean definitions are found
-	 */
-	protected void process(Object configInstance, Class<?> configClass) throws BeanDefinitionStoreException {
-		if (configInstance != null && configClass != null)
-			throw new IllegalArgumentException(
-					"either an object instance or class should be used as a configuration; not both!");
-		if (configInstance == null && configClass == null)
-			throw new IllegalArgumentException("either an object instance or class should be used as a configuration");
-
-		// for object instance, populate the class arg
-		if (configInstance != null)
-			configClass = configInstance.getClass();
-
-		if (!ClassUtils.isConfigurationClass(configClass, configurationListenerRegistry)) {
-			throw new BeanDefinitionStoreException(configClass.getName()
-					+ " contains no Bean creation methods or Aspect methods");
-		}
-
-		if (Modifier.isFinal(configClass.getModifiers())) {
-			throw new BeanDefinitionStoreException("Configuration class " + configClass.getName() + " my not be final");
-		}
+		// a. produce a bean name based on the class name
+		String configBeanName = configurationClass.getName();
 
 		// create a bean from the configuration class/instance
 		RootBeanDefinition configurationBeanDefinition = new RootBeanDefinition();
 
-		// a. produce a bean name based on the class name
-		String configBeanName = configClass.getName();
+		// the class enhancement is done by #generateBeanDefinition along with
+		// validation
+		configurationBeanDefinition.setBeanClass(configurationClass);
+		configurationBeanDefinition.setResourceDescription("class-based configuration bean definition");
 
-		// b. otherwise, enhance the class
-		Class<?> configSubclass = configurationEnhancer.enhanceConfiguration(null, configClass);
+		Assert.isInstanceOf(DefaultListableBeanFactory.class, owningBeanFactory);
 
-		// c1. if we have an instance register it directly as a singleton
-		if (configInstance != null)
-			((DefaultListableBeanFactory) owningBeanFactory).registerSingleton(configBeanName, configInstance);
+		((DefaultListableBeanFactory) owningBeanFactory).registerBeanDefinition(configBeanName,
+			configurationBeanDefinition);
 
+		return generateBeanDefinitions(configBeanName, configurationClass);
 
-		// c2. no instance, let Spring instantiate everything
-		else {
-			configurationBeanDefinition.setBeanClass(configSubclass);
-			configurationBeanDefinition.setResourceDescription("configuration bean definition");
+	}
 
-			((DefaultListableBeanFactory) owningBeanFactory).registerBeanDefinition(configBeanName,
-				configurationBeanDefinition);
-		}
-		
-		generateBeanDefinitions(configBeanName, configInstance, configClass);
+	public int processBean(String beanName) throws BeanDefinitionStoreException {
+		Assert.notNull(beanName, "beanName is required");
+		Class<?> clazz = ProcessUtils.getBeanClass(beanName, owningBeanFactory);
+
+		// no class found
+		if (clazz == null)
+			return 0;
+
+		// otherwise start configuration processing
+		return generateBeanDefinitions(beanName, clazz);
 
 	}
 
 	/**
 	 * Modify metadata by emitting new bean definitions based on the bean
-	 * creation methods in this Java file
+	 * creation methods in this Java bytecode. Also, updates the configuration
+	 * bytecode definition.
 	 * 
-	 * @param configBeanName name of the bean containing the factory methods
-	 * @param configInstance configurer instance (if any)
+	 * @param configurationBeanName name of the bean containing the factory
+	 * methods
 	 * @param configClass class of the configurer bean instance
+	 * @return number of bean created
 	 */
-	public void generateBeanDefinitions(final String configBeanName, final Object configInstance,
-			final Class<?> configClass) {
+	protected int generateBeanDefinitions(final String configurationBeanName, final Class<?> configurationClass) {
+		if (!ProcessUtils.validateConfigurationClass(configurationClass, configurationListenerRegistry))
+			return 0;
+
+		int beansCreated = 0;
+		AbstractBeanDefinition definition = (AbstractBeanDefinition) owningBeanFactory.getBeanDefinition(configurationBeanName);
+
+		// update the configuration bean definition first
+		definition.setBeanClass(configurationEnhancer.enhanceConfiguration(configurationClass));
 
 		// Callback listeners
 		for (ConfigurationListener cl : configurationListenerRegistry.getConfigurationListeners()) {
-			cl.configurationClass(owningBeanFactory, childFactory, configBeanName, configClass);
+			cl.configurationClass(owningBeanFactory, childFactory, configurationBeanName, configurationClass);
 		}
 
 		// Only want to consider most specific bean creation method, in the case
 		// of overrides
 		// contains the beanNames resolved based on the method signature
 		final Set<String> noArgMethodsSeen = new HashSet<String>();
+		final int[] countFinalReference = new int[] { beansCreated };
 
-		final Configuration config = configClass.getAnnotation(Configuration.class);
-
-		ReflectionUtils.doWithMethods(configClass, new MethodCallback() {
+		ReflectionUtils.doWithMethods(configurationClass, new MethodCallback() {
 			public void doWith(Method m) throws IllegalArgumentException, IllegalAccessException {
 				Bean beanAnnotation = AnnotationUtils.findAnnotation(m, Bean.class);
 				// Determine bean name
-				String beanName = beanNamingStrategy.getBeanName(m, config);
+				String beanName = beanNamingStrategy.getBeanName(m);
 
 				if (beanAnnotation != null && !noArgMethodsSeen.contains(beanName)) {
 
@@ -240,7 +222,7 @@ public class ConfigurationProcessor {
 
 					if (owningBeanFactory.containsBean(beanName)) {
 						if (!beanAnnotation.allowOverriding()) {
-							throw new IllegalStateException("Already have a bean with name '" + m.getName() + "'");
+							throw new IllegalStateException("Already have a bean with name '" + beanName + "'");
 						}
 						else {
 							// Don't emit a bean definition
@@ -248,24 +230,29 @@ public class ConfigurationProcessor {
 						}
 					}
 					noArgMethodsSeen.add(beanName);
-					generateBeanDefinitionFromBeanCreationMethod(owningBeanFactory, configBeanName, configClass,
-						beanName, m, beanAnnotation);// , cca);
+					countFinalReference[0] += generateBeanDefinitionFromBeanCreationMethod(owningBeanFactory,
+						configurationBeanName, configurationClass, beanName, m, beanAnnotation);// ,
+					// cca);
 				}
 				else {
 					for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
-						cml.otherMethod(owningBeanFactory, childFactory, configBeanName, configClass, m);
+						cml.otherMethod(owningBeanFactory, childFactory, configurationBeanName, configurationClass, m);
 					}
 				}
 			}
 		});
 
+		beansCreated = countFinalReference[0];
+
 		// Find inner aspect classes
 		// TODO: need to go up tree? ReflectionUtils.doWithClasses
-		for (Class innerClass : configClass.getDeclaredClasses()) {
+		for (Class innerClass : configurationClass.getDeclaredClasses()) {
 			if (Modifier.isStatic(innerClass.getModifiers())) {
-				process(innerClass);
+				beansCreated += processClass(innerClass);
 			}
 		}
+
+		return beansCreated;
 	}
 
 	/**
@@ -278,14 +265,15 @@ public class ConfigurationProcessor {
 	 * @param beanAnnotation the Bean annotation available on the creation
 	 * method.
 	 */
-	protected void generateBeanDefinitionFromBeanCreationMethod(ConfigurableListableBeanFactory beanFactory,
+	protected int generateBeanDefinitionFromBeanCreationMethod(ConfigurableListableBeanFactory beanFactory,
 			String configurerBeanName, Class<?> configurerClass, String beanName, Method beanCreationMethod,
 			Bean beanAnnotation) {
 
+		int count = 0;
 		if (log.isDebugEnabled())
 			log.debug("Found bean creation method " + beanCreationMethod);
 
-		validateBeanCreationMethod(beanCreationMethod);
+		ProcessUtils.validateBeanCreationMethod(beanCreationMethod);
 
 		// Create a bean definition from the method
 
@@ -293,13 +281,15 @@ public class ConfigurationProcessor {
 
 		rbd.setFactoryMethodName(beanCreationMethod.getName());
 		rbd.setFactoryBeanName(configurerBeanName);
+		// tag the bean definition
+		rbd.setAttribute(ClassUtils.JAVA_CONFIG_PKG, Boolean.TRUE);
 
 		Configuration config = configurerClass.getAnnotation(Configuration.class);
 
 		if (log.isDebugEnabled())
 			log.debug("Creating future bean " + beanName);
 
-		copyAttributes(beanName, beanAnnotation, config, rbd, beanFactory);
+		ProcessUtils.copyAttributes(beanName, beanAnnotation, config, rbd, beanFactory);
 
 		// create description string
 		StringBuilder builder = new StringBuilder("Bean creation method ");
@@ -330,83 +320,8 @@ public class ConfigurationProcessor {
 			((BeanDefinitionRegistry) beanFactory).registerBeanDefinition(beanDefinitionRegistration.name,
 				beanDefinitionRegistration.rbd);
 		}
-	}
 
-	/**
-	 * Validation for the bean creation method. Checks that the method is not
-	 * final (so it can be proxied) and that a type is being returned (the
-	 * return instance becoming the actual bean).
-	 * 
-	 * @param beanCreationMethod
-	 * @throws BeanDefinitionStoreException
-	 */
-	protected void validateBeanCreationMethod(Method beanCreationMethod) throws BeanDefinitionStoreException {
-		if (Modifier.isFinal(beanCreationMethod.getModifiers())) {
-			throw new BeanDefinitionStoreException("Bean creation method " + beanCreationMethod.getName()
-					+ " may not be final");
-		}
-		if (beanCreationMethod.getReturnType() == Void.TYPE) {
-			throw new BeanDefinitionStoreException("Bean creation method " + beanCreationMethod.getName()
-					+ " may not have void return");
-		}
-	}
-
-	/**
-	 * Create the bean definition based on the annotation properties.
-	 * 
-	 * @param beanName name of the bean we're creating (not the factory bean)
-	 * @param beanAnnotation bean annotation
-	 * @param configuration configuration on the configuration class. Sets
-	 * defaults. May be null as this annotation is not required.
-	 * @param rbd bean definition, in Spring IoC container internal metadata
-	 * @param beanFactory bean factory we are executing in
-	 */
-	protected void copyAttributes(String beanName, Bean beanAnnotation, Configuration configuration,
-			RootBeanDefinition rbd, ConfigurableListableBeanFactory beanFactory) {
-
-		// singleton/scope
-		rbd.setSingleton(beanAnnotation.scope() == Scope.SINGLETON);
-
-		// depends-on
-		rbd.setDependsOn(beanAnnotation.dependsOn());
-
-		// aliases
-		for (String alias : beanAnnotation.aliases()) {
-			beanFactory.registerAlias(beanName, alias);
-		}
-
-		// lifecycle methods
-		if (StringUtils.hasText(beanAnnotation.initMethodName())) {
-			rbd.setInitMethodName(beanAnnotation.initMethodName());
-		}
-
-		if (StringUtils.hasText(beanAnnotation.destroyMethodName())) {
-			rbd.setDestroyMethodName(beanAnnotation.destroyMethodName());
-		}
-
-		// configuration, fallback methods
-
-		if (beanAnnotation.dependencyCheck() != DependencyCheck.UNSPECIFIED) {
-			rbd.setDependencyCheck(beanAnnotation.dependencyCheck().value());
-		}
-		else if (configuration != null && configuration.defaultDependencyCheck() != DependencyCheck.UNSPECIFIED) {
-			rbd.setDependencyCheck(configuration.defaultDependencyCheck().value());
-		}
-
-		if (beanAnnotation.lazy() != Lazy.UNSPECIFIED) {
-			rbd.setLazyInit(beanAnnotation.lazy().booleanValue());
-		}
-		else if (configuration != null && configuration.defaultLazy() != Lazy.UNSPECIFIED) {
-			rbd.setLazyInit(configuration.defaultLazy().booleanValue());
-		}
-
-		if (beanAnnotation.autowire() != Autowire.INHERITED) {
-			rbd.setAutowireMode(beanAnnotation.autowire().value());
-		}
-		else if (configuration != null && configuration.defaultAutowire() != Autowire.INHERITED) {
-			rbd.setAutowireMode(configuration.defaultAutowire().value());
-		}
-
+		return count;
 	}
 
 	public BytecodeConfigurationEnhancer getConfigurationEnhancer() {

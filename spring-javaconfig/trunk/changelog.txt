@@ -12,15 +12,13 @@ General
 
 Package org.springframework.config.java.annotation
 * annotation @ExternalBean added to allow injection of an already defined bean
+* @Bean can forbid the overriding of the resulting bean by other bean definitions. Default is true.
+
+Package org.springframework.config.java.naming
+* the method -> bean name translation is pluggable and used through out the code. 
 
 Package org.springframework.config.java.process
-* ConfigurationProcessor accepts configuration instances
-
-Package org.springframework.config.java.process.naming
-* new naming strategy for bean name creation added
-
-Package org.springframework.config.java.support
-* BytecodeConfigurationEnhancer allows a backing configuration instance not just a 'static' class
+* @Bean.metadata is translated into BeanDefinition attribute
 
 Changes in version 1.0-M1 (2006-11-28)
 --------------------------------------

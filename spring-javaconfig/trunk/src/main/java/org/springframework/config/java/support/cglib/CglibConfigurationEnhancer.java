@@ -28,6 +28,8 @@ import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
+import org.springframework.config.java.naming.BeanNamingStrategy;
+import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.config.java.support.BytecodeConfigurationEnhancer;
 import org.springframework.config.java.support.factory.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.util.ClassUtils;
@@ -82,7 +84,7 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 
 	private final BeanNameTrackingDefaultListableBeanFactory childFactory;
 
-	private final Callback EXTERNAL_BEAN_CALLBACK_INSTANCE;
+	private BeanNamingStrategy namingStrategy = new MethodNameStrategy();
 
 	public CglibConfigurationEnhancer(ConfigurableListableBeanFactory owningBeanFactory,
 			BeanNameTrackingDefaultListableBeanFactory childFactory,
@@ -93,16 +95,14 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 		this.owningBeanFactory = owningBeanFactory;
 		this.configurationListenerRegistry = configurationListenerRegistry;
 		this.childFactory = childFactory;
-
-		EXTERNAL_BEAN_CALLBACK_INSTANCE = new ExternalBeanMethodMethodInterceptor(owningBeanFactory);
 	}
-
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.springframework.config.java.support.BytecodeConfigurationEnhancer#enhanceConfiguration(java.lang.Object, java.lang.Class)
+	 * @see org.springframework.config.java.support.BytecodeConfigurationEnhancer#enhanceConfiguration(java.lang.Object,
+	 * java.lang.Class)
 	 */
-	public <T> Class<? extends T> enhanceConfiguration(T configurationInstance, Class<T> configurationClass) {
+	public <T> Class<? extends T> enhanceConfiguration(Class<T> configurationClass) {
 		Assert.notNull(configurationClass, "configuration class required");
 
 		Enhancer enhancer = new Enhancer();
@@ -119,13 +119,23 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 
 		Class<?> configurationSubclass = enhancer.createClass();
 
-		Enhancer.registerCallbacks(configurationSubclass, new Callback[] { NoOp.INSTANCE,
-				// TODO: can this be shared also?
-				new BeanMethodMethodInterceptor(owningBeanFactory, childFactory, configurationListenerRegistry, configurationInstance),
-				EXTERNAL_BEAN_CALLBACK_INSTANCE });
+		// create callbacks for this particular configuration class to preserve
+		// settings (such as naming strategy)
+
+		BeanMethodMethodInterceptor beanMethodCallback = new BeanMethodMethodInterceptor(owningBeanFactory,
+				childFactory, configurationListenerRegistry);
+		beanMethodCallback.setNamingStrategy(namingStrategy);
+
+		Callback externalBeanCallback = new ExternalBeanMethodMethodInterceptor(owningBeanFactory, namingStrategy);
+
+		Enhancer.registerCallbacks(configurationSubclass, new Callback[] { NoOp.INSTANCE, beanMethodCallback,
+				externalBeanCallback });
 
 		return configurationSubclass.asSubclass(configurationClass);
+	}
 
+	public void setBeanNamingStrategy(BeanNamingStrategy beanNamingStrategy) {
+		this.namingStrategy = beanNamingStrategy;
 	}
 
 }

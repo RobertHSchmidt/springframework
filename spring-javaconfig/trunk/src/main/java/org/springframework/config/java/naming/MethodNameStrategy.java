@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.process.naming;
+package org.springframework.config.java.naming;
 
 import java.lang.reflect.Method;
 
-import org.springframework.config.java.annotation.Configuration;
 import org.springframework.util.Assert;
 
 /**
@@ -63,11 +62,11 @@ public class MethodNameStrategy implements BeanNamingStrategy {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.springframework.config.java.process.naming.BeanNamingStrategy#getBeanName(java.lang.reflect.Method,
+	 * @see org.springframework.config.java.naming.BeanNamingStrategy#getBeanName(java.lang.reflect.Method,
 	 * org.springframework.config.java.annotation.Bean,
 	 * org.springframework.config.java.annotation.Configuration)
 	 */
-	public String getBeanName(Method beanCreationMethod, Configuration configuration) {
+	public String getBeanName(Method beanCreationMethod) {
 		Assert.notNull(beanCreationMethod, "beanCreationMethod is required");
 		StringBuilder builder = new StringBuilder();
 

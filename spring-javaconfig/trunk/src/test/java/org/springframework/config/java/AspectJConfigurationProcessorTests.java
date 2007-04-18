@@ -50,47 +50,48 @@ import org.springframework.config.java.process.ConfigurationProcessor;
  * @author Rod Johnson
  */
 public class AspectJConfigurationProcessorTests extends TestCase {
-	
+
 	private ConfigurationListenerRegistry clr = new DefaultConfigurationListenerRegistry();
 
 	// TODO this may not be a valid test. Would need prototype aspect bean
 	// and autoproxy
 	public void xtestPerInstanceAdviceAndSharedAdvice() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
-		configurationProcessor.process(PerInstanceCountingAdvice.class);
-		
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		configurationProcessor.processClass(PerInstanceCountingAdvice.class);
+
 		TestBean advised1 = (TestBean) bf.getBean("advised");
 		Object target1 = ((Advised) advised1).getTargetSource().getTarget();
 		TestBean advised2 = (TestBean) bf.getBean("advised");
-		
+
 		// Hashcode works on this
 		advised2.setAge(35);
-		
+
 		assertNotSame(advised1, advised2);
 		Object target2 = ((Advised) advised2).getTargetSource().getTarget();
 		assertNotSame(target1, target2);
-		//System.out.println("t1=" + System.identityHashCode(target1) + "; t2=" + System.identityHashCode(target2));
-		
+		// System.out.println("t1=" + System.identityHashCode(target1) + "; t2="
+		// + System.identityHashCode(target2));
+
 		assertEquals("advised", bf.getBeanNamesForType(TestBean.class)[0]);
-		
+
 		assertEquals(0, PerInstanceCountingAdvice.getCount(target1));
 		advised1.absquatulate();
 		assertEquals(0, PerInstanceCountingAdvice.getCount(target1));
 		advised1.getSpouse();
 		assertEquals(1, PerInstanceCountingAdvice.getCount(target1));
 		assertEquals(0, PerInstanceCountingAdvice.getCount(target2));
-		
+
 		advised2.getSpouse();
 		assertEquals(1, PerInstanceCountingAdvice.getCount(target1));
 		assertEquals(1, PerInstanceCountingAdvice.getCount(target2));
 	}
-	
+
 	public void testSharedAfterAdvice() throws Throwable {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
-		configurationProcessor.process(AfterAdvice.class);
-		
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		configurationProcessor.processClass(AfterAdvice.class);
+
 		TestBean advised = (TestBean) bf.getBean("advised");
 		AfterAdvice.count = 0;
 		advised.absquatulate();
@@ -105,115 +106,110 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 		}
 		assertEquals("After advice should count failure", 2, AfterAdvice.count);
 	}
-	
+
 	/**
-	 *TODO inherited
+	 * TODO inherited
 	 * @param clazz
 	 * @throws Exception
 	 */
 	public void testAspectJAnnotationsRequireAspectAnnotationDirect() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
-		try {
-			configurationProcessor.process(InvalidNoAspectAnnotation.class);
-			fail("Aspect annotationName required");
-		}
-		catch (BeanDefinitionStoreException ex) {
-			// Ok
-		}
+		assertFalse("Aspect annotationName required",
+			configurationProcessor.processClass(InvalidNoAspectAnnotation.class) > 0);
 	}
-	
+
 	public void testInvalidInheritanceFromConcreteAspect() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 		try {
-			configurationProcessor.process(InvalidInheritanceFromConcreteAspect.class);
+			configurationProcessor.processClass(InvalidInheritanceFromConcreteAspect.class);
 			fail("Cannot extend a concrete aspect");
 		}
 		catch (AopConfigException ex) {
 			// Ok
 		}
 	}
-	
-	
+
 	public void testAspectJAroundAdviceWithImplicitScope() throws Exception {
 		doTestAspectJAroundAdviceWithImplicitScope(AroundSingletonCountingAdvice.class);
 	}
-	
+
 	public void testAspectJAroundAdviceWithImplicitScopeAndNamedPointcut() throws Exception {
 		doTestAspectJAroundAdviceWithImplicitScope(AroundAdviceWithNamedPointcut.class);
 	}
-	
+
 	public void testAspectJAroundAdviceWithAspectInnerClass() throws Exception {
 		doTestAspectJAroundAdviceWithImplicitScope(InnerClassAdvice.class);
 	}
-	
+
 	private void doTestAspectJAroundAdviceWithImplicitScope(Class clazz) throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
-		configurationProcessor.process(clazz);
-		
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		configurationProcessor.processClass(clazz);
+
 		TestBean advised1 = (TestBean) bf.getBean("advised");
 		int newAge = 24;
 		advised1.setAge(newAge);
 		assertEquals("Invocations must work on target without around advice", newAge, advised1.getAge());
-		assertEquals("around", advised1.getName());		
+		assertEquals("around", advised1.getName());
 	}
-	
-	
+
 	public void testAspectJAroundAdviceWithAspectClassScope() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
-		configurationProcessor.process(SingletonCountingAdvice.class);
-		
-		try {
-			configurationProcessor.process(InvalidAroundAdviceClassWithNoAspectAnnotation.class);
-			fail("Must not allow class that does not define beans or aspects");
-		}
-		catch (BeanDefinitionStoreException ex) {
-			// Ok
-		}
-		configurationProcessor.process(AroundAdviceClass.class);
-		
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		configurationProcessor.processClass(SingletonCountingAdvice.class);
+
+		assertFalse("Must not allow class that does not define beans or aspects",
+			configurationProcessor.processClass(InvalidAroundAdviceClassWithNoAspectAnnotation.class) > 0);
+		configurationProcessor.processClass(AroundAdviceClass.class);
+
 		TestBean advised1 = (TestBean) bf.getBean("advised");
 		int newAge = 24;
 		advised1.setAge(newAge);
 		assertEquals("Invocations must work on target without around advice", newAge, advised1.getAge());
-		assertEquals("around", advised1.getName());		
+		assertEquals("around", advised1.getName());
 	}
-	
-	
+
 	// TODO do we really want the configuration class to *be* an aspect?
 	// The model elsewhere is that configuration *contains* aspects
 	// Structure it? It's Java 5 only?
-	
+
 	public void testAspectJNoAroundAdvice() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 		// Superclass doesn't have around advice
-		configurationProcessor.process(SingletonCountingAdvice.class);
-		
+		configurationProcessor.processClass(SingletonCountingAdvice.class);
+
 		TestBean advised1 = (TestBean) bf.getBean("advised");
 		int newAge = 24;
 		advised1.setAge(newAge);
 		assertEquals("Invocations must work on target without around advice", newAge, advised1.getAge());
-		assertEquals("tony", advised1.getName());		
+		assertEquals("tony", advised1.getName());
 	}
-	
-//	public void testPointcutExpressionWithoutArgs() throws Exception {
-//		Set supportedPrimitives = new HashSet();
-//		supportedPrimitives.add(PointcutPrimitive.EXECUTION);
-//		supportedPrimitives.add(PointcutPrimitive.ARGS);
-//		PointcutParser parser = new PointcutParser(supportedPrimitives);
-//		PointcutExpression expression = parser.parsePointcutExpression("execution(* *.getN*() )");
-//		
-//		Method getNameMethod = ITestBean.class.getMethod("getName", null);
-//		Method setNameMethod = ITestBean.class.getMethod("setName", new Class[] { String.class} );
-//		
-//		FuzzyBoolean matches = expression.matchesMethodExecution(getNameMethod, TestBean.class);
-//		assertSame(FuzzyBoolean.YES, expression.matchesMethodExecution(getNameMethod, TestBean.class));
-//		assertSame(FuzzyBoolean.NO, expression.matchesMethodExecution(setNameMethod, TestBean.class));
-//	}
+
+	// public void testPointcutExpressionWithoutArgs() throws Exception {
+	// Set supportedPrimitives = new HashSet();
+	// supportedPrimitives.add(PointcutPrimitive.EXECUTION);
+	// supportedPrimitives.add(PointcutPrimitive.ARGS);
+	// PointcutParser parser = new PointcutParser(supportedPrimitives);
+	// PointcutExpression expression =
+	// parser.parsePointcutExpression("execution(*
+	// *.getN*() )");
+	//		
+	// Method getNameMethod = ITestBean.class.getMethod("getName", null);
+	// Method setNameMethod = ITestBean.class.getMethod("setName", new Class[] {
+	// String.class} );
+	//		
+	// FuzzyBoolean matches = expression.matchesMethodExecution(getNameMethod,
+	// TestBean.class);
+	// assertSame(FuzzyBoolean.YES,
+	// expression.matchesMethodExecution(getNameMethod,
+	// TestBean.class));
+	// assertSame(FuzzyBoolean.NO,
+	// expression.matchesMethodExecution(setNameMethod,
+	// TestBean.class));
+	// }
 
 	public void testPointcutExpressionWithPointcutReference() throws Exception {
 		Set supportedPrimitives = new HashSet();
@@ -221,62 +217,75 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 		supportedPrimitives.add(PointcutPrimitive.ARGS);
 		supportedPrimitives.add(PointcutPrimitive.REFERENCE);
 		// TODO can hold state in pointcut parser
-//		PointcutParser parser = new PointcutParser(supportedPrimitives);
-//		PointcutExpression expression = parser.parsePointcutExpression("foo", "execution(* *.getN*() )");
-//		PointcutExpression orPc = parser.parsePointcutExpression("execution(void *.absquatulate()) || foo()");
-//		
-//		Method getNameMethod = ITestBean.class.getMethod("getName", null);
-//		Method setNameMethod = ITestBean.class.getMethod("setName", new Class[] { String.class} );
-//		Method absquatulateMethod = TestBean.class.getMethod("absquatulate", null );
-//		
-//		FuzzyBoolean matches = expression.matchesMethodExecution(getNameMethod, TestBean.class);
-//		assertSame(FuzzyBoolean.YES, orPc.matchesMethodExecution(getNameMethod, TestBean.class));
-//		assertSame(FuzzyBoolean.NO, orPc.matchesMethodExecution(setNameMethod, TestBean.class));
-//		assertSame(FuzzyBoolean.YES, orPc.matchesMethodExecution(absquatulateMethod, TestBean.class));
+		// PointcutParser parser = new PointcutParser(supportedPrimitives);
+		// PointcutExpression expression = parser.parsePointcutExpression("foo",
+		// "execution(* *.getN*() )");
+		// PointcutExpression orPc =
+		// parser.parsePointcutExpression("execution(void
+		// *.absquatulate()) || foo()");
+		//		
+		// Method getNameMethod = ITestBean.class.getMethod("getName", null);
+		// Method setNameMethod = ITestBean.class.getMethod("setName", new
+		// Class[] {
+		// String.class} );
+		// Method absquatulateMethod = TestBean.class.getMethod("absquatulate",
+		// null );
+		//		
+		// FuzzyBoolean matches =
+		// expression.matchesMethodExecution(getNameMethod,
+		// TestBean.class);
+		// assertSame(FuzzyBoolean.YES,
+		// orPc.matchesMethodExecution(getNameMethod,
+		// TestBean.class));
+		// assertSame(FuzzyBoolean.NO,
+		// orPc.matchesMethodExecution(setNameMethod,
+		// TestBean.class));
+		// assertSame(FuzzyBoolean.YES,
+		// orPc.matchesMethodExecution(absquatulateMethod,
+		// TestBean.class));
 	}
-	
+
 	/**
 	 * Invalid class, doesn't have an Aspect tag
-	 *
+	 * 
 	 */
 	public static class InvalidNoAspectAnnotation {
 		@Around("execution(* *.getName())")
 		public Object invalid(ProceedingJoinPoint pjp) throws Throwable {
-			//System.out.println("Invoking around advice method");
+			// System.out.println("Invoking around advice method");
 			return "around";
 		}
 	}
-	
+
 	public abstract static class CountingConfiguration {
 		/**
 		 * Map from target to invocation count
 		 */
-		public static Map<Object,Integer> counts = new HashMap<Object,Integer>();
-		
+		public static Map<Object, Integer> counts = new HashMap<Object, Integer>();
+
 		public static int getCount(Object target) {
 			Integer count = counts.get(target);
 			return (count != null) ? count : 0;
 		}
-		
-		@Bean(scope=Scope.PROTOTYPE)
+
+		@Bean(scope = Scope.PROTOTYPE)
 		public TestBean advised() {
 			TestBean tb = new TestBean();
 			tb.setName("tony");
 			return tb;
 		}
-		
-		@Bean(autowire=Autowire.BY_TYPE, dependencyCheck=DependencyCheck.ALL)
+
+		@Bean(autowire = Autowire.BY_TYPE, dependencyCheck = DependencyCheck.ALL)
 		public DependsOnTestBean dotb() {
-			return new DependsOnTestBean();			
+			return new DependsOnTestBean();
 		}
 	}
-	
-	
+
 	@Aspect
 	public static class AfterAdvice extends CountingConfiguration {
-		
+
 		public static int count = 0;
-		
+
 		@After("execution(* *.exceptional(Throwable))")
 		public void after() {
 			++count;
@@ -285,121 +294,122 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 
 	@Aspect
 	public abstract static class SingletonCountingAdvice extends CountingConfiguration {
-		
+
 		@Before("execution(* *.getSpouse())")
 		public void doesntMatter() {
-			//System.out.println("this is the advice method body");
-//			System.out.println("ADviced on Targetid=" + System.identityHashCode(target));
-//			Integer count = counts.get(target);
-//			if (count == null) {
-//				count = 0;
-//			}
-//			++count;
-//			counts.put(target, count);
-		}		
+			// System.out.println("this is the advice method body");
+			// System.out.println("ADviced on Targetid=" +
+			// System.identityHashCode(target));
+			// Integer count = counts.get(target);
+			// if (count == null) {
+			// count = 0;
+			// }
+			// ++count;
+			// counts.put(target, count);
+		}
 	}
-	
-	
+
 	// TODO different binding
 	@Aspect
 	public abstract static class PerInstanceCountingAdvice extends CountingConfiguration {
-		
+
 		@Before("execution(* *.getSpouse())")
 		public void doesntMatter() {
-			//System.out.println("this is the advice method body");
-//			System.out.println("ADviced on Targetid=" + System.identityHashCode(target));
-//			Integer count = counts.get(target);
-//			if (count == null) {
-//				count = 0;
-//			}
-//			++count;
-//			counts.put(target, count);
-		}		
+			// System.out.println("this is the advice method body");
+			// System.out.println("ADviced on Targetid=" +
+			// System.identityHashCode(target));
+			// Integer count = counts.get(target);
+			// if (count == null) {
+			// count = 0;
+			// }
+			// ++count;
+			// counts.put(target, count);
+		}
 	}
-	
+
 	@Aspect
 	public static class AroundSingletonCountingAdvice extends SingletonCountingAdvice {
 		@Around("execution(* *.getName())")
 		public Object newValue(ProceedingJoinPoint pjp) throws Throwable {
-			//System.out.println("Invoking around advice method");
+			// System.out.println("Invoking around advice method");
 			return "around";
 		}
 	}
-	
+
 	// TODO isn't aspect inherited? Clarify with Adrian
 	@Aspect
 	public static class AroundAdviceWithNamedPointcut extends SingletonCountingAdvice {
-		
+
 		@Pointcut("execution(* *.getName())")
-		public void getName() {}
-		
+		public void getName() {
+		}
+
 		@Around("getName()")
 		public Object newValue(ProceedingJoinPoint pjp) throws Throwable {
-			//System.out.println("Invoking around advice method");
+			// System.out.println("Invoking around advice method");
 			return "around";
 		}
 	}
-	
+
 	public static class InnerClassAdvice extends CountingConfiguration {
-		
+
 		// This is enough to bring it in
 		@Aspect
-		static class InnerAroundAdvice extends AroundAdviceClass {			
+		static class InnerAroundAdvice extends AroundAdviceClass {
 		}
 	}
-	
+
 	// Invalid, doesn't have aspect tag
-	public static class InvalidAroundAdviceClassWithNoAspectAnnotation  {
+	public static class InvalidAroundAdviceClassWithNoAspectAnnotation {
 		@Around("execution(* *.getName())")
 		public Object newValue(ProceedingJoinPoint pjp) throws Throwable {
-			//System.out.println("Invoking around advice method");
+			// System.out.println("Invoking around advice method");
 			return "around";
 		}
 	}
-	
+
 	@Aspect
-	public abstract static class ValidAroundAdviceClassWithAspectAnnotation  {
+	public abstract static class ValidAroundAdviceClassWithAspectAnnotation {
 		@Around("execution(* *.getName())")
 		public Object newValue(ProceedingJoinPoint pjp) throws Throwable {
 			return "around";
 		}
 	}
-	
+
 	@Aspect
 	@Configuration
 	public abstract static class AroundAdviceClass extends ValidAroundAdviceClassWithAspectAnnotation {
-		
+
 	}
-	
+
 	public static class InvalidInheritanceFromConcreteAspect extends AroundSingletonCountingAdvice {
-		
+
 	}
-	
-	
+
 	@Aspect
-	public abstract static class SumAroundAdvice  {
+	public abstract static class SumAroundAdvice {
 		@Around("execution(int *.returnZero(int, int)) && args(a,b)")
 		public Object newValue(ProceedingJoinPoint pjp, int a, int b) throws Throwable {
 			return a + b;
 		}
-		
+
 		@Bean
 		public ReturnZero willAdd() {
 			return new ReturnZero();
 		}
 	}
-	
+
 	public static class ReturnZero {
 		public int returnZero(int a, int b) {
 			return 0;
 		}
 	}
-	
+
 	// TODO: fix w/ Maven
 	public void tstAroundAdviceWithArguments() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
-		configurationProcessor.process(SumAroundAdvice.class);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		configurationProcessor.processClass(SumAroundAdvice.class);
 		ReturnZero rz = (ReturnZero) bf.getBean("willAdd");
 		assertEquals("Must add arguments, not return zero", 25, rz.returnZero(10, 15));
 	}

@@ -45,6 +45,8 @@ public abstract class ClassUtils {
 
 	public static final char SLASH = '/';
 
+	public static final String JAVA_CONFIG_PKG = "org.springframework.config.java";
+
 	/**
 	 * Convert the / form to the . form
 	 * @param className
@@ -75,52 +77,6 @@ public abstract class ClassUtils {
 		Assert.notNull(a, "annotation is required");
 
 		return (AnnotationUtils.findAnnotation(method, a) != null);
-	}
-
-	/**
-	 * Find all bean creation methods in the given configuration class. It looks for
-	 * {@link Bean} annotation on public methods.
-	 * 
-	 * @param configurationClass
-	 * @return
-	 */
-	public static Collection<Method> getBeanCreationMethods(Class<?> configurationClass) {
-		Assert.notNull(configurationClass);
-		
-		Collection<Method> beanCreationMethods = new ArrayList<Method>();
-		Method[] publicMethods = configurationClass.getMethods();
-		for (int i = 0; i < publicMethods.length; i++) {
-			if (hasAnnotation(publicMethods[i], Bean.class)) {
-				beanCreationMethods.add(publicMethods[i]);
-			}
-		}
-		return beanCreationMethods;
-	}
-
-	/**
-	 * Check if the given class is a configuration.
-	 * 
-	 * Additionaly, a listener registry is checked against the class.
-	 * 
-	 * @param candidateConfigurationClass
-	 * @param registry
-	 * @return
-	 */
-	public static boolean isConfigurationClass(Class<?> candidateConfigurationClass,
-			ConfigurationListenerRegistry registry) {
-		
-		Assert.notNull(candidateConfigurationClass);
-		if (candidateConfigurationClass.isAnnotationPresent(Configuration.class)
-				|| !getBeanCreationMethods(candidateConfigurationClass).isEmpty()) {
-			return true;
-		}
-		if (registry != null)
-			for (ConfigurationListener cl : registry.getConfigurationListeners()) {
-				if (cl.understands(candidateConfigurationClass)) {
-					return true;
-				}
-			}
-		return false;
 	}
 
 }

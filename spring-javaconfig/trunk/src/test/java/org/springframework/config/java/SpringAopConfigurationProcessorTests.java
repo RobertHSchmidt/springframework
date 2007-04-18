@@ -46,7 +46,7 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 	public void testPerInstanceAdviceAndSharedAdvice() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
-		configurationProcessor.process(SpringAroundPerInstanceAdvice.class);
+		configurationProcessor.processClass(SpringAroundPerInstanceAdvice.class);
 		
 		TestBean advised1 = (TestBean) bf.getBean("advised");
 		Object target1 = ((Advised) advised1).getTargetSource().getTarget();
@@ -78,7 +78,7 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 	public void testAroundAdvice() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
-		configurationProcessor.process(SpringAroundPerInstanceAdvice.class);
+		configurationProcessor.processClass(SpringAroundPerInstanceAdvice.class);
 		
 		TestBean advised1 = (TestBean) bf.getBean("advised");
 		int newAge = 24;
@@ -92,7 +92,7 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
 		// Superclass doesn't have around advice
-		configurationProcessor.process(SingletonCountingAdvice.class);
+		configurationProcessor.processClass(SingletonCountingAdvice.class);
 		
 		TestBean advised1 = (TestBean) bf.getBean("advised");
 		int newAge = 24;
@@ -107,7 +107,7 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
 		// Superclass doesn't have around advice
-		configurationProcessor.process(OrderedSpringAdvice.class);
+		configurationProcessor.processClass(OrderedSpringAdvice.class);
 		
 		TestBean advised1 = (TestBean) bf.getBean("advised");
 		assertNull(advised1.getSpouse());
@@ -215,7 +215,7 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 	public void testInterceptAll() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
-		configurationProcessor.process(InterceptAllAdvice.class);
+		configurationProcessor.processClass(InterceptAllAdvice.class);
 		
 		TestBean kaare = (TestBean) bf.getBean("kaare");
 		

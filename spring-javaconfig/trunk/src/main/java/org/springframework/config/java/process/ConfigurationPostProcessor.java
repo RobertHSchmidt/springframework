@@ -19,13 +19,12 @@ package org.springframework.config.java.process;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
-import org.springframework.config.java.util.ClassUtils;
+import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.core.Ordered;
 
 /**
@@ -36,84 +35,55 @@ import org.springframework.core.Ordered;
  * In the BeanFactoryPostProcessor implementation, this class adds factory bean
  * definitions for every Configuration bean found in the bean factory. It also
  * creates a child factory containing pointcuts and advisors required to
- * interpret Pointcut attributes. It sets the class of the Configuration bean
- * definition to be a generated subclass that caches singletons on
- * self-invocation.
+ * interpret Pointcut attributes.
  * 
  * @see org.springframework.config.java.process.ConfigurationProcessor
  * @see org.springframework.config.java.annotation.Bean
  * @see org.springframework.config.java.annotation.Configuration
+ * 
  * @author Rod Johnson
+ * @author Costin Leau
  */
-public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ordered {
+public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ordered, InitializingBean {
 
 	protected final Log log = LogFactory.getLog(getClass());
 
 	private ConfigurationListenerRegistry configurationListenerRegistry;
 
-	public ConfigurationPostProcessor() {
-		this.configurationListenerRegistry = new DefaultConfigurationListenerRegistry();
-	}
+	private BeanNamingStrategy namingStrategy;
 
-	// TODO property for prefix, to allow to avoid namespace conlicts?
-	// Could be bean name aware, so could prefix optionally
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
+	public void afterPropertiesSet() throws Exception {
+		if (configurationListenerRegistry == null)
+			configurationListenerRegistry = new DefaultConfigurationListenerRegistry();
+
+	}
 
 	/**
 	 * Generate BeanDefinitions and add them to factory for each Configuration
-	 * bean
+	 * bean.
 	 */
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 
 		String[] beanNames = beanFactory.getBeanDefinitionNames();
-		for (int i = 0; i < beanNames.length; i++) {
-			BeanDefinition bd = beanFactory.getBeanDefinition(beanNames[i]);
-			if (bd instanceof RootBeanDefinition && isEligibleForConfigurationProcessing(bd)) {
-				RootBeanDefinition rbd = (RootBeanDefinition) bd;
-				ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(beanFactory,
+
+		// before creating a new process, do some validation even though we
+		// might duplicate it inside ConfigurationProcessor
+		for (String beanName : beanNames) {
+			// get the class
+			Class<?> clazz = ProcessUtils.getBeanClass(beanName, beanFactory);
+			if (clazz != null && ProcessUtils.validateConfigurationClass(clazz, configurationListenerRegistry)) {
+				ConfigurationProcessor processor = new ConfigurationProcessor(beanFactory,
 						configurationListenerRegistry);
 
-				Class<?> clazz = null;
-
-				if (rbd.hasBeanClass())
-					clazz = rbd.getBeanClass();
-				else {
-					// load the class (changes in the lazy loading code part of
-					// spring core)
-
-					// TODO: add support for factory-method beans
-					if (rbd.getBeanClassName() != null) {
-						try {
-							clazz = org.springframework.util.ClassUtils.forName(rbd.getBeanClassName());
-						}
-						catch (ClassNotFoundException e) {
-							throw new IllegalArgumentException("invalid bean class" + rbd.getBeanClassName());
-						}
-					}
-				}
-				// TODO set resourceLoader
-				if (ClassUtils.isConfigurationClass(clazz, configurationListenerRegistry)) {
-					configurationProcessor.generateBeanDefinitions(beanNames[i], null, clazz);
-					rbd.setBeanClass(configurationProcessor.getConfigurationEnhancer().enhanceConfiguration(null, clazz));
-				}
-				else {
-					log.debug("Bean with name '" + beanNames[i] + "' is not a configurer");
-				}
+				if (namingStrategy != null)
+					processor.setBeanNamingStrategy(namingStrategy);
+				processor.processBean(beanName);
 			}
 		}
-	}
-
-	/**
-	 * Determines if the given bean definition is eligible for configuration
-	 * processsing by a ConfigurationProcessor. Abstract beans are not eligible
-	 * for configuration processing; they have no class name. We might include
-	 * other cases too in the future.
-	 */
-	private boolean isEligibleForConfigurationProcessing(BeanDefinition def) {
-		if (def.isAbstract()) {
-			return false;
-		}
-
-		return true;
 	}
 
 	/**
@@ -121,6 +91,24 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 	 */
 	public int getOrder() {
 		return Integer.MIN_VALUE;
+	}
+
+	/**
+	 * The listener registry used by this factory bean. Initially,
+	 * {@link DefaultConfigurationListenerRegistry} is used.
+	 * 
+	 * @param configurationListenerRegistry The configurationListenerRegistry to
+	 * set.
+	 */
+	public void setConfigurationListenerRegistry(ConfigurationListenerRegistry configurationListenerRegistry) {
+		this.configurationListenerRegistry = configurationListenerRegistry;
+	}
+
+	/**
+	 * @param namingStrategy The namingStrategy to set.
+	 */
+	public void setNamingStrategy(BeanNamingStrategy namingStrategy) {
+		this.namingStrategy = namingStrategy;
 	}
 
 }
