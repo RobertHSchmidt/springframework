@@ -27,16 +27,20 @@ import org.springframework.util.Assert;
 /**
  * Method interceptor for external bean methods.
  * 
+ * <p/> This implementation is thread-safe.
+ * 
  * @author Rod Johnson
  * 
  */
 public class ExternalBeanMethodMethodInterceptor implements MethodInterceptor {
 
-	private BeanFactory owningBeanFactory;
-	private BeanNamingStrategy namingStrategy;
+	private final BeanFactory owningBeanFactory;
+
+	private final BeanNamingStrategy namingStrategy;
 
 	public ExternalBeanMethodMethodInterceptor(BeanFactory owningBeanFactory, BeanNamingStrategy namingStrategy) {
 		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
+		Assert.notNull(namingStrategy);
 
 		this.owningBeanFactory = owningBeanFactory;
 		this.namingStrategy = namingStrategy;

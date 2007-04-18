@@ -35,9 +35,10 @@ import org.springframework.config.java.listener.ConfigurationListener;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.naming.MethodNameStrategy;
+import org.springframework.config.java.support.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.support.BytecodeConfigurationEnhancer;
+import org.springframework.config.java.support.MethodBeanWrapper;
 import org.springframework.config.java.support.cglib.CglibConfigurationEnhancer;
-import org.springframework.config.java.support.factory.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -114,11 +115,14 @@ public class ConfigurationProcessor {
 		if (this.beanNamingStrategy == null)
 			this.beanNamingStrategy = new MethodNameStrategy();
 
-		// TODO: this should be pluggable but has to be a prototype since it
-		// depends on the childFactory instance
-		CglibConfigurationEnhancer enhancer = new CglibConfigurationEnhancer(bdr, childFactory,
+		MethodBeanWrapper wrapper = new MethodBeanWrapper(owningBeanFactory, childFactory,
 				configurationListenerRegistry);
-		enhancer.setBeanNamingStrategy(beanNamingStrategy);
+
+		// TODO: this should be pluggable but also has to be a prototype since
+		// it
+		// depends on the childFactory instance which is internal
+		CglibConfigurationEnhancer enhancer = new CglibConfigurationEnhancer(this.owningBeanFactory, this.childFactory,
+				beanNamingStrategy, wrapper);
 
 		this.configurationEnhancer = enhancer;
 	}

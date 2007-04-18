@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.support.factory;
+package org.springframework.config.java.support;
 
 import java.util.Stack;
 
