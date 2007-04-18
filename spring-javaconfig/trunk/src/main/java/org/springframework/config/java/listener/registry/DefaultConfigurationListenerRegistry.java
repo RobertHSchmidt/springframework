@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.springframework.config.java.listener.AutoBeanConfigurationListener;
 import org.springframework.config.java.listener.ConfigurationListener;
-import org.springframework.config.java.listener.ConversationScopedConfigurationListener;
 import org.springframework.config.java.listener.aop.AspectJAdviceConfigurationListener;
 import org.springframework.config.java.listener.aop.SpringAdviceConfigurationListener;
 import org.springframework.config.java.listener.aop.SpringAdvisorConfigurationListener;
@@ -42,7 +41,6 @@ public class DefaultConfigurationListenerRegistry implements ConfigurationListen
 		registerConfigurationListener(new SpringAdvisorConfigurationListener());
 		registerConfigurationListener(new SpringAdviceConfigurationListener());
 		registerConfigurationListener(new AspectJAdviceConfigurationListener());
-		registerConfigurationListener(new ConversationScopedConfigurationListener());
 	}
 
 	public void registerConfigurationListener(ConfigurationListener listener) {

@@ -31,7 +31,6 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.DependencyCheck;
 import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.Meta;
-import org.springframework.config.java.annotation.Scope;
 import org.springframework.config.java.listener.ConfigurationListener;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.util.ClassUtils;
@@ -156,7 +155,7 @@ public abstract class ProcessUtils {
 			RootBeanDefinition rbd, ConfigurableListableBeanFactory beanFactory) {
 
 		// singleton/scope
-		rbd.setSingleton(beanAnnotation.scope() == Scope.SINGLETON);
+		rbd.setScope(beanAnnotation.scope());
 
 		// depends-on
 		rbd.setDependsOn(beanAnnotation.dependsOn());

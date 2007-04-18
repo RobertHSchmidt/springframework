@@ -37,17 +37,18 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.beans.factory.annotation.Autowire;
+import org.springframework.beans.factory.config.Scope;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Lazy;
-import org.springframework.config.java.annotation.Scope;
 import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.config.java.template.ConfigurationSupport;
+import org.springframework.config.java.util.DefaultScopes;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -58,16 +59,16 @@ import org.springframework.context.support.GenericApplicationContext;
  * @author Rod Johnson
  */
 public class ConfigurationProcessorTests extends TestCase {
-	
+
 	private ConfigurationListenerRegistry clr = new DefaultConfigurationListenerRegistry();
 
 	public void testSimple() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 
 		configurationProcessor.processClass(BaseConfiguration.class);
 		assertTrue(bf.containsBean(BaseConfiguration.class.getName()));
-		
+
 		ITestBean tb = (ITestBean) bf.getBean("tom");
 		assertEquals("tom", tb.getName());
 		assertEquals("becky", tb.getSpouse().getName());
@@ -75,59 +76,59 @@ public class ConfigurationProcessorTests extends TestCase {
 		ITestBean factorysBecky = (ITestBean) bf.getBean("becky");
 		assertSame(tomsBecky, factorysBecky);
 	}
-	
+
 	public void testBeanNameAware() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 
 		configurationProcessor.processClass(BaseConfiguration.class);
 		assertTrue(bf.containsBean(BaseConfiguration.class.getName()));
-		
+
 		TestBean tom = (TestBean) bf.getBean("tom");
 		assertEquals("tom", tom.getName());
 		assertEquals("tom", tom.getBeanName());
 	}
-	
+
 	public void testMethodOverrideWithJava() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 
 		configurationProcessor.processClass(MethodOverrideConfiguration.class);
 		assertTrue(bf.containsBean(MethodOverrideConfiguration.class.getName()));
-		
+
 		TestBean tom = (TestBean) bf.getBean("tom");
 		assertEquals("overridden", tom.getName());
 	}
-	
+
 	public void testAfterPropertiesSetInvokedBeforeExplicitWiring() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 
 		configurationProcessor.processClass(AfterPropertiesConfiguration.class);
-	
+
 		// This is enough to run the test
 		TestBean test = (TestBean) bf.getBean("test");
 	}
-	
+
 	public void testBeanFactoryAware() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 
 		configurationProcessor.processClass(BaseConfiguration.class);
 		assertTrue(bf.containsBean(BaseConfiguration.class.getName()));
-		
+
 		TestBean becky = (TestBean) bf.getBean("becky");
 		assertEquals("becky", becky.getName());
 		assertSame(bf, becky.getBeanFactory());
 	}
-	
+
 	public void testHidden() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 
 		configurationProcessor.processClass(BaseConfiguration.class);
 		assertTrue(bf.containsBean(BaseConfiguration.class.getName()));
-		
+
 		ITestBean dependsOnHidden = (ITestBean) bf.getBean("dependsOnHidden");
 		ITestBean hidden = dependsOnHidden.getSpouse();
 		assertFalse(bf.containsBean("hidden"));
@@ -137,15 +138,14 @@ public class ConfigurationProcessorTests extends TestCase {
 		ITestBean factorysBecky = (ITestBean) bf.getBean("becky");
 		assertSame(hiddenBecky, factorysBecky);
 	}
-	
-	
+
 	public void testAutowireOnBeanDefinition() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 		configurationProcessor.processClass(AspectJConfigurationProcessorTests.SingletonCountingAdvice.class);
-		
+
 		System.out.println("beans " + Arrays.toString(bf.getBeanDefinitionNames()));
-		Object dotb  = bf.getBean("dotb");
+		Object dotb = bf.getBean("dotb");
 		System.out.println(dotb);
 		DependsOnTestBean dotb1 = (DependsOnTestBean) bf.getBean("dotb");
 		DependsOnTestBean dotb2 = (DependsOnTestBean) bf.getBean("dotb");
@@ -153,22 +153,22 @@ public class ConfigurationProcessorTests extends TestCase {
 		assertSame(dotb1.getTestBean(), dotb2.getTestBean());
 		assertNotNull("Autowire works", dotb1.getTestBean());
 	}
-	
+
 	public void testAutowireOnProxiedBeanDefinition() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 		configurationProcessor.processClass(ProxiesDotb.class);
-		
+
 		ProxiesDotb.count = 0;
 		TestBean adrian = (TestBean) bf.getBean("adrian");
 		DependsOnTestBean sarah = (DependsOnTestBean) bf.getBean("sarah");
 		assertTrue(AopUtils.isAopProxy(sarah));
 		assertTrue(AopUtils.isCglibProxy(sarah));
 		assertNotNull("Autowire works", sarah.getTestBean());
-		
+
 		assertEquals(1, ProxiesDotb.count);
 	}
-	
+
 	public void testInvalidFinalConfigurationClass() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
@@ -180,7 +180,7 @@ public class ConfigurationProcessorTests extends TestCase {
 			// Ok
 		}
 	}
-	
+
 	public void testInvalidDueToFinalBeanMethod() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
@@ -192,7 +192,7 @@ public class ConfigurationProcessorTests extends TestCase {
 			// Ok
 		}
 	}
-	
+
 	public void testInvalidDueToFinalBeanClass() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
@@ -207,7 +207,7 @@ public class ConfigurationProcessorTests extends TestCase {
 			// Ok
 		}
 	}
-	
+
 	public void testValidWithDynamicProxy() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
@@ -215,19 +215,19 @@ public class ConfigurationProcessorTests extends TestCase {
 		ITestBean tb = (ITestBean) bf.getBean("test");
 		assertTrue(AopUtils.isJdkDynamicProxy(tb));
 	}
-	
+
 	public void testApplicationContextAwareCallbackWithGenericApplicationContext() {
 		doTestApplicationContextAwareCallback(new GenericApplicationContext());
 	}
-	
+
 	private void doTestApplicationContextAwareCallback(AbstractApplicationContext bf) {
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 		configurationProcessor.processClass(ApplicationContextAwareConfiguration.class);
 		bf.refresh();
 		ApplicationContextAwareImpl acai = (ApplicationContextAwareImpl) bf.getBean("ai");
 		assertNotNull("ApplicationContextAware callback must be honoured", acai.applicationContext);
 	}
-	
+
 	@Configuration
 	public static class ApplicationContextAwareConfiguration {
 		@Bean
@@ -235,58 +235,57 @@ public class ConfigurationProcessorTests extends TestCase {
 			return new ApplicationContextAwareImpl();
 		}
 	}
-	
+
 	public static class ApplicationContextAwareImpl implements ApplicationContextAware {
 		public ApplicationContext applicationContext;
+
 		public void setApplicationContext(ApplicationContext ac) {
 			this.applicationContext = ac;
 		}
 	}
-	
-	
+
 	// TODO test override in XML: possible
 	// TODO conflict in Java config: illegal
-	
+
 	// TODO multiple advice on the one method
-	
+
 	// TODO deep getBeans
-	
+
 	// TODO circular get beans
-	
-	
+
 	public void testDefaultAutowire() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 		configurationProcessor.processClass(DefaultAutowireConfiguration.class);
-		
+
 		DependsOnTestBean sarah = (DependsOnTestBean) bf.getBean("sarah");
 		assertEquals("adrian", sarah.getTestBean().getName());
 	}
-	
+
 	public void testFactoryBean() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 		configurationProcessor.processClass(ContainsFactoryBean.class);
-		
+
 		assertTrue("Factory bean must return created type", bf.getBean("factoryBean") instanceof TestBean);
 	}
-	
+
 	public void testNewAnnotationNotRequiredOnConcreteMethod() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 		configurationProcessor.processClass(InheritsWithoutNewAnnotation.class);
-		
+
 		TestBean tom = (TestBean) bf.getBean("tom");
 		TestBean becky = (TestBean) bf.getBean("becky");
 		assertSame(tom, becky.getSpouse());
 		assertSame(becky, bf.getBean("becky"));
 	}
-	
+
 	public void testProgrammaticProxyCreation() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 		configurationProcessor.processClass(ProxyConfiguration.class);
-		
+
 		ITestBean proxy = (ITestBean) bf.getBean("proxied");
 		assertSame(proxy, bf.getBean("proxied"));
 		ProxyConfiguration.count = 0;
@@ -296,12 +295,12 @@ public class ConfigurationProcessorTests extends TestCase {
 		assertEquals(name, proxy.getName());
 		assertEquals(2, ProxyConfiguration.count);
 	}
-	
+
 	public void testBeanAliases() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 		configurationProcessor.processClass(AliasesConfiguration.class);
-		
+
 		ITestBean alias = (ITestBean) bf.getBean("aliased");
 		assertEquals("Legion", alias.getName());
 		assertSame(alias, bf.getBean("aliased"));
@@ -310,110 +309,116 @@ public class ConfigurationProcessorTests extends TestCase {
 		assertSame(alias, bf.getBean("harry"));
 		assertFalse(bf.containsBean("Glen"));
 	}
-	
-//	public void testConversationalScopeAgainstClass() {
-//		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-//		
-//		// We need a scope map definition for this to work
-//		HashMapScopeMap scopeMap = new HashMapScopeMap();
-//		bf.registerSingleton(ConversationScopedConfigurationListener.SCOPE_MAP_BEAN_NAME, scopeMap);
-//		
-//		MapScopeIdentiferResolver sir = new MapScopeIdentiferResolver();
-//		bf.registerSingleton(ConversationScopedConfigurationListener.SCOPE_IDENTIFIER_RESOLVER_BEAN_NAME, sir);
-//		
-//		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf); 
-//		configurationProcessor.process(ScopedConfigurationWithClass.class);
-//		
-//		Object obj = bf.getBean("conversationalTestBean");
-//		
-//		// Not possible, as only parent factory is visible
-//		//assertEquals("Only one testBean", 1, bf.getBeansOfType(TestBean.class).size());
-//		
-//		TestBean conversational = (TestBean) obj;
-//		
-//		//assertFalse(AopUtils.isCglibProxy(conversational));
-//		assertTrue(AopUtils.isAopProxy(conversational));
-//		System.out.println(((Advised) conversational).toProxyConfigString());
-//		assertEquals("conversational", conversational.getName());
-//		Advised adv = (Advised) conversational;
-//		assertTrue(adv.getTargetSource() instanceof ScopedTargetSource);
-//		
-//		// TODO actually try the sucker and see if it scopes
-//		//fail();
-//	}
-	
-//	public void testConversationalScopeAgainstInterface() {
-//		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-//		
-//		// We need a scope map definition for this to work
-//		HashMapScopeMap scopeMap = new HashMapScopeMap();
-//		bf.registerSingleton(ConversationScopedConfigurationListener.SCOPE_MAP_BEAN_NAME, scopeMap);
-//		
-//		MapScopeIdentiferResolver sir = new MapScopeIdentiferResolver();
-//		bf.registerSingleton(ConversationScopedConfigurationListener.SCOPE_IDENTIFIER_RESOLVER_BEAN_NAME, sir);
-//		
-//		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf); 
-//		configurationProcessor.process(ScopedConfigurationWithInterface.class);
-//		
-//		Object obj = bf.getBean("conversationalTestBean");
-//		
-//		//assertEquals("Only one testBean", 1, bf.getBeansOfType(ITestBean.class).size());
-//		
-//		assertTrue(obj instanceof Advised);
-//		System.out.println(((Advised) obj).toProxyConfigString());
-//		
-//		ITestBean conversational = (ITestBean) obj;
-//		
-//		assertFalse(AopUtils.isCglibProxy(conversational));
-//		assertTrue(AopUtils.isAopProxy(conversational));
-//		System.out.println(((Advised) conversational).toProxyConfigString());
-//		assertEquals("conversational", conversational.getName());
-//		Advised adv = (Advised) conversational;
-//		assertTrue(adv.getTargetSource() instanceof ScopedTargetSource);
-//		
-//		// TODO actually try the sucker
-//		//fail();
-//	}
-	
+
+	// public void testConversationalScopeAgainstClass() {
+	// DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+	//		
+	// // We need a scope map definition for this to work
+	// HashMapScopeMap scopeMap = new HashMapScopeMap();
+	// bf.registerSingleton(ConversationScopedConfigurationListener.SCOPE_MAP_BEAN_NAME,
+	// scopeMap);
+	//		
+	// MapScopeIdentiferResolver sir = new MapScopeIdentiferResolver();
+	// bf.registerSingleton(ConversationScopedConfigurationListener.SCOPE_IDENTIFIER_RESOLVER_BEAN_NAME,
+	// sir);
+	//		
+	// ConfigurationProcessor configurationProcessor = new
+	// ConfigurationProcessor(bf);
+	// configurationProcessor.process(ScopedConfigurationWithClass.class);
+	//		
+	// Object obj = bf.getBean("conversationalTestBean");
+	//		
+	// // Not possible, as only parent factory is visible
+	// //assertEquals("Only one testBean", 1,
+	// bf.getBeansOfType(TestBean.class).size());
+	//		
+	// TestBean conversational = (TestBean) obj;
+	//		
+	// //assertFalse(AopUtils.isCglibProxy(conversational));
+	// assertTrue(AopUtils.isAopProxy(conversational));
+	// System.out.println(((Advised) conversational).toProxyConfigString());
+	// assertEquals("conversational", conversational.getName());
+	// Advised adv = (Advised) conversational;
+	// assertTrue(adv.getTargetSource() instanceof ScopedTargetSource);
+	//		
+	// // TODO actually try the sucker and see if it scopes
+	// //fail();
+	// }
+
+	// public void testConversationalScopeAgainstInterface() {
+	// DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+	//		
+	// // We need a scope map definition for this to work
+	// HashMapScopeMap scopeMap = new HashMapScopeMap();
+	// bf.registerSingleton(ConversationScopedConfigurationListener.SCOPE_MAP_BEAN_NAME,
+	// scopeMap);
+	//		
+	// MapScopeIdentiferResolver sir = new MapScopeIdentiferResolver();
+	// bf.registerSingleton(ConversationScopedConfigurationListener.SCOPE_IDENTIFIER_RESOLVER_BEAN_NAME,
+	// sir);
+	//		
+	// ConfigurationProcessor configurationProcessor = new
+	// ConfigurationProcessor(bf);
+	// configurationProcessor.process(ScopedConfigurationWithInterface.class);
+	//		
+	// Object obj = bf.getBean("conversationalTestBean");
+	//		
+	// //assertEquals("Only one testBean", 1,
+	// bf.getBeansOfType(ITestBean.class).size());
+	//		
+	// assertTrue(obj instanceof Advised);
+	// System.out.println(((Advised) obj).toProxyConfigString());
+	//		
+	// ITestBean conversational = (ITestBean) obj;
+	//		
+	// assertFalse(AopUtils.isCglibProxy(conversational));
+	// assertTrue(AopUtils.isAopProxy(conversational));
+	// System.out.println(((Advised) conversational).toProxyConfigString());
+	// assertEquals("conversational", conversational.getName());
+	// Advised adv = (Advised) conversational;
+	// assertTrue(adv.getTargetSource() instanceof ScopedTargetSource);
+	//		
+	// // TODO actually try the sucker
+	// //fail();
+	// }
+
 	public void testHotSwappable() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 		configurationProcessor.processClass(HotSwapConfiguration.class);
-		
+
 		TestBean hs = (TestBean) bf.getBean("hotSwappable");
 		assertTrue(AopUtils.isCglibProxy(hs));
 		assertEquals("hotSwappable", hs.getName());
 		Advised adv = (Advised) hs;
 		assertTrue(adv.getTargetSource() instanceof HotSwappableTargetSource);
-		
+
 		ITestBean ihs = (ITestBean) bf.getBean("hotSwappableInterface");
 		assertFalse(ihs instanceof TestBean);
 		assertTrue(AopUtils.isAopProxy(ihs));
-		assertTrue("Should not proxy target class if return type is an interface", 
-				AopUtils.isJdkDynamicProxy(ihs));
+		assertTrue("Should not proxy target class if return type is an interface", AopUtils.isJdkDynamicProxy(ihs));
 		assertEquals("hotSwappableInterface", ihs.getName());
 		adv = (Advised) ihs;
 		assertTrue(adv.getTargetSource() instanceof HotSwappableTargetSource);
 	}
-	
+
 	public void testBeanFactoryAwareConfiguration() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		TestBean spouse = new TestBean();
 		bf.registerSingleton("spouse", spouse);
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 		configurationProcessor.processClass(BeanFactoryAwareConfiguration.class);
-		
+
 		ITestBean marriedToInjection = (ITestBean) bf.getBean("marriedToInjection");
 		assertSame(spouse, marriedToInjection.getSpouse());
 	}
-	
-	
+
 	public static class BaseConfiguration {
-		
-//		@Bean
-//		private TestBean field;
-		
-		@Bean(scope= Scope.SINGLETON, lazy = Lazy.FALSE)
+
+		// @Bean
+		// private TestBean field;
+
+		@Bean(scope = DefaultScopes.SINGLETON, lazy = Lazy.FALSE)
 		public TestBean tom() {
 			TestBean tom = basePerson();
 			tom.setName("tom");
@@ -421,12 +426,12 @@ public class ConfigurationProcessorTests extends TestCase {
 			return tom;
 		}
 
-		@Bean(scope = Scope.PROTOTYPE)
+		@Bean(scope = DefaultScopes.PROTOTYPE)
 		public Point prototypePoint() {
 			return new Point(3, 4);
 		}
 
-		@Bean(scope = Scope.PROTOTYPE, lazy = Lazy.FALSE)
+		@Bean(scope = DefaultScopes.PROTOTYPE, lazy = Lazy.FALSE)
 		public TestBean prototype() {
 			TestBean tom = basePerson();
 			tom.setName("prototype");
@@ -445,7 +450,7 @@ public class ConfigurationProcessorTests extends TestCase {
 			becky.setName("becky");
 			return becky;
 		}
-		
+
 		@Bean()
 		protected TestBean hidden() {
 			TestBean hidden = new TestBean();
@@ -453,15 +458,15 @@ public class ConfigurationProcessorTests extends TestCase {
 			hidden.setSpouse(becky());
 			return hidden;
 		}
-		
-		@Bean 
+
+		@Bean
 		public TestBean dependsOnHidden() {
 			TestBean t = new TestBean();
 			t.setSpouse(hidden());
 			return t;
 		}
 	}
-	
+
 	public static class MethodOverrideConfiguration extends BaseConfiguration {
 		@Override
 		public TestBean tom() {
@@ -472,11 +477,11 @@ public class ConfigurationProcessorTests extends TestCase {
 			};
 		}
 	}
-	
+
 	public static class ProxyConfiguration {
-	
+
 		public static int count;
-		
+
 		@Bean
 		public ITestBean proxied() {
 			TestBean tb = new TestBean();
@@ -490,30 +495,29 @@ public class ConfigurationProcessorTests extends TestCase {
 		}
 	}
 
-	
 	public static class BeanFactoryAwareConfiguration extends ConfigurationSupport {
-		
-		@Bean 
+
+		@Bean
 		public TestBean marriedToInjection() {
 			TestBean tb = new TestBean();
 			tb.setSpouse((TestBean) getBeanFactory().getBean("spouse"));
 			return tb;
 		}
-		
+
 	}
-	
+
 	public static class AliasesConfiguration extends ConfigurationSupport {
-		
-		@Bean(aliases = { "tom", "dick", "harry" } )
+
+		@Bean(aliases = { "tom", "dick", "harry" })
 		public TestBean aliased() {
 			TestBean tb = new TestBean();
 			tb.setName("Legion");
 			return tb;
 		}
 	}
-	
+
 	public static class HotSwapConfiguration extends ConfigurationSupport {
-			
+
 		@Bean
 		@HotSwappable
 		public TestBean hotSwappable() {
@@ -521,7 +525,7 @@ public class ConfigurationProcessorTests extends TestCase {
 			tb.setName("hotSwappable");
 			return tb;
 		}
-		
+
 		@Bean
 		@HotSwappable
 		public ITestBean hotSwappableInterface() {
@@ -530,100 +534,79 @@ public class ConfigurationProcessorTests extends TestCase {
 			return tb;
 		}
 	}
-	
-	public static class ScopedConfigurationWithClass extends ConfigurationSupport {
-		
-		@Bean(scope = Scope.CONVERSATIONAL)
-		public TestBean conversationalTestBean() {
-			TestBean tb = new TestBean();
-			tb.setName("conversational");
-			return tb;
-		}
-	}
-	
-	public static class ScopedConfigurationWithInterface extends ConfigurationSupport {
-		
-		@Bean(scope = Scope.CONVERSATIONAL)
-		public ITestBean conversationalTestBean() {
-			TestBean tb = new TestBean();
-			tb.setName("conversational");
-			return tb;
-		}
-	}
 
-	
+
 	public static abstract class DefinesAbstractBeanMethod {
-		
+
 		@Bean
 		public TestBean becky() {
 			TestBean becky = new TestBean();
 			becky.setSpouse(tom());
 			return becky;
 		}
-	
+
 		@Bean
 		public abstract TestBean tom();
 	}
-	
+
 	public static class InheritsWithoutNewAnnotation extends DefinesAbstractBeanMethod {
 
 		public TestBean tom() {
 			return new TestBean();
 		}
 	}
-	
+
 	// TODO default lazy and other lazy
-	
+
 	@Configuration(defaultAutowire = Autowire.BY_TYPE)
 	public static class DefaultAutowireConfiguration {
-		@Bean 
+		@Bean
 		public TestBean adrian() {
 			return new TestBean("adrian", 34);
 		}
-		
+
 		@Bean
 		public DependsOnTestBean sarah() {
 			DependsOnTestBean sarah = new DependsOnTestBean();
-			//sarah.setTestBean(adrian());
+			// sarah.setTestBean(adrian());
 			return sarah;
 		}
 	}
-	
-	
+
 	@Configuration
 	@Aspect
 	public static class ProxiesDotb {
-		
+
 		public static int count = 0;
-		
-		@Bean 
+
+		@Bean
 		public TestBean adrian() {
 			return new TestBean("adrian", 34);
 		}
-		
-		@Bean(autowire=Autowire.BY_TYPE)
+
+		@Bean(autowire = Autowire.BY_TYPE)
 		public DependsOnTestBean sarah() {
 			DependsOnTestBean sarah = new DependsOnTestBean();
-			//sarah.setTestBean(adrian());
+			// sarah.setTestBean(adrian());
 			return sarah;
 		}
-		
+
 		@Before("execution(* getTestBean())")
 		public void println() {
 			++count;
 		}
-		
+
 	}
-	
-	@Configuration 
+
+	@Configuration
 	public static class AfterPropertiesConfiguration {
-		//@Bean(dependsOn="apt")
+		// @Bean(dependsOn="apt")
 		@Bean
 		public TestBean test() {
 			assertEquals("AfterPropertiesSet must have been called by now", 5, apt().sum());
 			return new TestBean();
 		}
-		
+
 		@Bean()
 		public AfterPropertiesTest apt() {
 			AfterPropertiesTest apt = new AfterPropertiesTest();
@@ -632,27 +615,27 @@ public class ConfigurationProcessorTests extends TestCase {
 			return apt;
 		}
 	}
-	
-	
+
 	public static class AfterPropertiesTest implements InitializingBean {
 		private int a, b, sum;
+
 		public void setA(int a) {
 			this.a = a;
 		}
-		
+
 		public void setB(int b) {
 			this.b = b;
 		}
-		
+
 		public void afterPropertiesSet() throws Exception {
 			sum = a + b;
 		}
-		
+
 		public int sum() {
 			return sum;
 		}
 	}
-	
+
 	@Configuration
 	public static class ContainsFactoryBean {
 		@Bean
@@ -660,7 +643,7 @@ public class ConfigurationProcessorTests extends TestCase {
 			return new DummyFactory();
 		}
 	}
-	
+
 	@Configuration
 	public final static class InvalidFinalConfigurationClass {
 		@Bean
@@ -668,7 +651,7 @@ public class ConfigurationProcessorTests extends TestCase {
 			return new DummyFactory();
 		}
 	}
-	
+
 	@Configuration
 	public static class InvalidDueToFinalBeanMethod {
 		@Bean
@@ -676,60 +659,60 @@ public class ConfigurationProcessorTests extends TestCase {
 			return new DummyFactory();
 		}
 	}
-	
+
 	private final static class FinalTestBean extends TestBean {
 	}
-	
+
 	@Configuration
 	@Aspect
 	public static class InvalidDueToFinalBeanClass {
 		@Before("execution(* get*())")
 		public void empty() {
 		}
-		
+
 		@Bean
 		public FinalTestBean test() {
 			return new FinalTestBean();
 		}
 	}
-	
+
 	@Configuration
 	@Aspect
 	public static class ValidWithDynamicProxies {
 		@Before("execution(* get*())")
-		public void empty() {	
+		public void empty() {
 		}
-		
+
 		@Bean
 		public ITestBean test() {
 			return new FinalTestBean();
 		}
 	}
-	
+
 	public void testEffectOfHidingOnAutowire() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 		configurationProcessor.processClass(AutowiringConfiguration.class);
-		
+
 		assertFalse(bf.containsBean("testBean"));
 		DependsOnTestBean dotb = (DependsOnTestBean) bf.getBean("autowireCandidate");
 		assertNull("Should NOT have autowired with hidden bean", dotb.tb);
 	}
-	
+
 	public void testHiddenBeansDoNotConfuseAutowireByType() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 		configurationProcessor.processClass(AutowiringConfigurationWithNonHiddenWinner.class);
-		
+
 		assertFalse(bf.containsBean("testBean"));
 		DependsOnTestBean dotb = (DependsOnTestBean) bf.getBean("autowireCandidate");
 		assertNotNull("Autowire worked", dotb.tb);
 		assertEquals("Autowire winner must be visible", "visible", dotb.tb.getName());
 	}
-	
+
 	public void testAutowireAmbiguityIsRejected() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 		try {
 			configurationProcessor.processClass(InvalidAutowiringConfigurationWithAmbiguity.class);
 			bf.getBean("autowireCandidate");
@@ -739,64 +722,64 @@ public class ConfigurationProcessorTests extends TestCase {
 			assertFalse("Useful error message required", ex.getMessage().indexOf("autowireCandidate") == -1);
 		}
 	}
-	
-	
+
 	@Configuration
 	public static class AutowiringConfiguration {
-		@Bean() 
+		@Bean()
 		protected TestBean testBean() {
 			return new TestBean();
 		}
-		
-		@Bean(autowire=Autowire.BY_TYPE)
+
+		@Bean(autowire = Autowire.BY_TYPE)
 		public DependsOnTestBean autowireCandidate() {
 			return new DependsOnTestBean();
 		}
 	}
-	
+
 	@Configuration
 	public static class AutowiringConfigurationWithNonHiddenWinner {
 		@Bean
 		protected TestBean testBean() {
 			return new TestBean();
 		}
-		
-		@Bean 
+
+		@Bean
 		public TestBean nonHiddenTestBean() {
 			TestBean tb = new TestBean();
 			tb.setName("visible");
 			return tb;
 		}
-		
-		@Bean(autowire=Autowire.BY_TYPE)
+
+		@Bean(autowire = Autowire.BY_TYPE)
 		public DependsOnTestBean autowireCandidate() {
 			return new DependsOnTestBean();
 		}
 	}
-	
+
 	@Configuration
 	public static class InvalidAutowiringConfigurationWithAmbiguity {
 		@Bean
 		public TestBean testBean() {
 			return new TestBean();
 		}
-		
-		@Bean 
+
+		@Bean
 		public TestBean nonHiddenTestBean() {
 			TestBean tb = new TestBean();
 			tb.setName("visible");
 			return tb;
 		}
-		
-		@Bean(autowire=Autowire.BY_TYPE)
+
+		@Bean(autowire = Autowire.BY_TYPE)
 		public DependsOnTestBean autowireCandidate() {
 			return new DependsOnTestBean();
 		}
-	}	
-	
+	}
+
 	@Configuration
 	public static class BeanCreationMethodsThrowExceptions {
 		public static boolean makeItFail;
+
 		@Bean
 		public TestBean throwsException() throws Exception {
 			if (makeItFail) {
@@ -804,16 +787,16 @@ public class ConfigurationProcessorTests extends TestCase {
 			}
 			return new TestBean();
 		}
-		
-		@Bean 
+
+		@Bean
 		public TestBean throwsThrowable() throws Throwable {
 			if (makeItFail) {
 				throw new Throwable();
 			}
 			return new TestBean();
 		}
-		
-		@Bean 
+
+		@Bean
 		public TestBean throwsOtherCheckedException() throws InterruptedException {
 			if (makeItFail) {
 				throw new InterruptedException();
@@ -821,7 +804,7 @@ public class ConfigurationProcessorTests extends TestCase {
 			return new TestBean();
 		}
 	}
-	
+
 	public void testBeanCreationMethodsThatMayThrowExceptions() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
@@ -831,7 +814,7 @@ public class ConfigurationProcessorTests extends TestCase {
 		assertNotNull(bf.getBean("throwsThrowable"));
 		assertNotNull(bf.getBean("throwsOtherCheckedException"));
 	}
-	
+
 	public void testBeanCreationMethodsThatDoThrowExceptions() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
@@ -845,8 +828,7 @@ public class ConfigurationProcessorTests extends TestCase {
 			// TODO what to check
 		}
 	}
-	
-	
+
 	@Configuration
 	public static class BeanCreationMethodReturnsNull {
 		@Bean
@@ -854,7 +836,7 @@ public class ConfigurationProcessorTests extends TestCase {
 			return null;
 		}
 	}
-	
+
 	public void testBeanCreationMethodReturnsNull() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
@@ -867,14 +849,14 @@ public class ConfigurationProcessorTests extends TestCase {
 			// TODO what to check
 		}
 	}
-	
+
 	@Configuration
 	public static class BeanCreationMethodReturnsVoid {
 		@Bean
 		public void invalidReturnsVoid() {
 		}
 	}
-	
+
 	public void testBeanCreationMethodCannotHaveVoidReturn() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
@@ -886,8 +868,7 @@ public class ConfigurationProcessorTests extends TestCase {
 			// TODO what to check
 		}
 	}
-	
-	
+
 	@Aspect
 	@Configuration
 	public static class AdvisedAutowiring {
@@ -895,22 +876,22 @@ public class ConfigurationProcessorTests extends TestCase {
 		public Husband husband() {
 			return new HusbandImpl();
 		}
-		
+
 		@Bean
 		public Wife wife() {
 			return new Wife();
 		}
-		
+
 		@Before("execution(* getWife())")
 		protected void log() {
 			System.out.println();
 		}
 	}
-	
+
 	public static interface Husband {
 		Wife getWife();
 	}
-	
+
 	public static class HusbandImpl implements Husband {
 		private Wife wife;
 
@@ -922,48 +903,47 @@ public class ConfigurationProcessorTests extends TestCase {
 			this.wife = wife;
 		}
 	}
-	
+
 	public static class Wife {
 	}
 
-	
 	public void testAutowiringOnProxiedBean() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 		configurationProcessor.processClass(AdvisedAutowiring.class);
 		Husband husband = (Husband) bf.getBean("husband");
 		assertTrue(AopUtils.isAopProxy(husband));
 		assertNotNull("Advised object should have still been autowired", husband.getWife());
 	}
-	
-	
+
 	public abstract static class ValidAutoBeanTest extends ConfigurationSupport {
 		@Bean
 		public TestBean rod() {
 			TestBean rod = new TestBean();
 			rod.setName("Rod");
-			//rod.setSpouse(kerry());
+			// rod.setSpouse(kerry());
 			return rod;
 		}
-		
-		@AutoBean public abstract TestBean kerry();
+
+		@AutoBean
+		public abstract TestBean kerry();
 	}
-	
+
 	public void testValidAutoBean() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
 		configurationProcessor.processClass(ValidAutoBeanTest.class);
-		
+
 		TestBean kerry = (TestBean) bf.getBean("kerry");
 		assertEquals("AutoBean was autowired", "Rod", kerry.getSpouse().getName());
-		
+
 		// TODO will not work due to ordering: document?
 		// An @Bean can't always depend on an autobean
-//		TestBean rod = (TestBean) bf.getBean("rod");
-//		assertNotNull(rod.getSpouse());
-//		assertSame(rod, rod.getSpouse().getSpouse());
+		// TestBean rod = (TestBean) bf.getBean("rod");
+		// assertNotNull(rod.getSpouse());
+		// assertSame(rod, rod.getSpouse().getSpouse());
 	}
-	
+
 	public abstract static class InvalidAutoBeanTest extends ConfigurationSupport {
 		@Bean
 		public TestBean rod() {
@@ -971,11 +951,12 @@ public class ConfigurationProcessorTests extends TestCase {
 			rod.setSpouse(kerry());
 			return rod;
 		}
-		
+
 		// Invalid, as it's on an interface type
-		@AutoBean public abstract ITestBean kerry();
+		@AutoBean
+		public abstract ITestBean kerry();
 	}
-	
+
 	public void testInvalidAutoBean() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
@@ -984,29 +965,30 @@ public class ConfigurationProcessorTests extends TestCase {
 			fail();
 		}
 		catch (BeanDefinitionStoreException ex) {
-			
+
 		}
 	}
-	
+
 	public static class RequiresProperty extends ConfigurationSupport {
 		@Bean
 		public TestBean costin() {
 			TestBean costin = new TestBean();
 			costin.getName();
-			//costin.setName(getString("costin.name"));
+			// costin.setName(getString("costin.name"));
 			ITestBean uninterestingBeanThatWillNotBeReturned = new TestBean();
 			uninterestingBeanThatWillNotBeReturned.getName();
 			return costin;
 		}
 	}
-	
-	
-	// Property population, no longer used 
-//	public void testStringPropertyIsLoaded() {
-//		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-//		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
-//		configurationProcessor.process(RequiresProperty.class);
-//		TestBean costin = (TestBean) bf.getBean("costin");
-//		assertEquals("Name was populated from properties file", "costin", costin.getName());
-//	}
+
+	// Property population, no longer used
+	// public void testStringPropertyIsLoaded() {
+	// DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+	// ConfigurationProcessor configurationProcessor = new
+	// ConfigurationProcessor(bf, clr);
+	// configurationProcessor.process(RequiresProperty.class);
+	// TestBean costin = (TestBean) bf.getBean("costin");
+	// assertEquals("Name was populated from properties file", "costin",
+	// costin.getName());
+	// }
 }
