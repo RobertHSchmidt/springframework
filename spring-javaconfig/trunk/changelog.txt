@@ -13,12 +13,20 @@ General
 Package org.springframework.config.java.annotation
 * annotation @ExternalBean added to allow injection of an already defined bean
 * @Bean can forbid the overriding of the resulting bean by other bean definitions. Default is true.
+* @Bean.scope property was changed from the Scope enum (which was removed) to a String to allow custom scopes.
 
 Package org.springframework.config.java.naming
 * the method -> bean name translation is pluggable and used through out the code. 
 
 Package org.springframework.config.java.process
 * @Bean.metadata is translated into BeanDefinition attribute
+
+Package org.springframework.config.java.support.cglib
+* the cglib code has been improved, only one instance callback being used per processor.
+
+Package org.springframework.config.java.util
+* added new package with two new utility classes: one for pasing the other for specifying Spring 2.0 default 
+ scopes
 
 Changes in version 1.0-M1 (2006-11-28)
 --------------------------------------

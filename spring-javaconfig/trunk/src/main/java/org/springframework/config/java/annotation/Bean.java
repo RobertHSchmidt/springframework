@@ -22,6 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.beans.factory.annotation.Autowire;
+import org.springframework.beans.factory.config.BeanDefinition;
 
 /**
  * Annotation to be applied to methods that create beans in a Spring context.
@@ -72,17 +73,17 @@ import org.springframework.beans.factory.annotation.Autowire;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Bean {
-	
+
 	/**
 	 * Bean aliases.
 	 */
 	String[] aliases() default {};
 
 	/**
-	 * Scope: whether the bean is a singleton, prototype or conversational,
-	 * managed scope.
+	 * Scope: whether the bean is a singleton, prototype or custom scope.
+	 * Default is singleton.
 	 */
-	Scope scope() default Scope.SINGLETON;
+	String scope() default BeanDefinition.SCOPE_SINGLETON;
 
 	/**
 	 * Bean autowire strategy.

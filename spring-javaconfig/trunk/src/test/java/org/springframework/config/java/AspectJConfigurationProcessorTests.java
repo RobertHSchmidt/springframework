@@ -34,16 +34,15 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.AopConfigException;
 import org.springframework.beans.DependsOnTestBean;
 import org.springframework.beans.TestBean;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.DependencyCheck;
-import org.springframework.config.java.annotation.Scope;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
+import org.springframework.config.java.util.DefaultScopes;
 
 /**
  * 
@@ -268,7 +267,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 			return (count != null) ? count : 0;
 		}
 
-		@Bean(scope = Scope.PROTOTYPE)
+		@Bean(scope = DefaultScopes.PROTOTYPE)
 		public TestBean advised() {
 			TestBean tb = new TestBean();
 			tb.setName("tony");
