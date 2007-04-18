@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.process.naming;
+package org.springframework.config.java.naming;
 
 import java.lang.reflect.Method;
-
-import org.springframework.config.java.annotation.Configuration;
 
 /**
  * Strategy interface for constructing a bean name from the java method.
@@ -28,11 +26,13 @@ import org.springframework.config.java.annotation.Configuration;
 public interface BeanNamingStrategy {
 
 	/**
-	 * Create the bean name based on the declaring context represented through the given parameters.
+	 * Create the bean name based on the given method. If more contextual
+	 * information is needed, consider using the Method API to get access to it
+	 * or provide hooks inside the implementations.
 	 * 
-	 * @param beanCreationMethod the method which creates the actual bean instance
-	 * @param configuration the global @Configuration annotation for this particular bean (can be null) 
+	 * @param beanCreationMethod the method which creates the actual bean
+	 * instance
 	 * @return the bean name
 	 */
-	String getBeanName(Method beanCreationMethod, Configuration configuration);
+	String getBeanName(Method beanCreationMethod);
 }

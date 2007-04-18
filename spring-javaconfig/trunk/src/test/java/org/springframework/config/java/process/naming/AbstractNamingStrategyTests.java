@@ -17,6 +17,8 @@ package org.springframework.config.java.process.naming;
 
 import java.lang.reflect.Method;
 
+import org.springframework.config.java.naming.BeanNamingStrategy;
+
 import junit.framework.TestCase;
 
 public abstract class AbstractNamingStrategyTests extends TestCase {
@@ -47,7 +49,7 @@ public abstract class AbstractNamingStrategyTests extends TestCase {
 	
 	public void testNullMethod() {
 		try {
-			strategy.getBeanName(null, null);
+			strategy.getBeanName(null);
 			fail("should have thrown exception");
 		}
 		catch (IllegalArgumentException e) {

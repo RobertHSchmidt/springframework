@@ -15,6 +15,7 @@
  */
 package org.springframework.config.java.support;
 
+
 /**
  * Decorate the given configuration class for usage inside Spring application
  * context.
@@ -31,12 +32,10 @@ public interface BytecodeConfigurationEnhancer {
 
 	/**
 	 * Create a new <i>enhanced</i> subclass of the given configuration instance and class.
-	 * 
-	 * 
-	 * @param configurationInstance configuration class instance (optional)
 	 * @param configurationClass configuration class - mandatory
+	 * 
 	 * 
 	 * @return the enhanced class
 	 */
-	<T> Class<? extends T> enhanceConfiguration(T configurationInstance, Class<T> configurationClass);
+	<T> Class<? extends T> enhanceConfiguration(Class<T> configurationClass);
 }

@@ -176,21 +176,21 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		// proxied.getName();
 		proxied.getLocation();
 	}
-	
+
 	public void testAbstractBeanDefinition() throws Exception {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/abstractDef.xml");
-		
+
 		// there should be two, nothing more!
 		assertEquals(2, bf.getBeanDefinitionCount());
 		assertFalse(AbstractConfig.testBeanCreated);
 	}
-	
+
 	@Configuration
 	public static class AbstractConfig {
-		
+
 		public static boolean testBeanCreated = false;
-		
+
 		@Bean
 		public TestBean testBean() {
 			// this should never occur
@@ -535,8 +535,8 @@ public class ConfigurationPostProcessorTests extends TestCase {
 
 		assertTrue(AopUtils.isAopProxy(outerProxy));
 		System.out.println(outerProxy.toProxyConfigString());
-		//Object innerProxy = outerProxy.getTargetSource().getTarget();
-		//System.out.println(innerProxy);
+		// Object innerProxy = outerProxy.getTargetSource().getTarget();
+		// System.out.println(innerProxy);
 		Advised innerProxy = (Advised) outerProxy.getTargetSource().getTarget();
 		assertTrue(bean instanceof AdvisedByConfig);
 		assertTrue(innerProxy instanceof AdvisedByConfig);
@@ -550,48 +550,48 @@ public class ConfigurationPostProcessorTests extends TestCase {
 
 	@Configuration
 	public static class LegalOverrideConfiguration {
-		@Bean 
+		@Bean
 		public TestBean bob() {
 			TestBean bob = new TestBean();
 			bob.setSpouse(ann());
 			return bob;
 		}
-		
-		@Bean(allowOverriding=true)
+
+		@Bean(allowOverriding = true)
 		public TestBean ann() {
 			return new TestBean();
 		}
 	}
-	
+
 	public void testLegalOverride() {
-		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext("org/springframework/config/java/legalOverride.xml");
+		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
+				"org/springframework/config/java/legalOverride.xml");
 		TestBean bob = (TestBean) bf.getBean("bob");
 		assertTrue(bf.containsBean("ann"));
-		assertEquals("Property value must have come from XML override, not @Bean method",
-				"Ann", bob.getSpouse().getName());
+		assertEquals("Property value must have come from XML override, not @Bean method", "Ann",
+			bob.getSpouse().getName());
 	}
-	
+
 	@Configuration
 	public static class IllegalOverrideConfiguration {
-		@Bean 
+		@Bean
 		public TestBean bob() {
 			TestBean bob = new TestBean();
 			bob.setSpouse(ann());
 			return bob;
 		}
-		
+
 		// Does not allow overriding
-		@Bean
+		@Bean(allowOverriding = false)
 		public TestBean ann() {
 			return new TestBean();
 		}
 	}
-	
-	
+
 	public void testIllegalOverride() {
 		try {
 			ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"org/springframework/config/java/illegalOverride.xml");
+					"org/springframework/config/java/illegalOverride.xml");
 			bf.getBean("ann");
 			fail();
 		}
@@ -599,27 +599,26 @@ public class ConfigurationPostProcessorTests extends TestCase {
 			// Ok
 		}
 	}
-	
+
 	@Configuration
 	public static abstract class ExternalBeanConfiguration {
-		@Bean 
+		@Bean
 		public TestBean bob() {
 			TestBean bob = new TestBean();
 			bob.setSpouse(ann());
 			return bob;
 		}
-		
+
 		// Will be taken from XML
 		@ExternalBean
 		public abstract TestBean ann();
 	}
-	
+
 	public void testExternalBean() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"org/springframework/config/java/externalBean.xml");
 		TestBean bob = (TestBean) bf.getBean("bob");
 		assertTrue(bf.containsBean("ann"));
-		assertEquals("External bean must have been satisfied",
-				"Ann", bob.getSpouse().getName());
+		assertEquals("External bean must have been satisfied", "Ann", bob.getSpouse().getName());
 	}
 }

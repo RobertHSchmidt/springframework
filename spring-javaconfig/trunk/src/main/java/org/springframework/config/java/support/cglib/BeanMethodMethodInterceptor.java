@@ -23,6 +23,8 @@ import java.util.Map;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.interceptor.ExposeInvocationInterceptor;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
@@ -33,7 +35,9 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Scope;
 import org.springframework.config.java.listener.ConfigurationListener;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
+import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.support.factory.BeanNameTrackingDefaultListableBeanFactory;
+import org.springframework.config.java.util.ClassUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
@@ -49,19 +53,23 @@ import org.springframework.util.Assert;
  */
 public class BeanMethodMethodInterceptor implements MethodInterceptor {
 
+	private static final Log log = LogFactory.getLog(BeanMethodMethodInterceptor.class);
+
 	private ConfigurableListableBeanFactory owningBeanFactory;
 
 	private BeanNameTrackingDefaultListableBeanFactory childTrackingFactory;
 
 	private ConfigurationListenerRegistry configurationListenerRegistry;
 
-	private Map<Method, Object> singletons = new HashMap<Method, Object>();
-
 	private Object configurationInstance;
+
+	private BeanNamingStrategy namingStrategy;
+
+	private Map<Method, Object> singletons = new HashMap<Method, Object>();
 
 	public BeanMethodMethodInterceptor(ConfigurableListableBeanFactory owningBeanFactory,
 			BeanNameTrackingDefaultListableBeanFactory childFactory,
-			ConfigurationListenerRegistry configurationListenerRegistry, Object configurationInstance) {
+			ConfigurationListenerRegistry configurationListenerRegistry) {
 
 		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
 		Assert.notNull(configurationListenerRegistry, "configurationListenerRegistry is required");
@@ -69,7 +77,18 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 		this.owningBeanFactory = owningBeanFactory;
 		this.childTrackingFactory = childFactory;
 		this.configurationListenerRegistry = configurationListenerRegistry;
-		this.configurationInstance = configurationInstance;
+	}
+
+	private Object invokeOriginal(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
+		if (configurationInstance != null)
+			System.out.println(" configInstance " + configurationInstance.getClass());
+		// call the backing configuration instance if there is any
+		// if (configurationInstance != null)
+		// return mp.invoke(configurationInstance, args);
+
+		// or the configuration created instance otherwise
+		// else
+		return mp.invokeSuper(o, args);
 	}
 
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
@@ -77,7 +96,8 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 		if (ann == null) {
 			// normally this branch will not be invoked since the callback is
 			// already filtered when CGLib was set up.
-			return mp.invokeSuper(o, args);
+
+			return invokeOriginal(o, m, args, mp);
 		}
 		else {
 			return returnWrappedResultMayBeCached(o, m, args, mp, ann.scope() == Scope.SINGLETON);
@@ -87,32 +107,27 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 	private Object returnWrappedResultMayBeCached(Object o, Method m, Object[] args, MethodProxy mp, boolean useCache)
 			throws Throwable {
 
-		if (!useCache) {
-			return wrapResult(o, args, m, mp);
-		}
+		String beanName = namingStrategy.getBeanName(m);
+		boolean inCreation = false;
 
-		// Cache result, for singleton style behaviour,
-		// where the bean creation method always returns the same value
+		Object bean = null;
 		synchronized (o) {
-			Object cached = singletons.get(m);
-			if (cached == null) {
-				cached = wrapResult(o, args, m, mp);
-				singletons.put(m, cached);
+			inCreation = owningBeanFactory.isCurrentlyInCreation(beanName);
+			if (inCreation) {
+				bean = wrapResult(o, args, m, mp);
 			}
-			return cached;
 
-			// FIXME: use owning context singleton map
-			// String singletonName = "" + m.hashCode();
-			//
-			// if (!owningBeanFactory.containsSingleton(singletonName)) {
-			// Object shouldBeCached = wrapResult(o, args, m, mp);
-			// owningBeanFactory.registerSingleton(singletonName,
-			// shouldBeCached);
-			// return shouldBeCached;
-			// }
-			//			
-			// return owningBeanFactory.getSingleton(singletonName);
+			else {
+				bean = childTrackingFactory.getBean(beanName);
+			}
 		}
+
+		if (log.isDebugEnabled())
+			if (inCreation)
+				log.debug(beanName + " currenty in creation, created one");
+			else
+				log.debug(beanName + " not in creation, asked the BF for one");
+		return bean;
 	}
 
 	/**
@@ -128,7 +143,6 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 	 * @return
 	 * @throws Throwable
 	 */
-	// FIXME: add method bean name resulted from naming strategy
 	private Object wrapResult(Object o, Object[] args, Method m, MethodProxy mp) throws Throwable {
 
 		// If we are in our first call to getBean() with this name and were
@@ -140,52 +154,55 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 		// so that calls made within a factory method in otherBean() style
 		// still
 		// get fully configured objects.
+
 		String lastRequestedBeanName = childTrackingFactory.lastRequestedBeanName();
-		if (lastRequestedBeanName != null && !m.getName().equals(lastRequestedBeanName)) {
-			return childTrackingFactory.getBean(m.getName());
+
+		// method -> bean name
+		String beanName = namingStrategy.getBeanName(m);
+
+		// if another bean was requested, bail out
+		if (lastRequestedBeanName != null && !beanName.equals(lastRequestedBeanName)) {
+			return childTrackingFactory.getBean(beanName);
 		}
 
 		try {
+			// first call - start tracking
 			if (lastRequestedBeanName == null) {
 				// Remember the getBean() method we're now executing,
 				// if we were invoked from within the factory method in the
-				// configuration class
-				// rather than through the BeanFactory
-				childTrackingFactory.recordRequestForBeanName(m.getName());
+				// configuration class than through the BeanFactory
+				childTrackingFactory.recordRequestForBeanName(beanName);
 			}
 
-			// Get raw result of @Bean method or get bean from factory if it
-			// is overriden
+			// get a bean instance in case the @Bean was overriden
 			Object originallyCreatedBean = null;
-			BeanDefinition beanDef = owningBeanFactory.getBeanDefinition(m.getName());
+
+			BeanDefinition beanDef = owningBeanFactory.getBeanDefinition(beanName);
+
 			if (beanDef instanceof RootBeanDefinition) {
 				RootBeanDefinition rbdef = (RootBeanDefinition) beanDef;
-				if (rbdef.getFactoryBeanName() == null) {
-					// We have a regular bean definition already in the
-					// factory:
-					// use that instead of the @Bean method
-					originallyCreatedBean = owningBeanFactory.getBean(m.getName());
+				// the definition was overriden (use that one)
+				if (rbdef.getAttribute(ClassUtils.JAVA_CONFIG_PKG) == null) {
+					originallyCreatedBean = owningBeanFactory.getBean(beanName);
 				}
 			}
+
 			if (originallyCreatedBean == null) {
-				if (configurationInstance != null)
-					originallyCreatedBean = mp.invoke(configurationInstance, args);
-				else
-					originallyCreatedBean = mp.invokeSuper(o, args);
+				// nothing was found so
+				originallyCreatedBean = invokeOriginal(o, m, args, mp);
 			}
 
 			if (!configurationListenerRegistry.getConfigurationListeners().isEmpty()) {
 				// We know we have advisors that may affect this object
 				// Prepare to proxy it
-				ProxyFactory pf;
+				ProxyFactory pf = new ProxyFactory(originallyCreatedBean);
+
 				if (shouldProxyBeanCreationMethod(m)) {
-					pf = new ProxyFactory(originallyCreatedBean);
 					pf.setProxyTargetClass(true);
 				}
 				else {
-					pf = new ProxyFactory(new Class[] { m.getReturnType() });
+					pf.setInterfaces(new Class[] { m.getReturnType() });
 					pf.setProxyTargetClass(false);
-					pf.setTarget(originallyCreatedBean);
 				}
 
 				boolean customized = false;
@@ -215,6 +232,7 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 			}
 		}
 		finally {
+			// be sure to clean tracking
 			if (lastRequestedBeanName == null) {
 				childTrackingFactory.pop();
 			}
@@ -222,7 +240,8 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 	}
 
 	/**
-	 * Use CGLIB only if the return type isn't an interface
+	 * Use CGLIB only if the return type isn't an interface or if autowire is
+	 * required (as an interface based proxy excludes the setters).
 	 * 
 	 * @param m
 	 * @param c
@@ -231,7 +250,22 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 	private boolean shouldProxyBeanCreationMethod(Method m) {
 		Bean bean = AnnotationUtils.findAnnotation(m, Bean.class);
 
-		// TODO need to consider autowiring enabled at factory level
+		// TODO need to consider autowiring enabled at factory level - reuse the
+		// detection from ConfigurationProcessor
 		return !m.getReturnType().isInterface() || bean.autowire().isAutowire();
+	}
+
+	/**
+	 * @param configurationInstance The configurationInstance to set.
+	 */
+	public void setConfigurationInstance(Object configurationInstance) {
+		this.configurationInstance = configurationInstance;
+	}
+
+	/**
+	 * @param namingStrategy The namingStrategy to set.
+	 */
+	public void setNamingStrategy(BeanNamingStrategy namingStrategy) {
+		this.namingStrategy = namingStrategy;
 	}
 }

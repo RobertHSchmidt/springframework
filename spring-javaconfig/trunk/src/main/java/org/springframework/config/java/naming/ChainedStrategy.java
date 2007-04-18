@@ -13,34 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.process.naming;
+package org.springframework.config.java.naming;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import org.springframework.config.java.annotation.Configuration;
 import org.springframework.util.Assert;
 
 /**
  * Chain-like implementation naming strategy.
  * 
  * Allows a stack of strategies to be specified, returning the first non-null
- * name. The default chain includes {@link BeanAnnotationNameStrategy} and
- * {@link MethodNameStrategy}.
+ * name.
  * 
  * @author Costin Leau
  * 
  */
 public class ChainedStrategy implements BeanNamingStrategy {
 
-	private static final BeanNamingStrategy[] DEFAULT_STRATEGIES = new BeanNamingStrategy[] {
-			new BeanAnnotationNameStrategy(), new MethodNameStrategy() };
-
 	private BeanNamingStrategy[] strategies;
-
-	public ChainedStrategy() {
-		this(DEFAULT_STRATEGIES);
-	}
 
 	public ChainedStrategy(BeanNamingStrategy[] strategies) {
 		Assert.notEmpty(strategies, "at least one strategy required");
@@ -49,13 +40,13 @@ public class ChainedStrategy implements BeanNamingStrategy {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.springframework.config.java.process.naming.BeanNamingStrategy#getBeanName(java.lang.reflect.Method,
+	 * @see org.springframework.config.java.naming.BeanNamingStrategy#getBeanName(java.lang.reflect.Method,
 	 * org.springframework.config.java.annotation.Configuration)
 	 */
-	public String getBeanName(Method beanCreationMethod, Configuration configuration) {
+	public String getBeanName(Method beanCreationMethod) {
 		for (BeanNamingStrategy strategy : strategies) {
 			if (strategy != null) {
-				String name = strategy.getBeanName(beanCreationMethod, configuration);
+				String name = strategy.getBeanName(beanCreationMethod);
 				if (name != null)
 					return name;
 			}

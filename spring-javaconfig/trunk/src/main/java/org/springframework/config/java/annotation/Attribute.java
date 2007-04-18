@@ -16,19 +16,14 @@
 
 package org.springframework.config.java.annotation;
 
-import org.springframework.core.AttributeAccessor;
-
 /**
  * Bean metadata annotation.
  * 
- * Provides annotation mapping for {@link AttributeAccessor} though limited to
- * Strings.
- * 
  * @author Rod Johnson
- * 
+ *
  */
-public @interface Meta {
-
+public @interface Attribute {
+	
 	String name();
 
 	String value();

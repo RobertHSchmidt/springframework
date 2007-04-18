@@ -31,7 +31,7 @@ public class HibernateTests extends TestCase {
 		
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(
 				bf, clr);
-		configurationProcessor.process(HibernateTestConfig1.class);
+		configurationProcessor.processClass(HibernateTestConfig1.class);
 		bf.refresh();
 		
 		PersonService service = (PersonService) bf.getBean("personService");

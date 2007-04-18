@@ -21,6 +21,7 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.util.Assert;
 
 /**
@@ -32,15 +33,17 @@ import org.springframework.util.Assert;
 public class ExternalBeanMethodMethodInterceptor implements MethodInterceptor {
 
 	private BeanFactory owningBeanFactory;
+	private BeanNamingStrategy namingStrategy;
 
-	public ExternalBeanMethodMethodInterceptor(BeanFactory owningBeanFactory) {
+	public ExternalBeanMethodMethodInterceptor(BeanFactory owningBeanFactory, BeanNamingStrategy namingStrategy) {
 		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
 
 		this.owningBeanFactory = owningBeanFactory;
+		this.namingStrategy = namingStrategy;
 	}
 
-	// FIXME: add bean naming strategy
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
-		return owningBeanFactory.getBean(m.getName());
+		String beanName = namingStrategy.getBeanName(m);
+		return owningBeanFactory.getBean(beanName);
 	}
 }

@@ -74,12 +74,6 @@ import org.springframework.beans.factory.annotation.Autowire;
 public @interface Bean {
 	
 	/**
-	 * Bean name. By default it's empty, leaving naming strategies to generate
-	 * one during processing.
-	 */
-	String name() default "";
-
-	/**
 	 * Bean aliases.
 	 */
 	String[] aliases() default {};
