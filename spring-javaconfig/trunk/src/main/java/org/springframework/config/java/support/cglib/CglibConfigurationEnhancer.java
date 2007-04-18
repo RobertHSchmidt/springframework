@@ -27,11 +27,11 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalBean;
-import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.naming.MethodNameStrategy;
+import org.springframework.config.java.support.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.support.BytecodeConfigurationEnhancer;
-import org.springframework.config.java.support.factory.BeanNameTrackingDefaultListableBeanFactory;
+import org.springframework.config.java.support.MethodBeanWrapper;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.util.Assert;
 
@@ -78,23 +78,38 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 
 	private static final int EXTERNAL_BEAN_CALLBACK_INDEX = 2;
 
-	private final ConfigurableListableBeanFactory owningBeanFactory;
+	private final Callback BEAN_METHOD_CREATION_CALLBACK;
 
-	private final ConfigurationListenerRegistry configurationListenerRegistry;
+	private final Callback EXTERNAL_BEAN_CALLBACK;
 
-	private final BeanNameTrackingDefaultListableBeanFactory childFactory;
+	private ConfigurableListableBeanFactory owningBeanFactory;
 
-	private BeanNamingStrategy namingStrategy = new MethodNameStrategy();
+	private BeanNameTrackingDefaultListableBeanFactory childFactory;
+
+	private BeanNamingStrategy beanNamingStrategy;
+
+	private MethodBeanWrapper beanWrapper;
 
 	public CglibConfigurationEnhancer(ConfigurableListableBeanFactory owningBeanFactory,
-			BeanNameTrackingDefaultListableBeanFactory childFactory,
-			ConfigurationListenerRegistry configurationListenerRegistry) {
+			BeanNameTrackingDefaultListableBeanFactory childFactory, BeanNamingStrategy beanNamingStrategy,
+			MethodBeanWrapper beanWrapper) {
 
 		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
-		Assert.notNull(configurationListenerRegistry, "configurationListenerRegistry is required");
+		Assert.notNull(childFactory, "childFactory is required");
+		Assert.notNull(beanWrapper, "beanWrapper is required");
+
 		this.owningBeanFactory = owningBeanFactory;
-		this.configurationListenerRegistry = configurationListenerRegistry;
 		this.childFactory = childFactory;
+
+		this.beanNamingStrategy = (beanNamingStrategy == null ? new MethodNameStrategy() : beanNamingStrategy);
+
+		this.beanWrapper = beanWrapper;
+
+		BEAN_METHOD_CREATION_CALLBACK = new BeanMethodMethodInterceptor(this.owningBeanFactory, this.childFactory,
+				this.beanWrapper, this.beanNamingStrategy);
+
+		EXTERNAL_BEAN_CALLBACK = new ExternalBeanMethodMethodInterceptor(this.owningBeanFactory,
+				this.beanNamingStrategy);
 	}
 
 	/*
@@ -119,23 +134,9 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 
 		Class<?> configurationSubclass = enhancer.createClass();
 
-		// create callbacks for this particular configuration class to preserve
-		// settings (such as naming strategy)
-
-		BeanMethodMethodInterceptor beanMethodCallback = new BeanMethodMethodInterceptor(owningBeanFactory,
-				childFactory, configurationListenerRegistry);
-		beanMethodCallback.setNamingStrategy(namingStrategy);
-
-		Callback externalBeanCallback = new ExternalBeanMethodMethodInterceptor(owningBeanFactory, namingStrategy);
-
-		Enhancer.registerCallbacks(configurationSubclass, new Callback[] { NoOp.INSTANCE, beanMethodCallback,
-				externalBeanCallback });
+		Enhancer.registerCallbacks(configurationSubclass, new Callback[] { NoOp.INSTANCE,
+				BEAN_METHOD_CREATION_CALLBACK, EXTERNAL_BEAN_CALLBACK });
 
 		return configurationSubclass.asSubclass(configurationClass);
 	}
-
-	public void setBeanNamingStrategy(BeanNamingStrategy beanNamingStrategy) {
-		this.namingStrategy = beanNamingStrategy;
-	}
-
 }
