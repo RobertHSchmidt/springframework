@@ -71,14 +71,16 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 	}
 
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
-		Bean ann = AnnotationUtils.findAnnotation(m, Bean.class);
-		if (ann == null) {
-			// normally this branch will not be invoked since the callback is
-			// already filtered when CGLib was set up.
+		// Bean ann = AnnotationUtils.findAnnotation(m, Bean.class);
+		// if (ann == null) {
+		// // normally this branch will not be invoked since the callback is
+		// // already filtered when CGLib was set up.
+		//
+		// return mp.invokeSuper(o, args);
+		// }
+		// else
 
-			return mp.invokeSuper(o, args);
-		}
-		else {
+		{
 			return returnWrappedResultMayBeCached(o, m, args, mp);
 		}
 	}
@@ -93,6 +95,8 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 		synchronized (o) {
 			// check the creation on the parent
 			inCreation = owningBeanFactory.isCurrentlyInCreation(beanName);
+
+			// the BF extpects us to create the object
 			if (inCreation) {
 				bean = beanWrapper.wrapResult(beanName, new EnhancerMethodInvoker() {
 					public Method getMethod() {

@@ -32,7 +32,7 @@ public class MethodNameStrategy implements BeanNamingStrategy {
 	 * Naming prefix.
 	 * 
 	 * @author Costin Leau
-	 *
+	 * 
 	 */
 	public enum Prefix {
 
@@ -88,25 +88,24 @@ public class MethodNameStrategy implements BeanNamingStrategy {
 	 */
 	public String getBeanName(Method beanCreationMethod) {
 		Assert.notNull(beanCreationMethod, "beanCreationMethod is required");
-		StringBuilder builder = new StringBuilder();
+
+		String name = beanCreationMethod.getName();
+		Class enclosingClass = beanCreationMethod.getDeclaringClass();
 
 		switch (prefix) {
 		case CLASS:
-			builder.append(beanCreationMethod.getDeclaringClass().getSimpleName());
-			builder.append(".");
+			name = enclosingClass.getSimpleName().concat(".").concat(name);
 			break;
 
 		case FQN:
-			builder.append(beanCreationMethod.getDeclaringClass().getName());
-			builder.append(".");
+			name = enclosingClass.getName().concat(".").concat(name);
 			break;
 
 		default:
 			// no-op
 			break;
 		}
-		builder.append(beanCreationMethod.getName());
-		return builder.toString();
+		return name;
 	}
 
 	public void setPrefix(Prefix prefix) {
