@@ -230,7 +230,10 @@ public abstract class ProcessUtils {
 		AbstractBeanDefinition definition = (AbstractBeanDefinition) bd;
 
 		
-		// FIXME: check for FactoryBean/factory-method type of beans
+		// TODO: check for FactoryBean/factory-method type of beans
+		// hard since we are a BFPP and it's impossible to get the actual configuration instance/class
+		// w/o initilizing the factory-method/FB even for non @Configuration cases.
+		
 		if (definition.hasBeanClass())
 			clazz = definition.getBeanClass();
 
