@@ -28,6 +28,12 @@ import org.springframework.util.Assert;
  */
 public class MethodNameStrategy implements BeanNamingStrategy {
 
+	/**
+	 * Naming prefix.
+	 * 
+	 * @author Costin Leau
+	 *
+	 */
 	public enum Prefix {
 
 		/**
@@ -59,6 +65,20 @@ public class MethodNameStrategy implements BeanNamingStrategy {
 	}
 
 	private Prefix prefix = Prefix.NONE;
+
+	/**
+	 * Default, empty constructor.
+	 */
+	public MethodNameStrategy() {
+	}
+
+	/**
+	 * Constructor allowing the naming prefix to be specified.
+	 * @param prefix naming prefix
+	 */
+	public MethodNameStrategy(Prefix prefix) {
+		this.prefix = prefix;
+	}
 
 	/*
 	 * (non-Javadoc)

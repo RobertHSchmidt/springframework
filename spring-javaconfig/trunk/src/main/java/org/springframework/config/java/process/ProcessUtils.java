@@ -229,6 +229,8 @@ public abstract class ProcessUtils {
 		// required for updating the bean class
 		AbstractBeanDefinition definition = (AbstractBeanDefinition) bd;
 
+		
+		// FIXME: check for FactoryBean/factory-method type of beans
 		if (definition.hasBeanClass())
 			clazz = definition.getBeanClass();
 

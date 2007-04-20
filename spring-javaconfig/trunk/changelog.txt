@@ -23,6 +23,7 @@ Package org.springframework.config.java.process
 
 Package org.springframework.config.java.support.cglib
 * the cglib code has been improved, only one instance callback being used per processor.
+* the backing beanFactory is used for handling bean instances. Scopes are fully supported [SJC-9]
 
 Package org.springframework.config.java.util
 * added new package with two new utility classes: one for pasing the other for specifying Spring 2.0 default 
