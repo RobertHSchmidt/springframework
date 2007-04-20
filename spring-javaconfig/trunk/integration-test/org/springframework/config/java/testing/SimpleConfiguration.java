@@ -17,7 +17,7 @@ package org.springframework.config.java.testing;
 
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.template.ConfigurationSupport;
+import org.springframework.config.java.support.ConfigurationSupport;
 import org.springframework.config.java.testing.Worker.JobTitle;
 
 /**

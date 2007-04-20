@@ -29,7 +29,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
-import org.springframework.config.java.template.ConfigurationSupport;
+import org.springframework.config.java.support.ConfigurationSupport;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**

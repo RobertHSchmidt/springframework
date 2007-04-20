@@ -95,7 +95,7 @@ public @interface Bean {
 	 */
 	Lazy lazy() default Lazy.UNSPECIFIED;
 
-	boolean noproxy() default false;
+	//boolean noproxy() default false;
 
 	/**
 	 * Bean init method name. Normally this is not needed, as the initialization
@@ -124,7 +124,7 @@ public @interface Bean {
 	Meta[] meta() default {};
 
 	/**
-	 * Allow the bean to be overriden in XML or other non-Java configuration
+	 * Allow the bean to be overridden in XML or other non-Java configuration
 	 * @return whether overriding of this bean is allowed
 	 */
 	boolean allowOverriding() default false;

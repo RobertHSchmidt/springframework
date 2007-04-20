@@ -25,6 +25,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.naming.BeanNamingStrategy;
+import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.core.Ordered;
 
 /**
@@ -59,6 +60,9 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 	public void afterPropertiesSet() throws Exception {
 		if (configurationListenerRegistry == null)
 			configurationListenerRegistry = new DefaultConfigurationListenerRegistry();
+		
+		if (namingStrategy == null)
+			namingStrategy = new MethodNameStrategy();
 
 	}
 
@@ -78,7 +82,7 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 			if (clazz != null && ProcessUtils.validateConfigurationClass(clazz, configurationListenerRegistry)) {
 				ConfigurationProcessor processor = new ConfigurationProcessor(beanFactory,
 						configurationListenerRegistry);
-
+				// default naming strategy
 				if (namingStrategy != null)
 					processor.setBeanNamingStrategy(namingStrategy);
 				processor.processBean(beanName);
@@ -105,6 +109,8 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 	}
 
 	/**
+	 * BeanNamingStrategy used for generating the bean definitions.
+	 * 
 	 * @param namingStrategy The namingStrategy to set.
 	 */
 	public void setNamingStrategy(BeanNamingStrategy namingStrategy) {

@@ -5,6 +5,7 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.aop.SpringAdvisor;
+import org.springframework.config.java.support.ConfigurationSupport;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.AnnotationTransactionAttributeSource;
 import org.springframework.transaction.interceptor.TransactionAttributeSourceAdvisor;
