@@ -23,12 +23,10 @@ import net.sf.cglib.proxy.MethodProxy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.support.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.support.EnhancerMethodInvoker;
 import org.springframework.config.java.support.MethodBeanWrapper;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
 /**
@@ -93,8 +91,8 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 		Object bean = null;
 
 		synchronized (o) {
-			// check the creation on the parent
-			inCreation = owningBeanFactory.isCurrentlyInCreation(beanName);
+			// check the bean creation
+			inCreation = owningBeanFactory.isCurrentlyInCreation(beanName) || childTrackingFactory.isCurrentlyInCreation(beanName);
 
 			// the BF extpects us to create the object
 			if (inCreation) {

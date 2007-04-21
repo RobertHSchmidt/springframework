@@ -53,10 +53,6 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 	private static class BeanCreationCallbackFilter implements CallbackFilter {
 
 		public int accept(Method m) {
-			// We don't intercept non-public methods like finalize
-			if (!Modifier.isPublic(m.getModifiers())) {
-				return CglibConfigurationEnhancer.NO_OP_CALLBACK_INDEX;
-			}
 			if (ClassUtils.hasAnnotation(m, Bean.class)) {
 				return CglibConfigurationEnhancer.BEAN_CALLBACK_INDEX;
 			}
