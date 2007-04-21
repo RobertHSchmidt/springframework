@@ -29,15 +29,19 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.target.HotSwappableTargetSource;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.DependsOnTestBean;
 import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.config.java.ConfigurationProcessorTests.HiddenBeans.BFAwareBean;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
@@ -534,7 +538,6 @@ public class ConfigurationProcessorTests extends TestCase {
 		}
 	}
 
-
 	public static abstract class DefinesAbstractBeanMethod {
 
 		@Bean
@@ -966,6 +969,97 @@ public class ConfigurationProcessorTests extends TestCase {
 		catch (BeanDefinitionStoreException ex) {
 
 		}
+	}
+
+	@Configuration
+	public static class HiddenBeans {
+
+		public static class BFAwareBean implements BeanFactoryAware {
+
+			public BeanFactory bf;
+
+			private Object[] beans;
+
+			public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+				this.bf = beanFactory;
+			}
+
+			/**
+			 * @param beans The beans to set.
+			 */
+			public void setBeans(Object[] beans) {
+				this.beans = beans;
+			}
+
+			/**
+			 * @return Returns the beans.
+			 */
+			public Object[] getBeans() {
+				return beans;
+			}
+
+			private String name;
+
+			public BFAwareBean(String name) {
+				this.name = name;
+			}
+
+			/**
+			 * @return Returns the bf.
+			 */
+			public BeanFactory getBf() {
+				return bf;
+			}
+			
+		}
+
+		@Bean
+		private Object privateBean() {
+			return new BFAwareBean("private");
+		}
+
+		@Bean
+		Object packageBean() {
+			return new BFAwareBean("package");
+		}
+
+		@Bean
+		protected Object protectedBean() {
+			return new BFAwareBean("protected");
+		}
+
+		@Bean
+		public BFAwareBean beans() {
+			BFAwareBean bean = new BFAwareBean("public");
+			bean.setBeans(new Object[] { privateBean(), packageBean(), protectedBean() });
+			return bean;
+		}
+	}
+
+	public void testHiddenBeans() {
+		GenericApplicationContext ctx = new GenericApplicationContext();
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(ctx, clr);
+
+		configurationProcessor.processClass(HiddenBeans.class);
+		
+		ctx.refresh();
+
+		BeanFactory bf = ctx.getBeanFactory();
+		// hidden beans
+		assertFalse(bf.containsBean("protectedBean"));
+		assertFalse(bf.containsBean("packageBean"));
+		assertFalse(bf.containsBean("privateBean"));
+
+		BFAwareBean beans = (BFAwareBean) bf.getBean("beans");
+		assertEquals(3, beans.getBeans().length);
+
+		BeanFactory hiddenBF = ((BFAwareBean) beans.getBeans()[2]).bf;
+		assertNotSame(bf, hiddenBF);
+
+		assertTrue(hiddenBF.containsBean("protectedBean"));
+		assertTrue(hiddenBF.containsBean("packageBean"));
+		assertTrue(hiddenBF.containsBean("privateBean"));
+
 	}
 
 	public static class RequiresProperty extends ConfigurationSupport {

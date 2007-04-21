@@ -614,6 +614,15 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		public abstract TestBean ann();
 	}
 
+	@Configuration
+	public static class ExternalBeanConfigurationNonAbstract extends ExternalBeanConfiguration {
+
+		@ExternalBean
+		public TestBean ann() {
+			throw new UnsupportedOperationException("should not be called");
+		}
+	}
+
 	public void testExternalBean() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"org/springframework/config/java/externalBean.xml");
@@ -621,4 +630,13 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		assertTrue(bf.containsBean("ann"));
 		assertEquals("External bean must have been satisfied", "Ann", bob.getSpouse().getName());
 	}
+
+	public void testExternalBeanNonAbstract() {
+		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
+				"org/springframework/config/java/externalBean.xml");
+		TestBean bob = (TestBean) bf.getBean("bob");
+		assertTrue(bf.containsBean("ann"));
+		assertEquals("External bean must have been satisfied", "Ann", bob.getSpouse().getName());
+	}
+
 }

@@ -101,6 +101,10 @@ public interface ConfigurationListener {
 
 		public String name;
 
+		/**
+		 * Should the bean definition be hidden or not. When hidden, the bean definition resides only
+		 * in the child context.
+		 */
 		public boolean hide;
 
 		public BeanDefinitionRegistration(RootBeanDefinition rbd, String name) {
