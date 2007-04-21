@@ -110,15 +110,21 @@ public class MethodBeanWrapper {
 			Object originallyCreatedBean = null;
 
 			BeanDefinition beanDef = null;
-			// consider hidden beans also (contained only in the children factory)
-			if (childTrackingFactory.containsBeanDefinition(beanName))
-				 beanDef = childTrackingFactory.getBeanDefinition(beanName);
-			else
+			boolean hidden = false;
+			// consider hidden beans also (contained only in the children
+			// factory)
+			if (childTrackingFactory.containsBeanDefinition(beanName)) {
+				beanDef = childTrackingFactory.getBeanDefinition(beanName);
+				hidden = true;
+			}
+			else {
 				beanDef = owningBeanFactory.getBeanDefinition(beanName);
+				hidden = false;
+			}
 
 			// the definition was overriden (use that one)
 			if (beanDef.getAttribute(ClassUtils.JAVA_CONFIG_PKG) == null) {
-				originallyCreatedBean = childTrackingFactory.getBean(beanName);
+				originallyCreatedBean = owningBeanFactory.getBean(beanName);
 			}
 
 			if (originallyCreatedBean == null) {
