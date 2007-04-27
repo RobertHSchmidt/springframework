@@ -76,8 +76,9 @@ public interface ConfigurationListener {
 	 * @param configurerBeanName bean name of the configurer class
 	 * @param configurerClass configurer class
 	 * @param m method on configurer class
+	 * @return number of newly bean definitions created
 	 */
-	void otherMethod(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+	int otherMethod(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
 			String configurerBeanName, Class<?> configurerClass, Method m);
 
 	/**

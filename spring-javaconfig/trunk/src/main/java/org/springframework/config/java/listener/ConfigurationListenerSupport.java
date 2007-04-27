@@ -49,8 +49,9 @@ public class ConfigurationListenerSupport implements ConfigurationListener {
 			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
 	}
 
-	public void otherMethod(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+	public int otherMethod(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
 			String configurerBeanName, Class configurerClass, Method m) {
+		return 0;
 	}
 
 	public boolean processBeanMethodReturnValue(ConfigurableListableBeanFactory beanFactory,

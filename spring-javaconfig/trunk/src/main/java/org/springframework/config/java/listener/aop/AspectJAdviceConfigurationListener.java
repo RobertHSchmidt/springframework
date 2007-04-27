@@ -59,10 +59,11 @@ public class AspectJAdviceConfigurationListener extends AbstractAopConfiguration
 	}
 
 	@Override
-	public void otherMethod(ConfigurableListableBeanFactory beanFactory,
+	public int otherMethod(ConfigurableListableBeanFactory beanFactory,
 			final DefaultListableBeanFactory childBeanFactory, String configurerBeanName, final Class configurerClass,
 			Method aspectJAdviceMethod) {
 
+		int count = 0;
 		try {
 			// If it's a valid aspect, we'll continue in this method
 			// Using validate() rather than isAspect() ensures that illegal
@@ -72,7 +73,7 @@ public class AspectJAdviceConfigurationListener extends AbstractAopConfiguration
 		}
 		catch (NotAnAtAspectException ex) {
 			// Nothing to do
-			return;
+			return count;
 		}
 
 		int declarationOrderInAspect = 0;
@@ -92,11 +93,15 @@ public class AspectJAdviceConfigurationListener extends AbstractAopConfiguration
 			// TODO this is required to cover named pointcuts, but seems a bit
 			// hacky
 			if (advice == null) {
-				return;
+				return count;
 			}
 
 			addAdvice(adviceName, ((PointcutAdvisor) pa).getPointcut(), advice, childBeanFactory);
+			// added the advice as singleton
+			count++;
 		}
+		
+		return count;
 	}
 
 	/**

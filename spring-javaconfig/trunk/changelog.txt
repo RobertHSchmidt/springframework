@@ -20,6 +20,7 @@ Package org.springframework.config.java.naming
 
 Package org.springframework.config.java.process
 * @Bean.metadata is translated into BeanDefinition attribute
+* process returns the number of bean definitions created based on annotations
 
 Package org.springframework.config.java.support.cglib
 * the cglib code has been improved, only one instance callback being used per processor.

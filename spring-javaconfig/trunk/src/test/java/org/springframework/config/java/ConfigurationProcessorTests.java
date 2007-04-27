@@ -1010,7 +1010,7 @@ public class ConfigurationProcessorTests extends TestCase {
 			public BeanFactory getBf() {
 				return bf;
 			}
-			
+
 		}
 
 		@Bean
@@ -1041,7 +1041,7 @@ public class ConfigurationProcessorTests extends TestCase {
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(ctx, clr);
 
 		configurationProcessor.processClass(HiddenBeans.class);
-		
+
 		ctx.refresh();
 
 		BeanFactory bf = ctx.getBeanFactory();
@@ -1060,6 +1060,26 @@ public class ConfigurationProcessorTests extends TestCase {
 		assertTrue(hiddenBF.containsBean("packageBean"));
 		assertTrue(hiddenBF.containsBean("privateBean"));
 
+	}
+
+	public void testBeanDefinitionCount() throws Exception {
+		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		
+		// 4 @Bean + 1 @Configuration
+		assertEquals(5, configurationProcessor.processClass(HiddenBeans.class));
+		// 2 @Bean + 1 Advice (@Before) + 1 @Configuration
+		assertEquals(4, configurationProcessor.processClass(AdvisedAutowiring.class));
+		// 3 @Bean + 1 @Configuration
+		assertEquals(4, configurationProcessor.processClass(BeanCreationMethodsThrowExceptions.class));
+		// 2 @Bean + 1 @Configuration		
+		assertEquals(3, configurationProcessor.processClass(AutowiringConfiguration.class));
+		// 6 @Bean + 1 Configuration	
+		assertEquals(7, configurationProcessor.processClass(BaseConfiguration.class));
+		// 2 @Bean + 1 Configuration
+		assertEquals(3, configurationProcessor.processClass(HotSwapConfiguration.class));
+		// 1 @Bean + 1 @Autobean + 1 Configuration
+		assertEquals(3, configurationProcessor.processClass(ValidAutoBeanTest.class));
 	}
 
 	public static class RequiresProperty extends ConfigurationSupport {

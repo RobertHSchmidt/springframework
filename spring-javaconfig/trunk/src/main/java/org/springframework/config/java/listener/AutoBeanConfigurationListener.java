@@ -43,9 +43,10 @@ public class AutoBeanConfigurationListener extends ConfigurationListenerSupport 
 	}
 
 	@Override
-	public void otherMethod(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+	public int otherMethod(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
 			String configurerBeanName, Class configurerClass, Method m) {
 		AutoBean autoBean = AnnotationUtils.findAnnotation(m, AutoBean.class);
+		int count = 0;
 		if (autoBean != null) {
 			// Create a bean definition for this class
 			if (m.getReturnType().isInterface()) {
@@ -53,10 +54,9 @@ public class AutoBeanConfigurationListener extends ConfigurationListenerSupport 
 						+ ": don't know what class to instantiate; processing @AutoBean method " + m);
 			}
 
-
 			// make sure the cast actually works
 			Assert.isInstanceOf(BeanDefinitionRegistry.class, beanFactory);
-				
+
 			BeanDefinitionRegistry bdr = (BeanDefinitionRegistry) beanFactory;
 
 			RootBeanDefinition bd = new RootBeanDefinition(m.getReturnType());
@@ -68,6 +68,9 @@ public class AutoBeanConfigurationListener extends ConfigurationListenerSupport 
 				// Hide the bean so that it's not publically visible
 				childBeanFactory.registerBeanDefinition(m.getName(), bd);
 			}
+			// one bean definition created
+			count++;
 		}
+		return count;
 	}
 }
