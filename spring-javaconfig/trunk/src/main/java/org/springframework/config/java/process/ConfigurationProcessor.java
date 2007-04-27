@@ -128,7 +128,7 @@ public class ConfigurationProcessor {
 	}
 
 	/**
-	 * Generate bean definitions from a rough configuration class.
+	 * Generate bean definitions from a 'naked' configuration class.
 	 * 
 	 * <p/> Normally this method is used internally on inner classes however, it
 	 * is possible to use it directly on classes that haven't been manually
@@ -137,6 +137,8 @@ public class ConfigurationProcessor {
 	 * @param configurationClass class containing
 	 * @Configurable or
 	 * @Bean annotation
+	 * @return the number of bean definition generated (including the
+	 * configuration)
 	 * @throws BeanDefinitionStoreException if no bean definitions are found
 	 */
 	public int processClass(Class<?> configurationClass) throws BeanDefinitionStoreException {
@@ -162,7 +164,8 @@ public class ConfigurationProcessor {
 		((DefaultListableBeanFactory) owningBeanFactory).registerBeanDefinition(configBeanName,
 			configurationBeanDefinition);
 
-		return generateBeanDefinitions(configBeanName, configurationClass);
+		// include the configuration bean definition
+		return (generateBeanDefinitions(configBeanName, configurationClass) + 1);
 
 	}
 
@@ -240,7 +243,8 @@ public class ConfigurationProcessor {
 				}
 				else {
 					for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
-						cml.otherMethod(owningBeanFactory, childFactory, configurationBeanName, configurationClass, m);
+						countFinalReference[0] += cml.otherMethod(owningBeanFactory, childFactory,
+							configurationBeanName, configurationClass, m);
 					}
 				}
 			}
@@ -324,6 +328,8 @@ public class ConfigurationProcessor {
 			((BeanDefinitionRegistry) beanFactory).registerBeanDefinition(beanDefinitionRegistration.name,
 				beanDefinitionRegistration.rbd);
 		}
+
+		count++;
 
 		return count;
 	}
