@@ -90,16 +90,13 @@ public class MethodBeanWrapper {
 
 		String lastRequestedBeanName = childTrackingFactory.lastRequestedBeanName();
 
+		boolean newBeanRequested = (lastRequestedBeanName == null || beanName.equals(lastRequestedBeanName));
+		
 		Method method = invoker.getMethod();
-
-		// if another bean was requested, bail out
-		if (lastRequestedBeanName != null && !beanName.equals(lastRequestedBeanName)) {
-			return childTrackingFactory.getBean(beanName);
-		}
 
 		try {
 			// first call - start tracking
-			if (lastRequestedBeanName == null) {
+			if (newBeanRequested) {
 				// Remember the getBean() method we're now executing,
 				// if we were invoked from within the factory method in the
 				// configuration class than through the BeanFactory
@@ -173,7 +170,7 @@ public class MethodBeanWrapper {
 		}
 		finally {
 			// be sure to clean tracking
-			if (lastRequestedBeanName == null) {
+			if (newBeanRequested) {
 				childTrackingFactory.pop();
 			}
 		}
