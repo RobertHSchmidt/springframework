@@ -17,6 +17,8 @@ package org.springframework.aws;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import org.apache.tools.ant.BuildException;
 import org.jets3t.service.S3Service;
@@ -26,7 +28,15 @@ import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
 
 public class Upload {
+	
+	private static final float KILOBYTE = 1024;
 
+	private static final float MEGABYTE = 1048576;
+	
+	private static final float SECOND = 1000;
+	
+	private static final NumberFormat formatter = new DecimalFormat("###,###.0");
+	
 	private String bucketName;
 
 	private File file;
@@ -63,7 +73,8 @@ public class Upload {
 		}
 	}
 
-	public void upload(S3Service service) throws S3ServiceException, IOException {
+	public void upload(S3Service service) throws S3ServiceException,
+			IOException {
 		S3Bucket bucket = getBucket();
 		S3Object object = getObject();
 
@@ -89,14 +100,52 @@ public class Upload {
 	}
 
 	private void logStart() throws IOException {
-		System.out
-				.println("Uploading " + file.getCanonicalPath() + " (" + file.length() + "B) to bucket " + bucketName);
+		System.out.println("Uploading " + file.getCanonicalPath() + " ("
+				+ getFormattedSize(file.length()) + ") to " + bucketName + "/" + toFile);
 	}
 
 	private void logEnd(long startTime, long endTime) {
-		float transferTime = endTime - startTime / 1000f;
-		System.out.println("Transfer Time: " + transferTime + "s - Transfer Rate: " + file.length() / transferTime
-				+ "B/s");
+		long transferTime = endTime - startTime;
+		System.out.println("Transfer Time: " + getFormattedTime(transferTime)
+				+ " - Transfer Rate: " + getFormattedSpeed(file.length(), transferTime));
 	}
-
+	
+	private String getFormattedSize(long size) {
+		StringBuilder sb = new StringBuilder();
+		float megabytes = size / MEGABYTE;
+		if(megabytes > 1) {
+			sb.append(formatter.format(megabytes));
+			sb.append(" MB");
+		} else {
+			float kilobytes = size / KILOBYTE;
+			sb.append(formatter.format(kilobytes));
+			sb.append(" KB");
+		}
+		return sb.toString();
+	}
+	
+	private String getFormattedTime(long time) {
+		StringBuilder sb = new StringBuilder();
+		float seconds = time / SECOND;
+		sb.append(formatter.format(seconds));
+		sb.append(" s");
+		return sb.toString();
+	}
+	
+	private String getFormattedSpeed(long size, long time) {
+		StringBuilder sb = new StringBuilder();
+		float seconds = time / SECOND;
+		float megabytes = size / MEGABYTE;
+		float megabytesPerSecond = megabytes / seconds;
+		if(megabytesPerSecond > 1) {
+			sb.append(formatter.format(megabytesPerSecond));
+			sb.append(" MB/s");
+		} else {
+			float kilobytes = size / KILOBYTE;
+			float kilobytesPerSecond = kilobytes / seconds;
+			sb.append(formatter.format(kilobytesPerSecond));
+			sb.append(" KB/s");
+		}
+		return sb.toString();
+	}
 }
