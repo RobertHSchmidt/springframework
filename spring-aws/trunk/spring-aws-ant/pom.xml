@@ -32,16 +32,23 @@
 		</plugins>
 		<extensions>
 			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-webdav</artifactId>
+				<groupId>org.springframework.aws</groupId>
+				<artifactId>spring-aws-maven</artifactId>
+				<version>1.0</version>
 			</extension>
 		</extensions>
 	</build>
 	<distributionManagement>
 		<repository>
-			<id>SourceForge</id>
-			<url>dav:https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo</url>
+			<id>local</id>
+			<name>Local Repository</name>
+			<url>file:///Users/nebhale/Documents/springframework/repos/repo</url>
 		</repository>
+		<snapshotRepository>
+			<id>aws-s3</id>
+			<name>Amazon S3</name>
+			<url>s3://maven.springframework.org</url>
+		</snapshotRepository>
 	</distributionManagement>
 	<dependencies>
 		<dependency>
