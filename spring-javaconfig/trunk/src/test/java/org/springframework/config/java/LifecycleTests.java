@@ -120,7 +120,7 @@ public class LifecycleTests extends TestCase {
 		clr = new DefaultConfigurationListenerRegistry();
 		appCtx = new GenericApplicationContext();
 		appCtx.registerShutdownHook();
-		configurationProcessor = new ConfigurationProcessor(appCtx, clr);
+		configurationProcessor = new ConfigurationProcessor(appCtx);
 
 		AwareBean.DESTROYED = 0;
 		AwareBean.INITIALIZED = 0;

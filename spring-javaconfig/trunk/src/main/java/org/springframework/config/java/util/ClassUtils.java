@@ -17,13 +17,7 @@ package org.springframework.config.java.util;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
 
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.listener.ConfigurationListener;
-import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 

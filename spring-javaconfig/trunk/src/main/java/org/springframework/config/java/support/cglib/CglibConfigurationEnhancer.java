@@ -16,7 +16,6 @@
 package org.springframework.config.java.support.cglib;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 
 import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.CallbackFilter;
@@ -28,7 +27,6 @@ import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.naming.BeanNamingStrategy;
-import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.config.java.support.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.support.BytecodeConfigurationEnhancer;
 import org.springframework.config.java.support.MethodBeanWrapper;
@@ -93,13 +91,12 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
 		Assert.notNull(childFactory, "childFactory is required");
 		Assert.notNull(beanWrapper, "beanWrapper is required");
+		Assert.notNull(beanNamingStrategy, "beanNamingStrategy is required");
 
 		this.owningBeanFactory = owningBeanFactory;
 		this.childFactory = childFactory;
-
-		this.beanNamingStrategy = (beanNamingStrategy == null ? new MethodNameStrategy() : beanNamingStrategy);
-
 		this.beanWrapper = beanWrapper;
+		this.beanNamingStrategy = beanNamingStrategy;
 
 		BEAN_METHOD_CREATION_CALLBACK = new BeanMethodMethodInterceptor(this.owningBeanFactory, this.childFactory,
 				this.beanWrapper, this.beanNamingStrategy);
