@@ -56,7 +56,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	// and autoproxy
 	public void xtestPerInstanceAdviceAndSharedAdvice() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(PerInstanceCountingAdvice.class);
 
 		TestBean advised1 = (TestBean) bf.getBean("advised");
@@ -88,7 +88,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 
 	public void testSharedAfterAdvice() throws Throwable {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(AfterAdvice.class);
 
 		TestBean advised = (TestBean) bf.getBean("advised");
@@ -113,14 +113,14 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	 */
 	public void testAspectJAnnotationsRequireAspectAnnotationDirect() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		assertFalse("Aspect annotationName required",
 			configurationProcessor.processClass(InvalidNoAspectAnnotation.class) > 0);
 	}
 
 	public void testInvalidInheritanceFromConcreteAspect() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		try {
 			configurationProcessor.processClass(InvalidInheritanceFromConcreteAspect.class);
 			fail("Cannot extend a concrete aspect");
@@ -144,7 +144,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 
 	private void doTestAspectJAroundAdviceWithImplicitScope(Class clazz) throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(clazz);
 
 		TestBean advised1 = (TestBean) bf.getBean("advised");
@@ -156,7 +156,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 
 	public void testAspectJAroundAdviceWithAspectClassScope() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(SingletonCountingAdvice.class);
 
 		assertFalse("Must not allow class that does not define beans or aspects",
@@ -176,7 +176,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 
 	public void testAspectJNoAroundAdvice() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		// Superclass doesn't have around advice
 		configurationProcessor.processClass(SingletonCountingAdvice.class);
 
@@ -407,7 +407,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	// TODO: fix w/ Maven
 	public void tstAroundAdviceWithArguments() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(SumAroundAdvice.class);
 		ReturnZero rz = (ReturnZero) bf.getBean("willAdd");
 		assertEquals("Must add arguments, not return zero", 25, rz.returnZero(10, 15));

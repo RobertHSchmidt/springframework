@@ -136,7 +136,7 @@ public class ScopingTest extends TestCase {
 	protected void setUp() throws Exception {
 		clr = new DefaultConfigurationListenerRegistry();
 		bf = new DefaultListableBeanFactory();
-		configurationProcessor = new ConfigurationProcessor(bf, clr);
+		configurationProcessor = new ConfigurationProcessor(bf);
 		scope = new MyCustomScope();
 		// register the scope
 		bf.registerScope(SCOPE, scope);

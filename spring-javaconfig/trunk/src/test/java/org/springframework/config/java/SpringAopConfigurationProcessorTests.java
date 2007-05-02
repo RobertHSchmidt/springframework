@@ -45,7 +45,7 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 
 	public void testPerInstanceAdviceAndSharedAdvice() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf); 
 		configurationProcessor.processClass(SpringAroundPerInstanceAdvice.class);
 		
 		TestBean advised1 = (TestBean) bf.getBean("advised");
@@ -77,7 +77,7 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 	
 	public void testAroundAdvice() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf); 
 		configurationProcessor.processClass(SpringAroundPerInstanceAdvice.class);
 		
 		TestBean advised1 = (TestBean) bf.getBean("advised");
@@ -90,7 +90,7 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 	
 	public void testNoAroundAdvice() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf); 
 		// Superclass doesn't have around advice
 		configurationProcessor.processClass(SingletonCountingAdvice.class);
 		
@@ -105,7 +105,7 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 		OrderCheckingInterceptor.clear();
 		
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf); 
 		// Superclass doesn't have around advice
 		configurationProcessor.processClass(OrderedSpringAdvice.class);
 		
@@ -215,7 +215,7 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 	// FIXME: interception on self causes circular dependency - can this be prevented?
 	public void tstInterceptAll() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf); 
 		configurationProcessor.processClass(InterceptAllAdvice.class);
 		
 		TestBean kaare = (TestBean) bf.getBean("kaare");

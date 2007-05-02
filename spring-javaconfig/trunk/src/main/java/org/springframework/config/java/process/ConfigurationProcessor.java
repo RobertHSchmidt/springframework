@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -33,6 +34,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.listener.ConfigurationListener;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
+import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.config.java.support.BeanNameTrackingDefaultListableBeanFactory;
@@ -65,12 +67,16 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
  * The process work on configurations created from classes but also object
  * instances.
  * 
+ * <p>
+ * This class implements {@link InitializingBean} interface - remember to call
+ * {@link InitializingBean#afterPropertiesSet()} before any processing.
+ * 
  * 
  * @author Rod Johnson
  * @author Costin Leau
  * @see org.springframework.config.java.listener.ConfigurationListener
  */
-public class ConfigurationProcessor {
+public class ConfigurationProcessor implements InitializingBean {
 
 	protected final Log log = LogFactory.getLog(getClass());
 
@@ -93,8 +99,17 @@ public class ConfigurationProcessor {
 
 	private BeanNamingStrategy beanNamingStrategy;
 
-	public ConfigurationProcessor(ConfigurableApplicationContext ac, ConfigurationListenerRegistry clr) {
-		init(ac.getBeanFactory(), clr);
+	private boolean initialized = false;
+
+	/**
+	 * Constructor taking an application context as paramater. Suitable for
+	 * programatic use.
+	 * 
+	 * @param ac application context in which the newly created bean definition
+	 * will reside
+	 */
+	public ConfigurationProcessor(ConfigurableApplicationContext ac) {
+		this(ac.getBeanFactory());
 	}
 
 	/**
@@ -102,18 +117,27 @@ public class ConfigurationProcessor {
 	 * 
 	 * @param bdr owning factory
 	 */
-	public ConfigurationProcessor(ConfigurableListableBeanFactory bdr, ConfigurationListenerRegistry clr) {
-		init(bdr, clr);
+	public ConfigurationProcessor(ConfigurableListableBeanFactory bdr) {
+		this.owningBeanFactory = bdr;
 	}
 
-	protected void init(ConfigurableListableBeanFactory bdr, ConfigurationListenerRegistry clr) {
-		this.owningBeanFactory = bdr;
-		this.configurationListenerRegistry = clr;
-		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(owningBeanFactory);
+	/*
+	 * Called to avoid constructor changes every time a new configuration switch
+	 * appears on this class.
+	 * 
+	 * (non-Javadoc)
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
+	public void afterPropertiesSet() {
+		Assert.notNull(owningBeanFactory, "an owning factory bean is required");
 
-		// default naming strategy
-		if (this.beanNamingStrategy == null)
-			this.beanNamingStrategy = new MethodNameStrategy();
+		// apply defaults were suitable
+		this.configurationListenerRegistry = (configurationListenerRegistry == null ? new DefaultConfigurationListenerRegistry()
+				: configurationListenerRegistry);
+
+		this.beanNamingStrategy = (beanNamingStrategy == null ? new MethodNameStrategy() : beanNamingStrategy);
+
+		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(owningBeanFactory);
 
 		MethodBeanWrapper wrapper = new MethodBeanWrapper(owningBeanFactory, childFactory,
 				configurationListenerRegistry);
@@ -125,6 +149,14 @@ public class ConfigurationProcessor {
 				beanNamingStrategy, wrapper);
 
 		this.configurationEnhancer = enhancer;
+
+		initialized = true;
+	}
+
+	private void checkInit() {
+		if (!initialized) {
+			afterPropertiesSet();
+		}
 	}
 
 	/**
@@ -142,6 +174,9 @@ public class ConfigurationProcessor {
 	 * @throws BeanDefinitionStoreException if no bean definitions are found
 	 */
 	public int processClass(Class<?> configurationClass) throws BeanDefinitionStoreException {
+
+		checkInit();
+
 		if (!ProcessUtils.validateConfigurationClass(configurationClass, configurationListenerRegistry))
 			return 0;
 
@@ -170,6 +205,9 @@ public class ConfigurationProcessor {
 	}
 
 	public int processBean(String beanName) throws BeanDefinitionStoreException {
+
+		checkInit();
+
 		Assert.notNull(beanName, "beanName is required");
 		Class<?> clazz = ProcessUtils.getBeanClass(beanName, owningBeanFactory);
 
@@ -346,6 +384,14 @@ public class ConfigurationProcessor {
 	 */
 	public void setBeanNamingStrategy(BeanNamingStrategy beanNamingStrategy) {
 		this.beanNamingStrategy = beanNamingStrategy;
+	}
+
+	/**
+	 * @param configurationListenerRegistry The configurationListenerRegistry to
+	 * set.
+	 */
+	public void setConfigurationListenerRegistry(ConfigurationListenerRegistry configurationListenerRegistry) {
+		this.configurationListenerRegistry = configurationListenerRegistry;
 	}
 
 	/**

@@ -47,7 +47,7 @@ public class J2eeHelperTests extends TestCase {
 
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(
-				bf, clr);
+				bf);
 		configurationProcessor.processClass(J2eeTxConfig.class);
 
 		PlatformTransactionManager ptm = (PlatformTransactionManager) bf
@@ -71,7 +71,7 @@ public class J2eeHelperTests extends TestCase {
 
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(
-				bf, clr);
+				bf);
 		configurationProcessor.processClass(TestTxConfig.class);
 		
 		Object result = bf.getBean(AbstractTransactionalConfiguration.TRANSACTION_MANAGER_BEAN_NAME);
@@ -98,7 +98,7 @@ public class J2eeHelperTests extends TestCase {
 
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(
-				bf, clr);
+				bf);
 		configurationProcessor.processClass(TestHsqlConfig.class);
 		
 		MyDao myDao = (MyDao) bf.getBean("myDao");

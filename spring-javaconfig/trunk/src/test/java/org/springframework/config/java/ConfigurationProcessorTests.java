@@ -67,7 +67,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testSimple() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 
 		configurationProcessor.processClass(BaseConfiguration.class);
 		assertTrue(bf.containsBean(BaseConfiguration.class.getName()));
@@ -82,7 +82,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testBeanNameAware() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 
 		configurationProcessor.processClass(BaseConfiguration.class);
 		assertTrue(bf.containsBean(BaseConfiguration.class.getName()));
@@ -94,7 +94,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testMethodOverrideWithJava() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 
 		configurationProcessor.processClass(MethodOverrideConfiguration.class);
 		assertTrue(bf.containsBean(MethodOverrideConfiguration.class.getName()));
@@ -105,7 +105,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testAfterPropertiesSetInvokedBeforeExplicitWiring() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 
 		configurationProcessor.processClass(AfterPropertiesConfiguration.class);
 
@@ -115,7 +115,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testBeanFactoryAware() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 
 		configurationProcessor.processClass(BaseConfiguration.class);
 		assertTrue(bf.containsBean(BaseConfiguration.class.getName()));
@@ -127,7 +127,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testHidden() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 
 		configurationProcessor.processClass(BaseConfiguration.class);
 		assertTrue(bf.containsBean(BaseConfiguration.class.getName()));
@@ -144,7 +144,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testAutowireOnBeanDefinition() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(AspectJConfigurationProcessorTests.SingletonCountingAdvice.class);
 
 		System.out.println("beans " + Arrays.toString(bf.getBeanDefinitionNames()));
@@ -159,7 +159,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testAutowireOnProxiedBeanDefinition() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(ProxiesDotb.class);
 
 		ProxiesDotb.count = 0;
@@ -174,7 +174,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testInvalidFinalConfigurationClass() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		try {
 			configurationProcessor.processClass(InvalidFinalConfigurationClass.class);
 			fail("Should reject final configuration class");
@@ -186,7 +186,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testInvalidDueToFinalBeanMethod() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		try {
 			configurationProcessor.processClass(InvalidDueToFinalBeanMethod.class);
 			fail("Should reject final Bean method");
@@ -198,7 +198,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testInvalidDueToFinalBeanClass() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		try {
 			configurationProcessor.processClass(InvalidDueToFinalBeanClass.class);
 			// Arguably should spot this earlier
@@ -213,7 +213,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testValidWithDynamicProxy() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(ValidWithDynamicProxies.class);
 		ITestBean tb = (ITestBean) bf.getBean("test");
 		assertTrue(AopUtils.isJdkDynamicProxy(tb));
@@ -224,7 +224,7 @@ public class ConfigurationProcessorTests extends TestCase {
 	}
 
 	private void doTestApplicationContextAwareCallback(AbstractApplicationContext bf) {
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(ApplicationContextAwareConfiguration.class);
 		bf.refresh();
 		ApplicationContextAwareImpl acai = (ApplicationContextAwareImpl) bf.getBean("ai");
@@ -258,7 +258,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testDefaultAutowire() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(DefaultAutowireConfiguration.class);
 
 		DependsOnTestBean sarah = (DependsOnTestBean) bf.getBean("sarah");
@@ -267,7 +267,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testFactoryBean() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(ContainsFactoryBean.class);
 
 		assertTrue("Factory bean must return created type", bf.getBean("factoryBean") instanceof TestBean);
@@ -275,7 +275,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testNewAnnotationNotRequiredOnConcreteMethod() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(InheritsWithoutNewAnnotation.class);
 
 		TestBean tom = (TestBean) bf.getBean("tom");
@@ -286,7 +286,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testProgrammaticProxyCreation() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(ProxyConfiguration.class);
 
 		ITestBean proxy = (ITestBean) bf.getBean("proxied");
@@ -301,7 +301,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testBeanAliases() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(AliasesConfiguration.class);
 
 		ITestBean alias = (ITestBean) bf.getBean("aliased");
@@ -387,7 +387,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testHotSwappable() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(HotSwapConfiguration.class);
 
 		TestBean hs = (TestBean) bf.getBean("hotSwappable");
@@ -409,7 +409,7 @@ public class ConfigurationProcessorTests extends TestCase {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		TestBean spouse = new TestBean();
 		bf.registerSingleton("spouse", spouse);
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(BeanFactoryAwareConfiguration.class);
 
 		ITestBean marriedToInjection = (ITestBean) bf.getBean("marriedToInjection");
@@ -693,7 +693,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testEffectOfHidingOnAutowire() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(AutowiringConfiguration.class);
 
 		assertFalse(bf.containsBean("testBean"));
@@ -703,7 +703,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testHiddenBeansDoNotConfuseAutowireByType() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(AutowiringConfigurationWithNonHiddenWinner.class);
 
 		assertFalse(bf.containsBean("testBean"));
@@ -714,7 +714,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testAutowireAmbiguityIsRejected() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		try {
 			configurationProcessor.processClass(InvalidAutowiringConfigurationWithAmbiguity.class);
 			bf.getBean("autowireCandidate");
@@ -809,7 +809,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testBeanCreationMethodsThatMayThrowExceptions() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		BeanCreationMethodsThrowExceptions.makeItFail = false;
 		configurationProcessor.processClass(BeanCreationMethodsThrowExceptions.class);
 		assertNotNull(bf.getBean("throwsException"));
@@ -819,7 +819,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testBeanCreationMethodsThatDoThrowExceptions() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		BeanCreationMethodsThrowExceptions.makeItFail = true;
 		try {
 			configurationProcessor.processClass(BeanCreationMethodsThrowExceptions.class);
@@ -841,7 +841,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testBeanCreationMethodReturnsNull() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		try {
 			configurationProcessor.processClass(BeanCreationMethodReturnsNull.class);
 			bf.getBean("returnsNull");
@@ -861,7 +861,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testBeanCreationMethodCannotHaveVoidReturn() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		try {
 			configurationProcessor.processClass(BeanCreationMethodReturnsVoid.class);
 			fail();
@@ -911,7 +911,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testAutowiringOnProxiedBean() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(AdvisedAutowiring.class);
 		Husband husband = (Husband) bf.getBean("husband");
 		assertTrue(AopUtils.isAopProxy(husband));
@@ -933,7 +933,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testValidAutoBean() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(ValidAutoBeanTest.class);
 
 		TestBean kerry = (TestBean) bf.getBean("kerry");
@@ -961,7 +961,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testInvalidAutoBean() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		try {
 			configurationProcessor.processClass(InvalidAutoBeanTest.class);
 			fail();
@@ -1038,7 +1038,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testHiddenBeans() {
 		GenericApplicationContext ctx = new GenericApplicationContext();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(ctx, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(ctx);
 
 		configurationProcessor.processClass(HiddenBeans.class);
 
@@ -1064,7 +1064,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public void testBeanDefinitionCount() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf, clr);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		
 		// 4 @Bean + 1 @Configuration
 		assertEquals(5, configurationProcessor.processClass(HiddenBeans.class));

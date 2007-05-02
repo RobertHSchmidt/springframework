@@ -19,13 +19,11 @@ package org.springframework.config.java.process;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.naming.BeanNamingStrategy;
-import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.core.Ordered;
 
 /**
@@ -45,26 +43,13 @@ import org.springframework.core.Ordered;
  * @author Rod Johnson
  * @author Costin Leau
  */
-public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ordered, InitializingBean {
+public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ordered {
 
 	protected final Log log = LogFactory.getLog(getClass());
 
 	private ConfigurationListenerRegistry configurationListenerRegistry;
 
 	private BeanNamingStrategy namingStrategy;
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-	 */
-	public void afterPropertiesSet() throws Exception {
-		if (configurationListenerRegistry == null)
-			configurationListenerRegistry = new DefaultConfigurationListenerRegistry();
-		
-		if (namingStrategy == null)
-			namingStrategy = new MethodNameStrategy();
-
-	}
 
 	/**
 	 * Generate BeanDefinitions and add them to factory for each Configuration
@@ -80,11 +65,10 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 			// get the class
 			Class<?> clazz = ProcessUtils.getBeanClass(beanName, beanFactory);
 			if (clazz != null && ProcessUtils.validateConfigurationClass(clazz, configurationListenerRegistry)) {
-				ConfigurationProcessor processor = new ConfigurationProcessor(beanFactory,
-						configurationListenerRegistry);
-				// default naming strategy
-				if (namingStrategy != null)
-					processor.setBeanNamingStrategy(namingStrategy);
+				ConfigurationProcessor processor = new ConfigurationProcessor(beanFactory);
+				processor.setConfigurationListenerRegistry(configurationListenerRegistry);
+				processor.setBeanNamingStrategy(namingStrategy);
+				processor.afterPropertiesSet();
 				processor.processBean(beanName);
 			}
 		}

@@ -30,7 +30,7 @@ public class HibernateTests extends TestCase {
 		GenericApplicationContext bf = new GenericApplicationContext();
 		
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(
-				bf, clr);
+				bf);
 		configurationProcessor.processClass(HibernateTestConfig1.class);
 		bf.refresh();
 		
