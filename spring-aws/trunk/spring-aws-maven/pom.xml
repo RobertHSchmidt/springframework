@@ -41,19 +41,12 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<extensions>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-webdav</artifactId>
-				<version>1.0-beta-2</version>
-			</extension>
-		</extensions>
 	</build>
 	<distributionManagement>
 		<repository>
-			<id>source-forge</id>
-			<name>SourceForge</name>
-			<url>dav:https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo</url>
+			<id>local</id>
+			<name>Local Repository</name>
+			<url>file:///Users/nebhale/Documents/springframework/repos/repo</url>
 		</repository>
 	</distributionManagement>
 	<dependencies>
