@@ -44,6 +44,17 @@ import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.security.AWSCredentials;
 
+/**
+ * An implementation of the Maven Wagon interface that allows you to access the Amazon S3 service. URLs that
+ * reference the S3 service should be in the form of <code>s3://bucket.name</code>. As an example
+ * <code>s3://static.springframework.org</code> would put files into the
+ * <code>static.springframework.org</code> bucket on the S3 service.
+ * 
+ * This implementation uses the <code>username</code> and <code>passphrase</code> portions of the server
+ * authentication metadata for credentials.
+ * 
+ * @author Ben Hale
+ */
 public class SimpleStorageServiceWagon implements Wagon {
 
 	private S3Service service;
