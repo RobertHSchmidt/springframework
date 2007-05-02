@@ -22,28 +22,54 @@ import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.events.SessionEvent;
 import org.apache.maven.wagon.events.SessionListener;
 
+/**
+ * Support for sending messages to Maven session listeners.  Automates the collection of listeners and the
+ * iteration over that collection when an event is fired.
+ * 
+ * @author Ben Hale
+ */
 public class SessionListenerSupport {
 
 	private Wagon wagon;
 
 	private Set<SessionListener> listeners = new HashSet<SessionListener>();
 
+	/**
+	 * Creates a new instance
+	 * @param wagon The wagon that events will come from
+	 */
 	public SessionListenerSupport(Wagon wagon) {
 		this.wagon = wagon;
 	}
 
+	/**
+	 * Adds a listener to the collection
+	 * @param listener The listener to add
+	 */
 	public void addListener(SessionListener listener) {
 		listeners.add(listener);
 	}
 
+	/**
+	 * Removes a listener from the collection
+	 * @param listener The listener to remove
+	 */
 	public void removeListener(SessionListener listener) {
 		listeners.remove(listener);
 	}
 
+	/**
+	 * Whether the collection already contains a listener
+	 * @param listener The listener to check for
+	 */
 	public boolean hasListener(SessionListener listener) {
 		return listeners.contains(listener);
 	}
 
+	/**
+	 * Sends a session opening event to all listeners
+	 * @see SessionEvent#SESSION_OPENING
+	 */
 	public void fireSessionOpening() {
 		SessionEvent event = new SessionEvent(wagon,
 				SessionEvent.SESSION_OPENING);
@@ -52,6 +78,10 @@ public class SessionListenerSupport {
 		}
 	}
 
+	/**
+	 * Sends a session opened event to all listeners
+	 * @see SessionEvent#SESSION_OPENED
+	 */
 	public void fireSessionOpened() {
 		SessionEvent event = new SessionEvent(wagon,
 				SessionEvent.SESSION_OPENED);
@@ -60,6 +90,10 @@ public class SessionListenerSupport {
 		}
 	}
 
+	/**
+	 * Sends a session disconnecting event to all listeners
+	 * @see SessionEvent#SESSION_DISCONNECTING
+	 */
 	public void fireSessionDisconnecting() {
 		SessionEvent event = new SessionEvent(wagon,
 				SessionEvent.SESSION_DISCONNECTING);
@@ -68,6 +102,10 @@ public class SessionListenerSupport {
 		}
 	}
 
+	/**
+	 * Sends a session disconnected event to all listeners
+	 * @see SessionEvent#SESSION_DISCONNECTED
+	 */
 	public void fireSessionDisconnected() {
 		SessionEvent event = new SessionEvent(wagon,
 				SessionEvent.SESSION_DISCONNECTED);
@@ -76,6 +114,10 @@ public class SessionListenerSupport {
 		}
 	}
 
+	/**
+	 * Sends a session connection refused event to all listeners
+	 * @see SessionEvent#SESSION_CONNECTION_REFUSED
+	 */
 	public void fireSessionConnectionRefused() {
 		SessionEvent event = new SessionEvent(wagon,
 				SessionEvent.SESSION_CONNECTION_REFUSED);
@@ -84,6 +126,10 @@ public class SessionListenerSupport {
 		}
 	}
 
+	/**
+	 * Sends a session logged in event to all listeners
+	 * @see SessionEvent#SESSION_LOGGED_IN
+	 */
 	public void fireSessionLoggedIn() {
 		SessionEvent event = new SessionEvent(wagon,
 				SessionEvent.SESSION_LOGGED_IN);
@@ -92,6 +138,10 @@ public class SessionListenerSupport {
 		}
 	}
 
+	/**
+	 * Sends a session logged off event to all listeners
+	 * @see SessionEvent#SESSION_LOGGED_OFF
+	 */
 	public void fireSessionLoggedOff() {
 		SessionEvent event = new SessionEvent(wagon,
 				SessionEvent.SESSION_LOGGED_OFF);
@@ -100,6 +150,10 @@ public class SessionListenerSupport {
 		}
 	}
 
+	/**
+	 * Sends a session error event to all listeners
+	 * @param e The session error
+	 */
 	public void fireSessionError(Exception e) {
 		SessionEvent event = new SessionEvent(wagon, e);
 		for (SessionListener listener : listeners) {
