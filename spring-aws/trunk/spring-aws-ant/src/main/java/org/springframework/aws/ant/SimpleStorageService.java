@@ -25,6 +25,26 @@ import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.impl.rest.httpclient.RestS3Service;
 import org.jets3t.service.security.AWSCredentials;
 
+/**
+ * An ANT task for dealing with the Amazon S3 service.  Requires properties to be set for
+ * an <code>accessKey</code> and a <code>secretKey</code>. S3 operations are listed as elements contained
+ * in the s3 tag.
+ * 
+ * <pre>
+ * <aws:s3 accessKey="${s3.accessKey}" secretKey="${s3.secretKey}">
+ *         <upload bucketName="static.springframework.org"
+ *                 file="${target.release.dir}/${release-with-dependencies.zip}"
+ *                 toFile="SPR/spring-framework-${spring-version}-with-dependencies-${tstamp}-${build.number}.zip"
+ *                 publicRead="true"/>
+ *         <upload bucketName="static.springframework.org"
+ *                 file="${target.release.dir}/${release.zip}"
+ *                 toFile="SPR/spring-framework-${spring-version}-${tstamp}-${build.number}.zip"
+ *                 publicRead="true"/>
+ * </aws:s3>
+ * </pre>
+ * 
+ * @author Ben Hale
+ */
 public class SimpleStorageService {
 
 	private String accessKey;
@@ -33,18 +53,33 @@ public class SimpleStorageService {
 
 	private List<Upload> uploads = new ArrayList<Upload>();
 
+	/**
+	 * Required parameter that corresponds to the S3 Access Key
+	 * @param accessKey The S3 Access Key
+	 */
 	public void setAccessKey(String accessKey) {
 		this.accessKey = accessKey;
 	}
 
+	/**
+	 * Required parameter that corresponds to the S3 Secret Key
+	 * @param secretKey The S3 Secret Key
+	 */
 	public void setSecretKey(String secretKey) {
 		this.secretKey = secretKey;
 	}
 
+	/**
+	 * Add any upload operations
+	 * @param upload The upload operation metadata
+	 */
 	public void addConfiguredUpload(Upload upload) {
 		uploads.add(upload);
 	}
 
+	/**
+	 * Run all S3 operations configured as part of this task
+	 */
 	public void execute() {
 		try {
 			AWSCredentials credentials = new AWSCredentials(accessKey, secretKey);
