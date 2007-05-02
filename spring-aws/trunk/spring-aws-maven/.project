@@ -1,6 +1,6 @@
 <projectDescription>
   <name>spring-aws-maven</name>
-  <comment/>
+  <comment>Tools to manage artifacts and deployment</comment>
   <projects/>
   <buildSpec>
     <buildCommand>
