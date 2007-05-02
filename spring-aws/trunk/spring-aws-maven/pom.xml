@@ -1,14 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.apache.maven.wagon</groupId>
-		<artifactId>wagon-providers</artifactId>
-		<version>1.0-beta-2</version>
-	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.springframework.aws</groupId>
 	<artifactId>spring-aws-maven</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0-SNAPSHOT</version>
 	<name>Amazon Web Services Maven Support</name>
 	<url>http://www.springframework.org</url>
 	<inceptionYear>2007</inceptionYear>
@@ -32,12 +27,6 @@
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-release-plugin</artifactId>
-				<configuration>
-					<tagBase>https://springframework.svn.sourceforge.net/svnroot/springframework/spring-aws/tags</tagBase>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -69,6 +58,11 @@
 			<groupId>net.java.dev.jets3t</groupId>
 			<artifactId>jets3t</artifactId>
 			<version>0.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.wagon</groupId>
+			<artifactId>wagon-provider-api</artifactId>
+			<version>1.0-beta-2</version>
 		</dependency>
 	</dependencies>
 </project>
