@@ -35,6 +35,12 @@
 					<target>1.5</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<tagBase>https://springframework.svn.sourceforge.net/svnroot/springframework/spring-aws/tags</tagBase>
+				</configuration>
+			</plugin>
 		</plugins>
 		<extensions>
 			<extension>
