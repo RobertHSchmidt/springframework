@@ -27,6 +27,20 @@ import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
 
+/**
+ * A member of the S3 ANT task for dealing with Amazon S3 upload behavior. Requires properties to be set for
+ * <code>bucketName</code>, <code>file</code>, and <code>toFile</code>. This operation will use the
+ * credentials setup in its parent S3 task tag.
+ * 
+ * <pre>
+ * <upload bucketName="static.springframework.org"
+ *         file="${target.release.dir}/${release-with-dependencies.zip}"
+ *         toFile="SPR/spring-framework-${spring-version}-with-dependencies-${tstamp}-${build.number}.zip"
+ *         publicRead="true"/>
+ * </pre>
+ * 
+ * @author Ben Hale
+ */
 public class Upload {
 	
 	private static final float KILOBYTE = 1024;
@@ -43,24 +57,43 @@ public class Upload {
 
 	private String toFile;
 
-	private boolean publicRead;
+	private boolean publicRead = false;
 
+	/**
+	 * Required parameter that corresponds to the S3 bucket to upload to
+	 * @param bucketName The name of the bucket
+	 */
 	public void setBucketName(String bucketName) {
 		this.bucketName = bucketName;
 	}
 
+	/**
+	 * Required parameter that corresponds to the file to upload
+	 * @param file The file to upload
+	 */
 	public void setFile(File file) {
 		this.file = file;
 	}
 
+	/**
+	 * Required parameter that corresponds to the target object key in S3.
+	 * @param toFile The target object key in S3
+	 */
 	public void setToFile(String toFile) {
 		this.toFile = toFile;
 	}
 
+	/**
+	 * Optional parameter that corresponds to public readability of the object in S3.  Defaults to false.
+	 * @param publicRead
+	 */
 	public void setPublicRead(boolean publicRead) {
 		this.publicRead = publicRead;
 	}
 
+	/**
+	 * Verify that required parameters have been set.
+	 */
 	public void init() {
 		if (bucketName == null) {
 			throw new BuildException("bucketName must be set");
@@ -73,6 +106,12 @@ public class Upload {
 		}
 	}
 
+	/**
+	 * Uploads an object to S3.
+	 * @param service The service with credentials to use for upload
+	 * @throws S3ServiceException If there is an error with the S3 service
+	 * @throws IOException If the source file cannot be read
+	 */
 	public void upload(S3Service service) throws S3ServiceException,
 			IOException {
 		S3Bucket bucket = getBucket();
