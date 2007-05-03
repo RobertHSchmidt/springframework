@@ -42,7 +42,7 @@ public class SpringAdvisorConfigurationListener extends ConfigurationListenerSup
 	private List<String> advisorBeanNames = new LinkedList<String>();
 
 	@Override
-	public void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
+	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
 			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
 			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
 
@@ -52,6 +52,7 @@ public class SpringAdvisorConfigurationListener extends ConfigurationListenerSup
 			}
 			advisorBeanNames.add(m.getName());
 		}
+		return 0;
 	}
 
 	@Override

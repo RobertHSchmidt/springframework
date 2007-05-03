@@ -30,8 +30,7 @@ import org.springframework.util.Assert;
 
 /**
  * Configuration listener that registers autowired bean definitions in the
- * factory for
- * @AutoBean methods.
+ * factory for &#64;AutoBean methods.
  * 
  * @author Rod Johnson
  */

@@ -28,10 +28,12 @@ import org.springframework.beans.factory.annotation.Autowire;
  * Annotation for a configuration class. This annotation is not required,
  * however its use is recommended to improve configuration processing
  * performance. Holds similar information to that held in the default values of
- * a bean factory. Note however that the information here is not used to
- * populate the defaults of the owning bean factory, which would affect other
- * configurations. In the style of the Java configuration mechanism generally,
- * each Java configuration class is kept isolated.
+ * a bean factory.
+ * 
+ * <p/>Note however that the information here is not used to populate the
+ * defaults of the owning bean factory, which would affect other configurations.
+ * In the style of the Java configuration mechanism generally, each Java
+ * configuration class is kept isolated.
  * 
  * @author Rod Johnson
  * 
@@ -58,8 +60,8 @@ public @interface Configuration {
 
 	/**
 	 * Dependency check strategy. By default, the dependency check is
-	 * unspecified, that is the default Spring option will apply. In most
-	 * cases, it means no dependency check will be done.
+	 * unspecified, that is the default Spring option will apply. In most cases,
+	 * it means no dependency check will be done.
 	 * 
 	 * @see DependencyCheck
 	 * @return

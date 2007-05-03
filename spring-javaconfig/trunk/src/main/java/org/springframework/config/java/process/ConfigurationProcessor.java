@@ -230,7 +230,7 @@ public class ConfigurationProcessor implements InitializingBean {
 	 * @param configClass class of the configurer bean instance
 	 * @return number of bean created
 	 */
-	protected int generateBeanDefinitions(final String configurationBeanName, final Class<?> configurationClass) {
+	protected int generateBeanDefinitions(final String configurationBeanName, Class<?> configurationClass) {
 		if (!ProcessUtils.validateConfigurationClass(configurationClass, configurationListenerRegistry))
 			return 0;
 
@@ -238,11 +238,15 @@ public class ConfigurationProcessor implements InitializingBean {
 		AbstractBeanDefinition definition = (AbstractBeanDefinition) owningBeanFactory.getBeanDefinition(configurationBeanName);
 
 		// update the configuration bean definition first
-		definition.setBeanClass(configurationEnhancer.enhanceConfiguration(configurationClass));
+		Class enhancedClass = configurationEnhancer.enhanceConfiguration(configurationClass);
+		definition.setBeanClass(enhancedClass);
+
+		final Class configClass = configurationClass;
 
 		// Callback listeners
 		for (ConfigurationListener cl : configurationListenerRegistry.getConfigurationListeners()) {
-			cl.configurationClass(owningBeanFactory, childFactory, configurationBeanName, configurationClass);
+			beansCreated += cl.configurationClass(owningBeanFactory, childFactory, configurationBeanName,
+				configurationClass);
 		}
 
 		// Only want to consider most specific bean creation method, in the case
@@ -251,7 +255,7 @@ public class ConfigurationProcessor implements InitializingBean {
 		final Set<String> noArgMethodsSeen = new HashSet<String>();
 		final int[] countFinalReference = new int[] { beansCreated };
 
-		ReflectionUtils.doWithMethods(configurationClass, new MethodCallback() {
+		ReflectionUtils.doWithMethods(configClass, new MethodCallback() {
 			public void doWith(Method m) throws IllegalArgumentException, IllegalAccessException {
 				Bean beanAnnotation = AnnotationUtils.findAnnotation(m, Bean.class);
 				// Determine bean name
@@ -276,13 +280,13 @@ public class ConfigurationProcessor implements InitializingBean {
 					}
 					noArgMethodsSeen.add(beanName);
 					countFinalReference[0] += generateBeanDefinitionFromBeanCreationMethod(owningBeanFactory,
-						configurationBeanName, configurationClass, beanName, m, beanAnnotation);// ,
+						configurationBeanName, configClass, beanName, m, beanAnnotation);// ,
 					// cca);
 				}
 				else {
 					for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
 						countFinalReference[0] += cml.otherMethod(owningBeanFactory, childFactory,
-							configurationBeanName, configurationClass, m);
+							configurationBeanName, configClass, m);
 					}
 				}
 			}
@@ -292,7 +296,7 @@ public class ConfigurationProcessor implements InitializingBean {
 
 		// Find inner aspect classes
 		// TODO: need to go up tree? ReflectionUtils.doWithClasses
-		for (Class innerClass : configurationClass.getDeclaredClasses()) {
+		for (Class innerClass : configClass.getDeclaredClasses()) {
 			if (Modifier.isStatic(innerClass.getModifiers())) {
 				beansCreated += processClass(innerClass);
 			}
@@ -345,12 +349,14 @@ public class ConfigurationProcessor implements InitializingBean {
 
 		rbd.setResourceDescription(builder.toString());
 
+		// create a beanDefinitionRegistration for the current bean
+		// definition/name pair
 		ConfigurationListener.BeanDefinitionRegistration beanDefinitionRegistration = new ConfigurationListener.BeanDefinitionRegistration(
 				rbd, beanName);
 		beanDefinitionRegistration.hide = !Modifier.isPublic(beanCreationMethod.getModifiers());
 
 		for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
-			cml.beanCreationMethod(beanDefinitionRegistration, beanFactory, childFactory, configurerBeanName,
+			count += cml.beanCreationMethod(beanDefinitionRegistration, beanFactory, childFactory, configurerBeanName,
 				configurerClass, beanCreationMethod, beanAnnotation);
 		}
 
@@ -358,7 +364,11 @@ public class ConfigurationProcessor implements InitializingBean {
 		// addPropertiesIndicatedByGetterInvocations(configurerClass,
 		// beanCreationMethod, rbd);
 
-		// TODO allow use of null return value to suppress bean
+		// allow registration bypass
+		if (beanDefinitionRegistration == null || beanDefinitionRegistration.rbd == null) {
+			return count;
+		}
+
 		if (beanDefinitionRegistration.hide) {
 			childFactory.registerBeanDefinition(beanDefinitionRegistration.name, beanDefinitionRegistration.rbd);
 		}

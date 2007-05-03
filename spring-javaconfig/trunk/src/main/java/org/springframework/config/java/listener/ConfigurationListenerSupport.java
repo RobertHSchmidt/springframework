@@ -40,13 +40,15 @@ public class ConfigurationListenerSupport implements ConfigurationListener {
 		return false;
 	}
 
-	public void configurationClass(ConfigurableListableBeanFactory beanFactory,
+	public int configurationClass(ConfigurableListableBeanFactory beanFactory,
 			DefaultListableBeanFactory childBeanFactory, String configurerBeanName, Class configurerClass) {
+		return 0;
 	}
 
-	public void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
+	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
 			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
 			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
+		return 0;
 	}
 
 	public int otherMethod(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,

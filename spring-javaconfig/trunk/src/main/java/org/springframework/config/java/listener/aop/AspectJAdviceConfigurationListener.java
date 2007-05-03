@@ -51,11 +51,12 @@ public class AspectJAdviceConfigurationListener extends AbstractAopConfiguration
 	 * Check whether inheritance hierarchy is consistent
 	 */
 	@Override
-	public void configurationClass(ConfigurableListableBeanFactory beanFactory,
+	public int configurationClass(ConfigurableListableBeanFactory beanFactory,
 			DefaultListableBeanFactory childBeanFactory, String configurerBeanName, Class configurerClass) {
 		if (aspectJAdvisorFactory.isAspect(configurerClass)) {
 			aspectJAdvisorFactory.validate(configurerClass);
 		}
+		return 0;
 	}
 
 	@Override
@@ -80,7 +81,7 @@ public class AspectJAdviceConfigurationListener extends AbstractAopConfiguration
 		String aspectName = "aspectName";
 		Advisor pa = aspectJAdvisorFactory.getAdvisor(/* configurerClass, */aspectJAdviceMethod,
 		// new PrototypeAspectInstanceFactory(childBeanFactory,
-		// getConfigurerBeanName(configurerClass)));
+			// getConfigurerBeanName(configurerClass)));
 			new BeanFactoryAspectInstanceFactory(childBeanFactory, getConfigurerBeanName(configurerClass),
 					configurerClass), declarationOrderInAspect, aspectName);
 
@@ -100,7 +101,7 @@ public class AspectJAdviceConfigurationListener extends AbstractAopConfiguration
 			// added the advice as singleton
 			count++;
 		}
-		
+
 		return count;
 	}
 

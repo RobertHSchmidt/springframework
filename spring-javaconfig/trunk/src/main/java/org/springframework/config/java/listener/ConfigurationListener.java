@@ -42,7 +42,16 @@ public interface ConfigurationListener {
 	 */
 	boolean understands(Class<?> configurerClass);
 
-	void configurationClass(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+	/**
+	 * React to the given configuration class.
+	 * 
+	 * @param beanFactory
+	 * @param childBeanFactory
+	 * @param configurerBeanName
+	 * @param configurerClass
+	 * @return number of bean definitions created
+	 */
+	int configurationClass(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
 			String configurerBeanName, Class<?> configurerClass);
 
 	/**
@@ -59,8 +68,10 @@ public interface ConfigurationListener {
 	 * @param m configuration method
 	 * @param beanAnnotation bean annotation on the configuration method, which
 	 * will not be null.
+	 * @return number of additional bean definitions created for the existing one. The value should be different from zero if wrapping bean definitions
+	 * are created besides the normal &#64;Bean discovery process 
 	 */
-	void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
+	int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
 			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
 			String configurerBeanName, Class<?> configurerClass, Method m, Bean beanAnnotation);
 

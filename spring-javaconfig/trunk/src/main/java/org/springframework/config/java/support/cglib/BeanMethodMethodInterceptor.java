@@ -69,30 +69,23 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 	}
 
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
-		// Bean ann = AnnotationUtils.findAnnotation(m, Bean.class);
-		// if (ann == null) {
-		// // normally this branch will not be invoked since the callback is
-		// // already filtered when CGLib was set up.
-		//
-		// return mp.invokeSuper(o, args);
-		// }
-		// else
 
-		{
-			return returnWrappedResultMayBeCached(o, m, args, mp);
-		}
+		return returnWrappedResultMayBeCached(getBeanName(m), o, m, args, mp);
 	}
 
-	private Object returnWrappedResultMayBeCached(final Object o, final Method m, final Object[] args,
-			final MethodProxy mp) throws Throwable {
+	protected String getBeanName(Method m) {
+		return namingStrategy.getBeanName(m);
+	}
 
-		String beanName = namingStrategy.getBeanName(m);
+	protected Object returnWrappedResultMayBeCached(final String beanName, final Object o, final Method m,
+			final Object[] args, final MethodProxy mp) throws Throwable {
+
 		boolean inCreation = false;
 		Object bean = null;
 
 		synchronized (o) {
 			// check the bean creation
-			inCreation = owningBeanFactory.isCurrentlyInCreation(beanName) || childTrackingFactory.isCurrentlyInCreation(beanName);
+			inCreation = isCurrentlyInCreation(beanName);
 
 			// the BF extpects us to create the object
 			if (inCreation) {
@@ -119,5 +112,11 @@ public class BeanMethodMethodInterceptor implements MethodInterceptor {
 			else
 				log.debug(beanName + " not in creation, asked the BF for one");
 		return bean;
+
+	}
+
+	protected boolean isCurrentlyInCreation(String beanName) {
+		return owningBeanFactory.isCurrentlyInCreation(beanName)
+				|| childTrackingFactory.isCurrentlyInCreation(beanName);
 	}
 }

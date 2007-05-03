@@ -44,19 +44,20 @@ import org.springframework.beans.factory.config.BeanDefinition;
  * <p>
  * Bean creation methods may reference other bean creation methods by calling
  * them directly, as follows. This ensures that references between beans are
- * strongly typed: <code>
- * @Bean
+ * strongly typed: 
+ * <pre class="code">
+ * &#64;Bean
  * public Company interface21() {
- * 	    Company company = new DefaultCompany("Interface21");
- *      company.setChiefScientist(adrian());
- *      return company;
+ *    Company company = new DefaultCompany("Interface21");
+ *    company.setChiefScientist(adrian());
+ *    return company;
  * }
  * 
- * @Bean
+ * &#64;Bean
  * public Person adrian() {
- * 	     return new Person("Adrian Colyer");
+ *    return new Person("Adrian Colyer");
  * }
- * </code>
+ * </pre>
  * <p>
  * If a bean creation method is protected, rather than public, the the bean will
  * be hidden. This means that the bean will be added to a child factory used
