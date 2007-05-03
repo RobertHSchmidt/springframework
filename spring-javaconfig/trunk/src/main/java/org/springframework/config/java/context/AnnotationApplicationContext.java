@@ -35,14 +35,26 @@ public class AnnotationApplicationContext extends AbstractAnnotationApplicationC
 	private Class[] configClasses;
 
 	/**
-	 * Create a new AnnotationApplicationContext.
+	 * Create a new AnnotationApplicationContext w/o any settings.
+	 * 
+	 * @see #setClassLoader(ClassLoader)
+	 * @see #setConfigClasses(Class[])
+	 * @see #setConfigLocations(String[])
+	 * @see #setConfigResources(Resource[])
 	 */
 	public AnnotationApplicationContext() {
 		super();
 	}
 
 	/**
-	 * Create a new AnnotationApplicationContext with the given parent.
+	 * Create a new AnnotationApplicationContext with the given parent. The
+	 * instance can be further configured before calling {@link #refresh()}.
+	 * 
+	 * 
+	 * @see #setClassLoader(ClassLoader)
+	 * @see #setConfigClasses(Class[])
+	 * @see #setConfigLocations(String[])
+	 * @see #setConfigResources(Resource[])
 	 * 
 	 * @param parent the parent application context
 	 */
@@ -51,7 +63,9 @@ public class AnnotationApplicationContext extends AbstractAnnotationApplicationC
 	}
 
 	/**
-	 * Create a new AnnotationApplicationContext from the given locations.
+	 * Create a new AnnotationApplicationContext from the given locations ({@link #refresh()}
+	 * is being called).
+	 * 
 	 * 
 	 * @param locations the metadata locations
 	 */
@@ -61,7 +75,8 @@ public class AnnotationApplicationContext extends AbstractAnnotationApplicationC
 	}
 
 	/**
-	 * Create a new AnnotationApplicationContext from the given classes.
+	 * Create a new AnnotationApplicationContext from the given classes ({@link #refresh()}
+	 * is being called).
 	 * 
 	 * @param classes
 	 */
