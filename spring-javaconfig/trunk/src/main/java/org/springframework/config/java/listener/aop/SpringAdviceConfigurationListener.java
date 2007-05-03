@@ -30,29 +30,34 @@ import org.springframework.core.annotation.Order;
 
 /**
  * Configuration class to create a Spring Advisor containing an AspectJ pointcut
- * and the Spring advice returned by the method. Usage: <code>
- * @SpringAdvice("expression")
+ * and the Spring advice returned by the method. <p/> Usage:
+ * 
+ * <pre>
+ *  @SpringAdvice(&quot;expression&quot;)
  * protected Advice returnsSpringAdvice() { ... }
- * </code>
+ * </pre>
+ * 
+ * 
  * <p>
  * It is possible to specify an advice that will match everything as follows:
- * <code>
- * @SpringAdvice(matchAll=true)
+ * 
+ * <pre>
+ *  @SpringAdvice(matchAll=true)
  * protected Advice returnsSpringAdvice() { ... }
- * </code>
+ * </pre>
  * 
  * @author Rod Johnson
  */
 public class SpringAdviceConfigurationListener extends AbstractAopConfigurationListener {
 
 	@Override
-	public void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
+	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
 			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
 			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
 
 		SpringAdvice springAdvice = AnnotationUtils.findAnnotation(m, SpringAdvice.class);
 		if (springAdvice == null) {
-			return;
+			return 0;
 		}
 
 		log.debug("Found advice method " + m);
@@ -78,6 +83,8 @@ public class SpringAdviceConfigurationListener extends AbstractAopConfigurationL
 			pc = createSpringPointcut(springAdvice, m);
 		}
 		addAdvice(adviceName, pc, childBeanFactory);
+
+		return 0;
 	}
 
 	protected Pointcut createSpringPointcut(SpringAdvice ann, Method method) {

@@ -26,6 +26,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalBean;
+import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.support.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.support.BytecodeConfigurationEnhancer;
@@ -51,6 +52,8 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 	private static class BeanCreationCallbackFilter implements CallbackFilter {
 
 		public int accept(Method m) {
+			if (ClassUtils.hasAnnotation(m, ScopedProxy.class))
+				return CglibConfigurationEnhancer.SCOPED_PROXY_CALLBACK_INDEX;
 			if (ClassUtils.hasAnnotation(m, Bean.class)) {
 				return CglibConfigurationEnhancer.BEAN_CALLBACK_INDEX;
 			}
@@ -64,17 +67,28 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 	private static final CallbackFilter BEAN_CREATION_METHOD_CALLBACK_FILTER = new BeanCreationCallbackFilter();
 
 	private static final Class[] CALLBACK_TYPES = new Class[] { NoOp.class, BeanMethodMethodInterceptor.class,
-			ExternalBeanMethodMethodInterceptor.class };
+			ExternalBeanMethodMethodInterceptor.class, ScopedProxyBeanMethodMethodInterceptor.class };
 
+	// non-intercepted method
 	private static final int NO_OP_CALLBACK_INDEX = 0;
 
+	// normal method invocation
 	private static final int BEAN_CALLBACK_INDEX = 1;
 
+	// external bean invocation
 	private static final int EXTERNAL_BEAN_CALLBACK_INDEX = 2;
+
+	// scoped proxy invocation (similar to normal invocation but aware of the
+	// scoping prefix)
+	private static final int SCOPED_PROXY_CALLBACK_INDEX = 3;
 
 	private final Callback BEAN_METHOD_CREATION_CALLBACK;
 
 	private final Callback EXTERNAL_BEAN_CALLBACK;
+
+	private final Callback SCOPED_PROXY_CALLBACK;
+
+	private final Callback[] CALLBACKS;
 
 	private ConfigurableListableBeanFactory owningBeanFactory;
 
@@ -103,6 +117,12 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 
 		EXTERNAL_BEAN_CALLBACK = new ExternalBeanMethodMethodInterceptor(this.owningBeanFactory,
 				this.beanNamingStrategy);
+
+		SCOPED_PROXY_CALLBACK = new ScopedProxyBeanMethodMethodInterceptor(
+				(BeanMethodMethodInterceptor) BEAN_METHOD_CREATION_CALLBACK);
+
+		CALLBACKS = new Callback[] { NoOp.INSTANCE, BEAN_METHOD_CREATION_CALLBACK, EXTERNAL_BEAN_CALLBACK,
+				SCOPED_PROXY_CALLBACK };
 	}
 
 	/*
@@ -127,8 +147,7 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 
 		Class<?> configurationSubclass = enhancer.createClass();
 
-		Enhancer.registerCallbacks(configurationSubclass, new Callback[] { NoOp.INSTANCE,
-				BEAN_METHOD_CREATION_CALLBACK, EXTERNAL_BEAN_CALLBACK });
+		Enhancer.registerCallbacks(configurationSubclass, CALLBACKS);
 
 		return configurationSubclass.asSubclass(configurationClass);
 	}
