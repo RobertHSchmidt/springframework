@@ -68,6 +68,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
  * 
  * 
  * @author Rod Johnson
+ * @author Costin Leau
  * 
  * @see org.springframework.config.java.annotation.Configuration
  */

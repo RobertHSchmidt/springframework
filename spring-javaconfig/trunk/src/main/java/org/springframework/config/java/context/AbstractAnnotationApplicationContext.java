@@ -40,7 +40,7 @@ import org.springframework.core.io.Resource;
  * 
  * @author Costin Leau
  * 
- * @see org.springframework.config.java.testing.config.java.parsing.DefaultListableBeanFactory
+ * @see DefaultListableBeanFactory
  */
 public abstract class AbstractAnnotationApplicationContext extends AbstractRefreshableApplicationContext {
 
@@ -64,7 +64,6 @@ public abstract class AbstractAnnotationApplicationContext extends AbstractRefre
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.springframework.config.java.testing.config.java.context.support.AbstractRefreshableApplicationContext#loadBeanDefinitions(org.springframework.config.java.testing.config.java.parsing.DefaultListableBeanFactory)
 	 */
 	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {

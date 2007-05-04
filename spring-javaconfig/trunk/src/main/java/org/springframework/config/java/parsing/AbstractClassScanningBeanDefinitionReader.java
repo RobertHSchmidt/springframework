@@ -114,7 +114,7 @@ public abstract class AbstractClassScanningBeanDefinitionReader extends Abstract
 	/**
 	 * Search the class for any innerClasses.
 	 * 
-	 * @param resource
+	 * @param stream
 	 * @return
 	 */
 	protected abstract int searchClass(InputStream stream) throws IOException;

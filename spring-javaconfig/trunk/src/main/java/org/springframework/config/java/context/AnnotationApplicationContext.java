@@ -102,7 +102,7 @@ public class AnnotationApplicationContext extends AbstractAnnotationApplicationC
 
 	/**
 	 * Set the configuration locations from Strings. These will be converted
-	 * into Spring's {@link Resource} using the current ${@link org.springframework.config.java.testing.config.java.core.io.ResourceLoader}.
+	 * into Spring's {@link Resource} using the current ${@link org.springframework.core.io.ResourceLoader}.
 	 * 
 	 * @param locations
 	 */

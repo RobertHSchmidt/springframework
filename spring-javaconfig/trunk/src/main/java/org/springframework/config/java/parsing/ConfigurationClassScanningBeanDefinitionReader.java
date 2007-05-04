@@ -21,7 +21,7 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Configuration;
 
 /**
- * ASM {@link http://asm.objectweb.org} based annotation bean definition
+ * <a href="http://asm.objectweb.org">ASM</a> based annotation bean definition
  * reader. This implementation will read the bytecode directly to find more
  * information about each class read. ASM will be used as much as possible in
  * order to avoid unnecessary class loading.

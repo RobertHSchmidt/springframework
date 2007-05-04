@@ -33,7 +33,7 @@ import org.springframework.config.java.annotation.Configuration;
  * Configuration listener that processes AspectJ aspects.
  * 
  * @author Rod Johnson
- * @see org.springframework.config.java.testing.config.java.aop.aspectj.annotation.AspectJAdvisorFactory
+ * @see org.springframework.aop.aspectj.annotation.AspectJAdvisorFactory
  */
 public class AspectJAdviceConfigurationListener extends AbstractAopConfigurationListener {
 

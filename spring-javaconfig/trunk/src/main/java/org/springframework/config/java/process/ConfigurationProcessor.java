@@ -167,8 +167,8 @@ public class ConfigurationProcessor implements InitializingBean {
 	 * declared in the enclosing bean factory.
 	 * 
 	 * @param configurationClass class containing
-	 * @Configurable or
-	 * @Bean annotation
+	 * &#64;Configurable or
+	 * &#64;Bean annotation
 	 * @return the number of bean definition generated (including the
 	 * configuration)
 	 * @throws BeanDefinitionStoreException if no bean definitions are found
@@ -227,7 +227,7 @@ public class ConfigurationProcessor implements InitializingBean {
 	 * 
 	 * @param configurationBeanName name of the bean containing the factory
 	 * methods
-	 * @param configClass class of the configurer bean instance
+	 * @param configurationClass class of the configurer bean instance
 	 * @return number of bean created
 	 */
 	protected int generateBeanDefinitions(final String configurationBeanName, Class<?> configurationClass) {
