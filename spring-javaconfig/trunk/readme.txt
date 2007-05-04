@@ -4,7 +4,10 @@ http://www.springframework.org/javaconfig
 
 1. INTRODUCTION
 
-Spring JavaConfig offers a programatic way of configuring the Spring container.
+Spring JavaConfig offers a Java-based alternative to configuring Spring Application Contexts. 
+While most people currently use XML to configure bean definitions in their Application Contexts, 
+Spring's versatility and metadata based internal handling of bean definitions means alternatives 
+to XML config are easy to implement.
 
 2. RELEASE INFO
 
@@ -12,7 +15,7 @@ The Spring JavaConfig is targeted at Spring 2.0.5 and above and JDK level 1.5 an
 
 Release contents:
 * "src" contains the Java source files for the framework
-* "java-config.examples" contains the samples Java source files
+* "samples" contains the samples Java source files
 * "dist" contains various Spring JavaConfig distribution jar files
 * "lib" contains all third-party libraries needed for running the samples and/or building the framework
 * "docs" contains general documentation and API javadocs
@@ -24,7 +27,7 @@ Maven 2 pom.xml are provided for building the sources.
 Latest info is available at the public website: http://www.springframework.org/javaconfig
 Project info at the SourceForge site: http://sourceforge.net/projects/springframework
 
-Spring OSGi is released under the terms of the Apache Software License (see license.txt).
+Spring JavaConfig is released under the terms of the Apache Software License (see license.txt).
 All libraries included in the "-with-dependencies" download are subject to their respective licenses.
 This product includes software developed by the Apache Software Foundation (http://www.apache.org).
 
