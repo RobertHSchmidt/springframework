@@ -18,18 +18,20 @@ package org.springframework.samples.petclinic;
 import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.annotation.Bean;
-import org.springframework.beans.factory.annotation.Configuration;
-import org.springframework.beans.factory.java.template.ConfigurationSupport;
+import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.annotation.ExternalBean;
+import org.springframework.config.java.support.ConfigurationSupport;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.dao.DataAccessException;
-import org.springframework.samples.petclinic.validation.OwnerValidator;
-import org.springframework.samples.petclinic.validation.PetValidator;
-import org.springframework.samples.petclinic.validation.VisitValidator;
-import org.springframework.samples.petclinic.web.ClinicController;
 import org.springframework.transaction.TransactionException;
 import org.springframework.validation.Validator;
+import org.springframework.samples.petclinic.validation.OwnerValidator;
+import org.springframework.samples.petclinic.validation.PetValidator; 
+import org.springframework.samples.petclinic.validation.VisitValidator; 
+import org.springframework.samples.petclinic.web.ClinicController;
+import org.springframework.samples.petclinic.Clinic;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.RequestToViewNameTranslator;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
@@ -45,39 +47,11 @@ import org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator;
 public class PetclinicWebConfiguration extends ConfigurationSupport {
 
 	@Bean
-	public MessageSource messageSource() {
-		ResourceBundleMessageSource source = new ResourceBundleMessageSource();
-		source.setBasename("messages");
-		return source;
-	}
-
-	@Bean
-	public HandlerExceptionResolver exceptionResolver() {
-		SimpleMappingExceptionResolver resolver = new SimpleMappingExceptionResolver();
-
-		Properties mappings = new Properties();
-		mappings.put(DataAccessException.class.getName(), "dataAccessFailure");
-		mappings.put(TransactionException.class.getName(), "dataAccessFailure");
-		resolver.setExceptionMappings(mappings);
-		return resolver;
-	}
-
-	@Bean
 	public RequestToViewNameTranslator viewNameTranslator() {
 		DefaultRequestToViewNameTranslator translator = new DefaultRequestToViewNameTranslator();
 		translator.setSuffix("View");
 		return translator;
 	}
-
-	/*
-	 * do not add this as it will break petclinic (the views are not properly
-	 * resolved
-	 */
-	/*
-	 * @Bean public ViewResolver viewResolver() { ResourceBundleViewResolver
-	 * resolver = new ResourceBundleViewResolver();
-	 * resolver.setBasename("views"); return resolver; }
-	 */
 
 	@Bean
 	public Validator visitValidator() {
@@ -97,8 +71,14 @@ public class PetclinicWebConfiguration extends ConfigurationSupport {
 	@Bean
 	public Controller clinicController() {
 		ClinicController ctrl = new ClinicController();
-		ctrl.setMethodNameResolver((MethodNameResolver) getBean("clinicControllerResolver"));
-		ctrl.setClinic((Clinic) getBean("clinic"));
+		ctrl.setMethodNameResolver(clinicControllerResolver());
+		ctrl.setClinic((Clinic)getBean("clinic"));
 		return ctrl;
+	}
+	
+	@ExternalBean
+	public MethodNameResolver clinicControllerResolver() {
+		// will never be executed
+		return null;
 	}
 }

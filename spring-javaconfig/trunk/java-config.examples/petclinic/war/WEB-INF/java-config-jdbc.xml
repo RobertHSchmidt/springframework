@@ -8,5 +8,5 @@
 
 	<bean class="org.springframework.samples.petclinic.JdbcConfiguration"/>
 	
-	<bean class="org.springframework.beans.factory.java.ConfigurationPostProcessor" />
+	<bean class="org.springframework.config.java.process.ConfigurationPostProcessor" />
 </beans>
