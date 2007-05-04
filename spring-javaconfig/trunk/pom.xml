@@ -115,25 +115,21 @@ limitations under the License.
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
       <version>2.0.4</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
       <version>2.0.4</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
       <version>2.0.4</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
       <version>2.0.4</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -153,7 +149,6 @@ limitations under the License.
       <groupId>org.springframework</groupId>
       <artifactId>spring-support</artifactId>
       <version>2.0.4</version>
-      <scope>provided</scope>
     </dependency>        
 
     <dependency>
@@ -174,25 +169,21 @@ limitations under the License.
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <version>1.1</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.aopalliance</groupId>
       <artifactId>aopalliance</artifactId>
       <version>1.0</version>
-      <scope>provided</scope>
     </dependency>    
     <dependency>
       <groupId>asm</groupId>
       <artifactId>asm</artifactId>
       <version>2.2.3</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>asm</groupId>
       <artifactId>asm-commons</artifactId>
       <version>2.2.3</version>
-      <scope>provided</scope>
     </dependency>
     
     <dependency>
@@ -213,6 +204,7 @@ limitations under the License.
         </exclusion>
       </exclusions>
       <optional>true</optional>
+      <scope>provided</scope>
 	</dependency>   
     
     <!-- 
@@ -227,7 +219,6 @@ limitations under the License.
       <groupId>cglib</groupId>
       <artifactId>cglib-nodep</artifactId>
       <version>2.1_3</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>commons-dbcp</groupId>
@@ -272,7 +263,15 @@ limitations under the License.
       <artifactId>spring-mock</artifactId>
       <version>2.0.4</version>
       <scope>test</scope>
+    </dependency> 
+    <!-- required by petclinic sample -->   
+    <dependency>
+      <groupId>groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <version>1.1-BETA-1</version>
+      <scope>test</scope>
     </dependency>    
+    
   </dependencies>
   
   <build>
