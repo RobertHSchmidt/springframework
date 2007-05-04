@@ -143,7 +143,7 @@ public class AwareBean implements BeanFactoryAware {
       context. Let's look at example:</para>
 
       <programlisting>@Configuration
-public static abstract class ExternalBeanConfiguration {
+public abstract class ExternalBeanConfiguration {
   @Bean
   public TestBean james() {
     TestBean james = new TestBean();
@@ -163,6 +163,52 @@ public static abstract class ExternalBeanConfiguration {
       the method name (please see the naming chapter for more details). This
       way, your configuration remains pure Java and refactoring
       friendly.</para>
+
+      <para>Note that <literal>@ExternalBean</literal> works on normal method
+      also; the example above uses the abstract method to avoid writing dummy
+      code that doesn't execute:</para>
+
+      <programlisting>@Configuration
+public class ExternalBeanOnNormalMethod {
+
+  @ExternalBean
+  public TestBean ann(){
+      System.out.println("this code will not execute as the method " +
+          "will be overriden with a bean look up at runtime");
+  }
+}</programlisting>
+    </section>
+
+    <section>
+      <title><literal>@ScopedProxy</literal></title>
+
+      <para>Spring offers a convenient way of working with scoped dependencies
+      through <ulink
+      url="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-scopes-other-injection">scoped
+      proxies</ulink>(please see the link for an in-depth discussion on the
+      matter). The easiest way to create such a proxy, when using the XML
+      configuration, is the <literal>&lt;aop:scoped-proxy/&gt;</literal>
+      element. JavaConfig offers as alternative the<literal>
+      @ScopedProxy</literal> annotation which provides the same semantic and
+      configuration options.</para>
+
+      <para>The reference documentation XML scoped proxy example, looks like
+      this under JavaConfig:</para>
+
+      <programlisting>// a HTTP Session-scoped bean exposed as a proxy
+@Bean(scope = DefaultScopes.SESSION)
+@ScopedProxy
+public UserPreferences userPreferences() {
+   return new UserPreferences();
+}
+
+@Bean
+public Service userService() {
+   UserService service = new SimpleUserService();
+   // a reference to the proxied 'userPreferences' bean
+   service.seUserPreferences(userPreferences());
+   return service;
+}</programlisting>
     </section>
   </chapter>
 
@@ -242,8 +288,8 @@ applicationContext.getBean("blue");</programlisting>
     <para>In some cases, this naming scheme is not suitable as methods with
     the same name, from different classes will override each other
     definitions. To customize the behavior, one can implement
-    BeanNamingStrategy interface to provide its own naming generation
-    strategy.</para>
+    <literal>BeanNamingStrategy</literal> interface to provide its own naming
+    generation strategy.</para>
 
     <para>However, before writing your own code, take a look at the options
     provided by the default implementation:
@@ -273,15 +319,16 @@ applicationContext.getBean("ColoursConfiguration.blue");</programlisting>
     XML file, one has to use the Spring container. As mentioned, one can
     achieve this with <link linkend="externalBean">@ExternalBean</link>
     annotation (the recommended way). For cases where this is not suitable or
-    desired, the underlying beanFactory used for the @Configuration class can
-    be access. Out of the box, this can be achieved by extending configuration
-    classes from <literal>ConfigurationSupport</literal> or by implementing
-    the <literal>BeanFactoryAware</literal> interface.</para>
+    desired, the underlying beanFactory used for the
+    <literal>@Configuration</literal> class can be access. Out of the box,
+    this can be achieved by extending configuration classes from
+    <literal>ConfigurationSupport</literal> or by implementing the
+    <literal>BeanFactoryAware</literal> interface.</para>
 
     <para>Consider the following XML configuration:<programlisting>&lt;bean id="myBean" class="MyBean"/&gt;</programlisting></para>
 
-    <para>In order to refer to myBean bean when using Java, one can use the
-    following snippets:</para>
+    <para>In order to refer to <literal>myBean</literal> bean when using Java,
+    one can use the following snippets:</para>
 
     <para><programlisting>@Configuration
 public class MyConfig extends ConfigurationSupport {
@@ -313,6 +360,11 @@ public class MyOtherConfig implements BeanFactoryAware {
     <literal>ConfigurationSupport</literal> and/or
     <literal>BeanFactoryAware</literal> as @<literal>ExternalBean</literal>
     offers the same capability in a refactoring friendly manner.</para>
+
+    <para>JavaConfig distribution contains a converted Petclinic sample that
+    replaces some XML configuration parts, with Java and <ulink
+    url="http://groovy.codehaus.org/">Groovy</ulink> - please see the samples
+    folder for more info.</para>
   </chapter>
 
   <chapter>
