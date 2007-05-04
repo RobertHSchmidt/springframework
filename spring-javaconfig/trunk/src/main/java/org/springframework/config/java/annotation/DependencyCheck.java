@@ -22,7 +22,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
  * Annotation representing a Spring IoC dependency check status.
  * 
  * @author Rod Johnson
- * @see org.springframework.config.java.parsing.AbstractBeanDefinition
+ * @see AbstractBeanDefinition
  */
 public enum DependencyCheck {
 

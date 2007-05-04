@@ -33,7 +33,7 @@ import org.springframework.core.annotation.Order;
  * and the Spring advice returned by the method. <p/> Usage:
  * 
  * <pre>
- *  @SpringAdvice(&quot;expression&quot;)
+ *  &#64;SpringAdvice(&quot;expression&quot;)
  * protected Advice returnsSpringAdvice() { ... }
  * </pre>
  * 
@@ -42,7 +42,7 @@ import org.springframework.core.annotation.Order;
  * It is possible to specify an advice that will match everything as follows:
  * 
  * <pre>
- *  @SpringAdvice(matchAll=true)
+ *  &#64;SpringAdvice(matchAll=true)
  * protected Advice returnsSpringAdvice() { ... }
  * </pre>
  * 
