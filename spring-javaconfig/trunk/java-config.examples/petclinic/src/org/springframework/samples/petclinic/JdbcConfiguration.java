@@ -17,9 +17,9 @@ package org.springframework.samples.petclinic;
 
 import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.Bean;
-import org.springframework.beans.factory.annotation.Configuration;
-import org.springframework.beans.factory.java.template.ConfigurationSupport;
+import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.support.ConfigurationSupport;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.samples.petclinic.jdbc.AbstractJdbcClinic;

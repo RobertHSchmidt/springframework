@@ -6,7 +6,8 @@
 
 	<property name="war.dir" value="war" />
 	<property name="src.dir" value="src" />
-	<property name="build.dir" value="../../target/classes" />
+	<property name="build.dir" value=".classes" />
+	<property name="lib.dir" value="${basedir}/lib" />
 	<property name="docs.dir" value="${war.dir}/docs" />
 	<property name="webclasses.dir" value="${war.dir}/WEB-INF/classes" />
 	<property name="weblib.dir" value="${war.dir}/WEB-INF/lib" />
@@ -25,10 +26,16 @@
 
 
 	<path id="master-classpath">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar"/>
+		</fileset>	
 	</path>
 
 
 	<path id="build-classpath">
+		<fileset dir="${tmp.dir}/WEB-INF/lib">
+			<include name="**/*.jar"/>
+		</fileset>	
 	</path>
 
 
@@ -62,28 +69,64 @@
 	</target>
 
 	<target name="clean" description="Cleanup">
-		<delete dir="${dist.dir}/tmp" />
+		<delete dir="${tmp.dir}" />
+		<delete dir="${build.dir}"/>
 	</target>
 
+    <!-- Groovy compiler ant target -->
+	<taskdef name="groovyc"
+         classname="org.codehaus.groovy.ant.Groovyc"
+         classpathref="master-classpath"/>
 
-	<target name="warfile" description="Add JavaConfig files to the petclinic war">
+
+
+	<target name="warfile" description="Add JavaConfig files to the petclinic war" depends="clean">
 
 		<mkdir dir="${tmp.dir}" />
 
-		<!-- unpack jar -->
+		<!-- unpack jar original Petclinic Jar -->
 		<unjar dest="${tmp.dir}" src="dist/petclinic.war" />
 
-		<jar destfile="${tmp.dir}/WEB-INF/lib/java-config.jar" basedir="${build.dir}" />
-
+	    <!-- move javaconfig dist jar inside the war -->
+		<copy todir="${tmp.dir}/WEB-INF/lib/" overwrite="true">
+			<fileset dir="${lib.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+		
+		<!-- build the files using the unpacked jars -->
+        <mkdir dir="${build.dir}" />
+   
+		<javac destdir="${build.dir}" source="1.5" target="1.5" debug="true"
+				deprecation="false" optimize="false" failonerror="true">
+			<src path="${src.dir}"/>
+			<classpath refid="master-classpath"/>
+			<classpath refid="build-classpath"/>
+		</javac>
+		<!--
+        <java classname="org.codehaus.groovy.ant.Groovyc">
+            <classpath refid="build-classpath" />
+            <arg value="${build.dir}" />
+            <arg value="${src.dir}" />
+        </java> 
+        -->
+		
+		<groovyc srcdir="${src.dir}"  destdir="${build.dir}" classpathref="build-classpath" />
+		
+		<!-- pack the built classes as a jar -->
+		<jar destfile="${tmp.dir}/WEB-INF/lib/java-configs.jar" basedir="${build.dir}"/>
+		
+		<!-- copy the rest of the files in one folder -->
 		<copy todir="${tmp.dir}/" overwrite="true">
 			<fileset dir="${war.dir}">
 				<include name="**/*" />
 			</fileset>
 		</copy>
-
+		
+        <!-- pack the petclinic-javaconfig jar -->
 		<jar destfile="${dist.dir}/petclinic-javaconfig.war" basedir="${tmp.dir}" />
 
-		<delete dir="${dist.dir}/tmp" />
+		<delete dir="${tmp.dir}" failonerror="false"/>
 	</target>
 
 </project>
