@@ -136,7 +136,7 @@ public class AwareBean implements BeanFactoryAware {
     </section>
 
     <section>
-      <title id="externalBean"><literal>@ExternalBean</literal></title>
+      <title id="external-bean"><literal>@ExternalBean</literal></title>
 
       <para><literal>@ExternalBean</literal> is a simple markup annotation
       used for injecting 'external' beans, defined in a parent application
@@ -179,7 +179,7 @@ public class ExternalBeanOnNormalMethod {
 }</programlisting>
     </section>
 
-    <section>
+    <section id="scoped-proxy">
       <title><literal>@ScopedProxy</literal></title>
 
       <para>Spring offers a convenient way of working with scoped dependencies
@@ -213,6 +213,92 @@ public Service userService() {
   </chapter>
 
   <chapter>
+    <title>Bean Visibility</title>
+
+    <para>A nice JavaConfig feature is bean visibility. JavaConfig uses a
+    method visibilty modifiers to determine if the bean resulted from that
+    method can be accessed through by owning application context / bean
+    factory or not.</para>
+
+    <para>Consider the following configuration:</para>
+
+    <programlisting>@Configuration
+public abstract class VisibilityConfiguration {
+
+  @Bean
+  public Bean publicBean() {
+     Bean bean = new Bean();
+     bean.setDependency(hiddenBean());
+     return bean;
+  }
+  
+  @Bean
+  protected HiddenBean hiddenBean() {
+     return new Bean("protected bean");
+  }
+
+  @Bean
+  private HiddenBean secretBean() {
+     Bean bean = new Bean("private bean");
+     // hidden beans can access beans defined in the 'owning' context
+     bean.setDependency(outsideBean());
+  }
+
+  @ExternalBean
+  public abstract Bean outsideBean()
+}</programlisting>
+
+    <para>used along side the following XML configuration (for more
+    information on mixing configuration strategies see <link
+    linkend="mixing-configurations">this</link> chapter) :</para>
+
+    <programlisting>&lt;beans&gt;
+ &lt;!-- the configuration above --&gt;
+ &lt;bean class="my.java.config.VisibilityConfiguration"/&gt;
+
+ &lt;!-- Java Configuration post processor --&gt;
+ &lt;bean class="org.springframework.config.java.process.ConfigurationPostProcessor"/&gt;
+
+ &lt;bean id="mainBean" class="my.company.Bean"&gt;
+    &lt;!-- this will work --&gt;
+    &lt;property name="dependency" ref="publicBean"/&gt;
+    &lt;!-- this will *not* work --&gt;
+    &lt;property name="anotherDependency" ref="hiddenBean"/&gt;
+ &lt;/bean&gt;
+&lt;/beans&gt;</programlisting>
+
+    <para>One JavaConfig will encounter the configuration above, it will
+    create 3 beans : <literal>publicBean</literal>,
+    <literal>hiddenBean</literal> and <literal>secretBean</literal>. All of
+    them can see each other however, beans created in the 'owning' application
+    context (the application context that bootstraps JavaConfig) will see only
+    <literal>publicBean</literal>. Both <literal>hiddenBean</literal> and
+    <literal>secretBean</literal> can be accessed only by beans created inside
+    <literal>VisibilityConfiguration</literal>.</para>
+
+    <para>Any <literal>@Bean</literal> annotated method, which is not
+    <literal>public</literal> (i.e. with <literal>protected</literal>,
+    <literal>private</literal> and <literal>default</literal> visibility),
+    will create a <literal>'hidden' </literal>bean.</para>
+
+    <para>In the example above, <literal>mainBean</literal> has been
+    configured with both <literal>publicBean</literal> and
+    <literal>hiddenBean</literal>. However, since the latter is (as the name
+    imply) hidden, at runtime Spring will throw:</para>
+
+    <programlisting>org.springframework.beans.factory.NoSuchBeanDefinitionException: No bean named 'hiddenBean' is defined
+ ...</programlisting>
+
+    <para>To provide the visibility functionality, JavaConfig takes advantage
+    of the application context <ulink
+    url="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html">hierarchy</ulink>
+    provided by the Spring container, placing all hidden beans for a
+    particular configuration class, inside a child application context Thus,
+    the hidden beans can access beans defined in the parent (or owning)
+    context but not the other way around.</para>
+  </chapter>
+
+  <chapter id="wire-deps">
     <title>Wire dependencies</title>
 
     <para>To assemble a bean, one simply has to use the constructs provided by
@@ -266,7 +352,7 @@ public Manager shopManager() {
 }</programlisting>
   </chapter>
 
-  <chapter>
+  <chapter id="naming-strategy">
     <title>Naming strategy</title>
 
     <para>In all the examples so far, the bean resulting from the method
@@ -311,13 +397,13 @@ applicationContext.getBean("blue");</programlisting>
 applicationContext.getBean("ColoursConfiguration.blue");</programlisting>
   </chapter>
 
-  <chapter>
+  <chapter id="mixing-configurations">
     <title>Mixing XML and annotations</title>
 
     <para>Java and XML configuration are not exclusive - both can be used
     inside the same Spring application. In order to retrieve a bean from an
     XML file, one has to use the Spring container. As mentioned, one can
-    achieve this with <link linkend="externalBean">@ExternalBean</link>
+    achieve this with <link linkend="external-bean">@ExternalBean</link>
     annotation (the recommended way). For cases where this is not suitable or
     desired, the underlying beanFactory used for the
     <literal>@Configuration</literal> class can be access. Out of the box,
@@ -367,7 +453,7 @@ public class MyOtherConfig implements BeanFactoryAware {
     folder for more info.</para>
   </chapter>
 
-  <chapter>
+  <chapter id="using-java-config">
     <title>Using Java Configuration</title>
 
     <para>To use annotations for configuring your application, one can
@@ -428,7 +514,7 @@ ApplicationContext aBunchOfConfigs =
     </itemizedlist>
   </chapter>
 
-  <chapter>
+  <chapter id="roadmap">
     <title>Roadmap</title>
 
     <para>The project is relatively young and can be considered in beta
