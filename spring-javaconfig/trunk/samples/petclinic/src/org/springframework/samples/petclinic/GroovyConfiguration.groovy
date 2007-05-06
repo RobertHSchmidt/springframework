@@ -22,6 +22,9 @@ import org.springframework.samples.petclinic.web.EditOwnerForm
 @Configuration
 abstract class GroovyConfiguration extends ConfigurationSupport {
 
+	/**
+	 * Convert a map to a Properties object.
+	 */
 	Properties convertToProps(Map map) {
   	    Properties props = new Properties()
   	    props.putAll(map)
@@ -54,6 +57,14 @@ abstract class GroovyConfiguration extends ConfigurationSupport {
 		mapping.mappings = convertToProps(mappings)
 		return mapping
     }
+
+	@Bean
+	PropertiesMethodNameResolver clinicControllerResolver() {
+	   PropertiesMethodNameResolver resolver = new PropertiesMethodNameResolver()
+	   def mappings = ["/welcome.htm":"welcomeHandler", "/vets.htm":"vetsHandler", "/owner.htm":"ownerHandler"]
+	   resolver.mappings = convertToProps(mappings)
+	   return resolver
+	}
     	
 	@Bean
 	FindOwnersForm findOwnersForm() {
@@ -102,16 +113,5 @@ abstract class GroovyConfiguration extends ConfigurationSupport {
     
     @ExternalBean
     abstract Validator ownerValidator()
-    
-	/*
-	@Bean
-	PropertiesMethodNameResolver clinicControllerResolver() {
-	   PropertiesMethodNameResolver resolver = new PropertiesMethodNameResolver()
-	   def mappings = ["/welcome.html":"welcomeHandler", "/vets.htm":"vetsHandler", "/owner.htm":"ownerHandler"]
-	   Properties props = new Properties()
-	   props.putAll(mappings)
-	   resolver.mappings = props
-	   return resolver
-	}
-	*/
+
 }
