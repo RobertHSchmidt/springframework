@@ -23,25 +23,6 @@
 
     <!-- end JavaConfig -->
     
-    <!--
-	<bean id="urlMapping"
-		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-		<property name="mappings">
-			<props>
-				<prop key="/welcome.htm">clinicController</prop>
-				<prop key="/vets.htm">clinicController</prop>
-				<prop key="/findOwners.htm">findOwnersForm</prop>
-				<prop key="/owner.htm">clinicController</prop>
-				<prop key="/addOwner.htm">addOwnerForm</prop>
-				<prop key="/editOwner.htm">editOwnerForm</prop>
-				<prop key="/addPet.htm">addPetForm</prop>
-				<prop key="/editPet.htm">editPetForm</prop>
-				<prop key="/addVisit.htm">addVisitForm</prop>
-			</props>
-		</property>
-	</bean>
-	-->
-
 	<!--
 		- This bean provides explicit View mappings in a resource bundle instead of the
 		- default InternalResourceViewResolver. It fetches the view mappings from
@@ -55,22 +36,6 @@
 	<bean id="viewResolver"
 		class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
 		<property name="basename" value="views" />
-	</bean>
-
-
-	<!--
-		- This bean is a MethodNameResolver definition for a MultiActionController.
-		- It maps URLs to methods for the "clinicController" bean.
-		-->
-	<bean id="clinicControllerResolver"
-		class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
-		<property name="mappings">
-			<props>
-				<prop key="/welcome.htm">welcomeHandler</prop>
-				<prop key="/vets.htm">vetsHandler</prop>
-				<prop key="/owner.htm">ownerHandler</prop>
-			</props>
-		</property>
 	</bean>
 
 	<!--
