@@ -337,7 +337,7 @@ public class ConfigurationProcessor implements InitializingBean {
 		Configuration config = configurerClass.getAnnotation(Configuration.class);
 
 		if (log.isDebugEnabled())
-			log.debug("Creating future bean " + beanName);
+			log.debug("Creating bean definition for " + beanName);
 
 		ProcessUtils.copyAttributes(beanName, beanAnnotation, config, rbd, beanFactory);
 

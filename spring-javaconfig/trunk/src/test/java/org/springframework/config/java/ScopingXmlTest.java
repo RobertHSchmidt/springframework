@@ -30,6 +30,11 @@ public class ScopingXmlTest extends AbstractDependencyInjectionSpringContextTest
 		return new String[] { "classpath:org/springframework/config/java/scoping.xml", };
 	}
 
+	@Override
+	protected void onSetUp() throws Exception {
+		ScopingTest.flag = "1";
+	}
+
 	public void testGetScopedBean() {
 		TestBean bean = (TestBean) applicationContext.getBean("scopedProxyClass");
 		assertNotNull(bean);
