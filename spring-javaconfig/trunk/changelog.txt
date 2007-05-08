@@ -2,6 +2,9 @@ SPRING JAVACONFIG CHANGELOG
 ===========================
 http://springframework.org/javaconfig
 
+Changes in version 1.0-m3 (2007-mm-dd)
+--------------------------------------
+
 
 Changes in version 1.0-m2 (2007-05-08)
 --------------------------------------
