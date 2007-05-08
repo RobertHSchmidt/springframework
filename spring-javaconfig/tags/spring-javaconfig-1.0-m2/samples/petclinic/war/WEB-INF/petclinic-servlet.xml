@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<!--
+	- DispatcherServlet application context for PetClinic's web tier.
+	
+	Provides a mixture of Groovy, Java and XML.
+-->
+<beans default-autowire="no">
+
+	<!-- Java Config here -->
+	<bean
+		class="org.springframework.samples.petclinic.PetclinicWebConfiguration" />
+
+
+	<!-- Groovy configuration -->
+	<bean class="org.springframework.samples.petclinic.GroovyConfiguration"/>
+
+
+	<bean
+		class="org.springframework.config.java.process.ConfigurationPostProcessor" />
+
+
+    <!-- end JavaConfig -->
+    
+	<!--
+		- This bean provides explicit View mappings in a resource bundle instead of the
+		- default InternalResourceViewResolver. It fetches the view mappings from
+		- localized "views_xx" classpath files, i.e. "/WEB-INF/classes/views.properties"
+		- or "/WEB-INF/classes/views_de.properties".
+		-
+		- Symbolic view names returned by Controllers will be resolved by this bean
+		- using the respective properties file, which defines arbitrary mappings between
+		- view names and resources.
+	-->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
+		<property name="basename" value="views" />
+	</bean>
+
+	<!--
+		- This bean is a SimpleFormController that manages the addPet use case.
+		- It uses the "petValidator" and "clinic" beans.
+	-->
+	<bean id="addPetForm"
+		class="org.springframework.samples.petclinic.web.AddPetForm">
+		<property name="formView" value="petForm" />
+		<property name="successView" value="ownerRedirect" />
+		<property name="validator" ref="petValidator" />
+		<property name="clinic" ref="clinic" />
+	</bean>
+
+	<!--
+		- This bean is a SimpleFormController that manages the editPet use case.
+		- It uses the "petValidator" and "clinic" beans.
+	-->
+	<bean id="editPetForm"
+		class="org.springframework.samples.petclinic.web.EditPetForm">
+		<property name="formView" value="petForm" />
+		<property name="successView" value="ownerRedirect" />
+		<property name="validator" ref="petValidator" />
+		<property name="clinic" ref="clinic" />
+	</bean>
+
+
+	<!--
+		- This bean is a SimpleFormController that manages the addVisit use case.
+		- It uses the "visitValidator" and "clinic" beans.
+	-->
+	<bean id="addVisitForm"
+		class="org.springframework.samples.petclinic.web.AddVisitForm">
+		<property name="formView" value="visitForm" />
+		<property name="successView" value="ownerRedirect" />
+		<property name="validator" ref="visitValidator" />
+		<property name="clinic" ref="clinic" />
+	</bean>
+
+</beans>
