@@ -107,6 +107,24 @@ limitations under the License.
     </license>
   </licenses>
 
+	<distributionManagement>
+		<repository>
+			<id>local</id>
+			<name>Local Repository</name>
+			<url>file:///Users/nebhale/Documents/springframework/repos/repo</url>
+		</repository>
+		<repository>
+			<id>local-snapshots</id>
+			<name>Local Snapshot Release Repository</name>
+			<url>file:///Users/nebhale/Documents/springframework/repos/repo-snapshots</url>
+		</repository>
+		<snapshotRepository>
+			<id>aws-s3</id>
+			<name>Amazon S3</name>
+			<url>s3://maven.springframework.org</url>
+		</snapshotRepository>
+	</distributionManagement>
+
   <!-- =================================================== -->
   <!-- Project Modules, Dependencies, Plugins and Profiles -->
   <!-- =================================================== -->
@@ -402,6 +420,13 @@ limitations under the License.
         <artifactId>cobertura-maven-plugin</artifactId>
       </plugin>
 
+		<extensions>
+			<extension>
+				<groupId>org.springframework.aws</groupId>
+				<artifactId>spring-aws-maven</artifactId>
+				<version>1.0.1</version>
+			</extension>
+		</extensions>
 
     </plugins>
   </reporting>
