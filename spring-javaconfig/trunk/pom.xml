@@ -379,9 +379,6 @@ limitations under the License.
           </groups>
          <stylesheetfile>${basedir}/docs/stylesheet.css</stylesheetfile>
           <overview>${basedir}/docs/overview.html</overview>          
-          <!--
-          <excludePackageNames>org.springframework.osgi.test.trivial*</excludePackageNames>
-          -->
           <links>
             <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
             <link>
@@ -409,31 +406,12 @@ limitations under the License.
     </plugins>
   </reporting>
 
-<!-- 
-  <distributionManagement>
-    <repository>
-    </repository>
-    <snapshotRepository>
-    </snapshotRepository>
-    <site>
-    </site>
-  </distributionManagement>
-
- -->
 
   <!-- ================================================ -->
   <!--            Repository Configuration              -->
   <!-- ================================================ -->
 
   <repositories>
-    <repository>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>apache-snapshots</id>
-      <name>Apache Snapshots</name>
-      <url>http://cvs.apache.org/maven-snapshot-repository</url>
-    </repository>
     <repository>
       <id>safehaus-repository</id>
       <name>Safehaus Repository</name>
