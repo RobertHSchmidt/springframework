@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.springframework</groupId>
   <artifactId>spring-javaconfig</artifactId>
-  <version>1.0-m2-SNAPSHOT</version>
+  <version>1.0-m2</version>
   <name>Spring JavaConfig</name>
   <url>http://www.springframework.org/javaconfig</url>
   <description>
@@ -12,6 +12,9 @@
   internal handling of bean definitions means alternatives to XML config are easy to implement. 
   </description>
 
+  <properties>
+    <spring.version>2.0.5</spring.version>
+  </properties>
   <!-- ============================================= -->
   <!-- Basic configuration: JIRA, SCM, CI, devs etc. -->
   <!-- ============================================= -->
@@ -114,54 +117,57 @@ limitations under the License.
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
-      <version>2.0.4</version>
+      <version>${spring.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>2.0.4</version>
+      <version>${spring.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>2.0.4</version>
+      <version>${spring.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
-      <version>2.0.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-portlet</artifactId>
-      <version>2.0.4</version>
-      <scope>provided</scope>
+      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-remoting</artifactId>
-      <version>2.0.4</version>
+      <version>${spring.version}</version>
       <scope>provided</scope>
     </dependency>        
     
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-support</artifactId>
-      <version>2.0.4</version>
+      <version>${spring.version}</version>
     </dependency>        
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
-      <version>2.0.4</version>
+      <version>${spring.version}</version>
       <scope>provided</scope>
-    </dependency>        
+    </dependency>  
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-hibernate3</artifactId>
+      <version>${spring.version}</version>
+      <scope>provided</scope>
+    </dependency>    
+    
+          
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
-      <version>2.0.4</version>
+      <version>${spring.version}</version>
       <scope>provided</scope>
     </dependency>        
            
@@ -196,13 +202,6 @@ limitations under the License.
       <version>2.2.3</version>
     </dependency>
     
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-hibernate3</artifactId>
-      <version>2.0.4</version>
-      <scope>provided</scope>
-    </dependency>    
-    
 	<dependency>
       <groupId>org.hibernate</groupId>
 	  <artifactId>hibernate</artifactId>
@@ -216,11 +215,16 @@ limitations under the License.
           <groupId>ehcache</groupId>
           <artifactId>ehcache</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>asm</groupId>
+          <artifactId>asm-attrs</artifactId>
+        </exclusion>
+        
       </exclusions>
       <optional>true</optional>
       <scope>provided</scope>
 	</dependency>   
-    
+	
     <dependency>
       <groupId>cglib</groupId>
       <artifactId>cglib-nodep</artifactId>
@@ -263,13 +267,15 @@ limitations under the License.
       <artifactId>hsqldb</artifactId>
       <version>1.8.0.7</version>
       <scope>test</scope>
-    </dependency>        
+    </dependency>      
+      
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-mock</artifactId>
-      <version>2.0.4</version>
+      <version>${spring.version}</version>
       <scope>test</scope>
     </dependency> 
+    
     <!-- required by petclinic sample -->   
     <dependency>
       <groupId>groovy</groupId>
@@ -330,7 +336,7 @@ limitations under the License.
             <configuration>
               <overWriteReleases>false</overWriteReleases>
               <overWriteSnapshots>true</overWriteSnapshots>
-              <excludeTransitive>true</excludeTransitive>
+              <excludeTransitive>false</excludeTransitive>
             </configuration>
           </execution>
         </executions>
