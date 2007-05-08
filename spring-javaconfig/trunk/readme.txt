@@ -1,5 +1,5 @@
 SPRING JAVACONFIG 1.0-M2 (May 2007)
--------------------------------
+-----------------------------------
 http://www.springframework.org/javaconfig
 
 1. INTRODUCTION

@@ -1,4 +1,4 @@
-  <chapter>
+  <chapter id="introduction">
     <title>Introduction</title>
 
     <para>As mentioned in the <ulink
@@ -15,8 +15,8 @@
     semantics, making them a great configuration candidate.</para>
   </chapter>
 
-  <chapter>
-    <title id="components">Components</title>
+  <chapter id="components">
+    <title>Components</title>
 
     <para>Java Configuration uses annotations to leverage Java constructs
     allowing beans to be created and configured by the developer without
@@ -53,8 +53,8 @@ public class DataSourceConfiguration
       offers several utility methods.</para>
     </section>
 
-    <section>
-      <title id="bean"><literal>@Bean</literal></title>
+    <section id="bean">
+      <title><literal>@Bean</literal></title>
 
       <para>As the name implies, <literal>@Bean</literal> indicates a bean
       definition (the &lt;bean/&gt; tag). Let's start with a simple
@@ -135,8 +135,8 @@ public class AwareBean implements BeanFactoryAware {
       initializing method if needed.</para>
     </section>
 
-    <section>
-      <title id="external-bean"><literal>@ExternalBean</literal></title>
+    <section id="external-bean">
+      <title><literal>@ExternalBean</literal></title>
 
       <para><literal>@ExternalBean</literal> is a simple markup annotation
       used for injecting 'external' beans, defined in a parent application
@@ -212,7 +212,7 @@ public Service userService() {
     </section>
   </chapter>
 
-  <chapter>
+  <chapter id="bean-visibility">
     <title>Bean Visibility</title>
 
     <para>A nice JavaConfig feature is bean visibility. JavaConfig uses a

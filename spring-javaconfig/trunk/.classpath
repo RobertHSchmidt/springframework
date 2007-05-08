@@ -4,7 +4,6 @@
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="src" path="src/test/resources"/>
-	<classpathentry kind="src" path="integration-test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="M2_REPO/aspectj/aspectjlib/1.5.3/aspectjlib-1.5.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/aspectj/aspectjrt/1.5.3/aspectjrt-1.5.3.jar"/>
@@ -18,21 +17,23 @@
 	<classpathentry kind="var" path="M2_REPO/cglib/cglib-nodep/2.1_3/cglib-nodep-2.1_3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/hsqldb/hsqldb/1.8.0.7/hsqldb-1.8.0.7.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-beans/2.0.4/spring-beans-2.0.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-aop/2.0.4/spring-aop-2.0.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-context/2.0.4/spring-context-2.0.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-core/2.0.4/spring-core-2.0.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-dao/2.0.4/spring-dao-2.0.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-portlet/2.0.4/spring-portlet-2.0.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-hibernate3/2.0.4/spring-hibernate3-2.0.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-support/2.0.4/spring-support-2.0.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate/3.2.2.ga/hibernate-3.2.2.ga.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-web/2.0.4/spring-web-2.0.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-webmvc/2.0.4/spring-webmvc-2.0.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-remoting/2.0.4/spring-remoting-2.0.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-jdbc/2.0.4/spring-jdbc-2.0.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-mock/2.0.4/spring-mock-2.0.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/asm/asm/2.2.3/asm-2.2.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/asm/asm-commons/2.2.3/asm-commons-2.2.3.jar"/>
+	<classpathentry kind="var" path="M2_REPO/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/commons-collections/commons-collections/3.2/commons-collections-3.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.13/log4j-1.2.13.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-aop/2.0.5/spring-aop-2.0.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-beans/2.0.5/spring-beans-2.0.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-context/2.0.5/spring-context-2.0.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-core/2.0.5/spring-core-2.0.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-hibernate3/2.0.5/spring-hibernate3-2.0.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-mock/2.0.5/spring-mock-2.0.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-remoting/2.0.5/spring-remoting-2.0.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-support/2.0.5/spring-support-2.0.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-dao/2.0.5/spring-dao-2.0.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-web/2.0.5/spring-web-2.0.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-webmvc/2.0.5/spring-webmvc-2.0.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-jdbc/2.0.5/spring-jdbc-2.0.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
