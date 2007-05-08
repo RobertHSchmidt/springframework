@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.springframework</groupId>
   <artifactId>spring-javaconfig</artifactId>
-  <version>1.0-m2</version>
+  <version>1.0-m3-SNAPSHOT</version>
   <name>Spring JavaConfig</name>
   <url>http://www.springframework.org/javaconfig</url>
   <description>
