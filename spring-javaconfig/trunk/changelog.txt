@@ -5,6 +5,9 @@ http://springframework.org/javaconfig
 Changes in version 1.0-m3 (2007-mm-dd)
 --------------------------------------
 
+Changes in version 1.0-m2a (2007-05-10)
+---------------------------------------
+* Fixed (a confusing) documentation typo. The binary code is identical to 1.0-m2 (the reason why the jar have the same name).
 
 Changes in version 1.0-m2 (2007-05-08)
 --------------------------------------

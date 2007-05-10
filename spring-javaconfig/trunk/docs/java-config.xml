@@ -113,8 +113,7 @@ public List&lt;Date&gt; birthdays() {
       url="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-nature">lifecycle</ulink>
       methods and *Aware interfaces are fully supported:</para>
 
-      <programlisting>@Bean(destroyMethodName = "close", lazy = Lazy.TRUE)
-public class AwareBean implements BeanFactoryAware {
+      <programlisting>public class AwareBean implements BeanFactoryAware {
 
   private BeanFactory factory;
 
@@ -126,6 +125,11 @@ public class AwareBean implements BeanFactoryAware {
   public void close(){
     // do clean-up
   }
+}</programlisting>
+
+      <programlisting>@Bean(destroyMethodName = "close", lazy = Lazy.TRUE)
+public AwareBean createBeanFactoryAwareBean() {
+   return new AwareBean();
 }</programlisting>
 
       <para>Besides <literal>destroyMethodName</literal>,
