@@ -15,10 +15,7 @@
  */
 package org.springframework.aws.maven;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -121,7 +118,6 @@ public class SimpleStorageServiceWagon implements Wagon {
 
 	public void disconnect() throws ConnectionException {
 		sessionListeners.fireSessionDisconnecting();
-		service = null;
 		sessionListeners.fireSessionLoggedOff();
 		sessionListeners.fireSessionDisconnected();
 	}
@@ -138,13 +134,15 @@ public class SimpleStorageServiceWagon implements Wagon {
 		}
 		transferListeners.fireTransferStarted(resource, TransferEvent.REQUEST_GET);
 
+		InputStream in = null;
+		OutputStream out = null;
 		try {
-			InputStream in = object.getDataInputStream();
-			FileOutputStream fos = new FileOutputStream(destination);
+			in = object.getDataInputStream();
+			out = new FileOutputStream(destination);
 			byte[] buf = new byte[1024];
 			int len;
 			while ((len = in.read(buf)) != -1) {
-				fos.write(buf, 0, len);
+				out.write(buf, 0, len);
 			}
 		} catch (S3ServiceException e) {
 			transferListeners.fireTransferError(resource, TransferEvent.REQUEST_GET, e);
@@ -152,8 +150,20 @@ public class SimpleStorageServiceWagon implements Wagon {
 		} catch (IOException e) {
 			transferListeners.fireTransferError(resource, TransferEvent.REQUEST_GET, e);
 			throw new TransferFailedException("Transfer of resource " + resourceName + "failed", e);
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+				}
+			}
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e) {
+				}
+			}
 		}
-
 		transferListeners.fireTransferCompleted(resource, TransferEvent.REQUEST_GET);
 	}
 
@@ -223,13 +233,34 @@ public class SimpleStorageServiceWagon implements Wagon {
 		object.setContentLength(source.length());
 
 		transferListeners.fireTransferStarted(resource, TransferEvent.REQUEST_PUT);
-		try {
+        InputStream in = null;
+        try {
 			service.putObject(bucket, object);
-		} catch (S3ServiceException e) {
+
+            in = new FileInputStream(source);
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) != -1) {
+				transferListeners.fireTransferProgress(resource, TransferEvent.REQUEST_PUT, buf, len);
+			}
+        } catch (S3ServiceException e) {
 			transferListeners.fireTransferError(resource, TransferEvent.REQUEST_PUT, e);
 			throw new TransferFailedException("Transfer of resource " + destination + "failed", e);
-		}
-		transferListeners.fireTransferCompleted(resource, TransferEvent.REQUEST_GET);
+		} catch (FileNotFoundException e) {
+            transferListeners.fireTransferError(resource, TransferEvent.REQUEST_PUT, e);
+			throw new TransferFailedException("Transfer of resource " + destination + "failed", e);
+        } catch (IOException e) {
+			transferListeners.fireTransferError(resource, TransferEvent.REQUEST_PUT, e);
+			throw new TransferFailedException("Transfer of resource " + destination + "failed", e);
+		} finally {
+            if(in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+        transferListeners.fireTransferCompleted(resource, TransferEvent.REQUEST_GET);
 	}
 
 	public void putDirectory(File sourceDirectory, String destinationDirectory) throws TransferFailedException,
@@ -267,7 +298,6 @@ public class SimpleStorageServiceWagon implements Wagon {
 	private AWSCredentials getCredentials(AuthenticationInfo authenticationInfo) {
 		String accessKey = authenticationInfo.getUserName();
 		String secretKey = authenticationInfo.getPassphrase();
-		AWSCredentials credentials = new AWSCredentials(accessKey, secretKey);
-		return credentials;
+        return new AWSCredentials(accessKey, secretKey);
 	}
 }
