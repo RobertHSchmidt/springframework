@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <groupId>org.apache.felix</groupId>
+  <artifactId>maven-bundle-plugin</artifactId>
+  <version>0.9.0-incubator-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <timestamp>20070502.180156</timestamp>
+      <buildNumber>9</buildNumber>
+    </snapshot>
+    <lastUpdated>20070502180214</lastUpdated>
+  </versioning>
+</metadata>
