@@ -62,6 +62,7 @@ public class TransferListenerSupport {
 	/**
 	 * Whether the collection already contains a listener
 	 * @param listener The listener to check for
+     * @return whether the collection contains the listener
 	 */
 	public boolean hasListener(TransferListener listener) {
 		return listeners.contains(listener);
@@ -95,7 +96,15 @@ public class TransferListenerSupport {
 		}
 	}
 
-	/**
+    public void fireTransferProgress(Resource resource, int requestType, byte[] buffer, int length) {
+        TransferEvent event = new TransferEvent(wagon, resource,
+                TransferEvent.TRANSFER_PROGRESS, requestType);
+        for(TransferListener listener : listeners) {
+            listener.transferProgress(event, buffer, length);
+        }
+    }
+
+    /**
 	 * Sends a transfer completed event to all listeners
 	 * @param resource The resource being transfered
 	 * @param requestType GET or PUT request
