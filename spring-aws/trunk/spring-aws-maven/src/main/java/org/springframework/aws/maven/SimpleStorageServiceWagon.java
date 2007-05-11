@@ -143,6 +143,7 @@ public class SimpleStorageServiceWagon implements Wagon {
 			int len;
 			while ((len = in.read(buf)) != -1) {
 				out.write(buf, 0, len);
+				transferListeners.fireTransferProgress(resource, TransferEvent.REQUEST_GET, buf, len);
 			}
 		} catch (S3ServiceException e) {
 			transferListeners.fireTransferError(resource, TransferEvent.REQUEST_GET, e);
