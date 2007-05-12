@@ -28,7 +28,7 @@ import org.apache.maven.wagon.events.SessionListener;
  * 
  * @author Ben Hale
  */
-public class SessionListenerSupport {
+class SessionListenerSupport {
 
 	private Wagon wagon;
 
@@ -61,6 +61,7 @@ public class SessionListenerSupport {
 	/**
 	 * Whether the collection already contains a listener
 	 * @param listener The listener to check for
+     * @return Whether the collection contains a listener
 	 */
 	public boolean hasListener(SessionListener listener) {
 		return listeners.contains(listener);

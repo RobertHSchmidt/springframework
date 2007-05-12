@@ -29,7 +29,7 @@ import org.apache.maven.wagon.resource.Resource;
  * 
  * @author Ben Hale
  */
-public class TransferListenerSupport {
+class TransferListenerSupport {
 
 	private Wagon wagon;
 
