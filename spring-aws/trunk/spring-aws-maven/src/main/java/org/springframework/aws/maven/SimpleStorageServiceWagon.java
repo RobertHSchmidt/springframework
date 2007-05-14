@@ -30,7 +30,6 @@ import org.jets3t.service.security.AWSCredentials;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -57,6 +56,8 @@ public class SimpleStorageServiceWagon extends AbstractWagon {
 
     private S3Bucket bucket;
 
+    private String basedir;
+
     public SimpleStorageServiceWagon() {
         super(false);
     }
@@ -69,11 +70,12 @@ public class SimpleStorageServiceWagon extends AbstractWagon {
             throw new AuthenticationException("Cannot authenticate with current credentials", e);
         }
         bucket = new S3Bucket(source.getHost());
+        basedir = getBaseDir(source);
     }
 
     protected boolean doesRemoteResourceExist(String resourceName) {
         try {
-            service.getObjectDetails(bucket, resourceName);
+            service.getObjectDetails(bucket, basedir + resourceName);
         } catch (S3ServiceException e) {
             return false;
         }
@@ -88,7 +90,7 @@ public class SimpleStorageServiceWagon extends AbstractWagon {
             throws ResourceDoesNotExistException, S3ServiceException, IOException {
         S3Object object;
         try {
-            object = service.getObject(bucket, resourceName);
+            object = service.getObject(bucket, basedir + resourceName);
         } catch (S3ServiceException e) {
             throw new ResourceDoesNotExistException("Resource " + resourceName + " does not exist in the repository", e);
         }
@@ -122,12 +124,12 @@ public class SimpleStorageServiceWagon extends AbstractWagon {
     }
 
     protected boolean isRemoteResourceNewer(String resourceName, long timestamp) throws S3ServiceException {
-        S3Object object = service.getObjectDetails(bucket, resourceName);
+        S3Object object = service.getObjectDetails(bucket, basedir + resourceName);
         return object.getLastModifiedDate().compareTo(new Date(timestamp)) < 0;
     }
 
     protected List<String> listDirectory(String directory) throws Exception {
-        S3Object[] objects = service.listObjects(bucket, directory, "");
+        S3Object[] objects = service.listObjects(bucket, basedir + directory, "");
         List<String> fileNames = new ArrayList<String>(objects.length);
         for (S3Object object : objects) {
             fileNames.add(object.getKey());
@@ -136,7 +138,7 @@ public class SimpleStorageServiceWagon extends AbstractWagon {
     }
 
     protected void putResource(File source, String destination, TransferProgress progress) throws S3ServiceException, IOException {
-        S3Object object = new S3Object(destination);
+        S3Object object = new S3Object(basedir + destination);
         object.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
         object.setDataInputFile(source);
         object.setContentLength(source.length());
@@ -160,6 +162,15 @@ public class SimpleStorageServiceWagon extends AbstractWagon {
                 }
             }
         }
+    }
+
+    private String getBaseDir(Repository source) {
+        StringBuilder sb = new StringBuilder(source.getBasedir());
+        sb.deleteCharAt(0);
+        if (sb.charAt(sb.length() - 1) != '/') {
+            sb.append('/');
+        }
+        return sb.toString();
     }
 
     private AWSCredentials getCredentials(AuthenticationInfo authenticationInfo) throws AuthenticationException {
