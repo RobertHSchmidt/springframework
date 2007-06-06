@@ -1,6 +1,6 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>javax.xml</groupId>
+  <groupId>javax.xml.crypto</groupId>
   <artifactId>xmldsig</artifactId>
   <version>1.0</version>
   <name>JSR 105 - Java(TM) XML Digital Signature API</name>
