@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>multithreadedtc</groupId>
+    <artifactId>multithreadedtc-jdk1.4</artifactId>
+	<packaging>1.01</packaging>
+    <name>Multithreaded TestCase</name>
+    <description>A framework for testing concurrent Java applications</description>
+    <url>http://www.cs.umd.edu/projects/PL/multithreadedtc/overview.html</url>
+    
+    <dependencies>
+		<dependency>
+			<groupId>net.sf.retrotranslator</groupId>
+			<artifactId>retrotranslator-runtime</artifactId>
+			<version>1.2.1</version>
+			<scope>runtime</scope>
+		</dependency> 
+    </dependencies>
+</project>
+
