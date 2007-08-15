@@ -5,8 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>multithreadedtc</groupId>
     <artifactId>multithreadedtc-jdk1.4</artifactId>
-	<packaging>1.01</packaging>
+	<packaging>jar</packaging>
     <name>Multithreaded TestCase</name>
+    <version>1.01</version>
     <description>A framework for testing concurrent Java applications</description>
     <url>http://www.cs.umd.edu/projects/PL/multithreadedtc/overview.html</url>
     
