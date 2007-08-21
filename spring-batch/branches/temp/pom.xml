@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.springframework.batch</groupId>
@@ -17,28 +19,50 @@
 		<url>http://www.interface21.com</url>
 	</organization>
 	<scm>
-		<developerConnection>scm:svn:https://svn.interface21.com/svn/i21/spring-batch/trunk</developerConnection>
+		<url>
+			https://springframework.svn.sourceforge.net/svnroot/springframework/spring-batch/trunk
+		</url>
+		<connection>
+			scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-batch/trunk
+		</connection>
+		<developerConnection>
+			scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-batch/trunk
+		</developerConnection>
 	</scm>
 	<issueManagement>
 		<system>JIRA</system>
-		<url>http://opensource.atlassian.com/projects/spring/browse/BATCH</url>
+		<url>
+			http://opensource.atlassian.com/projects/spring/browse/BATCH
+		</url>
 	</issueManagement>
 	<mailingLists>
 		<mailingList>
 			<name>Spring Batch Forum</name>
-			<post>http://forum.springframework.org/forumdisplay.php?f=41</post>
-			<archive>http://forum.springframework.org/forumdisplay.php?f=41</archive>
+			<post>
+				http://forum.springframework.org/forumdisplay.php?f=41
+			</post>
+			<archive>
+				http://forum.springframework.org/forumdisplay.php?f=41
+			</archive>
 		</mailingList>
 		<mailingList>
-			<subscribe>http://lists.interface21.com/listmanager/listinfo/spring-batch-announce</subscribe>
-			<unsubscribe>http://lists.interface21.com/listmanager/listinfo/spring-batch-announce</unsubscribe>
+			<subscribe>
+				http://lists.interface21.com/listmanager/listinfo/spring-batch-announce
+			</subscribe>
+			<unsubscribe>
+				http://lists.interface21.com/listmanager/listinfo/spring-batch-announce
+			</unsubscribe>
 			<name>Spring Batch Announce</name>
-			<archive>http://lists.interface21.com/archives/spring-batch-announce</archive>
+			<archive>
+				http://lists.interface21.com/archives/spring-batch-announce
+			</archive>
 		</mailingList>
 	</mailingLists>
 	<ciManagement>
 		<system>Bamboo</system>
-		<url>http://build.springframework.org:8085/bamboo/browse/BATCH</url>
+		<url>
+			http://build.springframework.org:8085/bamboo/browse/BATCH
+		</url>
 	</ciManagement>
 	<licenses>
 		<license>
@@ -57,8 +81,8 @@
 		<module>execution</module>
 		<module>samples</module>
 		<module>integration</module>
-		<module>docs</module> 
-  </modules>
+		<module>docs-i21</module>
+	</modules>
 
 	<profiles>
 		<profile>
@@ -81,7 +105,9 @@
 		<profile>
 			<id>strict</id>
 			<properties>
-				<maven.test.failure.ignore>false</maven.test.failure.ignore>
+				<maven.test.failure.ignore>
+					false
+				</maven.test.failure.ignore>
 			</properties>
 		</profile>
 		<profile>
@@ -95,7 +121,9 @@
 			<pluginRepositories>
 				<pluginRepository>
 					<id>apache-snapshots</id>
-					<url>http://people.apache.org/maven-snapshot-repository</url>
+					<url>
+						http://people.apache.org/maven-snapshot-repository
+					</url>
 				</pluginRepository>
 			</pluginRepositories>
 		</profile>
@@ -117,6 +145,18 @@
 					<source>1.4</source>
 					<target>1.4</target>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -142,12 +182,15 @@
 						<configuration>
 							<tasks>
 								<echo>Creating JUnit reports</echo>
-								<mkdir dir="target/surefire-reports"/>
-								<junitreport todir="target/surefire-reports">
-									<fileset dir="target/surefire-reports">
-										<include name="TEST-*.xml"/>
+								<mkdir dir="target/surefire-reports" />
+								<junitreport
+									todir="target/surefire-reports">
+									<fileset
+										dir="target/surefire-reports">
+										<include name="TEST-*.xml" />
 									</fileset>
-									<report todir="target/site/junit-reports"/>
+									<report
+										todir="target/site/junit-reports" />
 								</junitreport>
 							</tasks>
 						</configuration>
@@ -162,9 +205,9 @@
 							<tasks>
 								<echo>Removing test data</echo>
 								<delete failonerror="false">
-									<fileset dir="amqstore"/>
-									<fileset dir="activemq-data"/>
-									<fileset dir="derby-home"/>
+									<fileset dir="amqstore" />
+									<fileset dir="activemq-data" />
+									<fileset dir="derby-home" />
 								</delete>
 							</tasks>
 						</configuration>
@@ -210,22 +253,30 @@
 	<repositories>
 		<repository>
 			<id>apache-snapshots</id>
-			<url>http://people.apache.org/maven-snapshot-repository</url>
+			<url>
+				http://people.apache.org/maven-snapshot-repository
+			</url>
 		</repository>
 		<repository>
 			<id>spring-snapshots</id>
-			<url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-snapshots</url>
+			<url>
+				https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-snapshots
+			</url>
 		</repository>
 	</repositories>
 
 	<pluginRepositories>
 		<pluginRepository>
 			<id>spring</id>
-			<url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo</url>
+			<url>
+				https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo
+			</url>
 		</pluginRepository>
 		<pluginRepository>
 			<id>spring-ext</id>
-			<url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext</url>
+			<url>
+				https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext
+			</url>
 		</pluginRepository>
 		<pluginRepository>
 			<id>objectstyle</id>
@@ -246,7 +297,9 @@
 				<version>1.0</version>
 				<configuration>
 					<name>JUnit Report</name>
-					<description>JUnit test results for this project</description>
+					<description>
+						JUnit test results for this project
+					</description>
 					<base>junit-reports</base>
 				</configuration>
 			</plugin>
@@ -258,18 +311,40 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<configuration>
 					<links>
-						<link>http://java.sun.com/j2ee/1.4/docs/api</link>
-						<link>http://java.sun.com/j2se/1.5.0/docs/api</link>
-						<link>http://jakarta.apache.org/commons/collections/apidocs-COLLECTIONS_3_0/</link>
-						<link>http://jakarta.apache.org/commons/dbcp/apidocs/</link>
-						<link>http://jakarta.apache.org/commons/fileupload/apidocs/</link>
-						<link>http://jakarta.apache.org/commons/httpclient/apidocs/</link>
-						<link>http://jakarta.apache.org/commons/logging/api/</link>
-						<link>http://jakarta.apache.org/commons/pool/apidocs/</link>
+						<link>
+							http://java.sun.com/j2ee/1.4/docs/api
+						</link>
+						<link>
+							http://java.sun.com/j2se/1.5.0/docs/api
+						</link>
+						<link>
+							http://jakarta.apache.org/commons/collections/apidocs-COLLECTIONS_3_0/
+						</link>
+						<link>
+							http://jakarta.apache.org/commons/dbcp/apidocs/
+						</link>
+						<link>
+							http://jakarta.apache.org/commons/fileupload/apidocs/
+						</link>
+						<link>
+							http://jakarta.apache.org/commons/httpclient/apidocs/
+						</link>
+						<link>
+							http://jakarta.apache.org/commons/logging/api/
+						</link>
+						<link>
+							http://jakarta.apache.org/commons/pool/apidocs/
+						</link>
 						<link>http://www.junit.org/junit/javadoc/</link>
-						<link>http://logging.apache.org/log4j/docs/api/</link>
-						<link>http://jakarta.apache.org/regexp/apidocs/</link>
-						<link>http://jakarta.apache.org/velocity/api/</link>
+						<link>
+							http://logging.apache.org/log4j/docs/api/
+						</link>
+						<link>
+							http://jakarta.apache.org/regexp/apidocs/
+						</link>
+						<link>
+							http://jakarta.apache.org/velocity/api/
+						</link>
 					</links>
 				</configuration>
 			</plugin>
