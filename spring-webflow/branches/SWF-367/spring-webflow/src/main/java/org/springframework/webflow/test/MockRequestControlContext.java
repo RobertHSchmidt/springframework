@@ -22,9 +22,9 @@ import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.FlowSessionStatus;
-import org.springframework.webflow.execution.ViewSelection;
 
 /**
  * Mock implementation of the {@link RequestControlContext} interface to facilitate standalone Flow and State unit
@@ -38,11 +38,24 @@ import org.springframework.webflow.execution.ViewSelection;
  */
 public class MockRequestControlContext extends MockRequestContext implements RequestControlContext {
 
+	private boolean flowExecutionRedirectSent;
+
+	private boolean alwaysRedirectOnPause;
+
 	/**
 	 * Creates a new mock request control context for controlling a mock execution of the provided flow definition.
+	 * @param flow the flow definition
 	 */
-	public MockRequestControlContext(Flow rootFlow) {
-		super(rootFlow);
+	public MockRequestControlContext(Flow flow) {
+		super(flow);
+	}
+
+	/**
+	 * Creates a new mock request control context for controlling a flow execution.
+	 * @param flowExecutionContext the flow execution context
+	 */
+	public MockRequestControlContext(FlowExecutionContext flowExecutionContext) {
+		super(flowExecutionContext);
 	}
 
 	// implementing RequestControlContext
@@ -55,17 +68,15 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 		}
 	}
 
-	public ViewSelection start(Flow flow, MutableAttributeMap input) throws IllegalStateException {
+	public void start(Flow flow, MutableAttributeMap input) throws IllegalStateException {
 		getMockFlowExecutionContext().setActiveSession(new MockFlowSession(flow, input));
 		getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.STARTING);
-		ViewSelection selectedView = flow.start(this, input);
-		return selectedView;
+		flow.start(this, input);
 	}
 
-	public ViewSelection handleEvent(Event event) {
+	public void handleEvent(Event event) {
 		setLastEvent(event);
-		ViewSelection selectedView = ((Flow) getActiveFlow()).handleEvent(this);
-		return selectedView;
+		((Flow) getActiveFlow()).handleEvent(this);
 	}
 
 	public FlowSession endActiveFlowSession(MutableAttributeMap output) throws IllegalStateException {
@@ -76,7 +87,34 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 		return endingSession;
 	}
 
-	public ViewSelection execute(Transition transition) {
-		return transition.execute((TransitionableState) getCurrentState(), this);
+	public void execute(Transition transition) {
+		transition.execute((TransitionableState) getCurrentState(), this);
+	}
+
+	public void assignFlowExecutionKey() {
+	}
+
+	public boolean getAlwaysRedirectOnPause() {
+		return alwaysRedirectOnPause;
+	}
+
+	public void sendExternalRedirect(String resourceUri) {
+
+	}
+
+	public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input) {
+
+	}
+
+	public void sendFlowExecutionRedirect() {
+		this.flowExecutionRedirectSent = true;
+	}
+
+	public void setAlwaysRedirectOnPause(boolean alwaysRedirectOnPause) {
+		this.alwaysRedirectOnPause = alwaysRedirectOnPause;
+	}
+
+	public boolean getFlowExecutionRedirectSent() {
+		return this.flowExecutionRedirectSent;
 	}
 }
