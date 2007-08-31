@@ -21,8 +21,8 @@ import org.springframework.webflow.definition.FlowDefinition;
 
 /**
  * Provides contextual information about a flow execution. A flow execution is an runnable instance of a
- * {@link FlowDefinition}. In other words, it is the central Spring Web Flow construct for carrying out a conversation
- * with a client. This immutable interface provides access to runtime information about the conversation, such as it's
+ * {@link FlowDefinition}. It is the central Spring Web Flow construct for carrying out a conversation with a client.
+ * This immutable interface provides access to runtime information about the conversation, such as it's
  * {@link #isActive() status} and {@link #getActiveSession() current state}.
  * <p>
  * An object implementing this interface is also traversable from a execution request context (see
@@ -42,8 +42,9 @@ import org.springframework.webflow.definition.FlowDefinition;
 public interface FlowExecutionContext {
 
 	/**
-	 * Gets the key assigned to this flow execution.
-	 * @return the flow execution key; may be null if a key has not yet been assigned.
+	 * Returns the key assigned to this flow execution. The flow execution key is the flow execution's persistent
+	 * identity.
+	 * @return the flow execution key; may be <code>null</code> if a key has not yet been assigned.
 	 */
 	public FlowExecutionKey getKey();
 
