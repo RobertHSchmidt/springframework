@@ -152,6 +152,8 @@ public interface RequestContext {
 	 */
 	public TransitionDefinition getLastTransition();
 
+	public View getView();
+
 	/**
 	 * Returns a context map for accessing arbitrary attributes about the state of the current request. These attributes
 	 * may be used to influence flow execution behavior.

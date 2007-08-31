@@ -75,31 +75,18 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * This will start the entire flow execution <i>from scratch</i>.
 	 * @param input input attributes to pass to the flow, which the flow may choose to map into its scope
 	 * @param context the external context in which the starting event occurred
-	 * @return the starting view selection, a value object to be used to issue a suitable response to the caller
 	 * @throws FlowExecutionException if an exception was thrown within a state of the flow execution during request
 	 * processing
 	 */
-	public ViewSelection start(MutableAttributeMap input, ExternalContext context) throws FlowExecutionException;
+	public void start(MutableAttributeMap input, ExternalContext context) throws FlowExecutionException;
 
 	/**
 	 * Signal an occurrence of the specified user event in the current state of this executing flow. The event will be
 	 * processed in full and control will be returned once event processing is complete.
-	 * @param eventId the identifier of the user event that occurred
 	 * @param context the external context in which the event occurred
-	 * @return the next view selection to render, used by the calling executor to issue a suitable response to the
-	 * client
 	 * @throws FlowExecutionException if an exception was thrown within a state of the resumed flow execution during
 	 * event processing
 	 */
-	public ViewSelection signalEvent(String eventId, ExternalContext context) throws FlowExecutionException;
+	public void resume(ExternalContext context) throws FlowExecutionException;
 
-	/**
-	 * Refresh this flow execution, asking the current view selection to be reconstituted to support reissuing the last
-	 * response. This is an idempotent operation that may be safely called on a paused execution.
-	 * @param context the external context in which the refresh event occurred
-	 * @return the current view selection for this flow execution
-	 * @throws FlowExecutionException if an exception was thrown within a state of the resumed flow execution during
-	 * event processing
-	 */
-	public ViewSelection refresh(ExternalContext context) throws FlowExecutionException;
 }

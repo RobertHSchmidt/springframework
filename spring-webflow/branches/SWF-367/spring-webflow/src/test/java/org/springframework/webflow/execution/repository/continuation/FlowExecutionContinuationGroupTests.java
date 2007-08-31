@@ -32,7 +32,7 @@ import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
 import org.springframework.webflow.engine.impl.FlowExecutionImplStateRestorer;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 import org.springframework.webflow.execution.support.ApplicationView;

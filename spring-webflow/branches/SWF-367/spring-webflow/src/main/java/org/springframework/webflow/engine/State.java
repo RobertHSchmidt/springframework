@@ -182,13 +182,13 @@ public abstract class State extends AnnotatedObject implements StateDefinition {
 	 * processing
 	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
-	public final ViewSelection enter(RequestControlContext context) throws FlowExecutionException {
+	public final void enter(RequestControlContext context) throws FlowExecutionException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Entering state '" + getId() + "' of flow '" + getFlow().getId() + "'");
 		}
 		context.setCurrentState(this);
 		entryActionList.execute(context);
-		return doEnter(context);
+		doEnter(context);
 	}
 
 	/**
@@ -200,7 +200,7 @@ public abstract class State extends AnnotatedObject implements StateDefinition {
 	 * processing
 	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
-	protected abstract ViewSelection doEnter(RequestControlContext context) throws FlowExecutionException;
+	protected abstract void doEnter(RequestControlContext context) throws FlowExecutionException;
 
 	/**
 	 * Handle an exception that occured in this state during the context of the current flow execution request.

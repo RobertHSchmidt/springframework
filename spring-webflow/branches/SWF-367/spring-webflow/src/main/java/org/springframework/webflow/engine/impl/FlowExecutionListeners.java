@@ -24,7 +24,6 @@ import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.ViewSelection;
 
 /**
  * A helper that aids in publishing events to an array of <code>FlowExecutionListener</code> objects.
@@ -153,9 +152,9 @@ class FlowExecutionListeners {
 	/**
 	 * Notify all interested listeners that a flow session was paused in the flow execution.
 	 */
-	public void firePaused(RequestContext context, ViewSelection selectedView) {
+	public void firePaused(RequestContext context) {
 		for (int i = 0; i < listeners.length; i++) {
-			listeners[i].paused(context, selectedView);
+			listeners[i].paused(context);
 		}
 	}
 

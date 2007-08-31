@@ -107,28 +107,26 @@ public class EndState extends State {
 	}
 
 	/**
-	 * Specialization of State's <code>doEnter</code> template method that executes behaviour specific to this state
+	 * Specialization of State's <code>doEnter</code> template method that executes behavior specific to this state
 	 * type in polymorphic fashion.
 	 * <p>
 	 * This implementation pops the top (active) flow session off the execution stack, ending it, and resumes control in
-	 * the parent flow (if neccessary). If the ended session is the root flow, a {@link ViewSelection} is returned.
+	 * the parent flow (if necessary). If the ended session is the root flow, a {@link ViewSelection} is returned.
 	 * @param context the control context for the currently executing flow, used by this state to manipulate the flow
 	 * execution
-	 * @return a view selection signaling that control should be returned to the client and a view rendered
 	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
-	protected ViewSelection doEnter(RequestControlContext context) throws FlowExecutionException {
+	protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 		FlowSession activeSession = context.getFlowExecutionContext().getActiveSession();
 		if (activeSession.isRoot()) {
 			// entire flow execution is ending, return ending view if applicable
 			ViewSelection selectedView = viewSelector.makeEntrySelection(context);
 			context.endActiveFlowSession(createSessionOutput(context));
-			return selectedView;
 		} else {
 			// there is a parent flow that will resume (this flow is a subflow)
 			LocalAttributeMap sessionOutput = createSessionOutput(context);
 			context.endActiveFlowSession(sessionOutput);
-			return context.signalEvent(new Event(this, getId(), sessionOutput));
+			context.handleEvent(new Event(this, getId(), sessionOutput));
 		}
 	}
 

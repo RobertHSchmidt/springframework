@@ -23,7 +23,6 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.ViewSelection;
 
 /**
  * A transitionable state that executes one or more actions when entered. When the action(s) are executed this state
@@ -136,7 +135,7 @@ public class ActionState extends TransitionableState {
 	}
 
 	/**
-	 * Specialization of State's <code>doEnter</code> template method that executes behaviour specific to this state
+	 * Specialization of State's <code>doEnter</code> template method that executes behavior specific to this state
 	 * type in polymorphic fashion.
 	 * <p>
 	 * This implementation iterates over each configured <code>Action</code> instance and executes it. Execution
@@ -144,10 +143,9 @@ public class ActionState extends TransitionableState {
 	 * context, or the set of all actions is exhausted.
 	 * @param context the control context for the currently executing flow, used by this state to manipulate the flow
 	 * execution
-	 * @return a view selection signaling that control should be returned to the client and a view rendered
 	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
-	protected ViewSelection doEnter(RequestControlContext context) throws FlowExecutionException {
+	protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 		int executionCount = 0;
 		String[] eventIds = new String[actionList.size()];
 		Iterator it = actionList.iterator();
@@ -158,7 +156,7 @@ public class ActionState extends TransitionableState {
 				eventIds[executionCount] = event.getId();
 				try {
 					// will check both local state transitions and global transitions
-					return context.signalEvent(event);
+					context.handleEvent(event);
 				} catch (NoMatchingActionResultTransitionException e) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Action execution ["
@@ -207,7 +205,6 @@ public class ActionState extends TransitionableState {
 	/**
 	 * Local "no transition found" exception used to report that an action result could not be mapped to a state
 	 * transition.
-	 * 
 	 * @author Keith Donald
 	 * @author Erwin Vervaet
 	 */

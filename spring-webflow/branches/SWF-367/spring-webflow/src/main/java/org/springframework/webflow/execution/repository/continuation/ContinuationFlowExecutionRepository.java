@@ -21,7 +21,7 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException;
 import org.springframework.webflow.execution.repository.support.AbstractConversationFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;

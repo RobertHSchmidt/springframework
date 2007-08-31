@@ -117,9 +117,8 @@ public interface FlowExecutionListener {
 	/**
 	 * Called when a flow execution is paused, for instance when it is waiting for user input (after event processing).
 	 * @param context the source of the event
-	 * @param selectedView the view that will display
 	 */
-	public void paused(RequestContext context, ViewSelection selectedView);
+	public void paused(RequestContext context);
 
 	/**
 	 * Called after a flow execution is successfully reactivated after pause (but before event processing).

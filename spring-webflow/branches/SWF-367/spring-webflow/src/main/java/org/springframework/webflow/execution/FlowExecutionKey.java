@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.repository;
+package org.springframework.webflow.execution;
 
 import java.io.Serializable;
+
+import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 
 /**
  * A key that uniquely identifies a flow execution in a managed {@link FlowExecutionRepository}. Serves as a flow

@@ -17,7 +17,6 @@ package org.springframework.webflow.engine;
 
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.ViewSelection;
 
 /**
  * A simple transitionable state that when entered will execute the first transition whose matching criteria evaluates
@@ -50,7 +49,7 @@ public class DecisionState extends TransitionableState {
 	 * execution
 	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
-	protected ViewSelection doEnter(RequestControlContext context) throws FlowExecutionException {
-		return getRequiredTransition(context).execute(this, context);
+	protected void doEnter(RequestControlContext context) throws FlowExecutionException {
+		getRequiredTransition(context).execute(this, context);
 	}
 }

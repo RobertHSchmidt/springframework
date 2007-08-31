@@ -53,4 +53,8 @@ public abstract class ViewSelection implements Serializable {
 			return "null";
 		}
 	}
+
+	public void render(RequestContext context) {
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
 }
