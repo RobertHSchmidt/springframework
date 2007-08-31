@@ -16,6 +16,7 @@
 package org.springframework.webflow.execution.repository;
 
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionKey;
 
 /**
  * Central subsystem interface responsible for the saving and restoring of flow executions, where each flow execution
@@ -36,25 +37,12 @@ import org.springframework.webflow.execution.FlowExecution;
 public interface FlowExecutionRepository {
 
 	/**
-	 * Generate a unique flow execution key to be used as the persistent identifier of the flow execution. This method
-	 * should be called after a new flow execution is started and remains active; thus needing to be saved. The
-	 * FlowExecutionKey is the execution's persistent identity.
-	 * @param flowExecution the flow execution
-	 * @return the flow execution key
-	 * @throws FlowExecutionRepositoryException a problem occurred generating the key
+	 * Parse the string-encoded flow execution key into its object form. Essentially, the reverse of
+	 * {@link FlowExecutionKey#toString()}.
+	 * @param encodedKey the string encoded key
+	 * @return the parsed flow execution key, the persistent identifier for exactly one flow execution
 	 */
-	public FlowExecutionKey generateKey(FlowExecution flowExecution) throws FlowExecutionRepositoryException;
-
-	/**
-	 * Obtain the "next" flow execution key to be used as the flow execution's persistent identity. This method should
-	 * be called after a existing flow execution has resumed and remains active; thus needing to be updated. This
-	 * repository may choose to return the previous key or generate a new key.
-	 * @param flowExecution the flow execution
-	 * @param previousKey the <i>current</i> key associated with the flow execution
-	 * @throws FlowExecutionRepositoryException a problem occurred generating the key
-	 */
-	public FlowExecutionKey getNextKey(FlowExecution flowExecution, FlowExecutionKey previousKey)
-			throws FlowExecutionRepositoryException;
+	public FlowExecutionKey parseFlowExecutionKey(String encodedKey) throws FlowExecutionRepositoryException;
 
 	/**
 	 * Return the lock for the flow execution, allowing for the lock to be acquired or released.
@@ -88,7 +76,7 @@ public interface FlowExecutionRepository {
 	 * <p>
 	 * Before calling this method, you should acquire the lock for the keyed flow execution.
 	 * @param key the flow execution key
-	 * @return the flow execution, fully hydrated and ready to signal an event against
+	 * @return the flow execution, fully hydrated and ready to resume
 	 * @throws FlowExecutionRepositoryException if no flow execution was indexed with the key provided
 	 */
 	public FlowExecution getFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
@@ -98,29 +86,19 @@ public interface FlowExecutionRepository {
 	 * or update the persistent state of an active (but paused) flow execution.
 	 * <p>
 	 * Before calling this method, you should acquire the lock for the keyed flow execution.
-	 * @param key the flow execution key
 	 * @param flowExecution the flow execution
 	 * @throws FlowExecutionRepositoryException the flow execution could not be stored
 	 */
-	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution)
-			throws FlowExecutionRepositoryException;
+	public void putFlowExecution(FlowExecution flowExecution) throws FlowExecutionRepositoryException;
 
 	/**
 	 * Remove the flow execution from the repository. This should be called when the flow execution ends (is no longer
 	 * active).
 	 * <p>
 	 * Before calling this method, you should acquire the lock for the keyed flow execution.
-	 * @param key the flow execution key
+	 * @param flowExecution the flow execution
 	 * @throws FlowExecutionRepositoryException the flow execution could not be removed.
 	 */
-	public void removeFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
-
-	/**
-	 * Parse the string-encoded flow execution key into its object form. Essentially, the reverse of
-	 * {@link FlowExecutionKey#toString()}.
-	 * @param encodedKey the string encoded key
-	 * @return the parsed flow execution key, the persistent identifier for exactly one flow execution
-	 */
-	public FlowExecutionKey parseFlowExecutionKey(String encodedKey) throws FlowExecutionRepositoryException;
+	public void removeFlowExecution(FlowExecution flowExecution) throws FlowExecutionRepositoryException;
 
 }

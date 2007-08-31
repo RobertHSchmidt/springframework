@@ -16,7 +16,6 @@
 package org.springframework.webflow.executor.support;
 
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.execution.repository.FlowExecutionKey;
 import org.springframework.webflow.executor.FlowExecutor;
 
 /**
@@ -58,23 +57,5 @@ public interface FlowExecutorArgumentExtractor {
 	 * @throws FlowExecutorArgumentExtractionException if the flow execution key could not be extracted
 	 */
 	public String extractFlowExecutionKey(ExternalContext context) throws FlowExecutorArgumentExtractionException;
-
-	/**
-	 * Returns true if the event id is extractable from the context.
-	 * @param context the context in which a external user event occured
-	 * @return true if extractable, false if not
-	 */
-	public boolean isEventIdPresent(ExternalContext context);
-
-	/**
-	 * Extract the flow execution event id from the external context.
-	 * <p>
-	 * This method should only be called if a {@link FlowExecutionKey} was successfully extracted, indicating a request
-	 * to resume a flow execution.
-	 * @param context the context in which a external user event occured
-	 * @return the event id
-	 * @throws FlowExecutorArgumentExtractionException if the event id could not be extracted
-	 */
-	public String extractEventId(ExternalContext context) throws FlowExecutorArgumentExtractionException;
 
 }

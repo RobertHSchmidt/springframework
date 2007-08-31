@@ -21,7 +21,6 @@ import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.ViewSelection;
 
 /**
  * A transitionable state that spawns a subflow when executed. When the subflow this state spawns ends, the ending
@@ -105,11 +104,11 @@ public class SubflowState extends TransitionableState {
 	 * execution
 	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
-	protected ViewSelection doEnter(RequestControlContext context) throws FlowExecutionException {
+	protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Spawning subflow '" + getSubflow().getId() + "' within flow '" + getFlow().getId() + "'");
+			logger.debug("Calling subflow '" + getSubflow().getId() + "'");
 		}
-		return context.start(getSubflow(), createSubflowInput(context));
+		context.start(getSubflow(), createSubflowInput(context));
 	}
 
 	/**
@@ -137,9 +136,9 @@ public class SubflowState extends TransitionableState {
 	 * Called on completion of the subflow to handle the subflow result event as determined by the end state reached by
 	 * the subflow.
 	 */
-	public ViewSelection onEvent(RequestControlContext context) {
+	public void handleEvent(RequestControlContext context) {
 		mapSubflowOutput(context.getLastEvent().getAttributes(), context);
-		return super.onEvent(context);
+		super.handleEvent(context);
 	}
 
 	/**

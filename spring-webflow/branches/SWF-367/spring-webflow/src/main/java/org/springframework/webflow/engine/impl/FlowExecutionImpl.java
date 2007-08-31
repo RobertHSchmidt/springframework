@@ -35,14 +35,16 @@ import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.RequestControlContext;
 import org.springframework.webflow.engine.State;
-import org.springframework.webflow.engine.ViewState;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionException;
+import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.FlowSessionStatus;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.FlowExecutionRequestRedirector;
 import org.springframework.webflow.execution.ViewSelection;
+import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
 
 /**
  * Default implementation of FlowExecution that uses a stack-based data structure to manage spawned flow sessions. This
@@ -86,6 +88,16 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	private transient FlowExecutionListeners listeners;
 
 	/**
+	 * The factory for getting the key to assign this flow execution when needed for persistence.
+	 */
+	private transient FlowExecutionKeyFactory keyFactory;
+
+	/**
+	 * The key assigned to this flow execution. May be null if a key has not been assigned.
+	 */
+	private FlowExecutionKey key;
+
+	/**
 	 * The flash map ("flash scope").
 	 */
 	private MutableAttributeMap flashScope = new LocalAttributeMap();
@@ -110,34 +122,32 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	private String flowId;
 
 	/**
+	 * A redirector for sending redirects to the calling agent asking them to perform another action.
+	 */
+	private transient FlowExecutionRequestRedirector redirector;
+
+	/**
 	 * Default constructor required for externalizable serialization. Should NOT be called programmatically.
 	 */
 	public FlowExecutionImpl() {
 	}
 
 	/**
-	 * Create a new flow execution executing the provided flow. This constructor is mainly used for testing.
-	 * @param flow the root flow of this flow execution
-	 */
-	public FlowExecutionImpl(Flow flow) {
-		this(flow, new FlowExecutionListener[0], null);
-	}
-
-	/**
-	 * Create a new flow execution executing the provided flow.
+	 * Create a new flow execution executing the provided flow. Flow executions are normally created by a flow execution
+	 * factory.
 	 * @param flow the root flow of this flow execution
 	 * @param listeners the listeners interested in flow execution lifecycle events
 	 * @param attributes flow execution system attributes
 	 */
-	public FlowExecutionImpl(Flow flow, FlowExecutionListener[] listeners, AttributeMap attributes) {
+	public FlowExecutionImpl(Flow flow, FlowExecutionListener[] listeners, AttributeMap attributes,
+			FlowExecutionKeyFactory keyFactory, FlowExecutionRequestRedirector redirector) {
 		setFlow(flow);
 		this.flowSessions = new LinkedList();
 		this.listeners = new FlowExecutionListeners(listeners);
 		this.attributes = (attributes != null ? attributes : CollectionUtils.EMPTY_ATTRIBUTE_MAP);
+		this.keyFactory = keyFactory;
+		this.redirector = redirector;
 		this.conversationScope = new LocalAttributeMap();
-		if (logger.isDebugEnabled()) {
-			logger.debug("Created new execution of flow '" + flow.getId() + "'");
-		}
 	}
 
 	public String getCaption() {
@@ -145,6 +155,10 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	// implementing FlowExecutionContext
+
+	public FlowExecutionKey getKey() {
+		return key;
+	}
 
 	public FlowDefinition getDefinition() {
 		return flow;
@@ -172,93 +186,59 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	// methods implementing FlowExecution
 
-	public ViewSelection start(MutableAttributeMap input, ExternalContext externalContext)
-			throws FlowExecutionException {
-		Assert.state(!isActive(), "This flow is already executing -- you cannot call 'start()' more than once");
+	public void start(MutableAttributeMap input, ExternalContext externalContext) throws FlowExecutionException {
+		Assert.state(!isActive(), "This flow is already executing; you cannot call 'start()' more than once");
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting execution with input '" + input + "'");
 		}
 		RequestControlContext context = createControlContext(externalContext);
 		getListeners().fireRequestSubmitted(context);
 		try {
-			try {
-				// launch a flow session for the root flow
-				ViewSelection selectedView = context.start(flow, input);
-				return pause(context, selectedView);
-			} catch (FlowExecutionException e) {
-				return pause(context, handleException(e, context));
-			} catch (Exception e) {
-				String flowId = context.getActiveFlow().getId();
-				String stateId = null;
-				if (context.getCurrentState() != null) {
-					stateId = context.getCurrentState().getId();
-				}
-				FlowExecutionException flowException = new FlowExecutionException(flowId, stateId,
-						"Exception thrown in state '" + stateId + "' of flow '" + flowId + "'", e);
-				return pause(context, handleException(flowException, context));
-			}
+			// launch a flow session for the root flow
+			context.start(flow, input);
+		} catch (FlowExecutionException e) {
+			handleException(e, context);
+		} catch (Exception e) {
+			handleException(wrap(e, context), context);
 		} finally {
+			if (isActive()) {
+				getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
+				getListeners().firePaused(context);
+			}
 			getListeners().fireRequestProcessed(context);
 		}
 	}
 
-	public ViewSelection signalEvent(String eventId, ExternalContext externalContext) throws FlowExecutionException {
+	public void resume(ExternalContext externalContext) throws FlowExecutionException {
 		assertActive();
-		if (logger.isDebugEnabled()) {
-			logger.debug("Resuming execution on user event '" + eventId + "'");
-		}
+		RequestControlContext context = createControlContext(externalContext);
+		getListeners().fireRequestSubmitted(context);
 		flashScope.clear();
-		RequestControlContext context = createControlContext(externalContext);
-		getListeners().fireRequestSubmitted(context);
 		try {
-			try {
-				resume(context);
-				Event event = new Event(externalContext, eventId, externalContext.getRequestParameterMap()
-						.asAttributeMap());
-				ViewSelection selectedView = context.signalEvent(event);
-				return pause(context, selectedView);
-			} catch (FlowExecutionException e) {
-				return pause(context, handleException(e, context));
-			} catch (Exception e) {
-				String flowId = context.getActiveFlow().getId();
-				String stateId = context.getCurrentState().getId();
-				FlowExecutionException flowException = new FlowExecutionException(flowId, stateId,
-						"Exception thrown in state '" + stateId + "' of flow '" + flowId + "'", e);
-				return pause(context, handleException(flowException, context));
-			}
+			getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
+			getListeners().fireResumed(context);
+			getActiveFlow().resume(context);
+		} catch (FlowExecutionException e) {
+			handleException(e, context);
+		} catch (Exception e) {
+			handleException(wrap(e, context), context);
 		} finally {
+			if (isActive()) {
+				getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
+				getListeners().firePaused(context);
+			}
 			getListeners().fireRequestProcessed(context);
 		}
 	}
 
-	public ViewSelection refresh(ExternalContext externalContext) throws FlowExecutionException {
-		assertActive();
-		if (logger.isDebugEnabled()) {
-			logger.debug("Resuming execution for refresh");
-		}
-		RequestControlContext context = createControlContext(externalContext);
-		getListeners().fireRequestSubmitted(context);
-		try {
-			try {
-				resume(context);
-				State currentState = getCurrentState();
-				if (!(currentState instanceof ViewState)) {
-					throw new IllegalStateException("Current state is not a view state - cannot refresh; "
-							+ "perhaps an unhandled exception occured in another state?");
-				}
-				ViewSelection selectedView = ((ViewState) currentState).refresh(context);
-				return pause(context, selectedView);
-			} catch (FlowExecutionException e) {
-				return pause(context, handleException(e, context));
-			} catch (Exception e) {
-				String flowId = context.getActiveFlow().getId();
-				String stateId = context.getCurrentState().getId();
-				FlowExecutionException flowException = new FlowExecutionException(flowId, stateId,
-						"Exception thrown in state '" + stateId + "' of flow '" + flowId + "'", e);
-				return pause(context, handleException(flowException, context));
-			}
-		} finally {
-			getListeners().fireRequestProcessed(context);
+	private FlowExecutionException wrap(Exception e, RequestContext context) {
+		if (context.getFlowExecutionContext().isActive()) {
+			String flowId = context.getActiveFlow().getId();
+			String stateId = context.getCurrentState().getId();
+			return new FlowExecutionException(flowId, stateId, "Exception thrown in state '" + stateId + "' of flow '"
+					+ flowId + "'", e);
+		} else {
+			return new FlowExecutionException(flowId, null, "Exception thrown within inactive flow '" + flowId + "'");
 		}
 	}
 
@@ -271,42 +251,10 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	/**
-	 * Resume this flow execution.
-	 * @param context the state request context
-	 */
-	protected void resume(RequestControlContext context) {
-		getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
-		getListeners().fireResumed(context);
-	}
-
-	/**
-	 * Pause this flow execution.
-	 * @param context the request control context
-	 * @param selectedView the initial selected view to render
-	 * @return the selected view to render
-	 */
-	protected ViewSelection pause(RequestControlContext context, ViewSelection selectedView) {
-		if (!isActive()) {
-			// view selected by an end state
-			return selectedView;
-		}
-		getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
-		getListeners().firePaused(context, selectedView);
-		if (logger.isDebugEnabled()) {
-			if (selectedView != null) {
-				logger.debug("Paused to render " + selectedView + " and wait for user input");
-			} else {
-				logger.debug("Paused to wait for user input");
-			}
-		}
-		return selectedView;
-	}
-
-	/**
-	 * Handles an exception that occured performing an operation on this flow execution. First trys the set of exception
-	 * handlers associated with the offending state, then the handlers at the flow level.
-	 * @param exception the exception that occured
-	 * @param context the request control context the exception occured in
+	 * Handles an exception that occurred performing an operation on this flow execution. First trys the set of
+	 * exception handlers associated with the offending state, then the handlers at the flow level.
+	 * @param exception the exception that occurred
+	 * @param context the request control context the exception occurred in
 	 * @return the selected error view, never null
 	 * @throws FlowExecutionException rethrows the exception if it was not handled at the state or flow level
 	 */
@@ -575,6 +523,22 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 */
 	ListIterator getSubflowSessionIterator() {
 		return flowSessions.listIterator(1);
+	}
+
+	void assignKey() {
+		this.key = keyFactory.getKey();
+	}
+
+	public void sendFlowExecutionRedirect() {
+		redirector.sendFlowExecutionRedirect(key);
+	}
+
+	public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input) {
+		redirector.sendFlowDefinitionRedirect(flowId, input);
+	}
+
+	public void sendExternalRedirect(String resourceUri) {
+		redirector.sendExternalRedirect(resourceUri);
 	}
 
 }

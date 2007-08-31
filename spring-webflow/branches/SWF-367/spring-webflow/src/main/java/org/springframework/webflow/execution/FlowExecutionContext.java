@@ -42,6 +42,12 @@ import org.springframework.webflow.definition.FlowDefinition;
 public interface FlowExecutionContext {
 
 	/**
+	 * Gets the key assigned to this flow execution.
+	 * @return the flow execution key; may be null if a key has not yet been assigned.
+	 */
+	public FlowExecutionKey getKey();
+
+	/**
 	 * Returns the root flow definition associated with this executing flow.
 	 * <p>
 	 * A call to this method always returns the same flow definition -- the top-level "root" -- no matter what flow may

@@ -77,8 +77,9 @@ import org.springframework.webflow.execution.ViewSelection;
  * <p>
  * Note: flows are singleton definition objects so they should be thread-safe. You can think a flow definition as
  * analagous somewhat to a Java class, defining all the behavior of an application module. The core behaviors
- * {@link #start(RequestControlContext, MutableAttributeMap) start}, {@link #onEvent(RequestControlContext) on event},
- * and {@link #end(RequestControlContext, MutableAttributeMap) end} each accept a {@link RequestContext request context}
+ * {@link #start(RequestControlContext, MutableAttributeMap) start},
+ * {@link #handleEvent(RequestControlContext) on event}, and
+ * {@link #end(RequestControlContext, MutableAttributeMap) end} each accept a {@link RequestContext request context}
  * that allows for this flow to access execution state in a thread safe manner. A flow execution is what models a
  * running instance of this flow definition, somewhat analgous to a java object that is an instance of a class.
  * 
@@ -512,31 +513,34 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	 * @param input eligible input into the session
 	 * @throws FlowExecutionException when an exception occurs starting the flow
 	 */
-	public ViewSelection start(RequestControlContext context, MutableAttributeMap input) throws FlowExecutionException {
+	public void start(RequestControlContext context, MutableAttributeMap input) throws FlowExecutionException {
 		createVariables(context);
 		if (inputMapper != null) {
 			inputMapper.map(input, context, null);
 		}
 		startActionList.execute(context);
-		return startState.enter(context);
+		startState.enter(context);
 	}
 
 	/**
 	 * Inform this flow definition that an event was signaled in the current state of an active flow execution. The
 	 * signaled event is the last event available in given request context ({@link RequestContext#getLastEvent()}).
 	 * @param context the flow execution control context
-	 * @return the selected view
 	 * @throws FlowExecutionException when an exception occurs processing the event
 	 */
-	public ViewSelection onEvent(RequestControlContext context) throws FlowExecutionException {
+	public void resume(RequestControlContext context) throws FlowExecutionException {
+		getCurrentViewState(context).resume(context);
+	}
+
+	public void handleEvent(RequestControlContext context) {
 		TransitionableState currentState = getCurrentTransitionableState(context);
 		try {
-			return currentState.onEvent(context);
+			currentState.handleEvent(context);
 		} catch (NoMatchingTransitionException e) {
 			// try the flow level transition set for a match
 			Transition transition = globalTransitionSet.getTransition(context);
 			if (transition != null) {
-				return transition.execute(currentState, context);
+				transition.execute(currentState, context);
 			} else {
 				// no matching global transition => let the original exception
 				// propagate
@@ -565,8 +569,8 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	}
 
 	/**
-	 * Handle an exception that occured during an execution of this flow.
-	 * @param exception the exception that occured
+	 * Handle an exception that occurred during an execution of this flow.
+	 * @param exception the exception that occurred
 	 * @param context the flow execution control context
 	 * @return the selected error view, or <code>null</code> if no handler matched or returned a non-null view
 	 * selection
@@ -590,6 +594,15 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 			}
 			variable.create(context);
 		}
+	}
+
+	private ViewState getCurrentViewState(RequestControlContext context) {
+		TransitionableState state = getCurrentTransitionableState(context);
+		if (!(state instanceof ViewState)) {
+			throw new IllegalStateException("You can only resume paused view states, and state "
+					+ context.getCurrentState() + " is not a view state - programmer error");
+		}
+		return (ViewState) state;
 	}
 
 	/**

@@ -226,7 +226,7 @@ public class FlowTests extends TestCase {
 		Event event = new Event(this, "foo");
 		try {
 			context.setLastEvent(event);
-			flow.onEvent(context);
+			flow.handleEvent(context);
 		} catch (IllegalStateException e) {
 
 		}
@@ -239,7 +239,7 @@ public class FlowTests extends TestCase {
 		context.setLastEvent(event);
 		try {
 			context.setLastEvent(event);
-			flow.onEvent(context);
+			flow.handleEvent(context);
 		} catch (IllegalStateException e) {
 
 		}
@@ -252,7 +252,7 @@ public class FlowTests extends TestCase {
 		context.setLastEvent(event);
 		assertTrue(context.getFlowExecutionContext().isActive());
 		context.setLastEvent(event);
-		flow.onEvent(context);
+		flow.handleEvent(context);
 		assertTrue(!context.getFlowExecutionContext().isActive());
 	}
 
@@ -263,7 +263,7 @@ public class FlowTests extends TestCase {
 		context.setLastEvent(event);
 		assertTrue(context.getFlowExecutionContext().isActive());
 		context.setLastEvent(event);
-		flow.onEvent(context);
+		flow.handleEvent(context);
 		assertTrue(!context.getFlowExecutionContext().isActive());
 	}
 
@@ -274,7 +274,7 @@ public class FlowTests extends TestCase {
 		context.setLastEvent(event);
 		try {
 			context.setLastEvent(event);
-			flow.onEvent(context);
+			flow.handleEvent(context);
 		} catch (NoMatchingTransitionException e) {
 
 		}

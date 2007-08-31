@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.engine.impl;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -23,13 +24,18 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionFactory;
+import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.FlowExecutionListener;
+import org.springframework.webflow.execution.FlowExecutionRequestRedirector;
+import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.factory.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
+import org.springframework.webflow.util.RandomGuidUidGenerator;
 
 /**
  * A factory for instances of the {@link FlowExecutionImpl default flow execution} implementation.
@@ -50,6 +56,16 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 	 * System execution attributes that may influence flow execution behavior. The default is an empty map.
 	 */
 	private AttributeMap executionAttributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
+
+	/**
+	 * The factory used to assign keys to flow executions that need to be persisted.
+	 */
+	private FlowExecutionKeyFactory keyFactory = new RandomFlowExecutionKeyFactory();
+
+	/**
+	 * A service that can instruct clients to take specific actions.
+	 */
+	private FlowExecutionRequestRedirector requestRedirector = new NoOpFlowExecutionRequestRedirector();
 
 	/**
 	 * Returns the attributes to apply to flow executions created by this factory. Execution attributes may affect flow
@@ -99,12 +115,67 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 		this.executionListenerLoader = listenerLoader;
 	}
 
+	public void setExecutionKeyFactory(FlowExecutionKeyFactory keyFactory) {
+		this.keyFactory = keyFactory;
+	}
+
+	public void setExecutionRequestRedirector(FlowExecutionRequestRedirector requestRedirector) {
+		this.requestRedirector = requestRedirector;
+	}
+
 	public FlowExecution createFlowExecution(FlowDefinition flowDefinition) {
 		Assert.isInstanceOf(Flow.class, flowDefinition, "Flow definition is of wrong type: ");
 		if (logger.isDebugEnabled()) {
-			logger.debug("Creating flow execution for flow definition with id '" + flowDefinition.getId() + "'");
+			logger.debug("Creating new execution of '" + flowDefinition.getId() + "'");
 		}
 		FlowExecutionListener[] listeners = executionListenerLoader.getListeners(flowDefinition);
-		return new FlowExecutionImpl((Flow) flowDefinition, listeners, executionAttributes);
+		return new FlowExecutionImpl((Flow) flowDefinition, listeners, executionAttributes, keyFactory,
+				requestRedirector);
+	}
+
+	private static class NoOpFlowExecutionRequestRedirector implements FlowExecutionRequestRedirector {
+		public void sendFlowExecutionRedirect(FlowExecutionKey key) {
+			throw new UnsupportedOperationException("Auto-generated method stub");
+		}
+
+		public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input) {
+			throw new UnsupportedOperationException("Auto-generated method stub");
+		}
+
+		public void sendExternalRedirect(String resourceUri) {
+			throw new UnsupportedOperationException("Auto-generated method stub");
+		}
+	}
+
+	private static class RandomFlowExecutionKeyFactory implements FlowExecutionKeyFactory {
+		private RandomGuidUidGenerator idGenerator = new RandomGuidUidGenerator();
+
+		public FlowExecutionKey getKey() {
+			return new SimpleFlowExecutionKey(idGenerator.generateUid());
+		}
+
+		private static class SimpleFlowExecutionKey extends FlowExecutionKey {
+			private Serializable value;
+
+			public SimpleFlowExecutionKey(Serializable value) {
+				this.value = value;
+			}
+
+			public boolean equals(Object o) {
+				if (!(o instanceof SimpleFlowExecutionKey)) {
+					SimpleFlowExecutionKey key = (SimpleFlowExecutionKey) o;
+					return this.value.equals(key.value);
+				}
+				return false;
+			}
+
+			public int hashCode() {
+				return this.value.hashCode();
+			}
+
+			public String toString() {
+				return value.toString();
+			}
+		}
 	}
 }

@@ -28,10 +28,11 @@ import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionFactory;
-import org.springframework.webflow.execution.ViewSelection;
-import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
+import org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor;
+import org.springframework.webflow.executor.support.RequestPathFlowExecutorArgumentHandler;
 
 /**
  * The default implementation of the central facade for <i>driving</i> the execution of flows within an application.
@@ -88,6 +89,11 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 public class FlowExecutorImpl implements FlowExecutor {
 
 	private static final Log logger = LogFactory.getLog(FlowExecutorImpl.class);
+
+	/**
+	 * A helper for extracting flow executor arguments.
+	 */
+	private FlowExecutorArgumentExtractor argumentExtractor = new RequestPathFlowExecutorArgumentHandler();
 
 	/**
 	 * A locator to access flow definitions registered in a central registry.
@@ -175,40 +181,42 @@ public class FlowExecutorImpl implements FlowExecutor {
 		return executionRepository;
 	}
 
-	public ResponseInstruction launch(String flowDefinitionId, ExternalContext context) throws FlowException {
+	public void execute(ExternalContext context) throws FlowException {
+		if (argumentExtractor.isFlowExecutionKeyPresent(context)) {
+			resume(argumentExtractor.extractFlowExecutionKey(context), context);
+		} else if (argumentExtractor.isFlowIdPresent(context)) {
+			launch(argumentExtractor.extractFlowId(context), context);
+		} else {
+			throw new IllegalArgumentException("Unable to handle request from external context");
+		}
+	}
+
+	public void launch(String flowDefinitionId, ExternalContext context) throws FlowException {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Launching flow execution for flow definition '" + flowDefinitionId + "'");
+			logger.debug("Launching execution of flow '" + flowDefinitionId + "'");
 		}
 		// expose external context as a thread-bound service
 		ExternalContextHolder.setExternalContext(context);
 		try {
 			FlowDefinition flowDefinition = definitionLocator.getFlowDefinition(flowDefinitionId);
 			FlowExecution flowExecution = executionFactory.createFlowExecution(flowDefinition);
-			ViewSelection selectedView = flowExecution.start(createInput(context), context);
+			flowExecution.start(createInput(context), context);
 			if (flowExecution.isActive()) {
-				// execution still active => store it in the repository
-				FlowExecutionKey key = executionRepository.generateKey(flowExecution);
-				FlowExecutionLock lock = executionRepository.getLock(key);
-				lock.lock();
-				try {
-					executionRepository.putFlowExecution(key, flowExecution);
-				} finally {
-					lock.unlock();
-				}
-				return new ResponseInstruction(key.toString(), flowExecution, selectedView);
+				executionRepository.putFlowExecution(flowExecution);
 			} else {
-				// execution already ended => just render the selected view
-				return new ResponseInstruction(flowExecution, selectedView);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Execution of '" + flowDefinitionId
+							+ "' ended in one-request; no need to persist execution state");
+				}
 			}
 		} finally {
 			ExternalContextHolder.setExternalContext(null);
 		}
 	}
 
-	public ResponseInstruction resume(String flowExecutionKey, String eventId, ExternalContext context)
-			throws FlowException {
+	public void resume(String flowExecutionKey, ExternalContext context) throws FlowException {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Resuming flow execution with key '" + flowExecutionKey + "' on user event '" + eventId + "'");
+			logger.debug("Resuming flow execution with key '" + flowExecutionKey + "' in context " + context);
 		}
 		// expose external context as a thread-bound service
 		ExternalContextHolder.setExternalContext(context);
@@ -219,43 +227,13 @@ public class FlowExecutorImpl implements FlowExecutor {
 			lock.lock();
 			try {
 				FlowExecution flowExecution = executionRepository.getFlowExecution(key);
-				ViewSelection selectedView = flowExecution.signalEvent(eventId, context);
+				flowExecution.resume(context);
 				if (flowExecution.isActive()) {
-					// execution still active => store it in the repository
-					key = executionRepository.getNextKey(flowExecution, key);
-					executionRepository.putFlowExecution(key, flowExecution);
-					return new ResponseInstruction(key.toString(), flowExecution, selectedView);
+					executionRepository.putFlowExecution(flowExecution);
 				} else {
 					// execution ended => remove it from the repository
-					executionRepository.removeFlowExecution(key);
-					return new ResponseInstruction(flowExecution, selectedView);
+					executionRepository.removeFlowExecution(flowExecution);
 				}
-			} finally {
-				lock.unlock();
-			}
-		} finally {
-			ExternalContextHolder.setExternalContext(null);
-		}
-	}
-
-	public ResponseInstruction refresh(String flowExecutionKey, ExternalContext context) throws FlowException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Refreshing flow execution with key '" + flowExecutionKey + "'");
-		}
-		// expose external context as a thread-bound service
-		ExternalContextHolder.setExternalContext(context);
-		try {
-			FlowExecutionKey key = executionRepository.parseFlowExecutionKey(flowExecutionKey);
-			FlowExecutionLock lock = executionRepository.getLock(key);
-			// make sure we're the only one manipulating the flow execution
-			lock.lock();
-			try {
-				FlowExecution flowExecution = executionRepository.getFlowExecution(key);
-				ViewSelection selectedView = flowExecution.refresh(context);
-				// don't generate a new key for a refresh, just update
-				// the flow execution with it's existing key
-				executionRepository.putFlowExecution(key, flowExecution);
-				return new ResponseInstruction(key.toString(), flowExecution, selectedView);
 			} finally {
 				lock.unlock();
 			}

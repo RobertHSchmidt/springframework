@@ -37,7 +37,7 @@ import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.FlowSessionStatus;
-import org.springframework.webflow.execution.ViewSelection;
+import org.springframework.webflow.execution.View;
 
 /**
  * Default request control context implementation used internally by the web flow system. This class is closely coupled
@@ -84,6 +84,11 @@ class RequestControlContextImpl implements RequestControlContext {
 	 * The last transition that executed in this request context; initially null.
 	 */
 	private Transition lastTransition;
+
+	/**
+	 * The last view that was rendered.
+	 */
+	private View lastView;
 
 	/**
 	 * Create a new request context.
@@ -142,6 +147,10 @@ class RequestControlContextImpl implements RequestControlContext {
 		return lastTransition;
 	}
 
+	public View getLastView() {
+		return lastView;
+	}
+
 	public AttributeMap getAttributes() {
 		return attributes;
 	}
@@ -160,14 +169,6 @@ class RequestControlContextImpl implements RequestControlContext {
 
 	// implementing RequestControlContext
 
-	public void setLastEvent(Event lastEvent) {
-		this.lastEvent = lastEvent;
-	}
-
-	public void setLastTransition(Transition lastTransition) {
-		this.lastTransition = lastTransition;
-	}
-
 	public void setCurrentState(State state) {
 		getExecutionListeners().fireStateEntering(this, state);
 		State previousState = getCurrentStateInternal();
@@ -178,7 +179,28 @@ class RequestControlContextImpl implements RequestControlContext {
 		getExecutionListeners().fireStateEntered(this, previousState);
 	}
 
-	public ViewSelection start(Flow flow, MutableAttributeMap input) throws FlowExecutionException {
+	public void setLastEvent(Event lastEvent) {
+		this.lastEvent = lastEvent;
+	}
+
+	public void setLastTransition(Transition lastTransition) {
+		this.lastTransition = lastTransition;
+	}
+
+	public void setLastView(View lastView) {
+		this.lastView = lastView;
+	}
+
+	public void assignFlowExecutionKey() {
+		this.flowExecution.assignKey();
+	}
+
+	public boolean getAlwaysRedirectOnPause() {
+		Boolean redirectOnPause = this.flowExecution.getAttributes().getBoolean("alwaysRedirectOnPause");
+		return redirectOnPause != null ? redirectOnPause.booleanValue() : false;
+	}
+
+	public void start(Flow flow, MutableAttributeMap input) throws FlowExecutionException {
 		if (input == null) {
 			// create a mutable map so entries can be added by listeners!
 			input = new LocalAttributeMap();
@@ -190,20 +212,18 @@ class RequestControlContextImpl implements RequestControlContext {
 		getExecutionListeners().fireSessionStarting(this, flow, input);
 		FlowSession session = flowExecution.activateSession(flow);
 		getExecutionListeners().fireSessionCreated(this, session);
-		ViewSelection selectedView = flow.start(this, input);
+		flow.start(this, input);
 		getExecutionListeners().fireSessionStarted(this, session);
-		return selectedView;
 	}
 
-	public ViewSelection signalEvent(Event event) throws FlowExecutionException {
+	public void handleEvent(Event event) throws FlowExecutionException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Signaling event '" + event.getId() + "' in state '" + getCurrentState().getId()
 					+ "' of flow '" + getActiveFlow().getId() + "'");
 		}
 		setLastEvent(event);
 		getExecutionListeners().fireEventSignaled(this, event);
-		ViewSelection selectedView = getActiveFlowInternal().onEvent(this);
-		return selectedView;
+		getActiveFlowInternal().handleEvent(this);
 	}
 
 	public FlowSession endActiveFlowSession(MutableAttributeMap output) throws IllegalStateException {
@@ -218,8 +238,20 @@ class RequestControlContextImpl implements RequestControlContext {
 		return session;
 	}
 
-	public ViewSelection execute(Transition transition) {
-		return transition.execute(getCurrentStateInternal(), this);
+	public void execute(Transition transition) {
+		transition.execute(getCurrentStateInternal(), this);
+	}
+
+	public void sendFlowExecutionRedirect() {
+		this.flowExecution.sendFlowExecutionRedirect();
+	}
+
+	public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input) {
+		this.flowExecution.sendFlowDefinitionRedirect(flowId, input);
+	}
+
+	public void sendExternalRedirect(String resourceUri) {
+		this.flowExecution.sendExternalRedirect(resourceUri);
 	}
 
 	// internal helpers
@@ -257,4 +289,5 @@ class RequestControlContextImpl implements RequestControlContext {
 				.append("requestScope", requestScope).append("attributes", attributes).append("flowExecution",
 						flowExecution).toString();
 	}
+
 }

@@ -23,7 +23,6 @@ import org.springframework.webflow.definition.TransitionDefinition;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.ViewSelection;
 
 /**
  * A path from one {@link TransitionableState state} to another {@link State state}.
@@ -190,8 +189,7 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	 * execution
 	 * @throws FlowExecutionException when transition execution fails
 	 */
-	public ViewSelection execute(State sourceState, RequestControlContext context) throws FlowExecutionException {
-		ViewSelection selectedView;
+	public void execute(State sourceState, RequestControlContext context) throws FlowExecutionException {
 		if (canExecute(context)) {
 			if (sourceState != null) {
 				if (logger.isDebugEnabled()) {
@@ -209,11 +207,10 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 			State targetState = targetStateResolver.resolveTargetState(this, sourceState, context);
 			context.setLastTransition(this);
 			// enter the target state (note: any exceptions are propagated)
-			selectedView = targetState.enter(context);
+			targetState.enter(context);
 		} else {
 			if (sourceState != null && sourceState instanceof TransitionableState) {
-				// 'roll back' and re-enter the transitionable source state
-				selectedView = ((TransitionableState) sourceState).reenter(context);
+				((TransitionableState) sourceState).reenter(context);
 			} else {
 				throw new IllegalStateException("Execution of '" + this + "' was blocked by '" + getExecutionCriteria()
 						+ "', " + "; however, no source state is set at runtime.  "
@@ -228,7 +225,6 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 				logger.debug("Completed execution of " + this + ", as a result the flow execution has ended");
 			}
 		}
-		return selectedView;
 	}
 
 	public String toString() {
