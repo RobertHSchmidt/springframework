@@ -29,6 +29,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.View;
 
 /**
  * Mock implementation of the <code>RequestContext</code> interface to facilitate standalone flow artifact (e.g.
@@ -42,7 +43,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class MockRequestContext implements RequestContext {
 
-	private FlowExecutionContext flowExecutionContext = new MockFlowExecutionContext();
+	private FlowExecutionContext flowExecutionContext;
 
 	private ExternalContext externalContext = new MockExternalContext();
 
@@ -54,16 +55,7 @@ public class MockRequestContext implements RequestContext {
 
 	private Transition lastTransition;
 
-	/**
-	 * Creates a new mock request context with the following defaults:
-	 * <ul>
-	 * <li>A flow execution context with a active session of flow "mockFlow" in state "mockState".
-	 * <li>A mock external context with no request parameters set.
-	 * </ul>
-	 * To add request parameters to this request, use the {@link #putRequestParameter(String, String)} method.
-	 */
-	public MockRequestContext() {
-	}
+	private View lastView;
 
 	/**
 	 * Creates a new mock request context with the following defaults:
@@ -72,20 +64,19 @@ public class MockRequestContext implements RequestContext {
 	 * <li>A mock external context with no request parameters set.
 	 * </ul>
 	 * To add request parameters to this request, use the {@link #putRequestParameter(String, String)} method.
+	 * @param flow the flow definition
 	 */
 	public MockRequestContext(Flow flow) {
-		flowExecutionContext = new MockFlowExecutionContext(flow);
+		this(new MockFlowExecutionContext(flow));
 	}
 
 	/**
-	 * Creates a new mock request context with the following defaults:
-	 * <ul>
-	 * <li>A flow execution context with a active session of flow "mockFlow" in state "mockState".
-	 * <li>A mock external context with the provided parameters set.
-	 * </ul>
+	 * Creates a new mock request context with the provided flow execution context. To add request parameters to this
+	 * request, use the {@link #putRequestParameter(String, String)} method.
+	 * @param flowExecutionContext the flow execution context
 	 */
-	public MockRequestContext(ParameterMap requestParameterMap) {
-		externalContext = new MockExternalContext(requestParameterMap);
+	public MockRequestContext(FlowExecutionContext flowExecutionContext) {
+		this.flowExecutionContext = flowExecutionContext;
 	}
 
 	// implementing RequestContext
@@ -132,6 +123,10 @@ public class MockRequestContext implements RequestContext {
 
 	public TransitionDefinition getLastTransition() {
 		return lastTransition;
+	}
+
+	public View getLastView() {
+		return lastView;
 	}
 
 	public AttributeMap getAttributes() {
@@ -185,6 +180,14 @@ public class MockRequestContext implements RequestContext {
 	 */
 	public void setLastTransition(Transition lastTransition) {
 		this.lastTransition = lastTransition;
+	}
+
+	/**
+	 * Set the last view that rendered in this request context.
+	 * @param lastView the last view that rendered
+	 */
+	public void setLastView(View lastView) {
+		this.lastView = lastView;
 	}
 
 	/**
@@ -246,4 +249,5 @@ public class MockRequestContext implements RequestContext {
 	public void putRequestParameter(String parameterName, String[] parameterValues) {
 		getMockExternalContext().putRequestParameter(parameterName, parameterValues);
 	}
+
 }

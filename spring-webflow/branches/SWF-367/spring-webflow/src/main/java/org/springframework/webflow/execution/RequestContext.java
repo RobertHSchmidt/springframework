@@ -85,7 +85,7 @@ public interface RequestContext {
 
 	/**
 	 * Returns a mutable accessor for accessing and/or setting attributes in flash scope. <b>Flash scoped attributes
-	 * exist untill the next event is signaled in the flow execution.</b>
+	 * exist until the next event is signaled in the flow execution.</b>
 	 * @return the flash scope
 	 */
 	public MutableAttributeMap getFlashScope();
@@ -148,11 +148,15 @@ public interface RequestContext {
 
 	/**
 	 * Returns the last state transition that executed in this request.
-	 * @return the last transition, or <code>null</code> if no transition has occured yet
+	 * @return the last transition, or <code>null</code> if no transition has occurred yet
 	 */
 	public TransitionDefinition getLastTransition();
 
-	public View getView();
+	/**
+	 * Returns the last view that was rendered. Null into a view is rendered or restored.
+	 * @return the last view, or <code>null</code> if no view has been rendered or restored yet
+	 */
+	public View getLastView();
 
 	/**
 	 * Returns a context map for accessing arbitrary attributes about the state of the current request. These attributes

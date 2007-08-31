@@ -17,87 +17,71 @@ package org.springframework.webflow.engine;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.expression.support.StaticExpression;
-import org.springframework.webflow.engine.impl.FlowExecutionImpl;
-import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
-import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.TestAction;
-import org.springframework.webflow.execution.ViewSelection;
-import org.springframework.webflow.execution.support.ApplicationView;
-import org.springframework.webflow.test.MockExternalContext;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.View;
+import org.springframework.webflow.execution.ViewFactory;
+import org.springframework.webflow.test.MockRequestControlContext;
 
 /**
- * Tests that each of the Flow state types execute as expected when entered.
- * 
+ * Tests that ViewState logic is correct.
  * @author Keith Donald
  */
 public class ViewStateTests extends TestCase {
 
-	public void testViewState() {
+	public void testEnterViewState() {
 		Flow flow = new Flow("myFlow");
-		ViewState state = new ViewState(flow, "viewState");
-		state.setViewSelector(view("myViewName"));
+		StubViewFactory viewFactory = new StubViewFactory();
+		ViewState state = new ViewState(flow, "viewState", viewFactory);
 		state.getTransitionSet().add(new Transition(on("submit"), to("finish")));
 		new EndState(flow, "finish");
-		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ApplicationView view = (ApplicationView) flowExecution.start(null, new MockExternalContext());
-		assertEquals("viewState", flowExecution.getActiveSession().getState().getId());
-		assertNotNull(view);
-		assertEquals("myViewName", view.getViewName());
+		MockRequestControlContext context = new MockRequestControlContext(flow);
+		state.enter(context);
+		assertTrue("Render not called", context.getFlowScope().contains("renderCalled"));
+		assertFalse(context.getFlowExecutionRedirectSent());
 	}
 
-	public void testViewStateMarker() {
+	public void testEnterViewStateWithRedirect() {
 		Flow flow = new Flow("myFlow");
-		ViewState state = new ViewState(flow, "viewState");
+		StubViewFactory viewFactory = new StubViewFactory();
+		ViewState state = new ViewState(flow, "viewState", viewFactory);
 		state.getTransitionSet().add(new Transition(on("submit"), to("finish")));
 		new EndState(flow, "finish");
-		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		ViewSelection view = flowExecution.start(null, new MockExternalContext());
-		assertEquals("viewState", flowExecution.getActiveSession().getState().getId());
-		assertEquals(ViewSelection.NULL_VIEW, view);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
+		context.setAlwaysRedirectOnPause(true);
+		state.enter(context);
+		assertFalse("Render called", context.getFlowScope().contains("renderCalled"));
+		assertTrue(context.getFlowExecutionRedirectSent());
 	}
 
-	public void testViewStateNotRenderableSelection() {
+	public void testResumeViewStateForRefresh() {
 		Flow flow = new Flow("myFlow");
-		ViewState state = new ViewState(flow, "viewState");
-		state.setViewSelector(new ApplicationViewSelector(new StaticExpression("myView"), true));
-		TestAction action = new TestAction();
-		state.getRenderActionList().add(action);
+		StubViewFactory viewFactory = new StubViewFactory();
+		ViewState state = new ViewState(flow, "viewState", viewFactory);
 		state.getTransitionSet().add(new Transition(on("submit"), to("finish")));
 		new EndState(flow, "finish");
-		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		assertFalse(action.isExecuted());
-
-		flowExecution.start(null, new MockExternalContext());
-		assertEquals("viewState", flowExecution.getActiveSession().getState().getId());
-		assertFalse(action.isExecuted());
-		assertEquals(action.getExecutionCount(), 0);
-
-		flowExecution.refresh(new MockExternalContext());
-		assertEquals(action.getExecutionCount(), 1);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
+		state.enter(context);
+		context = new MockRequestControlContext(context.getFlowExecutionContext());
+		state.resume(context);
+		assertTrue("Render not called", context.getFlowScope().contains("renderCalled"));
+		assertFalse(context.getFlowExecutionRedirectSent());
 	}
 
-	public void testViewStateRenderableSelection() {
+	public void testResumeViewStateForEvent() {
 		Flow flow = new Flow("myFlow");
-		ViewState state = new ViewState(flow, "viewState");
-		state.setViewSelector(new ApplicationViewSelector(new StaticExpression("test")));
-		TestAction action = new TestAction();
-		state.getRenderActionList().add(action);
+		StubViewFactory viewFactory = new StubViewFactory();
+		ViewState state = new ViewState(flow, "viewState", viewFactory);
 		state.getTransitionSet().add(new Transition(on("submit"), to("finish")));
 		new EndState(flow, "finish");
-		FlowExecution flowExecution = new FlowExecutionImpl(flow);
-		assertFalse(action.isExecuted());
-
-		flowExecution.start(null, new MockExternalContext());
-		assertEquals("viewState", flowExecution.getActiveSession().getState().getId());
-		assertTrue(action.isExecuted());
-		assertEquals(action.getExecutionCount(), 1);
-
-		flowExecution.refresh(new MockExternalContext());
-		assertEquals(action.getExecutionCount(), 2);
-
+		MockRequestControlContext context = new MockRequestControlContext(flow);
+		state.enter(context);
+		context = new MockRequestControlContext(context.getFlowExecutionContext());
+		context.putRequestParameter("_eventId", "submit");
+		state.resume(context);
+		assertFalse(context.getFlowExecutionContext().isActive());
 	}
 
 	protected TransitionCriteria on(String event) {
@@ -108,7 +92,35 @@ public class ViewStateTests extends TestCase {
 		return new DefaultTargetStateResolver(stateId);
 	}
 
-	public static ViewSelector view(String viewName) {
-		return new ApplicationViewSelector(new StaticExpression(viewName));
+	private static class StubViewFactory implements ViewFactory {
+
+		public View createView(RequestContext context) {
+			return new NullView(context);
+		}
+
+		public View restoreView(RequestContext context) {
+			return new NullView(context);
+		}
+
+		private static class NullView extends View {
+			private RequestContext context;
+
+			public NullView(RequestContext context) {
+				this.context = context;
+			}
+
+			public void render() {
+				context.getFlowScope().put("renderCalled", Boolean.TRUE);
+			}
+
+			public boolean eventSignaled() {
+				return context.getExternalContext().getRequestParameterMap().contains("_eventId");
+			}
+
+			public Event getEvent() {
+				return new Event(this, context.getExternalContext().getRequestParameterMap().get("_eventId"));
+			}
+		}
 	}
+
 }

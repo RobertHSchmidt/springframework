@@ -19,15 +19,12 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.View;
 import org.springframework.webflow.execution.ViewFactory;
-import org.springframework.webflow.execution.ViewSelection;
 
 /**
- * A view state is a state that issues a response to the user, for example, for soliciting form input.
- * <p>
- * To accomplish this, a <code>ViewState</code> makes a {@link ViewSelection}, which contains the necessary
- * information to issue a suitable response.
+ * A view state is a state that issues a response to the user, for example, for soliciting form input. To accomplish
+ * this, a <code>ViewState</code> delegates to a {@link ViewFactory}.
  * 
- * @see org.springframework.webflow.engine.ViewSelector
+ * @see ViewFactory
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -75,7 +72,7 @@ public class ViewState extends TransitionableState {
 		} else {
 			View view = viewFactory.createView(context);
 			renderActionList.execute(context);
-			view.render(context);
+			view.render();
 			context.setLastView(view);
 		}
 	}
@@ -87,7 +84,7 @@ public class ViewState extends TransitionableState {
 			context.handleEvent(view.getEvent());
 		} else {
 			renderActionList.execute(context);
-			view.render(context);
+			view.render();
 		}
 	}
 
