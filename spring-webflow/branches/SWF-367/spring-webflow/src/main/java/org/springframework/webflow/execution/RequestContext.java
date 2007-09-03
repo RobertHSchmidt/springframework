@@ -153,12 +153,6 @@ public interface RequestContext {
 	public TransitionDefinition getLastTransition();
 
 	/**
-	 * Returns the last view that was rendered. Null into a view is rendered or restored.
-	 * @return the last view, or <code>null</code> if no view has been rendered or restored yet
-	 */
-	public View getLastView();
-
-	/**
 	 * Returns a context map for accessing arbitrary attributes about the state of the current request. These attributes
 	 * may be used to influence flow execution behavior.
 	 * @return the current attributes of this request, or empty if not set
@@ -170,13 +164,5 @@ public interface RequestContext {
 	 * @param attributes the attributes
 	 */
 	public void setAttributes(AttributeMap attributes);
-
-	/**
-	 * Returns the data model capturing the state of this context, suitable for exposing to clients (mostly web views).
-	 * Typically the model will contain the union of the data available in request, flash, session and conversation
-	 * scope.
-	 * @return the model that can be exposed to a client view for rendering purposes
-	 */
-	public AttributeMap getModel();
 
 }

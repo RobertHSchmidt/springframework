@@ -39,13 +39,11 @@ public class DecisionState extends TransitionableState {
 	}
 
 	/**
-	 * Specialization of State's <code>doEnter</code> template method that executes behaviour specific to this state
+	 * Specialization of State's <code>doEnter</code> template method that executes behavior specific to this state
 	 * type in polymorphic fashion.
 	 * <p>
 	 * Simply looks up the first transition that matches the state of the context and executes it.
 	 * @param context the control context for the currently executing flow, used by this state to manipulate the flow
-	 * execution
-	 * @return a view selection containing model and view information needed to render the results of the state
 	 * execution
 	 * @throws FlowExecutionException if an exception occurs in this state
 	 */

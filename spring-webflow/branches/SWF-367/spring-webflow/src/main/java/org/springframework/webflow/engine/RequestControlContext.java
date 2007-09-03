@@ -21,7 +21,6 @@ import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.View;
 
 /**
  * Mutable control interface used to manipulate an ongoing flow execution in the context of one client request.
@@ -75,12 +74,6 @@ public interface RequestControlContext extends RequestContext {
 	 * render a view and pause the flow execution.
 	 */
 	public void assignFlowExecutionKey();
-
-	/**
-	 * Record the last view that rendered in the executing flow. This method will be called when a state renders a view.
-	 * @param view the last view that rendered
-	 */
-	public void setLastView(View view);
 
 	/**
 	 * Spawn a new flow session and activate it in the currently executing flow. Also transitions the spawned flow to

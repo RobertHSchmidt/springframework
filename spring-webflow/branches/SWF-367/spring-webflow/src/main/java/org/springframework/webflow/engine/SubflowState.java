@@ -18,6 +18,7 @@ package org.springframework.webflow.engine;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.RequestContext;
@@ -47,7 +48,7 @@ public class SubflowState extends TransitionableState {
 	/**
 	 * The attribute mapper that should map attributes from the parent flow down to the spawned subflow and visa versa.
 	 */
-	private FlowAttributeMapper attributeMapper;
+	private FlowAttributeMapper attributeMapper = new NoAttributeMapper();
 
 	/**
 	 * Create a new subflow state.
@@ -63,15 +64,7 @@ public class SubflowState extends TransitionableState {
 	}
 
 	/**
-	 * Returns the subflow spawned by this state.
-	 */
-	public Flow getSubflow() {
-		return subflow;
-	}
-
-	/**
-	 * Set the subflow that will be spawned by this state.
-	 * @param subflow the subflow to spawn
+	 * Set the subflow this state will call.
 	 */
 	private void setSubflow(Flow subflow) {
 		Assert.notNull(subflow, "A subflow state must have a subflow; the subflow is required");
@@ -79,17 +72,10 @@ public class SubflowState extends TransitionableState {
 	}
 
 	/**
-	 * Returns the attribute mapper used to map data between the parent and child flow, or null if no mapping is needed.
-	 */
-	public FlowAttributeMapper getAttributeMapper() {
-		return attributeMapper;
-	}
-
-	/**
-	 * Set the attribute mapper used to map model data between the parent and child flow. Can be null if no mapping is
-	 * needed.
+	 * Set the attribute mapper used to map model data between the parent and child flow.
 	 */
 	public void setAttributeMapper(FlowAttributeMapper attributeMapper) {
+		Assert.notNull(attributeMapper, "The attribute mapper is required");
 		this.attributeMapper = attributeMapper;
 	}
 
@@ -100,36 +86,13 @@ public class SubflowState extends TransitionableState {
 	 * Entering this state, creates the subflow input map and spawns the subflow in the current flow execution.
 	 * @param context the control context for the currently executing flow, used by this state to manipulate the flow
 	 * execution
-	 * @return a view selection containing model and view information needed to render the results of the state
-	 * execution
 	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
 	protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Calling subflow '" + getSubflow().getId() + "'");
+			logger.debug("Calling subflow '" + subflow.getId() + "'");
 		}
-		context.start(getSubflow(), createSubflowInput(context));
-	}
-
-	/**
-	 * Create the input data map for the spawned subflow session. The returned map will be passed to
-	 * {@link Flow#start(RequestControlContext, MutableAttributeMap)}.
-	 */
-	protected MutableAttributeMap createSubflowInput(RequestContext context) {
-		if (getAttributeMapper() != null) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Messaging the configured attribute mapper to map attributes "
-						+ "down to the spawned subflow for access within the subflow");
-			}
-			return getAttributeMapper().createFlowInput(context);
-		} else {
-			if (logger.isDebugEnabled()) {
-				logger.debug("No attribute mapper configured for this subflow state '" + getId()
-						+ "' -- As a result, no attributes will be passed to the spawned subflow '" + subflow.getId()
-						+ "'");
-			}
-			return null;
-		}
+		context.start(subflow, attributeMapper.createFlowInput(context));
 	}
 
 	/**
@@ -137,33 +100,27 @@ public class SubflowState extends TransitionableState {
 	 * the subflow.
 	 */
 	public void handleEvent(RequestControlContext context) {
-		mapSubflowOutput(context.getLastEvent().getAttributes(), context);
+		attributeMapper.mapFlowOutput(context.getLastEvent().getAttributes(), context);
 		super.handleEvent(context);
-	}
-
-	/**
-	 * Map the output data produced by the subflow back into the request context (typically flow scope).
-	 */
-	private void mapSubflowOutput(AttributeMap subflowOutput, RequestContext context) {
-		if (getAttributeMapper() != null) {
-			if (logger.isDebugEnabled()) {
-				logger
-						.debug("Messaging the configured attribute mapper to map subflow result attributes to the "
-								+ "resuming parent flow -- It will have access to attributes passed up by the completed subflow");
-			}
-			attributeMapper.mapFlowOutput(subflowOutput, context);
-		} else {
-			if (logger.isDebugEnabled()) {
-				logger
-						.debug("No attribute mapper is configured for the resuming subflow state '"
-								+ getId()
-								+ "' -- As a result, no attributes of the ending flow will be passed to the resuming parent flow");
-			}
-		}
 	}
 
 	protected void appendToString(ToStringCreator creator) {
 		creator.append("subflow", subflow.getId()).append("attributeMapper", attributeMapper);
 		super.appendToString(creator);
 	}
+
+	/**
+	 * Maps no output attributes. The default implementation.
+	 */
+	private class NoAttributeMapper implements FlowAttributeMapper {
+		public MutableAttributeMap createFlowInput(RequestContext context) {
+			logger.debug("No input will be passed to subflow");
+			return new LocalAttributeMap();
+		}
+
+		public void mapFlowOutput(AttributeMap flowOutput, RequestContext context) {
+			logger.debug("No subflow output will be mapped");
+		}
+	}
+
 }

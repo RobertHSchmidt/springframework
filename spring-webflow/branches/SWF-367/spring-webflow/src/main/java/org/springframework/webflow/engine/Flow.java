@@ -45,7 +45,7 @@ import org.springframework.webflow.execution.ViewSelection;
  * <p>
  * Especially in Intranet applications there are often "controlled navigations" where the user is not free to do what he
  * or she wants but must follow the guidelines provided by the system to complete a process that is transactional in
- * nature (the quinessential example would be a 'checkout' flow of a shopping cart application). This is a typical use
+ * nature (the quintessential example would be a 'checkout' flow of a shopping cart application). This is a typical use
  * case appropriate to model as a flow.
  * <p>
  * Structurally a Flow is composed of a set of states. A {@link State} is a point in a flow where a behavior is
@@ -55,7 +55,7 @@ import org.springframework.webflow.execution.ViewSelection;
  * Each {@link TransitionableState} type has one or more transitions that when executed move a flow to another state.
  * These transitions define the supported paths through the flow.
  * <p>
- * A state transition is triggered by the occurence of an event. An event is something that happens the flow should
+ * A state transition is triggered by the occurrence of an event. An event is something that happens the flow should
  * respond to, for example a user input event like ("submit") or an action execution result event like ("success"). When
  * an event occurs in a state of a Flow that event drives a state transition that decides what to do next.
  * <p>
@@ -81,7 +81,7 @@ import org.springframework.webflow.execution.ViewSelection;
  * {@link #handleEvent(RequestControlContext) on event}, and
  * {@link #end(RequestControlContext, MutableAttributeMap) end} each accept a {@link RequestContext request context}
  * that allows for this flow to access execution state in a thread safe manner. A flow execution is what models a
- * running instance of this flow definition, somewhat analgous to a java object that is an instance of a class.
+ * running instance of this flow definition, somewhat analogous to a java object that is an instance of a class.
  * 
  * @see org.springframework.webflow.engine.State
  * @see org.springframework.webflow.engine.TransitionableState
@@ -523,15 +523,18 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	}
 
 	/**
-	 * Inform this flow definition that an event was signaled in the current state of an active flow execution. The
-	 * signaled event is the last event available in given request context ({@link RequestContext#getLastEvent()}).
+	 * Resume a paused session for this flow in its current view state.
 	 * @param context the flow execution control context
-	 * @throws FlowExecutionException when an exception occurs processing the event
+	 * @throws FlowExecutionException when an exception occurs during the resume operation
 	 */
 	public void resume(RequestControlContext context) throws FlowExecutionException {
 		getCurrentViewState(context).resume(context);
 	}
 
+	/**
+	 * Handle the last event that occurred against an active session of this flow.
+	 * @param context the flow execution control context
+	 */
 	public void handleEvent(RequestControlContext context) {
 		TransitionableState currentState = getCurrentTransitionableState(context);
 		try {
@@ -596,6 +599,9 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 		}
 	}
 
+	/**
+	 * Returns the current state and makes sure it is a view state.
+	 */
 	private ViewState getCurrentViewState(RequestControlContext context) {
 		TransitionableState state = getCurrentTransitionableState(context);
 		if (!(state instanceof ViewState)) {

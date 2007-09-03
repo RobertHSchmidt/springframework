@@ -73,13 +73,11 @@ public class ViewState extends TransitionableState {
 			View view = viewFactory.createView(context);
 			renderActionList.execute(context);
 			view.render();
-			context.setLastView(view);
 		}
 	}
 
 	public void resume(RequestControlContext context) {
 		View view = viewFactory.restoreView(context);
-		context.setLastView(view);
 		if (view.eventSignaled()) {
 			context.handleEvent(view.getEvent());
 		} else {

@@ -19,10 +19,6 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.View;
-import org.springframework.webflow.execution.ViewFactory;
 import org.springframework.webflow.test.MockRequestControlContext;
 
 /**
@@ -90,37 +86,6 @@ public class ViewStateTests extends TestCase {
 
 	protected TargetStateResolver to(String stateId) {
 		return new DefaultTargetStateResolver(stateId);
-	}
-
-	private static class StubViewFactory implements ViewFactory {
-
-		public View createView(RequestContext context) {
-			return new NullView(context);
-		}
-
-		public View restoreView(RequestContext context) {
-			return new NullView(context);
-		}
-
-		private static class NullView extends View {
-			private RequestContext context;
-
-			public NullView(RequestContext context) {
-				this.context = context;
-			}
-
-			public void render() {
-				context.getFlowScope().put("renderCalled", Boolean.TRUE);
-			}
-
-			public boolean eventSignaled() {
-				return context.getExternalContext().getRequestParameterMap().contains("_eventId");
-			}
-
-			public Event getEvent() {
-				return new Event(this, context.getExternalContext().getRequestParameterMap().get("_eventId"));
-			}
-		}
 	}
 
 }

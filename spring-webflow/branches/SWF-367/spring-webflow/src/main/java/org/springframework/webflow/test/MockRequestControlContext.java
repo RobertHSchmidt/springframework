@@ -83,7 +83,7 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 		MockFlowSession endingSession = getMockFlowExecutionContext().getMockActiveSession();
 		endingSession.getDefinitionInternal().end(this, output);
 		endingSession.setStatus(FlowSessionStatus.ENDED);
-		getMockFlowExecutionContext().setActiveSession(null);
+		getMockFlowExecutionContext().setActiveSession(endingSession.getParent());
 		return endingSession;
 	}
 

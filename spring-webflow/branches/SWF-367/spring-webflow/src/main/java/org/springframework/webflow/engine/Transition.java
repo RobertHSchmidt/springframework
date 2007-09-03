@@ -28,7 +28,7 @@ import org.springframework.webflow.execution.RequestContext;
  * A path from one {@link TransitionableState state} to another {@link State state}.
  * <p>
  * When executed a transition takes a flow execution from its current state, called the <i>source state</i>, to another
- * state, called the </i>target state</i>. A transition may become eligible for execution on the occurence of an
+ * state, called the </i>target state</i>. A transition may become eligible for execution on the occurrence of an
  * {@link Event} from within a transitionable source state.
  * <p>
  * When an event occurs within this transition's source <code>TransitionableState</code> the determination of the
@@ -162,7 +162,7 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	}
 
 	/**
-	 * Checks if this transition is elligible for execution given the state of the provided flow execution request
+	 * Checks if this transition is eligible for execution given the state of the provided flow execution request
 	 * context.
 	 * @param context the flow execution request context
 	 * @return true if this transition should execute, false otherwise
@@ -184,9 +184,8 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	/**
 	 * Execute this state transition. Will only be called if the {@link #matches(RequestContext)} method returns true
 	 * for given context.
+	 * @param sourceState the source state
 	 * @param context the flow execution control context
-	 * @return a view selection containing model and view information needed to render the results of the transition
-	 * execution
 	 * @throws FlowExecutionException when transition execution fails
 	 */
 	public void execute(State sourceState, RequestControlContext context) throws FlowExecutionException {
@@ -219,10 +218,10 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 		}
 		if (logger.isDebugEnabled()) {
 			if (context.getFlowExecutionContext().isActive()) {
-				logger.debug("Completed execution of " + this + ", as a result the new state is '"
+				logger.debug("Completed execution of " + this + "; as a result, the new state is '"
 						+ context.getCurrentState().getId() + "' in flow '" + context.getActiveFlow().getId() + "'");
 			} else {
-				logger.debug("Completed execution of " + this + ", as a result the flow execution has ended");
+				logger.debug("Completed execution of " + this + "; as a result, the flow execution has ended");
 			}
 		}
 	}
