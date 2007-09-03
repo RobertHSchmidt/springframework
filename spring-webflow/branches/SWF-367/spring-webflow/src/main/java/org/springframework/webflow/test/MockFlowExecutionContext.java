@@ -48,9 +48,16 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 	/**
 	 * Creates a new mock flow execution context for the specified root flow definition.
 	 */
-	public MockFlowExecutionContext(Flow rootFlow) {
-		this.flow = rootFlow;
-		activeSession = new MockFlowSession(rootFlow);
+	public MockFlowExecutionContext(Flow flow) {
+		this(new MockFlowSession(flow));
+	}
+
+	/**
+	 * Creates a new mock flow execution context for the specified active flow session.
+	 */
+	public MockFlowExecutionContext(FlowSession flowSession) {
+		this.flow = flowSession.getDefinition();
+		this.activeSession = flowSession;
 	}
 
 	public FlowExecutionKey getKey() {
@@ -58,7 +65,7 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 	}
 
 	public String getCaption() {
-		return "Mock flow execution context";
+		return flow.getCaption();
 	}
 
 	// implementing flow execution context

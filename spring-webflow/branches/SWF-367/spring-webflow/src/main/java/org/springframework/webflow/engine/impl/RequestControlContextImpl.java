@@ -37,7 +37,6 @@ import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.FlowSessionStatus;
-import org.springframework.webflow.execution.View;
 
 /**
  * Default request control context implementation used internally by the web flow system. This class is closely coupled
@@ -84,11 +83,6 @@ class RequestControlContextImpl implements RequestControlContext {
 	 * The last transition that executed in this request context; initially null.
 	 */
 	private Transition lastTransition;
-
-	/**
-	 * The last view that was rendered.
-	 */
-	private View lastView;
 
 	/**
 	 * Create a new request context.
@@ -147,10 +141,6 @@ class RequestControlContextImpl implements RequestControlContext {
 		return lastTransition;
 	}
 
-	public View getLastView() {
-		return lastView;
-	}
-
 	public AttributeMap getAttributes() {
 		return attributes;
 	}
@@ -161,10 +151,6 @@ class RequestControlContextImpl implements RequestControlContext {
 		} else {
 			this.attributes = attributes;
 		}
-	}
-
-	public AttributeMap getModel() {
-		return getConversationScope().union(getFlowScope()).union(getFlashScope()).union(getRequestScope());
 	}
 
 	// implementing RequestControlContext
@@ -185,10 +171,6 @@ class RequestControlContextImpl implements RequestControlContext {
 
 	public void setLastTransition(Transition lastTransition) {
 		this.lastTransition = lastTransition;
-	}
-
-	public void setLastView(View lastView) {
-		this.lastView = lastView;
 	}
 
 	public void assignFlowExecutionKey() {

@@ -29,7 +29,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.View;
 
 /**
  * Mock implementation of the <code>RequestContext</code> interface to facilitate standalone flow artifact (e.g.
@@ -54,8 +53,6 @@ public class MockRequestContext implements RequestContext {
 	private Event lastEvent;
 
 	private Transition lastTransition;
-
-	private View lastView;
 
 	/**
 	 * Creates a new mock request context with the following defaults:
@@ -125,20 +122,12 @@ public class MockRequestContext implements RequestContext {
 		return lastTransition;
 	}
 
-	public View getLastView() {
-		return lastView;
-	}
-
 	public AttributeMap getAttributes() {
 		return attributes;
 	}
 
 	public void setAttributes(AttributeMap attributes) {
 		this.attributes.replaceWith(attributes);
-	}
-
-	public AttributeMap getModel() {
-		return getConversationScope().union(getFlowScope()).union(getFlashScope()).union(getRequestScope());
 	}
 
 	// mutators
@@ -180,14 +169,6 @@ public class MockRequestContext implements RequestContext {
 	 */
 	public void setLastTransition(Transition lastTransition) {
 		this.lastTransition = lastTransition;
-	}
-
-	/**
-	 * Set the last view that rendered in this request context.
-	 * @param lastView the last view that rendered
-	 */
-	public void setLastView(View lastView) {
-		this.lastView = lastView;
 	}
 
 	/**
