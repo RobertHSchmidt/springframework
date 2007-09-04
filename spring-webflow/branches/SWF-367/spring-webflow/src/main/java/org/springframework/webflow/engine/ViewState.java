@@ -86,6 +86,11 @@ public class ViewState extends TransitionableState {
 		}
 	}
 
+	public void exit(RequestControlContext context) {
+		super.exit(context);
+		context.getFlashScope().clear();
+	}
+
 	private boolean shouldRedirect(RequestControlContext context) {
 		return redirect || context.getAlwaysRedirectOnPause();
 	}

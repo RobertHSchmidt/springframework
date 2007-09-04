@@ -22,7 +22,7 @@ import org.springframework.webflow.execution.ViewSelection;
 
 public class MyCustomStateExceptionHandler implements FlowExecutionExceptionHandler {
 
-	public boolean handles(FlowExecutionException e) {
+	public boolean canHandle(FlowExecutionException e) {
 		return false;
 	}
 

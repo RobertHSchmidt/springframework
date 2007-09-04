@@ -80,7 +80,7 @@ public class XmlFlowBuilderTests extends TestCase {
 				.getExceptionHandlerSet().toArray()[1];
 		FlowExecutionException exception = new FlowExecutionException("testFlow1", "actionState1", "test",
 				new IOException());
-		assertTrue(handler.handles(exception));
+		assertTrue(handler.canHandle(exception));
 		context.getFlowScope().put("testTargetState", "endState1");
 		ViewSelection view = handler.handle(exception, context);
 		assertTrue(view instanceof ApplicationView);

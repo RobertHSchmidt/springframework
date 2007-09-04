@@ -22,7 +22,6 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.execution.FlowExecutionException;
-import org.springframework.webflow.execution.ViewSelection;
 
 /**
  * A point in a flow where something happens. What happens is determined by a state's type. Standard types of states
@@ -202,10 +201,8 @@ public abstract class State extends AnnotatedObject implements StateDefinition {
 	 * Handle an exception that occurred in this state during the context of the current flow execution request.
 	 * @param exception the exception that occurred
 	 * @param context the flow execution control context
-	 * @return the selected error view, or <code>null</code> if no handler matched or returned a non-null view
-	 * selection
 	 */
-	public ViewSelection handleException(FlowExecutionException exception, RequestControlContext context) {
+	public boolean handleException(FlowExecutionException exception, RequestControlContext context) {
 		return getExceptionHandlerSet().handleException(exception, context);
 	}
 

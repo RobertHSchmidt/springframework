@@ -17,8 +17,15 @@ package org.springframework.webflow.engine;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.mapping.DefaultAttributeMapper;
+import org.springframework.binding.mapping.Mapping;
+import org.springframework.binding.mapping.MappingBuilder;
+import org.springframework.webflow.core.DefaultExpressionParserFactory;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
+import org.springframework.webflow.execution.FlowExecutionException;
+import org.springframework.webflow.execution.ResponseRenderer;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestControlContext;
@@ -35,6 +42,33 @@ public class EndStateTests extends TestCase {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		state.enter(context);
 		assertFalse("Active", context.getFlowExecutionContext().isActive());
+	}
+
+	public void testEnterEndStateWithFinalResponseRenderer() {
+		Flow flow = new Flow("myFlow");
+		EndState state = new EndState(flow, "end");
+		StubResponseRenderer renderer = new StubResponseRenderer();
+		state.setFinalResponseRenderer(renderer);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
+		state.enter(context);
+		assertTrue(renderer.renderCalled);
+	}
+
+	public void testEnterEndStateWithOutputMapper() {
+		Flow flow = new Flow("myFlow") {
+			public void end(RequestControlContext context, MutableAttributeMap output) throws FlowExecutionException {
+				assertEquals("foo", output.get("y"));
+			}
+		};
+		EndState state = new EndState(flow, "end");
+		DefaultAttributeMapper mapper = new DefaultAttributeMapper();
+		MappingBuilder builder = new MappingBuilder(DefaultExpressionParserFactory.getExpressionParser());
+		Mapping mapping = builder.source("flowScope.x").target("y").value();
+		mapper.addMapping(mapping);
+		state.setOutputMapper(mapper);
+		MockRequestControlContext context = new MockRequestControlContext(flow);
+		context.getFlowScope().put("x", "foo");
+		state.enter(context);
 	}
 
 	public void testEnterEndStateTerminateFlowSession() {
@@ -65,4 +99,12 @@ public class EndStateTests extends TestCase {
 		return new DefaultTargetStateResolver(stateId);
 	}
 
+	private class StubResponseRenderer implements ResponseRenderer {
+		private boolean renderCalled;
+
+		public void render(RequestControlContext context) {
+			this.renderCalled = true;
+		}
+
+	}
 }

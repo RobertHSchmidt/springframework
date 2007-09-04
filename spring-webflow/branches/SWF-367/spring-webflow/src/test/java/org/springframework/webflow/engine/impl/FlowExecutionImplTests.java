@@ -374,7 +374,7 @@ public class FlowExecutionImplTests extends TestCase {
 			return ViewSelection.NULL_VIEW;
 		}
 
-		public boolean handles(FlowExecutionException exception) {
+		public boolean canHandle(FlowExecutionException exception) {
 			return true;
 		}
 

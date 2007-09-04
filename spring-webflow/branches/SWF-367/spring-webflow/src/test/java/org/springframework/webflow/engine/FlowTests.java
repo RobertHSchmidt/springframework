@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 import junit.framework.TestCase;
 
-import org.springframework.binding.expression.support.StaticExpression;
 import org.springframework.binding.mapping.DefaultAttributeMapper;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.context.support.StaticApplicationContext;
@@ -27,7 +26,6 @@ import org.springframework.webflow.TestException;
 import org.springframework.webflow.action.TestMultiAction;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
-import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.engine.support.BeanFactoryFlowVariable;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
@@ -37,7 +35,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.execution.TestAction;
-import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.test.MockRequestControlContext;
 
 /**
@@ -51,11 +48,9 @@ public class FlowTests extends TestCase {
 
 	private Flow createSimpleFlow() {
 		flow = new Flow("myFlow");
-		ViewState state1 = new ViewState(flow, "myState1");
-		state1.setViewSelector(new ApplicationViewSelector(new StaticExpression("myView")));
+		ViewState state1 = new ViewState(flow, "myState1", new StubViewFactory());
 		state1.getTransitionSet().add(new Transition(on("submit"), to("myState2")));
-		EndState state2 = new EndState(flow, "myState2");
-		state2.setViewSelector(new ApplicationViewSelector(new StaticExpression("myView2")));
+		new EndState(flow, "myState2");
 		flow.getGlobalTransitionSet().add(new Transition(on("globalEvent"), to("myState2")));
 		return flow;
 	}
@@ -193,7 +188,6 @@ public class FlowTests extends TestCase {
 		beanFactory.registerPrototype("bean", ArrayList.class);
 		flow.addVariable(new BeanFactoryFlowVariable("var2", "bean", beanFactory, ScopeType.FLOW));
 		flow.start(context, new LocalAttributeMap());
-		assertEquals(2, context.getFlowScope().size());
 		context.getFlowScope().getRequired("var1", ArrayList.class);
 		context.getFlowScope().getRequired("var2", ArrayList.class);
 	}
@@ -308,10 +302,8 @@ public class FlowTests extends TestCase {
 		context.setCurrentState(flow.getStateInstance("myState1"));
 		FlowExecutionException e = new FlowExecutionException(flow.getId(), flow.getStartState().getId(), "Oops!",
 				new TestException());
-		ApplicationView selectedView = (ApplicationView) flow.handleException(e, context);
+		flow.handleException(e, context);
 		assertFalse(context.getFlowExecutionContext().isActive());
-		assertNotNull("Should not have been null", selectedView);
-		assertEquals("Wrong selected view", "myView2", selectedView.getViewName());
 	}
 
 	public void testHandleStateExceptionNoMatch() {
