@@ -6,6 +6,7 @@
 <faces-config>
 
 	<application>
+		<action-listener>org.springframework.faces.webflow.FlowActionListener</action-listener>
 		<navigation-handler>org.springframework.faces.webflow.FlowNavigationHandler</navigation-handler>
 		<variable-resolver>org.springframework.faces.webflow.el.DelegatingFlowVariableResolver</variable-resolver>
 		<variable-resolver>org.springframework.web.jsf.DelegatingVariableResolver</variable-resolver>
