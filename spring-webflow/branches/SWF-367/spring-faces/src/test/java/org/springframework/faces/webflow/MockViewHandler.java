@@ -39,7 +39,7 @@ public class MockViewHandler extends ViewHandler {
 	}
 
 	/**
-	 * Set the view root that this mpck is supposed to create.
+	 * Set the view root that this mock is supposed to create.
 	 * @param viewRoot the view to set.
 	 */
 	public void setCreateView(UIViewRoot viewRoot) {
