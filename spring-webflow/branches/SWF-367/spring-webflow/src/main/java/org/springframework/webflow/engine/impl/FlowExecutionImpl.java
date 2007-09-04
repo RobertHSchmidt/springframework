@@ -39,11 +39,10 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.FlowExecutionListener;
+import org.springframework.webflow.execution.FlowExecutionRequestRedirector;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.FlowSessionStatus;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.FlowExecutionRequestRedirector;
-import org.springframework.webflow.execution.ViewSelection;
 import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
 
 /**
@@ -189,7 +188,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	public void start(MutableAttributeMap input, ExternalContext externalContext) throws FlowExecutionException {
 		Assert.state(!isActive(), "This flow is already executing; you cannot call 'start()' more than once");
 		if (logger.isDebugEnabled()) {
-			logger.debug("Starting execution with input '" + input + "'");
+			logger.debug("Starting execution with input '" + input + "' in " + externalContext);
 		}
 		RequestControlContext context = createControlContext(externalContext);
 		getListeners().fireRequestSubmitted(context);
@@ -211,9 +210,11 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	public void resume(ExternalContext externalContext) throws FlowExecutionException {
 		assertActive();
+		if (logger.isDebugEnabled()) {
+			logger.debug("Resuming execution in " + externalContext);
+		}
 		RequestControlContext context = createControlContext(externalContext);
 		getListeners().fireRequestSubmitted(context);
-		flashScope.clear();
 		try {
 			getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
 			getListeners().fireResumed(context);
@@ -243,76 +244,55 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	/**
-	 * Returns the listener list.
-	 * @return the attached execution listeners.
-	 */
-	FlowExecutionListeners getListeners() {
-		return listeners;
-	}
-
-	/**
-	 * Handles an exception that occurred performing an operation on this flow execution. First trys the set of
+	 * Handles an exception that occurred performing an operation on this flow execution. First tries the set of
 	 * exception handlers associated with the offending state, then the handlers at the flow level.
 	 * @param exception the exception that occurred
 	 * @param context the request control context the exception occurred in
-	 * @return the selected error view, never null
 	 * @throws FlowExecutionException rethrows the exception if it was not handled at the state or flow level
 	 */
-	protected ViewSelection handleException(FlowExecutionException exception, RequestControlContext context)
+	protected void handleException(FlowExecutionException exception, RequestControlContext context)
 			throws FlowExecutionException {
 		getListeners().fireExceptionThrown(context, exception);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Attempting to handle [" + exception + "]");
 		}
+		boolean handled = false;
 		try {
-			// the state could be null if the flow was attempting a start operation
-			ViewSelection selectedView = tryStateHandlers(exception, context);
-			if (selectedView != null) {
-				return selectedView;
-			}
-			selectedView = tryFlowHandlers(exception, context);
-			if (selectedView != null) {
-				return selectedView;
+			if (tryStateHandlers(exception, context) || tryFlowHandlers(exception, context)) {
+				handled = true;
 			}
 		} catch (FlowExecutionException newException) {
-			// exception handling resulted in a new FlowExecutionException, try to handle it
-			return handleException(newException, context);
+			// exception handling itself resulted in a new FlowExecutionException, try to handle it
+			handleException(newException, context);
 		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("Rethrowing unhandled flow execution exception");
+		if (!handled) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Rethrowing unhandled flow execution exception");
+			}
+			throw exception;
 		}
-		throw exception;
 	}
 
 	/**
 	 * Try to handle given exception using execution exception handlers registered at the state level. Returns null if
 	 * no handler handled the exception.
+	 * @return true if the exception was handled
 	 */
-	private ViewSelection tryStateHandlers(FlowExecutionException exception, RequestControlContext context) {
-		ViewSelection selectedView = null;
+	private boolean tryStateHandlers(FlowExecutionException exception, RequestControlContext context) {
 		if (exception.getStateId() != null) {
-			selectedView = getActiveFlow().getStateInstance(exception.getStateId()).handleException(exception, context);
-			if (selectedView != null) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("State '" + exception.getStateId() + "' handled exception");
-				}
-			}
+			return getActiveFlow().getStateInstance(exception.getStateId()).handleException(exception, context);
+		} else {
+			return false;
 		}
-		return selectedView;
 	}
 
 	/**
 	 * Try to handle given exception using execution exception handlers registered at the flow level. Returns null if no
 	 * handler handled the exception.
+	 * @return true if the exception was handled
 	 */
-	private ViewSelection tryFlowHandlers(FlowExecutionException exception, RequestControlContext context) {
-		ViewSelection selectedView = getActiveFlow().handleException(exception, context);
-		if (selectedView != null) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Flow '" + exception.getFlowId() + "' handled exception");
-			}
-		}
-		return selectedView;
+	private boolean tryFlowHandlers(FlowExecutionException exception, RequestControlContext context) {
+		return getActiveFlow().handleException(exception, context);
 	}
 
 	// internal helpers
@@ -323,6 +303,14 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 */
 	protected RequestControlContext createControlContext(ExternalContext externalContext) {
 		return new RequestControlContextImpl(this, externalContext);
+	}
+
+	/**
+	 * Returns the listener list.
+	 * @return the attached execution listeners.
+	 */
+	FlowExecutionListeners getListeners() {
+		return listeners;
 	}
 
 	/**
@@ -411,13 +399,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 */
 	private Flow getActiveFlow() {
 		return (Flow) getActiveSessionInternal().getDefinition();
-	}
-
-	/**
-	 * Returns the current state of this flow execution.
-	 */
-	private State getCurrentState() {
-		return (State) getActiveSessionInternal().getState();
 	}
 
 	// custom serialization (implementation of Externalizable for optimized storage)

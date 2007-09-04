@@ -65,10 +65,10 @@ public class TransitionExecutingFlowExecutionExceptionHandlerTests extends TestC
 		handler.add(TestException.class, "state");
 		FlowExecutionException e = new FlowExecutionException(state.getOwner().getId(), state.getId(), "Oops",
 				new TestException());
-		assertTrue("Doesn't handle state exception", handler.handles(e));
+		assertTrue("Doesn't handle state exception", handler.canHandle(e));
 
 		e = new FlowExecutionException(state.getOwner().getId(), state.getId(), "Oops", new Exception());
-		assertFalse("Shouldn't handle exception", handler.handles(e));
+		assertFalse("Shouldn't handle exception", handler.canHandle(e));
 	}
 
 	public void testTransitionExecutorHandlesExceptionSuperclassMatch() {
@@ -76,9 +76,9 @@ public class TransitionExecutingFlowExecutionExceptionHandlerTests extends TestC
 		handler.add(Exception.class, "state");
 		FlowExecutionException e = new FlowExecutionException(state.getOwner().getId(), state.getId(), "Oops",
 				new TestException());
-		assertTrue("Doesn't handle state exception", handler.handles(e));
+		assertTrue("Doesn't handle state exception", handler.canHandle(e));
 		e = new FlowExecutionException(state.getOwner().getId(), state.getId(), "Oops", new RuntimeException());
-		assertTrue("Doesn't handle state exception", handler.handles(e));
+		assertTrue("Doesn't handle state exception", handler.canHandle(e));
 	}
 
 	public void testFlowStateExceptionHandlingTransition() {

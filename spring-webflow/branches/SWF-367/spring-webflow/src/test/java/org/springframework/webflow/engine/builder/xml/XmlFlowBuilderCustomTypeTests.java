@@ -82,7 +82,7 @@ public class XmlFlowBuilderCustomTypeTests extends TestCase {
 	}
 
 	public static class CustomExceptionHandler implements FlowExecutionExceptionHandler {
-		public boolean handles(FlowExecutionException exception) {
+		public boolean canHandle(FlowExecutionException exception) {
 			return false;
 		}
 

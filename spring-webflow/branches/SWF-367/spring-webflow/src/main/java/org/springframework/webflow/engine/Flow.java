@@ -31,7 +31,6 @@ import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.ViewSelection;
 
 /**
  * A single flow definition. A Flow definition is a reusable, self-contained controller module that provides the blue
@@ -575,10 +574,8 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	 * Handle an exception that occurred during an execution of this flow.
 	 * @param exception the exception that occurred
 	 * @param context the flow execution control context
-	 * @return the selected error view, or <code>null</code> if no handler matched or returned a non-null view
-	 * selection
 	 */
-	public ViewSelection handleException(FlowExecutionException exception, RequestControlContext context)
+	public boolean handleException(FlowExecutionException exception, RequestControlContext context)
 			throws FlowExecutionException {
 		return getExceptionHandlerSet().handleException(exception, context);
 	}

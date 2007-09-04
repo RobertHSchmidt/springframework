@@ -83,7 +83,7 @@ public class StateExceptionHandlerTests extends TestCase {
 			this.handleResult = handleResult;
 		}
 
-		public boolean handles(FlowExecutionException exception) {
+		public boolean canHandle(FlowExecutionException exception) {
 			return typeToHandle.isInstance(exception);
 		}
 
