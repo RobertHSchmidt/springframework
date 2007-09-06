@@ -112,7 +112,7 @@
         <repository>
             <id>spring-release</id>
             <name>Spring Release Repository</name>
-            <url>s3://maven.springframework.org/release</url>
+            <url>file://${repo.dir}</url>
         </repository>
         <snapshotRepository>
             <id>spring-snapshot</id>
