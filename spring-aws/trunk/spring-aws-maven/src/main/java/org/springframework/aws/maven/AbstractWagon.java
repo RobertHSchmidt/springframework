@@ -157,6 +157,7 @@ public abstract class AbstractWagon implements Wagon {
         try {
             getResource(resourceName, destination, new TransferProgress(resource, TransferEvent.REQUEST_GET,
                     transferListeners));
+            transferListeners.fireTransferCompleted(resource, TransferEvent.REQUEST_GET);
         } catch (TransferFailedException e) {
             throw e;
         } catch (ResourceDoesNotExistException e) {
@@ -166,8 +167,6 @@ public abstract class AbstractWagon implements Wagon {
         } catch (Exception e) {
             transferListeners.fireTransferError(resource, TransferEvent.REQUEST_GET, e);
             throw new TransferFailedException("Transfer of resource " + destination + "failed", e);
-        } finally {
-            transferListeners.fireTransferCompleted(resource, TransferEvent.REQUEST_GET);
         }
     }
 
@@ -223,6 +222,7 @@ public abstract class AbstractWagon implements Wagon {
         try {
             putResource(source, destination, new TransferProgress(resource, TransferEvent.REQUEST_PUT,
                     transferListeners));
+            transferListeners.fireTransferCompleted(resource, TransferEvent.REQUEST_PUT);
         } catch (TransferFailedException e) {
             throw e;
         } catch (ResourceDoesNotExistException e) {
@@ -232,8 +232,6 @@ public abstract class AbstractWagon implements Wagon {
         } catch (Exception e) {
             transferListeners.fireTransferError(resource, TransferEvent.REQUEST_PUT, e);
             throw new TransferFailedException("Transfer of resource " + destination + "failed", e);
-        } finally {
-            transferListeners.fireTransferCompleted(resource, TransferEvent.REQUEST_PUT);
         }
     }
 
@@ -284,7 +282,7 @@ public abstract class AbstractWagon implements Wagon {
     protected abstract boolean doesRemoteResourceExist(String resourceName) throws Exception;
 
     /**
-     * Subclasses must implement with specifc disconnection behavior
+     * Subclasses must implement with specific disconnection behavior
      *
      * @throws Exception Implementations can throw any exception and it will be
      *                   handled by the base class
@@ -305,7 +303,7 @@ public abstract class AbstractWagon implements Wagon {
             throws Exception;
 
     /**
-     * Subcalss must implement with newer detection behavior
+     * Subclass must implement with newer detection behavior
      *
      * @param resourceName The name of the resource being compared
      * @param timestamp    The timestamp to compare against
