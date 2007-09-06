@@ -31,7 +31,6 @@ import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.ViewSelection;
 
 /**
  * A {@link FlowExecutionListener} that implements the Flow Managed Persistence Context (FMPC) pattern using the
@@ -107,7 +106,7 @@ public class JpaFlowExecutionListener extends FlowExecutionListenerAdapter {
 		}
 	}
 
-	public void paused(RequestContext context, ViewSelection selectedView) {
+	public void paused(RequestContext context) {
 		if (isPersistenceContext(context.getActiveFlow())) {
 			unbind(getEntityManager(context));
 		}

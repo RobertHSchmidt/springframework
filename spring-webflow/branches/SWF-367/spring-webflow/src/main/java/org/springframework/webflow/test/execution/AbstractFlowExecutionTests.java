@@ -139,12 +139,10 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * <li>no input attributes
 	 * <li>an empty {@link ExternalContext} with no environmental request parameters set
 	 * </ul>
-	 * @return the view selection made as a result of starting the flow (returned when the first interactive state (a
-	 * view state or end state) is entered)
 	 * @throws FlowExecutionException if an exception was thrown while starting the flow execution
 	 */
-	protected ViewSelection startFlow() throws FlowExecutionException {
-		return startFlow(null, createExternalContext(null));
+	protected void startFlow() throws FlowExecutionException {
+		startFlow(null, createExternalContext(null));
 	}
 
 	/**
@@ -160,8 +158,8 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * view state or end state) is entered)
 	 * @throws FlowExecutionException if an exception was thrown while starting the flow execution
 	 */
-	protected ViewSelection startFlow(MutableAttributeMap input) throws FlowExecutionException {
-		return startFlow(input, createExternalContext(null));
+	protected void startFlow(MutableAttributeMap input) throws FlowExecutionException {
+		startFlow(input, createExternalContext(null));
 	}
 
 	/**
@@ -176,38 +174,25 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * @param input the flow execution input attributes eligible for mapping by the root flow
 	 * @param context the external context providing information about the caller's environment, used by the flow
 	 * execution during the start operation
-	 * @return the view selection made as a result of starting the flow (returned when the first interactive state (a
-	 * view state or end state) is entered)
 	 * @throws FlowExecutionException if an exception was thrown while starting the flow execution
 	 */
-	protected ViewSelection startFlow(MutableAttributeMap input, ExternalContext context) throws FlowExecutionException {
+	protected void startFlow(MutableAttributeMap input, ExternalContext context) throws FlowExecutionException {
 		flowExecution = getFlowExecutionFactory().createFlowExecution(getFlowDefinition());
-		return flowExecution.start(input, context);
+		flowExecution.start(input, context);
 	}
 
 	/**
-	 * Signal an occurence of an event in the current state of the flow execution being tested.
-	 * @param eventId the event that occured
-	 * @throws FlowExecutionException if an exception was thrown within a state of the resumed flow execution during
-	 * event processing
-	 */
-	protected ViewSelection signalEvent(String eventId) throws FlowExecutionException {
-		return signalEvent(eventId, createExternalContext(null));
-	}
-
-	/**
-	 * Signal an occurence of an event in the current state of the flow execution being tested.
-	 * @param eventId the event that occured
+	 * Signal an occurrence of an event in the current state of the flow execution being tested.
 	 * @param requestParameters request parameters needed by the flow execution to complete event processing
 	 * @throws FlowExecutionException if an exception was thrown within a state of the resumed flow execution during
 	 * event processing
 	 */
-	protected ViewSelection signalEvent(String eventId, ParameterMap requestParameters) throws FlowExecutionException {
-		return signalEvent(eventId, createExternalContext(requestParameters));
+	protected void resume(ParameterMap requestParameters) throws FlowExecutionException {
+		resume(createExternalContext(requestParameters));
 	}
 
 	/**
-	 * Signal an occurence of an event in the current state of the flow execution being tested.
+	 * Signal an occurrence of an event in the current state of the flow execution being tested.
 	 * <p>
 	 * Note: signaling an event will cause state transitions to occur in a chain until control is returned to the
 	 * caller. Control is returned once an "interactive" state type is entered: either a view state when the flow is
@@ -229,44 +214,15 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * code, which will allow you to receive a callback on each state transition (among other points). It is recommended
 	 * you extend {@link org.springframework.webflow.execution.FlowExecutionListenerAdapter} and only override the
 	 * callback methods you are interested in.
-	 * @param eventId the event that occured
 	 * @param context the external context providing information about the caller's environment, used by the flow
 	 * execution during the signal event operation
-	 * @return the view selection that was made, returned once control is returned to the client (occurs when the flow
-	 * enters a view state, or an end state)
 	 * @throws FlowExecutionException if an exception was thrown within a state of the resumed flow execution during
 	 * event processing
 	 */
-	protected ViewSelection signalEvent(String eventId, ExternalContext context) throws FlowExecutionException {
+	protected void resume(ExternalContext context) throws FlowExecutionException {
 		Assert.state(flowExecution != null, "The flow execution to test is [null]; "
 				+ "you must start the flow execution before you can signal an event against it!");
-		return flowExecution.signalEvent(eventId, context);
-	}
-
-	/**
-	 * Refresh the flow execution being tested, asking the current view state to make a "refresh" view selection. This
-	 * is idempotent operation that may be safely called on an active but currently paused execution. Used to simulate a
-	 * browser flow execution redirect.
-	 * @return the current view selection for this flow execution
-	 * @throws FlowExecutionException if an exception was thrown during refresh
-	 */
-	protected ViewSelection refresh() throws FlowExecutionException {
-		return refresh(createExternalContext(null));
-	}
-
-	/**
-	 * Refresh the flow execution being tested, asking the current view state state to make a "refresh" view selection.
-	 * This is idempotent operation that may be safely called on an active but currently paused execution. Used to
-	 * simulate a browser flow execution redirect.
-	 * @param context the external context providing information about the caller's environment, used by the flow
-	 * execution during the refresh operation
-	 * @return the current view selection for this flow execution
-	 * @throws FlowExecutionException if an exception was thrown during refresh
-	 */
-	protected ViewSelection refresh(ExternalContext context) throws FlowExecutionException {
-		Assert.state(flowExecution != null,
-				"The flow execution to test is [null]; you must start the flow execution before you can refresh it!");
-		return flowExecution.refresh(context);
+		flowExecution.resume(context);
 	}
 
 	// convenience accessors

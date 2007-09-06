@@ -172,6 +172,17 @@ public class FlowTests extends TestCase {
 		assertEquals("Wrong start state", "myState1", context.getCurrentState().getId());
 	}
 
+	public void testStartWithoutStartState() {
+		MockRequestControlContext context = new MockRequestControlContext(flow);
+		try {
+			Flow empty = new Flow("empty");
+			empty.start(context, null);
+			fail("should have failed");
+		} catch (IllegalStateException e) {
+
+		}
+	}
+
 	public void testStartWithAction() {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		TestAction action = new TestAction();
@@ -274,6 +285,13 @@ public class FlowTests extends TestCase {
 		}
 	}
 
+	public void testResume() {
+		MockRequestControlContext context = new MockRequestControlContext(flow);
+		context.setCurrentState(flow.getStateInstance("myState1"));
+		flow.resume(context);
+		assertTrue(context.getFlowScope().getBoolean("renderCalled").booleanValue());
+	}
+
 	public void testEnd() {
 		TestAction action = new TestAction();
 		flow.getEndActionList().add(action);
@@ -295,7 +313,7 @@ public class FlowTests extends TestCase {
 		assertEquals("foo", sessionOutput.get("attr"));
 	}
 
-	public void testHandleStateException() {
+	public void testHandleException() {
 		flow.getExceptionHandlerSet().add(
 				new TransitionExecutingFlowExecutionExceptionHandler().add(TestException.class, "myState2"));
 		MockRequestControlContext context = new MockRequestControlContext(flow);
@@ -306,7 +324,7 @@ public class FlowTests extends TestCase {
 		assertFalse(context.getFlowExecutionContext().isActive());
 	}
 
-	public void testHandleStateExceptionNoMatch() {
+	public void testHandleExceptionNoMatch() {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		FlowExecutionException e = new FlowExecutionException(flow.getId(), flow.getStartState().getId(), "Oops!",
 				new TestException());

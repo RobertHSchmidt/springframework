@@ -182,9 +182,9 @@ public class Transition extends AnnotatedObject implements TransitionDefinition 
 	}
 
 	/**
-	 * Execute this state transition. Will only be called if the {@link #matches(RequestContext)} method returns true
-	 * for given context.
-	 * @param sourceState the source state
+	 * Execute this state transition. Should only be called if the {@link #matches(RequestContext)} method returns true
+	 * for the given context.
+	 * @param sourceState the source state to transition from, may be null if the current state is null
 	 * @param context the flow execution control context
 	 * @throws FlowExecutionException when transition execution fails
 	 */

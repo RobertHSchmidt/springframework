@@ -70,14 +70,14 @@ public class ViewState extends TransitionableState {
 		if (shouldRedirect(context)) {
 			context.sendFlowExecutionRedirect();
 		} else {
-			View view = viewFactory.createView(context);
+			View view = viewFactory.getView(context);
 			renderActionList.execute(context);
 			view.render();
 		}
 	}
 
 	public void resume(RequestControlContext context) {
-		View view = viewFactory.restoreView(context);
+		View view = viewFactory.getView(context);
 		if (view.eventSignaled()) {
 			context.handleEvent(view.getEvent());
 		} else {

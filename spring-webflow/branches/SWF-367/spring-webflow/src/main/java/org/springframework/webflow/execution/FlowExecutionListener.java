@@ -43,7 +43,6 @@ import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
  * @see FlowExecution
  * @see RequestContext
  * @see Event
- * @see ViewSelection
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -64,24 +63,23 @@ public interface FlowExecutionListener {
 	public void requestProcessed(RequestContext context);
 
 	/**
-	 * Called to indicate a new flow definition session is about to be created and started. Called before the session is
-	 * created. An exception may be thrown from this method to veto the start operation. Any type of runtime exception
-	 * can be used for this purpose.
+	 * Called to indicate a new flow definition session is about to be created. Called before the session is created. An
+	 * exception may be thrown from this method to veto the start operation. Any type of runtime exception can be used
+	 * for this purpose.
 	 * @param context the source of the event
 	 * @param definition the flow for which a new session is starting
 	 * @param input a mutable input map - attributes placed in this map are eligible for input mapping by the flow
 	 * definition at startup
 	 */
-	public void sessionStarting(RequestContext context, FlowDefinition definition, MutableAttributeMap input);
+	public void sessionCreating(RequestContext context, FlowDefinition definition, MutableAttributeMap input);
 
 	/**
 	 * Called after a new flow session has been created but before it starts. Useful for setting arbitrary attributes in
 	 * the session before the flow starts.
 	 * @param context the source of the event
 	 * @param session the session that was created
-	 * @since 1.0.2
 	 */
-	public void sessionCreated(RequestContext context, FlowSession session);
+	public void sessionStarting(RequestContext context, FlowSession session);
 
 	/**
 	 * Called after a new flow session has started. At this point the flow's start state has been entered and any other

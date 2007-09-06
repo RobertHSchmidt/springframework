@@ -74,6 +74,11 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	private transient Flow flow;
 
 	/**
+	 * A flag indicating if this execution has started.
+	 */
+	private boolean started;
+
+	/**
 	 * The stack of active, currently executing flow sessions. As subflows are spawned, they are pushed onto the stack.
 	 * As they end, they are popped off the stack.
 	 */
@@ -163,11 +168,22 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		return flow;
 	}
 
+	public boolean hasStarted() {
+		return started;
+	}
+
 	public boolean isActive() {
 		return !flowSessions.isEmpty();
 	}
 
 	public FlowSession getActiveSession() {
+		if (!isActive()) {
+			if (started) {
+				throw new IllegalStateException("No active session to access; this flow execution has ended");
+			} else {
+				throw new IllegalStateException("No active session to access; this flow execution has not been started");
+			}
+		}
 		return getActiveSessionInternal();
 	}
 
@@ -185,11 +201,13 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	// methods implementing FlowExecution
 
-	public void start(MutableAttributeMap input, ExternalContext externalContext) throws FlowExecutionException {
-		Assert.state(!isActive(), "This flow is already executing; you cannot call 'start()' more than once");
+	public void start(MutableAttributeMap input, ExternalContext externalContext) throws FlowExecutionException,
+			IllegalStateException {
+		Assert.state(!started, "This flow has already been started; you cannot call 'start()' more than once");
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting execution with input '" + input + "' in " + externalContext);
 		}
+		started = true;
 		RequestControlContext context = createControlContext(externalContext);
 		getListeners().fireRequestSubmitted(context);
 		try {
@@ -198,6 +216,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		} catch (FlowExecutionException e) {
 			handleException(e, context);
 		} catch (Exception e) {
+			e.printStackTrace();
 			handleException(wrap(e, context), context);
 		} finally {
 			if (isActive()) {
@@ -208,8 +227,14 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 	}
 
-	public void resume(ExternalContext externalContext) throws FlowExecutionException {
-		assertActive();
+	public void resume(ExternalContext externalContext) throws FlowExecutionException, IllegalStateException {
+		if (!isActive()) {
+			if (started) {
+				throw new IllegalStateException("This flow execution cannot be resumed; it has ended");
+			} else {
+				throw new IllegalStateException("This flow execution cannot be resumed; it has not been started");
+			}
+		}
 		if (logger.isDebugEnabled()) {
 			logger.debug("Resuming execution in " + externalContext);
 		}
@@ -280,7 +305,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 */
 	private boolean tryStateHandlers(FlowExecutionException exception, RequestControlContext context) {
 		if (exception.getStateId() != null) {
-			return getActiveFlow().getStateInstance(exception.getStateId()).handleException(exception, context);
+			return getCurrentFlow().getStateInstance(exception.getStateId()).handleException(exception, context);
 		} else {
 			return false;
 		}
@@ -292,7 +317,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * @return true if the exception was handled
 	 */
 	private boolean tryFlowHandlers(FlowExecutionException exception, RequestControlContext context) {
-		return getActiveFlow().handleException(exception, context);
+		return getCurrentFlow().handleException(exception, context);
 	}
 
 	// internal helpers
@@ -315,10 +340,8 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	/**
 	 * Returns the currently active flow session.
-	 * @throws IllegalStateException this execution is not active
 	 */
-	FlowSessionImpl getActiveSessionInternal() throws IllegalStateException {
-		assertActive();
+	FlowSessionImpl getActiveSessionInternal() {
 		return (FlowSessionImpl) flowSessions.getLast();
 	}
 
@@ -385,12 +408,13 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	/**
-	 * Make sure that this flow execution is active and throw an exception if it's not.
+	 * Returns the current flow which may or may not yet be active.
 	 */
-	private void assertActive() throws IllegalStateException {
-		if (!isActive()) {
-			throw new IllegalStateException(
-					"This flow execution is not active, it has either ended or has never been started.");
+	private Flow getCurrentFlow() {
+		if (isActive()) {
+			return getActiveFlow();
+		} else {
+			return flow;
 		}
 	}
 
@@ -404,12 +428,14 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	// custom serialization (implementation of Externalizable for optimized storage)
 
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		started = in.readBoolean();
 		flowId = (String) in.readObject();
 		flowSessions = (LinkedList) in.readObject();
 		flashScope = (MutableAttributeMap) in.readObject();
 	}
 
 	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeBoolean(started);
 		out.writeObject(flowId);
 		out.writeObject(flowSessions);
 		out.writeObject(flashScope);
@@ -417,7 +443,11 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	public String toString() {
 		if (!isActive()) {
-			return "[Inactive " + getCaption() + "]";
+			if (!hasStarted()) {
+				return "[Not yet started " + getCaption() + "]";
+			} else {
+				return "[Ended " + getCaption() + "]";
+			}
 		} else {
 			if (flow != null) {
 				return new ToStringCreator(this).append("flow", flow.getId()).append("flowSessions", flowSessions)
