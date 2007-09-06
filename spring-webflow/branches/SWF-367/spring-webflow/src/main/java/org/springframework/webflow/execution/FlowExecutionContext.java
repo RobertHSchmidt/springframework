@@ -58,6 +58,14 @@ public interface FlowExecutionContext {
 	public FlowDefinition getDefinition();
 
 	/**
+	 * Returns a flag indicating if this execution has been started. A flow execution that has started and is active is
+	 * currently in progress. A flow execution that has started and is not active has ended.
+	 * @see #isActive()
+	 * @return true if started, false if not started
+	 */
+	public boolean hasStarted();
+
+	/**
 	 * Is the flow execution active?
 	 * <p>
 	 * All methods on an active flow execution context can be called successfully. If the flow execution is not active,

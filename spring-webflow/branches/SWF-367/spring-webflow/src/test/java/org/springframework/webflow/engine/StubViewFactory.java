@@ -22,11 +22,7 @@ import org.springframework.webflow.execution.ViewFactory;
 
 class StubViewFactory implements ViewFactory {
 
-	public View createView(RequestContext context) {
-		return new NullView(context);
-	}
-
-	public View restoreView(RequestContext context) {
+	public View getView(RequestContext context) {
 		return new NullView(context);
 	}
 

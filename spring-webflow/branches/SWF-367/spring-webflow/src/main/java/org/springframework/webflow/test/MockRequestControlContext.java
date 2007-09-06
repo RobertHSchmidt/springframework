@@ -69,7 +69,11 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 	}
 
 	public void start(Flow flow, MutableAttributeMap input) throws IllegalStateException {
-		getMockFlowExecutionContext().setActiveSession(new MockFlowSession(flow, input));
+		MockFlowSession session = new MockFlowSession(flow, input);
+		if (getFlowExecutionContext().isActive()) {
+			session.setParent(getFlowExecutionContext().getActiveSession());
+		}
+		getMockFlowExecutionContext().setActiveSession(session);
 		getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.STARTING);
 		flow.start(this, input);
 	}

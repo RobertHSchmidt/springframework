@@ -44,7 +44,6 @@ import org.springframework.webflow.execution.FlowSessionStatus;
  * complete flow execution implementation based on a finite state machine.
  * 
  * @see FlowExecutionImpl
- * @see FlowSessionImpl
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -191,9 +190,9 @@ class RequestControlContextImpl implements RequestControlContext {
 			logger.debug("Activating new session for flow '" + flow.getId() + "' in state '"
 					+ flow.getStartState().getId() + "' with input " + input);
 		}
-		getExecutionListeners().fireSessionStarting(this, flow, input);
+		getExecutionListeners().fireSessionCreating(this, flow, input);
 		FlowSession session = flowExecution.activateSession(flow);
-		getExecutionListeners().fireSessionCreated(this, session);
+		getExecutionListeners().fireSessionStarting(this, session);
 		flow.start(this, input);
 		getExecutionListeners().fireSessionStarted(this, session);
 	}

@@ -129,9 +129,11 @@ public class EndState extends State {
 	 */
 	private class NullFinalResponse implements ResponseRenderer {
 		public void render(RequestControlContext context) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Not rendering a final response");
-			}
+			logger.debug("Not rendering a final response");
+		}
+
+		public String toString() {
+			return "none";
 		}
 	}
 
@@ -140,9 +142,11 @@ public class EndState extends State {
 	 */
 	private class NoOutputMapper implements AttributeMapper {
 		public void map(Object source, Object target, MappingContext context) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("No output attributes mapped");
-			}
+			logger.debug("No output attributes mapped");
+		}
+
+		public String toString() {
+			return "none";
 		}
 	}
 }

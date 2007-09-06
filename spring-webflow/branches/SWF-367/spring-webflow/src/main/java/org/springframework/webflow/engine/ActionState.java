@@ -155,8 +155,8 @@ public class ActionState extends TransitionableState {
 			if (event != null) {
 				eventIds[executionCount] = event.getId();
 				try {
-					// will check both local state transitions and global transitions
 					context.handleEvent(event);
+					return;
 				} catch (NoMatchingActionResultTransitionException e) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Action execution ["

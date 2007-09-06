@@ -21,6 +21,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.binding.mapping.AttributeMapper;
+import org.springframework.binding.mapping.MappingContext;
 import org.springframework.core.CollectionFactory;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;
@@ -126,7 +127,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	/**
 	 * The mapper to map flow input attributes.
 	 */
-	private AttributeMapper inputMapper;
+	private AttributeMapper inputMapper = new NoInputMapper();
 
 	/**
 	 * The list of actions to execute when this flow starts.
@@ -149,7 +150,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	/**
 	 * The mapper to map flow output attributes.
 	 */
-	private AttributeMapper outputMapper;
+	private AttributeMapper outputMapper = new NoOutputMapper();
 
 	/**
 	 * The set of exception handlers for this flow.
@@ -513,12 +514,18 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	 * @throws FlowExecutionException when an exception occurs starting the flow
 	 */
 	public void start(RequestControlContext context, MutableAttributeMap input) throws FlowExecutionException {
+		assertStartStateSet();
 		createVariables(context);
-		if (inputMapper != null) {
-			inputMapper.map(input, context, null);
-		}
+		inputMapper.map(input, context, null);
 		startActionList.execute(context);
 		startState.enter(context);
+	}
+
+	private void assertStartStateSet() {
+		if (startState == null) {
+			throw new IllegalStateException("Unable to start flow '" + id
+					+ "'; the start state is not set -- flow builder configuration error?");
+		}
 	}
 
 	/**
@@ -565,9 +572,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	 */
 	public void end(RequestControlContext context, MutableAttributeMap output) throws FlowExecutionException {
 		endActionList.execute(context);
-		if (outputMapper != null) {
-			outputMapper.map(context, output, null);
-		}
+		outputMapper.map(context, output, null);
 	}
 
 	/**
@@ -618,6 +623,33 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 					+ context.getCurrentState() + " is not transitionable - programmer error");
 		}
 		return (TransitionableState) currentState;
+	}
+
+	/**
+	 * Maps no input attributes. The default implementation.
+	 */
+	private class NoInputMapper implements AttributeMapper {
+		public void map(Object source, Object target, MappingContext context) {
+			logger.debug("No input attributes mapped");
+		}
+
+		public String toString() {
+			return "none";
+		}
+
+	}
+
+	/**
+	 * Maps no input attributes. The default implementation.
+	 */
+	private class NoOutputMapper implements AttributeMapper {
+		public void map(Object source, Object target, MappingContext context) {
+			logger.debug("No output attributes mapped");
+		}
+
+		public String toString() {
+			return "none";
+		}
 	}
 
 	public String toString() {

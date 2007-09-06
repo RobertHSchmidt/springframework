@@ -60,7 +60,7 @@ public class FlowExecutorImplTests extends TestCase {
 
 	public static class SimpleViewFactory implements ViewFactory {
 
-		public View createView(RequestContext context) {
+		public View getView(RequestContext context) {
 			return new SimpleView();
 		}
 
