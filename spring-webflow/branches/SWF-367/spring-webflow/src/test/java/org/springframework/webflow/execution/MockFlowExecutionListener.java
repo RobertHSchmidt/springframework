@@ -45,7 +45,7 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 
 	private int stateEnteredCount;
 
-	private int resumedCount;
+	private int resumingCount;
 
 	private boolean paused;
 
@@ -174,8 +174,8 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 	/**
 	 * Returns the number of times the flow execution has resumed.
 	 */
-	public int getResumedCount() {
-		return resumedCount;
+	public int getResumingCount() {
+		return resumingCount;
 	}
 
 	/**
@@ -252,10 +252,10 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		pausedCount++;
 	}
 
-	public void resumed(RequestContext context) {
+	public void resuming(RequestContext context) {
 		executing = true;
 		paused = false;
-		resumedCount++;
+		resumingCount++;
 	}
 
 	public void sessionEnding(RequestContext context, FlowSession session, MutableAttributeMap output) {
@@ -304,7 +304,7 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		stateEnteredCount = 0;
 		eventSignaledCount = 0;
 		pausedCount = 0;
-		resumedCount = 0;
+		resumingCount = 0;
 		sessionEndingCount = 0;
 		sessionEndedCount = 0;
 		exceptionThrownCount = 0;

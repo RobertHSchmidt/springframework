@@ -102,7 +102,7 @@ public class HibernateFlowExecutionListener extends FlowExecutionListenerAdapter
 		this.entityInterceptor = entityInterceptor;
 	}
 
-	public void sessionCreated(RequestContext context, FlowSession session) {
+	public void sessionStarting(RequestContext context, FlowSession session) {
 		if (isPersistenceContext(session.getDefinition())) {
 			Session hibernateSession = createSession(context);
 			session.getScope().put(HIBERNATE_SESSION_ATTRIBUTE, hibernateSession);
@@ -110,15 +110,15 @@ public class HibernateFlowExecutionListener extends FlowExecutionListenerAdapter
 		}
 	}
 
-	public void resumed(RequestContext context) {
-		if (isPersistenceContext(context.getActiveFlow())) {
-			bind(getHibernateSession(context));
-		}
-	}
-
 	public void paused(RequestContext context) {
 		if (isPersistenceContext(context.getActiveFlow())) {
 			unbind(getHibernateSession(context));
+		}
+	}
+
+	public void resuming(RequestContext context) {
+		if (isPersistenceContext(context.getActiveFlow())) {
+			bind(getHibernateSession(context));
 		}
 	}
 

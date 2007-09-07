@@ -20,7 +20,7 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.View;
 import org.springframework.webflow.execution.ViewFactory;
 
-class StubViewFactory implements ViewFactory {
+public class StubViewFactory implements ViewFactory {
 
 	public View getView(RequestContext context) {
 		return new NullView(context);

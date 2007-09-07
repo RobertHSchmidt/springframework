@@ -161,9 +161,9 @@ class FlowExecutionListeners {
 	/**
 	 * Notify all interested listeners that the flow execution was resumed.
 	 */
-	public void fireResumed(RequestContext context) {
+	public void fireResuming(RequestContext context) {
 		for (int i = 0; i < listeners.length; i++) {
-			listeners[i].resumed(context);
+			listeners[i].resuming(context);
 		}
 	}
 
