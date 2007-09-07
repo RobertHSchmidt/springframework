@@ -122,7 +122,7 @@ public interface FlowExecutionListener {
 	 * Called after a flow execution is successfully reactivated after pause (but before event processing).
 	 * @param context the source of the event
 	 */
-	public void resumed(RequestContext context);
+	public void resuming(RequestContext context);
 
 	/**
 	 * Called when the active flow execution session has been asked to end but before it has ended.

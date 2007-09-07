@@ -56,7 +56,7 @@ public abstract class FlowExecutionListenerAdapter implements FlowExecutionListe
 	public void paused(RequestContext context) {
 	}
 
-	public void resumed(RequestContext context) {
+	public void resuming(RequestContext context) {
 	}
 
 	public void sessionEnding(RequestContext context, FlowSession session, MutableAttributeMap output) {

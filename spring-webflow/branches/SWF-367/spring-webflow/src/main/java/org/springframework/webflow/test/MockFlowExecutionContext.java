@@ -74,6 +74,10 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 		return flow;
 	}
 
+	public boolean hasStarted() {
+		return isActive();
+	}
+
 	public boolean isActive() {
 		return activeSession != null;
 	}

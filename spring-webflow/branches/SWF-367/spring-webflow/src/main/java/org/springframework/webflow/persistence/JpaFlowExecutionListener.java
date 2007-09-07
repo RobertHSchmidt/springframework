@@ -92,7 +92,7 @@ public class JpaFlowExecutionListener extends FlowExecutionListenerAdapter {
 		this.transactionTemplate = new TransactionTemplate(transactionManager);
 	}
 
-	public void sessionCreated(RequestContext context, FlowSession session) {
+	public void sessionStarting(RequestContext context, FlowSession session) {
 		if (isPersistenceContext(session.getDefinition())) {
 			EntityManager em = entityManagerFactory.createEntityManager();
 			session.getScope().put(ENTITY_MANAGER_ATTRIBUTE, em);
@@ -100,15 +100,15 @@ public class JpaFlowExecutionListener extends FlowExecutionListenerAdapter {
 		}
 	}
 
-	public void resumed(RequestContext context) {
-		if (isPersistenceContext(context.getActiveFlow())) {
-			bind(getEntityManager(context));
-		}
-	}
-
 	public void paused(RequestContext context) {
 		if (isPersistenceContext(context.getActiveFlow())) {
 			unbind(getEntityManager(context));
+		}
+	}
+
+	public void resuming(RequestContext context) {
+		if (isPersistenceContext(context.getActiveFlow())) {
+			bind(getEntityManager(context));
 		}
 	}
 

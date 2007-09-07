@@ -521,13 +521,6 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 		startState.enter(context);
 	}
 
-	private void assertStartStateSet() {
-		if (startState == null) {
-			throw new IllegalStateException("Unable to start flow '" + id
-					+ "'; the start state is not set -- flow builder configuration error?");
-		}
-	}
-
 	/**
 	 * Resume a paused session for this flow in its current view state.
 	 * @param context the flow execution control context
@@ -587,6 +580,13 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 
 	// internal helpers
 
+	private void assertStartStateSet() {
+		if (startState == null) {
+			throw new IllegalStateException("Unable to start flow '" + id
+					+ "'; the start state is not set -- flow builder configuration error?");
+		}
+	}
+
 	/**
 	 * Create (setup) all known flow variables in flow scope.
 	 */
@@ -605,12 +605,12 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	 * Returns the current state and makes sure it is a view state.
 	 */
 	private ViewState getCurrentViewState(RequestControlContext context) {
-		TransitionableState state = getCurrentTransitionableState(context);
-		if (!(state instanceof ViewState)) {
+		State currentState = (State) context.getCurrentState();
+		if (!(currentState instanceof ViewState)) {
 			throw new IllegalStateException("You can only resume paused view states, and state "
 					+ context.getCurrentState() + " is not a view state - programmer error");
 		}
-		return (ViewState) state;
+		return (ViewState) currentState;
 	}
 
 	/**

@@ -242,7 +242,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		getListeners().fireRequestSubmitted(context);
 		try {
 			getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
-			getListeners().fireResumed(context);
+			getListeners().fireResuming(context);
 			getActiveFlow().resume(context);
 		} catch (FlowExecutionException e) {
 			handleException(e, context);
