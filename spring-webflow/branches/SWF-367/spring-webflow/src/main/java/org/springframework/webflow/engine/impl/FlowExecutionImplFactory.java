@@ -115,10 +115,16 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 		this.executionListenerLoader = listenerLoader;
 	}
 
+	/**
+	 * Sets the strategy for generating flow execution keys for persistent flow executions.
+	 */
 	public void setExecutionKeyFactory(FlowExecutionKeyFactory keyFactory) {
 		this.keyFactory = keyFactory;
 	}
 
+	/**
+	 * Sets the strategy for redirecting a flow execution request.
+	 */
 	public void setExecutionRequestRedirector(FlowExecutionRequestRedirector requestRedirector) {
 		this.requestRedirector = requestRedirector;
 	}
@@ -133,24 +139,30 @@ public class FlowExecutionImplFactory implements FlowExecutionFactory {
 				requestRedirector);
 	}
 
+	/**
+	 * Simply throws unsupported operation exceptions.
+	 */
 	private static class NoOpFlowExecutionRequestRedirector implements FlowExecutionRequestRedirector {
 		public void sendFlowExecutionRedirect(FlowExecutionKey key) {
-			throw new UnsupportedOperationException("Auto-generated method stub");
+			throw new UnsupportedOperationException("Not Supported");
 		}
 
 		public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input) {
-			throw new UnsupportedOperationException("Auto-generated method stub");
+			throw new UnsupportedOperationException("Not Supported");
 		}
 
 		public void sendExternalRedirect(String resourceUri) {
-			throw new UnsupportedOperationException("Auto-generated method stub");
+			throw new UnsupportedOperationException("Not Supported");
 		}
 	}
 
+	/**
+	 * Generates random flow execution keys.
+	 */
 	private static class RandomFlowExecutionKeyFactory implements FlowExecutionKeyFactory {
 		private RandomGuidUidGenerator idGenerator = new RandomGuidUidGenerator();
 
-		public FlowExecutionKey getKey() {
+		public FlowExecutionKey getKey(FlowExecution execution) {
 			return new SimpleFlowExecutionKey(idGenerator.generateUid());
 		}
 

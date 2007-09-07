@@ -15,16 +15,10 @@
  */
 package org.springframework.webflow.test.execution;
 
-import java.util.Collection;
-import java.util.Map;
-
 import junit.framework.TestCase;
 
-import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.core.style.StylerUtils;
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.definition.FlowDefinition;
@@ -32,11 +26,6 @@ import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionFactory;
-import org.springframework.webflow.execution.ViewSelection;
-import org.springframework.webflow.execution.support.ApplicationView;
-import org.springframework.webflow.execution.support.ExternalRedirect;
-import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
-import org.springframework.webflow.execution.support.FlowExecutionRedirect;
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
@@ -74,11 +63,6 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	private FlowExecutionFactory flowExecutionFactory;
 
 	/**
-	 * The expression parser for parsing evaluatable model attribute expressions.
-	 */
-	private ExpressionParser expressionParser = DefaultExpressionParserFactory.getExpressionParser();
-
-	/**
 	 * The flow execution running the flow when the test is active (runtime object).
 	 */
 	private FlowExecution flowExecution;
@@ -98,14 +82,6 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 */
 	public AbstractFlowExecutionTests(String name) {
 		super(name);
-	}
-
-	/**
-	 * Set the expression parser responsible for parsing expression strings into evaluatable expression objects.
-	 */
-	public void setExpressionParser(ExpressionParser expressionParser) {
-		Assert.notNull(expressionParser, "The expression parser is required");
-		this.expressionParser = expressionParser;
 	}
 
 	/**
@@ -367,117 +343,6 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 		assertEquals("The current state '" + getFlowExecution().getActiveSession().getState().getId()
 				+ "' does not equal the expected state '" + expectedCurrentStateId + "'", expectedCurrentStateId,
 				getFlowExecution().getActiveSession().getState().getId());
-	}
-
-	/**
-	 * Assert that the view name equals the provided value.
-	 * @param expectedViewName the expected name
-	 * @param viewSelection the selected view
-	 */
-	protected void assertViewNameEquals(String expectedViewName, ApplicationView viewSelection) {
-		assertEquals("The view name is wrong:", expectedViewName, viewSelection.getViewName());
-	}
-
-	/**
-	 * Assert that the selected view contains the specified model attribute with the provided expected value.
-	 * @param expectedValue the expected value
-	 * @param attributeName the attribute name (can be an expression)
-	 * @param viewSelection the selected view with a model attribute map to assert against
-	 */
-	protected void assertModelAttributeEquals(Object expectedValue, String attributeName, ApplicationView viewSelection) {
-		assertEquals("The model attribute '" + attributeName + "' value is wrong:", expectedValue,
-				evaluateModelAttributeExpression(attributeName, viewSelection.getModel()));
-	}
-
-	/**
-	 * Assert that the selected view contains the specified collection model attribute with the provided expected size.
-	 * @param expectedSize the expected size
-	 * @param attributeName the collection attribute name (can be an expression
-	 * @param viewSelection the selected view with a model attribute map to assert against
-	 */
-	protected void assertModelAttributeCollectionSize(int expectedSize, String attributeName,
-			ApplicationView viewSelection) {
-		assertModelAttributeNotNull(attributeName, viewSelection);
-		Collection c = (Collection) evaluateModelAttributeExpression(attributeName, viewSelection.getModel());
-		assertEquals("The model attribute '" + attributeName + "' collection size is wrong:", expectedSize, c.size());
-	}
-
-	/**
-	 * Assert that the selected view contains the specified model attribute.
-	 * @param attributeName the attribute name (can be an expression)
-	 * @param viewSelection the selected view with a model attribute map to assert against
-	 */
-	protected void assertModelAttributeNotNull(String attributeName, ApplicationView viewSelection) {
-		assertNotNull("The model attribute '" + attributeName + "' is null but should not be; model contents are "
-				+ StylerUtils.style(viewSelection.getModel()), evaluateModelAttributeExpression(attributeName,
-				viewSelection.getModel()));
-	}
-
-	/**
-	 * Assert that the selected view does not contain the specified model attribute.
-	 * @param attributeName the attribute name (can be an expression)
-	 * @param viewSelection the selected view with a model attribute map to assert against
-	 */
-	protected void assertModelAttributeNull(String attributeName, ApplicationView viewSelection) {
-		assertNull("The model attribute '" + attributeName + "' is not null but should be; model contents are "
-				+ StylerUtils.style(viewSelection.getModel()), evaluateModelAttributeExpression(attributeName,
-				viewSelection.getModel()));
-	}
-
-	// other helpers
-
-	/**
-	 * Assert that the returned view selection is an instance of {@link ApplicationView}.
-	 * @param viewSelection the view selection
-	 */
-	protected ApplicationView applicationView(ViewSelection viewSelection) {
-		Assert.isInstanceOf(ApplicationView.class, viewSelection, "Unexpected class of view selection: ");
-		return (ApplicationView) viewSelection;
-	}
-
-	/**
-	 * Assert that the returned view selection is an instance of {@link FlowExecutionRedirect}.
-	 * @param viewSelection the view selection
-	 */
-	protected FlowExecutionRedirect flowExecutionRedirect(ViewSelection viewSelection) {
-		Assert.isInstanceOf(FlowExecutionRedirect.class, viewSelection, "Unexpected class of view selection: ");
-		return (FlowExecutionRedirect) viewSelection;
-	}
-
-	/**
-	 * Assert that the returned view selection is an instance of {@link FlowDefinitionRedirect}.
-	 * @param viewSelection the view selection
-	 */
-	protected FlowDefinitionRedirect flowDefinitionRedirect(ViewSelection viewSelection) {
-		Assert.isInstanceOf(FlowDefinitionRedirect.class, viewSelection, "Unexpected class of view selection: ");
-		return (FlowDefinitionRedirect) viewSelection;
-	}
-
-	/**
-	 * Assert that the returned view selection is an instance of {@link ExternalRedirect}.
-	 * @param viewSelection the view selection
-	 */
-	protected ExternalRedirect externalRedirect(ViewSelection viewSelection) {
-		Assert.isInstanceOf(ExternalRedirect.class, viewSelection, "Unexpected class of view selection: ");
-		return (ExternalRedirect) viewSelection;
-	}
-
-	/**
-	 * Assert that the returned view selection is the {@link ViewSelection#NULL_VIEW}.
-	 * @param viewSelection the view selection
-	 */
-	protected void nullView(ViewSelection viewSelection) {
-		assertEquals("Not the null view selection:", viewSelection, ViewSelection.NULL_VIEW);
-	}
-
-	/**
-	 * Evaluates a model attribute expression.
-	 * @param attributeName the attribute expression
-	 * @param model the model map
-	 * @return the attribute expression value
-	 */
-	protected Object evaluateModelAttributeExpression(String attributeName, Map model) {
-		return expressionParser.parseExpression(attributeName).evaluate(model, null);
 	}
 
 	/**

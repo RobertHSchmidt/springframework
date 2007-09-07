@@ -537,7 +537,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	void assignKey() {
-		this.key = keyFactory.getKey();
+		this.key = keyFactory.getKey(this);
 	}
 
 	public void sendFlowExecutionRedirect() {

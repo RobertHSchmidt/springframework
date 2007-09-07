@@ -25,6 +25,7 @@ import org.springframework.webflow.engine.RequestControlContext;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.StubViewFactory;
 import org.springframework.webflow.engine.ViewState;
+import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.FlowExecutionListener;
@@ -258,7 +259,7 @@ public class FlowExecutionImplTests extends TestCase {
 	}
 
 	private static class SimpleFlowExecutionKeyFactory implements FlowExecutionKeyFactory {
-		public FlowExecutionKey getKey() {
+		public FlowExecutionKey getKey(FlowExecution execution) {
 			return new FlowExecutionKey() {
 				public String toString() {
 					return "key";
