@@ -25,7 +25,6 @@ import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ResponseRenderer;
-import org.springframework.webflow.execution.ViewSelection;
 
 /**
  * A state that ends a flow when entered. This state ends the active flow session of an ongoing flow execution.
@@ -91,7 +90,7 @@ public class EndState extends State {
 	 * type in polymorphic fashion.
 	 * <p>
 	 * This implementation pops the top (active) flow session off the execution stack, ending it, and resumes control in
-	 * the parent flow (if necessary). If the ended session is the root flow, a {@link ViewSelection} is returned.
+	 * the parent flow (if necessary). If the ended session is the root flow, a final response is rendered.
 	 * @param context the control context for the currently executing flow, used by this state to manipulate the flow
 	 * execution
 	 * @throws FlowExecutionException if an exception occurs in this state
