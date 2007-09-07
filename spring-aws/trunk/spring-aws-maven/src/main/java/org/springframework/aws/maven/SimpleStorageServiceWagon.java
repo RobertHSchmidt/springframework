@@ -138,6 +138,7 @@ public class SimpleStorageServiceWagon extends AbstractWagon {
     }
 
     protected void putResource(File source, String destination, TransferProgress progress) throws S3ServiceException, IOException {
+    	buildDestinationPath(getDestinationPath(destination));
         S3Object object = new S3Object(basedir + destination);
         object.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
         object.setDataInputFile(source);
@@ -162,6 +163,21 @@ public class SimpleStorageServiceWagon extends AbstractWagon {
                 }
             }
         }
+    }
+    
+    private void buildDestinationPath(String destination) throws S3ServiceException {
+    	S3Object object = new S3Object(basedir + destination + "/");
+    	object.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
+    	object.setContentLength(0);
+    	service.putObject(bucket, object);
+    	int index = destination.lastIndexOf('/');
+    	if(index != -1) {
+    		buildDestinationPath(destination.substring(0, index));
+    	}
+    }
+    
+    private String getDestinationPath(String destination) {
+    	return destination.substring(0, destination.lastIndexOf('/'));
     }
 
     private String getBaseDir(Repository source) {
