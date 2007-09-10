@@ -122,21 +122,21 @@ public class ServletExternalContext implements ExternalContext {
 	/**
 	 * Return the wrapped HTTP servlet context.
 	 */
-	public ServletContext getContext() {
+	public Object getContext() {
 		return context;
 	}
 
 	/**
 	 * Return the wrapped HTTP servlet request.
 	 */
-	public HttpServletRequest getRequest() {
+	public Object getRequest() {
 		return request;
 	}
 
 	/**
 	 * Return the wrapped HTTP servlet response.
 	 */
-	public HttpServletResponse getResponse() {
+	public Object getResponse() {
 		return response;
 	}
 
