@@ -92,4 +92,22 @@ public interface ExternalContext {
 	 */
 	public SharedAttributeMap getApplicationMap();
 
+	/**
+	 * Provides access to the context object for the current environment.
+	 * @return the environment specific context object
+	 */
+	public Object getContext();
+
+	/**
+	 * Provides access to the request object for the current environment.
+	 * @return the environment specific request object.
+	 */
+	public Object getRequest();
+
+	/**
+	 * Provides access to the response object for the current environment.
+	 * @return the environment specific response object.
+	 */
+	public Object getResponse();
+
 }

@@ -148,21 +148,21 @@ public class PortletExternalContext implements ExternalContext {
 	/**
 	 * Returns the wrapped Portlet context.
 	 */
-	public PortletContext getContext() {
+	public Object getContext() {
 		return context;
 	}
 
 	/**
 	 * Returns the wrapped Portlet request.
 	 */
-	public PortletRequest getRequest() {
+	public Object getRequest() {
 		return request;
 	}
 
 	/**
 	 * Returns the wrapped Portlet response.
 	 */
-	public PortletResponse getResponse() {
+	public Object getResponse() {
 		return response;
 	}
 
