@@ -35,6 +35,7 @@ public class MockViewHandler extends ViewHandler {
 	}
 
 	public UIViewRoot createView(FacesContext context, String viewId) {
+		context.setViewRoot(viewRoot);
 		return viewRoot;
 	}
 
