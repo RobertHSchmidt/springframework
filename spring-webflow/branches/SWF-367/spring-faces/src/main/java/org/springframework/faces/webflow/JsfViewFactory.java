@@ -4,7 +4,6 @@ import java.util.Iterator;
 
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
 import javax.faces.el.ValueBinding;
@@ -32,45 +31,48 @@ public class JsfViewFactory implements ViewFactory {
 		this.viewName = viewName;
 	}
 
-	public View createView(RequestContext context) {
+	public View getView(RequestContext context) {
+
+		boolean restored = false;
 
 		notifyBeforeListeners(context, PhaseId.RESTORE_VIEW);
 
-		UIViewRoot viewRoot;
+		JsfView view;
 
-		if (getFacesContext(context).getViewRoot() != null) {
-			viewRoot = getFacesContext(context).getViewRoot();
+		if (viewExists(context)) {
+			view = (JsfView) context.getFlowScope().get(JsfView.STATE_KEY);
+			restored = true;
+		} else if (getFacesContext(context).getViewRoot() != null) {
+			view = new JsfView(getFacesContext(context).getViewRoot());
+			restored = viewExists(context);
 		} else {
 			ViewHandler handler = getFacesContext(context).getApplication().getViewHandler();
-			viewRoot = handler.createView(getFacesContext(context), viewName);
+			view = new JsfView(handler.createView(getFacesContext(context), viewName));
+			restored = false;
 		}
-		processBindings(viewRoot);
+		processBindings(view.getViewRoot());
+
+		getFacesContext(context).setViewRoot(view.getViewRoot());
 
 		notifyAfterListeners(context, PhaseId.RESTORE_VIEW);
 
-		return new JsfView(viewRoot);
+		if (restored && !getFacesContext(context).getResponseComplete()
+				&& !getFacesContext(context).getRenderResponse()) {
+			facesLifecycle.execute(getFacesContext(context));
+			getFacesContext(context).renderResponse();
+		}
+
+		context.getFlowScope().put(JsfView.STATE_KEY, view);
+
+		return view;
 	}
 
-	public View restoreView(RequestContext context) {
-
-		notifyBeforeListeners(context, PhaseId.RESTORE_VIEW);
-
-		UIViewRoot viewRoot;
-
-		if (getFacesContext(context).getViewRoot() != null) {
-			viewRoot = getFacesContext(context).getViewRoot();
-		} else {
-			viewRoot = getFacesContext(context).getApplication().getViewHandler().restoreView(getFacesContext(context),
-					viewName);
+	private boolean viewExists(RequestContext context) {
+		JsfView view = (JsfView) context.getFlowScope().get(JsfView.STATE_KEY);
+		if (view != null && view.getViewRoot().getViewId().equals(viewName)) {
+			return true;
 		}
-		processBindings(viewRoot);
-
-		notifyAfterListeners(context, PhaseId.RESTORE_VIEW);
-
-		if (!getFacesContext(context).getResponseComplete() && !getFacesContext(context).getRenderResponse()) {
-			facesLifecycle.execute(getFacesContext(context));
-		}
-		return new JsfView(viewRoot);
+		return false;
 	}
 
 	private void notifyAfterListeners(RequestContext context, PhaseId phaseId) {

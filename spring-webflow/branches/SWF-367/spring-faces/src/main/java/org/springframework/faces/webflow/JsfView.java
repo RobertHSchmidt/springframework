@@ -8,12 +8,13 @@ import javax.faces.context.FacesContext;
 
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.View;
 
 public class JsfView extends View {
 
 	public static final String EVENT_KEY = "org.springframework.webflow.FacesEvent";
+
+	public static final String STATE_KEY = "org.springframework.webflow.FacesState";
 
 	/**
 	 * The root of the JSF component tree managed by this view
@@ -43,20 +44,20 @@ public class JsfView extends View {
 		return event;
 	}
 
-	public void render(RequestContext context) {
+	public UIViewRoot getViewRoot() {
+		return this.viewRoot;
+	}
+
+	public void render() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		facesContext.renderResponse();
 		try {
-			facesContext.getApplication().getViewHandler().renderView(facesContext.getCurrentInstance(), viewRoot);
+			facesContext.getApplication().getViewHandler().renderView(facesContext, viewRoot);
 		} catch (IOException e) {
 			throw new FacesException("An I/O error occurred during view rendering", e);
 		} finally {
 			facesContext.responseComplete();
 		}
-	}
-
-	public UIViewRoot getViewRoot() {
-		return this.viewRoot;
 	}
 
 }
