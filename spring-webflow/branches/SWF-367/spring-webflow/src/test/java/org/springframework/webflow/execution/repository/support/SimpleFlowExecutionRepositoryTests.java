@@ -19,10 +19,13 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
-import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
-import org.springframework.webflow.definition.registry.StaticFlowDefinitionHolder;
-import org.springframework.webflow.engine.SimpleFlow;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
+import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
+import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionException;
+import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.StubViewFactory;
+import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.engine.impl.FlowExecutionImplStateRestorer;
 import org.springframework.webflow.execution.FlowExecution;
@@ -46,11 +49,17 @@ public class SimpleFlowExecutionRepositoryTests extends TestCase {
 	private FlowExecutionLock lock;
 
 	protected void setUp() throws Exception {
-		FlowDefinitionRegistry registry = new FlowDefinitionRegistryImpl();
-		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(new SimpleFlow()));
-		execution = new FlowExecutionImplFactory().createFlowExecution(registry.getFlowDefinition("simpleFlow"));
-		FlowExecutionStateRestorer stateRestorer = new FlowExecutionImplStateRestorer(registry);
-		repository = new SimpleFlowExecutionRepository(stateRestorer, new SessionBindingConversationManager());
+		final Flow flow = new Flow("flow");
+		ViewState view = new ViewState(flow, "view", new StubViewFactory());
+		FlowDefinitionLocator flowLocator = new FlowDefinitionLocator() {
+			public FlowDefinition getFlowDefinition(String flowPath) throws NoSuchFlowDefinitionException,
+					FlowDefinitionConstructionException {
+				return flow;
+			}
+		};
+		execution = new FlowExecutionImplFactory().createFlowExecution(flow);
+		FlowExecutionStateRestorer stateRestorer = new FlowExecutionImplStateRestorer(flowLocator);
+		repository = new SimpleFlowExecutionRepository(new SessionBindingConversationManager(), stateRestorer);
 		ExternalContextHolder.setExternalContext(new MockExternalContext());
 	}
 

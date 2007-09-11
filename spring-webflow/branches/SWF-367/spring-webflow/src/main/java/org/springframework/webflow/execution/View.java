@@ -1,11 +1,11 @@
 package org.springframework.webflow.execution;
 
-public abstract class View {
+public interface View {
 
-	public abstract void render();
+	public void render();
 
-	public abstract boolean eventSignaled();
+	public boolean eventSignaled();
 
-	public abstract Event getEvent();
+	public Event getEvent();
 
 }

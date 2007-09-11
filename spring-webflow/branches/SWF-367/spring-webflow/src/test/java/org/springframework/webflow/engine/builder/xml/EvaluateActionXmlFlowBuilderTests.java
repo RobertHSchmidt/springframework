@@ -23,7 +23,7 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowSessionStatus;
+import org.springframework.webflow.execution.FlowExecutionStatus;
 import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.test.MockExternalContext;
 
@@ -44,8 +44,8 @@ public class EvaluateActionXmlFlowBuilderTests extends TestCase {
 		FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
 		FlowExecution execution = factory.createFlowExecution(flow);
 		ApplicationView selection = (ApplicationView) execution.start(null, new MockExternalContext());
-		assertEquals(FlowSessionStatus.CREATED, execution.getActiveSession().getScope().get("sessionStatus"));
+		assertEquals(FlowExecutionStatus.CREATED, execution.getActiveSession().getScope().get("sessionStatus"));
 		assertNotNull(selection.getModel().get("hashCode"));
-		assertEquals(new Integer(FlowSessionStatus.CREATED.hashCode()), selection.getModel().get("hashCode"));
+		assertEquals(new Integer(FlowExecutionStatus.CREATED.hashCode()), selection.getModel().get("hashCode"));
 	}
 }

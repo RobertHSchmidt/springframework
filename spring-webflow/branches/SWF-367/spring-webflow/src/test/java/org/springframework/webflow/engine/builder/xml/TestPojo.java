@@ -16,7 +16,7 @@
 package org.springframework.webflow.engine.builder.xml;
 
 import org.springframework.util.Assert;
-import org.springframework.webflow.execution.FlowSessionStatus;
+import org.springframework.webflow.execution.FlowExecutionStatus;
 
 public class TestPojo {
 	private boolean flag;
@@ -25,20 +25,20 @@ public class TestPojo {
 		return true;
 	}
 
-	public FlowSessionStatus enumMethod() {
-		return FlowSessionStatus.CREATED;
+	public FlowExecutionStatus enumMethod() {
+		return FlowExecutionStatus.CREATED;
 	}
 
-	public void methodWithVariableArgument(FlowSessionStatus status) {
-		Assert.isTrue(status == FlowSessionStatus.CREATED);
+	public void methodWithVariableArgument(FlowExecutionStatus status) {
+		Assert.isTrue(status == FlowExecutionStatus.CREATED);
 	}
 
 	public void methodWithConstantArgument(String constant) {
 		Assert.isTrue(constant.equals("A constant"));
 	}
 
-	public void methodWithArgumentTypeConversion(FlowSessionStatus status) {
-		Assert.isTrue(status == FlowSessionStatus.CREATED);
+	public void methodWithArgumentTypeConversion(FlowExecutionStatus status) {
+		Assert.isTrue(status == FlowExecutionStatus.CREATED);
 	}
 
 	public boolean isFlag() {

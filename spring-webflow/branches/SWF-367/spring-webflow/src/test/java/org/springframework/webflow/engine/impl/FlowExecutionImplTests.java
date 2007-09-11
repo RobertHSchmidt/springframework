@@ -30,7 +30,6 @@ import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
-import org.springframework.webflow.execution.FlowSessionStatus;
 import org.springframework.webflow.execution.MockFlowExecutionListener;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
@@ -50,7 +49,8 @@ public class FlowExecutionImplTests extends TestCase {
 		new EndState(flow, "end");
 		MockFlowExecutionListener mockListener = new MockFlowExecutionListener();
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
-		FlowExecutionImpl execution = new FlowExecutionImpl(flow, listeners, null, null, null);
+		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		execution.setListeners(listeners);
 		MockExternalContext context = new MockExternalContext();
 		assertFalse(execution.hasStarted());
 		execution.start(null, context);
@@ -81,11 +81,11 @@ public class FlowExecutionImplTests extends TestCase {
 		};
 		MockFlowExecutionListener mockListener = new MockFlowExecutionListener();
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
-		FlowExecutionImpl execution = new FlowExecutionImpl(flow, listeners, null, null, null);
+		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		execution.setListeners(listeners);
 		MockExternalContext context = new MockExternalContext();
 		execution.start(null, context);
 		assertTrue(execution.isActive());
-		assertEquals(FlowSessionStatus.PAUSED, execution.getActiveSession().getStatus());
 		assertEquals(1, mockListener.getPausedCount());
 	}
 
@@ -98,7 +98,8 @@ public class FlowExecutionImplTests extends TestCase {
 			}
 		};
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
-		FlowExecutionImpl execution = new FlowExecutionImpl(flow, listeners, null, null, null);
+		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		execution.setListeners(listeners);
 		MockExternalContext context = new MockExternalContext();
 		assertFalse(execution.hasStarted());
 		try {
@@ -116,7 +117,7 @@ public class FlowExecutionImplTests extends TestCase {
 				throw new IllegalStateException("Oops");
 			}
 		};
-		FlowExecutionImpl execution = new FlowExecutionImpl(flow, null, null, null, null);
+		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		MockExternalContext context = new MockExternalContext();
 		assertFalse(execution.hasStarted());
 		try {
@@ -135,7 +136,7 @@ public class FlowExecutionImplTests extends TestCase {
 				throw e;
 			}
 		};
-		FlowExecutionImpl execution = new FlowExecutionImpl(flow, null, null, null, null);
+		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		MockExternalContext context = new MockExternalContext();
 		assertFalse(execution.hasStarted());
 		try {
@@ -148,7 +149,7 @@ public class FlowExecutionImplTests extends TestCase {
 	public void testStartCannotCallTwice() {
 		Flow flow = new Flow("flow");
 		new EndState(flow, "end");
-		FlowExecutionImpl execution = new FlowExecutionImpl(flow, null, null, null, null);
+		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		MockExternalContext context = new MockExternalContext();
 		execution.start(null, context);
 		try {
@@ -164,8 +165,9 @@ public class FlowExecutionImplTests extends TestCase {
 		new ViewState(flow, "view", new StubViewFactory());
 		MockFlowExecutionListener mockListener = new MockFlowExecutionListener();
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
-		FlowExecutionImpl execution = new FlowExecutionImpl(flow, listeners, null, new SimpleFlowExecutionKeyFactory(),
-				null);
+		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		execution.setListeners(listeners);
+		execution.setKeyFactory(new SimpleFlowExecutionKeyFactory());
 		MockExternalContext context = new MockExternalContext();
 		execution.start(null, context);
 		context = new MockExternalContext();
@@ -183,7 +185,8 @@ public class FlowExecutionImplTests extends TestCase {
 		};
 		MockFlowExecutionListener mockListener = new MockFlowExecutionListener();
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
-		FlowExecutionImpl execution = new FlowExecutionImpl(flow, listeners, null, null, null);
+		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		execution.setListeners(listeners);
 		MockExternalContext context = new MockExternalContext();
 		execution.start(null, context);
 		context = new MockExternalContext();
@@ -199,7 +202,7 @@ public class FlowExecutionImplTests extends TestCase {
 	public void testResumeAfterEnding() {
 		Flow flow = new Flow("flow");
 		new EndState(flow, "end");
-		FlowExecutionImpl execution = new FlowExecutionImpl(flow, null, null, null, null);
+		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		MockExternalContext context = new MockExternalContext();
 		execution.start(null, context);
 		try {
@@ -219,8 +222,9 @@ public class FlowExecutionImplTests extends TestCase {
 		};
 		MockFlowExecutionListener mockListener = new MockFlowExecutionListener();
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
-		FlowExecutionImpl execution = new FlowExecutionImpl(flow, listeners, null, new SimpleFlowExecutionKeyFactory(),
-				null);
+		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		execution.setListeners(listeners);
+		execution.setKeyFactory(new SimpleFlowExecutionKeyFactory());
 		MockExternalContext context = new MockExternalContext();
 		execution.start(null, context);
 		context = new MockExternalContext();
@@ -243,8 +247,9 @@ public class FlowExecutionImplTests extends TestCase {
 		};
 		MockFlowExecutionListener mockListener = new MockFlowExecutionListener();
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
-		FlowExecutionImpl execution = new FlowExecutionImpl(flow, listeners, null, new SimpleFlowExecutionKeyFactory(),
-				null);
+		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		execution.setListeners(listeners);
+		execution.setKeyFactory(new SimpleFlowExecutionKeyFactory());
 		MockExternalContext context = new MockExternalContext();
 		execution.start(null, context);
 		context = new MockExternalContext();

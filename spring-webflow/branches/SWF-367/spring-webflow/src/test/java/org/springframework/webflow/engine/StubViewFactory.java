@@ -26,7 +26,7 @@ public class StubViewFactory implements ViewFactory {
 		return new NullView(context);
 	}
 
-	private static class NullView extends View {
+	private static class NullView implements View {
 		private RequestContext context;
 
 		public NullView(RequestContext context) {

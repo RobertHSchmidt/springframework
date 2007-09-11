@@ -24,7 +24,7 @@ import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowSession;
-import org.springframework.webflow.execution.FlowSessionStatus;
+import org.springframework.webflow.execution.FlowExecutionStatus;
 
 /**
  * Mock implementation of the {@link RequestControlContext} interface to facilitate standalone Flow and State unit
@@ -64,7 +64,7 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 		State previousState = (State) getCurrentState();
 		getMockFlowExecutionContext().getMockActiveSession().setState(state);
 		if (previousState == null) {
-			getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.ACTIVE);
+			getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowExecutionStatus.ACTIVE);
 		}
 	}
 
@@ -74,7 +74,7 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 			session.setParent(getFlowExecutionContext().getActiveSession());
 		}
 		getMockFlowExecutionContext().setActiveSession(session);
-		getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowSessionStatus.STARTING);
+		getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowExecutionStatus.STARTING);
 		flow.start(this, input);
 	}
 
@@ -86,7 +86,7 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 	public FlowSession endActiveFlowSession(MutableAttributeMap output) throws IllegalStateException {
 		MockFlowSession endingSession = getMockFlowExecutionContext().getMockActiveSession();
 		endingSession.getDefinitionInternal().end(this, output);
-		endingSession.setStatus(FlowSessionStatus.ENDED);
+		endingSession.setStatus(FlowExecutionStatus.ENDED);
 		getMockFlowExecutionContext().setActiveSession(endingSession.getParent());
 		return endingSession;
 	}

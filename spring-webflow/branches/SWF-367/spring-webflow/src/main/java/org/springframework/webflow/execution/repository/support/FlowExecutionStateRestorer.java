@@ -17,11 +17,11 @@ package org.springframework.webflow.execution.repository.support;
 
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionKey;
 
 /**
  * A support strategy used by repositories that serialize flow executions to restore transient execution state after
  * deserialization.
- * 
  * @author Keith Donald
  */
 public interface FlowExecutionStateRestorer {
@@ -34,5 +34,6 @@ public interface FlowExecutionStateRestorer {
 	 * conversation
 	 * @return the restored flow execution
 	 */
-	public FlowExecution restoreState(FlowExecution flowExecution, MutableAttributeMap conversationScope);
+	public FlowExecution restoreState(FlowExecution flowExecution, FlowExecutionKey key,
+			MutableAttributeMap conversationScope);
 }
