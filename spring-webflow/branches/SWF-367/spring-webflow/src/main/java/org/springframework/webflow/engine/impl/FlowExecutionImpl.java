@@ -43,7 +43,6 @@ import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionRequestRedirector;
 import org.springframework.webflow.execution.FlowSession;
-import org.springframework.webflow.execution.FlowExecutionStatus;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
 
@@ -249,7 +248,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			handleException(wrap(e, context), context);
 		} finally {
 			if (isActive()) {
-				setStatus(FlowExecutionStatus.PAUSED);
 				listeners.firePaused(context);
 			}
 			listeners.fireRequestProcessed(context);
