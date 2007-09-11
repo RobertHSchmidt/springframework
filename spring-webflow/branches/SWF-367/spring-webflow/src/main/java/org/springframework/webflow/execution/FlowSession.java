@@ -32,7 +32,6 @@ import org.springframework.webflow.definition.StateDefinition;
  * 
  * @see FlowDefinition
  * @see FlowExecution
- * @see FlowExecutionStatus
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
