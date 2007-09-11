@@ -557,8 +557,4 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		State currentState = (State) session.getState();
 		return currentState;
 	}
-
-	private void setStatus(FlowExecutionStatus status) {
-
-	}
 }
