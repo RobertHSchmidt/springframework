@@ -18,7 +18,7 @@ package org.springframework.webflow.action;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.FlowSessionStatus;
+import org.springframework.webflow.execution.FlowExecutionStatus;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -37,7 +37,7 @@ public class ResultObjectEventFactoryTests extends TestCase {
 	}
 
 	public void testMappedTypes() {
-		assertTrue(factory.isMappedValueType(FlowSessionStatus.class));
+		assertTrue(factory.isMappedValueType(FlowExecutionStatus.class));
 		assertTrue(factory.isMappedValueType(boolean.class));
 		assertTrue(factory.isMappedValueType(Boolean.class));
 		assertTrue(factory.isMappedValueType(String.class));
@@ -57,7 +57,7 @@ public class ResultObjectEventFactoryTests extends TestCase {
 	}
 
 	public void testLabeledEnumResult() {
-		Event result = factory.createResultEvent(this, FlowSessionStatus.ACTIVE, context);
+		Event result = factory.createResultEvent(this, FlowExecutionStatus.ACTIVE, context);
 		assertEquals("Active", result.getId());
 	}
 

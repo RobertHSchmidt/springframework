@@ -44,9 +44,7 @@ import org.springframework.webflow.definition.TransitionDefinition;
  * code, e.g. a view implementation (JSP).
  * <p>
  * The {@link #getRequestScope() requestScope} property may be used as a store for arbitrary data that should exist for
- * the life of this object. Request-scoped data, along with all data in {@link #getFlashScope() flash scope},
- * {@link #getFlowScope() flow scope} and {@link #getConversationScope() conversation scope} is available for exposing
- * to view templates via a {@link #getModel() model} property.
+ * the life of this object.
  * <p>
  * The web flow system will ensure that a RequestContext object is local to the current thread. It can be safely
  * manipulated without needing to worry about concurrent access.
@@ -77,22 +75,22 @@ public interface RequestContext {
 	public StateDefinition getCurrentState() throws IllegalStateException;
 
 	/**
-	 * Returns a mutable accessor for accessing and/or setting attributes in request scope. <b>Request scoped attributes
+	 * Returns a mutable map for accessing and/or setting attributes in request scope. <b>Request scoped attributes
 	 * exist for the duration of this request only.</b>
 	 * @return the request scope
 	 */
 	public MutableAttributeMap getRequestScope();
 
 	/**
-	 * Returns a mutable accessor for accessing and/or setting attributes in flash scope. <b>Flash scoped attributes
-	 * exist until the next event is signaled in the flow execution.</b>
+	 * Returns a mutable map for accessing and/or setting attributes in flash scope. <b>Flash scoped attributes exist
+	 * until the next event is signaled in the flow execution.</b>
 	 * @return the flash scope
 	 */
 	public MutableAttributeMap getFlashScope();
 
 	/**
-	 * Returns a mutable accessor for accessing and/or setting attributes in flow scope. <b>Flow scoped attributes exist
-	 * for the life of the active flow session.</b>
+	 * Returns a mutable map for accessing and/or setting attributes in flow scope. <b>Flow scoped attributes exist for
+	 * the life of the active flow session.</b>
 	 * @return the flow scope
 	 * @see FlowSession
 	 */

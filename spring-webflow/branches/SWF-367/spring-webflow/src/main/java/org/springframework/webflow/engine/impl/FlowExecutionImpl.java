@@ -35,13 +35,15 @@ import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.RequestControlContext;
 import org.springframework.webflow.engine.State;
+import org.springframework.webflow.engine.Transition;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionRequestRedirector;
 import org.springframework.webflow.execution.FlowSession;
-import org.springframework.webflow.execution.FlowSessionStatus;
+import org.springframework.webflow.execution.FlowExecutionStatus;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
 
@@ -60,7 +62,6 @@ import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
- * @author Ben Hale
  */
 public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
@@ -99,7 +100,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	/**
 	 * The key assigned to this flow execution. May be null if a key has not been assigned.
 	 */
-	private FlowExecutionKey key;
+	private transient FlowExecutionKey key;
 
 	/**
 	 * The flash map ("flash scope").
@@ -140,18 +141,18 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * Create a new flow execution executing the provided flow. Flow executions are normally created by a flow execution
 	 * factory.
 	 * @param flow the root flow of this flow execution
-	 * @param listeners the listeners interested in flow execution lifecycle events
-	 * @param attributes flow execution system attributes
 	 */
-	public FlowExecutionImpl(Flow flow, FlowExecutionListener[] listeners, AttributeMap attributes,
-			FlowExecutionKeyFactory keyFactory, FlowExecutionRequestRedirector redirector) {
+	public FlowExecutionImpl(Flow flow) {
 		setFlow(flow);
+		this.listeners = new FlowExecutionListeners();
+		this.attributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
 		this.flowSessions = new LinkedList();
-		this.listeners = new FlowExecutionListeners(listeners);
-		this.attributes = (attributes != null ? attributes : CollectionUtils.EMPTY_ATTRIBUTE_MAP);
-		this.keyFactory = keyFactory;
-		this.redirector = redirector;
 		this.conversationScope = new LocalAttributeMap();
+	}
+
+	FlowExecutionImpl(String flowId, LinkedList flowSessions) {
+		this.flowId = flowId;
+		this.flowSessions = flowSessions;
 	}
 
 	public String getCaption() {
@@ -209,10 +210,10 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 		started = true;
 		RequestControlContext context = createControlContext(externalContext);
-		getListeners().fireRequestSubmitted(context);
+		listeners.fireRequestSubmitted(context);
 		try {
 			// launch a flow session for the root flow
-			context.start(flow, input);
+			start(flow, input, context);
 		} catch (FlowExecutionException e) {
 			handleException(e, context);
 		} catch (Exception e) {
@@ -220,10 +221,9 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			handleException(wrap(e, context), context);
 		} finally {
 			if (isActive()) {
-				getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
-				getListeners().firePaused(context);
+				listeners.firePaused(context);
 			}
-			getListeners().fireRequestProcessed(context);
+			listeners.fireRequestProcessed(context);
 		}
 	}
 
@@ -239,88 +239,24 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			logger.debug("Resuming execution in " + externalContext);
 		}
 		RequestControlContext context = createControlContext(externalContext);
-		getListeners().fireRequestSubmitted(context);
+		listeners.fireRequestSubmitted(context);
 		try {
-			getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
-			getListeners().fireResuming(context);
-			getActiveFlow().resume(context);
+			listeners.fireResuming(context);
+			getActiveSessionInternal().getFlow().resume(context);
 		} catch (FlowExecutionException e) {
 			handleException(e, context);
 		} catch (Exception e) {
 			handleException(wrap(e, context), context);
 		} finally {
 			if (isActive()) {
-				getActiveSessionInternal().setStatus(FlowSessionStatus.PAUSED);
-				getListeners().firePaused(context);
+				setStatus(FlowExecutionStatus.PAUSED);
+				listeners.firePaused(context);
 			}
-			getListeners().fireRequestProcessed(context);
+			listeners.fireRequestProcessed(context);
 		}
 	}
 
-	private FlowExecutionException wrap(Exception e, RequestContext context) {
-		if (context.getFlowExecutionContext().isActive()) {
-			String flowId = context.getActiveFlow().getId();
-			String stateId = context.getCurrentState().getId();
-			return new FlowExecutionException(flowId, stateId, "Exception thrown in state '" + stateId + "' of flow '"
-					+ flowId + "'", e);
-		} else {
-			return new FlowExecutionException(flowId, null, "Exception thrown within inactive flow '" + flowId + "'");
-		}
-	}
-
-	/**
-	 * Handles an exception that occurred performing an operation on this flow execution. First tries the set of
-	 * exception handlers associated with the offending state, then the handlers at the flow level.
-	 * @param exception the exception that occurred
-	 * @param context the request control context the exception occurred in
-	 * @throws FlowExecutionException rethrows the exception if it was not handled at the state or flow level
-	 */
-	protected void handleException(FlowExecutionException exception, RequestControlContext context)
-			throws FlowExecutionException {
-		getListeners().fireExceptionThrown(context, exception);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Attempting to handle [" + exception + "]");
-		}
-		boolean handled = false;
-		try {
-			if (tryStateHandlers(exception, context) || tryFlowHandlers(exception, context)) {
-				handled = true;
-			}
-		} catch (FlowExecutionException newException) {
-			// exception handling itself resulted in a new FlowExecutionException, try to handle it
-			handleException(newException, context);
-		}
-		if (!handled) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Rethrowing unhandled flow execution exception");
-			}
-			throw exception;
-		}
-	}
-
-	/**
-	 * Try to handle given exception using execution exception handlers registered at the state level. Returns null if
-	 * no handler handled the exception.
-	 * @return true if the exception was handled
-	 */
-	private boolean tryStateHandlers(FlowExecutionException exception, RequestControlContext context) {
-		if (exception.getStateId() != null) {
-			return getCurrentFlow().getStateInstance(exception.getStateId()).handleException(exception, context);
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * Try to handle given exception using execution exception handlers registered at the flow level. Returns null if no
-	 * handler handled the exception.
-	 * @return true if the exception was handled
-	 */
-	private boolean tryFlowHandlers(FlowExecutionException exception, RequestControlContext context) {
-		return getCurrentFlow().handleException(exception, context);
-	}
-
-	// internal helpers
+	// subclassing hooks
 
 	/**
 	 * Create a flow execution control context.
@@ -331,167 +267,118 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	}
 
 	/**
-	 * Returns the listener list.
-	 * @return the attached execution listeners.
-	 */
-	FlowExecutionListeners getListeners() {
-		return listeners;
-	}
-
-	/**
-	 * Returns the currently active flow session.
-	 */
-	FlowSessionImpl getActiveSessionInternal() {
-		return (FlowSessionImpl) flowSessions.getLast();
-	}
-
-	/**
-	 * Set the state that is currently active in this flow execution.
-	 * @param newState the new current state
-	 */
-	protected void setCurrentState(State newState) {
-		getActiveSessionInternal().setState(newState);
-	}
-
-	/**
-	 * Activate a new <code>FlowSession</code> for the flow definition. Creates the new flow session and pushes it
-	 * onto the stack.
-	 * @param flow the flow definition
-	 * @return the new flow session
-	 */
-	protected FlowSession activateSession(Flow flow) {
-		FlowSessionImpl session;
-		if (!flowSessions.isEmpty()) {
-			FlowSessionImpl parent = getActiveSessionInternal();
-			parent.setStatus(FlowSessionStatus.SUSPENDED);
-			session = createFlowSession(flow, parent);
-		} else {
-			session = createFlowSession(flow, null);
-		}
-		flowSessions.add(session);
-		session.setStatus(FlowSessionStatus.STARTING);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Starting " + session);
-		}
-		return session;
-	}
-
-	/**
 	 * Create a new flow session object. Subclasses can override this to return a special implementation if required.
 	 * @param flow the flow that should be associated with the flow session
 	 * @param parent the flow session that should be the parent of the newly created flow session (may be null)
 	 * @return the newly created flow session
 	 */
-	FlowSessionImpl createFlowSession(Flow flow, FlowSessionImpl parent) {
+	protected FlowSessionImpl createFlowSession(Flow flow, FlowSessionImpl parent) {
 		return new FlowSessionImpl(flow, parent);
 	}
 
-	/**
-	 * End the active flow session, popping it of the stack.
-	 * @return the ended session
-	 */
-	public FlowSession endActiveFlowSession() {
-		FlowSessionImpl endingSession = (FlowSessionImpl) flowSessions.removeLast();
-		endingSession.setStatus(FlowSessionStatus.ENDED);
-		if (!flowSessions.isEmpty()) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Resuming session '" + getActiveSessionInternal().getDefinition().getId() + "' in state '"
-						+ getActiveSessionInternal().getState().getId() + "'");
-			}
-			getActiveSessionInternal().setStatus(FlowSessionStatus.ACTIVE);
-		} else {
-			if (logger.isDebugEnabled()) {
-				logger.debug("[Ended] - this execution is now inactive");
-			}
+	// package private request control context callbacks
+
+	void start(Flow flow, MutableAttributeMap input, RequestControlContext context) {
+		if (input == null) {
+			// create a mutable map so entries can be added by listeners!
+			input = new LocalAttributeMap();
 		}
-		return endingSession;
+		listeners.fireSessionCreating(context, flow, input);
+		FlowSession session = activateSession(flow);
+		listeners.fireSessionStarting(context, session);
+		flow.start(context, input);
+		listeners.fireSessionStarted(context, session);
 	}
 
-	/**
-	 * Returns the current flow which may or may not yet be active.
-	 */
-	private Flow getCurrentFlow() {
-		if (isActive()) {
-			return getActiveFlow();
-		} else {
-			return flow;
-		}
+	void setCurrentState(State newState, RequestContext context) {
+		listeners.fireStateEntering(context, newState);
+		FlowSessionImpl session = getActiveSessionInternal();
+		State previousState = (State) session.getState();
+		session.setState(newState);
+		listeners.fireStateEntered(context, previousState);
 	}
 
-	/**
-	 * Returns the currently active flow.
-	 */
-	private Flow getActiveFlow() {
-		return (Flow) getActiveSessionInternal().getDefinition();
+	void handleEvent(Event event, RequestControlContext context) {
+		listeners.fireEventSignaled(context, event);
+		getActiveSessionInternal().getFlow().handleEvent(context);
 	}
 
-	// custom serialization (implementation of Externalizable for optimized storage)
-
-	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-		started = in.readBoolean();
-		flowId = (String) in.readObject();
-		flowSessions = (LinkedList) in.readObject();
-		flashScope = (MutableAttributeMap) in.readObject();
+	void execute(Transition transition, RequestControlContext context) {
+		transition.execute(getCurrentState(), context);
 	}
 
-	public void writeExternal(ObjectOutput out) throws IOException {
-		out.writeBoolean(started);
-		out.writeObject(flowId);
-		out.writeObject(flowSessions);
-		out.writeObject(flashScope);
+	FlowSession endActiveFlowSession(MutableAttributeMap output, RequestControlContext context) {
+		FlowSessionImpl session = getActiveSessionInternal();
+		listeners.fireSessionEnding(context, session, output);
+		session.getFlow().end(context, output);
+		flowSessions.removeLast();
+		listeners.fireSessionEnded(context, session, output);
+		return session;
 	}
 
-	public String toString() {
-		if (!isActive()) {
-			if (!hasStarted()) {
-				return "[Not yet started " + getCaption() + "]";
-			} else {
-				return "[Ended " + getCaption() + "]";
-			}
-		} else {
-			if (flow != null) {
-				return new ToStringCreator(this).append("flow", flow.getId()).append("flowSessions", flowSessions)
-						.append("flashScope", flashScope).toString();
-			} else {
-				return "[Unhydrated " + getCaption() + "]";
-			}
+	void assignKey() {
+		this.key = keyFactory.getKey(this);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Assigned key " + this.key);
 		}
 	}
 
-	// package private setters for restoring transient state
-	// used by FlowExecutionImplStateRestorer
+	void sendFlowExecutionRedirect() {
+		redirector.sendFlowExecutionRedirect(key);
+	}
+
+	void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input) {
+		redirector.sendFlowDefinitionRedirect(flowId, input);
+	}
+
+	void sendExternalRedirect(String resourceUri) {
+		redirector.sendExternalRedirect(resourceUri);
+	}
+
+	// package private setters for restoring transient state used by FlowExecutionImplServicesConfigurer
+
+	FlowExecutionListener[] getListeners() {
+		return this.listeners.getArray();
+	}
+
+	void setListeners(FlowExecutionListener[] listeners) {
+		this.listeners = new FlowExecutionListeners(listeners);
+	}
+
+	void setAttributes(AttributeMap attributes) {
+		this.attributes = attributes;
+	}
+
+	void setKeyFactory(FlowExecutionKeyFactory keyFactory) {
+		this.keyFactory = keyFactory;
+	}
+
+	public void setRequestRedirector(FlowExecutionRequestRedirector requestRedirector) {
+		this.redirector = requestRedirector;
+	}
+
+	// Used by FlowExecutionImplStateRestorer
 
 	/**
 	 * Restore the flow definition of this flow execution.
 	 */
 	void setFlow(Flow flow) {
-		Assert.notNull(flow, "The root flow definition is required");
 		this.flow = flow;
 		this.flowId = flow.getId();
-	}
-
-	/**
-	 * Restore the listeners of this flow execution.
-	 */
-	void setListeners(FlowExecutionListeners listeners) {
-		Assert.notNull(listeners, "The execution listener list is required");
-		this.listeners = listeners;
-	}
-
-	/**
-	 * Restore the execution attributes of this flow execution.
-	 */
-	void setAttributes(AttributeMap attributes) {
-		Assert.notNull(conversationScope, "The execution attribute map is required");
-		this.attributes = attributes;
 	}
 
 	/**
 	 * Restore conversation scope for this flow execution.
 	 */
 	void setConversationScope(MutableAttributeMap conversationScope) {
-		Assert.notNull(conversationScope, "The conversation scope map is required");
 		this.conversationScope = conversationScope;
+	}
+
+	/**
+	 * Restore the flow execution key.
+	 */
+	void setKey(FlowExecutionKey key) {
+		this.key = key;
 	}
 
 	/**
@@ -536,20 +423,144 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		return flowSessions.listIterator(1);
 	}
 
-	void assignKey() {
-		this.key = keyFactory.getKey(this);
+	// custom serialization (implementation of Externalizable for optimized storage)
+
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		started = in.readBoolean();
+		flowId = (String) in.readObject();
+		flowSessions = (LinkedList) in.readObject();
+		flashScope = (MutableAttributeMap) in.readObject();
 	}
 
-	public void sendFlowExecutionRedirect() {
-		redirector.sendFlowExecutionRedirect(key);
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeBoolean(started);
+		out.writeObject(flowId);
+		out.writeObject(flowSessions);
+		out.writeObject(flashScope);
 	}
 
-	public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input) {
-		redirector.sendFlowDefinitionRedirect(flowId, input);
+	public String toString() {
+		if (!isActive()) {
+			if (!hasStarted()) {
+				return "[Not yet started " + getCaption() + "]";
+			} else {
+				return "[Ended " + getCaption() + "]";
+			}
+		} else {
+			if (flow != null) {
+				return new ToStringCreator(this).append("flow", flow.getId()).append("flowSessions", flowSessions)
+						.append("flashScope", flashScope).toString();
+			} else {
+				return "[Unhydrated " + getCaption() + "]";
+			}
+		}
 	}
 
-	public void sendExternalRedirect(String resourceUri) {
-		redirector.sendExternalRedirect(resourceUri);
+	// internal helpers
+
+	/**
+	 * Activate a new <code>FlowSession</code> for the flow definition. Creates the new flow session and pushes it
+	 * onto the stack.
+	 * @param flow the flow definition
+	 * @return the new flow session
+	 */
+	private FlowSession activateSession(Flow flow) {
+		FlowSessionImpl session;
+		if (!flowSessions.isEmpty()) {
+			FlowSessionImpl parent = getActiveSessionInternal();
+			session = createFlowSession(flow, parent);
+		} else {
+			session = createFlowSession(flow, null);
+		}
+		flowSessions.add(session);
+		return session;
 	}
 
+	private FlowSessionImpl getActiveSessionInternal() {
+		return (FlowSessionImpl) flowSessions.getLast();
+	}
+
+	private FlowExecutionException wrap(Exception e, RequestContext context) {
+		if (context.getFlowExecutionContext().isActive()) {
+			String flowId = context.getActiveFlow().getId();
+			String stateId = context.getCurrentState().getId();
+			return new FlowExecutionException(flowId, stateId, "Exception thrown in state '" + stateId + "' of flow '"
+					+ flowId + "'", e);
+		} else {
+			return new FlowExecutionException(flowId, null, "Exception thrown within inactive flow '" + flowId + "'");
+		}
+	}
+
+	/**
+	 * Handles an exception that occurred performing an operation on this flow execution. First tries the set of
+	 * exception handlers associated with the offending state, then the handlers at the flow level.
+	 * @param exception the exception that occurred
+	 * @param context the request control context the exception occurred in
+	 * @throws FlowExecutionException rethrows the exception if it was not handled at the state or flow level
+	 */
+	private void handleException(FlowExecutionException exception, RequestControlContext context)
+			throws FlowExecutionException {
+		listeners.fireExceptionThrown(context, exception);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Attempting to handle [" + exception + "]");
+		}
+		boolean handled = false;
+		try {
+			if (tryStateHandlers(exception, context) || tryFlowHandlers(exception, context)) {
+				handled = true;
+			}
+		} catch (FlowExecutionException newException) {
+			// exception handling itself resulted in a new FlowExecutionException, try to handle it
+			handleException(newException, context);
+		}
+		if (!handled) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Rethrowing unhandled flow execution exception");
+			}
+			throw exception;
+		}
+	}
+
+	/**
+	 * Try to handle given exception using execution exception handlers registered at the state level. Returns null if
+	 * no handler handled the exception.
+	 * @return true if the exception was handled
+	 */
+	private boolean tryStateHandlers(FlowExecutionException exception, RequestControlContext context) {
+		if (exception.getStateId() != null) {
+			return getCurrentFlow().getStateInstance(exception.getStateId()).handleException(exception, context);
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Try to handle given exception using execution exception handlers registered at the flow level. Returns null if no
+	 * handler handled the exception.
+	 * @return true if the exception was handled
+	 */
+	private boolean tryFlowHandlers(FlowExecutionException exception, RequestControlContext context) {
+		return getCurrentFlow().handleException(exception, context);
+	}
+
+	/**
+	 * Returns the current flow which may or may not yet be active.
+	 */
+	private Flow getCurrentFlow() {
+		if (isActive()) {
+			return getActiveSessionInternal().getFlow();
+		} else {
+			return flow;
+		}
+	}
+
+	private State getCurrentState() {
+		FlowSessionImpl session = getActiveSessionInternal();
+		State currentState = (State) session.getState();
+		return currentState;
+	}
+
+	private void setStatus(FlowExecutionStatus status) {
+
+	}
 }

@@ -30,11 +30,11 @@ public interface FlowDefinitionLocator {
 
 	/**
 	 * Lookup the flow definition with the specified <code>path</code>.
-	 * @param flowPath the flow definition path
+	 * @param flowId the flow definition identifier
 	 * @return the flow definition
 	 * @throws NoSuchFlowDefinitionException when the flow definition with the specified id does not exist
 	 * @throws FlowDefinitionConstructionException if there is a problem constructing the identified flow definition
 	 */
-	public FlowDefinition getFlowDefinition(String flowPath) throws NoSuchFlowDefinitionException,
+	public FlowDefinition getFlowDefinition(String flowId) throws NoSuchFlowDefinitionException,
 			FlowDefinitionConstructionException;
 }

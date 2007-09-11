@@ -35,6 +35,8 @@ import org.springframework.webflow.execution.RequestContext;
  */
 class FlowExecutionListeners {
 
+	private FlowExecutionListener[] EMPTY_LISTENER_ARRAY = new FlowExecutionListener[0];
+
 	/**
 	 * The list of listeners that should receive event callbacks during managed flow executions.
 	 */
@@ -55,7 +57,7 @@ class FlowExecutionListeners {
 		if (listeners != null) {
 			this.listeners = listeners;
 		} else {
-			this.listeners = new FlowExecutionListener[0];
+			this.listeners = EMPTY_LISTENER_ARRAY;
 		}
 	}
 

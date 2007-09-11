@@ -54,14 +54,6 @@ public interface RequestControlContext extends RequestContext {
 	public void setCurrentState(State state);
 
 	/**
-	 * Record the last event signaled in the executing flow. This method will be called as part of signaling an event in
-	 * a flow to indicate the 'lastEvent' that was signaled.
-	 * @param lastEvent the last event signaled
-	 * @see Flow#handleEvent(RequestControlContext)
-	 */
-	public void setLastEvent(Event lastEvent);
-
-	/**
 	 * Record the last transition that executed in the executing flow. This method will be called as part of executing a
 	 * transition from one state to another.
 	 * @param lastTransition the last transition that executed
