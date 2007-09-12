@@ -104,6 +104,7 @@ public class FlowExecutionImplTests extends TestCase {
 		assertFalse(execution.hasStarted());
 		try {
 			execution.start(null, context);
+			fail("Should have failed");
 		} catch (FlowExecutionException e) {
 			assertEquals("flow", e.getFlowId());
 			assertNull(e.getStateId());
@@ -122,6 +123,7 @@ public class FlowExecutionImplTests extends TestCase {
 		assertFalse(execution.hasStarted());
 		try {
 			execution.start(null, context);
+			fail("Should have failed");
 		} catch (FlowExecutionException e) {
 			assertEquals("flow", e.getFlowId());
 			assertEquals("state", e.getStateId());
@@ -141,6 +143,7 @@ public class FlowExecutionImplTests extends TestCase {
 		assertFalse(execution.hasStarted());
 		try {
 			execution.start(null, context);
+			fail("Should have failed");
 		} catch (FlowExecutionException ex) {
 			assertSame(e, ex);
 		}
