@@ -102,7 +102,7 @@ public abstract class TransitionableState extends State implements Transitionabl
 	 * @throws NoMatchingTransitionException when a matching transition cannot be found
 	 */
 	public void handleEvent(RequestControlContext context) throws NoMatchingTransitionException {
-		getRequiredTransition(context).execute(this, context);
+		context.execute(getRequiredTransition(context));
 	}
 
 	/**
