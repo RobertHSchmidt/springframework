@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.repository.continuation;
+package org.springframework.webflow.execution.repository.impl;
 
-import java.io.Serializable;
-
-import org.springframework.util.Assert;
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException;
-import org.springframework.webflow.execution.repository.support.AbstractConversationFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.continuation.AbstractFlowExecutionContinuationRepository;
+import org.springframework.webflow.execution.repository.continuation.ContinuationNotFoundException;
+import org.springframework.webflow.execution.repository.continuation.ContinuationUnmarshalException;
+import org.springframework.webflow.execution.repository.continuation.FlowExecutionContinuation;
+import org.springframework.webflow.execution.repository.continuation.SerializedFlowExecutionContinuationFactory;
 import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
-import org.springframework.webflow.util.RandomGuidUidGenerator;
-import org.springframework.webflow.util.UidGenerator;
 
 /**
  * Stores <i>one to many</i> flow execution continuations (snapshots) per conversation, where each continuation
@@ -38,7 +37,7 @@ import org.springframework.webflow.util.UidGenerator;
  * This repository is responsible for:
  * <ul>
  * <li>Beginning a new conversation when a new flow execution is made persistent. Each conversation is assigned a
- * unique conversartion id which forms one part of the flow execution key.
+ * unique conversation id which forms one part of the flow execution key.
  * <li>Associating a flow execution with that conversation by adding a {@link FlowExecutionContinuation} to a
  * continuation group.<br>
  * When a flow execution is placed in this repository a new continuation snapshot is created, assigned an id, and added
@@ -58,22 +57,12 @@ import org.springframework.webflow.util.UidGenerator;
  * 
  * @author Keith Donald
  */
-public class ContinuationFlowExecutionRepository extends AbstractConversationFlowExecutionRepository {
+public class DefaultFlowExecutionRepository extends AbstractFlowExecutionContinuationRepository {
 
 	/**
 	 * The conversation attribute that stores the "continuation group".
 	 */
 	private static final String CONTINUATION_GROUP_ATTRIBUTE = "continuationGroup";
-
-	/**
-	 * The continuation factory that will be used to create new continuations to be added to active conversations.
-	 */
-	private FlowExecutionContinuationFactory continuationFactory = new SerializedFlowExecutionContinuationFactory();
-
-	/**
-	 * The uid generation strategy to use.
-	 */
-	private UidGenerator continuationIdGenerator = new RandomGuidUidGenerator();
 
 	/**
 	 * The maximum number of continuations that can be active per conversation. The default is 30, which is high enough
@@ -84,52 +73,12 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 
 	/**
 	 * Create a new continuation based flow execution repository using given state restorer and conversation manager.
-	 * @param executionStateRestorer the state restoration strategy to use
 	 * @param conversationManager the conversation manager to use
+	 * @param executionStateRestorer the state restoration strategy to use
 	 */
-	public ContinuationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer,
-			ConversationManager conversationManager) {
-		super(executionStateRestorer, conversationManager);
-	}
-
-	/**
-	 * Returns the continuation factory that encapsulates the construction of continuations stored in this repository.
-	 * Defaults to {@link SerializedFlowExecutionContinuationFactory}.
-	 */
-	public FlowExecutionContinuationFactory getContinuationFactory() {
-		return continuationFactory;
-	}
-
-	/**
-	 * Sets the continuation factory that encapsulates the construction of continuations stored in this repository.
-	 */
-	public void setContinuationFactory(FlowExecutionContinuationFactory continuationFactory) {
-		Assert.notNull(continuationFactory, "The continuation factory is required");
-		this.continuationFactory = continuationFactory;
-	}
-
-	/**
-	 * Returns the uid generation strategy used to generate continuation identifiers. Defaults to
-	 * {@link RandomGuidUidGenerator}.
-	 */
-	public UidGenerator getContinuationIdGenerator() {
-		return continuationIdGenerator;
-	}
-
-	/**
-	 * Sets the uid generation strategy used to generate unique continuation identifiers for
-	 * {@link FlowExecutionKey flow execution keys}.
-	 */
-	public void setContinuationIdGenerator(UidGenerator continuationIdGenerator) {
-		Assert.notNull(continuationIdGenerator, "The continuation id generator is required");
-		this.continuationIdGenerator = continuationIdGenerator;
-	}
-
-	/**
-	 * Returns the maximum number of continuations allowed per conversation in this repository.
-	 */
-	public int getMaxContinuations() {
-		return maxContinuations;
+	public DefaultFlowExecutionRepository(ConversationManager conversationManager,
+			FlowExecutionStateRestorer executionStateRestorer) {
+		super(conversationManager, executionStateRestorer, new SerializedFlowExecutionContinuationFactory());
 	}
 
 	/**
@@ -147,40 +96,34 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 		FlowExecutionContinuation continuation = getContinuation(key);
 		try {
 			FlowExecution execution = continuation.unmarshal();
-			// flow execution was deserialized, so restore transient state
-			return getExecutionStateRestorer().restoreState(execution, getConversationScope(key));
+			return restoreTransientState(execution, key);
 		} catch (ContinuationUnmarshalException e) {
 			throw new FlowExecutionRestorationFailureException(key, e);
 		}
 	}
 
-	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
+	public void putFlowExecution(FlowExecution flowExecution) {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Putting flow execution '" + flowExecution + "' into repository with key '" + key + "'");
+			logger.debug("Putting flow execution '" + flowExecution + "' into repository");
 		}
+		FlowExecutionKey key = flowExecution.getKey();
 		FlowExecutionContinuationGroup continuationGroup = getContinuationGroup(key);
-		FlowExecutionContinuation continuation = continuationFactory.createContinuation(flowExecution);
+		FlowExecutionContinuation continuation = snapshot(flowExecution);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Adding new continuation to group with id " + getContinuationId(key));
 		}
 		continuationGroup.add(getContinuationId(key), continuation);
-		putConversationScope(key, flowExecution.getConversationScope());
+		putConversationScope(flowExecution);
 	}
 
-	protected Serializable generateContinuationId(FlowExecution flowExecution) {
-		return continuationIdGenerator.generateUid();
-	}
-
-	protected Serializable parseContinuationId(String encodedId) {
-		return continuationIdGenerator.parseUid(encodedId);
-	}
+	// internal helpers
 
 	/**
 	 * Returns the continuation group associated with the governing conversation.
 	 * @param key the flow execution key
 	 * @return the continuation group
 	 */
-	FlowExecutionContinuationGroup getContinuationGroup(FlowExecutionKey key) {
+	private FlowExecutionContinuationGroup getContinuationGroup(FlowExecutionKey key) {
 		Conversation conversation = getConversation(key);
 		FlowExecutionContinuationGroup group = (FlowExecutionContinuationGroup) conversation
 				.getAttribute(CONTINUATION_GROUP_ATTRIBUTE);
@@ -200,7 +143,7 @@ public class ContinuationFlowExecutionRepository extends AbstractConversationFlo
 	 * @param key the flow execution key
 	 * @return the continuation.
 	 */
-	protected FlowExecutionContinuation getContinuation(FlowExecutionKey key)
+	private FlowExecutionContinuation getContinuation(FlowExecutionKey key)
 			throws FlowExecutionRestorationFailureException {
 		try {
 			return getContinuationGroup(key).get(getContinuationId(key));

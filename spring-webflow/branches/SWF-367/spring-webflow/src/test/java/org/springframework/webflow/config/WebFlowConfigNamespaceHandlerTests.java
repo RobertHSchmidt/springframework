@@ -31,7 +31,7 @@ import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.engine.support.ApplicationViewSelector;
 import org.springframework.webflow.execution.factory.ConditionalFlowExecutionListenerLoader;
 import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
-import org.springframework.webflow.execution.repository.continuation.ClientContinuationFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.continuation.AbstractFlowExecutionContinuationRepository;
 import org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.AbstractConversationFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepository;
@@ -125,7 +125,7 @@ public class WebFlowConfigNamespaceHandlerTests extends TestCase {
 	public void testClientExecutor() {
 		FlowExecutorImpl flowExecutor = (FlowExecutorImpl) this.beanFactory.getBean("clientExecutor");
 		assertSame(this.beanFactory.getBean("withPathWithWildcards"), flowExecutor.getDefinitionLocator());
-		assertTrue(flowExecutor.getExecutionRepository() instanceof ClientContinuationFlowExecutionRepository);
+		assertTrue(flowExecutor.getExecutionRepository() instanceof AbstractFlowExecutionContinuationRepository);
 		AttributeMap attribs = ((FlowExecutionImplFactory) flowExecutor.getExecutionFactory()).getExecutionAttributes();
 		assertEquals(1, attribs.size());
 		assertEquals(new Boolean(true), attribs.get(ApplicationViewSelector.ALWAYS_REDIRECT_ON_PAUSE_ATTRIBUTE));
@@ -192,7 +192,7 @@ public class WebFlowConfigNamespaceHandlerTests extends TestCase {
 	public void testClientExtended() {
 		FlowExecutorImpl flowExecutor = (FlowExecutorImpl) this.beanFactory.getBean("clientExtended");
 		assertTrue("Repository type should be ClientContinuationFlowExecutionRepository", flowExecutor
-				.getExecutionRepository() instanceof ClientContinuationFlowExecutionRepository);
+				.getExecutionRepository() instanceof AbstractFlowExecutionContinuationRepository);
 	}
 
 	public void testSimpleExtended() {

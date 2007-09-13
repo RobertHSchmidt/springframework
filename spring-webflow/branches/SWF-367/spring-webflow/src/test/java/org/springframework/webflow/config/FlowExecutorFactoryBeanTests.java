@@ -23,7 +23,7 @@ import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
-import org.springframework.webflow.execution.repository.continuation.ClientContinuationFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.continuation.AbstractFlowExecutionContinuationRepository;
 import org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepository;
 import org.springframework.webflow.executor.FlowExecutorImpl;
@@ -67,7 +67,7 @@ public class FlowExecutorFactoryBeanTests extends TestCase {
 				RepositoryType.CONTINUATION, null);
 		assertTrue(continuation.getConversationManager() instanceof SessionBindingConversationManager);
 
-		ClientContinuationFlowExecutionRepository client = (ClientContinuationFlowExecutionRepository) setupRepo(
+		AbstractFlowExecutionContinuationRepository client = (AbstractFlowExecutionContinuationRepository) setupRepo(
 				RepositoryType.CLIENT, null);
 		assertFalse("Client repo does not use SessionBindingConversationManager by default", client
 				.getConversationManager() instanceof SessionBindingConversationManager);
@@ -89,7 +89,7 @@ public class FlowExecutorFactoryBeanTests extends TestCase {
 				RepositoryType.CONTINUATION, cm);
 		assertTrue(continuation.getConversationManager() instanceof CustomConversationManager);
 
-		ClientContinuationFlowExecutionRepository client = (ClientContinuationFlowExecutionRepository) setupRepo(
+		AbstractFlowExecutionContinuationRepository client = (AbstractFlowExecutionContinuationRepository) setupRepo(
 				RepositoryType.CLIENT, cm);
 		assertTrue(client.getConversationManager() instanceof CustomConversationManager);
 	}

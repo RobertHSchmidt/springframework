@@ -16,7 +16,7 @@
 package org.springframework.webflow.config;
 
 import org.springframework.core.enums.StaticLabeledEnum;
-import org.springframework.webflow.execution.repository.continuation.ClientContinuationFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.continuation.AbstractFlowExecutionContinuationRepository;
 import org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepository;
 
@@ -43,7 +43,7 @@ public class RepositoryType extends StaticLabeledEnum {
 
 	/**
 	 * The 'client' (continuation) flow execution repository type.
-	 * @see ClientContinuationFlowExecutionRepository
+	 * @see AbstractFlowExecutionContinuationRepository
 	 */
 	public static final RepositoryType CLIENT = new RepositoryType(2, "Client");
 

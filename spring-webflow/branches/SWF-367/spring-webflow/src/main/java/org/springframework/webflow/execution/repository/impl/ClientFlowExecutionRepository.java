@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.repository.continuation;
+package org.springframework.webflow.execution.repository.impl;
 
 import java.io.Serializable;
 
-import org.springframework.util.Assert;
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationException;
 import org.springframework.webflow.conversation.ConversationId;
@@ -28,7 +27,10 @@ import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRestorationFailureException;
-import org.springframework.webflow.execution.repository.support.AbstractConversationFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.continuation.AbstractFlowExecutionContinuationRepository;
+import org.springframework.webflow.execution.repository.continuation.ContinuationUnmarshalException;
+import org.springframework.webflow.execution.repository.continuation.FlowExecutionContinuation;
+import org.springframework.webflow.execution.repository.continuation.SerializedFlowExecutionContinuationFactory;
 import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
 import org.springframework.webflow.util.Base64;
 
@@ -52,7 +54,7 @@ import org.springframework.webflow.util.Base64;
  * implementation does not provide a secure way of storing state on the client, so a malicious client could reverse
  * engineer a continuation and get access to possible sensitive data stored in the flow execution. If you need more
  * security and still want to store continuations on the client, subclass this class and override the methods
- * {@link #encode(FlowExecution)} and {@link #decode(String)}, implementing them with a secure encoding/decoding
+ * {@link #encode(FlowExecution)} and {@link #decode(Serializable)}, implementing them with a secure encoding/decoding
  * algorithm, e.g. based on public/private key encryption.
  * 
  * @see Base64
@@ -60,88 +62,47 @@ import org.springframework.webflow.util.Base64;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class ClientContinuationFlowExecutionRepository extends AbstractConversationFlowExecutionRepository {
-
-	/**
-	 * The continuation factory that will be used to create new continuations to be added to active conversations.
-	 */
-	private FlowExecutionContinuationFactory continuationFactory = new SerializedFlowExecutionContinuationFactory();
+public class ClientFlowExecutionRepository extends AbstractFlowExecutionContinuationRepository {
 
 	/**
 	 * Creates a new client continuation repository. Uses a 'no op' conversation manager by default.
 	 * @param executionStateRestorer the transient flow execution state restorer
 	 */
-	public ClientContinuationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer) {
-		super(executionStateRestorer, new NoOpConversationManager());
+	public ClientFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer) {
+		this(new NoOpConversationManager(), executionStateRestorer);
 	}
 
 	/**
-	 * Creates a new client continuation repository. Use this contructor when you want to use a particular conversation
+	 * Creates a new client continuation repository. Use this constructor when you want to use a particular conversation
 	 * manager, e.g. one that does proper conversation management.
-	 * @param executionStateRestorer the transient flow execution state restorer
 	 * @param conversationManager the conversation manager for managing centralized conversational state
+	 * @param executionStateRestorer the transient flow execution state restorer
 	 */
-	public ClientContinuationFlowExecutionRepository(FlowExecutionStateRestorer executionStateRestorer,
-			ConversationManager conversationManager) {
-		super(executionStateRestorer, conversationManager);
-	}
-
-	/**
-	 * Returns the continuation factory in use by this repository.
-	 */
-	protected FlowExecutionContinuationFactory getContinuationFactory() {
-		return continuationFactory;
-	}
-
-	/**
-	 * Sets the continuation factory used by this repository.
-	 */
-	public void setContinuationFactory(FlowExecutionContinuationFactory continuationFactory) {
-		Assert.notNull(continuationFactory, "The continuation factory is required");
-		this.continuationFactory = continuationFactory;
+	public ClientFlowExecutionRepository(ConversationManager conversationManager,
+			FlowExecutionStateRestorer executionStateRestorer) {
+		super(conversationManager, executionStateRestorer, new SerializedFlowExecutionContinuationFactory());
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Getting flow execution with key '" + key + "'");
 		}
-
 		// note that the call to getConversationScope() below will try to obtain
 		// the conversation identified by the key, which will fail if that conversation
 		// is no longer managed by the conversation manager (i.e. it has expired)
-
-		FlowExecutionContinuation continuation = decode((String) getContinuationId(key));
 		try {
-			FlowExecution execution = continuation.unmarshal();
-			// the flow execution was deserialized so we need to restore transient
-			// state
-			return getExecutionStateRestorer().restoreState(execution, getConversationScope(key));
+			Serializable encodedExecution = getContinuationId(key);
+			FlowExecution execution = decode(encodedExecution);
+			return restoreTransientState(execution, execution.getKey());
 		} catch (ContinuationUnmarshalException e) {
 			throw new FlowExecutionRestorationFailureException(key, e);
 		}
 	}
 
-	public void putFlowExecution(FlowExecutionKey key, FlowExecution flowExecution) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Putting flow execution '" + flowExecution + "' into repository with key '" + key + "'");
-		}
-
-		// note that the call to putConversationScope() below will try to obtain
-		// the conversation identified by the key, which will fail if that conversation
-		// is no longer managed by the conversation manager (i.e. it has expired)
-
-		// the flow execution state is already stored in the key, so
-		// there's nothing we need to do to store it
-		putConversationScope(key, flowExecution.getConversationScope());
-	}
-
-	protected final Serializable generateContinuationId(FlowExecution flowExecution) {
-		return encode(flowExecution);
-	}
-
-	protected final Serializable parseContinuationId(String encodedId) {
-		// just return here, continuation decoding happens in getFlowExecution
-		return encodedId;
+	public void putFlowExecution(FlowExecution flowExecution) {
+		// search for key in response, replace key value with execution state value
+		// call #encode(FlowExecution) to get state value
+		putConversationScope(flowExecution);
 	}
 
 	/**
@@ -153,7 +114,7 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	 * @return the encoded representation
 	 */
 	protected Serializable encode(FlowExecution flowExecution) {
-		FlowExecutionContinuation continuation = continuationFactory.createContinuation(flowExecution);
+		FlowExecutionContinuation continuation = snapshot(flowExecution);
 		return new Base64(true).encodeToString(continuation.toByteArray());
 	}
 
@@ -162,12 +123,12 @@ public class ClientContinuationFlowExecutionRepository extends AbstractConversat
 	 * <p>
 	 * Subclasses can override this to change the decoding algorithm. This class just does a <code>BASE64</code>
 	 * decoding and then deserializes the flow execution.
-	 * @param encodedContinuation the encoded flow execution data
+	 * @param encodedExecution the encoded flow execution data
 	 * @return the decoded flow execution instance
 	 */
-	protected FlowExecutionContinuation decode(String encodedContinuation) {
-		byte[] bytes = new Base64(true).decodeFromString(encodedContinuation);
-		return continuationFactory.createContinuation(bytes);
+	protected FlowExecution decode(Serializable encodedExecution) {
+		byte[] continuationBytes = new Base64(true).decodeFromString((String) encodedExecution);
+		return deserializeExecution(continuationBytes);
 	}
 
 	/**

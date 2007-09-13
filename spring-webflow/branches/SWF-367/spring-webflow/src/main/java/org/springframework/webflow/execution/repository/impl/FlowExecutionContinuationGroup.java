@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.execution.repository.continuation;
+package org.springframework.webflow.execution.repository.impl;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
+import org.springframework.webflow.execution.repository.continuation.ContinuationNotFoundException;
+import org.springframework.webflow.execution.repository.continuation.FlowExecutionContinuation;
 
 /**
  * A group of flow execution continuations. Simple typed data structure backed by a map and linked list. Supports
