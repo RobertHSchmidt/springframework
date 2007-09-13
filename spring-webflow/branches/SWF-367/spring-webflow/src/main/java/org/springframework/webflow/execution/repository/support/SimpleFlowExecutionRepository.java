@@ -17,13 +17,10 @@ package org.springframework.webflow.execution.repository.support;
 
 import java.io.Serializable;
 
-import org.springframework.util.Assert;
 import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.PermissionDeniedFlowExecutionAccessException;
-import org.springframework.webflow.util.RandomGuidUidGenerator;
-import org.springframework.webflow.util.UidGenerator;
 
 /**
  * Conversation manager based flow execution repository that stores <i>exactly one</i> flow execution per conversation.
@@ -56,11 +53,6 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 	private boolean alwaysGenerateNewNextKey = true;
 
 	/**
-	 * The uid generation strategy to use.
-	 */
-	private UidGenerator continuationIdGenerator = new RandomGuidUidGenerator();
-
-	/**
 	 * Create a new simple repository using given state restorer and conversation manager.
 	 * @param conversationManager the conversation manager to use
 	 */
@@ -82,23 +74,6 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 	 */
 	public void setAlwaysGenerateNewNextKey(boolean alwaysGenerateNewNextKey) {
 		this.alwaysGenerateNewNextKey = alwaysGenerateNewNextKey;
-	}
-
-	/**
-	 * Returns the uid generation strategy used to generate continuation identifiers. Defaults to
-	 * {@link RandomGuidUidGenerator}.
-	 */
-	public UidGenerator getContinuationIdGenerator() {
-		return continuationIdGenerator;
-	}
-
-	/**
-	 * Sets the uid generation strategy used to generate unique continuation identifiers for
-	 * {@link FlowExecutionKey flow execution keys}.
-	 */
-	public void setContinuationIdGenerator(UidGenerator continuationIdGenerator) {
-		Assert.notNull(continuationIdGenerator, "The continuation id generator is required");
-		this.continuationIdGenerator = continuationIdGenerator;
 	}
 
 	public FlowExecution getFlowExecution(FlowExecutionKey key) {
@@ -128,14 +103,6 @@ public class SimpleFlowExecutionRepository extends AbstractFlowExecutionReposito
 		} else {
 			return flowExecution.getKey();
 		}
-	}
-
-	protected Serializable generateContinuationId(FlowExecution flowExecution) {
-		return continuationIdGenerator.generateUid();
-	}
-
-	protected Serializable parseContinuationId(String encodedId) {
-		return continuationIdGenerator.parseUid(encodedId);
 	}
 
 	// internal helpers

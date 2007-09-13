@@ -20,8 +20,8 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionKey;
 
 /**
- * A support strategy used by repositories that serialize flow executions to restore transient execution state after
- * deserialization.
+ * A strategy used by repositories to restore transient flow execution state during execution restoration.
+ * 
  * @author Keith Donald
  */
 public interface FlowExecutionStateRestorer {
@@ -29,6 +29,7 @@ public interface FlowExecutionStateRestorer {
 	/**
 	 * Restore the transient state of the flow execution.
 	 * @param flowExecution the (potentially deserialized) flow execution
+	 * @param key the flow execution key, typically not part of the serialized form
 	 * @param conversationScope the execution's conversation scope, which is typically not part of the serialized form
 	 * since it could be shared by multiple physical flow execution <i>copies</i> all sharing the same logical
 	 * conversation

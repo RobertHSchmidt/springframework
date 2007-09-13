@@ -37,6 +37,8 @@ import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
+import org.springframework.webflow.util.RandomGuidUidGenerator;
+import org.springframework.webflow.util.UidGenerator;
 
 /**
  * Abstract base class for flow execution repository implementations. Does not make any assumptions about the storage
@@ -66,6 +68,11 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	private FlowExecutionStateRestorer executionStateRestorer;
 
 	/**
+	 * The uid generation strategy to use.
+	 */
+	private UidGenerator continuationIdGenerator = new RandomGuidUidGenerator();
+
+	/**
 	 * Constructor for use in subclasses.
 	 * @param conversationManager the conversation manager to use
 	 */
@@ -77,10 +84,27 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 		this.executionStateRestorer = executionStateRestorer;
 	}
 
+	/**
+	 * Returns the uid generation strategy used to generate continuation identifiers. Defaults to
+	 * {@link RandomGuidUidGenerator}.
+	 */
+	public UidGenerator getContinuationIdGenerator() {
+		return continuationIdGenerator;
+	}
+
+	/**
+	 * Sets the uid generation strategy used to generate unique continuation identifiers for
+	 * {@link FlowExecutionKey flow execution keys}.
+	 */
+	public void setContinuationIdGenerator(UidGenerator continuationIdGenerator) {
+		Assert.notNull(continuationIdGenerator, "The continuation id generator is required");
+		this.continuationIdGenerator = continuationIdGenerator;
+	}
+
 	public FlowExecutionKey getKey(FlowExecution execution) {
 		if (execution.getKey() == null) {
 			Conversation conversation = beginConversation(execution);
-			return new CompositeFlowExecutionKey(conversation.getId(), generateContinuationId(execution));
+			return new CompositeFlowExecutionKey(conversation.getId(), continuationIdGenerator.generateUid());
 		} else {
 			return getNextKey(execution);
 		}
@@ -103,7 +127,7 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 		// parse out the continuation id
 		Serializable continuationId;
 		try {
-			continuationId = parseContinuationId(keyParts[1]);
+			continuationId = continuationIdGenerator.parseUid(keyParts[1]);
 		} catch (FlowExecutionRepositoryException e) {
 			throw new BadlyFormattedFlowExecutionKeyException(encodedKey, "The continuation id '" + keyParts[1]
 					+ "' contained in the composite flow execution key '" + encodedKey + "' is invalid", e);
@@ -114,6 +138,8 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	public FlowExecutionLock getLock(FlowExecutionKey key) throws FlowExecutionRepositoryException {
 		return new ConversationBackedFlowExecutionLock(getConversation(key));
 	}
+
+	// abstract repository methods to be overridden by subclasses
 
 	public abstract FlowExecution getFlowExecution(FlowExecutionKey key) throws FlowExecutionRepositoryException;
 
@@ -146,7 +172,7 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	 */
 	protected FlowExecutionKey getNextKey(FlowExecution execution) {
 		CompositeFlowExecutionKey key = (CompositeFlowExecutionKey) execution.getKey();
-		return new CompositeFlowExecutionKey(key.getConversationId(), generateContinuationId(execution));
+		return new CompositeFlowExecutionKey(key.getConversationId(), continuationIdGenerator.generateUid());
 	}
 
 	/**
@@ -178,22 +204,6 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	protected void putConversationScope(FlowExecution flowExecution) {
 		getConversation(flowExecution.getKey()).putAttribute("scope", flowExecution.getConversationScope());
 	}
-
-	// abstract template methods
-
-	/**
-	 * Template method used to generate a new continuation id for given flow execution. Subclasses must override.
-	 * @param flowExecution the flow execution
-	 * @return the continuation id
-	 */
-	protected abstract Serializable generateContinuationId(FlowExecution flowExecution);
-
-	/**
-	 * Template method to parse the continuation id from the encoded string.
-	 * @param encodedId the string identifier
-	 * @return the parsed continuation id
-	 */
-	protected abstract Serializable parseContinuationId(String encodedId) throws FlowExecutionRepositoryException;
 
 	// internal helpers
 
