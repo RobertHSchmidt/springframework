@@ -37,7 +37,7 @@ import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.factory.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
-import org.springframework.webflow.execution.repository.continuation.ClientContinuationFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.continuation.AbstractFlowExecutionContinuationRepository;
 import org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
 import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepository;
@@ -351,10 +351,10 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 		if (repositoryType == RepositoryType.CLIENT) {
 			if (conversationManager == null) {
 				// use the default no-op conversation manager
-				return new ClientContinuationFlowExecutionRepository(executionStateRestorer);
+				return new AbstractFlowExecutionContinuationRepository(executionStateRestorer);
 			} else {
 				// use the conversation manager specified by the user
-				return new ClientContinuationFlowExecutionRepository(executionStateRestorer, conversationManager);
+				return new AbstractFlowExecutionContinuationRepository(executionStateRestorer, conversationManager);
 			}
 		} else {
 			// determine the conversation manager to use

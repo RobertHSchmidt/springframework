@@ -33,11 +33,11 @@ import org.springframework.webflow.execution.repository.support.FlowExecutionSta
 import org.springframework.webflow.test.MockExternalContext;
 
 /**
- * Unit tests for {@link ClientContinuationFlowExecutionRepository}.
+ * Unit tests for {@link AbstractFlowExecutionContinuationRepository}.
  */
 public class ClientContinuationFlowExecutionRepositoryTests extends TestCase {
 
-	private ClientContinuationFlowExecutionRepository repository;
+	private AbstractFlowExecutionContinuationRepository repository;
 
 	private FlowExecution execution;
 
@@ -50,7 +50,7 @@ public class ClientContinuationFlowExecutionRepositoryTests extends TestCase {
 		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(new SimpleFlow()));
 		execution = new FlowExecutionImplFactory().createFlowExecution(registry.getFlowDefinition("simpleFlow"));
 		FlowExecutionStateRestorer stateRestorer = new FlowExecutionImplStateRestorer(registry);
-		repository = new ClientContinuationFlowExecutionRepository(stateRestorer,
+		repository = new AbstractFlowExecutionContinuationRepository(stateRestorer,
 				new SessionBindingConversationManager());
 		ExternalContextHolder.setExternalContext(new MockExternalContext());
 	}

@@ -39,7 +39,7 @@ import org.springframework.webflow.execution.FlowExecution;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class SerializedFlowExecutionContinuation extends FlowExecutionContinuation implements Externalizable {
+class SerializedFlowExecutionContinuation extends FlowExecutionContinuation implements Externalizable {
 
 	/**
 	 * The serialized flow execution.

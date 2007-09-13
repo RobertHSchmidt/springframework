@@ -73,6 +73,12 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	private UidGenerator continuationIdGenerator = new RandomGuidUidGenerator();
 
 	/**
+	 * Flag to indicate whether or not a new flow execution key should always be generated before each put call. Default
+	 * is true.
+	 */
+	private boolean alwaysGenerateNewNextKey = true;
+
+	/**
 	 * Constructor for use in subclasses.
 	 * @param conversationManager the conversation manager to use
 	 */
@@ -85,20 +91,20 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	}
 
 	/**
-	 * Returns the uid generation strategy used to generate continuation identifiers. Defaults to
-	 * {@link RandomGuidUidGenerator}.
-	 */
-	public UidGenerator getContinuationIdGenerator() {
-		return continuationIdGenerator;
-	}
-
-	/**
 	 * Sets the uid generation strategy used to generate unique continuation identifiers for
 	 * {@link FlowExecutionKey flow execution keys}.
 	 */
 	public void setContinuationIdGenerator(UidGenerator continuationIdGenerator) {
 		Assert.notNull(continuationIdGenerator, "The continuation id generator is required");
 		this.continuationIdGenerator = continuationIdGenerator;
+	}
+
+	/**
+	 * Sets a flag indicating if a new {@link FlowExecutionKey} should always be generated before each put call. By
+	 * setting this to false a FlowExecution can remain identified by the same key throughout its life.
+	 */
+	public void setAlwaysGenerateNewNextKey(boolean alwaysGenerateNewNextKey) {
+		this.alwaysGenerateNewNextKey = alwaysGenerateNewNextKey;
 	}
 
 	public FlowExecutionKey getKey(FlowExecution execution) {
@@ -171,8 +177,12 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	 * @return the next flow execution
 	 */
 	protected FlowExecutionKey getNextKey(FlowExecution execution) {
-		CompositeFlowExecutionKey key = (CompositeFlowExecutionKey) execution.getKey();
-		return new CompositeFlowExecutionKey(key.getConversationId(), continuationIdGenerator.generateUid());
+		if (alwaysGenerateNewNextKey) {
+			CompositeFlowExecutionKey key = (CompositeFlowExecutionKey) execution.getKey();
+			return new CompositeFlowExecutionKey(key.getConversationId(), continuationIdGenerator.generateUid());
+		} else {
+			return execution.getKey();
+		}
 	}
 
 	/**
