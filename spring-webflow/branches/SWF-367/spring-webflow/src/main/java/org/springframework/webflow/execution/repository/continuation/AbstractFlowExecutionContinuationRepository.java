@@ -43,6 +43,7 @@ public abstract class AbstractFlowExecutionContinuationRepository extends Abstra
 			FlowExecutionStateRestorer executionStateRestorer, FlowExecutionContinuationFactory continuationFactory) {
 		super(conversationManager, executionStateRestorer);
 		Assert.notNull(continuationFactory, "The flow execution continuation factory is required");
+		this.continuationFactory = continuationFactory;
 	}
 
 	/**

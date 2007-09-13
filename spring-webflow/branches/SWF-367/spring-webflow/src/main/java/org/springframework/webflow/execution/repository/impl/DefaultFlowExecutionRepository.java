@@ -103,6 +103,7 @@ public class DefaultFlowExecutionRepository extends AbstractFlowExecutionContinu
 	}
 
 	public void putFlowExecution(FlowExecution flowExecution) {
+		assertKeySet(flowExecution);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Putting flow execution '" + flowExecution + "' into repository");
 		}

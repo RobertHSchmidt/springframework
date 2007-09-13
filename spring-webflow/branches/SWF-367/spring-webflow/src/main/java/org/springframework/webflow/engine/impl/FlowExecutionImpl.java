@@ -351,7 +351,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		this.keyFactory = keyFactory;
 	}
 
-	public void setRequestRedirector(FlowExecutionRequestRedirector requestRedirector) {
+	void setRequestRedirector(FlowExecutionRequestRedirector requestRedirector) {
 		this.redirector = requestRedirector;
 	}
 
