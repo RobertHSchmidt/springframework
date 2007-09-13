@@ -38,7 +38,7 @@ public interface FlowExecutionContinuationFactory {
 	 * Restore a flow execution continuation object from the provided byte array.
 	 * @param bytes the flow execution byte array
 	 * @return the continuation
-	 * @throws ContinuationCreationException when the continuation cannot be created
+	 * @throws ContinuationUnmarshalException when the continuation cannot be restored
 	 */
-	public FlowExecutionContinuation restoreContinuation(byte[] bytes);
+	public FlowExecutionContinuation restoreContinuation(byte[] bytes) throws ContinuationUnmarshalException;
 }
