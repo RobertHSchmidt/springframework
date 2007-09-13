@@ -32,6 +32,7 @@ import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionFactory;
 import org.springframework.webflow.execution.FlowExecutionKey;
+import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
@@ -50,7 +51,7 @@ import org.springframework.webflow.util.UidGenerator;
  * 
  * @author Erwin Vervaet
  */
-public abstract class AbstractFlowExecutionRepository implements FlowExecutionRepository {
+public abstract class AbstractFlowExecutionRepository implements FlowExecutionRepository, FlowExecutionKeyFactory {
 
 	/**
 	 * Logger, usable in subclasses
@@ -152,6 +153,7 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	public abstract void putFlowExecution(FlowExecution flowExecution) throws FlowExecutionRepositoryException;
 
 	public void removeFlowExecution(FlowExecution flowExecution) throws FlowExecutionRepositoryException {
+		assertKeySet(flowExecution);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Removing flow execution '" + flowExecution + "' from repository");
 		}
@@ -208,11 +210,19 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	}
 
 	protected FlowExecution restoreTransientState(FlowExecution execution, FlowExecutionKey key) {
-		return executionStateRestorer.restoreState(execution, key, getConversationScope(execution.getKey()));
+		return executionStateRestorer.restoreState(execution, key, getConversationScope(key));
 	}
 
 	protected void putConversationScope(FlowExecution flowExecution) {
 		getConversation(flowExecution.getKey()).putAttribute("scope", flowExecution.getConversationScope());
+	}
+
+	protected void assertKeySet(FlowExecution execution) throws IllegalStateException {
+		if (execution.getKey() == null) {
+			throw new IllegalStateException(
+					"Key for the flow execution is null; make sure the key is assigned first.  Execution = "
+							+ execution);
+		}
 	}
 
 	// internal helpers
