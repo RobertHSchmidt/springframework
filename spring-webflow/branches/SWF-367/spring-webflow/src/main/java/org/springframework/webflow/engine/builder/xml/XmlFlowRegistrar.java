@@ -22,14 +22,12 @@ import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
 import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
-import org.springframework.webflow.engine.builder.FlowRegistryFactoryBean;
-import org.springframework.webflow.engine.builder.FlowServiceLocator;
 import org.springframework.webflow.engine.builder.RefreshableFlowDefinitionHolder;
+import org.springframework.webflow.engine.builder.support.FlowServiceLocator;
 
 /**
  * A flow definition registrar that populates a flow definition registry with flow definitions defined in externalized
- * XML resources. Typically used in conjunction with a {@link FlowRegistryFactoryBean} but may also be used stand-alone
- * in programmatic fashion.
+ * XML resources.
  * <p>
  * By default, a flow definition added to this registrar with the {@link #addLocation(Resource, String)} method will be
  * will be assigned a registry identifier equal to the filename of the underlying definition resource, minus the
@@ -37,7 +35,6 @@ import org.springframework.webflow.engine.builder.RefreshableFlowDefinitionHolde
  * "flow1" when registered in a registry.
  * 
  * @author Keith Donald
- * @author Ben Hale
  */
 public class XmlFlowRegistrar extends ExternalizedFlowDefinitionRegistrar {
 
@@ -47,12 +44,17 @@ public class XmlFlowRegistrar extends ExternalizedFlowDefinitionRegistrar {
 	private DocumentLoader documentLoader;
 
 	/**
+	 * The service locator needed for xml flow definition assembly.
+	 */
+	private FlowServiceLocator flowServiceLocator;
+
+	/**
 	 * Creates a new XML flow registrar.
-	 * @param flowServiceLocator the locator needed to support flow definition assembly
+	 * @param flowServiceLocator the locator needed to support xml flow definition assembly
 	 */
 	public XmlFlowRegistrar(FlowServiceLocator flowServiceLocator) {
 		Assert.notNull(flowServiceLocator, "The flow service locator is required");
-		setFlowServiceLocator(flowServiceLocator);
+		this.flowServiceLocator = flowServiceLocator;
 	}
 
 	/**
@@ -78,7 +80,7 @@ public class XmlFlowRegistrar extends ExternalizedFlowDefinitionRegistrar {
 	 * @return the builder to build the flow definition from the resource.
 	 */
 	protected FlowBuilder createFlowBuilder(Resource location) {
-		XmlFlowBuilder builder = new XmlFlowBuilder(location, getFlowServiceLocator());
+		XmlFlowBuilder builder = new XmlFlowBuilder(location, flowServiceLocator);
 		if (documentLoader != null) {
 			builder.setDocumentLoader(documentLoader);
 		}

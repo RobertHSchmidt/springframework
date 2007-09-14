@@ -63,10 +63,10 @@ import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
-import org.springframework.webflow.engine.builder.AbstractFlowBuilder;
-import org.springframework.webflow.engine.builder.FlowArtifactFactory;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
-import org.springframework.webflow.engine.builder.FlowServiceLocator;
+import org.springframework.webflow.engine.builder.support.AbstractFlowBuilder;
+import org.springframework.webflow.engine.builder.support.FlowArtifactFactory;
+import org.springframework.webflow.engine.builder.support.FlowServiceLocator;
 import org.springframework.webflow.engine.support.AttributeExpression;
 import org.springframework.webflow.engine.support.BeanFactoryFlowVariable;
 import org.springframework.webflow.engine.support.BooleanExpressionTransitionCriteria;
@@ -257,14 +257,6 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	private Document document;
 
 	/**
-	 * Create a new XML flow builder parsing the document at the specified location.
-	 * @param location the location of the XML-based flow definition resource
-	 */
-	public XmlFlowBuilder(Resource location) {
-		setLocation(location);
-	}
-
-	/**
 	 * Create a new XML flow builder parsing the document at the specified location, using the provided service locator
 	 * to access externally managed flow artifacts.
 	 * @param location the location of the XML-based flow definition resource
@@ -300,10 +292,6 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	public void setDocumentLoader(DocumentLoader documentLoader) {
 		Assert.notNull(documentLoader, "The XML document loader is required");
 		this.documentLoader = documentLoader;
-	}
-
-	public String toString() {
-		return new ToStringCreator(this).append("location", location).toString();
 	}
 
 	// implementing FlowBuilder
@@ -401,33 +389,6 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 		return getLocalFlowServiceLocator().getFlowArtifactFactory();
 	}
 
-	// utility (from Spring 2.x DomUtils)
-
-	/**
-	 * Utility method that returns the first child element identified by its name.
-	 * @param ele the DOM element to analyze
-	 * @param childEleName the child element name to look for
-	 * @return the <code>org.w3c.dom.Element</code> instance, or <code>null</code> if none found
-	 */
-	protected Element getChildElementByTagName(Element ele, String childEleName) {
-		NodeList nl = ele.getChildNodes();
-		for (int i = 0; i < nl.getLength(); i++) {
-			Node node = nl.item(i);
-			if (node instanceof Element && nodeNameEquals(node, childEleName)) {
-				return (Element) node;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Namespace-aware equals comparison. Returns <code>true</code> if either {@link Node#getLocalName} or
-	 * {@link Node#getNodeName} equals <code>desiredName</code>, otherwise returns <code>false</code>.
-	 */
-	protected boolean nodeNameEquals(Node node, String desiredName) {
-		return desiredName.equals(node.getNodeName()) || desiredName.equals(node.getLocalName());
-	}
-
 	// internal parsing logic and hook methods
 
 	private Flow parseFlow(String id, AttributeMap attributes, Element flowElement) {
@@ -440,7 +401,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	private boolean isFlowElement(Element flowElement) {
-		return nodeNameEquals(flowElement, FLOW_ELEMENT);
+		return DomUtils.nodeNameEquals(flowElement, FLOW_ELEMENT);
 	}
 
 	private void initLocalServiceRegistry(Element flowElement, Flow flow) {
@@ -463,7 +424,6 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	 * @param flow the current flow definition being built
 	 * @param resources the file resources to assemble the bean factory from; typically XML-based
 	 * @return the bean factory
-	 * @since 1.0.4
 	 */
 	protected BeanFactory createLocalBeanFactory(Flow flow, Resource[] resources) {
 		// see if this factory has a parent
@@ -504,7 +464,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	/**
 	 * Register beans in the bean factory local to the flow definition being built.
 	 * <p>
-	 * Subclasses may override this metod to customize the population of the bean factory local to the flow definition
+	 * Subclasses may override this method to customize the population of the bean factory local to the flow definition
 	 * being built; for example, to register mock implementations of services in a test environment.
 	 * @param flow the current flow definition being built
 	 * @param beanFactory the bean factory; register local beans with it using
@@ -542,21 +502,21 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	private void parseAndAddStartActions(Element element, Flow flow) {
-		Element startElement = getChildElementByTagName(element, START_ACTIONS_ELEMENT);
+		Element startElement = DomUtils.getChildElementByTagName(element, START_ACTIONS_ELEMENT);
 		if (startElement != null) {
 			flow.getStartActionList().addAll(parseAnnotatedActions(startElement));
 		}
 	}
 
 	private void parseAndAddEndActions(Element element, Flow flow) {
-		Element endElement = getChildElementByTagName(element, END_ACTIONS_ELEMENT);
+		Element endElement = DomUtils.getChildElementByTagName(element, END_ACTIONS_ELEMENT);
 		if (endElement != null) {
 			flow.getEndActionList().addAll(parseAnnotatedActions(endElement));
 		}
 	}
 
 	private void parseAndAddGlobalTransitions(Element element, Flow flow) {
-		Element globalTransitionsElement = getChildElementByTagName(element, GLOBAL_TRANSITIONS_ELEMENT);
+		Element globalTransitionsElement = DomUtils.getChildElementByTagName(element, GLOBAL_TRANSITIONS_ELEMENT);
 		if (globalTransitionsElement != null) {
 			flow.getGlobalTransitionSet().addAll(parseTransitions(globalTransitionsElement));
 		}
@@ -567,7 +527,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 		for (Iterator it = inlineFlowElements.iterator(); it.hasNext();) {
 			Element inlineFlowElement = (Element) it.next();
 			String inlineFlowId = inlineFlowElement.getAttribute(ID_ATTRIBUTE);
-			Element flowElement = getChildElementByTagName(inlineFlowElement, FLOW_ATTRIBUTE);
+			Element flowElement = DomUtils.getChildElementByTagName(inlineFlowElement, FLOW_ATTRIBUTE);
 			Flow inlineFlow = parseFlow(inlineFlowId, null, flowElement);
 			buildInlineFlow(flowElement, inlineFlow);
 			flow.addInlineFlow(inlineFlow);
@@ -584,7 +544,6 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 		parseAndAddEndActions(flowElement, inlineFlow);
 		inlineFlow.setOutputMapper(parseOutputMapper(flowElement));
 		inlineFlow.getExceptionHandlerSet().addAll(parseExceptionHandlers(flowElement));
-
 		destroyLocalServiceRegistry();
 	}
 
@@ -594,15 +553,15 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 			Node childNode = childNodeList.item(i);
 			if (childNode instanceof Element) {
 				Element stateElement = (Element) childNode;
-				if (nodeNameEquals(stateElement, ACTION_STATE_ELEMENT)) {
+				if (DomUtils.nodeNameEquals(stateElement, ACTION_STATE_ELEMENT)) {
 					parseAndAddActionState(stateElement, flow);
-				} else if (nodeNameEquals(stateElement, VIEW_STATE_ELEMENT)) {
+				} else if (DomUtils.nodeNameEquals(stateElement, VIEW_STATE_ELEMENT)) {
 					parseAndAddViewState(stateElement, flow);
-				} else if (nodeNameEquals(stateElement, DECISION_STATE_ELEMENT)) {
+				} else if (DomUtils.nodeNameEquals(stateElement, DECISION_STATE_ELEMENT)) {
 					parseAndAddDecisionState(stateElement, flow);
-				} else if (nodeNameEquals(stateElement, SUBFLOW_STATE_ELEMENT)) {
+				} else if (DomUtils.nodeNameEquals(stateElement, SUBFLOW_STATE_ELEMENT)) {
 					parseAndAddSubflowState(stateElement, flow);
-				} else if (nodeNameEquals(stateElement, END_STATE_ELEMENT)) {
+				} else if (DomUtils.nodeNameEquals(stateElement, END_STATE_ELEMENT)) {
 					parseAndAddEndState(stateElement, flow);
 				}
 			}
@@ -616,7 +575,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	private String getStartStateId(Element element) {
-		Element startStateElement = getChildElementByTagName(element, START_STATE_ELEMENT);
+		Element startStateElement = DomUtils.getChildElementByTagName(element, START_STATE_ELEMENT);
 		return startStateElement.getAttribute(IDREF_ATTRIBUTE);
 	}
 
@@ -655,7 +614,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	private Action[] parseEntryActions(Element element) {
-		Element entryActionsElement = getChildElementByTagName(element, ENTRY_ACTIONS_ELEMENT);
+		Element entryActionsElement = DomUtils.getChildElementByTagName(element, ENTRY_ACTIONS_ELEMENT);
 		if (entryActionsElement != null) {
 			return parseAnnotatedActions(entryActionsElement);
 		} else {
@@ -664,7 +623,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	private Action[] parseRenderActions(Element element) {
-		Element renderActionsElement = getChildElementByTagName(element, RENDER_ACTIONS_ELEMENT);
+		Element renderActionsElement = DomUtils.getChildElementByTagName(element, RENDER_ACTIONS_ELEMENT);
 		if (renderActionsElement != null) {
 			return parseAnnotatedActions(renderActionsElement);
 		} else {
@@ -673,7 +632,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	private Action[] parseExitActions(Element element) {
-		Element exitActionsElement = getChildElementByTagName(element, EXIT_ACTIONS_ELEMENT);
+		Element exitActionsElement = DomUtils.getChildElementByTagName(element, EXIT_ACTIONS_ELEMENT);
 		if (exitActionsElement != null) {
 			return parseAnnotatedActions(exitActionsElement);
 		} else {
@@ -727,16 +686,16 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 			if (!(childNode instanceof Element)) {
 				continue;
 			}
-			if (nodeNameEquals(childNode, ACTION_ELEMENT)) {
+			if (DomUtils.nodeNameEquals(childNode, ACTION_ELEMENT)) {
 				// parse standard action
 				actions.add(parseAnnotatedAction((Element) childNode));
-			} else if (nodeNameEquals(childNode, BEAN_ACTION_ELEMENT)) {
+			} else if (DomUtils.nodeNameEquals(childNode, BEAN_ACTION_ELEMENT)) {
 				// parse bean invoking action
 				actions.add(parseAnnotatedBeanInvokingAction((Element) childNode));
-			} else if (nodeNameEquals(childNode, EVALUATE_ACTION_ELEMENT)) {
+			} else if (DomUtils.nodeNameEquals(childNode, EVALUATE_ACTION_ELEMENT)) {
 				// parse evaluate action
 				actions.add(parseAnnotatedEvaluateAction((Element) childNode));
-			} else if (nodeNameEquals(childNode, SET_ELEMENT)) {
+			} else if (DomUtils.nodeNameEquals(childNode, SET_ELEMENT)) {
 				// parse set action
 				actions.add(parseAnnotatedSetAction((Element) childNode));
 			}
@@ -783,7 +742,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	private Parameters parseMethodParameters(Element element) {
-		Element methodArgumentsElement = getChildElementByTagName(element, METHOD_ARGUMENTS_ELEMENT);
+		Element methodArgumentsElement = DomUtils.getChildElementByTagName(element, METHOD_ARGUMENTS_ELEMENT);
 		if (methodArgumentsElement == null) {
 			return Parameters.NONE;
 		}
@@ -804,7 +763,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	private ActionResultExposer parseMethodResultExposer(Element element) {
-		Element resultElement = getChildElementByTagName(element, METHOD_RESULT_ELEMENT);
+		Element resultElement = DomUtils.getChildElementByTagName(element, METHOD_RESULT_ELEMENT);
 		if (resultElement != null) {
 			return parseActionResultExposer(resultElement);
 		} else {
@@ -829,7 +788,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	private ActionResultExposer parseEvaluationResultExposer(Element element) {
-		Element resultElement = getChildElementByTagName(element, EVALUATION_RESULT_ELEMENT);
+		Element resultElement = DomUtils.getChildElementByTagName(element, EVALUATION_RESULT_ELEMENT);
 		if (resultElement != null) {
 			return parseActionResultExposer(resultElement);
 		} else {
@@ -926,7 +885,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	private FlowAttributeMapper parseFlowAttributeMapper(Element element) {
-		Element mapperElement = getChildElementByTagName(element, ATTRIBUTE_MAPPER_ELEMENT);
+		Element mapperElement = DomUtils.getChildElementByTagName(element, ATTRIBUTE_MAPPER_ELEMENT);
 		if (mapperElement == null) {
 			return null;
 		}
@@ -938,7 +897,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	private AttributeMapper parseInputMapper(Element element) {
-		Element mapperElement = getChildElementByTagName(element, INPUT_MAPPER_ELEMENT);
+		Element mapperElement = DomUtils.getChildElementByTagName(element, INPUT_MAPPER_ELEMENT);
 		if (mapperElement != null) {
 			DefaultAttributeMapper mapper = new DefaultAttributeMapper();
 			parseSimpleAttributeMappings(mapper, DomUtils.getChildElementsByTagName(mapperElement,
@@ -951,7 +910,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	private AttributeMapper parseOutputMapper(Element element) {
-		Element mapperElement = getChildElementByTagName(element, OUTPUT_MAPPER_ELEMENT);
+		Element mapperElement = DomUtils.getChildElementByTagName(element, OUTPUT_MAPPER_ELEMENT);
 		if (mapperElement != null) {
 			DefaultAttributeMapper mapper = new DefaultAttributeMapper();
 			parseSimpleAttributeMappings(mapper, DomUtils.getChildElementsByTagName(mapperElement,
@@ -1039,7 +998,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	private FlowExecutionExceptionHandler[] parseTransitionExecutingExceptionHandlers(Element element) {
 		List transitionElements = Collections.EMPTY_LIST;
 		if (isFlowElement(element)) {
-			Element globalTransitionsElement = getChildElementByTagName(element, GLOBAL_TRANSITIONS_ELEMENT);
+			Element globalTransitionsElement = DomUtils.getChildElementByTagName(element, GLOBAL_TRANSITIONS_ELEMENT);
 			if (globalTransitionsElement != null) {
 				transitionElements = DomUtils.getChildElementsByTagName(globalTransitionsElement, TRANSITION_ELEMENT);
 			}
@@ -1082,5 +1041,9 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 
 	private FlowExecutionExceptionHandler parseCustomExceptionHandler(Element element) {
 		return getLocalFlowServiceLocator().getExceptionHandler(element.getAttribute(BEAN_ATTRIBUTE));
+	}
+
+	public String toString() {
+		return new ToStringCreator(this).append("location", location).toString();
 	}
 }
