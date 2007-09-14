@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
 import javax.faces.el.ValueBinding;
@@ -39,20 +40,25 @@ public class JsfViewFactory implements ViewFactory {
 
 		JsfView view;
 
+		ViewHandler handler = getFacesContext(context).getApplication().getViewHandler();
+
 		if (viewExists(context)) {
-			view = (JsfView) context.getFlowScope().get(JsfView.STATE_KEY);
-			restored = true;
-		} else if (getFacesContext(context).getViewRoot() != null) {
 			view = new JsfView(getFacesContext(context).getViewRoot());
-			restored = viewExists(context);
+			restored = true;
 		} else {
-			ViewHandler handler = getFacesContext(context).getApplication().getViewHandler();
-			view = new JsfView(handler.createView(getFacesContext(context), viewName));
-			restored = false;
+			UIViewRoot root = handler.restoreView(getFacesContext(context), viewName);
+			if (root != null) {
+				view = new JsfView(root);
+				restored = true;
+			} else {
+				view = new JsfView(handler.createView(getFacesContext(context), viewName));
+				restored = false;
+			}
 		}
-		processBindings(view.getViewRoot());
 
 		getFacesContext(context).setViewRoot(view.getViewRoot());
+
+		processBindings(view.getViewRoot());
 
 		notifyAfterListeners(context, PhaseId.RESTORE_VIEW);
 
@@ -62,14 +68,12 @@ public class JsfViewFactory implements ViewFactory {
 			getFacesContext(context).renderResponse();
 		}
 
-		context.getFlowScope().put(JsfView.STATE_KEY, view);
-
 		return view;
 	}
 
 	private boolean viewExists(RequestContext context) {
-		JsfView view = (JsfView) context.getFlowScope().get(JsfView.STATE_KEY);
-		if (view != null && view.getViewRoot().getViewId().equals(viewName)) {
+		if (getFacesContext(context).getViewRoot() != null
+				&& getFacesContext(context).getViewRoot().getViewId().equals(viewName)) {
 			return true;
 		}
 		return false;
