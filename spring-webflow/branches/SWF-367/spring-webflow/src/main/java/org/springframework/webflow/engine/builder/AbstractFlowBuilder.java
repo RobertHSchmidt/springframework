@@ -33,7 +33,7 @@ import org.springframework.webflow.engine.Flow;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public abstract class BaseFlowBuilder implements FlowBuilder {
+public abstract class AbstractFlowBuilder implements FlowBuilder {
 
 	/**
 	 * The <code>Flow</code> built by this builder.
@@ -49,7 +49,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	 * Default constructor for subclassing. Sets up use of a {@link BaseFlowServiceLocator}.
 	 * @see #setFlowServiceLocator(FlowServiceLocator)
 	 */
-	protected BaseFlowBuilder() {
+	protected AbstractFlowBuilder() {
 		setFlowServiceLocator(new BaseFlowServiceLocator());
 	}
 
@@ -57,7 +57,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	 * Creates a flow builder using the given locator to link in artifacts.
 	 * @param flowServiceLocator the locator for services needed by this builder to build its Flow
 	 */
-	protected BaseFlowBuilder(FlowServiceLocator flowServiceLocator) {
+	protected AbstractFlowBuilder(FlowServiceLocator flowServiceLocator) {
 		setFlowServiceLocator(flowServiceLocator);
 	}
 
@@ -112,9 +112,6 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	public void buildExceptionHandlers() throws FlowBuilderException {
 	}
 
-	/**
-	 * Get the flow (result) built by this builder.
-	 */
 	public Flow getFlow() {
 		return flow;
 	}
