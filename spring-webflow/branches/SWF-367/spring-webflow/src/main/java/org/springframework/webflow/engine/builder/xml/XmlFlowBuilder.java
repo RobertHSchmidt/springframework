@@ -244,7 +244,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	 * The resource from which the document element being parsed was read. Used as a location for relative resource
 	 * lookup.
 	 */
-	protected Resource location;
+	protected Resource resource;
 
 	/**
 	 * A flow service locator local to this builder that first looks in a locally-managed Spring bean factory for
@@ -265,13 +265,13 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	/**
 	 * Create a new XML flow builder parsing the document at the specified location, using the provided service locator
 	 * to access externally managed flow artifacts.
-	 * @param location the location of the XML-based flow definition resource
+	 * @param resource the location of the XML-based flow definition resource
 	 * @param flowServiceLocator the locator for services needed by this builder to build its Flow
 	 */
-	public XmlFlowBuilder(Resource location, FlowServiceLocator flowServiceLocator) {
-		Assert.notNull(location, "The resource location of the XML-based flow definition is required");
+	public XmlFlowBuilder(Resource resource, FlowServiceLocator flowServiceLocator) {
+		Assert.notNull(resource, "The resource location of the XML-based flow definition is required");
 		Assert.notNull(flowServiceLocator, "The locator of services needed by the flow is required");
-		this.location = location;
+		this.resource = resource;
 		this.flowServiceLocator = flowServiceLocator;
 	}
 
@@ -290,14 +290,14 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	public void init(String id, AttributeMap attributes) throws FlowBuilderException {
 		localFlowServiceLocator = new LocalFlowServiceLocator(getFlowServiceLocator());
 		try {
-			document = documentLoader.loadDocument(location);
+			document = documentLoader.loadDocument(resource);
 		} catch (IOException e) {
-			throw new FlowBuilderException("Could not access the XML flow definition resource at " + location, e);
+			throw new FlowBuilderException("Could not access the XML flow definition resource at " + resource, e);
 		} catch (ParserConfigurationException e) {
 			throw new FlowBuilderException("Could not configure the parser to parse the XML flow definition at "
-					+ location, e);
+					+ resource, e);
 		} catch (SAXException e) {
-			throw new FlowBuilderException("Could not parse the XML flow definition document at " + location, e);
+			throw new FlowBuilderException("Could not parse the XML flow definition document at " + resource, e);
 		}
 		setFlow(parseFlow(id, attributes, getDocumentElement()));
 	}
@@ -347,7 +347,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	// implementing ResourceHolder
 
 	public Resource getResource() {
-		return location;
+		return resource;
 	}
 
 	// helpers
@@ -1052,6 +1052,6 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	public String toString() {
-		return new ToStringCreator(this).append("location", location).toString();
+		return new ToStringCreator(this).append("location", resource).toString();
 	}
 }
