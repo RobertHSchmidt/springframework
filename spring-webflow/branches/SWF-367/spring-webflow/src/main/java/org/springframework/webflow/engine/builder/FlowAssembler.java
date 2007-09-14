@@ -64,16 +64,16 @@ public class FlowAssembler {
 	 * @param flowBuilder the builder the factory will use to build flows
 	 */
 	public FlowAssembler(String flowId, FlowBuilder flowBuilder) {
-		this(flowId, null, flowBuilder);
+		this(flowId, flowBuilder, null);
 	}
 
 	/**
 	 * Create a new flow assembler that will direct Flow assembly using the specified builder strategy.
 	 * @param flowId the flow id to assign
-	 * @param flowAttributes externally assigned flow attributes that can affect flow construction
 	 * @param flowBuilder the builder the factory will use to build flows
+	 * @param flowAttributes externally assigned flow attributes that can affect flow construction
 	 */
-	public FlowAssembler(String flowId, AttributeMap flowAttributes, FlowBuilder flowBuilder) {
+	public FlowAssembler(String flowId, FlowBuilder flowBuilder, AttributeMap flowAttributes) {
 		Assert.hasText(flowId, "The flow id is required");
 		Assert.notNull(flowBuilder, "The flow builder is required");
 		this.flowId = flowId;

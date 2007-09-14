@@ -15,9 +15,6 @@
  */
 package org.springframework.webflow.engine.builder.support;
 
-import org.springframework.binding.convert.ConversionException;
-import org.springframework.binding.convert.ConversionExecutor;
-import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowBuilder;
@@ -41,19 +38,6 @@ public abstract class AbstractFlowBuilder implements FlowBuilder {
 	 * The <code>Flow</code> built by this builder.
 	 */
 	private Flow flow;
-
-	/**
-	 * Locates actions, attribute mappers, and other artifacts needed by the flow built by this builder.
-	 */
-	private FlowServiceLocator flowServiceLocator;
-
-	/**
-	 * Creates a flow builder using the given locator to link in artifacts.
-	 * @param flowServiceLocator the locator for services needed by this builder to build its Flow
-	 */
-	protected AbstractFlowBuilder(FlowServiceLocator flowServiceLocator) {
-		setFlowServiceLocator(flowServiceLocator);
-	}
 
 	public abstract void init(String flowId, AttributeMap attributes) throws FlowBuilderException;
 
@@ -94,49 +78,10 @@ public abstract class AbstractFlowBuilder implements FlowBuilder {
 	// helpers for use in subclasses
 
 	/**
-	 * Returns the configured flow service locator.
-	 */
-	protected FlowServiceLocator getFlowServiceLocator() {
-		return flowServiceLocator;
-	}
-
-	/**
 	 * Set the flow being built by this builder. Typically called during initialization to set the initial flow
 	 * reference returned by {@link #getFlow()} after building.
 	 */
 	protected void setFlow(Flow flow) {
 		this.flow = flow;
 	}
-
-	/**
-	 * Returns a conversion executor capable of converting string objects to the target class aliased by the provided
-	 * alias.
-	 * @param targetAlias the target class alias, e.g. "long" or "float"
-	 * @return the conversion executor, or <code>null</code> if no suitable converter exists for given alias
-	 */
-	protected ConversionExecutor fromStringTo(String targetAlias) {
-		return getFlowServiceLocator().getConversionService().getConversionExecutorByTargetAlias(String.class,
-				targetAlias);
-	}
-
-	/**
-	 * Returns a converter capable of converting a string value to the given type.
-	 * @param targetType the type you wish to convert to (from a string)
-	 * @return the converter
-	 * @throws ConversionException when the converter cannot be found
-	 */
-	protected ConversionExecutor fromStringTo(Class targetType) throws ConversionException {
-		return getFlowServiceLocator().getConversionService().getConversionExecutor(String.class, targetType);
-	}
-
-	// internal helpers
-
-	/**
-	 * Sets the flow service locator to use. Defaults to {@link BaseFlowServiceLocator}.
-	 */
-	private void setFlowServiceLocator(FlowServiceLocator flowServiceLocator) {
-		Assert.notNull(flowServiceLocator, "The flow service locator is required");
-		this.flowServiceLocator = flowServiceLocator;
-	}
-
 }

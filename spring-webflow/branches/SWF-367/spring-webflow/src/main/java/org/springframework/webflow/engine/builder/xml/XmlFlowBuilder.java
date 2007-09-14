@@ -27,6 +27,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.Expression;
@@ -235,6 +236,11 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	private static final String RESOURCE_ATTRIBUTE = "resource";
 
 	/**
+	 * Locates actions, attribute mappers, and other artifacts needed by the flow built by this builder.
+	 */
+	private FlowServiceLocator flowServiceLocator;
+
+	/**
 	 * The resource from which the document element being parsed was read. Used as a location for relative resource
 	 * lookup.
 	 */
@@ -263,25 +269,10 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	 * @param flowServiceLocator the locator for services needed by this builder to build its Flow
 	 */
 	public XmlFlowBuilder(Resource location, FlowServiceLocator flowServiceLocator) {
-		super(flowServiceLocator);
-		setLocation(location);
-	}
-
-	/**
-	 * Returns the resource from which the document element was loaded. This is used for location relative loading of
-	 * other resources.
-	 */
-	public Resource getLocation() {
-		return location;
-	}
-
-	/**
-	 * Sets the resource from which the document element was loaded. This is used for location relative loading of other
-	 * resources.
-	 */
-	public void setLocation(Resource location) {
 		Assert.notNull(location, "The resource location of the XML-based flow definition is required");
+		Assert.notNull(flowServiceLocator, "The locator of services needed by the flow is required");
 		this.location = location;
+		this.flowServiceLocator = flowServiceLocator;
 	}
 
 	/**
@@ -376,6 +367,13 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	/**
+	 * Returns the configured flow service locator.
+	 */
+	protected FlowServiceLocator getFlowServiceLocator() {
+		return flowServiceLocator;
+	}
+
+	/**
 	 * Returns the flow service locator local to this builder.
 	 */
 	protected FlowServiceLocator getLocalFlowServiceLocator() {
@@ -387,36 +385,6 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	 */
 	protected FlowArtifactFactory getFlowArtifactFactory() {
 		return getLocalFlowServiceLocator().getFlowArtifactFactory();
-	}
-
-	// internal parsing logic and hook methods
-
-	private Flow parseFlow(String id, AttributeMap attributes, Element flowElement) {
-		if (!isFlowElement(flowElement)) {
-			throw new IllegalStateException("This is not the '" + FLOW_ELEMENT + "' element");
-		}
-		Flow flow = getFlowArtifactFactory().createFlow(id, parseAttributes(flowElement).union(attributes));
-		initLocalServiceRegistry(flowElement, flow);
-		return flow;
-	}
-
-	private boolean isFlowElement(Element flowElement) {
-		return DomUtils.nodeNameEquals(flowElement, FLOW_ELEMENT);
-	}
-
-	private void initLocalServiceRegistry(Element flowElement, Flow flow) {
-		List importElements = DomUtils.getChildElementsByTagName(flowElement, IMPORT_ELEMENT);
-		Resource[] resources = new Resource[importElements.size()];
-		for (int i = 0; i < importElements.size(); i++) {
-			Element importElement = (Element) importElements.get(i);
-			try {
-				resources[i] = getLocation().createRelative(importElement.getAttribute(RESOURCE_ATTRIBUTE));
-			} catch (IOException e) {
-				throw new FlowBuilderException("Could not access flow-relative artifact resource '"
-						+ importElement.getAttribute(RESOURCE_ATTRIBUTE) + "'", e);
-			}
-		}
-		localFlowServiceLocator.push(new LocalFlowServiceRegistry(flow, createLocalBeanFactory(flow, resources)));
 	}
 
 	/**
@@ -471,6 +439,36 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	 * {@link ConfigurableBeanFactory#registerSingleton(String, Object)}
 	 */
 	protected void registerLocalBeans(Flow flow, ConfigurableBeanFactory beanFactory) {
+	}
+
+	// internal parsing logic and hook methods
+
+	private Flow parseFlow(String id, AttributeMap attributes, Element flowElement) {
+		if (!isFlowElement(flowElement)) {
+			throw new IllegalStateException("This is not the '" + FLOW_ELEMENT + "' element");
+		}
+		Flow flow = getFlowArtifactFactory().createFlow(id, parseAttributes(flowElement).union(attributes));
+		initLocalServiceRegistry(flowElement, flow);
+		return flow;
+	}
+
+	private boolean isFlowElement(Element flowElement) {
+		return DomUtils.nodeNameEquals(flowElement, FLOW_ELEMENT);
+	}
+
+	private void initLocalServiceRegistry(Element flowElement, Flow flow) {
+		List importElements = DomUtils.getChildElementsByTagName(flowElement, IMPORT_ELEMENT);
+		Resource[] resources = new Resource[importElements.size()];
+		for (int i = 0; i < importElements.size(); i++) {
+			Element importElement = (Element) importElements.get(i);
+			try {
+				resources[i] = getResource().createRelative(importElement.getAttribute(RESOURCE_ATTRIBUTE));
+			} catch (IOException e) {
+				throw new FlowBuilderException("Could not access flow-relative artifact resource '"
+						+ importElement.getAttribute(RESOURCE_ATTRIBUTE) + "'", e);
+			}
+		}
+		localFlowServiceLocator.push(new LocalFlowServiceRegistry(flow, createLocalBeanFactory(flow, resources)));
 	}
 
 	private void destroyLocalServiceRegistry() {
@@ -1041,6 +1039,16 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 
 	private FlowExecutionExceptionHandler parseCustomExceptionHandler(Element element) {
 		return getLocalFlowServiceLocator().getExceptionHandler(element.getAttribute(BEAN_ATTRIBUTE));
+	}
+
+	/**
+	 * Returns a converter capable of converting a string value to the given type.
+	 * @param targetType the type you wish to convert to (from a string)
+	 * @return the converter
+	 * @throws ConversionException when the converter cannot be found
+	 */
+	private ConversionExecutor fromStringTo(Class targetType) throws ConversionException {
+		return getFlowServiceLocator().getConversionService().getConversionExecutor(String.class, targetType);
 	}
 
 	public String toString() {
