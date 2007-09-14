@@ -27,6 +27,7 @@ import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
@@ -168,6 +169,15 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	 */
 	public Flow(String id) {
 		setId(id);
+	}
+
+	/**
+	 * Construct a new flow definition with the given id and attributes. The id should be unique among all flows.
+	 * @param id the flow identifier
+	 */
+	public Flow(String id, AttributeMap attributes) {
+		setId(id);
+		getAttributeMap().putAll(attributes);
 	}
 
 	// implementing FlowDefinition

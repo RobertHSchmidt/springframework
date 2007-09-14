@@ -200,6 +200,10 @@ public class DefaultFlowServiceLocator implements FlowServiceLocator {
 
 	// overridable by subclasses
 
+	protected FlowDefinitionLocator getSubflowLocator() {
+		return subflowLocator;
+	}
+
 	/**
 	 * Setup a conversion service used by this flow service locator.
 	 * @param userConversionService a user supplied conversion service, optional

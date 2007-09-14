@@ -70,7 +70,7 @@ public class XmlFlowRegistrar extends ExternalizedFlowDefinitionRegistrar {
 
 	protected FlowDefinitionHolder createFlowDefinitionHolder(FlowDefinitionResource resource) {
 		FlowBuilder builder = createFlowBuilder(resource.getLocation());
-		FlowAssembler assembler = new FlowAssembler(resource.getId(), resource.getAttributes(), builder);
+		FlowAssembler assembler = new FlowAssembler(resource.getId(), builder, resource.getAttributes());
 		return new RefreshableFlowDefinitionHolder(assembler);
 	}
 

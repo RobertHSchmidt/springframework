@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.builder;
+package org.springframework.webflow.engine.builder.support;
 
 import junit.framework.TestCase;
 
 import org.springframework.binding.convert.ConversionException;
+import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.WildcardTransitionCriteria;
 import org.springframework.webflow.execution.Event;
@@ -25,9 +26,6 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockFlowServiceLocator;
 import org.springframework.webflow.test.MockRequestContext;
 
-/**
- * Test case for {@link TextToTransitionCriteria}.
- */
 public class TextToTransitionCriteriaTests extends TestCase {
 
 	private MockFlowServiceLocator serviceLocator = new MockFlowServiceLocator();
@@ -108,7 +106,8 @@ public class TextToTransitionCriteriaTests extends TestCase {
 	}
 
 	private RequestContext getRequestContext() {
-		MockRequestContext ctx = new MockRequestContext();
+		Flow flow = new Flow("id");
+		MockRequestContext ctx = new MockRequestContext(flow);
 		ctx.getFlowScope().put("foo", "bar");
 		ctx.setLastEvent(new Event(this, "sample"));
 		return ctx;

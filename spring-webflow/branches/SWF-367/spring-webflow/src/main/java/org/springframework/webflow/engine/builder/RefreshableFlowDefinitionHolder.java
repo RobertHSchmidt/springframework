@@ -85,7 +85,7 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 			// must return early assembly result
 			return getFlowBuilder().getFlow();
 		}
-		if (!isAssembled()) {
+		if (flowDefinition == null) {
 			lastModified = calculateLastModified();
 			assembleFlow();
 		} else {
@@ -101,66 +101,32 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 	// internal helpers
 
 	/**
-	 * Returns the flow builder that actually builds the Flow definition.
-	 */
-	protected FlowBuilder getFlowBuilder() {
-		return assembler.getFlowBuilder();
-	}
-
-	/**
-	 * Reassemble the flow if its underlying resource has changed.
-	 */
-	protected void refreshIfChanged() {
-		if (this.lastModified == -1) {
-			// just ignore, tracking last modified date not supported
-			return;
-		}
-		long calculatedLastModified = calculateLastModified();
-		if (this.lastModified < calculatedLastModified) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Resource modification detected, reloading flow definition with id '"
-						+ assembler.getFlowId() + "'");
-			}
-			assembleFlow();
-			this.lastModified = calculatedLastModified;
-		}
-	}
-
-	/**
 	 * Helper that retrieves the last modified date by querying the backing flow resource.
-	 * @return the last modified date, or -1 if it could not be retrieved
+	 * @return the last modified date, or 0L if it could not be retrieved
 	 */
-	protected long calculateLastModified() {
+	private long calculateLastModified() {
 		if (getFlowBuilder() instanceof ResourceHolder) {
 			Resource resource = ((ResourceHolder) getFlowBuilder()).getResource();
-			if (logger.isDebugEnabled()) {
-				logger.debug("Calculating last modified timestamp for flow definition resource '" + resource + "'");
-			}
 			try {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Calculating last modified timestamp for flow definition resource '" + resource + "'");
+				}
 				return resource.getFile().lastModified();
 			} catch (IOException e) {
 				// ignore, last modified checks not supported
 			}
 		}
-		return -1;
-	}
-
-	/**
-	 * Returns the last modified date of the backed flow definition resource.
-	 * @return the last modified date
-	 */
-	protected long getLastModified() {
-		return lastModified;
+		return 0L;
 	}
 
 	/**
 	 * Assemble the held flow definition, delegating to the configured FlowAssembler (director).
 	 */
-	protected void assembleFlow() throws FlowBuilderException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Assembling flow definition with id '" + assembler.getFlowId() + "'");
-		}
+	private void assembleFlow() throws FlowBuilderException {
 		try {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Assembling flow definition with id '" + assembler.getFlowId() + "'");
+			}
 			assembling = true;
 			flowDefinition = assembler.assembleFlow();
 		} finally {
@@ -169,16 +135,25 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 	}
 
 	/**
-	 * Returns a flag indicating if this holder has performed and completed flow definition assembly.
+	 * Reassemble the flow if its underlying resource has changed.
 	 */
-	protected boolean isAssembled() {
-		return flowDefinition != null;
+	private void refreshIfChanged() {
+		long calculatedLastModified = calculateLastModified();
+		if (calculatedLastModified > lastModified) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Resource modification detected, reloading flow definition with id '"
+						+ assembler.getFlowId() + "'");
+			}
+			assembleFlow();
+			lastModified = calculatedLastModified;
+		}
 	}
 
 	/**
-	 * Returns a flag indicating if this holder is performing assembly.
+	 * Returns the flow builder that actually builds the Flow definition.
 	 */
-	protected boolean isAssembling() {
-		return assembling;
+	private FlowBuilder getFlowBuilder() {
+		return assembler.getFlowBuilder();
 	}
+
 }
