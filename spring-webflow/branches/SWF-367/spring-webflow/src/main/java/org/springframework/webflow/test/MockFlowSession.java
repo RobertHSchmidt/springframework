@@ -23,7 +23,6 @@ import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.execution.FlowSession;
-import org.springframework.webflow.execution.FlowExecutionStatus;
 
 /**
  * Mock implementation of the {@link FlowSession} interface.
@@ -37,8 +36,6 @@ public class MockFlowSession implements FlowSession {
 	private Flow definition;
 
 	private State state;
-
-	private FlowExecutionStatus status = FlowExecutionStatus.CREATED;
 
 	private MutableAttributeMap scope = new LocalAttributeMap();
 
@@ -54,7 +51,7 @@ public class MockFlowSession implements FlowSession {
 	}
 
 	/**
-	 * Creates a new mock session in {@link FlowExecutionStatus#CREATED} state for the specified flow definition.
+	 * Creates a new mock session for the specified flow definition.
 	 * @param flow the flow definition for the session
 	 * @param input initial contents of 'flow scope'
 	 */
@@ -71,10 +68,6 @@ public class MockFlowSession implements FlowSession {
 
 	public StateDefinition getState() {
 		return state;
-	}
-
-	public FlowExecutionStatus getStatus() {
-		return status;
 	}
 
 	public MutableAttributeMap getScope() {
@@ -107,13 +100,6 @@ public class MockFlowSession implements FlowSession {
 	 */
 	public void setState(State state) {
 		this.state = state;
-	}
-
-	/**
-	 * Set the status of this flow session.
-	 */
-	public void setStatus(FlowExecutionStatus status) {
-		this.status = status;
 	}
 
 	/**

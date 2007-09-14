@@ -31,17 +31,17 @@ import org.springframework.webflow.test.MockExternalContext;
 /**
  * Base class for integration tests that verify a flow executes as expected. Flow execution tests captured by subclasses
  * should test that a flow responds to all supported transition criteria correctly, transitioning to the correct states
- * and producing the expected results on the occurence of possible external (user) events.
+ * and producing the expected results on the occurrence of possible external (user) events.
  * <p>
  * More specifically, a typical flow execution test case will test:
  * <ul>
  * <li>That the flow execution starts as expected given a request from an external context containing potential input
  * attributes (see the {@link #startFlow(MutableAttributeMap, ExternalContext)} variants).
  * <li>That given the set of supported state transition criteria a state executes the appropriate transition when a
- * matching event is signaled (with potential input request parameters, see the
- * {@link #signalEvent(String, ExternalContext)} variants). A test case should be coded for each logical event that can
- * occur, where an event drives a possible path through the flow. The goal should be to exercise all possible paths of
- * the flow. Use a test coverage tool like Clover or Emma to assist with measuring your test's effectiveness.
+ * matching event is signaled (with potential input request parameters, see the {@link #resume(ExternalContext)}
+ * variants). A test case should be coded for each logical event that can occur, where an event drives a possible path
+ * through the flow. The goal should be to exercise all possible paths of the flow. Use a test coverage tool like Clover
+ * or Emma to assist with measuring your test's effectiveness.
  * <li>That given a transition that leads to an interactive state type (a view state or an end state) that the view
  * selection returned to the client matches what was expected and the current state of the flow matches what is
  * expected.
@@ -130,8 +130,6 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * <li>an empty {@link ExternalContext} with no environmental request parameters set
 	 * </ul>
 	 * @param input the flow execution input attributes eligible for mapping by the root flow
-	 * @return the view selection made as a result of starting the flow (returned when the first interactive state (a
-	 * view state or end state) is entered)
 	 * @throws FlowExecutionException if an exception was thrown while starting the flow execution
 	 */
 	protected void startFlow(MutableAttributeMap input) throws FlowExecutionException {

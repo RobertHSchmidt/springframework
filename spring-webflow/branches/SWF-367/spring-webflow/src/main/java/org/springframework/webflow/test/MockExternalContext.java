@@ -195,4 +195,16 @@ public class MockExternalContext implements ExternalContext {
 	public void putRequestParameter(String parameterName, String[] parameterValues) {
 		getMockRequestParameterMap().put(parameterName, parameterValues);
 	}
+
+	public Object getContext() {
+		return null;
+	}
+
+	public Object getRequest() {
+		return null;
+	}
+
+	public Object getResponse() {
+		return null;
+	}
 }

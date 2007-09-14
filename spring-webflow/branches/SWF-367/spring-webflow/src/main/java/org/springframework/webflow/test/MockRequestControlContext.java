@@ -24,7 +24,6 @@ import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowSession;
-import org.springframework.webflow.execution.FlowExecutionStatus;
 
 /**
  * Mock implementation of the {@link RequestControlContext} interface to facilitate standalone Flow and State unit
@@ -61,11 +60,7 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 	// implementing RequestControlContext
 
 	public void setCurrentState(State state) {
-		State previousState = (State) getCurrentState();
 		getMockFlowExecutionContext().getMockActiveSession().setState(state);
-		if (previousState == null) {
-			getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowExecutionStatus.ACTIVE);
-		}
 	}
 
 	public void start(Flow flow, MutableAttributeMap input) throws IllegalStateException {
@@ -74,7 +69,6 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 			session.setParent(getFlowExecutionContext().getActiveSession());
 		}
 		getMockFlowExecutionContext().setActiveSession(session);
-		getMockFlowExecutionContext().getMockActiveSession().setStatus(FlowExecutionStatus.STARTING);
 		flow.start(this, input);
 	}
 
@@ -86,7 +80,6 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 	public FlowSession endActiveFlowSession(MutableAttributeMap output) throws IllegalStateException {
 		MockFlowSession endingSession = getMockFlowExecutionContext().getMockActiveSession();
 		endingSession.getDefinitionInternal().end(this, output);
-		endingSession.setStatus(FlowExecutionStatus.ENDED);
 		getMockFlowExecutionContext().setActiveSession(endingSession.getParent());
 		return endingSession;
 	}
@@ -102,23 +95,24 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 		return alwaysRedirectOnPause;
 	}
 
-	public void sendExternalRedirect(String resourceUri) {
-
+	public void sendFlowExecutionRedirect() {
+		this.flowExecutionRedirectSent = true;
 	}
 
 	public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input) {
 
 	}
 
-	public void sendFlowExecutionRedirect() {
-		this.flowExecutionRedirectSent = true;
+	public void sendExternalRedirect(String resourceUri) {
+
+	}
+
+	public boolean getFlowExecutionRedirectSent() {
+		return this.flowExecutionRedirectSent;
 	}
 
 	public void setAlwaysRedirectOnPause(boolean alwaysRedirectOnPause) {
 		this.alwaysRedirectOnPause = alwaysRedirectOnPause;
 	}
 
-	public boolean getFlowExecutionRedirectSent() {
-		return this.flowExecutionRedirectSent;
-	}
 }
