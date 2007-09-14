@@ -74,7 +74,6 @@ import org.springframework.webflow.engine.support.SimpleFlowVariable;
 import org.springframework.webflow.engine.support.TransitionCriteriaChain;
 import org.springframework.webflow.engine.support.TransitionExecutingFlowExecutionExceptionHandler;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.ResponseRenderer;
 import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.execution.ViewFactory;
 import org.springframework.webflow.util.ResourceHolder;
@@ -103,8 +102,8 @@ import org.xml.sax.SAXException;
  * <p>
  * This builder will setup a flow-local bean factory for the flow being constructed. That flow-local bean factory will
  * be populated with XML bean definitions contained in files referenced using the "import" element. The flow-local bean
- * factory will use the bean factory defing this flow builder as a parent. As such, the flow can access artifacts in
- * either its flow-local bean factory or in the parent bean factory hierarchy, e.g. the bean factory of the dispatcher.
+ * factory will use the bean factory of this flow builder as a parent. As such, the flow can access artifacts in either
+ * its flow-local bean factory or in the parent bean factory hierarchy, e.g. the bean factory of the dispatcher.
  * 
  * @author Erwin Vervaet
  * @author Keith Donald
@@ -154,8 +153,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 	private static final String DEFAULT_VALUE = "default";
 
 	private static final String VIEW_STATE_ELEMENT = "view-state";
-
-	private static final String VIEW_ATTRIBUTE = "view";
 
 	private static final String DECISION_STATE_ELEMENT = "decision-state";
 
@@ -649,7 +646,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private void parseAndAddEndState(Element element, Flow flow) {
 		getFlowArtifactFactory().createEndState(parseId(element), flow, parseEntryActions(element),
-				parseFinalResponseRenderer(element), parseOutputMapper(element), parseExceptionHandlers(element),
+				parseFinalResponseAction(element), parseOutputMapper(element), parseExceptionHandlers(element),
 				parseAttributes(element));
 	}
 
@@ -713,7 +710,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 		return null;
 	}
 
-	private ResponseRenderer parseFinalResponseRenderer(Element element) {
+	private Action parseFinalResponseAction(Element element) {
 		// TODO
 		return null;
 	}
@@ -730,7 +727,6 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 			if (!(childNode instanceof Element)) {
 				continue;
 			}
-
 			if (nodeNameEquals(childNode, ACTION_ELEMENT)) {
 				// parse standard action
 				actions.add(parseAnnotatedAction((Element) childNode));
