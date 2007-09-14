@@ -70,7 +70,7 @@ public class AbstractFlowBuilderTests extends TestCase {
 		master.setFlowServiceLocator(new BaseFlowServiceLocator() {
 			public Flow getSubflow(String id) throws FlowArtifactLookupException {
 				if (id.equals(PERSON_DETAILS)) {
-					BaseFlowBuilder builder = new TestDetailFlowBuilderLookupById();
+					AbstractFlowBuilder builder = new TestDetailFlowBuilderLookupById();
 					builder.setFlowServiceLocator(this);
 					FlowAssembler assembler = new FlowAssembler(PERSON_DETAILS, builder);
 					return assembler.assembleFlow();

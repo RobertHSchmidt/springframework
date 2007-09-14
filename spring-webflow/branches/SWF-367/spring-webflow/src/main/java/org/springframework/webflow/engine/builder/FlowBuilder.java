@@ -25,7 +25,7 @@ import org.springframework.webflow.engine.Flow;
  * <li> Call {@link #buildVariables()} to create any variables of the flow and add them to the flow definition.
  * <li> Call {@link #buildInputMapper()} to create and set the input mapper for the flow.
  * <li> Call {@link #buildStartActions()} to create and add any start actions to the flow.
- * <li> Call {@link #buildInlineFlows()} to create any inline flows encapsulated by the flow and add them to the flow
+ * <li> Call {@link #buildInlineFlows()} to create any in-line flows encapsulated by the flow and add them to the flow
  * definition.
  * <li> Call {@link #buildStates()} to create the states of the flow and add them to the flow definition.
  * <li> Call {@link #buildGlobalTransitions()} to create the any transitions shared by all states of the flow and add
@@ -43,10 +43,9 @@ import org.springframework.webflow.engine.Flow;
  * <code>OrderFlowBuilder</code> built in Java code, or a generic flow builder strategy, like the
  * <code>XmlFlowBuilder</code>, for building flows from an XML-definition.
  * <p>
- * Flow builders are used by the {@link org.springframework.webflow.engine.builder.FlowAssembler}, which acts as an
- * assembler (director). Flow Builders may be reused, however, exercise caution when doing this as these objects are not
- * thread safe. Also, for each use be sure to call init, followed by the build* methods, getFlow, and dispose completely
- * in that order.
+ * Flow builders are used by the {@link FlowAssembler}, which acts as an assembler (director). Flow Builders may be
+ * reused, however, exercise caution when doing this as these objects are not thread safe. Also, for each use be sure to
+ * call init, followed by the build* methods, getFlow, and dispose completely in that order.
  * <p>
  * This is an example of the classic GoF builder pattern.
  * 
