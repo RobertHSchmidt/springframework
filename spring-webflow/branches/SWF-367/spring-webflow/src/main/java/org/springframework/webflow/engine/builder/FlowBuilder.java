@@ -51,9 +51,7 @@ import org.springframework.webflow.engine.Flow;
  * This is an example of the classic GoF builder pattern.
  * 
  * @see Flow
- * @see org.springframework.webflow.engine.builder.FlowAssembler
- * @see org.springframework.webflow.engine.builder.AbstractFlowBuilder
- * @see org.springframework.webflow.engine.builder.xml.XmlFlowBuilder
+ * @see FlowAssembler
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

@@ -28,7 +28,6 @@ import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.TransitionCriteria;
-import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.engine.builder.FlowArtifactFactory;
 import org.springframework.webflow.engine.builder.FlowArtifactLookupException;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
@@ -148,14 +147,6 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 			return (TargetStateResolver) getBean(id, TargetStateResolver.class);
 		} else {
 			return parent.getTargetStateResolver(id);
-		}
-	}
-
-	public ViewSelector getViewSelector(String id) throws FlowArtifactLookupException {
-		if (containsBean(id)) {
-			return (ViewSelector) getBean(id, ViewSelector.class);
-		} else {
-			return parent.getViewSelector(id);
 		}
 	}
 
