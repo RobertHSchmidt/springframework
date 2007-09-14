@@ -47,7 +47,7 @@ import org.springframework.webflow.execution.Action;
  * a {@link ConversionService} and {@link ExpressionParser}.
  * 
  * @see org.springframework.webflow.engine.builder.FlowBuilder
- * @see org.springframework.webflow.engine.builder.BaseFlowBuilder
+ * @see org.springframework.webflow.engine.builder.AbstractFlowBuilder
  * @see org.springframework.webflow.engine.builder.FlowAssembler
  * 
  * @author Keith Donald

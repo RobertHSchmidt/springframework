@@ -63,7 +63,7 @@ import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
-import org.springframework.webflow.engine.builder.BaseFlowBuilder;
+import org.springframework.webflow.engine.builder.AbstractFlowBuilder;
 import org.springframework.webflow.engine.builder.FlowArtifactFactory;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
 import org.springframework.webflow.engine.builder.FlowServiceLocator;
@@ -108,7 +108,7 @@ import org.xml.sax.SAXException;
  * @author Erwin Vervaet
  * @author Keith Donald
  */
-public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
+public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolder {
 
 	// recognized XML elements and attributes
 

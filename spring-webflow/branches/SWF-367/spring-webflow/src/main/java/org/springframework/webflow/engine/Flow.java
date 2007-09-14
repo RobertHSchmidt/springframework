@@ -76,15 +76,15 @@ import org.springframework.webflow.execution.RequestContext;
  * the ability to design reusable, high-level controller modules that may be executed in <i>any</i> environment.
  * <p>
  * Note: flows are singleton definition objects so they should be thread-safe. You can think a flow definition as
- * analagous somewhat to a Java class, defining all the behavior of an application module. The core behaviors
- * {@link #start(RequestControlContext, MutableAttributeMap) start},
- * {@link #handleEvent(RequestControlContext) on event}, and
- * {@link #end(RequestControlContext, MutableAttributeMap) end} each accept a {@link RequestContext request context}
- * that allows for this flow to access execution state in a thread safe manner. A flow execution is what models a
- * running instance of this flow definition, somewhat analogous to a java object that is an instance of a class.
+ * analogous to a Java class, defining all the behavior of an application module. The core behaviors
+ * {@link #start(RequestControlContext, MutableAttributeMap) start}, {@link #resume(RequestControlContext)},
+ * {@link #handleEvent(RequestControlContext) on event}, {@link #end(RequestControlContext, MutableAttributeMap) end},
+ * and {@link #handleException(FlowExecutionException, RequestControlContext)}. Each method accepts a
+ * {@link RequestContext request context} that allows for this flow to access execution state in a thread safe manner. A
+ * flow execution is what models a running instance of this flow definition, somewhat analogous to a java object that is
+ * an instance of a class.
  * 
  * @see org.springframework.webflow.engine.State
- * @see org.springframework.webflow.engine.TransitionableState
  * @see org.springframework.webflow.engine.ActionState
  * @see org.springframework.webflow.engine.ViewState
  * @see org.springframework.webflow.engine.SubflowState

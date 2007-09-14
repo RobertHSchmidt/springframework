@@ -35,20 +35,6 @@ import org.springframework.webflow.engine.builder.RefreshableFlowDefinitionHolde
  * will be assigned a registry identifier equal to the filename of the underlying definition resource, minus the
  * filename extension. For example, a XML-based flow definition defined in the file "flow1.xml" will be identified as
  * "flow1" when registered in a registry.
- * <p>
- * Programmatic usage example:
- * 
- * <pre class="code">
- *     BeanFactory beanFactory = ...
- *     FlowDefinitionRegistry registry = new FlowDefinitionRegistryImpl();
- *     FlowServiceLocator flowServiceLocator =
- *         new DefaultFlowServiceLocator(registry, beanFactory);
- *     XmlFlowRegistrar registrar = new XmlFlowRegistrar(flowServiceLocator);
- *     File parent = new File(&quot;src/webapp/WEB-INF&quot;);
- *     registrar.add(new FileSystemResource(new File(parent, &quot;flow1.xml&quot;));
- *     registrar.add(new FileSystemResource(new File(parent, &quot;flow2.xml&quot;));
- *     registrar.registerFlowDefinitions(registry);
- * </pre>
  * 
  * @author Keith Donald
  * @author Ben Hale
