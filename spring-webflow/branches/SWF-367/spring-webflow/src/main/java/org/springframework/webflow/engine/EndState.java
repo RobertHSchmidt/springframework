@@ -20,11 +20,11 @@ import org.springframework.binding.mapping.MappingContext;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.ResponseRenderer;
 
 /**
  * A state that ends a flow when entered. This state ends the active flow session of an ongoing flow execution.
@@ -49,7 +49,7 @@ public class EndState extends State {
 	/**
 	 * The renderer that will render the final response when a flow execution terminates.
 	 */
-	private ResponseRenderer finalResponseRenderer = new NullFinalResponse();
+	private Action finalResponseAction = new NullFinalResponseAction();
 
 	/**
 	 * The attribute mapper for mapping output attributes exposed by this end state when it is entered.
@@ -62,7 +62,7 @@ public class EndState extends State {
 	 * @param id the state identifier (must be unique to the flow)
 	 * @throws IllegalArgumentException when this state cannot be added to given flow, e.g. because the id is not unique
 	 * @see State#State(Flow, String)
-	 * @see #setFinalResponseRenderer(ResponseRenderer)
+	 * @see #setFinalResponseAction(Action)
 	 * @see #setOutputMapper(AttributeMapper)
 	 */
 	public EndState(Flow flow, String id) throws IllegalArgumentException {
@@ -72,9 +72,9 @@ public class EndState extends State {
 	/**
 	 * Sets the renderer that will render the final flow execution response.
 	 */
-	public void setFinalResponseRenderer(ResponseRenderer responseRenderer) {
-		Assert.notNull(responseRenderer, "The final response renderer is required");
-		this.finalResponseRenderer = responseRenderer;
+	public void setFinalResponseAction(Action finalResponseAction) {
+		Assert.notNull(finalResponseAction, "The final response action is required");
+		this.finalResponseAction = finalResponseAction;
 	}
 
 	/**
@@ -95,11 +95,11 @@ public class EndState extends State {
 	 * execution
 	 * @throws FlowExecutionException if an exception occurs in this state
 	 */
-	protected void doEnter(RequestControlContext context) throws FlowExecutionException {
+	protected void doEnter(final RequestControlContext context) throws FlowExecutionException {
 		FlowSession activeSession = context.getFlowExecutionContext().getActiveSession();
 		if (activeSession.isRoot()) {
-			// entire flow execution is ending; render the final response
-			finalResponseRenderer.render(context);
+			// entire flow execution is ending; issue the final response
+			ActionExecutor.execute(finalResponseAction, context);
 			context.endActiveFlowSession(createSessionOutput(context));
 		} else {
 			// there is a parent flow that will resume (this flow is a subflow)
@@ -120,15 +120,16 @@ public class EndState extends State {
 	}
 
 	protected void appendToString(ToStringCreator creator) {
-		creator.append("finalResponseRenderer", finalResponseRenderer).append("outputMapper", outputMapper);
+		creator.append("finalResponseAction", finalResponseAction).append("outputMapper", outputMapper);
 	}
 
 	/**
 	 * Renders no response. The default implementation.
 	 */
-	private class NullFinalResponse implements ResponseRenderer {
-		public void render(RequestContext context) {
-			logger.debug("Not rendering a final response");
+	private class NullFinalResponseAction implements Action {
+		public Event execute(RequestContext context) {
+			logger.debug("Not issuing a final response");
+			return new Event(this, "success");
 		}
 
 		public String toString() {

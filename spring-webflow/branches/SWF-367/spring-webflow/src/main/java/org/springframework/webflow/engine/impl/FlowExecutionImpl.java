@@ -41,7 +41,6 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.FlowExecutionListener;
-import org.springframework.webflow.execution.FlowExecutionRequestRedirector;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
@@ -124,11 +123,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * Set so the transient {@link #flow} field can be restored by the {@link FlowExecutionImplStateRestorer}.
 	 */
 	private String flowId;
-
-	/**
-	 * A redirector for sending redirects to the calling agent asking them to perform another action.
-	 */
-	private transient FlowExecutionRequestRedirector redirector;
 
 	/**
 	 * Default constructor required for externalizable serialization. Should NOT be called programmatically.
@@ -314,23 +308,12 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		return session;
 	}
 
-	void assignKey() {
+	FlowExecutionKey assignKey() {
 		this.key = keyFactory.getKey(this);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Assigned key " + this.key);
 		}
-	}
-
-	void sendFlowExecutionRedirect() {
-		redirector.sendFlowExecutionRedirect(key);
-	}
-
-	void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input) {
-		redirector.sendFlowDefinitionRedirect(flowId, input);
-	}
-
-	void sendExternalRedirect(String resourceUri) {
-		redirector.sendExternalRedirect(resourceUri);
+		return this.key;
 	}
 
 	// package private setters for restoring transient state used by FlowExecutionImplServicesConfigurer
@@ -349,10 +332,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	void setKeyFactory(FlowExecutionKeyFactory keyFactory) {
 		this.keyFactory = keyFactory;
-	}
-
-	void setRequestRedirector(FlowExecutionRequestRedirector requestRedirector) {
-		this.redirector = requestRedirector;
 	}
 
 	// Used by FlowExecutionImplStateRestorer

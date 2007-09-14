@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.core.collection.LocalAttributeMap;
-import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
@@ -14,7 +13,6 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.FlowExecutionListener;
-import org.springframework.webflow.execution.FlowExecutionRequestRedirector;
 import org.springframework.webflow.execution.MockFlowExecutionListener;
 import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.factory.FlowExecutionListenerLoader;
@@ -32,22 +30,6 @@ public class FlowExecutionStateRestorerImplTests extends TestCase {
 			return newKey;
 		}
 	};
-	private boolean redirectorCalled;
-	private FlowExecutionRequestRedirector executionRequestRedirector = new FlowExecutionRequestRedirector() {
-		public void sendExternalRedirect(String resourceUri) {
-			// TODO Auto-generated method stub
-			throw new UnsupportedOperationException("Auto-generated method stub");
-		}
-
-		public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input) {
-			// TODO Auto-generated method stub
-			throw new UnsupportedOperationException("Auto-generated method stub");
-		}
-
-		public void sendFlowExecutionRedirect(FlowExecutionKey key) {
-			redirectorCalled = true;
-		}
-	};
 
 	protected void setUp() {
 		definitionLocator = new SimpleFlowDefinitionLocator();
@@ -55,7 +37,6 @@ public class FlowExecutionStateRestorerImplTests extends TestCase {
 		stateRestorer.setExecutionAttributes(executionAttributes);
 		stateRestorer.setExecutionListenerLoader(executionListenerLoader);
 		stateRestorer.setExecutionKeyFactory(executionKeyFactory);
-		stateRestorer.setExecutionRequestRedirector(executionRequestRedirector);
 	}
 
 	public void testRestoreStateNoSessions() {
@@ -71,8 +52,6 @@ public class FlowExecutionStateRestorerImplTests extends TestCase {
 		assertEquals(1, execution.getListeners().length);
 		execution.assignKey();
 		assertEquals(newKey, execution.getKey());
-		execution.sendFlowExecutionRedirect();
-		assertTrue(redirectorCalled);
 	}
 
 	public void testRestoreStateFlowDefinitionIdNotSet() {
