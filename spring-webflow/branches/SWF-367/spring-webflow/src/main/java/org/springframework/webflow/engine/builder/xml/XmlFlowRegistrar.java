@@ -28,11 +28,6 @@ import org.springframework.webflow.engine.builder.support.FlowServiceLocator;
 /**
  * A flow definition registrar that populates a flow definition registry with flow definitions defined in externalized
  * XML resources.
- * <p>
- * By default, a flow definition added to this registrar with the {@link #addLocation(Resource, String)} method will be
- * will be assigned a registry identifier equal to the filename of the underlying definition resource, minus the
- * filename extension. For example, a XML-based flow definition defined in the file "flow1.xml" will be identified as
- * "flow1" when registered in a registry.
  * 
  * @author Keith Donald
  */

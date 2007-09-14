@@ -34,7 +34,7 @@ public class ActionStateTests extends TestCase {
 	private MockRequestControlContext context;
 
 	public void setUp() {
-		flow = new Flow("myFlow");
+		flow = Flow.create("myFlow");
 		state = new ActionState(flow, "actionState");
 		new EndState(flow, "finish");
 		context = new MockRequestControlContext(flow);

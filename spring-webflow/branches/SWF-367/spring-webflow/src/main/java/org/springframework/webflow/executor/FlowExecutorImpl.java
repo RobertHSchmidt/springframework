@@ -25,6 +25,7 @@ import org.springframework.webflow.core.FlowException;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionFactory;
@@ -148,7 +149,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 
 	/**
 	 * Set the service responsible for mapping attributes of an {@link ExternalContext} to a new {@link FlowExecution}
-	 * during the {@link #launch(String, ExternalContext) launch flow} operation.
+	 * during the {@link #launch(FlowId, ExternalContext) launch flow} operation.
 	 * <p>
 	 * The default implementation simply exposes all request parameters as flow execution input attributes. May be null.
 	 * @see RequestParameterInputMapper
@@ -183,7 +184,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 
 	public void execute(ExternalContext context) throws FlowException {
 		if (argumentExtractor.isFlowExecutionKeyPresent(context)) {
-			resume(argumentExtractor.extractFlowExecutionKey(context), context);
+			resume(argumentExtractor.extractFlowExecutionKeyString(context), context);
 		} else if (argumentExtractor.isFlowIdPresent(context)) {
 			launch(argumentExtractor.extractFlowId(context), context);
 		} else {
@@ -191,9 +192,9 @@ public class FlowExecutorImpl implements FlowExecutor {
 		}
 	}
 
-	public void launch(String flowDefinitionId, ExternalContext context) throws FlowException {
+	public void launch(FlowId flowDefinitionId, ExternalContext context) throws FlowException {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Launching execution of flow '" + flowDefinitionId + "'");
+			logger.debug("Launching new execution of flow '" + flowDefinitionId + "'");
 		}
 		// expose external context as a thread-bound service
 		ExternalContextHolder.setExternalContext(context);
@@ -214,14 +215,11 @@ public class FlowExecutorImpl implements FlowExecutor {
 		}
 	}
 
-	public void resume(String flowExecutionKey, ExternalContext context) throws FlowException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Resuming flow execution with key '" + flowExecutionKey + "' in context " + context);
-		}
+	public void resume(String flowExecutionKeyString, ExternalContext context) throws FlowException {
 		// expose external context as a thread-bound service
 		ExternalContextHolder.setExternalContext(context);
 		try {
-			FlowExecutionKey key = executionRepository.parseFlowExecutionKey(flowExecutionKey);
+			FlowExecutionKey key = executionRepository.parseFlowExecutionKey(flowExecutionKeyString);
 			FlowExecutionLock lock = executionRepository.getLock(key);
 			// make sure we're the only one manipulating the flow execution
 			lock.lock();

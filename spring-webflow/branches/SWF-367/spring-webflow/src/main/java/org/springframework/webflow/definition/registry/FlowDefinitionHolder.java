@@ -16,6 +16,7 @@
 package org.springframework.webflow.definition.registry;
 
 import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.FlowId;
 
 /**
  * A holder holding a reference to a Flow definition. Provides a layer of indirection, enabling things like
@@ -32,7 +33,7 @@ public interface FlowDefinitionHolder {
 	 * callers may call to obtain the id of the flow without triggering full flow definition assembly (which may be an
 	 * expensive operation).
 	 */
-	public String getFlowDefinitionId();
+	public FlowId getFlowDefinitionId();
 
 	/**
 	 * Returns the flow definition held by this holder. Calling this method the first time may trigger flow assembly

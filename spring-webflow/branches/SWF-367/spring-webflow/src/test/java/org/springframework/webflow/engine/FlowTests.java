@@ -26,6 +26,7 @@ import org.springframework.webflow.TestException;
 import org.springframework.webflow.action.TestMultiAction;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.engine.support.BeanFactoryFlowVariable;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
@@ -47,7 +48,7 @@ public class FlowTests extends TestCase {
 	private Flow flow = createSimpleFlow();
 
 	private Flow createSimpleFlow() {
-		flow = new Flow("myFlow");
+		flow = Flow.create("myFlow");
 		ViewState state1 = new ViewState(flow, "myState1", new StubViewFactory());
 		state1.getTransitionSet().add(new Transition(on("submit"), to("myState2")));
 		new EndState(flow, "myState2");
@@ -56,7 +57,7 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testAddStates() {
-		Flow flow = new Flow("myFlow");
+		Flow flow = Flow.create("myFlow");
 		new EndState(flow, "myState1");
 		new EndState(flow, "myState2");
 		assertEquals("Wrong start state:", "myState1", flow.getStartState().getId());
@@ -64,13 +65,13 @@ public class FlowTests extends TestCase {
 		assertTrue(flow.containsState("myState1"));
 		assertTrue(flow.containsState("myState2"));
 		State state = flow.getStateInstance("myState1");
-		assertEquals("Wrong flow:", "myFlow", state.getFlow().getId());
+		assertEquals("Wrong flow:", flow.getId(), state.getFlow().getId());
 		assertEquals("Wrong state:", "myState1", flow.getState("myState1").getId());
 		assertEquals("Wrong state:", "myState2", flow.getState("myState2").getId());
 	}
 
 	public void testAddDuplicateState() {
-		Flow flow = new Flow("myFlow");
+		Flow flow = Flow.create("myFlow");
 		new EndState(flow, "myState1");
 		try {
 			new EndState(flow, "myState1");
@@ -81,7 +82,7 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testAddSameStateTwice() {
-		Flow flow = new Flow("myFlow");
+		Flow flow = Flow.create("myFlow");
 		EndState state = new EndState(flow, "myState1");
 		try {
 			flow.add(state);
@@ -93,9 +94,9 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testAddStateAlreadyInOtherFlow() {
-		Flow otherFlow = new Flow("myOtherFlow");
+		Flow otherFlow = Flow.create("myOtherFlow");
 		State state = new EndState(otherFlow, "myState1");
-		Flow flow = new Flow("myFlow");
+		Flow flow = Flow.create("myFlow");
 		try {
 			flow.add(state);
 			fail("Added state part of another flow");
@@ -105,7 +106,7 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testGetStateNoStartState() {
-		Flow flow = new Flow("myFlow");
+		Flow flow = Flow.create("myFlow");
 		try {
 			flow.getStartState();
 			fail("Retrieved start state when no such state");
@@ -151,12 +152,10 @@ public class FlowTests extends TestCase {
 	}
 
 	public void testAddInlineFlow() {
-		Flow inline = new Flow("inline");
+		Flow inline = Flow.create("inline");
 		flow.addInlineFlow(inline);
-		assertSame(inline, flow.getInlineFlow("inline"));
+		assertSame(inline, flow.getInlineFlow(FlowId.valueOf("inline")));
 		assertEquals(1, flow.getInlineFlowCount());
-		String[] inlined = flow.getInlineFlowIds();
-		assertEquals(1, inlined.length);
 		assertSame(flow.getInlineFlows()[0], inline);
 	}
 
@@ -175,7 +174,7 @@ public class FlowTests extends TestCase {
 	public void testStartWithoutStartState() {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		try {
-			Flow empty = new Flow("empty");
+			Flow empty = Flow.create("empty");
 			empty.start(context, null);
 			fail("should have failed");
 		} catch (IllegalStateException e) {

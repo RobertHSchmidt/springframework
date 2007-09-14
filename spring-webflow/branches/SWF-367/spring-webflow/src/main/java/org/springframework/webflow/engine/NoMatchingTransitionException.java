@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.engine;
 
+import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionException;
 
@@ -40,7 +41,7 @@ public class NoMatchingTransitionException extends FlowExecutionException {
 	 * @param event the event that occured that could not be matched to a transition
 	 * @param message the message
 	 */
-	public NoMatchingTransitionException(String flowId, String stateId, Event event, String message) {
+	public NoMatchingTransitionException(FlowId flowId, String stateId, Event event, String message) {
 		super(flowId, stateId, message);
 		this.event = event;
 	}
@@ -53,7 +54,7 @@ public class NoMatchingTransitionException extends FlowExecutionException {
 	 * @param message the message
 	 * @param cause the underlying cause
 	 */
-	public NoMatchingTransitionException(String flowId, String stateId, Event event, String message, Throwable cause) {
+	public NoMatchingTransitionException(FlowId flowId, String stateId, Event event, String message, Throwable cause) {
 		super(flowId, stateId, message, cause);
 		this.event = event;
 	}

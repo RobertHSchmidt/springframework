@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.CollectionUtils;
+import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.engine.Flow;
 
 /**
@@ -46,12 +47,7 @@ public class FlowAssembler {
 	/**
 	 * The identifier to assign to the flow.
 	 */
-	private String flowId;
-
-	/**
-	 * Attributes that can be used to affect flow construction.
-	 */
-	private AttributeMap flowAttributes;
+	private FlowId flowId;
 
 	/**
 	 * The flow builder strategy used to construct the flow from its component parts.
@@ -59,13 +55,9 @@ public class FlowAssembler {
 	private FlowBuilder flowBuilder;
 
 	/**
-	 * Create a new flow assembler that will direct Flow assembly using the specified builder strategy.
-	 * @param flowId the flow id to assign
-	 * @param flowBuilder the builder the factory will use to build flows
+	 * Attributes that can be used to affect flow construction.
 	 */
-	public FlowAssembler(String flowId, FlowBuilder flowBuilder) {
-		this(flowId, flowBuilder, null);
-	}
+	private AttributeMap flowAttributes;
 
 	/**
 	 * Create a new flow assembler that will direct Flow assembly using the specified builder strategy.
@@ -73,26 +65,19 @@ public class FlowAssembler {
 	 * @param flowBuilder the builder the factory will use to build flows
 	 * @param flowAttributes externally assigned flow attributes that can affect flow construction
 	 */
-	public FlowAssembler(String flowId, FlowBuilder flowBuilder, AttributeMap flowAttributes) {
-		Assert.hasText(flowId, "The flow id is required");
+	public FlowAssembler(FlowId flowId, FlowBuilder flowBuilder, AttributeMap flowAttributes) {
+		Assert.notNull(flowId, "The flow id is required");
 		Assert.notNull(flowBuilder, "The flow builder is required");
 		this.flowId = flowId;
-		this.flowAttributes = (flowAttributes != null ? flowAttributes : CollectionUtils.EMPTY_ATTRIBUTE_MAP);
 		this.flowBuilder = flowBuilder;
+		this.flowAttributes = (flowAttributes != null ? flowAttributes : CollectionUtils.EMPTY_ATTRIBUTE_MAP);
 	}
 
 	/**
 	 * Returns the identifier to assign to the flow.
 	 */
-	public String getFlowId() {
+	public FlowId getFlowId() {
 		return flowId;
-	}
-
-	/**
-	 * Returns externally assigned attributes that can be used to affect flow construction.
-	 */
-	public AttributeMap getFlowAttributes() {
-		return flowAttributes;
 	}
 
 	/**
@@ -103,11 +88,18 @@ public class FlowAssembler {
 	}
 
 	/**
+	 * Returns externally assigned attributes that can be used to affect flow construction.
+	 */
+	public AttributeMap getFlowAttributes() {
+		return flowAttributes;
+	}
+
+	/**
 	 * Assembles the flow, directing the construction process by delegating to the configured FlowBuilder. Every call to
 	 * this method will assemble the Flow instance.
 	 * <p>
 	 * This will drive the flow construction process as described in the {@link FlowBuilder} JavaDoc, starting with
-	 * builder initialization using {@link FlowBuilder#init(String, AttributeMap)} and finishing by cleaning up the
+	 * builder initialization using {@link FlowBuilder#init(FlowId, AttributeMap)} and finishing by cleaning up the
 	 * builder with a call to {@link FlowBuilder#dispose()}.
 	 * @return the constructed flow
 	 * @throws FlowBuilderException when flow assembly fails

@@ -17,11 +17,13 @@ package org.springframework.webflow.definition.registry;
 
 import java.io.Serializable;
 
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.CollectionUtils;
+import org.springframework.webflow.definition.FlowId;
 
 /**
  * A pointer to an externalized flow definition resource. Adds assigned identification information about the resource
@@ -36,7 +38,7 @@ public class FlowDefinitionResource implements Serializable {
 	/**
 	 * The identifier to assign to the flow definition.
 	 */
-	private String id;
+	private FlowId id;
 
 	/**
 	 * Attributes that can be used to affect flow construction.
@@ -49,47 +51,19 @@ public class FlowDefinitionResource implements Serializable {
 	private Resource location;
 
 	/**
-	 * Creates a new externalized flow definition resource. The flow id assigned will be the same name as the
-	 * externalized resource's filename, excluding the extension.
-	 * @param location the flow resource location
-	 */
-	public FlowDefinitionResource(Resource location) {
-		init(conventionalFlowId(location), location, null);
-	}
-
-	/**
-	 * Creates a new externalized flow definition resource. The flow id assigned will be the same name as the
-	 * externalized resource's filename, excluding the extension.
-	 * @param location the flow resource location
-	 * @param attributes flow definition attributes to be assigned
-	 */
-	public FlowDefinitionResource(Resource location, AttributeMap attributes) {
-		init(conventionalFlowId(location), location, attributes);
-	}
-
-	/**
-	 * Creates a new externalized flow definition.
-	 * @param id the flow id to be assigned
-	 * @param location the flow resource location
-	 */
-	public FlowDefinitionResource(String id, Resource location) {
-		init(id, location, null);
-	}
-
-	/**
 	 * Creates a new externalized flow definition.
 	 * @param id the flow id to be assigned
 	 * @param location the flow resource location
 	 * @param attributes flow definition attributes to be assigned
 	 */
-	public FlowDefinitionResource(String id, Resource location, AttributeMap attributes) {
+	public FlowDefinitionResource(FlowId id, Resource location, AttributeMap attributes) {
 		init(id, location, attributes);
 	}
 
 	/**
 	 * Returns the identifier to assign to the flow definition.
 	 */
-	public String getId() {
+	public FlowId getId() {
 		return id;
 	}
 
@@ -124,8 +98,8 @@ public class FlowDefinitionResource implements Serializable {
 	/**
 	 * Initialize this object.
 	 */
-	private void init(String id, Resource location, AttributeMap attributes) {
-		Assert.hasText(id, "The id of the externalized flow definition is required");
+	private void init(FlowId id, Resource location, AttributeMap attributes) {
+		Assert.notNull(id, "The id of the externalized flow definition is required");
 		Assert.notNull(location, "The location of the externalized flow definition is required");
 		this.id = id;
 		this.location = location;
@@ -136,22 +110,25 @@ public class FlowDefinitionResource implements Serializable {
 		}
 	}
 
+	public static FlowDefinitionResource create(String string) {
+		DefaultResourceLoader loader = new DefaultResourceLoader();
+		Resource resource = loader.getResource(string);
+		return new FlowDefinitionResource(conventionalFlowId(resource), resource, null);
+	}
+
 	// public utilities
 
 	/**
 	 * Returns the flow id assigned to the flow definition contained in given resource. By convention this will be the
 	 * filename of the resource, excluding extension.
-	 * @see FlowDefinitionResource#FlowDefinitionResource(Resource)
-	 * @see FlowDefinitionResource#FlowDefinitionResource(Resource, AttributeMap)
-	 * @since 1.0.1
 	 */
-	public static String conventionalFlowId(Resource location) {
+	private static FlowId conventionalFlowId(Resource location) {
 		String fileName = location.getFilename();
 		int extensionIndex = fileName.lastIndexOf('.');
 		if (extensionIndex != -1) {
-			return fileName.substring(0, extensionIndex);
+			return new FlowId("", fileName.substring(0, extensionIndex));
 		} else {
-			return fileName;
+			return new FlowId("", fileName);
 		}
 	}
 

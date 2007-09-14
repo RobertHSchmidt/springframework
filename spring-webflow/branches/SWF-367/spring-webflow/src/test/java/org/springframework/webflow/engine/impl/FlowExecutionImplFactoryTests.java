@@ -48,7 +48,7 @@ public class FlowExecutionImplFactoryTests extends TestCase {
 	private boolean getKeyCalled;
 
 	public void setUp() {
-		flowDefinition = new Flow("flow");
+		flowDefinition = Flow.create("flow");
 		new EndState(flowDefinition, "end");
 	}
 

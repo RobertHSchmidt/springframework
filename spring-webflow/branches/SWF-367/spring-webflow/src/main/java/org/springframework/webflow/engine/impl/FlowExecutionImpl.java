@@ -32,6 +32,7 @@ import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.RequestControlContext;
 import org.springframework.webflow.engine.State;
@@ -122,7 +123,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	/**
 	 * Set so the transient {@link #flow} field can be restored by the {@link FlowExecutionImplStateRestorer}.
 	 */
-	private String flowId;
+	private FlowId flowId;
 
 	/**
 	 * Default constructor required for externalizable serialization. Should NOT be called programmatically.
@@ -143,7 +144,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		this.conversationScope = new LocalAttributeMap();
 	}
 
-	FlowExecutionImpl(String flowId, LinkedList flowSessions) {
+	FlowExecutionImpl(FlowId flowId, LinkedList flowSessions) {
 		this.flowId = flowId;
 		this.flowSessions = flowSessions;
 	}
@@ -361,7 +362,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	/**
 	 * Returns the flow definition id of this flow execution.
 	 */
-	String getFlowId() {
+	FlowId getFlowId() {
 		return flowId;
 	}
 
@@ -404,7 +405,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		started = in.readBoolean();
-		flowId = (String) in.readObject();
+		flowId = (FlowId) in.readObject();
 		flowSessions = (LinkedList) in.readObject();
 		flashScope = (MutableAttributeMap) in.readObject();
 	}
@@ -459,7 +460,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	private FlowExecutionException wrap(Exception e, RequestContext context) {
 		if (context.getFlowExecutionContext().isActive()) {
-			String flowId = context.getActiveFlow().getId();
+			FlowId flowId = context.getActiveFlow().getId();
 			String stateId = context.getCurrentState().getId();
 			return new FlowExecutionException(flowId, stateId, "Exception thrown in state '" + stateId + "' of flow '"
 					+ flowId + "'", e);

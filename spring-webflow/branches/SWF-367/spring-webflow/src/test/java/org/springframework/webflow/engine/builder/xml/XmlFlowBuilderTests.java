@@ -1,8 +1,11 @@
 package org.springframework.webflow.engine.builder.xml;
 
+import junit.framework.TestCase;
+
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionException;
@@ -11,17 +14,15 @@ import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
 import org.springframework.webflow.engine.builder.support.DefaultFlowServiceLocator;
 
-import junit.framework.TestCase;
-
 public class XmlFlowBuilderTests extends TestCase {
 	private XmlFlowBuilder builder;
 	private DefaultFlowServiceLocator serviceLocator;
 
 	protected void setUp() {
 		FlowDefinitionLocator subflowLocator = new FlowDefinitionLocator() {
-			public FlowDefinition getFlowDefinition(String flowId) throws NoSuchFlowDefinitionException,
+			public FlowDefinition getFlowDefinition(FlowId flowId) throws NoSuchFlowDefinitionException,
 					FlowDefinitionConstructionException {
-				return new Flow("subflow");
+				return new Flow(flowId);
 			}
 		};
 		StaticListableBeanFactory beanFactory = new StaticListableBeanFactory();
@@ -32,7 +33,7 @@ public class XmlFlowBuilderTests extends TestCase {
 	public void testBuildIncompleteFlow() {
 		ClassPathResource resource = new ClassPathResource("flow-incomplete.xml", getClass());
 		builder = new XmlFlowBuilder(resource, serviceLocator);
-		FlowAssembler assembler = new FlowAssembler("flow", builder);
+		FlowAssembler assembler = new FlowAssembler(FlowId.valueOf("flow"), builder, null);
 		try {
 			assembler.assembleFlow();
 			fail("Should have failed");
@@ -44,9 +45,9 @@ public class XmlFlowBuilderTests extends TestCase {
 	public void testBuildFlowWithEndState() {
 		ClassPathResource resource = new ClassPathResource("flow-endstate.xml", getClass());
 		builder = new XmlFlowBuilder(resource, serviceLocator);
-		FlowAssembler assembler = new FlowAssembler("flow", builder);
+		FlowAssembler assembler = new FlowAssembler(FlowId.valueOf("flow"), builder, null);
 		Flow flow = assembler.assembleFlow();
-		assertEquals("flow", flow.getId());
+		assertEquals(FlowId.valueOf("flow"), flow.getId());
 		assertEquals("end", flow.getStartState().getId());
 	}
 }

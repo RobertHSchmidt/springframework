@@ -16,13 +16,14 @@
 package org.springframework.webflow.execution;
 
 import org.springframework.webflow.core.FlowException;
+import org.springframework.webflow.definition.FlowId;
 
 /**
  * Base class for exceptions that occur within a flow while it is executing. Can be used directly, but you are
  * encouraged to create a specific subclass for a particular use case.
  * <p>
  * Execution exceptions occur at runtime when the flow is executing requests on behalf of a client. They signal that an
- * execution problem occured: e.g. action execution failed or no transition matched the current request context.
+ * execution problem occurred: e.g. action execution failed or no transition matched the current request context.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -30,22 +31,22 @@ import org.springframework.webflow.core.FlowException;
 public class FlowExecutionException extends FlowException {
 
 	/**
-	 * The id of the flow definition in which the exception occured.
+	 * The id of the flow definition in which the exception occurred.
 	 */
-	private String flowId;
+	private FlowId flowId;
 
 	/**
-	 * The state of the flow where the exception occured (optional).
+	 * The state of the flow where the exception occurred (optional).
 	 */
 	private String stateId;
 
 	/**
 	 * Creates a new flow execution exception.
-	 * @param flowId the flow where the exception occured
-	 * @param stateId the state where the exception occured
+	 * @param flowId the flow where the exception occurred
+	 * @param stateId the state where the exception occurred
 	 * @param message a descriptive message
 	 */
-	public FlowExecutionException(String flowId, String stateId, String message) {
+	public FlowExecutionException(FlowId flowId, String stateId, String message) {
 		super(message);
 		this.stateId = stateId;
 		this.flowId = flowId;
@@ -58,7 +59,7 @@ public class FlowExecutionException extends FlowException {
 	 * @param message a descriptive message
 	 * @param cause the root cause
 	 */
-	public FlowExecutionException(String flowId, String stateId, String message, Throwable cause) {
+	public FlowExecutionException(FlowId flowId, String stateId, String message, Throwable cause) {
 		super(message, cause);
 		this.stateId = stateId;
 		this.flowId = flowId;
@@ -67,7 +68,7 @@ public class FlowExecutionException extends FlowException {
 	/**
 	 * Returns the id of the flow definition that was executing when this exception occured.
 	 */
-	public String getFlowId() {
+	public FlowId getFlowId() {
 		return flowId;
 	}
 

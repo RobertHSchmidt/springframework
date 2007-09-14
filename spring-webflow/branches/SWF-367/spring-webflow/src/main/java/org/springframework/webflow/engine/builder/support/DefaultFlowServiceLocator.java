@@ -29,6 +29,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.webflow.action.BeanInvokingActionFactory;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
+import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.engine.Flow;
@@ -147,7 +148,7 @@ public class DefaultFlowServiceLocator implements FlowServiceLocator {
 
 	public Flow getSubflow(String id) throws FlowArtifactLookupException {
 		try {
-			return (Flow) subflowLocator.getFlowDefinition(id);
+			return (Flow) subflowLocator.getFlowDefinition(FlowId.valueOf(id));
 		} catch (NoSuchFlowDefinitionException e) {
 			throw new FlowArtifactLookupException(id, Flow.class, "Could not locate subflow definition with id '" + id
 					+ "'", e);

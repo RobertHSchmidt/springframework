@@ -41,8 +41,8 @@ public class SubflowStateTests extends TestCase {
 	private MockRequestControlContext context;
 
 	public void setUp() {
-		parentFlow = new Flow("parent");
-		subflow = new Flow("child");
+		parentFlow = Flow.create("parent");
+		subflow = Flow.create("child");
 		subflowState = new SubflowState(parentFlow, "subflow", subflow);
 		context = new MockRequestControlContext(parentFlow);
 		context.setCurrentState(subflowState);
