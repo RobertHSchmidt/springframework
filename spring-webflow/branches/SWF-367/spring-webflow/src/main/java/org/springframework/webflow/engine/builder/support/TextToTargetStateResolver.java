@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.builder;
+package org.springframework.webflow.engine.builder.support;
 
 import org.springframework.binding.convert.ConversionContext;
 import org.springframework.binding.convert.support.AbstractConverter;
@@ -37,7 +37,7 @@ import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class TextToTargetStateResolver extends AbstractConverter {
+class TextToTargetStateResolver extends AbstractConverter {
 
 	/**
 	 * Prefix used when the user wants to use a custom TargetStateResolver implementation managed by a factory.

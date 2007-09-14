@@ -23,7 +23,6 @@ import java.util.Set;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.webflow.engine.builder.FlowServiceLocator;
 
 /**
  * A flow definition registrar that populates a flow definition registry from flow definitions defined within
@@ -40,11 +39,6 @@ import org.springframework.webflow.engine.builder.FlowServiceLocator;
  * @author Ben Hale
  */
 public abstract class ExternalizedFlowDefinitionRegistrar implements FlowDefinitionRegistrar {
-
-	/**
-	 * The locator of services needed by flow definitions.
-	 */
-	private FlowServiceLocator flowServiceLocator;
 
 	/**
 	 * A set of mappings between a namespace and a set of externalized flow definitions. A map of Strings to Sets
@@ -78,17 +72,6 @@ public abstract class ExternalizedFlowDefinitionRegistrar implements FlowDefinit
 	 */
 	public void setDefaultNamespace(String defaultNamespace) {
 		this.defaultNamespace = defaultNamespace;
-	}
-
-	public void setFlowServiceLocator(FlowServiceLocator flowServiceLocator) {
-		this.flowServiceLocator = flowServiceLocator;
-	}
-
-	/**
-	 * Returns the flow service locator for use by subclasses.
-	 */
-	protected FlowServiceLocator getFlowServiceLocator() {
-		return flowServiceLocator;
 	}
 
 	/**

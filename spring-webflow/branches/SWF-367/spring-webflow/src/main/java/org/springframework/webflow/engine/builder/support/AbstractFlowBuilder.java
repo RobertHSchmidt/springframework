@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.builder;
+package org.springframework.webflow.engine.builder.support;
 
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.builder.FlowBuilder;
+import org.springframework.webflow.engine.builder.FlowBuilderException;
 
 /**
  * Abstract base implementation of a flow builder defining common functionality needed by most concrete flow builder
@@ -28,7 +30,7 @@ import org.springframework.webflow.engine.Flow;
  * <p>
  * This class also provides a {@link FlowServiceLocator} for use by subclasses in the flow construction process.
  * 
- * @see org.springframework.webflow.engine.builder.FlowServiceLocator
+ * @see FlowServiceLocator
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -46,42 +48,11 @@ public abstract class AbstractFlowBuilder implements FlowBuilder {
 	private FlowServiceLocator flowServiceLocator;
 
 	/**
-	 * Default constructor for subclassing. Sets up use of a {@link BaseFlowServiceLocator}.
-	 * @see #setFlowServiceLocator(FlowServiceLocator)
-	 */
-	protected AbstractFlowBuilder() {
-		setFlowServiceLocator(new BaseFlowServiceLocator());
-	}
-
-	/**
 	 * Creates a flow builder using the given locator to link in artifacts.
 	 * @param flowServiceLocator the locator for services needed by this builder to build its Flow
 	 */
 	protected AbstractFlowBuilder(FlowServiceLocator flowServiceLocator) {
 		setFlowServiceLocator(flowServiceLocator);
-	}
-
-	/**
-	 * Returns the configured flow service locator.
-	 */
-	protected FlowServiceLocator getFlowServiceLocator() {
-		return flowServiceLocator;
-	}
-
-	/**
-	 * Sets the flow service locator to use. Defaults to {@link BaseFlowServiceLocator}.
-	 */
-	public void setFlowServiceLocator(FlowServiceLocator flowServiceLocator) {
-		Assert.notNull(flowServiceLocator, "The flow service locator is required");
-		this.flowServiceLocator = flowServiceLocator;
-	}
-
-	/**
-	 * Set the flow being built by this builder. Typically called during initialization to set the initial flow
-	 * reference returned by {@link #getFlow()} after building.
-	 */
-	protected void setFlow(Flow flow) {
-		this.flow = flow;
 	}
 
 	public abstract void init(String flowId, AttributeMap attributes) throws FlowBuilderException;
@@ -123,6 +94,21 @@ public abstract class AbstractFlowBuilder implements FlowBuilder {
 	// helpers for use in subclasses
 
 	/**
+	 * Returns the configured flow service locator.
+	 */
+	protected FlowServiceLocator getFlowServiceLocator() {
+		return flowServiceLocator;
+	}
+
+	/**
+	 * Set the flow being built by this builder. Typically called during initialization to set the initial flow
+	 * reference returned by {@link #getFlow()} after building.
+	 */
+	protected void setFlow(Flow flow) {
+		this.flow = flow;
+	}
+
+	/**
 	 * Returns a conversion executor capable of converting string objects to the target class aliased by the provided
 	 * alias.
 	 * @param targetAlias the target class alias, e.g. "long" or "float"
@@ -142,4 +128,15 @@ public abstract class AbstractFlowBuilder implements FlowBuilder {
 	protected ConversionExecutor fromStringTo(Class targetType) throws ConversionException {
 		return getFlowServiceLocator().getConversionService().getConversionExecutor(String.class, targetType);
 	}
+
+	// internal helpers
+
+	/**
+	 * Sets the flow service locator to use. Defaults to {@link BaseFlowServiceLocator}.
+	 */
+	private void setFlowServiceLocator(FlowServiceLocator flowServiceLocator) {
+		Assert.notNull(flowServiceLocator, "The flow service locator is required");
+		this.flowServiceLocator = flowServiceLocator;
+	}
+
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.builder;
+package org.springframework.webflow.engine.builder.support;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionService;
@@ -28,10 +28,12 @@ import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
+import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.execution.Action;
 
 /**
- * A support interface used by flow builders at configuration time. Acts as a "service locator" responsible for:
+ * A support interface used by flow builder implements at configuration time. Acts as a "service locator" responsible
+ * for:
  * <ol>
  * <li> Retrieving dependent (but externally managed) flow services needed to configure flow and state definitions. Such
  * services are usually hosted in a backing registry and may be shared by multiple flows.
@@ -45,10 +47,6 @@ import org.springframework.webflow.execution.Action;
  * <p>
  * Finally, this interface also exposes access to generic infrastructure services also needed by flow assemblers such as
  * a {@link ConversionService} and {@link ExpressionParser}.
- * 
- * @see org.springframework.webflow.engine.builder.FlowBuilder
- * @see org.springframework.webflow.engine.builder.AbstractFlowBuilder
- * @see org.springframework.webflow.engine.builder.FlowAssembler
  * 
  * @author Keith Donald
  * @author Erwin Vervaet

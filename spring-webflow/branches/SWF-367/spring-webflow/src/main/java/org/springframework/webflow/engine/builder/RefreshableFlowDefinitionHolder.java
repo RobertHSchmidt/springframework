@@ -36,9 +36,9 @@ import org.springframework.webflow.util.ResourceHolder;
  * {@link FlowDefinition}! This class bridges the <i>abstract</i> world of {@link FlowDefinition flow definitions}
  * with the <i>concrete</i> world of {@link Flow flow implementations}.
  * 
+ * @see FlowAssembler
  * @see FlowDefinition
  * @see Flow
- * @see FlowAssembler
  * 
  * @author Keith Donald
  */

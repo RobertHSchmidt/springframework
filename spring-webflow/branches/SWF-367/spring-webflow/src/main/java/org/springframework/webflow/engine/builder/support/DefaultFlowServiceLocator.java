@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.builder;
+package org.springframework.webflow.engine.builder.support;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -29,6 +29,8 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.webflow.action.BeanInvokingActionFactory;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
+import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
+import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionException;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
@@ -38,14 +40,11 @@ import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.execution.Action;
 
 /**
- * Base implementation that implements a minimal set of the <code>FlowServiceLocator</code> interface, throwing
- * unsupported operation exceptions for some operations.
- * <p>
- * May be subclassed to offer additional factory/lookup support.
+ * Default flow service locator implementation.
  * 
  * @author Keith Donald
  */
-public class BaseFlowServiceLocator implements FlowServiceLocator {
+public class DefaultFlowServiceLocator implements FlowServiceLocator {
 
 	/**
 	 * The factory encapsulating the creation of central Flow artifacts such as {@link Flow flows} and
@@ -60,7 +59,7 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	private BeanInvokingActionFactory beanInvokingActionFactory = new BeanInvokingActionFactory();
 
 	/**
-	 * The parser for parsing expression strings into evaluatable expression objects.
+	 * The parser for parsing expression strings into expression objects.
 	 */
 	private ExpressionParser expressionParser = DefaultExpressionParserFactory.getExpressionParser();
 
@@ -78,6 +77,29 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	 * A resource loader that can load resources.
 	 */
 	private ResourceLoader resourceLoader = new DefaultResourceLoader();
+
+	/**
+	 * The registry for locating subflows.
+	 */
+	private FlowDefinitionLocator subflowLocator;
+
+	/**
+	 * The Spring bean factory used.
+	 */
+	private BeanFactory beanFactory;
+
+	/**
+	 * Creates a flow service locator that retrieves subflows from the provided registry and additional artifacts from
+	 * the provided bean factory.
+	 * @param subflowRegistry the registry for loading subflows
+	 * @param beanFactory the spring bean factory
+	 */
+	public DefaultFlowServiceLocator(FlowDefinitionLocator subflowRegistry, BeanFactory beanFactory) {
+		Assert.notNull(subflowRegistry, "The subflow registry is required");
+		Assert.notNull(beanFactory, "The bean factory is required");
+		this.subflowLocator = subflowRegistry;
+		this.beanFactory = beanFactory;
+	}
 
 	/**
 	 * Sets the factory encapsulating the creation of central Flow artifacts such as {@link Flow flows} and
@@ -124,7 +146,12 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 	}
 
 	public Flow getSubflow(String id) throws FlowArtifactLookupException {
-		throw new FlowArtifactLookupException(id, Flow.class, "Subflow lookup is not supported by this service locator");
+		try {
+			return (Flow) subflowLocator.getFlowDefinition(id);
+		} catch (NoSuchFlowDefinitionException e) {
+			throw new FlowArtifactLookupException(id, Flow.class, "Could not locate subflow definition with id '" + id
+					+ "'", e);
+		}
 	}
 
 	public Action getAction(String id) throws FlowArtifactLookupException {
@@ -155,14 +182,6 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 		return beanInvokingActionFactory;
 	}
 
-	public BeanFactory getBeanFactory() throws UnsupportedOperationException {
-		throw new UnsupportedOperationException("Bean factory lookup is not supported by this service locator");
-	}
-
-	public ResourceLoader getResourceLoader() {
-		return resourceLoader;
-	}
-
 	public ExpressionParser getExpressionParser() {
 		return expressionParser;
 	}
@@ -171,46 +190,15 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 		return conversionService;
 	}
 
-	// helpers for use by subclasses
-
-	/**
-	 * Helper method for determining if the configured bean factory contains the provided bean.
-	 * @param id the id of the bean
-	 * @return true if yes, false otherwise
-	 */
-	protected boolean containsBean(String id) {
-		return getBeanFactory().containsBean(id);
+	public ResourceLoader getResourceLoader() {
+		return resourceLoader;
 	}
 
-	/**
-	 * Helper method to lookup the bean representing a flow artifact of the specified type.
-	 * @param id the bean id
-	 * @param artifactType the bean type
-	 * @return the bean
-	 * @throws FlowArtifactLookupException an exception occurred
-	 */
-	protected Object getBean(String id, Class artifactType) throws FlowArtifactLookupException {
-		try {
-			return getBeanFactory().getBean(id, artifactType);
-		} catch (BeansException e) {
-			throw new FlowArtifactLookupException(id, artifactType, e);
-		}
+	public BeanFactory getBeanFactory() {
+		return beanFactory;
 	}
 
-	/**
-	 * Helper method to lookup the type of the bean with the provided id.
-	 * @param id the bean id
-	 * @param artifactType the bean type
-	 * @return the bean's type
-	 * @throws FlowArtifactLookupException an exception occurred
-	 */
-	protected Class getBeanType(String id, Class artifactType) throws FlowArtifactLookupException {
-		try {
-			return getBeanFactory().getType(id);
-		} catch (BeansException e) {
-			throw new FlowArtifactLookupException(id, artifactType, e);
-		}
-	}
+	// overridable by subclasses
 
 	/**
 	 * Setup a conversion service used by this flow service locator.
@@ -228,13 +216,24 @@ public class BaseFlowServiceLocator implements FlowServiceLocator {
 		}
 	}
 
+	// internal helpers
+
 	/**
 	 * Add all web flow specific converters to given conversion service.
 	 */
-	protected void addWebFlowConverters(GenericConversionService conversionService) {
+	private void addWebFlowConverters(GenericConversionService conversionService) {
 		conversionService.addConverter(new TextToTransitionCriteria(this));
 		conversionService.addConverter(new TextToTargetStateResolver(this));
 		conversionService.addConverter(new TextToExpression(getExpressionParser()));
 		conversionService.addConverter(new TextToMethodSignature(conversionService));
 	}
+
+	private Object getBean(String id, Class artifactType) throws FlowArtifactLookupException {
+		try {
+			return getBeanFactory().getBean(id, artifactType);
+		} catch (BeansException e) {
+			throw new FlowArtifactLookupException(id, artifactType, e);
+		}
+	}
+
 }

@@ -28,9 +28,9 @@ import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.TransitionCriteria;
-import org.springframework.webflow.engine.builder.FlowArtifactFactory;
-import org.springframework.webflow.engine.builder.FlowArtifactLookupException;
-import org.springframework.webflow.engine.builder.FlowServiceLocator;
+import org.springframework.webflow.engine.builder.support.FlowArtifactFactory;
+import org.springframework.webflow.engine.builder.support.FlowArtifactLookupException;
+import org.springframework.webflow.engine.builder.support.FlowServiceLocator;
 import org.springframework.webflow.execution.Action;
 
 /**
