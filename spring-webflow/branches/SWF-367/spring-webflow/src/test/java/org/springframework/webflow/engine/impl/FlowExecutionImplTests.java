@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.RequestControlContext;
@@ -45,7 +46,7 @@ import org.springframework.webflow.test.MockExternalContext;
 public class FlowExecutionImplTests extends TestCase {
 
 	public void testStartAndEnd() {
-		Flow flow = new Flow("flow");
+		Flow flow = Flow.create("flow");
 		new EndState(flow, "end");
 		MockFlowExecutionListener mockListener = new MockFlowExecutionListener();
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
@@ -73,7 +74,7 @@ public class FlowExecutionImplTests extends TestCase {
 	}
 
 	public void testStartAndPause() {
-		Flow flow = new Flow("flow");
+		Flow flow = Flow.create("flow");
 		new State(flow, "state") {
 			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 				// no op
@@ -90,7 +91,7 @@ public class FlowExecutionImplTests extends TestCase {
 	}
 
 	public void testStartExceptionThrownBeforeFirstSessionCreated() {
-		Flow flow = new Flow("flow");
+		Flow flow = Flow.create("flow");
 		new EndState(flow, "end");
 		FlowExecutionListener mockListener = new FlowExecutionListenerAdapter() {
 			public void sessionCreating(RequestContext context, FlowDefinition definition, MutableAttributeMap input) {
@@ -106,14 +107,14 @@ public class FlowExecutionImplTests extends TestCase {
 			execution.start(null, context);
 			fail("Should have failed");
 		} catch (FlowExecutionException e) {
-			assertEquals("flow", e.getFlowId());
+			assertEquals(flow.getId(), e.getFlowId());
 			assertNull(e.getStateId());
 		}
 	}
 
 	public void testStartExceptionThrownByState() {
-		Flow flow = new Flow("flow");
-		new State(flow, "state") {
+		Flow flow = Flow.create("flow");
+		State state = new State(flow, "state") {
 			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 				throw new IllegalStateException("Oops");
 			}
@@ -125,14 +126,14 @@ public class FlowExecutionImplTests extends TestCase {
 			execution.start(null, context);
 			fail("Should have failed");
 		} catch (FlowExecutionException e) {
-			assertEquals("flow", e.getFlowId());
-			assertEquals("state", e.getStateId());
+			assertEquals(flow.getId(), e.getFlowId());
+			assertEquals(state.getId(), e.getStateId());
 		}
 	}
 
 	public void testStartFlowExecutionExceptionThrown() {
-		Flow flow = new Flow("flow");
-		final FlowExecutionException e = new FlowExecutionException("flow", "state", "Oops");
+		Flow flow = Flow.create("flow");
+		final FlowExecutionException e = new FlowExecutionException(FlowId.valueOf("flow"), "state", "Oops");
 		new State(flow, "state") {
 			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 				throw e;
@@ -150,7 +151,7 @@ public class FlowExecutionImplTests extends TestCase {
 	}
 
 	public void testStartCannotCallTwice() {
-		Flow flow = new Flow("flow");
+		Flow flow = Flow.create("flow");
 		new EndState(flow, "end");
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		MockExternalContext context = new MockExternalContext();
@@ -164,7 +165,7 @@ public class FlowExecutionImplTests extends TestCase {
 	}
 
 	public void testResume() {
-		Flow flow = new Flow("flow");
+		Flow flow = Flow.create("flow");
 		new ViewState(flow, "view", new StubViewFactory());
 		MockFlowExecutionListener mockListener = new MockFlowExecutionListener();
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
@@ -180,7 +181,7 @@ public class FlowExecutionImplTests extends TestCase {
 	}
 
 	public void testResumeNotAViewState() {
-		Flow flow = new Flow("flow");
+		Flow flow = Flow.create("flow");
 		new State(flow, "state") {
 			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 				// no-op
@@ -203,7 +204,7 @@ public class FlowExecutionImplTests extends TestCase {
 	}
 
 	public void testResumeAfterEnding() {
-		Flow flow = new Flow("flow");
+		Flow flow = Flow.create("flow");
 		new EndState(flow, "end");
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		MockExternalContext context = new MockExternalContext();
@@ -217,8 +218,8 @@ public class FlowExecutionImplTests extends TestCase {
 	}
 
 	public void testResumeException() {
-		Flow flow = new Flow("flow");
-		new ViewState(flow, "view", new StubViewFactory()) {
+		Flow flow = Flow.create("flow");
+		ViewState state = new ViewState(flow, "view", new StubViewFactory()) {
 			public void resume(RequestControlContext context) {
 				throw new IllegalStateException("Oops");
 			}
@@ -234,18 +235,18 @@ public class FlowExecutionImplTests extends TestCase {
 		try {
 			execution.resume(context);
 		} catch (FlowExecutionException e) {
-			assertEquals("flow", e.getFlowId());
-			assertEquals("view", e.getStateId());
+			assertEquals(flow.getId(), e.getFlowId());
+			assertEquals(state.getId(), e.getStateId());
 			assertEquals(1, mockListener.getResumingCount());
 			assertEquals(2, mockListener.getPausedCount());
 		}
 	}
 
 	public void testResumeFlowExecutionException() {
-		Flow flow = new Flow("flow");
-		new ViewState(flow, "view", new StubViewFactory()) {
+		Flow flow = Flow.create("flow");
+		ViewState state = new ViewState(flow, "view", new StubViewFactory()) {
 			public void resume(RequestControlContext context) {
-				throw new FlowExecutionException("flow", "view", "oops");
+				throw new FlowExecutionException(FlowId.valueOf("flow"), "view", "oops");
 			}
 		};
 		MockFlowExecutionListener mockListener = new MockFlowExecutionListener();
@@ -259,8 +260,8 @@ public class FlowExecutionImplTests extends TestCase {
 		try {
 			execution.resume(context);
 		} catch (FlowExecutionException e) {
-			assertEquals("flow", e.getFlowId());
-			assertEquals("view", e.getStateId());
+			assertEquals(flow.getId(), e.getFlowId());
+			assertEquals(state.getId(), e.getStateId());
 			assertEquals(1, mockListener.getResumingCount());
 			assertEquals(2, mockListener.getPausedCount());
 		}

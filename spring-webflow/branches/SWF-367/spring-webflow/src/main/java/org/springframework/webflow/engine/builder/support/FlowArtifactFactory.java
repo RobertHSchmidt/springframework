@@ -17,6 +17,7 @@ package org.springframework.webflow.engine.builder.support;
 
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.EndState;
@@ -59,10 +60,8 @@ public class FlowArtifactFactory {
 	 * @return the initial flow instance, ready for assembly by a FlowBuilder
 	 * @throws FlowArtifactLookupException an exception occured creating the Flow instance
 	 */
-	public Flow createFlow(String id, AttributeMap attributes) throws FlowArtifactLookupException {
-		Flow flow = new Flow(id);
-		flow.getAttributeMap().putAll(attributes);
-		return flow;
+	public Flow createFlow(FlowId id, AttributeMap attributes) throws FlowArtifactLookupException {
+		return Flow.create(id, attributes);
 	}
 
 	/**

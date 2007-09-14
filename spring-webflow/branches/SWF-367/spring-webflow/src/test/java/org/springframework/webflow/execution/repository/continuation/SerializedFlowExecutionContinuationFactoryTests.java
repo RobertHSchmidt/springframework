@@ -3,6 +3,7 @@ package org.springframework.webflow.execution.repository.continuation;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionException;
@@ -21,14 +22,14 @@ public class SerializedFlowExecutionContinuationFactoryTests extends TestCase {
 	private FlowExecutionStateRestorer stateRestorer;
 
 	public void setUp() {
-		flow = new Flow("myFlow");
+		flow = Flow.create("myFlow");
 		new State(flow, "state") {
 			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 			}
 		};
 		factory = new SerializedFlowExecutionContinuationFactory();
 		stateRestorer = new FlowExecutionImplStateRestorer(new FlowDefinitionLocator() {
-			public FlowDefinition getFlowDefinition(String flowId) throws NoSuchFlowDefinitionException,
+			public FlowDefinition getFlowDefinition(FlowId flowId) throws NoSuchFlowDefinitionException,
 					FlowDefinitionConstructionException {
 				return flow;
 			}

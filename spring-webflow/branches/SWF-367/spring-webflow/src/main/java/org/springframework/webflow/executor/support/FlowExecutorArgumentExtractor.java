@@ -16,6 +16,7 @@
 package org.springframework.webflow.executor.support;
 
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.executor.FlowExecutor;
 
 /**
@@ -41,7 +42,7 @@ public interface FlowExecutorArgumentExtractor {
 	 * @return the extracted flow id
 	 * @throws FlowExecutorArgumentExtractionException if the flow id could not be extracted
 	 */
-	public String extractFlowId(ExternalContext context) throws FlowExecutorArgumentExtractionException;
+	public FlowId extractFlowId(ExternalContext context) throws FlowExecutorArgumentExtractionException;
 
 	/**
 	 * Returns true if the flow execution key is extractable from the context.
@@ -56,6 +57,6 @@ public interface FlowExecutorArgumentExtractor {
 	 * @return the obtained flow execution key
 	 * @throws FlowExecutorArgumentExtractionException if the flow execution key could not be extracted
 	 */
-	public String extractFlowExecutionKey(ExternalContext context) throws FlowExecutorArgumentExtractionException;
+	public String extractFlowExecutionKeyString(ExternalContext context) throws FlowExecutorArgumentExtractionException;
 
 }

@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 
 public class AnnotatedObjectTests extends TestCase {
 
-	private AnnotatedObject object = new Flow("foo");
+	private AnnotatedObject object = Flow.create("foo");
 
 	public void testSetCaption() {
 		object.setCaption("caption");

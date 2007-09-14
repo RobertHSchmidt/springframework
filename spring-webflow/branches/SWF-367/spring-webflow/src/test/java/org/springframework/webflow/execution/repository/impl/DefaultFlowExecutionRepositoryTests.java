@@ -13,6 +13,7 @@ import org.springframework.webflow.conversation.ConversationParameters;
 import org.springframework.webflow.conversation.NoSuchConversationException;
 import org.springframework.webflow.conversation.impl.SimpleConversationId;
 import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionException;
@@ -36,7 +37,7 @@ public class DefaultFlowExecutionRepositoryTests extends TestCase {
 	private DefaultFlowExecutionRepository repository;
 
 	protected void setUp() throws Exception {
-		flow = new Flow("myFlow");
+		flow = Flow.create("myFlow");
 		new State(flow, "state") {
 			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 				context.assignFlowExecutionKey();
@@ -44,7 +45,7 @@ public class DefaultFlowExecutionRepositoryTests extends TestCase {
 		};
 		conversationManager = new StubConversationManager();
 		stateRestorer = new FlowExecutionImplStateRestorer(new FlowDefinitionLocator() {
-			public FlowDefinition getFlowDefinition(String flowId) throws NoSuchFlowDefinitionException,
+			public FlowDefinition getFlowDefinition(FlowId flowId) throws NoSuchFlowDefinitionException,
 					FlowDefinitionConstructionException {
 				return flow;
 			}
@@ -54,14 +55,14 @@ public class DefaultFlowExecutionRepositoryTests extends TestCase {
 
 	public void testParseFlowExecutionKey() {
 		String key = "_c12345_k54321";
-		FlowExecutionKey k = (FlowExecutionKey) repository.parseFlowExecutionKey(key);
+		FlowExecutionKey k = repository.parseFlowExecutionKey(key);
 		assertEquals(key, k.toString());
 	}
 
 	public void testParseBadlyFormattedFlowExecutionKey() {
 		String key = "_c12345";
 		try {
-			FlowExecutionKey k = (FlowExecutionKey) repository.parseFlowExecutionKey(key);
+			repository.parseFlowExecutionKey(key);
 			fail("Should have failed");
 		} catch (BadlyFormattedFlowExecutionKeyException e) {
 			assertEquals("_c12345", e.getInvalidKey());
@@ -70,14 +71,14 @@ public class DefaultFlowExecutionRepositoryTests extends TestCase {
 	}
 
 	public void testGetLock() {
-		FlowExecutionKey key = (FlowExecutionKey) repository.parseFlowExecutionKey("_c12345_k54321");
+		FlowExecutionKey key = repository.parseFlowExecutionKey("_c12345_k54321");
 		FlowExecutionLock lock = repository.getLock(key);
 		assertNotNull(lock);
 		lock.unlock();
 	}
 
 	public void testGetLockNoSuchFlowExecution() {
-		FlowExecutionKey key = (FlowExecutionKey) repository.parseFlowExecutionKey("_cbogus_k54321");
+		FlowExecutionKey key = repository.parseFlowExecutionKey("_cbogus_k54321");
 		try {
 			repository.getLock(key);
 			fail("should have failed");

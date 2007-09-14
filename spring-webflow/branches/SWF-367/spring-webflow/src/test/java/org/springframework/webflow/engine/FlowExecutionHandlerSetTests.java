@@ -17,6 +17,7 @@ package org.springframework.webflow.engine;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.test.MockRequestControlContext;
 
@@ -27,7 +28,7 @@ import org.springframework.webflow.test.MockRequestControlContext;
  */
 public class FlowExecutionHandlerSetTests extends TestCase {
 
-	Flow flow = new Flow("myFlow");
+	Flow flow = Flow.create("myFlow");
 	MockRequestControlContext context = new MockRequestControlContext(flow);
 	boolean handled;
 
@@ -37,7 +38,7 @@ public class FlowExecutionHandlerSetTests extends TestCase {
 		handlerSet.add(new TestStateExceptionHandler(FlowExecutionException.class, "execution 1"));
 		handlerSet.add(new TestStateExceptionHandler(FlowExecutionException.class, "execution 2"));
 		assertEquals(3, handlerSet.size());
-		FlowExecutionException e = new FlowExecutionException("flowId", "stateId", "Test");
+		FlowExecutionException e = new FlowExecutionException(FlowId.valueOf("flowId"), "stateId", "Test");
 		assertTrue(handlerSet.handleException(e, context));
 		assertFalse(context.getFlowScope().contains("null"));
 		assertTrue(context.getFlowScope().contains("execution 1"));

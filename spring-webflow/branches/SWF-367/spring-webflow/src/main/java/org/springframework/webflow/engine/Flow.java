@@ -30,6 +30,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.RequestContext;
@@ -108,7 +109,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	/**
 	 * An assigned flow identifier uniquely identifying this flow among all other flows.
 	 */
-	private String id;
+	private FlowId id;
 
 	/**
 	 * The set of state definitions for this flow.
@@ -167,22 +168,37 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	 * Construct a new flow definition with the given id. The id should be unique among all flows.
 	 * @param id the flow identifier
 	 */
-	public Flow(String id) {
-		setId(id);
+	public Flow(FlowId id) {
+		Assert.notNull(id, "This flow must be uniquely identified");
+		this.id = id;
+	}
+
+	// convenient static factory methods
+
+	/**
+	 * Create a new flow with the given id and attributes.
+	 * @param id the flow id
+	 * @param attributes the attributes
+	 * @return the flow
+	 */
+	public static Flow create(FlowId id, AttributeMap attributes) {
+		Flow flow = new Flow(id);
+		flow.getAttributeMap().putAll(attributes);
+		return flow;
 	}
 
 	/**
-	 * Construct a new flow definition with the given id and attributes. The id should be unique among all flows.
-	 * @param id the flow identifier
+	 * Create a new flow with the string-encoded flow identifier.
+	 * @param flowIdString the string flow id
+	 * @return the flow
 	 */
-	public Flow(String id, AttributeMap attributes) {
-		setId(id);
-		getAttributeMap().putAll(attributes);
+	public static Flow create(String flowIdString) {
+		return new Flow(FlowId.valueOf(flowIdString));
 	}
 
 	// implementing FlowDefinition
 
-	public String getId() {
+	public FlowId getId() {
 		return id;
 	}
 
@@ -196,14 +212,6 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 
 	public StateDefinition getState(String stateId) {
 		return getStateInstance(stateId);
-	}
-
-	/**
-	 * Set the unique id of this flow.
-	 */
-	protected void setId(String id) {
-		Assert.hasText(id, "This flow must have a unique, non-blank identifier");
-		this.id = id;
 	}
 
 	/**
@@ -426,20 +434,6 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	}
 
 	/**
-	 * Returns the list of inline flow ids.
-	 * @return a string array of inline flow identifiers
-	 */
-	public String[] getInlineFlowIds() {
-		String[] flowIds = new String[getInlineFlowCount()];
-		int i = 0;
-		Iterator it = inlineFlows.iterator();
-		while (it.hasNext()) {
-			flowIds[i++] = ((Flow) it.next()).getId();
-		}
-		return flowIds;
-	}
-
-	/**
 	 * Returns the list of inline flows.
 	 * @return the list of inline flows
 	 */
@@ -460,7 +454,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	 * @param id the inline flow id
 	 * @return true if this flow contains a inline flow with that id, false otherwise
 	 */
-	public boolean containsInlineFlow(String id) {
+	public boolean containsInlineFlow(FlowId id) {
 		return getInlineFlow(id) != null;
 	}
 
@@ -470,11 +464,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	 * @return the inline flow
 	 * @throws IllegalArgumentException when an invalid flow id is provided
 	 */
-	public Flow getInlineFlow(String id) throws IllegalArgumentException {
-		if (!StringUtils.hasText(id)) {
-			throw new IllegalArgumentException(
-					"The specified inline flowId is invalid: flow identifiers must be non-blank");
-		}
+	public Flow getInlineFlow(FlowId id) throws IllegalArgumentException {
 		Iterator it = inlineFlows.iterator();
 		while (it.hasNext()) {
 			Flow flow = (Flow) it.next();
@@ -669,4 +659,5 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 						"globalTransitionSet", globalTransitionSet).append("endActionList", endActionList).append(
 						"outputMapper", outputMapper).append("inlineFlows", inlineFlows).toString();
 	}
+
 }

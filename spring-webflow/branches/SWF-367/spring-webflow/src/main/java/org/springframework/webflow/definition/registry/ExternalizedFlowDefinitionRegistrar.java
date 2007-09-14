@@ -15,13 +15,9 @@
  */
 package org.springframework.webflow.definition.registry;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
-import org.springframework.core.io.Resource;
 import org.springframework.core.style.ToStringCreator;
 
 /**
@@ -40,111 +36,22 @@ import org.springframework.core.style.ToStringCreator;
  */
 public abstract class ExternalizedFlowDefinitionRegistrar implements FlowDefinitionRegistrar {
 
-	/**
-	 * A set of mappings between a namespace and a set of externalized flow definitions. A map of Strings to Sets
-	 * containing {@link FlowDefinitionResource}s
-	 */
-	private Map namespaceFlowMappings;
+	private HashSet resources = new HashSet();
 
 	/**
-	 * The default namespace for flows registered without an explicit namespace.
-	 */
-	private String defaultNamespace = "";
-
-	/**
-	 * Creates a new registrar with an empty initial set of namespace to flow mappings.
-	 */
-	public ExternalizedFlowDefinitionRegistrar() {
-		this(new HashMap());
-	}
-
-	/**
-	 * Creates a new registrar with an initial set of namespace to flow mappings.
-	 * @param namespaceFlowMappings the initial set of namespace to flow mappings
-	 */
-	public ExternalizedFlowDefinitionRegistrar(Map namespaceFlowMappings) {
-		this.namespaceFlowMappings = namespaceFlowMappings;
-	}
-
-	/**
-	 * Sets the default namespace to register flows in. If not set the default namespace is "" (an empty string).
-	 * @param defaultNamespace the default namespace
-	 */
-	public void setDefaultNamespace(String defaultNamespace) {
-		this.defaultNamespace = defaultNamespace;
-	}
-
-	/**
-	 * Adds an externalized XML flow definition to be registered in the default namespace.
-	 * @param location the resource to register
-	 * @see #addLocation(Resource, String)
-	 * @see #setDefaultNamespace(String)
-	 */
-	public boolean addLocation(Resource location) {
-		return addLocation(location, defaultNamespace);
-	}
-
-	/**
-	 * Adds an externalized XML flow definition to be registered. The resource will be assigned a registry identifier
-	 * equal to the filename of the resource, minus the filename extension. For example, an XML-based flow definition
-	 * defined in the file <code>flow1.xml</code> will be identified as <code>flow1</code> in the registry created
-	 * by this factory bean.
-	 * @param location the resource to register
-	 * @param namespace the namespace to register the flow definition in
-	 */
-	public boolean addLocation(Resource location, String namespace) {
-		return getFlows(namespace).add(new FlowDefinitionResource(location));
-	}
-
-	/**
-	 * Adds an externalized XML flow definition resource to be registered in the default namespace.
+	 * Adds an externalized flow definition resource to be registered.
 	 * @param resource the flow definition resource to be registered
-	 * @see #addResource(FlowDefinitionResource, String)
-	 * @see #setDefaultNamespace(String)
 	 */
 	public boolean addResource(FlowDefinitionResource resource) {
-		return addResource(resource, defaultNamespace);
-	}
-
-	/**
-	 * Adds an externalized XML flow definition resource to be registered.
-	 * @param resource the flow definition resource to be registered
-	 * @param namespace the namespace to register the flow definition in
-	 */
-	public boolean addResource(FlowDefinitionResource resource, String namespace) {
-		return getFlows(namespace).add(resource);
+		return resources.add(resource);
 	}
 
 	public void registerFlowDefinitions(FlowDefinitionRegistry registry) {
-		for (Iterator mappings = namespaceFlowMappings.entrySet().iterator(); mappings.hasNext();) {
-			Map.Entry mapping = (Map.Entry) mappings.next();
-			String namespace = (String) mapping.getKey();
-			for (Iterator resources = ((Set) mapping.getValue()).iterator(); resources.hasNext();) {
-				FlowDefinitionResource resource = (FlowDefinitionResource) resources.next();
-				register(resource, namespace, registry);
-			}
+		Iterator it = resources.iterator();
+		while (it.hasNext()) {
+			FlowDefinitionResource resource = (FlowDefinitionResource) it.next();
+			registry.registerFlowDefinition(createFlowDefinitionHolder(resource));
 		}
-	}
-
-	/**
-	 * Registers a flow definition resource in a given namespace.
-	 * @param resource the resource to register
-	 * @param namespace the namespace to register in
-	 * @param registry the registry
-	 */
-	private void register(FlowDefinitionResource resource, String namespace, FlowDefinitionRegistry registry) {
-		registry.registerFlowDefinition(createFlowDefinitionHolder(resource), namespace);
-	}
-
-	/**
-	 * Returns the set of flows to be registered in a namespace.
-	 * @param namespace The namespace for the collection to be returned
-	 */
-	private Set getFlows(String namespace) {
-		if (!namespaceFlowMappings.containsKey(namespace)) {
-			namespaceFlowMappings.put(namespace, new HashSet());
-		}
-		return (Set) namespaceFlowMappings.get(namespace);
 	}
 
 	// sub-classing hooks
@@ -158,6 +65,6 @@ public abstract class ExternalizedFlowDefinitionRegistrar implements FlowDefinit
 	protected abstract FlowDefinitionHolder createFlowDefinitionHolder(FlowDefinitionResource resource);
 
 	public String toString() {
-		return new ToStringCreator(this).append("namespaceFlowMappings", namespaceFlowMappings).toString();
+		return new ToStringCreator(this).append("resources", resources).toString();
 	}
 }

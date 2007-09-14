@@ -6,6 +6,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.support.AbstractFlowBuilder;
@@ -16,22 +17,22 @@ public class RefreshableFlowDefinitionHolderTests extends TestCase {
 	private FlowAssembler assembler;
 
 	protected void setUp() {
-		FlowAssembler assembler = new FlowAssembler("flowId", new SimpleFlowBuilder());
+		FlowAssembler assembler = new FlowAssembler(FlowId.valueOf("flowId"), new SimpleFlowBuilder(), null);
 		holder = new RefreshableFlowDefinitionHolder(assembler);
 	}
 
 	public void testGetFlowDefinition() {
 		FlowDefinition flow = holder.getFlowDefinition();
-		assertEquals("flowId", flow.getId());
+		assertEquals(FlowId.valueOf("flowId"), flow.getId());
 		assertEquals("end", flow.getStartState().getId());
 	}
 
 	public void testGetFlowDefinitionWithChangesRefreshed() {
-		assembler = new FlowAssembler("flowId", new ChangeDetectableFlowBuilder());
+		assembler = new FlowAssembler(FlowId.valueOf("flowId"), new ChangeDetectableFlowBuilder(), null);
 		holder = new RefreshableFlowDefinitionHolder(assembler);
 		FlowDefinition flow = holder.getFlowDefinition();
 		flow = holder.getFlowDefinition();
-		assertEquals("flowId", flow.getId());
+		assertEquals(FlowId.valueOf("flowId"), flow.getId());
 		assertEquals("end", flow.getStartState().getId());
 	}
 
@@ -41,8 +42,8 @@ public class RefreshableFlowDefinitionHolderTests extends TestCase {
 			new EndState(getFlow(), "end");
 		}
 
-		public void init(String flowId, AttributeMap attributes) throws FlowBuilderException {
-			setFlow(new Flow(flowId, attributes));
+		public void init(FlowId flowId, AttributeMap attributes) throws FlowBuilderException {
+			setFlow(Flow.create(flowId, attributes));
 		}
 	}
 

@@ -41,7 +41,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class SubflowState extends TransitionableState {
 
 	/**
-	 * The subflow that should be spawned when this subflow state is entered.
+	 * The subflow that should be spawned when this subflow state is entered. TODO - late binding
 	 */
 	private Flow subflow;
 

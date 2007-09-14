@@ -16,6 +16,7 @@
 package org.springframework.webflow.definition.registry;
 
 import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.FlowId;
 
 /**
  * A runtime service locator interface for retrieving flow definitions by <code>id</code>.
@@ -35,6 +36,6 @@ public interface FlowDefinitionLocator {
 	 * @throws NoSuchFlowDefinitionException when the flow definition with the specified id does not exist
 	 * @throws FlowDefinitionConstructionException if there is a problem constructing the identified flow definition
 	 */
-	public FlowDefinition getFlowDefinition(String flowId) throws NoSuchFlowDefinitionException,
+	public FlowDefinition getFlowDefinition(FlowId flowId) throws NoSuchFlowDefinitionException,
 			FlowDefinitionConstructionException;
 }

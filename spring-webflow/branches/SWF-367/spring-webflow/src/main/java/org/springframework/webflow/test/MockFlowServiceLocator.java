@@ -51,7 +51,7 @@ public class MockFlowServiceLocator extends DefaultFlowServiceLocator {
 	 * @param subflow the subflow
 	 */
 	public void registerSubflow(Flow subflow) {
-		getSubflowRegistry().registerFlowDefinition(new StaticFlowDefinitionHolder(subflow));
+		getMockSubflowRegistry().registerFlowDefinition(new StaticFlowDefinitionHolder(subflow));
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class MockFlowServiceLocator extends DefaultFlowServiceLocator {
 		((StaticListableBeanFactory) getBeanFactory()).addBean(beanName, bean);
 	}
 
-	private FlowDefinitionRegistry getSubflowRegistry() {
+	public FlowDefinitionRegistry getMockSubflowRegistry() {
 		return (FlowDefinitionRegistry) getSubflowLocator();
 	}
 }

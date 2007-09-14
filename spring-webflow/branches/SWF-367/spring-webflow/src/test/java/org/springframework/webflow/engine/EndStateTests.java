@@ -22,6 +22,7 @@ import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.mapping.MappingBuilder;
 import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.execution.Action;
@@ -39,7 +40,7 @@ import org.springframework.webflow.test.MockRequestControlContext;
 public class EndStateTests extends TestCase {
 
 	public void testEnterEndStateTerminateFlowExecution() {
-		Flow flow = new Flow("myFlow");
+		Flow flow = Flow.create("myFlow");
 		EndState state = new EndState(flow, "end");
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		state.enter(context);
@@ -47,7 +48,7 @@ public class EndStateTests extends TestCase {
 	}
 
 	public void testEnterEndStateWithFinalResponseRenderer() {
-		Flow flow = new Flow("myFlow");
+		Flow flow = Flow.create("myFlow");
 		EndState state = new EndState(flow, "end");
 		StubFinalResponseAction action = new StubFinalResponseAction();
 		state.setFinalResponseAction(action);
@@ -57,7 +58,7 @@ public class EndStateTests extends TestCase {
 	}
 
 	public void testEnterEndStateWithOutputMapper() {
-		Flow flow = new Flow("myFlow") {
+		Flow flow = new Flow(FlowId.valueOf("myFlow")) {
 			public void end(RequestControlContext context, MutableAttributeMap output) throws FlowExecutionException {
 				assertEquals("foo", output.get("y"));
 			}
@@ -74,11 +75,11 @@ public class EndStateTests extends TestCase {
 	}
 
 	public void testEnterEndStateTerminateFlowSession() {
-		Flow subflow = new Flow("mySubflow");
+		Flow subflow = Flow.create("mySubflow");
 		EndState state = new EndState(subflow, "end");
 		MockFlowSession session = new MockFlowSession(subflow);
 
-		Flow parent = new Flow("parent");
+		Flow parent = Flow.create("parent");
 		SubflowState subflowState = new SubflowState(parent, "subflow", subflow);
 		subflowState.getTransitionSet().add(new Transition(on("end"), to("end")));
 		new EndState(parent, "end");

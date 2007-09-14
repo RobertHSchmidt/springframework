@@ -170,7 +170,7 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	 */
 	protected ConversationParameters createConversationParameters(FlowExecution flowExecution) {
 		FlowDefinition flow = flowExecution.getDefinition();
-		return new ConversationParameters(flow.getId(), flow.getCaption(), flow.getDescription());
+		return new ConversationParameters(flow.getId().toString(), flow.getCaption(), flow.getDescription());
 	}
 
 	/**

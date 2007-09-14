@@ -29,7 +29,7 @@ public class ActionExecutorTests extends TestCase {
 	private Flow flow;
 
 	protected void setUp() throws Exception {
-		flow = new Flow("myFlow");
+		flow = Flow.create("myFlow");
 		state = new EndState(flow, "end");
 		context = new MockRequestContext(flow);
 	}

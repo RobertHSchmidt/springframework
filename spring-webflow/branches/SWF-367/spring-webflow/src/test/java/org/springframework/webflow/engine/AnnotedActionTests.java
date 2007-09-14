@@ -30,7 +30,7 @@ public class AnnotedActionTests extends TestCase {
 	private MockRequestContext context;
 
 	protected void setUp() throws Exception {
-		Flow flow = new Flow("myFlow");
+		Flow flow = Flow.create("myFlow");
 		context = new MockRequestContext(flow);
 	}
 
