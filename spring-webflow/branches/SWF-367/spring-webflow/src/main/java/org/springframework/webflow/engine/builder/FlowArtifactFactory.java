@@ -31,7 +31,6 @@ import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.ResponseRenderer;
 import org.springframework.webflow.execution.ViewFactory;
 
 /**
@@ -174,7 +173,7 @@ public class FlowArtifactFactory {
 	 * @param id the identifier to assign to the state, must be unique to its owning flow (required)
 	 * @param flow the flow that will own (contain) this state (required)
 	 * @param entryActions any state entry actions; may be null
-	 * @param finalResponseRenderer the state response renderer; may be null
+	 * @param finalResponseAction the state response renderer; may be null
 	 * @param outputMapper the state output mapper; may be null
 	 * @param exceptionHandlers any exception handlers; may be null
 	 * @param attributes attributes to assign to the State, which may also be used to affect state construction; may be
@@ -182,12 +181,12 @@ public class FlowArtifactFactory {
 	 * @return the fully initialized subflow state instance
 	 * @throws FlowArtifactLookupException an exception occurred creating the state
 	 */
-	public State createEndState(String id, Flow flow, Action[] entryActions, ResponseRenderer finalResponseRenderer,
+	public State createEndState(String id, Flow flow, Action[] entryActions, Action finalResponseAction,
 			AttributeMapper outputMapper, FlowExecutionExceptionHandler[] exceptionHandlers, AttributeMap attributes)
 			throws FlowArtifactLookupException {
 		EndState endState = new EndState(flow, id);
-		if (finalResponseRenderer != null) {
-			endState.setFinalResponseRenderer(finalResponseRenderer);
+		if (finalResponseAction != null) {
+			endState.setFinalResponseAction(finalResponseAction);
 		}
 		if (outputMapper != null) {
 			endState.setOutputMapper(outputMapper);
