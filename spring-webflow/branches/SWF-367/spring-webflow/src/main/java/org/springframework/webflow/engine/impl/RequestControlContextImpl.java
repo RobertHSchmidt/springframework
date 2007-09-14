@@ -33,6 +33,7 @@ import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowExecutionException;
+import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.FlowSession;
 
 /**
@@ -157,8 +158,8 @@ class RequestControlContextImpl implements RequestControlContext {
 		this.lastTransition = lastTransition;
 	}
 
-	public void assignFlowExecutionKey() {
-		flowExecution.assignKey();
+	public FlowExecutionKey assignFlowExecutionKey() {
+		return flowExecution.assignKey();
 	}
 
 	public boolean getAlwaysRedirectOnPause() {
@@ -181,18 +182,6 @@ class RequestControlContextImpl implements RequestControlContext {
 
 	public FlowSession endActiveFlowSession(MutableAttributeMap output) throws IllegalStateException {
 		return flowExecution.endActiveFlowSession(output, this);
-	}
-
-	public void sendFlowExecutionRedirect() {
-		flowExecution.sendFlowExecutionRedirect();
-	}
-
-	public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input) {
-		flowExecution.sendFlowDefinitionRedirect(flowId, input);
-	}
-
-	public void sendExternalRedirect(String resourceUri) {
-		flowExecution.sendExternalRedirect(resourceUri);
 	}
 
 	public String toString() {

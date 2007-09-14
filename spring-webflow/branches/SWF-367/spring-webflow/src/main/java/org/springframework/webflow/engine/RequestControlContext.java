@@ -19,6 +19,7 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowExecutionException;
+import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -27,8 +28,7 @@ import org.springframework.webflow.execution.RequestContext;
  * Primarily used internally by the various flow artifacts when they are invoked.
  * <p>
  * This interface acts as a facade for core definition constructs such as the central <code>Flow</code> and
- * <code>State</code> classes, abstracting away details about the runtime execution machine defined in the
- * {@link org.springframework.webflow.engine.impl execution engine implementation} package.
+ * <code>State</code> classes, abstracting away details about the runtime execution machine.
  * <p>
  * Note this type is not the same as the {@link FlowExecutionContext}. Objects of this type are <i>request specific</i>:
  * they provide a control interface for manipulating exactly one flow execution locally from exactly one request. A
@@ -65,7 +65,7 @@ public interface RequestControlContext extends RequestContext {
 	 * Assign the ongoing flow execution its flow execution key. This method will be called before a state is about to
 	 * render a view and pause the flow execution.
 	 */
-	public void assignFlowExecutionKey();
+	public FlowExecutionKey assignFlowExecutionKey();
 
 	/**
 	 * Spawn a new flow session and activate it in the currently executing flow. Also transitions the spawned flow to
@@ -109,25 +109,6 @@ public interface RequestControlContext extends RequestContext {
 	 * @see Transition#execute(State, RequestControlContext)
 	 */
 	public void execute(Transition transition);
-
-	/**
-	 * Request that a flow execution redirect be sent as the response. A flow execution redirect tells the caller to
-	 * refresh this flow execution in a new request.
-	 */
-	public void sendFlowExecutionRedirect();
-
-	/**
-	 * Request that a flow definition redirect be sent as the response. A flow definition redirect tells the caller to
-	 * start a new execution of the flow definition with the input provided.
-	 */
-	public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input);
-
-	/**
-	 * Request that a external redirect be sent as the response. An external redirect tells the caller to access the
-	 * resource at the given resource URI.
-	 * @param resourceUri the resource uri string
-	 */
-	public void sendExternalRedirect(String resourceUri);
 
 	/**
 	 * Returns true if the 'always redirect pause' flow execution attribute is set to true, false otherwise.

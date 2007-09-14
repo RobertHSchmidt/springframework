@@ -23,6 +23,7 @@ import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionContext;
+import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.FlowSession;
 
 /**
@@ -88,23 +89,12 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 		transition.execute((TransitionableState) getCurrentState(), this);
 	}
 
-	public void assignFlowExecutionKey() {
+	public FlowExecutionKey assignFlowExecutionKey() {
+		return null;
 	}
 
 	public boolean getAlwaysRedirectOnPause() {
 		return alwaysRedirectOnPause;
-	}
-
-	public void sendFlowExecutionRedirect() {
-		this.flowExecutionRedirectSent = true;
-	}
-
-	public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input) {
-
-	}
-
-	public void sendExternalRedirect(String resourceUri) {
-
 	}
 
 	public boolean getFlowExecutionRedirectSent() {

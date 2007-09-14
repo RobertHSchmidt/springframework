@@ -29,7 +29,6 @@ import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
-import org.springframework.webflow.execution.FlowExecutionRequestRedirector;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
@@ -47,8 +46,6 @@ public class FlowExecutionImplFactoryTests extends TestCase {
 	private boolean starting;
 
 	private boolean getKeyCalled;
-
-	private boolean sendersCalled;
 
 	public void setUp() {
 		flowDefinition = new Flow("flow");
@@ -109,28 +106,5 @@ public class FlowExecutionImplFactoryTests extends TestCase {
 		execution.start(null, new MockExternalContext());
 		assertTrue(getKeyCalled);
 		assertNull(execution.getKey());
-	}
-
-	public void testCreateWithCustomFlowExecutionRequestRedirector() {
-		State state = new State(flowDefinition, "state") {
-			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
-				context.sendFlowExecutionRedirect();
-			}
-		};
-		flowDefinition.setStartState(state);
-		factory.setExecutionRequestRedirector(new FlowExecutionRequestRedirector() {
-			public void sendExternalRedirect(String resourceUri) {
-			}
-
-			public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input) {
-			}
-
-			public void sendFlowExecutionRedirect(FlowExecutionKey key) {
-				sendersCalled = true;
-			}
-		});
-		FlowExecution execution = factory.createFlowExecution(flowDefinition);
-		execution.start(null, new MockExternalContext());
-		assertTrue(sendersCalled);
 	}
 }

@@ -24,8 +24,10 @@ import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
+import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionException;
-import org.springframework.webflow.execution.ResponseRenderer;
+import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestControlContext;
@@ -47,11 +49,11 @@ public class EndStateTests extends TestCase {
 	public void testEnterEndStateWithFinalResponseRenderer() {
 		Flow flow = new Flow("myFlow");
 		EndState state = new EndState(flow, "end");
-		StubResponseRenderer renderer = new StubResponseRenderer();
-		state.setFinalResponseRenderer(renderer);
+		StubFinalResponseAction action = new StubFinalResponseAction();
+		state.setFinalResponseAction(action);
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		state.enter(context);
-		assertTrue(renderer.renderCalled);
+		assertTrue(action.executeCalled);
 	}
 
 	public void testEnterEndStateWithOutputMapper() {
@@ -99,12 +101,12 @@ public class EndStateTests extends TestCase {
 		return new DefaultTargetStateResolver(stateId);
 	}
 
-	private class StubResponseRenderer implements ResponseRenderer {
-		private boolean renderCalled;
+	private class StubFinalResponseAction implements Action {
+		private boolean executeCalled;
 
-		public void render(RequestControlContext context) {
-			this.renderCalled = true;
+		public Event execute(RequestContext context) {
+			executeCalled = true;
+			return new Event(this, "success");
 		}
-
 	}
 }

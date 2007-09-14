@@ -110,4 +110,25 @@ public interface ExternalContext {
 	 */
 	public Object getResponse();
 
+	/**
+	 * Request that a flow execution redirect be sent as the response. A flow execution redirect tells the caller to
+	 * refresh this flow execution in a new request.
+	 */
+	public void sendFlowExecutionRedirect();
+
+	/**
+	 * Request that a flow definition redirect be sent as the response. A flow definition redirect tells the caller to
+	 * start a new execution of the flow definition with the input provided.
+	 * @param flowId the identifier of the flow definition to redirect to
+	 * @param input the input to pass to the new execution of the definition
+	 */
+	public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input);
+
+	/**
+	 * Request that a external redirect be sent as the response. An external redirect tells the caller to access the
+	 * resource at the given resource URI.
+	 * @param resourceUri the resource uri string
+	 */
+	public void sendExternalRedirect(String resourceUri);
+
 }

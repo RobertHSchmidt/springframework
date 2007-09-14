@@ -28,8 +28,6 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
  * Used by {@link FlowExecutorImpl} as the default AttributeMapper implementation.
  * 
  * @see ExternalContext#getRequestParameterMap()
- * @see FlowExecutor#launch(String, ExternalContext)
- * 
  * @author Keith Donald
  */
 public class RequestParameterInputMapper implements AttributeMapper {

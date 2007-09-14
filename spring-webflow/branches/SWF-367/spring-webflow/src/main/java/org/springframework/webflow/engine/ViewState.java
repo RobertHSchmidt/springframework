@@ -71,7 +71,7 @@ public class ViewState extends TransitionableState {
 	protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 		context.assignFlowExecutionKey();
 		if (shouldRedirect(context)) {
-			context.sendFlowExecutionRedirect();
+			context.getExternalContext().sendFlowExecutionRedirect();
 		} else {
 			View view = viewFactory.getView(context);
 			renderActionList.execute(context);

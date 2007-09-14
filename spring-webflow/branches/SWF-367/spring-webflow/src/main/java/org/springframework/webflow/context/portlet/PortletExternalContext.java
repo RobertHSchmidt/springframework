@@ -166,6 +166,21 @@ public class PortletExternalContext implements ExternalContext {
 		return response;
 	}
 
+	public void sendFlowExecutionRedirect() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
+
+	public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
+
+	public void sendExternalRedirect(String resourceUri) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
+
 	public String toString() {
 		return new ToStringCreator(this).append("requestParameterMap", getRequestParameterMap()).toString();
 	}

@@ -20,10 +20,8 @@ import java.io.Serializable;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.CollectionUtils;
-import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionKey;
-import org.springframework.webflow.execution.FlowExecutionRequestRedirector;
 import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.factory.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
@@ -46,11 +44,6 @@ abstract class FlowExecutionImplServicesConfigurer {
 	 * The factory used to assign keys to flow executions that need to be persisted.
 	 */
 	private FlowExecutionKeyFactory executionKeyFactory = new RandomFlowExecutionKeyFactory();
-
-	/**
-	 * A service that can instruct clients to take specific actions.
-	 */
-	private FlowExecutionRequestRedirector executionRequestRedirector = new NoOpFlowExecutionRequestRedirector();
 
 	/**
 	 * Sets the attributes to apply to flow executions created by this factory. Execution attributes may affect flow
@@ -78,36 +71,11 @@ abstract class FlowExecutionImplServicesConfigurer {
 		this.executionKeyFactory = executionKeyFactory;
 	}
 
-	/**
-	 * Sets the strategy for redirecting a flow execution request.
-	 */
-	public void setExecutionRequestRedirector(FlowExecutionRequestRedirector executionRequestRedirector) {
-		this.executionRequestRedirector = executionRequestRedirector;
-	}
-
 	protected FlowExecution configureServices(FlowExecutionImpl execution) {
 		execution.setAttributes(executionAttributes);
 		execution.setListeners(executionListenerLoader.getListeners(execution.getDefinition()));
 		execution.setKeyFactory(executionKeyFactory);
-		execution.setRequestRedirector(executionRequestRedirector);
 		return execution;
-	}
-
-	/**
-	 * Simply throws unsupported operation exceptions.
-	 */
-	private static class NoOpFlowExecutionRequestRedirector implements FlowExecutionRequestRedirector {
-		public void sendFlowExecutionRedirect(FlowExecutionKey key) {
-			throw new UnsupportedOperationException("Not Supported");
-		}
-
-		public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input) {
-			throw new UnsupportedOperationException("Not Supported");
-		}
-
-		public void sendExternalRedirect(String resourceUri) {
-			throw new UnsupportedOperationException("Not Supported");
-		}
 	}
 
 	/**
