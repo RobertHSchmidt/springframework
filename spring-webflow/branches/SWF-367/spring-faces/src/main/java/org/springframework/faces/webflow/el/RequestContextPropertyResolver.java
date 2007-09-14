@@ -20,16 +20,17 @@ import java.util.Map;
 import javax.faces.el.PropertyNotFoundException;
 import javax.faces.el.PropertyResolver;
 
-import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Custom property resolver that resolves supported properties of the current flow execution. Supports resolving all
+ * Custom property resolver that resolves supported properties of the current request context. Supports resolving all
  * scopes as java.util.Maps: "flowScope", "conversationScope", and "flashScope". Also supports attribute searching when
  * no scope prefix is specified. The search order is flash, flow, conversation.
  * 
  * @author Keith Donald
+ * @author Jeremy Grelle
  */
-public class FlowExecutionPropertyResolver extends AbstractFlowExecutionPropertyResolver {
+public class RequestContextPropertyResolver extends AbstractRequestContextPropertyResolver {
 
 	/**
 	 * The name of the special flash scope execution property.
@@ -37,24 +38,24 @@ public class FlowExecutionPropertyResolver extends AbstractFlowExecutionProperty
 	private static final String FLASH_SCOPE_PROPERTY = "flashScope";
 
 	/**
-	 * The name of the special flow scope execution property.
+	 * The name of the special flow scope context property.
 	 */
 	private static final String FLOW_SCOPE_PROPERTY = "flowScope";
 
 	/**
-	 * The name of the special conversation scope execution property.
+	 * The name of the special conversation scope context property.
 	 */
 	private static final String CONVERSATION_SCOPE_PROPERTY = "conversationScope";
 
 	/**
 	 * Creates a new flow executon property resolver that resolves flash, flow, and conversation scope attributes.
-	 * @param resolverDelegate the resolver to delegate to when the property is not a flow execution attribute
+	 * @param resolverDelegate the resolver to delegate to when the property is not a flow context attribute
 	 */
-	public FlowExecutionPropertyResolver(PropertyResolver resolverDelegate) {
+	public RequestContextPropertyResolver(PropertyResolver resolverDelegate) {
 		super(resolverDelegate);
 	}
 
-	protected Class doGetAttributeType(FlowExecution execution, String attributeName) {
+	protected Class doGetAttributeType(RequestContext context, String attributeName) {
 		if (FLASH_SCOPE_PROPERTY.equals(attributeName)) {
 			return Map.class;
 		} else if (FLOW_SCOPE_PROPERTY.equals(attributeName)) {
@@ -65,17 +66,17 @@ public class FlowExecutionPropertyResolver extends AbstractFlowExecutionProperty
 			// perform an attribute search
 
 			// try flash scope first
-			Object value = execution.getFlashScope().get(attributeName);
+			Object value = context.getFlashScope().get(attributeName);
 			if (value != null) {
 				return value.getClass();
 			}
 			// try flow scope
-			value = execution.getActiveSession().getScope().get(attributeName);
+			value = context.getFlowScope().get(attributeName);
 			if (value != null) {
 				return value.getClass();
 			}
 			// try conversation scope
-			value = execution.getConversationScope().get(attributeName);
+			value = context.getConversationScope().get(attributeName);
 			if (value != null) {
 				return value.getClass();
 			}
@@ -84,48 +85,48 @@ public class FlowExecutionPropertyResolver extends AbstractFlowExecutionProperty
 		}
 	}
 
-	protected Object doGetAttribute(FlowExecution execution, String attributeName) {
+	protected Object doGetAttribute(RequestContext context, String attributeName) {
 		if (FLASH_SCOPE_PROPERTY.equals(attributeName)) {
-			return execution.getFlashScope().asMap();
+			return context.getFlashScope().asMap();
 		} else if (FLOW_SCOPE_PROPERTY.equals(attributeName)) {
-			return execution.getActiveSession().getScope().asMap();
+			return context.getFlowScope().asMap();
 		} else if (CONVERSATION_SCOPE_PROPERTY.equals(attributeName)) {
-			return execution.getConversationScope().asMap();
+			return context.getConversationScope().asMap();
 		} else {
 			// perform an attribute search
 
 			// try flash scope
-			Object value = execution.getFlashScope().get(attributeName);
+			Object value = context.getFlashScope().get(attributeName);
 			if (value != null) {
 				return value;
 			}
 			// try flow scope
-			value = execution.getActiveSession().getScope().get(attributeName);
+			value = context.getFlowScope().get(attributeName);
 			if (value != null) {
 				return value;
 			}
 			// try conversation scope
-			value = execution.getConversationScope().get(attributeName);
+			value = context.getConversationScope().get(attributeName);
 			if (value != null) {
 				return value;
 			}
 			// cannot resolve as expected
-			throw new PropertyNotFoundException("Readable flow execution attribute '" + attributeName
+			throw new PropertyNotFoundException("Readable flow context attribute '" + attributeName
 					+ "' not found in any scope (flash, flow, or conversation)");
 		}
 	}
 
-	protected void doSetAttribute(FlowExecution execution, String attributeName, Object attributeValue) {
+	protected void doSetAttribute(RequestContext context, String attributeName, Object attributeValue) {
 		// perform a search
-		if (execution.getFlashScope().contains(attributeName)) {
-			execution.getFlashScope().put(attributeName, attributeValue);
-		} else if (execution.getActiveSession().getScope().contains(attributeName)) {
-			execution.getActiveSession().getScope().put(attributeName, attributeValue);
-		} else if (execution.getConversationScope().contains(attributeName)) {
-			execution.getConversationScope().put(attributeName, attributeValue);
+		if (context.getFlashScope().contains(attributeName)) {
+			context.getFlashScope().put(attributeName, attributeValue);
+		} else if (context.getFlowScope().contains(attributeName)) {
+			context.getFlowScope().put(attributeName, attributeValue);
+		} else if (context.getConversationScope().contains(attributeName)) {
+			context.getConversationScope().put(attributeName, attributeValue);
 		} else {
 			// cannot resolve as expected
-			throw new PropertyNotFoundException("Settable flow execution attribute '" + attributeName
+			throw new PropertyNotFoundException("Settable flow context attribute '" + attributeName
 					+ "' not found in any scope (flash, flow, or conversation)");
 		}
 	}

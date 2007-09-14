@@ -19,27 +19,23 @@ import javax.faces.context.FacesContext;
 import javax.faces.el.EvaluationException;
 import javax.faces.el.VariableResolver;
 
-import org.springframework.faces.webflow.FlowExecutionHolderUtils;
-import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.RequestContextHolder;
 
 /**
- * Custom variable resolver that resolves to a thread-bound FlowExecution object for binding expressions prefixed with a
- * {@link #FLOW_EXECUTION_VARIABLE_NAME}. For instance "flowExecution.conversationScope.myProperty".
+ * Custom variable resolver that resolves to a thread-bound RequestContext object for binding expressions prefixed with
+ * a {@link #REQUEST_CONTEXT_VARIABLE_NAME}. For instance "requestContext.conversationScope.myProperty".
  * 
- * This class is designed to be used with a {@link FlowExecutionPropertyResolver}.
- * 
- * This class is a more flexible alternative to the {@link FlowVariableResolver} which is expected to be used ONLY with
- * a {@link FlowPropertyResolver} to resolve flow scope variables ONLY. It is more flexible because it provides access
- * to any scope structure of a {@link FlowExecution} object.
+ * This class is designed to be used with a {@link RequestContextPropertyResolver}.
  * 
  * @author Keith Donald
+ * @author Jeremy Grelle
  */
-public class FlowExecutionVariableResolver extends VariableResolver {
+public class RequestContextVariableResolver extends VariableResolver {
 
 	/**
-	 * Name of the flow execution variable.
+	 * Name of the request context variable.
 	 */
-	public static final String FLOW_EXECUTION_VARIABLE_NAME = "flowExecution";
+	public static final String REQUEST_CONTEXT_VARIABLE_NAME = "requestContext";
 
 	/**
 	 * The standard variable resolver to delegate to if this one doesn't apply.
@@ -47,10 +43,10 @@ public class FlowExecutionVariableResolver extends VariableResolver {
 	private VariableResolver resolverDelegate;
 
 	/**
-	 * Creates a new flow executon variable resolver that resolves the current FlowExecution object.
-	 * @param resolverDelegate the resolver to delegate to when the variable is not named "flowExecution".
+	 * Creates a new request context variable resolver that resolves the current RequestContext object.
+	 * @param resolverDelegate the resolver to delegate to when the variable is not named "requestContext".
 	 */
-	public FlowExecutionVariableResolver(VariableResolver resolverDelegate) {
+	public RequestContextVariableResolver(VariableResolver resolverDelegate) {
 		this.resolverDelegate = resolverDelegate;
 	}
 
@@ -62,8 +58,8 @@ public class FlowExecutionVariableResolver extends VariableResolver {
 	}
 
 	public Object resolveVariable(FacesContext context, String name) throws EvaluationException {
-		if (FLOW_EXECUTION_VARIABLE_NAME.equals(name)) {
-			return FlowExecutionHolderUtils.getRequiredCurrentFlowExecution(context);
+		if (REQUEST_CONTEXT_VARIABLE_NAME.equals(name)) {
+			return RequestContextHolder.getRequestContext();
 		} else {
 			return resolverDelegate.resolveVariable(context, name);
 		}

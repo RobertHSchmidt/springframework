@@ -19,12 +19,12 @@ import javax.faces.context.FacesContext;
 import javax.faces.el.EvaluationException;
 import javax.faces.el.VariableResolver;
 
-import org.springframework.faces.webflow.FlowExecutionHolderUtils;
 import org.springframework.web.jsf.DelegatingVariableResolver;
-import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.RequestContextHolder;
 
 /**
- * Custom variable resolver that searches the current flow execution for variables to resolve. The search algorithm
+ * Custom variable resolver that searches the current request context for variables to resolve. The search algorithm
  * looks in flash scope first, then flow scope, then conversation scope. If no variable is found this resolver delegates
  * to the next resolver in the chain.
  * 
@@ -36,6 +36,7 @@ import org.springframework.webflow.execution.FlowExecution;
  * such a Spring-backed managed bean facility as the sole-provider for centralized JSF managed bean references.
  * 
  * @author Keith Donald
+ * @author Jeremy Grelle
  */
 public class DelegatingFlowVariableResolver extends VariableResolver {
 
@@ -45,7 +46,7 @@ public class DelegatingFlowVariableResolver extends VariableResolver {
 	private VariableResolver resolverDelegate;
 
 	/**
-	 * Create a new FlowExecutionVariableResolver, using the given original VariableResolver.
+	 * Create a new DelegatingFlowVariableResolver, using the given original VariableResolver.
 	 * <p>
 	 * A JSF implementation will automatically pass its original resolver into the constructor of a configured resolver,
 	 * provided that there is a corresponding constructor argument.
@@ -64,25 +65,18 @@ public class DelegatingFlowVariableResolver extends VariableResolver {
 	}
 
 	public Object resolveVariable(FacesContext context, String name) throws EvaluationException {
-		FlowExecution execution = FlowExecutionHolderUtils.getCurrentFlowExecution(context);
-		if (execution != null) {
-			if (execution.isActive()) {
-				// flow execution is active: try flash/flow/conversation scope
-				if (execution.getFlashScope().contains(name)) {
-					return execution.getFlashScope().get(name);
-				} else if (execution.getActiveSession().getScope().contains(name)) {
-					return execution.getActiveSession().getScope().get(name);
-				} else if (execution.getConversationScope().contains(name)) {
-					return execution.getConversationScope().get(name);
-				}
-			} else {
-				// flow execution has ended: check for end-state attributes exposed in the request map
-				if (context.getExternalContext().getRequestMap().containsKey(name)) {
-					return context.getExternalContext().getRequestMap().get(name);
-				}
+		RequestContext requestContext = RequestContextHolder.getRequestContext();
+		if (requestContext != null) {
+			// flow execution is active: try flash/flow/conversation scope
+			if (requestContext.getFlashScope().contains(name)) {
+				return requestContext.getFlashScope().get(name);
+			} else if (requestContext.getFlowScope().contains(name)) {
+				return requestContext.getFlowScope().get(name);
+			} else if (requestContext.getConversationScope().contains(name)) {
+				return requestContext.getConversationScope().get(name);
 			}
 		}
-		// no flow execution bound or flow execution attribute found with that name - delegate
+		// no request context bound or flow execution attribute found with that name - delegate
 		return resolverDelegate.resolveVariable(context, name);
 	}
 }

@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.View;
 
-public class JsfView extends View {
+public class JsfView implements View {
 
 	public static final String EVENT_KEY = "org.springframework.webflow.FacesEvent";
 
@@ -57,6 +57,7 @@ public class JsfView extends View {
 			throw new FacesException("An I/O error occurred during view rendering", e);
 		} finally {
 			facesContext.responseComplete();
+			facesContext.release();
 		}
 	}
 

@@ -20,14 +20,15 @@ import javax.faces.el.PropertyNotFoundException;
 import javax.faces.el.PropertyResolver;
 import javax.faces.el.ReferenceSyntaxException;
 
-import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Base class for property resolvers that get and set flow execution attributes.
+ * Base class for property resolvers that get and set request context attributes.
  * 
  * @author Keith Donald
+ * @author Jeremy Grelle
  */
-public abstract class AbstractFlowExecutionPropertyResolver extends PropertyResolver {
+public abstract class AbstractRequestContextPropertyResolver extends PropertyResolver {
 
 	/**
 	 * The standard property resolver to delegate to if this one doesn't apply.
@@ -35,10 +36,10 @@ public abstract class AbstractFlowExecutionPropertyResolver extends PropertyReso
 	private final PropertyResolver resolverDelegate;
 
 	/**
-	 * Creates a new flow executon property resolver
+	 * Creates a new request context property resolver
 	 * @param resolverDelegate the resolver to delegate to when the property is not a flow execution attribute
 	 */
-	public AbstractFlowExecutionPropertyResolver(PropertyResolver resolverDelegate) {
+	public AbstractRequestContextPropertyResolver(PropertyResolver resolverDelegate) {
 		this.resolverDelegate = resolverDelegate;
 	}
 
@@ -50,18 +51,18 @@ public abstract class AbstractFlowExecutionPropertyResolver extends PropertyReso
 	}
 
 	public Class getType(Object base, Object property) throws EvaluationException, PropertyNotFoundException {
-		if (base instanceof FlowExecution) {
-			FlowExecution execution = (FlowExecution) base;
+		if (base instanceof RequestContext) {
+			RequestContext context = (RequestContext) base;
 			assertPropertyNameValid(property);
-			return doGetAttributeType(execution, (String) property);
+			return doGetAttributeType(context, (String) property);
 		} else {
 			return resolverDelegate.getType(base, property);
 		}
 	}
 
 	public Class getType(Object base, int index) throws EvaluationException, PropertyNotFoundException {
-		if (base instanceof FlowExecution) {
-			// cannot access flow execution by index so we cannot determine type. Return null per JSF spec
+		if (base instanceof RequestContext) {
+			// cannot access request context by index so we cannot determine type. Return null per JSF spec
 			return null;
 		} else {
 			return resolverDelegate.getType(base, index);
@@ -69,17 +70,17 @@ public abstract class AbstractFlowExecutionPropertyResolver extends PropertyReso
 	}
 
 	public Object getValue(Object base, Object property) throws EvaluationException, PropertyNotFoundException {
-		if (base instanceof FlowExecution) {
-			FlowExecution execution = (FlowExecution) base;
+		if (base instanceof RequestContext) {
+			RequestContext context = (RequestContext) base;
 			assertPropertyNameValid(property);
-			return doGetAttribute(execution, (String) property);
+			return doGetAttribute(context, (String) property);
 		} else {
 			return resolverDelegate.getValue(base, property);
 		}
 	}
 
 	public Object getValue(Object base, int index) throws EvaluationException, PropertyNotFoundException {
-		if (base instanceof FlowExecution) {
+		if (base instanceof RequestContext) {
 			throw new ReferenceSyntaxException("Cannot apply an index value to a flow execution");
 		} else {
 			return resolverDelegate.getValue(base, index);
@@ -87,7 +88,7 @@ public abstract class AbstractFlowExecutionPropertyResolver extends PropertyReso
 	}
 
 	public boolean isReadOnly(Object base, Object property) throws EvaluationException, PropertyNotFoundException {
-		if (base instanceof FlowExecution) {
+		if (base instanceof RequestContext) {
 			return false;
 		} else {
 			return resolverDelegate.isReadOnly(base, property);
@@ -95,7 +96,7 @@ public abstract class AbstractFlowExecutionPropertyResolver extends PropertyReso
 	}
 
 	public boolean isReadOnly(Object base, int index) throws EvaluationException, PropertyNotFoundException {
-		if (base instanceof FlowExecution) {
+		if (base instanceof RequestContext) {
 			return false;
 		} else {
 			return resolverDelegate.isReadOnly(base, index);
@@ -104,8 +105,8 @@ public abstract class AbstractFlowExecutionPropertyResolver extends PropertyReso
 
 	public void setValue(Object base, Object property, Object value) throws EvaluationException,
 			PropertyNotFoundException {
-		if ((base instanceof FlowExecution)) {
-			FlowExecution execution = (FlowExecution) base;
+		if ((base instanceof RequestContext)) {
+			RequestContext execution = (RequestContext) base;
 			assertPropertyNameValid(property);
 			doSetAttribute(execution, (String) property, value);
 		} else {
@@ -114,7 +115,7 @@ public abstract class AbstractFlowExecutionPropertyResolver extends PropertyReso
 	}
 
 	public void setValue(Object base, int index, Object value) throws EvaluationException, PropertyNotFoundException {
-		if (base instanceof FlowExecution) {
+		if (base instanceof RequestContext) {
 			throw new ReferenceSyntaxException("Cannot apply an index value to a flow execution");
 		} else {
 			resolverDelegate.setValue(base, index, value);
@@ -138,26 +139,26 @@ public abstract class AbstractFlowExecutionPropertyResolver extends PropertyReso
 
 	/**
 	 * Gets the type of value returned by the flow execution attribute.
-	 * @param execution the flow execution
+	 * @param context the flow request context
 	 * @param attributeName the name of the attribute
 	 * @return the type of value returned by the attribute
 	 */
-	protected abstract Class doGetAttributeType(FlowExecution execution, String attributeName);
+	protected abstract Class doGetAttributeType(RequestContext context, String attributeName);
 
 	/**
 	 * Gets the value of the flow execution attribute.
-	 * @param execution the flow execution
+	 * @param context the flow request context
 	 * @param attributeName the name of the attribute
 	 * @return the attribute value
 	 */
-	protected abstract Object doGetAttribute(FlowExecution execution, String attributeName);
+	protected abstract Object doGetAttribute(RequestContext context, String attributeName);
 
 	/**
 	 * Sets the value of the flow execution attribute.
-	 * @param execution the flow execution
+	 * @param context the flow request context
 	 * @param attributeName the name of the attribute
 	 * @param attributeValue the attribute value
 	 */
-	protected abstract void doSetAttribute(FlowExecution execution, String attributeName, Object attributeValue);
+	protected abstract void doSetAttribute(RequestContext context, String attributeName, Object attributeValue);
 
 }
