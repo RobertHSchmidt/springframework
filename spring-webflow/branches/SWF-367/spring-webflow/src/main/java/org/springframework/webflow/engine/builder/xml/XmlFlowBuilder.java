@@ -63,7 +63,6 @@ import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
-import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.engine.builder.BaseFlowBuilder;
 import org.springframework.webflow.engine.builder.FlowArtifactFactory;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
@@ -75,7 +74,9 @@ import org.springframework.webflow.engine.support.SimpleFlowVariable;
 import org.springframework.webflow.engine.support.TransitionCriteriaChain;
 import org.springframework.webflow.engine.support.TransitionExecutingFlowExecutionExceptionHandler;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.ResponseRenderer;
 import org.springframework.webflow.execution.ScopeType;
+import org.springframework.webflow.execution.ViewFactory;
 import org.springframework.webflow.util.ResourceHolder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -630,7 +631,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private void parseAndAddViewState(Element element, Flow flow) {
 		getFlowArtifactFactory().createViewState(parseId(element), flow, parseEntryActions(element),
-				parseViewSelector(element), parseRenderActions(element), parseTransitions(element),
+				parseViewFactory(element), parseRenderActions(element), parseTransitions(element),
 				parseExceptionHandlers(element), parseExitActions(element), parseAttributes(element));
 	}
 
@@ -648,7 +649,7 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 
 	private void parseAndAddEndState(Element element, Flow flow) {
 		getFlowArtifactFactory().createEndState(parseId(element), flow, parseEntryActions(element),
-				parseViewSelector(element), parseOutputMapper(element), parseExceptionHandlers(element),
+				parseFinalResponseRenderer(element), parseOutputMapper(element), parseExceptionHandlers(element),
 				parseAttributes(element));
 	}
 
@@ -707,9 +708,14 @@ public class XmlFlowBuilder extends BaseFlowBuilder implements ResourceHolder {
 				parseAttributes(element));
 	}
 
-	private ViewSelector parseViewSelector(Element element) {
-		String viewName = element.getAttribute(VIEW_ATTRIBUTE);
-		return (ViewSelector) fromStringTo(ViewSelector.class).execute(viewName);
+	private ViewFactory parseViewFactory(Element element) {
+		// TODO
+		return null;
+	}
+
+	private ResponseRenderer parseFinalResponseRenderer(Element element) {
+		// TODO
+		return null;
 	}
 
 	private Flow parseSubflow(Element element) {

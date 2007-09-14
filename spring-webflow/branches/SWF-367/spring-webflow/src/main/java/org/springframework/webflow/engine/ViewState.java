@@ -16,6 +16,7 @@
 package org.springframework.webflow.engine;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.View;
 import org.springframework.webflow.execution.ViewFactory;
@@ -50,10 +51,12 @@ public class ViewState extends TransitionableState {
 	 * Create a new view state.
 	 * @param flow the owning flow
 	 * @param id the state identifier (must be unique to the flow)
+	 * @param viewFactory the view factory
 	 * @throws IllegalArgumentException when this state cannot be added to given flow, e.g. because the id is not unique
 	 */
 	public ViewState(Flow flow, String id, ViewFactory viewFactory) throws IllegalArgumentException {
 		super(flow, id);
+		Assert.notNull(viewFactory, "The view factory is required");
 		this.viewFactory = viewFactory;
 	}
 

@@ -107,7 +107,7 @@ public class FlowAssembler {
 	 * this method will assemble the Flow instance.
 	 * <p>
 	 * This will drive the flow construction process as described in the {@link FlowBuilder} JavaDoc, starting with
-	 * builder initialisation using {@link FlowBuilder#init(String, AttributeMap)} and finishing by cleaning up the
+	 * builder initialization using {@link FlowBuilder#init(String, AttributeMap)} and finishing by cleaning up the
 	 * builder with a call to {@link FlowBuilder#dispose()}.
 	 * @return the constructed flow
 	 * @throws FlowBuilderException when flow assembly fails

@@ -64,7 +64,7 @@ public abstract class BaseFlowBuilder implements FlowBuilder {
 	/**
 	 * Returns the configured flow service locator.
 	 */
-	public FlowServiceLocator getFlowServiceLocator() {
+	protected FlowServiceLocator getFlowServiceLocator() {
 		return flowServiceLocator;
 	}
 

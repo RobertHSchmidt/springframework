@@ -22,11 +22,9 @@ import org.springframework.webflow.engine.Flow;
  * Simple object that holds a reference to a local bean factory housing services needed by a flow definition at
  * execution time.
  * <p>
- * Internal helper class of the {@link org.springframework.webflow.engine.builder.xml.XmlFlowBuilder}. Package private
- * to highlight it's non-public nature.
+ * Internal helper class of the {@link XmlFlowBuilder}. Package private to highlight it's non-public nature.
  * 
- * @see org.springframework.webflow.engine.builder.xml.XmlFlowBuilder
- * @see org.springframework.webflow.engine.builder.xml.LocalFlowServiceLocator
+ * @see XmlFlowBuilder
  * 
  * @author Keith Donald
  */

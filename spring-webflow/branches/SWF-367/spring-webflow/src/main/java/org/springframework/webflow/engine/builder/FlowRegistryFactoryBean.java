@@ -33,21 +33,6 @@ import org.springframework.webflow.engine.builder.xml.XmlFlowRegistrar;
 /**
  * A factory bean that accepts an arbitrary list of {@link FlowDefinitionRegistrar}s and uses them to register flows.
  * This implementation should not be used programmatically but rather from the spring-webflow-config XML namespace.
- * <p>
- * Example Usage:
- * 
- * <pre>
- * &lt;flow:registry id=&quot;flowRegistry&quot;&gt;
- *     &lt;flow:location path=&quot;flow1.xml&quot;/&gt;
- *     &lt;flow:location id=&quot;foo&quot; path=&quot;flow2.xml&quot;/&gt;
- *     &lt;flow:class name=&quot;BarClass&quot;/&gt;
- *     &lt;flow:crud entity=&quot;Account&quot;/&gt;
- *     &lt;flow:namespace name=&quot;baz&quot;&gt;
- *         &lt;flow:location path=&quot;flow3.xml&quot;/&gt;
- *         &lt;flow:class name=&quot;XyzClass&quot;/&gt;
- *     &lt;/flow:namespace&gt;
- * &lt;/flow:registry&gt;
- * </pre>
  * 
  * @author Ben Hale
  */

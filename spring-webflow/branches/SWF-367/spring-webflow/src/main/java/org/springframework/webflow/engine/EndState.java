@@ -127,7 +127,7 @@ public class EndState extends State {
 	 * Renders no response. The default implementation.
 	 */
 	private class NullFinalResponse implements ResponseRenderer {
-		public void render(RequestControlContext context) {
+		public void render(RequestContext context) {
 			logger.debug("Not rendering a final response");
 		}
 

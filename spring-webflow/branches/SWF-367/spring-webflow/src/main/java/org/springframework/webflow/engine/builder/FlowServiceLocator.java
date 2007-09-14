@@ -28,7 +28,6 @@ import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
-import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -95,14 +94,6 @@ public interface FlowServiceLocator {
 	 * @throws FlowArtifactLookupException when no such resolver is found
 	 */
 	public TargetStateResolver getTargetStateResolver(String id) throws FlowArtifactLookupException;
-
-	/**
-	 * Returns the view selector to make view selections in view states with the provided id.
-	 * @param id the view selector id
-	 * @return the view selector
-	 * @throws FlowArtifactLookupException when no such selector is found
-	 */
-	public ViewSelector getViewSelector(String id) throws FlowArtifactLookupException;
 
 	/**
 	 * Returns the exception handler to handle flow execution exceptions with the provided id.
