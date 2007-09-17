@@ -19,7 +19,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowBuilder;
-import org.springframework.webflow.engine.builder.FlowServiceLocator;
+import org.springframework.webflow.engine.builder.support.FlowServiceLocator;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
 
 /**
