@@ -33,6 +33,7 @@ import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 import org.springframework.webflow.execution.MockFlowExecutionListener;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
 import org.springframework.webflow.test.MockExternalContext;
 
@@ -42,6 +43,7 @@ import org.springframework.webflow.test.MockExternalContext;
  * @author Keith Donald
  * @author Erwin Vervaet
  * @author Ben Hale
+ * @author Jeremy Grelle
  */
 public class FlowExecutionImplTests extends TestCase {
 
@@ -265,6 +267,61 @@ public class FlowExecutionImplTests extends TestCase {
 			assertEquals(1, mockListener.getResumingCount());
 			assertEquals(2, mockListener.getPausedCount());
 		}
+	}
+
+	public void testRequestContextManagedOnStartAndResume() {
+		Flow flow = Flow.create("flow");
+		ViewState state = new ViewState(flow, "view", new StubViewFactory()) {
+			public void start(RequestControlContext context) {
+				assertSame(context, RequestContextHolder.getRequestContext());
+			}
+
+			public void resume(RequestControlContext context) {
+				assertSame(context, RequestContextHolder.getRequestContext());
+			}
+		};
+		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		execution.setKeyFactory(new SimpleFlowExecutionKeyFactory());
+
+		MockExternalContext context = new MockExternalContext();
+		execution.start(null, context);
+		try {
+			RequestContextHolder.getRequestContext();
+			fail("RequestContext was not released");
+		} catch (IllegalStateException e) {
+			// This is expected
+		}
+
+		context = new MockExternalContext();
+		execution.resume(context);
+		try {
+			RequestContextHolder.getRequestContext();
+			fail("RequestContext was not released");
+		} catch (IllegalStateException e) {
+			// This is expected
+		}
+
+	}
+
+	public void testRequestContextBoundAndReleasedOnResume() {
+		Flow flow = Flow.create("flow");
+		ViewState state = new ViewState(flow, "view", new StubViewFactory()) {
+			public void start(RequestControlContext context) {
+				assertSame(context, RequestContextHolder.getRequestContext());
+			}
+		};
+		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		execution.setKeyFactory(new SimpleFlowExecutionKeyFactory());
+		MockExternalContext context = new MockExternalContext();
+		execution.start(null, context);
+
+		try {
+			RequestContextHolder.getRequestContext();
+			fail("RequestContext was not released");
+		} catch (IllegalStateException e) {
+			// This is expected
+		}
+
 	}
 
 	private static class SimpleFlowExecutionKeyFactory implements FlowExecutionKeyFactory {
