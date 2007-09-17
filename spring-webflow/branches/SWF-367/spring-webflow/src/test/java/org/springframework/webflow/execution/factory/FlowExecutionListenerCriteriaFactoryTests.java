@@ -17,6 +17,7 @@ package org.springframework.webflow.execution.factory;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.engine.Flow;
 
 /**
@@ -28,19 +29,19 @@ public class FlowExecutionListenerCriteriaFactoryTests extends TestCase {
 
 	public void testAllFlows() {
 		FlowExecutionListenerCriteria c = factory.allFlows();
-		assertEquals(true, c.appliesTo(new Flow("foo")));
+		assertEquals(true, c.appliesTo(Flow.create("foo")));
 	}
 
 	public void testFlowMatch() {
-		FlowExecutionListenerCriteria c = factory.flow("foo");
-		assertEquals(true, c.appliesTo(new Flow("foo")));
-		assertEquals(false, c.appliesTo(new Flow("baz")));
+		FlowExecutionListenerCriteria c = factory.flow(FlowId.valueOf("foo"));
+		assertEquals(true, c.appliesTo(Flow.create("foo")));
+		assertEquals(false, c.appliesTo(Flow.create("baz")));
 	}
 
 	public void testMultipleFlowMatch() {
-		FlowExecutionListenerCriteria c = factory.flows(new String[] { "foo", "bar" });
-		assertEquals(true, c.appliesTo(new Flow("foo")));
-		assertEquals(true, c.appliesTo(new Flow("bar")));
-		assertEquals(false, c.appliesTo(new Flow("baz")));
+		FlowExecutionListenerCriteria c = factory.flows(new FlowId[] { FlowId.valueOf("foo"), FlowId.valueOf("bar") });
+		assertEquals(true, c.appliesTo(Flow.create("foo")));
+		assertEquals(true, c.appliesTo(Flow.create("bar")));
+		assertEquals(false, c.appliesTo(Flow.create("baz")));
 	}
 }
