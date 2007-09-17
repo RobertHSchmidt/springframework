@@ -20,7 +20,6 @@ import org.springframework.web.util.WebUtils;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.FlowExecutionContext;
-import org.springframework.webflow.execution.support.FlowDefinitionRedirect;
 
 /**
  * Flow executor argument handler that extracts arguments from the request path and exposes them in the URL path.
