@@ -23,7 +23,6 @@ package org.springframework.webflow.definition.registry;
  * registry hierarchy.
  * 
  * @author Keith Donald
- * @author Ben Hale
  */
 public interface FlowDefinitionRegistry extends FlowDefinitionLocator {
 

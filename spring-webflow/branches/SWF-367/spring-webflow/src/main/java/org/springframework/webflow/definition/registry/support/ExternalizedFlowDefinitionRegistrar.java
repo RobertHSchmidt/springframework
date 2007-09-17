@@ -34,7 +34,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
  * @see org.springframework.webflow.definition.registry.FlowDefinitionRegistry
  * 
  * @author Keith Donald
- * @author Ben Hale
  */
 public abstract class ExternalizedFlowDefinitionRegistrar implements FlowDefinitionRegistrar {
 

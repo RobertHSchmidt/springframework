@@ -19,7 +19,9 @@ import org.springframework.util.Assert;
  * @author Keith Donald
  */
 public class FlowId implements Serializable {
+
 	private String namespace;
+
 	private String shortName;
 
 	/**
