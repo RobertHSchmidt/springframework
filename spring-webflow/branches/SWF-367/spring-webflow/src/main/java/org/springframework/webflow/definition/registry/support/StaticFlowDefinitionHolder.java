@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.definition.registry;
+package org.springframework.webflow.definition.registry.support;
 
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.FlowId;
+import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
 
 /**
  * A simple flow definition holder that just holds a constant singleton reference to a flow definition.
