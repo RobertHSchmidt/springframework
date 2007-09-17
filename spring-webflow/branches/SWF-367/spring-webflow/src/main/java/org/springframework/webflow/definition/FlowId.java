@@ -46,5 +46,4 @@ public class FlowId implements Serializable {
 			return namespace + "/" + shortName;
 		}
 	}
-
 }

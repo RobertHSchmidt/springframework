@@ -2,8 +2,10 @@ package org.springframework.webflow.engine.builder.xml;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.definition.registry.FlowDefinitionResource;
+import org.springframework.webflow.definition.registry.support.FlowDefinitionResource;
 import org.springframework.webflow.test.MockFlowServiceLocator;
 
 public class XmlFlowRegistrarTests extends TestCase {
@@ -16,9 +18,12 @@ public class XmlFlowRegistrarTests extends TestCase {
 	}
 
 	public void testRegisterFlow() {
-		registrar.addResource(FlowDefinitionResource.create("flow-registrar.xml"));
+		registrar.addResource(FlowDefinitionResource
+				.create("org/springframework/webflow/engine/builder/xml/flow-registrar.xml"));
 		FlowDefinitionRegistry registry = serviceLocator.getMockSubflowRegistry();
 		registrar.registerFlowDefinitions(registry);
-		assertEquals(1, registry.getFlowDefinitionCount());
+		FlowId id = FlowId.valueOf("flow-registrar");
+		FlowDefinition def = registry.getFlowDefinition(id);
+		assertEquals(def.getId(), id);
 	}
 }

@@ -37,7 +37,7 @@ public class FlowDefinitionConstructionException extends FlowException {
 	 * @param cause the underlying cause of the exception
 	 */
 	public FlowDefinitionConstructionException(FlowId flowId, Throwable cause) {
-		super("An exception occurred constructing the flow with " + flowId, cause);
+		super("An exception occurred constructing the flow '" + flowId + "'", cause);
 		this.flowId = flowId;
 	}
 
