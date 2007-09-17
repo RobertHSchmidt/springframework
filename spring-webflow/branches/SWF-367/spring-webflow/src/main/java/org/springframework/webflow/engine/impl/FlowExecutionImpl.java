@@ -214,7 +214,6 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		} catch (FlowExecutionException e) {
 			handleException(e, context);
 		} catch (Exception e) {
-			e.printStackTrace();
 			handleException(wrap(e, context), context);
 		} finally {
 			if (isActive()) {
