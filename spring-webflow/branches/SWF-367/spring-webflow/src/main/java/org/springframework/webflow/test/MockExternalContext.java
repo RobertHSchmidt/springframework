@@ -197,14 +197,29 @@ public class MockExternalContext implements ExternalContext {
 	}
 
 	public Object getContext() {
+		// TODO
 		return null;
 	}
 
 	public Object getRequest() {
+		// TODO
 		return null;
 	}
 
 	public Object getResponse() {
+		// TODO
 		return null;
+	}
+
+	public void sendExternalRedirect(String resourceUri) {
+		// TODO
+	}
+
+	public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input) {
+		// TODO
+	}
+
+	public void sendFlowExecutionRedirect() {
+		// TODO
 	}
 }

@@ -21,11 +21,11 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.registry.FlowDefinitionResource;
+import org.springframework.webflow.definition.registry.support.FlowDefinitionResource;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
-import org.springframework.webflow.engine.builder.FlowServiceLocator;
+import org.springframework.webflow.engine.builder.support.FlowServiceLocator;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
@@ -168,7 +168,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 */
 	protected final Flow createFlow(FlowDefinitionResource resource, FlowServiceLocator serviceLocator) {
 		FlowBuilder builder = createFlowBuilder(resource.getLocation(), serviceLocator);
-		FlowAssembler assembler = new FlowAssembler(resource.getId(), resource.getAttributes(), builder);
+		FlowAssembler assembler = new FlowAssembler(resource.getId(), builder, resource.getAttributes());
 		return assembler.assembleFlow();
 	}
 
@@ -228,6 +228,6 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * @return the flow definition resource
 	 */
 	protected FlowDefinitionResource createFlowDefinitionResource(File file) {
-		return new FlowDefinitionResource(new FileSystemResource(file));
+		return FlowDefinitionResource.create(new FileSystemResource(file));
 	}
 }
