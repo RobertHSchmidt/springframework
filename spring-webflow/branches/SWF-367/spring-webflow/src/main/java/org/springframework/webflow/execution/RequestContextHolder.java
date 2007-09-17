@@ -31,7 +31,7 @@ public class RequestContextHolder {
 	 * @throws IllegalStateException if no RequestContext is bound to this thread
 	 */
 	public static RequestContext getRequestContext() {
-		Assert.state(requestContextHolder.get() != null, "No external context is bound to this thread");
+		Assert.state(requestContextHolder.get() != null, "No request context is bound to this thread");
 		return (RequestContext) requestContextHolder.get();
 	}
 

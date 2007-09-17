@@ -44,6 +44,7 @@ import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
 
 /**
@@ -61,6 +62,7 @@ import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
+ * @author Jeremy Grelle
  */
 public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
@@ -204,6 +206,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		}
 		started = true;
 		RequestControlContext context = createControlContext(externalContext);
+		RequestContextHolder.setRequestContext(context);
 		listeners.fireRequestSubmitted(context);
 		try {
 			// launch a flow session for the root flow
@@ -218,6 +221,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 				listeners.firePaused(context);
 			}
 			listeners.fireRequestProcessed(context);
+			RequestContextHolder.setRequestContext(null);
 		}
 	}
 
@@ -233,6 +237,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			logger.debug("Resuming execution in " + externalContext);
 		}
 		RequestControlContext context = createControlContext(externalContext);
+		RequestContextHolder.setRequestContext(context);
 		listeners.fireRequestSubmitted(context);
 		try {
 			listeners.fireResuming(context);
@@ -246,6 +251,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 				listeners.firePaused(context);
 			}
 			listeners.fireRequestProcessed(context);
+			RequestContextHolder.setRequestContext(null);
 		}
 	}
 
