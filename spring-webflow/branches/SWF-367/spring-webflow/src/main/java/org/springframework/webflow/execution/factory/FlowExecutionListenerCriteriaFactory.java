@@ -19,6 +19,7 @@ import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.FlowId;
 
 /**
  * Static factory for creating commonly used flow execution listener criteria.
@@ -30,26 +31,28 @@ import org.springframework.webflow.definition.FlowDefinition;
  */
 public class FlowExecutionListenerCriteriaFactory {
 
+	private static final WildcardFlowExecutionListenerCriteria WILDCARD_INSTANCE = new WildcardFlowExecutionListenerCriteria();
+
 	/**
 	 * Returns a wild card criteria that matches all flows.
 	 */
 	public FlowExecutionListenerCriteria allFlows() {
-		return new WildcardFlowExecutionListenerCriteria();
+		return WILDCARD_INSTANCE;
 	}
 
 	/**
 	 * Returns a criteria that just matches a flow with the specified id.
 	 * @param flowId the flow id to match
 	 */
-	public FlowExecutionListenerCriteria flow(String flowId) {
-		return new FlowIdFlowExecutionListenerCriteria(flowId);
+	public FlowExecutionListenerCriteria flow(FlowId flowId) {
+		return new FlowIdFlowExecutionListenerCriteria(new FlowId[] { flowId });
 	}
 
 	/**
 	 * Returns a criteria that just matches a flow if it is identified by one of the specified ids.
 	 * @param flowIds the flow ids to match
 	 */
-	public FlowExecutionListenerCriteria flows(String[] flowIds) {
+	public FlowExecutionListenerCriteria flows(FlowId[] flowIds) {
 		return new FlowIdFlowExecutionListenerCriteria(flowIds);
 	}
 
@@ -75,22 +78,13 @@ public class FlowExecutionListenerCriteriaFactory {
 		/**
 		 * The flow ids that apply for this criteria.
 		 */
-		private String[] flowIds;
+		private FlowId[] flowIds;
 
 		/**
-		 * Create a new flow id matching flow execution listener criteria implemenation.
-		 * @param flowId the flow id to match
-		 */
-		public FlowIdFlowExecutionListenerCriteria(String flowId) {
-			Assert.notNull(flowId, "The flow id is required");
-			this.flowIds = new String[] { flowId };
-		}
-
-		/**
-		 * Create a new flow id matching flow execution listener criteria implemenation.
+		 * Create a new flow id matching flow execution listener criteria implementation.
 		 * @param flowIds the flow ids to match
 		 */
-		public FlowIdFlowExecutionListenerCriteria(String[] flowIds) {
+		public FlowIdFlowExecutionListenerCriteria(FlowId[] flowIds) {
 			Assert.notEmpty(flowIds, "The flow id array is required");
 			this.flowIds = flowIds;
 		}
