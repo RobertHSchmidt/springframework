@@ -16,9 +16,8 @@
 package org.springframework.webflow.definition.registry;
 
 /**
- * A container of flow definitions. Extends the {@link FlowDefinitionRegistryMBean} management interface exposing
- * registry monitoring and management operations. Also extends {@link FlowDefinitionLocator} for accessing registered
- * Flow definitions for execution at runtime.
+ * A container of flow definitions. Extends {@link FlowDefinitionLocator} for accessing registered Flow definitions for
+ * execution at runtime.
  * <p>
  * Flow definition registries can be configured with a "parent" registry to provide a hook into a larger flow definition
  * registry hierarchy.
@@ -26,7 +25,7 @@ package org.springframework.webflow.definition.registry;
  * @author Keith Donald
  * @author Ben Hale
  */
-public interface FlowDefinitionRegistry extends FlowDefinitionLocator, FlowDefinitionRegistryMBean {
+public interface FlowDefinitionRegistry extends FlowDefinitionLocator {
 
 	/**
 	 * Sets this registry's parent registry. When asked by a client to locate a flow definition this registry will query

@@ -95,7 +95,7 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 		return flowDefinition;
 	}
 
-	public synchronized void refresh() throws FlowBuilderException {
+	public synchronized void refresh() throws FlowDefinitionConstructionException {
 		assembleFlow();
 	}
 
@@ -123,13 +123,15 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 	/**
 	 * Assemble the held flow definition, delegating to the configured FlowAssembler (director).
 	 */
-	private void assembleFlow() throws FlowBuilderException {
+	private void assembleFlow() throws FlowDefinitionConstructionException {
 		try {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Assembling flow definition with id '" + assembler.getFlowId() + "'");
 			}
 			assembling = true;
 			flowDefinition = assembler.assembleFlow();
+		} catch (FlowBuilderException e) {
+			throw new FlowDefinitionConstructionException(assembler.getFlowId(), e);
 		} finally {
 			assembling = false;
 		}

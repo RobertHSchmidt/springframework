@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.definition.registry;
+package org.springframework.webflow.definition.registry.support;
 
 import java.util.HashSet;
 import java.util.Iterator;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistrar;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 
 /**
  * A flow definition registrar that populates a flow definition registry from flow definitions defined within
@@ -28,7 +31,6 @@ import org.springframework.core.style.ToStringCreator;
  * Concrete subclasses are expected to derive from this class to provide knowledge about a particular kind of definition
  * format by implementing the abstract template methods in this class.
  * 
- * @see org.springframework.webflow.definition.registry.FlowDefinitionResource
  * @see org.springframework.webflow.definition.registry.FlowDefinitionRegistry
  * 
  * @author Keith Donald

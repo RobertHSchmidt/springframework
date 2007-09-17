@@ -15,8 +15,8 @@
  */
 package org.springframework.webflow.definition.registry;
 
-import org.springframework.core.style.StylerUtils;
 import org.springframework.webflow.core.FlowException;
+import org.springframework.webflow.definition.FlowId;
 
 /**
  * Thrown when no flow definition was found during a lookup operation by a flow locator.
@@ -29,23 +29,20 @@ public class NoSuchFlowDefinitionException extends FlowException {
 	/**
 	 * The id of the flow definition that could not be located.
 	 */
-	private String flowId;
+	private FlowId flowId;
 
 	/**
 	 * Creates an exception indicating a flow definition could not be found.
-	 * @param flowId the flow id
-	 * @param availableFlowIds all flow ids available to the locator generating this exception
+	 * @param id the flow definition id
 	 */
-	public NoSuchFlowDefinitionException(String flowId, String[] availableFlowIds) {
-		super("No such flow definition with id '" + flowId + "' found; the flows available are: "
-				+ StylerUtils.style(availableFlowIds));
-		this.flowId = flowId;
+	public NoSuchFlowDefinitionException(FlowId id) {
+		super("No such flow definition with " + id + " found");
 	}
 
 	/**
 	 * Returns the id of the flow definition that could not be found.
 	 */
-	public String getFlowId() {
+	public FlowId getFlowId() {
 		return flowId;
 	}
 }

@@ -17,9 +17,9 @@ package org.springframework.webflow.engine.builder.xml;
 
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
-import org.springframework.webflow.definition.registry.ExternalizedFlowDefinitionRegistrar;
 import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
-import org.springframework.webflow.definition.registry.FlowDefinitionResource;
+import org.springframework.webflow.definition.registry.support.ExternalizedFlowDefinitionRegistrar;
+import org.springframework.webflow.definition.registry.support.FlowDefinitionResource;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.RefreshableFlowDefinitionHolder;
@@ -27,7 +27,7 @@ import org.springframework.webflow.engine.builder.support.FlowServiceLocator;
 
 /**
  * A flow definition registrar that populates a flow definition registry with flow definitions defined in externalized
- * XML resources.
+ * XMLx resources.
  * 
  * @author Keith Donald
  */
