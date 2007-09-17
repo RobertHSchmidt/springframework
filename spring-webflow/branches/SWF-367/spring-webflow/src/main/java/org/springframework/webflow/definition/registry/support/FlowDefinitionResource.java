@@ -110,9 +110,9 @@ public class FlowDefinitionResource implements Serializable {
 		}
 	}
 
-	public static FlowDefinitionResource create(String string) {
+	public static FlowDefinitionResource create(String resourceString) {
 		DefaultResourceLoader loader = new DefaultResourceLoader();
-		Resource resource = loader.getResource(string);
+		Resource resource = loader.getResource(resourceString);
 		return new FlowDefinitionResource(conventionalFlowId(resource), resource, null);
 	}
 

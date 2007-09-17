@@ -32,7 +32,7 @@ import org.springframework.webflow.engine.Flow;
  * 
  * <pre>
  *     FlowBuilder builder = ...;
- *     Flow flow = new FlowAssembler(&quot;myFlow&quot;, builder).assembleFlow();
+ *     Flow flow = new FlowAssembler(&quot;myFlow&quot;, builder, null).assembleFlow();
  * </pre>
  * 
  * @see org.springframework.webflow.engine.builder.FlowBuilder
