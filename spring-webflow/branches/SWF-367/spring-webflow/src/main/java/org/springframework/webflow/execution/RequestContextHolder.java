@@ -1,6 +1,5 @@
 package org.springframework.webflow.execution;
 
-import org.springframework.util.Assert;
 
 /**
  * Simple holder class that associates a {@link RequestContext} instance with the current thread. The RequestContext
@@ -31,7 +30,6 @@ public class RequestContextHolder {
 	 * @throws IllegalStateException if no RequestContext is bound to this thread
 	 */
 	public static RequestContext getRequestContext() {
-		Assert.state(requestContextHolder.get() != null, "No request context is bound to this thread");
 		return (RequestContext) requestContextHolder.get();
 	}
 
