@@ -285,42 +285,11 @@ public class FlowExecutionImplTests extends TestCase {
 
 		MockExternalContext context = new MockExternalContext();
 		execution.start(null, context);
-		try {
-			RequestContextHolder.getRequestContext();
-			fail("RequestContext was not released");
-		} catch (IllegalStateException e) {
-			// This is expected
-		}
+		assertNull("RequestContext was not released", RequestContextHolder.getRequestContext());
 
 		context = new MockExternalContext();
 		execution.resume(context);
-		try {
-			RequestContextHolder.getRequestContext();
-			fail("RequestContext was not released");
-		} catch (IllegalStateException e) {
-			// This is expected
-		}
-
-	}
-
-	public void testRequestContextBoundAndReleasedOnResume() {
-		Flow flow = Flow.create("flow");
-		ViewState state = new ViewState(flow, "view", new StubViewFactory()) {
-			public void start(RequestControlContext context) {
-				assertSame(context, RequestContextHolder.getRequestContext());
-			}
-		};
-		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
-		execution.setKeyFactory(new SimpleFlowExecutionKeyFactory());
-		MockExternalContext context = new MockExternalContext();
-		execution.start(null, context);
-
-		try {
-			RequestContextHolder.getRequestContext();
-			fail("RequestContext was not released");
-		} catch (IllegalStateException e) {
-			// This is expected
-		}
+		assertNull("RequestContext was not released", RequestContextHolder.getRequestContext());
 
 	}
 
