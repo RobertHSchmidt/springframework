@@ -240,7 +240,6 @@ public class MockExternalContext implements ExternalContext {
 	}
 
 	public void setPausedResult(String flowExecutionKey) {
-		System.out.println(flowExecutionKey);
 		this.pausedFlowExecutionKeyResult = flowExecutionKey;
 	}
 
