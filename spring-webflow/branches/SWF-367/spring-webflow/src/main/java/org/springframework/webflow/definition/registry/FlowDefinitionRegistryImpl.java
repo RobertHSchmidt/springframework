@@ -52,6 +52,9 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 	public FlowDefinition getFlowDefinition(String id) throws NoSuchFlowDefinitionException,
 			FlowDefinitionConstructionException {
 		try {
+			if (id == null) {
+				throw new IllegalArgumentException("The id of the flow to lookup is required");
+			}
 			if (logger.isDebugEnabled()) {
 				logger.debug("Getting flow definition with id '" + id + "'");
 			}

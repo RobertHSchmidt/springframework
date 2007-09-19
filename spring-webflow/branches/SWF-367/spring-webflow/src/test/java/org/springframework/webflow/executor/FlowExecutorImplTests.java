@@ -2,6 +2,7 @@ package org.springframework.webflow.executor;
 
 import junit.framework.TestCase;
 
+import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.definition.registry.support.StaticFlowDefinitionHolder;
@@ -37,7 +38,15 @@ public class FlowExecutorImplTests extends TestCase {
 		new EndState(flow, "end");
 		definitionLocator.registerFlowDefinition(new StaticFlowDefinitionHolder(flow));
 		MockExternalContext context = new MockExternalContext();
-		executor.launchExecution("flow", context);
+		context.setFlowId("flow");
+
+		ExternalContextHolder.setExternalContext(context);
+		executor.execute(context);
+		ExternalContextHolder.setExternalContext(null);
+
+		assertFalse(context.getFlowExecutionRedirect());
+		assertNull(context.getPausedFlowExecutionKeyResult());
+		assertNull(context.getExceptionResult());
 	}
 
 	public void testLaunchAndResume() {
@@ -45,13 +54,24 @@ public class FlowExecutorImplTests extends TestCase {
 		new ViewState(flow, "pause", new StubViewFactory());
 		definitionLocator.registerFlowDefinition(new StaticFlowDefinitionHolder(flow));
 		MockExternalContext context = new MockExternalContext();
-		executor.launchExecution("flow", context);
-		// assertTrue(result.isPaused());
-		// assertFalse(result.isEnded());
-		// assertNotNull(result.getEncodedKey());
+		context.setFlowId("flow");
+
+		ExternalContextHolder.setExternalContext(context);
+		executor.execute(context);
+		ExternalContextHolder.setExternalContext(null);
+
+		assertNotNull(context.getPausedFlowExecutionKeyResult());
+		assertNull(context.getExceptionResult());
+		assertFalse(context.getFlowExecutionRedirect());
+
 		MockExternalContext context2 = new MockExternalContext();
 		context2.setSessionMap(context.getSessionMap());
-		// executor.resumeExecution(result.getEncodedKey(), context);
+		context2.setFlowId("flow");
+		context2.setFlowExecutionKey(context.getPausedFlowExecutionKeyResult());
+
+		ExternalContextHolder.setExternalContext(context);
+		executor.execute(context2);
+		ExternalContextHolder.setExternalContext(null);
 	}
 
 	public void testLaunchAndException() {
@@ -64,11 +84,15 @@ public class FlowExecutorImplTests extends TestCase {
 		};
 		definitionLocator.registerFlowDefinition(new StaticFlowDefinitionHolder(flow));
 		MockExternalContext context = new MockExternalContext();
-		executor.launchExecution("flow", context);
-		// assertFalse(result.isEnded());
-		// assertFalse(result.isPaused());
-		// assertNull(result.getEncodedKey());
-		// assertTrue(result.isException());
-		// assertSame(e, result.getException().getCause());
+		context.setFlowId("flow");
+
+		ExternalContextHolder.setExternalContext(context);
+		executor.execute(context);
+		ExternalContextHolder.setExternalContext(null);
+
+		assertFalse(context.getFlowExecutionRedirect());
+		assertNull(context.getPausedFlowExecutionKeyResult());
+		assertNotNull(context.getExceptionResult());
+		assertSame(e, context.getExceptionResult().getCause());
 	}
 }

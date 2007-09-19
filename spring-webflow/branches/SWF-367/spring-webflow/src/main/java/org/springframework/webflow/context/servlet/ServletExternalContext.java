@@ -24,18 +24,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.core.FlowException;
-import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.LocalParameterMap;
 import org.springframework.webflow.core.collection.LocalSharedAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.core.collection.SharedAttributeMap;
-import org.springframework.webflow.definition.FlowId;
-import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.executor.FlowExecutor;
 
 /**
@@ -81,9 +78,13 @@ public class ServletExternalContext implements ExternalContext {
 	 */
 	private SharedAttributeMap applicationMap;
 
-	private FlowExecutor flowExecutor;
+	private String flowId;
 
-	private FlowExecutionKey flowExecutionKey;
+	private String flowExecutionKey;
+
+	private String[] requestElements;
+
+	private FlowExecutor flowExecutor;
 
 	private boolean flowExecutionRedirect;
 
@@ -111,22 +112,46 @@ public class ServletExternalContext implements ExternalContext {
 		this.sessionMap = new LocalSharedAttributeMap(new HttpSessionMap(this.request));
 		this.applicationMap = new LocalSharedAttributeMap(new HttpServletContextMap(context));
 		this.flowExecutor = flowExecutor;
+		parseRequestPathInfo();
 	}
 
-	public String getContextPath() {
-		return request.getContextPath();
+	public String getFlowId() {
+		return flowId;
 	}
 
-	public String getDispatcherPath() {
-		return request.getServletPath();
+	public String getFlowExecutionKey() {
+		return flowExecutionKey;
 	}
 
-	public String getRequestPathInfo() {
-		return request.getPathInfo();
+	private void parseRequestPathInfo() {
+		String pathInfo = request.getPathInfo();
+		if (pathInfo == null) {
+			throw new IllegalArgumentException(
+					"The request path is null - unable to determine flow id or flow execution key");
+		}
+		String[] pathElements = pathInfo.substring(1, pathInfo.length()).split("/");
+		flowId = pathElements[0];
+		if (pathElements.length == 1) {
+			flowExecutionKey = null;
+			requestElements = new String[0];
+		} else if (pathElements.length > 1) {
+			if (pathElements[1].equals("execution")) {
+				flowExecutionKey = pathElements[2];
+				requestElements = new String[0];
+			} else {
+				flowExecutionKey = null;
+				requestElements = new String[pathElements.length - 1];
+				System.arraycopy(pathElements, 1, requestElements, 0, requestElements.length);
+			}
+		}
 	}
 
 	public String getRequestMethod() {
 		return request.getMethod();
+	}
+
+	public String[] getRequestElements() {
+		return requestElements;
 	}
 
 	public ParameterMap getRequestParameterMap() {
@@ -149,41 +174,34 @@ public class ServletExternalContext implements ExternalContext {
 		return applicationMap;
 	}
 
-	/**
-	 * Return the wrapped HTTP servlet context.
-	 */
 	public Object getContext() {
 		return context;
 	}
 
-	/**
-	 * Return the wrapped HTTP servlet request.
-	 */
 	public Object getRequest() {
 		return request;
 	}
 
-	/**
-	 * Return the wrapped HTTP servlet response.
-	 */
 	public Object getResponse() {
 		return response;
 	}
+
+	// response requesters
 
 	public void sendFlowExecutionRedirect() {
 		this.flowExecutionRedirect = true;
 	}
 
-	public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input) {
-
+	public void sendFlowDefinitionRedirect(String flowId, String[] requestElements, ParameterMap requestParameters) {
 	}
 
 	public void sendExternalRedirect(String resourceUri) {
 		this.resourceUri = resourceUri;
 	}
 
-	public void setPausedResult(FlowExecutionKey key) {
-		this.flowExecutionKey = key;
+	// execution processing result setters
+
+	public void setPausedResult(String flowExecutionKey) {
 	}
 
 	public void setEndedResult() {
@@ -195,18 +213,11 @@ public class ServletExternalContext implements ExternalContext {
 	}
 
 	public void processRequest() {
-		String executionKey = getFlowExecutionKey();
-		if (executionKey != null) {
-			flowExecutor.resumeExecution(executionKey, this);
-		} else {
-			flowExecutor.launchExecution(getFlowId(), this);
-		}
-		if (isPausedResult()) {
-			if (flowExecutionRedirect) {
-				issueFlowExecutionRedirect();
-			} else {
-				// flush writer?
-			}
+		ExternalContextHolder.setExternalContext(this);
+		try {
+			flowExecutor.execute(this);
+		} finally {
+			ExternalContextHolder.setExternalContext(null);
 		}
 	}
 
@@ -222,25 +233,8 @@ public class ServletExternalContext implements ExternalContext {
 		return flowExecutionKey != null;
 	}
 
-	private String getFlowExecutionKey() {
-		String requestInfo = request.getPathInfo();
-		String[] pathElements = StringUtils.tokenizeToStringArray(requestInfo, "/");
-		if (pathElements.length == 2) {
-			return pathElements[1];
-		} else {
-			return null;
-		}
-	}
-
-	private FlowId getFlowId() {
-		return FlowId.valueOf(StringUtils.tokenizeToStringArray(request.getPathInfo(), "/")[0]);
-	}
-
-	private AttributeMap getFlowInput() {
-		return inputMapBuilder.buildInputMap(getFlowId(), this);
-	}
-
 	public String toString() {
 		return new ToStringCreator(this).append("requestParameterMap", getRequestParameterMap()).toString();
 	}
+
 }

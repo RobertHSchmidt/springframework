@@ -6,7 +6,6 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.support.AbstractFlowBuilder;
@@ -23,7 +22,7 @@ public class RefreshableFlowDefinitionHolderTests extends TestCase {
 
 	public void testGetFlowDefinition() {
 		FlowDefinition flow = holder.getFlowDefinition();
-		assertEquals(FlowId.valueOf("flowId"), flow.getId());
+		assertEquals("flowId", flow.getId());
 		assertEquals("end", flow.getStartState().getId());
 	}
 
@@ -32,7 +31,7 @@ public class RefreshableFlowDefinitionHolderTests extends TestCase {
 		holder = new RefreshableFlowDefinitionHolder(assembler);
 		FlowDefinition flow = holder.getFlowDefinition();
 		flow = holder.getFlowDefinition();
-		assertEquals(FlowId.valueOf("flowId"), flow.getId());
+		assertEquals("flowId", flow.getId());
 		assertEquals("end", flow.getStartState().getId());
 	}
 

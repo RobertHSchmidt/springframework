@@ -16,13 +16,12 @@
 package org.springframework.webflow.engine.builder;
 
 import org.springframework.webflow.core.collection.AttributeMap;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.engine.Flow;
 
 /**
  * Builder interface used to build a flow definition. The process of building a flow consists of the following steps:
  * <ol>
- * <li> Initialize this builder, creating the initial flow definition, by calling {@link #init(FlowId, AttributeMap)}.
+ * <li> Initialize this builder, creating the initial flow definition, by calling {@link #init(String, AttributeMap)}.
  * <li> Call {@link #buildVariables()} to create any variables of the flow and add them to the flow definition.
  * <li> Call {@link #buildInputMapper()} to create and set the input mapper for the flow.
  * <li> Call {@link #buildStartActions()} to create and add any start actions to the flow.
@@ -130,7 +129,7 @@ public interface FlowBuilder {
 
 	/**
 	 * Shutdown the builder, releasing any resources it holds. A new flow construction process should start with another
-	 * call to the {@link #init(FlowId, AttributeMap)} method.
+	 * call to the {@link #init(String, AttributeMap)} method.
 	 */
 	public void dispose();
 }

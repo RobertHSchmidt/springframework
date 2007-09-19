@@ -4,7 +4,6 @@ import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
 import org.springframework.webflow.core.collection.CollectionUtils;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.engine.Flow;
 
 public class FlowAssemblerTests extends TestCase {
@@ -28,10 +27,10 @@ public class FlowAssemblerTests extends TestCase {
 		builder.buildEndActions();
 		builder.buildOutputMapper();
 		builder.buildExceptionHandlers();
-		EasyMock.expect(builder.getFlow()).andReturn("search");
+		EasyMock.expect(builder.getFlow()).andReturn(new Flow("search"));
 		EasyMock.replay(new Object[] { builder });
 		Flow flow = assembler.assembleFlow();
-		assertEquals(FlowId.valueOf("search"), flow.getId());
+		assertEquals("search", flow.getId());
 		EasyMock.verify(new Object[] { builder });
 	}
 

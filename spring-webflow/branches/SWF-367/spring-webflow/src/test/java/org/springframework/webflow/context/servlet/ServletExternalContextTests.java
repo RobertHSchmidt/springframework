@@ -21,8 +21,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.core.collection.AttributeMap;
-import org.springframework.webflow.definition.FlowId;
+import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.executor.FlowExecutor;
 
 /**
@@ -39,37 +38,71 @@ public class ServletExternalContextTests extends TestCase {
 		request = new MockHttpServletRequest();
 		response = new MockHttpServletResponse();
 		flowExecutor = new StubFlowExecutor();
-		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
 	}
 
-	public void testProcessLaunchRequest() {
-		request.setMethod("GET");
+	public void testProcessLaunchFlowRequest() {
 		request.setPathInfo("/booking");
+		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
 		context.processRequest();
-		assertEquals(FlowId.valueOf("booking"), flowExecutor.flowId);
-		assertEquals(0, flowExecutor.input.size());
+		assertEquals("booking", context.getFlowId());
 	}
 
-	public void testProcessLaunchRequestWithInput() {
-		request.setMethod("GET");
-		request.setPathInfo("/conference/46/speakers/24");
+	public void testProcessLaunchFlowRequestTrailingSlash() {
+		request.setPathInfo("/booking/");
+		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
 		context.processRequest();
-		assertEquals(FlowId.valueOf("conference"), flowExecutor.flowId);
-		assertEquals(1, flowExecutor.input.size());
+		assertEquals("booking", context.getFlowId());
+	}
+
+	public void testProcessLaunchFlowRequestElements() {
+		request.setPathInfo("/users/1");
+		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
+		context.processRequest();
+		assertEquals("users", context.getFlowId());
+		assertEquals(context.getRequestElements()[0], "1");
+	}
+
+	public void testProcessLaunchFlowMultipleRequestElements() {
+		request.setPathInfo("/users/1/foo/bar//baz/");
+		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
+		context.processRequest();
+		assertEquals("users", context.getFlowId());
+		assertEquals("1", context.getRequestElements()[0]);
+		assertEquals("foo", context.getRequestElements()[1]);
+		assertEquals("bar", context.getRequestElements()[2]);
+		assertEquals("", context.getRequestElements()[3]);
+		assertEquals("baz", context.getRequestElements()[4]);
+	}
+
+	public void testProcessResumeFlowExecution() {
+		request.setPathInfo("/booking/execution/_c12345_k12345");
+		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
+		context.processRequest();
+		assertEquals("booking", context.getFlowId());
+		assertEquals("_c12345_k12345", context.getFlowExecutionKey());
+	}
+
+	public void testExternalContextUnbound() {
+		request.setPathInfo("/booking/execution/_c12345_k12345");
+		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
+		context.processRequest();
+		assertNull(ExternalContextHolder.getExternalContext());
+	}
+
+	public void testNoRequestPathInfo() {
+		request.setPathInfo(null);
+		try {
+			context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
+			fail("Should have failed");
+		} catch (IllegalArgumentException e) {
+
+		}
 	}
 
 	public class StubFlowExecutor implements FlowExecutor {
 
-		private FlowId flowId;
-		private AttributeMap input;
-
-		public void launchExecution(FlowId id, AttributeMap input, ExternalContext context) {
-			this.flowId = id;
-			this.input = input;
-		}
-
-		public void resumeExecution(String encodedKey, ExternalContext context) {
-
+		public void execute(ExternalContext context) {
+			assertNotNull(ExternalContextHolder.getExternalContext());
 		}
 
 	}
