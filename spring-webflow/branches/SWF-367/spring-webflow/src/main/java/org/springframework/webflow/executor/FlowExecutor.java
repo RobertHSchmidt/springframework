@@ -28,18 +28,5 @@ import org.springframework.webflow.context.ExternalContext;
  * @author Keith Donald
  */
 public interface FlowExecutor {
-
-	/**
-	 * Launch a new execution of the flow definition with the provided id.
-	 * @param id the flow definition identifier
-	 * @param context the external context representing the calling environment
-	 */
-	public void launchExecution(String id, ExternalContext context);
-
-	/**
-	 * Resume the flow execution with the provided execution key.
-	 * @param encodedKey the flow execution key as an encoded string
-	 * @param context the external context representing the calling environment
-	 */
-	public void resumeExecution(String encodedKey, ExternalContext context);
+	public void execute(ExternalContext context);
 }

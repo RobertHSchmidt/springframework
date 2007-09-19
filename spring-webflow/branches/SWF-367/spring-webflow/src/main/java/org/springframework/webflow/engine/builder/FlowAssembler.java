@@ -20,7 +20,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.CollectionUtils;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.engine.Flow;
 
 /**

@@ -49,4 +49,8 @@ public final class StaticFlowDefinitionHolder implements FlowDefinitionHolder {
 	public void refresh() {
 		// nothing to do
 	}
+
+	public String toString() {
+		return flowDefinition.toString();
+	}
 }

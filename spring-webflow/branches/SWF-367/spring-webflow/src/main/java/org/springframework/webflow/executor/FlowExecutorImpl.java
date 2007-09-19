@@ -110,7 +110,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 		}
 	}
 
-	public void launchExecution(String flowId, ExternalContext context) {
+	private void launchExecution(String flowId, ExternalContext context) {
 		try {
 			FlowDefinition flowDefinition = definitionLocator.getFlowDefinition(flowId);
 			FlowExecution flowExecution = executionFactory.createFlowExecution(flowDefinition);
@@ -128,7 +128,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 		}
 	}
 
-	public void resumeExecution(String encodedKey, ExternalContext context) {
+	private void resumeExecution(String encodedKey, ExternalContext context) {
 		try {
 			FlowExecutionKey key = executionRepository.parseFlowExecutionKey(encodedKey);
 			FlowExecutionLock lock = executionRepository.getLock(key);

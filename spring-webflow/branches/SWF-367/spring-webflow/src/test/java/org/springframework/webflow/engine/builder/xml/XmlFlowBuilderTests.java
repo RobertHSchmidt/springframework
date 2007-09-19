@@ -5,7 +5,6 @@ import junit.framework.TestCase;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionException;
@@ -47,7 +46,7 @@ public class XmlFlowBuilderTests extends TestCase {
 		builder = new XmlFlowBuilder(resource, serviceLocator);
 		FlowAssembler assembler = new FlowAssembler("flow", builder, null);
 		Flow flow = assembler.assembleFlow();
-		assertEquals(FlowId.valueOf("flow"), flow.getId());
+		assertEquals("flow", flow.getId());
 		assertEquals("end", flow.getStartState().getId());
 	}
 }

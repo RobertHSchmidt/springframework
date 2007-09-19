@@ -270,7 +270,7 @@ public class FlowExecutionImplTests extends TestCase {
 
 	public void testRequestContextManagedOnStartAndResume() {
 		Flow flow = new Flow("flow");
-		ViewState state = new ViewState(flow, "view", new StubViewFactory()) {
+		new ViewState(flow, "view", new StubViewFactory()) {
 			public void resume(RequestControlContext context) {
 				assertSame(context, RequestContextHolder.getRequestContext());
 			}
