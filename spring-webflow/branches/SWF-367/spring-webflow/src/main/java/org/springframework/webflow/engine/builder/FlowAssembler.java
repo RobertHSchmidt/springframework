@@ -45,9 +45,9 @@ public class FlowAssembler {
 	private static final Log logger = LogFactory.getLog(FlowAssembler.class);
 
 	/**
-	 * The identifier to assign to the flow.
+	 * The unique identifier to assign to the flow.
 	 */
-	private FlowId flowId;
+	private String flowId;
 
 	/**
 	 * The flow builder strategy used to construct the flow from its component parts.
@@ -65,7 +65,7 @@ public class FlowAssembler {
 	 * @param flowBuilder the builder the factory will use to build flows
 	 * @param flowAttributes externally assigned flow attributes that can affect flow construction
 	 */
-	public FlowAssembler(FlowId flowId, FlowBuilder flowBuilder, AttributeMap flowAttributes) {
+	public FlowAssembler(String flowId, FlowBuilder flowBuilder, AttributeMap flowAttributes) {
 		Assert.notNull(flowId, "The flow id is required");
 		Assert.notNull(flowBuilder, "The flow builder is required");
 		this.flowId = flowId;
@@ -76,7 +76,7 @@ public class FlowAssembler {
 	/**
 	 * Returns the identifier to assign to the flow.
 	 */
-	public FlowId getFlowId() {
+	public String getFlowId() {
 		return flowId;
 	}
 

@@ -20,7 +20,7 @@ public class XmlFlowBuilderTests extends TestCase {
 
 	protected void setUp() {
 		FlowDefinitionLocator subflowLocator = new FlowDefinitionLocator() {
-			public FlowDefinition getFlowDefinition(FlowId flowId) throws NoSuchFlowDefinitionException,
+			public FlowDefinition getFlowDefinition(String flowId) throws NoSuchFlowDefinitionException,
 					FlowDefinitionConstructionException {
 				return new Flow(flowId);
 			}
@@ -33,7 +33,7 @@ public class XmlFlowBuilderTests extends TestCase {
 	public void testBuildIncompleteFlow() {
 		ClassPathResource resource = new ClassPathResource("flow-incomplete.xml", getClass());
 		builder = new XmlFlowBuilder(resource, serviceLocator);
-		FlowAssembler assembler = new FlowAssembler(FlowId.valueOf("flow"), builder, null);
+		FlowAssembler assembler = new FlowAssembler("flow", builder, null);
 		try {
 			assembler.assembleFlow();
 			fail("Should have failed");
@@ -45,7 +45,7 @@ public class XmlFlowBuilderTests extends TestCase {
 	public void testBuildFlowWithEndState() {
 		ClassPathResource resource = new ClassPathResource("flow-endstate.xml", getClass());
 		builder = new XmlFlowBuilder(resource, serviceLocator);
-		FlowAssembler assembler = new FlowAssembler(FlowId.valueOf("flow"), builder, null);
+		FlowAssembler assembler = new FlowAssembler("flow", builder, null);
 		Flow flow = assembler.assembleFlow();
 		assertEquals(FlowId.valueOf("flow"), flow.getId());
 		assertEquals("end", flow.getStartState().getId());

@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.context;
 
+import org.springframework.webflow.core.FlowException;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.core.collection.SharedAttributeMap;
@@ -36,22 +37,28 @@ import org.springframework.webflow.core.collection.SharedAttributeMap;
 public interface ExternalContext {
 
 	/**
-	 * Returns the path (or identifier) of the application that is executing.
-	 * @return the application context path (e.g. "/myapp")
+	 * Returns the id of the flow the client requested be launched or resumed.
+	 * @return the flow id, never null
 	 */
-	public String getContextPath();
+	public String getFlowId();
 
 	/**
-	 * Returns the path (or identifier) of the dispatcher <i>within</i> the application that dispatched this request.
-	 * @return the dispatcher path (e.g. "/dispatcher")
+	 * Returns the execution the client requested to be resumed.
+	 * @return the flow execution key, may be null if this is not a resume request
 	 */
-	public String getDispatcherPath();
+	public String getFlowExecutionKey();
 
 	/**
-	 * Returns the path info of this external request. Could be null.
-	 * @return the request path info (e.g. "/flows.htm")
+	 * Returns the type of this external request.
+	 * @return the request method.
 	 */
-	public String getRequestPathInfo();
+	public String getRequestMethod();
+
+	/**
+	 * Returns the path of this request as a ordered list of fields.
+	 * @return the elements of the request path
+	 */
+	public String[] getRequestElements();
 
 	/**
 	 * Provides access to the parameters associated with the user request that led to SWF being called. This map is
@@ -119,16 +126,20 @@ public interface ExternalContext {
 	/**
 	 * Request that a flow definition redirect be sent as the response. A flow definition redirect tells the caller to
 	 * start a new execution of the flow definition with the input provided.
-	 * @param flowId the identifier of the flow definition to redirect to
-	 * @param input the input to pass to the new execution of the definition
 	 */
-	public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input);
+	public void sendFlowDefinitionRedirect(String flowId, String[] requestElements, ParameterMap requestParameters);
 
 	/**
 	 * Request that a external redirect be sent as the response. An external redirect tells the caller to access the
 	 * resource at the given resource URI.
-	 * @param resourceUri the resource uri string
+	 * @param resourceUri the resource URI string
 	 */
 	public void sendExternalRedirect(String resourceUri);
+
+	public void setPausedResult(String flowExecutionKey);
+
+	public void setEndedResult();
+
+	public void setExceptionResult(FlowException e);
 
 }

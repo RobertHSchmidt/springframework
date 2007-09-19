@@ -61,11 +61,11 @@ public interface FlowBuilder {
 	/**
 	 * Initialize this builder. This could cause the builder to open a stream to an externalized resource representing
 	 * the flow definition, for example.
-	 * @param id the identifier to assign to the flow
+	 * @param flowId the identifier to assign to the flow
 	 * @param attributes custom attributes to assign to the flow
 	 * @throws FlowBuilderException an exception occurred building the flow
 	 */
-	public void init(FlowId id, AttributeMap attributes) throws FlowBuilderException;
+	public void init(String flowId, AttributeMap attributes) throws FlowBuilderException;
 
 	/**
 	 * Builds any variables initialized by the flow when it starts.

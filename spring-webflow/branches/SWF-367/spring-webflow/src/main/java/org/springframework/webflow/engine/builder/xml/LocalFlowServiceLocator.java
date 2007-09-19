@@ -23,7 +23,6 @@ import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.action.BeanInvokingActionFactory;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
@@ -106,15 +105,14 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 	// implementing FlowServiceLocator
 
 	public Flow getSubflow(String id) throws FlowArtifactLookupException {
-		FlowId flowId = FlowId.valueOf(id);
 		Flow currentFlow = getCurrentFlow();
 		// quick check for recursive subflow
-		if (currentFlow.getId().equals(flowId)) {
+		if (currentFlow.getId().equals(id)) {
 			return currentFlow;
 		}
 		// check local inline flows
-		if (currentFlow.containsInlineFlow(flowId)) {
-			return currentFlow.getInlineFlow(flowId);
+		if (currentFlow.containsInlineFlow(id)) {
+			return currentFlow.getInlineFlow(id);
 		}
 		// check externally managed top-level flows
 		return parent.getSubflow(id);

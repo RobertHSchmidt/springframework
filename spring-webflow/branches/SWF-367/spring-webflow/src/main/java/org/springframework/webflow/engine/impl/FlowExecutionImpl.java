@@ -32,7 +32,6 @@ import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.RequestControlContext;
 import org.springframework.webflow.engine.State;
@@ -125,7 +124,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	/**
 	 * Set so the transient {@link #flow} field can be restored by the {@link FlowExecutionImplStateRestorer}.
 	 */
-	private FlowId flowId;
+	private String flowId;
 
 	/**
 	 * Default constructor required for externalizable serialization. Should NOT be called programmatically.
@@ -146,7 +145,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		this.conversationScope = new LocalAttributeMap();
 	}
 
-	FlowExecutionImpl(FlowId flowId, LinkedList flowSessions) {
+	FlowExecutionImpl(String flowId, LinkedList flowSessions) {
 		this.flowId = flowId;
 		this.flowSessions = flowSessions;
 	}
@@ -198,23 +197,21 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	// methods implementing FlowExecution
 
-	public void start(MutableAttributeMap input, ExternalContext externalContext) throws FlowExecutionException,
-			IllegalStateException {
+	public void start(ExternalContext externalContext) throws FlowExecutionException, IllegalStateException {
 		Assert.state(!started, "This flow has already been started; you cannot call 'start()' more than once");
 		if (logger.isDebugEnabled()) {
-			logger.debug("Starting execution with input '" + input + "' in " + externalContext);
+			logger.debug("Starting execution in " + externalContext);
 		}
 		started = true;
 		RequestControlContext context = createControlContext(externalContext);
 		RequestContextHolder.setRequestContext(context);
 		listeners.fireRequestSubmitted(context);
 		try {
-			// launch a flow session for the root flow
-			start(flow, input, context);
+			start(flow, flow.createExecutionInputMap(externalContext), context);
 		} catch (FlowExecutionException e) {
 			handleException(e, context);
 		} catch (Exception e) {
-			handleException(wrap(e, context), context);
+			handleException(wrap(e), context);
 		} finally {
 			if (isActive()) {
 				listeners.firePaused(context);
@@ -244,7 +241,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		} catch (FlowExecutionException e) {
 			handleException(e, context);
 		} catch (Exception e) {
-			handleException(wrap(e, context), context);
+			handleException(wrap(e), context);
 		} finally {
 			if (isActive()) {
 				listeners.firePaused(context);
@@ -277,13 +274,9 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	// package private request control context callbacks
 
 	void start(Flow flow, MutableAttributeMap input, RequestControlContext context) {
-		if (input == null) {
-			// create a mutable map so entries can be added by listeners!
-			input = new LocalAttributeMap();
-		}
-		listeners.fireSessionCreating(context, flow, input);
+		listeners.fireSessionCreating(context, flow);
 		FlowSession session = activateSession(flow);
-		listeners.fireSessionStarting(context, session);
+		listeners.fireSessionStarting(context, session, input);
 		flow.start(context, input);
 		listeners.fireSessionStarted(context, session);
 	}
@@ -367,7 +360,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	/**
 	 * Returns the flow definition id of this flow execution.
 	 */
-	FlowId getFlowId() {
+	String getFlowId() {
 		return flowId;
 	}
 
@@ -410,7 +403,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		started = in.readBoolean();
-		flowId = (FlowId) in.readObject();
+		flowId = (String) in.readObject();
 		flowSessions = (LinkedList) in.readObject();
 		flashScope = (MutableAttributeMap) in.readObject();
 	}
@@ -463,10 +456,11 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		return (FlowSessionImpl) flowSessions.getLast();
 	}
 
-	private FlowExecutionException wrap(Exception e, RequestContext context) {
-		if (context.getFlowExecutionContext().isActive()) {
-			FlowId flowId = context.getActiveFlow().getId();
-			String stateId = context.getCurrentState().getId();
+	private FlowExecutionException wrap(Exception e) {
+		if (isActive()) {
+			FlowSessionImpl session = getActiveSessionInternal();
+			String flowId = session.getFlowId();
+			String stateId = session.getStateId();
 			return new FlowExecutionException(flowId, stateId, "Exception thrown in state '" + stateId + "' of flow '"
 					+ flowId + "'", e);
 		} else {
@@ -479,7 +473,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * exception handlers associated with the offending state, then the handlers at the flow level.
 	 * @param exception the exception that occurred
 	 * @param context the request control context the exception occurred in
-	 * @throws FlowExecutionException rethrows the exception if it was not handled at the state or flow level
+	 * @throws FlowExecutionException re-throws the exception if it was not handled at the state or flow level
 	 */
 	private void handleException(FlowExecutionException exception, RequestControlContext context)
 			throws FlowExecutionException {

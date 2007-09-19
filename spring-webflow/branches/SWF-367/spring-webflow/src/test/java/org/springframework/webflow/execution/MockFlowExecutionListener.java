@@ -205,7 +205,7 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		requestInProcess = true;
 	}
 
-	public void sessionCreating(RequestContext context, FlowDefinition definition, MutableAttributeMap input) {
+	public void sessionCreating(RequestContext context, FlowDefinition definition) {
 		if (!context.getFlowExecutionContext().isActive()) {
 			Assert.state(!started, "The flow execution was already started");
 			started = true;
@@ -213,7 +213,7 @@ public class MockFlowExecutionListener extends FlowExecutionListenerAdapter {
 		sessionCreatingCount++;
 	}
 
-	public void sessionStarting(RequestContext context, FlowSession session) {
+	public void sessionStarting(RequestContext context, FlowSession session, MutableAttributeMap input) {
 		sessionStartingCount++;
 		sessionStarting = true;
 		flowNestingLevel++;

@@ -16,7 +16,6 @@
 package org.springframework.webflow.execution;
 
 import org.springframework.webflow.core.FlowException;
-import org.springframework.webflow.definition.FlowId;
 
 /**
  * Base class for exceptions that occur within a flow while it is executing. Can be used directly, but you are
@@ -33,7 +32,7 @@ public class FlowExecutionException extends FlowException {
 	/**
 	 * The id of the flow definition in which the exception occurred.
 	 */
-	private FlowId flowId;
+	private String flowId;
 
 	/**
 	 * The state of the flow where the exception occurred (optional).
@@ -46,7 +45,7 @@ public class FlowExecutionException extends FlowException {
 	 * @param stateId the state where the exception occurred
 	 * @param message a descriptive message
 	 */
-	public FlowExecutionException(FlowId flowId, String stateId, String message) {
+	public FlowExecutionException(String flowId, String stateId, String message) {
 		super(message);
 		this.stateId = stateId;
 		this.flowId = flowId;
@@ -59,7 +58,7 @@ public class FlowExecutionException extends FlowException {
 	 * @param message a descriptive message
 	 * @param cause the root cause
 	 */
-	public FlowExecutionException(FlowId flowId, String stateId, String message, Throwable cause) {
+	public FlowExecutionException(String flowId, String stateId, String message, Throwable cause) {
 		super(message, cause);
 		this.stateId = stateId;
 		this.flowId = flowId;
@@ -68,7 +67,7 @@ public class FlowExecutionException extends FlowException {
 	/**
 	 * Returns the id of the flow definition that was executing when this exception occured.
 	 */
-	public FlowId getFlowId() {
+	public String getFlowId() {
 		return flowId;
 	}
 

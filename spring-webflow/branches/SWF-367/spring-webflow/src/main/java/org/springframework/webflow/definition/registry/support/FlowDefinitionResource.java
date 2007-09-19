@@ -23,7 +23,6 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.CollectionUtils;
-import org.springframework.webflow.definition.FlowId;
 
 /**
  * A pointer to an externalized flow definition resource. Adds assigned identification information about the resource
@@ -38,7 +37,7 @@ public class FlowDefinitionResource implements Serializable {
 	/**
 	 * The identifier to assign to the flow definition.
 	 */
-	private FlowId id;
+	private String id;
 
 	/**
 	 * Attributes that can be used to affect flow construction.
@@ -56,14 +55,14 @@ public class FlowDefinitionResource implements Serializable {
 	 * @param location the flow resource location
 	 * @param attributes flow definition attributes to be assigned
 	 */
-	public FlowDefinitionResource(FlowId id, Resource location, AttributeMap attributes) {
+	public FlowDefinitionResource(String id, Resource location, AttributeMap attributes) {
 		init(id, location, attributes);
 	}
 
 	/**
 	 * Returns the identifier to assign to the flow definition.
 	 */
-	public FlowId getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -98,7 +97,7 @@ public class FlowDefinitionResource implements Serializable {
 	/**
 	 * Initialize this object.
 	 */
-	private void init(FlowId id, Resource location, AttributeMap attributes) {
+	private void init(String id, Resource location, AttributeMap attributes) {
 		Assert.notNull(id, "The id of the externalized flow definition is required");
 		Assert.notNull(location, "The location of the externalized flow definition is required");
 		this.id = id;
@@ -125,13 +124,13 @@ public class FlowDefinitionResource implements Serializable {
 	 * Returns the flow id assigned to the flow definition contained in given resource. By convention this will be the
 	 * filename of the resource, excluding extension.
 	 */
-	private static FlowId conventionalFlowId(Resource location) {
+	private static String conventionalFlowId(Resource location) {
 		String fileName = location.getFilename();
 		int extensionIndex = fileName.lastIndexOf('.');
 		if (extensionIndex != -1) {
-			return new FlowId("", fileName.substring(0, extensionIndex));
+			return fileName.substring(0, extensionIndex);
 		} else {
-			return new FlowId("", fileName);
+			return fileName;
 		}
 	}
 

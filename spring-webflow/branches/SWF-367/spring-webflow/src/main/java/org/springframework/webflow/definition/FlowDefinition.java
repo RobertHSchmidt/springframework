@@ -45,7 +45,7 @@ public interface FlowDefinition extends Annotated {
 	 * Returns the unique id of this flow.
 	 * @return the flow id
 	 */
-	public FlowId getId();
+	public String getId();
 
 	/**
 	 * Return this flow's starting point.

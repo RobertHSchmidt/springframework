@@ -56,7 +56,6 @@ import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.engine.AnnotatedAction;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowAttributeMapper;
@@ -288,7 +287,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 
 	// implementing FlowBuilder
 
-	public void init(FlowId id, AttributeMap attributes) throws FlowBuilderException {
+	public void init(String flowId, AttributeMap attributes) throws FlowBuilderException {
 		localFlowServiceLocator = new LocalFlowServiceLocator(getFlowServiceLocator());
 		try {
 			document = documentLoader.loadDocument(resource);
@@ -300,7 +299,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 		} catch (SAXException e) {
 			throw new FlowBuilderException("Could not parse the XML flow definition document at " + resource, e);
 		}
-		setFlow(parseFlow(id, attributes, getDocumentElement()));
+		setFlow(parseFlow(flowId, attributes, getDocumentElement()));
 	}
 
 	public void buildVariables() throws FlowBuilderException {
@@ -444,7 +443,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 
 	// internal parsing logic and hook methods
 
-	private Flow parseFlow(FlowId id, AttributeMap attributes, Element flowElement) {
+	private Flow parseFlow(String id, AttributeMap attributes, Element flowElement) {
 		if (!isFlowElement(flowElement)) {
 			throw new IllegalStateException("This is not the '" + FLOW_ELEMENT + "' element");
 		}
@@ -527,7 +526,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 			Element inlineFlowElement = (Element) it.next();
 			String inlineFlowId = inlineFlowElement.getAttribute(ID_ATTRIBUTE);
 			Element flowElement = DomUtils.getChildElementByTagName(inlineFlowElement, FLOW_ATTRIBUTE);
-			Flow inlineFlow = parseFlow(FlowId.valueOf(inlineFlowId), null, flowElement);
+			Flow inlineFlow = parseFlow(inlineFlowId, null, flowElement);
 			buildInlineFlow(flowElement, inlineFlow);
 			flow.addInlineFlow(inlineFlow);
 		}

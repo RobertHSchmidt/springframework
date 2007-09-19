@@ -20,39 +20,58 @@ import junit.framework.TestCase;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.definition.FlowId;
+import org.springframework.webflow.executor.FlowExecutor;
 
 /**
  * Unit tests for {@link ServletExternalContext}.
  */
 public class ServletExternalContextTests extends TestCase {
 
-	private ServletExternalContext context = new ServletExternalContext(new MockServletContext(),
-			new MockHttpServletRequest(), new MockHttpServletResponse());
+	private MockHttpServletRequest request;
+	private MockHttpServletResponse response;
+	private ServletExternalContext context;
+	private StubFlowExecutor flowExecutor;
 
-	public void testApplicationMap() {
-		assertEquals(1, context.getApplicationMap().size());
-		context.getApplicationMap().put("foo", "bar");
-		assertEquals("bar", context.getApplicationMap().get("foo"));
-		assertEquals("bar", context.getContext().getAttribute("foo"));
+	protected void setUp() {
+		request = new MockHttpServletRequest();
+		response = new MockHttpServletResponse();
+		flowExecutor = new StubFlowExecutor();
+		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
 	}
 
-	public void testSessionMap() {
-		assertEquals(0, context.getSessionMap().size());
-		context.getSessionMap().put("foo", "bar");
-		assertEquals("bar", context.getSessionMap().get("foo"));
-		assertEquals("bar", context.getRequest().getSession().getAttribute("foo"));
+	public void testProcessLaunchRequest() {
+		request.setMethod("GET");
+		request.setPathInfo("/booking");
+		context.processRequest();
+		assertEquals(FlowId.valueOf("booking"), flowExecutor.flowId);
+		assertEquals(0, flowExecutor.input.size());
 	}
 
-	public void testRequestMap() {
-		assertEquals(0, context.getRequestMap().size());
-		context.getRequestMap().put("foo", "bar");
-		assertEquals("bar", context.getRequestMap().get("foo"));
-		assertEquals("bar", context.getRequest().getAttribute("foo"));
+	public void testProcessLaunchRequestWithInput() {
+		request.setMethod("GET");
+		request.setPathInfo("/conference/46/speakers/24");
+		context.processRequest();
+		assertEquals(FlowId.valueOf("conference"), flowExecutor.flowId);
+		assertEquals(1, flowExecutor.input.size());
 	}
 
-	public void testOther() {
-		assertEquals(null, context.getRequestPathInfo());
-		assertEquals("", context.getDispatcherPath());
-		assertNotNull(context.getResponse());
+	public class StubFlowExecutor implements FlowExecutor {
+
+		private FlowId flowId;
+		private AttributeMap input;
+
+		public void launchExecution(FlowId id, AttributeMap input, ExternalContext context) {
+			this.flowId = id;
+			this.input = input;
+		}
+
+		public void resumeExecution(String encodedKey, ExternalContext context) {
+
+		}
+
 	}
+
 }

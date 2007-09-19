@@ -68,18 +68,18 @@ public interface FlowExecutionListener {
 	 * for this purpose.
 	 * @param context the source of the event
 	 * @param definition the flow for which a new session is starting
-	 * @param input a mutable input map - attributes placed in this map are eligible for input mapping by the flow
-	 * definition at startup
 	 */
-	public void sessionCreating(RequestContext context, FlowDefinition definition, MutableAttributeMap input);
+	public void sessionCreating(RequestContext context, FlowDefinition definition);
 
 	/**
 	 * Called after a new flow session has been created but before it starts. Useful for setting arbitrary attributes in
 	 * the session before the flow starts.
 	 * @param context the source of the event
 	 * @param session the session that was created
+	 * @param input a mutable input map - attributes placed in this map are eligible for input mapping by the flow
+	 * definition at startup
 	 */
-	public void sessionStarting(RequestContext context, FlowSession session);
+	public void sessionStarting(RequestContext context, FlowSession session, MutableAttributeMap input);
 
 	/**
 	 * Called after a new flow session has started. At this point the flow's start state has been entered and any other

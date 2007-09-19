@@ -21,7 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
 import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
 import org.springframework.webflow.engine.Flow;
@@ -77,7 +76,7 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 		this.assembler = assembler;
 	}
 
-	public FlowId getFlowDefinitionId() {
+	public String getFlowDefinitionId() {
 		return assembler.getFlowId();
 	}
 

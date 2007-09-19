@@ -3,7 +3,6 @@ package org.springframework.webflow.execution.repository.continuation;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionException;
@@ -22,14 +21,14 @@ public class SerializedFlowExecutionContinuationFactoryTests extends TestCase {
 	private FlowExecutionStateRestorer stateRestorer;
 
 	public void setUp() {
-		flow = Flow.create("myFlow");
+		flow = new Flow("myFlow");
 		new State(flow, "state") {
 			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 			}
 		};
 		factory = new SerializedFlowExecutionContinuationFactory();
 		stateRestorer = new FlowExecutionImplStateRestorer(new FlowDefinitionLocator() {
-			public FlowDefinition getFlowDefinition(FlowId flowId) throws NoSuchFlowDefinitionException,
+			public FlowDefinition getFlowDefinition(String flowId) throws NoSuchFlowDefinitionException,
 					FlowDefinitionConstructionException {
 				return flow;
 			}
@@ -38,7 +37,7 @@ public class SerializedFlowExecutionContinuationFactoryTests extends TestCase {
 
 	public void testCreateContinuation() {
 		FlowExecutionImpl flowExecution = new FlowExecutionImpl(flow);
-		flowExecution.start(null, new MockExternalContext());
+		flowExecution.start(new MockExternalContext());
 		flowExecution.getActiveSession().getScope().put("foo", "bar");
 		FlowExecutionContinuation continuation = factory.createContinuation(flowExecution);
 		FlowExecutionImpl flowExecution2 = (FlowExecutionImpl) continuation.unmarshal();
@@ -53,7 +52,7 @@ public class SerializedFlowExecutionContinuationFactoryTests extends TestCase {
 
 	public void testRestoreContinuation() {
 		FlowExecutionImpl flowExecution = new FlowExecutionImpl(flow);
-		flowExecution.start(null, new MockExternalContext());
+		flowExecution.start(new MockExternalContext());
 		flowExecution.getActiveSession().getScope().put("foo", "bar");
 		FlowExecutionContinuation continuation = factory.createContinuation(flowExecution);
 		byte[] bytes = continuation.toByteArray();

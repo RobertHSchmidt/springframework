@@ -6,7 +6,6 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionException;
@@ -43,7 +42,7 @@ public class FlowExecutionStateRestorerImplTests extends TestCase {
 	public void testRestoreStateNoSessions() {
 		FlowExecutionKey key = new SimpleFlowExecutionKey();
 		LocalAttributeMap conversationScope = new LocalAttributeMap();
-		FlowExecutionImpl execution = new FlowExecutionImpl(FlowId.valueOf("parent"), new LinkedList());
+		FlowExecutionImpl execution = new FlowExecutionImpl("parent", new LinkedList());
 		stateRestorer.restoreState(execution, key, conversationScope);
 		assertSame(definitionLocator.parent, execution.getDefinition());
 		assertTrue(execution.getFlowSessions().isEmpty());
@@ -70,7 +69,7 @@ public class FlowExecutionStateRestorerImplTests extends TestCase {
 	public void testRestoreStateFlowSessionsNotSet() {
 		FlowExecutionKey key = new SimpleFlowExecutionKey();
 		LocalAttributeMap conversationScope = new LocalAttributeMap();
-		FlowExecutionImpl execution = new FlowExecutionImpl(FlowId.valueOf("parent"), null);
+		FlowExecutionImpl execution = new FlowExecutionImpl("parent", null);
 		try {
 			stateRestorer.restoreState(execution, key, conversationScope);
 			fail("Should've failed");
@@ -80,10 +79,10 @@ public class FlowExecutionStateRestorerImplTests extends TestCase {
 	}
 
 	private class SimpleFlowDefinitionLocator implements FlowDefinitionLocator {
-		Flow parent = Flow.create("parent");
-		Flow child = Flow.create("child");
+		Flow parent = new Flow("parent");
+		Flow child = new Flow("child");
 
-		public FlowDefinition getFlowDefinition(FlowId flowId) throws NoSuchFlowDefinitionException,
+		public FlowDefinition getFlowDefinition(String flowId) throws NoSuchFlowDefinitionException,
 				FlowDefinitionConstructionException {
 			if (flowId.equals(parent.getId())) {
 				return parent;

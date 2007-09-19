@@ -19,7 +19,6 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
-import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.RequestControlContext;
@@ -29,6 +28,7 @@ import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
+import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
@@ -48,7 +48,7 @@ public class FlowExecutionImplFactoryTests extends TestCase {
 	private boolean getKeyCalled;
 
 	public void setUp() {
-		flowDefinition = Flow.create("flow");
+		flowDefinition = new Flow("flow");
 		new EndState(flowDefinition, "end");
 	}
 
@@ -78,14 +78,14 @@ public class FlowExecutionImplFactoryTests extends TestCase {
 
 	public void testCreateWithExecutionListener() {
 		FlowExecutionListener listener1 = new FlowExecutionListenerAdapter() {
-			public void sessionCreating(RequestContext context, FlowDefinition definition, MutableAttributeMap input) {
+			public void sessionStarting(RequestContext context, FlowSession session, MutableAttributeMap input) {
 				starting = true;
 			}
 		};
 		factory.setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(listener1));
 		FlowExecution execution = factory.createFlowExecution(flowDefinition);
 		assertFalse(execution.isActive());
-		execution.start(null, new MockExternalContext());
+		execution.start(new MockExternalContext());
 		assertTrue(starting);
 	}
 
@@ -103,7 +103,7 @@ public class FlowExecutionImplFactoryTests extends TestCase {
 			}
 		});
 		FlowExecution execution = factory.createFlowExecution(flowDefinition);
-		execution.start(null, new MockExternalContext());
+		execution.start(new MockExternalContext());
 		assertTrue(getKeyCalled);
 		assertNull(execution.getKey());
 	}

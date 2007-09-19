@@ -99,9 +99,9 @@ class FlowExecutionListeners {
 	/**
 	 * Notify all interested listeners that a flow execution session is starting (about to be created).
 	 */
-	public void fireSessionCreating(RequestContext context, FlowDefinition flow, MutableAttributeMap input) {
+	public void fireSessionCreating(RequestContext context, FlowDefinition flow) {
 		for (int i = 0; i < listeners.length; i++) {
-			listeners[i].sessionCreating(context, flow, input);
+			listeners[i].sessionCreating(context, flow);
 		}
 	}
 
@@ -109,9 +109,9 @@ class FlowExecutionListeners {
 	 * Notify all interested listeners that a flow execution session has been activated (created, on the stack and about
 	 * to start).
 	 */
-	public void fireSessionStarting(RequestContext context, FlowSession session) {
+	public void fireSessionStarting(RequestContext context, FlowSession session, MutableAttributeMap input) {
 		for (int i = 0; i < listeners.length; i++) {
-			listeners[i].sessionStarting(context, session);
+			listeners[i].sessionStarting(context, session, input);
 		}
 	}
 

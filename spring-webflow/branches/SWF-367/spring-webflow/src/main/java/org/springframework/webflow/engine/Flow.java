@@ -27,10 +27,11 @@ import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.RequestContext;
@@ -109,7 +110,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	/**
 	 * An assigned flow identifier uniquely identifying this flow among all other flows.
 	 */
-	private FlowId id;
+	private String id;
 
 	/**
 	 * The set of state definitions for this flow.
@@ -168,8 +169,8 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	 * Construct a new flow definition with the given id. The id should be unique among all flows.
 	 * @param id the flow identifier
 	 */
-	public Flow(FlowId id) {
-		Assert.notNull(id, "This flow must be uniquely identified");
+	public Flow(String id) {
+		Assert.hasText(id, "This flow must be uniquely identified");
 		this.id = id;
 	}
 
@@ -181,24 +182,15 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	 * @param attributes the attributes
 	 * @return the flow
 	 */
-	public static Flow create(FlowId id, AttributeMap attributes) {
+	public static Flow create(String id, AttributeMap attributes) {
 		Flow flow = new Flow(id);
 		flow.getAttributeMap().putAll(attributes);
 		return flow;
 	}
 
-	/**
-	 * Create a new flow with the string-encoded flow identifier.
-	 * @param flowIdString the string flow id
-	 * @return the flow
-	 */
-	public static Flow create(String flowIdString) {
-		return new Flow(FlowId.valueOf(flowIdString));
-	}
-
 	// implementing FlowDefinition
 
-	public FlowId getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -454,7 +446,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	 * @param id the inline flow id
 	 * @return true if this flow contains a inline flow with that id, false otherwise
 	 */
-	public boolean containsInlineFlow(FlowId id) {
+	public boolean containsInlineFlow(String id) {
 		return getInlineFlow(id) != null;
 	}
 
@@ -464,7 +456,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	 * @return the inline flow
 	 * @throws IllegalArgumentException when an invalid flow id is provided
 	 */
-	public Flow getInlineFlow(FlowId id) throws IllegalArgumentException {
+	public Flow getInlineFlow(String id) throws IllegalArgumentException {
 		Iterator it = inlineFlows.iterator();
 		while (it.hasNext()) {
 			Flow flow = (Flow) it.next();
@@ -501,11 +493,20 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	// behavioral code, could be overridden in subclasses
 
 	/**
+	 * Factory method that creates the initial input map to pass to this flow when a new execution of this flow is
+	 * started. Allows this flow to assemble the input map from data in the external context representing the calling
+	 * environment.
+	 */
+	public MutableAttributeMap createExecutionInputMap(ExternalContext context) {
+		return new LocalAttributeMap();
+	}
+
+	/**
 	 * Start a new session for this flow in its start state. This boils down to the following:
 	 * <ol>
 	 * <li>Create (setup) all registered flow variables ({@link #addVariable(FlowVariable)}) in flow scope.</li>
-	 * <li>Map provided input data into the flow execution control context. Typically data will be mapped into flow
-	 * scope using the registered input mapper ({@link #setInputMapper(AttributeMapper)}).</li>
+	 * <li>Map provided input data into the flow. Typically data will be mapped into flow scope using the registered
+	 * input mapper ({@link #setInputMapper(AttributeMapper)}).</li>
 	 * <li>Execute all registered start actions ({@link #getStartActionList()}).</li>
 	 * <li>Enter the configured start state ({@link #setStartState(State)})</li>
 	 * </ol>

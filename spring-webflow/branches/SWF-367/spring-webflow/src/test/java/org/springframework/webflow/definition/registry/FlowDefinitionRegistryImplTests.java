@@ -19,7 +19,6 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.definition.registry.support.StaticFlowDefinitionHolder;
 
@@ -41,16 +40,7 @@ public class FlowDefinitionRegistryImplTests extends TestCase {
 
 	public void testNoSuchFlowDefinition() {
 		try {
-			registry.getFlowDefinition(FlowId.valueOf("bogus"));
-			fail("Should've bombed with NoSuchFlow");
-		} catch (NoSuchFlowDefinitionException e) {
-
-		}
-	}
-
-	public void testNoSuchFlowDefinitionWithNamespace() {
-		try {
-			registry.getFlowDefinition(FlowId.valueOf("/namespace/bogus"));
+			registry.getFlowDefinition("bogus");
 			fail("Should've bombed with NoSuchFlow");
 		} catch (NoSuchFlowDefinitionException e) {
 
@@ -59,27 +49,21 @@ public class FlowDefinitionRegistryImplTests extends TestCase {
 
 	public void testRegisterFlow() {
 		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(fooFlow));
-		assertEquals(fooFlow, registry.getFlowDefinition(FlowId.valueOf("foo")));
-	}
-
-	public void testRegisterFlowWithNamespace() {
-		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(barFlow));
-		assertEquals(barFlow, registry.getFlowDefinition(FlowId.valueOf("/namespace/bar")));
+		assertEquals(fooFlow, registry.getFlowDefinition("foo"));
 	}
 
 	public void testRegisterFlowSameIds() {
 		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(fooFlow));
 		FooFlow newFlow = new FooFlow();
 		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(newFlow));
-		FlowId foo = FlowId.valueOf("foo");
-		assertSame(newFlow, registry.getFlowDefinition(foo));
+		assertSame(newFlow, registry.getFlowDefinition("foo"));
 	}
 
 	public void testRegisterMultipleFlows() {
 		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(fooFlow));
 		registry.registerFlowDefinition(new StaticFlowDefinitionHolder(barFlow));
-		assertEquals(fooFlow, registry.getFlowDefinition(FlowId.valueOf("foo")));
-		assertEquals(barFlow, registry.getFlowDefinition(FlowId.valueOf("/namespace/bar")));
+		assertEquals(fooFlow, registry.getFlowDefinition("foo"));
+		assertEquals(barFlow, registry.getFlowDefinition("bar"));
 	}
 
 	public void testParentHierarchy() {
@@ -88,12 +72,12 @@ public class FlowDefinitionRegistryImplTests extends TestCase {
 		child.setParent(registry);
 		FooFlow fooFlow = new FooFlow();
 		child.registerFlowDefinition(new StaticFlowDefinitionHolder(fooFlow));
-		assertSame(fooFlow, child.getFlowDefinition(FlowId.valueOf("foo")));
-		assertEquals(barFlow, child.getFlowDefinition(FlowId.valueOf("/namespace/bar")));
+		assertSame(fooFlow, child.getFlowDefinition("foo"));
+		assertEquals(barFlow, child.getFlowDefinition("bar"));
 	}
 
 	private static class FooFlow implements FlowDefinition {
-		private FlowId id = FlowId.valueOf("foo");
+		private String id = "foo";
 
 		public AttributeMap getAttributes() {
 			return null;
@@ -107,7 +91,7 @@ public class FlowDefinitionRegistryImplTests extends TestCase {
 			return null;
 		}
 
-		public FlowId getId() {
+		public String getId() {
 			return id;
 		}
 
@@ -121,7 +105,7 @@ public class FlowDefinitionRegistryImplTests extends TestCase {
 	}
 
 	private static class BarFlow implements FlowDefinition {
-		private FlowId id = FlowId.valueOf("/namespace/bar");
+		private String id = "bar";
 
 		public AttributeMap getAttributes() {
 			return null;
@@ -135,7 +119,7 @@ public class FlowDefinitionRegistryImplTests extends TestCase {
 			return null;
 		}
 
-		public FlowId getId() {
+		public String getId() {
 			return id;
 		}
 
