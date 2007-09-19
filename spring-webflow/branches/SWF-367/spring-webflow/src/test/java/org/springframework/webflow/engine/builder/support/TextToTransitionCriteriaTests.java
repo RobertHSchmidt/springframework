@@ -106,7 +106,7 @@ public class TextToTransitionCriteriaTests extends TestCase {
 	}
 
 	private RequestContext getRequestContext() {
-		Flow flow = Flow.create("id");
+		Flow flow = new Flow("id");
 		MockRequestContext ctx = new MockRequestContext(flow);
 		ctx.getFlowScope().put("foo", "bar");
 		ctx.setLastEvent(new Event(this, "sample"));

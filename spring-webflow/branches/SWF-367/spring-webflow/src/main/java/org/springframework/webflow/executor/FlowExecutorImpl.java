@@ -17,11 +17,8 @@ package org.springframework.webflow.executor;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.core.FlowException;
-import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionFactory;
@@ -105,30 +102,33 @@ public class FlowExecutorImpl implements FlowExecutor {
 		this.executionRepository = executionRepository;
 	}
 
-	public FlowExecutionResult launchExecution(FlowId id, MutableAttributeMap input, ExternalContext context) {
-		// expose external context as a thread-bound service
-		ExternalContextHolder.setExternalContext(context);
-		try {
-			FlowDefinition flowDefinition = definitionLocator.getFlowDefinition(id);
-			FlowExecution flowExecution = executionFactory.createFlowExecution(flowDefinition);
-			flowExecution.start(input, context);
-			if (flowExecution.isActive()) {
-				executionRepository.putFlowExecution(flowExecution);
-				return FlowExecutionResult.getPausedResult(flowExecution.getKey());
-			} else {
-				return FlowExecutionResult.getEndedResult();
-			}
-		} catch (FlowException e) {
-			handleException(e, context);
-			return FlowExecutionResult.getExceptionResult(e);
-		} finally {
-			ExternalContextHolder.setExternalContext(null);
+	public void execute(ExternalContext context) {
+		if (context.getFlowExecutionKey() != null) {
+			resumeExecution(context.getFlowExecutionKey(), context);
+		} else {
+			launchExecution(context.getFlowId(), context);
 		}
 	}
 
-	public FlowExecutionResult resumeExecution(String encodedKey, ExternalContext context) {
-		// expose external context as a thread-bound service
-		ExternalContextHolder.setExternalContext(context);
+	public void launchExecution(String flowId, ExternalContext context) {
+		try {
+			FlowDefinition flowDefinition = definitionLocator.getFlowDefinition(flowId);
+			FlowExecution flowExecution = executionFactory.createFlowExecution(flowDefinition);
+			flowExecution.start(context);
+			if (flowExecution.isActive()) {
+				executionRepository.putFlowExecution(flowExecution);
+				context.setPausedResult(flowExecution.getKey().toString());
+			} else {
+				context.setEndedResult();
+			}
+		} catch (FlowException e) {
+			if (!handleException(e, context)) {
+				context.setExceptionResult(e);
+			}
+		}
+	}
+
+	public void resumeExecution(String encodedKey, ExternalContext context) {
 		try {
 			FlowExecutionKey key = executionRepository.parseFlowExecutionKey(encodedKey);
 			FlowExecutionLock lock = executionRepository.getLock(key);
@@ -139,24 +139,24 @@ public class FlowExecutorImpl implements FlowExecutor {
 				flowExecution.resume(context);
 				if (flowExecution.isActive()) {
 					executionRepository.putFlowExecution(flowExecution);
-					return FlowExecutionResult.getPausedResult(flowExecution.getKey());
+					context.setPausedResult(flowExecution.getKey().toString());
 				} else {
 					// execution ended => remove it from the repository
 					executionRepository.removeFlowExecution(flowExecution);
-					return FlowExecutionResult.getEndedResult();
+					context.setEndedResult();
 				}
 			} finally {
 				lock.unlock();
 			}
 		} catch (FlowException e) {
-			handleException(e, context);
-			return FlowExecutionResult.getExceptionResult(e);
-		} finally {
-			ExternalContextHolder.setExternalContext(null);
+			if (!handleException(e, context)) {
+				context.setExceptionResult(e);
+			}
 		}
 	}
 
-	private void handleException(FlowException e, ExternalContext context) {
+	private boolean handleException(FlowException e, ExternalContext context) {
 		// TODO
+		return false;
 	}
 }

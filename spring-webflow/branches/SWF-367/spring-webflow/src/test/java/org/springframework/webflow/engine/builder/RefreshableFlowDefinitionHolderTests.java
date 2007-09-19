@@ -17,7 +17,7 @@ public class RefreshableFlowDefinitionHolderTests extends TestCase {
 	private FlowAssembler assembler;
 
 	protected void setUp() {
-		FlowAssembler assembler = new FlowAssembler(FlowId.valueOf("flowId"), new SimpleFlowBuilder(), null);
+		FlowAssembler assembler = new FlowAssembler("flowId", new SimpleFlowBuilder(), null);
 		holder = new RefreshableFlowDefinitionHolder(assembler);
 	}
 
@@ -28,7 +28,7 @@ public class RefreshableFlowDefinitionHolderTests extends TestCase {
 	}
 
 	public void testGetFlowDefinitionWithChangesRefreshed() {
-		assembler = new FlowAssembler(FlowId.valueOf("flowId"), new ChangeDetectableFlowBuilder(), null);
+		assembler = new FlowAssembler("flowId", new ChangeDetectableFlowBuilder(), null);
 		holder = new RefreshableFlowDefinitionHolder(assembler);
 		FlowDefinition flow = holder.getFlowDefinition();
 		flow = holder.getFlowDefinition();
@@ -42,7 +42,7 @@ public class RefreshableFlowDefinitionHolderTests extends TestCase {
 			new EndState(getFlow(), "end");
 		}
 
-		public void init(FlowId flowId, AttributeMap attributes) throws FlowBuilderException {
+		public void init(String flowId, AttributeMap attributes) throws FlowBuilderException {
 			setFlow(Flow.create(flowId, attributes));
 		}
 	}

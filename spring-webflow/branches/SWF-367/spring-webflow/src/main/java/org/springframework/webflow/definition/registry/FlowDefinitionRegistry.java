@@ -37,8 +37,8 @@ public interface FlowDefinitionRegistry extends FlowDefinitionLocator {
 	 * Register a flow definition in this registry. Registers a "holder", not the Flow definition itself. This allows
 	 * the actual Flow definition to be loaded lazily only when needed, and also rebuilt at runtime when its underlying
 	 * resource changes without re-deploy.
-	 * @param flowHolder a holder holding the flow definition to register
+	 * @param definitionHolder a holder holding the flow definition to register
 	 */
-	public void registerFlowDefinition(FlowDefinitionHolder flowHolder);
+	public void registerFlowDefinition(FlowDefinitionHolder definitionHolder);
 
 }

@@ -25,7 +25,6 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
@@ -51,7 +50,7 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	/**
 	 * Set so the transient {@link #flow} field can be restored by the {@link FlowExecutionImplStateRestorer}.
 	 */
-	private FlowId flowId;
+	private String flowId;
 
 	/**
 	 * The current state of this flow session.
@@ -122,7 +121,7 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	// custom serialization
 
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-		flowId = (FlowId) in.readObject();
+		flowId = (String) in.readObject();
 		stateId = (String) in.readObject();
 		scope = (MutableAttributeMap) in.readObject();
 		parent = (FlowSessionImpl) in.readObject();
@@ -166,7 +165,7 @@ class FlowSessionImpl implements FlowSession, Externalizable {
 	/**
 	 * Returns the id of the flow of this session.
 	 */
-	FlowId getFlowId() {
+	String getFlowId() {
 		return flowId;
 	}
 

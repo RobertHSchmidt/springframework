@@ -29,7 +29,7 @@ public class StaticFlowExecutionListenerLoaderTests extends TestCase {
 	private FlowExecutionListenerLoader loader = StaticFlowExecutionListenerLoader.EMPTY_INSTANCE;
 
 	public void testEmptyListenerArray() {
-		assertEquals(0, loader.getListeners(Flow.create("foo")).length);
+		assertEquals(0, loader.getListeners(new Flow("foo")).length);
 		assertEquals(0, loader.getListeners(null).length);
 	}
 
@@ -37,7 +37,7 @@ public class StaticFlowExecutionListenerLoaderTests extends TestCase {
 		final FlowExecutionListener listener1 = new FlowExecutionListenerAdapter() {
 		};
 		loader = new StaticFlowExecutionListenerLoader(listener1);
-		assertEquals(listener1, loader.getListeners(Flow.create("foo"))[0]);
+		assertEquals(listener1, loader.getListeners(new Flow("foo"))[0]);
 	}
 
 	public void testStaticListeners() {
@@ -47,8 +47,8 @@ public class StaticFlowExecutionListenerLoaderTests extends TestCase {
 		};
 
 		loader = new StaticFlowExecutionListenerLoader(new FlowExecutionListener[] { listener1, listener2 });
-		assertEquals(listener1, loader.getListeners(Flow.create("foo"))[0]);
-		assertEquals(listener2, loader.getListeners(Flow.create("foo"))[1]);
+		assertEquals(listener1, loader.getListeners(new Flow("foo"))[0]);
+		assertEquals(listener2, loader.getListeners(new Flow("foo"))[1]);
 	}
 
 }

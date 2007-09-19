@@ -16,8 +16,6 @@
 package org.springframework.webflow.executor;
 
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.core.collection.MutableAttributeMap;
-import org.springframework.webflow.definition.FlowId;
 
 /**
  * The central facade and entry-point service interface into the Spring Web Flow system for <i>driving the executions of
@@ -34,15 +32,14 @@ public interface FlowExecutor {
 	/**
 	 * Launch a new execution of the flow definition with the provided id.
 	 * @param id the flow definition identifier
-	 * @param input input to pass the new execution on startup
 	 * @param context the external context representing the calling environment
 	 */
-	public FlowExecutionResult launchExecution(FlowId id, MutableAttributeMap input, ExternalContext context);
+	public void launchExecution(String id, ExternalContext context);
 
 	/**
 	 * Resume the flow execution with the provided execution key.
 	 * @param encodedKey the flow execution key as an encoded string
 	 * @param context the external context representing the calling environment
 	 */
-	public FlowExecutionResult resumeExecution(String encodedKey, ExternalContext context);
+	public void resumeExecution(String encodedKey, ExternalContext context);
 }

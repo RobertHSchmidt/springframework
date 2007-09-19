@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.execution;
 
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.definition.StateDefinition;
 
 /**
@@ -39,7 +38,7 @@ public class EnterStateVetoException extends FlowExecutionException {
 	 * @param vetoedStateId the state for which entering is vetoed
 	 * @param message a descriptive message
 	 */
-	public EnterStateVetoException(FlowId flowId, String sourceStateId, String vetoedStateId, String message) {
+	public EnterStateVetoException(String flowId, String sourceStateId, String vetoedStateId, String message) {
 		super(flowId, sourceStateId, message);
 		this.vetoedStateId = vetoedStateId;
 	}
@@ -52,7 +51,7 @@ public class EnterStateVetoException extends FlowExecutionException {
 	 * @param message a descriptive message
 	 * @param cause the underlying cause
 	 */
-	public EnterStateVetoException(FlowId flowId, String sourceStateId, String vetoedStateId, String message,
+	public EnterStateVetoException(String flowId, String sourceStateId, String vetoedStateId, String message,
 			Throwable cause) {
 		super(flowId, sourceStateId, message, cause);
 		this.vetoedStateId = vetoedStateId;

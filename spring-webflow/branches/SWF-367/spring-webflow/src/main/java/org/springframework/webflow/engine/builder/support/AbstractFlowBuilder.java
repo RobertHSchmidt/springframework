@@ -16,7 +16,6 @@
 package org.springframework.webflow.engine.builder.support;
 
 import org.springframework.webflow.core.collection.AttributeMap;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
@@ -24,7 +23,7 @@ import org.springframework.webflow.engine.builder.FlowBuilderException;
 /**
  * Abstract base implementation of a flow builder defining common functionality needed by most concrete flow builder
  * implementations. This class implements all optional parts of the FlowBuilder process as no-op methods. Subclasses are
- * only required to implement {@link #init(FlowId, AttributeMap)} and {@link #buildStates()}.
+ * only required to implement {@link #init(String, AttributeMap)} and {@link #buildStates()}.
  * <p>
  * This class also provides a {@link FlowServiceLocator} for use by subclasses in the flow construction process.
  * 
@@ -40,7 +39,7 @@ public abstract class AbstractFlowBuilder implements FlowBuilder {
 	 */
 	private Flow flow;
 
-	public abstract void init(FlowId id, AttributeMap attributes) throws FlowBuilderException;
+	public abstract void init(String flowId, AttributeMap attributes) throws FlowBuilderException;
 
 	public void buildVariables() throws FlowBuilderException {
 	}

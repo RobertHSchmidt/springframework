@@ -18,8 +18,6 @@ package org.springframework.webflow.engine.impl;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.core.collection.MutableAttributeMap;
-import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.RequestControlContext;
@@ -31,6 +29,7 @@ import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
+import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.MockFlowExecutionListener;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -48,7 +47,7 @@ import org.springframework.webflow.test.MockExternalContext;
 public class FlowExecutionImplTests extends TestCase {
 
 	public void testStartAndEnd() {
-		Flow flow = Flow.create("flow");
+		Flow flow = new Flow("flow");
 		new EndState(flow, "end");
 		MockFlowExecutionListener mockListener = new MockFlowExecutionListener();
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
@@ -56,7 +55,7 @@ public class FlowExecutionImplTests extends TestCase {
 		execution.setListeners(listeners);
 		MockExternalContext context = new MockExternalContext();
 		assertFalse(execution.hasStarted());
-		execution.start(null, context);
+		execution.start(context);
 		assertTrue(execution.hasStarted());
 		assertFalse(execution.isActive());
 		assertEquals(1, mockListener.getRequestsSubmittedCount());
@@ -76,7 +75,7 @@ public class FlowExecutionImplTests extends TestCase {
 	}
 
 	public void testStartAndPause() {
-		Flow flow = Flow.create("flow");
+		Flow flow = new Flow("flow");
 		new State(flow, "state") {
 			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 				// no op
@@ -87,16 +86,16 @@ public class FlowExecutionImplTests extends TestCase {
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		execution.setListeners(listeners);
 		MockExternalContext context = new MockExternalContext();
-		execution.start(null, context);
+		execution.start(context);
 		assertTrue(execution.isActive());
 		assertEquals(1, mockListener.getPausedCount());
 	}
 
 	public void testStartExceptionThrownBeforeFirstSessionCreated() {
-		Flow flow = Flow.create("flow");
+		Flow flow = new Flow("flow");
 		new EndState(flow, "end");
 		FlowExecutionListener mockListener = new FlowExecutionListenerAdapter() {
-			public void sessionCreating(RequestContext context, FlowDefinition definition, MutableAttributeMap input) {
+			public void sessionStarting(RequestContext context, FlowSession session, MutableAttributeMap input) {
 				throw new IllegalStateException("Oops");
 			}
 		};
@@ -106,7 +105,7 @@ public class FlowExecutionImplTests extends TestCase {
 		MockExternalContext context = new MockExternalContext();
 		assertFalse(execution.hasStarted());
 		try {
-			execution.start(null, context);
+			execution.start(context);
 			fail("Should have failed");
 		} catch (FlowExecutionException e) {
 			assertEquals(flow.getId(), e.getFlowId());
@@ -115,7 +114,7 @@ public class FlowExecutionImplTests extends TestCase {
 	}
 
 	public void testStartExceptionThrownByState() {
-		Flow flow = Flow.create("flow");
+		Flow flow = new Flow("flow");
 		State state = new State(flow, "state") {
 			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 				throw new IllegalStateException("Oops");
@@ -125,7 +124,7 @@ public class FlowExecutionImplTests extends TestCase {
 		MockExternalContext context = new MockExternalContext();
 		assertFalse(execution.hasStarted());
 		try {
-			execution.start(null, context);
+			execution.start(context);
 			fail("Should have failed");
 		} catch (FlowExecutionException e) {
 			assertEquals(flow.getId(), e.getFlowId());
@@ -134,8 +133,8 @@ public class FlowExecutionImplTests extends TestCase {
 	}
 
 	public void testStartFlowExecutionExceptionThrown() {
-		Flow flow = Flow.create("flow");
-		final FlowExecutionException e = new FlowExecutionException(FlowId.valueOf("flow"), "state", "Oops");
+		Flow flow = new Flow("flow");
+		final FlowExecutionException e = new FlowExecutionException("flow", "state", "Oops");
 		new State(flow, "state") {
 			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 				throw e;
@@ -145,7 +144,7 @@ public class FlowExecutionImplTests extends TestCase {
 		MockExternalContext context = new MockExternalContext();
 		assertFalse(execution.hasStarted());
 		try {
-			execution.start(null, context);
+			execution.start(context);
 			fail("Should have failed");
 		} catch (FlowExecutionException ex) {
 			assertSame(e, ex);
@@ -153,13 +152,13 @@ public class FlowExecutionImplTests extends TestCase {
 	}
 
 	public void testStartCannotCallTwice() {
-		Flow flow = Flow.create("flow");
+		Flow flow = new Flow("flow");
 		new EndState(flow, "end");
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		MockExternalContext context = new MockExternalContext();
-		execution.start(null, context);
+		execution.start(context);
 		try {
-			execution.start(null, context);
+			execution.start(context);
 			fail("Should've failed");
 		} catch (IllegalStateException e) {
 
@@ -167,7 +166,7 @@ public class FlowExecutionImplTests extends TestCase {
 	}
 
 	public void testResume() {
-		Flow flow = Flow.create("flow");
+		Flow flow = new Flow("flow");
 		new ViewState(flow, "view", new StubViewFactory());
 		MockFlowExecutionListener mockListener = new MockFlowExecutionListener();
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
@@ -175,7 +174,7 @@ public class FlowExecutionImplTests extends TestCase {
 		execution.setListeners(listeners);
 		execution.setKeyFactory(new SimpleFlowExecutionKeyFactory());
 		MockExternalContext context = new MockExternalContext();
-		execution.start(null, context);
+		execution.start(context);
 		context = new MockExternalContext();
 		execution.resume(context);
 		assertEquals(1, mockListener.getResumingCount());
@@ -183,7 +182,7 @@ public class FlowExecutionImplTests extends TestCase {
 	}
 
 	public void testResumeNotAViewState() {
-		Flow flow = Flow.create("flow");
+		Flow flow = new Flow("flow");
 		new State(flow, "state") {
 			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 				// no-op
@@ -194,7 +193,7 @@ public class FlowExecutionImplTests extends TestCase {
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		execution.setListeners(listeners);
 		MockExternalContext context = new MockExternalContext();
-		execution.start(null, context);
+		execution.start(context);
 		context = new MockExternalContext();
 		try {
 			execution.resume(context);
@@ -206,11 +205,11 @@ public class FlowExecutionImplTests extends TestCase {
 	}
 
 	public void testResumeAfterEnding() {
-		Flow flow = Flow.create("flow");
+		Flow flow = new Flow("flow");
 		new EndState(flow, "end");
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		MockExternalContext context = new MockExternalContext();
-		execution.start(null, context);
+		execution.start(context);
 		try {
 			execution.resume(context);
 			fail("Should've failed");
@@ -220,7 +219,7 @@ public class FlowExecutionImplTests extends TestCase {
 	}
 
 	public void testResumeException() {
-		Flow flow = Flow.create("flow");
+		Flow flow = new Flow("flow");
 		ViewState state = new ViewState(flow, "view", new StubViewFactory()) {
 			public void resume(RequestControlContext context) {
 				throw new IllegalStateException("Oops");
@@ -232,7 +231,7 @@ public class FlowExecutionImplTests extends TestCase {
 		execution.setListeners(listeners);
 		execution.setKeyFactory(new SimpleFlowExecutionKeyFactory());
 		MockExternalContext context = new MockExternalContext();
-		execution.start(null, context);
+		execution.start(context);
 		context = new MockExternalContext();
 		try {
 			execution.resume(context);
@@ -245,10 +244,10 @@ public class FlowExecutionImplTests extends TestCase {
 	}
 
 	public void testResumeFlowExecutionException() {
-		Flow flow = Flow.create("flow");
+		Flow flow = new Flow("flow");
 		ViewState state = new ViewState(flow, "view", new StubViewFactory()) {
 			public void resume(RequestControlContext context) {
-				throw new FlowExecutionException(FlowId.valueOf("flow"), "view", "oops");
+				throw new FlowExecutionException("flow", "view", "oops");
 			}
 		};
 		MockFlowExecutionListener mockListener = new MockFlowExecutionListener();
@@ -257,7 +256,7 @@ public class FlowExecutionImplTests extends TestCase {
 		execution.setListeners(listeners);
 		execution.setKeyFactory(new SimpleFlowExecutionKeyFactory());
 		MockExternalContext context = new MockExternalContext();
-		execution.start(null, context);
+		execution.start(context);
 		context = new MockExternalContext();
 		try {
 			execution.resume(context);
@@ -270,12 +269,8 @@ public class FlowExecutionImplTests extends TestCase {
 	}
 
 	public void testRequestContextManagedOnStartAndResume() {
-		Flow flow = Flow.create("flow");
+		Flow flow = new Flow("flow");
 		ViewState state = new ViewState(flow, "view", new StubViewFactory()) {
-			public void start(RequestControlContext context) {
-				assertSame(context, RequestContextHolder.getRequestContext());
-			}
-
 			public void resume(RequestControlContext context) {
 				assertSame(context, RequestContextHolder.getRequestContext());
 			}
@@ -284,7 +279,7 @@ public class FlowExecutionImplTests extends TestCase {
 		execution.setKeyFactory(new SimpleFlowExecutionKeyFactory());
 
 		MockExternalContext context = new MockExternalContext();
-		execution.start(null, context);
+		execution.start(context);
 		assertNull("RequestContext was not released", RequestContextHolder.getRequestContext());
 
 		context = new MockExternalContext();

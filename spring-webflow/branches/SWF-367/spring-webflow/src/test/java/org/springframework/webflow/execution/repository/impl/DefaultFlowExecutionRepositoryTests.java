@@ -13,7 +13,6 @@ import org.springframework.webflow.conversation.ConversationParameters;
 import org.springframework.webflow.conversation.NoSuchConversationException;
 import org.springframework.webflow.conversation.impl.SimpleConversationId;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionException;
@@ -37,7 +36,7 @@ public class DefaultFlowExecutionRepositoryTests extends TestCase {
 	private DefaultFlowExecutionRepository repository;
 
 	protected void setUp() throws Exception {
-		flow = Flow.create("myFlow");
+		flow = new Flow("myFlow");
 		new State(flow, "state") {
 			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 				context.assignFlowExecutionKey();
@@ -45,7 +44,7 @@ public class DefaultFlowExecutionRepositoryTests extends TestCase {
 		};
 		conversationManager = new StubConversationManager();
 		stateRestorer = new FlowExecutionImplStateRestorer(new FlowDefinitionLocator() {
-			public FlowDefinition getFlowDefinition(FlowId flowId) throws NoSuchFlowDefinitionException,
+			public FlowDefinition getFlowDefinition(String flowId) throws NoSuchFlowDefinitionException,
 					FlowDefinitionConstructionException {
 				return flow;
 			}
@@ -91,7 +90,7 @@ public class DefaultFlowExecutionRepositoryTests extends TestCase {
 		FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
 		factory.setExecutionKeyFactory(repository);
 		FlowExecution execution = factory.createFlowExecution(flow);
-		execution.start(null, new MockExternalContext());
+		execution.start(new MockExternalContext());
 		assertNotNull(execution.getKey());
 		repository.putFlowExecution(execution);
 		FlowExecution execution2 = repository.getFlowExecution(execution.getKey());
@@ -114,7 +113,7 @@ public class DefaultFlowExecutionRepositoryTests extends TestCase {
 		FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
 		factory.setExecutionKeyFactory(repository);
 		FlowExecution execution = factory.createFlowExecution(flow);
-		execution.start(null, new MockExternalContext());
+		execution.start(new MockExternalContext());
 		assertNotNull(execution.getKey());
 		repository.putFlowExecution(execution);
 		repository.removeFlowExecution(execution);
@@ -141,7 +140,7 @@ public class DefaultFlowExecutionRepositoryTests extends TestCase {
 		FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
 		factory.setExecutionKeyFactory(repository);
 		FlowExecution execution = factory.createFlowExecution(flow);
-		execution.start(null, new MockExternalContext());
+		execution.start(new MockExternalContext());
 		try {
 			repository.removeFlowExecution(execution);
 			repository.removeFlowExecution(execution);

@@ -23,7 +23,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowId;
 
 /**
  * A generic registry implementation for housing one or more flow definitions.
@@ -50,7 +49,7 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 
 	// implementing FlowDefinitionLocator
 
-	public FlowDefinition getFlowDefinition(FlowId id) throws NoSuchFlowDefinitionException,
+	public FlowDefinition getFlowDefinition(String id) throws NoSuchFlowDefinitionException,
 			FlowDefinitionConstructionException {
 		try {
 			if (logger.isDebugEnabled()) {
@@ -72,11 +71,9 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 		this.parent = parent;
 	}
 
-	public void registerFlowDefinition(FlowDefinitionHolder flowHolder) {
-		Assert.notNull(flowHolder, "The holder of the flow definition to register is required");
-		FlowId id = flowHolder.getFlowDefinitionId();
-		Map namespace = getNamespace(id.getNamespace());
-		namespace.put(id.getShortName(), flowHolder);
+	public void registerFlowDefinition(FlowDefinitionHolder definitionHolder) {
+		Assert.notNull(definitionHolder, "The holder of the flow definition to register is required");
+		flowDefinitions.put(definitionHolder.getFlowDefinitionId(), definitionHolder);
 	}
 
 	// internal helpers
@@ -84,23 +81,12 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 	/**
 	 * Returns the identified flow definition holder. Throws an exception if it cannot be found.
 	 */
-	private FlowDefinitionHolder getFlowDefinitionHolder(FlowId id) throws NoSuchFlowDefinitionException {
-		Map namespace = getNamespace(id.getNamespace());
-		FlowDefinitionHolder flowHolder = (FlowDefinitionHolder) namespace.get(id.getShortName());
-		if (flowHolder == null) {
+	private FlowDefinitionHolder getFlowDefinitionHolder(String id) throws NoSuchFlowDefinitionException {
+		FlowDefinitionHolder holder = (FlowDefinitionHolder) flowDefinitions.get(id);
+		if (holder == null) {
 			throw new NoSuchFlowDefinitionException(id);
 		}
-		return flowHolder;
-	}
-
-	/**
-	 * Returns the map for a given namespace. Creates the map if it does not exist.
-	 */
-	private Map getNamespace(String namespace) {
-		if (!flowDefinitions.containsKey(namespace)) {
-			flowDefinitions.put(namespace, new TreeMap());
-		}
-		return (Map) flowDefinitions.get(namespace);
+		return holder;
 	}
 
 	public String toString() {

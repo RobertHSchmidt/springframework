@@ -30,7 +30,7 @@ import org.springframework.webflow.test.MockRequestControlContext;
 public class DecisionStateTests extends TestCase {
 
 	public void testIfDecision() {
-		Flow flow = Flow.create("flow");
+		Flow flow = new Flow("flow");
 		DecisionState state = new DecisionState(flow, "decisionState");
 		state.getTransitionSet().add(new Transition(new EventIdTransitionCriteria("foo"), to("target")));
 		new EndState(flow, "target");
@@ -41,7 +41,7 @@ public class DecisionStateTests extends TestCase {
 	}
 
 	public void testElseDecision() {
-		Flow flow = Flow.create("flow");
+		Flow flow = new Flow("flow");
 		DecisionState state = new DecisionState(flow, "decisionState");
 		state.getTransitionSet().add(new Transition(new EventIdTransitionCriteria("foo"), to("invalid")));
 		state.getTransitionSet().add(new Transition(to("target")));
@@ -53,7 +53,7 @@ public class DecisionStateTests extends TestCase {
 	}
 
 	public void testCannotDecide() {
-		Flow flow = Flow.create("flow");
+		Flow flow = new Flow("flow");
 		DecisionState state = new DecisionState(flow, "decisionState");
 		state.getTransitionSet().add(new Transition(new EventIdTransitionCriteria("foo"), to("invalid")));
 		state.getTransitionSet().add(new Transition(new EventIdTransitionCriteria("bar"), to("invalid")));

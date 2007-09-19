@@ -28,7 +28,7 @@ import org.springframework.webflow.test.MockRequestControlContext;
 public class ViewStateTests extends TestCase {
 
 	public void testEnterViewState() {
-		Flow flow = Flow.create("myFlow");
+		Flow flow = new Flow("myFlow");
 		StubViewFactory viewFactory = new StubViewFactory();
 		ViewState state = new ViewState(flow, "viewState", viewFactory);
 		state.getTransitionSet().add(new Transition(on("submit"), to("finish")));
@@ -40,7 +40,7 @@ public class ViewStateTests extends TestCase {
 	}
 
 	public void testEnterViewStateWithRedirect() {
-		Flow flow = Flow.create("myFlow");
+		Flow flow = new Flow("myFlow");
 		StubViewFactory viewFactory = new StubViewFactory();
 		ViewState state = new ViewState(flow, "viewState", viewFactory);
 		state.getTransitionSet().add(new Transition(on("submit"), to("finish")));
@@ -53,7 +53,7 @@ public class ViewStateTests extends TestCase {
 	}
 
 	public void testResumeViewStateForRefresh() {
-		Flow flow = Flow.create("myFlow");
+		Flow flow = new Flow("myFlow");
 		StubViewFactory viewFactory = new StubViewFactory();
 		ViewState state = new ViewState(flow, "viewState", viewFactory);
 		state.getTransitionSet().add(new Transition(on("submit"), to("finish")));
@@ -67,7 +67,7 @@ public class ViewStateTests extends TestCase {
 	}
 
 	public void testResumeViewStateForEvent() {
-		Flow flow = Flow.create("myFlow");
+		Flow flow = new Flow("myFlow");
 		StubViewFactory viewFactory = new StubViewFactory();
 		ViewState state = new ViewState(flow, "viewState", viewFactory);
 		state.getTransitionSet().add(new Transition(on("submit"), to("finish")));

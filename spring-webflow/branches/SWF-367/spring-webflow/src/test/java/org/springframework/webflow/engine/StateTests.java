@@ -37,7 +37,7 @@ public class StateTests extends TestCase {
 	private boolean handled;
 
 	public void setUp() {
-		flow = Flow.create("flow");
+		flow = new Flow("flow");
 		state = new State(flow, "myState") {
 			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 				entered = true;

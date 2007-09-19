@@ -28,7 +28,7 @@ public class TransitionTests extends TestCase {
 	private boolean exitCalled;
 
 	public void testExecuteTransitionFromState() {
-		Flow flow = Flow.create("flow");
+		Flow flow = new Flow("flow");
 		final TransitionableState source = new TransitionableState(flow, "state 1") {
 			public void exit(RequestControlContext context) {
 				exitCalled = true;
@@ -56,7 +56,7 @@ public class TransitionTests extends TestCase {
 	}
 
 	public void testExecuteTransitionWithNullSourceState() {
-		Flow flow = Flow.create("flow");
+		Flow flow = new Flow("flow");
 		final TransitionableState target = new TransitionableState(flow, "state 2") {
 			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 			}
@@ -74,7 +74,7 @@ public class TransitionTests extends TestCase {
 	}
 
 	public void testTransitionExecutionRefused() {
-		Flow flow = Flow.create("flow");
+		Flow flow = new Flow("flow");
 		final TransitionableState source = new TransitionableState(flow, "state 1") {
 
 			public void reenter(RequestControlContext context) {

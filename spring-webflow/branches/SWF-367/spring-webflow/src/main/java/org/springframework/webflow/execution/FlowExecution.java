@@ -16,7 +16,6 @@
 package org.springframework.webflow.execution;
 
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 
@@ -45,12 +44,11 @@ public interface FlowExecution extends FlowExecutionContext {
 	 * <p>
 	 * When this method returns, execution status is either "paused" or "ended". If ended, the flow execution cannot be
 	 * used again. If "paused", the flow execution may be {@link #resume(ExternalContext)}.
-	 * @param input input attributes to pass to the execution
 	 * @param context the external context representing the calling environment
 	 * @throws FlowExecutionException if an exception was thrown within a state of the flow execution during request
 	 * processing
 	 */
-	public void start(MutableAttributeMap input, ExternalContext context) throws FlowExecutionException;
+	public void start(ExternalContext context) throws FlowExecutionException;
 
 	/**
 	 * Resume this flow execution. May be called when the flow execution is paused.

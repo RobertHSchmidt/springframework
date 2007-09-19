@@ -16,7 +16,6 @@
 package org.springframework.webflow.definition.registry.support;
 
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowId;
 import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
 
 /**
@@ -39,7 +38,7 @@ public final class StaticFlowDefinitionHolder implements FlowDefinitionHolder {
 		this.flowDefinition = flowDefinition;
 	}
 
-	public FlowId getFlowDefinitionId() {
+	public String getFlowDefinitionId() {
 		return flowDefinition.getId();
 	}
 

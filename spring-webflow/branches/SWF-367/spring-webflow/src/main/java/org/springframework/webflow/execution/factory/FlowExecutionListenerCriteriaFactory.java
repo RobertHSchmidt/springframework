@@ -19,7 +19,6 @@ import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.FlowId;
 
 /**
  * Static factory for creating commonly used flow execution listener criteria.
@@ -44,15 +43,15 @@ public class FlowExecutionListenerCriteriaFactory {
 	 * Returns a criteria that just matches a flow with the specified id.
 	 * @param flowId the flow id to match
 	 */
-	public FlowExecutionListenerCriteria flow(FlowId flowId) {
-		return new FlowIdFlowExecutionListenerCriteria(new FlowId[] { flowId });
+	public FlowExecutionListenerCriteria flow(String flowId) {
+		return new FlowIdFlowExecutionListenerCriteria(new String[] { flowId });
 	}
 
 	/**
 	 * Returns a criteria that just matches a flow if it is identified by one of the specified ids.
 	 * @param flowIds the flow ids to match
 	 */
-	public FlowExecutionListenerCriteria flows(FlowId[] flowIds) {
+	public FlowExecutionListenerCriteria flows(String[] flowIds) {
 		return new FlowIdFlowExecutionListenerCriteria(flowIds);
 	}
 
@@ -78,13 +77,13 @@ public class FlowExecutionListenerCriteriaFactory {
 		/**
 		 * The flow ids that apply for this criteria.
 		 */
-		private FlowId[] flowIds;
+		private String[] flowIds;
 
 		/**
 		 * Create a new flow id matching flow execution listener criteria implementation.
 		 * @param flowIds the flow ids to match
 		 */
-		public FlowIdFlowExecutionListenerCriteria(FlowId[] flowIds) {
+		public FlowIdFlowExecutionListenerCriteria(String[] flowIds) {
 			Assert.notEmpty(flowIds, "The flow id array is required");
 			this.flowIds = flowIds;
 		}

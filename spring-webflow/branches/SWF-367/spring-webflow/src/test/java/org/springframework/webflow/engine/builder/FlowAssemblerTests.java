@@ -13,11 +13,11 @@ public class FlowAssemblerTests extends TestCase {
 
 	protected void setUp() {
 		builder = (FlowBuilder) EasyMock.createMock(FlowBuilder.class);
-		assembler = new FlowAssembler(FlowId.valueOf("search"), builder, null);
+		assembler = new FlowAssembler("search", builder, null);
 	}
 
 	public void testAssembleFlow() {
-		builder.init(FlowId.valueOf("search"), CollectionUtils.EMPTY_ATTRIBUTE_MAP);
+		builder.init("search", CollectionUtils.EMPTY_ATTRIBUTE_MAP);
 		builder.dispose();
 		builder.buildVariables();
 		builder.buildInputMapper();
@@ -28,7 +28,7 @@ public class FlowAssemblerTests extends TestCase {
 		builder.buildEndActions();
 		builder.buildOutputMapper();
 		builder.buildExceptionHandlers();
-		EasyMock.expect(builder.getFlow()).andReturn(Flow.create("search"));
+		EasyMock.expect(builder.getFlow()).andReturn("search");
 		EasyMock.replay(new Object[] { builder });
 		Flow flow = assembler.assembleFlow();
 		assertEquals(FlowId.valueOf("search"), flow.getId());
@@ -36,7 +36,7 @@ public class FlowAssemblerTests extends TestCase {
 	}
 
 	public void testDisposeCalledOnException() {
-		builder.init(FlowId.valueOf("search"), CollectionUtils.EMPTY_ATTRIBUTE_MAP);
+		builder.init("search", CollectionUtils.EMPTY_ATTRIBUTE_MAP);
 		EasyMock.expectLastCall().andThrow(new IllegalArgumentException());
 		builder.dispose();
 		EasyMock.replay(new Object[] { builder });
