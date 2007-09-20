@@ -15,6 +15,9 @@
  */
 package org.springframework.webflow.context.servlet;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.TestCase;
 
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -22,6 +25,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.ExternalContextHolder;
+import org.springframework.webflow.core.collection.LocalParameterMap;
 import org.springframework.webflow.executor.FlowExecutor;
 
 /**
@@ -32,7 +36,7 @@ public class ServletExternalContextTests extends TestCase {
 	private MockHttpServletRequest request;
 	private MockHttpServletResponse response;
 	private ServletExternalContext context;
-	private StubFlowExecutor flowExecutor;
+	private FlowExecutor flowExecutor;
 
 	protected void setUp() {
 		request = new MockHttpServletRequest();
@@ -40,21 +44,21 @@ public class ServletExternalContextTests extends TestCase {
 		flowExecutor = new StubFlowExecutor();
 	}
 
-	public void testProcessLaunchFlowRequest() {
+	public void testProcessLaunchFlowRequest() throws Exception {
 		request.setPathInfo("/booking");
 		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
 		context.processRequest();
 		assertEquals("booking", context.getFlowId());
 	}
 
-	public void testProcessLaunchFlowRequestTrailingSlash() {
+	public void testProcessLaunchFlowRequestTrailingSlash() throws Exception {
 		request.setPathInfo("/booking/");
 		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
 		context.processRequest();
 		assertEquals("booking", context.getFlowId());
 	}
 
-	public void testProcessLaunchFlowRequestElements() {
+	public void testProcessLaunchFlowRequestElements() throws Exception {
 		request.setPathInfo("/users/1");
 		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
 		context.processRequest();
@@ -62,7 +66,7 @@ public class ServletExternalContextTests extends TestCase {
 		assertEquals(context.getRequestElements()[0], "1");
 	}
 
-	public void testProcessLaunchFlowMultipleRequestElements() {
+	public void testProcessLaunchFlowMultipleRequestElements() throws Exception {
 		request.setPathInfo("/users/1/foo/bar//baz/");
 		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
 		context.processRequest();
@@ -74,19 +78,24 @@ public class ServletExternalContextTests extends TestCase {
 		assertEquals("baz", context.getRequestElements()[4]);
 	}
 
-	public void testProcessResumeFlowExecution() {
-		request.setPathInfo("/booking/execution/_c12345_k12345");
+	public void testProcessResumeFlowExecution() throws Exception {
+		request.setPathInfo("/executions/booking/_c12345_k12345");
 		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
 		context.processRequest();
 		assertEquals("booking", context.getFlowId());
 		assertEquals("_c12345_k12345", context.getFlowExecutionKey());
 	}
 
-	public void testExternalContextUnbound() {
-		request.setPathInfo("/booking/execution/_c12345_k12345");
+	public void testExternalContextUnbound() throws Exception {
+		request.setPathInfo("/executions/booking/_c12345_k12345");
 		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
 		context.processRequest();
-		assertNull(ExternalContextHolder.getExternalContext());
+		try {
+			ExternalContextHolder.getExternalContext();
+			fail("Should have failed");
+		} catch (IllegalStateException e) {
+
+		}
 	}
 
 	public void testNoRequestPathInfo() {
@@ -99,12 +108,70 @@ public class ServletExternalContextTests extends TestCase {
 		}
 	}
 
-	public class StubFlowExecutor implements FlowExecutor {
+	public void testSendFlowExecutionRedirect() throws Exception {
+		request.setPathInfo("/users/1");
+		flowExecutor = new FlowExecutor() {
+			public void execute(ExternalContext context) {
+				context.sendFlowExecutionRedirect();
+				context.setPausedResult("_c12345_k12345");
+			}
+		};
+		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
+		context.processRequest();
+		assertEquals("/executions/users/_c12345_k12345", response.getRedirectedUrl());
+	}
 
+	public void testFlowExecutionRedirectAttemptOnEnd() throws Exception {
+		request.setPathInfo("/users/1");
+		flowExecutor = new FlowExecutor() {
+			public void execute(ExternalContext context) {
+				context.sendFlowExecutionRedirect();
+				context.setEndedResult();
+			}
+		};
+		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
+		try {
+			context.processRequest();
+			fail("Should have failed");
+		} catch (IllegalStateException e) {
+
+		}
+	}
+
+	public void testSendFlowDefinitionRedirect() throws Exception {
+		request.setPathInfo("/users/1");
+		flowExecutor = new FlowExecutor() {
+			public void execute(ExternalContext context) {
+				Map parameters = new HashMap();
+				parameters.put("foo", "bar");
+				parameters.put("bar", "baz");
+				context.sendFlowDefinitionRedirect("customers", new String[] { "1", "you&me" }, new LocalParameterMap(
+						parameters));
+				context.setEndedResult();
+			}
+		};
+		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
+		context.processRequest();
+		assertEquals("/customers/1/you%26me?foo=bar&bar=baz", response.getRedirectedUrl());
+	}
+
+	public void testSendExternalRedirect() throws Exception {
+		request.setPathInfo("/users/1");
+		flowExecutor = new FlowExecutor() {
+			public void execute(ExternalContext context) {
+				context.sendExternalRedirect("/foo/bar/baz");
+				context.setEndedResult();
+			}
+		};
+		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
+		context.processRequest();
+		assertEquals("/foo/bar/baz", response.getRedirectedUrl());
+	}
+
+	public class StubFlowExecutor implements FlowExecutor {
 		public void execute(ExternalContext context) {
 			assertNotNull(ExternalContextHolder.getExternalContext());
 		}
-
 	}
 
 }
