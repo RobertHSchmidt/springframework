@@ -37,8 +37,8 @@ import org.springframework.webflow.core.collection.SharedAttributeMap;
 public interface ExternalContext {
 
 	/**
-	 * Returns the id of the flow the client requested be launched or resumed.
-	 * @return the flow id, never null
+	 * Returns the id of the flow the client requested be launched.
+	 * @return the flow id
 	 */
 	public String getFlowId();
 
