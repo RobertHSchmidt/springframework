@@ -59,7 +59,7 @@ public class WebFlowConfigNamespaceHandler extends NamespaceHandlerSupport {
 		registerBeanDefinitionParser("execution-attributes", new ExecutionAttributesBeanDefinitionParser());
 		registerBeanDefinitionParser("execution-listeners", new ExecutionListenersBeanDefinitionParser());
 		registerBeanDefinitionParser("executor", new ExecutorBeanDefinitionParser());
-		registerBeanDefinitionParser("registry", new RegistryBeanDefinitionParser());
+		registerBeanDefinitionParser("registry", new FlowRegistryBeanDefinitionParser());
 		registerBeanDefinitionParser("enable-scopes", new EnableScopesBeanDefinitionParser());
 	}
 }

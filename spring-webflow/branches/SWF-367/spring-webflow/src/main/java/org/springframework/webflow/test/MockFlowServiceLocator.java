@@ -17,11 +17,13 @@ package org.springframework.webflow.test;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
+import org.springframework.webflow.config.DefaultFlowServiceLocator;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
+import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
-import org.springframework.webflow.definition.registry.support.StaticFlowDefinitionHolder;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.builder.support.DefaultFlowServiceLocator;
 
 /**
  * A stub flow service locator implementation suitable for a test environment.
@@ -67,5 +69,37 @@ public class MockFlowServiceLocator extends DefaultFlowServiceLocator {
 
 	public FlowDefinitionRegistry getMockSubflowRegistry() {
 		return (FlowDefinitionRegistry) getSubflowLocator();
+	}
+
+	private static class StaticFlowDefinitionHolder implements FlowDefinitionHolder {
+		private Flow flow;
+
+		public StaticFlowDefinitionHolder(Flow flow) {
+			this.flow = flow;
+		}
+
+		public String getFlowDefinitionId() {
+			return flow.getId();
+		}
+
+		public FlowDefinition getFlowDefinition() throws FlowDefinitionConstructionException {
+			return flow;
+		}
+
+		public void refresh() throws FlowDefinitionConstructionException {
+			// nothing to do
+		}
+
+		public boolean equals(Object o) {
+			if (!(o instanceof StaticFlowDefinitionHolder)) {
+				return false;
+			}
+			StaticFlowDefinitionHolder other = (StaticFlowDefinitionHolder) o;
+			return flow.equals(other.flow);
+		}
+
+		public int hashCode() {
+			return flow.hashCode();
+		}
 	}
 }

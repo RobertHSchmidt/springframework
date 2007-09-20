@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.webflow.config.DefaultFlowServiceLocator;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
@@ -11,7 +12,6 @@ import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionExcep
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
-import org.springframework.webflow.engine.builder.support.DefaultFlowServiceLocator;
 
 public class XmlFlowBuilderTests extends TestCase {
 	private XmlFlowBuilder builder;

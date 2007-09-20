@@ -110,35 +110,6 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	/**
 	 * Start the flow execution to be tested.
 	 * <p>
-	 * Convenience operation that starts the execution with:
-	 * <ul>
-	 * <li>no input attributes
-	 * <li>an empty {@link ExternalContext} with no environmental request parameters set
-	 * </ul>
-	 * @throws FlowExecutionException if an exception was thrown while starting the flow execution
-	 */
-	protected void startFlow() throws FlowExecutionException {
-		startFlow(null, createExternalContext(null));
-	}
-
-	/**
-	 * Start the flow execution to be tested.
-	 * <p>
-	 * Convenience operation that starts the execution with:
-	 * <ul>
-	 * <li>the specified input attributes, eligible for mapping by the root flow
-	 * <li>an empty {@link ExternalContext} with no environmental request parameters set
-	 * </ul>
-	 * @param input the flow execution input attributes eligible for mapping by the root flow
-	 * @throws FlowExecutionException if an exception was thrown while starting the flow execution
-	 */
-	protected void startFlow(MutableAttributeMap input) throws FlowExecutionException {
-		startFlow(input, createExternalContext(null));
-	}
-
-	/**
-	 * Start the flow execution to be tested.
-	 * <p>
 	 * This is the most flexible of the start methods. It allows you to specify:
 	 * <ol>
 	 * <li>a map of input attributes to pass to the flow execution, eligible for mapping by the root flow definition
@@ -150,9 +121,9 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * execution during the start operation
 	 * @throws FlowExecutionException if an exception was thrown while starting the flow execution
 	 */
-	protected void startFlow(MutableAttributeMap input, ExternalContext context) throws FlowExecutionException {
+	protected void startFlow(ExternalContext context) throws FlowExecutionException {
 		flowExecution = getFlowExecutionFactory().createFlowExecution(getFlowDefinition());
-		flowExecution.start(input, context);
+		flowExecution.start(context);
 	}
 
 	/**

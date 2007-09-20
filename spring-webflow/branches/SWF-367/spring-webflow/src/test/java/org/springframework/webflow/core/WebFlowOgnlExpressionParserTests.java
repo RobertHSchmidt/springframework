@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 import org.springframework.binding.collection.MapAdaptable;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.SettableExpression;
+import org.springframework.webflow.config.WebFlowOgnlExpressionParser;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 
 /**

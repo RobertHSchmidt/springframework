@@ -21,7 +21,6 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.registry.support.FlowDefinitionResource;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
@@ -91,8 +90,8 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	}
 
 	/**
-	 * Sets system attributes to be associated with the flow execution the next time one is {@link #startFlow() started}
-	 * by this test. Useful for assigning attributes that influence flow execution behavior.
+	 * Sets system attributes to be associated with the flow execution the next time one is started. by this test.
+	 * Useful for assigning attributes that influence flow execution behavior.
 	 * @param executionAttributes the system attributes to assign
 	 */
 	protected void setFlowExecutionAttributes(AttributeMap executionAttributes) {
@@ -100,8 +99,8 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	}
 
 	/**
-	 * Set a single listener to be attached to the flow execution the next time one is {@link #startFlow() started} by
-	 * this test. Useful for attaching a listener that does test assertions during the execution of the flow.
+	 * Set a single listener to be attached to the flow execution the next time one is started by this test. Useful for
+	 * attaching a listener that does test assertions during the execution of the flow.
 	 * @param executionListener the listener to attach
 	 */
 	protected void setFlowExecutionListener(FlowExecutionListener executionListener) {
