@@ -21,8 +21,8 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.FlowExecutionContext;
-import org.springframework.webflow.execution.FlowExecutionContextHolder;
-import org.springframework.webflow.execution.FlowSession;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.RequestContextHolder;
 
 /**
  * Base class for {@link Scope} implementations that access a Web Flow scope from the current thread-bound
@@ -34,9 +34,6 @@ import org.springframework.webflow.execution.FlowSession;
  * Relies on a thread-bound
  * @{link FlowExecutionContext} instance located through the
  * @{link FlowExecutionContextHolder}.
- * 
- * @see FlowExecutionContext
- * @see FlowExecutionContextHolder
  * 
  * @author Ben Hale
  */
@@ -70,11 +67,6 @@ public abstract class AbstractWebFlowScope implements Scope {
 
 	/**
 	 * Template method that returns the target scope map.
-	 * @return the target scope map
-	 * @see FlowExecutionContext#getConversationScope()
-	 * @see FlowExecutionContext#getActiveSession()
-	 * @see FlowSession#getFlashMap()
-	 * @see FlowSession#getScope()
 	 * @throws IllegalStateException if the scope could not be accessed
 	 */
 	protected abstract MutableAttributeMap getScope() throws IllegalStateException;
@@ -105,8 +97,8 @@ public abstract class AbstractWebFlowScope implements Scope {
 	 * @return the current thread-bound flow execution context
 	 * @throws IllegalStateException if the current flow execution context is not bound
 	 */
-	protected FlowExecutionContext getFlowExecutionContext() throws IllegalStateException {
-		return FlowExecutionContextHolder.getFlowExecutionContext();
+	protected RequestContext getRequestContext() throws IllegalStateException {
+		return RequestContextHolder.getRequestContext();
 	}
 
 }

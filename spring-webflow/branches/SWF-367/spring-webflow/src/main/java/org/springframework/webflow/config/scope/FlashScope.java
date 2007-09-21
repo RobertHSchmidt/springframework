@@ -28,6 +28,6 @@ import org.springframework.webflow.execution.FlowExecutionContext;
  */
 public class FlashScope extends AbstractWebFlowScope {
 	protected MutableAttributeMap getScope() {
-		return getFlowExecutionContext().getFlashScope();
+		return getRequestContext().getFlashScope();
 	}
 }

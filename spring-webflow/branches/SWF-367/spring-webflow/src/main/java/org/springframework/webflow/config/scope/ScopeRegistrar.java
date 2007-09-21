@@ -32,6 +32,7 @@ import org.springframework.webflow.execution.ScopeType;
 public class ScopeRegistrar implements BeanFactoryPostProcessor, Ordered {
 
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+		beanFactory.registerScope(ScopeType.REQUEST.getLabel().toLowerCase(), new RequestScope());
 		beanFactory.registerScope(ScopeType.FLASH.getLabel().toLowerCase(), new FlashScope());
 		beanFactory.registerScope(ScopeType.FLOW.getLabel().toLowerCase(), new FlowScope());
 		beanFactory.registerScope(ScopeType.CONVERSATION.getLabel().toLowerCase(), new ConversationScope());
