@@ -23,7 +23,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
 import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
-import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.util.ResourceHolder;
 
 /**
@@ -32,13 +31,11 @@ import org.springframework.webflow.util.ResourceHolder;
  * <p>
  * This class is thread-safe.
  * <p>
- * Note that this {@link FlowDefinition} holder uses a {@link Flow} assembler. This is normal since a {@link Flow} is a
- * {@link FlowDefinition}! This class bridges the <i>abstract</i> world of {@link FlowDefinition flow definitions}
- * with the <i>concrete</i> world of {@link Flow flow implementations}.
+ * Note that this {@link FlowDefinition} holder uses a {@link FlowAssembler}. This class bridges the <i>abstract</i>
+ * world of {@link FlowDefinition flow definitions} with the <i>concrete</i> world of flow implementations.
  * 
  * @see FlowAssembler
  * @see FlowDefinition
- * @see Flow
  * 
  * @author Keith Donald
  */
