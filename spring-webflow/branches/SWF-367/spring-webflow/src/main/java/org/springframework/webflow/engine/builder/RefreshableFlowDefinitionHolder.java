@@ -84,6 +84,7 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 		}
 		if (flowDefinition == null) {
 			lastModified = calculateLastModified();
+			logger.debug("Assembling the flow definition for the first time");
 			assembleFlow();
 		} else {
 			refreshIfChanged();
@@ -105,10 +106,11 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 		if (getFlowBuilder() instanceof ResourceHolder) {
 			Resource resource = ((ResourceHolder) getFlowBuilder()).getResource();
 			try {
+				long lastModified = resource.getFile().lastModified();
 				if (logger.isDebugEnabled()) {
-					logger.debug("Calculating last modified timestamp for flow definition resource '" + resource + "'");
+					logger.debug("Flow definition [" + resource + "] was last modified on " + lastModified);
 				}
-				return resource.getFile().lastModified();
+				return lastModified;
 			} catch (IOException e) {
 				// ignore, last modified checks not supported
 			}
@@ -121,9 +123,6 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 	 */
 	private void assembleFlow() throws FlowDefinitionConstructionException {
 		try {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Assembling flow definition with id '" + assembler.getFlowId() + "'");
-			}
 			assembling = true;
 			flowDefinition = assembler.assembleFlow();
 		} catch (FlowBuilderException e) {
@@ -140,8 +139,8 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 		long calculatedLastModified = calculateLastModified();
 		if (calculatedLastModified > lastModified) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Resource modification detected, reloading flow definition with id '"
-						+ assembler.getFlowId() + "'");
+				logger.debug("Resource modification detected; refreshing flow definition '" + assembler.getFlowId()
+						+ "'");
 			}
 			assembleFlow();
 			lastModified = calculatedLastModified;
@@ -156,7 +155,7 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 	}
 
 	public String toString() {
-		return getFlowDefinitionId();
+		return "'" + getFlowDefinitionId() + "'";
 	}
 
 }
