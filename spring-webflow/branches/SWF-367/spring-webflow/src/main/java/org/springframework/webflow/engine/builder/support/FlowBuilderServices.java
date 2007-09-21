@@ -1,19 +1,16 @@
-package org.springframework.webflow.config;
+package org.springframework.webflow.engine.builder.support;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.action.BeanInvokingActionFactory;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
-import org.springframework.webflow.engine.builder.support.FlowArtifactFactory;
 import org.springframework.webflow.execution.Action;
 
-public class FlowBuilderServices implements BeanFactoryAware, ResourceLoaderAware {
+public class FlowBuilderServices {
 
 	/**
 	 * The factory encapsulating the creation of central Flow artifacts such as {@link Flow flows} and

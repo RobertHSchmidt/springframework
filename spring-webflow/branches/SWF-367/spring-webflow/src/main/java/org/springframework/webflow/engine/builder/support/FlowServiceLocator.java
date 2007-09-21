@@ -53,6 +53,48 @@ import org.springframework.webflow.execution.Action;
  */
 public interface FlowServiceLocator {
 
+	// flow builder services
+
+	/**
+	 * Returns the factory for core flow artifacts such as Flow and State.
+	 * @return the flow artifact factory
+	 */
+	public FlowArtifactFactory getFlowArtifactFactory();
+
+	/**
+	 * Returns the factory for bean invoking actions.
+	 * @return the bean invoking action factory
+	 */
+	public BeanInvokingActionFactory getBeanInvokingActionFactory();
+
+	/**
+	 * Returns a generic bean (service) registry for accessing arbitrary beans.
+	 * @return the generic service registry
+	 * @throws UnsupportedOperationException when not supported by this locator
+	 */
+	public BeanFactory getBeanFactory() throws UnsupportedOperationException;
+
+	/**
+	 * Returns a generic resource loader for accessing file-based resources.
+	 * @return the generic resource loader
+	 */
+	public ResourceLoader getResourceLoader();
+
+	/**
+	 * Returns the expression parser for parsing expression strings.
+	 * @return the expression parser
+	 */
+	public ExpressionParser getExpressionParser();
+
+	/**
+	 * Returns a generic type conversion service for converting between types, typically from string to a rich value
+	 * object.
+	 * @return the generic conversion service
+	 */
+	public ConversionService getConversionService();
+
+	// flow artifacts
+
 	/**
 	 * Returns the Flow to be used as a subflow with the provided id.
 	 * @param id the flow id
@@ -100,42 +142,4 @@ public interface FlowServiceLocator {
 	 * @throws FlowArtifactLookupException when no such handler is found
 	 */
 	public FlowExecutionExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException;
-
-	/**
-	 * Returns the factory for core flow artifacts such as Flow and State.
-	 * @return the flow artifact factory
-	 */
-	public FlowArtifactFactory getFlowArtifactFactory();
-
-	/**
-	 * Returns the factory for bean invoking actions.
-	 * @return the bean invoking action factory
-	 */
-	public BeanInvokingActionFactory getBeanInvokingActionFactory();
-
-	/**
-	 * Returns a generic bean (service) registry for accessing arbitrary beans.
-	 * @return the generic service registry
-	 * @throws UnsupportedOperationException when not supported by this locator
-	 */
-	public BeanFactory getBeanFactory() throws UnsupportedOperationException;
-
-	/**
-	 * Returns a generic resource loader for accessing file-based resources.
-	 * @return the generic resource loader
-	 */
-	public ResourceLoader getResourceLoader();
-
-	/**
-	 * Returns the expression parser for parsing expression strings.
-	 * @return the expression parser
-	 */
-	public ExpressionParser getExpressionParser();
-
-	/**
-	 * Returns a generic type conversion service for converting between types, typically from string to a rich value
-	 * object.
-	 * @return the generic conversion service
-	 */
-	public ConversionService getConversionService();
 }

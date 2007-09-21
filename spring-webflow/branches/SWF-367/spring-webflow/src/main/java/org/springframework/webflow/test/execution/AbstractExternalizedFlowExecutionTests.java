@@ -15,9 +15,6 @@
  */
 package org.springframework.webflow.test.execution;
 
-import java.io.File;
-
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
@@ -109,10 +106,9 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	}
 
 	/**
-	 * Set the listeners to be attached to the flow execution the next time one is {@link #startFlow() started} by this
-	 * test. Useful for attaching listeners that do test assertions during the execution of the flow.
+	 * Set the listeners to be attached to the flow execution the next time one is started. by this test. Useful for
+	 * attaching listeners that do test assertions during the execution of the flow.
 	 * @param executionListeners the listeners to attach
-	 * @since 1.0.4
 	 */
 	protected void setFlowExecutionListeners(FlowExecutionListener[] executionListeners) {
 		getFlowExecutionImplFactory().setExecutionListenerLoader(
@@ -127,7 +123,7 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 			return cachedFlowDefinition;
 		}
 		FlowServiceLocator flowServiceLocator = createFlowServiceLocator();
-		Flow flow = createFlow(getFlowDefinitionResource(), flowServiceLocator);
+		Flow flow = createFlow(flowServiceLocator);
 		if (isCacheFlowDefinition()) {
 			cachedFlowDefinition = flow;
 		}
@@ -161,72 +157,17 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * Factory method to assemble a flow definition from a resource. Called by {@link #getFlowDefinition()} to create
 	 * the "main" flow to test. May also be called by subclasses to create subflow definitions whose executions should
 	 * also be exercised by this test.
-	 * @param resource the flow definition resource
 	 * @return the built flow definition, ready for execution
-	 * @see #createFlowBuilder(Resource, FlowServiceLocator)
 	 */
-	protected final Flow createFlow(FlowDefinitionResource resource, FlowServiceLocator serviceLocator) {
-		FlowBuilder builder = createFlowBuilder(resource.getLocation(), serviceLocator);
+	protected final Flow createFlow(FlowServiceLocator serviceLocator) {
+		FlowDefinitionResource resource = getFlowDefinitionResource();
+		FlowBuilder builder = createFlowBuilder(resource.getPath(), serviceLocator);
 		FlowAssembler assembler = new FlowAssembler(resource.getId(), builder, resource.getAttributes());
 		return assembler.assembleFlow();
 	}
 
-	/**
-	 * Returns the pointer to the resource that houses the definition of the flow to be tested. Subclasses must
-	 * implement.
-	 * <p>
-	 * Example usage:
-	 * 
-	 * <pre class="code">
-	 * protected FlowDefinitionResource getFlowDefinitionResource() {
-	 * 	return createFlowDefinitionResource(&quot;/WEB-INF/flows/order-flow.xml&quot;);
-	 * }
-	 * </pre>
-	 * 
-	 * @return the flow definition resource
-	 */
 	protected abstract FlowDefinitionResource getFlowDefinitionResource();
 
-	/**
-	 * Factory method to create the builder that will build the flow definition whose execution will be tested.
-	 * Subclasses must implement.
-	 * <p>
-	 * A subclass may return a builder that sets up mock implementations of services needed locally by the flow
-	 * definition at runtime.
-	 * @param resource the externalized flow definition resource location
-	 * @param serviceLocator the flow service locator
-	 * @return the flow builder that will build the flow to be tested
-	 */
-	protected abstract FlowBuilder createFlowBuilder(Resource resource, FlowServiceLocator serviceLocator);
+	protected abstract FlowBuilder createFlowBuilder(Resource path, FlowServiceLocator serviceLocator);
 
-	/**
-	 * Convenient factory method that creates a {@link FlowDefinitionResource} from a file path. Typically called by
-	 * subclasses overriding {@link #getFlowDefinitionResource()}.
-	 * @param filePath the full path to the externalized flow definition file
-	 * @return the flow definition resource
-	 */
-	protected final FlowDefinitionResource createFlowDefinitionResource(String filePath) {
-		return createFlowDefinitionResource(new File(filePath));
-	}
-
-	/**
-	 * Convenient factory method that creates a {@link FlowDefinitionResource} from a file in a directory. Typically
-	 * called by subclasses overriding {@link #getFlowDefinitionResource()}.
-	 * @param fileDirectory the directory containing the file
-	 * @param fileName the short file name
-	 * @return the flow definition resource pointing to the file
-	 */
-	protected final FlowDefinitionResource createFlowDefinitionResource(String fileDirectory, String fileName) {
-		return createFlowDefinitionResource(new File(fileDirectory, fileName));
-	}
-
-	/**
-	 * Convenient factory method that creates a {@link FlowDefinitionResource} from a file. Typically called by
-	 * subclasses overriding {@link #getFlowDefinitionResource()}.
-	 * @param file the file
-	 * @return the flow definition resource
-	 */
-	protected FlowDefinitionResource createFlowDefinitionResource(File file) {
-		return FlowDefinitionResource.create(new FileSystemResource(file));
-	}
 }

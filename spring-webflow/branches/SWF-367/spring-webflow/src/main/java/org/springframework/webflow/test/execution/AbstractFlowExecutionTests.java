@@ -19,14 +19,11 @@ import junit.framework.TestCase;
 
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.core.collection.MutableAttributeMap;
-import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionFactory;
-import org.springframework.webflow.test.MockExternalContext;
 
 /**
  * Base class for integration tests that verify a flow executes as expected. Flow execution tests captured by subclasses
@@ -36,9 +33,9 @@ import org.springframework.webflow.test.MockExternalContext;
  * More specifically, a typical flow execution test case will test:
  * <ul>
  * <li>That the flow execution starts as expected given a request from an external context containing potential input
- * attributes (see the {@link #startFlow(MutableAttributeMap, ExternalContext)} variants).
+ * attributes (see the {@link #startFlow(ExternalContext)} variants).
  * <li>That given the set of supported state transition criteria a state executes the appropriate transition when a
- * matching event is signaled (with potential input request parameters, see the {@link #resume(ExternalContext)}
+ * matching event is signaled (with potential input request parameters, see the {@link #resumeFlow(ExternalContext)}
  * variants). A test case should be coded for each logical event that can occur, where an event drives a possible path
  * through the flow. The goal should be to exercise all possible paths of the flow. Use a test coverage tool like Clover
  * or Emma to assist with measuring your test's effectiveness.
@@ -98,25 +95,7 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	}
 
 	/**
-	 * Creates an ExternalContext instance. Defaults to using {@link MockExternalContext}. Subclasses can override if
-	 * they which to use another external context implementation.
-	 * @param requestParameters request parameters to put into the external context (optional)
-	 * @return a new ExternalContext instance
-	 */
-	protected ExternalContext createExternalContext(ParameterMap requestParameters) {
-		return new MockExternalContext(requestParameters);
-	}
-
-	/**
 	 * Start the flow execution to be tested.
-	 * <p>
-	 * This is the most flexible of the start methods. It allows you to specify:
-	 * <ol>
-	 * <li>a map of input attributes to pass to the flow execution, eligible for mapping by the root flow definition
-	 * <li>an external context that provides the flow execution being tested access to the calling environment for this
-	 * request
-	 * </ol>
-	 * @param input the flow execution input attributes eligible for mapping by the root flow
 	 * @param context the external context providing information about the caller's environment, used by the flow
 	 * execution during the start operation
 	 * @throws FlowExecutionException if an exception was thrown while starting the flow execution
@@ -127,44 +106,12 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	}
 
 	/**
-	 * Signal an occurrence of an event in the current state of the flow execution being tested.
-	 * @param requestParameters request parameters needed by the flow execution to complete event processing
-	 * @throws FlowExecutionException if an exception was thrown within a state of the resumed flow execution during
-	 * event processing
-	 */
-	protected void resume(ParameterMap requestParameters) throws FlowExecutionException {
-		resume(createExternalContext(requestParameters));
-	}
-
-	/**
-	 * Signal an occurrence of an event in the current state of the flow execution being tested.
-	 * <p>
-	 * Note: signaling an event will cause state transitions to occur in a chain until control is returned to the
-	 * caller. Control is returned once an "interactive" state type is entered: either a view state when the flow is
-	 * paused or an end state when the flow terminates. Action states are executed without returning control, as their
-	 * result always triggers another state transition, executed internally. Action states can also be executed in a
-	 * chain like fashion (e.g. action state 1 (result), action state 2 (result), action state 3 (result), view state
-	 * <control returns so view can be rendered>).
-	 * <p>
-	 * If you wish to verify expected behavior on each state transition (and not just when the view state triggers
-	 * return of control back to the client), you have a few options:
-	 * <p>
-	 * First, you may implement standalone unit tests for your {@link org.springframework.webflow.execution.Action}
-	 * implementations. There you can verify that an Action executes its logic properly in isolation. When you do this,
-	 * you may mock or stub out services the Action implementation needs that are expensive to initialize. You can also
-	 * verify there that the action puts everything in the flow or request scope it was expected to (to meet its
-	 * contract with the view it is prepping for display, for example).
-	 * <p>
-	 * Second, you can attach one or more FlowExecutionListeners to the flow execution at start time within your test
-	 * code, which will allow you to receive a callback on each state transition (among other points). It is recommended
-	 * you extend {@link org.springframework.webflow.execution.FlowExecutionListenerAdapter} and only override the
-	 * callback methods you are interested in.
+	 * Resume the flow execution to be tested.
 	 * @param context the external context providing information about the caller's environment, used by the flow
-	 * execution during the signal event operation
-	 * @throws FlowExecutionException if an exception was thrown within a state of the resumed flow execution during
-	 * event processing
+	 * execution during the start operation
+	 * @throws FlowExecutionException if an exception was thrown while starting the flow execution
 	 */
-	protected void resume(ExternalContext context) throws FlowExecutionException {
+	protected void resumeFlow(ExternalContext context) throws FlowExecutionException {
 		Assert.state(flowExecution != null, "The flow execution to test is [null]; "
 				+ "you must start the flow execution before you can signal an event against it!");
 		flowExecution.resume(context);
@@ -301,7 +248,8 @@ public abstract class AbstractFlowExecutionTests extends TestCase {
 	 * Assert that the entire flow execution has ended; that is, it is no longer active.
 	 */
 	protected void assertFlowExecutionEnded() {
-		assertTrue("The flow execution is still active but it should have ended", !getFlowExecution().isActive());
+		assertTrue("The flow execution is still active but it should have ended", getFlowExecution().hasStarted()
+				&& !getFlowExecution().isActive());
 	}
 
 	/**

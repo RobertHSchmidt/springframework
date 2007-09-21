@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.config;
+package org.springframework.webflow.engine.builder.support;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -32,9 +32,6 @@ import org.springframework.webflow.engine.FlowAttributeMapper;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.TransitionCriteria;
-import org.springframework.webflow.engine.builder.support.FlowArtifactFactory;
-import org.springframework.webflow.engine.builder.support.FlowArtifactLookupException;
-import org.springframework.webflow.engine.builder.support.FlowServiceLocator;
 import org.springframework.webflow.execution.Action;
 
 public class DefaultFlowServiceLocator implements FlowServiceLocator {
@@ -44,6 +41,10 @@ public class DefaultFlowServiceLocator implements FlowServiceLocator {
 	private ConversionService conversionService;
 
 	private FlowBuilderServices builderServices;
+
+	public DefaultFlowServiceLocator(FlowDefinitionLocator subflowRegistry) {
+		this(subflowRegistry, FlowBuilderSystemDefaults.get());
+	}
 
 	public DefaultFlowServiceLocator(FlowDefinitionLocator subflowRegistry, FlowBuilderServices builderServices) {
 		Assert.notNull(subflowRegistry, "The subflow registry is required");

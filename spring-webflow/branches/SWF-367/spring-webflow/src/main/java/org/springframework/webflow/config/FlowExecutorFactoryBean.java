@@ -19,9 +19,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.util.Assert;
-import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
 import org.springframework.webflow.core.collection.AttributeMap;
@@ -31,16 +29,12 @@ import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.engine.impl.FlowExecutionImplStateRestorer;
-import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionFactory;
-import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.factory.FlowExecutionListenerLoader;
-import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
-import org.springframework.webflow.execution.repository.continuation.AbstractFlowExecutionContinuationRepository;
-import org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.impl.ClientFlowExecutionRepository;
+import org.springframework.webflow.execution.repository.impl.DefaultFlowExecutionRepository;
 import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
-import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepository;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 
@@ -102,12 +96,6 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	private Integer maxContinuations;
 
 	/**
-	 * A custom attribute mapper to use for mapping attributes of an {@link ExternalContext} to a new
-	 * {@link FlowExecution} during the {@link FlowExecutor#launch(String, ExternalContext) launch flow} operation.
-	 */
-	private AttributeMapper inputMapper;
-
-	/**
 	 * The flow executor this factory bean creates.
 	 */
 	private FlowExecutor flowExecutor;
@@ -139,24 +127,6 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	}
 
 	/**
-	 * Convenience setter that sets a single listener that always applies to flow executions launched by the executor
-	 * created by this factory.
-	 * @param executionListener the flow execution listener
-	 */
-	public void setExecutionListener(FlowExecutionListener executionListener) {
-		setExecutionListeners(new FlowExecutionListener[] { executionListener });
-	}
-
-	/**
-	 * Convenience setter that sets a list of listeners that always apply to flow executions launched by the executor
-	 * created by this factory.
-	 * @param executionListeners the flow execution listeners
-	 */
-	public void setExecutionListeners(FlowExecutionListener[] executionListeners) {
-		setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(executionListeners));
-	}
-
-	/**
 	 * Sets the strategy for loading the listeners that will observe executions of a flow definition. Allows full
 	 * control over what listeners should apply to executions of a flow definition launched by the executor created by
 	 * this factory.
@@ -177,9 +147,6 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 
 	/**
 	 * Set the maximum number of continuation snapshots allowed for a single conversation when using the
-	 * {@link RepositoryType#CONTINUATION continuation} flow execution repository.
-	 * @see ContinuationFlowExecutionRepository#setMaxContinuations(int)
-	 * @since 1.0.1
 	 */
 	public void setMaxContinuations(int maxContinuations) {
 		this.maxContinuations = new Integer(maxContinuations);
@@ -189,7 +156,6 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * Returns the configured maximum number of continuation snapshots allowed for a single conversation when using the
 	 * {@link RepositoryType#CONTINUATION continuation} flow execution repository.
 	 * @return the configured value or null if the user did not explicitly specify a value and wants to use the default
-	 * @since 1.0.1
 	 */
 	protected Integer getMaxContinuations() {
 		return maxContinuations;
@@ -224,29 +190,9 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * Returns the configured maximum number of allowed concurrent conversations in the session. Will only be used when
 	 * using the default conversation manager, e.g. when no explicit conversation manager has been configured using
 	 * {@link #setConversationManager(ConversationManager)}.
-	 * @return the configured value or null if the user did not explicitly specify a value and wants to use the default
-	 * @since 1.0.1
 	 */
 	protected Integer getMaxConversations() {
 		return maxConversations;
-	}
-
-	/**
-	 * Set the service responsible for mapping attributes of an {@link ExternalContext} to a new {@link FlowExecution}
-	 * during the {@link FlowExecutor#launch(String, ExternalContext) launch flow} operation.
-	 * <p>
-	 * This is optional. If not set, a default implementation will be used that simply exposes all request parameters as
-	 * flow execution input attributes.
-	 */
-	public void setInputMapper(AttributeMapper inputMapper) {
-		this.inputMapper = inputMapper;
-	}
-
-	/**
-	 * Return the configured input mapper.
-	 */
-	protected AttributeMapper getInputMapper() {
-		return inputMapper;
 	}
 
 	/**
@@ -277,11 +223,25 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 				executionAttributes, executionListenerLoader);
 
 		// a repository to store flow executions
-		FlowExecutionRepository executionRepository = createExecutionRepository(repositoryType, executionStateRestorer,
-				conversationManager);
+		FlowExecutionRepository executionRepository = createFlowExecutionRepository(repositoryType,
+				executionStateRestorer, conversationManager);
 
 		// combine all pieces of the puzzle to get an operational flow executor
 		flowExecutor = createFlowExecutor(definitionLocator, executionFactory, executionRepository);
+	}
+
+	// implementing FactoryBean
+
+	public Class getObjectType() {
+		return FlowExecutor.class;
+	}
+
+	public boolean isSingleton() {
+		return true;
+	}
+
+	public Object getObject() throws Exception {
+		return flowExecutor;
 	}
 
 	// subclassing hook methods
@@ -346,15 +306,15 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * default conversation manager should be used
 	 * @return a new flow execution repository instance
 	 */
-	protected FlowExecutionRepository createExecutionRepository(RepositoryType repositoryType,
+	protected FlowExecutionRepository createFlowExecutionRepository(RepositoryType repositoryType,
 			FlowExecutionStateRestorer executionStateRestorer, ConversationManager conversationManager) {
 		if (repositoryType == RepositoryType.CLIENT) {
 			if (conversationManager == null) {
 				// use the default no-op conversation manager
-				return new AbstractFlowExecutionContinuationRepository(executionStateRestorer);
+				return new ClientFlowExecutionRepository(executionStateRestorer);
 			} else {
 				// use the conversation manager specified by the user
-				return new AbstractFlowExecutionContinuationRepository(executionStateRestorer, conversationManager);
+				return new ClientFlowExecutionRepository(conversationManager, executionStateRestorer);
 			}
 		} else {
 			// determine the conversation manager to use
@@ -362,19 +322,21 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 			if (conversationManagerToUse == null) {
 				conversationManagerToUse = createDefaultConversationManager();
 			}
-
 			if (repositoryType == RepositoryType.SIMPLE) {
-				return new SimpleFlowExecutionRepository(executionStateRestorer, conversationManagerToUse);
+				DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(
+						conversationManagerToUse, executionStateRestorer);
+				repository.setMaxContinuations(1);
+				return repository;
 			} else if (repositoryType == RepositoryType.CONTINUATION) {
-				ContinuationFlowExecutionRepository repository = new ContinuationFlowExecutionRepository(
-						executionStateRestorer, conversationManagerToUse);
+				DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(
+						conversationManagerToUse, executionStateRestorer);
 				if (getMaxContinuations() != null) {
 					repository.setMaxContinuations(getMaxContinuations().intValue());
 				}
 				return repository;
 			} else if (repositoryType == RepositoryType.SINGLEKEY) {
-				SimpleFlowExecutionRepository repository = new SimpleFlowExecutionRepository(executionStateRestorer,
-						conversationManagerToUse);
+				DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(
+						conversationManagerToUse, executionStateRestorer);
 				repository.setAlwaysGenerateNewNextKey(false);
 				return repository;
 			} else {
@@ -394,32 +356,6 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 */
 	protected FlowExecutor createFlowExecutor(FlowDefinitionLocator definitionLocator,
 			FlowExecutionFactory executionFactory, FlowExecutionRepository executionRepository) {
-		FlowExecutorImpl flowExecutor = new FlowExecutorImpl(definitionLocator, executionFactory, executionRepository);
-		if (getInputMapper() != null) {
-			flowExecutor.setInputMapper(inputMapper);
-		}
-		return flowExecutor;
-	}
-
-	// implementing FactoryBean
-
-	public Class getObjectType() {
-		return FlowExecutor.class;
-	}
-
-	public boolean isSingleton() {
-		return true;
-	}
-
-	public Object getObject() throws Exception {
-		return getFlowExecutor();
-	}
-
-	/**
-	 * Returns the flow executor constructed by the factory bean.
-	 * @since 1.0.2
-	 */
-	public FlowExecutor getFlowExecutor() {
-		return flowExecutor;
+		return new FlowExecutorImpl(definitionLocator, executionFactory, executionRepository);
 	}
 }
