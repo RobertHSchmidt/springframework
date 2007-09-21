@@ -16,6 +16,7 @@
 package org.springframework.webflow.test.execution;
 
 import org.springframework.core.io.Resource;
+import org.springframework.webflow.config.FlowDefinitionResource;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.Flow;

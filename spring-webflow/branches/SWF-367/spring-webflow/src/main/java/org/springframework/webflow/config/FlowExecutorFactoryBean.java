@@ -45,8 +45,7 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
  * This factory encapsulates the construction and assembly of a {@link FlowExecutor}, including the provision of its
  * {@link FlowExecutionRepository} strategy.
  * <p>
- * The {@link #setDefinitionLocator(FlowDefinitionLocator) definition locator} property is required, all other
- * properties are optional.
+ * The definition locator property is required, all other properties are optional.
  * <p>
  * This class has been designed with subclassing in mind. If you want to do advanced Spring Web Flow customization, e.g.
  * using a custom {@link org.springframework.webflow.executor.FlowExecutor} implementation, consider subclassing this
@@ -55,7 +54,7 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
  * @author Keith Donald
  * @author Erwin Vervaet
  */
-public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
+class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 
 	/**
 	 * The locator the executor will use to access flow definitions registered in a central registry. Required.
@@ -153,12 +152,13 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	}
 
 	/**
-	 * Returns the configured maximum number of continuation snapshots allowed for a single conversation when using the
-	 * {@link RepositoryType#CONTINUATION continuation} flow execution repository.
-	 * @return the configured value or null if the user did not explicitly specify a value and wants to use the default
+	 * Set the maximum number of allowed concurrent conversations in the session. This is a convenience setter to allow
+	 * easy configuration of the maxConversations property of the default {@link SessionBindingConversationManager}. Do
+	 * not use this when an explicit conversation manager is configured.
+	 * @see SessionBindingConversationManager#setMaxConversations(int)
 	 */
-	protected Integer getMaxContinuations() {
-		return maxContinuations;
+	public void setMaxConversations(int maxConversations) {
+		this.maxConversations = new Integer(maxConversations);
 	}
 
 	/**
@@ -168,31 +168,11 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * The conversation manager is used by the flow execution repository subsystem to begin and end new conversations
 	 * that store execution state.
 	 * <p>
-	 * By default, a {@link SessionBindingConversationManager} is used. Do not use {@link #setMaxConversations(int)}
-	 * when using this method.
+	 * By default, a {@link SessionBindingConversationManager} is used. Do not use setMaxConversations when using this
+	 * method.
 	 */
 	public void setConversationManager(ConversationManager conversationManager) {
 		this.conversationManager = conversationManager;
-	}
-
-	/**
-	 * Set the maximum number of allowed concurrent conversations in the session. This is a convenience setter to allow
-	 * easy configuration of the maxConversations property of the default {@link SessionBindingConversationManager}. Do
-	 * not use this when using {@link #setConversationManager(ConversationManager)}.
-	 * @see SessionBindingConversationManager#setMaxConversations(int)
-	 * @since 1.0.1
-	 */
-	public void setMaxConversations(int maxConversations) {
-		this.maxConversations = new Integer(maxConversations);
-	}
-
-	/**
-	 * Returns the configured maximum number of allowed concurrent conversations in the session. Will only be used when
-	 * using the default conversation manager, e.g. when no explicit conversation manager has been configured using
-	 * {@link #setConversationManager(ConversationManager)}.
-	 */
-	protected Integer getMaxConversations() {
-		return maxConversations;
 	}
 
 	/**
@@ -248,14 +228,13 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 
 	/**
 	 * Create the conversation manager to be used in the default case, e.g. when no explicit conversation manager has
-	 * been configured using {@link #setConversationManager(ConversationManager)}. This implementation return a
-	 * {@link SessionBindingConversationManager}.
+	 * been configured. This implementation return a {@link SessionBindingConversationManager}.
 	 * @return the default conversation manager
 	 */
 	protected ConversationManager createDefaultConversationManager() {
 		SessionBindingConversationManager conversationManager = new SessionBindingConversationManager();
-		if (getMaxConversations() != null) {
-			conversationManager.setMaxConversations(getMaxConversations().intValue());
+		if (maxConversations != null) {
+			conversationManager.setMaxConversations(maxConversations.intValue());
 		}
 		return conversationManager;
 	}
@@ -330,8 +309,8 @@ public class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 			} else if (repositoryType == RepositoryType.CONTINUATION) {
 				DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(
 						conversationManagerToUse, executionStateRestorer);
-				if (getMaxContinuations() != null) {
-					repository.setMaxContinuations(getMaxContinuations().intValue());
+				if (maxContinuations != null) {
+					repository.setMaxContinuations(maxContinuations.intValue());
 				}
 				return repository;
 			} else if (repositoryType == RepositoryType.SINGLEKEY) {
