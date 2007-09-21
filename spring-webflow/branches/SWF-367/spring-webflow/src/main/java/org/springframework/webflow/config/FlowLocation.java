@@ -5,9 +5,12 @@ import java.util.Set;
 
 import org.springframework.util.Assert;
 
-public class FlowLocation {
+class FlowLocation {
+
 	private String id;
+
 	private String path;
+
 	private Set attributes;
 
 	public FlowLocation(String id, String path, Set attributes) {
