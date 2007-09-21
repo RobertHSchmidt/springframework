@@ -22,18 +22,18 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
+import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.util.xml.DomUtils;
 import org.springframework.webflow.config.FlowLocation.Attribute;
 import org.w3c.dom.Element;
 
 /**
- * {@link BeanDefinitionParser} for the <code>&lt;registry&gt;</code> tag.
+ * {@link BeanDefinitionParser} for the flow <code>&lt;registry&gt;</code> tag.
  * 
  * @author Ben Hale
  */
-class FlowRegistryBeanDefinitionParser extends AbstractBeanDefinitionParser {
+class FlowRegistryBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
 	private static final String LOCATION_ELEMENT = "location";
 

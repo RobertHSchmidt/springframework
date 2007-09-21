@@ -17,13 +17,13 @@ package org.springframework.webflow.test;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
-import org.springframework.webflow.config.DefaultFlowServiceLocator;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
 import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.builder.support.DefaultFlowServiceLocator;
 
 /**
  * A stub flow service locator implementation suitable for a test environment.
@@ -44,7 +44,7 @@ public class MockFlowServiceLocator extends DefaultFlowServiceLocator {
 	 * Creates a new mock flow service locator.
 	 */
 	public MockFlowServiceLocator() {
-		super(new FlowDefinitionRegistryImpl(), new StaticListableBeanFactory());
+		super(new FlowDefinitionRegistryImpl());
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class MockFlowServiceLocator extends DefaultFlowServiceLocator {
 		((StaticListableBeanFactory) getBeanFactory()).addBean(beanName, bean);
 	}
 
-	public FlowDefinitionRegistry getMockSubflowRegistry() {
+	private FlowDefinitionRegistry getMockSubflowRegistry() {
 		return (FlowDefinitionRegistry) getSubflowLocator();
 	}
 

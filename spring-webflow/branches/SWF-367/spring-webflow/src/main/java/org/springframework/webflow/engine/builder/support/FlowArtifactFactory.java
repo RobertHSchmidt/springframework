@@ -78,11 +78,10 @@ public class FlowArtifactFactory {
 	 * @param attributes attributes to assign to the State, which may also be used to affect state construction; may be
 	 * null
 	 * @return the fully initialized view state instance
-	 * @throws FlowArtifactLookupException an exception occurred creating the state
 	 */
 	public State createViewState(String id, Flow flow, Action[] entryActions, ViewFactory viewFactory,
 			Action[] renderActions, Transition[] transitions, FlowExecutionExceptionHandler[] exceptionHandlers,
-			Action[] exitActions, AttributeMap attributes) throws FlowArtifactLookupException {
+			Action[] exitActions, AttributeMap attributes) {
 		ViewState viewState = new ViewState(flow, id, viewFactory);
 		viewState.getRenderActionList().addAll(renderActions);
 		configureCommonProperties(viewState, entryActions, transitions, exceptionHandlers, exitActions, attributes);
@@ -103,11 +102,10 @@ public class FlowArtifactFactory {
 	 * @param attributes attributes to assign to the State, which may also be used to affect state construction; may be
 	 * null
 	 * @return the fully initialized action state instance
-	 * @throws FlowArtifactLookupException an exception occurred creating the state
 	 */
 	public State createActionState(String id, Flow flow, Action[] entryActions, Action[] actions,
 			Transition[] transitions, FlowExecutionExceptionHandler[] exceptionHandlers, Action[] exitActions,
-			AttributeMap attributes) throws FlowArtifactLookupException {
+			AttributeMap attributes) {
 		ActionState actionState = new ActionState(flow, id);
 		actionState.getActionList().addAll(actions);
 		configureCommonProperties(actionState, entryActions, transitions, exceptionHandlers, exitActions, attributes);
@@ -130,8 +128,7 @@ public class FlowArtifactFactory {
 	 * @throws FlowArtifactLookupException an exception occurred creating the state
 	 */
 	public State createDecisionState(String id, Flow flow, Action[] entryActions, Transition[] transitions,
-			FlowExecutionExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeMap attributes)
-			throws FlowArtifactLookupException {
+			FlowExecutionExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeMap attributes) {
 		DecisionState decisionState = new DecisionState(flow, id);
 		configureCommonProperties(decisionState, entryActions, transitions, exceptionHandlers, exitActions, attributes);
 		return decisionState;
@@ -152,12 +149,10 @@ public class FlowArtifactFactory {
 	 * @param attributes attributes to assign to the State, which may also be used to affect state construction; may be
 	 * null
 	 * @return the fully initialized subflow state instance
-	 * @throws FlowArtifactLookupException an exception occurred creating the state
 	 */
 	public State createSubflowState(String id, Flow flow, Action[] entryActions, Flow subflow,
 			FlowAttributeMapper attributeMapper, Transition[] transitions,
-			FlowExecutionExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeMap attributes)
-			throws FlowArtifactLookupException {
+			FlowExecutionExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeMap attributes) {
 		SubflowState subflowState = new SubflowState(flow, id, subflow);
 		if (attributeMapper != null) {
 			subflowState.setAttributeMapper(attributeMapper);
@@ -179,11 +174,9 @@ public class FlowArtifactFactory {
 	 * @param attributes attributes to assign to the State, which may also be used to affect state construction; may be
 	 * null
 	 * @return the fully initialized subflow state instance
-	 * @throws FlowArtifactLookupException an exception occurred creating the state
 	 */
 	public State createEndState(String id, Flow flow, Action[] entryActions, Action finalResponseAction,
-			AttributeMapper outputMapper, FlowExecutionExceptionHandler[] exceptionHandlers, AttributeMap attributes)
-			throws FlowArtifactLookupException {
+			AttributeMapper outputMapper, FlowExecutionExceptionHandler[] exceptionHandlers, AttributeMap attributes) {
 		EndState endState = new EndState(flow, id);
 		if (finalResponseAction != null) {
 			endState.setFinalResponseAction(finalResponseAction);
@@ -205,10 +198,9 @@ public class FlowArtifactFactory {
 	 * @param attributes attributes to assign to the transition, which may also be used to affect transition
 	 * construction; may be null
 	 * @return the fully initialized transition instance
-	 * @throws FlowArtifactLookupException an exception occurred creating the transition
 	 */
 	public Transition createTransition(TargetStateResolver targetStateResolver, TransitionCriteria matchingCriteria,
-			TransitionCriteria executionCriteria, AttributeMap attributes) throws FlowArtifactLookupException {
+			TransitionCriteria executionCriteria, AttributeMap attributes) {
 		Transition transition = new Transition(targetStateResolver);
 		if (matchingCriteria != null) {
 			transition.setMatchingCriteria(matchingCriteria);

@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
  * 
  * @author Ben Hale
  */
-class ExecutionListenersBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+class FlowExecutionListenerLoaderBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
 	// elements and attributes
 

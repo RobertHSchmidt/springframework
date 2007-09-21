@@ -16,9 +16,6 @@
 package org.springframework.webflow.config;
 
 import org.springframework.core.enums.StaticLabeledEnum;
-import org.springframework.webflow.execution.repository.continuation.AbstractFlowExecutionContinuationRepository;
-import org.springframework.webflow.execution.repository.continuation.ContinuationFlowExecutionRepository;
-import org.springframework.webflow.execution.repository.support.SimpleFlowExecutionRepository;
 
 /**
  * Type-safe enumeration of logical flow execution repository types.
@@ -31,26 +28,21 @@ public class RepositoryType extends StaticLabeledEnum {
 
 	/**
 	 * The 'simple' flow execution repository type.
-	 * @see SimpleFlowExecutionRepository
 	 */
 	public static final RepositoryType SIMPLE = new RepositoryType(0, "Simple");
 
 	/**
 	 * The 'continuation' flow execution repository type.
-	 * @see ContinuationFlowExecutionRepository
 	 */
 	public static final RepositoryType CONTINUATION = new RepositoryType(1, "Continuation");
 
 	/**
 	 * The 'client' (continuation) flow execution repository type.
-	 * @see AbstractFlowExecutionContinuationRepository
 	 */
 	public static final RepositoryType CLIENT = new RepositoryType(2, "Client");
 
 	/**
 	 * The 'singleKey' flow execution repository type.
-	 * @see SimpleFlowExecutionRepository
-	 * @see SimpleFlowExecutionRepository#setAlwaysGenerateNewNextKey(boolean)
 	 */
 	public static final RepositoryType SINGLEKEY = new RepositoryType(3, "Single Key");
 

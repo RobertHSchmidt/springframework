@@ -2,10 +2,15 @@ package org.springframework.webflow.config;
 
 import java.util.Iterator;
 
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.binding.convert.ConversionExecutor;
+import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.config.FlowLocation.Attribute;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
@@ -15,15 +20,22 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImp
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.RefreshableFlowDefinitionHolder;
+import org.springframework.webflow.engine.builder.support.DefaultFlowServiceLocator;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.engine.builder.support.FlowBuilderSystemDefaults;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
 
-public class FlowRegistryFactoryBean implements FactoryBean, InitializingBean {
+public class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware, BeanFactoryAware, InitializingBean {
 
 	private FlowDefinitionRegistry registry;
 
 	private FlowLocation[] flowLocations;
 
 	private FlowBuilderServices builderServices;
+
+	private ResourceLoader resourceLoader;
+
+	private BeanFactory beanFactory;
 
 	public void setFlowLocations(FlowLocation[] flowLocations) {
 		this.flowLocations = flowLocations;
@@ -33,7 +45,18 @@ public class FlowRegistryFactoryBean implements FactoryBean, InitializingBean {
 		this.builderServices = builderServices;
 	}
 
+	public void setResourceLoader(ResourceLoader resourceLoader) {
+		this.resourceLoader = resourceLoader;
+	}
+
+	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+		this.beanFactory = beanFactory;
+	}
+
 	public void afterPropertiesSet() throws Exception {
+		if (builderServices == null) {
+			initBuilderServices();
+		}
 		registry = new FlowDefinitionRegistryImpl();
 		for (int i = 0; i < flowLocations.length; i++) {
 			FlowLocation location = flowLocations[i];
@@ -57,7 +80,7 @@ public class FlowRegistryFactoryBean implements FactoryBean, InitializingBean {
 		String flowId = location.getId();
 		Resource flowResource = builderServices.getResourceLoader().getResource(location.getPath());
 		if (flowId == null) {
-			flowId = buildFlowId(flowResource);
+			flowId = getFlowId(flowResource);
 		}
 		MutableAttributeMap flowAttributes = new LocalAttributeMap();
 		for (Iterator it = location.getAttributes().iterator(); it.hasNext();) {
@@ -91,13 +114,23 @@ public class FlowRegistryFactoryBean implements FactoryBean, InitializingBean {
 		}
 	}
 
-	private String buildFlowId(Resource flowResource) {
+	private String getFlowId(Resource flowResource) {
 		String fileName = flowResource.getFilename();
 		int extensionIndex = fileName.lastIndexOf('.');
 		if (extensionIndex != -1) {
 			return fileName.substring(0, extensionIndex);
 		} else {
 			return fileName;
+		}
+	}
+
+	private void initBuilderServices() {
+		builderServices = new FlowBuilderSystemDefaults().createBuilderServices();
+		if (resourceLoader != null) {
+			builderServices.setResourceLoader(resourceLoader);
+		}
+		if (beanFactory != null) {
+			builderServices.setBeanFactory(beanFactory);
 		}
 	}
 }

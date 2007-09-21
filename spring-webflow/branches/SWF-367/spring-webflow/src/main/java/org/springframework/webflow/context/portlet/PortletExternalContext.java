@@ -24,6 +24,7 @@ import javax.portlet.PortletSession;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.core.FlowException;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.LocalParameterMap;
 import org.springframework.webflow.core.collection.LocalSharedAttributeMap;
@@ -103,20 +104,6 @@ public class PortletExternalContext implements ExternalContext {
 		this.userInfoMap = userInfo != null ? new LocalAttributeMap(userInfo) : null;
 	}
 
-	public String getContextPath() {
-		return request.getContextPath();
-	}
-
-	public String getDispatcherPath() {
-		// returns null in a portlet environment
-		return null;
-	}
-
-	public String getRequestPathInfo() {
-		// returns null in a portlet environment
-		return null;
-	}
-
 	public ParameterMap getRequestParameterMap() {
 		return requestParameterMap;
 	}
@@ -183,5 +170,45 @@ public class PortletExternalContext implements ExternalContext {
 
 	public String toString() {
 		return new ToStringCreator(this).append("requestParameterMap", getRequestParameterMap()).toString();
+	}
+
+	public String getFlowExecutionKey() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
+
+	public String getFlowId() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
+
+	public String[] getRequestElements() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
+
+	public String getRequestMethod() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
+
+	public void sendFlowDefinitionRedirect(String flowId, String[] requestElements, ParameterMap requestParameters) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
+
+	public void setEndedResult() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
+
+	public void setExceptionResult(FlowException e) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
+
+	public void setPausedResult(String flowExecutionKey) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
 	}
 }

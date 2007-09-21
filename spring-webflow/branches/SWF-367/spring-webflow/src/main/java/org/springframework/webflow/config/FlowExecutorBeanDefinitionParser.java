@@ -30,13 +30,11 @@ import org.w3c.dom.Element;
  * @author Ben Hale
  * @author Christian Dupuis
  */
-class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
+class FlowExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	// elements and attributes
 
 	private static final String CONVERSATION_MANAGER_REF_ATTRIBUTE = "conversation-manager-ref";
-
-	private static final String EXECUTION_ATTRIBUTES_ELEMENT = "execution-attributes";
 
 	private static final String EXECUTION_LISTENERS_ELEMENT = "execution-listeners";
 
@@ -58,8 +56,6 @@ class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	private static final String DEFINITION_LOCATOR_PROPERTY = "definitionLocator";
 
-	private static final String EXECUTION_ATTRIBUTES_PROPERTY = "executionAttributes";
-
 	private static final String EXECUTION_LISTENER_LOADER_PROPERTY = "executionListenerLoader";
 
 	private static final String MAX_CONTINUATIONS_PROPERTY = "maxContinuations";
@@ -73,7 +69,6 @@ class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 				.rootBeanDefinition(FlowExecutorFactoryBean.class);
 		definitionBuilder.setSource(parserContext.extractSource(element));
 		definitionBuilder.addPropertyReference(DEFINITION_LOCATOR_PROPERTY, getRegistryRef(element, parserContext));
-		addExecutionAttributes(element, parserContext, definitionBuilder);
 		addExecutionListenerLoader(element, parserContext, definitionBuilder);
 		configureRepository(element, definitionBuilder, parserContext);
 		return definitionBuilder.getBeanDefinition();
@@ -203,18 +198,6 @@ class ExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 	 */
 	private String getConversationManagerRef(Element element) {
 		return element.getAttribute(CONVERSATION_MANAGER_REF_ATTRIBUTE);
-	}
-
-	/**
-	 * Parse execution attribute definitions contained in given element.
-	 */
-	private void addExecutionAttributes(Element element, ParserContext parserContext,
-			BeanDefinitionBuilder definitionBuilder) {
-		Element attributesElement = DomUtils.getChildElementByTagName(element, EXECUTION_ATTRIBUTES_ELEMENT);
-		if (attributesElement != null) {
-			definitionBuilder.addPropertyValue(EXECUTION_ATTRIBUTES_PROPERTY, parserContext.getDelegate()
-					.parseCustomElement(attributesElement, definitionBuilder.getBeanDefinition()));
-		}
 	}
 
 	/**
