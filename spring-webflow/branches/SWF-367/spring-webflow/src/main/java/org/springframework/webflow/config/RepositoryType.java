@@ -24,7 +24,7 @@ import org.springframework.core.enums.StaticLabeledEnum;
  * 
  * @author Keith Donald
  */
-public class RepositoryType extends StaticLabeledEnum {
+class RepositoryType extends StaticLabeledEnum {
 
 	/**
 	 * The 'simple' flow execution repository type.

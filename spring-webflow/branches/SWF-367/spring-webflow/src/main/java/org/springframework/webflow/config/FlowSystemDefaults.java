@@ -27,7 +27,7 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
  * 
  * @author Keith Donald
  */
-public class FlowSystemDefaults implements Serializable {
+class FlowSystemDefaults implements Serializable {
 
 	/**
 	 * The default 'alwaysRedirectOnPause' execution attribute value.
