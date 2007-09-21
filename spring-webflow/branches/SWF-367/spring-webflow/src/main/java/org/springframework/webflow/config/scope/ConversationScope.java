@@ -28,6 +28,6 @@ import org.springframework.webflow.execution.FlowExecution;
  */
 public class ConversationScope extends AbstractWebFlowScope {
 	protected MutableAttributeMap getScope() {
-		return getFlowExecutionContext().getConversationScope();
+		return getRequestContext().getConversationScope();
 	}
 }
