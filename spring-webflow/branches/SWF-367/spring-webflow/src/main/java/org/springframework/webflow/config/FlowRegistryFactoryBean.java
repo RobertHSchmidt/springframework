@@ -25,13 +25,15 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.builder.support.FlowBuilderSystemDefaults;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
 
-public class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware, BeanFactoryAware, InitializingBean {
+class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware, BeanFactoryAware, InitializingBean {
 
 	private FlowDefinitionRegistry registry;
 
 	private FlowLocation[] flowLocations;
 
 	private FlowBuilderServices builderServices;
+
+	private FlowDefinitionResourceFactory flowResourceFactory;
 
 	private ResourceLoader resourceLoader;
 
@@ -57,6 +59,7 @@ public class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware
 		if (builderServices == null) {
 			initBuilderServices();
 		}
+		flowResourceFactory = new FlowDefinitionResourceFactory(resourceLoader);
 		registry = new FlowDefinitionRegistryImpl();
 		for (int i = 0; i < flowLocations.length; i++) {
 			FlowLocation location = flowLocations[i];
@@ -77,25 +80,29 @@ public class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware
 	}
 
 	private FlowDefinitionHolder createFlowDefinitionHolder(FlowLocation location) {
-		String flowId = location.getId();
-		Resource flowResource = builderServices.getResourceLoader().getResource(location.getPath());
-		if (flowId == null) {
-			flowId = getFlowId(flowResource);
-		}
-		MutableAttributeMap flowAttributes = new LocalAttributeMap();
-		for (Iterator it = location.getAttributes().iterator(); it.hasNext();) {
-			Attribute attribute = (Attribute) it.next();
-			flowAttributes.put(attribute.getName(), getConvertedValue(attribute));
-		}
-		FlowBuilder flowBuilder = createFlowBuilder(flowResource);
-		return new RefreshableFlowDefinitionHolder(new FlowAssembler(flowId, flowBuilder, flowAttributes));
+		FlowDefinitionResource flowResource = createResource(location);
+		FlowBuilder builder = createFlowBuilder(flowResource);
+		FlowAssembler assembler = new FlowAssembler(flowResource.getId(), builder, flowResource.getAttributes());
+		return new RefreshableFlowDefinitionHolder(assembler);
 	}
 
-	private FlowBuilder createFlowBuilder(Resource flowResource) {
-		if (isXml(flowResource)) {
-			return new XmlFlowBuilder(flowResource, new DefaultFlowServiceLocator(registry, builderServices));
+	private FlowDefinitionResource createResource(FlowLocation location) {
+		MutableAttributeMap flowAttributes = null;
+		if (!location.getAttributes().isEmpty()) {
+			flowAttributes = new LocalAttributeMap();
+			for (Iterator it = location.getAttributes().iterator(); it.hasNext();) {
+				Attribute attribute = (Attribute) it.next();
+				flowAttributes.put(attribute.getName(), getConvertedValue(attribute));
+			}
+		}
+		return flowResourceFactory.createResource(location.getPath(), flowAttributes, location.getId());
+	}
+
+	private FlowBuilder createFlowBuilder(FlowDefinitionResource resource) {
+		if (isXml(resource.getPath())) {
+			return new XmlFlowBuilder(resource.getPath(), new DefaultFlowServiceLocator(registry, builderServices));
 		} else {
-			throw new IllegalArgumentException("Resource " + flowResource
+			throw new IllegalArgumentException(resource
 					+ " is not a supported resource type; supported types are [.xml]");
 		}
 	}
@@ -111,16 +118,6 @@ public class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware
 			return converter.execute(attribute.getValue());
 		} else {
 			return attribute.getValue();
-		}
-	}
-
-	private String getFlowId(Resource flowResource) {
-		String fileName = flowResource.getFilename();
-		int extensionIndex = fileName.lastIndexOf('.');
-		if (extensionIndex != -1) {
-			return fileName.substring(0, extensionIndex);
-		} else {
-			return fileName;
 		}
 	}
 
