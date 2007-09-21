@@ -76,6 +76,9 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 
 	public void registerFlowDefinition(FlowDefinitionHolder definitionHolder) {
 		Assert.notNull(definitionHolder, "The holder of the flow definition to register is required");
+		if (logger.isDebugEnabled()) {
+			logger.debug("Registering flow " + definitionHolder);
+		}
 		flowDefinitions.put(definitionHolder.getFlowDefinitionId(), definitionHolder);
 	}
 

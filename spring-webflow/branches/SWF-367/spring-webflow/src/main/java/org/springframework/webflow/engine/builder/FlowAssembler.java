@@ -65,8 +65,8 @@ public class FlowAssembler {
 	 * @param flowAttributes externally assigned flow attributes that can affect flow construction
 	 */
 	public FlowAssembler(String flowId, FlowBuilder flowBuilder, AttributeMap flowAttributes) {
-		Assert.notNull(flowId, "The flow id is required");
-		Assert.notNull(flowBuilder, "The flow builder is required");
+		Assert.hasText(flowId, "The flow id is required for flow assembly");
+		Assert.notNull(flowBuilder, "A flow builder is required for flow assembly");
 		this.flowId = flowId;
 		this.flowBuilder = flowBuilder;
 		this.flowAttributes = (flowAttributes != null ? flowAttributes : CollectionUtils.EMPTY_ATTRIBUTE_MAP);
