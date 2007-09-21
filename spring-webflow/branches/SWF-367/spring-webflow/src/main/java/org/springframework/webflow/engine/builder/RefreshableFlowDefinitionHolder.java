@@ -155,4 +155,8 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 		return assembler.getFlowBuilder();
 	}
 
+	public String toString() {
+		return getFlowDefinitionId();
+	}
+
 }
