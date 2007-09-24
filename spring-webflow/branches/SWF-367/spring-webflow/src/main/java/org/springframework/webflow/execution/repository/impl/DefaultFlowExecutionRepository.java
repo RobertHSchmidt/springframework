@@ -120,7 +120,7 @@ public class DefaultFlowExecutionRepository extends AbstractFlowExecutionContinu
 	// internal helpers
 
 	/**
-	 * Returns the continuation group associated with the governing conversation.
+	 * Returns the continuation group associated with the governing conversation. TODO: memento persistence?
 	 * @param key the flow execution key
 	 * @return the continuation group
 	 */

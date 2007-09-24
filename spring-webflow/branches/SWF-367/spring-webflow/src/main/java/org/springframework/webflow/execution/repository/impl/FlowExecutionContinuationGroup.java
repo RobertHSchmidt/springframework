@@ -80,6 +80,9 @@ class FlowExecutionContinuationGroup implements Serializable {
 
 	/**
 	 * Add a flow execution continuation with given id to this group.
+	 * 
+	 * TODO add listener methods 1. continuationAdded(ConversationId conversationId, FlowExecutionContinuation
+	 * continuation) 2. maxContinuationsReached(ConversationId conversationId)
 	 * @param continuationId the continuation id
 	 * @param continuation the continuation
 	 */
