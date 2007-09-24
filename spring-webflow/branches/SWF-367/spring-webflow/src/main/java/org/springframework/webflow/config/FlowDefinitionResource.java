@@ -4,8 +4,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.webflow.core.collection.AttributeMap;
 
 public class FlowDefinitionResource {
+
 	private String id;
+
 	private Resource path;
+
 	private AttributeMap attributes;
 
 	FlowDefinitionResource(String flowId, Resource path, AttributeMap attributes) {

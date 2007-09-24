@@ -54,9 +54,9 @@ public class ConversationSizeTests extends TestCase {
 		conversationManager = new SessionBindingConversationManager();
 
 		FlowExecutorFactoryBean flowExecutorFactory = new FlowExecutorFactoryBean();
-		flowExecutorFactory.setDefinitionLocator(flowRegistry);
+		flowExecutorFactory.setFlowDefinitionLocator(flowRegistry);
 		flowExecutorFactory.setConversationManager(conversationManager);
-		flowExecutorFactory.setRepositoryType(RepositoryType.CONTINUATION);
+		flowExecutorFactory.setFlowExecutionRepositoryType(RepositoryType.CONTINUATION);
 		flowExecutorFactory.afterPropertiesSet();
 		flowExecutor = flowExecutorFactory.getFlowExecutor();
 	}

@@ -30,6 +30,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.engine.impl.FlowExecutionImplStateRestorer;
 import org.springframework.webflow.execution.FlowExecutionFactory;
+import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.factory.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.impl.ClientFlowExecutionRepository;
@@ -59,17 +60,17 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	/**
 	 * The locator the executor will use to access flow definitions registered in a central registry. Required.
 	 */
-	private FlowDefinitionLocator definitionLocator;
+	private FlowDefinitionLocator flowDefinitionLocator;
 
 	/**
 	 * Execution attributes to apply.
 	 */
-	private MutableAttributeMap executionAttributes;
+	private MutableAttributeMap flowExecutionAttributes;
 
 	/**
 	 * The loader that will determine which listeners to attach to flow definition executions.
 	 */
-	private FlowExecutionListenerLoader executionListenerLoader;
+	private FlowExecutionListenerLoader flowExecutionListenerLoader;
 
 	/**
 	 * The conversation manager to be used by the flow execution repository to store state associated with conversations
@@ -107,10 +108,10 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	/**
 	 * Sets the flow definition locator that will locate flow definitions needed for execution. Typically also a
 	 * {@link FlowDefinitionRegistry}. Required.
-	 * @param definitionLocator the flow definition locator (registry)
+	 * @param flowDefinitionLocator the flow definition locator (registry)
 	 */
-	public void setDefinitionLocator(FlowDefinitionLocator definitionLocator) {
-		this.definitionLocator = definitionLocator;
+	public void setFlowDefinitionLocator(FlowDefinitionLocator flowDefinitionLocator) {
+		this.flowDefinitionLocator = flowDefinitionLocator;
 	}
 
 	/**
@@ -119,10 +120,10 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * <p>
 	 * Note: this method simply accepts a generic <code>java.util.Map</code> to allow for easy configuration by
 	 * Spring. The map entries should consist of non-null String keys with object values.
-	 * @param executionAttributes the flow execution system attributes
+	 * @param flowExecutionAttributes the flow execution system attributes
 	 */
-	public void setExecutionAttributes(Map executionAttributes) {
-		this.executionAttributes = new LocalAttributeMap(executionAttributes);
+	public void setFlowExecutionAttributes(Map flowExecutionAttributes) {
+		this.flowExecutionAttributes = new LocalAttributeMap(flowExecutionAttributes);
 	}
 
 	/**
@@ -130,8 +131,8 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * control over what listeners should apply to executions of a flow definition launched by the executor created by
 	 * this factory.
 	 */
-	public void setExecutionListenerLoader(FlowExecutionListenerLoader executionListenerLoader) {
-		this.executionListenerLoader = executionListenerLoader;
+	public void setFlowExecutionListenerLoader(FlowExecutionListenerLoader flowExecutionListenerLoader) {
+		this.flowExecutionListenerLoader = flowExecutionListenerLoader;
 	}
 
 	/**
@@ -140,7 +141,7 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * provided type.
 	 * @param repositoryType the flow execution repository type
 	 */
-	public void setRepositoryType(RepositoryType repositoryType) {
+	public void setFlowExecutionRepositoryType(RepositoryType repositoryType) {
 		this.repositoryType = repositoryType;
 	}
 
@@ -186,28 +187,29 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	// implementing InitializingBean
 
 	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(definitionLocator, "The flow definition locator is required");
+		Assert.notNull(flowDefinitionLocator, "The flow definition locator property is required");
 
 		// apply defaults
-		executionAttributes = defaults.applyExecutionAttributes(executionAttributes);
+		flowExecutionAttributes = defaults.applyExecutionAttributes(flowExecutionAttributes);
 		repositoryType = defaults.applyIfNecessary(repositoryType);
 
 		// pass all available parameters to the hook methods so that they
 		// can participate in the construction process
 
-		// a factory for flow executions
-		FlowExecutionFactory executionFactory = createFlowExecutionFactory(executionAttributes, executionListenerLoader);
-
 		// a strategy to restore deserialized flow executions
-		FlowExecutionStateRestorer executionStateRestorer = createFlowExecutionStateRestorer(definitionLocator,
-				executionAttributes, executionListenerLoader);
+		FlowExecutionStateRestorer executionStateRestorer = createFlowExecutionStateRestorer(flowDefinitionLocator,
+				flowExecutionAttributes, flowExecutionListenerLoader);
 
 		// a repository to store flow executions
 		FlowExecutionRepository executionRepository = createFlowExecutionRepository(repositoryType,
 				executionStateRestorer, conversationManager);
 
+		// a factory for flow executions
+		FlowExecutionFactory executionFactory = createFlowExecutionFactory(flowExecutionAttributes,
+				flowExecutionListenerLoader, (FlowExecutionKeyFactory) executionRepository);
+
 		// combine all pieces of the puzzle to get an operational flow executor
-		flowExecutor = createFlowExecutor(definitionLocator, executionFactory, executionRepository);
+		flowExecutor = createFlowExecutor(flowDefinitionLocator, executionFactory, executionRepository);
 	}
 
 	// implementing FactoryBean
@@ -225,37 +227,6 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	}
 
 	// subclassing hook methods
-
-	/**
-	 * Create the conversation manager to be used in the default case, e.g. when no explicit conversation manager has
-	 * been configured. This implementation return a {@link SessionBindingConversationManager}.
-	 * @return the default conversation manager
-	 */
-	protected ConversationManager createDefaultConversationManager() {
-		SessionBindingConversationManager conversationManager = new SessionBindingConversationManager();
-		if (maxConversations != null) {
-			conversationManager.setMaxConversations(maxConversations.intValue());
-		}
-		return conversationManager;
-	}
-
-	/**
-	 * Create the flow execution factory to be used by the executor produced by this factory bean. Configure the
-	 * execution factory appropriately. Subclasses may override if they which to use a custom execution factory, e.g. to
-	 * use a custom FlowExecution implementation.
-	 * @param executionAttributes execution attributes to apply to created executions
-	 * @param executionListenerLoader decides which listeners to apply to created executions
-	 * @return a new flow execution factory instance
-	 */
-	protected FlowExecutionFactory createFlowExecutionFactory(AttributeMap executionAttributes,
-			FlowExecutionListenerLoader executionListenerLoader) {
-		FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
-		executionFactory.setExecutionAttributes(executionAttributes);
-		if (executionListenerLoader != null) {
-			executionFactory.setExecutionListenerLoader(executionListenerLoader);
-		}
-		return executionFactory;
-	}
 
 	/**
 	 * Create the flow execution state restorer to be used by the executor produced by this factory bean. Configure the
@@ -323,6 +294,38 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 						+ repositoryType);
 			}
 		}
+	}
+
+	/**
+	 * Create the conversation manager to be used in the default case, e.g. when no explicit conversation manager has
+	 * been configured. This implementation return a {@link SessionBindingConversationManager}.
+	 * @return the default conversation manager
+	 */
+	protected ConversationManager createDefaultConversationManager() {
+		SessionBindingConversationManager conversationManager = new SessionBindingConversationManager();
+		if (maxConversations != null) {
+			conversationManager.setMaxConversations(maxConversations.intValue());
+		}
+		return conversationManager;
+	}
+
+	/**
+	 * Create the flow execution factory to be used by the executor produced by this factory bean. Configure the
+	 * execution factory appropriately. Subclasses may override if they which to use a custom execution factory, e.g. to
+	 * use a custom FlowExecution implementation.
+	 * @param executionAttributes execution attributes to apply to created executions
+	 * @param executionListenerLoader decides which listeners to apply to created executions
+	 * @return a new flow execution factory instance
+	 */
+	protected FlowExecutionFactory createFlowExecutionFactory(AttributeMap executionAttributes,
+			FlowExecutionListenerLoader executionListenerLoader, FlowExecutionKeyFactory keyFactory) {
+		FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
+		executionFactory.setExecutionAttributes(executionAttributes);
+		if (executionListenerLoader != null) {
+			executionFactory.setExecutionListenerLoader(executionListenerLoader);
+		}
+		executionFactory.setExecutionKeyFactory(keyFactory);
+		return executionFactory;
 	}
 
 	/**

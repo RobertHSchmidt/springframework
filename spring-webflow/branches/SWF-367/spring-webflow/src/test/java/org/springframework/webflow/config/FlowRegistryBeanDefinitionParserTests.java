@@ -23,7 +23,7 @@ public class FlowRegistryBeanDefinitionParserTests extends TestCase {
 
 	public void testBogusPathWithValidExtension() {
 		try {
-			FlowDefinition flow = registry.getFlowDefinition("bogus");
+			registry.getFlowDefinition("bogus");
 		} catch (NoSuchFlowDefinitionException e) {
 
 		}
