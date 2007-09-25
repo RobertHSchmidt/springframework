@@ -31,6 +31,7 @@ import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.builder.support.FlowArtifactFactory;
 import org.springframework.webflow.engine.builder.support.FlowArtifactLookupException;
 import org.springframework.webflow.engine.builder.support.FlowServiceLocator;
+import org.springframework.webflow.engine.builder.support.ViewFactoryCreator;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -180,6 +181,10 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 
 	public ConversionService getConversionService() {
 		return parent.getConversionService();
+	}
+
+	public ViewFactoryCreator getViewFactoryCreator() {
+		return parent.getViewFactoryCreator();
 	}
 
 	// internal helpers
