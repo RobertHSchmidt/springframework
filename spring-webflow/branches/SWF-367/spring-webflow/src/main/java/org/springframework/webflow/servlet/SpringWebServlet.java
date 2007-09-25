@@ -44,7 +44,7 @@ public class SpringWebServlet implements Servlet {
 
 	public void service(ServletRequest request, ServletResponse response) throws ServletException, IOException {
 		ServletContext servletContext = getServletConfig().getServletContext();
-		new ServletExternalContext(servletContext, request, response, flowExecutor).processRequest();
+		new ServletExternalContext(servletContext, request, response).execute(flowExecutor);
 	}
 
 	public void destroy() {

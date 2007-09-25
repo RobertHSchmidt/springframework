@@ -35,8 +35,8 @@ public class ServletExternalContextTests extends TestCase {
 
 	private MockHttpServletRequest request;
 	private MockHttpServletResponse response;
-	private ServletExternalContext context;
 	private FlowExecutor flowExecutor;
+	private ServletExternalContext context;
 
 	protected void setUp() {
 		request = new MockHttpServletRequest();
@@ -46,30 +46,30 @@ public class ServletExternalContextTests extends TestCase {
 
 	public void testProcessLaunchFlowRequest() throws Exception {
 		request.setPathInfo("/booking");
-		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
-		context.processRequest();
+		context = new ServletExternalContext(new MockServletContext(), request, response);
+		context.execute(flowExecutor);
 		assertEquals("booking", context.getFlowId());
 	}
 
 	public void testProcessLaunchFlowRequestTrailingSlash() throws Exception {
 		request.setPathInfo("/booking/");
-		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
-		context.processRequest();
+		context = new ServletExternalContext(new MockServletContext(), request, response);
+		context.execute(flowExecutor);
 		assertEquals("booking", context.getFlowId());
 	}
 
 	public void testProcessLaunchFlowRequestElements() throws Exception {
 		request.setPathInfo("/users/1");
-		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
-		context.processRequest();
+		context = new ServletExternalContext(new MockServletContext(), request, response);
+		context.execute(flowExecutor);
 		assertEquals("users", context.getFlowId());
 		assertEquals(context.getRequestElements()[0], "1");
 	}
 
 	public void testProcessLaunchFlowMultipleRequestElements() throws Exception {
 		request.setPathInfo("/users/1/foo/bar//baz/");
-		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
-		context.processRequest();
+		context = new ServletExternalContext(new MockServletContext(), request, response);
+		context.execute(flowExecutor);
 		assertEquals("users", context.getFlowId());
 		assertEquals("1", context.getRequestElements()[0]);
 		assertEquals("foo", context.getRequestElements()[1]);
@@ -80,16 +80,16 @@ public class ServletExternalContextTests extends TestCase {
 
 	public void testProcessResumeFlowExecution() throws Exception {
 		request.setPathInfo("/executions/booking/_c12345_k12345");
-		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
-		context.processRequest();
+		context = new ServletExternalContext(new MockServletContext(), request, response);
+		context.execute(flowExecutor);
 		assertEquals("booking", context.getFlowId());
 		assertEquals("_c12345_k12345", context.getFlowExecutionKey());
 	}
 
 	public void testExternalContextUnbound() throws Exception {
 		request.setPathInfo("/executions/booking/_c12345_k12345");
-		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
-		context.processRequest();
+		context = new ServletExternalContext(new MockServletContext(), request, response);
+		context.execute(flowExecutor);
 		try {
 			ExternalContextHolder.getExternalContext();
 			fail("Should have failed");
@@ -101,7 +101,7 @@ public class ServletExternalContextTests extends TestCase {
 	public void testNoRequestPathInfo() {
 		request.setPathInfo(null);
 		try {
-			context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
+			context = new ServletExternalContext(new MockServletContext(), request, response);
 			fail("Should have failed");
 		} catch (IllegalArgumentException e) {
 
@@ -116,8 +116,8 @@ public class ServletExternalContextTests extends TestCase {
 				context.setPausedResult("_c12345_k12345");
 			}
 		};
-		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
-		context.processRequest();
+		context = new ServletExternalContext(new MockServletContext(), request, response);
+		context.execute(flowExecutor);
 		assertEquals("/executions/users/_c12345_k12345", response.getRedirectedUrl());
 	}
 
@@ -129,9 +129,9 @@ public class ServletExternalContextTests extends TestCase {
 				context.setEndedResult();
 			}
 		};
-		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
+		context = new ServletExternalContext(new MockServletContext(), request, response);
 		try {
-			context.processRequest();
+			context.execute(flowExecutor);
 			fail("Should have failed");
 		} catch (IllegalStateException e) {
 
@@ -150,8 +150,8 @@ public class ServletExternalContextTests extends TestCase {
 				context.setEndedResult();
 			}
 		};
-		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
-		context.processRequest();
+		context = new ServletExternalContext(new MockServletContext(), request, response);
+		context.execute(flowExecutor);
 		assertEquals("/customers/1/you%26me?foo=bar&bar=baz", response.getRedirectedUrl());
 	}
 
@@ -163,8 +163,8 @@ public class ServletExternalContextTests extends TestCase {
 				context.setEndedResult();
 			}
 		};
-		context = new ServletExternalContext(new MockServletContext(), request, response, flowExecutor);
-		context.processRequest();
+		context = new ServletExternalContext(new MockServletContext(), request, response);
+		context.execute(flowExecutor);
 		assertEquals("/foo/bar/baz", response.getRedirectedUrl());
 	}
 

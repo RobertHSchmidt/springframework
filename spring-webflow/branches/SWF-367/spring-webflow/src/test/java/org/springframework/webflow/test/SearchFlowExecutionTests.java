@@ -20,12 +20,11 @@ import java.util.List;
 
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.binding.mapping.MappingContext;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.webflow.config.FlowDefinitionResource;
+import org.springframework.webflow.config.FlowDefinitionResourceFactory;
 import org.springframework.webflow.core.collection.AttributeMap;
-import org.springframework.webflow.definition.registry.FlowDefinitionResource;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.test.execution.AbstractXmlFlowExecutionTests;
 
 /**
@@ -34,43 +33,16 @@ import org.springframework.webflow.test.execution.AbstractXmlFlowExecutionTests;
 public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
 	public void testStartFlow() {
-		ApplicationView view = applicationView(startFlow());
-		assertCurrentStateEquals("enterCriteria");
-		assertViewNameEquals("searchCriteria", view);
-		assertModelAttributeNotNull("searchCriteria", view);
+		startFlow(new MockExternalContext());
 	}
 
 	public void testCriteriaSubmitSuccess() {
-		startFlow();
-		MockParameterMap parameters = new MockParameterMap();
-		parameters.put("firstName", "Keith");
-		parameters.put("lastName", "Donald");
-		ApplicationView view = applicationView(signalEvent("search", parameters));
-		assertCurrentStateEquals("displayResults");
-		assertViewNameEquals("searchResults", view);
-		assertModelAttributeCollectionSize(1, "results", view);
 	}
 
 	public void testNewSearch() {
-		testCriteriaSubmitSuccess();
-		ApplicationView view = applicationView(signalEvent("newSearch"));
-		assertCurrentStateEquals("enterCriteria");
-		assertViewNameEquals("searchCriteria", view);
 	}
 
 	public void testSelectValidResult() {
-		testCriteriaSubmitSuccess();
-		MockParameterMap parameters = new MockParameterMap();
-		parameters.put("id", "1");
-		ApplicationView view = applicationView(signalEvent("select", parameters));
-		assertCurrentStateEquals("displayResults");
-		assertViewNameEquals("searchResults", view);
-		assertModelAttributeCollectionSize(1, "results", view);
-	}
-
-	protected FlowDefinitionResource getFlowDefinitionResource() {
-		return new FlowDefinitionResource("search-flow", new ClassPathResource("search-flow.xml",
-				SearchFlowExecutionTests.class));
 	}
 
 	protected void registerMockServices(MockFlowServiceLocator serviceRegistry) {
@@ -83,13 +55,11 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		});
 		// test responding to finish result
 		new EndState(mockDetailFlow, "finish");
-
 		serviceRegistry.registerSubflow(mockDetailFlow);
 		serviceRegistry.registerBean("phonebook", new TestPhoneBook());
 	}
 
-	public static class TestPhoneBook {
-
+	static class TestPhoneBook {
 		public List search(Object criteria) {
 			ArrayList res = new ArrayList();
 			res.add(new Object());
@@ -103,7 +73,10 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		public Object getPerson(String userId) {
 			return new Object();
 		}
+	}
 
+	protected FlowDefinitionResource getFlowDefinitionResource() {
+		return new FlowDefinitionResourceFactory().createClassPathResource("search-flow.xml", getClass());
 	}
 
 }

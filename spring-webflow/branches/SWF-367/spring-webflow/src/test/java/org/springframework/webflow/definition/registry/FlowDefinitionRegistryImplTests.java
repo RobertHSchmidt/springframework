@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
-import org.springframework.webflow.definition.registry.support.StaticFlowDefinitionHolder;
 
 /**
  * Unit tests for {@link FlowDefinitionRegistryImpl}.

@@ -4,6 +4,8 @@ import java.util.HashSet;
 
 import junit.framework.TestCase;
 
+import org.springframework.beans.factory.support.StaticListableBeanFactory;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.webflow.config.FlowLocation.Attribute;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -25,6 +27,8 @@ public class FlowRegistryFactoryBeanTests extends TestCase {
 		FlowLocation location2 = new FlowLocation("flow2", "org/springframework/webflow/config/flow.xml", attributes);
 		FlowLocation[] flowLocations = new FlowLocation[] { location1, location2 };
 		factoryBean.setFlowLocations(flowLocations);
+		factoryBean.setResourceLoader(new DefaultResourceLoader());
+		factoryBean.setBeanFactory(new StaticListableBeanFactory());
 		factoryBean.afterPropertiesSet();
 		FlowDefinitionRegistry registry = (FlowDefinitionRegistry) factoryBean.getObject();
 		FlowDefinition def = registry.getFlowDefinition("flow1");
@@ -41,6 +45,8 @@ public class FlowRegistryFactoryBeanTests extends TestCase {
 		FlowLocation location1 = new FlowLocation(null, "org/springframework/webflow/config/flow.xml", null);
 		FlowLocation[] flowLocations = new FlowLocation[] { location1 };
 		factoryBean.setFlowLocations(flowLocations);
+		factoryBean.setResourceLoader(new DefaultResourceLoader());
+		factoryBean.setBeanFactory(new StaticListableBeanFactory());
 		factoryBean.afterPropertiesSet();
 		FlowDefinitionRegistry registry = (FlowDefinitionRegistry) factoryBean.getObject();
 		FlowDefinition def = registry.getFlowDefinition("flow");
@@ -55,6 +61,8 @@ public class FlowRegistryFactoryBeanTests extends TestCase {
 		factoryBean.setFlowLocations(flowLocations);
 		FlowBuilderServices builderServices = new FlowBuilderSystemDefaults().createBuilderServices();
 		factoryBean.setFlowBuilderServices(builderServices);
+		factoryBean.setResourceLoader(new DefaultResourceLoader());
+		factoryBean.setBeanFactory(new StaticListableBeanFactory());
 		factoryBean.afterPropertiesSet();
 		FlowDefinitionRegistry registry = (FlowDefinitionRegistry) factoryBean.getObject();
 		FlowDefinition def = registry.getFlowDefinition("flow");

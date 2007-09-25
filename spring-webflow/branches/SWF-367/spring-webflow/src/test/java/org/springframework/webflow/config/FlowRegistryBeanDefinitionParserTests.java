@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionException;
 
@@ -21,10 +22,18 @@ public class FlowRegistryBeanDefinitionParserTests extends TestCase {
 		assertEquals("flow", flow.getId());
 	}
 
-	public void testBogusPathWithValidExtension() {
+	public void testNoSuchFlow() {
+		try {
+			registry.getFlowDefinition("not there");
+		} catch (NoSuchFlowDefinitionException e) {
+
+		}
+	}
+
+	public void testBogusPath() {
 		try {
 			registry.getFlowDefinition("bogus");
-		} catch (NoSuchFlowDefinitionException e) {
+		} catch (FlowDefinitionConstructionException e) {
 
 		}
 	}

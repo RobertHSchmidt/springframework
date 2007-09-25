@@ -17,10 +17,6 @@ package org.springframework.webflow.test;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
-import org.springframework.webflow.definition.FlowDefinition;
-import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
-import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
-import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.support.DefaultFlowServiceLocator;
@@ -53,7 +49,7 @@ public class MockFlowServiceLocator extends DefaultFlowServiceLocator {
 	 * @param subflow the subflow
 	 */
 	public void registerSubflow(Flow subflow) {
-		getMockSubflowRegistry().registerFlowDefinition(new StaticFlowDefinitionHolder(subflow));
+		getMockSubflowRegistry().registerFlowDefinition(subflow);
 	}
 
 	/**
@@ -67,39 +63,7 @@ public class MockFlowServiceLocator extends DefaultFlowServiceLocator {
 		((StaticListableBeanFactory) getBeanFactory()).addBean(beanName, bean);
 	}
 
-	private FlowDefinitionRegistry getMockSubflowRegistry() {
-		return (FlowDefinitionRegistry) getSubflowLocator();
-	}
-
-	private static class StaticFlowDefinitionHolder implements FlowDefinitionHolder {
-		private Flow flow;
-
-		public StaticFlowDefinitionHolder(Flow flow) {
-			this.flow = flow;
-		}
-
-		public String getFlowDefinitionId() {
-			return flow.getId();
-		}
-
-		public FlowDefinition getFlowDefinition() throws FlowDefinitionConstructionException {
-			return flow;
-		}
-
-		public void refresh() throws FlowDefinitionConstructionException {
-			// nothing to do
-		}
-
-		public boolean equals(Object o) {
-			if (!(o instanceof StaticFlowDefinitionHolder)) {
-				return false;
-			}
-			StaticFlowDefinitionHolder other = (StaticFlowDefinitionHolder) o;
-			return flow.equals(other.flow);
-		}
-
-		public int hashCode() {
-			return flow.hashCode();
-		}
+	private FlowDefinitionRegistryImpl getMockSubflowRegistry() {
+		return (FlowDefinitionRegistryImpl) getSubflowLocator();
 	}
 }

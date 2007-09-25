@@ -44,7 +44,7 @@ public class MockRequestContext implements RequestContext {
 
 	private FlowExecutionContext flowExecutionContext;
 
-	private ExternalContext externalContext = new MockExternalContext();
+	private ExternalContext externalContext;
 
 	private MutableAttributeMap requestScope = new LocalAttributeMap();
 
@@ -55,9 +55,21 @@ public class MockRequestContext implements RequestContext {
 	private Transition lastTransition;
 
 	/**
-	 * Creates a new mock request context with the following defaults:
+	 * Convenience constructor that creates a new mock request context with the following defaults:
 	 * <ul>
-	 * <li>A flow execution context with an active session for the specified flow.
+	 * <li>A mock flow execution context with a active session of flow "mockFlow" in state "mockState".
+	 * <li>A mock external context with no request parameters set.
+	 * </ul>
+	 * To add request parameters to this request, use the {@link #putRequestParameter(String, String)} method.
+	 */
+	public MockRequestContext() {
+		this(new MockFlowExecutionContext());
+	}
+
+	/**
+	 * Convenience constructor that creates a new mock request context with the following defaults:
+	 * <ul>
+	 * <li>A mock flow execution context with an active session for the specified flow.
 	 * <li>A mock external context with no request parameters set.
 	 * </ul>
 	 * To add request parameters to this request, use the {@link #putRequestParameter(String, String)} method.
@@ -68,12 +80,25 @@ public class MockRequestContext implements RequestContext {
 	}
 
 	/**
+	 * Convenience constructor that creates a new mock request context with the following defaults:
+	 * <ul>
+	 * <li>A mock flow execution context with a active session of flow "mockFlow" in state "mockState".
+	 * <li>A mock external context with the provided parameters set.
+	 * </ul>
+	 */
+	public MockRequestContext(ParameterMap requestParameterMap) {
+		this.flowExecutionContext = new MockFlowExecutionContext();
+		this.externalContext = new MockExternalContext(requestParameterMap);
+	}
+
+	/**
 	 * Creates a new mock request context with the provided flow execution context. To add request parameters to this
 	 * request, use the {@link #putRequestParameter(String, String)} method.
 	 * @param flowExecutionContext the flow execution context
 	 */
 	public MockRequestContext(FlowExecutionContext flowExecutionContext) {
 		this.flowExecutionContext = flowExecutionContext;
+		this.externalContext = new MockExternalContext();
 	}
 
 	// implementing RequestContext

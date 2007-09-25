@@ -123,11 +123,7 @@ class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware, BeanF
 
 	private void initBuilderServices() {
 		builderServices = new FlowBuilderSystemDefaults().createBuilderServices();
-		if (resourceLoader != null) {
-			builderServices.setResourceLoader(resourceLoader);
-		}
-		if (beanFactory != null) {
-			builderServices.setBeanFactory(beanFactory);
-		}
+		builderServices.setResourceLoader(resourceLoader);
+		builderServices.setBeanFactory(beanFactory);
 	}
 }

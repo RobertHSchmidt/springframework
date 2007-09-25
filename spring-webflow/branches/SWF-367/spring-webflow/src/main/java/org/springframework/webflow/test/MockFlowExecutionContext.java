@@ -46,6 +46,15 @@ public class MockFlowExecutionContext implements FlowExecutionContext {
 	private MutableAttributeMap attributes = new LocalAttributeMap();
 
 	/**
+	 * Creates a new mock flow execution context -- automatically installs a root flow definition and active flow
+	 * session.
+	 */
+	public MockFlowExecutionContext() {
+		activeSession = new MockFlowSession();
+		this.flow = activeSession.getDefinition();
+	}
+
+	/**
 	 * Creates a new mock flow execution context for the specified root flow definition.
 	 */
 	public MockFlowExecutionContext(Flow flow) {

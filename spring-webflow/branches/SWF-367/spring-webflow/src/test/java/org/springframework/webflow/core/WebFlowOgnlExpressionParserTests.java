@@ -25,11 +25,7 @@ import org.springframework.binding.collection.MapAdaptable;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.SettableExpression;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
-import org.springframework.webflow.engine.builder.support.WebFlowOgnlExpressionParser;
 
-/**
- * Unit tests for {@link WebFlowOgnlExpressionParser}.
- */
 public class WebFlowOgnlExpressionParserTests extends TestCase {
 
 	WebFlowOgnlExpressionParser parser = new WebFlowOgnlExpressionParser();
