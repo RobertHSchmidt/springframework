@@ -142,4 +142,10 @@ public interface FlowServiceLocator {
 	 * @throws FlowArtifactLookupException when no such handler is found
 	 */
 	public FlowExecutionExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException;
+
+	/**
+	 * Returns the view factory creator for configuring a ViewFactory per view state
+	 * @return the view factory creator
+	 */
+	public ViewFactoryCreator getViewFactoryCreator();
 }
