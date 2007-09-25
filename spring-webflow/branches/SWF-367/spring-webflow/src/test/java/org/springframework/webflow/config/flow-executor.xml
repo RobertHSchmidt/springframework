@@ -11,15 +11,16 @@
 	<flow:executor id="flowExecutor" registry-ref="flowRegistry">
 		<flow:repository type="continuation" max-conversations="1" max-continuations="2"/>
 		<flow:execution-attributes>
-			<flow:alwaysRedirectOnPause value="true"/>
+			<flow:alwaysRedirectOnPause value="false"/>
 			<flow:attribute name="foo" value="bar"/>		
+			<flow:attribute name="bar" value="2" type="integer"/>		
 		</flow:execution-attributes>
 		<flow:execution-listeners>
 			<flow:listener ref="listener" criteria="*"/>
 		</flow:execution-listeners>
 	</flow:executor>
 	
-	<bean id="listener" class="org.springframework.webflow.execution.MockFlowExecutionListener" />
+	<bean id="listener" class="org.springframework.webflow.config.FlowExecutorBeanDefinitionParserTests$ConfigurationListener" />
 	
 	<flow:registry id="flowRegistry">
 		<flow:location path="org/springframework/webflow/config/flow.xml" />

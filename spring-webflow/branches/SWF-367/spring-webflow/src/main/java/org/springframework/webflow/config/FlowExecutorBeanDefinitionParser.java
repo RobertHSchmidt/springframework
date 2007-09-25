@@ -15,6 +15,11 @@
  */
 package org.springframework.webflow.config;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
@@ -36,6 +41,18 @@ class FlowExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	private static final String CONVERSATION_MANAGER_REF_ATTRIBUTE = "conversation-manager-ref";
 
+	private static final String EXECUTION_ATTRIBUTES_ELEMENT = "execution-attributes";
+
+	private static final String ALWAYS_REDIRECT_ON_PAUSE_ELEMENT = "alwaysRedirectOnPause";
+
+	private static final String ATTRIBUTE_ELEMENT = "attribute";
+
+	private static final String NAME_ATTRIBUTE = "name";
+
+	private static final String VALUE_ATTRIBUTE = "value";
+
+	private static final String TYPE_ATTRIBUTE = "type";
+
 	private static final String EXECUTION_LISTENERS_ELEMENT = "execution-listeners";
 
 	private static final String MAX_CONTINUATIONS_ATTRIBUTE = "max-continuations";
@@ -48,8 +65,6 @@ class FlowExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	private static final String REPOSITORY_TYPE_ATTRIBUTE = "repository-type";
 
-	private static final String TYPE_ATTRIBUTE = "type";
-
 	// properties
 
 	private static final String CONVERSATION_MANAGER_PROPERTY = "conversationManager";
@@ -57,6 +72,8 @@ class FlowExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 	private static final String DEFINITION_LOCATOR_PROPERTY = "flowDefinitionLocator";
 
 	private static final String REPOSITORY_TYPE_PROPERTY = "flowExecutionRepositoryType";
+
+	private static final String EXECUTION_ATTRIBUTES_PROPERTY = "flowExecutionAttributes";
 
 	private static final String EXECUTION_LISTENER_LOADER_PROPERTY = "flowExecutionListenerLoader";
 
@@ -69,6 +86,7 @@ class FlowExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 				.rootBeanDefinition(FlowExecutorFactoryBean.class);
 		definitionBuilder.setSource(parserContext.extractSource(element));
 		definitionBuilder.addPropertyReference(DEFINITION_LOCATOR_PROPERTY, getRegistryRef(element, parserContext));
+		definitionBuilder.addPropertyValue(EXECUTION_ATTRIBUTES_PROPERTY, parseAttributes(element));
 		addExecutionListenerLoader(element, parserContext, definitionBuilder);
 		configureRepository(element, definitionBuilder, parserContext);
 		return definitionBuilder.getBeanDefinition();
@@ -209,6 +227,30 @@ class FlowExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		if (listenersElement != null) {
 			definitionBuilder.addPropertyValue(EXECUTION_LISTENER_LOADER_PROPERTY, parserContext.getDelegate()
 					.parseCustomElement(listenersElement, definitionBuilder.getBeanDefinition()));
+		}
+	}
+
+	private Set parseAttributes(Element element) {
+		Element executionAttributesElement = DomUtils.getChildElementByTagName(element, EXECUTION_ATTRIBUTES_ELEMENT);
+		if (executionAttributesElement != null) {
+			HashSet attributes = new HashSet();
+			Element redirectElement = DomUtils.getChildElementByTagName(executionAttributesElement,
+					ALWAYS_REDIRECT_ON_PAUSE_ELEMENT);
+			if (redirectElement != null) {
+				String value = redirectElement.getAttribute(VALUE_ATTRIBUTE);
+				attributes.add(new FlowElementAttribute("alwaysRedirectOnPause", value, "boolean"));
+			}
+			List attributeElements = DomUtils.getChildElementsByTagName(executionAttributesElement, ATTRIBUTE_ELEMENT);
+			for (Iterator it = attributeElements.iterator(); it.hasNext();) {
+				Element attributeElement = (Element) it.next();
+				String name = attributeElement.getAttribute(NAME_ATTRIBUTE);
+				String value = attributeElement.getAttribute(VALUE_ATTRIBUTE);
+				String type = attributeElement.getAttribute(TYPE_ATTRIBUTE);
+				attributes.add(new FlowElementAttribute(name, value, type));
+			}
+			return attributes;
+		} else {
+			return null;
 		}
 	}
 }

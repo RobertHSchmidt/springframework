@@ -15,10 +15,15 @@
  */
 package org.springframework.webflow.config;
 
-import java.util.Map;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.binding.convert.ConversionExecutor;
+import org.springframework.binding.convert.ConversionService;
+import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.util.Assert;
 import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
@@ -65,7 +70,7 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	/**
 	 * Execution attributes to apply.
 	 */
-	private MutableAttributeMap flowExecutionAttributes;
+	private Set flowExecutionAttributes = Collections.EMPTY_SET;
 
 	/**
 	 * The loader that will determine which listeners to attach to flow definition executions.
@@ -96,14 +101,14 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	private Integer maxContinuations;
 
 	/**
+	 * The conversion service to use for type conversion of attribute values.
+	 */
+	private ConversionService conversionService = new DefaultConversionService();
+
+	/**
 	 * The flow executor this factory bean creates.
 	 */
 	private FlowExecutor flowExecutor;
-
-	/**
-	 * Spring Web Flow executor system defaults.
-	 */
-	private FlowExecutorSystemDefaults defaults = new FlowExecutorSystemDefaults();
 
 	/**
 	 * Sets the flow definition locator that will locate flow definitions needed for execution. Typically also a
@@ -117,13 +122,10 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	/**
 	 * Sets the system attributes that apply to flow executions launched by the executor created by this factory.
 	 * Execution attributes may affect flow execution behavior.
-	 * <p>
-	 * Note: this method simply accepts a generic <code>java.util.Map</code> to allow for easy configuration by
-	 * Spring. The map entries should consist of non-null String keys with object values.
 	 * @param flowExecutionAttributes the flow execution system attributes
 	 */
-	public void setFlowExecutionAttributes(Map flowExecutionAttributes) {
-		this.flowExecutionAttributes = new LocalAttributeMap(flowExecutionAttributes);
+	public void setFlowExecutionAttributes(Set flowExecutionAttributes) {
+		this.flowExecutionAttributes = flowExecutionAttributes;
 	}
 
 	/**
@@ -176,12 +178,8 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 		this.conversationManager = conversationManager;
 	}
 
-	/**
-	 * Set system defaults that should be used.
-	 * @param defaults the defaults to use.
-	 */
-	public void setDefaults(FlowExecutorSystemDefaults defaults) {
-		this.defaults = defaults;
+	public void setConversionService(ConversionService conversionService) {
+		this.conversionService = conversionService;
 	}
 
 	// implementing InitializingBean
@@ -190,7 +188,9 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 		Assert.notNull(flowDefinitionLocator, "The flow definition locator property is required");
 
 		// apply defaults
-		flowExecutionAttributes = defaults.applyExecutionAttributes(flowExecutionAttributes);
+		FlowExecutorSystemDefaults defaults = new FlowExecutorSystemDefaults();
+
+		MutableAttributeMap executionAttributes = defaults.applyExecutionAttributes(createExecutionAttributeMap());
 		flowExecutionRepositoryType = defaults.applyIfNecessary(flowExecutionRepositoryType);
 
 		// pass all available parameters to the hook methods so that they
@@ -198,14 +198,14 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 
 		// a strategy to restore deserialized flow executions
 		FlowExecutionStateRestorer executionStateRestorer = createFlowExecutionStateRestorer(flowDefinitionLocator,
-				flowExecutionAttributes, flowExecutionListenerLoader);
+				executionAttributes, flowExecutionListenerLoader);
 
 		// a repository to store flow executions
 		FlowExecutionRepository executionRepository = createFlowExecutionRepository(flowExecutionRepositoryType,
 				executionStateRestorer, conversationManager);
 
 		// a factory for flow executions
-		FlowExecutionFactory executionFactory = createFlowExecutionFactory(flowExecutionAttributes,
+		FlowExecutionFactory executionFactory = createFlowExecutionFactory(executionAttributes,
 				flowExecutionListenerLoader, (FlowExecutionKeyFactory) executionRepository);
 
 		// combine all pieces of the puzzle to get an operational flow executor
@@ -339,5 +339,24 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	protected FlowExecutor createFlowExecutor(FlowDefinitionLocator definitionLocator,
 			FlowExecutionFactory executionFactory, FlowExecutionRepository executionRepository) {
 		return new FlowExecutorImpl(definitionLocator, executionFactory, executionRepository);
+	}
+
+	private MutableAttributeMap createExecutionAttributeMap() {
+		LocalAttributeMap executionAttributes = new LocalAttributeMap();
+		for (Iterator it = flowExecutionAttributes.iterator(); it.hasNext();) {
+			FlowElementAttribute attribute = (FlowElementAttribute) it.next();
+			executionAttributes.put(attribute.getName(), getConvertedValue(attribute));
+		}
+		return executionAttributes;
+	}
+
+	private Object getConvertedValue(FlowElementAttribute attribute) {
+		if (attribute.needsTypeConversion()) {
+			ConversionExecutor converter = conversionService.getConversionExecutorByTargetAlias(String.class, attribute
+					.getType());
+			return converter.execute(attribute.getValue());
+		} else {
+			return attribute.getValue();
+		}
 	}
 }
