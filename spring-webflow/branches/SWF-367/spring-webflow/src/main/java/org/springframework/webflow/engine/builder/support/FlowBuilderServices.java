@@ -45,6 +45,11 @@ public class FlowBuilderServices {
 	 */
 	private BeanFactory beanFactory;
 
+	/**
+	 * The view factory creator
+	 */
+	private ViewFactoryCreator viewFactoryCreator;
+
 	public FlowArtifactFactory getFlowArtifactFactory() {
 		return flowArtifactFactory;
 	}
@@ -97,5 +102,13 @@ public class FlowBuilderServices {
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		Assert.notNull("The bean factory cannot be null");
 		this.beanFactory = beanFactory;
+	}
+
+	public ViewFactoryCreator getViewFactoryCreator() {
+		return viewFactoryCreator;
+	}
+
+	public void setViewFactoryCreator(ViewFactoryCreator viewFactoryCreator) {
+		this.viewFactoryCreator = viewFactoryCreator;
 	}
 }

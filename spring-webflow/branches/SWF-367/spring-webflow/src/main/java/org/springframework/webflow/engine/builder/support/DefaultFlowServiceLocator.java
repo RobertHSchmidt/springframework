@@ -107,6 +107,10 @@ public class DefaultFlowServiceLocator implements FlowServiceLocator {
 		return builderServices.getBeanFactory();
 	}
 
+	public ViewFactoryCreator getViewFactoryCreator() {
+		return builderServices.getViewFactoryCreator();
+	}
+
 	// usable by subclasses
 
 	protected final FlowDefinitionLocator getSubflowLocator() {

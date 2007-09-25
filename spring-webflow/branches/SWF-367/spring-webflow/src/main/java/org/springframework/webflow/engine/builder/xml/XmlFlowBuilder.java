@@ -235,6 +235,8 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 
 	private static final String RESOURCE_ATTRIBUTE = "resource";
 
+	private static final String VIEW_ATTRIBUTE = "view";
+
 	/**
 	 * Locates actions, attribute mappers, and other artifacts needed by the flow built by this builder.
 	 */
@@ -669,8 +671,8 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	private ViewFactory parseViewFactory(Element element) {
-		// TODO
-		return null;
+		String viewName = element.getAttribute(VIEW_ATTRIBUTE);
+		return getFlowServiceLocator().getViewFactoryCreator().create(viewName);
 	}
 
 	private Action parseFinalResponseAction(Element element) {
