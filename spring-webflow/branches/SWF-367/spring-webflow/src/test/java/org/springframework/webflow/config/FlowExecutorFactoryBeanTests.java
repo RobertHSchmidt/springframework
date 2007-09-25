@@ -68,7 +68,7 @@ public class FlowExecutorFactoryBeanTests extends TestCase {
 		Map attributes = new HashMap();
 		attributes.put("foo", "bar");
 		factoryBean.setFlowExecutionAttributes(attributes);
-		factoryBean.setFlowExecutionRepositoryType(RepositoryType.CONTINUATION);
+		factoryBean.setFlowExecutionRepositoryType(FlowExecutionRepositoryType.CONTINUATION);
 		FlowExecutionListener listener = new FlowExecutionListenerAdapter() {
 
 		};

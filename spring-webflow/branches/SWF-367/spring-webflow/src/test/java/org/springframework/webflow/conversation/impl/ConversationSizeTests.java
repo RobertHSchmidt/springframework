@@ -21,7 +21,7 @@ import java.io.ObjectOutputStream;
 import junit.framework.TestCase;
 
 import org.springframework.webflow.config.FlowExecutorFactoryBean;
-import org.springframework.webflow.config.RepositoryType;
+import org.springframework.webflow.config.FlowExecutionRepositoryType;
 import org.springframework.webflow.core.collection.SharedAttributeMap;
 import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistrar;
@@ -56,7 +56,7 @@ public class ConversationSizeTests extends TestCase {
 		FlowExecutorFactoryBean flowExecutorFactory = new FlowExecutorFactoryBean();
 		flowExecutorFactory.setFlowDefinitionLocator(flowRegistry);
 		flowExecutorFactory.setConversationManager(conversationManager);
-		flowExecutorFactory.setFlowExecutionRepositoryType(RepositoryType.CONTINUATION);
+		flowExecutorFactory.setFlowExecutionRepositoryType(FlowExecutionRepositoryType.CONTINUATION);
 		flowExecutorFactory.afterPropertiesSet();
 		flowExecutor = flowExecutorFactory.getFlowExecutor();
 	}

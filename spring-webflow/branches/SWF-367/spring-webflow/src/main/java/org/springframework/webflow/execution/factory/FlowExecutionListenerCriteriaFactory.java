@@ -18,6 +18,7 @@ package org.springframework.webflow.execution.factory;
 import org.springframework.core.style.StylerUtils;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.definition.FlowDefinition;
 
 /**
@@ -31,6 +32,18 @@ import org.springframework.webflow.definition.FlowDefinition;
 public class FlowExecutionListenerCriteriaFactory {
 
 	private static final WildcardFlowExecutionListenerCriteria WILDCARD_INSTANCE = new WildcardFlowExecutionListenerCriteria();
+
+	public FlowExecutionListenerCriteria getListenerCriteria(String encodedCriteria) {
+		if ("*".equals(encodedCriteria)) {
+			return allFlows();
+		} else {
+			String[] flowIds = StringUtils.commaDelimitedListToStringArray(encodedCriteria);
+			for (int i = 0; i < flowIds.length; i++) {
+				flowIds[i] = flowIds[i].trim();
+			}
+			return flows(flowIds);
+		}
+	}
 
 	/**
 	 * Returns a wild card criteria that matches all flows.

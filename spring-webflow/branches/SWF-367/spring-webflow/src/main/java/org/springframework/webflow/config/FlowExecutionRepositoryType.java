@@ -24,32 +24,32 @@ import org.springframework.core.enums.StaticLabeledEnum;
  * 
  * @author Keith Donald
  */
-class RepositoryType extends StaticLabeledEnum {
+public class FlowExecutionRepositoryType extends StaticLabeledEnum {
 
 	/**
 	 * The 'simple' flow execution repository type.
 	 */
-	public static final RepositoryType SIMPLE = new RepositoryType(0, "Simple");
+	public static final FlowExecutionRepositoryType SIMPLE = new FlowExecutionRepositoryType(0, "Simple");
 
 	/**
 	 * The 'continuation' flow execution repository type.
 	 */
-	public static final RepositoryType CONTINUATION = new RepositoryType(1, "Continuation");
+	public static final FlowExecutionRepositoryType CONTINUATION = new FlowExecutionRepositoryType(1, "Continuation");
 
 	/**
 	 * The 'client' (continuation) flow execution repository type.
 	 */
-	public static final RepositoryType CLIENT = new RepositoryType(2, "Client");
+	public static final FlowExecutionRepositoryType CLIENT = new FlowExecutionRepositoryType(2, "Client");
 
 	/**
 	 * The 'singleKey' flow execution repository type.
 	 */
-	public static final RepositoryType SINGLEKEY = new RepositoryType(3, "Single Key");
+	public static final FlowExecutionRepositoryType SINGLEKEY = new FlowExecutionRepositoryType(3, "Single Key");
 
 	/**
 	 * Private constructor because this is a typesafe enum!
 	 */
-	private RepositoryType(int code, String label) {
+	private FlowExecutionRepositoryType(int code, String label) {
 		super(code, label);
 	}
 }

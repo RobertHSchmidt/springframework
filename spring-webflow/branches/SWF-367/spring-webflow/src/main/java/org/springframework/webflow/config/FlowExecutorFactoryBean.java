@@ -87,11 +87,11 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * The type of execution repository to configure with executors created by this factory. Optional. Will fallback to
 	 * default value if not set.
 	 */
-	private RepositoryType repositoryType;
+	private FlowExecutionRepositoryType flowExecutionRepositoryType;
 
 	/**
 	 * The maximum number of allowed continuations for a single conversation. Only used when the repository type is
-	 * {@link RepositoryType#CONTINUATION}.
+	 * {@link FlowExecutionRepositoryType#CONTINUATION}.
 	 */
 	private Integer maxContinuations;
 
@@ -103,7 +103,7 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	/**
 	 * Spring Web Flow executor system defaults.
 	 */
-	private FlowSystemDefaults defaults = new FlowSystemDefaults();
+	private FlowExecutorSystemDefaults defaults = new FlowExecutorSystemDefaults();
 
 	/**
 	 * Sets the flow definition locator that will locate flow definitions needed for execution. Typically also a
@@ -141,8 +141,8 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * provided type.
 	 * @param repositoryType the flow execution repository type
 	 */
-	public void setFlowExecutionRepositoryType(RepositoryType repositoryType) {
-		this.repositoryType = repositoryType;
+	public void setFlowExecutionRepositoryType(FlowExecutionRepositoryType repositoryType) {
+		this.flowExecutionRepositoryType = repositoryType;
 	}
 
 	/**
@@ -180,7 +180,7 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * Set system defaults that should be used.
 	 * @param defaults the defaults to use.
 	 */
-	public void setDefaults(FlowSystemDefaults defaults) {
+	public void setDefaults(FlowExecutorSystemDefaults defaults) {
 		this.defaults = defaults;
 	}
 
@@ -191,7 +191,7 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 
 		// apply defaults
 		flowExecutionAttributes = defaults.applyExecutionAttributes(flowExecutionAttributes);
-		repositoryType = defaults.applyIfNecessary(repositoryType);
+		flowExecutionRepositoryType = defaults.applyIfNecessary(flowExecutionRepositoryType);
 
 		// pass all available parameters to the hook methods so that they
 		// can participate in the construction process
@@ -201,7 +201,7 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 				flowExecutionAttributes, flowExecutionListenerLoader);
 
 		// a repository to store flow executions
-		FlowExecutionRepository executionRepository = createFlowExecutionRepository(repositoryType,
+		FlowExecutionRepository executionRepository = createFlowExecutionRepository(flowExecutionRepositoryType,
 				executionStateRestorer, conversationManager);
 
 		// a factory for flow executions
@@ -256,9 +256,9 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * default conversation manager should be used
 	 * @return a new flow execution repository instance
 	 */
-	protected FlowExecutionRepository createFlowExecutionRepository(RepositoryType repositoryType,
+	protected FlowExecutionRepository createFlowExecutionRepository(FlowExecutionRepositoryType repositoryType,
 			FlowExecutionStateRestorer executionStateRestorer, ConversationManager conversationManager) {
-		if (repositoryType == RepositoryType.CLIENT) {
+		if (repositoryType == FlowExecutionRepositoryType.CLIENT) {
 			if (conversationManager == null) {
 				// use the default no-op conversation manager
 				return new ClientFlowExecutionRepository(executionStateRestorer);
@@ -272,19 +272,19 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 			if (conversationManagerToUse == null) {
 				conversationManagerToUse = createDefaultConversationManager();
 			}
-			if (repositoryType == RepositoryType.SIMPLE) {
+			if (repositoryType == FlowExecutionRepositoryType.SIMPLE) {
 				DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(
 						conversationManagerToUse, executionStateRestorer);
 				repository.setMaxContinuations(1);
 				return repository;
-			} else if (repositoryType == RepositoryType.CONTINUATION) {
+			} else if (repositoryType == FlowExecutionRepositoryType.CONTINUATION) {
 				DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(
 						conversationManagerToUse, executionStateRestorer);
 				if (maxContinuations != null) {
 					repository.setMaxContinuations(maxContinuations.intValue());
 				}
 				return repository;
-			} else if (repositoryType == RepositoryType.SINGLEKEY) {
+			} else if (repositoryType == FlowExecutionRepositoryType.SINGLEKEY) {
 				DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(
 						conversationManagerToUse, executionStateRestorer);
 				repository.setAlwaysGenerateNewNextKey(false);

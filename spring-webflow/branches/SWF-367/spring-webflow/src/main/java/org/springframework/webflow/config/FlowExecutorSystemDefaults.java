@@ -27,7 +27,7 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
  * 
  * @author Keith Donald
  */
-class FlowSystemDefaults implements Serializable {
+class FlowExecutorSystemDefaults implements Serializable {
 
 	/**
 	 * The default 'alwaysRedirectOnPause' execution attribute value.
@@ -37,7 +37,7 @@ class FlowSystemDefaults implements Serializable {
 	/**
 	 * The default flow execution repository type.
 	 */
-	private RepositoryType repositoryType = RepositoryType.CONTINUATION;
+	private FlowExecutionRepositoryType repositoryType = FlowExecutionRepositoryType.CONTINUATION;
 
 	/**
 	 * Overrides the alwaysRedirectOnPause execution attribute default. Defaults to "true".
@@ -51,7 +51,7 @@ class FlowSystemDefaults implements Serializable {
 	 * Overrides the default repository type.
 	 * @param repositoryType the new default value
 	 */
-	public void setRepositoryType(RepositoryType repositoryType) {
+	public void setRepositoryType(FlowExecutionRepositoryType repositoryType) {
 		this.repositoryType = repositoryType;
 	}
 
@@ -76,7 +76,7 @@ class FlowSystemDefaults implements Serializable {
 	 * @param selectedType the selected repository type (may be null if no selection was made)
 	 * @return the repository type, with the default applied if necessary
 	 */
-	public RepositoryType applyIfNecessary(RepositoryType selectedType) {
+	public FlowExecutionRepositoryType applyIfNecessary(FlowExecutionRepositoryType selectedType) {
 		if (selectedType == null) {
 			return repositoryType;
 		} else {

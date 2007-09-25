@@ -54,15 +54,15 @@ class FlowExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	private static final String CONVERSATION_MANAGER_PROPERTY = "conversationManager";
 
-	private static final String DEFINITION_LOCATOR_PROPERTY = "definitionLocator";
+	private static final String DEFINITION_LOCATOR_PROPERTY = "flowDefinitionLocator";
 
-	private static final String EXECUTION_LISTENER_LOADER_PROPERTY = "executionListenerLoader";
+	private static final String REPOSITORY_TYPE_PROPERTY = "flowExecutionRepositoryType";
+
+	private static final String EXECUTION_LISTENER_LOADER_PROPERTY = "flowExecutionListenerLoader";
 
 	private static final String MAX_CONTINUATIONS_PROPERTY = "maxContinuations";
 
 	private static final String MAX_CONVERSATIONS_PROPERTY = "maxConversations";
-
-	private static final String REPOSITORY_TYPE_PROPERTY = "repositoryType";
 
 	protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
 		BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder

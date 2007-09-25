@@ -25,7 +25,6 @@ import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.util.xml.DomUtils;
-import org.springframework.webflow.execution.factory.ConditionalFlowExecutionListenerLoader;
 import org.w3c.dom.Element;
 
 /**
@@ -39,16 +38,16 @@ class FlowExecutionListenerLoaderBeanDefinitionParser extends AbstractSingleBean
 
 	private static final String LISTENER_ELEMENT = "listener";
 
-	// properties
-
-	private static final String LISTENERS_PROPERTY = "listeners";
-
 	private static final String CRITERIA_ATTRIBUTE = "criteria";
 
 	private static final String REF_ATTRIBUTE = "ref";
 
+	// properties
+
+	private static final String LISTENERS_PROPERTY = "listeners";
+
 	protected Class getBeanClass(Element element) {
-		return ConditionalFlowExecutionListenerLoader.class;
+		return FlowExecutionListenerLoaderFactoryBean.class;
 	}
 
 	protected void doParse(Element element, BeanDefinitionBuilder definitionBuilder) {
