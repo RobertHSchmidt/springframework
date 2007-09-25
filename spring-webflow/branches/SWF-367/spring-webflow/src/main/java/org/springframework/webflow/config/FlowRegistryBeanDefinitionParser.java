@@ -25,7 +25,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.util.xml.DomUtils;
-import org.springframework.webflow.config.FlowLocation.Attribute;
 import org.w3c.dom.Element;
 
 /**
@@ -41,7 +40,9 @@ class FlowRegistryBeanDefinitionParser extends AbstractSingleBeanDefinitionParse
 
 	private static final String PATH_ATTRIBUTE = "path";
 
-	private static final String ATTRIBUTES_ELEMENT = "attributes";
+	private static final String DEFINITION_ATTRIBUTES_ELEMENT = "definition-attributes";
+
+	private static final String ATTRIBUTE_ELEMENT = "attribute";
 
 	private static final String NAME_ATTRIBUTE = "name";
 
@@ -72,15 +73,20 @@ class FlowRegistryBeanDefinitionParser extends AbstractSingleBeanDefinitionParse
 	}
 
 	private Set parseAttributes(Element element) {
-		List attributesElements = DomUtils.getChildElementsByTagName(element, ATTRIBUTES_ELEMENT);
-		HashSet attributes = new HashSet(attributesElements.size());
-		for (Iterator it = attributesElements.iterator(); it.hasNext();) {
-			Element attributeElement = (Element) it.next();
-			String name = attributeElement.getAttribute(NAME_ATTRIBUTE);
-			String value = attributeElement.getAttribute(VALUE_ATTRIBUTE);
-			String type = attributeElement.getAttribute(TYPE_ATTRIBUTE);
-			attributes.add(new Attribute(name, value, type));
+		Element definitionAttributesElement = DomUtils.getChildElementByTagName(element, DEFINITION_ATTRIBUTES_ELEMENT);
+		if (definitionAttributesElement != null) {
+			List attributeElements = DomUtils.getChildElementsByTagName(definitionAttributesElement, ATTRIBUTE_ELEMENT);
+			HashSet attributes = new HashSet(attributeElements.size());
+			for (Iterator it = attributeElements.iterator(); it.hasNext();) {
+				Element attributeElement = (Element) it.next();
+				String name = attributeElement.getAttribute(NAME_ATTRIBUTE);
+				String value = attributeElement.getAttribute(VALUE_ATTRIBUTE);
+				String type = attributeElement.getAttribute(TYPE_ATTRIBUTE);
+				attributes.add(new FlowElementAttribute(name, value, type));
+			}
+			return attributes;
+		} else {
+			return null;
 		}
-		return attributes;
 	}
 }

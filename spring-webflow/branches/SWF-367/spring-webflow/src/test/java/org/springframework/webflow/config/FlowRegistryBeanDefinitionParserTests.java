@@ -20,6 +20,8 @@ public class FlowRegistryBeanDefinitionParserTests extends TestCase {
 	public void testRegistryPopulated() {
 		FlowDefinition flow = registry.getFlowDefinition("flow");
 		assertEquals("flow", flow.getId());
+		assertEquals("bar", flow.getAttributes().get("foo"));
+		assertEquals(new Integer(2), flow.getAttributes().get("bar"));
 	}
 
 	public void testNoSuchFlow() {

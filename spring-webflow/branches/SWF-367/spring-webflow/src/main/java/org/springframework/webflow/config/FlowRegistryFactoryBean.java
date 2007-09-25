@@ -11,7 +11,6 @@ import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.webflow.config.FlowLocation.Attribute;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
@@ -91,7 +90,7 @@ class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware, BeanF
 		if (!location.getAttributes().isEmpty()) {
 			flowAttributes = new LocalAttributeMap();
 			for (Iterator it = location.getAttributes().iterator(); it.hasNext();) {
-				Attribute attribute = (Attribute) it.next();
+				FlowElementAttribute attribute = (FlowElementAttribute) it.next();
 				flowAttributes.put(attribute.getName(), getConvertedValue(attribute));
 			}
 		}
@@ -111,8 +110,8 @@ class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware, BeanF
 		return flowResource.getFilename().endsWith(".xml");
 	}
 
-	private Object getConvertedValue(Attribute attribute) {
-		if (attribute.getType() != null) {
+	private Object getConvertedValue(FlowElementAttribute attribute) {
+		if (attribute.needsTypeConversion()) {
 			ConversionExecutor converter = builderServices.getConversionService().getConversionExecutorByTargetAlias(
 					String.class, attribute.getType());
 			return converter.execute(attribute.getValue());

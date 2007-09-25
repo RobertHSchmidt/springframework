@@ -1,7 +1,7 @@
 package org.springframework.webflow.config;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -65,8 +65,8 @@ public class FlowExecutorFactoryBeanTests extends TestCase {
 				return flow;
 			}
 		});
-		Map attributes = new HashMap();
-		attributes.put("foo", "bar");
+		Set attributes = new HashSet();
+		attributes.add(new FlowElementAttribute("foo", "bar", null));
 		factoryBean.setFlowExecutionAttributes(attributes);
 		factoryBean.setFlowExecutionRepositoryType(FlowExecutionRepositoryType.CONTINUATION);
 		FlowExecutionListener listener = new FlowExecutionListenerAdapter() {

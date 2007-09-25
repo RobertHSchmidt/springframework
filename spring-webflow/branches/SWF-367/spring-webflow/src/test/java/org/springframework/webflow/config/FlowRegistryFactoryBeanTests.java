@@ -6,7 +6,6 @@ import junit.framework.TestCase;
 
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.webflow.config.FlowLocation.Attribute;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -21,8 +20,8 @@ public class FlowRegistryFactoryBeanTests extends TestCase {
 
 	public void testGetFlowRegistry() throws Exception {
 		HashSet attributes = new HashSet();
-		attributes.add(new Attribute("foo", "bar", null));
-		attributes.add(new Attribute("bar", "2", "integer"));
+		attributes.add(new FlowElementAttribute("foo", "bar", null));
+		attributes.add(new FlowElementAttribute("bar", "2", "integer"));
 		FlowLocation location1 = new FlowLocation("flow1", "org/springframework/webflow/config/flow.xml", attributes);
 		FlowLocation location2 = new FlowLocation("flow2", "org/springframework/webflow/config/flow.xml", attributes);
 		FlowLocation[] flowLocations = new FlowLocation[] { location1, location2 };

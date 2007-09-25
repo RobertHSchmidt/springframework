@@ -31,30 +31,4 @@ class FlowLocation {
 	public Set getAttributes() {
 		return attributes;
 	}
-
-	public static class Attribute {
-		private String name;
-		private String value;
-		private String type;
-
-		public Attribute(String name, String value, String type) {
-			Assert.hasText(name, "The name is required");
-			Assert.hasText(value, "The value is required");
-			this.name = name;
-			this.value = value;
-			this.type = type;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public String getValue() {
-			return value;
-		}
-
-		public String getType() {
-			return type;
-		}
-	}
 }
