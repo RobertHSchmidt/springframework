@@ -369,6 +369,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	 * @param inputMapper the input mapper
 	 */
 	public void setInputMapper(AttributeMapper inputMapper) {
+		Assert.notNull(inputMapper, "The input mapper cannot be null");
 		this.inputMapper = inputMapper;
 	}
 
@@ -403,6 +404,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	 * @param outputMapper the output mapper
 	 */
 	public void setOutputMapper(AttributeMapper outputMapper) {
+		Assert.notNull(outputMapper, "The output mapper cannot be null");
 		this.outputMapper = outputMapper;
 	}
 

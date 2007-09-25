@@ -307,7 +307,10 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	public void buildInputMapper() throws FlowBuilderException {
-		getFlow().setInputMapper(parseInputMapper(getDocumentElement()));
+		AttributeMapper inputMapper = parseInputMapper(getDocumentElement());
+		if (inputMapper != null) {
+			getFlow().setInputMapper(inputMapper);
+		}
 	}
 
 	public void buildStartActions() throws FlowBuilderException {
@@ -331,7 +334,10 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	public void buildOutputMapper() throws FlowBuilderException {
-		getFlow().setOutputMapper(parseOutputMapper(getDocumentElement()));
+		AttributeMapper outputMapper = parseOutputMapper(getDocumentElement());
+		if (outputMapper != null) {
+			getFlow().setOutputMapper(outputMapper);
+		}
 	}
 
 	public void buildExceptionHandlers() throws FlowBuilderException {
