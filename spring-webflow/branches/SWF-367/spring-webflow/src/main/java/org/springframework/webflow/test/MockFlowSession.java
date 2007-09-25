@@ -21,7 +21,9 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.RequestControlContext;
 import org.springframework.webflow.engine.State;
+import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowSession;
 
 /**
@@ -42,6 +44,19 @@ public class MockFlowSession implements FlowSession {
 	private MutableAttributeMap flashMap = new LocalAttributeMap();
 
 	private FlowSession parent;
+
+	/**
+	 * Creates a new mock flow session that sets a flow with id "mockFlow" as the 'active flow' in state "mockState".
+	 */
+	public MockFlowSession() {
+		setDefinition(new Flow("mockFlow"));
+		State state = new State(definition, "mockState") {
+			protected void doEnter(RequestControlContext context) throws FlowExecutionException {
+				// nothing to do
+			}
+		};
+		setState(state);
+	}
 
 	/**
 	 * Creates a new mock session in a created state for the specified flow definition.

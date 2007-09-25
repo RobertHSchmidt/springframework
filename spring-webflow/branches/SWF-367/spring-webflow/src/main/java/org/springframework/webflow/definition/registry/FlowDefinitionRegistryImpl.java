@@ -82,6 +82,10 @@ public class FlowDefinitionRegistryImpl implements FlowDefinitionRegistry {
 		flowDefinitions.put(definitionHolder.getFlowDefinitionId(), definitionHolder);
 	}
 
+	public void registerFlowDefinition(FlowDefinition definition) {
+		registerFlowDefinition(new StaticFlowDefinitionHolder(definition));
+	}
+
 	// internal helpers
 
 	/**

@@ -7,4 +7,8 @@ public class ClientFlowExecutionRepositoryTests extends TestCase {
 	protected void setUp() {
 
 	}
+
+	public void testMe() {
+
+	}
 }

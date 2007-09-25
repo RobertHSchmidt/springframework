@@ -3,21 +3,24 @@ package org.springframework.webflow.config;
 import java.io.File;
 import java.io.IOException;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 
 public class FlowDefinitionResourceFactory {
 	private ResourceLoader resourceLoader;
 
 	public FlowDefinitionResourceFactory() {
-		resourceLoader = new DefaultResourceLoader();
+		this.resourceLoader = new DefaultResourceLoader();
 	}
 
 	public FlowDefinitionResourceFactory(ResourceLoader resourceLoader) {
+		Assert.notNull(resourceLoader, "The resource loader cannot be null");
 		this.resourceLoader = resourceLoader;
 	}
 
@@ -58,6 +61,11 @@ public class FlowDefinitionResourceFactory {
 		return new FlowDefinitionResource(getFlowId(resource), resource, null);
 	}
 
+	public FlowDefinitionResource createClassPathResource(String path, Class clazz) {
+		Resource resource = new ClassPathResource(path, clazz);
+		return new FlowDefinitionResource(getFlowId(resource), resource, null);
+	}
+
 	private String getFlowId(Resource flowResource) {
 		String fileName = flowResource.getFilename();
 		int extensionIndex = fileName.lastIndexOf('.');
@@ -67,4 +75,5 @@ public class FlowDefinitionResourceFactory {
 			return fileName;
 		}
 	}
+
 }

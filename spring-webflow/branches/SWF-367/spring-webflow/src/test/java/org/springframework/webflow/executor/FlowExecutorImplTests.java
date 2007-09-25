@@ -5,7 +5,6 @@ import junit.framework.TestCase;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
-import org.springframework.webflow.definition.registry.support.StaticFlowDefinitionHolder;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.RequestControlContext;
@@ -36,7 +35,7 @@ public class FlowExecutorImplTests extends TestCase {
 	public void testLaunchAndEnd() {
 		Flow flow = new Flow("flow");
 		new EndState(flow, "end");
-		definitionLocator.registerFlowDefinition(new StaticFlowDefinitionHolder(flow));
+		definitionLocator.registerFlowDefinition(flow);
 		MockExternalContext context = new MockExternalContext();
 		context.setFlowId("flow");
 
@@ -52,7 +51,7 @@ public class FlowExecutorImplTests extends TestCase {
 	public void testLaunchAndResume() {
 		Flow flow = new Flow("flow");
 		new ViewState(flow, "pause", new StubViewFactory());
-		definitionLocator.registerFlowDefinition(new StaticFlowDefinitionHolder(flow));
+		definitionLocator.registerFlowDefinition(flow);
 		MockExternalContext context = new MockExternalContext();
 		context.setFlowId("flow");
 
@@ -82,7 +81,7 @@ public class FlowExecutorImplTests extends TestCase {
 				throw e;
 			}
 		};
-		definitionLocator.registerFlowDefinition(new StaticFlowDefinitionHolder(flow));
+		definitionLocator.registerFlowDefinition(flow);
 		MockExternalContext context = new MockExternalContext();
 		context.setFlowId("flow");
 

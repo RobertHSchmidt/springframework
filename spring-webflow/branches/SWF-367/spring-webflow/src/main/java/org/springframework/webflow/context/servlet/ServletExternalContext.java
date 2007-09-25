@@ -91,8 +91,6 @@ public class ServletExternalContext implements ExternalContext {
 
 	private String[] requestElements;
 
-	private FlowExecutor flowExecutor;
-
 	private String encodingScheme = DEFAULT_ENCODING_SCHEME;
 
 	private boolean flowExecutionRedirect;
@@ -111,8 +109,7 @@ public class ServletExternalContext implements ExternalContext {
 	 * @param request the servlet request
 	 * @param response the servlet response
 	 */
-	public ServletExternalContext(ServletContext context, ServletRequest request, ServletResponse response,
-			FlowExecutor flowExecutor) {
+	public ServletExternalContext(ServletContext context, ServletRequest request, ServletResponse response) {
 		this.context = context;
 		try {
 			this.request = (HttpServletRequest) request;
@@ -124,7 +121,6 @@ public class ServletExternalContext implements ExternalContext {
 		this.requestMap = new LocalAttributeMap(new HttpServletRequestMap(this.request));
 		this.sessionMap = new LocalSharedAttributeMap(new HttpSessionMap(this.request));
 		this.applicationMap = new LocalSharedAttributeMap(new HttpServletContextMap(context));
-		this.flowExecutor = flowExecutor;
 		parseRequestPathInfo();
 	}
 
@@ -134,28 +130,6 @@ public class ServletExternalContext implements ExternalContext {
 
 	public String getFlowExecutionKey() {
 		return flowExecutionKey;
-	}
-
-	private void parseRequestPathInfo() {
-		String pathInfo = request.getPathInfo();
-		if (pathInfo == null) {
-			throw new IllegalArgumentException(
-					"The request path is null - unable to determine flow id or flow execution key");
-		}
-		String[] pathElements = pathInfo.substring(1, pathInfo.length()).split("/");
-		if (pathElements[0].equals("executions")) {
-			flowId = pathElements[1];
-			flowExecutionKey = pathElements[2];
-			requestElements = null;
-		} else {
-			flowId = pathElements[0];
-			if (pathElements.length > 1) {
-				requestElements = new String[pathElements.length - 1];
-				System.arraycopy(pathElements, 1, requestElements, 0, requestElements.length);
-			} else {
-				requestElements = null;
-			}
-		}
 	}
 
 	public String getRequestMethod() {
@@ -228,7 +202,7 @@ public class ServletExternalContext implements ExternalContext {
 		this.exception = e;
 	}
 
-	public void processRequest() throws IOException {
+	public void execute(FlowExecutor flowExecutor) throws IOException {
 		ExternalContextHolder.setExternalContext(this);
 		try {
 			flowExecutor.execute(this);
@@ -259,6 +233,28 @@ public class ServletExternalContext implements ExternalContext {
 			}
 		} finally {
 			ExternalContextHolder.setExternalContext(null);
+		}
+	}
+
+	private void parseRequestPathInfo() {
+		String pathInfo = request.getPathInfo();
+		if (pathInfo == null) {
+			throw new IllegalArgumentException(
+					"The request path is null - unable to determine flow id or flow execution key");
+		}
+		String[] pathElements = pathInfo.substring(1, pathInfo.length()).split("/");
+		if (pathElements[0].equals("executions")) {
+			flowId = pathElements[1];
+			flowExecutionKey = pathElements[2];
+			requestElements = null;
+		} else {
+			flowId = pathElements[0];
+			if (pathElements.length > 1) {
+				requestElements = new String[pathElements.length - 1];
+				System.arraycopy(pathElements, 1, requestElements, 0, requestElements.length);
+			} else {
+				requestElements = null;
+			}
 		}
 	}
 

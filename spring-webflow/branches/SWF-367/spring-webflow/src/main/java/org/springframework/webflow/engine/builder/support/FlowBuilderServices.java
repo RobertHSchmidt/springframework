@@ -5,6 +5,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.Assert;
 import org.springframework.webflow.action.BeanInvokingActionFactory;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
@@ -49,6 +50,7 @@ public class FlowBuilderServices {
 	}
 
 	public void setFlowArtifactFactory(FlowArtifactFactory flowArtifactFactory) {
+		Assert.notNull(flowArtifactFactory, "The flow artifact factory is required");
 		this.flowArtifactFactory = flowArtifactFactory;
 	}
 
@@ -57,6 +59,7 @@ public class FlowBuilderServices {
 	}
 
 	public void setBeanInvokingActionFactory(BeanInvokingActionFactory beanInvokingActionFactory) {
+		Assert.notNull(beanInvokingActionFactory, "The bean invoking action factory is required");
 		this.beanInvokingActionFactory = beanInvokingActionFactory;
 	}
 
@@ -65,6 +68,7 @@ public class FlowBuilderServices {
 	}
 
 	public void setConversionService(ConversionService conversionService) {
+		Assert.notNull(conversionService, "The type conversion service cannot be null");
 		this.conversionService = conversionService;
 	}
 
@@ -73,6 +77,7 @@ public class FlowBuilderServices {
 	}
 
 	public void setExpressionParser(ExpressionParser expressionParser) {
+		Assert.notNull(expressionParser, "The expression parser cannot be null");
 		this.expressionParser = expressionParser;
 	}
 
@@ -81,6 +86,7 @@ public class FlowBuilderServices {
 	}
 
 	public void setResourceLoader(ResourceLoader resourceLoader) {
+		Assert.notNull("The resource loader cannot be null");
 		this.resourceLoader = resourceLoader;
 	}
 
@@ -89,6 +95,7 @@ public class FlowBuilderServices {
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+		Assert.notNull("The bean factory cannot be null");
 		this.beanFactory = beanFactory;
 	}
 }
