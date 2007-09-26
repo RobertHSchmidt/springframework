@@ -59,7 +59,11 @@ public class MockExternalContext implements ExternalContext {
 
 	private Object response;
 
-	private boolean flowExecutionRedirect;
+	private boolean flowExecutionRedirectResult;
+
+	private FlowDefinitionRedirectResult flowDefinitionRedirectResult;
+
+	private String externalRedirectResult;
 
 	private String pausedFlowExecutionKeyResult;
 
@@ -220,15 +224,15 @@ public class MockExternalContext implements ExternalContext {
 	}
 
 	public void sendFlowExecutionRedirect() {
-		this.flowExecutionRedirect = true;
+		flowExecutionRedirectResult = true;
 	}
 
 	public void sendFlowDefinitionRedirect(String flowId, String[] requestElements, ParameterMap requestParameters) {
-
+		flowDefinitionRedirectResult = new FlowDefinitionRedirectResult(flowId, requestElements, requestParameters);
 	}
 
 	public void sendExternalRedirect(String resourceUri) {
-
+		externalRedirectResult = resourceUri;
 	}
 
 	public void setEndedResult() {
@@ -236,15 +240,23 @@ public class MockExternalContext implements ExternalContext {
 	}
 
 	public void setExceptionResult(FlowException e) {
-		this.exceptionResult = e;
+		exceptionResult = e;
 	}
 
 	public void setPausedResult(String flowExecutionKey) {
 		this.pausedFlowExecutionKeyResult = flowExecutionKey;
 	}
 
-	public boolean getFlowExecutionRedirect() {
-		return flowExecutionRedirect;
+	public boolean getFlowExecutionRedirectResult() {
+		return flowExecutionRedirectResult;
+	}
+
+	public FlowDefinitionRedirectResult getFlowDefinitionRedirectResult() {
+		return flowDefinitionRedirectResult;
+	}
+
+	public String getExternalRedirectResult() {
+		return externalRedirectResult;
 	}
 
 	public String getPausedFlowExecutionKeyResult() {
@@ -253,5 +265,34 @@ public class MockExternalContext implements ExternalContext {
 
 	public FlowException getExceptionResult() {
 		return exceptionResult;
+	}
+
+	public static class FlowDefinitionRedirectResult {
+
+		private String flowId;
+
+		private String[] requestElements;
+
+		private ParameterMap requestParameters;
+
+		public FlowDefinitionRedirectResult(String flowId, String[] requestElements, ParameterMap requestParameters) {
+			super();
+			this.flowId = flowId;
+			this.requestElements = requestElements;
+			this.requestParameters = requestParameters;
+		}
+
+		public String getFlowId() {
+			return flowId;
+		}
+
+		public String[] getRequestElements() {
+			return requestElements;
+		}
+
+		public ParameterMap getRequestParameters() {
+			return requestParameters;
+		}
+
 	}
 }

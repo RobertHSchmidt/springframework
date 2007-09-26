@@ -672,10 +672,11 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 
 	private ViewFactory parseViewFactory(Element element) {
 		String viewName = element.getAttribute(VIEW_ATTRIBUTE);
-		return getFlowServiceLocator().getViewFactoryCreator().create(viewName);
+		return getFlowServiceLocator().getViewFactoryCreator().createViewFactory(viewName);
 	}
 
 	private Action parseFinalResponseAction(Element element) {
+		String viewName = element.getAttribute(VIEW_ATTRIBUTE);
 		// TODO
 		return null;
 	}

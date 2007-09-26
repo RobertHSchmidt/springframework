@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.core.FlowException;
@@ -288,6 +289,7 @@ public class ServletExternalContext implements ExternalContext {
 		private ParameterMap requestParameters;
 
 		public FlowDefinitionRedirector(String flowId, String[] requestElements, ParameterMap requestParameters) {
+			Assert.hasText(flowId, "The id of the flow definition to redirect to is required");
 			this.flowId = flowId;
 			this.requestElements = requestElements;
 			this.requestParameters = requestParameters;
