@@ -49,7 +49,7 @@ public class ViewStateTests extends TestCase {
 		context.setAlwaysRedirectOnPause(true);
 		state.enter(context);
 		assertFalse("Render called", context.getFlowScope().contains("renderCalled"));
-		assertTrue(context.getMockExternalContext().getFlowExecutionRedirect());
+		assertTrue(context.getMockExternalContext().getFlowExecutionRedirectResult());
 	}
 
 	public void testResumeViewStateForRefresh() {

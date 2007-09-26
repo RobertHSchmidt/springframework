@@ -9,6 +9,6 @@ public interface ViewFactoryCreator {
 	 * @param viewName the name of the view to be produced by the created view factory
 	 * @return the view factory
 	 */
-	ViewFactory create(String viewName);
+	ViewFactory createViewFactory(String viewName);
 
 }

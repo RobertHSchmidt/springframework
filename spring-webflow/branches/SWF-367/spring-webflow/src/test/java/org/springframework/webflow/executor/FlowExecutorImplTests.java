@@ -43,7 +43,7 @@ public class FlowExecutorImplTests extends TestCase {
 		executor.execute(context);
 		ExternalContextHolder.setExternalContext(null);
 
-		assertFalse(context.getFlowExecutionRedirect());
+		assertFalse(context.getFlowExecutionRedirectResult());
 		assertNull(context.getPausedFlowExecutionKeyResult());
 		assertNull(context.getExceptionResult());
 	}
@@ -61,7 +61,7 @@ public class FlowExecutorImplTests extends TestCase {
 
 		assertNotNull(context.getPausedFlowExecutionKeyResult());
 		assertNull(context.getExceptionResult());
-		assertFalse(context.getFlowExecutionRedirect());
+		assertFalse(context.getFlowExecutionRedirectResult());
 
 		MockExternalContext context2 = new MockExternalContext();
 		context2.setSessionMap(context.getSessionMap());
@@ -89,7 +89,7 @@ public class FlowExecutorImplTests extends TestCase {
 		executor.execute(context);
 		ExternalContextHolder.setExternalContext(null);
 
-		assertFalse(context.getFlowExecutionRedirect());
+		assertFalse(context.getFlowExecutionRedirectResult());
 		assertNull(context.getPausedFlowExecutionKeyResult());
 		assertNotNull(context.getExceptionResult());
 		assertSame(e, context.getExceptionResult().getCause());
