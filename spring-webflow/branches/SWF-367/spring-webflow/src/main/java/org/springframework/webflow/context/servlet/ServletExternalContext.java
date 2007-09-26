@@ -173,11 +173,15 @@ public class ServletExternalContext implements ExternalContext {
 		return response;
 	}
 
+	public boolean isResponseCommitted() {
+		return flowExecutionRedirect == true || flowDefinitionRedirector != null || resourceUri != null;
+	}
+
 	// response requesters
 
 	// TODO fragment support?
 	public void sendFlowExecutionRedirect() {
-		this.flowExecutionRedirect = true;
+		flowExecutionRedirect = true;
 	}
 
 	// TODO fragment support?

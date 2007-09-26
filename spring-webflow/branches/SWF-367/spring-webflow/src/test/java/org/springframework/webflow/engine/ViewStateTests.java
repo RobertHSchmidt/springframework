@@ -39,7 +39,20 @@ public class ViewStateTests extends TestCase {
 		assertFalse(context.getFlowExecutionRedirectSent());
 	}
 
-	public void testEnterViewStateWithRedirect() {
+	public void testEnterViewStateWithLocalRedirect() {
+		Flow flow = new Flow("myFlow");
+		StubViewFactory viewFactory = new StubViewFactory();
+		ViewState state = new ViewState(flow, "viewState", viewFactory);
+		state.setRedirect(true);
+		state.getTransitionSet().add(new Transition(on("submit"), to("finish")));
+		new EndState(flow, "finish");
+		MockRequestControlContext context = new MockRequestControlContext(flow);
+		state.enter(context);
+		assertFalse("Render called", context.getFlowScope().contains("renderCalled"));
+		assertTrue(context.getMockExternalContext().getFlowExecutionRedirectResult());
+	}
+
+	public void testEnterViewStateWithAlwaysRedirectOnPause() {
 		Flow flow = new Flow("myFlow");
 		StubViewFactory viewFactory = new StubViewFactory();
 		ViewState state = new ViewState(flow, "viewState", viewFactory);
@@ -47,6 +60,19 @@ public class ViewStateTests extends TestCase {
 		new EndState(flow, "finish");
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		context.setAlwaysRedirectOnPause(true);
+		state.enter(context);
+		assertFalse("Render called", context.getFlowScope().contains("renderCalled"));
+		assertTrue(context.getMockExternalContext().getFlowExecutionRedirectResult());
+	}
+
+	public void testEnterViewStateResponseAlreadyCommitted() {
+		Flow flow = new Flow("myFlow");
+		StubViewFactory viewFactory = new StubViewFactory();
+		ViewState state = new ViewState(flow, "viewState", viewFactory);
+		state.getTransitionSet().add(new Transition(on("submit"), to("finish")));
+		new EndState(flow, "finish");
+		MockRequestControlContext context = new MockRequestControlContext(flow);
+		context.getMockExternalContext().sendFlowExecutionRedirect();
 		state.enter(context);
 		assertFalse("Render called", context.getFlowScope().contains("renderCalled"));
 		assertTrue(context.getMockExternalContext().getFlowExecutionRedirectResult());
