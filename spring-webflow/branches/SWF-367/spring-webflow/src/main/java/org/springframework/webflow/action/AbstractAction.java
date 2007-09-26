@@ -24,7 +24,6 @@ import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.support.EventFactorySupport;
 
 /**
  * Base action that provides assistance commonly needed by action implementations. This includes:
