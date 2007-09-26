@@ -142,4 +142,6 @@ public interface ExternalContext {
 
 	public void setExceptionResult(FlowException e);
 
+	public boolean isResponseCommitted();
+
 }

@@ -61,6 +61,14 @@ public class ViewState extends TransitionableState {
 	}
 
 	/**
+	 * Sets whether this view state should send a flow execution redirect when entered.
+	 * @param redirect the redirect flag
+	 */
+	public void setRedirect(boolean redirect) {
+		this.redirect = redirect;
+	}
+
+	/**
 	 * Returns the list of actions executable by this view state on entry and on refresh. The returned list is mutable.
 	 * @return the state action list
 	 */
@@ -70,12 +78,18 @@ public class ViewState extends TransitionableState {
 
 	protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 		context.assignFlowExecutionKey();
-		if (shouldRedirect(context)) {
-			context.getExternalContext().sendFlowExecutionRedirect();
+		if (context.getExternalContext().isResponseCommitted()) {
+			logger.debug("Response already committed in this request: nothing else to do");
+			return;
 		} else {
-			View view = viewFactory.getView(context);
-			renderActionList.execute(context);
-			view.render();
+			if (shouldRedirect(context)) {
+				context.getExternalContext().sendFlowExecutionRedirect();
+			} else {
+				View view = viewFactory.getView(context);
+				renderActionList.execute(context);
+				view.render();
+				context.getFlashScope().clear();
+			}
 		}
 	}
 
@@ -86,12 +100,8 @@ public class ViewState extends TransitionableState {
 		} else {
 			renderActionList.execute(context);
 			view.render();
+			context.getFlashScope().clear();
 		}
-	}
-
-	public void exit(RequestControlContext context) {
-		super.exit(context);
-		context.getFlashScope().clear();
 	}
 
 	private boolean shouldRedirect(RequestControlContext context) {

@@ -267,6 +267,11 @@ public class MockExternalContext implements ExternalContext {
 		return exceptionResult;
 	}
 
+	public boolean isResponseCommitted() {
+		return flowExecutionRedirectResult == true || flowDefinitionRedirectResult != null
+				|| externalRedirectResult != null;
+	}
+
 	public static class FlowDefinitionRedirectResult {
 
 		private String flowId;

@@ -168,10 +168,6 @@ public class PortletExternalContext implements ExternalContext {
 		throw new UnsupportedOperationException("Auto-generated method stub");
 	}
 
-	public String toString() {
-		return new ToStringCreator(this).append("requestParameterMap", getRequestParameterMap()).toString();
-	}
-
 	public String getFlowExecutionKey() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Auto-generated method stub");
@@ -211,4 +207,14 @@ public class PortletExternalContext implements ExternalContext {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Auto-generated method stub");
 	}
+
+	public boolean isResponseCommitted() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
+
+	public String toString() {
+		return new ToStringCreator(this).append("requestParameterMap", getRequestParameterMap()).toString();
+	}
+
 }
