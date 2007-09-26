@@ -85,10 +85,15 @@ public class ViewState extends TransitionableState {
 			if (shouldRedirect(context)) {
 				context.getExternalContext().sendFlowExecutionRedirect();
 			} else {
-				View view = viewFactory.getView(context);
 				renderActionList.execute(context);
-				view.render();
-				context.getFlashScope().clear();
+				if (context.getExternalContext().isResponseCommitted()) {
+					logger.debug("Response already committed in this request: nothing else to do");
+					return;
+				} else {
+					View view = viewFactory.getView(context);
+					view.render();
+					context.getFlashScope().clear();
+				}
 			}
 		}
 	}
@@ -99,8 +104,13 @@ public class ViewState extends TransitionableState {
 			context.handleEvent(view.getEvent());
 		} else {
 			renderActionList.execute(context);
-			view.render();
-			context.getFlashScope().clear();
+			if (context.getExternalContext().isResponseCommitted()) {
+				logger.debug("Response already committed in this request: nothing else to do");
+				return;
+			} else {
+				view.render();
+				context.getFlashScope().clear();
+			}
 		}
 	}
 
