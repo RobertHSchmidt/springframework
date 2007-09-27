@@ -2,28 +2,32 @@ package org.springframework.webflow.engine.builder.support;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.binding.convert.ConversionService;
+import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.binding.expression.ExpressionParser;
+import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.webflow.action.BeanInvokingActionFactory;
+import org.springframework.webflow.core.DefaultExpressionParserFactory;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.execution.Action;
 
-public class FlowBuilderServices {
+public class FlowBuilderServices implements ResourceLoaderAware, BeanFactoryAware {
 
 	/**
 	 * The factory encapsulating the creation of central Flow artifacts such as {@link Flow flows} and
 	 * {@link State states}.
 	 */
-	private FlowArtifactFactory flowArtifactFactory;
+	private FlowArtifactFactory flowArtifactFactory = new FlowArtifactFactory();
 
 	/**
 	 * The factory encapsulating the creation of bean invoking actions, actions that adapt methods on objects to the
 	 * {@link Action} interface.
 	 */
-	private BeanInvokingActionFactory beanInvokingActionFactory;
+	private BeanInvokingActionFactory beanInvokingActionFactory = new BeanInvokingActionFactory();
 
 	/**
 	 * The view factory creator.
@@ -33,12 +37,12 @@ public class FlowBuilderServices {
 	/**
 	 * The conversion service.
 	 */
-	private ConversionService conversionService;
+	private ConversionService conversionService = new DefaultConversionService();
 
 	/**
 	 * The parser for parsing expression strings into expression objects.
 	 */
-	private ExpressionParser expressionParser;
+	private ExpressionParser expressionParser = DefaultExpressionParserFactory.getExpressionParser();
 
 	/**
 	 * A resource loader that can load resources.

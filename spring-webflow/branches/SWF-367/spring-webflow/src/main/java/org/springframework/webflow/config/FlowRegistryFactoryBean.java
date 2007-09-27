@@ -21,7 +21,6 @@ import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.RefreshableFlowDefinitionHolder;
 import org.springframework.webflow.engine.builder.support.DefaultFlowServiceLocator;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.engine.builder.support.FlowBuilderSystemDefaults;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
 
 class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware, BeanFactoryAware, InitializingBean {
@@ -121,7 +120,7 @@ class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware, BeanF
 	}
 
 	private void initBuilderServices() {
-		builderServices = new FlowBuilderSystemDefaults().createBuilderServices();
+		builderServices = new FlowBuilderServices();
 		builderServices.setResourceLoader(resourceLoader);
 		builderServices.setBeanFactory(beanFactory);
 	}

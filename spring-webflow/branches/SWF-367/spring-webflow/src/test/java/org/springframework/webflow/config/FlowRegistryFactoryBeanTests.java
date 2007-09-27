@@ -9,7 +9,6 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.engine.builder.support.FlowBuilderSystemDefaults;
 
 public class FlowRegistryFactoryBeanTests extends TestCase {
 	private FlowRegistryFactoryBean factoryBean;
@@ -58,7 +57,7 @@ public class FlowRegistryFactoryBeanTests extends TestCase {
 		FlowLocation location1 = new FlowLocation(null, "org/springframework/webflow/config/flow.xml", null);
 		FlowLocation[] flowLocations = new FlowLocation[] { location1 };
 		factoryBean.setFlowLocations(flowLocations);
-		FlowBuilderServices builderServices = new FlowBuilderSystemDefaults().createBuilderServices();
+		FlowBuilderServices builderServices = new FlowBuilderServices();
 		factoryBean.setFlowBuilderServices(builderServices);
 		factoryBean.setResourceLoader(new DefaultResourceLoader());
 		factoryBean.setBeanFactory(new StaticListableBeanFactory());

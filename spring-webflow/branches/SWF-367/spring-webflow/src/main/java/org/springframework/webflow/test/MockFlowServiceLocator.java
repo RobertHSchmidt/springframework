@@ -40,7 +40,7 @@ public class MockFlowServiceLocator extends DefaultFlowServiceLocator {
 	 * Creates a new mock flow service locator.
 	 */
 	public MockFlowServiceLocator() {
-		super(new FlowDefinitionRegistryImpl());
+		super(new FlowDefinitionRegistryImpl(), FlowBuilderSystemDefaults.get());
 	}
 
 	/**

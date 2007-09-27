@@ -43,10 +43,6 @@ public class DefaultFlowServiceLocator implements FlowServiceLocator {
 
 	private FlowBuilderServices builderServices;
 
-	public DefaultFlowServiceLocator(FlowDefinitionLocator subflowRegistry) {
-		this(subflowRegistry, FlowBuilderSystemDefaults.get());
-	}
-
 	public DefaultFlowServiceLocator(FlowDefinitionLocator subflowRegistry, FlowBuilderServices builderServices) {
 		Assert.notNull(subflowRegistry, "The subflow registry is required");
 		Assert.notNull(builderServices, "The flow builder services holder is required");
