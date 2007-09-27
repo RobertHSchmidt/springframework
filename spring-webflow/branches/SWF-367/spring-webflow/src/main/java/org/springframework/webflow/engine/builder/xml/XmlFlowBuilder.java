@@ -617,33 +617,14 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	private void parseAndAddViewState(Element element, Flow flow) {
-		String encodedView = element.getAttribute(VIEW_ATTRIBUTE);
-		ViewFactory viewFactory;
-		boolean redirect;
-		if (encodedView.startsWith(REDIRECT_PREFIX)) {
-			String viewName = encodedView.substring(REDIRECT_PREFIX.length());
-			viewFactory = flowServiceLocator.getViewFactoryCreator().createViewFactory(viewName);
-			redirect = true;
-		} else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
-			String externalUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());
-			Expression urlExpr = (Expression) fromStringTo(Expression.class).execute(externalUrl);
-			viewFactory = new ActionInvokingViewFactory(new ExternalRedirectAction(urlExpr));
-			redirect = false;
-		} else if (encodedView.startsWith(FLOW_DEFINITION_REDIRECT_PREFIX)) {
-			String flowRedirect = encodedView.substring(FLOW_DEFINITION_REDIRECT_PREFIX.length());
-			viewFactory = new ActionInvokingViewFactory(FlowDefinitionRedirectAction.create(flowRedirect));
-			redirect = false;
-		} else if (encodedView.startsWith(BEAN_PREFIX)) {
-			viewFactory = flowServiceLocator.getViewFactory(encodedView.substring(BEAN_PREFIX.length()));
-			redirect = false;
-		} else {
-			Expression viewNameExpr = (Expression) fromStringTo(Expression.class).execute(encodedView);
-			viewFactory = flowServiceLocator.getViewFactoryCreator().createViewFactory(encodedView);
-			redirect = false;
+		ViewInfo viewInfo = parseViewInfo(element);
+		boolean redirect = false;
+		if (viewInfo.redirect != null) {
+			redirect = viewInfo.redirect.booleanValue();
 		}
-		getFlowArtifactFactory().createViewState(parseId(element), flow, parseEntryActions(element), viewFactory,
-				redirect, parseRenderActions(element), parseTransitions(element), parseExceptionHandlers(element),
-				parseExitActions(element), parseAttributes(element));
+		getFlowArtifactFactory().createViewState(parseId(element), flow, parseEntryActions(element),
+				viewInfo.viewFactory, redirect, parseRenderActions(element), parseTransitions(element),
+				parseExceptionHandlers(element), parseExitActions(element), parseAttributes(element));
 	}
 
 	private void parseAndAddDecisionState(Element element, Flow flow) {
@@ -675,6 +656,61 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 		} else {
 			return null;
 		}
+	}
+
+	private ViewInfo parseViewInfo(Element element) {
+		String encodedView = element.getAttribute(VIEW_ATTRIBUTE);
+		if (encodedView.startsWith(REDIRECT_PREFIX)) {
+			String encodedViewName = encodedView.substring(REDIRECT_PREFIX.length());
+			Expression viewName = (Expression) fromStringTo(Expression.class).execute(encodedViewName);
+			ViewFactory viewFactory = flowServiceLocator.getViewFactoryCreator().createViewFactory(viewName);
+			return new ViewInfo(viewFactory, Boolean.TRUE);
+		} else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
+			String encodedUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());
+			Expression externalUrl = (Expression) fromStringTo(Expression.class).execute(encodedUrl);
+			ViewFactory viewFactory = new ActionInvokingViewFactory(new ExternalRedirectAction(externalUrl));
+			return new ViewInfo(viewFactory, Boolean.FALSE);
+		} else if (encodedView.startsWith(FLOW_DEFINITION_REDIRECT_PREFIX)) {
+			String flowRedirect = encodedView.substring(FLOW_DEFINITION_REDIRECT_PREFIX.length());
+			ViewFactory viewFactory = new ActionInvokingViewFactory(FlowDefinitionRedirectAction.create(flowRedirect));
+			return new ViewInfo(viewFactory, Boolean.FALSE);
+		} else if (encodedView.startsWith(BEAN_PREFIX)) {
+			ViewFactory viewFactory = flowServiceLocator.getViewFactory(encodedView.substring(BEAN_PREFIX.length()));
+			return new ViewInfo(viewFactory, Boolean.FALSE);
+		} else {
+			Expression viewName = (Expression) fromStringTo(Expression.class).execute(encodedView);
+			ViewFactory viewFactory = flowServiceLocator.getViewFactoryCreator().createViewFactory(viewName);
+			return new ViewInfo(viewFactory, null);
+		}
+	}
+
+	private static class ViewInfo {
+		private ViewFactory viewFactory;
+		private Boolean redirect;
+
+		public ViewInfo(ViewFactory viewFactory, Boolean redirect) {
+			this.viewFactory = viewFactory;
+			this.redirect = redirect;
+		}
+	}
+
+	private Action parseFinalResponseAction(Element element) {
+		Action finalResponseAction;
+		String encodedView = element.getAttribute(VIEW_ATTRIBUTE);
+		if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
+			String encodedUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());
+			Expression externalUrl = (Expression) fromStringTo(Expression.class).execute(encodedUrl);
+			finalResponseAction = new ExternalRedirectAction(externalUrl);
+		} else if (encodedView.startsWith(FLOW_DEFINITION_REDIRECT_PREFIX)) {
+			String flowRedirect = encodedView.substring(FLOW_DEFINITION_REDIRECT_PREFIX.length());
+			finalResponseAction = FlowDefinitionRedirectAction.create(flowRedirect);
+		} else if (encodedView.startsWith(BEAN_PREFIX)) {
+			finalResponseAction = flowServiceLocator.getAction(encodedView.substring(BEAN_PREFIX.length()));
+		} else {
+			Expression viewName = (Expression) fromStringTo(Expression.class).execute(encodedView);
+			finalResponseAction = flowServiceLocator.getViewFactoryCreator().createFinalResponseAction(viewName);
+		}
+		return finalResponseAction;
 	}
 
 	private Action[] parseRenderActions(Element element) {
@@ -717,17 +753,6 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 		TransitionCriteria executionCriteria = TransitionCriteriaChain.criteriaChainFor(parseAnnotatedActions(element));
 		return getFlowArtifactFactory().createTransition(targetStateResolver, matchingCriteria, executionCriteria,
 				parseAttributes(element));
-	}
-
-	private ViewFactory parseViewFactory(Element element) {
-		String viewName = element.getAttribute(VIEW_ATTRIBUTE);
-		return getFlowServiceLocator().getViewFactoryCreator().createViewFactory(viewName);
-	}
-
-	private Action parseFinalResponseAction(Element element) {
-		String viewName = element.getAttribute(VIEW_ATTRIBUTE);
-		// TODO
-		return null;
 	}
 
 	private Flow parseSubflow(Element element) {
