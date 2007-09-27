@@ -25,8 +25,8 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  */
 public class WebFlowConfigNamespaceHandler extends NamespaceHandlerSupport {
 	public void init() {
-		registerBeanDefinitionParser("executor", new FlowExecutorBeanDefinitionParser());
-		registerBeanDefinitionParser("execution-listeners", new FlowExecutionListenerLoaderBeanDefinitionParser());
-		registerBeanDefinitionParser("registry", new FlowRegistryBeanDefinitionParser());
+		registerBeanDefinitionParser("flow-executor", new FlowExecutorBeanDefinitionParser());
+		registerBeanDefinitionParser("flow-execution-listeners", new FlowExecutionListenerLoaderBeanDefinitionParser());
+		registerBeanDefinitionParser("flow-registry", new FlowRegistryBeanDefinitionParser());
 	}
 }
