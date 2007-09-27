@@ -15,7 +15,6 @@
  */
 package org.springframework.webflow.config;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -70,7 +69,7 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	/**
 	 * Execution attributes to apply.
 	 */
-	private Set flowExecutionAttributes = Collections.EMPTY_SET;
+	private Set flowExecutionAttributes;
 
 	/**
 	 * The loader that will determine which listeners to attach to flow definition executions.
@@ -343,9 +342,11 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 
 	private MutableAttributeMap createExecutionAttributeMap() {
 		LocalAttributeMap executionAttributes = new LocalAttributeMap();
-		for (Iterator it = flowExecutionAttributes.iterator(); it.hasNext();) {
-			FlowElementAttribute attribute = (FlowElementAttribute) it.next();
-			executionAttributes.put(attribute.getName(), getConvertedValue(attribute));
+		if (flowExecutionAttributes != null) {
+			for (Iterator it = flowExecutionAttributes.iterator(); it.hasNext();) {
+				FlowElementAttribute attribute = (FlowElementAttribute) it.next();
+				executionAttributes.put(attribute.getName(), getConvertedValue(attribute));
+			}
 		}
 		return executionAttributes;
 	}
