@@ -20,7 +20,7 @@ Provides an easy way to configure a flow executor and an XML flow definition reg
 
 	<xsd:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans-2.0.xsd" />
 
-	<xsd:element name="registry">
+	<xsd:element name="flow-registry">
 		<xsd:annotation>
 			<xsd:documentation>
 				<![CDATA[
@@ -67,7 +67,7 @@ Individual paths such as:
 
 	<xsd:complexType name="locationType">
 		<xsd:sequence>
-			<xsd:element name="definition-attributes" type="definitionAttributesType" minOccurs="0">
+			<xsd:element name="flow-definition-attributes" type="flowDefinitionAttributesType" minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
@@ -102,7 +102,7 @@ that matches multiple resources.
 		</xsd:attribute>
 	</xsd:complexType>
 	
-	<xsd:element name="executor">
+	<xsd:element name="flow-executor">
 		<xsd:annotation>
 			<xsd:documentation>
 				<![CDATA[
@@ -117,7 +117,7 @@ an execution repository.
 			<xsd:complexContent>
 				<xsd:extension base="beans:identifiedType">
 					<xsd:sequence>
-						<xsd:element name="repository" type="repositoryType" minOccurs="0">
+						<xsd:element name="flow-execution-repository" type="flowExecutionRepositoryType" minOccurs="0">
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
@@ -127,7 +127,7 @@ to be more fine grained than the repositoryType attribute on executor.
 								</xsd:documentation>
 							</xsd:annotation>
 						</xsd:element>
-						<xsd:element name="execution-attributes" type="executionAttributesType" minOccurs="0">
+						<xsd:element name="flow-execution-attributes" type="flowExecutionAttributesType" minOccurs="0">
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
@@ -137,7 +137,7 @@ These attributes may influence execution behavior.
 								</xsd:documentation>
 							</xsd:annotation>
 						</xsd:element>
-						<xsd:element name="execution-listeners" type="executionListenersType" minOccurs="0">
+						<xsd:element name="flow-execution-listeners" type="flowExecutionListenersType" minOccurs="0">
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
@@ -147,17 +147,7 @@ The listeners eligible for observing the lifecycle of executions launched by thi
 							</xsd:annotation>
 						</xsd:element>
 					</xsd:sequence>
-					<xsd:attribute name="repository-type" type="repositoryTypeAttribute">
-						<xsd:annotation>
-							<xsd:documentation>
-						<![CDATA[
-The type of execution repository to use.  The repository is responsible for managing flow execution 
-persistence between requests.
-]]>
-							</xsd:documentation>
-						</xsd:annotation>			
-					</xsd:attribute>
-					<xsd:attribute name="registry-ref" type="xsd:string" use="required">
+					<xsd:attribute name="flow-registry" type="xsd:string" default="flowRegistry">
 						<xsd:annotation>
 							<xsd:documentation>
 								<![CDATA[
@@ -171,7 +161,7 @@ The idref to the registry this executor will use to locate flow definitions for 
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:simpleType name="repositoryTypeAttribute">
+	<xsd:simpleType name="flowExecutionRepositoryTypeAttribute">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="continuation">
 				<xsd:annotation>
@@ -216,8 +206,8 @@ constant throughout the life of the execution.
 		</xsd:restriction>
 	</xsd:simpleType>
 	
-	<xsd:complexType name="repositoryType">
-		<xsd:attribute name="type" type="repositoryTypeAttribute" use="required">
+	<xsd:complexType name="flowExecutionRepositoryType">
+		<xsd:attribute name="type" type="flowExecutionRepositoryTypeAttribute" use="required">
 			<xsd:annotation>
 				<xsd:documentation>
 					<![CDATA[
@@ -232,7 +222,7 @@ persistence between requests.
 				<xsd:documentation>
 				<![CDATA[
 The maximum number of concurrent conversations allowed by this repository.  It is illegal to set this
-attribute if you are also setting the 'conversation-manager-ref' attribute.
+attribute if you are also setting the 'conversation-manager' attribute.
 ]]>
 				</xsd:documentation>
 			</xsd:annotation>
@@ -247,7 +237,7 @@ This attribute is only relevant when the repository type is 'continuation'.
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
-		<xsd:attribute name="conversation-manager-ref" type="xsd:string">
+		<xsd:attribute name="conversation-manager" type="xsd:string">
 			<xsd:annotation>
 				<xsd:documentation>
 				<![CDATA[
@@ -260,9 +250,9 @@ When used, any value for the 'max-conversations' attribute is ignored.
 		</xsd:attribute>
 	</xsd:complexType>
 
-	<xsd:complexType name="executionListenersType">
+	<xsd:complexType name="flowExecutionListenersType">
 		<xsd:sequence>
-			<xsd:element name="listener" type="listenerType" maxOccurs="unbounded">
+			<xsd:element name="listener" type="flowExecutionListenerType" maxOccurs="unbounded">
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
@@ -275,7 +265,7 @@ flow definitions.  The flow definitions this listener applies to may be restrict
 		</xsd:sequence>
 	</xsd:complexType>
 
-	<xsd:complexType name="listenerType">
+	<xsd:complexType name="flowExecutionListenerType">
 		<xsd:attribute name="ref" type="xsd:string" use="required">
 			<xsd:annotation>
 				<xsd:documentation>
@@ -297,7 +287,7 @@ Example: 'flow1,flow2,flow3'.
 		</xsd:attribute>
 	</xsd:complexType>
 
-	<xsd:complexType name="executionAttributesType">
+	<xsd:complexType name="flowExecutionAttributesType">
 		<xsd:sequence>
 			<xsd:element name="alwaysRedirectOnPause" type="alwaysRedirectOnPauseType" minOccurs="0">
 				<xsd:annotation>
@@ -335,7 +325,7 @@ true = always redirect on pause; false = do not, only redirect when explicitly i
 		</xsd:attribute>
 	</xsd:complexType>
 
-	<xsd:complexType name="definitionAttributesType">
+	<xsd:complexType name="flowDefinitionAttributesType">
 		<xsd:sequence>
 			<xsd:element name="attribute" type="attributeType" minOccurs="0" maxOccurs="unbounded">
 				<xsd:annotation>
