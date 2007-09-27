@@ -22,8 +22,10 @@
 	
 	<bean id="listener" class="org.springframework.webflow.config.FlowExecutorBeanDefinitionParserTests$ConfigurationListener" />
 	
-	<web:flow-registry id="flowRegistry">
+	<web:flow-registry id="flowRegistry" flow-builder-services="flowBuilderServices">
 		<web:location path="org/springframework/webflow/config/flow.xml" />
 	</web:flow-registry>
+
+	<bean id="flowBuilderServices" class="org.springframework.webflow.engine.builder.support.FlowBuilderServices" />
 	
 </beans>
