@@ -71,6 +71,7 @@ public class FlowArtifactFactory {
 	 * @param flow the flow that will own (contain) this state (required)
 	 * @param entryActions any state entry actions; may be null
 	 * @param viewFactory the state view factory strategy
+	 * @param redirect whether to send a flow execution redirect before rendering
 	 * @param renderActions any 'render actions' to execute on entry and refresh; may be null
 	 * @param transitions any transitions (paths) out of this state; may be null
 	 * @param exceptionHandlers any exception handlers; may be null
@@ -80,9 +81,10 @@ public class FlowArtifactFactory {
 	 * @return the fully initialized view state instance
 	 */
 	public State createViewState(String id, Flow flow, Action[] entryActions, ViewFactory viewFactory,
-			Action[] renderActions, Transition[] transitions, FlowExecutionExceptionHandler[] exceptionHandlers,
-			Action[] exitActions, AttributeMap attributes) {
+			boolean redirect, Action[] renderActions, Transition[] transitions,
+			FlowExecutionExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeMap attributes) {
 		ViewState viewState = new ViewState(flow, id, viewFactory);
+		viewState.setRedirect(redirect);
 		viewState.getRenderActionList().addAll(renderActions);
 		configureCommonProperties(viewState, entryActions, transitions, exceptionHandlers, exitActions, attributes);
 		return viewState;

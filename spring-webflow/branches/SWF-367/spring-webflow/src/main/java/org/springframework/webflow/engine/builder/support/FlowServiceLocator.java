@@ -30,6 +30,7 @@ import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.ViewFactory;
 
 /**
  * A support interface used by flow builder implements at configuration time. Acts as a "service locator" responsible
@@ -68,17 +69,10 @@ public interface FlowServiceLocator {
 	public BeanInvokingActionFactory getBeanInvokingActionFactory();
 
 	/**
-	 * Returns a generic bean (service) registry for accessing arbitrary beans.
-	 * @return the generic service registry
-	 * @throws UnsupportedOperationException when not supported by this locator
+	 * Returns the view factory creator for configuring a ViewFactory per view state
+	 * @return the view factory creator
 	 */
-	public BeanFactory getBeanFactory() throws UnsupportedOperationException;
-
-	/**
-	 * Returns a generic resource loader for accessing file-based resources.
-	 * @return the generic resource loader
-	 */
-	public ResourceLoader getResourceLoader();
+	public ViewFactoryCreator getViewFactoryCreator();
 
 	/**
 	 * Returns the expression parser for parsing expression strings.
@@ -92,6 +86,18 @@ public interface FlowServiceLocator {
 	 * @return the generic conversion service
 	 */
 	public ConversionService getConversionService();
+
+	/**
+	 * Returns a generic resource loader for accessing file-based resources.
+	 * @return the generic resource loader
+	 */
+	public ResourceLoader getResourceLoader();
+
+	/**
+	 * Returns a generic bean (service) registry for accessing arbitrary beans.
+	 * @return the generic service registry
+	 */
+	public BeanFactory getBeanFactory();
 
 	// flow artifacts
 
@@ -109,6 +115,14 @@ public interface FlowServiceLocator {
 	 * @throws FlowArtifactLookupException when no such action is found
 	 */
 	public Action getAction(String id) throws FlowArtifactLookupException;
+
+	/**
+	 * Returns the view factory with the provided id.
+	 * @param id the view factory id
+	 * @return the view factory
+	 * @throws FlowArtifactLookupException when no such factory is found
+	 */
+	public ViewFactory getViewFactory(String id) throws FlowArtifactLookupException;
 
 	/**
 	 * Returns the flow attribute mapper with the provided id. Flow attribute mappers are used from subflow states to
@@ -143,9 +157,4 @@ public interface FlowServiceLocator {
 	 */
 	public FlowExecutionExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException;
 
-	/**
-	 * Returns the view factory creator for configuring a ViewFactory per view state
-	 * @return the view factory creator
-	 */
-	public ViewFactoryCreator getViewFactoryCreator();
 }

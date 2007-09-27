@@ -33,6 +33,7 @@ import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.ViewFactory;
 
 public class DefaultFlowServiceLocator implements FlowServiceLocator {
 
@@ -81,6 +82,10 @@ public class DefaultFlowServiceLocator implements FlowServiceLocator {
 
 	public FlowExecutionExceptionHandler getExceptionHandler(String id) throws FlowArtifactLookupException {
 		return (FlowExecutionExceptionHandler) getBean(id, FlowExecutionExceptionHandler.class);
+	}
+
+	public ViewFactory getViewFactory(String id) throws FlowArtifactLookupException {
+		return (ViewFactory) getBean(id, ViewFactory.class);
 	}
 
 	public FlowArtifactFactory getFlowArtifactFactory() {
@@ -142,5 +147,4 @@ public class DefaultFlowServiceLocator implements FlowServiceLocator {
 			throw new FlowArtifactLookupException(id, artifactType, e);
 		}
 	}
-
 }

@@ -52,6 +52,8 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.webflow.action.ActionResultExposer;
 import org.springframework.webflow.action.EvaluateAction;
+import org.springframework.webflow.action.ExternalRedirectAction;
+import org.springframework.webflow.action.FlowDefinitionRedirectAction;
 import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -66,6 +68,7 @@ import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
 import org.springframework.webflow.engine.builder.support.AbstractFlowBuilder;
+import org.springframework.webflow.engine.builder.support.ActionInvokingViewFactory;
 import org.springframework.webflow.engine.builder.support.FlowArtifactFactory;
 import org.springframework.webflow.engine.builder.support.FlowServiceLocator;
 import org.springframework.webflow.engine.support.AttributeExpression;
@@ -236,6 +239,28 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	private static final String RESOURCE_ATTRIBUTE = "resource";
 
 	private static final String VIEW_ATTRIBUTE = "view";
+
+	/**
+	 * Prefix used when the encoded view name wants to specify that a redirect is required. ("redirect:")
+	 */
+	private static final String REDIRECT_PREFIX = "redirect:";
+
+	/**
+	 * Prefix used when the encoded view name wants to specify that a redirect to an external URL is required.
+	 * ("externalRedirect:")
+	 */
+	private static final String EXTERNAL_REDIRECT_PREFIX = "externalRedirect:";
+
+	/**
+	 * Prefix used when the encoded view name wants to specify that a redirect to a flow definition is requred.
+	 * ("flowRedirect:")
+	 */
+	private static final String FLOW_DEFINITION_REDIRECT_PREFIX = "flowRedirect:";
+
+	/**
+	 * Prefix used when the user wants to use a ViewSelector implementation managed by a bean factory. ("bean:")
+	 */
+	private static final String BEAN_PREFIX = "bean:";
 
 	/**
 	 * Locates actions, attribute mappers, and other artifacts needed by the flow built by this builder.
@@ -592,9 +617,33 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	private void parseAndAddViewState(Element element, Flow flow) {
-		getFlowArtifactFactory().createViewState(parseId(element), flow, parseEntryActions(element),
-				parseViewFactory(element), parseRenderActions(element), parseTransitions(element),
-				parseExceptionHandlers(element), parseExitActions(element), parseAttributes(element));
+		String encodedView = element.getAttribute(VIEW_ATTRIBUTE);
+		ViewFactory viewFactory;
+		boolean redirect;
+		if (encodedView.startsWith(REDIRECT_PREFIX)) {
+			String viewName = encodedView.substring(REDIRECT_PREFIX.length());
+			viewFactory = flowServiceLocator.getViewFactoryCreator().createViewFactory(viewName);
+			redirect = true;
+		} else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
+			String externalUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());
+			Expression urlExpr = (Expression) fromStringTo(Expression.class).execute(externalUrl);
+			viewFactory = new ActionInvokingViewFactory(new ExternalRedirectAction(urlExpr));
+			redirect = false;
+		} else if (encodedView.startsWith(FLOW_DEFINITION_REDIRECT_PREFIX)) {
+			String flowRedirect = encodedView.substring(FLOW_DEFINITION_REDIRECT_PREFIX.length());
+			viewFactory = new ActionInvokingViewFactory(FlowDefinitionRedirectAction.create(flowRedirect));
+			redirect = false;
+		} else if (encodedView.startsWith(BEAN_PREFIX)) {
+			viewFactory = flowServiceLocator.getViewFactory(encodedView.substring(BEAN_PREFIX.length()));
+			redirect = false;
+		} else {
+			Expression viewNameExpr = (Expression) fromStringTo(Expression.class).execute(encodedView);
+			viewFactory = flowServiceLocator.getViewFactoryCreator().createViewFactory(encodedView);
+			redirect = false;
+		}
+		getFlowArtifactFactory().createViewState(parseId(element), flow, parseEntryActions(element), viewFactory,
+				redirect, parseRenderActions(element), parseTransitions(element), parseExceptionHandlers(element),
+				parseExitActions(element), parseAttributes(element));
 	}
 
 	private void parseAndAddDecisionState(Element element, Flow flow) {
