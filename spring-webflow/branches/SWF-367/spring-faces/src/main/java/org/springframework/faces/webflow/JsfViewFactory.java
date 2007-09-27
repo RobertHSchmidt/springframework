@@ -2,124 +2,98 @@ package org.springframework.faces.webflow;
 
 import java.util.Iterator;
 
+import javax.el.ELContext;
+import javax.el.ValueExpression;
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
-import javax.faces.context.FacesContextFactory;
-import javax.faces.el.ValueBinding;
-import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
-import javax.faces.event.PhaseListener;
 import javax.faces.lifecycle.Lifecycle;
 
+import org.springframework.binding.expression.Expression;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.View;
 import org.springframework.webflow.execution.ViewFactory;
 
 public class JsfViewFactory implements ViewFactory {
 
-	private final FacesContextFactory facesContextFactory;
-
 	private final Lifecycle facesLifecycle;
 
-	private final String viewName;
+	private final Expression viewExpr;
 
-	public JsfViewFactory(FacesContextFactory facesContextFactory, Lifecycle facesLifecycle, String viewName) {
+	public JsfViewFactory(Lifecycle facesLifecycle, Expression viewExpr) {
 
-		this.facesContextFactory = facesContextFactory;
 		this.facesLifecycle = facesLifecycle;
-		this.viewName = viewName;
+		this.viewExpr = viewExpr;
 	}
 
 	public View getView(RequestContext context) {
 
-		boolean restored = false;
+		FacesContext facesContext = JsfFlowUtils.getFacesContext(facesLifecycle);
+		try {
+			boolean restored = false;
 
-		notifyBeforeListeners(context, PhaseId.RESTORE_VIEW);
+			if (!facesContext.getRenderResponse()) {
+				JsfFlowUtils.notifyBeforeListeners(PhaseId.RESTORE_VIEW, facesLifecycle);
+			}
 
-		JsfView view;
+			JsfView view;
 
-		ViewHandler handler = getFacesContext(context).getApplication().getViewHandler();
+			ViewHandler handler = facesContext.getApplication().getViewHandler();
 
-		if (viewExists(context)) {
-			view = new JsfView(getFacesContext(context).getViewRoot());
-			restored = true;
-		} else {
-			UIViewRoot root = handler.restoreView(getFacesContext(context), viewName);
-			if (root != null) {
-				view = new JsfView(root);
+			if (viewExists(facesContext)) {
+				view = new JsfView(facesContext.getViewRoot(), facesLifecycle);
 				restored = true;
 			} else {
-				view = new JsfView(handler.createView(getFacesContext(context), viewName));
-				restored = false;
+				String viewName = (String) viewExpr.evaluate(null, null);
+				UIViewRoot root = handler.restoreView(facesContext, viewName);
+				if (root != null) {
+					view = new JsfView(root, facesLifecycle);
+					restored = true;
+				} else {
+					view = new JsfView(handler.createView(facesContext, viewName), facesLifecycle);
+					restored = false;
+				}
 			}
+
+			facesContext.setViewRoot(view.getViewRoot());
+
+			processBindings(facesContext.getELContext(), view.getViewRoot());
+
+			if (!facesContext.getRenderResponse()) {
+				JsfFlowUtils.notifyAfterListeners(PhaseId.RESTORE_VIEW, facesLifecycle);
+			}
+
+			if (restored && !facesContext.getResponseComplete() && !facesContext.getRenderResponse()) {
+				facesLifecycle.execute(facesContext);
+				facesContext.renderResponse();
+			}
+
+			return view;
+		} finally {
+			facesContext.release();
 		}
-
-		getFacesContext(context).setViewRoot(view.getViewRoot());
-
-		processBindings(view.getViewRoot());
-
-		notifyAfterListeners(context, PhaseId.RESTORE_VIEW);
-
-		if (restored && !getFacesContext(context).getResponseComplete()
-				&& !getFacesContext(context).getRenderResponse()) {
-			facesLifecycle.execute(getFacesContext(context));
-			getFacesContext(context).renderResponse();
-		}
-
-		return view;
 	}
 
-	private boolean viewExists(RequestContext context) {
-		if (getFacesContext(context).getViewRoot() != null
-				&& getFacesContext(context).getViewRoot().getViewId().equals(viewName)) {
+	private boolean viewExists(FacesContext facesContext) {
+		if (facesContext.getViewRoot() != null && facesContext.getViewRoot().getViewId().equals(viewExpr)) {
 			return true;
 		}
 		return false;
 	}
 
-	private void notifyAfterListeners(RequestContext context, PhaseId phaseId) {
-		PhaseEvent afterPhaseEvent = new PhaseEvent(getFacesContext(context), phaseId, facesLifecycle);
-		for (int i = 0; i < facesLifecycle.getPhaseListeners().length; i++) {
-			PhaseListener listener = facesLifecycle.getPhaseListeners()[i];
-			if (listener.getPhaseId() == phaseId || listener.getPhaseId() == PhaseId.ANY_PHASE) {
-				listener.afterPhase(afterPhaseEvent);
-			}
-		}
-	}
+	private void processBindings(ELContext elContext, UIComponent component) {
 
-	private void notifyBeforeListeners(RequestContext context, PhaseId phaseId) {
-		PhaseEvent beforePhaseEvent = new PhaseEvent(getFacesContext(context), phaseId, facesLifecycle);
-		for (int i = 0; i < facesLifecycle.getPhaseListeners().length; i++) {
-			PhaseListener listener = facesLifecycle.getPhaseListeners()[i];
-			if (listener.getPhaseId() == phaseId || listener.getPhaseId() == PhaseId.ANY_PHASE) {
-				listener.beforePhase(beforePhaseEvent);
-			}
-		}
-	}
-
-	private void processBindings(UIComponent component) {
-
-		ValueBinding binding = (ValueBinding) component.getValueBinding("binding");
-		if (binding != null) {
-			binding.setValue(FacesContext.getCurrentInstance(), component);
+		ValueExpression expr = component.getValueExpression("binding");
+		if (expr != null) {
+			expr.setValue(elContext, component);
 		}
 
 		Iterator i = component.getChildren().iterator();
 		while (i.hasNext()) {
 			UIComponent child = (UIComponent) i.next();
-			processBindings(component);
+			processBindings(elContext, child);
 		}
-	}
-
-	private FacesContext getFacesContext(RequestContext requestContext) {
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		if (facesContext == null) {
-			facesContext = facesContextFactory.getFacesContext(requestContext.getExternalContext().getContext(),
-					requestContext.getExternalContext().getRequest(),
-					requestContext.getExternalContext().getResponse(), facesLifecycle);
-		}
-		return facesContext;
 	}
 }
