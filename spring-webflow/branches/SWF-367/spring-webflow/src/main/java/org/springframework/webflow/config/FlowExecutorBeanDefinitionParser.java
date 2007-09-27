@@ -30,7 +30,7 @@ import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 /**
- * {@link BeanDefinitionParser} for the <code>&lt;executor&gt;</code> tag.
+ * {@link BeanDefinitionParser} for the <code>&lt;flow-executor&gt;</code> tag.
  * 
  * @author Ben Hale
  * @author Christian Dupuis
@@ -39,9 +39,9 @@ class FlowExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	// elements and attributes
 
-	private static final String CONVERSATION_MANAGER_REF_ATTRIBUTE = "conversation-manager-ref";
+	private static final String CONVERSATION_MANAGER_REF_ATTRIBUTE = "conversation-manager";
 
-	private static final String EXECUTION_ATTRIBUTES_ELEMENT = "execution-attributes";
+	private static final String EXECUTION_ATTRIBUTES_ELEMENT = "flow-execution-attributes";
 
 	private static final String ALWAYS_REDIRECT_ON_PAUSE_ELEMENT = "alwaysRedirectOnPause";
 
@@ -53,17 +53,15 @@ class FlowExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
 	private static final String TYPE_ATTRIBUTE = "type";
 
-	private static final String EXECUTION_LISTENERS_ELEMENT = "execution-listeners";
+	private static final String EXECUTION_LISTENERS_ELEMENT = "flow-execution-listeners";
 
 	private static final String MAX_CONTINUATIONS_ATTRIBUTE = "max-continuations";
 
 	private static final String MAX_CONVERSATIONS_ATTRIBUTE = "max-conversations";
 
-	private static final String REGISTRY_REF_ATTRIBUTE = "registry-ref";
+	private static final String REGISTRY_REF_ATTRIBUTE = "flow-registry";
 
-	private static final String REPOSITORY_ELEMENT = "repository";
-
-	private static final String REPOSITORY_TYPE_ATTRIBUTE = "repository-type";
+	private static final String REPOSITORY_ELEMENT = "flow-execution-repository";
 
 	// properties
 
@@ -101,18 +99,10 @@ class FlowExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 	private void configureRepository(Element element, BeanDefinitionBuilder definitionBuilder,
 			ParserContext parserContext) {
 		Element repositoryElement = DomUtils.getChildElementByTagName(element, REPOSITORY_ELEMENT);
-		String repositoryTypeAttribute = getRepositoryType(element);
 		if (repositoryElement != null) {
-			if (StringUtils.hasText(repositoryTypeAttribute)) {
-				parserContext.getReaderContext().error(
-						"The 'repositoryType' attribute of the 'executor' element must "
-								+ "not have a value if there is a 'repository' element", element);
-			}
 			definitionBuilder.addPropertyValue(REPOSITORY_TYPE_PROPERTY, getType(repositoryElement));
 			configureContinuations(repositoryElement, definitionBuilder, parserContext);
 			configureConversationManager(repositoryElement, definitionBuilder, parserContext);
-		} else if (StringUtils.hasText(repositoryTypeAttribute)) {
-			definitionBuilder.addPropertyValue(REPOSITORY_TYPE_PROPERTY, repositoryTypeAttribute);
 		}
 	}
 
@@ -168,18 +158,9 @@ class FlowExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		String registryRef = element.getAttribute(REGISTRY_REF_ATTRIBUTE);
 		if (!StringUtils.hasText(registryRef)) {
 			parserContext.getReaderContext().error(
-					"The 'registry-ref' attribute of the 'executor' element must have a value", element);
+					"The 'registry-ref' attribute of the 'flow-executor' element must have a value", element);
 		}
 		return registryRef;
-	}
-
-	/**
-	 * Returns the name of the repository type enum field detailed in the bean definition.
-	 * @param element the element to extract the repository type from
-	 * @return the type of the repository
-	 */
-	private String getRepositoryType(Element element) {
-		return element.getAttribute(REPOSITORY_TYPE_ATTRIBUTE).toUpperCase();
 	}
 
 	/**

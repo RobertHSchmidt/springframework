@@ -40,7 +40,7 @@ class FlowRegistryBeanDefinitionParser extends AbstractSingleBeanDefinitionParse
 
 	private static final String PATH_ATTRIBUTE = "path";
 
-	private static final String DEFINITION_ATTRIBUTES_ELEMENT = "definition-attributes";
+	private static final String DEFINITION_ATTRIBUTES_ELEMENT = "flow-definition-attributes";
 
 	private static final String ATTRIBUTE_ELEMENT = "attribute";
 
