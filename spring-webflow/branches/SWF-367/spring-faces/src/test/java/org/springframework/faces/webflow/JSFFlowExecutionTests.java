@@ -1,11 +1,17 @@
 package org.springframework.faces.webflow;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.el.CompositeELResolver;
 import javax.faces.FacesException;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
+import javax.faces.event.PhaseEvent;
+import javax.faces.event.PhaseId;
+import javax.faces.event.PhaseListener;
 import javax.faces.lifecycle.Lifecycle;
 
 import junit.framework.TestCase;
@@ -15,14 +21,17 @@ import org.jboss.el.ExpressionFactoryImpl;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.binding.method.Parameter;
-import org.springframework.faces.el.Jsf11ELExpressionParser;
-import org.springframework.faces.webflow.el.DelegatingFlowVariableResolver;
-import org.springframework.faces.webflow.el.RequestContextPropertyResolver;
-import org.springframework.faces.webflow.el.RequestContextVariableResolver;
+import org.springframework.faces.el.FlowELExpressionParser;
+import org.springframework.faces.webflow.el.DelegatingAppContextELResolver;
+import org.springframework.faces.webflow.el.FlowELResolver;
+import org.springframework.faces.webflow.el.RequestContextELResolver;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.webflow.action.AbstractBeanInvokingAction;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.SetAction;
+import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.ExternalContextHolder;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
@@ -33,12 +42,13 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
+import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ScopeType;
 import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
-import org.springframework.webflow.test.MockExternalContext;
 
 public class JSFFlowExecutionTests extends TestCase {
 
@@ -48,21 +58,28 @@ public class JSFFlowExecutionTests extends TestCase {
 	MockViewHandler viewHandler;
 	MockService service;
 	GenericWebApplicationContext ctx;
+	TrackingPhaseListener trackingListener;
 
 	Flow flow;
 	FlowExecution execution;
 
-	ExpressionParser parser = new Jsf11ELExpressionParser(new ExpressionFactoryImpl());
+	ExpressionParser parser = new FlowELExpressionParser(new ExpressionFactoryImpl());
 
+	/**
+	 * TODO - The management of the JSF mocks has gotten rather convoluted now that we are tearing down and rebuilding
+	 * the FacesContext multiple times per request. Consider enhancing JSFMockHelper to manage things more appropriately
+	 * for SWF usage.
+	 */
 	protected void setUp() throws Exception {
-		service = (MockService) EasyMock.createMock(MockService.class);
+		service = EasyMock.createMock(MockService.class);
 
+		trackingListener = new TrackingPhaseListener();
 		jsfRequestSetup();
 
 		flow = Flow.create("jsf-flow", null);
 
-		ViewState view1 = new ViewState(flow, "viewState1", new JsfViewFactory(jsf.facesContextFactory(),
-				new TestLifecycle(jsf.lifecycle()), "view1"));
+		ViewState view1 = new ViewState(flow, "viewState1", new JsfViewFactory(new TestLifecycle(jsf.lifecycle()),
+				parser.parseExpression("view1")));
 		view1.getTransitionSet().add(new Transition(on("event1"), to("doSomething")));
 		view1.getTransitionSet().add(new Transition(on("event2"), to("evalSomething")));
 
@@ -79,8 +96,9 @@ public class JSFFlowExecutionTests extends TestCase {
 		evalSomething.getActionList().add(new EvaluateAction(parser.parseExpression("#{JsfBean.addValue(jsfModel)}")));
 		evalSomething.getTransitionSet().add(new Transition(on("success"), to("viewState2")));
 
-		ViewState viewState2 = new ViewState(flow, "viewState2", new JsfViewFactory(jsf.facesContextFactory(),
-				new TestLifecycle(jsf.lifecycle()), "view2"));
+		ViewState viewState2 = new ViewState(flow, "viewState2", new JsfViewFactory(new TestLifecycle(jsf.lifecycle()),
+				parser.parseExpression("view2")));
+		viewState2.getEntryActionList().add(new ViewState2SetupAction());
 		viewState2.getTransitionSet().add(new Transition(on("event1"), to("endState1")));
 
 		new EndState(flow, "endState1");
@@ -92,16 +110,20 @@ public class JSFFlowExecutionTests extends TestCase {
 
 	private void jsfRequestSetup() throws Exception {
 		jsf = new JSFMockHelper();
+		jsf.tearDown();
 		jsf.setUp();
+		FacesContext flowContext = new FlowFacesContext(jsf.facesContext());
+		org.apache.shale.test.mock.MockFacesContext.setCurrentInstance(flowContext);
+
 		viewHandler = new NoRenderViewHandler();
 		jsf.application().setViewHandler(viewHandler);
+		trackingListener.reset();
+		jsf.lifecycle().addPhaseListener(trackingListener);
 
-		DelegatingFlowVariableResolver dfvr = new DelegatingFlowVariableResolver(jsf.application()
-				.getVariableResolver());
-		RequestContextVariableResolver fvr = new RequestContextVariableResolver(dfvr);
-		jsf.application().setVariableResolver(fvr);
-		RequestContextPropertyResolver fpr = new RequestContextPropertyResolver(jsf.application().getPropertyResolver());
-		jsf.application().setPropertyResolver(fpr);
+		CompositeELResolver baseResolver = (CompositeELResolver) jsf.facesContext().getELContext().getELResolver();
+		baseResolver.add(new RequestContextELResolver());
+		baseResolver.add(new FlowELResolver());
+		baseResolver.add(new DelegatingAppContextELResolver());
 
 		jsf.externalContext().getRequestMap().put("JsfBean", new JSFManagedBean());
 	}
@@ -116,7 +138,7 @@ public class JSFFlowExecutionTests extends TestCase {
 		assertNotNull(jsfBean);
 	}
 
-	public void testManagedBeanPropertyAsArgument() throws Exception {
+	public void testBeanAction() throws Exception {
 		startFlow();
 
 		jsfRequestSetup();
@@ -132,7 +154,7 @@ public class JSFFlowExecutionTests extends TestCase {
 		existingRoot.setViewId("view1");
 		viewHandler.setRestoreView(existingRoot);
 
-		execution.resume(new MockExternalContext());
+		execution.resume(getExternalContext());
 
 		EasyMock.verify(new Object[] { service });
 
@@ -140,7 +162,7 @@ public class JSFFlowExecutionTests extends TestCase {
 		assertEquals("viewState2", currentState.getId());
 	}
 
-	public void testEvalManagedBeanMethod() throws Exception {
+	public void testEvalAction() throws Exception {
 		startFlow();
 
 		jsfRequestSetup();
@@ -153,7 +175,7 @@ public class JSFFlowExecutionTests extends TestCase {
 		existingRoot.setViewId("view1");
 		viewHandler.setRestoreView(existingRoot);
 
-		execution.resume(new MockExternalContext());
+		execution.resume(getExternalContext());
 
 		assertFalse(jsfBean.getValues().isEmpty());
 		String addedValue = jsfBean.getValues().get(0).toString();
@@ -175,7 +197,14 @@ public class JSFFlowExecutionTests extends TestCase {
 		UIViewRoot view = new UIViewRoot();
 		view.setViewId("view1");
 		viewHandler.setCreateView(view);
-		execution.start(new MockExternalContext());
+		execution.start(getExternalContext());
+	}
+
+	private ExternalContext getExternalContext() {
+		jsf.request().setPathElements("myApp", "", "/flow", null);
+		ExternalContext ext = new ServletExternalContext(jsf.servletContext(), jsf.request(), jsf.response());
+		ExternalContextHolder.setExternalContext(ext);
+		return ext;
 	}
 
 	private class TestLifecycle extends FlowLifecycle {
@@ -224,6 +253,49 @@ public class JSFFlowExecutionTests extends TestCase {
 
 		public void renderView(FacesContext context, UIViewRoot viewToRender) throws IOException, FacesException {
 			// do nothing
+		}
+	}
+
+	private class TrackingPhaseListener implements PhaseListener {
+
+		private List phaseCallbacks = new ArrayList();
+
+		public void afterPhase(PhaseEvent event) {
+			String phaseCallback = "AFTER_" + event.getPhaseId();
+			assertFalse("Phase callback " + phaseCallback + " already executed.", phaseCallbacks
+					.contains(phaseCallback));
+			phaseCallbacks.add(phaseCallback);
+		}
+
+		public void beforePhase(PhaseEvent event) {
+			String phaseCallback = "BEFORE_" + event.getPhaseId();
+			assertFalse("Phase callback " + phaseCallback + " already executed.", phaseCallbacks
+					.contains(phaseCallback));
+			phaseCallbacks.add(phaseCallback);
+		}
+
+		public PhaseId getPhaseId() {
+			return PhaseId.ANY_PHASE;
+		}
+
+		public List getPhaseCallbacks() {
+			return phaseCallbacks;
+		}
+
+		public void reset() {
+			phaseCallbacks.clear();
+		}
+
+	}
+
+	private class ViewState2SetupAction implements Action {
+
+		public Event execute(RequestContext context) throws Exception {
+			jsfRequestSetup();
+			UIViewRoot newRoot = new UIViewRoot();
+			newRoot.setViewId("view2");
+			viewHandler.setCreateView(newRoot);
+			return new Event(this, "success");
 		}
 	}
 }

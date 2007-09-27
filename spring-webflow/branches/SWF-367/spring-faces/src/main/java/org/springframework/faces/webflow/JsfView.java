@@ -5,7 +5,10 @@ import java.io.IOException;
 import javax.faces.FacesException;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+import javax.faces.event.PhaseId;
+import javax.faces.lifecycle.Lifecycle;
 
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.View;
@@ -25,8 +28,15 @@ public class JsfView implements View {
 
 	private Event event;
 
-	public JsfView(UIViewRoot viewRoot) {
+	private Lifecycle facesLifecycle;
+
+	public JsfView(UIViewRoot viewRoot, Lifecycle facesLifecycle) {
+
+		Assert.notNull(viewRoot);
+		Assert.notNull(facesLifecycle);
+
 		this.viewRoot = viewRoot;
+		this.facesLifecycle = facesLifecycle;
 
 		String jsfEvent = (String) FacesContext.getCurrentInstance().getExternalContext().getRequestMap()
 				.get(EVENT_KEY);
@@ -49,10 +59,13 @@ public class JsfView implements View {
 	}
 
 	public void render() {
-		FacesContext facesContext = FacesContext.getCurrentInstance();
+		FacesContext facesContext = JsfFlowUtils.getFacesContext(facesLifecycle);
+		facesContext.setViewRoot(viewRoot);
 		facesContext.renderResponse();
 		try {
+			JsfFlowUtils.notifyBeforeListeners(PhaseId.RENDER_RESPONSE, facesLifecycle);
 			facesContext.getApplication().getViewHandler().renderView(facesContext, viewRoot);
+			JsfFlowUtils.notifyAfterListeners(PhaseId.RENDER_RESPONSE, facesLifecycle);
 		} catch (IOException e) {
 			throw new FacesException("An I/O error occurred during view rendering", e);
 		} finally {

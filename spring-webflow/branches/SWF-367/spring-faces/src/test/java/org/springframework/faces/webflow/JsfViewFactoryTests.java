@@ -1,14 +1,23 @@
 package org.springframework.faces.webflow;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.faces.FacesException;
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+import javax.faces.event.PhaseEvent;
+import javax.faces.event.PhaseId;
+import javax.faces.event.PhaseListener;
 import javax.faces.lifecycle.Lifecycle;
 
 import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
+import org.jboss.el.ExpressionFactoryImpl;
+import org.springframework.binding.expression.ExpressionParser;
+import org.springframework.faces.el.FlowELExpressionParser;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.View;
 import org.springframework.webflow.execution.ViewFactory;
@@ -27,12 +36,22 @@ public class JsfViewFactoryTests extends TestCase {
 
 	private TestLifecycle lifecycle;
 
+	private PhaseListener trackingListener;
+
+	private ExpressionParser parser = new FlowELExpressionParser(new ExpressionFactoryImpl());
+
 	protected void setUp() throws Exception {
+		configureJsf();
+	}
+
+	private void configureJsf() throws Exception {
 		jsfMock.setUp();
+		trackingListener = new TrackingPhaseListener();
+		jsfMock.lifecycle().addPhaseListener(trackingListener);
 		jsfMock.facesContext().setViewRoot(null);
 		jsfMock.application().setViewHandler(viewHandler);
 		lifecycle = new TestLifecycle(jsfMock.lifecycle());
-		factory = new JsfViewFactory(jsfMock.facesContextFactory(), lifecycle, VIEW_ID);
+		factory = new JsfViewFactory(lifecycle, parser.parseExpression(VIEW_ID));
 	}
 
 	/**
@@ -96,8 +115,9 @@ public class JsfViewFactoryTests extends TestCase {
 
 	/**
 	 * View is restored, and then the same view-state is re-entered at the end of the request
+	 * @throws Exception
 	 */
-	public final void testGetView_RestoreTwice() {
+	public final void testGetView_RestoreTwice() throws Exception {
 
 		String event = "foo";
 
@@ -108,6 +128,10 @@ public class JsfViewFactoryTests extends TestCase {
 		((MockViewHandler) viewHandler).setRestoreView(existingRoot);
 
 		View restoredView = factory.getView(context);
+
+		assertNull("FacesContext was not released", FacesContext.getCurrentInstance());
+
+		configureJsf();
 
 		View recursiveView = factory.getView(context);
 
@@ -153,6 +177,34 @@ public class JsfViewFactoryTests extends TestCase {
 			assertFalse("Lifecycle executed more than once", executed);
 			super.execute(context);
 			executed = true;
+		}
+
+	}
+
+	private class TrackingPhaseListener implements PhaseListener {
+
+		private List phaseCallbacks = new ArrayList();
+
+		public void afterPhase(PhaseEvent event) {
+			String phaseCallback = "AFTER_" + event.getPhaseId();
+			assertFalse("Phase callback " + phaseCallback + " already executed.", phaseCallbacks
+					.contains(phaseCallback));
+			phaseCallbacks.add(phaseCallback);
+		}
+
+		public void beforePhase(PhaseEvent event) {
+			String phaseCallback = "BEFORE_" + event.getPhaseId();
+			assertFalse("Phase callback " + phaseCallback + " already executed.", phaseCallbacks
+					.contains(phaseCallback));
+			phaseCallbacks.add(phaseCallback);
+		}
+
+		public PhaseId getPhaseId() {
+			return PhaseId.ANY_PHASE;
+		}
+
+		public List getPhaseCallbacks() {
+			return phaseCallbacks;
 		}
 
 	}

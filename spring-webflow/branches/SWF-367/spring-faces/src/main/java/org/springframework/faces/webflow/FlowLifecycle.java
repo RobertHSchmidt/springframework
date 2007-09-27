@@ -54,6 +54,7 @@ public class FlowLifecycle extends Lifecycle {
 	}
 
 	private void invokePhase(FacesContext context, PhaseId phaseId) {
+		JsfFlowUtils.notifyBeforeListeners(phaseId, this);
 		if (phaseId == PhaseId.APPLY_REQUEST_VALUES) {
 			context.getViewRoot().processDecodes(context);
 		} else if (phaseId == PhaseId.PROCESS_VALIDATIONS) {
@@ -63,5 +64,6 @@ public class FlowLifecycle extends Lifecycle {
 		} else {
 			context.getViewRoot().processApplication(context);
 		}
+		JsfFlowUtils.notifyAfterListeners(phaseId, this);
 	}
 }

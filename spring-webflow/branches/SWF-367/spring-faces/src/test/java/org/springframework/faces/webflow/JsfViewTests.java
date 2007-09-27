@@ -22,8 +22,10 @@ import org.apache.shale.test.mock.MockResponseWriter;
 import org.apache.shale.test.mock.MockStateManager;
 import org.easymock.EasyMock;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
-import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.FlowExecutionKey;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.RequestContextHolder;
 
 public class JsfViewTests extends TestCase {
 
@@ -35,7 +37,10 @@ public class JsfViewTests extends TestCase {
 
 	private StringWriter output = new StringWriter();
 
-	private FlowExecution flowExecution = (FlowExecution) EasyMock.createMock(FlowExecution.class);
+	private RequestContext requestContext = (RequestContext) EasyMock.createMock(RequestContext.class);
+	private FlowExecutionContext flowExecutionContext = (FlowExecutionContext) EasyMock
+			.createMock(FlowExecutionContext.class);
+	private MutableAttributeMap flashMap = (MutableAttributeMap) EasyMock.createMock(MutableAttributeMap.class);
 
 	private FlowExecutionKey key = new FlowExecutionKey() {
 
@@ -44,14 +49,11 @@ public class JsfViewTests extends TestCase {
 		}
 	};
 
-	private MutableAttributeMap flashMap = (MutableAttributeMap) EasyMock.createMock(MutableAttributeMap.class);
-
 	protected void setUp() throws Exception {
 
 		jsfMock.setUp();
 		jsfMock.application().setViewHandler(new MockViewHandler());
 		jsfMock.application().setStateManager(new TestStateManager());
-		jsfMock.externalContext().getRequestMap().put("flowExecution", flowExecution);
 		jsfMock.facesContext().setResponseWriter(new MockResponseWriter(output, null, null));
 
 		RenderKitFactory rkf = (RenderKitFactory) FactoryFinder.getFactory(FactoryFinder.RENDER_KIT_FACTORY);
@@ -71,20 +73,27 @@ public class JsfViewTests extends TestCase {
 		form.getChildren().add(input);
 		viewToRender.getChildren().add(form);
 
-		view = new JsfView(viewToRender);
+		view = new JsfView(viewToRender, jsfMock.lifecycle());
+
+		RequestContextHolder.setRequestContext(requestContext);
+	}
+
+	protected void tearDown() throws Exception {
+		jsfMock.tearDown();
 	}
 
 	public final void testRender() {
 
-		EasyMock.expect(flowExecution.getFlashScope()).andStubReturn(flashMap);
-		EasyMock.expect(flowExecution.getKey()).andStubReturn(key);
+		EasyMock.expect(requestContext.getFlashScope()).andStubReturn(flashMap);
+		EasyMock.expect(requestContext.getFlowExecutionContext()).andStubReturn(flowExecutionContext);
+		EasyMock.expect(flowExecutionContext.getKey()).andStubReturn(key);
 		EasyMock.expect(flashMap.put(EasyMock.matches(JsfView.STATE_KEY), EasyMock.anyObject())).andStubReturn(null);
 
-		EasyMock.replay(new Object[] { flowExecution, flashMap });
+		EasyMock.replay(new Object[] { requestContext, flowExecutionContext, flashMap });
 
 		view.render();
 
-		EasyMock.verify(new Object[] { flowExecution, flashMap });
+		EasyMock.verify(new Object[] { requestContext, flowExecutionContext, flashMap });
 		assertNull("The FacesContext was not released", FacesContext.getCurrentInstance());
 		assertTrue(output.getBuffer().toString().contains(key.toString()));
 	}
