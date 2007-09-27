@@ -59,4 +59,9 @@ public class FlowDefinitionRedirectAction extends AbstractAction {
 			return new LocalParameterMap(requestParameters);
 		}
 	}
+
+	public static FlowDefinitionRedirectAction create(String encodedFlowRedirect) {
+		// TODO
+		return null;
+	}
 }

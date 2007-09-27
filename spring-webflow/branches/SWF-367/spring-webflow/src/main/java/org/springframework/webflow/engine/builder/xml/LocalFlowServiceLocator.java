@@ -33,6 +33,7 @@ import org.springframework.webflow.engine.builder.support.FlowArtifactLookupExce
 import org.springframework.webflow.engine.builder.support.FlowServiceLocator;
 import org.springframework.webflow.engine.builder.support.ViewFactoryCreator;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.ViewFactory;
 
 /**
  * Flow service locator that searches flow-local registries first before querying the global, externally managed flow
@@ -127,6 +128,14 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		}
 	}
 
+	public ViewFactory getViewFactory(String id) throws FlowArtifactLookupException {
+		if (containsBean(id)) {
+			return (ViewFactory) getBean(id, ViewFactory.class);
+		} else {
+			return parent.getViewFactory(id);
+		}
+	}
+
 	public FlowAttributeMapper getAttributeMapper(String id) throws FlowArtifactLookupException {
 		if (containsBean(id)) {
 			return (FlowAttributeMapper) getBean(id, FlowAttributeMapper.class);
@@ -159,32 +168,57 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 		}
 	}
 
+	// TODO - use flow builder services here?
 	public FlowArtifactFactory getFlowArtifactFactory() {
-		return parent.getFlowArtifactFactory();
+		if (containsBean("flowArtifactFactory")) {
+			return (FlowArtifactFactory) getBean("flowArtifactFactory", FlowArtifactFactory.class);
+		} else {
+			return parent.getFlowArtifactFactory();
+		}
 	}
 
 	public BeanInvokingActionFactory getBeanInvokingActionFactory() {
-		return parent.getBeanInvokingActionFactory();
+		if (containsBean("beanInvokingActionFactory")) {
+			return (BeanInvokingActionFactory) getBean("beanInvokingActionFactory", BeanInvokingActionFactory.class);
+		} else {
+			return parent.getBeanInvokingActionFactory();
+		}
+	}
+
+	public ViewFactoryCreator getViewFactoryCreator() {
+		if (containsBean("viewFactoryCreator")) {
+			return (ViewFactoryCreator) getBean("viewFactoryCreator", ViewFactoryCreator.class);
+		} else {
+			return parent.getViewFactoryCreator();
+		}
+	}
+
+	public ExpressionParser getExpressionParser() {
+		if (containsBean("expressionParser")) {
+			return (ExpressionParser) getBean("expressionParser", ExpressionParser.class);
+		} else {
+			return parent.getExpressionParser();
+		}
+	}
+
+	public ConversionService getConversionService() {
+		if (containsBean("conversionService")) {
+			return (ConversionService) getBean("conversionService", ConversionService.class);
+		} else {
+			return parent.getConversionService();
+		}
+	}
+
+	public ResourceLoader getResourceLoader() {
+		if (top().getBeanFactory() instanceof ResourceLoader) {
+			return (ResourceLoader) top().getBeanFactory();
+		} else {
+			return parent.getResourceLoader();
+		}
 	}
 
 	public BeanFactory getBeanFactory() {
 		return top().getBeanFactory();
-	}
-
-	public ResourceLoader getResourceLoader() {
-		return parent.getResourceLoader();
-	}
-
-	public ExpressionParser getExpressionParser() {
-		return parent.getExpressionParser();
-	}
-
-	public ConversionService getConversionService() {
-		return parent.getConversionService();
-	}
-
-	public ViewFactoryCreator getViewFactoryCreator() {
-		return parent.getViewFactoryCreator();
 	}
 
 	// internal helpers
@@ -192,14 +226,14 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 	/**
 	 * Returns the flow for the registry at the top of the stack.
 	 */
-	protected Flow getCurrentFlow() {
+	private Flow getCurrentFlow() {
 		return top().getFlow();
 	}
 
 	/**
 	 * Does this flow local service locator contain a bean defintion for the given id?
 	 */
-	protected boolean containsBean(String id) {
+	private boolean containsBean(String id) {
 		if (localRegistries.isEmpty()) {
 			return false;
 		} else {
@@ -210,7 +244,7 @@ class LocalFlowServiceLocator implements FlowServiceLocator {
 	/**
 	 * Get the identified bean and make sure it is of the required type.
 	 */
-	protected Object getBean(String id, Class artifactType) throws FlowArtifactLookupException {
+	private Object getBean(String id, Class artifactType) throws FlowArtifactLookupException {
 		try {
 			return getBeanFactory().getBean(id, artifactType);
 		} catch (BeansException e) {
