@@ -58,8 +58,17 @@ Individual paths such as:
 ]]>
 								</xsd:documentation>
 							</xsd:annotation>
-						</xsd:element>
+						</xsd:element>					
 					</xsd:sequence>
+					<xsd:attribute name="flow-builder-services" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+								<![CDATA[
+The idref of the flow builder services instance this flow definition registry should use.
+]]>
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -161,6 +170,50 @@ The idref to the registry this executor will use to locate flow definitions for 
 		</xsd:complexType>
 	</xsd:element>
 	
+	<xsd:complexType name="flowExecutionRepositoryType">
+		<xsd:attribute name="type" type="flowExecutionRepositoryTypeAttribute" use="required">
+			<xsd:annotation>
+				<xsd:documentation>
+					<![CDATA[
+The type of flow execution repository to use.  The repository is responsible for managing flow execution 
+persistence between requests.
+]]>
+				</xsd:documentation>
+			</xsd:annotation>			
+		</xsd:attribute>
+		<xsd:attribute name="max-conversations" type="xsd:integer">
+			<xsd:annotation>
+				<xsd:documentation>
+				<![CDATA[
+The maximum number of concurrent conversations allowed by this repository.  It is illegal to set this
+attribute if you are also setting the 'conversation-manager' attribute.
+]]>
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="max-continuations" type="xsd:integer">
+			<xsd:annotation>
+				<xsd:documentation>
+				<![CDATA[
+The maximum number of flow execution continuations (snapshots) allowed by this repository per conversation.
+This attribute is only relevant when the repository type is 'continuation'.
+]]>
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="conversation-manager" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>
+				<![CDATA[
+The idref of the conversation manager this repository should use.  Setting this attribute 
+allows full control over the conversation manager implementation and configuration.
+When used, any value for the 'max-conversations' attribute is ignored.
+]]>
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+
 	<xsd:simpleType name="flowExecutionRepositoryTypeAttribute">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="continuation">
@@ -206,50 +259,6 @@ constant throughout the life of the execution.
 		</xsd:restriction>
 	</xsd:simpleType>
 	
-	<xsd:complexType name="flowExecutionRepositoryType">
-		<xsd:attribute name="type" type="flowExecutionRepositoryTypeAttribute" use="required">
-			<xsd:annotation>
-				<xsd:documentation>
-					<![CDATA[
-The type of flow execution repository to use.  The repository is responsible for managing flow execution 
-persistence between requests.
-]]>
-				</xsd:documentation>
-			</xsd:annotation>			
-		</xsd:attribute>
-		<xsd:attribute name="max-conversations" type="xsd:integer">
-			<xsd:annotation>
-				<xsd:documentation>
-				<![CDATA[
-The maximum number of concurrent conversations allowed by this repository.  It is illegal to set this
-attribute if you are also setting the 'conversation-manager' attribute.
-]]>
-				</xsd:documentation>
-			</xsd:annotation>
-		</xsd:attribute>
-		<xsd:attribute name="max-continuations" type="xsd:integer">
-			<xsd:annotation>
-				<xsd:documentation>
-				<![CDATA[
-The maximum number of flow execution continuations (snapshots) allowed by this repository per conversation.
-This attribute is only relevant when the repository type is 'continuation'.
-]]>
-				</xsd:documentation>
-			</xsd:annotation>
-		</xsd:attribute>
-		<xsd:attribute name="conversation-manager" type="xsd:string">
-			<xsd:annotation>
-				<xsd:documentation>
-				<![CDATA[
-The idref of the conversation manager this repository should use.  Setting this attribute 
-allows full control over the conversation manager implementation and configuration.
-When used, any value for the 'max-conversations' attribute is ignored.
-]]>
-				</xsd:documentation>
-			</xsd:annotation>
-		</xsd:attribute>
-	</xsd:complexType>
-
 	<xsd:complexType name="flowExecutionListenersType">
 		<xsd:sequence>
 			<xsd:element name="listener" type="flowExecutionListenerType" maxOccurs="unbounded">
