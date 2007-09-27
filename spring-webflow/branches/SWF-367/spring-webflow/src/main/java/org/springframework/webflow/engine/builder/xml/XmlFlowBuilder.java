@@ -660,7 +660,10 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 
 	private ViewInfo parseViewInfo(Element element) {
 		String encodedView = element.getAttribute(VIEW_ATTRIBUTE);
-		if (encodedView.startsWith(REDIRECT_PREFIX)) {
+		if (encodedView == null || encodedView.length() == 0) {
+			// TODO what to do here?
+			return null;
+		} else if (encodedView.startsWith(REDIRECT_PREFIX)) {
 			String encodedViewName = encodedView.substring(REDIRECT_PREFIX.length());
 			Expression viewName = (Expression) fromStringTo(Expression.class).execute(encodedViewName);
 			ViewFactory viewFactory = flowServiceLocator.getViewFactoryCreator().createViewFactory(viewName);
@@ -695,22 +698,23 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	}
 
 	private Action parseFinalResponseAction(Element element) {
-		Action finalResponseAction;
 		String encodedView = element.getAttribute(VIEW_ATTRIBUTE);
-		if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
+		if (encodedView == null || encodedView.length() == 0) {
+			// null final responses are allowed
+			return null;
+		} else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
 			String encodedUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());
 			Expression externalUrl = (Expression) fromStringTo(Expression.class).execute(encodedUrl);
-			finalResponseAction = new ExternalRedirectAction(externalUrl);
+			return new ExternalRedirectAction(externalUrl);
 		} else if (encodedView.startsWith(FLOW_DEFINITION_REDIRECT_PREFIX)) {
 			String flowRedirect = encodedView.substring(FLOW_DEFINITION_REDIRECT_PREFIX.length());
-			finalResponseAction = FlowDefinitionRedirectAction.create(flowRedirect);
+			return FlowDefinitionRedirectAction.create(flowRedirect);
 		} else if (encodedView.startsWith(BEAN_PREFIX)) {
-			finalResponseAction = flowServiceLocator.getAction(encodedView.substring(BEAN_PREFIX.length()));
+			return flowServiceLocator.getAction(encodedView.substring(BEAN_PREFIX.length()));
 		} else {
 			Expression viewName = (Expression) fromStringTo(Expression.class).execute(encodedView);
-			finalResponseAction = flowServiceLocator.getViewFactoryCreator().createFinalResponseAction(viewName);
+			return flowServiceLocator.getViewFactoryCreator().createFinalResponseAction(viewName);
 		}
-		return finalResponseAction;
 	}
 
 	private Action[] parseRenderActions(Element element) {
