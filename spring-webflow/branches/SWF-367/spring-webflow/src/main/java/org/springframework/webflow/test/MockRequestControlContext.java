@@ -90,7 +90,9 @@ public class MockRequestControlContext extends MockRequestContext implements Req
 	}
 
 	public FlowExecutionKey assignFlowExecutionKey() {
-		return null;
+		MockFlowExecutionKey key = new MockFlowExecutionKey();
+		getMockFlowExecutionContext().setKey(key);
+		return key;
 	}
 
 	public boolean getAlwaysRedirectOnPause() {

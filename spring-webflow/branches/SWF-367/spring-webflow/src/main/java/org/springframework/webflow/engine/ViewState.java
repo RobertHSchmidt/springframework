@@ -83,7 +83,7 @@ public class ViewState extends TransitionableState {
 			return;
 		} else {
 			if (shouldRedirect(context)) {
-				context.getExternalContext().sendFlowExecutionRedirect();
+				context.sendFlowExecutionRedirect();
 			} else {
 				View view = viewFactory.getView(context);
 				renderActionList.execute(context);

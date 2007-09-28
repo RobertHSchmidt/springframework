@@ -94,13 +94,15 @@ public class ServletExternalContext implements ExternalContext {
 
 	private String encodingScheme = DEFAULT_ENCODING_SCHEME;
 
-	private boolean flowExecutionRedirect;
+	private FlowExecutionRedirector flowExecutionRedirector;
 
 	private FlowDefinitionRedirector flowDefinitionRedirector;
 
 	private String resourceUri;
 
-	private String pausedFlowExecutionKey;
+	private short result;
+
+	private String processedFlowExecutionKey;
 
 	private FlowException exception;
 
@@ -174,37 +176,49 @@ public class ServletExternalContext implements ExternalContext {
 	}
 
 	public boolean isResponseCommitted() {
-		return flowExecutionRedirect == true || flowDefinitionRedirector != null || resourceUri != null;
+		return flowExecutionRedirector != null || flowDefinitionRedirector != null || resourceUri != null;
 	}
 
 	// response requesters
 
 	// TODO fragment support?
-	public void sendFlowExecutionRedirect() {
-		flowExecutionRedirect = true;
+	public void sendFlowExecutionRedirect(String flowDefinitionId, String flowExecutionKey) {
+		flowExecutionRedirector = new FlowExecutionRedirector(flowDefinitionId, flowExecutionKey);
 	}
 
 	// TODO fragment support?
-	public void sendFlowDefinitionRedirect(String flowId, String[] requestElements, ParameterMap requestParameters) {
-		flowDefinitionRedirector = new FlowDefinitionRedirector(flowId, requestElements, requestParameters);
+	public void sendFlowDefinitionRedirect(String flowDefinitionId, String[] requestElements,
+			ParameterMap requestParameters) {
+		flowDefinitionRedirector = new FlowDefinitionRedirector(flowDefinitionId, requestElements, requestParameters);
 	}
 
 	public void sendExternalRedirect(String resourceUri) {
 		this.resourceUri = resourceUri;
 	}
 
+	// helpers
+
+	public String buildFlowExecutionUrl(String flowDefinitionId, String flowExecutionKey) {
+		return request.getContextPath() + request.getServletPath() + "/executions/" + flowDefinitionId + "/"
+				+ flowExecutionKey;
+	}
+
 	// execution processing result setters
 
 	public void setPausedResult(String flowExecutionKey) {
-		this.pausedFlowExecutionKey = flowExecutionKey;
+		result = 0;
+		processedFlowExecutionKey = flowExecutionKey;
 	}
 
-	public void setEndedResult() {
-
+	public void setEndedResult(String flowExecutionKey) {
+		result = 1;
+		processedFlowExecutionKey = flowExecutionKey;
 	}
 
 	public void setExceptionResult(FlowException e) {
-		this.exception = e;
+		result = 2;
+		exception = e;
+		processedFlowExecutionKey = flowExecutionKey;
 	}
 
 	public void execute(FlowExecutor flowExecutor) throws IOException {
@@ -212,9 +226,8 @@ public class ServletExternalContext implements ExternalContext {
 		try {
 			flowExecutor.execute(this);
 			if (isPausedResult()) {
-				if (flowExecutionRedirect) {
-					issueFlowExecutionRedirect();
-					return;
+				if (flowExecutionRedirector != null) {
+					flowExecutionRedirector.issueRedirect(request, response, encodingScheme);
 				} else if (flowDefinitionRedirector != null) {
 					flowDefinitionRedirector.issueRedirect(request, response, encodingScheme);
 				} else if (resourceUri != null) {
@@ -223,9 +236,13 @@ public class ServletExternalContext implements ExternalContext {
 					// commit response?
 				}
 			} else if (isEndResult()) {
-				if (flowExecutionRedirect) {
-					throw new IllegalStateException(
-							"You cannot send a flow execution redirect when the execution has ended - programmer error");
+				if (flowExecutionRedirector != null) {
+					if (flowExecutionRedirector.flowExecutionKey.equals(processedFlowExecutionKey)) {
+						throw new IllegalStateException(
+								"You cannot send a flow execution redirect when this execution has ended - programmer error");
+					} else {
+						flowExecutionRedirector.issueRedirect(request, response, encodingScheme);
+					}
 				} else if (flowDefinitionRedirector != null) {
 					flowDefinitionRedirector.issueRedirect(request, response, encodingScheme);
 				} else if (resourceUri != null) {
@@ -263,20 +280,16 @@ public class ServletExternalContext implements ExternalContext {
 		}
 	}
 
-	private void issueFlowExecutionRedirect() throws IOException {
-		sendRedirect(request.getContextPath() + "/executions/" + getFlowId() + "/" + pausedFlowExecutionKey.toString());
-	}
-
 	private boolean isPausedResult() {
-		return pausedFlowExecutionKey != null;
+		return result == 0;
 	}
 
 	private boolean isEndResult() {
-		return !isPausedResult() && !isExceptionResult();
+		return result == 1;
 	}
 
 	private boolean isExceptionResult() {
-		return exception != null;
+		return result == 2;
 	}
 
 	private void sendRedirect(String targetUrl) throws IOException {
@@ -285,6 +298,25 @@ public class ServletExternalContext implements ExternalContext {
 
 	public String toString() {
 		return new ToStringCreator(this).append("requestParameterMap", getRequestParameterMap()).toString();
+	}
+
+	private static class FlowExecutionRedirector {
+		private String flowExecutionKey;
+		private String flowId;
+
+		public FlowExecutionRedirector(String flowId, String flowExecutionKey) {
+			Assert.hasText(flowId, "The definition identifier of the flow execution to redirect to cannot be null");
+			Assert.hasText(flowExecutionKey, "The flow execution key to redirect to cannot be null");
+			this.flowId = flowId;
+			this.flowExecutionKey = flowExecutionKey;
+		}
+
+		public void issueRedirect(HttpServletRequest request, HttpServletResponse response, String encodingScheme)
+				throws IOException {
+			String targetUrl = request.getContextPath() + request.getServletPath() + "/executions/" + flowId + "/"
+					+ flowExecutionKey;
+			response.sendRedirect(response.encodeRedirectURL(targetUrl));
+		}
 	}
 
 	private static class FlowDefinitionRedirector {
@@ -341,5 +373,4 @@ public class ServletExternalContext implements ExternalContext {
 			return URLEncoder.encode(value, encodingScheme);
 		}
 	}
-
 }

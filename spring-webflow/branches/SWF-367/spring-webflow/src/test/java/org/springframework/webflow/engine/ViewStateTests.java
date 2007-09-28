@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
+import org.springframework.webflow.test.MockFlowExecutionKey;
 import org.springframework.webflow.test.MockRequestControlContext;
 
 /**
@@ -72,7 +73,8 @@ public class ViewStateTests extends TestCase {
 		state.getTransitionSet().add(new Transition(on("submit"), to("finish")));
 		new EndState(flow, "finish");
 		MockRequestControlContext context = new MockRequestControlContext(flow);
-		context.getMockExternalContext().sendFlowExecutionRedirect();
+		context.getMockFlowExecutionContext().setKey(new MockFlowExecutionKey());
+		context.sendFlowExecutionRedirect();
 		state.enter(context);
 		assertFalse("Render called", context.getFlowScope().contains("renderCalled"));
 		assertTrue(context.getMockExternalContext().getFlowExecutionRedirectResult());

@@ -163,4 +163,7 @@ public interface RequestContext {
 	 */
 	public void setAttributes(AttributeMap attributes);
 
+	public String getFlowExecutionUrl();
+
+	public void sendFlowExecutionRedirect();
 }

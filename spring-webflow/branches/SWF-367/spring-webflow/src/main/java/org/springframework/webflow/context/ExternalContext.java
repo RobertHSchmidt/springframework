@@ -117,17 +117,20 @@ public interface ExternalContext {
 	 */
 	public Object getResponse();
 
+	public String buildFlowExecutionUrl(String flowDefinitionId, String flowExecutionKey);
+
 	/**
 	 * Request that a flow execution redirect be sent as the response. A flow execution redirect tells the caller to
 	 * refresh this flow execution in a new request.
 	 */
-	public void sendFlowExecutionRedirect();
+	public void sendFlowExecutionRedirect(String flowDefinitionId, String flowExecutionKey);
 
 	/**
 	 * Request that a flow definition redirect be sent as the response. A flow definition redirect tells the caller to
 	 * start a new execution of the flow definition with the input provided.
 	 */
-	public void sendFlowDefinitionRedirect(String flowId, String[] requestElements, ParameterMap requestParameters);
+	public void sendFlowDefinitionRedirect(String flowDefinitionId, String[] requestElements,
+			ParameterMap requestParameters);
 
 	/**
 	 * Request that a external redirect be sent as the response. An external redirect tells the caller to access the
@@ -138,7 +141,7 @@ public interface ExternalContext {
 
 	public void setPausedResult(String flowExecutionKey);
 
-	public void setEndedResult();
+	public void setEndedResult(String flowExecutionKey);
 
 	public void setExceptionResult(FlowException e);
 
