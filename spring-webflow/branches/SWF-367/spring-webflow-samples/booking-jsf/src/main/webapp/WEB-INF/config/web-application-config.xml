@@ -18,16 +18,20 @@
 	</web:flow-executor>
 	
 	<web:flow-registry id="flowRegistry" flow-builder-services="flowBuilderServices">
-		<web:location path="org/springframework/webflow/config/flow.xml" />
+		<web:location path="flow/main/main.xml" />
+		<web:location path="flow/booking/booking.xml" />
 	</web:flow-registry>
 
 	<bean id="flowBuilderServices" class="org.springframework.webflow.engine.builder.support.FlowBuilderServices">
 		<property name="expressionParser">
-			<bean class="org.springframework.faces.el.FlowElExpressionParser">
+			<bean class="org.springframework.faces.el.FlowELExpressionParser">
 				<constructor-arg >
 					<bean class="org.jboss.el.ExpressionFactoryImpl"/>
 				</constructor-arg>
 			</bean>
+		</property>
+		<property name="viewFactoryCreator">
+			<bean class="org.springframework.webflow.engine.builder.xml.JsfViewFactoryCreator"/>
 		</property>
 	</bean>
 	
