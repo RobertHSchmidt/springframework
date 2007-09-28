@@ -29,9 +29,8 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 /**
  * The default implementation of the central facade for <i>driving</i> the execution of flows within an application.
  * <p>
- * This object is responsible for creating and starting new flow executions as requested by clients, as well as
- * signaling events for processing by existing, paused executions (that are waiting to be resumed in response to a user
- * event).
+ * This object is responsible for creating and launching new flow executions as requested by clients, as well as
+ * resuming existing, paused executions (that were waiting to be resumed in response to a user event).
  * <p>
  * This object is a facade or entry point into the Spring Web Flow execution system and makes the overall system easier
  * to use. The name <i>executor</i> was chosen as <i>executors drive executions</i>.

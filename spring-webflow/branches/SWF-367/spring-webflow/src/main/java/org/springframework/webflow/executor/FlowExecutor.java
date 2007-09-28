@@ -28,5 +28,10 @@ import org.springframework.webflow.context.ExternalContext;
  * @author Keith Donald
  */
 public interface FlowExecutor {
+
+	/**
+	 * Execute the flow request initiated by the provided external context.
+	 * @param context the external context, representing a client environment calling into Spring Web Flow
+	 */
 	public void execute(ExternalContext context);
 }
