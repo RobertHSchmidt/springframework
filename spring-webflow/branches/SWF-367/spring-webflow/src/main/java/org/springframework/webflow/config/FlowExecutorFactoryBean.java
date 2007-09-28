@@ -196,12 +196,13 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 		// can participate in the construction process
 
 		// a strategy to restore deserialized flow executions
-		FlowExecutionStateRestorer executionStateRestorer = createFlowExecutionStateRestorer(flowDefinitionLocator,
+		FlowExecutionImplStateRestorer executionStateRestorer = createFlowExecutionStateRestorer(flowDefinitionLocator,
 				executionAttributes, flowExecutionListenerLoader);
 
 		// a repository to store flow executions
 		FlowExecutionRepository executionRepository = createFlowExecutionRepository(flowExecutionRepositoryType,
 				executionStateRestorer, conversationManager);
+		executionStateRestorer.setExecutionKeyFactory((FlowExecutionKeyFactory) executionRepository);
 
 		// a factory for flow executions
 		FlowExecutionFactory executionFactory = createFlowExecutionFactory(executionAttributes,
@@ -236,7 +237,7 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	 * @param executionListenerLoader decides which listeners should apply to restored flow executions
 	 * @return a new state restorer instance
 	 */
-	protected FlowExecutionStateRestorer createFlowExecutionStateRestorer(FlowDefinitionLocator definitionLocator,
+	protected FlowExecutionImplStateRestorer createFlowExecutionStateRestorer(FlowDefinitionLocator definitionLocator,
 			AttributeMap executionAttributes, FlowExecutionListenerLoader executionListenerLoader) {
 		FlowExecutionImplStateRestorer executionStateRestorer = new FlowExecutionImplStateRestorer(definitionLocator);
 		executionStateRestorer.setExecutionAttributes(executionAttributes);
