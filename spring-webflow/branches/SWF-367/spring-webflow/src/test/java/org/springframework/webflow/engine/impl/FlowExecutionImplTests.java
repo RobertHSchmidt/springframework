@@ -35,6 +35,7 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
 import org.springframework.webflow.test.MockExternalContext;
+import org.springframework.webflow.test.MockFlowExecutionKey;
 
 /**
  * General flow execution tests.
@@ -172,7 +173,7 @@ public class FlowExecutionImplTests extends TestCase {
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		execution.setListeners(listeners);
-		execution.setKeyFactory(new SimpleFlowExecutionKeyFactory());
+		execution.setKeyFactory(new MockFlowExecutionKeyFactory());
 		MockExternalContext context = new MockExternalContext();
 		execution.start(context);
 		context = new MockExternalContext();
@@ -229,7 +230,7 @@ public class FlowExecutionImplTests extends TestCase {
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		execution.setListeners(listeners);
-		execution.setKeyFactory(new SimpleFlowExecutionKeyFactory());
+		execution.setKeyFactory(new MockFlowExecutionKeyFactory());
 		MockExternalContext context = new MockExternalContext();
 		execution.start(context);
 		context = new MockExternalContext();
@@ -254,7 +255,7 @@ public class FlowExecutionImplTests extends TestCase {
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		execution.setListeners(listeners);
-		execution.setKeyFactory(new SimpleFlowExecutionKeyFactory());
+		execution.setKeyFactory(new MockFlowExecutionKeyFactory());
 		MockExternalContext context = new MockExternalContext();
 		execution.start(context);
 		context = new MockExternalContext();
@@ -276,7 +277,7 @@ public class FlowExecutionImplTests extends TestCase {
 			}
 		};
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
-		execution.setKeyFactory(new SimpleFlowExecutionKeyFactory());
+		execution.setKeyFactory(new MockFlowExecutionKeyFactory());
 
 		MockExternalContext context = new MockExternalContext();
 		execution.start(context);
@@ -288,13 +289,9 @@ public class FlowExecutionImplTests extends TestCase {
 
 	}
 
-	private static class SimpleFlowExecutionKeyFactory implements FlowExecutionKeyFactory {
+	private static class MockFlowExecutionKeyFactory implements FlowExecutionKeyFactory {
 		public FlowExecutionKey getKey(FlowExecution execution) {
-			return new FlowExecutionKey() {
-				public String toString() {
-					return "key";
-				}
-			};
+			return new MockFlowExecutionKey();
 		}
 	}
 

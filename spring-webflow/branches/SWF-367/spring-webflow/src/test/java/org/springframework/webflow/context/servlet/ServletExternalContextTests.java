@@ -112,8 +112,7 @@ public class ServletExternalContextTests extends TestCase {
 		request.setPathInfo("/users/1");
 		flowExecutor = new FlowExecutor() {
 			public void execute(ExternalContext context) {
-				context.sendFlowExecutionRedirect();
-				context.setPausedResult("_c12345_k12345");
+				context.sendFlowExecutionRedirect("users", "_c12345_k12345");
 			}
 		};
 		context = new ServletExternalContext(new MockServletContext(), request, response);
@@ -125,8 +124,8 @@ public class ServletExternalContextTests extends TestCase {
 		request.setPathInfo("/users/1");
 		flowExecutor = new FlowExecutor() {
 			public void execute(ExternalContext context) {
-				context.sendFlowExecutionRedirect();
-				context.setEndedResult();
+				context.sendFlowExecutionRedirect("users", "_c12345_k12345");
+				context.setEndedResult("_c12345_k12345");
 			}
 		};
 		context = new ServletExternalContext(new MockServletContext(), request, response);
@@ -147,7 +146,7 @@ public class ServletExternalContextTests extends TestCase {
 				parameters.put("bar", "baz");
 				context.sendFlowDefinitionRedirect("customers", new String[] { "1", "you&me" }, new LocalParameterMap(
 						parameters));
-				context.setEndedResult();
+				context.setEndedResult(null);
 			}
 		};
 		context = new ServletExternalContext(new MockServletContext(), request, response);
@@ -160,7 +159,7 @@ public class ServletExternalContextTests extends TestCase {
 		flowExecutor = new FlowExecutor() {
 			public void execute(ExternalContext context) {
 				context.sendExternalRedirect("/foo/bar/baz");
-				context.setEndedResult();
+				context.setEndedResult(null);
 			}
 		};
 		context = new ServletExternalContext(new MockServletContext(), request, response);

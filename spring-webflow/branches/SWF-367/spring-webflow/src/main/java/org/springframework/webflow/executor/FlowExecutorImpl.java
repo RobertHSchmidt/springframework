@@ -119,7 +119,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 				executionRepository.putFlowExecution(flowExecution);
 				context.setPausedResult(flowExecution.getKey().toString());
 			} else {
-				context.setEndedResult();
+				context.setEndedResult(null);
 			}
 		} catch (FlowException e) {
 			if (!handleException(e, context)) {
@@ -143,7 +143,7 @@ public class FlowExecutorImpl implements FlowExecutor {
 				} else {
 					// execution ended => remove it from the repository
 					executionRepository.removeFlowExecution(flowExecution);
-					context.setEndedResult();
+					context.setEndedResult(flowExecution.getKey().toString());
 				}
 			} finally {
 				lock.unlock();

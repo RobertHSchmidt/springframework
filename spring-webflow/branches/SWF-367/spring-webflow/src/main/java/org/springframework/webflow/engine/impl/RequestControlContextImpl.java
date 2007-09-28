@@ -150,6 +150,24 @@ class RequestControlContextImpl implements RequestControlContext {
 
 	// implementing RequestControlContext
 
+	public String getFlowExecutionUrl() {
+		if (flowExecution.getKey() == null) {
+			throw new IllegalStateException(
+					"Flow execution key not yet assigned; unable to generate flow execution URL at this time");
+		} else {
+			return externalContext.buildFlowExecutionUrl(flowExecution.getFlowId(), flowExecution.getKey().toString());
+		}
+	}
+
+	public void sendFlowExecutionRedirect() {
+		if (flowExecution.getKey() == null) {
+			throw new IllegalStateException(
+					"Flow execution key not yet assigned; unable to send a flow execution redirect request");
+		} else {
+			externalContext.sendFlowExecutionRedirect(flowExecution.getFlowId(), flowExecution.getKey().toString());
+		}
+	}
+
 	public void setCurrentState(State state) {
 		flowExecution.setCurrentState(state, this);
 	}

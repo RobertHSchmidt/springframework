@@ -155,6 +155,26 @@ public class MockRequestContext implements RequestContext {
 		this.attributes.replaceWith(attributes);
 	}
 
+	public String getFlowExecutionUrl() {
+		if (flowExecutionContext.getKey() == null) {
+			throw new IllegalStateException(
+					"Flow execution key not yet assigned; unable to build the flow execution url");
+		} else {
+			String flowDefinitionId = flowExecutionContext.getDefinition().getId();
+			return externalContext.buildFlowExecutionUrl(flowDefinitionId, flowExecutionContext.getKey().toString());
+		}
+	}
+
+	public void sendFlowExecutionRedirect() {
+		if (flowExecutionContext.getKey() == null) {
+			throw new IllegalStateException(
+					"Flow execution key not yet assigned; unable to send a flow execution redirect request");
+		} else {
+			String flowDefinitionId = flowExecutionContext.getDefinition().getId();
+			externalContext.sendFlowExecutionRedirect(flowDefinitionId, flowExecutionContext.getKey().toString());
+		}
+	}
+
 	// mutators
 
 	/**

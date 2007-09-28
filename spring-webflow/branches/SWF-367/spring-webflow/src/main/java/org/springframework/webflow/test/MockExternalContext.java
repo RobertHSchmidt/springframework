@@ -223,28 +223,36 @@ public class MockExternalContext implements ExternalContext {
 		return response;
 	}
 
-	public void sendFlowExecutionRedirect() {
+	public String buildFlowExecutionUrl(String flowDefinitionId, String flowExecutionKey) {
+		// TODO
+		return null;
+	}
+
+	public void sendFlowExecutionRedirect(String flowDefinitionId, String flowExecutionKey) {
+		// TODO - update
 		flowExecutionRedirectResult = true;
 	}
 
-	public void sendFlowDefinitionRedirect(String flowId, String[] requestElements, ParameterMap requestParameters) {
-		flowDefinitionRedirectResult = new FlowDefinitionRedirectResult(flowId, requestElements, requestParameters);
+	public void sendFlowDefinitionRedirect(String flowDefinitionId, String[] requestElements,
+			ParameterMap requestParameters) {
+		flowDefinitionRedirectResult = new FlowDefinitionRedirectResult(flowDefinitionId, requestElements,
+				requestParameters);
 	}
 
 	public void sendExternalRedirect(String resourceUri) {
 		externalRedirectResult = resourceUri;
 	}
 
-	public void setEndedResult() {
+	public void setPausedResult(String flowExecutionKey) {
+		this.pausedFlowExecutionKeyResult = flowExecutionKey;
+	}
+
+	public void setEndedResult(String flowExecutionKey) {
 
 	}
 
 	public void setExceptionResult(FlowException e) {
 		exceptionResult = e;
-	}
-
-	public void setPausedResult(String flowExecutionKey) {
-		this.pausedFlowExecutionKeyResult = flowExecutionKey;
 	}
 
 	public boolean getFlowExecutionRedirectResult() {

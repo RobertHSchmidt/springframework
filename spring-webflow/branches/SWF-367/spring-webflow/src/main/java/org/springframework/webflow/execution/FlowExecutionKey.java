@@ -29,10 +29,9 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
  */
 public abstract class FlowExecutionKey implements Serializable {
 
-	/**
-	 * Subclasses should override toString to return a parseable string form of the key.
-	 * @see java.lang.Object#toString()
-	 * @see FlowExecutionRepository#parseFlowExecutionKey(String)
-	 */
+	public abstract boolean equals(Object o);
+
+	public abstract int hashCode();
+
 	public abstract String toString();
 }
