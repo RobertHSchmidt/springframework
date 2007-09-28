@@ -6,9 +6,8 @@ import javax.el.ExpressionFactory;
 import org.springframework.binding.expression.el.DefaultELContextFactory;
 import org.springframework.binding.expression.el.DefaultELResolver;
 import org.springframework.binding.expression.el.ELExpressionParser;
-import org.springframework.faces.webflow.el.DelegatingAppContextELResolver;
-import org.springframework.faces.webflow.el.FlowELResolver;
 import org.springframework.faces.webflow.el.ExternalContextELResolver;
+import org.springframework.faces.webflow.el.FlowELResolver;
 import org.springframework.faces.webflow.el.RequestContextELResolver;
 
 /**
@@ -34,12 +33,11 @@ public class FlowELExpressionParser extends ELExpressionParser {
 	private static class FlowELContextFactory extends DefaultELContextFactory {
 
 		public ELContext getEvaluationContext(Object target) {
-			ELContext flowELContext = super.getEvaluationContext(null);
+			ELContext flowELContext = super.getEvaluationContext(target);
 			DefaultELResolver resolver = (DefaultELResolver) flowELContext.getELResolver();
 			resolver.add(new RequestContextELResolver());
 			resolver.add(new FlowELResolver());
 			resolver.add(new ExternalContextELResolver());
-			resolver.add(new DelegatingAppContextELResolver());
 			return flowELContext;
 		}
 	}
