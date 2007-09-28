@@ -21,7 +21,7 @@ import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.core.collection.SharedAttributeMap;
 
 /**
- * A facade that provides normalized access to an external system that has interacted with Spring Web Flow.
+ * A facade that provides normalized access to an external system that has called into the Spring Web Flow system.
  * <p>
  * This context object provides a normalized interface for internal web flow artifacts to use to reason on and
  * manipulate the state of an external actor calling into SWF to execute flows. It represents the context about a
@@ -37,20 +37,23 @@ import org.springframework.webflow.core.collection.SharedAttributeMap;
 public interface ExternalContext {
 
 	/**
-	 * Returns the id of the flow the client requested be launched.
-	 * @return the flow id
+	 * Returns the unique id of the flow definition invoked by this caller. For a "launch" request, this identifier is
+	 * used directly to create a new flow execution. For a "resume" request, this identifier provides additional flow
+	 * execution context.
+	 * @return the flow definition identifier, never null
+	 * @see #getFlowExecutionKey()
 	 */
 	public String getFlowId();
 
 	/**
-	 * Returns the execution the client requested to be resumed.
+	 * Returns the unique key identifying the flow execution this client wishes to resume.
 	 * @return the flow execution key, may be null if this is not a resume request
 	 */
 	public String getFlowExecutionKey();
 
 	/**
-	 * Returns the type of this external request.
-	 * @return the request method.
+	 * Returns the type of this client request. For example, this request may be a "GET" request or a "POST" request.
+	 * @return the request method
 	 */
 	public String getRequestMethod();
 
@@ -117,34 +120,70 @@ public interface ExternalContext {
 	 */
 	public Object getResponse();
 
+	/**
+	 * Builds a context-relative flow execution URL that can be used to redirect to a paused a flow execution.
+	 * @param flowDefinitionId the flow definition id of the execution
+	 * @param flowExecutionKey the flow execution key
+	 * @return the generated flow execution url
+	 */
 	public String buildFlowExecutionUrl(String flowDefinitionId, String flowExecutionKey);
 
 	/**
 	 * Request that a flow execution redirect be sent as the response. A flow execution redirect tells the caller to
-	 * refresh this flow execution in a new request.
+	 * resume a flow execution in a new request. Sets response committed to true.
+	 * @param flowDefinitionId the flow definition id of the execution
+	 * @param flowExecutionKey the flow execution key
+	 * @see #isResponseCommitted()
 	 */
 	public void sendFlowExecutionRedirect(String flowDefinitionId, String flowExecutionKey);
 
 	/**
 	 * Request that a flow definition redirect be sent as the response. A flow definition redirect tells the caller to
-	 * start a new execution of the flow definition with the input provided.
+	 * start a new execution of the flow definition with the input provided. Sets response committed to true.
+	 * @param flowDefinitionId the flow definition identifier
+	 * @param requestElements element data to expose in the flow execution's external context
+	 * @param requestParameters input parameters to expose in the flow execution's external context
+	 * @see #isResponseCommitted()
 	 */
 	public void sendFlowDefinitionRedirect(String flowDefinitionId, String[] requestElements,
 			ParameterMap requestParameters);
 
 	/**
 	 * Request that a external redirect be sent as the response. An external redirect tells the caller to access the
-	 * resource at the given resource URI.
+	 * resource at the given resource URI. Sets response committed to true.
 	 * @param resourceUri the resource URI string
+	 * @see #isResponseCommitted()
 	 */
 	public void sendExternalRedirect(String resourceUri);
 
+	/**
+	 * Report that flow execution request processing ended with a "paused" result, indicating the flow execution paused
+	 * and will be waiting to resume on a subsequent request.
+	 * @param flowExecutionKey the flow execution key
+	 */
 	public void setPausedResult(String flowExecutionKey);
 
+	/**
+	 * Report that flow execution request processing ended with a "ended" result, indicating the flow execution
+	 * terminated.
+	 * @param flowExecutionKey the flow execution key, now invalid or null if never assigned
+	 */
 	public void setEndedResult(String flowExecutionKey);
 
+	/**
+	 * Report that flow execution request processing ended with an unhandled flow exception.
+	 * @param e the unhandled flow exception
+	 */
 	public void setExceptionResult(FlowException e);
 
+	/**
+	 * Returns true if the current request has already provisioned the response that will be sent back to the calling
+	 * system.
+	 * @return true if the response has been committed, false otherwise
+	 * @see #sendFlowExecutionRedirect(String, String)
+	 * @see #sendFlowDefinitionRedirect(String, String[], ParameterMap)
+	 * @see #sendExternalRedirect(String)
+	 */
 	public boolean isResponseCommitted();
 
 }
