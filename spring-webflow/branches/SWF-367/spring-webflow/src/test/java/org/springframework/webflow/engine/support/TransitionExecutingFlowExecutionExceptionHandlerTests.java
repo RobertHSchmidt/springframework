@@ -82,7 +82,7 @@ public class TransitionExecutingFlowExecutionExceptionHandlerTests extends TestC
 	}
 
 	public void testFlowStateExceptionHandlingTransition() {
-		EndState state2 = new EndState(flow, "end");
+		new EndState(flow, "end");
 		TransitionExecutingFlowExecutionExceptionHandler handler = new TransitionExecutingFlowExecutionExceptionHandler();
 		handler.add(TestException.class, "end");
 		flow.getExceptionHandlerSet().add(handler);
@@ -131,7 +131,7 @@ public class TransitionExecutingFlowExecutionExceptionHandlerTests extends TestC
 						throw new NullPointerException("failing");
 					}
 				});
-				TransitionableState errorState = new TransitionableState(getFlow(), "showError") {
+				new TransitionableState(getFlow(), "showError") {
 					protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 					}
 				};
