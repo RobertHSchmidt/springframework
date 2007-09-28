@@ -22,7 +22,6 @@ import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.binding.method.Parameter;
 import org.springframework.faces.el.FlowELExpressionParser;
-import org.springframework.faces.webflow.el.DelegatingAppContextELResolver;
 import org.springframework.faces.webflow.el.FlowELResolver;
 import org.springframework.faces.webflow.el.RequestContextELResolver;
 import org.springframework.web.context.support.GenericWebApplicationContext;
@@ -46,9 +45,9 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionKey;
+import org.springframework.webflow.execution.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ScopeType;
-import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
 
 public class JSFFlowExecutionTests extends TestCase {
 
@@ -123,7 +122,6 @@ public class JSFFlowExecutionTests extends TestCase {
 		CompositeELResolver baseResolver = (CompositeELResolver) jsf.facesContext().getELContext().getELResolver();
 		baseResolver.add(new RequestContextELResolver());
 		baseResolver.add(new FlowELResolver());
-		baseResolver.add(new DelegatingAppContextELResolver());
 
 		jsf.externalContext().getRequestMap().put("JsfBean", new JSFManagedBean());
 	}
