@@ -37,11 +37,7 @@
 	<!-- Map all *.spring requests to the Web Servlet for handling -->
 	<servlet-mapping>
 		<servlet-name>Spring Web Servlet</servlet-name>
-		<url-pattern>/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Spring Web Servlet</servlet-name>
-		<url-pattern>*.spring</url-pattern>
+		<url-pattern>/spring/*</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>
