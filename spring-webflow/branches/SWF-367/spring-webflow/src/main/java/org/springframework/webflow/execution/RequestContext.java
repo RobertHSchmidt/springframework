@@ -163,7 +163,11 @@ public interface RequestContext {
 	 */
 	public void setAttributes(AttributeMap attributes);
 
-	public String getFlowExecutionUrl();
-
-	public void sendFlowExecutionRedirect();
+	/**
+	 * Returns the context-relative URL of this flow execution. Needed by response writers that write out the URL of
+	 * this flow execution to allow calling back this execution in a subsequent request.
+	 * @throws IllegalStateException if the flow execution has not yet had its key assigned
+	 * @return the flow execution URL
+	 */
+	public String getFlowExecutionUrl() throws IllegalStateException;
 }
