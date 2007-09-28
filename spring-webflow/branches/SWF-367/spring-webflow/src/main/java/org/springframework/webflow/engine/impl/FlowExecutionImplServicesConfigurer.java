@@ -15,17 +15,11 @@
  */
 package org.springframework.webflow.engine.impl;
 
-import java.io.Serializable;
-
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.CollectionUtils;
-import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionKey;
-import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.factory.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
-import org.springframework.webflow.util.RandomGuidUidGenerator;
 
 abstract class FlowExecutionImplServicesConfigurer {
 
@@ -39,11 +33,6 @@ abstract class FlowExecutionImplServicesConfigurer {
 	 * System execution attributes that may influence flow execution behavior. The default is an empty map.
 	 */
 	private AttributeMap executionAttributes = CollectionUtils.EMPTY_ATTRIBUTE_MAP;
-
-	/**
-	 * The factory used to assign keys to flow executions that need to be persisted.
-	 */
-	private FlowExecutionKeyFactory executionKeyFactory = new RandomFlowExecutionKeyFactory();
 
 	/**
 	 * Sets the attributes to apply to flow executions created by this factory. Execution attributes may affect flow
@@ -65,51 +54,11 @@ abstract class FlowExecutionImplServicesConfigurer {
 	}
 
 	/**
-	 * Sets the strategy for generating flow execution keys for persistent flow executions.
+	 * Called by subclasses to apply the configured set of standard services to the flow execution.
+	 * @param execution the flow execution
 	 */
-	public void setExecutionKeyFactory(FlowExecutionKeyFactory executionKeyFactory) {
-		this.executionKeyFactory = executionKeyFactory;
-	}
-
-	protected FlowExecution configureServices(FlowExecutionImpl execution) {
+	protected void configureServices(FlowExecutionImpl execution) {
 		execution.setAttributes(executionAttributes);
 		execution.setListeners(executionListenerLoader.getListeners(execution.getDefinition()));
-		execution.setKeyFactory(executionKeyFactory);
-		return execution;
-	}
-
-	/**
-	 * Generates random flow execution keys.
-	 */
-	private static class RandomFlowExecutionKeyFactory implements FlowExecutionKeyFactory {
-		private RandomGuidUidGenerator idGenerator = new RandomGuidUidGenerator();
-
-		public FlowExecutionKey getKey(FlowExecution execution) {
-			return new SimpleFlowExecutionKey(idGenerator.generateUid());
-		}
-
-		private static class SimpleFlowExecutionKey extends FlowExecutionKey {
-			private Serializable value;
-
-			public SimpleFlowExecutionKey(Serializable value) {
-				this.value = value;
-			}
-
-			public boolean equals(Object o) {
-				if (!(o instanceof SimpleFlowExecutionKey)) {
-					SimpleFlowExecutionKey key = (SimpleFlowExecutionKey) o;
-					return this.value.equals(key.value);
-				}
-				return false;
-			}
-
-			public int hashCode() {
-				return this.value.hashCode();
-			}
-
-			public String toString() {
-				return value.toString();
-			}
-		}
 	}
 }

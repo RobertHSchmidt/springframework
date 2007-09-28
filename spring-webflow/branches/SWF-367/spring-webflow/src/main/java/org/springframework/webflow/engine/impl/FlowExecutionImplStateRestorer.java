@@ -24,6 +24,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionKey;
+import org.springframework.webflow.execution.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
 
 /**
@@ -49,14 +50,14 @@ public class FlowExecutionImplStateRestorer extends FlowExecutionImplServicesCon
 	}
 
 	public FlowExecution restoreState(FlowExecution flowExecution, FlowExecutionKey key,
-			MutableAttributeMap conversationScope) {
+			MutableAttributeMap conversationScope, FlowExecutionKeyFactory keyFactory) {
 		FlowExecutionImpl impl = (FlowExecutionImpl) flowExecution;
 		// the root flow should be a top-level flow visible by the flow def locator
 		if (impl.getFlowId() == null) {
-			throw new IllegalStateException("Cannot restore flow execution impl; the flow id is null");
+			throw new IllegalStateException("Cannot restore flow execution impl: the flow id is null");
 		}
 		if (impl.getFlowSessions() == null) {
-			throw new IllegalStateException("Cannot restore flow execution impl; the flowSessions list is null");
+			throw new IllegalStateException("Cannot restore flow execution impl: the flowSessions list is null");
 		}
 		Flow flow = (Flow) definitionLocator.getFlowDefinition(impl.getFlowId());
 		impl.setFlow(flow);
@@ -87,6 +88,8 @@ public class FlowExecutionImplStateRestorer extends FlowExecutionImplServicesCon
 			conversationScope = new LocalAttributeMap();
 		}
 		impl.setConversationScope(conversationScope);
-		return configureServices(impl);
+		configureServices(impl);
+		impl.setKeyFactory(keyFactory);
+		return impl;
 	}
 }

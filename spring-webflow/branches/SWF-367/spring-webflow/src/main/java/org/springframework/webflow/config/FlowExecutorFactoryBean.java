@@ -34,7 +34,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.engine.impl.FlowExecutionImplStateRestorer;
 import org.springframework.webflow.execution.FlowExecutionFactory;
-import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
+import org.springframework.webflow.execution.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.factory.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.impl.ClientFlowExecutionRepository;
@@ -202,7 +202,6 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 		// a repository to store flow executions
 		FlowExecutionRepository executionRepository = createFlowExecutionRepository(flowExecutionRepositoryType,
 				executionStateRestorer, conversationManager);
-		executionStateRestorer.setExecutionKeyFactory((FlowExecutionKeyFactory) executionRepository);
 
 		// a factory for flow executions
 		FlowExecutionFactory executionFactory = createFlowExecutionFactory(executionAttributes,

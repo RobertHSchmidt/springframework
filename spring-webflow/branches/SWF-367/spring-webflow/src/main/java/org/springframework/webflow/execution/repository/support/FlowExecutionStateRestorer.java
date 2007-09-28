@@ -18,6 +18,7 @@ package org.springframework.webflow.execution.repository.support;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionKey;
+import org.springframework.webflow.execution.FlowExecutionKeyFactory;
 
 /**
  * A strategy used by repositories to restore transient flow execution state during execution restoration.
@@ -33,8 +34,10 @@ public interface FlowExecutionStateRestorer {
 	 * @param conversationScope the execution's conversation scope, which is typically not part of the serialized form
 	 * since it could be shared by multiple physical flow execution <i>copies</i> all sharing the same logical
 	 * conversation
+	 * @param keyFactory the flow execution key factory the flow execution will use to assign itself a new key at a
+	 * later date (typically the repository itself)
 	 * @return the restored flow execution
 	 */
 	public FlowExecution restoreState(FlowExecution flowExecution, FlowExecutionKey key,
-			MutableAttributeMap conversationScope);
+			MutableAttributeMap conversationScope, FlowExecutionKeyFactory keyFactory);
 }

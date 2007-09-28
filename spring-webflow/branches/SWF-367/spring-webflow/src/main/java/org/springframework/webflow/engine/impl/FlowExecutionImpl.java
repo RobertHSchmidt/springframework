@@ -40,11 +40,11 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionKey;
+import org.springframework.webflow.execution.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
 
 /**
  * Default implementation of FlowExecution that uses a stack-based data structure to manage spawned flow sessions. This
