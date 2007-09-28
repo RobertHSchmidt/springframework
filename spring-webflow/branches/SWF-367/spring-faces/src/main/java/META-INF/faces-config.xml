@@ -14,7 +14,7 @@
 		<action-listener>org.springframework.faces.webflow.FlowActionListener</action-listener>
 		<el-resolver>org.springframework.faces.webflow.el.RequestContextELResolver</el-resolver>
 		<el-resolver>org.springframework.faces.webflow.el.FlowELResolver</el-resolver>
-		<el-resolver>org.springframework.web.jsf.el.DelegatingFacesELResolver</el-resolver>
+
 	</application>
 
 	<component>
