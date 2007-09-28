@@ -14,7 +14,7 @@
 		<action-listener>org.springframework.faces.webflow.FlowActionListener</action-listener>
 		<el-resolver>org.springframework.faces.webflow.el.RequestContextELResolver</el-resolver>
 		<el-resolver>org.springframework.faces.webflow.el.FlowELResolver</el-resolver>
-
+		<view-handler>org.springframework.faces.webflow.FlowExecutionViewHandler</view-handler>
 	</application>
 
 	<component>

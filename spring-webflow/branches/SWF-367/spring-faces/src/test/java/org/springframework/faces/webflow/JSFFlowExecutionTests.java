@@ -245,6 +245,14 @@ public class JSFFlowExecutionTests extends TestCase {
 				public String toString() {
 					return "key";
 				}
+
+				public boolean equals(Object o) {
+					return true;
+				}
+
+				public int hashCode() {
+					return 0;
+				}
 			};
 		}
 	}
