@@ -1,7 +1,5 @@
-package org.springframework.webflow.execution.factory;
+package org.springframework.webflow.execution;
 
-import org.springframework.webflow.execution.FlowExecution;
-import org.springframework.webflow.execution.FlowExecutionKey;
 
 /**
  * A factory for creating flow execution keys. Used to generate a persistent identity for a flow execution that needs to

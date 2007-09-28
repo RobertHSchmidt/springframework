@@ -12,9 +12,9 @@ import org.springframework.webflow.definition.registry.NoSuchFlowDefinitionExcep
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionKey;
+import org.springframework.webflow.execution.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.MockFlowExecutionListener;
-import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.factory.FlowExecutionListenerLoader;
 import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
 import org.springframework.webflow.test.MockFlowExecutionKey;
@@ -37,14 +37,13 @@ public class FlowExecutionStateRestorerImplTests extends TestCase {
 		stateRestorer = new FlowExecutionImplStateRestorer(definitionLocator);
 		stateRestorer.setExecutionAttributes(executionAttributes);
 		stateRestorer.setExecutionListenerLoader(executionListenerLoader);
-		stateRestorer.setExecutionKeyFactory(executionKeyFactory);
 	}
 
 	public void testRestoreStateNoSessions() {
 		FlowExecutionKey key = new MockFlowExecutionKey();
 		LocalAttributeMap conversationScope = new LocalAttributeMap();
 		FlowExecutionImpl execution = new FlowExecutionImpl("parent", new LinkedList());
-		stateRestorer.restoreState(execution, key, conversationScope);
+		stateRestorer.restoreState(execution, key, conversationScope, executionKeyFactory);
 		assertSame(definitionLocator.parent, execution.getDefinition());
 		assertTrue(execution.getFlowSessions().isEmpty());
 		assertSame(conversationScope, execution.getConversationScope());
@@ -60,7 +59,7 @@ public class FlowExecutionStateRestorerImplTests extends TestCase {
 		LocalAttributeMap conversationScope = new LocalAttributeMap();
 		FlowExecutionImpl execution = new FlowExecutionImpl();
 		try {
-			stateRestorer.restoreState(execution, key, conversationScope);
+			stateRestorer.restoreState(execution, key, conversationScope, executionKeyFactory);
 			fail("Should've failed");
 		} catch (IllegalStateException e) {
 
@@ -72,7 +71,7 @@ public class FlowExecutionStateRestorerImplTests extends TestCase {
 		LocalAttributeMap conversationScope = new LocalAttributeMap();
 		FlowExecutionImpl execution = new FlowExecutionImpl("parent", null);
 		try {
-			stateRestorer.restoreState(execution, key, conversationScope);
+			stateRestorer.restoreState(execution, key, conversationScope, executionKeyFactory);
 			fail("Should've failed");
 		} catch (IllegalStateException e) {
 

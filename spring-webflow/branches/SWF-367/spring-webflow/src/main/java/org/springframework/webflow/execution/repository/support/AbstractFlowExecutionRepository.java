@@ -32,7 +32,7 @@ import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionFactory;
 import org.springframework.webflow.execution.FlowExecutionKey;
-import org.springframework.webflow.execution.factory.FlowExecutionKeyFactory;
+import org.springframework.webflow.execution.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
@@ -210,7 +210,7 @@ public abstract class AbstractFlowExecutionRepository implements FlowExecutionRe
 	}
 
 	protected FlowExecution restoreTransientState(FlowExecution execution, FlowExecutionKey key) {
-		return executionStateRestorer.restoreState(execution, key, getConversationScope(key));
+		return executionStateRestorer.restoreState(execution, key, getConversationScope(key), this);
 	}
 
 	protected void putConversationScope(FlowExecution flowExecution) {

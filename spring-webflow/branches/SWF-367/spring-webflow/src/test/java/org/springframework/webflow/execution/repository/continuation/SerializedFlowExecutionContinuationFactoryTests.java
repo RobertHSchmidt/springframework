@@ -12,13 +12,16 @@ import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.impl.FlowExecutionImpl;
 import org.springframework.webflow.engine.impl.FlowExecutionImplStateRestorer;
 import org.springframework.webflow.execution.FlowExecutionException;
+import org.springframework.webflow.execution.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
 import org.springframework.webflow.test.MockExternalContext;
+import org.springframework.webflow.test.MockFlowExecutionKeyFactory;
 
 public class SerializedFlowExecutionContinuationFactoryTests extends TestCase {
 	private Flow flow;
 	private SerializedFlowExecutionContinuationFactory factory;
 	private FlowExecutionStateRestorer stateRestorer;
+	private FlowExecutionKeyFactory executionKeyFactory;
 
 	public void setUp() {
 		flow = new Flow("myFlow");
@@ -33,6 +36,7 @@ public class SerializedFlowExecutionContinuationFactoryTests extends TestCase {
 				return flow;
 			}
 		});
+		executionKeyFactory = new MockFlowExecutionKeyFactory();
 	}
 
 	public void testCreateContinuation() {
@@ -42,7 +46,7 @@ public class SerializedFlowExecutionContinuationFactoryTests extends TestCase {
 		FlowExecutionContinuation continuation = factory.createContinuation(flowExecution);
 		FlowExecutionImpl flowExecution2 = (FlowExecutionImpl) continuation.unmarshal();
 		assertNotSame(flowExecution, flowExecution2);
-		stateRestorer.restoreState(flowExecution2, null, flowExecution.getConversationScope());
+		stateRestorer.restoreState(flowExecution2, null, flowExecution.getConversationScope(), executionKeyFactory);
 		assertEquals(flowExecution.getDefinition().getId(), flowExecution2.getDefinition().getId());
 		assertEquals(flowExecution.getActiveSession().getScope().get("foo"), flowExecution2.getActiveSession()
 				.getScope().get("foo"));
@@ -60,7 +64,7 @@ public class SerializedFlowExecutionContinuationFactoryTests extends TestCase {
 		assertEquals(continuation, continuation2);
 		FlowExecutionImpl flowExecution2 = (FlowExecutionImpl) continuation2.unmarshal();
 		assertNotSame(flowExecution, flowExecution2);
-		stateRestorer.restoreState(flowExecution2, null, flowExecution.getConversationScope());
+		stateRestorer.restoreState(flowExecution2, null, flowExecution.getConversationScope(), executionKeyFactory);
 		assertEquals(flowExecution.getDefinition().getId(), flowExecution2.getDefinition().getId());
 		assertEquals(flowExecution.getActiveSession().getScope().get("foo"), flowExecution2.getActiveSession()
 				.getScope().get("foo"));
