@@ -25,6 +25,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionListener;
@@ -92,7 +93,7 @@ public class JpaFlowExecutionListener extends FlowExecutionListenerAdapter {
 		this.transactionTemplate = new TransactionTemplate(transactionManager);
 	}
 
-	public void sessionStarting(RequestContext context, FlowSession session) {
+	public void sessionStarting(RequestContext context, FlowSession session, MutableAttributeMap input) {
 		if (isPersistenceContext(session.getDefinition())) {
 			EntityManager em = entityManagerFactory.createEntityManager();
 			session.getScope().put(ENTITY_MANAGER_ATTRIBUTE, em);

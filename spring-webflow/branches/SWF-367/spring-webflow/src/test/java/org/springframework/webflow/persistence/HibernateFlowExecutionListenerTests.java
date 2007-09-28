@@ -70,7 +70,7 @@ public class HibernateFlowExecutionListenerTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		MockFlowSession flowSession = new MockFlowSession();
 		flowSession.getDefinitionInternal().getAttributeMap().put("persistenceContext", "true");
-		hibernateListener.sessionStarting(context, flowSession);
+		hibernateListener.sessionStarting(context, flowSession, null);
 		context.setActiveSession(flowSession);
 		assertSessionBound();
 
@@ -97,7 +97,7 @@ public class HibernateFlowExecutionListenerTests extends TestCase {
 	public void testFlowNotAPersistenceContext() {
 		MockRequestContext context = new MockRequestContext();
 		MockFlowSession flowSession = new MockFlowSession();
-		hibernateListener.sessionStarting(context, flowSession);
+		hibernateListener.sessionStarting(context, flowSession, null);
 		assertSessionNotBound();
 	}
 
@@ -106,7 +106,7 @@ public class HibernateFlowExecutionListenerTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		MockFlowSession flowSession = new MockFlowSession();
 		flowSession.getDefinitionInternal().getAttributeMap().put("persistenceContext", "true");
-		hibernateListener.sessionStarting(context, flowSession);
+		hibernateListener.sessionStarting(context, flowSession, null);
 		context.setActiveSession(flowSession);
 		assertSessionBound();
 
@@ -129,7 +129,7 @@ public class HibernateFlowExecutionListenerTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		MockFlowSession flowSession = new MockFlowSession();
 		flowSession.getDefinitionInternal().getAttributeMap().put("persistenceContext", "true");
-		hibernateListener.sessionStarting(context, flowSession);
+		hibernateListener.sessionStarting(context, flowSession, null);
 		context.setActiveSession(flowSession);
 		assertSessionBound();
 
@@ -163,7 +163,7 @@ public class HibernateFlowExecutionListenerTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		MockFlowSession flowSession = new MockFlowSession();
 		flowSession.getDefinitionInternal().getAttributeMap().put("persistenceContext", "true");
-		hibernateListener.sessionStarting(context, flowSession);
+		hibernateListener.sessionStarting(context, flowSession, null);
 		context.setActiveSession(flowSession);
 		assertSessionBound();
 
@@ -185,7 +185,7 @@ public class HibernateFlowExecutionListenerTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		MockFlowSession flowSession = new MockFlowSession();
 		flowSession.getDefinitionInternal().getAttributeMap().put("persistenceContext", "true");
-		hibernateListener.sessionStarting(context, flowSession);
+		hibernateListener.sessionStarting(context, flowSession, null);
 		context.setActiveSession(flowSession);
 		assertSessionBound();
 
@@ -205,7 +205,7 @@ public class HibernateFlowExecutionListenerTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		MockFlowSession flowSession = new MockFlowSession();
 		flowSession.getDefinitionInternal().getAttributeMap().put("persistenceContext", "true");
-		hibernateListener.sessionStarting(context, flowSession);
+		hibernateListener.sessionStarting(context, flowSession, null);
 		context.setActiveSession(flowSession);
 		assertSessionBound();
 
@@ -232,7 +232,7 @@ public class HibernateFlowExecutionListenerTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		MockFlowSession flowSession = new MockFlowSession();
 		flowSession.getDefinitionInternal().getAttributeMap().put("persistenceContext", "true");
-		hibernateListener.sessionStarting(context, flowSession);
+		hibernateListener.sessionStarting(context, flowSession, null);
 		context.setActiveSession(flowSession);
 		assertSessionBound();
 
