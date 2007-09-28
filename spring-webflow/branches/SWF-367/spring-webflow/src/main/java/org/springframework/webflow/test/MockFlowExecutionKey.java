@@ -17,12 +17,21 @@ package org.springframework.webflow.test;
 
 import org.springframework.webflow.execution.FlowExecutionKey;
 
+/**
+ * A simple flow execution key implementation. New instances of this class get their values from a sequence encapsulated
+ * as a stativ private variable of this class.
+ * 
+ * @author Keith Donald
+ */
 public class MockFlowExecutionKey extends FlowExecutionKey {
 
 	private static int nextKey = 1;
 
 	private int value;
 
+	/**
+	 * Creates a new mock flow execution key.
+	 */
 	public MockFlowExecutionKey() {
 		this.value = nextKey();
 	}
