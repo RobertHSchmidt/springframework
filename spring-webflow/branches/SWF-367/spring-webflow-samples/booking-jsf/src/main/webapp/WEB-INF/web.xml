@@ -16,6 +16,12 @@
 		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+	
+	<!-- Dummy mapping for faces initialization -->
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.faces</url-pattern>
+	</servlet-mapping>
 
 	<!-- The front controller of the Spring Web application, responsible for handling all application requests -->
 	<servlet>
@@ -29,6 +35,10 @@
 	</servlet>
 		
 	<!-- Map all *.spring requests to the Web Servlet for handling -->
+	<servlet-mapping>
+		<servlet-name>Spring Web Servlet</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>Spring Web Servlet</servlet-name>
 		<url-pattern>*.spring</url-pattern>
