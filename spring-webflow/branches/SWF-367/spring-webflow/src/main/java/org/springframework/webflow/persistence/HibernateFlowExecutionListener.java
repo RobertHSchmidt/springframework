@@ -26,6 +26,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionListener;
@@ -102,7 +103,7 @@ public class HibernateFlowExecutionListener extends FlowExecutionListenerAdapter
 		this.entityInterceptor = entityInterceptor;
 	}
 
-	public void sessionStarting(RequestContext context, FlowSession session) {
+	public void sessionStarting(RequestContext context, FlowSession session, MutableAttributeMap input) {
 		if (isPersistenceContext(session.getDefinition())) {
 			Session hibernateSession = createSession(context);
 			session.getScope().put(HIBERNATE_SESSION_ATTRIBUTE, hibernateSession);

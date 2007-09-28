@@ -48,7 +48,7 @@ public class JpaFlowExecutionListenerTests extends TestCase {
 	public void testFlowNotAPersistenceContext() {
 		MockRequestContext context = new MockRequestContext();
 		MockFlowSession flowSession = new MockFlowSession();
-		jpaListener.sessionStarting(context, flowSession);
+		jpaListener.sessionStarting(context, flowSession, null);
 		assertSessionNotBound();
 	}
 
@@ -57,7 +57,7 @@ public class JpaFlowExecutionListenerTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		MockFlowSession flowSession = new MockFlowSession();
 		flowSession.getDefinitionInternal().getAttributeMap().put("persistenceContext", "true");
-		jpaListener.sessionStarting(context, flowSession);
+		jpaListener.sessionStarting(context, flowSession, null);
 		context.setActiveSession(flowSession);
 		assertSessionBound();
 
@@ -80,7 +80,7 @@ public class JpaFlowExecutionListenerTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		MockFlowSession flowSession = new MockFlowSession();
 		flowSession.getDefinitionInternal().getAttributeMap().put("persistenceContext", "true");
-		jpaListener.sessionStarting(context, flowSession);
+		jpaListener.sessionStarting(context, flowSession, null);
 		context.setActiveSession(flowSession);
 		assertSessionBound();
 
@@ -113,7 +113,7 @@ public class JpaFlowExecutionListenerTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		MockFlowSession flowSession = new MockFlowSession();
 		flowSession.getDefinitionInternal().getAttributeMap().put("persistenceContext", "true");
-		jpaListener.sessionStarting(context, flowSession);
+		jpaListener.sessionStarting(context, flowSession, null);
 		context.setActiveSession(flowSession);
 		assertSessionBound();
 
@@ -135,7 +135,7 @@ public class JpaFlowExecutionListenerTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		MockFlowSession flowSession = new MockFlowSession();
 		flowSession.getDefinitionInternal().getAttributeMap().put("persistenceContext", "true");
-		jpaListener.sessionStarting(context, flowSession);
+		jpaListener.sessionStarting(context, flowSession, null);
 		context.setActiveSession(flowSession);
 		assertSessionBound();
 
@@ -155,7 +155,7 @@ public class JpaFlowExecutionListenerTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		MockFlowSession flowSession = new MockFlowSession();
 		flowSession.getDefinitionInternal().getAttributeMap().put("persistenceContext", "true");
-		jpaListener.sessionStarting(context, flowSession);
+		jpaListener.sessionStarting(context, flowSession, null);
 		context.setActiveSession(flowSession);
 		assertSessionBound();
 
@@ -182,7 +182,7 @@ public class JpaFlowExecutionListenerTests extends TestCase {
 		MockRequestContext context = new MockRequestContext();
 		MockFlowSession flowSession = new MockFlowSession();
 		flowSession.getDefinitionInternal().getAttributeMap().put("persistenceContext", "true");
-		jpaListener.sessionStarting(context, flowSession);
+		jpaListener.sessionStarting(context, flowSession, null);
 		context.setActiveSession(flowSession);
 		assertSessionBound();
 
