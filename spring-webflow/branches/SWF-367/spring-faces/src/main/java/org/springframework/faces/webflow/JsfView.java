@@ -11,6 +11,7 @@ import javax.faces.lifecycle.Lifecycle;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.execution.View;
 
 public class JsfView implements View {
@@ -24,8 +25,6 @@ public class JsfView implements View {
 	 */
 	private UIViewRoot viewRoot;
 
-	private boolean eventSignaled = false;
-
 	private Event event;
 
 	private Lifecycle facesLifecycle;
@@ -37,20 +36,21 @@ public class JsfView implements View {
 
 		this.viewRoot = viewRoot;
 		this.facesLifecycle = facesLifecycle;
-
-		String jsfEvent = (String) FacesContext.getCurrentInstance().getExternalContext().getRequestMap()
-				.get(EVENT_KEY);
-		if (StringUtils.hasText(jsfEvent)) {
-			this.eventSignaled = true;
-			this.event = new Event(this, jsfEvent);
-		}
 	}
 
 	public boolean eventSignaled() {
-		return eventSignaled;
+		return getEvent() != null;
 	}
 
 	public Event getEvent() {
+		if (event == null) {
+
+			String jsfEvent = (String) RequestContextHolder.getRequestContext().getExternalContext().getRequestMap()
+					.get(EVENT_KEY);
+			if (StringUtils.hasText(jsfEvent)) {
+				event = new Event(this, jsfEvent);
+			}
+		}
 		return event;
 	}
 

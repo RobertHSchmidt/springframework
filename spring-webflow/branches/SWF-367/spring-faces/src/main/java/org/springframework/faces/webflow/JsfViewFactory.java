@@ -77,7 +77,8 @@ public class JsfViewFactory implements ViewFactory {
 	}
 
 	private boolean viewExists(FacesContext facesContext) {
-		if (facesContext.getViewRoot() != null && facesContext.getViewRoot().getViewId().equals(viewExpr)) {
+		if (facesContext.getViewRoot() != null
+				&& facesContext.getViewRoot().getViewId().equals(viewExpr.evaluate(null, null))) {
 			return true;
 		}
 		return false;
