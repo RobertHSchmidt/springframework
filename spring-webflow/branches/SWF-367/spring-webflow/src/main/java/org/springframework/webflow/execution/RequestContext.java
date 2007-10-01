@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.execution;
 
+import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
@@ -129,6 +130,13 @@ public interface RequestContext {
 	 * @return the originating external context, the one that triggered the current execution request
 	 */
 	public ExternalContext getExternalContext();
+
+	/**
+	 * Returns the message context of this request. Useful for recording messages during the course of flow execution
+	 * for display to the client.
+	 * @return the message context
+	 */
+	public MessageContext getMessageContext();
 
 	/**
 	 * Returns contextual information about the flow execution itself. Information in this context typically spans more

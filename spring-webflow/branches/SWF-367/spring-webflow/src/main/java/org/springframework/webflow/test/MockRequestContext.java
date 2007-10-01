@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.test;
 
+import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -129,6 +130,11 @@ public class MockRequestContext implements RequestContext {
 
 	public ParameterMap getRequestParameters() {
 		return externalContext.getRequestParameterMap();
+	}
+
+	public MessageContext getMessageContext() {
+		// TODO
+		throw new UnsupportedOperationException("TODO");
 	}
 
 	public ExternalContext getExternalContext() {

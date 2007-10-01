@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.engine.impl;
 
+import org.springframework.binding.message.MessageContext;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
@@ -124,6 +125,11 @@ class RequestControlContextImpl implements RequestControlContext {
 		return externalContext;
 	}
 
+	public MessageContext getMessageContext() {
+		// TODO
+		throw new UnsupportedOperationException("TODO");
+	}
+
 	public FlowExecutionContext getFlowExecutionContext() {
 		return flowExecution;
 	}
@@ -207,5 +213,4 @@ class RequestControlContextImpl implements RequestControlContext {
 				.append("requestScope", requestScope).append("attributes", attributes).append("flowExecution",
 						flowExecution).toString();
 	}
-
 }
