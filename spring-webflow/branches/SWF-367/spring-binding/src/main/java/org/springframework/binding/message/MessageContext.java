@@ -12,6 +12,13 @@ public interface MessageContext {
 	public Message[] getMessages();
 
 	/**
+	 * Get messages by source.
+	 * @param source the source that recorded the message
+	 * @return messages
+	 */
+	public Message[] getMessages(Object source);
+
+	/**
 	 * Add a new message to this context.
 	 * @param messageResolver the resolver that will resolve the message to be added
 	 */
