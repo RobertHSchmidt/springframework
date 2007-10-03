@@ -8,9 +8,6 @@ import javax.el.ListELResolver;
 import javax.el.MapELResolver;
 import javax.el.ResourceBundleELResolver;
 
-import org.springframework.binding.collection.MapAdaptable;
-import org.springframework.util.Assert;
-
 /**
  * A generic ELResolver to be used as a default when no other ELResolvers have been configured by the client
  * application.
@@ -24,47 +21,34 @@ import org.springframework.util.Assert;
  */
 public class DefaultELResolver extends CompositeELResolver {
 
-	private Object target;
+	private Object root;
 
-	public DefaultELResolver() {
+	/**
+	 * Creates a new default EL resolver for resolving properties of the root object.
+	 * @param root the root object
+	 */
+	public DefaultELResolver(Object root) {
+		this.root = root;
 		configureResolvers();
 	}
 
 	public Class getType(ELContext context, Object base, Object property) {
-		return super.getType(context, adaptIfNecessary(base), property);
+		return super.getType(context, base, property);
 	}
 
 	public Object getValue(ELContext context, Object base, Object property) {
-		Assert.notNull(target, "The DefaultELResolver must have a target base property set.");
 		if (base == null) {
-			return super.getValue(context, target, property);
+			return super.getValue(context, root, property);
 		} else {
-			return super.getValue(context, adaptIfNecessary(base), property);
+			return super.getValue(context, base, property);
 		}
 	}
 
 	public void setValue(ELContext context, Object base, Object property, Object val) {
-		Assert.notNull(target, "The DefaultELResolver must have a target base property set.");
 		if (base == null) {
-			super.setValue(context, target, property, val);
+			super.setValue(context, root, property, val);
 		} else {
-			super.setValue(context, adaptIfNecessary(base), property, val);
-		}
-	}
-
-	public Object getTarget() {
-		return target;
-	}
-
-	public void setTarget(Object target) {
-		this.target = adaptIfNecessary(target);
-	}
-
-	private Object adaptIfNecessary(Object base) {
-		if (base instanceof MapAdaptable) {
-			return ((MapAdaptable) base).asMap();
-		} else {
-			return base;
+			super.setValue(context, base, property, val);
 		}
 	}
 
