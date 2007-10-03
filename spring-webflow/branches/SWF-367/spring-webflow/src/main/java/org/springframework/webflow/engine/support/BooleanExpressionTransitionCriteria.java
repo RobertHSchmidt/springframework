@@ -15,10 +15,6 @@
  */
 package org.springframework.webflow.engine.support;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.binding.expression.EvaluationContext;
 import org.springframework.binding.expression.Expression;
 import org.springframework.util.Assert;
 import org.springframework.webflow.engine.TransitionCriteria;
@@ -55,25 +51,8 @@ public class BooleanExpressionTransitionCriteria implements TransitionCriteria {
 	}
 
 	public boolean test(RequestContext context) {
-		Object result = booleanExpression.evaluate(context, getEvaluationContext(context));
-		Assert.isInstanceOf(Boolean.class, result, "Impossible to determine result of boolean expression: ");
+		Object result = booleanExpression.getValue(context);
 		return ((Boolean) result).booleanValue();
-	}
-
-	/**
-	 * Setup a context with a few aliased values to make writing expression based transition conditions a bit easier.
-	 */
-	protected EvaluationContext getEvaluationContext(RequestContext context) {
-		final Map attributes = new HashMap(1, 1);
-		// ${#result == lastEvent.id}
-		if (context.getLastEvent() != null) {
-			attributes.put(RESULT_ALIAS, context.getLastEvent().getId());
-		}
-		return new EvaluationContext() {
-			public Map getAttributes() {
-				return attributes;
-			}
-		};
 	}
 
 	public String toString() {

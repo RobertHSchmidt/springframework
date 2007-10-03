@@ -17,8 +17,8 @@ package org.springframework.webflow.core;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
+import org.springframework.binding.expression.ExpressionVariable;
 import org.springframework.binding.expression.ParserException;
-import org.springframework.binding.expression.SettableExpression;
 
 /**
  * Static helper factory that creates instances of the default expression parser used by Spring Web Flow when requested.
@@ -50,17 +50,10 @@ public final class DefaultExpressionParserFactory {
 		// this prevents the default OGNL-based parser from being intialized until it is actually used
 		// which allows OGNL to be an optional dependency if the expression parser wrapper is replaced and never used
 		return new ExpressionParser() {
-			public boolean isDelimitedExpression(String expressionString) {
-				return getDefaultExpressionParser().isDelimitedExpression(expressionString);
-			}
-
-			public Expression parseExpression(String expressionString) throws ParserException {
-				return getDefaultExpressionParser().parseExpression(expressionString);
-			}
-
-			public SettableExpression parseSettableExpression(String expressionString) throws ParserException,
-					UnsupportedOperationException {
-				return getDefaultExpressionParser().parseSettableExpression(expressionString);
+			public Expression parseExpression(String expressionString, Class expressionTargetType,
+					ExpressionVariable[] expressionVariables, boolean isAlwaysAnEvalExpression) throws ParserException {
+				return getDefaultExpressionParser().parseExpression(expressionString, expressionTargetType,
+						expressionVariables, isAlwaysAnEvalExpression);
 			}
 		};
 	}

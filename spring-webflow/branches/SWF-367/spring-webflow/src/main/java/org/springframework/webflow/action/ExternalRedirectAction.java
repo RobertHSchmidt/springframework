@@ -15,7 +15,7 @@ public class ExternalRedirectAction extends AbstractAction {
 	}
 
 	protected Event doExecute(RequestContext context) throws Exception {
-		String resourceUri = (String) this.resourceUri.evaluate(context, null);
+		String resourceUri = (String) this.resourceUri.getValue(context);
 		context.getExternalContext().sendExternalRedirect(resourceUri);
 		return success();
 	}
