@@ -24,7 +24,7 @@ public class FlowDefinitionRedirectAction extends AbstractAction {
 	}
 
 	protected Event doExecute(RequestContext context) throws Exception {
-		String flowId = (String) this.flowId.evaluate(context, null);
+		String flowId = (String) this.flowId.getValue(context);
 		String[] requestElements = evaluateRequestElements(context);
 		ParameterMap requestParameters = evaluateRequestParameters(context);
 		context.getExternalContext().sendFlowDefinitionRedirect(flowId, requestElements, requestParameters);
@@ -38,7 +38,7 @@ public class FlowDefinitionRedirectAction extends AbstractAction {
 		String[] requestElements = new String[this.requestElements.length];
 		for (int i = 0; i < this.requestElements.length; i++) {
 			Expression element = this.requestElements[i];
-			requestElements[i] = (String) element.evaluate(context, null);
+			requestElements[i] = (String) element.getValue(context);
 		}
 		return requestElements;
 	}
@@ -52,8 +52,8 @@ public class FlowDefinitionRedirectAction extends AbstractAction {
 				Map.Entry entry = (Map.Entry) it.next();
 				Expression name = (Expression) entry.getKey();
 				Expression value = (Expression) entry.getValue();
-				String paramName = (String) name.evaluate(context, null);
-				String paramValue = (String) value.evaluate(context, null);
+				String paramName = (String) name.getValue(context);
+				String paramValue = (String) value.getValue(context);
 				requestParameters.put(paramName, paramValue);
 			}
 			return new LocalParameterMap(requestParameters);
