@@ -16,7 +16,7 @@
 package org.springframework.binding.expression;
 
 /**
- * Parses expression strings, returing a configured evaluator instance capable of performing parsed expression
+ * Parses expression strings, returning a configured evaluator instance capable of performing parsed expression
  * evaluation in a thread safe way.
  * 
  * @author Keith Donald
@@ -24,30 +24,17 @@ package org.springframework.binding.expression;
 public interface ExpressionParser {
 
 	/**
-	 * Is this expression string delimited in a manner that indicates it is a parseable expression? For example
-	 * "${expression}".
-	 * @param expressionString the proposed expression string
-	 * @return true if yes, false if not
-	 */
-	public boolean isDelimitedExpression(String expressionString);
-
-	/**
-	 * Parse the provided expression string, returning an evaluator capable of evaluating it against input.
+	 * Parse the provided expression string, returning an expression evalutor capable of evaluating it.
 	 * @param expressionString the parseable expression string
+	 * @param expressionTargetType the class of target object this expression can successfully evaluate
+	 * @param expressionVariables variables providing aliases for this expression during evaluation
+	 * @param isAlwaysAnEvalExpression a flag indicating whether the expression being parsed is always an "eval"
+	 * expression or not; an eval expression is always dynamic and is never a literal expression. If true, the parser
+	 * may transform the provided expressionString by enclosing it in explicit "eval delimiters" like #{} before
+	 * parsing. Usually false, and some parsers may not care about this flag.
 	 * @return the evaluator for the parsed expression
-	 * @throws ParserException an exception occured during parsing
+	 * @throws ParserException an exception occurred during parsing
 	 */
-	public Expression parseExpression(String expressionString) throws ParserException;
-
-	/**
-	 * Parse the provided settable expression string, returning an evaluator capable of evaluating its value as well as
-	 * setting its value.
-	 * @param expressionString the parseable expression string
-	 * @return the evaluator for the parsed expression
-	 * @throws ParserException an exception occured during parsing
-	 * @throws UnsupportedOperationException this parser does not support settable expressions
-	 */
-	public SettableExpression parseSettableExpression(String expressionString) throws ParserException,
-			UnsupportedOperationException;
-
+	public Expression parseExpression(String expressionString, Class expressionTargetType,
+			ExpressionVariable[] expressionVariables, boolean isAlwaysAnEvalExpression) throws ParserException;
 }
