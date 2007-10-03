@@ -80,14 +80,30 @@ public abstract class AbstractExpressionParser implements ExpressionParser {
 		this.expressionSuffix = expressionSuffix;
 	}
 
+	public boolean isEvalExpressionString(String string) {
+		return string.startsWith(expressionPrefix) && string.endsWith(expressionSuffix);
+	}
+
+	public String parseEvalExpressionString(String string) {
+		return encloseInDelimitersIfNecessary(string);
+	}
+
 	public Expression parseExpression(String expressionString, Class expressionTargetType,
-			ExpressionVariable[] expressionVariables, boolean isEvalExpression) throws ParserException {
+			Class expectedEvaluationResultType, ExpressionVariable[] expressionVariables) throws ParserException {
 		// TODO variables
 		Expression[] expressions = parseExpressions(expressionString);
 		if (expressions.length == 1) {
 			return expressions[0];
 		} else {
 			return new CompositeStringExpression(expressions);
+		}
+	}
+
+	private String encloseInDelimitersIfNecessary(String expressionString) {
+		if (isEvalExpressionString(expressionString)) {
+			return expressionString;
+		} else {
+			return expressionPrefix + expressionString + expressionSuffix;
 		}
 	}
 

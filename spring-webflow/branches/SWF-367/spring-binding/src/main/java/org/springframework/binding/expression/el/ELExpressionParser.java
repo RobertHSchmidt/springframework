@@ -55,24 +55,30 @@ public class ELExpressionParser implements ExpressionParser {
 		this.contextFactories.put(expressionTargetType, contextFactory);
 	}
 
+	public boolean isEvalExpressionString(String expressionString) {
+		return expressionString.startsWith(EXPRESSION_PREFIX) && expressionString.endsWith(EXPRESSION_SUFFIX);
+	}
+
+	public String parseEvalExpressionString(String string) {
+		return encloseInDelimitersIfNecessary(string);
+	}
+
 	public Expression parseExpression(String expressionString, Class expressionTargetType,
-			ExpressionVariable[] expressionVariables, boolean isAlwaysAnEvalExpression) throws ParserException {
+			Class expectedEvaluationResultType, ExpressionVariable[] expressionVariables) throws ParserException {
 		ParserELContext context = new ParserELContext();
-		if (isAlwaysAnEvalExpression) {
-			expressionString = encloseInDelimitersIfNecessary(expressionString);
-		}
 		try {
 			context.mapVariables(expressionVariables, expressionFactory);
-			ValueExpression expr = expressionFactory.createValueExpression(context, expressionString, Object.class);
-			return new ELExpression(getContextFactory(expressionString, expressionTargetType), expr, context
-					.getVariableMapper());
+			ValueExpression expression = expressionFactory.createValueExpression(context, expressionString,
+					expectedEvaluationResultType);
+			ELContextFactory contextFactory = getContextFactory(expressionString, expressionTargetType);
+			return new ELExpression(contextFactory, expression, context.getVariableMapper());
 		} catch (ELException ex) {
 			throw new ParserException(expressionString, ex);
 		}
 	}
 
 	private String encloseInDelimitersIfNecessary(String expressionString) {
-		if (expressionString.startsWith(EXPRESSION_PREFIX) && expressionString.endsWith(EXPRESSION_SUFFIX)) {
+		if (isEvalExpressionString(expressionString)) {
 			return expressionString;
 		} else {
 			return EXPRESSION_PREFIX + expressionString + EXPRESSION_SUFFIX;
