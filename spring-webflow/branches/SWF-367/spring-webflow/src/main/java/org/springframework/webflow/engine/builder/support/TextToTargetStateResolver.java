@@ -20,6 +20,7 @@ import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.binding.expression.Expression;
 import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Converter that takes an encoded string representation and produces a corresponding {@link TargetStateResolver}
@@ -67,8 +68,9 @@ class TextToTargetStateResolver extends AbstractConverter {
 
 	protected Object doConvert(Object source, Class targetClass, ConversionContext context) throws Exception {
 		String targetStateId = (String) source;
-		if (flowServiceLocator.getExpressionParser().isDelimitedExpression(targetStateId)) {
-			Expression expression = flowServiceLocator.getExpressionParser().parseExpression(targetStateId);
+		if (flowServiceLocator.getExpressionParser().isEvalExpressionString(targetStateId)) {
+			Expression expression = flowServiceLocator.getExpressionParser().parseExpression(targetStateId,
+					RequestContext.class, String.class, null);
 			return new DefaultTargetStateResolver(expression);
 		} else if (targetStateId.startsWith(BEAN_PREFIX)) {
 			return flowServiceLocator.getTargetStateResolver(targetStateId.substring(BEAN_PREFIX.length()));

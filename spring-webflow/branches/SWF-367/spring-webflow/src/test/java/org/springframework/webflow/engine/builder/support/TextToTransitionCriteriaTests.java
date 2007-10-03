@@ -31,6 +31,9 @@ public class TextToTransitionCriteriaTests extends TestCase {
 	private MockFlowServiceLocator serviceLocator = new MockFlowServiceLocator();
 	private TextToTransitionCriteria converter = new TextToTransitionCriteria(serviceLocator);
 
+	public void setUp() {
+	}
+
 	public void testAny() {
 		String expression = "*";
 		TransitionCriteria criterion = (TransitionCriteria) converter.convert(expression);

@@ -50,10 +50,19 @@ public final class DefaultExpressionParserFactory {
 		// this prevents the default OGNL-based parser from being intialized until it is actually used
 		// which allows OGNL to be an optional dependency if the expression parser wrapper is replaced and never used
 		return new ExpressionParser() {
+			public boolean isEvalExpressionString(String string) {
+				return getDefaultExpressionParser().isEvalExpressionString(string);
+			}
+
+			public String parseEvalExpressionString(String string) throws ParserException {
+				return getDefaultExpressionParser().parseEvalExpressionString(string);
+			}
+
 			public Expression parseExpression(String expressionString, Class expressionTargetType,
-					ExpressionVariable[] expressionVariables, boolean isAlwaysAnEvalExpression) throws ParserException {
+					Class expectedEvaluationResultType, ExpressionVariable[] expressionVariables)
+					throws ParserException {
 				return getDefaultExpressionParser().parseExpression(expressionString, expressionTargetType,
-						expressionVariables, isAlwaysAnEvalExpression);
+						expectedEvaluationResultType, expressionVariables);
 			}
 		};
 	}

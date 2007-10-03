@@ -19,11 +19,13 @@ import org.springframework.binding.convert.ConversionContext;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.binding.expression.Expression;
+import org.springframework.binding.expression.ExpressionVariable;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.WildcardTransitionCriteria;
 import org.springframework.webflow.engine.support.BooleanExpressionTransitionCriteria;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Converter that takes an encoded string representation and produces a corresponding <code>TransitionCriteria</code>
@@ -78,8 +80,10 @@ class TextToTransitionCriteria extends AbstractConverter {
 		if (!StringUtils.hasText(encodedCriteria)
 				|| WildcardTransitionCriteria.WILDCARD_EVENT_ID.equals(encodedCriteria)) {
 			return WildcardTransitionCriteria.INSTANCE;
-		} else if (flowServiceLocator.getExpressionParser().isDelimitedExpression(encodedCriteria)) {
-			Expression expression = flowServiceLocator.getExpressionParser().parseExpression(encodedCriteria);
+		} else if (flowServiceLocator.getExpressionParser().isEvalExpressionString(encodedCriteria)) {
+			ExpressionVariable[] variables = new ExpressionVariable[] { new ExpressionVariable("result", "lastEvent.id") };
+			Expression expression = flowServiceLocator.getExpressionParser().parseExpression(encodedCriteria,
+					RequestContext.class, Boolean.class, variables);
 			return createBooleanExpressionTransitionCriteria(expression);
 		} else if (encodedCriteria.startsWith(BEAN_PREFIX)) {
 			return flowServiceLocator.getTransitionCriteria(encodedCriteria.substring(BEAN_PREFIX.length()));

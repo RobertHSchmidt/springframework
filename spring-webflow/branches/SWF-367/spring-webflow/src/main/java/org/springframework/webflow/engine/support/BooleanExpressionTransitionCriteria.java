@@ -31,11 +31,6 @@ import org.springframework.webflow.execution.RequestContext;
 public class BooleanExpressionTransitionCriteria implements TransitionCriteria {
 
 	/**
-	 * Constant alias that points to the id of the last event that occured in a web flow execution.
-	 */
-	private static final String RESULT_ALIAS = "result";
-
-	/**
 	 * The expression evaluator to use.
 	 */
 	private Expression booleanExpression;
@@ -51,8 +46,7 @@ public class BooleanExpressionTransitionCriteria implements TransitionCriteria {
 	}
 
 	public boolean test(RequestContext context) {
-		Object result = booleanExpression.getValue(context);
-		return ((Boolean) result).booleanValue();
+		return ((Boolean) booleanExpression.getValue(context)).booleanValue();
 	}
 
 	public String toString() {
