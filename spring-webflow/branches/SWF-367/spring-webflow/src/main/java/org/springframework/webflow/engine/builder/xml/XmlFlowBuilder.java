@@ -1172,7 +1172,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	 * @throws ConversionException when the converter cannot be found
 	 */
 	private ConversionExecutor fromStringTo(Class targetType) throws ConversionException {
-		return getFlowServiceLocator().getConversionService().getConversionExecutor(String.class, targetType);
+		return getLocalFlowServiceLocator().getConversionService().getConversionExecutor(String.class, targetType);
 	}
 
 	public String toString() {
