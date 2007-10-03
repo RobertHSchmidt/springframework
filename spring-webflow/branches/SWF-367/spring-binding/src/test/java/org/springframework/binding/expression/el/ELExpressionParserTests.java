@@ -40,10 +40,10 @@ public class ELExpressionParserTests extends TestCase {
 	public void testParseEvalExpression() {
 		String expressionString = "#{value}";
 		Class expressionTargetType = TestBean.class;
+		Class expectedEvaluationResultType = String.class;
 		ExpressionVariable[] expressionVariables = null;
-		boolean isAlwaysAnEvalExpression = true;
-		Expression exp = parser.parseExpression(expressionString, expressionTargetType, expressionVariables,
-				isAlwaysAnEvalExpression);
+		Expression exp = parser.parseExpression(expressionString, expressionTargetType, expectedEvaluationResultType,
+				expressionVariables);
 		TestBean target = new TestBean();
 		assertEquals("foo", exp.getValue(target));
 	}
@@ -51,10 +51,10 @@ public class ELExpressionParserTests extends TestCase {
 	public void testParseLiteralExpressionStringAsEvalExpression() {
 		String expressionString = "value";
 		Class expressionTargetType = TestBean.class;
+		Class expectedEvaluationResultType = String.class;
 		ExpressionVariable[] expressionVariables = null;
-		boolean isAlwaysAnEvalExpression = true;
-		Expression exp = parser.parseExpression(expressionString, expressionTargetType, expressionVariables,
-				isAlwaysAnEvalExpression);
+		Expression exp = parser.parseExpression(parser.parseEvalExpressionString(expressionString),
+				expressionTargetType, expectedEvaluationResultType, expressionVariables);
 		TestBean target = new TestBean();
 		assertEquals("foo", exp.getValue(target));
 	}
@@ -62,10 +62,10 @@ public class ELExpressionParserTests extends TestCase {
 	public void testParseLiteralExpression() {
 		String expressionString = "value";
 		Class expressionTargetType = TestBean.class;
+		Class expectedEvaluationResultType = String.class;
 		ExpressionVariable[] expressionVariables = null;
-		boolean isAlwaysAnEvalExpression = false;
-		Expression exp = parser.parseExpression(expressionString, expressionTargetType, expressionVariables,
-				isAlwaysAnEvalExpression);
+		Expression exp = parser.parseExpression(expressionString, expressionTargetType, expectedEvaluationResultType,
+				expressionVariables);
 		TestBean target = new TestBean();
 		assertEquals("value", exp.getValue(target));
 	}
@@ -73,13 +73,25 @@ public class ELExpressionParserTests extends TestCase {
 	public void testParseExpressionWithVariables() {
 		String expressionString = "#{value}#{max}";
 		Class expressionTargetType = TestBean.class;
+		Class expectedEvaluationResultType = String.class;
 		ExpressionVariable[] expressionVariables = new ExpressionVariable[] { new ExpressionVariable("max",
 				"#{maximum}") };
-		boolean isAlwaysAnEvalExpression = false;
-		Expression exp = parser.parseExpression(expressionString, expressionTargetType, expressionVariables,
-				isAlwaysAnEvalExpression);
+		Expression exp = parser.parseExpression(expressionString, expressionTargetType, expectedEvaluationResultType,
+				expressionVariables);
 		TestBean target = new TestBean();
 		assertEquals("foo2", exp.getValue(target));
+	}
+
+	public void testParseExpressionCoerceToInteger() {
+		String expressionString = "#{maximum}#{max}";
+		Class expressionTargetType = TestBean.class;
+		Class expectedEvaluationResultType = Integer.class;
+		ExpressionVariable[] expressionVariables = new ExpressionVariable[] { new ExpressionVariable("max",
+				"#{maximum}") };
+		Expression exp = parser.parseExpression(expressionString, expressionTargetType, expectedEvaluationResultType,
+				expressionVariables);
+		TestBean target = new TestBean();
+		assertEquals(new Integer(22), exp.getValue(target));
 	}
 
 	public static class TestBean {
