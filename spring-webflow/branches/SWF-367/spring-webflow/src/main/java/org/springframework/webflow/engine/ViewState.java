@@ -78,23 +78,13 @@ public class ViewState extends TransitionableState {
 
 	protected void doEnter(RequestControlContext context) throws FlowExecutionException {
 		context.assignFlowExecutionKey();
-		if (context.getExternalContext().isResponseCommitted()) {
-			logger.debug("Response already committed in this request: nothing else to do");
-			return;
+		if (shouldRedirect(context)) {
+			context.sendFlowExecutionRedirect();
 		} else {
-			if (shouldRedirect(context)) {
-				context.sendFlowExecutionRedirect();
-			} else {
-				View view = viewFactory.getView(context);
-				renderActionList.execute(context);
-				if (context.getExternalContext().isResponseCommitted()) {
-					logger.debug("Response already committed in this request: nothing else to do");
-					return;
-				} else {
-					view.render();
-					context.getFlashScope().clear();
-				}
-			}
+			View view = viewFactory.getView(context);
+			renderActionList.execute(context);
+			view.render();
+			context.getFlashScope().clear();
 		}
 	}
 
@@ -104,13 +94,8 @@ public class ViewState extends TransitionableState {
 			context.handleEvent(view.getEvent());
 		} else {
 			renderActionList.execute(context);
-			if (context.getExternalContext().isResponseCommitted()) {
-				logger.debug("Response already committed in this request: nothing else to do");
-				return;
-			} else {
-				view.render();
-				context.getFlashScope().clear();
-			}
+			view.render();
+			context.getFlashScope().clear();
 		}
 	}
 
