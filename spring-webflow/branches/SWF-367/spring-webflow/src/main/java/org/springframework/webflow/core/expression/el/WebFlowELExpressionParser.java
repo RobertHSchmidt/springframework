@@ -35,24 +35,24 @@ public class WebFlowELExpressionParser extends ELExpressionParser {
 			customResolvers.add(new RequestContextELResolver());
 			customResolvers.add(new ScopeSearchingELResolver());
 			ELResolver resolver = new DefaultELResolver(target, customResolvers);
-			return new SimpleELContext(resolver, variableMapper);
+			return new WebFlowELContext(resolver, variableMapper);
 		}
 	}
 
 	private static class AttributeMapELContextFactory implements ELContextFactory {
 		public ELContext getELContext(Object target, VariableMapper variableMapper) {
 			ELResolver resolver = new DefaultELResolver(target, null);
-			return new SimpleELContext(resolver, variableMapper);
+			return new WebFlowELContext(resolver, variableMapper);
 		}
 	}
 
-	private static class SimpleELContext extends ELContext {
+	private static class WebFlowELContext extends ELContext {
 
 		VariableMapper variableMapper;
 
 		ELResolver resolver;
 
-		public SimpleELContext(ELResolver resolver, VariableMapper variableMapper) {
+		public WebFlowELContext(ELResolver resolver, VariableMapper variableMapper) {
 			this.resolver = resolver;
 			this.variableMapper = variableMapper;
 		}
