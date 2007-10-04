@@ -15,7 +15,9 @@
  */
 package org.springframework.webflow.engine.impl;
 
+import org.springframework.binding.message.Message;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.binding.message.MessageResolver;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
@@ -126,8 +128,21 @@ class RequestControlContextImpl implements RequestControlContext {
 	}
 
 	public MessageContext getMessageContext() {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+		// TODO - This needs to return a real implementation later.
+		return new MessageContext() {
+
+			public void addMessage(MessageResolver messageResolver) {
+			}
+
+			public Message[] getMessages() {
+				return new Message[0];
+			}
+
+			public Message[] getMessages(Object source) {
+				return new Message[0];
+			}
+
+		};
 	}
 
 	public FlowExecutionContext getFlowExecutionContext() {

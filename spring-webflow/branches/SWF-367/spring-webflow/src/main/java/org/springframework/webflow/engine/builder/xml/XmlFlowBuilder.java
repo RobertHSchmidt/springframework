@@ -681,7 +681,8 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 			ViewFactory viewFactory = flowServiceLocator.getViewFactory(encodedView.substring(BEAN_PREFIX.length()));
 			return new ViewInfo(viewFactory, Boolean.FALSE);
 		} else {
-			Expression viewName = (Expression) fromStringTo(Expression.class).execute(encodedView);
+			Expression viewName = getExpressionParser().parseExpression(encodedView, RequestContext.class,
+					String.class, null);
 			ViewFactory viewFactory = flowServiceLocator.getViewFactoryCreator().createViewFactory(viewName);
 			return new ViewInfo(viewFactory, null);
 		}
@@ -994,7 +995,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 		Element mapperElement = DomUtils.getChildElementByTagName(element, INPUT_MAPPER_ELEMENT);
 		if (mapperElement != null) {
 			DefaultAttributeMapper mapper = new DefaultAttributeMapper();
-			parseSimpleAttributeMappings(mapper, DomUtils.getChildElementsByTagName(mapperElement,
+			parseSimpleInputAttributeMappings(mapper, DomUtils.getChildElementsByTagName(mapperElement,
 					INPUT_ATTRIBUTE_ELEMENT));
 			parseMappings(mapper, mapperElement, MutableAttributeMap.class, RequestContext.class);
 			return mapper;
@@ -1007,7 +1008,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 		Element mapperElement = DomUtils.getChildElementByTagName(element, OUTPUT_MAPPER_ELEMENT);
 		if (mapperElement != null) {
 			DefaultAttributeMapper mapper = new DefaultAttributeMapper();
-			parseSimpleAttributeMappings(mapper, DomUtils.getChildElementsByTagName(mapperElement,
+			parseSimpleOutputAttributeMappings(mapper, DomUtils.getChildElementsByTagName(mapperElement,
 					OUTPUT_ATTRIBUTE_ELEMENT));
 			parseMappings(mapper, mapperElement, RequestContext.class, MutableAttributeMap.class);
 			return mapper;
@@ -1040,18 +1041,36 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 		}
 	}
 
-	private void parseSimpleAttributeMappings(DefaultAttributeMapper mapper, List elements) {
+	private void parseSimpleInputAttributeMappings(DefaultAttributeMapper mapper, List elements) {
 		ExpressionParser parser = getLocalFlowServiceLocator().getExpressionParser();
 		for (Iterator it = elements.iterator(); it.hasNext();) {
 			Element element = (Element) it.next();
 			String expressionString = parser.parseEvalExpressionString(element.getAttribute(NAME_ATTRIBUTE));
-			Expression attribute = parser.parseExpression(expressionString, MutableAttributeMap.class, Object.class,
-					null);
-			Expression expression = new ScopedAttributeExpression(attribute, parseScope(element, ScopeType.FLOW));
+			Expression attributeExpression = parser.parseExpression(expressionString, MutableAttributeMap.class,
+					Object.class, null);
+			Expression scopedAttributeExpression = new ScopedAttributeExpression(attributeExpression, parseScope(
+					element, ScopeType.FLOW));
 			if (getRequired(element, false)) {
-				mapper.addMapping(new RequiredMapping(expression, expression, null));
+				mapper.addMapping(new RequiredMapping(attributeExpression, scopedAttributeExpression, null));
 			} else {
-				mapper.addMapping(new Mapping(expression, expression, null));
+				mapper.addMapping(new Mapping(attributeExpression, scopedAttributeExpression, null));
+			}
+		}
+	}
+
+	private void parseSimpleOutputAttributeMappings(DefaultAttributeMapper mapper, List elements) {
+		ExpressionParser parser = getLocalFlowServiceLocator().getExpressionParser();
+		for (Iterator it = elements.iterator(); it.hasNext();) {
+			Element element = (Element) it.next();
+			String expressionString = parser.parseEvalExpressionString(element.getAttribute(NAME_ATTRIBUTE));
+			Expression attributeExpression = parser.parseExpression(expressionString, MutableAttributeMap.class,
+					Object.class, null);
+			Expression scopedAttributeExpression = new ScopedAttributeExpression(attributeExpression, parseScope(
+					element, ScopeType.FLOW));
+			if (getRequired(element, false)) {
+				mapper.addMapping(new RequiredMapping(scopedAttributeExpression, attributeExpression, null));
+			} else {
+				mapper.addMapping(new Mapping(scopedAttributeExpression, attributeExpression, null));
 			}
 		}
 	}
