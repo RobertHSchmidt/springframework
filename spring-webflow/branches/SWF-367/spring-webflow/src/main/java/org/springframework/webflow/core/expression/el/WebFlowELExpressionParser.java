@@ -1,4 +1,4 @@
-package org.springframework.webflow.core;
+package org.springframework.webflow.core.expression.el;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,26 +21,25 @@ import org.springframework.webflow.execution.RequestContext;
  * 
  * @author Jeremy Grelle
  */
-public class FlowELExpressionParser extends ELExpressionParser {
+public class WebFlowELExpressionParser extends ELExpressionParser {
 
-	public FlowELExpressionParser(ExpressionFactory expressionFactory) {
+	public WebFlowELExpressionParser(ExpressionFactory expressionFactory) {
 		super(expressionFactory);
 		putContextFactory(RequestContext.class, new RequestContextELContextFactory());
 		putContextFactory(MutableAttributeMap.class, new AttributeMapELContextFactory());
 	}
 
 	private static class RequestContextELContextFactory implements ELContextFactory {
-
 		public ELContext getELContext(Object target, VariableMapper variableMapper) {
 			List customResolvers = new ArrayList();
 			customResolvers.add(new RequestContextELResolver());
+			customResolvers.add(new ScopeSearchingELResolver());
 			ELResolver resolver = new DefaultELResolver(target, customResolvers);
 			return new SimpleELContext(resolver, variableMapper);
 		}
 	}
 
 	private static class AttributeMapELContextFactory implements ELContextFactory {
-
 		public ELContext getELContext(Object target, VariableMapper variableMapper) {
 			ELResolver resolver = new DefaultELResolver(target, null);
 			return new SimpleELContext(resolver, variableMapper);

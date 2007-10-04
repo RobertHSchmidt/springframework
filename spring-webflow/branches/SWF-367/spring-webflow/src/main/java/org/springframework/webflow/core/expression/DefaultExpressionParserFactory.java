@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.core;
+package org.springframework.webflow.core.expression;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
@@ -47,7 +47,7 @@ public final class DefaultExpressionParserFactory {
 	 */
 	public static synchronized ExpressionParser getExpressionParser() {
 		// return a wrapper that will lazily load the default expression parser
-		// this prevents the default OGNL-based parser from being intialized until it is actually used
+		// this prevents the default OGNL-based parser from being initialized until it is actually used
 		// which allows OGNL to be an optional dependency if the expression parser wrapper is replaced and never used
 		return new ExpressionParser() {
 			public boolean isEvalExpressionString(String string) {

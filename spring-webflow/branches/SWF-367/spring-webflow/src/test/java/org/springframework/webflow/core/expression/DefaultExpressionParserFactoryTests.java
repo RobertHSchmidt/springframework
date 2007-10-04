@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.core;
+package org.springframework.webflow.core.expression;
 
 import junit.framework.TestCase;
 
 import org.springframework.binding.expression.ExpressionParser;
+import org.springframework.webflow.core.expression.DefaultExpressionParserFactory;
 
 /**
  * Unit tests for {@link DefaultExpressionParserFactory}.
