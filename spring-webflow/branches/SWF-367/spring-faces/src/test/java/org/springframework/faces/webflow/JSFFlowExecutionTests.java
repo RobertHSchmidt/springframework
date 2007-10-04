@@ -28,9 +28,9 @@ import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.core.FlowELExpressionParser;
-import org.springframework.webflow.core.FlowELResolver;
-import org.springframework.webflow.core.RequestContextELResolver;
+import org.springframework.webflow.core.expression.el.RequestContextELResolver;
+import org.springframework.webflow.core.expression.el.ScopeSearchingELResolver;
+import org.springframework.webflow.core.expression.el.WebFlowELExpressionParser;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
@@ -62,7 +62,7 @@ public class JSFFlowExecutionTests extends TestCase {
 	Flow flow;
 	FlowExecution execution;
 
-	ExpressionParser parser = new FlowELExpressionParser(new ExpressionFactoryImpl());
+	ExpressionParser parser = new WebFlowELExpressionParser(new ExpressionFactoryImpl());
 
 	/**
 	 * TODO - The management of the JSF mocks has gotten rather convoluted now that we are tearing down and rebuilding
@@ -124,7 +124,7 @@ public class JSFFlowExecutionTests extends TestCase {
 
 		CompositeELResolver baseResolver = (CompositeELResolver) jsf.facesContext().getELContext().getELResolver();
 		baseResolver.add(new RequestContextELResolver());
-		baseResolver.add(new FlowELResolver());
+		baseResolver.add(new ScopeSearchingELResolver());
 
 		jsf.externalContext().getRequestMap().put("JsfBean", new JSFManagedBean());
 	}

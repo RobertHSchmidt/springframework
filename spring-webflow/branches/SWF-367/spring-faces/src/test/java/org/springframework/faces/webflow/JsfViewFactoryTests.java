@@ -18,9 +18,9 @@ import org.easymock.EasyMock;
 import org.jboss.el.ExpressionFactoryImpl;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.core.FlowELExpressionParser;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.core.expression.el.WebFlowELExpressionParser;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.execution.View;
@@ -45,7 +45,7 @@ public class JsfViewFactoryTests extends TestCase {
 
 	private PhaseListener trackingListener;
 
-	private ExpressionParser parser = new FlowELExpressionParser(new ExpressionFactoryImpl());
+	private ExpressionParser parser = new WebFlowELExpressionParser(new ExpressionFactoryImpl());
 
 	private ExternalContext extContext = new MockExternalContext();
 

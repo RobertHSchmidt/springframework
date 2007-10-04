@@ -12,8 +12,8 @@
 	
 	<application>
 		<action-listener>org.springframework.faces.webflow.FlowActionListener</action-listener>
-		<el-resolver>org.springframework.webflow.core.RequestContextELResolver</el-resolver>
-		<el-resolver>org.springframework.webflow.core.FlowELResolver</el-resolver>
+		<el-resolver>org.springframework.webflow.core.expression.el.RequestContextELResolver</el-resolver>
+		<el-resolver>org.springframework.webflow.core.expression.el.ScopeSearchingELResolver</el-resolver>
 		<view-handler>org.springframework.faces.webflow.FlowExecutionViewHandler</view-handler>
 	</application>
 

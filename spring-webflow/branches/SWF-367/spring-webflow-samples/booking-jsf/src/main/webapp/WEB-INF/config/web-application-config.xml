@@ -24,7 +24,7 @@
 
 	<bean id="flowBuilderServices" class="org.springframework.webflow.engine.builder.support.FlowBuilderServices">
 		<property name="expressionParser">
-			<bean class="org.springframework.webflow.core.FlowELExpressionParser">
+			<bean class="org.springframework.webflow.core.expression.el.WebFlowELExpressionParser">
 				<constructor-arg >
 					<bean class="org.jboss.el.ExpressionFactoryImpl"/>
 				</constructor-arg>
