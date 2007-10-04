@@ -42,11 +42,11 @@ public class JsfViewFactory implements ViewFactory {
 
 			ViewHandler handler = facesContext.getApplication().getViewHandler();
 
-			if (viewExists(facesContext)) {
+			if (viewExists(facesContext, viewExpr.getValue(context).toString())) {
 				view = new JsfView(facesContext.getViewRoot(), facesLifecycle);
 				restored = true;
 			} else {
-				String viewName = (String) viewExpr.evaluate(null, null);
+				String viewName = (String) viewExpr.getValue(context);
 				UIViewRoot root = handler.restoreView(facesContext, viewName);
 				if (root != null) {
 					view = new JsfView(root, facesLifecycle);
@@ -76,9 +76,8 @@ public class JsfViewFactory implements ViewFactory {
 		}
 	}
 
-	private boolean viewExists(FacesContext facesContext) {
-		if (facesContext.getViewRoot() != null
-				&& facesContext.getViewRoot().getViewId().equals(viewExpr.evaluate(null, null))) {
+	private boolean viewExists(FacesContext facesContext, String viewId) {
+		if (facesContext.getViewRoot() != null && facesContext.getViewRoot().getViewId().equals(viewId)) {
 			return true;
 		}
 		return false;

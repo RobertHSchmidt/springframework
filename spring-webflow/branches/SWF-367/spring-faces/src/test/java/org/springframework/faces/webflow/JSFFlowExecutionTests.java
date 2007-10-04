@@ -21,9 +21,6 @@ import org.jboss.el.ExpressionFactoryImpl;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.method.MethodSignature;
 import org.springframework.binding.method.Parameter;
-import org.springframework.faces.el.FlowELExpressionParser;
-import org.springframework.faces.webflow.el.FlowELResolver;
-import org.springframework.faces.webflow.el.RequestContextELResolver;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.webflow.action.AbstractBeanInvokingAction;
 import org.springframework.webflow.action.EvaluateAction;
@@ -31,6 +28,9 @@ import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.core.FlowELExpressionParser;
+import org.springframework.webflow.core.FlowELResolver;
+import org.springframework.webflow.core.RequestContextELResolver;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
@@ -78,25 +78,28 @@ public class JSFFlowExecutionTests extends TestCase {
 		flow = Flow.create("jsf-flow", null);
 
 		ViewState view1 = new ViewState(flow, "viewState1", new JsfViewFactory(new TestLifecycle(jsf.lifecycle()),
-				parser.parseExpression("view1")));
+				parser.parseExpression("view1", RequestContext.class, String.class, null)));
 		view1.getTransitionSet().add(new Transition(on("event1"), to("doSomething")));
 		view1.getTransitionSet().add(new Transition(on("event2"), to("evalSomething")));
 
 		ActionState doSomething = new ActionState(flow, "doSomething");
 		doSomething.getActionList().add(
 				new StubBeanAction(new MethodSignature("doSomething", new Parameter(String.class, parser
-						.parseExpression("#{JsfBean.prop1}")))));
+						.parseExpression("#{JsfBean.prop1}", RequestContext.class, String.class, null)))));
 		doSomething.getTransitionSet().add(new Transition(on("success"), to("viewState2")));
 
 		ActionState evalSomething = new ActionState(flow, "evalSomething");
 		evalSomething.getEntryActionList().add(
-				new SetAction(parser.parseSettableExpression("#{requestContext.flowScope.jsfModel}"), ScopeType.FLOW,
-						parser.parseExpression("#{'foo'}")));
-		evalSomething.getActionList().add(new EvaluateAction(parser.parseExpression("#{JsfBean.addValue(jsfModel)}")));
+				new SetAction(parser.parseExpression("#{requestContext.flowScope.jsfModel}", RequestContext.class,
+						String.class, null), ScopeType.FLOW, parser.parseExpression("#{'foo'}", RequestContext.class,
+						String.class, null)));
+		evalSomething.getActionList().add(
+				new EvaluateAction(parser.parseExpression("#{JsfBean.addValue(jsfModel)}", RequestContext.class,
+						String.class, null)));
 		evalSomething.getTransitionSet().add(new Transition(on("success"), to("viewState2")));
 
 		ViewState viewState2 = new ViewState(flow, "viewState2", new JsfViewFactory(new TestLifecycle(jsf.lifecycle()),
-				parser.parseExpression("view2")));
+				parser.parseExpression("view2", RequestContext.class, String.class, null)));
 		viewState2.getEntryActionList().add(new ViewState2SetupAction());
 		viewState2.getTransitionSet().add(new Transition(on("event1"), to("endState1")));
 

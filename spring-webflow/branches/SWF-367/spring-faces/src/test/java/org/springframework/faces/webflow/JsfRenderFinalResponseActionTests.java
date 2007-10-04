@@ -19,8 +19,8 @@ import junit.framework.TestCase;
 import org.easymock.EasyMock;
 import org.jboss.el.ExpressionFactoryImpl;
 import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.faces.el.FlowELExpressionParser;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.core.FlowELExpressionParser;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
@@ -63,7 +63,8 @@ public class JsfRenderFinalResponseActionTests extends TestCase {
 		jsfMock.facesContext().setViewRoot(null);
 		jsfMock.application().setViewHandler(viewHandler);
 		lifecycle = new TestLifecycle(jsfMock.lifecycle());
-		factory = new JsfViewFactory(lifecycle, parser.parseExpression("#{'" + VIEW_ID + "'}"));
+		factory = new JsfViewFactory(lifecycle, parser.parseExpression("#{'" + VIEW_ID + "'}", RequestContext.class,
+				String.class, null));
 		finalResponseAction = new JsfRenderFinalResponseAction(factory);
 		RequestContextHolder.setRequestContext(context);
 		ExternalContext ext = new MockExternalContext();
