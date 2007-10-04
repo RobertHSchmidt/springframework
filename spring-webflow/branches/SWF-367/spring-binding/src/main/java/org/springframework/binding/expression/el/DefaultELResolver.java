@@ -12,8 +12,6 @@ import javax.el.ListELResolver;
 import javax.el.MapELResolver;
 import javax.el.ResourceBundleELResolver;
 
-import org.springframework.binding.collection.MapAdaptable;
-
 /**
  * A generic ELResolver to be used as a default when no other ELResolvers have been configured by the client
  * application.
@@ -34,7 +32,7 @@ public class DefaultELResolver extends CompositeELResolver {
 	 * @param root the root object
 	 */
 	public DefaultELResolver(Object root, List customResolvers) {
-		this.root = adaptIfNecessary(root);
+		this.root = root;
 		configureResolvers(customResolvers);
 	}
 
@@ -46,7 +44,7 @@ public class DefaultELResolver extends CompositeELResolver {
 		if (base == null) {
 			return super.getValue(context, root, property);
 		} else {
-			return super.getValue(context, adaptIfNecessary(base), property);
+			return super.getValue(context, base, property);
 		}
 	}
 
@@ -54,15 +52,7 @@ public class DefaultELResolver extends CompositeELResolver {
 		if (base == null) {
 			super.setValue(context, root, property, val);
 		} else {
-			super.setValue(context, adaptIfNecessary(base), property, val);
-		}
-	}
-
-	private Object adaptIfNecessary(Object base) {
-		if (base instanceof MapAdaptable) {
-			return ((MapAdaptable) base).asMap();
-		} else {
-			return base;
+			super.setValue(context, base, property, val);
 		}
 	}
 
