@@ -251,7 +251,8 @@ public class ServletExternalContext implements ExternalContext {
 					// commit response?
 				}
 			} else if (isExceptionResult()) {
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, exception.getMessage());
+				// response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, exception.getMessage());
+				throw exception;
 			}
 		} finally {
 			ExternalContextHolder.setExternalContext(null);
