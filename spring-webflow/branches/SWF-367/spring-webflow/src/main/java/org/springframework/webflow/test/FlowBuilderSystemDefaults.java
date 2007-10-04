@@ -4,7 +4,7 @@ import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.binding.convert.support.DefaultConversionService;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.webflow.action.BeanInvokingActionFactory;
-import org.springframework.webflow.core.DefaultExpressionParserFactory;
+import org.springframework.webflow.core.expression.DefaultExpressionParserFactory;
 import org.springframework.webflow.engine.builder.support.FlowArtifactFactory;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 

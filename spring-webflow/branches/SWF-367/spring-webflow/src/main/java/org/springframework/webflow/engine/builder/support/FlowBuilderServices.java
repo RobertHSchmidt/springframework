@@ -10,7 +10,7 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.webflow.action.BeanInvokingActionFactory;
-import org.springframework.webflow.core.DefaultExpressionParserFactory;
+import org.springframework.webflow.core.expression.DefaultExpressionParserFactory;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.execution.Action;
