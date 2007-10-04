@@ -23,7 +23,7 @@ public class ELExpressionParserTests extends TestCase {
 		public ELContext getELContext(final Object target, final VariableMapper variableMapper) {
 			return new ELContext() {
 				public ELResolver getELResolver() {
-					return new DefaultELResolver(target);
+					return new DefaultELResolver(target, null);
 				}
 
 				public FunctionMapper getFunctionMapper() {

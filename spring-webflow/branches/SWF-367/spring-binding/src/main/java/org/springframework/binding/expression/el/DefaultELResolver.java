@@ -1,12 +1,18 @@
 package org.springframework.binding.expression.el;
 
+import java.util.Iterator;
+import java.util.List;
+
 import javax.el.ArrayELResolver;
 import javax.el.BeanELResolver;
 import javax.el.CompositeELResolver;
 import javax.el.ELContext;
+import javax.el.ELResolver;
 import javax.el.ListELResolver;
 import javax.el.MapELResolver;
 import javax.el.ResourceBundleELResolver;
+
+import org.springframework.binding.collection.MapAdaptable;
 
 /**
  * A generic ELResolver to be used as a default when no other ELResolvers have been configured by the client
@@ -27,9 +33,9 @@ public class DefaultELResolver extends CompositeELResolver {
 	 * Creates a new default EL resolver for resolving properties of the root object.
 	 * @param root the root object
 	 */
-	public DefaultELResolver(Object root) {
-		this.root = root;
-		configureResolvers();
+	public DefaultELResolver(Object root, List customResolvers) {
+		this.root = adaptIfNecessary(root);
+		configureResolvers(customResolvers);
 	}
 
 	public Class getType(ELContext context, Object base, Object property) {
@@ -40,7 +46,7 @@ public class DefaultELResolver extends CompositeELResolver {
 		if (base == null) {
 			return super.getValue(context, root, property);
 		} else {
-			return super.getValue(context, base, property);
+			return super.getValue(context, adaptIfNecessary(base), property);
 		}
 	}
 
@@ -48,11 +54,26 @@ public class DefaultELResolver extends CompositeELResolver {
 		if (base == null) {
 			super.setValue(context, root, property, val);
 		} else {
-			super.setValue(context, base, property, val);
+			super.setValue(context, adaptIfNecessary(base), property, val);
 		}
 	}
 
-	private void configureResolvers() {
+	private Object adaptIfNecessary(Object base) {
+		if (base instanceof MapAdaptable) {
+			return ((MapAdaptable) base).asMap();
+		} else {
+			return base;
+		}
+	}
+
+	private void configureResolvers(List customResolvers) {
+		if (customResolvers != null) {
+			Iterator i = customResolvers.iterator();
+			while (i.hasNext()) {
+				ELResolver resolver = (ELResolver) i.next();
+				add(resolver);
+			}
+		}
 		add(new ArrayELResolver());
 		add(new ListELResolver());
 		add(new MapELResolver());
