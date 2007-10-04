@@ -20,9 +20,9 @@ import org.easymock.EasyMock;
 import org.jboss.el.ExpressionFactoryImpl;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.core.FlowELExpressionParser;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.core.expression.el.WebFlowELExpressionParser;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.execution.ViewFactory;
@@ -48,7 +48,7 @@ public class JsfRenderFinalResponseActionTests extends TestCase {
 
 	private StringWriter output = new StringWriter();
 
-	ExpressionParser parser = new FlowELExpressionParser(new ExpressionFactoryImpl());
+	ExpressionParser parser = new WebFlowELExpressionParser(new ExpressionFactoryImpl());
 
 	protected void setUp() throws Exception {
 		configureJsf();

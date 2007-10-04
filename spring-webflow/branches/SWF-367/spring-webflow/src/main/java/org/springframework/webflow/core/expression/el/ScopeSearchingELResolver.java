@@ -28,10 +28,14 @@ public class ScopeSearchingELResolver extends ELResolver {
 	}
 
 	public Class getType(ELContext elContext, Object base, Object property) {
-		if (base != null) {
+		RequestContext requestContext;
+		if (base != null && base instanceof RequestContext) {
+			requestContext = (RequestContext) base;
+		} else if (base == null) {
+			requestContext = RequestContextHolder.getRequestContext();
+		} else {
 			return null;
 		}
-		RequestContext requestContext = RequestContextHolder.getRequestContext();
 		if (requestContext == null) {
 			return null;
 		}
@@ -55,10 +59,14 @@ public class ScopeSearchingELResolver extends ELResolver {
 	}
 
 	public Object getValue(ELContext elContext, Object base, Object property) {
-		if (base != null) {
+		RequestContext requestContext;
+		if (base != null && base instanceof RequestContext) {
+			requestContext = (RequestContext) base;
+		} else if (base == null) {
+			requestContext = RequestContextHolder.getRequestContext();
+		} else {
 			return null;
 		}
-		RequestContext requestContext = RequestContextHolder.getRequestContext();
 		if (requestContext == null) {
 			return null;
 		}
@@ -81,10 +89,14 @@ public class ScopeSearchingELResolver extends ELResolver {
 	}
 
 	public boolean isReadOnly(ELContext elContext, Object base, Object property) {
-		if (base != null) {
+		RequestContext requestContext;
+		if (base != null && base instanceof RequestContext) {
+			requestContext = (RequestContext) base;
+		} else if (base == null) {
+			requestContext = RequestContextHolder.getRequestContext();
+		} else {
 			return false;
 		}
-		RequestContext requestContext = RequestContextHolder.getRequestContext();
 		if (requestContext == null) {
 			return false;
 		}
@@ -108,10 +120,14 @@ public class ScopeSearchingELResolver extends ELResolver {
 	}
 
 	public void setValue(ELContext elContext, Object base, Object property, Object value) {
-		if (base != null) {
+		RequestContext requestContext;
+		if (base != null && base instanceof RequestContext) {
+			requestContext = (RequestContext) base;
+		} else if (base == null) {
+			requestContext = RequestContextHolder.getRequestContext();
+		} else {
 			return;
 		}
-		RequestContext requestContext = RequestContextHolder.getRequestContext();
 		if (requestContext == null) {
 			return;
 		}

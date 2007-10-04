@@ -64,6 +64,7 @@ public class DefaultELResolver extends CompositeELResolver {
 				add(resolver);
 			}
 		}
+		add(new MapAdaptableELResolver());
 		add(new ArrayELResolver());
 		add(new ListELResolver());
 		add(new MapELResolver());
