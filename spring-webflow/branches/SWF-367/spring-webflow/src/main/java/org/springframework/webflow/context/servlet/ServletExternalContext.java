@@ -31,6 +31,7 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.ExternalContextHolder;
+import org.springframework.webflow.context.RequestPath;
 import org.springframework.webflow.core.FlowException;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.LocalParameterMap;
@@ -90,7 +91,7 @@ public class ServletExternalContext implements ExternalContext {
 
 	private String flowExecutionKey;
 
-	private String[] requestElements;
+	private RequestPath requestPath;
 
 	private String encodingScheme = DEFAULT_ENCODING_SCHEME;
 
@@ -139,8 +140,8 @@ public class ServletExternalContext implements ExternalContext {
 		return request.getMethod();
 	}
 
-	public String[] getRequestElements() {
-		return requestElements;
+	public RequestPath getRequestPath() {
+		return requestPath;
 	}
 
 	public ParameterMap getRequestParameterMap() {
@@ -263,20 +264,23 @@ public class ServletExternalContext implements ExternalContext {
 		String pathInfo = request.getPathInfo();
 		if (pathInfo == null) {
 			throw new IllegalArgumentException(
-					"The request path is null - unable to determine flow id or flow execution key");
+					"The requestPathInfo is null: unable to extract flow definition id or flow execution key");
 		}
 		String[] pathElements = pathInfo.substring(1, pathInfo.length()).split("/");
 		if (pathElements[0].equals("executions")) {
 			flowId = pathElements[1];
 			flowExecutionKey = pathElements[2];
-			requestElements = null;
+			requestPath = null;
 		} else {
 			flowId = pathElements[0];
 			if (pathElements.length > 1) {
-				requestElements = new String[pathElements.length - 1];
+				int afterFlowIdIndex = pathInfo.indexOf('/', 1);
+				String[] requestElements = new String[pathElements.length - 1];
 				System.arraycopy(pathElements, 1, requestElements, 0, requestElements.length);
+				requestPath = new ServletRequestPath(pathInfo.substring(afterFlowIdIndex, pathInfo.length()),
+						requestElements);
 			} else {
-				requestElements = null;
+				requestPath = null;
 			}
 		}
 	}
@@ -302,7 +306,9 @@ public class ServletExternalContext implements ExternalContext {
 	}
 
 	private static class FlowExecutionRedirector {
+
 		private String flowExecutionKey;
+
 		private String flowId;
 
 		public FlowExecutionRedirector(String flowId, String flowExecutionKey) {
@@ -321,8 +327,11 @@ public class ServletExternalContext implements ExternalContext {
 	}
 
 	private static class FlowDefinitionRedirector {
+
 		private String flowId;
+
 		private String[] requestElements;
+
 		private ParameterMap requestParameters;
 
 		public FlowDefinitionRedirector(String flowId, String[] requestElements, ParameterMap requestParameters) {
@@ -372,6 +381,28 @@ public class ServletExternalContext implements ExternalContext {
 
 		private String encode(String value, String encodingScheme) throws UnsupportedEncodingException {
 			return URLEncoder.encode(value, encodingScheme);
+		}
+	}
+
+	private static class ServletRequestPath implements RequestPath {
+		private String path;
+		private String[] pathElements;
+
+		ServletRequestPath(String path, String[] pathElements) {
+			this.path = path;
+			this.pathElements = pathElements;
+		}
+
+		public String[] getElements() {
+			return pathElements;
+		}
+
+		public String getElement(int index) {
+			return pathElements[index];
+		}
+
+		public String toString() {
+			return path;
 		}
 	}
 }
