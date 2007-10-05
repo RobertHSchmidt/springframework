@@ -34,8 +34,11 @@ import org.springframework.webflow.executor.FlowExecutor;
 public class ServletExternalContextTests extends TestCase {
 
 	private MockHttpServletRequest request;
+
 	private MockHttpServletResponse response;
+
 	private FlowExecutor flowExecutor;
+
 	private ServletExternalContext context;
 
 	protected void setUp() {
@@ -63,7 +66,7 @@ public class ServletExternalContextTests extends TestCase {
 		context = new ServletExternalContext(new MockServletContext(), request, response);
 		context.execute(flowExecutor);
 		assertEquals("users", context.getFlowId());
-		assertEquals(context.getRequestElements()[0], "1");
+		assertEquals(context.getRequestPath().getElement(0), "1");
 	}
 
 	public void testProcessLaunchFlowMultipleRequestElements() throws Exception {
@@ -71,11 +74,11 @@ public class ServletExternalContextTests extends TestCase {
 		context = new ServletExternalContext(new MockServletContext(), request, response);
 		context.execute(flowExecutor);
 		assertEquals("users", context.getFlowId());
-		assertEquals("1", context.getRequestElements()[0]);
-		assertEquals("foo", context.getRequestElements()[1]);
-		assertEquals("bar", context.getRequestElements()[2]);
-		assertEquals("", context.getRequestElements()[3]);
-		assertEquals("baz", context.getRequestElements()[4]);
+		assertEquals("1", context.getRequestPath().getElement(0));
+		assertEquals("foo", context.getRequestPath().getElement(1));
+		assertEquals("bar", context.getRequestPath().getElement(2));
+		assertEquals("", context.getRequestPath().getElement(3));
+		assertEquals("baz", context.getRequestPath().getElement(4));
 	}
 
 	public void testProcessResumeFlowExecution() throws Exception {

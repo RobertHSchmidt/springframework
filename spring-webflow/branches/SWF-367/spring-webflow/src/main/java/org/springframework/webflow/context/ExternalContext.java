@@ -61,7 +61,7 @@ public interface ExternalContext {
 	 * Returns the path of this request as a ordered list of fields.
 	 * @return the elements of the request path
 	 */
-	public String[] getRequestElements();
+	public RequestPath getRequestPath();
 
 	/**
 	 * Provides access to the parameters associated with the user request that led to SWF being called. This map is
@@ -139,22 +139,21 @@ public interface ExternalContext {
 
 	/**
 	 * Request that a flow definition redirect be sent as the response. A flow definition redirect tells the caller to
-	 * start a new execution of the flow definition with the input provided. Sets response committed to true.
-	 * @param flowDefinitionId the flow definition identifier
-	 * @param requestElements element data to expose in the flow execution's external context
-	 * @param requestParameters input parameters to expose in the flow execution's external context
-	 * @see #isResponseCommitted()
+	 * start a new execution of the flow definition with the input provided.
+	 * @param flowDefinitionId the id of the flow definition to redirect to
+	 * @param requestElements hierarchical data to send along in the redirect
+	 * @param requestParameters query parameters to send along in the redirect
 	 */
 	public void sendFlowDefinitionRedirect(String flowDefinitionId, String[] requestElements,
 			ParameterMap requestParameters);
 
 	/**
 	 * Request that a external redirect be sent as the response. An external redirect tells the caller to access the
-	 * resource at the given resource URI. Sets response committed to true.
-	 * @param resourceUri the resource URI string
+	 * resource at the given resource URL. Sets response committed to true.
+	 * @param resourceUrl the resource URL string
 	 * @see #isResponseCommitted()
 	 */
-	public void sendExternalRedirect(String resourceUri);
+	public void sendExternalRedirect(String resourceUrl);
 
 	/**
 	 * Report that flow execution request processing ended with a "paused" result, indicating the flow execution paused

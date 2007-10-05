@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import org.springframework.binding.collection.SharedMapDecorator;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.RequestPath;
 import org.springframework.webflow.core.FlowException;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.LocalSharedAttributeMap;
@@ -39,7 +40,7 @@ public class MockExternalContext implements ExternalContext {
 
 	private String flowExecutionKey;
 
-	private String[] requestElements;
+	private RequestPath requestPath;
 
 	private String requestMethod;
 
@@ -100,8 +101,8 @@ public class MockExternalContext implements ExternalContext {
 		return requestMethod;
 	}
 
-	public String[] getRequestElements() {
-		return requestElements;
+	public RequestPath getRequestPath() {
+		return requestPath;
 	}
 
 	public ParameterMap getRequestParameterMap() {
@@ -138,8 +139,8 @@ public class MockExternalContext implements ExternalContext {
 		this.requestMethod = requestMethod;
 	}
 
-	public void setRequestElements(String[] requestElements) {
-		this.requestElements = requestElements;
+	public void setRequestPath(RequestPath requestPath) {
+		this.requestPath = requestPath;
 	}
 
 	/**

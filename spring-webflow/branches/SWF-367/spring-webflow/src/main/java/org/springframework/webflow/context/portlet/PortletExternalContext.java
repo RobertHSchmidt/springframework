@@ -24,6 +24,7 @@ import javax.portlet.PortletSession;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.RequestPath;
 import org.springframework.webflow.core.FlowException;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.LocalParameterMap;
@@ -178,7 +179,7 @@ public class PortletExternalContext implements ExternalContext {
 		throw new UnsupportedOperationException("Auto-generated method stub");
 	}
 
-	public String[] getRequestElements() {
+	public RequestPath getRequestPath() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Auto-generated method stub");
 	}
