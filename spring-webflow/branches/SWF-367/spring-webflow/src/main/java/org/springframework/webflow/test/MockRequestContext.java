@@ -15,7 +15,9 @@
  */
 package org.springframework.webflow.test;
 
+import org.springframework.binding.message.DefaultMessageContextFactory;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.context.support.StaticMessageSource;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.FlowExecutionRequestInfo;
 import org.springframework.webflow.core.collection.AttributeMap;
@@ -47,6 +49,8 @@ public class MockRequestContext implements RequestContext {
 	private FlowExecutionContext flowExecutionContext;
 
 	private ExternalContext externalContext;
+
+	private MessageContext messageContext;
 
 	private MutableAttributeMap requestScope = new LocalAttributeMap();
 
@@ -91,6 +95,7 @@ public class MockRequestContext implements RequestContext {
 	public MockRequestContext(ParameterMap requestParameterMap) {
 		this.flowExecutionContext = new MockFlowExecutionContext();
 		this.externalContext = new MockExternalContext(requestParameterMap);
+		this.messageContext = new DefaultMessageContextFactory(new StaticMessageSource()).createMessageContext();
 	}
 
 	/**
@@ -101,6 +106,7 @@ public class MockRequestContext implements RequestContext {
 	public MockRequestContext(FlowExecutionContext flowExecutionContext) {
 		this.flowExecutionContext = flowExecutionContext;
 		this.externalContext = new MockExternalContext();
+		this.messageContext = new DefaultMessageContextFactory(new StaticMessageSource()).createMessageContext();
 	}
 
 	// implementing RequestContext
@@ -134,8 +140,7 @@ public class MockRequestContext implements RequestContext {
 	}
 
 	public MessageContext getMessageContext() {
-		// TODO
-		throw new UnsupportedOperationException("TODO");
+		return messageContext;
 	}
 
 	public ExternalContext getExternalContext() {
