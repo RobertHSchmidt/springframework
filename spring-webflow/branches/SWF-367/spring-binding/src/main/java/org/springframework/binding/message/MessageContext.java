@@ -23,4 +23,10 @@ public interface MessageContext {
 	 * @param messageResolver the resolver that will resolve the message to be added
 	 */
 	public void addMessage(MessageResolver messageResolver);
+
+	/**
+	 * Clear any messages added to this context.
+	 */
+	public void clearMessages();
+
 }
