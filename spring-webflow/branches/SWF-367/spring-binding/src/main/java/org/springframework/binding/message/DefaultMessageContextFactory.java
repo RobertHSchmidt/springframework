@@ -69,5 +69,9 @@ public class DefaultMessageContextFactory implements MessageContextFactory {
 			return (Message[]) messages.toArray(new Message[messages.size()]);
 		}
 
+		public void clearMessages() {
+			objectMessages.clear();
+		}
+
 	}
 }
