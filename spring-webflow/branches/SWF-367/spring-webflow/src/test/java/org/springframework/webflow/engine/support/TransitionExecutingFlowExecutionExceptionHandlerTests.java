@@ -32,7 +32,6 @@ import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
 import org.springframework.webflow.engine.builder.support.AbstractFlowBuilder;
-import org.springframework.webflow.engine.impl.FlowExecutionImpl;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecution;
@@ -104,7 +103,7 @@ public class TransitionExecutingFlowExecutionExceptionHandlerTests extends TestC
 		TransitionExecutingFlowExecutionExceptionHandler handler = new TransitionExecutingFlowExecutionExceptionHandler();
 		handler.add(TestException.class, "end");
 		flow.getExceptionHandlerSet().add(handler);
-		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		FlowExecution execution = new FlowExecutionImplFactory().createFlowExecution(flow);
 		try {
 			execution.start(new MockExternalContext());
 			fail("Should have failed no such state");
@@ -113,7 +112,7 @@ public class TransitionExecutingFlowExecutionExceptionHandlerTests extends TestC
 	}
 
 	public void testStateExceptionHandlingRethrow() {
-		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		FlowExecution execution = new FlowExecutionImplFactory().createFlowExecution(flow);
 		try {
 			execution.start(new MockExternalContext());
 			fail("Should have rethrown");
@@ -147,7 +146,7 @@ public class TransitionExecutingFlowExecutionExceptionHandlerTests extends TestC
 			}
 		};
 		Flow flow = new FlowAssembler("flow", builder, null).assembleFlow();
-		FlowExecution execution = new FlowExecutionImpl(flow);
+		FlowExecution execution = new FlowExecutionImplFactory().createFlowExecution(flow);
 		execution.start(new MockExternalContext());
 		assertTrue(execution.isActive());
 	}

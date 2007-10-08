@@ -17,6 +17,8 @@ package org.springframework.webflow.engine.impl;
 
 import junit.framework.TestCase;
 
+import org.springframework.binding.message.DefaultMessageContextFactory;
+import org.springframework.context.support.StaticMessageSource;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
@@ -54,6 +56,7 @@ public class FlowExecutionImplTests extends TestCase {
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		execution.setListeners(listeners);
+		execution.setMessageContextFactory(new DefaultMessageContextFactory(new StaticMessageSource()));
 		MockExternalContext context = new MockExternalContext();
 		assertFalse(execution.hasStarted());
 		execution.start(context);
@@ -86,6 +89,7 @@ public class FlowExecutionImplTests extends TestCase {
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		execution.setListeners(listeners);
+		execution.setMessageContextFactory(new DefaultMessageContextFactory(new StaticMessageSource()));
 		MockExternalContext context = new MockExternalContext();
 		execution.start(context);
 		assertTrue(execution.isActive());
@@ -103,6 +107,7 @@ public class FlowExecutionImplTests extends TestCase {
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
 		execution.setListeners(listeners);
+		execution.setMessageContextFactory(new DefaultMessageContextFactory(new StaticMessageSource()));
 		MockExternalContext context = new MockExternalContext();
 		assertFalse(execution.hasStarted());
 		try {
@@ -122,6 +127,7 @@ public class FlowExecutionImplTests extends TestCase {
 			}
 		};
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		execution.setMessageContextFactory(new DefaultMessageContextFactory(new StaticMessageSource()));
 		MockExternalContext context = new MockExternalContext();
 		assertFalse(execution.hasStarted());
 		try {
@@ -142,6 +148,7 @@ public class FlowExecutionImplTests extends TestCase {
 			}
 		};
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		execution.setMessageContextFactory(new DefaultMessageContextFactory(new StaticMessageSource()));
 		MockExternalContext context = new MockExternalContext();
 		assertFalse(execution.hasStarted());
 		try {
@@ -156,6 +163,7 @@ public class FlowExecutionImplTests extends TestCase {
 		Flow flow = new Flow("flow");
 		new EndState(flow, "end");
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		execution.setMessageContextFactory(new DefaultMessageContextFactory(new StaticMessageSource()));
 		MockExternalContext context = new MockExternalContext();
 		execution.start(context);
 		try {
@@ -172,6 +180,7 @@ public class FlowExecutionImplTests extends TestCase {
 		MockFlowExecutionListener mockListener = new MockFlowExecutionListener();
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		execution.setMessageContextFactory(new DefaultMessageContextFactory(new StaticMessageSource()));
 		execution.setListeners(listeners);
 		execution.setKeyFactory(new MockFlowExecutionKeyFactory());
 		MockExternalContext context = new MockExternalContext();
@@ -192,6 +201,7 @@ public class FlowExecutionImplTests extends TestCase {
 		MockFlowExecutionListener mockListener = new MockFlowExecutionListener();
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		execution.setMessageContextFactory(new DefaultMessageContextFactory(new StaticMessageSource()));
 		execution.setListeners(listeners);
 		MockExternalContext context = new MockExternalContext();
 		execution.start(context);
@@ -209,6 +219,7 @@ public class FlowExecutionImplTests extends TestCase {
 		Flow flow = new Flow("flow");
 		new EndState(flow, "end");
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		execution.setMessageContextFactory(new DefaultMessageContextFactory(new StaticMessageSource()));
 		MockExternalContext context = new MockExternalContext();
 		execution.start(context);
 		try {
@@ -229,6 +240,7 @@ public class FlowExecutionImplTests extends TestCase {
 		MockFlowExecutionListener mockListener = new MockFlowExecutionListener();
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		execution.setMessageContextFactory(new DefaultMessageContextFactory(new StaticMessageSource()));
 		execution.setListeners(listeners);
 		execution.setKeyFactory(new MockFlowExecutionKeyFactory());
 		MockExternalContext context = new MockExternalContext();
@@ -254,6 +266,7 @@ public class FlowExecutionImplTests extends TestCase {
 		MockFlowExecutionListener mockListener = new MockFlowExecutionListener();
 		FlowExecutionListener[] listeners = new FlowExecutionListener[] { mockListener };
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		execution.setMessageContextFactory(new DefaultMessageContextFactory(new StaticMessageSource()));
 		execution.setListeners(listeners);
 		execution.setKeyFactory(new MockFlowExecutionKeyFactory());
 		MockExternalContext context = new MockExternalContext();
@@ -277,6 +290,7 @@ public class FlowExecutionImplTests extends TestCase {
 			}
 		};
 		FlowExecutionImpl execution = new FlowExecutionImpl(flow);
+		execution.setMessageContextFactory(new DefaultMessageContextFactory(new StaticMessageSource()));
 		execution.setKeyFactory(new MockFlowExecutionKeyFactory());
 
 		MockExternalContext context = new MockExternalContext();

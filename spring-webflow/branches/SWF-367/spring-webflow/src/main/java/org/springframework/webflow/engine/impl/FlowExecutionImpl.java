@@ -19,11 +19,15 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.binding.message.MessageContext;
+import org.springframework.binding.message.MessageContextFactory;
+import org.springframework.binding.message.StateManageableMessageContext;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
@@ -98,6 +102,11 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	private transient FlowExecutionKeyFactory keyFactory;
 
 	/**
+	 * The factory for message contexts for tracking flow execution messages.
+	 */
+	private transient MessageContextFactory messageContextFactory;
+
+	/**
 	 * The key assigned to this flow execution. May be null if a key has not been assigned.
 	 */
 	private transient FlowExecutionKey key;
@@ -125,6 +134,11 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * Set so the transient {@link #flow} field can be restored by the {@link FlowExecutionImplStateRestorer}.
 	 */
 	private String flowId;
+
+	/**
+	 * Serializable snapshot of this flow execution's messages.
+	 */
+	private Serializable messagesMemento;
 
 	/**
 	 * Default constructor required for externalizable serialization. Should NOT be called programmatically.
@@ -203,7 +217,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			logger.debug("Starting execution in " + externalContext);
 		}
 		started = true;
-		RequestControlContext context = createControlContext(externalContext);
+		RequestControlContext context = createControlContext(externalContext, createMessageContext());
 		RequestContextHolder.setRequestContext(context);
 		listeners.fireRequestSubmitted(context);
 		try {
@@ -214,9 +228,18 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			handleException(wrap(e), context);
 		} finally {
 			if (isActive()) {
-				listeners.firePaused(context);
+				saveMessages(context);
+				try {
+					listeners.firePaused(context);
+				} catch (Throwable e) {
+					logger.error("Flow execution listener threw exception", e);
+				}
 			}
-			listeners.fireRequestProcessed(context);
+			try {
+				listeners.fireRequestProcessed(context);
+			} catch (Throwable e) {
+				logger.error("Flow execution listener threw exception", e);
+			}
 			RequestContextHolder.setRequestContext(null);
 		}
 	}
@@ -232,7 +255,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Resuming execution in " + externalContext);
 		}
-		RequestControlContext context = createControlContext(externalContext);
+		RequestControlContext context = createControlContext(externalContext, createMessageContext());
 		RequestContextHolder.setRequestContext(context);
 		listeners.fireRequestSubmitted(context);
 		try {
@@ -244,11 +267,32 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 			handleException(wrap(e), context);
 		} finally {
 			if (isActive()) {
-				listeners.firePaused(context);
+				saveMessages(context);
+				try {
+					listeners.firePaused(context);
+				} catch (Throwable e) {
+					logger.error("Flow execution listener threw exception", e);
+				}
 			}
-			listeners.fireRequestProcessed(context);
+			try {
+				listeners.fireRequestProcessed(context);
+			} catch (Throwable e) {
+				logger.error("Flow execution listener threw exception", e);
+			}
 			RequestContextHolder.setRequestContext(null);
 		}
+	}
+
+	private MessageContext createMessageContext() {
+		StateManageableMessageContext messageContext = messageContextFactory.createMessageContext();
+		if (messagesMemento != null) {
+			messageContext.restoreMessages(messagesMemento);
+		}
+		return messageContext;
+	}
+
+	private void saveMessages(RequestContext context) {
+		messagesMemento = ((StateManageableMessageContext) context.getMessageContext()).createMessagesMemento();
 	}
 
 	// subclassing hooks
@@ -257,8 +301,8 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 	 * Create a flow execution control context.
 	 * @param externalContext the external context triggering this request
 	 */
-	protected RequestControlContext createControlContext(ExternalContext externalContext) {
-		return new RequestControlContextImpl(this, externalContext);
+	protected RequestControlContext createControlContext(ExternalContext externalContext, MessageContext messageContext) {
+		return new RequestControlContextImpl(this, externalContext, messageContext);
 	}
 
 	/**
@@ -331,6 +375,10 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 
 	void setKeyFactory(FlowExecutionKeyFactory keyFactory) {
 		this.keyFactory = keyFactory;
+	}
+
+	void setMessageContextFactory(MessageContextFactory messageContextFactory) {
+		this.messageContextFactory = messageContextFactory;
 	}
 
 	// Used by FlowExecutionImplStateRestorer
@@ -406,6 +454,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		flowId = (String) in.readObject();
 		flowSessions = (LinkedList) in.readObject();
 		flashScope = (MutableAttributeMap) in.readObject();
+		messagesMemento = (Serializable) in.readObject();
 	}
 
 	public void writeExternal(ObjectOutput out) throws IOException {
@@ -413,6 +462,7 @@ public class FlowExecutionImpl implements FlowExecution, Externalizable {
 		out.writeObject(flowId);
 		out.writeObject(flowSessions);
 		out.writeObject(flashScope);
+		out.writeObject(messagesMemento);
 	}
 
 	public String toString() {
