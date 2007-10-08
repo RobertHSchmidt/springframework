@@ -188,7 +188,6 @@ public class ServletExternalContext implements ExternalContext {
 		flowExecutionRedirector = new FlowExecutionRedirector(request);
 	}
 
-	// TODO fragment support?
 	public void sendFlowDefinitionRedirect(FlowDefinitionRequestInfo request) {
 		flowDefinitionRedirector = new FlowDefinitionRedirector(request);
 	}
@@ -212,12 +211,12 @@ public class ServletExternalContext implements ExternalContext {
 	}
 
 	public String buildFlowExecutionUrl(FlowExecutionRequestInfo requestInfo, boolean contextRelative) {
+		String contextRelativeUrl = request.getContextPath() + request.getServletPath() + "/executions/"
+				+ requestInfo.getFlowDefinitionId() + "/" + requestInfo.getFlowExecutionKey();
 		if (contextRelative) {
-			return request.getContextPath() + request.getServletPath() + "/executions/"
-					+ requestInfo.getFlowDefinitionId() + "/" + requestInfo.getFlowExecutionKey();
+			return contextRelativeUrl;
 		} else {
-			return request.getScheme() + request.getServerName() + request.getContextPath() + request.getServletPath()
-					+ "/executions/" + requestInfo.getFlowDefinitionId() + "/" + requestInfo.getFlowExecutionKey();
+			return request.getScheme() + request.getServerName() + contextRelativeUrl;
 		}
 	}
 
