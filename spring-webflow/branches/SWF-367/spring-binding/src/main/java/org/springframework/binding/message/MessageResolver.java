@@ -13,7 +13,7 @@ public interface MessageResolver {
 
 	/**
 	 * Resolve the message from the source using the current locale.
-	 * @param source the message source, an abstraction for a resource bundle
+	 * @param messageSource the message source, an abstraction for a resource bundle
 	 * @param locale the current locale of this request
 	 * @return the resolved messaged
 	 */
