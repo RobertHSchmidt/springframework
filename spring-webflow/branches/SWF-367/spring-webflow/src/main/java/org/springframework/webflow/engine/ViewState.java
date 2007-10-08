@@ -84,6 +84,7 @@ public class ViewState extends TransitionableState {
 			View view = viewFactory.getView(context);
 			renderActionList.execute(context);
 			view.render();
+			context.getMessageContext().clearMessages();
 			context.getFlashScope().clear();
 		}
 	}
@@ -95,6 +96,7 @@ public class ViewState extends TransitionableState {
 		} else {
 			renderActionList.execute(context);
 			view.render();
+			context.getMessageContext().clearMessages();
 			context.getFlashScope().clear();
 		}
 	}
