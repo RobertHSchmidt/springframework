@@ -15,11 +15,8 @@
  */
 package org.springframework.webflow.engine.impl;
 
-import org.springframework.binding.message.Message;
 import org.springframework.binding.message.MessageContext;
-import org.springframework.binding.message.MessageResolver;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.FlowExecutionRequestInfo;
 import org.springframework.webflow.core.collection.AttributeMap;
@@ -63,6 +60,11 @@ class RequestControlContextImpl implements RequestControlContext {
 	private ExternalContext externalContext;
 
 	/**
+	 * A source context for messages to record during this flow execution request.
+	 */
+	private MessageContext messageContext;
+
+	/**
 	 * The request scope data map. Never null, initially empty.
 	 */
 	private LocalAttributeMap requestScope = new LocalAttributeMap();
@@ -87,11 +89,14 @@ class RequestControlContextImpl implements RequestControlContext {
 	 * Create a new request context.
 	 * @param flowExecution the owning flow execution
 	 * @param externalContext the external context that originated the flow execution request
+	 * @param messageContext the message context for recording status or validation messages during the execution of
+	 * this request
 	 */
-	public RequestControlContextImpl(FlowExecutionImpl flowExecution, ExternalContext externalContext) {
-		Assert.notNull(flowExecution, "The owning flow execution is required");
+	public RequestControlContextImpl(FlowExecutionImpl flowExecution, ExternalContext externalContext,
+			MessageContext messageContext) {
 		this.flowExecution = flowExecution;
 		this.externalContext = externalContext;
+		this.messageContext = messageContext;
 	}
 
 	// implementing RequestContext
@@ -129,21 +134,7 @@ class RequestControlContextImpl implements RequestControlContext {
 	}
 
 	public MessageContext getMessageContext() {
-		// TODO - This needs to return a real implementation later.
-		return new MessageContext() {
-
-			public void addMessage(MessageResolver messageResolver) {
-			}
-
-			public Message[] getMessages() {
-				return new Message[0];
-			}
-
-			public Message[] getMessages(Object source) {
-				return new Message[0];
-			}
-
-		};
+		return messageContext;
 	}
 
 	public FlowExecutionContext getFlowExecutionContext() {
