@@ -17,5 +17,5 @@ public interface MessageResolver {
 	 * @param locale the current locale of this request
 	 * @return the resolved messaged
 	 */
-	public Message resolveMessage(MessageSource source, Locale locale);
+	public Message resolveMessage(MessageSource messageSource, Locale locale);
 }
