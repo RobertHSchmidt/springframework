@@ -129,8 +129,7 @@ public interface ExternalContext {
 	public String buildFlowDefinitionUrl(FlowDefinitionRequestInfo requestInfo);
 
 	/**
-	 * Builds a server-relative flow execution URL, suitable for rendering links that resume a paused flow execution
-	 * when accessed.
+	 * Builds a flow execution URL, suitable for rendering links that resume a paused flow execution when accessed.
 	 * @param requestInfo data needed to build the flow execution URL
 	 * @param contextRelative whether the URL returned should be relative to this external context or absolute.
 	 * @return the generated flow execution URL
