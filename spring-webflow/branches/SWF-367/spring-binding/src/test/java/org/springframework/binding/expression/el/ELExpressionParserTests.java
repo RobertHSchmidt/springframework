@@ -82,6 +82,17 @@ public class ELExpressionParserTests extends TestCase {
 		assertEquals("foo2", exp.getValue(target));
 	}
 
+	public void testParseExpressionWithVariables2() {
+		String expressionString = "#{value}#{bean.encode(value)}";
+		Class expressionTargetType = TestBean.class;
+		Class expectedEvaluationResultType = String.class;
+		ExpressionVariable[] expressionVariables = null;
+		Expression exp = parser.parseExpression(expressionString, expressionTargetType, expectedEvaluationResultType,
+				expressionVariables);
+		TestBean target = new TestBean(new TestBean());
+		assertEquals("foo!foo", exp.getValue(target));
+	}
+
 	public void testParseExpressionCoerceToInteger() {
 		String expressionString = "#{maximum}#{max}";
 		Class expressionTargetType = TestBean.class;
@@ -99,8 +110,26 @@ public class ELExpressionParserTests extends TestCase {
 
 		private int maximum = 2;
 
+		private TestBean bean;
+
+		public TestBean() {
+
+		}
+
+		public TestBean(TestBean bean) {
+			this.bean = bean;
+		}
+
+		public TestBean getBean() {
+			return bean;
+		}
+
 		public String getValue() {
 			return value;
+		}
+
+		public String encode(String data) {
+			return "!" + data;
 		}
 
 		public void setValue(String value) {
