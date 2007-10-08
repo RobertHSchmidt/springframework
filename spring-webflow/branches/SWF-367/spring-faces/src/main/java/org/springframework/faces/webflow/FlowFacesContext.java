@@ -53,16 +53,12 @@ public class FlowFacesContext extends FacesContext {
 			msgText.append(message.getSummary());
 		}
 
-		if (StringUtils.hasText(message.getDetail())) {
-			msgText.append(message.getDetail());
-		}
-
 		if (message.getSeverity() == FacesMessage.SEVERITY_INFO) {
-			messageResolver = Messages.info(msgText.toString());
+			messageResolver = Messages.text(msgText.toString(), Severity.INFO);
 		} else if (message.getSeverity() == FacesMessage.SEVERITY_WARN) {
-			messageResolver = Messages.info(msgText.toString());
+			messageResolver = Messages.text(msgText.toString(), Severity.WARNING);
 		} else {
-			messageResolver = Messages.error(msgText.toString());
+			messageResolver = Messages.text(msgText.toString(), Severity.ERROR);
 		}
 
 		RequestContextHolder.getRequestContext().getMessageContext().addMessage(messageResolver);
