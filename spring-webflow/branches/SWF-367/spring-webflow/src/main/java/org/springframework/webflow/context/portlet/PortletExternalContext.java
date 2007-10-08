@@ -24,6 +24,8 @@ import javax.portlet.PortletSession;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.FlowDefinitionRequestInfo;
+import org.springframework.webflow.context.FlowExecutionRequestInfo;
 import org.springframework.webflow.context.RequestPath;
 import org.springframework.webflow.core.FlowException;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -154,21 +156,6 @@ public class PortletExternalContext implements ExternalContext {
 		return response;
 	}
 
-	public void sendFlowExecutionRedirect() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Auto-generated method stub");
-	}
-
-	public void sendFlowDefinitionRedirect(String flowId, MutableAttributeMap input) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Auto-generated method stub");
-	}
-
-	public void sendExternalRedirect(String resourceUri) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Auto-generated method stub");
-	}
-
 	public String getFlowExecutionKey() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Auto-generated method stub");
@@ -189,7 +176,32 @@ public class PortletExternalContext implements ExternalContext {
 		throw new UnsupportedOperationException("Auto-generated method stub");
 	}
 
-	public void sendFlowDefinitionRedirect(String flowId, String[] requestElements, ParameterMap requestParameters) {
+	public String buildFlowDefinitionUrl(FlowDefinitionRequestInfo urlInfo) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
+
+	public String buildFlowExecutionUrl(FlowExecutionRequestInfo urlInfo, boolean contextRelative) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
+
+	public String encode(String string) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
+
+	public void sendFlowDefinitionRedirect(FlowDefinitionRequestInfo urlInfo) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
+
+	public void sendFlowExecutionRedirect(FlowExecutionRequestInfo urlInfo) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
+
+	public void sendExternalRedirect(String resourceUrl) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Auto-generated method stub");
 	}
@@ -210,16 +222,6 @@ public class PortletExternalContext implements ExternalContext {
 	}
 
 	public boolean isResponseCommitted() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Auto-generated method stub");
-	}
-
-	public String buildFlowExecutionUrl(String flowDefinitionId, String flowExecutionKey) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Auto-generated method stub");
-	}
-
-	public void sendFlowExecutionRedirect(String flowDefinitionId, String flowExecutionKey) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Auto-generated method stub");
 	}

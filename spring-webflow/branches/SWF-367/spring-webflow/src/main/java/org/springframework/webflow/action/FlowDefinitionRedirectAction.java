@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.util.Assert;
+import org.springframework.webflow.context.FlowDefinitionRequestInfo;
+import org.springframework.webflow.context.RequestPath;
 import org.springframework.webflow.core.collection.LocalParameterMap;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.Event;
@@ -25,14 +27,15 @@ public class FlowDefinitionRedirectAction extends AbstractAction {
 
 	protected Event doExecute(RequestContext context) throws Exception {
 		String flowId = (String) this.flowId.getValue(context);
-		String[] requestElements = evaluateRequestElements(context);
+		RequestPath requestPath = evaluateRequestPath(context);
 		ParameterMap requestParameters = evaluateRequestParameters(context);
-		context.getExternalContext().sendFlowDefinitionRedirect(flowId, requestElements, requestParameters);
+		context.getExternalContext().sendFlowDefinitionRedirect(
+				new FlowDefinitionRequestInfo(flowId, requestPath, requestParameters, null));
 		return success();
 	}
 
-	private String[] evaluateRequestElements(RequestContext context) {
-		if (this.requestElements == null) {
+	private RequestPath evaluateRequestPath(RequestContext context) {
+		if (this.requestElements == null || this.requestElements.length == 0) {
 			return null;
 		}
 		String[] requestElements = new String[this.requestElements.length];
@@ -40,7 +43,7 @@ public class FlowDefinitionRedirectAction extends AbstractAction {
 			Expression element = this.requestElements[i];
 			requestElements[i] = (String) element.getValue(context);
 		}
-		return requestElements;
+		return RequestPath.valueOf(requestElements);
 	}
 
 	private ParameterMap evaluateRequestParameters(RequestContext context) {

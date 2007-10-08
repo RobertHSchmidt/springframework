@@ -40,7 +40,6 @@ public class TextToTransitionCriteriaTests extends TestCase {
 		TransitionCriteria criterion = (TransitionCriteria) converter.convert(expression);
 		RequestContext ctx = getRequestContext();
 		assertTrue("Criterion should evaluate to true", criterion.test(ctx));
-
 		assertSame(WildcardTransitionCriteria.INSTANCE, converter.convert("*"));
 		assertSame(WildcardTransitionCriteria.INSTANCE, converter.convert(""));
 	}

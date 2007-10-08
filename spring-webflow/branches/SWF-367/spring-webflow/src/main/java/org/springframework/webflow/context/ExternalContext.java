@@ -121,35 +121,48 @@ public interface ExternalContext {
 	public Object getResponse();
 
 	/**
-	 * Builds a context-relative flow execution URL that can be used to redirect to a paused a flow execution.
-	 * @param flowDefinitionId the flow definition id of the execution
-	 * @param flowExecutionKey the flow execution key
-	 * @return the generated flow execution url
+	 * Builds a context-relative flow definition URL, suitable for rendering links that a launch new execution of a flow
+	 * definition when accessed.
+	 * @param requestInfo data needed to build the flow definition path
+	 * @return the generated flow definition URL
 	 */
-	public String buildFlowExecutionUrl(String flowDefinitionId, String flowExecutionKey);
+	public String buildFlowDefinitionUrl(FlowDefinitionRequestInfo requestInfo);
+
+	/**
+	 * Builds a server-relative flow execution URL, suitable for rendering links that resume a paused flow execution
+	 * when accessed.
+	 * @param requestInfo data needed to build the flow execution URL
+	 * @param contextRelative whether the URL returned should be relative to this external context or absolute.
+	 * @return the generated flow execution URL
+	 */
+	public String buildFlowExecutionUrl(FlowExecutionRequestInfo requestInfo, boolean contextRelative);
+
+	/**
+	 * Encode the provided string using the encoding scheme of this external context.
+	 * @param string the string
+	 * @return the encoded string
+	 */
+	public String encode(String string);
 
 	/**
 	 * Request that a flow execution redirect be sent as the response. A flow execution redirect tells the caller to
 	 * resume a flow execution in a new request. Sets response committed to true.
-	 * @param flowDefinitionId the flow definition id of the execution
-	 * @param flowExecutionKey the flow execution key
+	 * @param requestInfo data needed to issue the flow execution redirect
 	 * @see #isResponseCommitted()
 	 */
-	public void sendFlowExecutionRedirect(String flowDefinitionId, String flowExecutionKey);
+	public void sendFlowExecutionRedirect(FlowExecutionRequestInfo requestInfo);
 
 	/**
 	 * Request that a flow definition redirect be sent as the response. A flow definition redirect tells the caller to
 	 * start a new execution of the flow definition with the input provided.
-	 * @param flowDefinitionId the id of the flow definition to redirect to
-	 * @param requestElements hierarchical data to send along in the redirect
-	 * @param requestParameters query parameters to send along in the redirect
+	 * @param requestInfo data needed to issue the flow definition redirect
 	 */
-	public void sendFlowDefinitionRedirect(String flowDefinitionId, String[] requestElements,
-			ParameterMap requestParameters);
+	public void sendFlowDefinitionRedirect(FlowDefinitionRequestInfo requestInfo);
 
 	/**
 	 * Request that a external redirect be sent as the response. An external redirect tells the caller to access the
-	 * resource at the given resource URL. Sets response committed to true.
+	 * resource at the given resource URL. Sets response committed to true. Note: no special encoding is performed on
+	 * the string argument. Callers must perform their own encoding when necessary.
 	 * @param resourceUrl the resource URL string
 	 * @see #isResponseCommitted()
 	 */
@@ -170,8 +183,8 @@ public interface ExternalContext {
 	public void setEndedResult(String flowExecutionKey);
 
 	/**
-	 * Report that flow execution request processing ended with an unhandled flow exception.
-	 * @param e the unhandled flow exception
+	 * Report that flow execution request processing ended with a flow exception.
+	 * @param e the flow exception
 	 */
 	public void setExceptionResult(FlowException e);
 
@@ -179,8 +192,8 @@ public interface ExternalContext {
 	 * Returns true if the current request has already provisioned the response that will be sent back to the calling
 	 * system.
 	 * @return true if the response has been committed, false otherwise
-	 * @see #sendFlowExecutionRedirect(String, String)
-	 * @see #sendFlowDefinitionRedirect(String, String[], ParameterMap)
+	 * @see #sendFlowExecutionRedirect(FlowExecutionRequestInfo)
+	 * @see #sendFlowDefinitionRedirect(FlowDefinitionRequestInfo)
 	 * @see #sendExternalRedirect(String)
 	 */
 	public boolean isResponseCommitted();
