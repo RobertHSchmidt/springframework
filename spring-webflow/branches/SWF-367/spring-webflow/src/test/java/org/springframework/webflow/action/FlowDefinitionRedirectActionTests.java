@@ -7,8 +7,8 @@ import junit.framework.TestCase;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.support.StaticExpression;
+import org.springframework.webflow.context.FlowDefinitionRequestInfo;
 import org.springframework.webflow.test.MockRequestContext;
-import org.springframework.webflow.test.MockExternalContext.FlowDefinitionRedirectResult;
 
 public class FlowDefinitionRedirectActionTests extends TestCase {
 	private FlowDefinitionRedirectAction action;
@@ -21,9 +21,9 @@ public class FlowDefinitionRedirectActionTests extends TestCase {
 		action = new FlowDefinitionRedirectAction(flowId, requestElements, requestParameters);
 		MockRequestContext context = new MockRequestContext();
 		action.execute(context);
-		FlowDefinitionRedirectResult result = context.getMockExternalContext().getFlowDefinitionRedirectResult();
-		assertEquals("user", result.getFlowId());
-		assertEquals("1", result.getRequestElements()[0]);
+		FlowDefinitionRequestInfo result = context.getMockExternalContext().getFlowDefinitionRedirectResult();
+		assertEquals("user", result.getFlowDefinitionId());
+		assertEquals("1", result.getRequestPath().getElement(0));
 		assertEquals("bar", result.getRequestParameters().get("foo"));
 	}
 
@@ -32,9 +32,9 @@ public class FlowDefinitionRedirectActionTests extends TestCase {
 		action = new FlowDefinitionRedirectAction(flowId, null, null);
 		MockRequestContext context = new MockRequestContext();
 		action.execute(context);
-		FlowDefinitionRedirectResult result = context.getMockExternalContext().getFlowDefinitionRedirectResult();
-		assertEquals("user", result.getFlowId());
-		assertEquals(null, result.getRequestElements());
+		FlowDefinitionRequestInfo result = context.getMockExternalContext().getFlowDefinitionRedirectResult();
+		assertEquals("user", result.getFlowDefinitionId());
+		assertEquals(null, result.getRequestPath());
 		assertEquals(null, result.getRequestParameters());
 	}
 

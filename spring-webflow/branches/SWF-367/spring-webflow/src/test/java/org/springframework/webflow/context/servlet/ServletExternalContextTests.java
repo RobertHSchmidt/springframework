@@ -15,9 +15,6 @@
  */
 package org.springframework.webflow.context.servlet;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import junit.framework.TestCase;
 
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -25,8 +22,11 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.core.collection.LocalParameterMap;
+import org.springframework.webflow.context.FlowDefinitionRequestInfo;
+import org.springframework.webflow.context.FlowExecutionRequestInfo;
+import org.springframework.webflow.context.RequestPath;
 import org.springframework.webflow.executor.FlowExecutor;
+import org.springframework.webflow.test.MockParameterMap;
 
 /**
  * Unit tests for {@link ServletExternalContext}.
@@ -115,7 +115,7 @@ public class ServletExternalContextTests extends TestCase {
 		request.setPathInfo("/users/1");
 		flowExecutor = new FlowExecutor() {
 			public void execute(ExternalContext context) {
-				context.sendFlowExecutionRedirect("users", "_c12345_k12345");
+				context.sendFlowExecutionRedirect(new FlowExecutionRequestInfo("users", "_c12345_k12345"));
 			}
 		};
 		context = new ServletExternalContext(new MockServletContext(), request, response);
@@ -127,7 +127,7 @@ public class ServletExternalContextTests extends TestCase {
 		request.setPathInfo("/users/1");
 		flowExecutor = new FlowExecutor() {
 			public void execute(ExternalContext context) {
-				context.sendFlowExecutionRedirect("users", "_c12345_k12345");
+				context.sendFlowExecutionRedirect(new FlowExecutionRequestInfo("users", "_c12345_k12345"));
 				context.setEndedResult("_c12345_k12345");
 			}
 		};
@@ -144,17 +144,19 @@ public class ServletExternalContextTests extends TestCase {
 		request.setPathInfo("/users/1");
 		flowExecutor = new FlowExecutor() {
 			public void execute(ExternalContext context) {
-				Map parameters = new HashMap();
+				MockParameterMap parameters = new MockParameterMap();
 				parameters.put("foo", "bar");
 				parameters.put("bar", "baz");
-				context.sendFlowDefinitionRedirect("customers", new String[] { "1", "you&me" }, new LocalParameterMap(
-						parameters));
+				RequestPath requestPath = new RequestPath("/1/you&me");
+				FlowDefinitionRequestInfo requestInfo = new FlowDefinitionRequestInfo("customers", requestPath,
+						parameters, "frag");
+				context.sendFlowDefinitionRedirect(requestInfo);
 				context.setEndedResult(null);
 			}
 		};
 		context = new ServletExternalContext(new MockServletContext(), request, response);
 		context.execute(flowExecutor);
-		assertEquals("/customers/1/you%26me?foo=bar&bar=baz", response.getRedirectedUrl());
+		assertEquals("/customers/1/you%26me?foo=bar&bar=baz#frag", response.getRedirectedUrl());
 	}
 
 	public void testSendExternalRedirect() throws Exception {

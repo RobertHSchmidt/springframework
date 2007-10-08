@@ -49,7 +49,7 @@ public class ViewStateTests extends TestCase {
 		MockRequestControlContext context = new MockRequestControlContext(flow);
 		state.enter(context);
 		assertFalse("Render called", context.getFlowScope().contains("renderCalled"));
-		assertTrue(context.getMockExternalContext().getFlowExecutionRedirectResult());
+		assertNotNull(context.getMockExternalContext().getFlowExecutionRedirectResult());
 	}
 
 	public void testEnterViewStateWithAlwaysRedirectOnPause() {
@@ -62,7 +62,7 @@ public class ViewStateTests extends TestCase {
 		context.setAlwaysRedirectOnPause(true);
 		state.enter(context);
 		assertFalse("Render called", context.getFlowScope().contains("renderCalled"));
-		assertTrue(context.getMockExternalContext().getFlowExecutionRedirectResult());
+		assertNotNull(context.getMockExternalContext().getFlowExecutionRedirectResult());
 	}
 
 	public void testResumeViewStateForRefresh() {

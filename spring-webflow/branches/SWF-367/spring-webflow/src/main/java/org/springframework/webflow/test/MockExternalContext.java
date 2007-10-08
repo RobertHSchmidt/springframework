@@ -19,6 +19,8 @@ import java.util.HashMap;
 
 import org.springframework.binding.collection.SharedMapDecorator;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.FlowDefinitionRequestInfo;
+import org.springframework.webflow.context.FlowExecutionRequestInfo;
 import org.springframework.webflow.context.RequestPath;
 import org.springframework.webflow.core.FlowException;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -60,9 +62,9 @@ public class MockExternalContext implements ExternalContext {
 
 	private Object response;
 
-	private boolean flowExecutionRedirectResult;
+	private FlowDefinitionRequestInfo flowDefinitionRedirectResult;
 
-	private FlowDefinitionRedirectResult flowDefinitionRedirectResult;
+	private FlowExecutionRequestInfo flowExecutionRedirectResult;
 
 	private String externalRedirectResult;
 
@@ -224,20 +226,26 @@ public class MockExternalContext implements ExternalContext {
 		return response;
 	}
 
-	public String buildFlowExecutionUrl(String flowDefinitionId, String flowExecutionKey) {
-		// TODO
-		return null;
+	public String encode(String string) {
+		return string;
 	}
 
-	public void sendFlowExecutionRedirect(String flowDefinitionId, String flowExecutionKey) {
-		// TODO - update
-		flowExecutionRedirectResult = true;
+	public String buildFlowDefinitionUrl(FlowDefinitionRequestInfo requestInfo) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
 	}
 
-	public void sendFlowDefinitionRedirect(String flowDefinitionId, String[] requestElements,
-			ParameterMap requestParameters) {
-		flowDefinitionRedirectResult = new FlowDefinitionRedirectResult(flowDefinitionId, requestElements,
-				requestParameters);
+	public String buildFlowExecutionUrl(FlowExecutionRequestInfo requestInfo, boolean contextRelative) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
+
+	public void sendFlowDefinitionRedirect(FlowDefinitionRequestInfo requestInfo) {
+		this.flowDefinitionRedirectResult = requestInfo;
+	}
+
+	public void sendFlowExecutionRedirect(FlowExecutionRequestInfo requestInfo) {
+		this.flowExecutionRedirectResult = requestInfo;
 	}
 
 	public void sendExternalRedirect(String resourceUri) {
@@ -256,12 +264,12 @@ public class MockExternalContext implements ExternalContext {
 		exceptionResult = e;
 	}
 
-	public boolean getFlowExecutionRedirectResult() {
-		return flowExecutionRedirectResult;
+	public FlowDefinitionRequestInfo getFlowDefinitionRedirectResult() {
+		return flowDefinitionRedirectResult;
 	}
 
-	public FlowDefinitionRedirectResult getFlowDefinitionRedirectResult() {
-		return flowDefinitionRedirectResult;
+	public FlowExecutionRequestInfo getFlowExecutionRedirectResult() {
+		return flowExecutionRedirectResult;
 	}
 
 	public String getExternalRedirectResult() {
@@ -277,36 +285,10 @@ public class MockExternalContext implements ExternalContext {
 	}
 
 	public boolean isResponseCommitted() {
-		return flowExecutionRedirectResult == true || flowDefinitionRedirectResult != null
-				|| externalRedirectResult != null;
-	}
-
-	public static class FlowDefinitionRedirectResult {
-
-		private String flowId;
-
-		private String[] requestElements;
-
-		private ParameterMap requestParameters;
-
-		public FlowDefinitionRedirectResult(String flowId, String[] requestElements, ParameterMap requestParameters) {
-			super();
-			this.flowId = flowId;
-			this.requestElements = requestElements;
-			this.requestParameters = requestParameters;
-		}
-
-		public String getFlowId() {
-			return flowId;
-		}
-
-		public String[] getRequestElements() {
-			return requestElements;
-		}
-
-		public ParameterMap getRequestParameters() {
-			return requestParameters;
-		}
-
+		return false;
+		/*
+		 * return flowExecutionRedirectResult == true || flowDefinitionRedirectResult != null || externalRedirectResult !=
+		 * null;
+		 */
 	}
 }

@@ -21,6 +21,7 @@ import org.springframework.binding.message.MessageResolver;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.FlowExecutionRequestInfo;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -176,7 +177,9 @@ class RequestControlContextImpl implements RequestControlContext {
 			throw new IllegalStateException(
 					"Flow execution key not yet assigned; unable to generate flow execution URL at this time");
 		} else {
-			return externalContext.buildFlowExecutionUrl(flowExecution.getFlowId(), flowExecution.getKey().toString());
+			FlowExecutionRequestInfo requestInfo = new FlowExecutionRequestInfo(flowExecution.getFlowId(),
+					flowExecution.getKey().toString());
+			return externalContext.buildFlowExecutionUrl(requestInfo, true);
 		}
 	}
 
@@ -185,7 +188,9 @@ class RequestControlContextImpl implements RequestControlContext {
 			throw new IllegalStateException(
 					"Flow execution key not yet assigned; unable to send a flow execution redirect request");
 		} else {
-			externalContext.sendFlowExecutionRedirect(flowExecution.getFlowId(), flowExecution.getKey().toString());
+			FlowExecutionRequestInfo requestInfo = new FlowExecutionRequestInfo(flowExecution.getFlowId(),
+					flowExecution.getKey().toString());
+			externalContext.sendFlowExecutionRedirect(requestInfo);
 		}
 	}
 
