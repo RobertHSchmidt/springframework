@@ -118,6 +118,11 @@ public class FlowFacesContextTests extends TestCase {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("Auto-generated method stub");
 		}
+
+		public void clearMessages() {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Auto-generated method stub");
+		}
 	}
 
 	private class TestGetMessagesContext implements MessageContext {
@@ -141,6 +146,11 @@ public class FlowFacesContextTests extends TestCase {
 
 		public Message[] getMessages(Object source) {
 			return new Message[] { messages[1] };
+		}
+
+		public void clearMessages() {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Auto-generated method stub");
 		}
 
 	}
