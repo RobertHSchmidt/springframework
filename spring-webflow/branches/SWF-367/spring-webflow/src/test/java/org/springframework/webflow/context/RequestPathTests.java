@@ -1,4 +1,4 @@
-package org.springframework.webflow.context.servlet;
+package org.springframework.webflow.context;
 
 import junit.framework.TestCase;
 
