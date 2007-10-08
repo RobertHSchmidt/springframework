@@ -518,7 +518,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 	private FlowVariable parseVariable(Element element) {
 		ScopeType scope = parseScope(element, ScopeType.FLOW);
 		if (StringUtils.hasText(element.getAttribute(BEAN_ATTRIBUTE))) {
-			BeanFactory beanFactory = getLocalFlowServiceLocator().getBeanFactory();
+			BeanFactory beanFactory = localFlowServiceLocator.getBeanFactory();
 			return new BeanFactoryFlowVariable(element.getAttribute(NAME_ATTRIBUTE), element
 					.getAttribute(BEAN_ATTRIBUTE), beanFactory, scope);
 		} else {
@@ -526,7 +526,7 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 				Class variableClass = (Class) fromStringTo(Class.class).execute(element.getAttribute(CLASS_ATTRIBUTE));
 				return new SimpleFlowVariable(element.getAttribute(NAME_ATTRIBUTE), variableClass, scope);
 			} else {
-				BeanFactory beanFactory = getLocalFlowServiceLocator().getBeanFactory();
+				BeanFactory beanFactory = localFlowServiceLocator.getBeanFactory();
 				return new BeanFactoryFlowVariable(element.getAttribute(NAME_ATTRIBUTE), null, beanFactory, scope);
 			}
 		}
@@ -688,16 +688,6 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 		}
 	}
 
-	private static class ViewInfo {
-		private ViewFactory viewFactory;
-		private Boolean redirect;
-
-		public ViewInfo(ViewFactory viewFactory, Boolean redirect) {
-			this.viewFactory = viewFactory;
-			this.redirect = redirect;
-		}
-	}
-
 	private Action parseFinalResponseAction(Element element) {
 		String encodedView = element.getAttribute(VIEW_ATTRIBUTE);
 		if (encodedView == null || encodedView.length() == 0) {
@@ -822,9 +812,9 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 		Parameters parameters = parseMethodParameters(element);
 		MethodSignature methodSignature = new MethodSignature(methodName, parameters);
 		ActionResultExposer resultExposer = parseMethodResultExposer(element);
-		return getLocalFlowServiceLocator().getBeanInvokingActionFactory().createBeanInvokingAction(beanId,
-				getLocalFlowServiceLocator().getBeanFactory(), methodSignature, resultExposer,
-				getLocalFlowServiceLocator().getConversionService(), null);
+		return localFlowServiceLocator.getBeanInvokingActionFactory().createBeanInvokingAction(beanId,
+				localFlowServiceLocator.getBeanFactory(), methodSignature, resultExposer,
+				localFlowServiceLocator.getConversionService(), null);
 	}
 
 	private Parameters parseMethodParameters(Element element) {
@@ -1088,12 +1078,12 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 
 		public Object getValue(Object target) throws EvaluationException {
 			MutableAttributeMap scopeMap = scopeType.getScope((RequestContext) target);
-			return this.scopeMapExpression.getValue(scopeMap);
+			return scopeMapExpression.getValue(scopeMap);
 		}
 
 		public void setValue(Object target, Object value) throws EvaluationException {
 			MutableAttributeMap scopeMap = scopeType.getScope((RequestContext) target);
-			this.scopeMapExpression.setValue(scopeMap, value);
+			scopeMapExpression.setValue(scopeMap, value);
 		}
 
 	}
@@ -1184,14 +1174,20 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 		return getLocalFlowServiceLocator().getExceptionHandler(element.getAttribute(BEAN_ATTRIBUTE));
 	}
 
-	/**
-	 * Returns a converter capable of converting a string value to the given type.
-	 * @param targetType the type you wish to convert to (from a string)
-	 * @return the converter
-	 * @throws ConversionException when the converter cannot be found
-	 */
 	private ConversionExecutor fromStringTo(Class targetType) throws ConversionException {
 		return getLocalFlowServiceLocator().getConversionService().getConversionExecutor(String.class, targetType);
+	}
+
+	private static class ViewInfo {
+
+		private ViewFactory viewFactory;
+
+		private Boolean redirect;
+
+		public ViewInfo(ViewFactory viewFactory, Boolean redirect) {
+			this.viewFactory = viewFactory;
+			this.redirect = redirect;
+		}
 	}
 
 	public String toString() {
