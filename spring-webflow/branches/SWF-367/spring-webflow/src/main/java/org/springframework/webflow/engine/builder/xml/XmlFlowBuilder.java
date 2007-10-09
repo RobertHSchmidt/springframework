@@ -608,7 +608,8 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 			return new ViewInfo(viewFactory, Boolean.TRUE);
 		} else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
 			String encodedUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());
-			Expression externalUrl = (Expression) fromStringTo(Expression.class).execute(encodedUrl);
+			Expression externalUrl = getExpressionParser().parseExpression(encodedUrl, RequestContext.class,
+					String.class, null);
 			ViewFactory viewFactory = new ActionInvokingViewFactory(new ExternalRedirectAction(externalUrl));
 			return new ViewInfo(viewFactory, Boolean.FALSE);
 		} else if (encodedView.startsWith(FLOW_DEFINITION_REDIRECT_PREFIX)) {
@@ -635,7 +636,8 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 			return null;
 		} else if (encodedView.startsWith(EXTERNAL_REDIRECT_PREFIX)) {
 			String encodedUrl = encodedView.substring(EXTERNAL_REDIRECT_PREFIX.length());
-			Expression externalUrl = (Expression) fromStringTo(Expression.class).execute(encodedUrl);
+			Expression externalUrl = getExpressionParser().parseExpression(encodedUrl, RequestContext.class,
+					String.class, null);
 			return new ExternalRedirectAction(externalUrl);
 		} else if (encodedView.startsWith(FLOW_DEFINITION_REDIRECT_PREFIX)) {
 			String flowRedirect = encodedView.substring(FLOW_DEFINITION_REDIRECT_PREFIX.length());
@@ -644,7 +646,8 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 			return (Action) getLocalContext().getBeanFactory().getBean(encodedView.substring(BEAN_PREFIX.length()),
 					Action.class);
 		} else {
-			Expression viewName = (Expression) fromStringTo(Expression.class).execute(encodedView);
+			Expression viewName = getExpressionParser().parseExpression(encodedView, RequestContext.class,
+					String.class, null);
 			Expression viewResource = new ViewResourceExpression(viewName, getLocalContext().getResourceLoader());
 			return getLocalContext().getViewFactoryCreator().createFinalResponseAction(viewResource);
 		}
