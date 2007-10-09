@@ -40,7 +40,7 @@ A flow registry is used by a flow executor at runtime to launch new executions o
 			<xsd:complexContent>
 				<xsd:extension base="beans:identifiedType">
 					<xsd:sequence>		
-						<xsd:element name="location" type="locationType" minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="flow-location" type="flowLocationType" minOccurs="0" maxOccurs="unbounded">
 							<xsd:annotation>
 								<xsd:documentation>
 									<![CDATA[
@@ -58,7 +58,16 @@ Individual paths such as:
 ]]>
 								</xsd:documentation>
 							</xsd:annotation>
-						</xsd:element>					
+						</xsd:element>
+						<xsd:element name="flow-builder" type="flowBuilderType" minOccurs="0" maxOccurs="unbounded">
+							<xsd:annotation>
+								<xsd:documentation>
+									<![CDATA[
+Specifies a flow builder implementation to register in the registry.
+]]>
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>												
 					</xsd:sequence>
 					<xsd:attribute name="flow-builder-services" type="xsd:string">
 						<xsd:annotation>
@@ -74,7 +83,7 @@ The idref of the flow builder services instance this flow definition registry sh
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:complexType name="locationType">
+	<xsd:complexType name="flowLocationType">
 		<xsd:sequence>
 			<xsd:element name="flow-definition-attributes" type="flowDefinitionAttributesType" minOccurs="0">
 				<xsd:annotation>
@@ -110,7 +119,19 @@ that matches multiple resources.
 			</xsd:annotation>
 		</xsd:attribute>
 	</xsd:complexType>
-	
+
+	<xsd:complexType name="flowBuilderType">
+		<xsd:attribute name="class" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>
+				<![CDATA[
+The fully qualified class name of the flow builder implementation.
+]]>
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+		
 	<xsd:element name="flow-executor">
 		<xsd:annotation>
 			<xsd:documentation>
