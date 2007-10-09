@@ -12,7 +12,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Special action for resolving and rendering resources from within a JAR file.
+ * Special action for resolving and rendering static resources from within a JAR file.
  * @author Jeremy Grelle
  * 
  */
