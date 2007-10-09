@@ -19,10 +19,12 @@ import org.springframework.binding.convert.ConversionContext;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.binding.expression.Expression;
+import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.ExpressionVariable;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.WildcardTransitionCriteria;
+import org.springframework.webflow.engine.builder.FlowBuilderContext;
 import org.springframework.webflow.engine.support.BooleanExpressionTransitionCriteria;
 import org.springframework.webflow.engine.support.EventIdTransitionCriteria;
 import org.springframework.webflow.execution.RequestContext;
@@ -55,16 +57,16 @@ class TextToTransitionCriteria extends AbstractConverter {
 	private static final String BEAN_PREFIX = "bean:";
 
 	/**
-	 * Locator to use for loading custom TransitionCriteria beans.
+	 * Context for flow builder services.
 	 */
-	private FlowServiceLocator flowServiceLocator;
+	private FlowBuilderContext flowBuilderContext;
 
 	/**
 	 * Create a new converter that converts strings to transition criteria objects. Custom transition criteria will be
 	 * looked up using given service locator.
 	 */
-	public TextToTransitionCriteria(FlowServiceLocator flowServiceLocator) {
-		this.flowServiceLocator = flowServiceLocator;
+	public TextToTransitionCriteria(FlowBuilderContext flowBuilderContext) {
+		this.flowBuilderContext = flowBuilderContext;
 	}
 
 	public Class[] getSourceClasses() {
@@ -77,16 +79,18 @@ class TextToTransitionCriteria extends AbstractConverter {
 
 	protected Object doConvert(Object source, Class targetClass, ConversionContext context) throws Exception {
 		String encodedCriteria = (String) source;
+		ExpressionParser parser = flowBuilderContext.getExpressionParser();
 		if (!StringUtils.hasText(encodedCriteria)
 				|| WildcardTransitionCriteria.WILDCARD_EVENT_ID.equals(encodedCriteria)) {
 			return WildcardTransitionCriteria.INSTANCE;
-		} else if (flowServiceLocator.getExpressionParser().isEvalExpressionString(encodedCriteria)) {
+		} else if (parser.isEvalExpressionString(encodedCriteria)) {
 			ExpressionVariable[] variables = new ExpressionVariable[] { new ExpressionVariable("result", "lastEvent.id") };
-			Expression expression = flowServiceLocator.getExpressionParser().parseExpression(encodedCriteria,
-					RequestContext.class, Boolean.class, variables);
+			Expression expression = parser.parseExpression(encodedCriteria, RequestContext.class, Boolean.class,
+					variables);
 			return createBooleanExpressionTransitionCriteria(expression);
 		} else if (encodedCriteria.startsWith(BEAN_PREFIX)) {
-			return flowServiceLocator.getTransitionCriteria(encodedCriteria.substring(BEAN_PREFIX.length()));
+			return flowBuilderContext.getBeanFactory().getBean(encodedCriteria.substring(BEAN_PREFIX.length()),
+					TransitionCriteria.class);
 		} else {
 			return createEventIdTransitionCriteria(encodedCriteria);
 		}

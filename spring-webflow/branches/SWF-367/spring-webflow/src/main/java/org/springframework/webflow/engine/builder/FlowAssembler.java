@@ -15,11 +15,7 @@
  */
 package org.springframework.webflow.engine.builder;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
-import org.springframework.webflow.core.collection.AttributeMap;
-import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.engine.Flow;
 
 /**
@@ -41,42 +37,26 @@ import org.springframework.webflow.engine.Flow;
  */
 public class FlowAssembler {
 
-	private static final Log logger = LogFactory.getLog(FlowAssembler.class);
-
-	/**
-	 * The unique identifier to assign to the flow.
-	 */
-	private String flowId;
-
 	/**
 	 * The flow builder strategy used to construct the flow from its component parts.
 	 */
 	private FlowBuilder flowBuilder;
 
 	/**
-	 * Attributes that can be used to affect flow construction.
+	 * Context needed to initialize the builder so it can perform a build operation.
 	 */
-	private AttributeMap flowAttributes;
+	private FlowBuilderContext flowBuilderContext;
 
 	/**
 	 * Create a new flow assembler that will direct Flow assembly using the specified builder strategy.
-	 * @param flowId the flow id to assign
 	 * @param flowBuilder the builder the factory will use to build flows
-	 * @param flowAttributes externally assigned flow attributes that can affect flow construction
+	 * @param flowBuilderContext context to influence the build process
 	 */
-	public FlowAssembler(String flowId, FlowBuilder flowBuilder, AttributeMap flowAttributes) {
-		Assert.hasText(flowId, "The flow id is required for flow assembly");
+	public FlowAssembler(FlowBuilder flowBuilder, FlowBuilderContext flowBuilderContext) {
 		Assert.notNull(flowBuilder, "A flow builder is required for flow assembly");
-		this.flowId = flowId;
+		Assert.notNull(flowBuilderContext, "A flow builder context is required for flow assembly");
 		this.flowBuilder = flowBuilder;
-		this.flowAttributes = (flowAttributes != null ? flowAttributes : CollectionUtils.EMPTY_ATTRIBUTE_MAP);
-	}
-
-	/**
-	 * Returns the identifier to assign to the flow.
-	 */
-	public String getFlowId() {
-		return flowId;
+		this.flowBuilderContext = flowBuilderContext;
 	}
 
 	/**
@@ -87,10 +67,11 @@ public class FlowAssembler {
 	}
 
 	/**
-	 * Returns externally assigned attributes that can be used to affect flow construction.
+	 * Returns the flow builder context.
+	 * @return flow builder context
 	 */
-	public AttributeMap getFlowAttributes() {
-		return flowAttributes;
+	public FlowBuilderContext getFlowBuilderContext() {
+		return flowBuilderContext;
 	}
 
 	/**
@@ -98,18 +79,14 @@ public class FlowAssembler {
 	 * this method will assemble the Flow instance.
 	 * <p>
 	 * This will drive the flow construction process as described in the {@link FlowBuilder} JavaDoc, starting with
-	 * builder initialization using {@link FlowBuilder#init(String, AttributeMap)} and finishing by cleaning up the
+	 * builder initialization using {@link FlowBuilder#init(FlowBuilderContext)} and finishing by cleaning up the
 	 * builder with a call to {@link FlowBuilder#dispose()}.
 	 * @return the constructed flow
 	 * @throws FlowBuilderException when flow assembly fails
 	 */
 	public Flow assembleFlow() throws FlowBuilderException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Assembling flow definition with id '" + flowId + "' using flow builder '" + flowBuilder
-					+ "'; externally assigned flow attributes are '" + flowAttributes + "'");
-		}
 		try {
-			flowBuilder.init(flowId, flowAttributes);
+			flowBuilder.init(flowBuilderContext);
 			directAssembly();
 			return flowBuilder.getFlow();
 		} finally {
@@ -125,7 +102,6 @@ public class FlowAssembler {
 		flowBuilder.buildVariables();
 		flowBuilder.buildInputMapper();
 		flowBuilder.buildStartActions();
-		flowBuilder.buildInlineFlows();
 		flowBuilder.buildStates();
 		flowBuilder.buildGlobalTransitions();
 		flowBuilder.buildEndActions();

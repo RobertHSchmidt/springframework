@@ -6,8 +6,8 @@ import org.springframework.webflow.execution.ViewFactory;
 
 public interface ViewFactoryCreator {
 
-	public ViewFactory createViewFactory(Expression viewName);
+	public ViewFactory createViewFactory(Expression viewId);
 
-	public Action createFinalResponseAction(Expression viewName);
+	public Action createFinalResponseAction(Expression viewId);
 
 }

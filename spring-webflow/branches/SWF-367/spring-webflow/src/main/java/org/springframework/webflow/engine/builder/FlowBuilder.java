@@ -15,18 +15,15 @@
  */
 package org.springframework.webflow.engine.builder;
 
-import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.engine.Flow;
 
 /**
  * Builder interface used to build a flow definition. The process of building a flow consists of the following steps:
  * <ol>
- * <li> Initialize this builder, creating the initial flow definition, by calling {@link #init(String, AttributeMap)}.
+ * <li> Initialize this builder, creating the initial flow definition, by calling {@link #init(FlowBuilderContext)}.
  * <li> Call {@link #buildVariables()} to create any variables of the flow and add them to the flow definition.
  * <li> Call {@link #buildInputMapper()} to create and set the input mapper for the flow.
  * <li> Call {@link #buildStartActions()} to create and add any start actions to the flow.
- * <li> Call {@link #buildInlineFlows()} to create any in-line flows encapsulated by the flow and add them to the flow
- * definition.
  * <li> Call {@link #buildStates()} to create the states of the flow and add them to the flow definition.
  * <li> Call {@link #buildGlobalTransitions()} to create the any transitions shared by all states of the flow and add
  * them to the flow definition.
@@ -60,11 +57,10 @@ public interface FlowBuilder {
 	/**
 	 * Initialize this builder. This could cause the builder to open a stream to an externalized resource representing
 	 * the flow definition, for example.
-	 * @param flowId the identifier to assign to the flow
-	 * @param attributes custom attributes to assign to the flow
+	 * @param context the flow builder context
 	 * @throws FlowBuilderException an exception occurred building the flow
 	 */
-	public void init(String flowId, AttributeMap attributes) throws FlowBuilderException;
+	public void init(FlowBuilderContext context) throws FlowBuilderException;
 
 	/**
 	 * Builds any variables initialized by the flow when it starts.
@@ -83,12 +79,6 @@ public interface FlowBuilder {
 	 * @throws FlowBuilderException an exception occurred building the flow
 	 */
 	public void buildStartActions() throws FlowBuilderException;
-
-	/**
-	 * Builds any "in-line" flows encapsulated by the flow.
-	 * @throws FlowBuilderException an exception occurred building the flow
-	 */
-	public void buildInlineFlows() throws FlowBuilderException;
 
 	/**
 	 * Builds the states of the flow.
@@ -129,7 +119,7 @@ public interface FlowBuilder {
 
 	/**
 	 * Shutdown the builder, releasing any resources it holds. A new flow construction process should start with another
-	 * call to the {@link #init(String, AttributeMap)} method.
+	 * call to the {@link #init(FlowBuilderContext)} method.
 	 */
 	public void dispose();
 }

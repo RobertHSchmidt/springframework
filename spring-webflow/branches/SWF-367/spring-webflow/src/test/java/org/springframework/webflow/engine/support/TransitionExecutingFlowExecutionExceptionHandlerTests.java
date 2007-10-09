@@ -19,7 +19,6 @@ import junit.framework.TestCase;
 
 import org.springframework.webflow.TestException;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
@@ -42,6 +41,7 @@ import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
 import org.springframework.webflow.test.MockExternalContext;
+import org.springframework.webflow.test.MockFlowBuilderContext;
 
 public class TransitionExecutingFlowExecutionExceptionHandlerTests extends TestCase {
 
@@ -141,11 +141,11 @@ public class TransitionExecutingFlowExecutionExceptionHandlerTests extends TestC
 						new TransitionExecutingFlowExecutionExceptionHandler().add(Exception.class, "showError"));
 			}
 
-			public void init(String flowId, AttributeMap attributes) throws FlowBuilderException {
-				setFlow(Flow.create(flowId, attributes));
+			public Flow createFlow() throws FlowBuilderException {
+				return Flow.create(getContext().getFlowId(), getContext().getFlowAttributes());
 			}
 		};
-		Flow flow = new FlowAssembler("flow", builder, null).assembleFlow();
+		Flow flow = new FlowAssembler(builder, new MockFlowBuilderContext("flow")).assembleFlow();
 		FlowExecution execution = new FlowExecutionImplFactory().createFlowExecution(flow);
 		execution.start(new MockExternalContext());
 		assertTrue(execution.isActive());

@@ -74,7 +74,7 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 	}
 
 	public String getFlowDefinitionId() {
-		return assembler.getFlowId();
+		return assembler.getFlowBuilderContext().getFlowId();
 	}
 
 	public synchronized FlowDefinition getFlowDefinition() throws FlowDefinitionConstructionException {
@@ -126,7 +126,7 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 			assembling = true;
 			flowDefinition = assembler.assembleFlow();
 		} catch (FlowBuilderException e) {
-			throw new FlowDefinitionConstructionException(assembler.getFlowId(), e);
+			throw new FlowDefinitionConstructionException(assembler.getFlowBuilderContext().getFlowId(), e);
 		} finally {
 			assembling = false;
 		}
@@ -138,10 +138,6 @@ public class RefreshableFlowDefinitionHolder implements FlowDefinitionHolder {
 	private void refreshIfChanged() {
 		long calculatedLastModified = calculateLastModified();
 		if (calculatedLastModified > lastModified) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Resource modification detected; refreshing flow definition '" + assembler.getFlowId()
-						+ "'");
-			}
 			assembleFlow();
 			lastModified = calculatedLastModified;
 		}

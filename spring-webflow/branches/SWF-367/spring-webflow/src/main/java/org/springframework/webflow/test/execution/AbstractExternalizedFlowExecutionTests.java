@@ -22,11 +22,11 @@ import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowAssembler;
 import org.springframework.webflow.engine.builder.FlowBuilder;
-import org.springframework.webflow.engine.builder.support.FlowServiceLocator;
+import org.springframework.webflow.engine.builder.FlowBuilderContext;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
-import org.springframework.webflow.test.MockFlowServiceLocator;
+import org.springframework.webflow.test.MockFlowBuilderContext;
 
 /**
  * Base class for flow integration tests that verify an externalized flow definition executes as expected. Supports
@@ -123,35 +123,11 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 		if (isCacheFlowDefinition() && cachedFlowDefinition != null) {
 			return cachedFlowDefinition;
 		}
-		FlowServiceLocator flowServiceLocator = createFlowServiceLocator();
-		Flow flow = createFlow(flowServiceLocator);
+		Flow flow = buildFlow();
 		if (isCacheFlowDefinition()) {
 			cachedFlowDefinition = flow;
 		}
 		return flow;
-	}
-
-	/**
-	 * Returns the flow service locator to use during flow definition construction time for accessing externally managed
-	 * flow artifacts such as actions and flows to be used as subflows.
-	 * <p>
-	 * This implementation just creates a {@link MockFlowServiceLocator} and populates it with services by calling
-	 * {@link #registerMockServices(MockFlowServiceLocator)}.
-	 * @return the flow artifact factory
-	 */
-	protected FlowServiceLocator createFlowServiceLocator() {
-		MockFlowServiceLocator serviceLocator = new MockFlowServiceLocator();
-		registerMockServices(serviceLocator);
-		return serviceLocator;
-	}
-
-	/**
-	 * Template method called by {@link #createFlowServiceLocator()} to allow registration of mock implementations of
-	 * services needed to test the flow execution. Useful when testing flow definitions in execution in isolation from
-	 * flows and middle-tier services. Subclasses may override.
-	 * @param serviceRegistry the mock service registry (and locator)
-	 */
-	protected void registerMockServices(MockFlowServiceLocator serviceRegistry) {
 	}
 
 	/**
@@ -160,15 +136,20 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 	 * also be exercised by this test.
 	 * @return the built flow definition, ready for execution
 	 */
-	protected final Flow createFlow(FlowServiceLocator serviceLocator) {
+	protected final Flow buildFlow() {
 		FlowDefinitionResource resource = getFlowDefinitionResource();
-		FlowBuilder builder = createFlowBuilder(resource.getPath(), serviceLocator);
-		FlowAssembler assembler = new FlowAssembler(resource.getId(), builder, resource.getAttributes());
+		FlowBuilderContext builderContext = createFlowBuilderContext(resource);
+		FlowBuilder builder = createFlowBuilder(resource.getPath());
+		FlowAssembler assembler = new FlowAssembler(builder, builderContext);
 		return assembler.assembleFlow();
+	}
+
+	protected FlowBuilderContext createFlowBuilderContext(FlowDefinitionResource resource) {
+		return new MockFlowBuilderContext(resource.getId(), resource.getAttributes());
 	}
 
 	protected abstract FlowDefinitionResource getFlowDefinitionResource();
 
-	protected abstract FlowBuilder createFlowBuilder(Resource path, FlowServiceLocator serviceLocator);
+	protected abstract FlowBuilder createFlowBuilder(Resource path);
 
 }

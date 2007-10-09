@@ -4,11 +4,11 @@ import junit.framework.TestCase;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.support.AbstractFlowBuilder;
+import org.springframework.webflow.test.MockFlowBuilderContext;
 import org.springframework.webflow.util.ResourceHolder;
 
 public class RefreshableFlowDefinitionHolderTests extends TestCase {
@@ -16,7 +16,7 @@ public class RefreshableFlowDefinitionHolderTests extends TestCase {
 	private FlowAssembler assembler;
 
 	protected void setUp() {
-		FlowAssembler assembler = new FlowAssembler("flowId", new SimpleFlowBuilder(), null);
+		FlowAssembler assembler = new FlowAssembler(new SimpleFlowBuilder(), new MockFlowBuilderContext("flowId"));
 		holder = new RefreshableFlowDefinitionHolder(assembler);
 	}
 
@@ -27,7 +27,7 @@ public class RefreshableFlowDefinitionHolderTests extends TestCase {
 	}
 
 	public void testGetFlowDefinitionWithChangesRefreshed() {
-		assembler = new FlowAssembler("flowId", new ChangeDetectableFlowBuilder(), null);
+		assembler = new FlowAssembler(new ChangeDetectableFlowBuilder(), new MockFlowBuilderContext("flowId"));
 		holder = new RefreshableFlowDefinitionHolder(assembler);
 		FlowDefinition flow = holder.getFlowDefinition();
 		flow = holder.getFlowDefinition();
@@ -41,9 +41,10 @@ public class RefreshableFlowDefinitionHolderTests extends TestCase {
 			new EndState(getFlow(), "end");
 		}
 
-		public void init(String flowId, AttributeMap attributes) throws FlowBuilderException {
-			setFlow(Flow.create(flowId, attributes));
+		protected Flow createFlow() {
+			return Flow.create(getContext().getFlowId(), getContext().getFlowAttributes());
 		}
+
 	}
 
 	public class ChangeDetectableFlowBuilder extends SimpleFlowBuilder implements ResourceHolder {

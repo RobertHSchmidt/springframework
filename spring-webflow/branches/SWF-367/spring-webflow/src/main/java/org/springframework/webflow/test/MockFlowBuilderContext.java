@@ -17,9 +17,11 @@ package org.springframework.webflow.test;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
+import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.builder.support.DefaultFlowServiceLocator;
+import org.springframework.webflow.engine.builder.support.FlowBuilderContextImpl;
 
 /**
  * A stub flow service locator implementation suitable for a test environment.
@@ -34,13 +36,20 @@ import org.springframework.webflow.engine.builder.support.DefaultFlowServiceLoca
  * 
  * @author Keith Donald
  */
-public class MockFlowServiceLocator extends DefaultFlowServiceLocator {
+public class MockFlowBuilderContext extends FlowBuilderContextImpl {
 
 	/**
 	 * Creates a new mock flow service locator.
 	 */
-	public MockFlowServiceLocator() {
-		super(new FlowDefinitionRegistryImpl(), FlowBuilderSystemDefaults.get());
+	public MockFlowBuilderContext(String flowId) {
+		this(flowId, CollectionUtils.EMPTY_ATTRIBUTE_MAP);
+	}
+
+	/**
+	 * Creates a new mock flow service locator.
+	 */
+	public MockFlowBuilderContext(String flowId, AttributeMap attributes) {
+		super(flowId, attributes, new FlowDefinitionRegistryImpl(), FlowBuilderSystemDefaults.get());
 	}
 
 	/**
@@ -49,7 +58,7 @@ public class MockFlowServiceLocator extends DefaultFlowServiceLocator {
 	 * @param subflow the subflow
 	 */
 	public void registerSubflow(Flow subflow) {
-		getMockSubflowRegistry().registerFlowDefinition(subflow);
+		((FlowDefinitionRegistryImpl) getFlowDefinitionLocator()).registerFlowDefinition(subflow);
 	}
 
 	/**
@@ -63,7 +72,4 @@ public class MockFlowServiceLocator extends DefaultFlowServiceLocator {
 		((StaticListableBeanFactory) getBeanFactory()).addBean(beanName, bean);
 	}
 
-	private FlowDefinitionRegistryImpl getMockSubflowRegistry() {
-		return (FlowDefinitionRegistryImpl) getSubflowLocator();
-	}
 }
