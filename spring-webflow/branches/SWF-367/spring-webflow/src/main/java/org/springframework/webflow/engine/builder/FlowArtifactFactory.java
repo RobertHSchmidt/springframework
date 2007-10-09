@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.webflow.engine.builder.support;
+package org.springframework.webflow.engine.builder;
 
 import org.springframework.binding.mapping.AttributeMapper;
 import org.springframework.webflow.core.collection.AttributeMap;
@@ -30,8 +30,6 @@ import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.ViewState;
-import org.springframework.webflow.engine.builder.FlowAssembler;
-import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.ViewFactory;
 
@@ -57,9 +55,8 @@ public class FlowArtifactFactory {
 	 * @param attributes attributes to assign to the Flow, which may also be used to affect flow construction; may be
 	 * null
 	 * @return the initial flow instance, ready for assembly by a FlowBuilder
-	 * @throws FlowArtifactLookupException an exception occured creating the Flow instance
 	 */
-	public Flow createFlow(String id, AttributeMap attributes) throws FlowArtifactLookupException {
+	public Flow createFlow(String id, AttributeMap attributes) {
 		return Flow.create(id, attributes);
 	}
 
@@ -127,7 +124,6 @@ public class FlowArtifactFactory {
 	 * @param attributes attributes to assign to the State, which may also be used to affect state construction; may be
 	 * null
 	 * @return the fully initialized decision state instance
-	 * @throws FlowArtifactLookupException an exception occurred creating the state
 	 */
 	public State createDecisionState(String id, Flow flow, Action[] entryActions, Transition[] transitions,
 			FlowExecutionExceptionHandler[] exceptionHandlers, Action[] exitActions, AttributeMap attributes) {

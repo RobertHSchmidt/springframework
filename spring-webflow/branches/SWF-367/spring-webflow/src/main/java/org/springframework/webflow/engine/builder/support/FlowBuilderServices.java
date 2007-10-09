@@ -13,6 +13,8 @@ import org.springframework.webflow.action.BeanInvokingActionFactory;
 import org.springframework.webflow.core.expression.DefaultExpressionParserFactory;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
+import org.springframework.webflow.engine.builder.FlowArtifactFactory;
+import org.springframework.webflow.engine.builder.ViewFactoryCreator;
 import org.springframework.webflow.execution.Action;
 
 public class FlowBuilderServices implements ResourceLoaderAware, BeanFactoryAware {

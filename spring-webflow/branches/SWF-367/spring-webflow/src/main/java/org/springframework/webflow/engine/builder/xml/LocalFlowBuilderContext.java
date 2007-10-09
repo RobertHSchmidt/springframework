@@ -22,9 +22,9 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.action.BeanInvokingActionFactory;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
+import org.springframework.webflow.engine.builder.FlowArtifactFactory;
 import org.springframework.webflow.engine.builder.FlowBuilderContext;
-import org.springframework.webflow.engine.builder.support.FlowArtifactFactory;
-import org.springframework.webflow.engine.builder.support.ViewFactoryCreator;
+import org.springframework.webflow.engine.builder.ViewFactoryCreator;
 
 class LocalFlowBuilderContext implements FlowBuilderContext {
 

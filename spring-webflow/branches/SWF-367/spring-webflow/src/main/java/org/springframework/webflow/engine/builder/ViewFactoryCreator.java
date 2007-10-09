@@ -1,4 +1,4 @@
-package org.springframework.webflow.engine.builder.support;
+package org.springframework.webflow.engine.builder;
 
 import org.springframework.binding.expression.Expression;
 import org.springframework.webflow.execution.Action;
