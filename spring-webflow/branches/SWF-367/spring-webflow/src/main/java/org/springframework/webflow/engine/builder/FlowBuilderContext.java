@@ -7,8 +7,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.action.BeanInvokingActionFactory;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
-import org.springframework.webflow.engine.builder.support.FlowArtifactFactory;
-import org.springframework.webflow.engine.builder.support.ViewFactoryCreator;
 
 public interface FlowBuilderContext {
 
