@@ -6,9 +6,14 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
 import org.springframework.webflow.engine.builder.support.AbstractFlowBuilder;
 
-public class FacesResourceFlowBuilder extends AbstractFlowBuilder {
+/**
+ * Builder for generating the "resources" flow which is responsible for serving static resources from the classpath.
+ * @author Jeremy Grelle
+ * 
+ */
+public class ResourceFlowBuilder extends AbstractFlowBuilder {
 
-	private static final String FLOW_ID = "faces-resources";
+	public static final String FLOW_ID = "resources";
 
 	public void buildStates() throws FlowBuilderException {
 
