@@ -18,7 +18,9 @@ package org.springframework.webflow.engine.builder.support;
 import org.springframework.binding.convert.ConversionContext;
 import org.springframework.binding.convert.support.AbstractConverter;
 import org.springframework.binding.expression.Expression;
+import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.webflow.engine.TargetStateResolver;
+import org.springframework.webflow.engine.builder.FlowBuilderContext;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -46,16 +48,16 @@ class TextToTargetStateResolver extends AbstractConverter {
 	private static final String BEAN_PREFIX = "bean:";
 
 	/**
-	 * Locator to use for loading custom TargetStateResolver beans.
+	 * Context for flow builder services.
 	 */
-	private FlowServiceLocator flowServiceLocator;
+	private FlowBuilderContext flowBuilderContext;
 
 	/**
 	 * Create a new converter that converts strings to transition target state resolver objects. The given conversion
 	 * service will be used to do all necessary internal conversion (e.g. parsing expression strings).
 	 */
-	public TextToTargetStateResolver(FlowServiceLocator flowServiceLocator) {
-		this.flowServiceLocator = flowServiceLocator;
+	public TextToTargetStateResolver(FlowBuilderContext flowBuilderContext) {
+		this.flowBuilderContext = flowBuilderContext;
 	}
 
 	public Class[] getSourceClasses() {
@@ -68,12 +70,12 @@ class TextToTargetStateResolver extends AbstractConverter {
 
 	protected Object doConvert(Object source, Class targetClass, ConversionContext context) throws Exception {
 		String targetStateId = (String) source;
-		if (flowServiceLocator.getExpressionParser().isEvalExpressionString(targetStateId)) {
-			Expression expression = flowServiceLocator.getExpressionParser().parseExpression(targetStateId,
-					RequestContext.class, String.class, null);
+		ExpressionParser parser = flowBuilderContext.getExpressionParser();
+		if (parser.isEvalExpressionString(targetStateId)) {
+			Expression expression = parser.parseExpression(targetStateId, RequestContext.class, String.class, null);
 			return new DefaultTargetStateResolver(expression);
 		} else if (targetStateId.startsWith(BEAN_PREFIX)) {
-			return flowServiceLocator.getTargetStateResolver(targetStateId.substring(BEAN_PREFIX.length()));
+			return flowBuilderContext.getBeanFactory().getBean(targetStateId.substring(BEAN_PREFIX.length()));
 		} else {
 			return new DefaultTargetStateResolver(targetStateId);
 		}

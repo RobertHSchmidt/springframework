@@ -45,7 +45,7 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 	public void testSelectValidResult() {
 	}
 
-	protected void registerMockServices(MockFlowServiceLocator serviceRegistry) {
+	protected void registerMockServices(MockFlowBuilderContext serviceRegistry) {
 		Flow mockDetailFlow = new Flow("detail-flow");
 		mockDetailFlow.setInputMapper(new AttributeMapper() {
 			public void map(Object source, Object target, MappingContext context) {

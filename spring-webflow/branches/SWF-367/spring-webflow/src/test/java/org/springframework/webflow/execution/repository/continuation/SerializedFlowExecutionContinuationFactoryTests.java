@@ -10,7 +10,9 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.RequestControlContext;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.impl.FlowExecutionImpl;
+import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.engine.impl.FlowExecutionImplStateRestorer;
+import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.springframework.webflow.execution.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.repository.support.FlowExecutionStateRestorer;
@@ -40,7 +42,7 @@ public class SerializedFlowExecutionContinuationFactoryTests extends TestCase {
 	}
 
 	public void testCreateContinuation() {
-		FlowExecutionImpl flowExecution = new FlowExecutionImpl(flow);
+		FlowExecution flowExecution = new FlowExecutionImplFactory().createFlowExecution(flow);
 		flowExecution.start(new MockExternalContext());
 		flowExecution.getActiveSession().getScope().put("foo", "bar");
 		FlowExecutionContinuation continuation = factory.createContinuation(flowExecution);
@@ -55,7 +57,7 @@ public class SerializedFlowExecutionContinuationFactoryTests extends TestCase {
 	}
 
 	public void testRestoreContinuation() {
-		FlowExecutionImpl flowExecution = new FlowExecutionImpl(flow);
+		FlowExecution flowExecution = new FlowExecutionImplFactory().createFlowExecution(flow);
 		flowExecution.start(new MockExternalContext());
 		flowExecution.getActiveSession().getScope().put("foo", "bar");
 		FlowExecutionContinuation continuation = factory.createContinuation(flowExecution);

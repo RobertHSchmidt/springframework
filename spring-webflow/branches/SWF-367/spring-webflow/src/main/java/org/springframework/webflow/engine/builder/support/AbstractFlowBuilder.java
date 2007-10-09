@@ -15,19 +15,15 @@
  */
 package org.springframework.webflow.engine.builder.support;
 
-import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowBuilder;
+import org.springframework.webflow.engine.builder.FlowBuilderContext;
 import org.springframework.webflow.engine.builder.FlowBuilderException;
 
 /**
  * Abstract base implementation of a flow builder defining common functionality needed by most concrete flow builder
  * implementations. This class implements all optional parts of the FlowBuilder process as no-op methods. Subclasses are
- * only required to implement {@link #init(String, AttributeMap)} and {@link #buildStates()}.
- * <p>
- * This class also provides a {@link FlowServiceLocator} for use by subclasses in the flow construction process.
- * 
- * @see FlowServiceLocator
+ * only required to implement {@link #init(FlowBuilderContext)} and {@link #buildStates()}.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -39,7 +35,23 @@ public abstract class AbstractFlowBuilder implements FlowBuilder {
 	 */
 	private Flow flow;
 
-	public abstract void init(String flowId, AttributeMap attributes) throws FlowBuilderException;
+	private FlowBuilderContext context;
+
+	protected FlowBuilderContext getContext() {
+		return context;
+	}
+
+	public void init(FlowBuilderContext context) throws FlowBuilderException {
+		this.context = context;
+		doInit();
+		this.flow = createFlow();
+	}
+
+	protected void doInit() {
+
+	}
+
+	protected abstract Flow createFlow();
 
 	public void buildVariables() throws FlowBuilderException {
 	}
@@ -48,9 +60,6 @@ public abstract class AbstractFlowBuilder implements FlowBuilder {
 	}
 
 	public void buildStartActions() throws FlowBuilderException {
-	}
-
-	public void buildInlineFlows() throws FlowBuilderException {
 	}
 
 	public abstract void buildStates() throws FlowBuilderException;
@@ -72,16 +81,12 @@ public abstract class AbstractFlowBuilder implements FlowBuilder {
 	}
 
 	public void dispose() {
-		setFlow(null);
+		flow = null;
+		doDispose();
 	}
 
-	// helpers for use in subclasses
+	protected void doDispose() {
 
-	/**
-	 * Set the flow being built by this builder. Typically called during initialization to set the initial flow
-	 * reference returned by {@link #getFlow()} after building.
-	 */
-	protected void setFlow(Flow flow) {
-		this.flow = flow;
 	}
+
 }

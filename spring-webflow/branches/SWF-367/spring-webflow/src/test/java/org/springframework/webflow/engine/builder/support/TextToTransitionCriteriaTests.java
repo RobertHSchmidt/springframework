@@ -23,13 +23,13 @@ import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.WildcardTransitionCriteria;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.test.MockFlowServiceLocator;
+import org.springframework.webflow.test.MockFlowBuilderContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 // TODO - 2 expected failures do to limitations in OgnlExpressionParser
 public class TextToTransitionCriteriaTests extends TestCase {
 
-	private MockFlowServiceLocator serviceLocator = new MockFlowServiceLocator();
+	private MockFlowBuilderContext serviceLocator = new MockFlowBuilderContext("flowId");
 	private TextToTransitionCriteria converter = new TextToTransitionCriteria(serviceLocator);
 
 	public void setUp() {

@@ -3,25 +3,26 @@ package org.springframework.webflow.engine.builder;
 import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
-import org.springframework.webflow.core.collection.CollectionUtils;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.test.MockFlowBuilderContext;
 
 public class FlowAssemblerTests extends TestCase {
 	private FlowBuilder builder;
 	private FlowAssembler assembler;
+	private FlowBuilderContext builderContext;
 
 	protected void setUp() {
 		builder = (FlowBuilder) EasyMock.createMock(FlowBuilder.class);
-		assembler = new FlowAssembler("search", builder, null);
+		builderContext = new MockFlowBuilderContext("search");
+		assembler = new FlowAssembler(builder, builderContext);
 	}
 
 	public void testAssembleFlow() {
-		builder.init("search", CollectionUtils.EMPTY_ATTRIBUTE_MAP);
+		builder.init(builderContext);
 		builder.dispose();
 		builder.buildVariables();
 		builder.buildInputMapper();
 		builder.buildStartActions();
-		builder.buildInlineFlows();
 		builder.buildStates();
 		builder.buildGlobalTransitions();
 		builder.buildEndActions();
@@ -35,7 +36,7 @@ public class FlowAssemblerTests extends TestCase {
 	}
 
 	public void testDisposeCalledOnException() {
-		builder.init("search", CollectionUtils.EMPTY_ATTRIBUTE_MAP);
+		builder.init(builderContext);
 		EasyMock.expectLastCall().andThrow(new IllegalArgumentException());
 		builder.dispose();
 		EasyMock.replay(new Object[] { builder });
