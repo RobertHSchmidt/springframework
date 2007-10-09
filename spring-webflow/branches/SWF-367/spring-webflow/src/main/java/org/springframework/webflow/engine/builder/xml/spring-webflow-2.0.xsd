@@ -224,10 +224,6 @@ A flow may also exhibit the following characteristics:
 (such as actions, exception handlers, view selectors, transition criteria, etc).
 (See the &lt;import/&gt; element)
 
-<li>Finally, a flow may nest one or more other flows within this document to
-use as subflows, referred to as 'inline flows'.
-(See the &lt;inline-flow/&gt; element)
-
 </ul>
 ]]>
 			</xsd:documentation>
@@ -452,15 +448,6 @@ execution of this flow definition. Exception handlers may be attached at the sta
 							<![CDATA[
 Requests the import of all custom flow artifacts contained within a single bean
 definition resource location.
-]]>
-						</xsd:documentation>
-					</xsd:annotation>
-				</xsd:element>
-				<xsd:element ref="inline-flow" minOccurs="0" maxOccurs="unbounded">
-					<xsd:annotation>
-						<xsd:documentation>
-							<![CDATA[
-Defines exactly one inline flow definition and assign an id to it.
 ]]>
 						</xsd:documentation>
 					</xsd:annotation>
@@ -1953,8 +1940,7 @@ The bean id of a custom exception handler implementation to attach.
 					<xsd:documentation>
 						<![CDATA[
 The relative resource path to a bean definition file to import.  Imported bean definitions 
-are referenceable by this flow and any of its inline flows.  
-The resource path is relative to this document.
+are referenceable by this flow.  The resource path is relative to this document.
 <br>
 For example:
 <pre>
@@ -1968,24 +1954,4 @@ For example:
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:element name="inline-flow">
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="identifiedType">
-					<xsd:sequence>
-						<xsd:element ref="flow" maxOccurs="unbounded">
-							<xsd:annotation>
-								<xsd:documentation>
-									<![CDATA[
-The contained in-line flow definition.
-]]>
-								</xsd:documentation>
-							</xsd:annotation>
-						</xsd:element>
-					</xsd:sequence>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-	
 </xsd:schema>
