@@ -15,7 +15,7 @@
 	
 	<start-state idref="displayMain"/>
 	
-	<view-state id="displayMain" view="/flow/main/main.xhtml">
+	<view-state id="displayMain" view="main.xhtml">
 		<transition on="findHotels" to="findHotels" />
 		<transition on="selectHotel" to="bookHotel" />
 		<transition on="cancelBooking" to="cancelBooking" />
