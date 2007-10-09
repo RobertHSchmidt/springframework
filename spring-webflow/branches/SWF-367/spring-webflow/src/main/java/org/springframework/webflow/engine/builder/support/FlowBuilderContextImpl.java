@@ -2,6 +2,7 @@ package org.springframework.webflow.engine.builder.support;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.binding.convert.ConversionService;
+import org.springframework.binding.convert.support.GenericConversionService;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.webflow.action.BeanInvokingActionFactory;
@@ -21,12 +22,18 @@ public class FlowBuilderContextImpl implements FlowBuilderContext {
 
 	private FlowBuilderServices flowBuilderServices;
 
+	private GenericConversionService flowConversionService;
+
 	public FlowBuilderContextImpl(String flowId, AttributeMap flowAttributes,
 			FlowDefinitionLocator flowDefinitionLocator, FlowBuilderServices flowBuilderServices) {
 		this.flowId = flowId;
 		this.flowAttributes = flowAttributes;
 		this.flowDefinitionLocator = flowDefinitionLocator;
 		this.flowBuilderServices = flowBuilderServices;
+		flowConversionService = new GenericConversionService();
+		flowConversionService.addConverter(new TextToTransitionCriteria(this));
+		flowConversionService.addConverter(new TextToTargetStateResolver(this));
+		flowConversionService.setParent(this.flowBuilderServices.getConversionService());
 	}
 
 	public String getFlowId() {
@@ -54,7 +61,7 @@ public class FlowBuilderContextImpl implements FlowBuilderContext {
 	}
 
 	public ConversionService getConversionService() {
-		return flowBuilderServices.getConversionService();
+		return flowConversionService;
 	}
 
 	public ResourceLoader getResourceLoader() {
@@ -67,5 +74,9 @@ public class FlowBuilderContextImpl implements FlowBuilderContext {
 
 	public FlowDefinitionLocator getFlowDefinitionLocator() {
 		return flowDefinitionLocator;
+	}
+
+	public FlowBuilderServices getFlowBuilderServices() {
+		return flowBuilderServices;
 	}
 }
