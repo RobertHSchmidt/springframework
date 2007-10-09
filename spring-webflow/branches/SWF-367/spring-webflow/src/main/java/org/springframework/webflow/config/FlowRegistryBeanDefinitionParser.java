@@ -37,7 +37,7 @@ class FlowRegistryBeanDefinitionParser extends AbstractSingleBeanDefinitionParse
 
 	private static final String FLOW_BUILDER_SERVICES_ATTRIBUTE = "flow-builder-services";
 
-	private static final String LOCATION_ELEMENT = "location";
+	private static final String FLOW_LOCATION_ELEMENT = "flow-location";
 
 	private static final String ID_ATTRIBUTE = "id";
 
@@ -70,7 +70,7 @@ class FlowRegistryBeanDefinitionParser extends AbstractSingleBeanDefinitionParse
 	}
 
 	private List parseLocations(Element element) {
-		List locationElements = DomUtils.getChildElementsByTagName(element, LOCATION_ELEMENT);
+		List locationElements = DomUtils.getChildElementsByTagName(element, FLOW_LOCATION_ELEMENT);
 		List locations = new ArrayList(locationElements.size());
 		for (Iterator it = locationElements.iterator(); it.hasNext();) {
 			Element locationElement = (Element) it.next();
