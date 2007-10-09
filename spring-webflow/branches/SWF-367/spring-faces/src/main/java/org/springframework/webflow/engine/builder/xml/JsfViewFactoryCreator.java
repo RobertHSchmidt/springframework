@@ -7,13 +7,13 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.faces.webflow.FlowLifecycleFactory;
 import org.springframework.faces.webflow.JsfRenderFinalResponseAction;
 import org.springframework.faces.webflow.JsfViewFactory;
-import org.springframework.webflow.engine.builder.support.ViewFactoryCreator;
+import org.springframework.webflow.engine.builder.ViewFactoryCreator;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.ViewFactory;
 
 /**
  * A ViewFactoryCreator implementation for creating JSF ViewFactories
- * @author Jeremy Grelle
+ * @author Jeremy Grellex
  * 
  */
 public class JsfViewFactoryCreator implements ViewFactoryCreator {

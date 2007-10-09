@@ -29,8 +29,8 @@ public class FlowResourceHelper {
 
 		writer.writeAttribute("type", "text/javascript", null);
 
-		FlowDefinitionRequestInfo requestInfo = new FlowDefinitionRequestInfo(ResourceFlowBuilder.FLOW_ID,
-				new RequestPath(scriptPath), null, null);
+		FlowDefinitionRequestInfo requestInfo = new FlowDefinitionRequestInfo("resources", new RequestPath(scriptPath),
+				null, null);
 		String src = requestContext.getExternalContext().buildFlowDefinitionUrl(requestInfo);
 
 		writer.writeAttribute("src", src, null);
@@ -49,8 +49,8 @@ public class FlowResourceHelper {
 		writer.writeAttribute("type", "text/css", null);
 		writer.writeAttribute("rel", "stylesheet", null);
 
-		FlowDefinitionRequestInfo requestInfo = new FlowDefinitionRequestInfo(ResourceFlowBuilder.FLOW_ID,
-				new RequestPath(cssPath), null, null);
+		FlowDefinitionRequestInfo requestInfo = new FlowDefinitionRequestInfo("resources", new RequestPath(cssPath),
+				null, null);
 		String src = requestContext.getExternalContext().buildFlowDefinitionUrl(requestInfo);
 
 		writer.writeAttribute("href", src, null);
