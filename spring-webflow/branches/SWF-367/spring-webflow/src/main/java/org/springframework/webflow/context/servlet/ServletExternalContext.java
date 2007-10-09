@@ -207,12 +207,14 @@ public class ServletExternalContext implements ExternalContext {
 	}
 
 	public String buildFlowDefinitionUrl(FlowDefinitionRequestInfo requestInfo) {
-		return request.getContextPath() + request.getServletPath() + "/" + requestInfo.getFlowDefinitionId();
+		return request.getContextPath() + request.getServletPath() + "/" + requestInfo.getFlowDefinitionId()
+				+ requestPath(requestInfo) + requestParameters(requestInfo) + fragment(requestInfo);
 	}
 
 	public String buildFlowExecutionUrl(FlowExecutionRequestInfo requestInfo, boolean contextRelative) {
 		String contextRelativeUrl = request.getContextPath() + request.getServletPath() + "/executions/"
-				+ requestInfo.getFlowDefinitionId() + "/" + requestInfo.getFlowExecutionKey();
+				+ requestInfo.getFlowDefinitionId() + "/" + requestInfo.getFlowExecutionKey()
+				+ requestPath(requestInfo) + requestParameters(requestInfo) + fragment(requestInfo);
 		if (contextRelative) {
 			return contextRelativeUrl;
 		} else {
@@ -244,9 +246,9 @@ public class ServletExternalContext implements ExternalContext {
 			flowExecutor.execute(this);
 			if (isPausedResult()) {
 				if (flowExecutionRedirector != null) {
-					flowExecutionRedirector.issueRedirect(request, response, encodingScheme);
+					flowExecutionRedirector.issueRedirect();
 				} else if (flowDefinitionRedirector != null) {
-					flowDefinitionRedirector.issueRedirect(request, response, encodingScheme);
+					flowDefinitionRedirector.issueRedirect();
 				} else if (resourceUri != null) {
 					sendRedirect(resourceUri);
 				} else {
@@ -258,10 +260,10 @@ public class ServletExternalContext implements ExternalContext {
 						throw new IllegalStateException(
 								"You cannot send a flow execution redirect when this execution has ended - programmer error");
 					} else {
-						flowExecutionRedirector.issueRedirect(request, response, encodingScheme);
+						flowExecutionRedirector.issueRedirect();
 					}
 				} else if (flowDefinitionRedirector != null) {
-					flowDefinitionRedirector.issueRedirect(request, response, encodingScheme);
+					flowDefinitionRedirector.issueRedirect();
 				} else if (resourceUri != null) {
 					sendRedirect(resourceUri);
 				} else {
@@ -313,6 +315,53 @@ public class ServletExternalContext implements ExternalContext {
 		return result == 2;
 	}
 
+	private String requestPath(AbstractFlowRequestInfo requestInfo) {
+		if (requestInfo.getRequestPath() == null) {
+			return "";
+		}
+		StringBuffer buffer = new StringBuffer();
+		String[] requestElements = requestInfo.getRequestPath().getElements();
+		for (int i = 0; i < requestElements.length; i++) {
+			buffer.append('/').append(encode(requestElements[i], encodingScheme));
+		}
+		return buffer.toString();
+	}
+
+	private String requestParameters(AbstractFlowRequestInfo requestInfo) {
+		if (requestInfo.getRequestParameters() == null) {
+			return "";
+		}
+		StringBuffer queryString = new StringBuffer();
+		queryString.append('?');
+		ParameterMap requestParameters = requestInfo.getRequestParameters();
+		Iterator it = requestParameters.asMap().entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			String parameterName = encode((String) entry.getKey(), encodingScheme);
+			String parameterValue = encode((String) entry.getValue(), encodingScheme);
+			queryString.append(parameterName).append('=').append(parameterValue);
+			if (it.hasNext()) {
+				queryString.append('&');
+			}
+		}
+		return queryString.toString();
+	}
+
+	private String fragment(AbstractFlowRequestInfo requestInfo) {
+		if (requestInfo.getFragment() == null || requestInfo.getFragment().length() == 0) {
+			return "";
+		}
+		return "#" + requestInfo.getFragment();
+	}
+
+	private String encode(String value, String encodingScheme) {
+		try {
+			return URLEncoder.encode(value, encodingScheme);
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private void sendRedirect(String targetUrl) throws IOException {
 		response.sendRedirect(response.encodeRedirectURL(targetUrl));
 	}
@@ -321,7 +370,7 @@ public class ServletExternalContext implements ExternalContext {
 		return new ToStringCreator(this).append("requestParameterMap", getRequestParameterMap()).toString();
 	}
 
-	private static abstract class FlowRedirector {
+	private abstract class FlowRedirector {
 		private AbstractFlowRequestInfo requestInfo;
 
 		public FlowRedirector(AbstractFlowRequestInfo requestInfo) {
@@ -332,54 +381,10 @@ public class ServletExternalContext implements ExternalContext {
 			return requestInfo;
 		}
 
-		public abstract void issueRedirect(HttpServletRequest request, HttpServletResponse response,
-				String encodingScheme) throws IOException;
-
-		protected String requestPath(String encodingScheme) throws UnsupportedEncodingException {
-			if (requestInfo.getRequestPath() == null) {
-				return "";
-			}
-			StringBuffer buffer = new StringBuffer();
-			String[] requestElements = requestInfo.getRequestPath().getElements();
-			for (int i = 0; i < requestElements.length; i++) {
-				buffer.append('/').append(encode(requestElements[i], encodingScheme));
-			}
-			return buffer.toString();
-		}
-
-		protected String requestParameters(String encodingScheme) throws UnsupportedEncodingException {
-			if (requestInfo.getRequestParameters() == null) {
-				return "";
-			}
-			StringBuffer queryString = new StringBuffer();
-			queryString.append('?');
-			ParameterMap requestParameters = requestInfo.getRequestParameters();
-			Iterator it = requestParameters.asMap().entrySet().iterator();
-			while (it.hasNext()) {
-				Map.Entry entry = (Map.Entry) it.next();
-				String parameterName = encode((String) entry.getKey(), encodingScheme);
-				String parameterValue = encode((String) entry.getValue(), encodingScheme);
-				queryString.append(parameterName).append('=').append(parameterValue);
-				if (it.hasNext()) {
-					queryString.append('&');
-				}
-			}
-			return queryString.toString();
-		}
-
-		protected String fragment() {
-			if (requestInfo.getFragment() == null || requestInfo.getFragment().length() == 0) {
-				return "";
-			}
-			return "#" + requestInfo.getFragment();
-		}
-
-		private String encode(String value, String encodingScheme) throws UnsupportedEncodingException {
-			return URLEncoder.encode(value, encodingScheme);
-		}
+		public abstract void issueRedirect() throws IOException;
 	}
 
-	private static class FlowExecutionRedirector extends FlowRedirector {
+	private class FlowExecutionRedirector extends FlowRedirector {
 		public FlowExecutionRedirector(FlowExecutionRequestInfo requestInfo) {
 			super(requestInfo);
 		}
@@ -389,27 +394,25 @@ public class ServletExternalContext implements ExternalContext {
 			return requestInfo.getFlowExecutionKey().equals(flowExecutionKey);
 		}
 
-		public void issueRedirect(HttpServletRequest request, HttpServletResponse response, String encodingScheme)
-				throws IOException {
+		public void issueRedirect() throws IOException {
 			FlowExecutionRequestInfo requestInfo = (FlowExecutionRequestInfo) getRequestInfo();
 			String targetUrl = request.getContextPath() + request.getServletPath() + "/executions/"
 					+ requestInfo.getFlowDefinitionId() + "/" + requestInfo.getFlowExecutionKey()
-					+ requestPath(encodingScheme) + requestParameters(encodingScheme) + fragment();
+					+ requestPath(getRequestInfo()) + requestParameters(getRequestInfo()) + fragment(getRequestInfo());
 			response.sendRedirect(response.encodeRedirectURL(targetUrl));
 		}
 	}
 
-	private static class FlowDefinitionRedirector extends FlowRedirector {
+	private class FlowDefinitionRedirector extends FlowRedirector {
 		public FlowDefinitionRedirector(FlowDefinitionRequestInfo redirect) {
 			super(redirect);
 		}
 
-		public void issueRedirect(HttpServletRequest request, HttpServletResponse response, String encodingScheme)
-				throws IOException {
+		public void issueRedirect() throws IOException {
 			FlowDefinitionRequestInfo redirect = (FlowDefinitionRequestInfo) getRequestInfo();
 			String targetUrl = request.getContextPath() + request.getServletPath() + "/"
-					+ redirect.getFlowDefinitionId() + requestPath(encodingScheme) + requestParameters(encodingScheme)
-					+ fragment();
+					+ redirect.getFlowDefinitionId() + requestPath(getRequestInfo())
+					+ requestParameters(getRequestInfo()) + fragment(getRequestInfo());
 			response.sendRedirect(response.encodeRedirectURL(targetUrl));
 		}
 	}
