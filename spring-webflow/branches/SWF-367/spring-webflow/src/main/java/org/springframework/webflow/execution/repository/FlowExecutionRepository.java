@@ -45,12 +45,9 @@ public interface FlowExecutionRepository {
 	public FlowExecutionKey parseFlowExecutionKey(String encodedKey) throws FlowExecutionRepositoryException;
 
 	/**
-	 * Return the lock for the flow execution, allowing for the lock to be acquired or released.
-	 * <p>
-	 * Caution: care should be made not to allow for a deadlock situation. If you acquire a lock make sure you release
-	 * it when you are done.
-	 * <p>
-	 * The general pattern for safely doing work against a locked conversation follows:
+	 * Return the lock for the flow execution, allowing for the lock to be acquired or released. Caution: care should be
+	 * made not to allow for a deadlock situation. If you acquire a lock make sure you release it when you are done. The
+	 * general pattern for safely doing work against a locked conversation follows:
 	 * 
 	 * <pre>
 	 * FlowExecutionLock lock = repository.getLock(key);
@@ -72,9 +69,7 @@ public interface FlowExecutionRepository {
 	/**
 	 * Return the <code>FlowExecution</code> indexed by the provided key. The returned flow execution represents the
 	 * restored state of an executing flow from a point in time. This should be called to resume a persistent flow
-	 * execution.
-	 * <p>
-	 * Before calling this method, you should acquire the lock for the keyed flow execution.
+	 * execution. Before calling this method, you should acquire the lock for the keyed flow execution.
 	 * @param key the flow execution key
 	 * @return the flow execution, fully hydrated and ready to resume
 	 * @throws FlowExecutionRepositoryException if no flow execution was indexed with the key provided
@@ -83,9 +78,8 @@ public interface FlowExecutionRepository {
 
 	/**
 	 * Place the <code>FlowExecution</code> in this repository under the provided key. This should be called to save
-	 * or update the persistent state of an active (but paused) flow execution.
-	 * <p>
-	 * Before calling this method, you should acquire the lock for the keyed flow execution.
+	 * or update the persistent state of an active (but paused) flow execution. Before calling this method, you should
+	 * acquire the lock for the keyed flow execution.
 	 * @param flowExecution the flow execution
 	 * @throws FlowExecutionRepositoryException the flow execution could not be stored
 	 */
@@ -93,9 +87,7 @@ public interface FlowExecutionRepository {
 
 	/**
 	 * Remove the flow execution from the repository. This should be called when the flow execution ends (is no longer
-	 * active).
-	 * <p>
-	 * Before calling this method, you should acquire the lock for the keyed flow execution.
+	 * active). Before calling this method, you should acquire the lock for the keyed flow execution.
 	 * @param flowExecution the flow execution
 	 * @throws FlowExecutionRepositoryException the flow execution could not be removed.
 	 */

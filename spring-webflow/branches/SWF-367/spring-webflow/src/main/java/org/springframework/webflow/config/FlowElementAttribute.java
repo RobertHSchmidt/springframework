@@ -17,9 +17,26 @@ package org.springframework.webflow.config;
 
 import org.springframework.util.Assert;
 
+/**
+ * A low-level definition of a attribute describing a flow artifact.
+ * 
+ * @author Keith Donald
+ */
 class FlowElementAttribute {
+
+	/**
+	 * The name of the attribute.
+	 */
 	private String name;
+
+	/**
+	 * The value of the attribute before type-conversion.
+	 */
 	private String value;
+
+	/**
+	 * The attribute type, optional, but necessary for type conversion.
+	 */
 	private String type;
 
 	public FlowElementAttribute(String name, String value, String type) {

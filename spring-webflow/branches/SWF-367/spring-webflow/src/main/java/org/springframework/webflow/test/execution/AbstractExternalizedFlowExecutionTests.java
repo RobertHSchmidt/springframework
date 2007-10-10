@@ -144,12 +144,37 @@ public abstract class AbstractExternalizedFlowExecutionTests extends AbstractFlo
 		return assembler.assembleFlow();
 	}
 
+	/**
+	 * Create the flow builder context to build the flow definition at the resource location provided.
+	 * @param resource the flow definition resource
+	 * @return the flow builder context
+	 */
 	protected FlowBuilderContext createFlowBuilderContext(FlowDefinitionResource resource) {
-		return new MockFlowBuilderContext(resource.getId(), resource.getAttributes());
+		MockFlowBuilderContext builderContext = new MockFlowBuilderContext(resource.getId(), resource.getAttributes());
+		configure(builderContext);
+		return builderContext;
 	}
 
+	/**
+	 * Subclasses may override this hook to customize the builder context for the flow being tested. Useful for
+	 * registering mock subflows or other builder services.
+	 * @param builderContext the mock flow builder context.
+	 */
+	protected void configure(MockFlowBuilderContext builderContext) {
+
+	}
+
+	/**
+	 * Get the flow definition to be tested.
+	 * @return the flow definition resource
+	 */
 	protected abstract FlowDefinitionResource getFlowDefinitionResource();
 
+	/**
+	 * Create the flow builder to build the flow at the specified resource location.
+	 * @param path the location of the flow definition
+	 * @return the flow builder that can build the flow definition
+	 */
 	protected abstract FlowBuilder createFlowBuilder(Resource path);
 
 }

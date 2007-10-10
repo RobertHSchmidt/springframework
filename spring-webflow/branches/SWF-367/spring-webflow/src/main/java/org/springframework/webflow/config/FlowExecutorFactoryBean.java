@@ -100,7 +100,7 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 	private Integer maxContinuations;
 
 	/**
-	 * The conversion service to use for type conversion of attribute values.
+	 * The conversion service to use for type conversion of flow execution attribute values.
 	 */
 	private ConversionService conversionService = new DefaultConversionService();
 
@@ -177,6 +177,10 @@ class FlowExecutorFactoryBean implements FactoryBean, InitializingBean {
 		this.conversationManager = conversationManager;
 	}
 
+	/**
+	 * Sets the conversion service for converting string-encoded flow execution attributes to typed values.
+	 * @param conversionService the conversion service
+	 */
 	public void setConversionService(ConversionService conversionService) {
 		this.conversionService = conversionService;
 	}

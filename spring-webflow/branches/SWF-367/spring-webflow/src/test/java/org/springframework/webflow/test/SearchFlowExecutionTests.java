@@ -32,6 +32,10 @@ import org.springframework.webflow.test.execution.AbstractXmlFlowExecutionTests;
  */
 public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 
+	protected FlowDefinitionResource getFlowDefinitionResource() {
+		return new FlowDefinitionResourceFactory().createClassPathResource("search-flow.xml", getClass());
+	}
+
 	public void testStartFlow() {
 		startFlow(new MockExternalContext());
 	}
@@ -45,7 +49,7 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 	public void testSelectValidResult() {
 	}
 
-	protected void registerMockServices(MockFlowBuilderContext serviceRegistry) {
+	protected void configure(MockFlowBuilderContext builderContext) {
 		Flow mockDetailFlow = new Flow("detail-flow");
 		mockDetailFlow.setInputMapper(new AttributeMapper() {
 			public void map(Object source, Object target, MappingContext context) {
@@ -55,8 +59,8 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 		});
 		// test responding to finish result
 		new EndState(mockDetailFlow, "finish");
-		serviceRegistry.registerSubflow(mockDetailFlow);
-		serviceRegistry.registerBean("phonebook", new TestPhoneBook());
+		builderContext.registerSubflow(mockDetailFlow);
+		builderContext.registerBean("phonebook", new TestPhoneBook());
 	}
 
 	static class TestPhoneBook {
@@ -74,9 +78,4 @@ public class SearchFlowExecutionTests extends AbstractXmlFlowExecutionTests {
 			return new Object();
 		}
 	}
-
-	protected FlowDefinitionResource getFlowDefinitionResource() {
-		return new FlowDefinitionResourceFactory().createClassPathResource("search-flow.xml", getClass());
-	}
-
 }
