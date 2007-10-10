@@ -29,7 +29,7 @@
 	<subflow-state id="bookHotel" flow="booking">
 		<attribute-mapper>
 			<input-mapper>
-				<mapping source="#{requestParameters.hotelId}" target="#{id}" from="string" to="long" />
+				<mapping source="requestParameters.hotelId" target="id" from="string" to="long" />
 			</input-mapper>
 		</attribute-mapper>
 		<transition on="bookingAuthorized" to="reloadCurrentUserBookings" />
