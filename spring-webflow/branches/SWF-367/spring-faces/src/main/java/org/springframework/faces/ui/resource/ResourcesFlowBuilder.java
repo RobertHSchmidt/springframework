@@ -8,7 +8,7 @@ import org.springframework.webflow.engine.builder.support.AbstractFlowBuilder;
  * Builder for generating the "resources" flow which is responsible for serving static resources from the classpath.
  * @author Jeremy Grelle
  */
-public class ResourceFlowBuilder extends AbstractFlowBuilder {
+public class ResourcesFlowBuilder extends AbstractFlowBuilder {
 	public void buildStates() throws FlowBuilderException {
 		EndState endState = new EndState(getFlow(), "renderResource");
 		endState.setFinalResponseAction(new ResolveAndRenderResourceAction());
