@@ -20,6 +20,10 @@ public class JsfXmlFlowBuilderTests extends TestCase {
 		beanFactory.addBean("bean", new Object());
 	}
 
+	protected void tearDown() throws Exception {
+		jsf.tearDown();
+	}
+
 	public final void testBuildJsfFlow() {
 		ClassPathResource resource = new ClassPathResource("jsf-flow.xml", getClass());
 		builder = new XmlFlowBuilder(resource);
