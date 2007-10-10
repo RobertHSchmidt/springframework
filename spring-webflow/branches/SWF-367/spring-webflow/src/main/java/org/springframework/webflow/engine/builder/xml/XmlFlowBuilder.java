@@ -30,7 +30,6 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.binding.convert.ConversionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.ConversionService;
-import org.springframework.binding.expression.EvaluationAttempt;
 import org.springframework.binding.expression.EvaluationException;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
@@ -52,6 +51,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
+import org.springframework.web.context.support.ServletContextResource;
 import org.springframework.webflow.action.ActionResultExposer;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.ExternalRedirectAction;
@@ -1142,10 +1142,12 @@ public class XmlFlowBuilder extends AbstractFlowBuilder implements ResourceHolde
 		}
 
 		public Object getValue(Object target) throws EvaluationException {
-			try {
-				return viewResourceLoader.getResource((String) viewLocation.getValue(target)).getFile().getPath();
-			} catch (IOException e) {
-				throw new EvaluationException(new EvaluationAttempt(this, target), e);
+			String location = (String) viewLocation.getValue(target);
+			Resource resource = viewResourceLoader.getResource(location);
+			if (resource instanceof ServletContextResource) {
+				return ((ServletContextResource) resource).getPath();
+			} else {
+				throw new IllegalArgumentException("Unsupported resource " + resource);
 			}
 		}
 
