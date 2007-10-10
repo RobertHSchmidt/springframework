@@ -16,6 +16,7 @@
 package org.springframework.webflow.context.servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Iterator;
@@ -183,6 +184,15 @@ public class ServletExternalContext implements ExternalContext {
 	}
 
 	// response requesters
+
+	public PrintWriter getResponseWriter() {
+		try {
+			return response.getWriter();
+		} catch (IOException e) {
+			// TODO - handle how?
+			throw new RuntimeException(e);
+		}
+	}
 
 	public void sendFlowExecutionRedirect(FlowExecutionRequestInfo request) {
 		flowExecutionRedirector = new FlowExecutionRedirector(request);

@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.test;
 
+import java.io.PrintWriter;
 import java.util.HashMap;
 
 import org.springframework.binding.collection.SharedMapDecorator;
@@ -224,6 +225,10 @@ public class MockExternalContext implements ExternalContext {
 
 	public Object getResponse() {
 		return response;
+	}
+
+	public PrintWriter getResponseWriter() {
+		throw new UnsupportedOperationException("Auto-generated method stub");
 	}
 
 	public String encode(String string) {
