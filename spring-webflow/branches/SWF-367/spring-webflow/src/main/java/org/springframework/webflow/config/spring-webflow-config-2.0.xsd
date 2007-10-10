@@ -89,8 +89,7 @@ The idref of the flow builder services instance this flow definition registry sh
 				<xsd:annotation>
 					<xsd:documentation>
 						<![CDATA[
-Execution attributes to associate with new flow executions launched by this executor.
-These attributes may influence execution behavior.
+Attributes to assign to the flow definition that may influence flow execution.
 ]]>
 					</xsd:documentation>
 				</xsd:annotation>
@@ -121,7 +120,27 @@ that matches multiple resources.
 	</xsd:complexType>
 
 	<xsd:complexType name="flowBuilderType">
-		<xsd:attribute name="class" type="xsd:string">
+		<xsd:sequence>
+			<xsd:element name="flow-definition-attributes" type="flowDefinitionAttributesType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>
+						<![CDATA[
+Attributes to assign to the flow definition that may influence flow execution.
+]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>	
+		<xsd:attribute name="id" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>
+					<![CDATA[
+The id to the externalized flow definition built by this builder.
+]]>
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>	
+		<xsd:attribute name="class" type="xsd:string" use="required">
 			<xsd:annotation>
 				<xsd:documentation>
 				<![CDATA[

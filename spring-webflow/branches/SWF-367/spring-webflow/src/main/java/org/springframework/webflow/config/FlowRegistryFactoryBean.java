@@ -1,6 +1,7 @@
 package org.springframework.webflow.config;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -11,8 +12,12 @@ import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.ClassUtils;
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.registry.FlowDefinitionConstructionException;
 import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistryImpl;
@@ -30,6 +35,8 @@ class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware, BeanF
 
 	private FlowLocation[] flowLocations;
 
+	private FlowBuilderInfo[] flowBuilders;
+
 	private FlowBuilderServices flowBuilderServices;
 
 	private FlowDefinitionResourceFactory flowResourceFactory;
@@ -40,6 +47,10 @@ class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware, BeanF
 
 	public void setFlowLocations(FlowLocation[] flowLocations) {
 		this.flowLocations = flowLocations;
+	}
+
+	public void setFlowBuilders(FlowBuilderInfo[] flowBuilders) {
+		this.flowBuilders = flowBuilders;
 	}
 
 	public void setFlowBuilderServices(FlowBuilderServices flowBuilderServices) {
@@ -60,10 +71,8 @@ class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware, BeanF
 		}
 		flowResourceFactory = new FlowDefinitionResourceFactory(resourceLoader);
 		flowRegistry = new FlowDefinitionRegistryImpl();
-		for (int i = 0; i < flowLocations.length; i++) {
-			FlowLocation location = flowLocations[i];
-			flowRegistry.registerFlowDefinition(createFlowDefinitionHolder(location));
-		}
+		registerFlowLocations();
+		registerFlowBuilders();
 	}
 
 	public Object getObject() throws Exception {
@@ -78,6 +87,24 @@ class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware, BeanF
 		return true;
 	}
 
+	private void registerFlowLocations() {
+		if (flowLocations != null) {
+			for (int i = 0; i < flowLocations.length; i++) {
+				FlowLocation location = flowLocations[i];
+				flowRegistry.registerFlowDefinition(createFlowDefinitionHolder(location));
+			}
+		}
+	}
+
+	private void registerFlowBuilders() {
+		if (flowBuilders != null) {
+		for (int i = 0; i < flowBuilders.length; i++) {
+			FlowBuilderInfo builder = flowBuilders[i];
+			flowRegistry.registerFlowDefinition(createFlowDefinitionHolder(builder));
+		}
+		}
+	}
+
 	private FlowDefinitionHolder createFlowDefinitionHolder(FlowLocation location) {
 		FlowDefinitionResource flowResource = createResource(location);
 		FlowBuilder builder = createFlowBuilder(flowResource);
@@ -88,15 +115,20 @@ class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware, BeanF
 	}
 
 	private FlowDefinitionResource createResource(FlowLocation location) {
+		AttributeMap flowAttributes = getFlowAttributes(location.getAttributes());
+		return flowResourceFactory.createResource(location.getPath(), flowAttributes, location.getId());
+	}
+
+	private AttributeMap getFlowAttributes(Set attributes) {
 		MutableAttributeMap flowAttributes = null;
-		if (!location.getAttributes().isEmpty()) {
+		if (!attributes.isEmpty()) {
 			flowAttributes = new LocalAttributeMap();
-			for (Iterator it = location.getAttributes().iterator(); it.hasNext();) {
+			for (Iterator it = attributes.iterator(); it.hasNext();) {
 				FlowElementAttribute attribute = (FlowElementAttribute) it.next();
 				flowAttributes.put(attribute.getName(), getConvertedValue(attribute));
 			}
 		}
-		return flowResourceFactory.createResource(location.getPath(), flowAttributes, location.getId());
+		return flowAttributes;
 	}
 
 	private FlowBuilder createFlowBuilder(FlowDefinitionResource resource) {
@@ -122,9 +154,56 @@ class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware, BeanF
 		}
 	}
 
+	private FlowDefinitionHolder createFlowDefinitionHolder(FlowBuilderInfo builder) {
+		ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
+		AttributeMap flowAttributes = getFlowAttributes(builder.getAttributes());
+		FlowBuilderContext builderContext = new FlowBuilderContextImpl(builder.getId(), flowAttributes, flowRegistry,
+				flowBuilderServices);
+		return new FlowBuilderCreatingFlowDefinitionHolder(builder.getClassName(), classLoader, builderContext);
+	}
+
 	private void initFlowBuilderServices() {
 		flowBuilderServices = new FlowBuilderServices();
 		flowBuilderServices.setResourceLoader(resourceLoader);
 		flowBuilderServices.setBeanFactory(beanFactory);
+	}
+
+	public class FlowBuilderCreatingFlowDefinitionHolder implements FlowDefinitionHolder {
+
+		private String flowBuilderClassName;
+
+		private ClassLoader classLoader;
+
+		private FlowBuilderContext builderContext;
+
+		public FlowBuilderCreatingFlowDefinitionHolder(String flowBuilderClassName, ClassLoader classLoader,
+				FlowBuilderContext builderContext) {
+			this.flowBuilderClassName = flowBuilderClassName;
+			this.classLoader = classLoader;
+			this.builderContext = builderContext;
+		}
+
+		public String getFlowDefinitionId() {
+			return builderContext.getFlowId();
+		}
+
+		public FlowDefinition getFlowDefinition() throws FlowDefinitionConstructionException {
+			try {
+				Class flowBuilderClass = classLoader.loadClass(flowBuilderClassName);
+				FlowBuilder builder = (FlowBuilder) flowBuilderClass.newInstance();
+				FlowAssembler assembler = new FlowAssembler(builder, builderContext);
+				return assembler.assembleFlow();
+			} catch (ClassNotFoundException e) {
+				throw new FlowDefinitionConstructionException(getFlowDefinitionId(), e);
+			} catch (InstantiationException e) {
+				throw new FlowDefinitionConstructionException(getFlowDefinitionId(), e);
+			} catch (IllegalAccessException e) {
+				throw new FlowDefinitionConstructionException(getFlowDefinitionId(), e);
+			}
+		}
+
+		public void refresh() throws FlowDefinitionConstructionException {
+		}
+
 	}
 }

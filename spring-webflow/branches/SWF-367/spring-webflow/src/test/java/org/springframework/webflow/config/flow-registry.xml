@@ -11,11 +11,19 @@
 	<web:flow-registry id="flowRegistry" flow-builder-services="flowBuilderServices">
 		<web:flow-location id="flow" path="org/springframework/webflow/config/flow.xml">
 			<web:flow-definition-attributes>
-				<web:attribute name="foo" value="bar"/>
-				<web:attribute name="bar" value="2" type="integer"/>
+				<web:attribute name="foo" value="bar" />
+				<web:attribute name="bar" value="2" type="integer" />
 			</web:flow-definition-attributes>
 		</web:flow-location>
-		<web:flow-location path="/some/path/that/is/bogus.xml"/>
+		<web:flow-location path="/some/path/that/is/bogus.xml" />
+		<web:flow-builder class="org.springframework.webflow.config.FooFlowBuilder" />
+		<web:flow-builder id="foo2" class="org.springframework.webflow.config.FooFlowBuilder" />
+		<web:flow-builder id="foo3" class="org.springframework.webflow.config.FooFlowBuilder">
+			<web:flow-definition-attributes>
+				<web:attribute name="foo" value="bar" />
+				<web:attribute name="bar" value="2" type="integer" />
+			</web:flow-definition-attributes>
+		</web:flow-builder>
 	</web:flow-registry>
 	
 	<bean id="flowBuilderServices" class="org.springframework.webflow.engine.builder.support.FlowBuilderServices" />

@@ -17,11 +17,28 @@ public class FlowRegistryBeanDefinitionParserTests extends TestCase {
 		registry = (FlowDefinitionRegistry) context.getBean("flowRegistry");
 	}
 
-	public void testRegistryPopulated() {
+	public void testRegistryFlowLocationsPopulated() {
 		FlowDefinition flow = registry.getFlowDefinition("flow");
 		assertEquals("flow", flow.getId());
 		assertEquals("bar", flow.getAttributes().get("foo"));
 		assertEquals(new Integer(2), flow.getAttributes().get("bar"));
+	}
+
+	public void testRegistryFlowBuildersPopulated() {
+		FlowDefinition foo = registry.getFlowDefinition("foo");
+		assertEquals("foo", foo.getId());
+	}
+
+	public void testRegistryFlowBuildersPopulatedWithId() {
+		FlowDefinition foo = registry.getFlowDefinition("foo2");
+		assertEquals("foo2", foo.getId());
+	}
+
+	public void testRegistryFlowBuildersPopulatedWithAttributes() {
+		FlowDefinition foo3 = registry.getFlowDefinition("foo3");
+		assertEquals("foo3", foo3.getId());
+		assertEquals("bar", foo3.getAttributes().get("foo"));
+		assertEquals(new Integer(2), foo3.getAttributes().get("bar"));
 	}
 
 	public void testNoSuchFlow() {
