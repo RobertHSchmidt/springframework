@@ -1,6 +1,5 @@
 package org.springframework.faces.ui.resource;
 
-import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -12,13 +11,15 @@ import java.io.StringWriter;
 import junit.framework.TestCase;
 
 import org.apache.shale.test.mock.MockResponseWriter;
+import org.easymock.EasyMock;
 import org.springframework.faces.webflow.JSFMockHelper;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.FlowDefinitionRequestInfo;
+import org.springframework.webflow.context.RequestPath;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
-public class ResourceHelperTests extends TestCase {
+public class FlowResourceHelperTests extends TestCase {
 
 	RequestContext requestContext = createMock(RequestContext.class);
 	ExternalContext externalContext = createMock(ExternalContext.class);
@@ -42,12 +43,16 @@ public class ResourceHelperTests extends TestCase {
 	public final void testRenderScriptLink() throws IOException {
 
 		String scriptPath = "/dojo/dojo.js";
-		String expectedUrl = "/spring/faces-resources/dojo/dojo.js";
+		String expectedUrl = "/context/spring/resources/dojo/dojo.js";
 
-		expect(externalContext.buildFlowDefinitionUrl((FlowDefinitionRequestInfo) anyObject())).andReturn(expectedUrl);
+		FlowDefinitionRequestInfo expectedRequest = new FlowDefinitionRequestInfo("resources", new RequestPath(
+				scriptPath), null, null);
+
+		expect(externalContext.buildFlowDefinitionUrl(requestInfoMatches(expectedRequest))).andReturn(expectedUrl);
 
 		replay(new Object[] { requestContext, externalContext });
 
+		resourceHelper.renderScriptLink(jsf.facesContext(), scriptPath);
 		resourceHelper.renderScriptLink(jsf.facesContext(), scriptPath);
 
 		verify(new Object[] { externalContext });
@@ -61,12 +66,16 @@ public class ResourceHelperTests extends TestCase {
 	public final void testRenderStyleLink() throws IOException {
 
 		String scriptPath = "/dijit/themes/dijit.css";
-		String expectedUrl = "/spring/faces-resources/dijit/themes/dijit.css";
+		String expectedUrl = "/context/spring/resources/dijit/themes/dijit.css";
 
-		expect(externalContext.buildFlowDefinitionUrl((FlowDefinitionRequestInfo) anyObject())).andReturn(expectedUrl);
+		FlowDefinitionRequestInfo expectedRequest = new FlowDefinitionRequestInfo("resources", new RequestPath(
+				scriptPath), null, null);
+
+		expect(externalContext.buildFlowDefinitionUrl(requestInfoMatches(expectedRequest))).andReturn(expectedUrl);
 
 		replay(new Object[] { requestContext, externalContext });
 
+		resourceHelper.renderStyleLink(jsf.facesContext(), scriptPath);
 		resourceHelper.renderStyleLink(jsf.facesContext(), scriptPath);
 
 		verify(new Object[] { externalContext });
@@ -74,5 +83,10 @@ public class ResourceHelperTests extends TestCase {
 		String expectedOutput = "<link type=\"text/css\" rel=\"stylesheet\" href=\"" + expectedUrl + "\"/>";
 
 		assertEquals(expectedOutput, writer.toString());
+	}
+
+	static FlowDefinitionRequestInfo requestInfoMatches(FlowDefinitionRequestInfo info) {
+		EasyMock.reportMatcher(new RequestInfoMatcher(info));
+		return null;
 	}
 }
