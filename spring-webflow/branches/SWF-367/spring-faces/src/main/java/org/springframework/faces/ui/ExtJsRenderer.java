@@ -22,11 +22,13 @@ public class ExtJsRenderer extends Renderer {
 
 		ExtJsComponent extJsComponent = (ExtJsComponent) component;
 
-		if (extJsComponent.getIncludeExtStyles().equals(Boolean.TRUE))
+		if (extJsComponent.getIncludeExtStyles().equals(Boolean.TRUE)) {
 			resourceHelper.renderStyleLink(context, EXT_CSS);
+		}
 
-		if (extJsComponent.getIncludeExtScript().equals(Boolean.TRUE))
+		if (extJsComponent.getIncludeExtScript().equals(Boolean.TRUE)) {
 			resourceHelper.renderScriptLink(context, EXT_SCRIPT);
+		}
 
 		resourceHelper.renderScriptLink(context, SPRING_FACES_SCRIPT);
 	}
