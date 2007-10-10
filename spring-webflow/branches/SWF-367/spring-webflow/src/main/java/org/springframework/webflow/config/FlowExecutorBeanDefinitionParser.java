@@ -32,8 +32,7 @@ import org.w3c.dom.Element;
 /**
  * {@link BeanDefinitionParser} for the <code>&lt;flow-executor&gt;</code> tag.
  * 
- * @author Ben Hale
- * @author Christian Dupuis
+ * @author Keith Donald
  */
 class FlowExecutorBeanDefinitionParser extends AbstractBeanDefinitionParser {
 

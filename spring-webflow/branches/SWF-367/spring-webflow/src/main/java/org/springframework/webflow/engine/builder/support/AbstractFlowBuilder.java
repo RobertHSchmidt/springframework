@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.engine.builder.support;
 
+import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.FlowBuilderContext;
@@ -23,7 +24,7 @@ import org.springframework.webflow.engine.builder.FlowBuilderException;
 /**
  * Abstract base implementation of a flow builder defining common functionality needed by most concrete flow builder
  * implementations. This class implements all optional parts of the FlowBuilder process as no-op methods. Subclasses are
- * only required to implement {@link #init(FlowBuilderContext)} and {@link #buildStates()}.
+ * only required to implement {@link #buildStates()}.
  * 
  * @author Keith Donald
  * @author Erwin Vervaet
@@ -51,7 +52,11 @@ public abstract class AbstractFlowBuilder implements FlowBuilder {
 
 	}
 
-	protected abstract Flow createFlow();
+	protected Flow createFlow() {
+		String id = getContext().getFlowId();
+		AttributeMap attributes = getContext().getFlowAttributes();
+		return getContext().getFlowArtifactFactory().createFlow(id, attributes);
+	}
 
 	public void buildVariables() throws FlowBuilderException {
 	}
