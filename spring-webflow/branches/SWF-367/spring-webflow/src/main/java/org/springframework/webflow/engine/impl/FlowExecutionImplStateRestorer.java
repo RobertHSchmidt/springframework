@@ -52,7 +52,6 @@ public class FlowExecutionImplStateRestorer extends FlowExecutionImplServicesCon
 	public FlowExecution restoreState(FlowExecution flowExecution, FlowExecutionKey key,
 			MutableAttributeMap conversationScope, FlowExecutionKeyFactory keyFactory) {
 		FlowExecutionImpl impl = (FlowExecutionImpl) flowExecution;
-		// the root flow should be a top-level flow visible by the flow def locator
 		if (impl.getFlowId() == null) {
 			throw new IllegalStateException("Cannot restore flow execution impl: the flow id is null");
 		}
@@ -66,20 +65,12 @@ public class FlowExecutionImplStateRestorer extends FlowExecutionImplServicesCon
 			root.setFlow(flow);
 			root.setState(flow.getStateInstance(root.getStateId()));
 			if (impl.hasSubflowSessions()) {
-				Flow parent = flow;
 				for (ListIterator it = impl.getSubflowSessionIterator(); it.hasNext();) {
 					FlowSessionImpl subflow = (FlowSessionImpl) it.next();
-					Flow definition;
-					if (parent.containsInlineFlow(subflow.getFlowId())) {
-						// subflow is an inline flow of it's parent
-						definition = parent.getInlineFlow(subflow.getFlowId());
-					} else {
-						// subflow is a top-level flow
-						definition = (Flow) definitionLocator.getFlowDefinition(subflow.getFlowId());
-					}
+					// TODO subflows encapsulated by top-level flow
+					Flow definition = (Flow) definitionLocator.getFlowDefinition(subflow.getFlowId());
 					subflow.setFlow(definition);
 					subflow.setState(definition.getStateInstance(subflow.getStateId()));
-					parent = definition;
 				}
 			}
 		}

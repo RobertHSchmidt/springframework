@@ -150,14 +150,6 @@ public class FlowTests extends TestCase {
 		assertEquals(1, flow.getEndActionList().size());
 	}
 
-	public void testAddInlineFlow() {
-		Flow inline = new Flow("inline");
-		flow.addInlineFlow(inline);
-		assertSame(inline, flow.getInlineFlow("inline"));
-		assertEquals(1, flow.getInlineFlowCount());
-		assertSame(flow.getInlineFlows()[0], inline);
-	}
-
 	public void testAddGlobalTransition() {
 		Transition t = new Transition(to("myState2"));
 		flow.getGlobalTransitionSet().add(t);

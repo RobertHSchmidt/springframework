@@ -161,11 +161,6 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	private FlowExecutionExceptionHandlerSet exceptionHandlerSet = new FlowExecutionExceptionHandlerSet();
 
 	/**
-	 * The set of inline flows contained by this flow.
-	 */
-	private Set inlineFlows = CollectionFactory.createLinkedSetIfPossible(3);
-
-	/**
 	 * Construct a new flow definition with the given id. The id should be unique among all flows.
 	 * @param id the flow identifier
 	 */
@@ -420,56 +415,6 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 	}
 
 	/**
-	 * Adds an inline flow to this flow.
-	 * @param flow the inline flow to add
-	 */
-	public void addInlineFlow(Flow flow) {
-		inlineFlows.add(flow);
-	}
-
-	/**
-	 * Returns the list of inline flows.
-	 * @return the list of inline flows
-	 */
-	public Flow[] getInlineFlows() {
-		return (Flow[]) inlineFlows.toArray(new Flow[inlineFlows.size()]);
-	}
-
-	/**
-	 * Returns the count of registered inline flows.
-	 * @return the count
-	 */
-	public int getInlineFlowCount() {
-		return inlineFlows.size();
-	}
-
-	/**
-	 * Tests if this flow contains an in-line flow with the specified id.
-	 * @param id the inline flow id
-	 * @return true if this flow contains a inline flow with that id, false otherwise
-	 */
-	public boolean containsInlineFlow(String id) {
-		return getInlineFlow(id) != null;
-	}
-
-	/**
-	 * Returns the inline flow with the provided id, or <code>null</code> if no such inline flow exists.
-	 * @param id the inline flow id
-	 * @return the inline flow
-	 * @throws IllegalArgumentException when an invalid flow id is provided
-	 */
-	public Flow getInlineFlow(String id) throws IllegalArgumentException {
-		Iterator it = inlineFlows.iterator();
-		while (it.hasNext()) {
-			Flow flow = (Flow) it.next();
-			if (flow.getId().equals(id)) {
-				return flow;
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Returns the set of transitions eligible for execution by this flow if no state-level transition is matched. The
 	 * returned set is mutable.
 	 * @return the global transition set
@@ -660,7 +605,7 @@ public class Flow extends AnnotatedObject implements FlowDefinition {
 				.append("variables", variables).append("inputMapper", inputMapper).append("startActionList",
 						startActionList).append("exceptionHandlerSet", exceptionHandlerSet).append(
 						"globalTransitionSet", globalTransitionSet).append("endActionList", endActionList).append(
-						"outputMapper", outputMapper).append("inlineFlows", inlineFlows).toString();
+						"outputMapper", outputMapper).toString();
 	}
 
 }
