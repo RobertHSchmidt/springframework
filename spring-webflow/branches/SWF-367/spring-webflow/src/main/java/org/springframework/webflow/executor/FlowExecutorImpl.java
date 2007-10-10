@@ -131,7 +131,6 @@ public class FlowExecutorImpl implements FlowExecutor {
 		try {
 			FlowExecutionKey key = executionRepository.parseFlowExecutionKey(encodedKey);
 			FlowExecutionLock lock = executionRepository.getLock(key);
-			// make sure we're the only one manipulating the flow execution
 			lock.lock();
 			try {
 				FlowExecution flowExecution = executionRepository.getFlowExecution(key);
@@ -140,7 +139,6 @@ public class FlowExecutorImpl implements FlowExecutor {
 					executionRepository.putFlowExecution(flowExecution);
 					context.setPausedResult(flowExecution.getKey().toString());
 				} else {
-					// execution ended => remove it from the repository
 					executionRepository.removeFlowExecution(flowExecution);
 					context.setEndedResult(flowExecution.getKey().toString());
 				}
