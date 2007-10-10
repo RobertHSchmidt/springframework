@@ -25,15 +25,19 @@ import javax.el.ResourceBundleELResolver;
  */
 public class DefaultELResolver extends CompositeELResolver {
 
-	private Object root;
+	private Object target;
 
 	/**
 	 * Creates a new default EL resolver for resolving properties of the root object.
-	 * @param root the root object
+	 * @param target the target, or "root", object of the expression
 	 */
-	public DefaultELResolver(Object root, List customResolvers) {
-		this.root = root;
+	public DefaultELResolver(Object target, List customResolvers) {
+		this.target = target;
 		configureResolvers(customResolvers);
+	}
+
+	public Object getTarget() {
+		return target;
 	}
 
 	public Class getType(ELContext context, Object base, Object property) {
@@ -42,7 +46,7 @@ public class DefaultELResolver extends CompositeELResolver {
 
 	public Object getValue(ELContext context, Object base, Object property) {
 		if (base == null) {
-			return super.getValue(context, root, property);
+			return super.getValue(context, target, property);
 		} else {
 			return super.getValue(context, base, property);
 		}
@@ -50,7 +54,7 @@ public class DefaultELResolver extends CompositeELResolver {
 
 	public void setValue(ELContext context, Object base, Object property, Object val) {
 		if (base == null) {
-			super.setValue(context, root, property, val);
+			super.setValue(context, target, property, val);
 		} else {
 			super.setValue(context, base, property, val);
 		}

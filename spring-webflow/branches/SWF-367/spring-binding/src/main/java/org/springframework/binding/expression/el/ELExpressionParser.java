@@ -113,7 +113,8 @@ public class ELExpressionParser implements ExpressionParser {
 				variableMapper = new VariableMapperImpl();
 				for (int i = 0; i < variables.length; i++) {
 					ExpressionVariable var = variables[i];
-					ValueExpression expr = expressionFactory.createValueExpression(this, var.getValue(), Object.class);
+					ValueExpression expr = expressionFactory.createValueExpression(this,
+							var.getValueExpressionString(), Object.class);
 					variableMapper.setVariable(var.getName(), expr);
 				}
 			}

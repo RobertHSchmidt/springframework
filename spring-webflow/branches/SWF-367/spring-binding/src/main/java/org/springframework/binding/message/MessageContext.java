@@ -1,7 +1,7 @@
 package org.springframework.binding.message;
 
 /**
- * A context for accessing and recording messages for display.
+ * A context for recording and retrieving messages for display.
  */
 public interface MessageContext {
 
@@ -12,9 +12,9 @@ public interface MessageContext {
 	public Message[] getMessages();
 
 	/**
-	 * Get messages by source.
+	 * Get all messages in this context from the source provided.
 	 * @param source the source that recorded the message
-	 * @return messages
+	 * @return the source's messages
 	 */
 	public Message[] getMessages(Object source);
 
@@ -25,7 +25,7 @@ public interface MessageContext {
 	public void addMessage(MessageResolver messageResolver);
 
 	/**
-	 * Clear any messages added to this context.
+	 * Clear all messages added to this context.
 	 */
 	public void clearMessages();
 
