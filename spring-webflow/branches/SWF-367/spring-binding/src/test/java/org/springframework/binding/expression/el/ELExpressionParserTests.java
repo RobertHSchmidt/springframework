@@ -1,5 +1,8 @@
 package org.springframework.binding.expression.el;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.el.ELContext;
 import javax.el.ELResolver;
 import javax.el.FunctionMapper;
@@ -112,12 +115,21 @@ public class ELExpressionParserTests extends TestCase {
 
 		private TestBean bean;
 
-		public TestBean() {
+		private List list = new ArrayList();
 
+		public TestBean() {
+			initList();
 		}
 
 		public TestBean(TestBean bean) {
 			this.bean = bean;
+			initList();
+		}
+
+		private void initList() {
+			list.add("1");
+			list.add("2");
+			list.add("3");
 		}
 
 		public TestBean getBean() {
