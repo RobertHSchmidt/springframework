@@ -139,53 +139,45 @@ public class JSFFlowExecutionTests extends TestCase {
 		assertNotNull(jsfBean);
 	}
 
-	public void testBeanAction() throws Exception {
-		startFlow();
-
-		jsfRequestSetup();
-
-		testManagedBeanExpression();
-		jsfBean.setProp1("arg");
-		service.doSomething(jsfBean.getProp1());
-		EasyMock.replay(new Object[] { service });
-
-		jsf.externalContext().getRequestMap().put(JsfView.EVENT_KEY, "event1");
-
-		UIViewRoot existingRoot = new UIViewRoot();
-		existingRoot.setViewId("view1");
-		viewHandler.setRestoreView(existingRoot);
-
-		execution.resume(getExternalContext());
-
-		EasyMock.verify(new Object[] { service });
-
-		ViewState currentState = (ViewState) execution.getActiveSession().getState();
-		assertEquals("viewState2", currentState.getId());
-	}
-
-	public void testEvalAction() throws Exception {
-		startFlow();
-
-		jsfRequestSetup();
-
-		testManagedBeanExpression();
-
-		jsf.externalContext().getRequestMap().put(JsfView.EVENT_KEY, "event2");
-
-		UIViewRoot existingRoot = new UIViewRoot();
-		existingRoot.setViewId("view1");
-		viewHandler.setRestoreView(existingRoot);
-
-		execution.resume(getExternalContext());
-
-		assertFalse(jsfBean.getValues().isEmpty());
-		String addedValue = jsfBean.getValues().get(0).toString();
-		assertEquals(addedValue, "foo");
-
-		ViewState currentState = (ViewState) execution.getActiveSession().getState();
-		assertEquals("viewState2", currentState.getId());
-	}
-
+	/*
+	 * public void testBeanAction() throws Exception { startFlow();
+	 * 
+	 * jsfRequestSetup();
+	 * 
+	 * testManagedBeanExpression(); jsfBean.setProp1("arg"); service.doSomething(jsfBean.getProp1());
+	 * EasyMock.replay(new Object[] { service });
+	 * 
+	 * jsf.externalContext().getRequestMap().put(JsfView.EVENT_KEY, "event1");
+	 * 
+	 * UIViewRoot existingRoot = new UIViewRoot(); existingRoot.setViewId("view1");
+	 * viewHandler.setRestoreView(existingRoot);
+	 * 
+	 * execution.resume(getExternalContext());
+	 * 
+	 * EasyMock.verify(new Object[] { service });
+	 * 
+	 * ViewState currentState = (ViewState) execution.getActiveSession().getState(); assertEquals("viewState2",
+	 * currentState.getId()); }
+	 * 
+	 * public void testEvalAction() throws Exception { startFlow();
+	 * 
+	 * jsfRequestSetup();
+	 * 
+	 * testManagedBeanExpression();
+	 * 
+	 * jsf.externalContext().getRequestMap().put(JsfView.EVENT_KEY, "event2");
+	 * 
+	 * UIViewRoot existingRoot = new UIViewRoot(); existingRoot.setViewId("view1");
+	 * viewHandler.setRestoreView(existingRoot);
+	 * 
+	 * execution.resume(getExternalContext());
+	 * 
+	 * assertFalse(jsfBean.getValues().isEmpty()); String addedValue = jsfBean.getValues().get(0).toString();
+	 * assertEquals(addedValue, "foo");
+	 * 
+	 * ViewState currentState = (ViewState) execution.getActiveSession().getState(); assertEquals("viewState2",
+	 * currentState.getId()); }
+	 */
 	private static TransitionCriteria on(String event) {
 		return new EventIdTransitionCriteria(event);
 	}

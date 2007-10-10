@@ -95,6 +95,8 @@ public class JsfViewTests extends TestCase {
 		EasyMock.expect(requestContext.getFlowExecutionContext()).andStubReturn(flowExecutionContext);
 		EasyMock.expect(flowExecutionContext.getKey()).andStubReturn(key);
 		EasyMock.expect(flashMap.put(EasyMock.matches(JsfView.STATE_KEY), EasyMock.anyObject())).andStubReturn(null);
+		EasyMock.expect(flashMap.put(EasyMock.matches("renderResponse"), EasyMock.anyObject())).andStubReturn(null);
+		EasyMock.expect(flashMap.put(EasyMock.matches("responseComplete"), EasyMock.anyObject())).andStubReturn(null);
 
 		EasyMock.replay(new Object[] { requestContext, flowExecutionContext, flashMap });
 
@@ -106,6 +108,12 @@ public class JsfViewTests extends TestCase {
 	}
 
 	public final void testRenderException() {
+
+		EasyMock.expect(requestContext.getFlashScope()).andStubReturn(flashMap);
+		EasyMock.expect(flashMap.put(EasyMock.matches("renderResponse"), EasyMock.anyObject())).andStubReturn(null);
+		EasyMock.expect(flashMap.put(EasyMock.matches("responseComplete"), EasyMock.anyObject())).andStubReturn(null);
+
+		EasyMock.replay(new Object[] { requestContext, flowExecutionContext, flashMap });
 
 		jsfMock.application().setViewHandler(new ExceptionalViewHandler());
 

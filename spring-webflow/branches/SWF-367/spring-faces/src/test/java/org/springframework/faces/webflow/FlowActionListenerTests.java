@@ -19,6 +19,10 @@ public class FlowActionListenerTests extends TestCase {
 		jsfMock.setUp();
 	}
 
+	protected void tearDown() throws Exception {
+		jsfMock.tearDown();
+	}
+
 	public final void testProcessAction() {
 
 		String outcome = "foo";

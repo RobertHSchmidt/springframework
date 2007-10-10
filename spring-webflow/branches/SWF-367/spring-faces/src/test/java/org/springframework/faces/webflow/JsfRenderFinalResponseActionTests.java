@@ -54,6 +54,10 @@ public class JsfRenderFinalResponseActionTests extends TestCase {
 		configureJsf();
 	}
 
+	protected void tearDown() throws Exception {
+		jsfMock.tearDown();
+	}
+
 	private void configureJsf() throws Exception {
 
 		jsfMock.setUp();
