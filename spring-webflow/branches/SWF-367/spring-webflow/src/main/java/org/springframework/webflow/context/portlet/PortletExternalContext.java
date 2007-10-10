@@ -15,6 +15,7 @@
  */
 package org.springframework.webflow.context.portlet;
 
+import java.io.PrintWriter;
 import java.util.Map;
 
 import javax.portlet.PortletContext;
@@ -156,12 +157,12 @@ public class PortletExternalContext implements ExternalContext {
 		return response;
 	}
 
-	public String getFlowExecutionKey() {
+	public String getFlowId() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Auto-generated method stub");
 	}
 
-	public String getFlowId() {
+	public String getFlowExecutionKey() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Auto-generated method stub");
 	}
@@ -172,6 +173,11 @@ public class PortletExternalContext implements ExternalContext {
 	}
 
 	public String getRequestMethod() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Auto-generated method stub");
+	}
+
+	public PrintWriter getResponseWriter() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Auto-generated method stub");
 	}

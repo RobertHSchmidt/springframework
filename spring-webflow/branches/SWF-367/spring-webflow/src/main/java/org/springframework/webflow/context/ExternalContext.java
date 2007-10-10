@@ -15,6 +15,8 @@
  */
 package org.springframework.webflow.context;
 
+import java.io.PrintWriter;
+
 import org.springframework.webflow.core.FlowException;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
@@ -119,6 +121,12 @@ public interface ExternalContext {
 	 * @return the environment specific response object.
 	 */
 	public Object getResponse();
+
+	/**
+	 * Get a writer for writing out a response.
+	 * @return the writer
+	 */
+	public PrintWriter getResponseWriter();
 
 	/**
 	 * Builds a context-relative flow definition URL, suitable for rendering links that a launch new execution of a flow
