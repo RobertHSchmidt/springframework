@@ -250,7 +250,12 @@ public class ServletExternalContext implements ExternalContext {
 		processedFlowExecutionKey = flowExecutionKey;
 	}
 
-	public void execute(FlowExecutor flowExecutor) throws IOException {
+	/**
+	 * Execute the flow request lifecycle, including provision of the final response.
+	 * @param flowExecutor the flow executor for calling into the Spring Web Flow system
+	 * @throws IOException an IOException occurred issuing the response
+	 */
+	public void executeFlowRequest(FlowExecutor flowExecutor) throws IOException {
 		ExternalContextHolder.setExternalContext(this);
 		try {
 			flowExecutor.execute(this);

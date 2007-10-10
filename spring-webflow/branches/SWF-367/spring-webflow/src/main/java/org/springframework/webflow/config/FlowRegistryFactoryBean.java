@@ -29,20 +29,50 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderContextImpl
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.builder.xml.XmlFlowBuilder;
 
+/**
+ * A factory for a flow definition registry. Is a Spring FactoryBean, for provision by the flow definition registry bean
+ * definition parser. Is package-private, as people should not be using this class directly, but rather through the
+ * higher-level webflow-config Spring 2.x configuration namespace.
+ * 
+ * @author Keith Donald
+ */
 class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware, BeanFactoryAware, InitializingBean {
 
+	/**
+	 * The definition registry produced by this factory bean.
+	 */
 	private FlowDefinitionRegistry flowRegistry;
 
+	/**
+	 * Flow definitions defined in external files that should be registered in the registry produced by this factory
+	 * bean.
+	 */
 	private FlowLocation[] flowLocations;
 
+	/**
+	 * Java {@link FlowBuilder flow builder} classes that should be registered in the registry produced by this factory
+	 * bean.
+	 */
 	private FlowBuilderInfo[] flowBuilders;
 
+	/**
+	 * The holder for services needed to build flow definitions registered in this registry.
+	 */
 	private FlowBuilderServices flowBuilderServices;
 
+	/**
+	 * A helper for creating abstract representation of externalized flow definition resources.
+	 */
 	private FlowDefinitionResourceFactory flowResourceFactory;
 
+	/**
+	 * The container's resource loader.
+	 */
 	private ResourceLoader resourceLoader;
 
+	/**
+	 * The containing bean factory this factory bean was deployed in.
+	 */
 	private BeanFactory beanFactory;
 
 	public void setFlowLocations(FlowLocation[] flowLocations) {
@@ -98,10 +128,10 @@ class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware, BeanF
 
 	private void registerFlowBuilders() {
 		if (flowBuilders != null) {
-		for (int i = 0; i < flowBuilders.length; i++) {
-			FlowBuilderInfo builder = flowBuilders[i];
-			flowRegistry.registerFlowDefinition(createFlowDefinitionHolder(builder));
-		}
+			for (int i = 0; i < flowBuilders.length; i++) {
+				FlowBuilderInfo builder = flowBuilders[i];
+				flowRegistry.registerFlowDefinition(createFlowDefinitionHolder(builder));
+			}
 		}
 	}
 
@@ -168,7 +198,7 @@ class FlowRegistryFactoryBean implements FactoryBean, ResourceLoaderAware, BeanF
 		flowBuilderServices.setBeanFactory(beanFactory);
 	}
 
-	public class FlowBuilderCreatingFlowDefinitionHolder implements FlowDefinitionHolder {
+	class FlowBuilderCreatingFlowDefinitionHolder implements FlowDefinitionHolder {
 
 		private String flowBuilderClassName;
 
