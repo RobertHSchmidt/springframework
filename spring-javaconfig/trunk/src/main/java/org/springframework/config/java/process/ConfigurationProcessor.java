@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2006 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,6 +121,24 @@ public class ConfigurationProcessor implements InitializingBean {
 		this.owningBeanFactory = bdr;
 	}
 
+	/**
+	 * Indicate the naming strategy used for creating the bean names during
+	 * processing.
+	 * 
+	 * @param beanNamingStrategy bean naming strategy implementation
+	 */
+	public void setBeanNamingStrategy(BeanNamingStrategy beanNamingStrategy) {
+		this.beanNamingStrategy = beanNamingStrategy;
+	}
+
+	/**
+	 * @param configurationListenerRegistry The configurationListenerRegistry to
+	 * set.
+	 */
+	public void setConfigurationListenerRegistry(ConfigurationListenerRegistry configurationListenerRegistry) {
+		this.configurationListenerRegistry = configurationListenerRegistry;
+	}
+
 	/*
 	 * Called to avoid constructor changes every time a new configuration switch
 	 * appears on this class.
@@ -201,7 +219,6 @@ public class ConfigurationProcessor implements InitializingBean {
 
 		// include the configuration bean definition
 		return (generateBeanDefinitions(configBeanName, configurationClass) + 1);
-
 	}
 
 	public int processBean(String beanName) throws BeanDefinitionStoreException {
@@ -217,7 +234,6 @@ public class ConfigurationProcessor implements InitializingBean {
 
 		// otherwise start configuration processing
 		return generateBeanDefinitions(beanName, clazz);
-
 	}
 
 	/**
@@ -360,10 +376,6 @@ public class ConfigurationProcessor implements InitializingBean {
 				configurerClass, beanCreationMethod, beanAnnotation);
 		}
 
-		// Not currently used
-		// addPropertiesIndicatedByGetterInvocations(configurerClass,
-		// beanCreationMethod, rbd);
-
 		// allow registration bypass
 		if (beanDefinitionRegistration == null || beanDefinitionRegistration.rbd == null) {
 			return count;
@@ -381,88 +393,9 @@ public class ConfigurationProcessor implements InitializingBean {
 
 		return count;
 	}
-
+	
 	public BytecodeConfigurationEnhancer getConfigurationEnhancer() {
 		return configurationEnhancer;
 	}
 
-	/**
-	 * Indicate the naming strategy used for creating the bean names during
-	 * processing.
-	 * 
-	 * @param beanNamingStrategy bean naming strategy implementation
-	 */
-	public void setBeanNamingStrategy(BeanNamingStrategy beanNamingStrategy) {
-		this.beanNamingStrategy = beanNamingStrategy;
-	}
-
-	/**
-	 * @param configurationListenerRegistry The configurationListenerRegistry to
-	 * set.
-	 */
-	public void setConfigurationListenerRegistry(ConfigurationListenerRegistry configurationListenerRegistry) {
-		this.configurationListenerRegistry = configurationListenerRegistry;
-	}
-
-	/**
-	 * Add properties indicated by getter invocations as found by ASM analysis
-	 * 
-	 * @param configurerClass
-	 * @param beanCreationMethod
-	 * @param rbd
-	 */
-	// private void addPropertiesIndicatedByGetterInvocations(Class<?>
-	// configurerClass, Method beanCreationMethod, RootBeanDefinition rbd) {
-	// try {
-	// String pathString = getPathString(configurerClass);
-	// System.out.println("pathString=" + pathString);
-	// Resource r = resourceLoader.getResource(pathString);
-	// System.out.println(r);
-	// if (r.exists()) {
-	// InputStream is = r.getInputStream();
-	// if (is != null) {
-	// ClassReader cr = new ClassReader(is);
-	// GetterInvocationFindingClassVisitor gifcv = new
-	// GetterInvocationFindingClassVisitor();
-	// cr.accept(gifcv, false);
-	//					
-	// // Add additional properties to bean definition based
-	// // on invoked getters
-	// List<String> gettersInvoked =
-	// gifcv.getGetterInvocations().get(beanCreationMethod.getName());
-	// if (gettersInvoked != null) {
-	// for (String nameOfGetterInvoked : gettersInvoked) {
-	// System.err.println(nameOfGetterInvoked);
-	// String propertyName =
-	// getBeanPropertyNameForMethodName(nameOfGetterInvoked);
-	// rbd.getPropertyValues().addPropertyValue(new PropertyValue(propertyName,
-	// resolvePropertyValue(beanCreationMethod.getName(), propertyName)));
-	// }
-	// }
-	// }
-	// }
-	// }
-	// catch (IOException ex) {
-	// ex.printStackTrace();
-	// }
-	// }
-	//	
-	// protected Object resolvePropertyValue(String name, String propertyName) {
-	// throw new UnsupportedOperationException("resolve " + name + "." +
-	// propertyName);
-	// }
-	//
-	// // TODO must have this somewhere
-	// private static String getBeanPropertyNameForMethodName(String methodName)
-	// {
-	// return Character.toLowerCase(methodName.charAt(3)) +
-	// methodName.substring(4);
-	// }
-	//
-	// private String getPathString(Class<?> configurerClass) {
-	// String className = configurerClass.getName();
-	// className = "classpath:" + className;
-	// className = StringUtils.replace(className, ".", "/");
-	// return className + ".class";
-	// }
 }
