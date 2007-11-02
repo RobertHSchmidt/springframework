@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2006 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.config.java.context;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.parsing.AbstractClassScanningBeanDefinitionReader;
-import org.springframework.config.java.parsing.ConfigurationClassScanningBeanDefinitionReader;
 import org.springframework.config.java.process.ConfigurationPostProcessor;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.core.io.Resource;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 /**
  * Convenient superclass for ApplicationContext implementations that read bean
@@ -67,19 +70,28 @@ public abstract class AbstractAnnotationApplicationContext extends AbstractRefre
 	 */
 	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {
-		AbstractClassScanningBeanDefinitionReader reader = createAnnotationBeanDefinitionReader(beanFactory);
-		reader.setResourceLoader(this);
-
-		loadBeanDefinitions(reader);
-
-		// treat Class case separately
-		loadBeanDefinitions(beanFactory, getConfigClasses());
+		
+		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+		scanner.addIncludeFilter(new AnnotationTypeFilter(Configuration.class));
+		scanner.setResourceLoader(this);
+		
+		if (getConfigClasses() != null && getConfigClasses().length > 0) {
+			for (Class<?> cz : getConfigClasses()) {
+				beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
+			}
+		}
+		else {
+			// Scan classpath
+			for (String location : getBasePackages()) {
+				Set<BeanDefinition> beandefs = scanner.findCandidateComponents(location);
+				for (BeanDefinition bd : beandefs) {
+					//System.out.println("----" + bd.getBeanClassName());
+					beanFactory.registerBeanDefinition(bd.getBeanClassName(), bd);
+				}
+			}
+		}
 	}
 
-	protected AbstractClassScanningBeanDefinitionReader createAnnotationBeanDefinitionReader(
-			DefaultListableBeanFactory beanFactory) {
-		return new ConfigurationClassScanningBeanDefinitionReader(beanFactory);
-	}
 
 	/**
 	 * Load bean definitions with the given
@@ -99,17 +111,17 @@ public abstract class AbstractAnnotationApplicationContext extends AbstractRefre
 	 * @see #getResources
 	 * @see #getResourcePatternResolver
 	 */
-	protected void loadBeanDefinitions(AbstractClassScanningBeanDefinitionReader reader) throws BeansException,
-			IOException {
-		Resource[] configResources = getConfigResources();
-		if (configResources != null) {
-			reader.loadBeanDefinitions(configResources);
-		}
-		String[] configLocations = getConfigLocations();
-		if (configLocations != null) {
-			reader.loadBeanDefinitions(configLocations);
-		}
-	}
+//	protected void loadBeanDefinitions(AbstractClassScanningBeanDefinitionReader reader) throws BeansException,
+//			IOException {
+//		Resource[] configResources = getConfigResources();
+//		if (configResources != null) {
+//			reader.loadBeanDefinitions(configResources);
+//		}
+//		String[] configLocations = getConfigLocations();
+//		if (configLocations != null) {
+//			reader.loadBeanDefinitions(configLocations);
+//		}
+//	}
 
 	/**
 	 * Load bean definitions from configuration classes.
@@ -152,7 +164,7 @@ public abstract class AbstractAnnotationApplicationContext extends AbstractRefre
 	 * Strings.
 	 * 
 	 * @return an array of Resource objects, or <code>null</code> if none
-	 * @see #getConfigLocations()
+	 * @see #getBasePackages()
 	 */
 	protected Resource[] getConfigResources() {
 		return null;
@@ -171,7 +183,7 @@ public abstract class AbstractAnnotationApplicationContext extends AbstractRefre
 	 * @see #getResources
 	 * @see #getResourcePatternResolver
 	 */
-	protected String[] getConfigLocations() {
+	protected String[] getBasePackages() {
 		return null;
 	}
 
@@ -186,7 +198,7 @@ public abstract class AbstractAnnotationApplicationContext extends AbstractRefre
 	 * 'synthetic' classes).
 	 * 
 	 * @return an array of Class objects, or <code>null</code> if none
-	 * @see #getConfigLocations()
+	 * @see #getBasePackages()
 	 */
 	protected Class[] getConfigClasses() {
 		return null;

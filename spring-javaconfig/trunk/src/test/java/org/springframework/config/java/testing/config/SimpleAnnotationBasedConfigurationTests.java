@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2006 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * Simple test which read a Spring configuration based on annotations.
  * 
  * @author Costin Leau
+ * @author Rod Johnson
  * 
  */
 public class SimpleAnnotationBasedConfigurationTests extends TestCase {
@@ -42,17 +43,18 @@ public class SimpleAnnotationBasedConfigurationTests extends TestCase {
 		assertEquals(2, company.getWorkers().size());
 		assertEquals(1, company.getOwners().size());
 
-		assertSame(bf.getBean("rick"), company.getWorkers().iterator().next());
+		assertSame(bf.getBean("mark"), company.getWorkers().iterator().next());
 	}
 
 	public void testSimpleConfigurationBootstrap() throws Exception {
 		ApplicationContext ctx = new AnnotationApplicationContext(SimpleConfiguration.class.getName());
 
-		System.out.println(Arrays.toString(ctx.getBeanDefinitionNames()));
+		//System.out.println(Arrays.toString(ctx.getBeanDefinitionNames()));
 	}
 
 	public void testAnnotationApplicationContext() throws Exception {
-		AnnotationApplicationContext ctx = new AnnotationApplicationContext("**/Sim*Configuration.class");
-		System.out.println(Arrays.toString(ctx.getBeanDefinitionNames()));
+		AnnotationApplicationContext ctx = new AnnotationApplicationContext("org.springframework.config.java.complex");
+		assertTrue("Found configurations and beans", ctx.getBeanDefinitionCount() >= 6);
+		//System.out.println(Arrays.toString(ctx.getBeanDefinitionNames()));
 	}
 }
