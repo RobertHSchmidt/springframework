@@ -100,7 +100,7 @@ public class ConfigurationProcessor implements InitializingBean {
 	private BeanNamingStrategy beanNamingStrategy;
 
 	private boolean initialized = false;
-
+	
 	/**
 	 * Constructor taking an application context as paramater. Suitable for
 	 * programatic use.
@@ -244,11 +244,18 @@ public class ConfigurationProcessor implements InitializingBean {
 	 * @param configurationBeanName name of the bean containing the factory
 	 * methods
 	 * @param configurationClass class of the configurer bean instance
-	 * @return number of bean created
+	 * @return number of bean definitions created
 	 */
 	protected int generateBeanDefinitions(final String configurationBeanName, Class<?> configurationClass) {
-		if (!ProcessUtils.validateConfigurationClass(configurationClass, configurationListenerRegistry))
+		if (!ProcessUtils.validateConfigurationClass(configurationClass, configurationListenerRegistry)) {
 			return 0;
+		}
+		
+		if (configurationClass.getEnclosingClass() != null &&
+				!Modifier.isStatic(configurationClass.getModifiers())) {
+			throw new IllegalArgumentException("Inner configuration class [" + configurationClass.getName() + "] " +
+					"must be static");
+		}
 
 		int beansCreated = 0;
 		AbstractBeanDefinition definition = (AbstractBeanDefinition) owningBeanFactory.getBeanDefinition(configurationBeanName);
@@ -265,8 +272,9 @@ public class ConfigurationProcessor implements InitializingBean {
 				configurationClass);
 		}
 
-		// Only want to consider most specific bean creation method, in the case
+		// Only want to consider the most specific bean creation method, in the case
 		// of overrides
+		
 		// contains the beanNames resolved based on the method signature
 		final Set<String> noArgMethodsSeen = new HashSet<String>();
 		final int[] countFinalReference = new int[] { beansCreated };
@@ -287,7 +295,8 @@ public class ConfigurationProcessor implements InitializingBean {
 
 					if (owningBeanFactory.containsBean(beanName)) {
 						if (!beanAnnotation.allowOverriding()) {
-							throw new IllegalStateException("Already have a bean with name '" + beanName + "'");
+							throw new IllegalStateException("Already have a bean with name '" + beanName + "'; " +
+									"processing configClass [" + configClass.getName() + "]");
 						}
 						else {
 							// Don't emit a bean definition
@@ -313,7 +322,9 @@ public class ConfigurationProcessor implements InitializingBean {
 		// Find inner aspect classes
 		// TODO: need to go up tree? ReflectionUtils.doWithClasses
 		for (Class innerClass : configClass.getDeclaredClasses()) {
-			if (Modifier.isStatic(innerClass.getModifiers())) {
+			if (Modifier.isStatic(innerClass.getModifiers())
+					&& (owningBeanFactory.getBeansOfType(innerClass).size() == 0)
+				) {
 				beansCreated += processClass(innerClass);
 			}
 		}

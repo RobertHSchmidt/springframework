@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.config.java;
 
 import junit.framework.TestCase;
@@ -44,8 +45,7 @@ public class ExternalBeanDependenciesTest extends TestCase {
 		}
 
 		@Bean
-		public TestBean spouseA() {
-			System.out.println("creating spouseA ");
+		public TestBean spouseA() {			
 			return new TestBean("spouseA");
 		}
 
@@ -68,7 +68,7 @@ public class ExternalBeanDependenciesTest extends TestCase {
 
 		@Bean
 		public TestBean spouseB() {
-			System.out.println("creating spouseB ");
+			//System.out.println("creating spouseB ");
 			return new TestBean("spouseB");
 		}
 

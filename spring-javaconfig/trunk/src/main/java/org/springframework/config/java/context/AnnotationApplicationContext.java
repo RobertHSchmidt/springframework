@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2006 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.config.java.context;
 
 import org.springframework.context.ApplicationContext;
@@ -24,11 +25,13 @@ import org.springframework.core.io.Resource;
  * application context definition/metadata directly from a class.
  * 
  * @author Costin Leau
+ * @author Rod Johnson
  * 
+ * TODO should no longer need the superclass
  */
 public class AnnotationApplicationContext extends AbstractAnnotationApplicationContext {
 
-	private String[] configLocations;
+	private String[] basePackages;
 
 	private Resource[] configResources;
 
@@ -39,7 +42,7 @@ public class AnnotationApplicationContext extends AbstractAnnotationApplicationC
 	 * 
 	 * @see #setClassLoader(ClassLoader)
 	 * @see #setConfigClasses(Class[])
-	 * @see #setConfigLocations(String[])
+	 * @see #setBasePackages(String[])
 	 * @see #setConfigResources(Resource[])
 	 */
 	public AnnotationApplicationContext() {
@@ -53,7 +56,7 @@ public class AnnotationApplicationContext extends AbstractAnnotationApplicationC
 	 * 
 	 * @see #setClassLoader(ClassLoader)
 	 * @see #setConfigClasses(Class[])
-	 * @see #setConfigLocations(String[])
+	 * @see #setBasePackages(String[])
 	 * @see #setConfigResources(Resource[])
 	 * 
 	 * @param parent the parent application context
@@ -67,10 +70,10 @@ public class AnnotationApplicationContext extends AbstractAnnotationApplicationC
 	 * is being called).
 	 * 
 	 * 
-	 * @param locations the metadata locations
+	 * @param basePackages the base packages to scan
 	 */
-	public AnnotationApplicationContext(String... locations) {
-		setConfigLocations(locations);
+	public AnnotationApplicationContext(String... basePackages) {
+		setBasePackages(basePackages);
 		refresh();
 	}
 
@@ -86,8 +89,8 @@ public class AnnotationApplicationContext extends AbstractAnnotationApplicationC
 	}
 
 	@Override
-	protected String[] getConfigLocations() {
-		return configLocations;
+	protected String[] getBasePackages() {
+		return basePackages;
 	}
 
 	@Override
@@ -101,17 +104,18 @@ public class AnnotationApplicationContext extends AbstractAnnotationApplicationC
 	}
 
 	/**
-	 * Set the configuration locations from Strings. These will be converted
-	 * into Spring's {@link Resource} using the current ${@link org.springframework.core.io.ResourceLoader}.
+	 * Set the base packages for configurations from Strings. These use the same
+	 * conventions as the component scanning introduced in
+	 * Spring 2.5.
 	 * 
-	 * @param locations
+	 * @param basePackages
 	 */
-	public void setConfigLocations(String... locations) {
-		this.configLocations = locations;
+	public void setBasePackages(String... basePackages) {
+		this.basePackages = basePackages;
 	}
 
 	/**
-	 * Indicate the configuration locations as {@link Resource}s.
+	 * Indicate the configuration locations.
 	 * 
 	 * @param resources
 	 */

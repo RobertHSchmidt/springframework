@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2006 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.config.java.testing;
 
 import org.springframework.config.java.annotation.Bean;
@@ -30,7 +31,7 @@ public class SimpleConfiguration extends ConfigurationSupport {
 	public Company company() {
 		Company company = new Company();
 
-		company.hire(rick());
+		company.hire(mark());
 		company.hire(coliny());
 
 		company.addOwner(rod());
@@ -39,10 +40,10 @@ public class SimpleConfiguration extends ConfigurationSupport {
 		return company;
 	}
 
-	@Bean(aliases = { "ricke", "revans" })
-	public Worker rick() {
+	@Bean(aliases = { "mfisher", "mark.fisher" })
+	public Worker mark() {
 		Worker rick = new Worker();
-		rick.setName("Rick Evans");
+		rick.setName("Mark Fisher");
 		rick.setTitle(JobTitle.Senior);
 		return rick;
 	}

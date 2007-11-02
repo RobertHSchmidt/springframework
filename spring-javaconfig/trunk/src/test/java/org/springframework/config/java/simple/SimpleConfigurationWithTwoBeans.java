@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2006 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.parsing;
 
-import org.springframework.aop.aspectj.TypePatternClassFilter;
+package org.springframework.config.java.simple;
+
+import java.awt.Point;
+
+import org.springframework.beans.TestBean;
+import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Configuration;
 
 /**
+ * 
  * @author Rod Johnson
+ *
  */
-public class TypePatternTypeFilter extends AbstractClassTestingTypeFilter {
-
-	private final TypePatternClassFilter typePatternClassFilter;
-
-	/**
-	 * 
-	 */
-	public TypePatternTypeFilter(String ajTypePattern) {
-		this.typePatternClassFilter = new TypePatternClassFilter(ajTypePattern);
+@Configuration
+public class SimpleConfigurationWithTwoBeans {
+	
+	@Bean
+	public TestBean anyName() {
+		return new TestBean();
+	}
+	
+	@Bean 
+	public Point point() {
+		return new Point(3, 2);
 	}
 
-	@Override
-	protected boolean match(ClassNameVisitor v) {
-		return this.typePatternClassFilter.matches(v.loadClass());
-	}
 }
