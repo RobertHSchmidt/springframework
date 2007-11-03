@@ -16,26 +16,38 @@
 
 package org.springframework.config.java.context;
 
+import java.io.IOException;
+import java.util.Set;
+
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.process.ConfigurationPostProcessor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.Resource;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.context.support.AbstractRefreshableApplicationContext;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 /**
- * Annotation-aware application context. This class extends
- * {@link AbstractAnnotationApplicationContext} and adds support for reading an
- * application context definition/metadata directly from a class.
+ * Annotation-aware application context that looks for classes
+ * annotated with the Configuration annotation and registers
+ * the beans they define.
  * 
  * @author Costin Leau
  * @author Rod Johnson
- * 
- * TODO should no longer need the superclass
  */
-public class AnnotationApplicationContext extends AbstractAnnotationApplicationContext {
+public class AnnotationApplicationContext extends AbstractRefreshableApplicationContext {
 
 	private String[] basePackages;
 
-	private Resource[] configResources;
-
 	private Class[] configClasses;
+	
+	/**
+	 * We delegate to Spring 2.5 and above class scanning support.
+	 */
+	private ClassPathScanningCandidateComponentProvider scanner;
 
 	/**
 	 * Create a new AnnotationApplicationContext w/o any settings.
@@ -43,36 +55,37 @@ public class AnnotationApplicationContext extends AbstractAnnotationApplicationC
 	 * @see #setClassLoader(ClassLoader)
 	 * @see #setConfigClasses(Class[])
 	 * @see #setBasePackages(String[])
-	 * @see #setConfigResources(Resource[])
 	 */
 	public AnnotationApplicationContext() {
-		super();
+		this((ApplicationContext) null);
 	}
 
 	/**
 	 * Create a new AnnotationApplicationContext with the given parent. The
 	 * instance can be further configured before calling {@link #refresh()}.
 	 * 
-	 * 
 	 * @see #setClassLoader(ClassLoader)
 	 * @see #setConfigClasses(Class[])
 	 * @see #setBasePackages(String[])
-	 * @see #setConfigResources(Resource[])
 	 * 
 	 * @param parent the parent application context
 	 */
 	public AnnotationApplicationContext(ApplicationContext parent) {
 		super(parent);
+		registerDefaultPostProcessors();
+		this.scanner = new ClassPathScanningCandidateComponentProvider(false);
+		this.scanner.addIncludeFilter(new AnnotationTypeFilter(Configuration.class));
+		this.scanner.setResourceLoader(this);
 	}
 
 	/**
 	 * Create a new AnnotationApplicationContext from the given locations ({@link #refresh()}
 	 * is being called).
 	 * 
-	 * 
 	 * @param basePackages the base packages to scan
 	 */
 	public AnnotationApplicationContext(String... basePackages) {
+		this((ApplicationContext) null);
 		setBasePackages(basePackages);
 		refresh();
 	}
@@ -84,21 +97,16 @@ public class AnnotationApplicationContext extends AbstractAnnotationApplicationC
 	 * @param classes
 	 */
 	public AnnotationApplicationContext(Class... classes) {
+		this((ApplicationContext) null);
 		setConfigClasses(classes);
 		refresh();
 	}
+	
 
-	@Override
 	protected String[] getBasePackages() {
 		return basePackages;
 	}
 
-	@Override
-	protected Resource[] getConfigResources() {
-		return configResources;
-	}
-
-	@Override
 	protected Class[] getConfigClasses() {
 		return configClasses;
 	}
@@ -114,14 +122,6 @@ public class AnnotationApplicationContext extends AbstractAnnotationApplicationC
 		this.basePackages = basePackages;
 	}
 
-	/**
-	 * Indicate the configuration locations.
-	 * 
-	 * @param resources
-	 */
-	public void setConfigResources(Resource... resources) {
-		this.configResources = resources;
-	}
 
 	/**
 	 * Indicate the {@link Class}es that hold annotations suitable for
@@ -130,5 +130,66 @@ public class AnnotationApplicationContext extends AbstractAnnotationApplicationC
 	 */
 	public void setConfigClasses(Class... classes) {
 		this.configClasses = classes;
+	}
+	
+	/**
+	 * Register the default post processors used for parsing Spring classes.
+	 * 
+	 */
+	protected void registerDefaultPostProcessors() {
+		addBeanFactoryPostProcessor(new ConfigurationPostProcessor());
+	}
+
+	
+	@Override
+	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {						
+		if (getConfigClasses() != null && getConfigClasses().length > 0) {
+			for (Class<?> cz : getConfigClasses()) {
+				beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
+			}
+		}
+		else {
+			// Scan classpath
+			for (String location : getBasePackages()) {
+				Set<BeanDefinition> beandefs = this.scanner.findCandidateComponents(location);
+				for (BeanDefinition bd : beandefs) {
+					//System.out.println("----" + bd.getBeanClassName());
+					beanFactory.registerBeanDefinition(bd.getBeanClassName(), bd);
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * Load bean definitions from configuration classes.
+	 * <p>
+	 * Since Class objects cannot be easily translated into a byte array or
+	 * InputStream, they have be parsed separately.
+	 * 
+	 * @param configClasses
+	 */
+	protected int loadBeanDefinitions(DefaultListableBeanFactory beanFactory, Class... configClasses) {
+		int loadedDefs = 0;
+		if (configClasses != null) {
+			for (Class clazz : configClasses) {
+				if (containsConfiguration(clazz)) {
+					loadedDefs++;
+					beanFactory.registerBeanDefinition(clazz.getName(), new RootBeanDefinition(clazz));
+				}
+			}
+		}
+
+		return loadedDefs;
+	}
+
+	/**
+	 * Discriminator between configuration and non-configuration classes.
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	private boolean containsConfiguration(Class<?> clazz) {
+		return clazz.isAnnotationPresent(Configuration.class);
 	}
 }
