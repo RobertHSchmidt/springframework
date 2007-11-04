@@ -43,8 +43,8 @@ import org.springframework.config.java.support.BytecodeConfigurationEnhancer;
 import org.springframework.config.java.support.MethodBeanWrapper;
 import org.springframework.config.java.support.cglib.CglibConfigurationEnhancer;
 import org.springframework.config.java.util.ClassUtils;
-import org.springframework.config.java.valuesource.CompositePropertySource;
-import org.springframework.config.java.valuesource.MessageSourcePropertiesSource;
+import org.springframework.config.java.valuesource.CompositeValueSource;
+import org.springframework.config.java.valuesource.MessageSourceValueSource;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -104,7 +104,7 @@ public class ConfigurationProcessor implements InitializingBean {
 
 	private BeanNamingStrategy beanNamingStrategy;
 	
-	private CompositePropertySource valueSource = new CompositePropertySource();
+	private CompositeValueSource valueSource = new CompositeValueSource();
 
 	private boolean initialized = false;
 	
@@ -279,7 +279,7 @@ public class ConfigurationProcessor implements InitializingBean {
 			// TODO parameterize or get from app context
 			ms.setResourceLoader(new DefaultResourceLoader());
 			ms.setBasenames(rbs.value());
-			this.valueSource.add(new MessageSourcePropertiesSource(ms));
+			this.valueSource.add(new MessageSourceValueSource(ms));
 			// TODO how do we know the properties were found?
 		}
 

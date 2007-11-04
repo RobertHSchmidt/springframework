@@ -16,32 +16,31 @@
 
 package org.springframework.config.java.valuesource;
 
-import java.util.LinkedList;
-import java.util.List;
+import org.springframework.context.MessageSource;
 
 /**
  * @author Rod Johnson
  * 
  */
-public class CompositePropertySource implements PropertySource {
+public class MessageSourceValueSource extends AbstractStringBasedValueSource {
 
-	private List<PropertySource> propertySources = new LinkedList<PropertySource>();
+	private final MessageSource messageSource;
 
-	public void add(PropertySource ps) {
-		this.propertySources.add(ps);
+	/**
+	 * @param properties
+	 */
+	public MessageSourceValueSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
 	}
 
-	public <T> T resolve(String name, Class<?> requiredType) {
-		for (PropertySource ps : propertySources) {
-			try {
-				return ps.resolve(name, requiredType);
-			}
-			catch (PropertyDefinitionException ex) {
-				// Keep going to next property source
-			}
+	@Override
+	public String getString(String name) throws ValueResolutionException {
+		// TODO what to do with locale?
+		String value = messageSource.getMessage(name, null, null);
+		if (value == null) {
+			throw new ValueResolutionException(name, "No definition in properties file");
 		}
-		// If we get here, we didn't find a definition in any property source
-		throw new PropertyDefinitionException(name, "Cannot resolve property '" + name + "'");
+		return value;
 	}
 
 }

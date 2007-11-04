@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2006 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,27 +17,19 @@
 package org.springframework.config.java.valuesource;
 
 /**
+ * Source of strongly typed externalized values
  * @author Rod Johnson
  * 
  */
-// TODO should this extend BeansException or a subclass?
-public class PropertyDefinitionException extends RuntimeException {
-
-	private static final long serialVersionUID = 1L;
-
-	private final String name;
+public interface ValueSource {
 
 	/**
-	 * @param msg
-	 * @param ex
+	 * 
+	 * @param name name of the property
+	 * @param requiredType work around Java type erasure
+	 * @throws ValueResolutionException if the property is not in the
+	 * required format or the value is not found
 	 */
-	public PropertyDefinitionException(String name, String message) {
-		super(message);
-		this.name = name;
-	}
-
-	public String getPropertyName() {
-		return this.name;
-	}
+	<T> T resolve(String name, Class<?> requiredType) throws ValueResolutionException;
 
 }

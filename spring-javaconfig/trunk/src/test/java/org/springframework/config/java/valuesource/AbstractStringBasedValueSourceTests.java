@@ -16,20 +16,28 @@
 
 package org.springframework.config.java.valuesource;
 
-/**
- * Source of strongly typed property values
- * @author Rod Johnson
- * 
- * TODO rename ValueSource, SVN willing...
- */
-public interface PropertySource {
+import junit.framework.TestCase;
 
-	/**
-	 * 
-	 * @param name
-	 * @throws PropertyDefinitionException if the property is not in the
-	 * required format or the value is not found
-	 */
-	<T> T resolve(String name, Class<?> requiredType) throws PropertyDefinitionException;
+/**
+ * 
+ * @author Rod Johnson
+ *
+ */
+public class AbstractStringBasedValueSourceTests extends TestCase {
+	
+	class Foo extends AbstractStringBasedValueSource {
+		@Override
+		public String getString(String name) throws ValueResolutionException {
+			// TODO Auto-generated method stub
+			return "foo";
+		}
+	}
+	
+	public void testSimpleStringBasedProperty() {
+		Foo f = new Foo();
+		String s = f.resolve("frog", String.class);
+		//Object o = f.resolve("woeirowieur", Object.class);
+	}
+	
 
 }

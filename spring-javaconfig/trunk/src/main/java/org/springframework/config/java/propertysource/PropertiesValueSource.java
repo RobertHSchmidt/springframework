@@ -16,30 +16,30 @@
 
 package org.springframework.config.java.valuesource;
 
+import java.util.Properties;
 
 /**
  * @author Rod Johnson
  * 
  */
-public abstract class AbstractStringBasedPropertySource implements PropertySource {
+public class PropertiesValueSource extends AbstractStringBasedValueSource {
 
-	public <T> T resolve(String name, Class<?> requiredType) throws PropertyDefinitionException {
-		String rawValue = getString(name);
-		
-		// TODO do proper type conversion using Spring property editors, not
-		// this horrible hack
-		
-		if (requiredType == String.class) {
-			return (T) rawValue;
-		}
-		if (requiredType == Integer.class || requiredType == int.class) {
-			return (T) (Integer) Integer.parseInt(rawValue);
-		}
-		throw new UnsupportedOperationException("Property conversion not yet implemented");
+	private Properties properties;
+
+	/**
+	 * @param properties
+	 */
+	public PropertiesValueSource(Properties properties) {
+		this.properties = properties;
 	}
 
-	public abstract String getString(String name) throws PropertyDefinitionException;
-	
-
+	@Override
+	public String getString(String name) throws ValueResolutionException {
+		String value = properties.getProperty(name);
+		if (value == null) {
+			throw new ValueResolutionException(name, "No definition in properties file");
+		}
+		return value;
+	}
 
 }
