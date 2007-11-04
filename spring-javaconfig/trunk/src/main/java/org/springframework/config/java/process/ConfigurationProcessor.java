@@ -32,6 +32,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.listener.ConfigurationListener;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
@@ -42,8 +43,12 @@ import org.springframework.config.java.support.BytecodeConfigurationEnhancer;
 import org.springframework.config.java.support.MethodBeanWrapper;
 import org.springframework.config.java.support.cglib.CglibConfigurationEnhancer;
 import org.springframework.config.java.util.ClassUtils;
+import org.springframework.config.java.valuesource.CompositePropertySource;
+import org.springframework.config.java.valuesource.MessageSourcePropertiesSource;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
@@ -98,6 +103,8 @@ public class ConfigurationProcessor implements InitializingBean {
 	private BytecodeConfigurationEnhancer configurationEnhancer;
 
 	private BeanNamingStrategy beanNamingStrategy;
+	
+	private CompositePropertySource valueSource = new CompositePropertySource();
 
 	private boolean initialized = false;
 	
@@ -164,7 +171,7 @@ public class ConfigurationProcessor implements InitializingBean {
 		// it
 		// depends on the childFactory instance which is internal
 		CglibConfigurationEnhancer enhancer = new CglibConfigurationEnhancer(this.owningBeanFactory, this.childFactory,
-				beanNamingStrategy, wrapper);
+				beanNamingStrategy, wrapper, valueSource);
 
 		this.configurationEnhancer = enhancer;
 
@@ -222,9 +229,7 @@ public class ConfigurationProcessor implements InitializingBean {
 	}
 
 	public int processBean(String beanName) throws BeanDefinitionStoreException {
-
 		checkInit();
-
 		Assert.notNull(beanName, "beanName is required");
 		Class<?> clazz = ProcessUtils.getBeanClass(beanName, owningBeanFactory);
 
@@ -261,10 +266,22 @@ public class ConfigurationProcessor implements InitializingBean {
 		AbstractBeanDefinition definition = (AbstractBeanDefinition) owningBeanFactory.getBeanDefinition(configurationBeanName);
 
 		// update the configuration bean definition first
-		Class enhancedClass = configurationEnhancer.enhanceConfiguration(configurationClass);
+		Class<?> enhancedClass = configurationEnhancer.enhanceConfiguration(configurationClass);
 		definition.setBeanClass(enhancedClass);
 
-		final Class configClass = configurationClass;
+		final Class<?> configClass = configurationClass;
+		
+		// Add any properties files referenced by the class
+		// TODO may not be cleanest to do this hear
+		if (configClass.isAnnotationPresent(ResourceBundles.class)) {
+			ResourceBundles rbs = configClass.getAnnotation(ResourceBundles.class);
+			ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
+			// TODO parameterize or get from app context
+			ms.setResourceLoader(new DefaultResourceLoader());
+			ms.setBasenames(rbs.value());
+			this.valueSource.add(new MessageSourcePropertiesSource(ms));
+			// TODO how do we know the properties were found?
+		}
 
 		// Callback listeners
 		for (ConfigurationListener cl : configurationListenerRegistry.getConfigurationListeners()) {
