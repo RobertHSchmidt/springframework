@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.config.java.support.cglib;
 
 import java.lang.reflect.Method;
@@ -41,7 +42,7 @@ import org.springframework.util.Assert;
  * @author Rod Johnson
  * @author Costin Leau
  */
-public class BeanMethodMethodInterceptor implements MethodInterceptor {
+class BeanMethodMethodInterceptor implements MethodInterceptor {
 
 	private static final Log log = LogFactory.getLog(BeanMethodMethodInterceptor.class);
 
