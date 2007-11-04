@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2006 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,10 @@ import org.springframework.aop.Advisor;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.BeanCurrentlyInCreationException;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.aop.SpringAdvisor;
 import org.springframework.config.java.listener.ConfigurationListenerSupport;
+import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**
@@ -43,7 +42,7 @@ public class SpringAdvisorConfigurationListener extends ConfigurationListenerSup
 
 	@Override
 	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
-			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+			ConfigurationProcessor cp,
 			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
 
 		if (AnnotationUtils.findAnnotation(m, SpringAdvisor.class) != null) {
@@ -56,11 +55,10 @@ public class SpringAdvisorConfigurationListener extends ConfigurationListenerSup
 	}
 
 	@Override
-	public boolean processBeanMethodReturnValue(ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childFactory, Object originallyCreatedBean, Method method, ProxyFactory pf) {
+	public boolean processBeanMethodReturnValue(ConfigurationProcessor cp, Object originallyCreatedBean, Method method, ProxyFactory pf) {
 		for (String advisorName : advisorBeanNames) {
 			try {
-				Advisor advisor = (Advisor) childFactory.getBean(advisorName);
+				Advisor advisor = (Advisor) cp.getChildBeanFactory().getBean(advisorName);
 				if (AopUtils.canApply(advisor, originallyCreatedBean.getClass())) {
 					pf.addAdvisor(advisor);
 				}

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.config.java.listener.aop;
 
 import java.lang.reflect.Method;
@@ -20,14 +21,12 @@ import java.lang.reflect.Method;
 import org.springframework.aop.framework.autoproxy.AutoProxyUtils;
 import org.springframework.aop.scope.ScopedProxyFactoryBean;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.listener.ConfigurationListenerSupport;
+import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.config.java.util.DefaultScopes;
 import org.springframework.config.java.util.ScopeUtils;
 import org.springframework.util.Assert;
@@ -52,7 +51,7 @@ public class ScopedProxyConfigurationListener extends ConfigurationListenerSuppo
 	 */
 	@Override
 	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
-			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+			ConfigurationProcessor cp,
 			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
 
 		int count = 0;
@@ -98,10 +97,10 @@ public class ScopedProxyConfigurationListener extends ConfigurationListenerSuppo
 			// ConfigurationProcessor#generateBeanDefinitionFromBeanCreationMethod
 			// (line 353)
 			if (beanDefinitionRegistration.hide) {
-				childBeanFactory.registerBeanDefinition(targetBeanName, targetDefinition);
+				cp.getChildBeanFactory().registerBeanDefinition(targetBeanName, targetDefinition);
 			}
 			else {
-				((BeanDefinitionRegistry) beanFactory).registerBeanDefinition(targetBeanName, targetDefinition);
+				cp.getBeanDefinitionRegistry().registerBeanDefinition(targetBeanName, targetDefinition);
 			}
 			// replace the original bean definition with the target one
 			beanDefinitionRegistration.rbd = scopedProxyDefinition;
@@ -117,7 +116,7 @@ public class ScopedProxyConfigurationListener extends ConfigurationListenerSuppo
 	 * java.lang.String, java.lang.Class, java.lang.reflect.Method)
 	 */
 	@Override
-	public int otherMethod(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+	public int otherMethod(ConfigurationProcessor cp,
 			String configurerBeanName, Class configurerClass, Method m) {
 		// catch invalid declarations
 		if (m.isAnnotationPresent(ScopedProxy.class))

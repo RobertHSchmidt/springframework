@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2006 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,9 @@ import org.springframework.aop.Pointcut;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.listener.ConfigurationListenerSupport;
+import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.core.Ordered;
 
 /**
@@ -61,13 +61,12 @@ public abstract class AbstractAopConfigurationListener extends ConfigurationList
 	}
 
 	@Override
-	public boolean processBeanMethodReturnValue(ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childFactory, Object originallyCreatedBean, Method method, ProxyFactory pf) {
+	public boolean processBeanMethodReturnValue(ConfigurationProcessor cp, Object originallyCreatedBean, Method method, ProxyFactory pf) {
 		int added = 0;
 		for (String adviceName : pointcuts.keySet()) {
 			Pointcut pc = pointcuts.get(adviceName);
 			if (AopUtils.canApply(pc, originallyCreatedBean.getClass())) {
-				Advice advice = (Advice) childFactory.getBean(adviceName);
+				Advice advice = (Advice) cp.getChildBeanFactory().getBean(adviceName);
 				DefaultPointcutAdvisor a = new DefaultPointcutAdvisor(pc, advice);
 
 				// Order advisors if necessary

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2006 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,8 @@ import org.springframework.aop.aspectj.annotation.AspectJAdvisorFactory;
 import org.springframework.aop.aspectj.annotation.BeanFactoryAspectInstanceFactory;
 import org.springframework.aop.aspectj.annotation.NotAnAtAspectException;
 import org.springframework.aop.aspectj.annotation.ReflectiveAspectJAdvisorFactory;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.process.ConfigurationProcessor;
 
 /**
  * Configuration listener that processes AspectJ aspects.
@@ -51,8 +50,7 @@ public class AspectJAdviceConfigurationListener extends AbstractAopConfiguration
 	 * Check whether inheritance hierarchy is consistent
 	 */
 	@Override
-	public int configurationClass(ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childBeanFactory, String configurerBeanName, Class configurerClass) {
+	public int configurationClass(ConfigurationProcessor cp, String configurerBeanName, Class configurerClass) {
 		if (aspectJAdvisorFactory.isAspect(configurerClass)) {
 			aspectJAdvisorFactory.validate(configurerClass);
 		}
@@ -60,8 +58,7 @@ public class AspectJAdviceConfigurationListener extends AbstractAopConfiguration
 	}
 
 	@Override
-	public int otherMethod(ConfigurableListableBeanFactory beanFactory,
-			final DefaultListableBeanFactory childBeanFactory, String configurerBeanName, final Class configurerClass,
+	public int otherMethod(ConfigurationProcessor cp, String configurerBeanName, final Class configurerClass,
 			Method aspectJAdviceMethod) {
 
 		int count = 0;
@@ -82,7 +79,7 @@ public class AspectJAdviceConfigurationListener extends AbstractAopConfiguration
 		Advisor pa = aspectJAdvisorFactory.getAdvisor(/* configurerClass, */aspectJAdviceMethod,
 		// new PrototypeAspectInstanceFactory(childBeanFactory,
 			// getConfigurerBeanName(configurerClass)));
-			new BeanFactoryAspectInstanceFactory(childBeanFactory, getConfigurerBeanName(configurerClass),
+			new BeanFactoryAspectInstanceFactory(cp.getChildBeanFactory(), getConfigurerBeanName(configurerClass),
 					configurerClass), declarationOrderInAspect, aspectName);
 
 		// TODO should handle introductions also?
@@ -97,7 +94,7 @@ public class AspectJAdviceConfigurationListener extends AbstractAopConfiguration
 				return count;
 			}
 
-			addAdvice(adviceName, ((PointcutAdvisor) pa).getPointcut(), advice, childBeanFactory);
+			addAdvice(adviceName, ((PointcutAdvisor) pa).getPointcut(), advice, cp.getChildBeanFactory());
 			// added the advice as singleton
 			count++;
 		}

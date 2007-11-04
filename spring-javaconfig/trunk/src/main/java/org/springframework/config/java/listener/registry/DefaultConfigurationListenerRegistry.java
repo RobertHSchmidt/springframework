@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2006 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,12 @@ import java.util.List;
 
 import org.springframework.config.java.listener.AutoBeanConfigurationListener;
 import org.springframework.config.java.listener.ConfigurationListener;
+import org.springframework.config.java.listener.ResourceBundlesConfigurationListener;
 import org.springframework.config.java.listener.aop.AspectJAdviceConfigurationListener;
 import org.springframework.config.java.listener.aop.ScopedProxyConfigurationListener;
 import org.springframework.config.java.listener.aop.SpringAdviceConfigurationListener;
 import org.springframework.config.java.listener.aop.SpringAdvisorConfigurationListener;
 import org.springframework.config.java.listener.aop.targetsource.HotSwapConfigurationListener;
-
 
 /**
  * Default ConfigurationListenerRegistry implementation.
@@ -38,6 +38,7 @@ public class DefaultConfigurationListenerRegistry implements ConfigurationListen
 
 	public DefaultConfigurationListenerRegistry() {
 		registerConfigurationListener(new AutoBeanConfigurationListener());
+		registerConfigurationListener(new ResourceBundlesConfigurationListener());
 		registerConfigurationListener(new HotSwapConfigurationListener());
 		registerConfigurationListener(new SpringAdvisorConfigurationListener());
 		registerConfigurationListener(new SpringAdviceConfigurationListener());
