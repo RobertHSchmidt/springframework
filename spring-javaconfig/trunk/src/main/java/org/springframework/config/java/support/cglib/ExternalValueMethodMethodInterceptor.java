@@ -22,6 +22,7 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import org.springframework.config.java.annotation.ExternalValue;
+import org.springframework.config.java.valuesource.ValueResolutionException;
 import org.springframework.config.java.valuesource.ValueSource;
 
 /**
@@ -49,12 +50,24 @@ public class ExternalValueMethodMethodInterceptor implements MethodInterceptor {
 		String name = ev.value();
 		if ("".equals(name)) {
 			name = m.getName();
+			// Strip property name if needed
 			if (name.startsWith("get")) {
 				name = Character.toLowerCase(name.charAt(3)) + name.substring(4);
 			}
 		}
 		
-		Object resolved = valueSource.resolve(name, m.getReturnType());
-		return resolved;
+		try {
+			return valueSource.resolve(name, m.getReturnType());
+		}
+		catch (ValueResolutionException ve) {
+			// Look for a concrete implementation
+			try {
+				return mp.invokeSuper(o, args);
+			}
+			catch (AbstractMethodError ex) {
+				// There was no implementation in the superclass
+				throw ve;
+			}
+		}
 	}
 }

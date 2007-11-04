@@ -19,6 +19,7 @@ package org.springframework.config.java;
 import junit.framework.TestCase;
 
 import org.springframework.beans.TestBean;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
@@ -41,7 +42,26 @@ public class ExternalValueTests extends TestCase {
 		public TestBean rod() {
 			TestBean rod = new TestBean();
 			rod.setName(getName());
-			rod.setAge(age());
+			rod.setAge(ignoreThisNameDueToAnnotationValue());
+			return rod;
+		}
+		
+		@ExternalValue
+		public abstract String getName();
+		
+		@ExternalValue("age")
+		public abstract int ignoreThisNameDueToAnnotationValue();
+		
+	}
+	
+	@Configuration
+	@ResourceBundles("classpath:/org/springframework/config/java/simple") 
+	static abstract class DefaultValues {
+		@Bean
+		public TestBean rod() {
+			TestBean rod = new TestBean();
+			rod.setName(getName());
+			rod.setAge(otherNumber());
 			return rod;
 		}
 		
@@ -49,7 +69,25 @@ public class ExternalValueTests extends TestCase {
 		public abstract String getName();
 		
 		@ExternalValue
-		public abstract int age();
+		public int otherNumber() {
+			return 25;
+		}
+		
+	}
+	
+	@Configuration
+	@ResourceBundles("classpath:/org/springframework/config/java/simple") 
+	static abstract class MissingValues {
+		@Bean
+		public TestBean rod() {
+			TestBean rod = new TestBean();
+			rod.setName(unresolved());
+			return rod;
+		}
+		
+		@ExternalValue
+		public abstract String unresolved();
+
 		
 	}
 
@@ -67,6 +105,32 @@ public class ExternalValueTests extends TestCase {
 		configurationProcessor.processClass(AbstractConfigurationDependsOnProperties.class);
 		TestBean rod = (TestBean) bf.getBean("rod");
 		assertEquals("int property must be resolved correctly", 37, rod.getAge());
+	}
+	
+	public void testDefaultValueInImplementationBody() throws Exception {
+		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
+		configurationProcessor.processClass(DefaultValues.class);
+		TestBean rod = (TestBean) bf.getBean("rod");
+		assertEquals("int property must default correctly if there's a concrete method", 25, rod.getAge());
+	}
+	
+	/**
+	 * @throws Exception
+	 */
+	public void testUnresolved() throws Exception {
+		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
+		try {
+			configurationProcessor.processClass(MissingValues.class);
+			bf.getBean("rod");
+			// TODO do we want to fail earlier than this?
+			
+			fail();
+		}
+		catch (BeanCreationException ex) {
+			// Ok
+		}
 	}
 
 }

@@ -16,12 +16,13 @@
 
 package org.springframework.config.java.valuesource;
 
+import org.springframework.beans.factory.BeanDefinitionStoreException;
+
 /**
  * @author Rod Johnson
  * 
  */
-// TODO should this extend BeansException or a subclass?
-public class ValueResolutionException extends RuntimeException {
+public class ValueResolutionException extends BeanDefinitionStoreException {
 
 	private static final long serialVersionUID = 1L;
 
@@ -35,8 +36,13 @@ public class ValueResolutionException extends RuntimeException {
 		super(message);
 		this.name = name;
 	}
+	
+	public ValueResolutionException(String name, Throwable t) {
+		super(name, t);
+		this.name = name;
+	}
 
-	public String getPropertyName() {
+	public String getValueName() {
 		return this.name;
 	}
 
