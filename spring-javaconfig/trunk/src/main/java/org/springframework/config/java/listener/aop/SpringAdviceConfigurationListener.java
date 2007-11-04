@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2006 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,9 @@ import java.lang.reflect.Method;
 
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.aspectj.AspectJExpressionPointcut;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.aop.SpringAdvice;
+import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
@@ -52,7 +51,7 @@ public class SpringAdviceConfigurationListener extends AbstractAopConfigurationL
 
 	@Override
 	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
-			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+			ConfigurationProcessor cp,
 			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
 
 		SpringAdvice springAdvice = AnnotationUtils.findAnnotation(m, SpringAdvice.class);
@@ -82,7 +81,7 @@ public class SpringAdviceConfigurationListener extends AbstractAopConfigurationL
 		else {
 			pc = createSpringPointcut(springAdvice, m);
 		}
-		addAdvice(adviceName, pc, childBeanFactory);
+		addAdvice(adviceName, pc, cp.getChildBeanFactory());
 
 		return 0;
 	}

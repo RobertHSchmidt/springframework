@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2006 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.config.java.listener;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
@@ -42,7 +42,7 @@ public class AutoBeanConfigurationListener extends ConfigurationListenerSupport 
 	}
 
 	@Override
-	public int otherMethod(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+	public int otherMethod(ConfigurationProcessor configurationProcessor,
 			String configurerBeanName, Class configurerClass, Method m) {
 		AutoBean autoBean = AnnotationUtils.findAnnotation(m, AutoBean.class);
 		int count = 0;
@@ -54,18 +54,16 @@ public class AutoBeanConfigurationListener extends ConfigurationListenerSupport 
 			}
 
 			// make sure the cast actually works
-			Assert.isInstanceOf(BeanDefinitionRegistry.class, beanFactory);
-
-			BeanDefinitionRegistry bdr = (BeanDefinitionRegistry) beanFactory;
+			Assert.isInstanceOf(BeanDefinitionRegistry.class, configurationProcessor.getOwningBeanFactory());
 
 			RootBeanDefinition bd = new RootBeanDefinition(m.getReturnType());
 			bd.setAutowireMode(autoBean.autowire().value());
 			if (Modifier.isPublic(m.getModifiers())) {
-				bdr.registerBeanDefinition(m.getName(), bd);
+				configurationProcessor.getBeanDefinitionRegistry().registerBeanDefinition(m.getName(), bd);
 			}
 			else {
 				// Hide the bean so that it's not publically visible
-				childBeanFactory.registerBeanDefinition(m.getName(), bd);
+				configurationProcessor.getChildBeanFactory().registerBeanDefinition(m.getName(), bd);
 			}
 			// one bean definition created
 			count++;

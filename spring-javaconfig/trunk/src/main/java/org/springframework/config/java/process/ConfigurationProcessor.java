@@ -32,7 +32,6 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.listener.ConfigurationListener;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
@@ -44,10 +43,9 @@ import org.springframework.config.java.support.MethodBeanWrapper;
 import org.springframework.config.java.support.cglib.CglibConfigurationEnhancer;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.config.java.valuesource.CompositeValueSource;
-import org.springframework.config.java.valuesource.MessageSourceValueSource;
+import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.ResourceLoaderAware;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
@@ -139,6 +137,10 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	public void setResourceLoader(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
 	}
+	
+	public ResourceLoader getResourceLoader() {
+		return resourceLoader;
+	}
 
 	/**
 	 * Indicate the naming strategy used for creating the bean names during
@@ -156,6 +158,30 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 */
 	public void setConfigurationListenerRegistry(ConfigurationListenerRegistry configurationListenerRegistry) {
 		this.configurationListenerRegistry = configurationListenerRegistry;
+	}
+	
+	public ConfigurationListenerRegistry getConfigurationListenerRegistry() {
+		return configurationListenerRegistry;
+	}
+	
+	public BytecodeConfigurationEnhancer getConfigurationEnhancer() {
+		return configurationEnhancer;
+	}
+
+	public BeanDefinitionRegistry getBeanDefinitionRegistry() {
+		return (BeanDefinitionRegistry) getOwningBeanFactory();
+	}
+	
+	public void addValueSource(ValueSource vs) {
+		this.valueSource.add(vs);
+	}
+	
+	public ConfigurableListableBeanFactory getOwningBeanFactory() {
+		return owningBeanFactory;
+	}
+	
+	public DefaultListableBeanFactory getChildBeanFactory() {
+		return childFactory;
 	}
 
 	/*
@@ -176,8 +202,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(owningBeanFactory);
 
-		MethodBeanWrapper wrapper = new MethodBeanWrapper(owningBeanFactory, childFactory,
-				configurationListenerRegistry);
+		MethodBeanWrapper wrapper = new MethodBeanWrapper(this, childFactory);
 
 		// TODO: this should be pluggable but also has to be a prototype since
 		// it
@@ -281,22 +306,12 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		definition.setBeanClass(enhancedClass);
 
 		final Class<?> configClass = configurationClass;
-		
-		// Add any properties files referenced by the class
-		// TODO may not be cleanest to do this here
-		if (configClass.isAnnotationPresent(ResourceBundles.class)) {
-			ResourceBundles rbs = configClass.getAnnotation(ResourceBundles.class);
-			ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
-			ms.setResourceLoader(this.resourceLoader);
-			ms.setBasenames(rbs.value());
-			this.valueSource.add(new MessageSourceValueSource(ms));
-			// TODO how do we know the properties were found?
-		}
 
 		// Callback listeners
 		for (ConfigurationListener cl : configurationListenerRegistry.getConfigurationListeners()) {
-			beansCreated += cl.configurationClass(owningBeanFactory, childFactory, configurationBeanName,
-				configurationClass);
+			if (cl.understands(configurationClass)) {
+				beansCreated += cl.configurationClass(this, configurationBeanName, configurationClass);
+			}
 		}
 
 		// Only want to consider the most specific bean creation method, in the case
@@ -337,7 +352,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 				}
 				else {
 					for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
-						countFinalReference[0] += cml.otherMethod(owningBeanFactory, childFactory,
+						countFinalReference[0] += cml.otherMethod(ConfigurationProcessor.this,
 							configurationBeanName, configClass, m);
 					}
 				}
@@ -410,7 +425,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		beanDefinitionRegistration.hide = !Modifier.isPublic(beanCreationMethod.getModifiers());
 
 		for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
-			count += cml.beanCreationMethod(beanDefinitionRegistration, beanFactory, childFactory, configurerBeanName,
+			count += cml.beanCreationMethod(beanDefinitionRegistration, this, configurerBeanName,
 				configurerClass, beanCreationMethod, beanAnnotation);
 		}
 
@@ -430,10 +445,6 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		count++;
 
 		return count;
-	}
-	
-	public BytecodeConfigurationEnhancer getConfigurationEnhancer() {
-		return configurationEnhancer;
 	}
 
 }

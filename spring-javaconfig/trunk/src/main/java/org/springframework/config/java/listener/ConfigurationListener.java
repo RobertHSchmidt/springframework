@@ -19,10 +19,9 @@ package org.springframework.config.java.listener;
 import java.lang.reflect.Method;
 
 import org.springframework.aop.framework.ProxyFactory;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.process.ConfigurationProcessor;
 
 /**
  * SPI interface that allows extension of a ConfigurationProcessor.
@@ -45,13 +44,12 @@ public interface ConfigurationListener {
 	/**
 	 * React to the given configuration class.
 	 * 
-	 * @param beanFactory
-	 * @param childBeanFactory
+	 * @param configurationProcessor
 	 * @param configurerBeanName
 	 * @param configurerClass
 	 * @return number of bean definitions created
 	 */
-	int configurationClass(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+	int configurationClass(ConfigurationProcessor configurationProcessor,
 			String configurerBeanName, Class<?> configurerClass);
 
 	/**
@@ -72,24 +70,20 @@ public interface ConfigurationListener {
 	 * are created besides the normal &#64;Bean discovery process 
 	 */
 	int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
-			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+			ConfigurationProcessor configurationProcessor,
 			String configurerBeanName, Class<?> configurerClass, Method m, Bean beanAnnotation);
 
 	/**
 	 * React to the encountering of a non bean definition method on the
 	 * configurer class. Non bean definition methods (with Bean annotations) may
 	 * be significant to some configuration classes.
-	 * @param beanFactory factory owning the configuration class. This method
-	 * will be called before beans are instantiated, so other objects may not be
-	 * available.
-	 * @param childBeanFactory child bean factory available for internal use,
-	 * such as for registering infrastructural beans
+	 * @param configurationProcessor
 	 * @param configurerBeanName bean name of the configurer class
 	 * @param configurerClass configurer class
 	 * @param m method on configurer class
 	 * @return number of newly bean definitions created
 	 */
-	int otherMethod(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+	int otherMethod(ConfigurationProcessor configurationProcessor,
 			String configurerBeanName, Class<?> configurerClass, Method m);
 
 	/**
@@ -100,8 +94,7 @@ public interface ConfigurationListener {
 	 * @return whether or not the proxy was changed. If all listeners return
 	 * false, the return value may not need to be proxied.
 	 */
-	boolean processBeanMethodReturnValue(ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childBeanFactory, Object originallyCreatedBean, Method method, ProxyFactory pf);
+	boolean processBeanMethodReturnValue(ConfigurationProcessor configurationProcessor, Object originallyCreatedBean, Method method, ProxyFactory pf);
 
 	/**
 	 * Class to hold BeanDefinition, name and any other information, to allow

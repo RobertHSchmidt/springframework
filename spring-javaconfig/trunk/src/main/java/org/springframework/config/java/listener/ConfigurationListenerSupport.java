@@ -21,9 +21,8 @@ import java.lang.reflect.Method;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.framework.ProxyFactory;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.process.ConfigurationProcessor;
 
 /**
  * Convenient base class for implementation of the ConfigurationListener
@@ -40,24 +39,23 @@ public class ConfigurationListenerSupport implements ConfigurationListener {
 		return false;
 	}
 
-	public int configurationClass(ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childBeanFactory, String configurerBeanName, Class configurerClass) {
+	public int configurationClass(ConfigurationProcessor configurationProcessor, 
+			String configurerBeanName, Class<?> configurerClass) {
 		return 0;
 	}
 
 	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
-			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
-			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
+			ConfigurationProcessor configurationProcessor,
+			String configurerBeanName, Class<?> configurerClass, Method m, Bean beanAnnotation) {
 		return 0;
 	}
 
-	public int otherMethod(ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
-			String configurerBeanName, Class configurerClass, Method m) {
+	public int otherMethod(ConfigurationProcessor configurationProcessor,
+			String configurerBeanName, Class<?> configurerClass, Method m) {
 		return 0;
 	}
 
-	public boolean processBeanMethodReturnValue(ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childBeanFactory, Object originallyCreatedBean, Method method, ProxyFactory pf) {
+	public boolean processBeanMethodReturnValue(ConfigurationProcessor configurationProcessor, Object originallyCreatedBean, Method method, ProxyFactory pf) {
 		return false;
 	}
 }

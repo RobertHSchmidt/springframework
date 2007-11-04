@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2006 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,10 @@ import java.util.List;
 
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.target.HotSwappableTargetSource;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
 import org.springframework.config.java.listener.ConfigurationListenerSupport;
+import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**
@@ -41,7 +40,7 @@ public class HotSwapConfigurationListener extends ConfigurationListenerSupport {
 
 	@Override
 	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
-			ConfigurableListableBeanFactory beanFactory, DefaultListableBeanFactory childBeanFactory,
+			ConfigurationProcessor cp,
 			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
 		if (AnnotationUtils.findAnnotation(m, HotSwappable.class) != null) {
 			hotswapMethods.add(m);
@@ -51,8 +50,7 @@ public class HotSwapConfigurationListener extends ConfigurationListenerSupport {
 	}
 
 	@Override
-	public boolean processBeanMethodReturnValue(ConfigurableListableBeanFactory beanFactory,
-			DefaultListableBeanFactory childBeanFactory, Object originallyCreatedBean, Method method, ProxyFactory pf) {
+	public boolean processBeanMethodReturnValue(ConfigurationProcessor cp, Object originallyCreatedBean, Method method, ProxyFactory pf) {
 		if (hotswapMethods.contains(method)) {
 			HotSwappableTargetSource hsts = new HotSwappableTargetSource(originallyCreatedBean);
 			pf.setTargetSource(hsts);
