@@ -31,10 +31,11 @@ public class CompositeValueSource implements ValueSource {
 		this.propertySources.add(ps);
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> T resolve(String name, Class<?> requiredType) {
 		for (ValueSource ps : propertySources) {
 			try {
-				return ps.resolve(name, requiredType);
+				return (T) ps.resolve(name, requiredType);
 			}
 			catch (ValueResolutionException ex) {
 				// Keep going to next property source
