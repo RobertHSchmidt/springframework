@@ -16,30 +16,28 @@
 
 package org.springframework.config.java.valuesource;
 
-import java.util.Properties;
-
 /**
  * @author Rod Johnson
  * 
  */
-public class PropertiesPropertySource extends AbstractStringBasedPropertySource {
+// TODO should this extend BeansException or a subclass?
+public class ValueResolutionException extends RuntimeException {
 
-	private Properties properties;
+	private static final long serialVersionUID = 1L;
+
+	private final String name;
 
 	/**
-	 * @param properties
+	 * @param msg
+	 * @param ex
 	 */
-	public PropertiesPropertySource(Properties properties) {
-		this.properties = properties;
+	public ValueResolutionException(String name, String message) {
+		super(message);
+		this.name = name;
 	}
 
-	@Override
-	public String getString(String name) throws PropertyDefinitionException {
-		String value = properties.getProperty(name);
-		if (value == null) {
-			throw new PropertyDefinitionException(name, "No definition in properties file");
-		}
-		return value;
+	public String getPropertyName() {
+		return this.name;
 	}
 
 }

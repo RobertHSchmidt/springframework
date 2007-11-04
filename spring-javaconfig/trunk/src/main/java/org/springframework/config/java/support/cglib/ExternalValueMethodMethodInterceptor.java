@@ -22,7 +22,7 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import org.springframework.config.java.annotation.ExternalValue;
-import org.springframework.config.java.valuesource.PropertySource;
+import org.springframework.config.java.valuesource.ValueSource;
 
 /**
  * Method interceptor for external property resolution methods.
@@ -34,9 +34,9 @@ import org.springframework.config.java.valuesource.PropertySource;
  */
 public class ExternalValueMethodMethodInterceptor implements MethodInterceptor {
 
-	private final PropertySource valueSource;
+	private final ValueSource valueSource;
 
-	public ExternalValueMethodMethodInterceptor(PropertySource ms) {
+	public ExternalValueMethodMethodInterceptor(ValueSource ms) {
 		this.valueSource = ms;
 	}
 

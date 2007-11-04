@@ -34,7 +34,7 @@ import org.springframework.config.java.support.BeanNameTrackingDefaultListableBe
 import org.springframework.config.java.support.BytecodeConfigurationEnhancer;
 import org.springframework.config.java.support.MethodBeanWrapper;
 import org.springframework.config.java.util.ClassUtils;
-import org.springframework.config.java.valuesource.PropertySource;
+import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.util.Assert;
 
 /**
@@ -111,7 +111,7 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 			BeanNameTrackingDefaultListableBeanFactory childFactory, 
 			BeanNamingStrategy beanNamingStrategy,
 			MethodBeanWrapper beanWrapper,
-			PropertySource valueSource) {
+			ValueSource valueSource) {
 
 		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
 		Assert.notNull(childFactory, "childFactory is required");
