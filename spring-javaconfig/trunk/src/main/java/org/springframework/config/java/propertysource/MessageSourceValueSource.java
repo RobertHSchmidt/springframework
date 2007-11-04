@@ -17,6 +17,7 @@
 package org.springframework.config.java.valuesource;
 
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 
 /**
  * @author Rod Johnson
@@ -36,11 +37,12 @@ public class MessageSourceValueSource extends AbstractStringBasedValueSource {
 	@Override
 	public String getString(String name) throws ValueResolutionException {
 		// TODO what to do with locale?
-		String value = messageSource.getMessage(name, null, null);
-		if (value == null) {
-			throw new ValueResolutionException(name, "No definition in properties file");
+		try {
+			return messageSource.getMessage(name, null, null);
 		}
-		return value;
+		catch (NoSuchMessageException ex) {
+			throw new ValueResolutionException(name, ex);
+		}
 	}
 
 }
