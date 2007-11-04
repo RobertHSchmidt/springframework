@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2006 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,9 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.naming.BeanNamingStrategy;
+import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.Ordered;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  * Post processor for use in a bean factory that can process multiple
@@ -43,37 +45,16 @@ import org.springframework.core.Ordered;
  * @author Rod Johnson
  * @author Costin Leau
  */
-public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ordered {
+public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ordered, ResourceLoaderAware {
 
 	protected final Log log = LogFactory.getLog(getClass());
 
 	private ConfigurationListenerRegistry configurationListenerRegistry;
 
 	private BeanNamingStrategy namingStrategy;
-
-	/**
-	 * Generate BeanDefinitions and add them to factory for each Configuration
-	 * bean.
-	 */
-	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-
-		String[] beanNames = beanFactory.getBeanDefinitionNames();
-
-		// before creating a new process, do some validation even though we
-		// might duplicate it inside ConfigurationProcessor
-		for (String beanName : beanNames) {
-			// get the class
-			Class<?> clazz = ProcessUtils.getBeanClass(beanName, beanFactory);
-			if (clazz != null && ProcessUtils.validateConfigurationClass(clazz, configurationListenerRegistry)) {
-				ConfigurationProcessor processor = new ConfigurationProcessor(beanFactory);
-				processor.setConfigurationListenerRegistry(configurationListenerRegistry);
-				processor.setBeanNamingStrategy(namingStrategy);
-				processor.afterPropertiesSet();
-				processor.processBean(beanName);
-			}
-		}
-	}
-
+	
+	private ResourceLoader resourceLoader;
+	
 	/**
 	 * Guarantee to execute before any other BeanFactoryPostProcessors
 	 */
@@ -99,6 +80,38 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 	 */
 	public void setNamingStrategy(BeanNamingStrategy namingStrategy) {
 		this.namingStrategy = namingStrategy;
+	}
+	
+	/**
+	 * Optional implementation of ResourceLoaderAware
+	 */
+	public void setResourceLoader(ResourceLoader resourceLoader) {
+		this.resourceLoader = resourceLoader;
+	}
+
+	/**
+	 * Generate BeanDefinitions and add them to factory for each Configuration
+	 * bean.
+	 */
+	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+		String[] beanNames = beanFactory.getBeanDefinitionNames();
+
+		// before creating a new process, do some validation even though we
+		// might duplicate it inside ConfigurationProcessor
+		for (String beanName : beanNames) {
+			// get the class
+			Class<?> clazz = ProcessUtils.getBeanClass(beanName, beanFactory);
+			if (clazz != null && ProcessUtils.validateConfigurationClass(clazz, configurationListenerRegistry)) {
+				ConfigurationProcessor processor = new ConfigurationProcessor(beanFactory);
+				processor.setConfigurationListenerRegistry(configurationListenerRegistry);
+				processor.setBeanNamingStrategy(namingStrategy);
+				processor.afterPropertiesSet();
+				if (this.resourceLoader != null) {
+					processor.setResourceLoader(resourceLoader);
+				}
+				processor.processBean(beanName);
+			}
+		}
 	}
 
 }

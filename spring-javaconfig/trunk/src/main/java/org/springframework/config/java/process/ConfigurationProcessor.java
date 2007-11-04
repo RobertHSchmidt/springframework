@@ -46,9 +46,11 @@ import org.springframework.config.java.util.ClassUtils;
 import org.springframework.config.java.valuesource.CompositeValueSource;
 import org.springframework.config.java.valuesource.MessageSourceValueSource;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
@@ -76,12 +78,11 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
  * This class implements {@link InitializingBean} interface - remember to call
  * {@link InitializingBean#afterPropertiesSet()} before any processing.
  * 
- * 
  * @author Rod Johnson
  * @author Costin Leau
  * @see org.springframework.config.java.listener.ConfigurationListener
  */
-public class ConfigurationProcessor implements InitializingBean {
+public class ConfigurationProcessor implements InitializingBean, ResourceLoaderAware {
 
 	protected final Log log = LogFactory.getLog(getClass());
 
@@ -105,6 +106,8 @@ public class ConfigurationProcessor implements InitializingBean {
 	private BeanNamingStrategy beanNamingStrategy;
 	
 	private CompositeValueSource valueSource = new CompositeValueSource();
+	
+	private ResourceLoader resourceLoader = new DefaultResourceLoader();
 
 	private boolean initialized = false;
 	
@@ -126,6 +129,15 @@ public class ConfigurationProcessor implements InitializingBean {
 	 */
 	public ConfigurationProcessor(ConfigurableListableBeanFactory bdr) {
 		this.owningBeanFactory = bdr;
+	}
+	
+	/**
+	 * Set the resourceLoader. This is optional, as a default ResourceLoader will
+	 * be used.
+	 * @param resourceLoader resourceLoader to use
+	 */
+	public void setResourceLoader(ResourceLoader resourceLoader) {
+		this.resourceLoader = resourceLoader;
 	}
 
 	/**
@@ -199,7 +211,6 @@ public class ConfigurationProcessor implements InitializingBean {
 	 * @throws BeanDefinitionStoreException if no bean definitions are found
 	 */
 	public int processClass(Class<?> configurationClass) throws BeanDefinitionStoreException {
-
 		checkInit();
 
 		if (!ProcessUtils.validateConfigurationClass(configurationClass, configurationListenerRegistry))
@@ -272,12 +283,11 @@ public class ConfigurationProcessor implements InitializingBean {
 		final Class<?> configClass = configurationClass;
 		
 		// Add any properties files referenced by the class
-		// TODO may not be cleanest to do this hear
+		// TODO may not be cleanest to do this here
 		if (configClass.isAnnotationPresent(ResourceBundles.class)) {
 			ResourceBundles rbs = configClass.getAnnotation(ResourceBundles.class);
 			ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
-			// TODO parameterize or get from app context
-			ms.setResourceLoader(new DefaultResourceLoader());
+			ms.setResourceLoader(this.resourceLoader);
 			ms.setBasenames(rbs.value());
 			this.valueSource.add(new MessageSourceValueSource(ms));
 			// TODO how do we know the properties were found?
