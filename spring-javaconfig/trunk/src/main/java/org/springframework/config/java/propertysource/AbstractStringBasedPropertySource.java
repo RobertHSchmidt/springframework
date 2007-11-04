@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2006 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.propertysource;
+package org.springframework.config.java.valuesource;
+
 
 /**
  * @author Rod Johnson
@@ -22,23 +23,23 @@ package org.springframework.config.java.propertysource;
  */
 public abstract class AbstractStringBasedPropertySource implements PropertySource {
 
-	public int getInt(String name) throws PropertyDefinitionException {
-		return (Integer) getObject(name, Integer.class);
-	}
-
-	public abstract String getString(String name) throws PropertyDefinitionException;
-
-	public Object getObject(String name, Class requiredType) throws PropertyDefinitionException {
+	public <T> T resolve(String name, Class<?> requiredType) throws PropertyDefinitionException {
 		String rawValue = getString(name);
+		
 		// TODO do proper type conversion using Spring property editors, not
 		// this horrible hack
+		
 		if (requiredType == String.class) {
-			return rawValue;
+			return (T) rawValue;
 		}
-		if (requiredType == Integer.class) {
-			return Integer.parseInt(rawValue);
+		if (requiredType == Integer.class || requiredType == int.class) {
+			return (T) (Integer) Integer.parseInt(rawValue);
 		}
 		throw new UnsupportedOperationException("Property conversion not yet implemented");
 	}
+
+	public abstract String getString(String name) throws PropertyDefinitionException;
+	
+
 
 }

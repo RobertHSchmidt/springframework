@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2006 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,22 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.propertysource;
+package org.springframework.config.java.valuesource;
 
 /**
  * Source of strongly typed property values
  * @author Rod Johnson
+ * 
+ * TODO rename ValueSource, SVN willing...
  */
 public interface PropertySource {
-
-	int getInt(String name) throws PropertyDefinitionException;
-
-	String getString(String name) throws PropertyDefinitionException;
 
 	/**
 	 * 
 	 * @param name
-	 * @param requiredType
-	 * @return
 	 * @throws PropertyDefinitionException if the property is not in the
 	 * required format or the value is not found
 	 */
-	// TODO parameterize
-	Object getObject(String name, Class requiredType) throws PropertyDefinitionException;
+	<T> T resolve(String name, Class<?> requiredType) throws PropertyDefinitionException;
 
 }
