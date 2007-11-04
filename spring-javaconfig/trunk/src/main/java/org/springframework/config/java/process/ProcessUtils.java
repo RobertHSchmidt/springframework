@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
@@ -43,7 +44,7 @@ import org.springframework.util.StringUtils;
  * @author Costin Leau
  * 
  */
-public abstract class ProcessUtils {
+abstract class ProcessUtils {
 
 	/**
 	 * Return true if the given class is a suitable Configuration or false
@@ -274,7 +275,6 @@ public abstract class ProcessUtils {
 	 * @return
 	 */
 	public static boolean isEligibleForConfigurationProcessing(BeanDefinition def) {
-
 		if (def.isAbstract() || (!StringUtils.hasText(def.getBeanClassName()))) {
 			return false;
 		}

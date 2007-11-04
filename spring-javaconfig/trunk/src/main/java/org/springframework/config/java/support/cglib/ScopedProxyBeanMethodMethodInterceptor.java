@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.config.java.support.cglib;
 
 import java.lang.reflect.Method;
@@ -34,7 +35,7 @@ import org.springframework.util.Assert;
  * @author Costin Leau
  * 
  */
-public class ScopedProxyBeanMethodMethodInterceptor implements MethodInterceptor {
+class ScopedProxyBeanMethodMethodInterceptor implements MethodInterceptor {
 
 	private final BeanMethodMethodInterceptor delegate;
 

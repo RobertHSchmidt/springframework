@@ -33,7 +33,7 @@ import org.springframework.config.java.valuesource.ValueSource;
  * @author Rod Johnson
  * 
  */
-public class ExternalValueMethodMethodInterceptor implements MethodInterceptor {
+class ExternalValueMethodMethodInterceptor implements MethodInterceptor {
 
 	private final ValueSource valueSource;
 
