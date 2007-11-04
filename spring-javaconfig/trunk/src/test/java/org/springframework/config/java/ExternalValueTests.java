@@ -43,6 +43,8 @@ public class ExternalValueTests extends TestCase {
 			TestBean rod = new TestBean();
 			rod.setName(getName());
 			rod.setAge(ignoreThisNameDueToAnnotationValue());
+			
+			rod.setJedi(jedi());
 			return rod;
 		}
 		
@@ -51,6 +53,9 @@ public class ExternalValueTests extends TestCase {
 		
 		@ExternalValue("age")
 		public abstract int ignoreThisNameDueToAnnotationValue();
+		
+		@ExternalValue
+		protected abstract boolean jedi();
 		
 	}
 	
@@ -91,12 +96,13 @@ public class ExternalValueTests extends TestCase {
 		
 	}
 
-	public void testStringProperty() throws Exception {
+	public void testStringAndBooleanProperty() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(AbstractConfigurationDependsOnProperties.class);
 		TestBean rod = (TestBean) bf.getBean("rod");
 		assertEquals("String property must be resolved correctly", "Rod", rod.getName());
+		assertTrue("Boolean property must be resolved correctly", rod.isJedi());
 	}
 	
 	public void testIntProperty() throws Exception {
