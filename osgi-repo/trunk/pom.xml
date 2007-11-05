@@ -223,7 +223,7 @@ limitations under the License.
            <Include-Resource>${spring.osgi.include.res}</Include-Resource>
 		   
 		   <Embed-Dependency>*;scope=provided;type=!pom;inline=true</Embed-Dependency>
-		   <_exportcontents>*</_exportcontents>    
+		   <_exportcontents>${spring.osgi.export}</_exportcontents>    
            
            <Implementation-Title>Spring Dynamic Modules Framework</Implementation-Title>
 		   <Implementation-Version>${unpack.version}</Implementation-Version>
