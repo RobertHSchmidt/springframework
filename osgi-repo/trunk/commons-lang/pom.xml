@@ -11,7 +11,7 @@
   <artifactId>commons-lang.osgi</artifactId>
   <packaging>bundle</packaging>
   <name>commons-lang (OSGi version)</name>
-  <version>2.2</version>
+  <version>2.2-SNAPSHOT</version>
   <url>http:// www.springframework.org/osgi</url>
 
   <properties>
