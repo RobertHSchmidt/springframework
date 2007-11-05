@@ -19,6 +19,13 @@
    <properties>
     <unpack.version>1.2.15</unpack.version>
     <spring.osgi.export.pkg>org.apache.log4j</spring.osgi.export.pkg>
+    <spring.osgi.import.pkg>
+	com.sun*;resolution:=optional,
+	javax*;resolution:=optional,
+	org.xml*;resolution:=optional,
+	org.w3c*;resolution:=optional,
+	*
+	</spring.osgi.import.pkg>
   </properties>
   
   <dependencies>
