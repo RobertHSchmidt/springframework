@@ -16,7 +16,7 @@
   
   <properties>
     <unpack.version>3.0.2</unpack.version>
-    <spring.osgi.export.pkg>mx4j*, javax.management*</spring.osgi.export.pkg>
+    <spring.osgi.export>javax.management*;version=1.2, mx4j*;version=${unpack.version}</spring.osgi.export>
     <spring.osgi.import.pkg>
     org.w3c.dom*;resolution:=optional,
     javax.xml.*;resolution:=optional,
@@ -31,6 +31,7 @@
     <groupId>mx4j</groupId>
     <artifactId>mx4j</artifactId>
     <version>3.0.2</version>
+    <scope>provided</scope>
    </dependency> 
  </dependencies>
 </project>
