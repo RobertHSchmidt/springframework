@@ -11,11 +11,11 @@
   <artifactId>commons-lang.osgi</artifactId>
   <packaging>bundle</packaging>
   <name>commons-lang (OSGi version)</name>
-  <version>2.2-SNAPSHOT</version>
+  <version>2.3-SNAPSHOT</version>
   <url>http:// www.springframework.org/osgi</url>
 
   <properties>
-    <unpack.version>2.2</unpack.version>
+    <unpack.version>2.3</unpack.version>
     <spring.osgi.export.pkg>org.apache.commons.lang*</spring.osgi.export.pkg>
   </properties> 
   
@@ -23,7 +23,7 @@
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
-      <version>2.2</version>
+      <version>2.3</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
