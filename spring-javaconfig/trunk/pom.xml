@@ -85,9 +85,6 @@
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
-					<testExcludes>
-						<testExclude>**/ClassWithInvalidDependencies.java</testExclude>
-					</testExcludes>
 				</configuration>
 			</plugin>
 			<plugin>
