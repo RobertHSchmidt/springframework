@@ -42,7 +42,7 @@ public class SpringAdvisorConfigurationListener extends ConfigurationListenerSup
 
 	@Override
 	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration, ConfigurationProcessor cp,
-			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
+			String configurerBeanName, Class<?> configurerClass, Method m, Bean beanAnnotation) {
 
 		if (AnnotationUtils.findAnnotation(m, SpringAdvisor.class) != null) {
 			if (!Advisor.class.isAssignableFrom(m.getReturnType())) {

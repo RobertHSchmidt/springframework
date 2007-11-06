@@ -41,7 +41,7 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 
 	private String[] basePackages;
 
-	private Class[] configClasses;
+	private Class<?>[] configClasses;
 
 	/**
 	 * We delegate to Spring 2.5 and above class scanning support.
@@ -95,7 +95,7 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 	 * 
 	 * @param classes
 	 */
-	public AnnotationApplicationContext(Class... classes) {
+	public AnnotationApplicationContext(Class<?>... classes) {
 		this((ApplicationContext) null);
 		setConfigClasses(classes);
 		refresh();
@@ -105,7 +105,7 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 		return basePackages;
 	}
 
-	protected Class[] getConfigClasses() {
+	protected Class<?>[] getConfigClasses() {
 		return configClasses;
 	}
 
@@ -124,7 +124,7 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 	 * configuring the current application context.
 	 * @param classes
 	 */
-	public void setConfigClasses(Class... classes) {
+	public void setConfigClasses(Class<?>... classes) {
 		this.configClasses = classes;
 	}
 
@@ -163,10 +163,10 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 	 * 
 	 * @param configClasses
 	 */
-	protected int loadBeanDefinitions(DefaultListableBeanFactory beanFactory, Class... configClasses) {
+	protected int loadBeanDefinitions(DefaultListableBeanFactory beanFactory, Class<?>... configClasses) {
 		int loadedDefs = 0;
 		if (configClasses != null) {
-			for (Class clazz : configClasses) {
+			for (Class<?> clazz : configClasses) {
 				if (containsConfiguration(clazz)) {
 					loadedDefs++;
 					beanFactory.registerBeanDefinition(clazz.getName(), new RootBeanDefinition(clazz));

@@ -25,6 +25,7 @@ import org.springframework.aop.MethodBeforeAdvice;
  * 
  * @author Rod Johnson
  */
+@SuppressWarnings("serial")
 public class CountingBeforeAdvice extends MethodCounter implements MethodBeforeAdvice {
 
 	public void before(Method m, Object[] args, Object target) throws Throwable {

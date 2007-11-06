@@ -347,7 +347,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 		// Find inner aspect classes
 		// TODO: need to go up tree? ReflectionUtils.doWithClasses
-		for (Class innerClass : configClass.getDeclaredClasses()) {
+		for (Class<?> innerClass : configClass.getDeclaredClasses()) {
 			if (Modifier.isStatic(innerClass.getModifiers())
 					&& (owningBeanFactory.getBeansOfType(innerClass).isEmpty())) {
 				beansCreated += processClass(innerClass);

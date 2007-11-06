@@ -370,7 +370,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		/**
 		 * @see org.springframework.config.java.testing.config.java.beans.factory.FactoryBean#getObjectType()
 		 */
-		public Class getObjectType() {
+		public Class<?> getObjectType() {
 			return TestBean.class;
 		}
 

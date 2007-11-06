@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
@@ -31,7 +30,9 @@ import org.springframework.transaction.jta.UserTransactionAdapter;
 
 public class J2eeHelperTests extends TestCase {
 
-	private ConfigurationListenerRegistry clr = new DefaultConfigurationListenerRegistry();
+	{
+		new DefaultConfigurationListenerRegistry();
+	}
 
 	private static final String DS_NAME = "java:comp/env/ds";
 
@@ -48,12 +49,16 @@ public class J2eeHelperTests extends TestCase {
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(J2eeTxConfig.class);
 
+		// TODO: assuming that pulling out and casting this bean is part of the
+		// test (cbeams)
+		@SuppressWarnings("unused")
 		PlatformTransactionManager ptm = (PlatformTransactionManager) bf.getBean("transactionManager");
+
 		DataSource ds = (DataSource) bf.getBean("dataSource");
 		assertSame(expectedDs, ds);
 	}
 
-	protected Object empty(Class... interfaces) {
+	protected Object empty(Class<?>... interfaces) {
 		ProxyFactory pf = new ProxyFactory();
 		pf.setInterfaces(interfaces);
 		pf.addAdvice(new MethodInterceptor() {

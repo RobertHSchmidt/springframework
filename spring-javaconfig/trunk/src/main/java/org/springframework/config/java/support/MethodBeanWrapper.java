@@ -103,6 +103,10 @@ public class MethodBeanWrapper {
 			Object originallyCreatedBean = null;
 
 			BeanDefinition beanDef = null;
+
+			// TODO: it's odd that this var is never used; leaving it in place
+			// for now... (cbeams)
+			@SuppressWarnings("unused")
 			boolean hidden = false;
 			// consider hidden beans also (contained only in the children
 			// factory)

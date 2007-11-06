@@ -17,8 +17,6 @@ package org.springframework.config.java.naming;
 
 import java.lang.reflect.Method;
 
-import org.springframework.config.java.naming.BeanNamingStrategy;
-
 import junit.framework.TestCase;
 
 public abstract class AbstractNamingStrategyTests extends TestCase {
@@ -34,7 +32,7 @@ public abstract class AbstractNamingStrategyTests extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		strategy = createNamingStrategy();
-		sampleMethod = AbstractNamingStrategyTests.class.getDeclaredMethod("setUp", null);
+		sampleMethod = AbstractNamingStrategyTests.class.getDeclaredMethod("setUp", (Class[]) null);
 	}
 
 	/*

@@ -43,7 +43,7 @@ public class AutoBeanConfigurationListener extends ConfigurationListenerSupport 
 
 	@Override
 	public int otherMethod(ConfigurationProcessor configurationProcessor, String configurerBeanName,
-			Class configurerClass, Method m) {
+			Class<?> configurerClass, Method m) {
 		AutoBean autoBean = AnnotationUtils.findAnnotation(m, AutoBean.class);
 		int count = 0;
 		if (autoBean != null) {

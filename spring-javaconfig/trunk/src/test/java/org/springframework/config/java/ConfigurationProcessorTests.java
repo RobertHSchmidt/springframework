@@ -46,7 +46,6 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
-import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.config.java.support.ConfigurationSupport;
@@ -62,7 +61,9 @@ import org.springframework.context.support.GenericApplicationContext;
  */
 public class ConfigurationProcessorTests extends TestCase {
 
-	private ConfigurationListenerRegistry clr = new DefaultConfigurationListenerRegistry();
+	{
+		new DefaultConfigurationListenerRegistry();
+	}
 
 	public void testSimple() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
@@ -109,6 +110,7 @@ public class ConfigurationProcessorTests extends TestCase {
 		configurationProcessor.processClass(AfterPropertiesConfiguration.class);
 
 		// This is enough to run the test
+		@SuppressWarnings("unused")
 		TestBean test = (TestBean) bf.getBean("test");
 	}
 
@@ -146,10 +148,7 @@ public class ConfigurationProcessorTests extends TestCase {
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(AspectJConfigurationProcessorTests.SingletonCountingAdvice.class);
 
-		// System.out.println("beans " +
-		// Arrays.toString(bf.getBeanDefinitionNames()));
-		Object dotb = bf.getBean("dotb");
-		// System.out.println(dotb);
+		bf.getBean("dotb");
 		DependsOnTestBean dotb1 = (DependsOnTestBean) bf.getBean("dotb");
 		DependsOnTestBean dotb2 = (DependsOnTestBean) bf.getBean("dotb");
 		assertSame(dotb1, dotb2);
@@ -163,7 +162,7 @@ public class ConfigurationProcessorTests extends TestCase {
 		configurationProcessor.processClass(ProxiesDotb.class);
 
 		ProxiesDotb.count = 0;
-		TestBean adrian = (TestBean) bf.getBean("adrian");
+		// TestBean adrian = (TestBean) bf.getBean("adrian");
 		DependsOnTestBean sarah = (DependsOnTestBean) bf.getBean("sarah");
 		assertTrue(AopUtils.isAopProxy(sarah));
 		assertTrue(AopUtils.isCglibProxy(sarah));
@@ -474,6 +473,7 @@ public class ConfigurationProcessorTests extends TestCase {
 		@Override
 		public TestBean tom() {
 			return new TestBean() {
+				@Override
 				public String getName() {
 					return "overridden";
 				}
@@ -553,6 +553,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	public static class InheritsWithoutNewAnnotation extends DefinesAbstractBeanMethod {
 
+		@Override
 		public TestBean tom() {
 			return new TestBean();
 		}

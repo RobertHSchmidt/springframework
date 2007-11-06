@@ -39,7 +39,6 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.DependencyCheck;
-import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.config.java.util.DefaultScopes;
@@ -50,7 +49,9 @@ import org.springframework.config.java.util.DefaultScopes;
  */
 public class AspectJConfigurationProcessorTests extends TestCase {
 
-	private ConfigurationListenerRegistry clr = new DefaultConfigurationListenerRegistry();
+	{
+		new DefaultConfigurationListenerRegistry();
+	}
 
 	// TODO this may not be a valid test. Would need prototype aspect bean
 	// and autoproxy
@@ -142,7 +143,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 		doTestAspectJAroundAdviceWithImplicitScope(InnerClassAdvice.class);
 	}
 
-	private void doTestAspectJAroundAdviceWithImplicitScope(Class clazz) throws Exception {
+	private void doTestAspectJAroundAdviceWithImplicitScope(Class<?> clazz) throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(clazz);
@@ -211,7 +212,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	// }
 
 	public void testPointcutExpressionWithPointcutReference() throws Exception {
-		Set supportedPrimitives = new HashSet();
+		Set<PointcutPrimitive> supportedPrimitives = new HashSet<PointcutPrimitive>();
 		supportedPrimitives.add(PointcutPrimitive.EXECUTION);
 		supportedPrimitives.add(PointcutPrimitive.ARGS);
 		supportedPrimitives.add(PointcutPrimitive.REFERENCE);

@@ -36,13 +36,13 @@ public class IndexedTestBean {
 
 	private Collection collection;
 
-	private List list;
+	private List<TestBean> list;
 
-	private Set set;
+	private Set<TestBean> set;
 
 	private SortedSet sortedSet;
 
-	private Map map;
+	private Map<String, Object> map;
 
 	private SortedMap sortedMap;
 
@@ -68,17 +68,17 @@ public class IndexedTestBean {
 		TestBean tbX = new TestBean("nameX", 0);
 		TestBean tbY = new TestBean("nameY", 0);
 		this.array = new TestBean[] { tb0, tb1 };
-		this.list = new ArrayList();
+		this.list = new ArrayList<TestBean>();
 		this.list.add(tb2);
 		this.list.add(tb3);
-		this.set = new TreeSet();
+		this.set = new TreeSet<TestBean>();
 		this.set.add(tb6);
 		this.set.add(tb7);
-		this.map = new HashMap();
+		this.map = new HashMap<String, Object>();
 		this.map.put("key1", tb4);
 		this.map.put("key2", tb5);
 		this.map.put("key.3", tb5);
-		List list = new ArrayList();
+		List<TestBean> list = new ArrayList<TestBean>();
 		list.add(tbX);
 		list.add(tbY);
 		this.map.put("key4", list);

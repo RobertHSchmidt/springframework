@@ -159,7 +159,7 @@ public class DummyFactory implements FactoryBean, BeanNameAware, BeanFactoryAwar
 		}
 	}
 
-	public Class getObjectType() {
+	public Class<?> getObjectType() {
 		return TestBean.class;
 	}
 

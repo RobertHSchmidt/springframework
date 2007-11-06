@@ -25,10 +25,11 @@ import java.util.HashMap;
  * 
  * @author Rod Johnson
  */
+@SuppressWarnings("serial")
 public class MethodCounter implements Serializable {
 
 	/** Method name --> count, does not understand overloading */
-	private HashMap map = new HashMap();
+	private HashMap<String, Integer> map = new HashMap<String, Integer>();
 
 	private int allCount;
 
@@ -37,14 +38,14 @@ public class MethodCounter implements Serializable {
 	}
 
 	protected void count(String methodName) {
-		Integer I = (Integer) map.get(methodName);
+		Integer I = map.get(methodName);
 		I = (I != null) ? new Integer(I.intValue() + 1) : new Integer(1);
 		map.put(methodName, I);
 		++allCount;
 	}
 
 	public int getCalls(String methodName) {
-		Integer I = (Integer) map.get(methodName);
+		Integer I = map.get(methodName);
 		return (I != null) ? I.intValue() : 0;
 	}
 
@@ -61,6 +62,9 @@ public class MethodCounter implements Serializable {
 		if (other == null || other.getClass() != this.getClass()) {
 			return false;
 		}
+
+		// TODO: not sure if this cast is part of the test
+		@SuppressWarnings("unused")
 		MethodCounter mc2 = (MethodCounter) other;
 		return true;
 	}

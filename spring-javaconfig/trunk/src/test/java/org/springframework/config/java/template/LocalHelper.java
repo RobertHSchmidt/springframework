@@ -4,7 +4,7 @@ import org.apache.commons.dbcp.BasicDataSource;
 
 public abstract class LocalHelper {
 
-	public static BasicDataSource basicDataSource(Class driverClass, String url, String uname, String pwd) {
+	public static BasicDataSource basicDataSource(Class<?> driverClass, String url, String uname, String pwd) {
 		BasicDataSource ds = new BasicDataSource();
 		ds.setDriverClassName(driverClass.getName());
 		ds.setAccessToUnderlyingConnectionAllowed(true);

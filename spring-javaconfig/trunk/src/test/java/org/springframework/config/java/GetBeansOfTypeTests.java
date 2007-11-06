@@ -46,7 +46,7 @@ public class GetBeansOfTypeTests extends TestCase {
 		}
 
 		@Bean
-		public Map map() {
+		public Map<?, ?> map() {
 			Properties properties = new Properties();
 			properties.put("2x", "4");
 			return properties;
@@ -62,15 +62,15 @@ public class GetBeansOfTypeTests extends TestCase {
 	@Configuration
 	public static class AnotherConfig {
 		@Bean
-		public Map anotherMap() {
-			Map attributes = new HashMap();
+		public Map<String, String> anotherMap() {
+			Map<String, String> attributes = new HashMap<String, String>();
 			attributes.put("re", "load");
 			return attributes;
 		}
 
 		@Bean
-		public IdentityHashMap parentMap() {
-			return new IdentityHashMap();
+		public IdentityHashMap<?, ?> parentMap() {
+			return new IdentityHashMap<Object, Object>();
 		}
 	}
 
