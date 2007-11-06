@@ -28,7 +28,11 @@ import org.springframework.util.Assert;
  * @author Costin Leau
  * 
  */
-public abstract class ClassUtils {
+public final class ClassUtils {
+
+	/** enforce un-instantiability */
+	private ClassUtils() {
+	}
 
 	/**
 	 * Class extension.
