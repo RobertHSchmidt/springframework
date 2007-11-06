@@ -103,8 +103,12 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 			Class<?> clazz = ProcessUtils.getBeanClass(beanName, beanFactory);
 			if (clazz != null && ProcessUtils.validateConfigurationClass(clazz, configurationListenerRegistry)) {
 				ConfigurationProcessor processor = new ConfigurationProcessor(beanFactory);
-				processor.setConfigurationListenerRegistry(configurationListenerRegistry);
-				processor.setBeanNamingStrategy(namingStrategy);
+				if (configurationListenerRegistry != null) {
+					processor.setConfigurationListenerRegistry(configurationListenerRegistry);
+				}
+				if (namingStrategy != null) {
+					processor.setBeanNamingStrategy(namingStrategy);
+				}
 				processor.afterPropertiesSet();
 				if (this.resourceLoader != null) {
 					processor.setResourceLoader(resourceLoader);

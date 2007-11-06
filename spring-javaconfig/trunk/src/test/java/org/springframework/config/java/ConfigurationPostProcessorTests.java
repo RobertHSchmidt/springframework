@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2004 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.aop.SpringAdvice;
+import org.springframework.config.java.process.ConfigurationPostProcessor;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -51,6 +52,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author Rod Johnson
  */
 public class ConfigurationPostProcessorTests extends TestCase {
+	
+	public void testPriorityOrdering() {
+		ConfigurationPostProcessor cpp = new ConfigurationPostProcessor();
+		assertEquals(Integer.MIN_VALUE, cpp.getOrder());
+	}
 
 	public void testSingleton() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
