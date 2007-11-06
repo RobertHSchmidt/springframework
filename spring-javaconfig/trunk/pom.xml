@@ -49,7 +49,18 @@
 				<role>Developer</role>
 			</roles>
 			<timezone>+1</timezone>
-		</developer>    
+		</developer>
+		<developer>
+			<id>cbeams</id>
+			<name>Chris Beams</name>
+			<email>chris.beams@interface21.com</email>
+			<organization>Interface21</organization>
+			<organizationUrl>http://www.interface21.com</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>-7</timezone>
+		</developer>
 	</developers>
 	<licenses>
 		<license>
@@ -101,7 +112,7 @@
 					</excludes>
 					<systemProperties>
 						<!-- The following is a workaround for an issue with Cobertura where reports always
-						     result in 100% coverage. See http://jira.codehaus.org/browse/MCOBERTURA-61 -->
+						result in 100% coverage. See http://jira.codehaus.org/browse/MCOBERTURA-61 -->
 						<property>
 							<name>net.sourceforge.cobertura.datafile</name>
 							<value>target/cobertura/cobertura.ser</value>
@@ -112,11 +123,30 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
+				<configuration>
+					<!-- See http://mojo.codehaus.org/cobertura-maven-plugin/usage.html#Check for more info -->
+					<check>
+						<haltOnFailure>true</haltOnFailure>
+						<branchRate>0</branchRate>
+						<lineRate>0</lineRate>
+						<packageLineRate>0</packageLineRate>
+						<packageBranchRate>0</packageBranchRate>
+						<totalBranchRate>89</totalBranchRate>
+						<totalLineRate>85</totalLineRate>
+					</check>
+				</configuration>
 				<executions>
 					<execution>
-						<id>clean</id>
+						<id>coverage-clean</id>
 						<goals>
 							<goal>clean</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>coverage-check</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -327,7 +357,7 @@
 						</group>
 					</groups>
 					<stylesheetfile>${basedir}/docs/stylesheet.css</stylesheetfile>
-					<overview>${basedir}/docs/overview.html</overview>          
+					<overview>${basedir}/docs/overview.html</overview>		  
 					<links>
 						<link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
 						<link>http://static.springframework.org/spring/docs/2.0.x/api/</link>
@@ -379,18 +409,3 @@
 		<spring.version>2.5-rc1</spring.version>
 	</properties>
 </project>
-
-  <!--repositories>
-    <repository>
-      <id>safehaus-repository</id>
-      <name>Safehaus Repository</name>
-      <url>http://m2.safehaus.org</url>
-    </repository>
-    <repository>
-      <id>spring-ext</id>
-      <name>Spring External Dependencies Repository</name>
-      <url>
-        https://svn.sourceforge.net/svnroot/springframework/repos/repo-ext/
-      </url>
-    </repository>
-  </repositories-->
