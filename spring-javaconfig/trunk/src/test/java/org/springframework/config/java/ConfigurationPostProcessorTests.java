@@ -475,6 +475,8 @@ public class ConfigurationPostProcessorTests extends TestCase {
 			return new AdvisedByConfig();
 		}
 
+		// TODO: this method never gets used. is this by design? (cbeams)
+		@SuppressWarnings("unused")
 		@Around("execution(int *.intValue())")
 		private int returnCount(ProceedingJoinPoint pjp) {
 			return counter++;
@@ -485,6 +487,8 @@ public class ConfigurationPostProcessorTests extends TestCase {
 	public static class CountAspect {
 		public static int counter;
 
+		// TODO: this method never gets used. is this by design? (cbeams)
+		@SuppressWarnings("unused")
 		@Around("execution(int *.intValue())")
 		private int countIntValueInvocation(ProceedingJoinPoint pjp) throws Throwable {
 			++counter;
