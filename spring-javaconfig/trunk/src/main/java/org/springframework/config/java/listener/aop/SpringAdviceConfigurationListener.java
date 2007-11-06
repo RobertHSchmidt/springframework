@@ -51,7 +51,7 @@ public class SpringAdviceConfigurationListener extends AbstractAopConfigurationL
 
 	@Override
 	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration, ConfigurationProcessor cp,
-			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
+			String configurerBeanName, Class<?> configurerClass, Method m, Bean beanAnnotation) {
 
 		SpringAdvice springAdvice = AnnotationUtils.findAnnotation(m, SpringAdvice.class);
 		if (springAdvice == null) {
@@ -104,6 +104,7 @@ public class SpringAdviceConfigurationListener extends AbstractAopConfigurationL
 	 * 
 	 */
 	// TODO consider moving into AspectJ expression
+	@SuppressWarnings("serial")
 	private class OrderedAspectJExpressionPointcut extends AspectJExpressionPointcut implements Ordered {
 
 		private final int order;

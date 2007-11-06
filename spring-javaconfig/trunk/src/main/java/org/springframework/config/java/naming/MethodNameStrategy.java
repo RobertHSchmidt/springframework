@@ -90,7 +90,7 @@ public class MethodNameStrategy implements BeanNamingStrategy {
 		Assert.notNull(beanCreationMethod, "beanCreationMethod is required");
 
 		String name = beanCreationMethod.getName();
-		Class enclosingClass = beanCreationMethod.getDeclaringClass();
+		Class<?> enclosingClass = beanCreationMethod.getDeclaringClass();
 
 		switch (prefix) {
 		case CLASS:

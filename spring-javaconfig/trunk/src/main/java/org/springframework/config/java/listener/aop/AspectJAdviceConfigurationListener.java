@@ -50,7 +50,7 @@ public class AspectJAdviceConfigurationListener extends AbstractAopConfiguration
 	 * Check whether inheritance hierarchy is consistent
 	 */
 	@Override
-	public int configurationClass(ConfigurationProcessor cp, String configurerBeanName, Class configurerClass) {
+	public int configurationClass(ConfigurationProcessor cp, String configurerBeanName, Class<?> configurerClass) {
 		if (aspectJAdvisorFactory.isAspect(configurerClass)) {
 			aspectJAdvisorFactory.validate(configurerClass);
 		}
@@ -58,7 +58,7 @@ public class AspectJAdviceConfigurationListener extends AbstractAopConfiguration
 	}
 
 	@Override
-	public int otherMethod(ConfigurationProcessor cp, String configurerBeanName, final Class configurerClass,
+	public int otherMethod(ConfigurationProcessor cp, String configurerBeanName, final Class<?> configurerClass,
 			Method aspectJAdviceMethod) {
 
 		int count = 0;
@@ -107,7 +107,7 @@ public class AspectJAdviceConfigurationListener extends AbstractAopConfiguration
 	 * @param configClass
 	 * @return
 	 */
-	protected String getConfigurerBeanName(Class configClass) {
+	protected String getConfigurerBeanName(Class<?> configClass) {
 		return configClass.getName();
 	}
 

@@ -35,8 +35,7 @@ public class AbstractStringBasedValueSourceTests extends TestCase {
 
 	public void testSimpleStringBasedProperty() {
 		Foo f = new Foo();
-		String s = f.resolve("frog", String.class);
-		// Object o = f.resolve("woeirowieur", Object.class);
+		f.resolve("frog", String.class);
 	}
 
 }

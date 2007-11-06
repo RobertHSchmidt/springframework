@@ -30,7 +30,6 @@ import org.springframework.config.java.AspectJConfigurationProcessorTests.Counti
 import org.springframework.config.java.AspectJConfigurationProcessorTests.SingletonCountingAdvice;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.aop.SpringAdvice;
-import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.core.annotation.Order;
@@ -41,7 +40,9 @@ import org.springframework.core.annotation.Order;
  */
 public class SpringAopConfigurationProcessorTests extends TestCase {
 
-	private ConfigurationListenerRegistry clr = new DefaultConfigurationListenerRegistry();
+	{
+		new DefaultConfigurationListenerRegistry();
+	}
 
 	public void testPerInstanceAdviceAndSharedAdvice() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();

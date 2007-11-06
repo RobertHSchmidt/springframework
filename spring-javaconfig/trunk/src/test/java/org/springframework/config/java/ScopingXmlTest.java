@@ -43,8 +43,7 @@ public class ScopingXmlTest extends AbstractDependencyInjectionSpringContextTest
 		assertEquals("1", bean.getName());
 
 		ITestBean interfaceBean = (ITestBean) applicationContext.getBean("scopedProxyClass");
-		assertNotNull(bean);
-		bean.getName();
-
+		assertNotNull(interfaceBean);
+		assertEquals("1", interfaceBean.getName());
 	}
 }

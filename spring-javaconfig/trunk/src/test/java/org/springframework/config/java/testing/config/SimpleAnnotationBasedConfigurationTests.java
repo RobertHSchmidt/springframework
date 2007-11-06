@@ -23,7 +23,6 @@ import junit.framework.TestCase;
 import org.springframework.config.java.context.AnnotationApplicationContext;
 import org.springframework.config.java.testing.Company;
 import org.springframework.config.java.testing.SimpleConfiguration;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -47,14 +46,11 @@ public class SimpleAnnotationBasedConfigurationTests extends TestCase {
 	}
 
 	public void testSimpleConfigurationBootstrap() throws Exception {
-		ApplicationContext ctx = new AnnotationApplicationContext(SimpleConfiguration.class.getName());
-
-		// System.out.println(Arrays.toString(ctx.getBeanDefinitionNames()));
+		new AnnotationApplicationContext(SimpleConfiguration.class.getName());
 	}
 
 	public void testAnnotationApplicationContext() throws Exception {
 		AnnotationApplicationContext ctx = new AnnotationApplicationContext("org.springframework.config.java.complex");
 		assertTrue("Found configurations and beans", ctx.getBeanDefinitionCount() >= 6);
-		// System.out.println(Arrays.toString(ctx.getBeanDefinitionNames()));
 	}
 }

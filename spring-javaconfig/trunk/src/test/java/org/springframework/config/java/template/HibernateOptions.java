@@ -16,6 +16,6 @@ public @interface HibernateOptions {
 
 	String[] configLocations() default {};
 
-	Class[] configClasses();
+	Class<?>[] configClasses();
 
 }

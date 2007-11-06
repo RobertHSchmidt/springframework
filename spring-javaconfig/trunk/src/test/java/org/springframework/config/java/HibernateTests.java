@@ -9,7 +9,6 @@ import org.hsqldb.jdbcDriver;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.config.java.template.AbstractHibernateConfiguration;
@@ -21,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class HibernateTests extends TestCase {
 
-	private ConfigurationListenerRegistry clr = new DefaultConfigurationListenerRegistry();
+	{
+		new DefaultConfigurationListenerRegistry();
+	}
 
 	public void testStoreEntity() {
 

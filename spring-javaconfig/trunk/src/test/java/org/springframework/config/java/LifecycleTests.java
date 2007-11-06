@@ -23,11 +23,9 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Lazy;
-import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.context.ApplicationContext;
@@ -43,13 +41,9 @@ import org.springframework.context.support.GenericApplicationContext;
  */
 public class LifecycleTests extends TestCase {
 
-	private ConfigurationListenerRegistry clr;
-
 	private ConfigurationProcessor configurationProcessor;
 
 	private ConfigurableApplicationContext appCtx;
-
-	private ConfigurableListableBeanFactory bf;
 
 	private static class AwareBean implements InitializingBean, DisposableBean, BeanFactoryAware, BeanNameAware,
 			ApplicationContextAware {
@@ -117,7 +111,7 @@ public class LifecycleTests extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		clr = new DefaultConfigurationListenerRegistry();
+		new DefaultConfigurationListenerRegistry();
 		appCtx = new GenericApplicationContext();
 		appCtx.registerShutdownHook();
 		configurationProcessor = new ConfigurationProcessor(appCtx);
@@ -126,13 +120,10 @@ public class LifecycleTests extends TestCase {
 		AwareBean.INITIALIZED = 0;
 		AwareBean.CUSTOM_INITIALIZED = 0;
 		AwareBean.CUSTOM_DESTROYED = 0;
-
-		bf = appCtx.getBeanFactory();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		clr = null;
 		configurationProcessor = null;
 		if (appCtx != null && appCtx.isActive())
 			appCtx.close();
