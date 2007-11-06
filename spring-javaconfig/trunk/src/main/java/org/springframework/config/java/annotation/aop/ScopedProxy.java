@@ -21,7 +21,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Maker annotation identical in functionality with &lt;aop:scoped-proxy/&gt;
+ * Marker annotation identical in functionality with &lt;aop:scoped-proxy/&gt;
  * tag. Provides a smart proxy backed by a scoped beans, which can be injected
  * into object instances (usually singletons) allowing the same reference to be
  * held while delegating method invocations to the backign, scoped beans. <p/>
