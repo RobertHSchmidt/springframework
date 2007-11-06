@@ -143,9 +143,10 @@
 						</goals>
 					</execution>
 					<execution>
-						<id>coverage-check</id>
+						<id>coverage-run</id>
 						<phase>verify</phase>
 						<goals>
+							<goal>cobertura</goal>
 							<goal>check</goal>
 						</goals>
 					</execution>
@@ -376,6 +377,12 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
+				<configuration>
+					<formats>
+						<format>html</format>
+						<format>xml</format>
+					</formats>
+				</configuration>
 			</plugin>
 		</plugins>
 	</reporting>
