@@ -34,17 +34,17 @@ public class IndexedTestBean {
 
 	private TestBean[] array;
 
-	private Collection collection;
+	private Collection<TestBean> collection;
 
 	private List<TestBean> list;
 
 	private Set<TestBean> set;
 
-	private SortedSet sortedSet;
+	private SortedSet<TestBean> sortedSet;
 
 	private Map<String, Object> map;
 
-	private SortedMap sortedMap;
+	private SortedMap<String, TestBean> sortedMap;
 
 	public IndexedTestBean() {
 		this(true);
@@ -92,51 +92,51 @@ public class IndexedTestBean {
 		this.array = array;
 	}
 
-	public Collection getCollection() {
+	public Collection<?> getCollection() {
 		return collection;
 	}
 
-	public void setCollection(Collection collection) {
+	public void setCollection(Collection<TestBean> collection) {
 		this.collection = collection;
 	}
 
-	public List getList() {
+	public List<TestBean> getList() {
 		return list;
 	}
 
-	public void setList(List list) {
+	public void setList(List<TestBean> list) {
 		this.list = list;
 	}
 
-	public Set getSet() {
+	public Set<TestBean> getSet() {
 		return set;
 	}
 
-	public void setSet(Set set) {
+	public void setSet(Set<TestBean> set) {
 		this.set = set;
 	}
 
-	public SortedSet getSortedSet() {
+	public SortedSet<TestBean> getSortedSet() {
 		return sortedSet;
 	}
 
-	public void setSortedSet(SortedSet sortedSet) {
+	public void setSortedSet(SortedSet<TestBean> sortedSet) {
 		this.sortedSet = sortedSet;
 	}
 
-	public Map getMap() {
+	public Map<String, Object> getMap() {
 		return map;
 	}
 
-	public void setMap(Map map) {
+	public void setMap(Map<String, Object> map) {
 		this.map = map;
 	}
 
-	public SortedMap getSortedMap() {
+	public SortedMap<String, TestBean> getSortedMap() {
 		return sortedMap;
 	}
 
-	public void setSortedMap(SortedMap sortedMap) {
+	public void setSortedMap(SortedMap<String, TestBean> sortedMap) {
 		this.sortedMap = sortedMap;
 	}
 

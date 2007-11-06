@@ -36,20 +36,20 @@ public class JavaAndXmlTest extends AbstractDependencyInjectionSpringContextTest
 	private TestBean dependency;
 
 	public static class TestBean {
-		private List dependencies;
+		private List<?> dependencies;
 
 		private String name;
 
-		public TestBean(String pName, List pDependencies) {
+		public TestBean(String pName, List<?> pDependencies) {
 			name = pName;
 			dependencies = pDependencies;
 		}
 
-		public List getDependencies() {
+		public List<?> getDependencies() {
 			return dependencies;
 		}
 
-		public void setDependencies(List pDependencies) {
+		public void setDependencies(List<?> pDependencies) {
 			dependencies = pDependencies;
 		}
 
@@ -68,7 +68,7 @@ public class JavaAndXmlTest extends AbstractDependencyInjectionSpringContextTest
 
 		@Bean
 		public TestBean root() {
-			return new TestBean("root", (List) beanFactory.getBean("root-dependencies"));
+			return new TestBean("root", (List<?>) beanFactory.getBean("root-dependencies"));
 		}
 
 		@Bean

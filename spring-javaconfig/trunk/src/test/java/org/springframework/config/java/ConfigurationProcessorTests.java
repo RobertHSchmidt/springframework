@@ -999,6 +999,8 @@ public class ConfigurationProcessorTests extends TestCase {
 				return beans;
 			}
 
+			// TODO: name never gets used... is this by design?
+			@SuppressWarnings("unused")
 			private String name;
 
 			public BFAwareBean(String name) {
