@@ -40,7 +40,7 @@ public class BeanNameTrackingDefaultListableBeanFactory extends DefaultListableB
 	};
 
 	public static Stack<String> names() {
-		return (Stack<String>) namesHolder.get();
+		return namesHolder.get();
 	}
 
 	public BeanNameTrackingDefaultListableBeanFactory(BeanFactory parent) {

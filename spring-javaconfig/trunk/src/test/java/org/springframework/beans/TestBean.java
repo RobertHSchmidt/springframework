@@ -378,6 +378,7 @@ public class TestBean implements BeanNameAware, BeanFactoryAware, ITestBean, IOt
 		return destroyed;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if (this == other) {
 			return true;
@@ -389,6 +390,7 @@ public class TestBean implements BeanNameAware, BeanFactoryAware, ITestBean, IOt
 		return (ObjectUtils.nullSafeEquals(this.name, tb2.name) && this.age == tb2.age);
 	}
 
+	@Override
 	public int hashCode() {
 		return this.age;
 	}
@@ -402,6 +404,7 @@ public class TestBean implements BeanNameAware, BeanFactoryAware, ITestBean, IOt
 		}
 	}
 
+	@Override
 	public String toString() {
 		String s = "name=" + name + "; age=" + age + "; touchy=" + touchy;
 		s += "; spouse={" + (spouse != null ? spouse.getName() : null) + "}";

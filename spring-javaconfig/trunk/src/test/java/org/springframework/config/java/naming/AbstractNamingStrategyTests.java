@@ -31,6 +31,7 @@ public abstract class AbstractNamingStrategyTests extends TestCase {
 	 * (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		strategy = createNamingStrategy();
 		sampleMethod = AbstractNamingStrategyTests.class.getDeclaredMethod("setUp", null);
@@ -40,6 +41,7 @@ public abstract class AbstractNamingStrategyTests extends TestCase {
 	 * (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		strategy = null;
 		sampleMethod = null;
