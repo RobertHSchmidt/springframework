@@ -17,18 +17,19 @@ package org.springframework.beans;
 
 public class DependsOnTestBean {
 	public TestBean tb;
+
 	private int state;
-	
+
 	public void setTestBean(TestBean tb) {
 		this.tb = tb;
 	}
-	
+
 	public int getState() {
 		return state;
 	}
-	
+
 	public TestBean getTestBean() {
 		return tb;
 	}
-	
+
 }

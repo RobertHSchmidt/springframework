@@ -21,26 +21,26 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Maker annotation identical in functionality with &lt;aop:scoped-proxy/&gt; tag.
- * Provides a smart proxy backed by a scoped beans, which can be injected into
- * object instances (usually singletons) allowing the same reference to be held
- * while delegating method invocations to the backign, scoped beans. <p/> Used
- * with scoped beans (non-singleton and non-prototype). <p/>
+ * Maker annotation identical in functionality with &lt;aop:scoped-proxy/&gt;
+ * tag. Provides a smart proxy backed by a scoped beans, which can be injected
+ * into object instances (usually singletons) allowing the same reference to be
+ * held while delegating method invocations to the backign, scoped beans. <p/>
+ * Used with scoped beans (non-singleton and non-prototype). <p/>
  * 
  * <pre class="code">
- * &#64;Configuration
+ * &#064;Configuration
  * public class ScopedConfig {
  * 
- *  &#64;Bean(scope = &quot;myScope&quot;)
- *  &#64;ScopedProxy
- *  public SomeBean someBean() {
- *   return new SomeBean();
- *  }
+ * 	&#064;Bean(scope = &quot;myScope&quot;)
+ * 	&#064;ScopedProxy
+ * 	public SomeBean someBean() {
+ * 		return new SomeBean();
+ * 	}
  * 
- *  &#64;Bean
- *  public SomeOtherBean() {
- *   return new AnotherBean(someBean());
- *  }
+ * 	&#064;Bean
+ * 	public SomeOtherBean() {
+ * 		return new AnotherBean(someBean());
+ * 	}
  * }
  * </pre>
  * 

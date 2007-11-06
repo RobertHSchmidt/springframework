@@ -28,8 +28,7 @@ import org.springframework.util.StringUtils;
  * 
  * @author Rod Johnson
  */
-public class ResourceBundlesConfigurationListener extends
-		ConfigurationListenerSupport {
+public class ResourceBundlesConfigurationListener extends ConfigurationListenerSupport {
 
 	@Override
 	public boolean understands(Class<?> configurerClass) {
@@ -37,15 +36,13 @@ public class ResourceBundlesConfigurationListener extends
 	}
 
 	@Override
-	public int configurationClass(ConfigurationProcessor cp,
-			String configurerBeanName, Class<?> configurerClass) {
+	public int configurationClass(ConfigurationProcessor cp, String configurerBeanName, Class<?> configurerClass) {
 		ResourceBundles rbs = configurerClass.getAnnotation(ResourceBundles.class);
 		ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
 		ms.setResourceLoader(cp.getResourceLoader());
 		ms.setBasenames(rbs.value());
-		log.info("Adding resource bundles [" + 
-				StringUtils.arrayToCommaDelimitedString(rbs.value()) +
-				"] defined in class " + configurerClass.getName());
+		log.info("Adding resource bundles [" + StringUtils.arrayToCommaDelimitedString(rbs.value())
+				+ "] defined in class " + configurerClass.getName());
 		cp.addValueSource(new MessageSourceValueSource(ms));
 		// TODO how do we know the properties were found?
 

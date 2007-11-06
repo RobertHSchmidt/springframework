@@ -45,7 +45,7 @@ public class ExternalBeanDependenciesTest extends TestCase {
 		}
 
 		@Bean
-		public TestBean spouseA() {			
+		public TestBean spouseA() {
 			return new TestBean("spouseA");
 		}
 
@@ -68,7 +68,7 @@ public class ExternalBeanDependenciesTest extends TestCase {
 
 		@Bean
 		public TestBean spouseB() {
-			//System.out.println("creating spouseB ");
+			// System.out.println("creating spouseB ");
 			return new TestBean("spouseB");
 		}
 
@@ -84,16 +84,16 @@ public class ExternalBeanDependenciesTest extends TestCase {
 
 		configurationProcessor.processClass(FirstConfiguration.class);
 		configurationProcessor.processClass(SecondConfiguration.class);
-		
+
 		TestBean beanA = (TestBean) bf.getBean("beanA");
 		TestBean beanB = (TestBean) bf.getBean("beanB");
 
 		assertNotNull(beanA.getSpouse());
 		assertNotNull(beanB.getSpouse());
-		
+
 		TestBean spouseA = (TestBean) bf.getBean("spouseA");
 		TestBean spouseB = (TestBean) bf.getBean("spouseB");
-		
+
 		assertSame(spouseB, beanA.getSpouse());
 		assertSame(spouseA, beanB.getSpouse());
 	}

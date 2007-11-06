@@ -114,8 +114,8 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	public void testAspectJAnnotationsRequireAspectAnnotationDirect() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		assertFalse("Aspect annotationName required",
-			configurationProcessor.processClass(InvalidNoAspectAnnotation.class) > 0);
+		assertFalse("Aspect annotationName required", configurationProcessor
+				.processClass(InvalidNoAspectAnnotation.class) > 0);
 	}
 
 	public void testInvalidInheritanceFromConcreteAspect() throws Exception {
@@ -159,8 +159,8 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(SingletonCountingAdvice.class);
 
-		assertFalse("Must not allow class that does not define beans or aspects",
-			configurationProcessor.processClass(InvalidAroundAdviceClassWithNoAspectAnnotation.class) > 0);
+		assertFalse("Must not allow class that does not define beans or aspects", configurationProcessor
+				.processClass(InvalidAroundAdviceClassWithNoAspectAnnotation.class) > 0);
 		configurationProcessor.processClass(AroundAdviceClass.class);
 
 		TestBean advised1 = (TestBean) bf.getBean("advised");

@@ -30,6 +30,7 @@ public class Worker extends Person {
 	};
 
 	private Company company;
+
 	private Date employmentDate;
 
 	private JobTitle title = JobTitle.Normal;
@@ -57,6 +58,5 @@ public class Worker extends Person {
 	public void setTitle(JobTitle title) {
 		this.title = title;
 	}
-	
-	
+
 }

@@ -39,23 +39,24 @@ public class ConfigurationListenerSupport implements ConfigurationListener {
 		return false;
 	}
 
-	public int configurationClass(ConfigurationProcessor configurationProcessor, 
-			String configurerBeanName, Class<?> configurerClass) {
+	public int configurationClass(ConfigurationProcessor configurationProcessor, String configurerBeanName,
+			Class<?> configurerClass) {
 		return 0;
 	}
 
 	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
-			ConfigurationProcessor configurationProcessor,
-			String configurerBeanName, Class<?> configurerClass, Method m, Bean beanAnnotation) {
+			ConfigurationProcessor configurationProcessor, String configurerBeanName, Class<?> configurerClass,
+			Method m, Bean beanAnnotation) {
 		return 0;
 	}
 
-	public int otherMethod(ConfigurationProcessor configurationProcessor,
-			String configurerBeanName, Class<?> configurerClass, Method m) {
+	public int otherMethod(ConfigurationProcessor configurationProcessor, String configurerBeanName,
+			Class<?> configurerClass, Method m) {
 		return 0;
 	}
 
-	public boolean processBeanMethodReturnValue(ConfigurationProcessor configurationProcessor, Object originallyCreatedBean, Method method, ProxyFactory pf) {
+	public boolean processBeanMethodReturnValue(ConfigurationProcessor configurationProcessor,
+			Object originallyCreatedBean, Method method, ProxyFactory pf) {
 		return false;
 	}
 }

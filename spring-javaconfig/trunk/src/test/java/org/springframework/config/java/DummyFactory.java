@@ -27,19 +27,19 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 /**
- * Simple factory to allow testing of FactoryBean support in AbstractBeanFactory.
- * Depending on whether its singleton property is set, it will return a singleton
- * or a prototype instance.
- *
- * <p>Implements InitializingBean interface, so we can check that
- * factories get this lifecycle callback if they want.
- *
+ * Simple factory to allow testing of FactoryBean support in
+ * AbstractBeanFactory. Depending on whether its singleton property is set, it
+ * will return a singleton or a prototype instance.
+ * 
+ * <p>
+ * Implements InitializingBean interface, so we can check that factories get
+ * this lifecycle callback if they want.
+ * 
  * @author Rod Johnson
  * @since 10.03.2003
  */
-public class DummyFactory
-		implements FactoryBean, BeanNameAware, BeanFactoryAware, InitializingBean, DisposableBean {
-	
+public class DummyFactory implements FactoryBean, BeanNameAware, BeanFactoryAware, InitializingBean, DisposableBean {
+
 	public static final String SINGLETON_NAME = "Factory singleton";
 
 	private static boolean prototypeCreated;
@@ -50,7 +50,6 @@ public class DummyFactory
 	public static void reset() {
 		prototypeCreated = false;
 	}
-
 
 	/**
 	 * Default is for factories to return a singleton instance.
@@ -68,7 +67,6 @@ public class DummyFactory
 	private TestBean testBean;
 
 	private TestBean otherTestBean;
-
 
 	public DummyFactory() {
 		this.testBean = new TestBean();
@@ -130,10 +128,10 @@ public class DummyFactory
 		}
 		this.initialized = true;
 	}
-	
+
 	/**
-	 * Was this initialized by invocation of the
-	 * afterPropertiesSet() method from the InitializingBean interface?
+	 * Was this initialized by invocation of the afterPropertiesSet() method
+	 * from the InitializingBean interface?
 	 */
 	public boolean wasInitialized() {
 		return initialized;
@@ -143,10 +141,8 @@ public class DummyFactory
 		return prototypeCreated;
 	}
 
-
 	/**
-	 * Return the managed object, supporting both singleton
-	 * and prototype mode.
+	 * Return the managed object, supporting both singleton and prototype mode.
 	 * @see org.springframework.config.java.testing.config.java.beans.factory.FactoryBean#getObject()
 	 */
 	public Object getObject() throws BeansException {
@@ -166,7 +162,6 @@ public class DummyFactory
 	public Class getObjectType() {
 		return TestBean.class;
 	}
-
 
 	public void destroy() {
 		if (this.testBean != null) {

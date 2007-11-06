@@ -46,7 +46,6 @@ public class IndexedTestBean {
 
 	private SortedMap sortedMap;
 
-
 	public IndexedTestBean() {
 		this(true);
 	}
@@ -68,7 +67,7 @@ public class IndexedTestBean {
 		TestBean tb7 = new TestBean("name7", 0);
 		TestBean tbX = new TestBean("nameX", 0);
 		TestBean tbY = new TestBean("nameY", 0);
-		this.array = new TestBean[] {tb0, tb1};
+		this.array = new TestBean[] { tb0, tb1 };
 		this.list = new ArrayList();
 		this.list.add(tb2);
 		this.list.add(tb3);
@@ -84,7 +83,6 @@ public class IndexedTestBean {
 		list.add(tbY);
 		this.map.put("key4", list);
 	}
-
 
 	public TestBean[] getArray() {
 		return array;

@@ -17,10 +17,10 @@
 package org.springframework.config.java.annotation;
 
 /**
- * Lazy instantiation options. 
+ * Lazy instantiation options.
  * 
  * @author Rod Johnson
- *
+ * 
  */
 public enum Lazy {
 

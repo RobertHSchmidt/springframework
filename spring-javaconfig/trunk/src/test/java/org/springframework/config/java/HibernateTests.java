@@ -20,36 +20,31 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
 
 public class HibernateTests extends TestCase {
-	
+
 	private ConfigurationListenerRegistry clr = new DefaultConfigurationListenerRegistry();
-	
+
 	public void testStoreEntity() {
 
-		//ConfigurationProcessor.BeanNameTrackingDefaultListableBeanFactory.clear();
-		
+		// ConfigurationProcessor.BeanNameTrackingDefaultListableBeanFactory.clear();
+
 		GenericApplicationContext bf = new GenericApplicationContext();
-		
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(
-				bf);
+
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(HibernateTestConfig1.class);
 		bf.refresh();
-		
+
 		PersonService service = (PersonService) bf.getBean("personService");
 		Person adrian = new Person();
 		adrian.setAge(34);
 		adrian.setName("Adrian");
 		service.create(adrian);
 	}
-	
-	
-	
+
 	@Configuration(defaultAutowire = Autowire.BY_TYPE)
-	@HibernateOptions(propertiesLocation="org/springframework/config/java/template/hib1.properties",
-			showSql=true,
-			configClasses={Person.class})
-			////configLocations={"org/springframework/config/java/Person.hbm.xml"},
+	@HibernateOptions(propertiesLocation = "org/springframework/config/java/template/hib1.properties", showSql = true, configClasses = { Person.class })
+	// //configLocations={"org/springframework/config/java/Person.hbm.xml"},
 	public static class HibernateTestConfig1 extends AbstractHibernateConfiguration {
-		
+
 		public HibernateTestConfig1() {
 			super("org/springframework/config/java/Person.hbm.xml");
 		}
@@ -63,35 +58,35 @@ public class HibernateTests extends TestCase {
 			bsd.setUrl("jdbc:hsqldb:mem:xdb");
 			return bsd;
 		}
-		
+
 		// Allow injection from XML
-//		public DataSource dataSource() {
-//			return dataSource;
-//		}
-//		
-//		public void setDatasource(DataSource ds) {
-//			this.dataSource = ds;
-//		}
-		
-		@Bean//(lazy=true)
+		// public DataSource dataSource() {
+		// return dataSource;
+		// }
+		//		
+		// public void setDatasource(DataSource ds) {
+		// this.dataSource = ds;
+		// }
+
+		@Bean
+		// (lazy=true)
 		public PersonDao personDao() {
 			PersonDao dao = new PersonDao();
 			return dao;
 		}
-		
-		@Bean//(lazy=true)
+
+		@Bean
+		// (lazy=true)
 		public PersonService personService() {
 			return new PersonService();
 		}
 	}
-	
-	
-	
+
 	public static class PersonDao extends HibernateDaoSupport {
 		public void save(Person person) {
 			getHibernateTemplate().save(person);
 		}
-		
+
 		public Person get(Person person, long id) {
 			return (Person) getHibernateTemplate().load(Person.class, id);
 		}
@@ -100,14 +95,17 @@ public class HibernateTests extends TestCase {
 	@Transactional
 	public static class PersonService {
 		private PersonDao dao;
+
 		private SimpleJdbcTemplate simpleJdbcTemplate;
+
 		public void setPersonDao(PersonDao dao) {
 			this.dao = dao;
 		}
+
 		public void setDatasource(DataSource ds) {
 			this.simpleJdbcTemplate = new SimpleJdbcTemplate(ds);
 		}
-		
+
 		public void create(Person p) {
 			dao.getSessionFactory();
 			assertEquals(0, simpleJdbcTemplate.queryForInt("SELECT COUNT(0) FROM T_PERSON WHERE ID=?", p.getId()));

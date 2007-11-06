@@ -64,13 +64,9 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 
 	private static final CallbackFilter BEAN_CREATION_METHOD_CALLBACK_FILTER = new BeanCreationCallbackFilter();
 
-	private static final Class[] CALLBACK_TYPES = new Class[] { 
-								NoOp.class, 
-								BeanMethodMethodInterceptor.class,
-								ExternalBeanMethodMethodInterceptor.class, 
-								ScopedProxyBeanMethodMethodInterceptor.class,
-								ExternalValueMethodMethodInterceptor.class
-							};
+	private static final Class[] CALLBACK_TYPES = new Class[] { NoOp.class, BeanMethodMethodInterceptor.class,
+			ExternalBeanMethodMethodInterceptor.class, ScopedProxyBeanMethodMethodInterceptor.class,
+			ExternalValueMethodMethodInterceptor.class };
 
 	// non-intercepted method
 	private static final int NO_OP_CALLBACK_INDEX = 0;
@@ -80,7 +76,7 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 
 	// external bean invocation
 	private static final int EXTERNAL_BEAN_CALLBACK_INDEX = 2;
-	
+
 	// external property resolution
 	private static final int EXTERNAL_PROPERTY_CALLBACK_INDEX = 4;
 
@@ -91,7 +87,7 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 	private final Callback BEAN_METHOD_CREATION_CALLBACK;
 
 	private final Callback EXTERNAL_BEAN_CALLBACK;
-	
+
 	private final Callback EXTERNAL_PROPERTY_CALLBACK;
 
 	private final Callback SCOPED_PROXY_CALLBACK;
@@ -105,13 +101,10 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 	private BeanNamingStrategy beanNamingStrategy;
 
 	private MethodBeanWrapper beanWrapper;
-	
 
 	public CglibConfigurationEnhancer(ConfigurableListableBeanFactory owningBeanFactory,
-			BeanNameTrackingDefaultListableBeanFactory childFactory, 
-			BeanNamingStrategy beanNamingStrategy,
-			MethodBeanWrapper beanWrapper,
-			ValueSource valueSource) {
+			BeanNameTrackingDefaultListableBeanFactory childFactory, BeanNamingStrategy beanNamingStrategy,
+			MethodBeanWrapper beanWrapper, ValueSource valueSource) {
 
 		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
 		Assert.notNull(childFactory, "childFactory is required");
@@ -129,19 +122,14 @@ public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer
 
 		EXTERNAL_BEAN_CALLBACK = new ExternalBeanMethodMethodInterceptor(this.owningBeanFactory,
 				this.beanNamingStrategy);
-		
+
 		EXTERNAL_PROPERTY_CALLBACK = new ExternalValueMethodMethodInterceptor(valueSource);
 
 		SCOPED_PROXY_CALLBACK = new ScopedProxyBeanMethodMethodInterceptor(
 				(BeanMethodMethodInterceptor) BEAN_METHOD_CREATION_CALLBACK);
 
-		CALLBACKS = new Callback[] { 
-								NoOp.INSTANCE, 
-								BEAN_METHOD_CREATION_CALLBACK, 
-								EXTERNAL_BEAN_CALLBACK,
-								SCOPED_PROXY_CALLBACK,
-								EXTERNAL_PROPERTY_CALLBACK
-							};
+		CALLBACKS = new Callback[] { NoOp.INSTANCE, BEAN_METHOD_CREATION_CALLBACK, EXTERNAL_BEAN_CALLBACK,
+				SCOPED_PROXY_CALLBACK, EXTERNAL_PROPERTY_CALLBACK };
 	}
 
 	/*

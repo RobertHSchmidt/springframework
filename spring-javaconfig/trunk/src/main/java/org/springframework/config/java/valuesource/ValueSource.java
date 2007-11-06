@@ -27,8 +27,8 @@ public interface ValueSource {
 	 * 
 	 * @param name name of the property
 	 * @param requiredType work around Java type erasure
-	 * @throws ValueResolutionException if the property is not in the
-	 * required format or the value is not found
+	 * @throws ValueResolutionException if the property is not in the required
+	 * format or the value is not found
 	 */
 	<T> T resolve(String name, Class<?> requiredType) throws ValueResolutionException;
 

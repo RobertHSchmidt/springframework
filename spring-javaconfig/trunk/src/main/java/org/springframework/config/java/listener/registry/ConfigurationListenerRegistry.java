@@ -20,8 +20,6 @@ import java.util.List;
 
 import org.springframework.config.java.listener.ConfigurationListener;
 
-
-
 /**
  * Interface holding a registry of configuration listeners that are used to
  * react to annotations in configuration classes.

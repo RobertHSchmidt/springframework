@@ -35,7 +35,7 @@ import org.springframework.util.ObjectUtils;
 
 /**
  * Simple test bean used for testing bean factories, AOP framework etc.
- *
+ * 
  * @author Rod Johnson
  * @since 15 April 2001
  */
@@ -97,7 +97,6 @@ public class TestBean implements BeanNameAware, BeanFactoryAware, ITestBean, IOt
 
 	private List pets;
 
-
 	public TestBean() {
 	}
 
@@ -118,7 +117,6 @@ public class TestBean implements BeanNameAware, BeanFactoryAware, ITestBean, IOt
 		this.spouse = spouse;
 		this.someProperties = someProperties;
 	}
-
 
 	public void setBeanName(String beanName) {
 		this.beanName = beanName;
@@ -342,7 +340,6 @@ public class TestBean implements BeanNameAware, BeanFactoryAware, ITestBean, IOt
 		this.pets = pets;
 	}
 
-
 	/**
 	 * @see ITestBean#exceptional(Throwable)
 	 */
@@ -355,6 +352,7 @@ public class TestBean implements BeanNameAware, BeanFactoryAware, ITestBean, IOt
 	public void unreliableFileOperation() throws IOException {
 		throw new IOException();
 	}
+
 	/**
 	 * @see ITestBean#returnsThis()
 	 */
@@ -372,7 +370,6 @@ public class TestBean implements BeanNameAware, BeanFactoryAware, ITestBean, IOt
 		return age++;
 	}
 
-
 	public void destroy() {
 		this.destroyed = true;
 	}
@@ -380,7 +377,6 @@ public class TestBean implements BeanNameAware, BeanFactoryAware, ITestBean, IOt
 	public boolean wasDestroyed() {
 		return destroyed;
 	}
-
 
 	public boolean equals(Object other) {
 		if (this == other) {

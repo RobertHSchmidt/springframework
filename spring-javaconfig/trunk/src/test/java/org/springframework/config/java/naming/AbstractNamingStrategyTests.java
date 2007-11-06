@@ -46,7 +46,7 @@ public abstract class AbstractNamingStrategyTests extends TestCase {
 	}
 
 	protected abstract BeanNamingStrategy createNamingStrategy();
-	
+
 	public void testNullMethod() {
 		try {
 			strategy.getBeanName(null);

@@ -53,38 +53,30 @@ public class AnnotationApplicationContextTests extends TestCase {
 	public void testReadSimplePackage() throws Exception {
 		ctx.setBasePackages("/org/springframework/config/java/simple");
 		ctx.refresh();
-		
+
 		int classesInPackage = 2;
 		int beansInClasses = 2;
-		
-		assertEquals(
-				classesInPackage + beansInClasses,
-				ctx.getBeanDefinitionCount());		
+
+		assertEquals(classesInPackage + beansInClasses, ctx.getBeanDefinitionCount());
 	}
 
 	public void testReadInnerClassesInPackage() throws Exception {
 		ctx.setBasePackages("/org/springframework/config/java/complex");
 		ctx.refresh();
-		//for (String s: ctx.getBeanDefinitionNames()) System.out.println(s);
-		
-		assertEquals(
-				6,
-				ctx.getBeanDefinitionCount());
+		// for (String s: ctx.getBeanDefinitionNames()) System.out.println(s);
+
+		assertEquals(6, ctx.getBeanDefinitionCount());
 	}
 
-
 	public void testReadClassesByName() throws Exception {
-		ctx.setConfigClasses(new Class<?>[] {
-				ComplexConfiguration.class,
-				EmptySimpleConfiguration.class 
-		});
+		ctx.setConfigClasses(new Class<?>[] { ComplexConfiguration.class, EmptySimpleConfiguration.class });
 		ctx.refresh();
-		
+
 		int classesInPackage = 4;
 		int beansInClasses = 3;
-		
-		//for (String s: ctx.getBeanDefinitionNames()) System.out.println(s);
-		
+
+		// for (String s: ctx.getBeanDefinitionNames()) System.out.println(s);
+
 		assertEquals(classesInPackage + beansInClasses, ctx.getBeanDefinitionCount());
 	}
 

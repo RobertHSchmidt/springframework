@@ -21,7 +21,7 @@ import org.springframework.config.java.annotation.Configuration;
 /**
  * 
  * @author Rod Johnson
- *
+ * 
  */
 @Configuration
 public class EmptySimpleConfiguration {

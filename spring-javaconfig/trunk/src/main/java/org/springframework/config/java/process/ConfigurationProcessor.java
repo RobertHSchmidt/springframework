@@ -102,13 +102,13 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	private BytecodeConfigurationEnhancer configurationEnhancer;
 
 	private BeanNamingStrategy beanNamingStrategy;
-	
+
 	private CompositeValueSource valueSource = new CompositeValueSource();
-	
+
 	private ResourceLoader resourceLoader = new DefaultResourceLoader();
 
 	private boolean initialized = false;
-	
+
 	/**
 	 * Constructor taking an application context as paramater. Suitable for
 	 * programatic use.
@@ -128,16 +128,16 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	public ConfigurationProcessor(ConfigurableListableBeanFactory bdr) {
 		this.owningBeanFactory = bdr;
 	}
-	
+
 	/**
-	 * Set the resourceLoader. This is optional, as a default ResourceLoader will
-	 * be used.
+	 * Set the resourceLoader. This is optional, as a default ResourceLoader
+	 * will be used.
 	 * @param resourceLoader resourceLoader to use
 	 */
 	public void setResourceLoader(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
 	}
-	
+
 	public ResourceLoader getResourceLoader() {
 		return resourceLoader;
 	}
@@ -159,11 +159,11 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	public void setConfigurationListenerRegistry(ConfigurationListenerRegistry configurationListenerRegistry) {
 		this.configurationListenerRegistry = configurationListenerRegistry;
 	}
-	
+
 	public ConfigurationListenerRegistry getConfigurationListenerRegistry() {
 		return configurationListenerRegistry;
 	}
-	
+
 	public BytecodeConfigurationEnhancer getConfigurationEnhancer() {
 		return configurationEnhancer;
 	}
@@ -171,15 +171,15 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	public BeanDefinitionRegistry getBeanDefinitionRegistry() {
 		return (BeanDefinitionRegistry) getOwningBeanFactory();
 	}
-	
+
 	public void addValueSource(ValueSource vs) {
 		this.valueSource.add(vs);
 	}
-	
+
 	public ConfigurableListableBeanFactory getOwningBeanFactory() {
 		return owningBeanFactory;
 	}
-	
+
 	public DefaultListableBeanFactory getChildBeanFactory() {
 		return childFactory;
 	}
@@ -228,9 +228,8 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 * is possible to use it directly on classes that haven't been manually
 	 * declared in the enclosing bean factory.
 	 * 
-	 * @param configurationClass class containing
-	 * &#64;Configurable or
-	 * &#64;Bean annotation
+	 * @param configurationClass class containing &#64;Configurable or &#64;Bean
+	 * annotation
 	 * @return the number of bean definition generated (including the
 	 * configuration)
 	 * @throws BeanDefinitionStoreException if no bean definitions are found
@@ -258,7 +257,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		Assert.isInstanceOf(DefaultListableBeanFactory.class, owningBeanFactory);
 
 		((DefaultListableBeanFactory) owningBeanFactory).registerBeanDefinition(configBeanName,
-			configurationBeanDefinition);
+				configurationBeanDefinition);
 
 		// include the configuration bean definition
 		return (generateBeanDefinitions(configBeanName, configurationClass) + 1);
@@ -291,15 +290,15 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		if (!ProcessUtils.validateConfigurationClass(configurationClass, configurationListenerRegistry)) {
 			return 0;
 		}
-		
-		if (configurationClass.getEnclosingClass() != null &&
-				!Modifier.isStatic(configurationClass.getModifiers())) {
-			throw new IllegalArgumentException("Inner configuration class [" + configurationClass.getName() + "] " +
-					"must be static");
+
+		if (configurationClass.getEnclosingClass() != null && !Modifier.isStatic(configurationClass.getModifiers())) {
+			throw new IllegalArgumentException("Inner configuration class [" + configurationClass.getName() + "] "
+					+ "must be static");
 		}
 
 		int beansCreated = 0;
-		AbstractBeanDefinition definition = (AbstractBeanDefinition) owningBeanFactory.getBeanDefinition(configurationBeanName);
+		AbstractBeanDefinition definition = (AbstractBeanDefinition) owningBeanFactory
+				.getBeanDefinition(configurationBeanName);
 
 		// update the configuration bean definition first
 		Class<?> enhancedClass = configurationEnhancer.enhanceConfiguration(configurationClass);
@@ -314,9 +313,10 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 			}
 		}
 
-		// Only want to consider the most specific bean creation method, in the case
+		// Only want to consider the most specific bean creation method, in the
+		// case
 		// of overrides
-		
+
 		// contains the beanNames resolved based on the method signature
 		final Set<String> noArgMethodsSeen = new HashSet<String>();
 		final int[] countFinalReference = new int[] { beansCreated };
@@ -337,8 +337,8 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 					if (owningBeanFactory.containsBean(beanName)) {
 						if (!beanAnnotation.allowOverriding()) {
-							throw new IllegalStateException("Already have a bean with name '" + beanName + "'; " +
-									"processing configClass [" + configClass.getName() + "]");
+							throw new IllegalStateException("Already have a bean with name '" + beanName + "'; "
+									+ "processing configClass [" + configClass.getName() + "]");
 						}
 						else {
 							// Don't emit a bean definition
@@ -347,13 +347,13 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 					}
 					noArgMethodsSeen.add(beanName);
 					countFinalReference[0] += generateBeanDefinitionFromBeanCreationMethod(owningBeanFactory,
-						configurationBeanName, configClass, beanName, m, beanAnnotation);// ,
+							configurationBeanName, configClass, beanName, m, beanAnnotation);// ,
 					// cca);
 				}
 				else {
 					for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
-						countFinalReference[0] += cml.otherMethod(ConfigurationProcessor.this,
-							configurationBeanName, configClass, m);
+						countFinalReference[0] += cml.otherMethod(ConfigurationProcessor.this, configurationBeanName,
+								configClass, m);
 					}
 				}
 			}
@@ -365,8 +365,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		// TODO: need to go up tree? ReflectionUtils.doWithClasses
 		for (Class innerClass : configClass.getDeclaredClasses()) {
 			if (Modifier.isStatic(innerClass.getModifiers())
-					&& (owningBeanFactory.getBeansOfType(innerClass).size() == 0)
-				) {
+					&& (owningBeanFactory.getBeansOfType(innerClass).size() == 0)) {
 				beansCreated += processClass(innerClass);
 			}
 		}
@@ -425,8 +424,8 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		beanDefinitionRegistration.hide = !Modifier.isPublic(beanCreationMethod.getModifiers());
 
 		for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
-			count += cml.beanCreationMethod(beanDefinitionRegistration, this, configurerBeanName,
-				configurerClass, beanCreationMethod, beanAnnotation);
+			count += cml.beanCreationMethod(beanDefinitionRegistration, this, configurerBeanName, configurerClass,
+					beanCreationMethod, beanAnnotation);
 		}
 
 		// allow registration bypass
@@ -439,7 +438,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		}
 		else {
 			((BeanDefinitionRegistry) beanFactory).registerBeanDefinition(beanDefinitionRegistration.name,
-				beanDefinitionRegistration.rbd);
+					beanDefinitionRegistration.rbd);
 		}
 
 		count++;

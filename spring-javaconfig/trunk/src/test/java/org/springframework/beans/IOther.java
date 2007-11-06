@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2002-2005 the original author or authors.
  * 
@@ -18,7 +17,7 @@
 package org.springframework.beans;
 
 public interface IOther {
-	
+
 	void absquatulate();
 
 }

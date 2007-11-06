@@ -50,8 +50,7 @@ public class ScopedProxyConfigurationListener extends ConfigurationListenerSuppo
 	 * org.springframework.config.java.annotation.Bean)
 	 */
 	@Override
-	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
-			ConfigurationProcessor cp,
+	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration, ConfigurationProcessor cp,
 			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
 
 		int count = 0;
@@ -116,8 +115,7 @@ public class ScopedProxyConfigurationListener extends ConfigurationListenerSuppo
 	 * java.lang.String, java.lang.Class, java.lang.reflect.Method)
 	 */
 	@Override
-	public int otherMethod(ConfigurationProcessor cp,
-			String configurerBeanName, Class configurerClass, Method m) {
+	public int otherMethod(ConfigurationProcessor cp, String configurerBeanName, Class configurerClass, Method m) {
 		// catch invalid declarations
 		if (m.isAnnotationPresent(ScopedProxy.class))
 			throw new BeanDefinitionStoreException(

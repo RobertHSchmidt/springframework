@@ -568,8 +568,8 @@ public class ConfigurationPostProcessorTests extends TestCase {
 				"org/springframework/config/java/legalOverride.xml");
 		TestBean bob = (TestBean) bf.getBean("bob");
 		assertTrue(bf.containsBean("ann"));
-		assertEquals("Property value must have come from XML override, not @Bean method", "Ann",
-			bob.getSpouse().getName());
+		assertEquals("Property value must have come from XML override, not @Bean method", "Ann", bob.getSpouse()
+				.getName());
 	}
 
 	@Configuration

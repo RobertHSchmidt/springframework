@@ -23,19 +23,17 @@ import org.springframework.beans.BeanWrapperImpl;
  * 
  */
 public abstract class AbstractStringBasedValueSource implements ValueSource {
-	
+
 	private BeanWrapperImpl beanWrapperImpl = new BeanWrapperImpl();
 
 	@SuppressWarnings("unchecked")
 	public <T> T resolve(String name, Class<?> requiredType) throws ValueResolutionException {
 		String rawValue = getString(name);
-		
+
 		// TODO might want to allow Spring type converters to be added
 		return (T) beanWrapperImpl.convertIfNecessary(rawValue, requiredType);
 	}
 
 	public abstract String getString(String name) throws ValueResolutionException;
-	
-
 
 }

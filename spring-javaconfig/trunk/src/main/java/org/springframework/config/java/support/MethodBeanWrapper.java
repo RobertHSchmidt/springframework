@@ -87,7 +87,7 @@ public class MethodBeanWrapper {
 		String lastRequestedBeanName = childTrackingFactory.lastRequestedBeanName();
 
 		boolean newBeanRequested = (lastRequestedBeanName == null || beanName.equals(lastRequestedBeanName));
-		
+
 		Method method = invoker.getMethod();
 
 		try {
@@ -139,10 +139,11 @@ public class MethodBeanWrapper {
 				}
 
 				boolean customized = false;
-				for (ConfigurationListener cml : configurationProcessor.getConfigurationListenerRegistry().getConfigurationListeners()) {
+				for (ConfigurationListener cml : configurationProcessor.getConfigurationListenerRegistry()
+						.getConfigurationListeners()) {
 					customized = customized
-							|| cml.processBeanMethodReturnValue(configurationProcessor,
-								originallyCreatedBean, method, pf);
+							|| cml.processBeanMethodReturnValue(configurationProcessor, originallyCreatedBean, method,
+									pf);
 				}
 
 				// Only proxy if we know that advisors apply to this bean

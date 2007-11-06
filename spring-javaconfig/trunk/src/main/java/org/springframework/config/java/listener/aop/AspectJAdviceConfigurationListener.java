@@ -78,9 +78,9 @@ public class AspectJAdviceConfigurationListener extends AbstractAopConfiguration
 		String aspectName = "aspectName";
 		Advisor pa = aspectJAdvisorFactory.getAdvisor(/* configurerClass, */aspectJAdviceMethod,
 		// new PrototypeAspectInstanceFactory(childBeanFactory,
-			// getConfigurerBeanName(configurerClass)));
-			new BeanFactoryAspectInstanceFactory(cp.getChildBeanFactory(), getConfigurerBeanName(configurerClass),
-					configurerClass), declarationOrderInAspect, aspectName);
+				// getConfigurerBeanName(configurerClass)));
+				new BeanFactoryAspectInstanceFactory(cp.getChildBeanFactory(), getConfigurerBeanName(configurerClass),
+						configurerClass), declarationOrderInAspect, aspectName);
 
 		// TODO should handle introductions also?
 		if (pa != null && (pa instanceof PointcutAdvisor)) {

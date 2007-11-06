@@ -40,87 +40,87 @@ import org.springframework.core.annotation.Order;
  * @author Rod Johnson
  */
 public class SpringAopConfigurationProcessorTests extends TestCase {
-	
+
 	private ConfigurationListenerRegistry clr = new DefaultConfigurationListenerRegistry();
 
 	public void testPerInstanceAdviceAndSharedAdvice() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(SpringAroundPerInstanceAdvice.class);
-		
+
 		TestBean advised1 = (TestBean) bf.getBean("advised");
 		Object target1 = ((Advised) advised1).getTargetSource().getTarget();
 		TestBean advised2 = (TestBean) bf.getBean("advised");
-		
+
 		// Hashcode works on this
 		advised2.setAge(35);
-		
+
 		assertNotSame(advised1, advised2);
 		Object target2 = ((Advised) advised2).getTargetSource().getTarget();
 		assertNotSame(target1, target2);
-		//System.out.println("t1=" + System.identityHashCode(target1) + "; t2=" + System.identityHashCode(target2));
-		
+		// System.out.println("t1=" + System.identityHashCode(target1) + "; t2="
+		// + System.identityHashCode(target2));
+
 		assertEquals("advised", bf.getBeanNamesForType(TestBean.class)[0]);
-		
+
 		assertEquals(0, SingletonCountingAdvice.getCount(target1));
 		advised1.absquatulate();
 		assertEquals(0, SingletonCountingAdvice.getCount(target1));
 		advised1.getSpouse();
 		assertEquals(1, SingletonCountingAdvice.getCount(target1));
 		assertEquals(0, SingletonCountingAdvice.getCount(target2));
-		
+
 		advised2.getSpouse();
 		assertEquals(1, SingletonCountingAdvice.getCount(target1));
 		assertEquals(1, SingletonCountingAdvice.getCount(target2));
 	}
 
-	
 	public void testAroundAdvice() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(SpringAroundPerInstanceAdvice.class);
-		
+
 		TestBean advised1 = (TestBean) bf.getBean("advised");
 		int newAge = 24;
 		advised1.setAge(newAge);
 		assertEquals("Invocations must work on target without around advice", newAge, advised1.getAge());
-		assertEquals("around", advised1.getName());		
+		assertEquals("around", advised1.getName());
 	}
-	
-	
+
 	public void testNoAroundAdvice() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		// Superclass doesn't have around advice
 		configurationProcessor.processClass(SingletonCountingAdvice.class);
-		
+
 		TestBean advised1 = (TestBean) bf.getBean("advised");
 		int newAge = 24;
 		advised1.setAge(newAge);
 		assertEquals("Invocations must work on target without around advice", newAge, advised1.getAge());
-		assertEquals("tony", advised1.getName());		
+		assertEquals("tony", advised1.getName());
 	}
-	
+
 	public void testCanControlInterceptorPosition() throws Exception {
 		OrderCheckingInterceptor.clear();
-		
+
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		// Superclass doesn't have around advice
 		configurationProcessor.processClass(OrderedSpringAdvice.class);
-		
+
 		TestBean advised1 = (TestBean) bf.getBean("advised");
 		assertNull(advised1.getSpouse());
 	}
 
 	public static class SpringAroundPerInstanceAdvice extends CountingConfiguration {
-		
+
 		@Bean
 		@SpringAdvice("execution(* getSpouse())")
 		public MethodBeforeAdvice doesntMatter() {
 			return new MethodBeforeAdvice() {
 				public void before(Method method, Object[] args, Object target) throws Throwable {
-					//System.out.println("Advised on Targetid=" + System.identityHashCode(target));
+					// System.out.println("Advised on Targetid=" +
+					// System.identityHashCode(target));
 					Integer count = counts.get(target);
 					if (count == null) {
 						count = 0;
@@ -130,8 +130,7 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 				}
 			};
 		}
-		
-		
+
 		@Bean
 		@SpringAdvice("execution(* *.getName())")
 		public MethodInterceptor around() {
@@ -142,24 +141,23 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 			};
 		}
 	}
-	
-	
+
 	public static class OrderedSpringAdvice extends CountingConfiguration {
-		
+
 		@Bean
 		@Order(0)
 		@SpringAdvice("execution(* getSpouse())")
 		public MethodInterceptor first() {
 			return new OrderCheckingInterceptor(0);
 		}
-		
+
 		@Bean
 		@Order(1)
 		@SpringAdvice("execution(* getSpouse())")
 		public MethodInterceptor second() {
 			return new OrderCheckingInterceptor(1);
 		}
-		
+
 		@Bean()
 		@Order(2)
 		@SpringAdvice("execution(* getSpouse())")
@@ -167,67 +165,68 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 			return new OrderCheckingInterceptor(2);
 		}
 	}
-	
+
 	private static class OrderCheckingInterceptor implements MethodInterceptor {
 		private static ThreadLocal<Integer> expectedInterceptorPosition = new ThreadLocal<Integer>();
-		
+
 		public static void clear() {
 			expectedInterceptorPosition.set(0);
 		}
-		
+
 		private int getPosition() {
 			int old = expectedInterceptorPosition.get();
 			expectedInterceptorPosition.set(expectedInterceptorPosition.get() + 1);
 			return old;
 		}
-		
+
 		private final int order;
+
 		public OrderCheckingInterceptor(int order) {
 			this.order = order;
 		}
-		
+
 		public Object invoke(MethodInvocation mi) throws Throwable {
 			assertEquals("Order value matches", order, getPosition());
 			return mi.proceed();
 		}
 	}
-	
+
 	public static class InterceptAllAdvice {
 		public static int count;
-		
+
 		@Bean
-		@SpringAdvice(matchAll=true)
+		@SpringAdvice(matchAll = true)
 		protected MethodBeforeAdvice count() {
 			return new MethodBeforeAdvice() {
 				public void before(Method method, Object[] args, Object target) throws Throwable {
-					//new Throwable().printStackTrace();
+					// new Throwable().printStackTrace();
 					++count;
 				}
 			};
 		}
-		
+
 		@Bean
 		public TestBean kaare() {
 			return new TestBean();
 		}
 	}
-	
-	// FIXME: interception on self causes circular dependency - can this be prevented?
+
+	// FIXME: interception on self causes circular dependency - can this be
+	// prevented?
 	public void tstInterceptAll() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf); 
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(InterceptAllAdvice.class);
-		
+
 		TestBean kaare = (TestBean) bf.getBean("kaare");
-		
+
 		// Can't start at 0 because of factory methods such as setBeanFactory()
 		int invocations = InterceptAllAdvice.count = 0;
-		
+
 		kaare.absquatulate();
 		assertEquals(++invocations, InterceptAllAdvice.count);
 		kaare.getAge();
 		assertEquals(++invocations, InterceptAllAdvice.count);
 	}
-	
 
 }

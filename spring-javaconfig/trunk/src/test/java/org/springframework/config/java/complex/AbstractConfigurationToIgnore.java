@@ -21,11 +21,11 @@ import org.springframework.config.java.annotation.Configuration;
 /**
  * Abstract configuration classes should be ignored.
  * @author Rod Johnson
- *
+ * 
  */
 @Configuration
 public abstract class AbstractConfigurationToIgnore {
-	
+
 	@Bean
 	public Object ignoreMeUnlessTheresASubclass() {
 		return new Object();
