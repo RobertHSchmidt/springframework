@@ -99,6 +99,14 @@
 					<excludes>
 						<exclude>**/Abstract*.java</exclude>
 					</excludes>
+					<systemProperties>
+						<!-- The following is a workaround for an issue with Cobertura where reports always
+						     result in 100% coverage. See http://jira.codehaus.org/browse/MCOBERTURA-61 -->
+						<property>
+							<name>net.sourceforge.cobertura.datafile</name>
+							<value>target/cobertura/cobertura.ser</value>
+						</property>
+					</systemProperties>
 				</configuration>
 			</plugin>
 			<plugin>
