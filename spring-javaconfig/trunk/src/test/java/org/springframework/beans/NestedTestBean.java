@@ -41,6 +41,7 @@ public class NestedTestBean implements INestedTestBean {
 		return company;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof NestedTestBean)) {
 			return false;
@@ -49,10 +50,12 @@ public class NestedTestBean implements INestedTestBean {
 		return this.company.equals(ntb.company);
 	}
 
+	@Override
 	public int hashCode() {
 		return this.company.hashCode();
 	}
 
+	@Override
 	public String toString() {
 		return "NestedTestBean: " + this.company;
 	}

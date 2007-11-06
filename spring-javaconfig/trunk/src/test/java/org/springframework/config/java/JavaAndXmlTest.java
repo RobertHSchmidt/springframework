@@ -94,6 +94,7 @@ public class JavaAndXmlTest extends AbstractDependencyInjectionSpringContextTest
 		assertNotNull(dependency);
 	}
 
+	@Override
 	protected String[] getConfigLocations() {
 		return new String[] { "classpath:org/springframework/config/java/javaandxml.xml", };
 	}

@@ -30,11 +30,13 @@ public class AnnotationApplicationContextTests extends TestCase {
 
 	protected AnnotationApplicationContext ctx;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		ctx = new AnnotationApplicationContext();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		ctx = null;

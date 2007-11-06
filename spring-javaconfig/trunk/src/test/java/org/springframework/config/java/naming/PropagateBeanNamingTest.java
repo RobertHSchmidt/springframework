@@ -36,6 +36,7 @@ public class PropagateBeanNamingTest extends AbstractDependencyInjectionSpringCo
 		setAutowireMode(AUTOWIRE_BY_NAME);
 	}
 
+	@Override
 	protected String[] getConfigLocations() {
 		return new String[] { "classpath:org/springframework/config/java/naming/PropagateBeanNamingTest.xml", };
 	}

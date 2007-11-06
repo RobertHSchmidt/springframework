@@ -63,16 +63,16 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 
 		assertEquals("advised", bf.getBeanNamesForType(TestBean.class)[0]);
 
-		assertEquals(0, SingletonCountingAdvice.getCount(target1));
+		assertEquals(0, CountingConfiguration.getCount(target1));
 		advised1.absquatulate();
-		assertEquals(0, SingletonCountingAdvice.getCount(target1));
+		assertEquals(0, CountingConfiguration.getCount(target1));
 		advised1.getSpouse();
-		assertEquals(1, SingletonCountingAdvice.getCount(target1));
-		assertEquals(0, SingletonCountingAdvice.getCount(target2));
+		assertEquals(1, CountingConfiguration.getCount(target1));
+		assertEquals(0, CountingConfiguration.getCount(target2));
 
 		advised2.getSpouse();
-		assertEquals(1, SingletonCountingAdvice.getCount(target1));
-		assertEquals(1, SingletonCountingAdvice.getCount(target2));
+		assertEquals(1, CountingConfiguration.getCount(target1));
+		assertEquals(1, CountingConfiguration.getCount(target2));
 	}
 
 	public void testAroundAdvice() throws Exception {

@@ -52,7 +52,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author Rod Johnson
  */
 public class ConfigurationPostProcessorTests extends TestCase {
-	
+
 	public void testPriorityOrdering() {
 		ConfigurationPostProcessor cpp = new ConfigurationPostProcessor();
 		assertEquals(Integer.MIN_VALUE, cpp.getOrder());
@@ -623,6 +623,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 	@Configuration
 	public static class ExternalBeanConfigurationNonAbstract extends ExternalBeanConfiguration {
 
+		@Override
 		@ExternalBean
 		public TestBean ann() {
 			throw new UnsupportedOperationException("should not be called");

@@ -73,6 +73,7 @@ public class BeansAndPostprocessorTests extends TestCase {
 	 * (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		ctx = new GenericApplicationContext();
 		configurationProcessor = new ConfigurationProcessor(ctx);
@@ -89,6 +90,7 @@ public class BeansAndPostprocessorTests extends TestCase {
 	 * (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		ctx.close();
 	}

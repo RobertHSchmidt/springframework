@@ -26,6 +26,7 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
  */
 public class ScopingXmlTest extends AbstractDependencyInjectionSpringContextTests {
 
+	@Override
 	protected String[] getConfigLocations() {
 		return new String[] { "classpath:org/springframework/config/java/scoping.xml", };
 	}
