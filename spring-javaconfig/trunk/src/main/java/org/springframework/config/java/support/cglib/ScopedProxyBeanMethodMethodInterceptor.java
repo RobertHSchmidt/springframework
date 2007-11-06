@@ -53,7 +53,7 @@ class ScopedProxyBeanMethodMethodInterceptor implements MethodInterceptor {
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
 		String beanToReturn = delegate.getBeanName(m);
 		String scopedBean = ScopeUtils.getScopedHiddenName(beanToReturn);
-		
+
 		if (delegate.isCurrentlyInCreation(scopedBean))
 			beanToReturn = scopedBean;
 		return delegate.returnWrappedResultMayBeCached(beanToReturn, o, m, args, mp);

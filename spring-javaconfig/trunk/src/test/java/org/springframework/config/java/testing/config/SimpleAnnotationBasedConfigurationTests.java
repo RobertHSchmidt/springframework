@@ -49,12 +49,12 @@ public class SimpleAnnotationBasedConfigurationTests extends TestCase {
 	public void testSimpleConfigurationBootstrap() throws Exception {
 		ApplicationContext ctx = new AnnotationApplicationContext(SimpleConfiguration.class.getName());
 
-		//System.out.println(Arrays.toString(ctx.getBeanDefinitionNames()));
+		// System.out.println(Arrays.toString(ctx.getBeanDefinitionNames()));
 	}
 
 	public void testAnnotationApplicationContext() throws Exception {
 		AnnotationApplicationContext ctx = new AnnotationApplicationContext("org.springframework.config.java.complex");
 		assertTrue("Found configurations and beans", ctx.getBeanDefinitionCount() >= 6);
-		//System.out.println(Arrays.toString(ctx.getBeanDefinitionNames()));
+		// System.out.println(Arrays.toString(ctx.getBeanDefinitionNames()));
 	}
 }

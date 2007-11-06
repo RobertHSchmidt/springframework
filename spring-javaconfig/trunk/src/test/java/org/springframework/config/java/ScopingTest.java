@@ -368,7 +368,7 @@ public class ScopingTest extends TestCase {
 
 		ConfigurationProcessor processor = new ConfigurationProcessor(anotherBf);
 		// count the beans
-		// 6 @Beans + 1 Configuration + 2 @ScopedProxy 
+		// 6 @Beans + 1 Configuration + 2 @ScopedProxy
 		assertEquals(9, processor.processClass(ScopedConfigurationClass.class));
 	}
 

@@ -36,8 +36,8 @@ public class MethodNameStrategyTests extends AbstractNamingStrategyTests {
 
 	public void testClass() {
 		((MethodNameStrategy) strategy).setPrefix(Prefix.CLASS);
-		assertEquals(AbstractNamingStrategyTests.class.getSimpleName().concat(".setUp"),
-			strategy.getBeanName(sampleMethod));
+		assertEquals(AbstractNamingStrategyTests.class.getSimpleName().concat(".setUp"), strategy
+				.getBeanName(sampleMethod));
 	}
 
 	public void testFQN() {

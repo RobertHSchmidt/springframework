@@ -41,8 +41,7 @@ public class SpringAdvisorConfigurationListener extends ConfigurationListenerSup
 	private List<String> advisorBeanNames = new LinkedList<String>();
 
 	@Override
-	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
-			ConfigurationProcessor cp,
+	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration, ConfigurationProcessor cp,
 			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
 
 		if (AnnotationUtils.findAnnotation(m, SpringAdvisor.class) != null) {
@@ -55,7 +54,8 @@ public class SpringAdvisorConfigurationListener extends ConfigurationListenerSup
 	}
 
 	@Override
-	public boolean processBeanMethodReturnValue(ConfigurationProcessor cp, Object originallyCreatedBean, Method method, ProxyFactory pf) {
+	public boolean processBeanMethodReturnValue(ConfigurationProcessor cp, Object originallyCreatedBean, Method method,
+			ProxyFactory pf) {
 		for (String advisorName : advisorBeanNames) {
 			try {
 				Advisor advisor = (Advisor) cp.getChildBeanFactory().getBean(advisorName);

@@ -39,8 +39,7 @@ public class HotSwapConfigurationListener extends ConfigurationListenerSupport {
 	private List<Method> hotswapMethods = new LinkedList<Method>();
 
 	@Override
-	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
-			ConfigurationProcessor cp,
+	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration, ConfigurationProcessor cp,
 			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
 		if (AnnotationUtils.findAnnotation(m, HotSwappable.class) != null) {
 			hotswapMethods.add(m);
@@ -50,7 +49,8 @@ public class HotSwapConfigurationListener extends ConfigurationListenerSupport {
 	}
 
 	@Override
-	public boolean processBeanMethodReturnValue(ConfigurationProcessor cp, Object originallyCreatedBean, Method method, ProxyFactory pf) {
+	public boolean processBeanMethodReturnValue(ConfigurationProcessor cp, Object originallyCreatedBean, Method method,
+			ProxyFactory pf) {
 		if (hotswapMethods.contains(method)) {
 			HotSwappableTargetSource hsts = new HotSwappableTargetSource(originallyCreatedBean);
 			pf.setTargetSource(hsts);

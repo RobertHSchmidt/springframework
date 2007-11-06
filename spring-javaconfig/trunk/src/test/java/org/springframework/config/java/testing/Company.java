@@ -27,6 +27,7 @@ public class Company {
 	private String name;
 
 	private Collection<Owner> owners;
+
 	private Collection<Worker> workers;
 
 	public Company() {

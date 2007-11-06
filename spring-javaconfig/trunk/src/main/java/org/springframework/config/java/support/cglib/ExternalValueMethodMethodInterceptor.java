@@ -46,7 +46,7 @@ class ExternalValueMethodMethodInterceptor implements MethodInterceptor {
 		if (ev == null) {
 			throw new IllegalArgumentException(m + "Must be annotated with @ExternalValue");
 		}
-		
+
 		String name = ev.value();
 		if ("".equals(name)) {
 			name = m.getName();
@@ -55,7 +55,7 @@ class ExternalValueMethodMethodInterceptor implements MethodInterceptor {
 				name = Character.toLowerCase(name.charAt(3)) + name.substring(4);
 			}
 		}
-		
+
 		try {
 			return valueSource.resolve(name, m.getReturnType());
 		}

@@ -49,8 +49,8 @@ public interface ConfigurationListener {
 	 * @param configurerClass
 	 * @return number of bean definitions created
 	 */
-	int configurationClass(ConfigurationProcessor configurationProcessor,
-			String configurerBeanName, Class<?> configurerClass);
+	int configurationClass(ConfigurationProcessor configurationProcessor, String configurerBeanName,
+			Class<?> configurerClass);
 
 	/**
 	 * React to the BeanDefinition and possibly customize it or change its name
@@ -66,12 +66,13 @@ public interface ConfigurationListener {
 	 * @param m configuration method
 	 * @param beanAnnotation bean annotation on the configuration method, which
 	 * will not be null.
-	 * @return number of additional bean definitions created for the existing one. The value should be different from zero if wrapping bean definitions
-	 * are created besides the normal &#64;Bean discovery process 
+	 * @return number of additional bean definitions created for the existing
+	 * one. The value should be different from zero if wrapping bean definitions
+	 * are created besides the normal &#64;Bean discovery process
 	 */
 	int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
-			ConfigurationProcessor configurationProcessor,
-			String configurerBeanName, Class<?> configurerClass, Method m, Bean beanAnnotation);
+			ConfigurationProcessor configurationProcessor, String configurerBeanName, Class<?> configurerClass,
+			Method m, Bean beanAnnotation);
 
 	/**
 	 * React to the encountering of a non bean definition method on the
@@ -83,8 +84,8 @@ public interface ConfigurationListener {
 	 * @param m method on configurer class
 	 * @return number of newly bean definitions created
 	 */
-	int otherMethod(ConfigurationProcessor configurationProcessor,
-			String configurerBeanName, Class<?> configurerClass, Method m);
+	int otherMethod(ConfigurationProcessor configurationProcessor, String configurerBeanName, Class<?> configurerClass,
+			Method m);
 
 	/**
 	 * Help to process the return value of a bean definition.
@@ -94,7 +95,8 @@ public interface ConfigurationListener {
 	 * @return whether or not the proxy was changed. If all listeners return
 	 * false, the return value may not need to be proxied.
 	 */
-	boolean processBeanMethodReturnValue(ConfigurationProcessor configurationProcessor, Object originallyCreatedBean, Method method, ProxyFactory pf);
+	boolean processBeanMethodReturnValue(ConfigurationProcessor configurationProcessor, Object originallyCreatedBean,
+			Method method, ProxyFactory pf);
 
 	/**
 	 * Class to hold BeanDefinition, name and any other information, to allow
@@ -107,8 +109,8 @@ public interface ConfigurationListener {
 		public String name;
 
 		/**
-		 * Should the bean definition be hidden or not. When hidden, the bean definition resides only
-		 * in the child context.
+		 * Should the bean definition be hidden or not. When hidden, the bean
+		 * definition resides only in the child context.
 		 */
 		public boolean hide;
 

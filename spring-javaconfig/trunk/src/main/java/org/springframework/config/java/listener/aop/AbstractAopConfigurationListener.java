@@ -61,7 +61,8 @@ public abstract class AbstractAopConfigurationListener extends ConfigurationList
 	}
 
 	@Override
-	public boolean processBeanMethodReturnValue(ConfigurationProcessor cp, Object originallyCreatedBean, Method method, ProxyFactory pf) {
+	public boolean processBeanMethodReturnValue(ConfigurationProcessor cp, Object originallyCreatedBean, Method method,
+			ProxyFactory pf) {
 		int added = 0;
 		for (String adviceName : pointcuts.keySet()) {
 			Pointcut pc = pointcuts.get(adviceName);

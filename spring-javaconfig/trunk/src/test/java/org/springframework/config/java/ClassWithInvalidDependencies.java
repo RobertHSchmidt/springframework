@@ -17,11 +17,10 @@ package org.springframework.config.java;
 
 /**
  * @author Costin Leau
- *
+ * 
  */
 public class ClassWithInvalidDependencies extends foo.bar.Class {
-	public Extra getExtra(Super zuper)
-	{
+	public Extra getExtra(Super zuper) {
 		return new NoOp();
 	}
 }

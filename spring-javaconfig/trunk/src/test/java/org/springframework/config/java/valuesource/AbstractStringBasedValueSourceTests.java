@@ -21,10 +21,10 @@ import junit.framework.TestCase;
 /**
  * 
  * @author Rod Johnson
- *
+ * 
  */
 public class AbstractStringBasedValueSourceTests extends TestCase {
-	
+
 	class Foo extends AbstractStringBasedValueSource {
 		@Override
 		public String getString(String name) throws ValueResolutionException {
@@ -32,12 +32,11 @@ public class AbstractStringBasedValueSourceTests extends TestCase {
 			return "foo";
 		}
 	}
-	
+
 	public void testSimpleStringBasedProperty() {
 		Foo f = new Foo();
 		String s = f.resolve("frog", String.class);
-		//Object o = f.resolve("woeirowieur", Object.class);
+		// Object o = f.resolve("woeirowieur", Object.class);
 	}
-	
 
 }

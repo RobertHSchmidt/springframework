@@ -31,9 +31,8 @@ import org.springframework.context.support.AbstractRefreshableApplicationContext
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 /**
- * Annotation-aware application context that looks for classes
- * annotated with the Configuration annotation and registers
- * the beans they define.
+ * Annotation-aware application context that looks for classes annotated with
+ * the Configuration annotation and registers the beans they define.
  * 
  * @author Costin Leau
  * @author Rod Johnson
@@ -43,7 +42,7 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 	private String[] basePackages;
 
 	private Class[] configClasses;
-	
+
 	/**
 	 * We delegate to Spring 2.5 and above class scanning support.
 	 */
@@ -101,7 +100,6 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 		setConfigClasses(classes);
 		refresh();
 	}
-	
 
 	protected String[] getBasePackages() {
 		return basePackages;
@@ -113,15 +111,13 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 
 	/**
 	 * Set the base packages for configurations from Strings. These use the same
-	 * conventions as the component scanning introduced in
-	 * Spring 2.5.
+	 * conventions as the component scanning introduced in Spring 2.5.
 	 * 
 	 * @param basePackages
 	 */
 	public void setBasePackages(String... basePackages) {
 		this.basePackages = basePackages;
 	}
-
 
 	/**
 	 * Indicate the {@link Class}es that hold annotations suitable for
@@ -131,7 +127,7 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 	public void setConfigClasses(Class... classes) {
 		this.configClasses = classes;
 	}
-	
+
 	/**
 	 * Register the default post processors used for parsing Spring classes.
 	 * 
@@ -140,9 +136,8 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 		addBeanFactoryPostProcessor(new ConfigurationPostProcessor());
 	}
 
-	
 	@Override
-	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {						
+	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {
 		if (getConfigClasses() != null && getConfigClasses().length > 0) {
 			for (Class<?> cz : getConfigClasses()) {
 				beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
@@ -153,13 +148,12 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 			for (String location : getBasePackages()) {
 				Set<BeanDefinition> beandefs = this.scanner.findCandidateComponents(location);
 				for (BeanDefinition bd : beandefs) {
-					//System.out.println("----" + bd.getBeanClassName());
+					// System.out.println("----" + bd.getBeanClassName());
 					beanFactory.registerBeanDefinition(bd.getBeanClassName(), bd);
 				}
 			}
 		}
 	}
-
 
 	/**
 	 * Load bean definitions from configuration classes.

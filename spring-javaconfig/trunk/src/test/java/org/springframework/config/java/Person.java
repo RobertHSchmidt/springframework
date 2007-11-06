@@ -1,13 +1,13 @@
 package org.springframework.config.java;
 
 public class Person {
-	
+
 	private long id;
-	
+
 	private int age;
-	
+
 	private String name;
-	
+
 	public long getId() {
 		return id;
 	}
@@ -27,6 +27,5 @@ public class Person {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
 
 }

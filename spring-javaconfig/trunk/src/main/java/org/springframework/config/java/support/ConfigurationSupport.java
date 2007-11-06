@@ -77,8 +77,6 @@ public class ConfigurationSupport implements BeanFactoryAware {
 	// TODO could be BeanPostProcessor to evaluate each bean in the factory for
 	// whether it's a property source,
 	// calling add as necessary. Or do we want to keep them distinct?
-
 	// TODO how to fix this for other callbacks. Can reuse any code from core?
 	// Create a child context?? just with this bean?
-
 }

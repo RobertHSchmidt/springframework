@@ -30,15 +30,14 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.jta.UserTransactionAdapter;
 
 public class J2eeHelperTests extends TestCase {
-	
+
 	private ConfigurationListenerRegistry clr = new DefaultConfigurationListenerRegistry();
 
 	private static final String DS_NAME = "java:comp/env/ds";
 
 	public void testLookup() throws NamingException {
 
-		SimpleNamingContextBuilder builder = SimpleNamingContextBuilder
-				.emptyActivatedContextBuilder();
+		SimpleNamingContextBuilder builder = SimpleNamingContextBuilder.emptyActivatedContextBuilder();
 		DataSource expectedDs = new DriverManagerDataSource();
 
 		builder.bind(DS_NAME, expectedDs);
@@ -46,17 +45,15 @@ public class J2eeHelperTests extends TestCase {
 				(javax.transaction.TransactionManager) empty(javax.transaction.TransactionManager.class)));
 
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(
-				bf);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(J2eeTxConfig.class);
 
-		PlatformTransactionManager ptm = (PlatformTransactionManager) bf
-				.getBean("transactionManager");
+		PlatformTransactionManager ptm = (PlatformTransactionManager) bf.getBean("transactionManager");
 		DataSource ds = (DataSource) bf.getBean("dataSource");
 		assertSame(expectedDs, ds);
 	}
-	
-	protected Object empty(Class ... interfaces) {
+
+	protected Object empty(Class... interfaces) {
 		ProxyFactory pf = new ProxyFactory();
 		pf.setInterfaces(interfaces);
 		pf.addAdvice(new MethodInterceptor() {
@@ -66,48 +63,44 @@ public class J2eeHelperTests extends TestCase {
 		});
 		return pf.getProxy();
 	}
-	
+
 	public void testAttributeDrivenTransactionManagement() {
 
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(
-				bf);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(TestTxConfig.class);
-		
+
 		Object result = bf.getBean(AbstractTransactionalConfiguration.TRANSACTION_MANAGER_BEAN_NAME);
 		if (result instanceof Advised) {
 			fail(((Advised) result).toProxyConfigString());
 		}
-		
 
-		CallCountingTransactionManager txm = (CallCountingTransactionManager) bf.getBean(AbstractTransactionalConfiguration.TRANSACTION_MANAGER_BEAN_NAME);
-		
-		TxAnnotated txAnnotated =  (TxAnnotated) bf.getBean("annotatedBean");
+		CallCountingTransactionManager txm = (CallCountingTransactionManager) bf
+				.getBean(AbstractTransactionalConfiguration.TRANSACTION_MANAGER_BEAN_NAME);
+
+		TxAnnotated txAnnotated = (TxAnnotated) bf.getBean("annotatedBean");
 		assertTrue(AopUtils.isAopProxy(txAnnotated));
-		
+
 		assertEquals(0, txm.commits);
 		txAnnotated.foo();
 		assertEquals(1, txm.commits);
-		
+
 		assertFalse("Advisor is hidden so as not to pollute context", bf.containsBean("txAdvisor"));
-		
+
 	}
-	
-	
+
 	public void xtestHsqlConfig() {
 
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(
-				bf);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(TestHsqlConfig.class);
-		
+
 		MyDao myDao = (MyDao) bf.getBean("myDao");
-		assertEquals(0, myDao.runCount() );
+		assertEquals(0, myDao.runCount());
 	}
-	
 
 	public static class J2eeTxConfig extends AbstractTransactionalConfiguration {
-		
+
 		@Override
 		public PlatformTransactionManager transactionManager() {
 			JtaTransactionManager jta = new JtaTransactionManager();
@@ -121,18 +114,18 @@ public class J2eeHelperTests extends TestCase {
 		}
 
 	}
-	
+
 	public static class TestTxConfig extends AbstractTransactionalConfiguration {
 		@Override
 		public PlatformTransactionManager transactionManager() {
 			return new CallCountingTransactionManager();
 		}
-		
+
 		@Override
 		public DataSource dataSource() {
 			throw new UnsupportedOperationException();
 		}
-		
+
 		@Bean
 		public TxAnnotated annotatedBean() {
 			return new TxAnnotated();
@@ -142,11 +135,11 @@ public class J2eeHelperTests extends TestCase {
 	public static class TxAnnotated {
 		@Transactional
 		public void foo() {
-			
+
 		}
 	}
-	
-	@Configuration(defaultAutowire=Autowire.BY_TYPE)
+
+	@Configuration(defaultAutowire = Autowire.BY_TYPE)
 	public static class TestHsqlConfig extends AbstractTransactionalConfiguration {
 		@Override
 		public PlatformTransactionManager transactionManager() {
@@ -162,16 +155,15 @@ public class J2eeHelperTests extends TestCase {
 			bsd.setUrl("jdbc:hsqldb:mem:xdb");
 			return bsd;
 		}
-		
+
 		@Bean
 		public MyDao myDao() {
 			return new MyDao();
 		}
 	}
-	
-	
+
 	public static class MyDao extends SimpleJdbcDaoSupport {
-		@Transactional(readOnly=true)
+		@Transactional(readOnly = true)
 		public int runCount() {
 			return getSimpleJdbcTemplate().queryForInt("SELECT COUNT(0) FROM USERS");
 		}

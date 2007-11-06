@@ -36,7 +36,7 @@ public class ValueResolutionException extends BeanDefinitionStoreException {
 		super(message);
 		this.name = name;
 	}
-	
+
 	public ValueResolutionException(String name, Throwable t) {
 		super(name, t);
 		this.name = name;

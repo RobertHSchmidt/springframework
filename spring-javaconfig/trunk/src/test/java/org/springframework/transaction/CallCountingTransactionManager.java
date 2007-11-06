@@ -26,8 +26,11 @@ import org.springframework.transaction.support.DefaultTransactionStatus;
 public class CallCountingTransactionManager extends AbstractPlatformTransactionManager {
 
 	public int begun;
+
 	public int commits;
+
 	public int rollbacks;
+
 	public int inflight;
 
 	protected Object doGetTransaction() {
@@ -48,7 +51,7 @@ public class CallCountingTransactionManager extends AbstractPlatformTransactionM
 		++rollbacks;
 		--inflight;
 	}
-	
+
 	public void clear() {
 		begun = commits = rollbacks = inflight = 0;
 	}

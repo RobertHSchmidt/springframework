@@ -23,8 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation used to identify resource paths to
- * use to resolve properties.
+ * Annotation used to identify resource paths to use to resolve properties.
  * 
  * @author Rod Johnson
  */

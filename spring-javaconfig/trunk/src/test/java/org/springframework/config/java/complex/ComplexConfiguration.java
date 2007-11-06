@@ -33,33 +33,33 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Configuration
 public class ComplexConfiguration {
-	
+
 	@Bean
 	public Point topLevelBean() {
 		return new Point();
 	}
-	
+
 	@Transactional(propagation = Propagation.MANDATORY)
 	@Configuration(defaultLazy = Lazy.UNSPECIFIED, defaultAutowire = Autowire.INHERITED, useFactoryAspects = false)
 	public static class InnerConfiguration {
-		@Bean 
-		public Object myBean() { 
-			return new Object(); 
+		@Bean
+		public Object myBean() {
+			return new Object();
 		}
 	}
 
 	@Configuration
 	public static class DeepConfiguration {
-		
-//		@Configuration(names = { "test", "database" })
-//		public class VeryDeepConfiguration {
-//			public void anonymousClass() {
-//				new InnerConfiguration() {
-//				};
-//			}
-//		}
-		
-		@Bean 
+
+		// @Configuration(names = { "test", "database" })
+		// public class VeryDeepConfiguration {
+		// public void anonymousClass() {
+		// new InnerConfiguration() {
+		// };
+		// }
+		// }
+
+		@Bean
 		public ITestBean deepConfigurationBean() {
 			return new TestBean();
 		}

@@ -52,9 +52,9 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 	private ConfigurationListenerRegistry configurationListenerRegistry;
 
 	private BeanNamingStrategy namingStrategy;
-	
+
 	private ResourceLoader resourceLoader;
-	
+
 	/**
 	 * Guarantee to execute before any other BeanFactoryPostProcessors
 	 */
@@ -81,7 +81,7 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 	public void setNamingStrategy(BeanNamingStrategy namingStrategy) {
 		this.namingStrategy = namingStrategy;
 	}
-	
+
 	/**
 	 * Optional implementation of ResourceLoaderAware
 	 */

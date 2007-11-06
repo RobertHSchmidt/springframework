@@ -32,7 +32,7 @@ import org.springframework.core.annotation.Order;
  * and the Spring advice returned by the method. <p/> Usage:
  * 
  * <pre>
- *  &#64;SpringAdvice(&quot;expression&quot;)
+ *  &#064;SpringAdvice(&quot;expression&quot;)
  * protected Advice returnsSpringAdvice() { ... }
  * </pre>
  * 
@@ -41,7 +41,7 @@ import org.springframework.core.annotation.Order;
  * It is possible to specify an advice that will match everything as follows:
  * 
  * <pre>
- *  &#64;SpringAdvice(matchAll=true)
+ *  &#064;SpringAdvice(matchAll=true)
  * protected Advice returnsSpringAdvice() { ... }
  * </pre>
  * 
@@ -50,8 +50,7 @@ import org.springframework.core.annotation.Order;
 public class SpringAdviceConfigurationListener extends AbstractAopConfigurationListener {
 
 	@Override
-	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
-			ConfigurationProcessor cp,
+	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration, ConfigurationProcessor cp,
 			String configurerBeanName, Class configurerClass, Method m, Bean beanAnnotation) {
 
 		SpringAdvice springAdvice = AnnotationUtils.findAnnotation(m, SpringAdvice.class);

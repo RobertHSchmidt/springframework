@@ -146,9 +146,10 @@ public class ConfigurationProcessorTests extends TestCase {
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(AspectJConfigurationProcessorTests.SingletonCountingAdvice.class);
 
-		//System.out.println("beans " + Arrays.toString(bf.getBeanDefinitionNames()));
+		// System.out.println("beans " +
+		// Arrays.toString(bf.getBeanDefinitionNames()));
 		Object dotb = bf.getBean("dotb");
-		//System.out.println(dotb);
+		// System.out.println(dotb);
 		DependsOnTestBean dotb1 = (DependsOnTestBean) bf.getBean("dotb");
 		DependsOnTestBean dotb2 = (DependsOnTestBean) bf.getBean("dotb");
 		assertSame(dotb1, dotb2);
@@ -1064,16 +1065,16 @@ public class ConfigurationProcessorTests extends TestCase {
 	public void testBeanDefinitionCount() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		
+
 		// 4 @Bean + 1 @Configuration
 		assertEquals(5, configurationProcessor.processClass(HiddenBeans.class));
 		// 2 @Bean + 1 Advice (@Before) + 1 @Configuration
 		assertEquals(4, configurationProcessor.processClass(AdvisedAutowiring.class));
 		// 3 @Bean + 1 @Configuration
 		assertEquals(4, configurationProcessor.processClass(BeanCreationMethodsThrowExceptions.class));
-		// 2 @Bean + 1 @Configuration		
+		// 2 @Bean + 1 @Configuration
 		assertEquals(3, configurationProcessor.processClass(AutowiringConfiguration.class));
-		// 6 @Bean + 1 Configuration	
+		// 6 @Bean + 1 Configuration
 		assertEquals(7, configurationProcessor.processClass(BaseConfiguration.class));
 		// 2 @Bean + 1 Configuration
 		assertEquals(3, configurationProcessor.processClass(HotSwapConfiguration.class));

@@ -26,35 +26,34 @@ import java.util.HashMap;
  * @author Rod Johnson
  */
 public class MethodCounter implements Serializable {
-	
+
 	/** Method name --> count, does not understand overloading */
 	private HashMap map = new HashMap();
-	
+
 	private int allCount;
-	
+
 	protected void count(Method m) {
 		count(m.getName());
 	}
-	
+
 	protected void count(String methodName) {
 		Integer I = (Integer) map.get(methodName);
 		I = (I != null) ? new Integer(I.intValue() + 1) : new Integer(1);
 		map.put(methodName, I);
 		++allCount;
 	}
-	
+
 	public int getCalls(String methodName) {
 		Integer I = (Integer) map.get(methodName);
 		return (I != null) ? I.intValue() : 0;
 	}
-	
+
 	public int getCalls() {
 		return allCount;
 	}
-	
+
 	/**
-	 * A bit simplistic: just wants the same class.
-	 * Doesn't worry about counts.
+	 * A bit simplistic: just wants the same class. Doesn't worry about counts.
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object other) {

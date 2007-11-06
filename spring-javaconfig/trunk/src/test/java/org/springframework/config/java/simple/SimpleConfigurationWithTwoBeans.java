@@ -25,17 +25,17 @@ import org.springframework.config.java.annotation.Configuration;
 /**
  * 
  * @author Rod Johnson
- *
+ * 
  */
 @Configuration
 public class SimpleConfigurationWithTwoBeans {
-	
+
 	@Bean
 	public TestBean anyName() {
 		return new TestBean();
 	}
-	
-	@Bean 
+
+	@Bean
 	public Point point() {
 		return new Point(3, 2);
 	}

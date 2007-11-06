@@ -36,31 +36,31 @@ import org.springframework.config.java.process.ConfigurationProcessor;
 public class ExternalValueTests extends TestCase {
 
 	@Configuration
-	@ResourceBundles("classpath:/org/springframework/config/java/simple") 
+	@ResourceBundles("classpath:/org/springframework/config/java/simple")
 	static abstract class AbstractConfigurationDependsOnProperties {
 		@Bean
 		public TestBean rod() {
 			TestBean rod = new TestBean();
 			rod.setName(getName());
 			rod.setAge(ignoreThisNameDueToAnnotationValue());
-			
+
 			rod.setJedi(jedi());
 			return rod;
 		}
-		
+
 		@ExternalValue
 		public abstract String getName();
-		
+
 		@ExternalValue("age")
 		public abstract int ignoreThisNameDueToAnnotationValue();
-		
+
 		@ExternalValue
 		protected abstract boolean jedi();
-		
+
 	}
-	
+
 	@Configuration
-	@ResourceBundles("classpath:/org/springframework/config/java/simple") 
+	@ResourceBundles("classpath:/org/springframework/config/java/simple")
 	static abstract class DefaultValues {
 		@Bean
 		public TestBean rod() {
@@ -69,19 +69,19 @@ public class ExternalValueTests extends TestCase {
 			rod.setAge(otherNumber());
 			return rod;
 		}
-		
+
 		@ExternalValue
 		public abstract String getName();
-		
+
 		@ExternalValue
 		public int otherNumber() {
 			return 25;
 		}
-		
+
 	}
-	
+
 	@Configuration
-	@ResourceBundles("classpath:/org/springframework/config/java/simple") 
+	@ResourceBundles("classpath:/org/springframework/config/java/simple")
 	static abstract class MissingValues {
 		@Bean
 		public TestBean rod() {
@@ -89,11 +89,10 @@ public class ExternalValueTests extends TestCase {
 			rod.setName(unresolved());
 			return rod;
 		}
-		
+
 		@ExternalValue
 		public abstract String unresolved();
 
-		
 	}
 
 	public void testStringAndBooleanProperty() throws Exception {
@@ -104,7 +103,7 @@ public class ExternalValueTests extends TestCase {
 		assertEquals("String property must be resolved correctly", "Rod", rod.getName());
 		assertTrue("Boolean property must be resolved correctly", rod.isJedi());
 	}
-	
+
 	public void testIntProperty() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
@@ -112,7 +111,7 @@ public class ExternalValueTests extends TestCase {
 		TestBean rod = (TestBean) bf.getBean("rod");
 		assertEquals("int property must be resolved correctly", 37, rod.getAge());
 	}
-	
+
 	public void testDefaultValueInImplementationBody() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
@@ -120,7 +119,7 @@ public class ExternalValueTests extends TestCase {
 		TestBean rod = (TestBean) bf.getBean("rod");
 		assertEquals("int property must default correctly if there's a concrete method", 25, rod.getAge());
 	}
-	
+
 	/**
 	 * @throws Exception
 	 */
@@ -131,7 +130,7 @@ public class ExternalValueTests extends TestCase {
 			configurationProcessor.processClass(MissingValues.class);
 			bf.getBean("rod");
 			// TODO do we want to fail earlier than this?
-			
+
 			fail();
 		}
 		catch (BeanCreationException ex) {
