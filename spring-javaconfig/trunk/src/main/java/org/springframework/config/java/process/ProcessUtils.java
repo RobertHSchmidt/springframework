@@ -100,7 +100,7 @@ abstract class ProcessUtils {
 	/**
 	 * Check if the given class is a configuration.
 	 * 
-	 * Additionaly, a listener registry is checked against the class.
+	 * Additionally, a listener registry is checked against the class.
 	 * 
 	 * @param candidateConfigurationClass
 	 * @param registry
