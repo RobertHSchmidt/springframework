@@ -297,7 +297,19 @@
 						http://people.apache.org/maven-snapshot-repository
 					</url>
 				</pluginRepository>
+				<pluginRepository>
+					<id>Codehaus Snapshots</id>
+					<url>http://snapshots.repository.codehaus.org/</url>
+				</pluginRepository>
 			</pluginRepositories>
+			<reporting>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>emma-maven-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</reporting>
 		</profile>
 	</profiles>
 
@@ -373,9 +385,9 @@
 								<mkdir dir="target/surefire-reports" />
 								<junitreport
 									todir="target/surefire-reports">
-									<fileset
-										dir="target/surefire-reports">
-										<include name="TEST-*.xml" />
+									<fileset dir=".">
+										<include
+											name="**/target/surefire-reports/TEST-*.xml" />
 									</fileset>
 									<report
 										todir="target/site/junit-reports" />
@@ -554,7 +566,9 @@
 						</link>
 					</links>
 					<aggregate>true</aggregate>
-					<excludePackageNames>org.springframework.batch.sample</excludePackageNames>
+					<excludePackageNames>
+						org.springframework.batch.sample
+					</excludePackageNames>
 				</configuration>
 			</plugin>
 		</plugins>
