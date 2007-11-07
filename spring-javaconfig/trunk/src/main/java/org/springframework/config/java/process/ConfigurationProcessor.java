@@ -32,6 +32,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.listener.ConfigurationListener;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
@@ -229,6 +230,8 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		if (!ProcessUtils.validateConfigurationClass(configurationClass, configurationListenerRegistry))
 			return 0;
 
+		int nBeanDefsGeneratedViaImport = processAnyImports(configurationClass);
+
 		// register the configuration as a bean to allow Spring to use it for
 		// creating the actual objects
 
@@ -249,7 +252,21 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 				configurationBeanDefinition);
 
 		// include the configuration bean definition
-		return (generateBeanDefinitions(configBeanName, configurationClass) + 1);
+		return nBeanDefsGeneratedViaImport + (generateBeanDefinitions(configBeanName, configurationClass) + 1);
+	}
+
+	private int processAnyImports(Class<?> configurationClass) {
+		if (!configurationClass.isAnnotationPresent(Import.class))
+			return 0;
+
+		int nBeanDefsGenerated = 0;
+		Import importAnnotation = configurationClass.getAnnotation(Import.class);
+		Class<?>[] configurationClassesToImport = importAnnotation.value();
+		for (Class<?> configurationClassToImport : configurationClassesToImport) {
+			nBeanDefsGenerated += processClass(configurationClassToImport);
+		}
+
+		return nBeanDefsGenerated;
 	}
 
 	public int processBean(String beanName) throws BeanDefinitionStoreException {
