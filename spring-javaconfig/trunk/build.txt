@@ -1,6 +1,15 @@
-In order to build and run the tests, maven2 is required.
+In order to build and run the tests, Maven2 is required.
 
-Eclipse users should have the M2_HOME variable set to point to the maven repository.
+    Homepage: http://maven.apache.org/
 
---
- Costin
+Eclipse users should have the q4e Maven2 Eclipse plugin installed:
+
+    Homepage: http://code.google.com/p/q4e/
+    Update URL: http://q4e.googlecode.com/svn/trunk/updatesite/
+
+
+From the command line, simply run
+
+    `mvn install`
+
+This will compile, test, package and install spring-javaconfig into your local Maven2 repository directory.
