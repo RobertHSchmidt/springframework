@@ -135,22 +135,6 @@
 						<totalLineRate>85</totalLineRate>
 					</check>
 				</configuration>
-				<executions>
-					<execution>
-						<id>coverage-clean</id>
-						<goals>
-							<goal>clean</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>coverage-run</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>cobertura</goal>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
