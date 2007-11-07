@@ -263,7 +263,9 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		Import importAnnotation = configurationClass.getAnnotation(Import.class);
 		Class<?>[] configurationClassesToImport = importAnnotation.value();
 		for (Class<?> configurationClassToImport : configurationClassesToImport) {
-			nBeanDefsGenerated += processClass(configurationClassToImport);
+			// duplicate check - process only if we've never encountered before
+			if (!owningBeanFactory.containsBeanDefinition(configurationClassToImport.getName()))
+				nBeanDefsGenerated += processClass(configurationClassToImport);
 		}
 
 		return nBeanDefsGenerated;
@@ -361,6 +363,8 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		});
 
 		beansCreated = countFinalReference[0];
+
+		processAnyImports(configClass);
 
 		// Find inner aspect classes
 		// TODO: need to go up tree? ReflectionUtils.doWithClasses
