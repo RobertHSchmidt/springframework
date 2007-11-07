@@ -37,9 +37,6 @@ import java.lang.annotation.Target;
  * //...
  * </pre>
  * 
- * Original feature request:
- * http://opensource.atlassian.com/projects/spring/browse/SJC-34
- * 
  * @see Configuration
  * 
  * @param value - one or more classes that are a) annotated with
