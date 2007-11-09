@@ -16,57 +16,46 @@
 
 package org.springframework.config.java.naming;
 
+import static org.junit.Assert.assertEquals;
+
 import java.lang.reflect.Method;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
- *
  * @author Rod Johnson
- *
  */
-public class ChainedStrategyTests extends TestCase {
+public class ChainedStrategyTests {
 
+	@Test(expected = IllegalArgumentException.class)
 	public void testNullArg() {
-		try {
-			new ChainedStrategy(null);
-			fail();
-		}
-		catch (IllegalArgumentException expected) {
-
-		}
+		new ChainedStrategy(null);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
 	public void testEmptyArg() {
-		try {
-			new ChainedStrategy(new BeanNamingStrategy[0]);
-			fail();
-		}
-		catch (IllegalArgumentException expected) {
-
-		}
+		new ChainedStrategy(new BeanNamingStrategy[0]);
 	}
 
+	@Test
 	public void testSkipsNull() {
 		ChainedStrategy cs = new ChainedStrategy(new BeanNamingStrategy[] {
-			new DummyNameStrategy(null),
-			new DummyNameStrategy("one"),
-			new DummyNameStrategy("two")
-		});
+				new DummyNameStrategy(null), new DummyNameStrategy("one"),
+				new DummyNameStrategy("two") });
 		assertEquals("one", cs.getBeanName(null));
 	}
 
+	@Test
 	public void testReturnsFirst() {
 		ChainedStrategy cs = new ChainedStrategy(new BeanNamingStrategy[] {
-			new DummyNameStrategy("zero"),
-			new DummyNameStrategy(null),
-			new DummyNameStrategy("two")
-		});
+				new DummyNameStrategy("zero"), new DummyNameStrategy(null),
+				new DummyNameStrategy("two") });
 		assertEquals("zero", cs.getBeanName(null));
 	}
 
 	private class DummyNameStrategy implements BeanNamingStrategy {
 		private String name;
+
 		public DummyNameStrategy(String name) {
 			this.name = name;
 		}
