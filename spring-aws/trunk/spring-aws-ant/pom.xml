@@ -34,7 +34,7 @@
 			<extension>
 				<groupId>org.springframework.aws</groupId>
 				<artifactId>spring-aws-maven</artifactId>
-				<version>1.1</version>
+				<version>1.2</version>
 			</extension>
 		</extensions>
 	</build>
@@ -47,7 +47,7 @@
 		<snapshotRepository>
 			<id>aws-s3</id>
 			<name>Amazon S3</name>
-			<url>s3://maven.springframework.org</url>
+			<url>s3://maven.springframework.org/snapshot</url>
 		</snapshotRepository>
 	</distributionManagement>
 	<dependencies>
