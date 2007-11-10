@@ -19,6 +19,7 @@ package org.springframework.config.java.support;
 import junit.framework.TestCase;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
@@ -42,11 +43,13 @@ import org.springframework.core.io.ResourceLoader;
  */
 public class ConfigurationSupportTests extends TestCase {
 
-	private static class TestFactoryBeanForBeanFactory implements FactoryBean, InitializingBean, BeanFactoryAware {
+	private static class TestFactoryBeanForBeanFactory implements FactoryBean, InitializingBean, BeanFactoryAware, BeanClassLoaderAware {
 
 		private final Object expectedReturnedObject;
 
 		private BeanFactory bf;
+
+		private ClassLoader beanClassLoader;
 
 		private boolean afterPropertiesSetCalled;
 
@@ -58,6 +61,10 @@ public class ConfigurationSupportTests extends TestCase {
 			afterPropertiesSetCalled = true;
 		}
 
+		public void setBeanClassLoader(ClassLoader cl) {
+			this.beanClassLoader = cl;
+		}
+
 		public void setBeanFactory(BeanFactory bf) throws BeansException {
 			this.bf = bf;
 		}
@@ -65,6 +72,7 @@ public class ConfigurationSupportTests extends TestCase {
 		public Object getObject() throws Exception {
 			TestCase.assertTrue(afterPropertiesSetCalled);
 			TestCase.assertNotNull("Must have beanFactory set", bf);
+			TestCase.assertNotNull("Must have beanClassLoader set", beanClassLoader);
 
 			return expectedReturnedObject;
 		}
