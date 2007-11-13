@@ -92,7 +92,7 @@ public class S3Repository extends AbstractRepository {
 		String key = S3Utils.getKey(parent);
 
 		try {
-			S3Object[] objects = service.listObjects(bucket, key, "");
+			S3Object[] objects = getService().listObjects(bucket, key, "");
 			List<String> keys = new ArrayList<String>(objects.length);
 			for (S3Object object : objects) {
 				keys.add(object.getKey());
@@ -108,12 +108,14 @@ public class S3Repository extends AbstractRepository {
 	protected void put(File source, String destination, boolean overwrite) throws IOException {
 		S3Bucket bucket = S3Utils.getBucket(destination);
 		String key = S3Utils.getKey(destination);
+		buildDestinationPath(bucket, getDestinationPath(key));
+
 		S3Object object = new S3Object(bucket, key);
 		object.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
 		object.setDataInputFile(source);
 		object.setContentLength(source.length());
 		try {
-			service.putObject(bucket, object);
+			getService().putObject(bucket, object);
 		}
 		catch (S3ServiceException e) {
 			throw new S3RepositoryException(e);
@@ -130,6 +132,27 @@ public class S3Repository extends AbstractRepository {
 			}
 		}
 		return service;
+	}
+
+	private void buildDestinationPath(S3Bucket bucket, String destination) {
+		S3Object object = new S3Object(bucket, destination + "/");
+		object.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
+		object.setContentLength(0);
+		try {
+			getService().putObject(bucket, object);
+		}
+		catch (S3ServiceException e) {
+			throw new S3RepositoryException(e);
+		}
+
+		int index = destination.lastIndexOf('/');
+		if (index != -1) {
+			buildDestinationPath(bucket, destination.substring(0, index));
+		}
+	}
+
+	private String getDestinationPath(String destination) {
+		return destination.substring(0, destination.lastIndexOf('/'));
 	}
 
 }

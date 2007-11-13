@@ -42,7 +42,7 @@ public class S3Utils {
 	 * @return An S3 key name for the given URI
 	 */
 	public static String getKey(String uri) {
-		return getUri(uri).getPath();
+		return getUri(uri).getPath().substring(1);
 	}
 
 	private static URI getUri(String uri) {
