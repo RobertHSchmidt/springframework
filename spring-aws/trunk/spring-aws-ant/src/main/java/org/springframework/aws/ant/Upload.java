@@ -28,29 +28,30 @@ import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
 
 /**
- * A member of the S3 ANT task for dealing with Amazon S3 upload behavior. Requires properties to be set for
- * <code>bucketName</code>, <code>file</code>, and <code>toFile</code>. This operation will use the
+ * A member of the S3 ANT task for dealing with Amazon S3 upload behavior.
+ * Requires properties to be set for <code>bucketName</code>,
+ * <code>file</code>, and <code>toFile</code>. This operation will use the
  * credentials setup in its parent S3 task tag.
  * 
  * <pre>
- * <upload bucketName="static.springframework.org"
- *         file="${target.release.dir}/${release-with-dependencies.zip}"
- *         toFile="SPR/spring-framework-${spring-version}-with-dependencies-${tstamp}-${build.number}.zip"
- *         publicRead="true"/>
+ * &lt;upload bucketName=&quot;static.springframework.org&quot;
+ *         file=&quot;${target.release.dir}/${release-with-dependencies.zip}&quot;
+ *         toFile=&quot;SPR/spring-framework-${spring-version}-with-dependencies-${tstamp}-${build.number}.zip&quot;
+ *         publicRead=&quot;true&quot;/&gt;
  * </pre>
  * 
  * @author Ben Hale
  */
 public class Upload {
-	
+
 	private static final float KILOBYTE = 1024;
 
 	private static final float MEGABYTE = 1048576;
-	
+
 	private static final float SECOND = 1000;
-	
+
 	private static final NumberFormat formatter = new DecimalFormat("###,###.0");
-	
+
 	private String bucketName;
 
 	private File file;
@@ -84,7 +85,8 @@ public class Upload {
 	}
 
 	/**
-	 * Optional parameter that corresponds to public readability of the object in S3.  Defaults to false.
+	 * Optional parameter that corresponds to public readability of the object
+	 * in S3. Defaults to false.
 	 * @param publicRead
 	 */
 	public void setPublicRead(boolean publicRead) {
@@ -112,8 +114,7 @@ public class Upload {
 	 * @throws S3ServiceException If there is an error with the S3 service
 	 * @throws IOException If the source file cannot be read
 	 */
-	public void upload(S3Service service) throws S3ServiceException,
-			IOException {
+	public void upload(S3Service service) throws S3ServiceException, IOException {
 		S3Bucket bucket = getBucket();
 		S3Object object = getObject();
 
@@ -139,30 +140,31 @@ public class Upload {
 	}
 
 	private void logStart() throws IOException {
-		System.out.println("Uploading " + file.getCanonicalPath() + " ("
-				+ getFormattedSize(file.length()) + ") to " + bucketName + "/" + toFile);
+		System.out.println("Uploading " + file.getCanonicalPath() + " (" + getFormattedSize(file.length()) + ") to "
+				+ bucketName + "/" + toFile);
 	}
 
 	private void logEnd(long startTime, long endTime) {
 		long transferTime = endTime - startTime;
-		System.out.println("Transfer Time: " + getFormattedTime(transferTime)
-				+ " - Transfer Rate: " + getFormattedSpeed(file.length(), transferTime));
+		System.out.println("Transfer Time: " + getFormattedTime(transferTime) + " - Transfer Rate: "
+				+ getFormattedSpeed(file.length(), transferTime));
 	}
-	
+
 	private String getFormattedSize(long size) {
 		StringBuilder sb = new StringBuilder();
 		float megabytes = size / MEGABYTE;
-		if(megabytes > 1) {
+		if (megabytes > 1) {
 			sb.append(formatter.format(megabytes));
 			sb.append(" MB");
-		} else {
+		}
+		else {
 			float kilobytes = size / KILOBYTE;
 			sb.append(formatter.format(kilobytes));
 			sb.append(" KB");
 		}
 		return sb.toString();
 	}
-	
+
 	private String getFormattedTime(long time) {
 		StringBuilder sb = new StringBuilder();
 		float seconds = time / SECOND;
@@ -170,16 +172,17 @@ public class Upload {
 		sb.append(" s");
 		return sb.toString();
 	}
-	
+
 	private String getFormattedSpeed(long size, long time) {
 		StringBuilder sb = new StringBuilder();
 		float seconds = time / SECOND;
 		float megabytes = size / MEGABYTE;
 		float megabytesPerSecond = megabytes / seconds;
-		if(megabytesPerSecond > 1) {
+		if (megabytesPerSecond > 1) {
 			sb.append(formatter.format(megabytesPerSecond));
 			sb.append(" MB/s");
-		} else {
+		}
+		else {
 			float kilobytes = size / KILOBYTE;
 			float kilobytesPerSecond = kilobytes / seconds;
 			sb.append(formatter.format(kilobytesPerSecond));
