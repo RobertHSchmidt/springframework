@@ -24,8 +24,9 @@ import org.apache.maven.wagon.events.TransferListener;
 import org.apache.maven.wagon.resource.Resource;
 
 /**
- * Support for sending messages to Maven transfer listeners. Automates the collection of listeners and the
- * iteration over that collection when an event is fired.
+ * Support for sending messages to Maven transfer listeners. Automates the
+ * collection of listeners and the iteration over that collection when an event
+ * is fired.
  * 
  * @author Ben Hale
  */
@@ -62,7 +63,7 @@ class TransferListenerSupport {
 	/**
 	 * Whether the collection already contains a listener
 	 * @param listener The listener to check for
-     * @return whether the collection contains the listener
+	 * @return whether the collection contains the listener
 	 */
 	public boolean hasListener(TransferListener listener) {
 		return listeners.contains(listener);
@@ -75,8 +76,7 @@ class TransferListenerSupport {
 	 * @see TransferEvent#TRANSFER_INITIATED
 	 */
 	public void fireTransferInitiated(Resource resource, int requestType) {
-		TransferEvent event = new TransferEvent(wagon, resource,
-				TransferEvent.TRANSFER_INITIATED, requestType);
+		TransferEvent event = new TransferEvent(wagon, resource, TransferEvent.TRANSFER_INITIATED, requestType);
 		for (TransferListener listener : listeners) {
 			listener.transferInitiated(event);
 		}
@@ -89,30 +89,27 @@ class TransferListenerSupport {
 	 * @see TransferEvent#TRANSFER_STARTED
 	 */
 	public void fireTransferStarted(Resource resource, int requestType) {
-		TransferEvent event = new TransferEvent(wagon, resource,
-				TransferEvent.TRANSFER_STARTED, requestType);
+		TransferEvent event = new TransferEvent(wagon, resource, TransferEvent.TRANSFER_STARTED, requestType);
 		for (TransferListener listener : listeners) {
 			listener.transferStarted(event);
 		}
 	}
 
-    public void fireTransferProgress(Resource resource, int requestType, byte[] buffer, int length) {
-        TransferEvent event = new TransferEvent(wagon, resource,
-                TransferEvent.TRANSFER_PROGRESS, requestType);
-        for(TransferListener listener : listeners) {
-            listener.transferProgress(event, buffer, length);
-        }
-    }
+	public void fireTransferProgress(Resource resource, int requestType, byte[] buffer, int length) {
+		TransferEvent event = new TransferEvent(wagon, resource, TransferEvent.TRANSFER_PROGRESS, requestType);
+		for (TransferListener listener : listeners) {
+			listener.transferProgress(event, buffer, length);
+		}
+	}
 
-    /**
+	/**
 	 * Sends a transfer completed event to all listeners
 	 * @param resource The resource being transfered
 	 * @param requestType GET or PUT request
 	 * @see TransferEvent#TRANSFER_COMPLETED
 	 */
 	public void fireTransferCompleted(Resource resource, int requestType) {
-		TransferEvent event = new TransferEvent(wagon, resource,
-				TransferEvent.TRANSFER_COMPLETED, requestType);
+		TransferEvent event = new TransferEvent(wagon, resource, TransferEvent.TRANSFER_COMPLETED, requestType);
 		for (TransferListener listener : listeners) {
 			listener.transferCompleted(event);
 		}
@@ -124,8 +121,7 @@ class TransferListenerSupport {
 	 * @param requestType GET or PUT request
 	 * @param e The transfer error
 	 */
-	public void fireTransferError(Resource resource, int requestType,
-			Exception e) {
+	public void fireTransferError(Resource resource, int requestType, Exception e) {
 		TransferEvent event = new TransferEvent(wagon, resource, e, requestType);
 		for (TransferListener listener : listeners) {
 			listener.transferError(event);

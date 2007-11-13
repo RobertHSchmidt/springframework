@@ -23,8 +23,9 @@ import org.apache.maven.wagon.events.SessionEvent;
 import org.apache.maven.wagon.events.SessionListener;
 
 /**
- * Support for sending messages to Maven session listeners.  Automates the collection of listeners and the
- * iteration over that collection when an event is fired.
+ * Support for sending messages to Maven session listeners. Automates the
+ * collection of listeners and the iteration over that collection when an event
+ * is fired.
  * 
  * @author Ben Hale
  */
@@ -61,7 +62,7 @@ class SessionListenerSupport {
 	/**
 	 * Whether the collection already contains a listener
 	 * @param listener The listener to check for
-     * @return Whether the collection contains a listener
+	 * @return Whether the collection contains a listener
 	 */
 	public boolean hasListener(SessionListener listener) {
 		return listeners.contains(listener);
@@ -72,8 +73,7 @@ class SessionListenerSupport {
 	 * @see SessionEvent#SESSION_OPENING
 	 */
 	public void fireSessionOpening() {
-		SessionEvent event = new SessionEvent(wagon,
-				SessionEvent.SESSION_OPENING);
+		SessionEvent event = new SessionEvent(wagon, SessionEvent.SESSION_OPENING);
 		for (SessionListener listener : listeners) {
 			listener.sessionOpening(event);
 		}
@@ -84,8 +84,7 @@ class SessionListenerSupport {
 	 * @see SessionEvent#SESSION_OPENED
 	 */
 	public void fireSessionOpened() {
-		SessionEvent event = new SessionEvent(wagon,
-				SessionEvent.SESSION_OPENED);
+		SessionEvent event = new SessionEvent(wagon, SessionEvent.SESSION_OPENED);
 		for (SessionListener listener : listeners) {
 			listener.sessionOpened(event);
 		}
@@ -96,8 +95,7 @@ class SessionListenerSupport {
 	 * @see SessionEvent#SESSION_DISCONNECTING
 	 */
 	public void fireSessionDisconnecting() {
-		SessionEvent event = new SessionEvent(wagon,
-				SessionEvent.SESSION_DISCONNECTING);
+		SessionEvent event = new SessionEvent(wagon, SessionEvent.SESSION_DISCONNECTING);
 		for (SessionListener listener : listeners) {
 			listener.sessionDisconnecting(event);
 		}
@@ -108,8 +106,7 @@ class SessionListenerSupport {
 	 * @see SessionEvent#SESSION_DISCONNECTED
 	 */
 	public void fireSessionDisconnected() {
-		SessionEvent event = new SessionEvent(wagon,
-				SessionEvent.SESSION_DISCONNECTED);
+		SessionEvent event = new SessionEvent(wagon, SessionEvent.SESSION_DISCONNECTED);
 		for (SessionListener listener : listeners) {
 			listener.sessionDisconnected(event);
 		}
@@ -120,8 +117,7 @@ class SessionListenerSupport {
 	 * @see SessionEvent#SESSION_CONNECTION_REFUSED
 	 */
 	public void fireSessionConnectionRefused() {
-		SessionEvent event = new SessionEvent(wagon,
-				SessionEvent.SESSION_CONNECTION_REFUSED);
+		SessionEvent event = new SessionEvent(wagon, SessionEvent.SESSION_CONNECTION_REFUSED);
 		for (SessionListener listener : listeners) {
 			listener.sessionConnectionRefused(event);
 		}
@@ -132,8 +128,7 @@ class SessionListenerSupport {
 	 * @see SessionEvent#SESSION_LOGGED_IN
 	 */
 	public void fireSessionLoggedIn() {
-		SessionEvent event = new SessionEvent(wagon,
-				SessionEvent.SESSION_LOGGED_IN);
+		SessionEvent event = new SessionEvent(wagon, SessionEvent.SESSION_LOGGED_IN);
 		for (SessionListener listener : listeners) {
 			listener.sessionLoggedIn(event);
 		}
@@ -144,8 +139,7 @@ class SessionListenerSupport {
 	 * @see SessionEvent#SESSION_LOGGED_OFF
 	 */
 	public void fireSessionLoggedOff() {
-		SessionEvent event = new SessionEvent(wagon,
-				SessionEvent.SESSION_LOGGED_OFF);
+		SessionEvent event = new SessionEvent(wagon, SessionEvent.SESSION_LOGGED_OFF);
 		for (SessionListener listener : listeners) {
 			listener.sessionLoggedOff(event);
 		}
