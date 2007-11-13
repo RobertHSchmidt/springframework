@@ -26,21 +26,21 @@ import org.jets3t.service.impl.rest.httpclient.RestS3Service;
 import org.jets3t.service.security.AWSCredentials;
 
 /**
- * An ANT task for dealing with the Amazon S3 service.  Requires properties to be set for
- * an <code>accessKey</code> and a <code>secretKey</code>. S3 operations are listed as elements contained
- * in the s3 tag.
+ * An ANT task for dealing with the Amazon S3 service. Requires properties to be
+ * set for an <code>accessKey</code> and a <code>secretKey</code>. S3
+ * operations are listed as elements contained in the s3 tag.
  * 
  * <pre>
- * <aws:s3 accessKey="${s3.accessKey}" secretKey="${s3.secretKey}">
- *         <upload bucketName="static.springframework.org"
- *                 file="${target.release.dir}/${release-with-dependencies.zip}"
- *                 toFile="SPR/spring-framework-${spring-version}-with-dependencies-${tstamp}-${build.number}.zip"
- *                 publicRead="true"/>
- *         <upload bucketName="static.springframework.org"
- *                 file="${target.release.dir}/${release.zip}"
- *                 toFile="SPR/spring-framework-${spring-version}-${tstamp}-${build.number}.zip"
- *                 publicRead="true"/>
- * </aws:s3>
+ * &lt;aws:s3 accessKey=&quot;${s3.accessKey}&quot; secretKey=&quot;${s3.secretKey}&quot;&gt;
+ *         &lt;upload bucketName=&quot;static.springframework.org&quot;
+ *                 file=&quot;${target.release.dir}/${release-with-dependencies.zip}&quot;
+ *                 toFile=&quot;SPR/spring-framework-${spring-version}-with-dependencies-${tstamp}-${build.number}.zip&quot;
+ *                 publicRead=&quot;true&quot;/&gt;
+ *         &lt;upload bucketName=&quot;static.springframework.org&quot;
+ *                 file=&quot;${target.release.dir}/${release.zip}&quot;
+ *                 toFile=&quot;SPR/spring-framework-${spring-version}-${tstamp}-${build.number}.zip&quot;
+ *                 publicRead=&quot;true&quot;/&gt;
+ * &lt;/aws:s3&gt;
  * </pre>
  * 
  * @author Ben Hale
@@ -88,9 +88,11 @@ public class SimpleStorageService {
 			for (Upload upload : uploads) {
 				upload.upload(service);
 			}
-		} catch (S3ServiceException e) {
+		}
+		catch (S3ServiceException e) {
 			throw new BuildException(e);
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			throw new BuildException(e);
 		}
 	}
