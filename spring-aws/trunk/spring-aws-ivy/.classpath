@@ -10,6 +10,6 @@
 	<classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.3/servlet-api-2.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/logkit/logkit/1.0.1/logkit-1.0.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/java/dev/jets3t/jets3t/0.5.0/jets3t-0.5.0.jar"/>
-	<classpathentry kind="lib" path="/Users/nebhale/Downloads/apache-ivy-2.0.0-alpha2-incubating 2/ivy-core-2.0.0-alpha2-incubating.jar" sourcepath="/Users/nebhale/Downloads/apache-ivy-2.0.0-alpha2-incubating/src/java"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/apache-ivy-2.0.0-alpha2-incubating"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
