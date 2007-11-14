@@ -96,7 +96,7 @@ public class S3Resource implements Resource {
 			this.exists = true;
 			this.contentLength = details.getContentLength();
 			this.lastModified = details.getLastModifiedDate().getTime();
-			this.name = details.getKey();
+			this.name = "s3://" + details.getBucketName() + "/" + details.getKey();
 		}
 		catch (S3ServiceException e) {
 			this.exists = false;
