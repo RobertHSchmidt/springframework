@@ -1,33 +1,37 @@
-<?xml version="1.0"?><project>
-  <parent>
-    <artifactId>osgi-repo</artifactId>
-    <groupId>org.springframework.osgi</groupId>
-    <version>1.0-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.springframework.osgi</groupId>
-  <artifactId>backport-util-concurrent.osgi</artifactId>
-  <packaging>bundle</packaging>
-  <name>backport-util-concurrent (OSGi version)</name>
-  <version>3.0-SNAPSHOT</version>
-  <url>http://www.springframework.org/osgi</url>
-  
-  <properties>
-    <unpack.version>3.0</unpack.version>
-    <spring.osgi.export.pkg>edu.emory.*</spring.osgi.export.pkg>
-    <spring.osgi.import.pkg>
-     sun.misc*;resolution:=optional,
-     *
-    </spring.osgi.import.pkg>
-    
-  </properties>
-  
-  <dependencies>
-    <dependency>
-      <groupId>backport-util-concurrent</groupId>
-      <artifactId>backport-util-concurrent</artifactId>
-      <version>3.0</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+		xmlns="http://maven.apache.org/POM/4.0.0"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<parent>
+		<artifactId>osgi-repo</artifactId>
+		<groupId>org.springframework.osgi</groupId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.springframework.osgi</groupId>
+	<artifactId>backport-util-concurrent.osgi</artifactId>
+	<packaging>bundle</packaging>
+	<version>3.0-SNAPSHOT</version>
+	<name>backport-util-concurrent (OSGi version)</name>
+
+	<properties>
+		<unpack.version>3.0</unpack.version>
+		<export.package>edu.emory.*</export.package>
+		<import.packages>
+			sun.misc*;resolution:=optional,
+			*
+		</import.packages>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>backport-util-concurrent</groupId>
+			<artifactId>backport-util-concurrent</artifactId>
+			<version>3.0</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 </project>

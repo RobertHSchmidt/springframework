@@ -1,35 +1,38 @@
-<?xml version="1.0"?><project>
-  <parent>
-    <artifactId>osgi-repo</artifactId>
-    <groupId>org.springframework.osgi</groupId>
-    <version>1.0-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.springframework.osgi</groupId>
-  <artifactId>jstl.osgi</artifactId>
-  <packaging>bundle</packaging>
-  <name>JSTL (OSGi version)</name>
-  <version>1.1.2-SNAPSHOT</version>
-  <url>http://www.springframework.org/osgi</url>
-  
-  <properties>
-    <unpack.version>1.1.2</unpack.version>
-    <spring.osgi.export.pkg>javax.servlet.jsp.jstl*</spring.osgi.export.pkg>
-    <spring.osgi.import.pkg>
-    javax.xml.parsers;resolution:=optional,
-    org.xml.sax*;resolution:=optional,
-    *
-    </spring.osgi.import.pkg>
-    
-    
-  </properties> 
-  
-  <dependencies>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jstl</artifactId>
-      <version>1.1.2</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+		xmlns="http://maven.apache.org/POM/4.0.0"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<parent>
+		<artifactId>osgi-repo</artifactId>
+		<groupId>org.springframework.osgi</groupId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.springframework.osgi</groupId>
+	<artifactId>jstl.osgi</artifactId>
+	<packaging>bundle</packaging>
+	<version>1.1.2-SNAPSHOT</version>
+	<name>JSTL (OSGi version)</name>
+
+	<properties>
+		<unpack.version>1.1.2</unpack.version>
+		<export.package>javax.servlet.jsp.jstl*</export.package>
+		<import.packages>
+			javax.xml.parsers;resolution:=optional,
+			org.xml.sax*;resolution:=optional,
+			*
+		</import.packages>
+
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.1.2</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 </project>

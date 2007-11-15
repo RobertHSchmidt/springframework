@@ -1,40 +1,44 @@
-<?xml version="1.0"?>
-<project>
-  <parent>
-    <artifactId>osgi-repo</artifactId>
-    <groupId>org.springframework.osgi</groupId>
-    <version>1.0-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+		xmlns="http://maven.apache.org/POM/4.0.0"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <groupId>org.springframework.osgi</groupId>
-  <artifactId>mysql-connector-java.osgi</artifactId>
-  	<packaging>bundle</packaging>
-  <name>mysql-connector-java (OSGi version)</name>
-  <version>3.1.14-SNAPSHOT</version>
-  <url>http:// www.springframework.org/osgi</url>
+	<parent>
+		<artifactId>osgi-repo</artifactId>
+		<groupId>org.springframework.osgi</groupId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
 
-  <properties>
-    <unpack.version>3.1.14</unpack.version>
-    
-    <spring.osgi.export.pkg>com.mysql*, org.gjt*</spring.osgi.export.pkg>
-    <spring.osgi.import.pkg>
-    com.mchange*;resolution:=optional,
-    org.apache.log4j;resolution:=optional,
-    org.jboss*;resolution:=optional,
-    javax.naming*;resolution:=optional,
-    javax.net*;resolution:=optional,
-    *
-    </spring.osgi.import.pkg>
-    
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.springframework.osgi</groupId>
+	<artifactId>mysql-connector-java.osgi</artifactId>
+	<packaging>bundle</packaging>
+	<version>3.1.14-SNAPSHOT</version>
+	<name>mysql-connector-java (OSGi version)</name>
+
+	<properties>
+		<unpack.version>3.1.14</unpack.version>
+		<export.packages>
+			com.mysql*;version=${unpack.version},
+			org.gjt*;version=${unpack.version}
+		</export.packages>
+		<import.packages>
+			com.mchange*;resolution:=optional,
+			org.apache.log4j;resolution:=optional,
+			org.jboss*;resolution:=optional,
+			javax.naming*;resolution:=optional,
+			javax.net*;resolution:=optional,
+			*
+		</import.packages>
   </properties>
-    
-  <dependencies>
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>3.1.14</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
+
+	<dependencies>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>3.1.14</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 </project>

@@ -1,358 +1,122 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.springframework.osgi</groupId>
-  <artifactId>osgi-repo</artifactId>
-  <packaging>pom</packaging>
-  <version>1.0-SNAPSHOT</version>
-  <name>Spring Framework dependencies packaged as OSGi bundles</name>
-  <url>http://www.springframework.org/osgi</url>
-  <description>
-  Spring repository for wrapped OSGi artifacts.
-  </description>
+<project
+		xmlns="http://maven.apache.org/POM/4.0.0"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <properties>
-    <spring.osgi.import.pkg>*</spring.osgi.import.pkg>
-    <spring.osgi.private.pkg>!*</spring.osgi.private.pkg>
-    
-    <!-- complete access to export/import properties -->
-    
-    <spring.osgi.export>${spring.osgi.export.pkg}*;version=${unpack.version}</spring.osgi.export>
-    <spring.osgi.import>${spring.osgi.import.pkg}</spring.osgi.import>
-    <spring.osgi.include.res></spring.osgi.include.res>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.springframework.osgi</groupId>
+	<artifactId>osgi-repo</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0-SNAPSHOT</version>
+	<name>OSGi repo directives</name>
 
-    <symName.prefix>org.springframework.osgi.bundle</symName.prefix>
-    <spring.osgi.symbolic.name>${groupId}.${artifactId}</spring.osgi.symbolic.name>
+	<properties>
+<!-- Default visibility -->
+		<export.package/>
+		<export.packages>
+			${export.package}*;version=${unpack.version}
+		</export.packages>
+		<import.packages>
+			*
+		</import.packages>
+		<include.resources>
+		</include.resources>
+		<private.packages>
+			!*
+		</private.packages>
 
-    <!-- the default-->
-    <spring.osgi.include.res></spring.osgi.include.res>
-    
-    <!-- End Felix BND plugin settings -->
-  </properties>
+		<symName.prefix>org.springframework.osgi.bundle</symName.prefix>
+		<symbolic.name>${groupId}.${artifactId}</symbolic.name>
+	</properties>
 
-  <!-- ============================================= -->
-  <!-- Basic configuration: JIRA, SCM, CI, devs etc. -->
-  <!-- ============================================= -->
+	<modules>
+		<module>aop-alliance</module>
+		<module>asm</module>
+		<module>aspectj</module>
+		<module>backport-util-concurrent</module>
+		<module>c3p0</module>
+		<module>cglib</module>
+		<module>commons-attributes</module>
+		<module>commons-beanutils</module>
+		<module>commons-collections</module>
+		<module>commons-lang</module>
+		<module>commons-pool</module>
+		<module>hsqldb</module>
+		<module>jsp-api</module>
+		<module>jstl</module>
+		<module>jta</module>
+		<module>junit</module>
+		<module>log4j</module>
+		<module>mx4j</module>
+		<module>mysql-connector</module>
+		<module>portlet-api</module>
+		<module>servlet-api</module>
+		<module>struts</module>
+	</modules>
 
-  <issueManagement>
-    <system>JIRA</system>
-    <url>
-      http://opensource.atlassian.com/projects/spring/browse/OSGI
-    </url>
-  </issueManagement>
+	<build>
+		<extensions>
+			<extension>
+				<groupId>org.springframework.aws</groupId>
+				<artifactId>spring-aws-maven</artifactId>
+				<version>1.2</version>
+			</extension>
+		</extensions>
 
-  <ciManagement>
-    <system>bamboo</system>
-    <url>http://build.springframework.org:8085/bamboo/browse/OSGI-TRUNK</url>
-    <notifiers>
-      <notifier>
-        <type>mail</type>
-        <configuration>
-          <address>costin.leau@interface21.com</address>
-        </configuration>
-      </notifier>
-    </notifiers>
-  </ciManagement>
+		<plugins>
+<!-- OSGi Felix bundle plugin -->
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>1.1.0-SNAPSHOT</version>
+				<configuration>
+					<instructions>
+						<Bundle-Name>${artifactId}</Bundle-Name>
+						<Bundle-SymbolicName>${symbolic.name}</Bundle-SymbolicName>
+						<Bundle-Description>${pom.name}</Bundle-Description>
+						<Import-Package>${import.packages}</Import-Package>
+						<Private-Package>${private.packages}</Private-Package>
+						<Include-Resource>${include.resources}</Include-Resource>
+						<Embed-Dependency>*;scope=provided;type=!pom;inline=true</Embed-Dependency>
+						<_exportcontents>${export.packages}</_exportcontents>
+						<Implementation-Title>Spring Dynamic Modules Framework</Implementation-Title>
+						<Implementation-Version>${unpack.version}</Implementation-Version>
+						<Implementation-Vendor>Spring Dynamic Modules Framework</Implementation-Vendor>
+						<Implementation-Vendor-Id>org.springframework.osgi</Implementation-Vendor-Id>
+					</instructions>
+				</configuration>
+				<extensions>true</extensions>
+			</plugin>
+		</plugins>
+	</build>
 
-  <scm>
-    <connection>
-      scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/osgi-repo/trunk
-    </connection>
-    <developerConnection>
-      scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/osgi-repo/trunk
-    </developerConnection>
-    <url>
-      http://springframework.svn.sourceforge.net/viewcvs.cgi/springframework/osgi-repo/trunk
-    </url>
-  </scm>
+	<distributionManagement>
+		<repository>
+			<id>spring-osgi</id>
+			<name>Spring OSGi Friendly Repository</name>
+			<url>s3://maven.springframework.org/osgi</url>
+		</repository>
+	</distributionManagement>
 
-  <inceptionYear>2007</inceptionYear>
+<!-- Remove the plugin repository when no longer using the snapshot -->
+	<pluginRepositories>
+		<pluginRepository>
+			<id>felix-snapshot</id>
+			<name>Felix Snapshot Repository</name>
+			<url>http://repository.ops4j.org/mvn-snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
 
-  <organization>
-    <name>Spring Framework</name>
-    <url>http://www.springframework.org</url>
-  </organization>
-
-  <developers>
-    <developer>
-      <id>adrian-colyer</id>
-      <name>Adrian Colyer</name>
-      <email>adrian.colyer at interface21.com</email>
-      <organization>Interface21</organization>
-      <organizationUrl>http://www.interface21.com</organizationUrl>
-      <roles>
-        <role>Project Admin</role>
-        <role>Developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-    <developer>
-      <id>costin_leau</id>
-      <name>Costin Leau</name>
-      <email>costin.leau at interface21.com</email>
-      <organization>Interface21</organization>
-      <organizationUrl>http://www.interface21.com</organizationUrl>
-      <roles>
-        <role>Developer</role>
-      </roles>
-      <timezone>+2</timezone>
-    </developer>
-    <developer>
-      <id>andypiper</id>
-      <name>Andy Piper</name>
-      <email>andy at bea.com</email>
-      <organization>BEA</organization>
-      <organizationUrl>http://www.bea.com</organizationUrl>
-      <roles>
-        <role>Developer</role>
-      </roles>
-      <timezone>0</timezone>
-    </developer>
-    <developer>
-      <id>jconstantine</id>
-      <name>Hal Hildebrand</name>
-      <email>hal.hildebrand at oracle.com</email>
-      <organization>Oracle</organization>
-      <organizationUrl>http://www.oracle.com</organizationUrl>
-      <roles>
-        <role>Developer</role>
-      </roles>
-      <timezone>-8</timezone>
-    </developer>
-  </developers>
-
-  <licenses>
-    <license>
-      <name>Apache License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-      <comments>
-Copyright 2006-2007 the original author or authors.
- 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-      </comments>
-    </license>
-  </licenses>
-
-  <!-- =================================================== -->
-  <!-- Project Modules, Dependencies, Plugins and Profiles -->
-  <!-- =================================================== -->
-
-  <modules>
-    <module>aop-alliance</module>
-    <module>asm</module>
-    <module>aspectj</module>
-    <module>backport-util-concurrent</module>
-    <module>c3p0</module>
-    <module>cglib</module>
-    <module>commons-attributes</module>
-    <module>commons-beanutils</module>
-    <module>commons-collections</module>
-    <module>commons-lang</module>
-    <module>commons-pool</module>
-    <module>hsqldb</module>
-    <module>jsp-api</module>
-    <module>jstl</module>
-    <module>jta</module>
-    <module>junit</module>
-    <module>log4j</module>
-    <module>mx4j</module>
-    <module>mysql-connector</module>
-    <module>portlet-api</module>
-    <module>servlet-api</module>
-<!--    <module>spring-osgi-required-bundle-archetype</module> -->
-    <module>struts</module>
-  </modules>
-  
-  
- <build>
- <!--
-        <extensions>
-            <extension>
-                <groupId>org.springframework.aws</groupId>
-                <artifactId>spring-aws-maven</artifactId>
-                <version>1.1.1</version>
-            </extension>
-        </extensions>
--->
-    <resources>
-      <resource>
-        <!-- Bug MRESOURCES-35 means we can't use absolute paths -->
-        <targetPath>../../META-INF</targetPath>
-        <filtering>true</filtering>
-        <includes>
-          <include>MANIFEST.MF</include>
-        </includes>
-        <directory>src/main/resources/META-INF</directory>
-      </resource>
-      <resource>
-        <filtering>true</filtering>
-        <directory>src/main/resources</directory>
-      </resource>
-    </resources>
-
-    <plugins>
-    
-       <!-- OSGi Felix bundle plugin -->
-       <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <version>1.1.0-SNAPSHOT</version>
-        <configuration>
-          <instructions>
-           
-           <!-- bundle specific conf -->      
-           <Bundle-Name>${artifactId}</Bundle-Name>
-           <Bundle-SymbolicName>${spring.osgi.symbolic.name}</Bundle-SymbolicName>
-           <Bundle-Description>${pom.name}</Bundle-Description>
-           <!--
-           <Export-Package>${spring.osgi.export}</Export-Package>
-           -->
-           <Import-Package>${spring.osgi.import}</Import-Package>
-           <Private-Package>${spring.osgi.private.pkg}</Private-Package>
-           <Include-Resource>${spring.osgi.include.res}</Include-Resource>
-		   
-		   <Embed-Dependency>*;scope=provided;type=!pom;inline=true</Embed-Dependency>
-		   <_exportcontents>${spring.osgi.export}</_exportcontents>    
-           
-           <Implementation-Title>Spring Dynamic Modules Framework</Implementation-Title>
-		   <Implementation-Version>${unpack.version}</Implementation-Version>
-		   <Implementation-Vendor>Spring Dynamic Modules Framework</Implementation-Vendor>
-		   <Implementation-Vendor-Id>org.springframework.osgi</Implementation-Vendor-Id>
-		   
-		  </instructions>
-        </configuration>
-        <extensions>true</extensions>
-      </plugin> 
-      
-
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptors>
-             <descriptor>src/assembly/bin.xml</descriptor>
-          </descriptors>
-        </configuration>
-      </plugin>
-      
-    </plugins>
-  </build>
-
-  <!-- ======================================= -->
-  <!--          Website and reporting          -->
-  <!-- ======================================= -->
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-      </plugin>
-	 </plugins>
-   </reporting>
-
-  <distributionManagement>
-    <repository>
-      <id>static.springframework.org</id>
-      <url>
-        scp://static.springframework.org/var/www/domains/springframework.org/static/htdocs/maven2-snapshots/
-      </url>
-    </repository>
-    
-    <!-- disable the repo for now
-        <snapshotRepository>
-            <id>spring-snapshot</id>
-            <name>Spring Snapshot Repository</name>
-            <url>s3://maven.springframework.org/snapshot</url>
-        </snapshotRepository>
-        -->
-    <site>
-      <id>static.springframework.org</id>
-      <name>SpringFramework.org</name>
-      <url>
-        scp://static.springframework.org/var/www/domains/springframework.org/static/htdocs/maven2-snapshots/spring-osgi/
-      </url>
-    </site>
-  </distributionManagement>
-
-  <!-- ================================================ -->
-  <!--            Repository Configuration              -->
-  <!-- ================================================ -->
-
-  <pluginRepositories>
-	
-    <pluginRepository>
-      <id>maven-repo</id>
-      <name>maven repo</name>
-      <url>http://repo1.maven.org/maven2/</url>
-    </pluginRepository>
-
-	<!-- alternative felix BND plugin snapshot -->
-	<pluginRepository>
-		<id>ops4j-snapshots</id>
-		<url>http://repository.ops4j.org/mvn-snapshots</url>
-		<releases>
-			<enabled>false</enabled>
-		</releases>
-	</pluginRepository>
-
-    <!--  Do NOT enable this repository
-    
-    <pluginRepository>
-	 <snapshots><enabled>true</enabled></snapshots>
-	<id>apache-snapshot-repo</id>
-      <name>Apache snapshot repo</name>
-      <url>http://cvs.apache.org/maven-snapshot-repository</url>
-	</pluginRepository>
-    -->
-  </pluginRepositories>
-
-
-  <repositories>
-    <repository>    
-      <id>apache.m2.incubator</id>
-      <name>Apache M2 Incubator Repository</name>
-      <url>http://people.apache.org/repo/m2-snapshot-repository/</url>
-    </repository>  
-    <repository>
-        <id>eclipse-repository</id>
-        <name>Eclipse Repository</name>
-        <url>http://repo1.maven.org/eclipse/</url>
-    </repository>
-    <repository>
-      <id>safehaus-repository</id>
-      <name>Safehaus Repository</name>
-      <url>http://m2.safehaus.org</url>
-    </repository>
-    <repository>
-      <id>spring-ext</id>
-      <name>Spring External Dependencies Repository</name>
-      <url>
-        https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext/
-      </url>
-    </repository>
-	<repository>
-	 <snapshots><enabled>true</enabled></snapshots>
-	<id>apache-snapshot-repo</id>
-      <name>Apache snapshot repo</name>
-      <url>http://cvs.apache.org/maven-snapshot-repository</url>
-	</repository>
-
-    <repository>
-    <id>i21-s3-maven-repo</id>
-      <name>i21 S3 milestone repo</name>
-      <url>http://s3.amazonaws.com/maven.springframework.org/milestone</url>
-    </repository>
-  </repositories>
-
+	<repositories>
+<!-- This repository needs to move to S3 -->
+		<repository>
+			<id>spring-ext</id>
+			<name>Spring External Dependencies Repository</name>
+			<url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext</url>
+		</repository>
+	</repositories>
 </project>
