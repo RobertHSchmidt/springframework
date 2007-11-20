@@ -23,6 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.beans.factory.annotation.Autowire;
+import org.springframework.stereotype.Component;
 
 /**
  * Annotation for a configuration class. This annotation is not required,
@@ -38,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowire;
  * @author Rod Johnson
  * 
  */
+@Component
 @Target( { ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
