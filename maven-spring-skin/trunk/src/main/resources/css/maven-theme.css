@@ -45,6 +45,19 @@ p {
     padding: 0;
 }
 
+p span.box {
+  border: 1px solid #b8b7b7;
+  background:#e2d5cf;
+  color: #5c5c5c;
+  padding:0 4px;
+}
+
+/* inside a list a paragraph should not stand out */
+li p {
+    margin: 0.2em 0 0 0;
+    padding: 0;
+}
+
 blockquote {
     border-left: 4px solid #69c;
     padding: 0 15px 0 15px;
@@ -61,6 +74,19 @@ pre {
     padding: 0.75em 1.5em;
     font-size: 1.2em;
     border: 1px solid #ddd;
+}
+
+div.breakout {
+    background-color: #eee;
+    padding: 0.75em 1.5em;
+    font-size: 1.2em;
+    border: 1px solid #ddd;
+    margin-bottom: 0.5em; 
+}
+
+/* breakout paragraphs are always one per div, so no need for margin */
+div.breakout p {
+    margin: 0 0 0 0;
 }
 
 tt {
