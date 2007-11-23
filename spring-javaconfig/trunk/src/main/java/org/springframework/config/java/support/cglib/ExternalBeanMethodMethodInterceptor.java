@@ -22,6 +22,7 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.util.Assert;
 
@@ -48,7 +49,14 @@ class ExternalBeanMethodMethodInterceptor implements MethodInterceptor {
 	}
 
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
-		String beanName = namingStrategy.getBeanName(m);
+		ExternalBean externalBean = m.getAnnotation(ExternalBean.class);
+		String beanName; 
+		if(externalBean != null && !"".equals(externalBean.value())) {
+			beanName = externalBean.value();
+		} 
+		else {
+			beanName = namingStrategy.getBeanName(m);
+		}
 		return owningBeanFactory.getBean(beanName);
 	}
 }
