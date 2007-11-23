@@ -97,5 +97,27 @@ public class ExternalBeanDependenciesTest extends TestCase {
 		assertSame(spouseB, beanA.getSpouse());
 		assertSame(spouseA, beanB.getSpouse());
 	}
+	
+	@Configuration
+	static abstract class NamedExternalConfiguration {
+		@Bean
+		public Object usesExternal() {
+			return namedExternal();
+		}
+		
+		@ExternalBean("nameOverride")
+		protected abstract Object namedExternal();
+	}
+	
+	public void testNamedExternalBean() throws Exception {
+		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+		Object externalBeanVal = new Object();
+		bf.registerSingleton("nameOverride", externalBeanVal);
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
+		
+		configurationProcessor.processClass(NamedExternalConfiguration.class);
+		
+		assertSame(externalBeanVal, bf.getBean("usesExternal"));
+	}
 
 }
