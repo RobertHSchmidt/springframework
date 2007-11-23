@@ -23,9 +23,11 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -51,6 +53,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 
@@ -306,6 +309,15 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		// update the configuration bean definition first
 		Class<?> enhancedClass = configurationEnhancer.enhanceConfiguration(configurationClass);
 		definition.setBeanClass(enhancedClass);
+		
+		// Force resolution of dependencies on other beans
+		// It's questionable why this is needed. SPR-33
+		for (PropertyValue pv : definition.getPropertyValues().getPropertyValues()) {
+			if (pv.getValue() instanceof RuntimeBeanReference) {
+				RuntimeBeanReference rbref = (RuntimeBeanReference) pv.getValue();
+				addDependsOn(definition, rbref.getBeanName());
+			}
+		}
 
 		final Class<?> configClass = configurationClass;
 
@@ -377,6 +389,16 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 		return beansCreated;
 	}
+	
+	private static void addDependsOn(AbstractBeanDefinition bd, String beanName) {
+		if (bd.getDependsOn() == null) {
+			bd.setDependsOn(new String[] { beanName });
+		}
+		else {
+			String[] added = (String[]) ObjectUtils.addObjectToArray(bd.getDependsOn(), beanName);
+			bd.setDependsOn(added);
+		}
+	}
 
 	/**
 	 * Generate the actual bean definition using the given method.
@@ -400,7 +422,6 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		ProcessUtils.validateBeanCreationMethod(beanCreationMethod);
 
 		// Create a bean definition from the method
-
 		RootBeanDefinition rbd = new RootBeanDefinition(beanCreationMethod.getReturnType());
 
 		rbd.setFactoryMethodName(beanCreationMethod.getName());
@@ -417,7 +438,6 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		builder.append(beanCreationMethod.getName());
 		builder.append(" in class ");
 		builder.append(beanCreationMethod.getDeclaringClass().getName());
-
 		rbd.setResourceDescription(builder.toString());
 
 		// create a beanDefinitionRegistration for the current bean
