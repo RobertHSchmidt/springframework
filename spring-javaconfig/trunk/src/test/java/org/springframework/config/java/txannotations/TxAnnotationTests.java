@@ -84,7 +84,7 @@ public class TxAnnotationTests extends TestCase {
 
 	public void testTxProxyingWithJavaConfigDependingOnXml() {
 		ClassPathXmlApplicationContext ac = new ClassPathXmlApplicationContext(
-				"org/springframework/config/java/txannotations/txAnnotations.xml");
+				"org/springframework/config/java/txannotations/txannotations.xml");
 		ac.getBean("myApplicationBean");
 	}
 	
