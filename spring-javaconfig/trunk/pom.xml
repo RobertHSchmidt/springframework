@@ -397,6 +397,6 @@
 		</repository>
 	</repositories>
 	<properties>
-		<spring.version>2.5-rc1</spring.version>
+		<spring.version>2.5</spring.version>
 	</properties>
 </project>
