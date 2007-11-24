@@ -29,30 +29,29 @@ public class TxAnnotationTests extends TestCase {
 
 	@Configuration
 	public static class SampleConfig {
-		
+
 		private DataSource genericDataSource;
+
 		private String password;
+
 		private String username;
 
 		/**
-		 * @param genericDataSource
-		 *            the genericDataSource to set
+		 * @param genericDataSource the genericDataSource to set
 		 */
 		public void setGenericDataSource(DataSource genericDataSource) {
 			this.genericDataSource = genericDataSource;
 		}
 
 		/**
-		 * @param password
-		 *            the password to set
+		 * @param password the password to set
 		 */
 		public void setPassword(String password) {
 			this.password = password;
 		}
 
 		/**
-		 * @param username
-		 *            the username to set
+		 * @param username the username to set
 		 */
 		public void setUsername(String username) {
 			this.username = username;
@@ -60,9 +59,9 @@ public class TxAnnotationTests extends TestCase {
 
 		@Bean
 		public DataSource transactionalDataSource() {
-//			System.out.println("### Datasource being initialized ("
-//					+ genericDataSource + ", " + username + "," + password
-//					+ ")");
+			// System.out.println("### Datasource being initialized ("
+			// + genericDataSource + ", " + username + "," + password
+			// + ")");
 
 			UserCredentialsDataSourceAdapter adapter = new UserCredentialsDataSourceAdapter();
 			adapter.setTargetDataSource(genericDataSource);
@@ -74,12 +73,12 @@ public class TxAnnotationTests extends TestCase {
 
 		@Bean
 		public Object myApplicationBean() {
-			//System.out.println("### Creating application bean");
+			// System.out.println("### Creating application bean");
 			// requires transaction manager...
 			transactionalDataSource();
 
 			return new Object();
-		} 
+		}
 	}
 
 	public void testTxProxyingWithJavaConfigDependingOnXml() {
@@ -87,6 +86,5 @@ public class TxAnnotationTests extends TestCase {
 				"org/springframework/config/java/txannotations/txannotations.xml");
 		ac.getBean("myApplicationBean");
 	}
-	
 
 }

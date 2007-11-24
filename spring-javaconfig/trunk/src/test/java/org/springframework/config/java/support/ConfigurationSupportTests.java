@@ -37,13 +37,14 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ResourceLoader;
 
 /**
- *
+ * 
  * @author Rod Johnson
- *
+ * 
  */
 public class ConfigurationSupportTests extends TestCase {
 
-	private static class TestFactoryBeanForBeanFactory implements FactoryBean, InitializingBean, BeanFactoryAware, BeanClassLoaderAware {
+	private static class TestFactoryBeanForBeanFactory implements FactoryBean, InitializingBean, BeanFactoryAware,
+			BeanClassLoaderAware {
 
 		private final Object expectedReturnedObject;
 
@@ -86,9 +87,10 @@ public class ConfigurationSupportTests extends TestCase {
 		}
 	}
 
-	private static class TestFactoryBeanForAppContext extends TestFactoryBeanForBeanFactory
-													implements ResourceLoaderAware, ApplicationContextAware {
+	private static class TestFactoryBeanForAppContext extends TestFactoryBeanForBeanFactory implements
+			ResourceLoaderAware, ApplicationContextAware {
 		private ResourceLoader rl;
+
 		private ApplicationContext ac;
 
 		public TestFactoryBeanForAppContext(Object o) {
@@ -99,8 +101,7 @@ public class ConfigurationSupportTests extends TestCase {
 			this.rl = rl;
 		}
 
-		public void setApplicationContext(ApplicationContext ac)
-				throws BeansException {
+		public void setApplicationContext(ApplicationContext ac) throws BeansException {
 			this.ac = ac;
 		}
 
@@ -140,12 +141,13 @@ public class ConfigurationSupportTests extends TestCase {
 
 	public void testApplicationContextCallbacks() {
 		GenericApplicationContext gac = new GenericApplicationContext();
-		//ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(gac);
+		// ConfigurationProcessor configurationProcessor = new
+		// ConfigurationProcessor(gac);
 		ConfigurationPostProcessor cpp = new ConfigurationPostProcessor();
 		gac.getDefaultListableBeanFactory().registerSingleton("not_significant", cpp);
 
-		gac.getDefaultListableBeanFactory().registerBeanDefinition(
-				"doesnt_matter", new RootBeanDefinition(ApplicationContextTest.class));
+		gac.getDefaultListableBeanFactory().registerBeanDefinition("doesnt_matter",
+				new RootBeanDefinition(ApplicationContextTest.class));
 
 		gac.refresh();
 		assertEquals("whatever", gac.getBean("factoryTestBean"));

@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 
 @Component("foo")
 public class AutoscannedClass {
-	
+
 	public String echo(String what) {
 		return what;
 	}

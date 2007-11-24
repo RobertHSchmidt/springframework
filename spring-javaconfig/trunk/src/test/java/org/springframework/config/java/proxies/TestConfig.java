@@ -22,18 +22,19 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-@Component	// TODO should be able to remove this
+@Component
+// TODO should be able to remove this
 @Configuration
 public class TestConfig {
-	
-	@Autowired(required=true)
+
+	@Autowired(required = true)
 	private AutoscannedClass foo;
-	
+
 	@Bean
 	public TestBean person() {
 		return new TestBean();
 	}
-	
+
 	public AutoscannedClass getAutoscannedObject() {
 		return foo;
 	}

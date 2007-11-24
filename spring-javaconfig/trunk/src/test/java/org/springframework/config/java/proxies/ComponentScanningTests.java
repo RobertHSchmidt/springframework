@@ -26,9 +26,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
 public class ComponentScanningTests extends TestCase {
-	
+
 	@Aspect
-	@Component // TODO why is this needed?
+	@Component
+	// TODO why is this needed?
 	public static class SimpleAspect {
 		@Around("execution(String *.*(..))")
 		public String prependChar(ProceedingJoinPoint pjp) throws Throwable {
@@ -38,19 +39,20 @@ public class ComponentScanningTests extends TestCase {
 	}
 
 	public void testConfigurationComponentScanned() {
-		ClassPathXmlApplicationContext aac = new ClassPathXmlApplicationContext("/org/springframework/config/java/proxies/proxies.xml");
-		//System.out.println(aac.getBeanFactory());
+		ClassPathXmlApplicationContext aac = new ClassPathXmlApplicationContext(
+				"/org/springframework/config/java/proxies/proxies.xml");
+		// System.out.println(aac.getBeanFactory());
 		aac.refresh();
-		
+
 		TestBean tb = (TestBean) aac.getBean("person");
 		tb.setName("Rod");
 		assertEquals("Aspect must fire", ".Rod", tb.getName());
-		
+
 		TestConfig config = (TestConfig) aac.getBean(aac.getBeanNamesForType(TestConfig.class)[0]);
-		
+
 		// Can get beans with direct calls on the config object
 		assertSame(tb, config.person());
-		
+
 		assertNotNull("Configuration bean must be autowired", config.getAutoscannedObject());
 		assertEquals("Aspect must fire", ".Rod", config.getAutoscannedObject().echo("Rod"));
 	}
