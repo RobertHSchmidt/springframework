@@ -309,7 +309,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		// update the configuration bean definition first
 		Class<?> enhancedClass = configurationEnhancer.enhanceConfiguration(configurationClass);
 		definition.setBeanClass(enhancedClass);
-		
+
 		// Force resolution of dependencies on other beans
 		// It's questionable why this is needed. SPR-33
 		for (PropertyValue pv : definition.getPropertyValues().getPropertyValues()) {
@@ -389,7 +389,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 		return beansCreated;
 	}
-	
+
 	private static void addDependsOn(AbstractBeanDefinition bd, String beanName) {
 		if (bd.getDependsOn() == null) {
 			bd.setDependsOn(new String[] { beanName });

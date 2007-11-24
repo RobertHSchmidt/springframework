@@ -39,17 +39,15 @@ public class ChainedStrategyTests {
 
 	@Test
 	public void testSkipsNull() {
-		ChainedStrategy cs = new ChainedStrategy(new BeanNamingStrategy[] {
-				new DummyNameStrategy(null), new DummyNameStrategy("one"),
-				new DummyNameStrategy("two") });
+		ChainedStrategy cs = new ChainedStrategy(new BeanNamingStrategy[] { new DummyNameStrategy(null),
+				new DummyNameStrategy("one"), new DummyNameStrategy("two") });
 		assertEquals("one", cs.getBeanName(null));
 	}
 
 	@Test
 	public void testReturnsFirst() {
-		ChainedStrategy cs = new ChainedStrategy(new BeanNamingStrategy[] {
-				new DummyNameStrategy("zero"), new DummyNameStrategy(null),
-				new DummyNameStrategy("two") });
+		ChainedStrategy cs = new ChainedStrategy(new BeanNamingStrategy[] { new DummyNameStrategy("zero"),
+				new DummyNameStrategy(null), new DummyNameStrategy("two") });
 		assertEquals("zero", cs.getBeanName(null));
 	}
 

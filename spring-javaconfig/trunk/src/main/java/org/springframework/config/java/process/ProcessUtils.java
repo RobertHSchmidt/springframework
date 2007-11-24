@@ -253,8 +253,7 @@ abstract class ProcessUtils {
 					clazz = org.springframework.util.ClassUtils.forName(bd.getBeanClassName());
 				}
 				catch (ClassNotFoundException e) {
-					throw new IllegalArgumentException("Bean class '"
-							+ bd.getBeanClassName() + "' not found");
+					throw new IllegalArgumentException("Bean class '" + bd.getBeanClassName() + "' not found");
 				}
 			}
 			else {

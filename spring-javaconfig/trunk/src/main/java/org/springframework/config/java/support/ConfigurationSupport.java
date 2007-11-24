@@ -30,7 +30,7 @@ import org.springframework.context.ResourceLoaderAware;
 /**
  * Convenient base class for Configurations, allowing easy lookup of beans in
  * the owning factory
- *
+ * 
  * @author Rod Johnson
  */
 @Configuration
@@ -66,8 +66,8 @@ public class ConfigurationSupport implements BeanFactoryAware, ApplicationContex
 	}
 
 	/**
-	 * Return the object created by this FactoryBean instance, first
-	 * invoking any container callbacks on the instance
+	 * Return the object created by this FactoryBean instance, first invoking
+	 * any container callbacks on the instance
 	 * @param fb FactoryBean instance
 	 * @return the object created by the configured FactoryBean instance
 	 */
@@ -82,19 +82,22 @@ public class ConfigurationSupport implements BeanFactoryAware, ApplicationContex
 	}
 
 	/**
-	 * Invoke callbacks on the object, as though it was configured in the factory
+	 * Invoke callbacks on the object, as though it was configured in the
+	 * factory
 	 * @param o object to configure
 	 * @return object after callbacks have been called on it
 	 */
 	protected Object getConfigured(Object o) {
 		if (this.autowireCapableBeanFactory == null) {
-			throw new UnsupportedOperationException("Cannot configure object - not running in an AutowireCapableBeanFactory");
+			throw new UnsupportedOperationException(
+					"Cannot configure object - not running in an AutowireCapableBeanFactory");
 		}
 		else {
 			autowireCapableBeanFactory.initializeBean(o, null);
 		}
 
-		// TODO could replace with ApplicationContextAwareProcessor call if that class were public
+		// TODO could replace with ApplicationContextAwareProcessor call if that
+		// class were public
 		if (this.applicationContext != null) {
 			if (o instanceof ResourceLoaderAware) {
 				((ResourceLoaderAware) o).setResourceLoader(this.applicationContext);

@@ -58,8 +58,8 @@ import org.springframework.context.support.GenericApplicationContext;
 /**
  * Tests for {@link ConfigurationProcessor}
  * 
- * @see ConfigurationProcessorImportAnnotationTests - tests ConfigurationProcessor usage against
- * classes annotated with Import
+ * @see ConfigurationProcessorImportAnnotationTests - tests
+ * ConfigurationProcessor usage against classes annotated with Import
  * @author Rod Johnson
  */
 public class ConfigurationProcessorTests extends TestCase {
