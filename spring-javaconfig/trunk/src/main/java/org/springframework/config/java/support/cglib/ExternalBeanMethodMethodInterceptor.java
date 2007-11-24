@@ -50,10 +50,10 @@ class ExternalBeanMethodMethodInterceptor implements MethodInterceptor {
 
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
 		ExternalBean externalBean = m.getAnnotation(ExternalBean.class);
-		String beanName; 
-		if(externalBean != null && !"".equals(externalBean.value())) {
+		String beanName;
+		if (externalBean != null && !"".equals(externalBean.value())) {
 			beanName = externalBean.value();
-		} 
+		}
 		else {
 			beanName = namingStrategy.getBeanName(m);
 		}

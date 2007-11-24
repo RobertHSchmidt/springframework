@@ -31,7 +31,7 @@ import org.springframework.config.java.process.ConfigurationProcessor;
  * @author Costin Leau
  * 
  */
-public class ExternalBeanDependenciesTest extends TestCase {
+public class ExternalBeanDependenciesTests extends TestCase {
 
 	@Configuration
 	static class FirstConfiguration {

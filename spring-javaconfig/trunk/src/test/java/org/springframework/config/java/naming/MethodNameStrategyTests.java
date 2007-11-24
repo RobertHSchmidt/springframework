@@ -15,8 +15,6 @@
  */
 package org.springframework.config.java.naming;
 
-import org.springframework.config.java.naming.BeanNamingStrategy;
-import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.config.java.naming.MethodNameStrategy.Prefix;
 
 /**

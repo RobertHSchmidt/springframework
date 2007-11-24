@@ -40,9 +40,8 @@ import org.springframework.context.ConfigurableApplicationContext;
  * proxies.
  * 
  * @author Costin Leau
- * 
  */
-public class ScopingTest extends TestCase {
+public class ScopingTests extends TestCase {
 
 	private static boolean[] createNewScope = new boolean[] { true };
 

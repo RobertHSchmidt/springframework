@@ -27,9 +27,8 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
 /**
  * Test for http://opensource.atlassian.com/projects/spring/browse/SJC-13.
- * 
  */
-public class JavaAndXmlTest extends AbstractDependencyInjectionSpringContextTests {
+public class JavaAndXmlTests extends AbstractDependencyInjectionSpringContextTests {
 
 	private TestBean root;
 
@@ -81,7 +80,7 @@ public class JavaAndXmlTest extends AbstractDependencyInjectionSpringContextTest
 		}
 	}
 
-	public JavaAndXmlTest() {
+	public JavaAndXmlTests() {
 		setAutowireMode(AUTOWIRE_BY_NAME);
 	}
 

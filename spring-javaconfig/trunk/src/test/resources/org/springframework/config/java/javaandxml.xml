@@ -7,7 +7,7 @@
 
 	<bean class="org.springframework.config.java.process.ConfigurationPostProcessor" />
 
-	<bean class="org.springframework.config.java.JavaAndXmlTest$TestConfiguration" />
+	<bean class="org.springframework.config.java.JavaAndXmlTests$TestConfiguration" />
 
 	<!-- This list is only there to make sure bean "root" gets instantiated before bean "dependency" -->
 	<u:list id="all-beans">

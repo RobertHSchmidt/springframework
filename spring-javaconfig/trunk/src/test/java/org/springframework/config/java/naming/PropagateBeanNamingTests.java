@@ -6,7 +6,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
-public class PropagateBeanNamingTest extends AbstractDependencyInjectionSpringContextTests {
+public class PropagateBeanNamingTests extends AbstractDependencyInjectionSpringContextTests {
 	/**
 	 * We are autowired by name and the naming strategy will name our bean
 	 * "test" + [method name]. So we expect this property to be set with
@@ -32,7 +32,7 @@ public class PropagateBeanNamingTest extends AbstractDependencyInjectionSpringCo
 		assertEquals("Test", testbean);
 	}
 
-	public PropagateBeanNamingTest() {
+	public PropagateBeanNamingTests() {
 		setAutowireMode(AUTOWIRE_BY_NAME);
 	}
 
