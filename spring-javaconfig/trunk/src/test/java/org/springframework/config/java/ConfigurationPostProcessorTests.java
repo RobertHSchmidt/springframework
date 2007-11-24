@@ -16,16 +16,24 @@
 
 package org.springframework.config.java;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.awt.Point;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-
-import junit.framework.TestCase;
 
 import org.aopalliance.aop.Advice;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.springframework.aop.Advisor;
 import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.aop.framework.Advised;
@@ -39,6 +47,7 @@ import org.springframework.beans.IOther;
 import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.config.java.ConfigurationProcessorTests.BaseConfiguration;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
@@ -48,16 +57,17 @@ import org.springframework.config.java.process.ConfigurationPostProcessor;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * 
  * @author Rod Johnson
  */
-public class ConfigurationPostProcessorTests extends TestCase {
+public class ConfigurationPostProcessorTests {
 
+	@Test
 	public void testPriorityOrdering() {
 		ConfigurationPostProcessor cpp = new ConfigurationPostProcessor();
 		assertEquals(Integer.MIN_VALUE, cpp.getOrder());
 	}
 
+	@Test
 	public void testSingleton() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/test.xml");
@@ -76,6 +86,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		assertSame(tomsBecky, factorysBecky);
 	}
 
+	@Test
 	public void testInjectedConfig() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/injectedTest.xml");
@@ -86,8 +97,8 @@ public class ConfigurationPostProcessorTests extends TestCase {
 
 	/**
 	 * Test that a bean defined in XML can be injected with a bean from a config
-	 * 
 	 */
+	@Test
 	public void testReverseInjectionWithAutowire() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/reverseInjection.xml");
@@ -97,6 +108,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		assertEquals(33, tb.tb.getAge());
 	}
 
+	@Test
 	public void testReverseInjectionExplicit() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/reverseInjection.xml");
@@ -106,6 +118,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		assertEquals(33, tb.tb.getAge());
 	}
 
+	@Test
 	public void testProxiedPrototype() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/test.xml");
@@ -125,6 +138,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		assertSame(tomsBecky, factorysBecky);
 	}
 
+	@Test
 	public void testNonProxiedPrototype() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/test.xml");
@@ -146,6 +160,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		// assertSame(tomsBecky, factorysBecky);
 	}
 
+	@Test
 	public void testPointcut() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/test.xml");
@@ -167,6 +182,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		assertFalse("No pointcut in factory: method was protected (hidden)", bf.containsBean("debugAdvice"));
 	}
 
+	@Test
 	public void testProgrammaticProxyCreation() throws Exception {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/test.xml");
@@ -183,6 +199,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		proxied.getLocation();
 	}
 
+	@Test
 	public void testAbstractBeanDefinition() throws Exception {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/abstractDef.xml");
@@ -193,7 +210,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 	}
 
 	@Configuration
-	public static class AbstractConfig {
+	static class AbstractConfig {
 
 		public static boolean testBeanCreated = false;
 
@@ -206,7 +223,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 	}
 
 	@Configuration
-	public static class InjectedConfig {
+	static class InjectedConfig {
 		private int age;
 
 		public void setAge(int age) {
@@ -223,7 +240,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 
 	@Configuration
 	@Aspect
-	public static class AdvisedBaseConfiguration extends BaseConfiguration {
+	static class AdvisedBaseConfiguration extends BaseConfiguration {
 
 		// @Beans
 		// public Map getBeans() {
@@ -327,6 +344,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 	// }
 	//
 
+	@Test
 	public void testFactoryBean() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/myfactory.xml");
@@ -336,7 +354,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 	}
 
 	@Configuration
-	public static class FactoryBeanConfig {
+	static class FactoryBeanConfig {
 		@Bean
 		public MyFactory factoryCreatedTestBean() {
 			String myString = "jenny";
@@ -346,7 +364,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		}
 	}
 
-	public static class MyFactory implements FactoryBean {
+	static class MyFactory implements FactoryBean {
 
 		private String myString;
 
@@ -384,7 +402,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 
 	@Configuration
 	@Aspect
-	public static class Advised1 {
+	static class Advised1 {
 		@Bean
 		public TestBean oldJohannes() {
 			return new TestBean("johannes", 29);
@@ -399,7 +417,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 
 	@Configuration
 	@Aspect
-	public static class Advised2 {
+	static class Advised2 {
 		@Bean
 		public TestBean youngJohannes() {
 			return new TestBean("johannes", 29);
@@ -411,6 +429,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testAspectsAreIndependent() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/independenceTest.xml");
@@ -455,7 +474,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 
 	@Configuration
 	@Aspect
-	public static class PostProcessedConfig {
+	static class PostProcessedConfig {
 		private int counter;
 
 		@Bean
@@ -484,7 +503,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 	}
 
 	@Aspect
-	public static class CountAspect {
+	static class CountAspect {
 		public static int counter;
 
 		// TODO: this method never gets used. is this by design? (cbeams)
@@ -496,12 +515,13 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		}
 	}
 
-	public static class AdvisedByConfig {
+	static class AdvisedByConfig {
 		public int intValue() {
 			return 0;
 		}
 	}
 
+	@Test
 	public void testBeanNamePostProcessorAppliesToBeansFromConfig() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/beanNamePostProcessor.xml");
@@ -518,6 +538,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		// System.out.println(((Advised) autoProxied).toProxyConfigString());
 	}
 
+	@Test
 	public void testAspectIsLocalToConfig() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/beanNamePostProcessor.xml");
@@ -535,6 +556,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 	// NB: Requires that singletons are not materialized to derive their type:
 	// see AbstractAutowireCapableBeanFactory.getTypeForFactoryMethod
 	// TODO: check behavior with Spring 2.0.1
+	@Test
 	public void testLocalAndExternalAspects() throws Exception {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/localAndExternalAspects.xml");
@@ -559,7 +581,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 	}
 
 	@Configuration
-	public static class LegalOverrideConfiguration {
+	static class LegalOverrideConfiguration {
 		@Bean
 		public TestBean bob() {
 			TestBean bob = new TestBean();
@@ -573,6 +595,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testLegalOverride() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"org/springframework/config/java/legalOverride.xml");
@@ -583,7 +606,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 	}
 
 	@Configuration
-	public static class IllegalOverrideConfiguration {
+	static class IllegalOverrideConfiguration {
 		@Bean
 		public TestBean bob() {
 			TestBean bob = new TestBean();
@@ -598,6 +621,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testIllegalOverride() {
 		try {
 			ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
@@ -611,7 +635,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 	}
 
 	@Configuration
-	public static abstract class ExternalBeanConfiguration {
+	static abstract class ExternalBeanConfiguration {
 		@Bean
 		public TestBean bob() {
 			TestBean bob = new TestBean();
@@ -625,7 +649,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 	}
 
 	@Configuration
-	public static class ExternalBeanConfigurationNonAbstract extends ExternalBeanConfiguration {
+	static class ExternalBeanConfigurationNonAbstract extends ExternalBeanConfiguration {
 
 		@Override
 		@ExternalBean
@@ -634,6 +658,7 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testExternalBean() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"org/springframework/config/java/externalBean.xml");
@@ -642,12 +667,46 @@ public class ConfigurationPostProcessorTests extends TestCase {
 		assertEquals("External bean must have been satisfied", "Ann", bob.getSpouse().getName());
 	}
 
+	@Test
 	public void testExternalBeanNonAbstract() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"org/springframework/config/java/externalBean.xml");
 		TestBean bob = (TestBean) bf.getBean("bob");
 		assertTrue(bf.containsBean("ann"));
 		assertEquals("External bean must have been satisfied", "Ann", bob.getSpouse().getName());
+	}
+
+	/**
+	 * TODO: test for SJC-17. Ignored while determining if changes need to be
+	 * made to Spring Core to support this.
+	 */
+	@Ignore
+	@Test
+	public void testRequiredAnnotation() {
+		// this is going to throw a BeanCreationException, complaining that
+		// 'alice' hasn't been properly configured
+		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
+				"org/springframework/config/java/requiredBean.xml");
+	}
+
+	@Configuration
+	static class RequiredBeanConfig {
+		@Bean
+		public Alice alice() {
+			Alice bean = new Alice();
+			// notice I'm explicitly setting the @Required property with a value
+			bean.setName("alice");
+			return bean;
+		}
+	}
+
+	static class Alice {
+		private String name;
+
+		@Required
+		public void setName(String name) {
+			this.name = name;
+		}
 	}
 
 }

@@ -7,10 +7,10 @@
 
 	<bean class="org.springframework.config.java.process.ConfigurationPostProcessor" >
 		<property name="namingStrategy">
-			<bean class="org.springframework.config.java.naming.PropagateBeanNamingTest$TestNamingStrategy" />
+			<bean class="org.springframework.config.java.naming.PropagateBeanNamingTests$TestNamingStrategy" />
 		</property>
 	</bean>
 
-	<bean class="org.springframework.config.java.naming.PropagateBeanNamingTest$TestConfiguration" />
+	<bean class="org.springframework.config.java.naming.PropagateBeanNamingTests$TestConfiguration" />
 
 </beans>

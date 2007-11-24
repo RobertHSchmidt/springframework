@@ -22,9 +22,8 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
 /**
  * @author Costin Leau
- * 
  */
-public class ScopingXmlTest extends AbstractDependencyInjectionSpringContextTests {
+public class ScopingXmlTests extends AbstractDependencyInjectionSpringContextTests {
 
 	@Override
 	protected String[] getConfigLocations() {
@@ -33,7 +32,7 @@ public class ScopingXmlTest extends AbstractDependencyInjectionSpringContextTest
 
 	@Override
 	protected void onSetUp() throws Exception {
-		ScopingTest.flag = "1";
+		ScopingTests.flag = "1";
 	}
 
 	public void testGetScopedBean() {
