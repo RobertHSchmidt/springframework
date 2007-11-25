@@ -27,6 +27,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.listener.ConfigurationListener;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.config.java.util.ClassUtils;
+import org.springframework.config.java.util.DependencyUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
@@ -129,6 +130,29 @@ public class MethodBeanWrapper {
 				originallyCreatedBean = invoker.invokeOriginalClass();
 			}
 
+			if (DependencyUtils.isAopAvailable())
+				return new ProxyHelper().proxyIfAppropriate(originallyCreatedBean, method);
+			else
+				return originallyCreatedBean;
+		}
+		finally {
+			// be sure to clean tracking
+			if (newBeanRequested) {
+				childTrackingFactory.pop();
+			}
+		}
+	}
+
+	/**
+	 * Inner class keeps AOP-specific resources (ProxyFactory, etc) from being
+	 * eagerly classloaded. This allows running javaconfig-based applications
+	 * with no dependency on aspectj, spring-aop, etc. unless desired.
+	 * 
+	 * @author cbeams
+	 * @see DependencyUtils#isAopAvailable()
+	 */
+	private class ProxyHelper {
+		public Object proxyIfAppropriate(Object originallyCreatedBean, Method method) {
 			if (!configurationProcessor.getConfigurationListenerRegistry().getConfigurationListeners().isEmpty()) {
 				// We know we have advisors that may affect this object
 				// Prepare to proxy it
@@ -160,37 +184,25 @@ public class MethodBeanWrapper {
 					}
 					return pf.getProxy();
 				}
-				else {
-					return originallyCreatedBean;
-				}
 			}
-			else {
-				// There can be no advisors
-				return originallyCreatedBean;
-			}
+			return originallyCreatedBean;
 		}
-		finally {
-			// be sure to clean tracking
-			if (newBeanRequested) {
-				childTrackingFactory.pop();
-			}
+
+		/**
+		 * Use class proxies only if the return type isn't an interface or if
+		 * autowire is required (as an interface based proxy excludes the setters).
+		 * 
+		 * @param m
+		 * @param c
+		 * @return
+		 */
+		private boolean shouldProxyBeanCreationMethod(Method m) {
+			Bean bean = AnnotationUtils.findAnnotation(m, Bean.class);
+
+			// TODO need to consider autowiring enabled at factory level - reuse the
+			// detection from ConfigurationProcessor
+			return !m.getReturnType().isInterface() || bean.autowire().isAutowire();
 		}
+
 	}
-
-	/**
-	 * Use class proxies only if the return type isn't an interface or if
-	 * autowire is required (as an interface based proxy excludes the setters).
-	 * 
-	 * @param m
-	 * @param c
-	 * @return
-	 */
-	private boolean shouldProxyBeanCreationMethod(Method m) {
-		Bean bean = AnnotationUtils.findAnnotation(m, Bean.class);
-
-		// TODO need to consider autowiring enabled at factory level - reuse the
-		// detection from ConfigurationProcessor
-		return !m.getReturnType().isInterface() || bean.autowire().isAutowire();
-	}
-
 }

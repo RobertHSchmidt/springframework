@@ -27,6 +27,7 @@ import org.springframework.config.java.listener.aop.ScopedProxyConfigurationList
 import org.springframework.config.java.listener.aop.SpringAdviceConfigurationListener;
 import org.springframework.config.java.listener.aop.SpringAdvisorConfigurationListener;
 import org.springframework.config.java.listener.aop.targetsource.HotSwapConfigurationListener;
+import org.springframework.config.java.util.DependencyUtils;
 
 /**
  * Default ConfigurationListenerRegistry implementation.
@@ -39,11 +40,14 @@ public class DefaultConfigurationListenerRegistry implements ConfigurationListen
 	public DefaultConfigurationListenerRegistry() {
 		registerConfigurationListener(new AutoBeanConfigurationListener());
 		registerConfigurationListener(new ResourceBundlesConfigurationListener());
-		registerConfigurationListener(new HotSwapConfigurationListener());
-		registerConfigurationListener(new SpringAdvisorConfigurationListener());
-		registerConfigurationListener(new SpringAdviceConfigurationListener());
-		registerConfigurationListener(new AspectJAdviceConfigurationListener());
 		registerConfigurationListener(new ScopedProxyConfigurationListener());
+		if (DependencyUtils.isAopAvailable()) {
+			registerConfigurationListener(new HotSwapConfigurationListener());
+			registerConfigurationListener(new SpringAdvisorConfigurationListener());
+			registerConfigurationListener(new SpringAdviceConfigurationListener());
+			registerConfigurationListener(new AspectJAdviceConfigurationListener());
+		}
+
 	}
 
 	public void registerConfigurationListener(ConfigurationListener listener) {
