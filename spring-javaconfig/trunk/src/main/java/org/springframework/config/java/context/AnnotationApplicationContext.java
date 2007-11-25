@@ -25,6 +25,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.process.ConfigurationPostProcessor;
+import org.springframework.config.java.util.ClassUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
@@ -138,9 +139,12 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 
 	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {
-		if (getConfigClasses() != null && getConfigClasses().length > 0) {
-			for (Class<?> cz : getConfigClasses()) {
-				beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
+		Class<?>[] configClasses = getConfigClasses();
+		if (configClasses != null && configClasses.length > 0) {
+			for (Class<?> cz : configClasses) {
+				if (ClassUtils.isConfigurationClass(cz)) {
+					beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
+				}
 			}
 		}
 		else {
@@ -155,35 +159,4 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 		}
 	}
 
-	/**
-	 * Load bean definitions from configuration classes.
-	 * <p>
-	 * Since Class objects cannot be easily translated into a byte array or
-	 * InputStream, they have be parsed separately.
-	 * 
-	 * @param configClasses
-	 */
-	protected int loadBeanDefinitions(DefaultListableBeanFactory beanFactory, Class<?>... configClasses) {
-		int loadedDefs = 0;
-		if (configClasses != null) {
-			for (Class<?> clazz : configClasses) {
-				if (containsConfiguration(clazz)) {
-					loadedDefs++;
-					beanFactory.registerBeanDefinition(clazz.getName(), new RootBeanDefinition(clazz));
-				}
-			}
-		}
-
-		return loadedDefs;
-	}
-
-	/**
-	 * Discriminator between configuration and non-configuration classes.
-	 * 
-	 * @param clazz
-	 * @return
-	 */
-	private boolean containsConfiguration(Class<?> clazz) {
-		return clazz.isAnnotationPresent(Configuration.class);
-	}
 }

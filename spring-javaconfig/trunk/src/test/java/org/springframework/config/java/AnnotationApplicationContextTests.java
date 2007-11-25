@@ -20,9 +20,12 @@ import junit.framework.TestCase;
 
 import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
+import org.springframework.config.java.ConfigurationPostProcessorTests.ExternalBeanConfiguration;
+import org.springframework.config.java.ConfigurationPostProcessorTests.ExternalBeanProvidingConfiguration;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
+import org.springframework.config.java.complex.AbstractConfigurationToIgnore;
 import org.springframework.config.java.complex.ComplexConfiguration;
 import org.springframework.config.java.context.AnnotationApplicationContext;
 import org.springframework.config.java.simple.EmptySimpleConfiguration;
@@ -286,6 +289,28 @@ public class AnnotationApplicationContextTests extends TestCase {
 		public ITestBean extBean() {
 			return new TestBean();
 		}
+	}
+
+	// ------------------------------------------------------------------------
+
+	public void testAbstractConfigurationDoesNotGetProcessed() {
+		ctx.setConfigClasses(AbstractConfigurationToIgnore.class);
+		ctx.refresh();
+
+		int configClasses = 0;
+		int beansInClasses = 0;
+
+		assertEquals(configClasses + beansInClasses, ctx.getBeanDefinitionCount());
+	}
+
+	public void testAbstrectConfigurationWithExternalBeanDoesGetProcessed() {
+		ctx.setConfigClasses(ExternalBeanConfiguration.class, ExternalBeanProvidingConfiguration.class);
+		ctx.refresh();
+
+		int configClasses = 2;
+		int beansInClasses = 2;
+
+		assertEquals(configClasses + beansInClasses, ctx.getBeanDefinitionCount());
 	}
 
 	// ------------------------------------------------------------------------

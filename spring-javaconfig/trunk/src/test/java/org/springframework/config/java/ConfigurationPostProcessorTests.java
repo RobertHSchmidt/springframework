@@ -649,6 +649,14 @@ public class ConfigurationPostProcessorTests {
 	}
 
 	@Configuration
+	static class ExternalBeanProvidingConfiguration {
+		@Bean
+		public TestBean ann() {
+			return new TestBean();
+		}
+	}
+
+	@Configuration
 	static class ExternalBeanConfigurationNonAbstract extends ExternalBeanConfiguration {
 
 		@Override

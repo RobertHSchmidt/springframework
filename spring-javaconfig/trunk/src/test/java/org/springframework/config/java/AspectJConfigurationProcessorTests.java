@@ -293,7 +293,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	}
 
 	@Aspect
-	public abstract static class SingletonCountingAdvice extends CountingConfiguration {
+	public abstract static class AbstractSingletonCountingAdvice extends CountingConfiguration {
 
 		@Before("execution(* *.getSpouse())")
 		public void doesntMatter() {
@@ -307,6 +307,9 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 			// ++count;
 			// counts.put(target, count);
 		}
+	}
+
+	public static class SingletonCountingAdvice extends AbstractSingletonCountingAdvice {
 	}
 
 	// TODO different binding
@@ -328,7 +331,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	}
 
 	@Aspect
-	public static class AroundSingletonCountingAdvice extends SingletonCountingAdvice {
+	public static class AroundSingletonCountingAdvice extends AbstractSingletonCountingAdvice {
 		@Around("execution(* *.getName())")
 		public Object newValue(ProceedingJoinPoint pjp) throws Throwable {
 			// System.out.println("Invoking around advice method");
@@ -338,7 +341,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 
 	// TODO isn't aspect inherited? Clarify with Adrian
 	@Aspect
-	public static class AroundAdviceWithNamedPointcut extends SingletonCountingAdvice {
+	public static class AroundAdviceWithNamedPointcut extends AbstractSingletonCountingAdvice {
 
 		@Pointcut("execution(* *.getName())")
 		public void getName() {
