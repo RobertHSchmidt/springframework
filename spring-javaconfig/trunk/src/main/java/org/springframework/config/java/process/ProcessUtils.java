@@ -18,8 +18,6 @@ package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.annotation.Autowire;
@@ -78,26 +76,6 @@ abstract class ProcessUtils {
 	}
 
 	/**
-	 * Find all bean creation methods in the given configuration class. It looks
-	 * for {@link Bean} annotation on public methods.
-	 * 
-	 * @param configurationClass
-	 * @return
-	 */
-	public static Collection<Method> getBeanCreationMethods(Class<?> configurationClass) {
-		Assert.notNull(configurationClass);
-
-		Collection<Method> beanCreationMethods = new ArrayList<Method>();
-		Method[] publicMethods = configurationClass.getMethods();
-		for (int i = 0; i < publicMethods.length; i++) {
-			if (ClassUtils.hasAnnotation(publicMethods[i], Bean.class)) {
-				beanCreationMethods.add(publicMethods[i]);
-			}
-		}
-		return beanCreationMethods;
-	}
-
-	/**
 	 * Check if the given class is a configuration.
 	 * 
 	 * Additionally, a listener registry is checked against the class.
@@ -109,11 +87,9 @@ abstract class ProcessUtils {
 	public static boolean isConfigurationClass(Class<?> candidateConfigurationClass,
 			ConfigurationListenerRegistry registry) {
 
-		Assert.notNull(candidateConfigurationClass);
-		if (candidateConfigurationClass.isAnnotationPresent(Configuration.class)
-				|| !getBeanCreationMethods(candidateConfigurationClass).isEmpty()) {
+		if (ClassUtils.isConfigurationClass(candidateConfigurationClass))
 			return true;
-		}
+
 		if (registry != null)
 			for (ConfigurationListener cl : registry.getConfigurationListeners()) {
 				if (cl.understands(candidateConfigurationClass)) {

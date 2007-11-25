@@ -40,6 +40,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.config.java.AspectJConfigurationProcessorTests.AroundAdviceWithNamedPointcut;
 import org.springframework.config.java.ConfigurationProcessorTests.HiddenBeans.BFAwareBean;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
@@ -149,7 +150,8 @@ public class ConfigurationProcessorTests extends TestCase {
 	public void testAutowireOnBeanDefinition() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(AspectJConfigurationProcessorTests.SingletonCountingAdvice.class);
+		// configurationProcessor.processClass(AspectJConfigurationProcessorTests.SingletonCountingAdvice.class);
+		configurationProcessor.processClass(AroundAdviceWithNamedPointcut.class);
 
 		bf.getBean("dotb");
 		DependsOnTestBean dotb1 = (DependsOnTestBean) bf.getBean("dotb");

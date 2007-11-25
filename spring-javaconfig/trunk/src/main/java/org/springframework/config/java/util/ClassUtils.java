@@ -17,7 +17,13 @@ package org.springframework.config.java.util;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
 
+import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
@@ -75,6 +81,60 @@ public final class ClassUtils {
 		Assert.notNull(a, "annotation is required");
 
 		return (AnnotationUtils.findAnnotation(method, a) != null);
+	}
+
+	/**
+	 * Check if the given class is a configuration.
+	 * 
+	 * @param candidateConfigurationClass - must be non-abstract and be
+	 * annotated with &#64;Configuration and/or have at least one method
+	 * annotated with &#64;Bean
+	 */
+	public static boolean isConfigurationClass(Class<?> candidateConfigurationClass) {
+		Assert.notNull(candidateConfigurationClass);
+
+		if (Modifier.isAbstract(candidateConfigurationClass.getModifiers())
+				&& getExternalBeanCreationMethods(candidateConfigurationClass).isEmpty())
+			return false;
+
+		return candidateConfigurationClass.isAnnotationPresent(Configuration.class)
+				|| !getBeanCreationMethods(candidateConfigurationClass).isEmpty();
+	}
+
+	/**
+	 * Find all bean creation methods in the given configuration class. It looks
+	 * for {@link Bean} annotation on public methods.
+	 * 
+	 * @param configurationClass
+	 * @return
+	 */
+	public static Collection<Method> getBeanCreationMethods(Class<?> configurationClass) {
+		return getAnnotatedMethods(configurationClass, Bean.class);
+	}
+
+	/**
+	 * Find all methods that are annotated with &#64;ExternalBean.
+	 * 
+	 * @param configurationClass
+	 * @return collection of all methods annotated with {@link ExternalBean}
+	 */
+	public static Collection<Method> getExternalBeanCreationMethods(Class<?> configurationClass) {
+		return getAnnotatedMethods(configurationClass, ExternalBean.class);
+	}
+
+	public static Collection<Method> getAnnotatedMethods(Class<?> targetClass,
+			Class<? extends Annotation> targetAnnotation) {
+		Assert.notNull(targetClass);
+		Assert.notNull(targetAnnotation);
+
+		Collection<Method> matchingMethods = new ArrayList<Method>();
+		Method[] publicMethods = targetClass.getMethods();
+		for (int i = 0; i < publicMethods.length; i++) {
+			if (ClassUtils.hasAnnotation(publicMethods[i], targetAnnotation)) {
+				matchingMethods.add(publicMethods[i]);
+			}
+		}
+		return matchingMethods;
 	}
 
 }
