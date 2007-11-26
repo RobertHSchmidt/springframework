@@ -41,8 +41,6 @@ public class ComponentScanningTests extends TestCase {
 	public void testConfigurationComponentScanned() {
 		ClassPathXmlApplicationContext aac = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/proxies/proxies.xml");
-		// System.out.println(aac.getBeanFactory());
-		aac.refresh();
 
 		TestBean tb = (TestBean) aac.getBean("person");
 		tb.setName("Rod");

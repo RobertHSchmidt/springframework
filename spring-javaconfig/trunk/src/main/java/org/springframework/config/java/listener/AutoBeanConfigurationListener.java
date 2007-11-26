@@ -20,13 +20,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.util.Assert;
 
 /**
  * Configuration listener that registers autowired bean definitions in the
@@ -53,18 +51,9 @@ public class AutoBeanConfigurationListener extends ConfigurationListenerSupport 
 						+ ": don't know what class to instantiate; processing @AutoBean method " + m);
 			}
 
-			// make sure the cast actually works
-			Assert.isInstanceOf(BeanDefinitionRegistry.class, configurationProcessor.getOwningBeanFactory());
-
 			RootBeanDefinition bd = new RootBeanDefinition(m.getReturnType());
 			bd.setAutowireMode(autoBean.autowire().value());
-			if (Modifier.isPublic(m.getModifiers())) {
-				configurationProcessor.getBeanDefinitionRegistry().registerBeanDefinition(m.getName(), bd);
-			}
-			else {
-				// Hide the bean so that it's not publically visible
-				configurationProcessor.getChildBeanFactory().registerBeanDefinition(m.getName(), bd);
-			}
+			configurationProcessor.registerBeanDefinition(m.getName(), bd, !Modifier.isPublic(m.getModifiers()));
 			// one bean definition created
 			count++;
 		}

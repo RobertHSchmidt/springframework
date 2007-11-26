@@ -112,6 +112,10 @@ abstract class ProcessUtils {
 			throw new BeanDefinitionStoreException("Bean creation method " + beanCreationMethod.getName()
 					+ " may not be final");
 		}
+		if (Modifier.isPrivate(beanCreationMethod.getModifiers())) {
+			throw new BeanDefinitionStoreException("Bean creation method " + beanCreationMethod.getName()
+					+ " may not be private");
+		}
 		if (beanCreationMethod.getReturnType() == Void.TYPE) {
 			throw new BeanDefinitionStoreException("Bean creation method " + beanCreationMethod.getName()
 					+ " may not have void return");

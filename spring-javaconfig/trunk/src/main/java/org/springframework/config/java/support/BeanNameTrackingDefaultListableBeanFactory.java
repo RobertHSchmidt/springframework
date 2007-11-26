@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.config.java.support;
 
 import java.util.Stack;
 
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 /**
@@ -43,8 +44,10 @@ public class BeanNameTrackingDefaultListableBeanFactory extends DefaultListableB
 		return namesHolder.get();
 	}
 
-	public BeanNameTrackingDefaultListableBeanFactory(BeanFactory parent) {
+	public BeanNameTrackingDefaultListableBeanFactory(ConfigurableListableBeanFactory parent) {
 		super(parent);
+		copyConfigurationFrom(parent);
+
 	}
 
 	@Override

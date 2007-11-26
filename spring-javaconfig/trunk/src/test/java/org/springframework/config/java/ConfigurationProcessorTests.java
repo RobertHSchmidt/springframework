@@ -215,6 +215,31 @@ public class ConfigurationProcessorTests extends TestCase {
 		}
 	}
 
+	@Configuration
+	static class InvalidDuePrivateBeanMethod {
+		@Bean
+		public Object ok() {
+			return new Object();
+		}
+
+		@SuppressWarnings("unused")
+		@Bean
+		private Object notOk() {
+			return new Object();
+		}
+	}
+
+	public void testInvalidDueToPrivateBeanMethod() {
+		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
+		try {
+			configurationProcessor.processClass(InvalidDuePrivateBeanMethod.class);
+			fail("Should reject private Bean method");
+		}
+		catch (BeanDefinitionStoreException expected) {
+		}
+	}
+
 	public void testValidWithDynamicProxy() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
@@ -1022,11 +1047,6 @@ public class ConfigurationProcessorTests extends TestCase {
 		}
 
 		@Bean
-		private Object privateBean() {
-			return new BFAwareBean("private");
-		}
-
-		@Bean
 		Object packageBean() {
 			return new BFAwareBean("package");
 		}
@@ -1039,7 +1059,7 @@ public class ConfigurationProcessorTests extends TestCase {
 		@Bean
 		public BFAwareBean beans() {
 			BFAwareBean bean = new BFAwareBean("public");
-			bean.setBeans(new Object[] { privateBean(), packageBean(), protectedBean() });
+			bean.setBeans(new Object[] { packageBean(), protectedBean() });
 			return bean;
 		}
 	}
@@ -1056,26 +1076,23 @@ public class ConfigurationProcessorTests extends TestCase {
 		// hidden beans
 		assertFalse(bf.containsBean("protectedBean"));
 		assertFalse(bf.containsBean("packageBean"));
-		assertFalse(bf.containsBean("privateBean"));
 
 		BFAwareBean beans = (BFAwareBean) bf.getBean("beans");
-		assertEquals(3, beans.getBeans().length);
+		assertEquals(2, beans.getBeans().length);
 
-		BeanFactory hiddenBF = ((BFAwareBean) beans.getBeans()[2]).bf;
+		BeanFactory hiddenBF = ((BFAwareBean) beans.getBeans()[1]).bf;
 		assertNotSame(bf, hiddenBF);
 
 		assertTrue(hiddenBF.containsBean("protectedBean"));
 		assertTrue(hiddenBF.containsBean("packageBean"));
-		assertTrue(hiddenBF.containsBean("privateBean"));
-
 	}
 
 	public void testBeanDefinitionCount() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 
-		// 4 @Bean + 1 @Configuration
-		assertEquals(5, configurationProcessor.processClass(HiddenBeans.class));
+		// 3 @Bean + 1 @Configuration
+		assertEquals(4, configurationProcessor.processClass(HiddenBeans.class));
 		// 2 @Bean + 1 Advice (@Before) + 1 @Configuration
 		assertEquals(4, configurationProcessor.processClass(AdvisedAutowiring.class));
 		// 3 @Bean + 1 @Configuration
