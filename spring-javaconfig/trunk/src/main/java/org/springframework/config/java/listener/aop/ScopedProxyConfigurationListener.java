@@ -91,16 +91,8 @@ public class ScopedProxyConfigurationListener extends ConfigurationListenerSuppo
 			targetDefinition.setAutowireCandidate(false);
 
 			// Register the target bean as separate bean in the factory
+			cp.registerBeanDefinition(targetBeanName, targetDefinition, beanDefinitionRegistration.hide);
 
-			// TODO: consider eliminating this redundant code with
-			// ConfigurationProcessor#generateBeanDefinitionFromBeanCreationMethod
-			// (line 353)
-			if (beanDefinitionRegistration.hide) {
-				cp.getChildBeanFactory().registerBeanDefinition(targetBeanName, targetDefinition);
-			}
-			else {
-				cp.getBeanDefinitionRegistry().registerBeanDefinition(targetBeanName, targetDefinition);
-			}
 			// replace the original bean definition with the target one
 			beanDefinitionRegistration.rbd = scopedProxyDefinition;
 		}

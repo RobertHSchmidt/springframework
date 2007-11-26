@@ -24,6 +24,9 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.naming.BeanNamingStrategy;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.ResourceLoader;
@@ -45,7 +48,8 @@ import org.springframework.core.io.ResourceLoader;
  * @author Rod Johnson
  * @author Costin Leau
  */
-public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ordered, ResourceLoaderAware {
+public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ordered, ResourceLoaderAware,
+		ApplicationContextAware {
 
 	protected final Log log = LogFactory.getLog(getClass());
 
@@ -53,7 +57,11 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 
 	private BeanNamingStrategy namingStrategy;
 
+	private ConfigurableApplicationContext applicationContext;
+
 	private ResourceLoader resourceLoader;
+
+	private boolean hasRun;
 
 	/**
 	 * Guarantee to execute before any other BeanFactoryPostProcessors
@@ -89,11 +97,22 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 		this.resourceLoader = resourceLoader;
 	}
 
+	public void setApplicationContext(ApplicationContext ac) throws BeansException {
+		if (ac instanceof ConfigurableApplicationContext) {
+			this.applicationContext = (ConfigurableApplicationContext) ac;
+		}
+	}
+
 	/**
 	 * Generate BeanDefinitions and add them to factory for each Configuration
 	 * bean.
 	 */
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+		if (hasRun) {
+			throw new IllegalStateException("ConfigurationPostProcessor cannot run on two BeanFactories");
+		}
+		hasRun = true;
+
 		String[] beanNames = beanFactory.getBeanDefinitionNames();
 
 		// before creating a new process, do some validation even though we
@@ -102,7 +121,14 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 			// get the class
 			Class<?> clazz = ProcessUtils.getBeanClass(beanName, beanFactory);
 			if (clazz != null && ProcessUtils.validateConfigurationClass(clazz, configurationListenerRegistry)) {
-				ConfigurationProcessor processor = new ConfigurationProcessor(beanFactory);
+				ConfigurationProcessor processor;
+				if (this.applicationContext != null) {
+					System.out.println("using acontext");
+					processor = new ConfigurationProcessor(this.applicationContext);
+				}
+				else {
+					processor = new ConfigurationProcessor(beanFactory);
+				}
 				if (configurationListenerRegistry != null) {
 					processor.setConfigurationListenerRegistry(configurationListenerRegistry);
 				}

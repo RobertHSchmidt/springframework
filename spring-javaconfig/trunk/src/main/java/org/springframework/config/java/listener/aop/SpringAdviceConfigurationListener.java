@@ -80,7 +80,7 @@ public class SpringAdviceConfigurationListener extends AbstractAopConfigurationL
 		else {
 			pc = createSpringPointcut(springAdvice, m);
 		}
-		addAdvice(adviceName, pc, cp.getChildBeanFactory());
+		addAdvice(adviceName, pc, cp);
 
 		return 0;
 	}

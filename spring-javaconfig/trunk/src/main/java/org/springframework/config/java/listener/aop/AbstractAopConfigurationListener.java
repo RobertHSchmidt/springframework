@@ -26,7 +26,6 @@ import org.springframework.aop.Pointcut;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.listener.ConfigurationListenerSupport;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.core.Ordered;
@@ -47,16 +46,16 @@ public abstract class AbstractAopConfigurationListener extends ConfigurationList
 	/**
 	 * Add an advice with the given pointcut
 	 * @param adviceName bean name of the advice in the child factory
-	 * @param pc pointcut
+	 * @param cp ConfigurationProcessor
 	 * @param childBeanFactory child factory
 	 */
-	protected void addAdvice(String adviceName, Pointcut pc, DefaultListableBeanFactory childBeanFactory) {
+	protected void addAdvice(String adviceName, Pointcut pc, ConfigurationProcessor cp) {
 		// childBeanFactory.registerBeanDefinition(adviceName, rbd);
 		pointcuts.put(adviceName, pc);
 	}
 
-	protected void addAdvice(String adviceName, Pointcut pc, Advice advice, DefaultListableBeanFactory childBeanFactory) {
-		childBeanFactory.registerSingleton(adviceName, advice);
+	protected void addAdvice(String adviceName, Pointcut pc, Advice advice, ConfigurationProcessor cp) {
+		cp.registerSingleton(adviceName, advice, true);
 		pointcuts.put(adviceName, pc);
 	}
 

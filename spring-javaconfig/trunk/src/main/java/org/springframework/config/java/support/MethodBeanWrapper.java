@@ -116,7 +116,7 @@ public class MethodBeanWrapper {
 				hidden = true;
 			}
 			else {
-				beanDef = configurationProcessor.getOwningBeanFactory().getBeanDefinition(beanName);
+				beanDef = configurationProcessor.getBeanDefinitionRegistry().getBeanDefinition(beanName);
 				hidden = false;
 			}
 
@@ -190,7 +190,8 @@ public class MethodBeanWrapper {
 
 		/**
 		 * Use class proxies only if the return type isn't an interface or if
-		 * autowire is required (as an interface based proxy excludes the setters).
+		 * autowire is required (as an interface based proxy excludes the
+		 * setters).
 		 * 
 		 * @param m
 		 * @param c
@@ -199,7 +200,8 @@ public class MethodBeanWrapper {
 		private boolean shouldProxyBeanCreationMethod(Method m) {
 			Bean bean = AnnotationUtils.findAnnotation(m, Bean.class);
 
-			// TODO need to consider autowiring enabled at factory level - reuse the
+			// TODO need to consider autowiring enabled at factory level - reuse
+			// the
 			// detection from ConfigurationProcessor
 			return !m.getReturnType().isInterface() || bean.autowire().isAutowire();
 		}

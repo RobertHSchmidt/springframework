@@ -94,7 +94,7 @@ public class AspectJAdviceConfigurationListener extends AbstractAopConfiguration
 				return count;
 			}
 
-			addAdvice(adviceName, ((PointcutAdvisor) pa).getPointcut(), advice, cp.getChildBeanFactory());
+			addAdvice(adviceName, ((PointcutAdvisor) pa).getPointcut(), advice, cp);
 			// added the advice as singleton
 			count++;
 		}

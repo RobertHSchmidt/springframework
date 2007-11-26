@@ -25,7 +25,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -49,6 +51,7 @@ import org.springframework.config.java.valuesource.CompositeValueSource;
 import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.ResourceLoaderAware;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
@@ -101,6 +104,14 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 */
 	private BeanNameTrackingDefaultListableBeanFactory childFactory;
 
+	/**
+	 * Non-null if we are running in an ApplicationContext and need to ensure
+	 * that BeanFactoryProcessors from the parent apply to the child
+	 */
+	private AbstractApplicationContext owningApplicationContext;
+
+	private ConfigurableApplicationContext childApplicationContext;
+
 	private ConfigurationListenerRegistry configurationListenerRegistry = new DefaultConfigurationListenerRegistry();
 
 	private BytecodeConfigurationEnhancer configurationEnhancer;
@@ -122,15 +133,51 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 */
 	public ConfigurationProcessor(ConfigurableApplicationContext ac) {
 		this(ac.getBeanFactory());
+		if (ac instanceof AbstractApplicationContext) {
+			this.owningApplicationContext = (AbstractApplicationContext) ac;
+
+			/*
+			 * // TODO this override is a hack! Why is EventMulticaster null?
+			 * this.childApplicationContext = new
+			 * GenericApplicationContext(this.childFactory,
+			 * this.owningApplicationContext) { @Override public void
+			 * publishEvent(ApplicationEvent event) { //
+			 * System.out.println("suppressed " + event); } };
+			 *  // TODO should just be able to ask for processors List<BeanFactoryPostProcessor>
+			 * bfpps = new LinkedList<BeanFactoryPostProcessor>(); // for
+			 * (Object o : //
+			 * owningApplicationContext.getBeansOfType(BeanFactoryPostProcessor.class).values()) // { //
+			 * if (!(o instanceof ConfigurationPostProcessor)) { //
+			 * bfpps.add((BeanFactoryPostProcessor) o); // } // }
+			 * 
+			 * System.out.println("About to copy bfpps"); for (Object o :
+			 * owningApplicationContext.getBeanFactoryPostProcessors()) { if
+			 * (!(o instanceof ConfigurationPostProcessor)) {
+			 * bfpps.add((BeanFactoryPostProcessor) o); } }
+			 * 
+			 * for (BeanFactoryPostProcessor bfpp : bfpps) {
+			 * System.out.println("Copying bfpp" + bfpp);
+			 * this.childApplicationContext.addBeanFactoryPostProcessor(bfpp); }
+			 *  // Piggyback on owning application context refresh
+			 * this.owningApplicationContext.addApplicationListener(new
+			 * ApplicationListener() { public void
+			 * onApplicationEvent(ApplicationEvent ev) { if (ev instanceof
+			 * ContextRefreshedEvent) {
+			 * System.out.println("------------refreshing");
+			 * ConfigurationProcessor.this.childApplicationContext.refresh(); } }
+			 * });
+			 */
+		}
 	}
 
 	/**
 	 * Create a configuration processor. This is tied to an owning factory.
 	 * 
-	 * @param bdr owning factory
+	 * @param clbf owning factory
 	 */
-	public ConfigurationProcessor(ConfigurableListableBeanFactory bdr) {
-		this.owningBeanFactory = bdr;
+	public ConfigurationProcessor(ConfigurableListableBeanFactory clbf) {
+		this.owningBeanFactory = clbf;
+		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(owningBeanFactory);
 	}
 
 	/**
@@ -169,19 +216,37 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	}
 
 	public BeanDefinitionRegistry getBeanDefinitionRegistry() {
-		return (BeanDefinitionRegistry) getOwningBeanFactory();
+		return (BeanDefinitionRegistry) owningBeanFactory;
 	}
 
 	public void addValueSource(ValueSource vs) {
 		this.valueSource.add(vs);
 	}
 
-	public ConfigurableListableBeanFactory getOwningBeanFactory() {
+	public BeanFactory getOwningBeanFactory() {
 		return owningBeanFactory;
 	}
 
-	public DefaultListableBeanFactory getChildBeanFactory() {
-		return childFactory;
+	public BeanFactory getChildBeanFactory() {
+		return (childApplicationContext != null) ? childApplicationContext : childFactory;
+	}
+
+	public void registerBeanDefinition(String name, BeanDefinition bd, boolean hide) {
+		if (hide) {
+			childFactory.registerBeanDefinition(name, bd);
+		}
+		else {
+			getBeanDefinitionRegistry().registerBeanDefinition(name, bd);
+		}
+	}
+
+	public void registerSingleton(String name, Object o, boolean hide) {
+		if (hide) {
+			childFactory.registerSingleton(name, o);
+		}
+		else {
+			owningBeanFactory.registerSingleton(name, o);
+		}
 	}
 
 	/*
@@ -193,8 +258,6 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 */
 	public void afterPropertiesSet() {
 		Assert.notNull(owningBeanFactory, "an owning factory bean is required");
-
-		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(owningBeanFactory);
 
 		MethodBeanWrapper wrapper = new MethodBeanWrapper(this, childFactory);
 
@@ -275,13 +338,17 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	}
 
 	public int processBean(String beanName) throws BeanDefinitionStoreException {
+
+		System.out.println("processing config bean " + beanName);
+
 		checkInit();
 		Assert.notNull(beanName, "beanName is required");
 		Class<?> clazz = ProcessUtils.getBeanClass(beanName, owningBeanFactory);
 
 		// no class found
-		if (clazz == null)
+		if (clazz == null) {
 			return 0;
+		}
 
 		// otherwise start configuration processing
 		return generateBeanDefinitions(beanName, clazz);
