@@ -102,6 +102,38 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 		refresh();
 	}
 
+	/**
+	 * Create a new AnnotationApplicationContext with the given parent and
+	 * classes.
+	 * 
+	 * @see #AnnotationApplicationContext(ApplicationContext)
+	 * @see #AnnotationApplicationContext(Class...)
+	 * 
+	 * @param parent the parent application context
+	 * @param classes zero or more configuration classes
+	 */
+	public AnnotationApplicationContext(ApplicationContext parent, Class<?>... classes) {
+		this(parent);
+		setConfigClasses(classes);
+		refresh();
+	}
+
+	/**
+	 * Create a new AnnotationApplicationContext with the given parent and base
+	 * packages.
+	 * 
+	 * @see #AnnotationApplicationContext(ApplicationContext)
+	 * @see #AnnotationApplicationContext(String...)
+	 * 
+	 * @param parent the parent application context
+	 * @param basePackages the base packages to scan
+	 */
+	public AnnotationApplicationContext(ApplicationContext parent, String... basePackages) {
+		this(parent);
+		setBasePackages(basePackages);
+		refresh();
+	}
+
 	protected String[] getBasePackages() {
 		return basePackages;
 	}
