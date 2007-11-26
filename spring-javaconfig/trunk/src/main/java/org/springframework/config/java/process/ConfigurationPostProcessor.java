@@ -123,7 +123,6 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 			if (clazz != null && ProcessUtils.validateConfigurationClass(clazz, configurationListenerRegistry)) {
 				ConfigurationProcessor processor;
 				if (this.applicationContext != null) {
-					System.out.println("using acontext");
 					processor = new ConfigurationProcessor(this.applicationContext);
 				}
 				else {
