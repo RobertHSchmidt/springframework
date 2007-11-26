@@ -142,8 +142,8 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 			 * GenericApplicationContext(this.childFactory,
 			 * this.owningApplicationContext) { @Override public void
 			 * publishEvent(ApplicationEvent event) { //
-			 * System.out.println("suppressed " + event); } };
-			 *  // TODO should just be able to ask for processors List<BeanFactoryPostProcessor>
+			 * System.out.println("suppressed " + event); } }; // TODO should
+			 * just be able to ask for processors List<BeanFactoryPostProcessor>
 			 * bfpps = new LinkedList<BeanFactoryPostProcessor>(); // for
 			 * (Object o : //
 			 * owningApplicationContext.getBeansOfType(BeanFactoryPostProcessor.class).values()) // { //
@@ -157,8 +157,8 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 			 * 
 			 * for (BeanFactoryPostProcessor bfpp : bfpps) {
 			 * System.out.println("Copying bfpp" + bfpp);
-			 * this.childApplicationContext.addBeanFactoryPostProcessor(bfpp); }
-			 *  // Piggyback on owning application context refresh
+			 * this.childApplicationContext.addBeanFactoryPostProcessor(bfpp); } //
+			 * Piggyback on owning application context refresh
 			 * this.owningApplicationContext.addApplicationListener(new
 			 * ApplicationListener() { public void
 			 * onApplicationEvent(ApplicationEvent ev) { if (ev instanceof
@@ -338,9 +338,6 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	}
 
 	public int processBean(String beanName) throws BeanDefinitionStoreException {
-
-		System.out.println("processing config bean " + beanName);
-
 		checkInit();
 		Assert.notNull(beanName, "beanName is required");
 		Class<?> clazz = ProcessUtils.getBeanClass(beanName, owningBeanFactory);
