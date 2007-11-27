@@ -24,7 +24,6 @@ import java.util.Set;
 
 import junit.framework.Assert;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectFactory;
@@ -117,8 +116,6 @@ public class HiddenBeanPostProcessorTests {
 		}
 	}
 
-	// TODO decision on application context/BFPP running in child context
-	@Ignore
 	@Test
 	public void testBeanFactoryPostProcessorActsOnHiddenBeans() {
 		// BeanFactoryPostProcessors work only on ApplicationContext
@@ -131,24 +128,22 @@ public class HiddenBeanPostProcessorTests {
 
 		gac.refresh();
 
-		Assert.assertTrue("Must have recorded public bean method", rememberingFactoryPostProcessor.beansSeen
-				.contains("publicPoint"));
-		Assert.assertTrue("Must have recorded package bean method", rememberingFactoryPostProcessor.beansSeen
-				.contains("packagePoint"));
-		Assert.assertTrue("Must have recorded protected bean method", rememberingFactoryPostProcessor.beansSeen
-				.contains("protectedPoint"));
+		validateBeanFactoryPostProcessor(rememberingFactoryPostProcessor);
 	}
 
-	@Ignore
 	@Test
 	public void testApplicationContextWithXml() {
 		ClassPathXmlApplicationContext cac = new ClassPathXmlApplicationContext(
 				new String[] { "/org/springframework/config/java/hiddenBeanPostProcessorTests.xml" }, true);
-		// cac.refresh();
 
 		RememberingBeanFactoryPostProcessor rememberingFactoryPostProcessor = (RememberingBeanFactoryPostProcessor) cac
-				.getBean("bfpp");
+				.getBean("bfpp1");
+		validateBeanFactoryPostProcessor(rememberingFactoryPostProcessor);
+		rememberingFactoryPostProcessor = (RememberingBeanFactoryPostProcessor) cac.getBean("bfpp2");
+		validateBeanFactoryPostProcessor(rememberingFactoryPostProcessor);
+	}
 
+	private void validateBeanFactoryPostProcessor(RememberingBeanFactoryPostProcessor rememberingFactoryPostProcessor) {
 		Assert.assertTrue("Must have recorded public bean method", rememberingFactoryPostProcessor.beansSeen
 				.contains("publicPoint"));
 		Assert.assertTrue("Must have recorded package bean method", rememberingFactoryPostProcessor.beansSeen

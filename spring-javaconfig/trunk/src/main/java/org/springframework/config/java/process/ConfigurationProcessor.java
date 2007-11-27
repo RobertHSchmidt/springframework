@@ -19,6 +19,8 @@ package org.springframework.config.java.process;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -28,6 +30,7 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -49,9 +52,13 @@ import org.springframework.config.java.support.cglib.CglibConfigurationEnhancer;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.config.java.valuesource.CompositeValueSource;
 import org.springframework.config.java.valuesource.ValueSource;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.ResourceLoaderAware;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
@@ -110,6 +117,11 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 */
 	private AbstractApplicationContext owningApplicationContext;
 
+	/**
+	 * If we are running in an ApplicationContext we create a child context, as
+	 * well as a child BeanFactory, so that we can apply
+	 * BeanFactoryPostProcessors to the child
+	 */
 	private ConfigurableApplicationContext childApplicationContext;
 
 	private ConfigurationListenerRegistry configurationListenerRegistry = new DefaultConfigurationListenerRegistry();
@@ -136,37 +148,39 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		if (ac instanceof AbstractApplicationContext) {
 			this.owningApplicationContext = (AbstractApplicationContext) ac;
 
-			/*
-			 * // TODO this override is a hack! Why is EventMulticaster null?
-			 * this.childApplicationContext = new
-			 * GenericApplicationContext(this.childFactory,
-			 * this.owningApplicationContext) { @Override public void
-			 * publishEvent(ApplicationEvent event) { //
-			 * System.out.println("suppressed " + event); } }; // TODO should
-			 * just be able to ask for processors List<BeanFactoryPostProcessor>
-			 * bfpps = new LinkedList<BeanFactoryPostProcessor>(); // for
-			 * (Object o : //
-			 * owningApplicationContext.getBeansOfType(BeanFactoryPostProcessor.class).values()) // { //
-			 * if (!(o instanceof ConfigurationPostProcessor)) { //
-			 * bfpps.add((BeanFactoryPostProcessor) o); // } // }
-			 * 
-			 * System.out.println("About to copy bfpps"); for (Object o :
-			 * owningApplicationContext.getBeanFactoryPostProcessors()) { if
-			 * (!(o instanceof ConfigurationPostProcessor)) {
-			 * bfpps.add((BeanFactoryPostProcessor) o); } }
-			 * 
-			 * for (BeanFactoryPostProcessor bfpp : bfpps) {
-			 * System.out.println("Copying bfpp" + bfpp);
-			 * this.childApplicationContext.addBeanFactoryPostProcessor(bfpp); } //
-			 * Piggyback on owning application context refresh
-			 * this.owningApplicationContext.addApplicationListener(new
-			 * ApplicationListener() { public void
-			 * onApplicationEvent(ApplicationEvent ev) { if (ev instanceof
-			 * ContextRefreshedEvent) {
-			 * System.out.println("------------refreshing");
-			 * ConfigurationProcessor.this.childApplicationContext.refresh(); } }
-			 * });
-			 */
+			// TODO this override is a hack! Why is EventMulticaster null?
+			this.childApplicationContext = new GenericApplicationContext(this.childFactory,
+					this.owningApplicationContext) {
+				@Override
+				public void publishEvent(ApplicationEvent event) {
+					System.out.println("suppressed " + event);
+				}
+			};
+
+			List<BeanFactoryPostProcessor> bfpps = new LinkedList<BeanFactoryPostProcessor>();
+			for (Object o : owningApplicationContext.getBeansOfType(BeanFactoryPostProcessor.class).values()) {
+				if (!(o instanceof ConfigurationPostProcessor)) {
+					bfpps.add((BeanFactoryPostProcessor) o);
+				}
+			}
+			for (Object o : owningApplicationContext.getBeanFactoryPostProcessors()) {
+				if (!(o instanceof ConfigurationPostProcessor)) {
+					bfpps.add((BeanFactoryPostProcessor) o);
+				}
+			}
+			// Add all BeanFactoryPostProcessors to the child context
+			for (BeanFactoryPostProcessor bfpp : bfpps) {
+				this.childApplicationContext.addBeanFactoryPostProcessor(bfpp);
+			}
+			// Piggyback on owning application context refresh
+			this.owningApplicationContext.addApplicationListener(new ApplicationListener() {
+				public void onApplicationEvent(ApplicationEvent ev) {
+					if (ev instanceof ContextRefreshedEvent) {
+						// System.out.println("------------refreshing");
+						ConfigurationProcessor.this.childApplicationContext.refresh();
+					}
+				}
+			});
 		}
 	}
 
