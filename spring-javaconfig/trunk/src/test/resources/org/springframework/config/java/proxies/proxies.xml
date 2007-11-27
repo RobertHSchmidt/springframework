@@ -14,6 +14,8 @@
 	<bean class="org.springframework.config.java.process.ConfigurationPostProcessor" />
 	
 
-	<context:component-scan base-package="org.springframework.config.java.proxies" />
+	<context:component-scan 
+					base-package="org.springframework.config.java.proxies" 
+					use-default-filters="true"/>
   
   </beans>

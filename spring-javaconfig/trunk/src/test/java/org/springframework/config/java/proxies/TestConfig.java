@@ -20,10 +20,7 @@ import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
-@Component
-// TODO should be able to remove this
 @Configuration
 public class TestConfig {
 
