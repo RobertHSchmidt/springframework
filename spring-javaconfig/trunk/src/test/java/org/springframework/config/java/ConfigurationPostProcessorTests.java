@@ -1,12 +1,12 @@
 /*
  * Copyright 2002-2007 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,13 +16,7 @@
 
 package org.springframework.config.java;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.awt.Point;
 import java.lang.reflect.Method;
@@ -291,25 +285,25 @@ public class ConfigurationPostProcessorTests {
 	// Configurer cfg = new Configurer(gac);
 	// cfg.xml(getClass(), "test.xml");
 	// cfg.add("testBean", TestBean.class).prop("name", "tom");
-	//		
+	//
 	// // Not picked up by get beans of type
-	//		
+	//
 	// // TODO register that does factory bean or factory method!?
 	// // how to parameterize? would need to add class!?
-	//		
+	//
 	// //cfg.addSingleton("nopAdvisor", new DefaultPointcutAdvisor(new
 	// NopInterceptor()));
-	//		
+	//
 	// ((DefaultPointcutAdvisor) cfg.add("nopAdvisor",
 	// DefaultPointcutAdvisor.class))
 	// .setAdvice(new NopInterceptor());
-	//		
+	//
 	// gac.refresh();
-	//		
+	//
 	// DefaultPointcutAdvisor a = (DefaultPointcutAdvisor)
 	// gac.getBean("nopAdvisor");
 	// NopInterceptor ni = (NopInterceptor) a.getAdvice();
-	//		
+	//
 	// DefaultAdvisorAutoProxyCreator apc = (DefaultAdvisorAutoProxyCreator)
 	// gac.getBean("autoproxy");
 	//
@@ -320,26 +314,26 @@ public class ConfigurationPostProcessorTests {
 	// assertEquals(1, ni.getCount());
 	// assertTrue(tb instanceof Advised);
 	// }
-	//	
+	//
 	// public void testGroovyScript() {
 	// GenericApplicationContext bf = new GenericApplicationContext();
 	// Configurer cfg = new Configurer(bf);
-	//		
+	//
 	// String propVal = "zoe";
-	//		
+	//
 	// cfg.add("gsf", GroovyScriptFactory.class);
-	//		
+	//
 	// // TODO doesn't support DI here
 	// cfg.addFactoryBean("hello", "gsf", "create")
 	// .carg("org/springframework/beans/factory/script/groovy/PropertyHello.groovy")
 	// .prop("message", propVal);
-	//		
+	//
 	// bf.refresh();
-	//		
+	//
 	// Hello hello = (Hello) bf.getBean("hello");
-	//		
+	//
 	// assertTrue("Not a script", hello instanceof DynamicScript);
-	//		
+	//
 	// assertEquals(propVal, hello.sayHello());
 	// }
 	//
@@ -458,7 +452,7 @@ public class ConfigurationPostProcessorTests {
 	// bnapc.setInterceptorNames(new String[] { "nopInterceptor"});
 	// bnapc.setBeanNames(new String[] { "test*" });
 	// bnapc.setBeanFactory(ac.getBeanFactory());
-	//        
+	//
 	// ac.getBeanFactory().addBeanPostProcessor(bnapc);
 	// JavaBeanDefinitionReader jbr = new
 	// JavaBeanDefinitionReader((BeanDefinitionRegistry)
@@ -467,7 +461,7 @@ public class ConfigurationPostProcessorTests {
 	// System.out.println(ac);
 	// ITestBean tb = (ITestBean) ac.getBean("testBean");
 	// assertEquals("tom", tb.getName());
-	//        
+	//
 	// assertTrue(AopUtils.isAopProxy(tb));
 	// assertEquals(1, nop.getCount());
 	// }
@@ -635,7 +629,7 @@ public class ConfigurationPostProcessorTests {
 	}
 
 	@Configuration
-	static abstract class ExternalBeanConfiguration {
+	public static abstract class ExternalBeanConfiguration {
 		@Bean
 		public TestBean bob() {
 			TestBean bob = new TestBean();
@@ -649,7 +643,7 @@ public class ConfigurationPostProcessorTests {
 	}
 
 	@Configuration
-	static class ExternalBeanProvidingConfiguration {
+	public static class ExternalBeanProvidingConfiguration {
 		@Bean
 		public TestBean ann() {
 			return new TestBean();
@@ -685,8 +679,8 @@ public class ConfigurationPostProcessorTests {
 	}
 
 	/**
-	 * TODO: test for SJC-17. Ignored while determining if changes need to be
-	 * made to Spring Core to support this.
+	 * TODO: test for SJC-17. Ignored while determining if changes need to be made to Spring Core to
+	 * support this.
 	 */
 	@Ignore
 	@Test

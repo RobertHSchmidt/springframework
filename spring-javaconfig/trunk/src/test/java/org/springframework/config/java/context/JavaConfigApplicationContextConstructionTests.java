@@ -41,7 +41,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * 
  * @author Chris Beams
  */
-public final class JavaConfigApplicationContextTests {
+public final class JavaConfigApplicationContextConstructionTests {
 
 	private JavaConfigApplicationContext ctx;
 
