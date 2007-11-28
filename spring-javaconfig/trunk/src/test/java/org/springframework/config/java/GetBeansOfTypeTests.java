@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.context.AnnotationApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -75,11 +75,9 @@ public class GetBeansOfTypeTests extends TestCase {
 	}
 
 	public void testGetBeansOfType() throws Exception {
+		ApplicationContext propertiesContext = new JavaConfigApplicationContext(PropertiesConfig.class);
+		ApplicationContext anotherContext = new JavaConfigApplicationContext(propertiesContext, AnotherConfig.class);
 
-		AnnotationApplicationContext propertiesContext = new AnnotationApplicationContext(PropertiesConfig.class);
-		AnnotationApplicationContext anotherContext = new AnnotationApplicationContext(propertiesContext);
-		anotherContext.setConfigClasses(AnotherConfig.class);
-		anotherContext.refresh();
 		String[] names = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(anotherContext, Properties.class);
 		assertEquals(2, names.length);
 		names = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(anotherContext, Map.class);
@@ -92,13 +90,10 @@ public class GetBeansOfTypeTests extends TestCase {
 		// get beans only from the child
 		names = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(anotherContext, IdentityHashMap.class);
 		assertEquals(1, names.length);
-
-		anotherContext.close();
-		propertiesContext.close();
 	}
 
 	public void testGetBeansFromJavaAndXml() throws Exception {
-		AnnotationApplicationContext propertiesContext = new AnnotationApplicationContext(PropertiesConfig.class);
+		JavaConfigApplicationContext propertiesContext = new JavaConfigApplicationContext(PropertiesConfig.class);
 		ApplicationContext xmlCtx = new ClassPathXmlApplicationContext(
 				new String[] { "org/springframework/config/java/simpleCtx.xml" }, propertiesContext);
 		String names[] = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(xmlCtx, Point.class);
