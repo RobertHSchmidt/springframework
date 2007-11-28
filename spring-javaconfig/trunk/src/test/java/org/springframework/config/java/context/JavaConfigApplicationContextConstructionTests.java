@@ -37,7 +37,7 @@ import org.springframework.config.java.testing.Worker.JobTitle;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Simple test which read a Spring configuration based on annotations.
+ * Tests that excercise the various constructors on {@link JavaConfigApplicationContext}.
  * 
  * @author Chris Beams
  */

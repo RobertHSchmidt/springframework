@@ -33,8 +33,9 @@ import org.springframework.config.java.support.ConfigurationSupport;
 /**
  * @author Costin Leau
  * @author Rod Johnson
+ * @author Chris Beams
  */
-public class AnnotationApplicationContextTests extends TestCase {
+public final class JavaConfigApplicationContextTests extends TestCase {
 
 	protected JavaConfigApplicationContext ctx;
 
