@@ -177,7 +177,8 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 				public void onApplicationEvent(ApplicationEvent ev) {
 					if (ev instanceof ContextRefreshedEvent) {
 						// System.out.println("------------refreshing");
-						ConfigurationProcessor.this.childApplicationContext.refresh();
+						if (!ConfigurationProcessor.this.childApplicationContext.isActive())
+							ConfigurationProcessor.this.childApplicationContext.refresh();
 					}
 				}
 			});

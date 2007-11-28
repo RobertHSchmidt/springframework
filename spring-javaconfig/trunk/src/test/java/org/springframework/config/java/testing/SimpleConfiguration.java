@@ -35,7 +35,7 @@ public class SimpleConfiguration extends ConfigurationSupport {
 		company.hire(coliny());
 
 		company.addOwner(rod());
-		company.setName("Interface21");
+		company.setName("SpringSource");
 
 		return company;
 	}

@@ -27,7 +27,7 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.complex.AbstractConfigurationToIgnore;
 import org.springframework.config.java.complex.ComplexConfiguration;
-import org.springframework.config.java.context.AnnotationApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.simple.EmptySimpleConfiguration;
 import org.springframework.config.java.support.ConfigurationSupport;
 
@@ -37,13 +37,7 @@ import org.springframework.config.java.support.ConfigurationSupport;
  */
 public class AnnotationApplicationContextTests extends TestCase {
 
-	protected AnnotationApplicationContext ctx;
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		ctx = new AnnotationApplicationContext();
-	}
+	protected JavaConfigApplicationContext ctx;
 
 	@Override
 	protected void tearDown() throws Exception {
@@ -62,8 +56,7 @@ public class AnnotationApplicationContextTests extends TestCase {
 	}
 
 	public void testReadSimplePackage() throws Exception {
-		ctx.setBasePackages("/org/springframework/config/java/simple");
-		ctx.refresh();
+		ctx = new JavaConfigApplicationContext("/org/springframework/config/java/simple");
 
 		int classesInPackage = 2;
 		int beansInClasses = 2;
@@ -72,15 +65,13 @@ public class AnnotationApplicationContextTests extends TestCase {
 	}
 
 	public void testReadInnerClassesInPackage() throws Exception {
-		ctx.setBasePackages("/org/springframework/config/java/complex");
-		ctx.refresh();
+		ctx = new JavaConfigApplicationContext("/org/springframework/config/java/complex");
 
 		assertEquals(6, ctx.getBeanDefinitionCount());
 	}
 
 	public void testReadClassesByName() throws Exception {
-		ctx.setConfigClasses(new Class<?>[] { ComplexConfiguration.class, EmptySimpleConfiguration.class });
-		ctx.refresh();
+		ctx = new JavaConfigApplicationContext(ComplexConfiguration.class, EmptySimpleConfiguration.class);
 
 		int classesInPackage = 4;
 		int beansInClasses = 3;
@@ -91,8 +82,7 @@ public class AnnotationApplicationContextTests extends TestCase {
 	// ------------------------------------------------------------------------
 
 	public void testProcessImports() {
-		ctx.setConfigClasses(ConfigurationWithImportAnnotation.class);
-		ctx.refresh();
+		ctx = new JavaConfigApplicationContext(ConfigurationWithImportAnnotation.class);
 
 		int configClasses = 2;
 		int beansInClasses = 2;
@@ -120,8 +110,7 @@ public class AnnotationApplicationContextTests extends TestCase {
 	// ------------------------------------------------------------------------
 
 	public void testImportAnnotationWithTwoLevelRecursion() {
-		ctx.setConfigClasses(AppConfig.class);
-		ctx.refresh();
+		ctx = new JavaConfigApplicationContext(AppConfig.class);
 
 		int configClasses = 2;
 		int beansInClasses = 3;
@@ -154,8 +143,7 @@ public class AnnotationApplicationContextTests extends TestCase {
 	// ------------------------------------------------------------------------
 
 	public void testImportAnnotationWithThreeLevelRecursion() {
-		ctx.setConfigClasses(FirstLevel.class);
-		ctx.refresh();
+		ctx = new JavaConfigApplicationContext(FirstLevel.class);
 
 		int configClasses = 3;
 		int beansInClasses = 3;
@@ -194,8 +182,7 @@ public class AnnotationApplicationContextTests extends TestCase {
 	// ------------------------------------------------------------------------
 
 	public void testImportAnnotationWithMultipleArguments() {
-		ctx.setConfigClasses(WithMultipleArgumentsToImportAnnotation.class);
-		ctx.refresh();
+		ctx = new JavaConfigApplicationContext(WithMultipleArgumentsToImportAnnotation.class);
 
 		int configClasses = 3;
 		int beansInClasses = 2;
@@ -229,8 +216,7 @@ public class AnnotationApplicationContextTests extends TestCase {
 	public void testImportAnnotationWithMultipleArgumentsResultingInDuplicateBeanDefinition() {
 		boolean threw = false;
 		try {
-			ctx.setConfigClasses(WithMultipleArgumentsThatWillCauseDuplication.class);
-			ctx.refresh();
+			ctx = new JavaConfigApplicationContext(WithMultipleArgumentsThatWillCauseDuplication.class);
 		}
 		catch (IllegalStateException e) {
 			threw = true;
@@ -262,8 +248,7 @@ public class AnnotationApplicationContextTests extends TestCase {
 	// ------------------------------------------------------------------------
 
 	public void testImportAnnotationOnInnerClasses() {
-		ctx.setConfigClasses(OuterConfig.class);
-		ctx.refresh();
+		ctx = new JavaConfigApplicationContext(OuterConfig.class);
 
 		int configClasses = 3;
 		int beansInClasses = 2;
@@ -294,8 +279,7 @@ public class AnnotationApplicationContextTests extends TestCase {
 	// ------------------------------------------------------------------------
 
 	public void testAbstractConfigurationDoesNotGetProcessed() {
-		ctx.setConfigClasses(AbstractConfigurationToIgnore.class);
-		ctx.refresh();
+		ctx = new JavaConfigApplicationContext(AbstractConfigurationToIgnore.class);
 
 		int configClasses = 0;
 		int beansInClasses = 0;
@@ -304,8 +288,8 @@ public class AnnotationApplicationContextTests extends TestCase {
 	}
 
 	public void testAbstrectConfigurationWithExternalBeanDoesGetProcessed() {
-		ctx.setConfigClasses(ExternalBeanConfiguration.class, ExternalBeanProvidingConfiguration.class);
-		ctx.refresh();
+		ctx = new JavaConfigApplicationContext(ExternalBeanConfiguration.class,
+				ExternalBeanProvidingConfiguration.class);
 
 		int configClasses = 2;
 		int beansInClasses = 2;

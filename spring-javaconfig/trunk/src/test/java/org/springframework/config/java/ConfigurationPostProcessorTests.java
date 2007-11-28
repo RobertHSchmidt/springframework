@@ -377,7 +377,7 @@ public class ConfigurationPostProcessorTests {
 		}
 
 		/**
-		 * @see org.springframework.config.java.testing.config.java.beans.factory.FactoryBean#getObject()
+		 * @see org.springframework.config.java.context.java.beans.factory.FactoryBean#getObject()
 		 */
 		public Object getObject() throws Exception {
 			TestBean tb = new TestBean();
@@ -386,14 +386,14 @@ public class ConfigurationPostProcessorTests {
 		}
 
 		/**
-		 * @see org.springframework.config.java.testing.config.java.beans.factory.FactoryBean#getObjectType()
+		 * @see org.springframework.config.java.context.java.beans.factory.FactoryBean#getObjectType()
 		 */
 		public Class<?> getObjectType() {
 			return TestBean.class;
 		}
 
 		/**
-		 * @see org.springframework.config.java.testing.config.java.beans.factory.FactoryBean#isSingleton()
+		 * @see org.springframework.config.java.context.java.beans.factory.FactoryBean#isSingleton()
 		 */
 		public boolean isSingleton() {
 			return true;
