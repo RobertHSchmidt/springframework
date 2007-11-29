@@ -1,12 +1,12 @@
 /*
  * Copyright 2002-2007 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,14 +16,22 @@
 
 package org.springframework.config.java.context;
 
-import static org.springframework.util.ObjectUtils.*;
+import static org.springframework.util.ObjectUtils.isEmpty;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.AmbiguousBeanLookupException;
+import org.springframework.beans.factory.MultiplePrimaryBeanDefinitionException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.TypeSafeBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
@@ -32,18 +40,18 @@ import org.springframework.util.Assert;
 /**
  * TODO: Document
  * 
- * Annotation-aware application context that looks for classes annotated with the Configuration
- * annotation and registers the beans they define.
+ * Annotation-aware application context that looks for classes annotated with
+ * the Configuration annotation and registers the beans they define.
  * 
  * @author Chris Beams
  */
-public class JavaConfigApplicationContext extends AbstractRefreshableApplicationContext {
+public class JavaConfigApplicationContext extends AbstractRefreshableApplicationContext implements TypeSafeBeanFactory {
 
 	protected final Set<Class<?>> configClasses = new HashSet<Class<?>>();
 
 	/**
-	 * The base packages for configurations from Strings. These use the same conventions as the
-	 * component scanning introduced in Spring 2.5.
+	 * The base packages for configurations from Strings. These use the same
+	 * conventions as the component scanning introduced in Spring 2.5.
 	 */
 	protected final Set<String> basePackages = new HashSet<String>();
 
@@ -89,6 +97,56 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	public JavaConfigApplicationContext(Class<?>[] classes, String[] basePackages) {
 		this(null, classes, basePackages);
+	}
+
+	/*
+	 * XXX: Review
+	 * @see org.springframework.beans.factory.TypeSafeBeanFactory#getBean(java.lang.Class)
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T getBean(Class<T> type) {
+		Map<String, Object> beansOfType = getBeansOfType(type);
+		int matchingBeanCount = beansOfType.size();
+
+		// happy path -- there is exactly one matching bean: return it.
+		if (matchingBeanCount == 1)
+			return (T) beansOfType.values().iterator().next();
+
+		// no matches: throw.
+		if (matchingBeanCount == 0)
+			throw new NoSuchBeanDefinitionException(type, "");
+
+		// there is more than one instance: attempt to find a primary bean
+		ArrayList<String> primaryCandidates = new ArrayList<String>();
+		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+		for (String beanName : beansOfType.keySet()) {
+			// XXX: Review - having to cast here is odd; there's probably a
+			// better way
+			AbstractBeanDefinition beanDef = (AbstractBeanDefinition) beanFactory.getBeanDefinition(beanName);
+			if (beanDef.isPrimary()) {
+				primaryCandidates.add(beanName);
+			}
+		}
+
+		int primaryCandidateCount = primaryCandidates.size();
+
+		if (primaryCandidateCount == 0) {
+			throw new AmbiguousBeanLookupException(type, beansOfType);
+		}
+		if (primaryCandidateCount > 1) {
+			throw new MultiplePrimaryBeanDefinitionException(type, primaryCandidates);
+		}
+		// exactly one primary candidate found
+		return (T) beanFactory.getBean(primaryCandidates.get(0));
+	}
+
+	/*
+	 * XXX: Review
+	 * @see org.springframework.beans.factory.TypeSafeBeanFactory#getBean(Class,
+	 * String)
+	 */
+	public <T> T getBean(Class<T> type, String beanName) {
+		return null;
 	}
 
 	/**
@@ -162,9 +220,9 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	}
 
 	/**
-	 * Optionally override an implementation's internally-provided default bean definition loader. A
-	 * custom bean definition loader would be used to implement special processing of configClasses
-	 * and basePackages.
+	 * Optionally override an implementation's internally-provided default bean
+	 * definition loader. A custom bean definition loader would be used to
+	 * implement special processing of configClasses and basePackages.
 	 * 
 	 * @param beanDefLoader - custom bean definition loader
 	 * @see JavaConfigBeanDefinitionLoader
