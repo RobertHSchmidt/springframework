@@ -1,4 +1,4 @@
-#Wed Nov 28 11:56:53 PST 2007
+#Thu Nov 29 04:25:10 PST 2007
 eclipse.preferences.version=1
 org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.5
@@ -119,7 +119,7 @@ org.eclipse.jdt.core.formatter.comment.indent_parameter_description=false
 org.eclipse.jdt.core.formatter.comment.indent_root_tags=false
 org.eclipse.jdt.core.formatter.comment.insert_new_line_before_root_tags=do not insert
 org.eclipse.jdt.core.formatter.comment.insert_new_line_for_parameter=do not insert
-org.eclipse.jdt.core.formatter.comment.line_length=100
+org.eclipse.jdt.core.formatter.comment.line_length=80
 org.eclipse.jdt.core.formatter.compact_else_if=true
 org.eclipse.jdt.core.formatter.continuation_indentation=2
 org.eclipse.jdt.core.formatter.continuation_indentation_for_array_initializer=2
