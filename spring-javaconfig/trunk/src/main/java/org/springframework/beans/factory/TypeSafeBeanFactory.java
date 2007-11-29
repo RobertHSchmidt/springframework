@@ -14,8 +14,6 @@ public interface TypeSafeBeanFactory {
 	 * of the same type exist, instances are inspected to see if exactly one is
 	 * marked as 'primary'.
 	 * 
-	 * <p/>XXX: Document
-	 * 
 	 * @param type desired instance type
 	 * @throws NoSuchBeanDefinitionException if no instance matches <var>type</var>
 	 * @throws AmbiguousBeanLookupException if more than one instance is found
@@ -27,7 +25,16 @@ public interface TypeSafeBeanFactory {
 	public <T> T getBean(Class<T> type);
 
 	/**
-	 * XXX: Document
+	 * Return an instance named <var>beanName</var> and of type <var>type</var>.
+	 * 
+	 * This method is similar to its predecessor
+	 * {@link BeanFactory#getBean(String, Class)}, but this variant takes
+	 * advantages of generics and removes the casting burden from the caller.
+	 * 
+	 * @throws NoSuchBeanDefinitionException if <var>beanName</var> cannot be
+	 * found
+	 * @throws BeanNotOfRequiredTypeException if <var>beanName</var> is found
+	 * but is not of type <var>type</var>
 	 */
 	public <T> T getBean(Class<T> type, String beanName);
 }

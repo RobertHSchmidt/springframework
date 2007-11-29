@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.AmbiguousBeanLookupException;
+import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.MultiplePrimaryBeanDefinitionException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.config.java.annotation.Bean;
@@ -61,6 +62,25 @@ public class JavaConfigApplicationContextTypeSafeGetBeanMethodTests {
 	public void testCannotDisambiguateWithMultiplePrimaryDesignations() {
 		ctx = new JavaConfigApplicationContext(MultiBeanConfigWithMultiplePrimaries.class);
 		ctx.getBean(TestBean.class);
+	}
+
+	@Test
+	public void testDisambiguateByProvidingQualifyingBeanName() {
+		ctx = new JavaConfigApplicationContext(MultiBeanConfig.class);
+		TestBean serviceA = ctx.getBean(TestBean.class, "serviceA");
+		assertNotNull(serviceA);
+	}
+
+	@Test(expected = BeanNotOfRequiredTypeException.class)
+	public void testDisambiguateByProvidingQualifyingBeanNameWithWrongClassName() {
+		ctx = new JavaConfigApplicationContext(MultiBeanConfig.class);
+		ctx.getBean(String.class, "serviceA"); // throws
+	}
+
+	@Test(expected = NoSuchBeanDefinitionException.class)
+	public void testDisambiguateByProvidingQualifyingBeanNameWithWrongBeanName() {
+		ctx = new JavaConfigApplicationContext(MultiBeanConfig.class);
+		ctx.getBean(TestBean.class, "serviceX"); // throws
 	}
 
 	@Configuration
