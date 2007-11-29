@@ -145,8 +145,9 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	 * @see org.springframework.beans.factory.TypeSafeBeanFactory#getBean(Class,
 	 * String)
 	 */
+	@SuppressWarnings("unchecked")
 	public <T> T getBean(Class<T> type, String beanName) {
-		return null;
+		return (T) getBean(beanName, type);
 	}
 
 	/**
