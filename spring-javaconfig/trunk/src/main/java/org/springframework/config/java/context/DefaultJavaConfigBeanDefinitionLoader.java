@@ -30,8 +30,9 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 /**
- * Helper class designed to abstract out the common bean definition loading logic shared by
- * {@link JavaConfigApplicationContext} and {@link JavaConfigWebApplicationContext}
+ * Helper class designed to abstract out the common bean definition loading
+ * logic shared by {@link JavaConfigApplicationContext} and
+ * {@link JavaConfigWebApplicationContext}
  * 
  * @see JavaConfigApplicationContext
  * @see JavaConfigWebApplicationContext
@@ -48,13 +49,15 @@ public class DefaultJavaConfigBeanDefinitionLoader implements JavaConfigBeanDefi
 	private final Set<String> basePackages;
 
 	/**
-	 * Create a new instance capable of loading bean definitions from both configuration classes in
-	 * <var>configClasses</var> and by scanning the classpath for any Configuration classes in
-	 * <var>basePackges</var>
+	 * Create a new instance capable of loading bean definitions from both
+	 * configuration classes in <var>configClasses</var> and by scanning the
+	 * classpath for any Configuration classes in <var>basePackges</var>
 	 * 
 	 * @param loader - usually a JavaConfig[Web]ApplicationContext
-	 * @param configClasses - the JavaConfigApplicationContext's set of configuration classes
-	 * @param basePackages - the JavaConfigApplicationContext's set of base packages to scan
+	 * @param configClasses - the JavaConfigApplicationContext's set of
+	 * configuration classes
+	 * @param basePackages - the JavaConfigApplicationContext's set of base
+	 * packages to scan
 	 * 
 	 * @see JavaConfigApplicationContext#initBeanDefinitionLoader()
 	 */
@@ -68,8 +71,8 @@ public class DefaultJavaConfigBeanDefinitionLoader implements JavaConfigBeanDefi
 	}
 
 	/**
-	 * Find all bean definitions within {@link #configClasses} and {@link #basePackages} and
-	 * register them with <var>beanFactory</var>.
+	 * Find all bean definitions within {@link #configClasses} and
+	 * {@link #basePackages} and register them with <var>beanFactory</var>.
 	 * 
 	 * @see JavaConfigApplicationContext#loadBeanDefinitions(DefaultListableBeanFactory)
 	 */

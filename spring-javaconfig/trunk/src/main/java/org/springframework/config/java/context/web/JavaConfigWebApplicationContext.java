@@ -28,7 +28,8 @@ import org.springframework.util.Assert;
 import org.springframework.web.context.support.AbstractRefreshableWebApplicationContext;
 
 /**
- * Fashioned after {@link JavaConfigApplicationContext}, but for use in the web tier.
+ * Fashioned after {@link JavaConfigApplicationContext}, but for use in the web
+ * tier.
  * 
  * TODO: Document
  * 
@@ -67,11 +68,12 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 	}
 
 	/**
-	 * Processes contents of <var>configLocations</var>, setting the values of configClasses and
-	 * basePackages appropriately.
+	 * Processes contents of <var>configLocations</var>, setting the values of
+	 * configClasses and basePackages appropriately.
 	 * 
-	 * @throws IllegalArgumentException if the <code>configLocations</code> array is null,
-	 * contains any null elements, or contains names of any classes that cannot be found
+	 * @throws IllegalArgumentException if the <code>configLocations</code>
+	 * array is null, contains any null elements, or contains names of any
+	 * classes that cannot be found
 	 * 
 	 * TODO: support base packages (only classes are supported right now)
 	 */

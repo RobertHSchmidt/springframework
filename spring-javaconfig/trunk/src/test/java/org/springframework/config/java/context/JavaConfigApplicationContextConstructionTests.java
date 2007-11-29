@@ -37,7 +37,8 @@ import org.springframework.config.java.testing.Worker.JobTitle;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Tests that excercise the various constructors on {@link JavaConfigApplicationContext}.
+ * Tests that excercise the various constructors on
+ * {@link JavaConfigApplicationContext}.
  * 
  * @author Chris Beams
  */
@@ -112,8 +113,8 @@ public final class JavaConfigApplicationContextConstructionTests {
 	}
 
 	/**
-	 * Sets up a base package with two classes in it, one of which is abstract and should thus be
-	 * ignored
+	 * Sets up a base package with two classes in it, one of which is abstract
+	 * and should thus be ignored
 	 */
 	@Test
 	public void testConstructionWithSingleBasePackage() {

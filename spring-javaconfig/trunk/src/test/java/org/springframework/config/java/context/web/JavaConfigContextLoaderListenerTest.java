@@ -66,8 +66,8 @@ public class JavaConfigContextLoaderListenerTest {
 	}
 
 	/**
-	 * Required to run this test under Junit3 because the way exceptions are thrown from listener
-	 * confuses junit4
+	 * Required to run this test under Junit3 because the way exceptions are
+	 * thrown from listener confuses junit4
 	 */
 	public static class Junit3Tests extends junit.framework.TestCase {
 		public void testFailingToProvideConfigLocationThrowsException() {
