@@ -28,15 +28,18 @@ import org.springframework.web.context.ContextLoaderListener;
  */
 public class JavaConfigContextLoaderListener extends ContextLoaderListener {
 	/**
-	 * Ensures {@link JavaConfigWebApplicationContext} will be the default context class used,
-	 * eliminating the need for the user to supply a 'contextClass' init-param in the web.xml
+	 * Ensures {@link JavaConfigWebApplicationContext} will be the default
+	 * context class used, eliminating the need for the user to supply a
+	 * 'contextClass' init-param in the web.xml
 	 * 
-	 * <p/>Note that if the user does explicitly set an init-param named 'contextClass' control will
-	 * be immediately returned to the default implementation
+	 * <p/>Note that if the user does explicitly set an init-param named
+	 * 'contextClass' control will be immediately returned to the default
+	 * implementation
 	 * 
-	 * @throws IllegalArgumentException if the user does not supply an init-param named
-	 * 'contextConfigLocation'. It is required to supply this as there is no reasonable default to
-	 * assume for the fully-qualified location of a Spring JavaConfig class.
+	 * @throws IllegalArgumentException if the user does not supply an
+	 * init-param named 'contextConfigLocation'. It is required to supply this
+	 * as there is no reasonable default to assume for the fully-qualified
+	 * location of a Spring JavaConfig class.
 	 * 
 	 * @see JavaConfigWebApplicationContext
 	 */

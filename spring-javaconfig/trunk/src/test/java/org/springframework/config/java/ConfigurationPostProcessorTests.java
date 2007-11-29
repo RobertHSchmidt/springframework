@@ -679,8 +679,8 @@ public class ConfigurationPostProcessorTests {
 	}
 
 	/**
-	 * TODO: test for SJC-17. Ignored while determining if changes need to be made to Spring Core to
-	 * support this.
+	 * TODO: test for SJC-17. Ignored while determining if changes need to be
+	 * made to Spring Core to support this.
 	 */
 	@Ignore
 	@Test

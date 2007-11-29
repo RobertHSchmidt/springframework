@@ -27,13 +27,15 @@ import org.springframework.web.servlet.DispatcherServlet;
 @SuppressWarnings("serial")
 public class JavaConfigDispatcherServlet extends DispatcherServlet {
 	/**
-	 * Returns {@link JavaConfigWebApplicationContext} unless the user has specified a
+	 * Returns {@link JavaConfigWebApplicationContext} unless the user has
+	 * specified a
 	 */
 	@Override
 	public Class<?> getContextClass() {
 		Class<?> clazz = super.getContextClass();
 
-		// if the user has supplied something other than the default, immediately return
+		// if the user has supplied something other than the default,
+		// immediately return
 		if (!clazz.equals(DEFAULT_CONTEXT_CLASS) && !clazz.equals(JavaConfigWebApplicationContext.class))
 			return clazz;
 
