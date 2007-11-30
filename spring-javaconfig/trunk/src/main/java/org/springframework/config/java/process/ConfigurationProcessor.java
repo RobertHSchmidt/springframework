@@ -1,12 +1,12 @@
 /*
  * Copyright 2002-2007 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -92,6 +92,7 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
  * 
  * @author Rod Johnson
  * @author Costin Leau
+ * @author Chris Beams
  * @see org.springframework.config.java.listener.ConfigurationListener
  */
 public class ConfigurationProcessor implements InitializingBean, ResourceLoaderAware {
@@ -421,28 +422,23 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 				// Determine bean name
 				String beanName = beanNamingStrategy.getBeanName(m);
 
-				if (beanAnnotation != null && !noArgMethodsSeen.contains(beanName)) {
-
-					// If the bean already exists in the factory, don't emit a
-					// bean definition
-					// This may or may not be legal, depending on whether the
-					// @Bean annotation
-					// allows overriding
-
-					if (owningBeanFactory.containsBean(beanName)) {
-						if (!beanAnnotation.allowOverriding()) {
-							throw new IllegalStateException("Already have a bean with name '" + beanName + "'; "
-									+ "processing configClass [" + configClass.getName() + "]");
-						}
-						else {
+				if (beanAnnotation != null) {
+					if (!noArgMethodsSeen.contains(beanName)) {
+						// If the bean already exists in the factory, don't emit
+						// a bean definition. This may or may not be legal,
+						// depending on whether the @Bean annotation allows
+						// overriding
+						if (owningBeanFactory.containsBean(beanName)) {
+							if (!beanAnnotation.allowOverriding()) {
+								throw new IllegalStateException("Already have a bean with name '" + beanName + "'");
+							}
 							// Don't emit a bean definition
 							return;
 						}
+						noArgMethodsSeen.add(beanName);
+						countFinalReference[0] += generateBeanDefinitionFromBeanCreationMethod(owningBeanFactory,
+								configurationBeanName, configClass, beanName, m, beanAnnotation);
 					}
-					noArgMethodsSeen.add(beanName);
-					countFinalReference[0] += generateBeanDefinitionFromBeanCreationMethod(owningBeanFactory,
-							configurationBeanName, configClass, beanName, m, beanAnnotation);// ,
-					// cca);
 				}
 				else {
 					for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
