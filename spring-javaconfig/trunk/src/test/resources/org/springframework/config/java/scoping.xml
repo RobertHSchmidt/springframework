@@ -27,7 +27,7 @@
 			<map>
 				<entry key="customScope">
 					<bean
-						class="org.springframework.config.java.ScopingTests$MyCustomScope" />
+						class="org.springframework.config.java.CustomScope" />
 				</entry>
 			</map>
 		</property>
