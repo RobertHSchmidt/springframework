@@ -575,60 +575,6 @@ public class ConfigurationPostProcessorTests {
 	}
 
 	@Configuration
-	static class LegalOverrideConfiguration {
-		@Bean
-		public TestBean bob() {
-			TestBean bob = new TestBean();
-			bob.setSpouse(ann());
-			return bob;
-		}
-
-		@Bean(allowOverriding = true)
-		public TestBean ann() {
-			return new TestBean();
-		}
-	}
-
-	@Test
-	public void testLegalOverride() {
-		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"org/springframework/config/java/legalOverride.xml");
-		TestBean bob = (TestBean) bf.getBean("bob");
-		assertTrue(bf.containsBean("ann"));
-		assertEquals("Property value must have come from XML override, not @Bean method", "Ann", bob.getSpouse()
-				.getName());
-	}
-
-	@Configuration
-	static class IllegalOverrideConfiguration {
-		@Bean
-		public TestBean bob() {
-			TestBean bob = new TestBean();
-			bob.setSpouse(ann());
-			return bob;
-		}
-
-		// Does not allow overriding
-		@Bean(allowOverriding = false)
-		public TestBean ann() {
-			return new TestBean();
-		}
-	}
-
-	@Test
-	public void testIllegalOverride() {
-		try {
-			ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-					"org/springframework/config/java/illegalOverride.xml");
-			bf.getBean("ann");
-			fail();
-		}
-		catch (IllegalStateException ex) {
-			// Ok
-		}
-	}
-
-	@Configuration
 	public static abstract class ExternalBeanConfiguration {
 		@Bean
 		public TestBean bob() {

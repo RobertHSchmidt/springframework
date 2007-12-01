@@ -16,6 +16,8 @@
 
 package org.springframework.config.java.process;
 
+import static java.lang.String.format;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
@@ -431,7 +433,10 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 						// overriding
 						if (owningBeanFactory.containsBean(beanName)) {
 							if (!beanAnnotation.allowOverriding()) {
-								throw new IllegalStateException("Already have a bean with name '" + beanName + "'");
+								String message = format(
+										"A bean named '%s' already exists. Consider using @Bean(allowOverriding=true)",
+										beanName);
+								throw new IllegalStateException(message);
 							}
 							// Don't emit a bean definition
 							return;
