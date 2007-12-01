@@ -3,7 +3,6 @@ package shadowing;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.*;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.TestBean;
 import org.springframework.config.java.annotation.Bean;
@@ -23,7 +22,7 @@ public class BeanShadowingTests {
 	 * the same way.
 	 */
 	@Test
-	public void proveXmlShadowingIsBasedOnOrder() {
+	public void demonstrateXmlShadowingIsBasedOnOrder() {
 		{
 			String[] configLocations = new String[] { "second.xml", "first.xml" };
 			ApplicationContext ctx = new ClassPathXmlApplicationContext(configLocations, getClass());
@@ -36,21 +35,6 @@ public class BeanShadowingTests {
 			assertEquals("second", ctx.getBean("foo"));
 		}
 	}
-
-	/**
-	 * XML config ensures that beans defined in a child context override any
-	 * beans in the parent context with the same name. JavaConfig should work
-	 * the same way.
-	 */
-	@Test
-	public void proveXmlShadowingWorksProperlyWhenNestingContexts() {
-		ApplicationContext parent = new ClassPathXmlApplicationContext("first.xml", getClass());
-		ApplicationContext child = new ClassPathXmlApplicationContext(new String[] { "second.xml" }, getClass(), parent);
-		assertEquals("first", parent.getBean("foo"));
-		assertEquals("second", child.getBean("foo"));
-	}
-
-	// ------------------------------------------------------------------------
 
 	@Test
 	public void testShadowingIsBasedOnOrder1() {
@@ -65,7 +49,7 @@ public class BeanShadowingTests {
 	}
 
 	@Configuration
-	static class First {
+	public static class First {
 		@Bean(allowOverriding = true)
 		public TestBean foo() {
 			return new TestBean("first");
@@ -73,11 +57,15 @@ public class BeanShadowingTests {
 	}
 
 	@Configuration
-	static class Second extends First {
+	public static class Second {
 		@Bean(allowOverriding = true)
-		@Override
 		public TestBean foo() {
 			return new TestBean("second");
+		}
+
+		@Bean
+		public String bar() {
+			return "bar";
 		}
 	}
 
@@ -132,7 +120,19 @@ public class BeanShadowingTests {
 
 	// ------------------------------------------------------------------------
 
-	@Ignore
+	/**
+	 * XML config ensures that beans defined in a child context override any
+	 * beans in the parent context with the same name. JavaConfig should work
+	 * the same way.
+	 */
+	@Test
+	public void demonstrateXmlShadowingWorksProperlyWhenNestingContexts() {
+		ApplicationContext parent = new ClassPathXmlApplicationContext("first.xml", getClass());
+		ApplicationContext child = new ClassPathXmlApplicationContext(new String[] { "second.xml" }, getClass(), parent);
+		assertEquals("first", parent.getBean("foo"));
+		assertEquals("second", child.getBean("foo"));
+	}
+
 	@Test
 	public void testChildContextBeanShadowsParentContextBean() {
 		JavaConfigApplicationContext firstContext = new JavaConfigApplicationContext(First.class);
@@ -140,9 +140,23 @@ public class BeanShadowingTests {
 		secondContext.setConfigClasses(Second.class);
 		secondContext.refresh();
 
-		// assertEquals("first", firstContext.getBean(TestBean.class.getName());
 		assertEquals("first", ((TestBean) firstContext.getBean("foo")).getName());
 		assertEquals("second", ((TestBean) secondContext.getBean("foo")).getName());
+		assertEquals("bar", secondContext.getBean("bar"));
+	}
+
+	// corners a subtle bug I found along the way...
+	@Test
+	public void testChildContextBeanShadowsParentContextBeanWhenUsingTypeSafeGetBeanMethod() {
+		JavaConfigApplicationContext firstContext = new JavaConfigApplicationContext(First.class);
+		JavaConfigApplicationContext secondContext = new JavaConfigApplicationContext(firstContext);
+		secondContext.setConfigClasses(Second.class);
+		secondContext.refresh();
+
+		// assertEquals("first", firstContext.getBean(TestBean.class.getName());
+		assertEquals("first", (firstContext.getBean(TestBean.class)).getName());
+		assertEquals("second", (secondContext.getBean(TestBean.class)).getName());
+		assertEquals("bar", secondContext.getBean(String.class));
 	}
 
 }
