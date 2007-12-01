@@ -133,11 +133,13 @@ public @interface Bean {
 	Meta[] meta() default {};
 
 	/**
-	 * Allow the bean to be overridden in XML or other non-Java configuration
+	 * Allow the bean to be overridden in another JavaConfig, XML or other
+	 * non-Java configuration. This is consistent with
+	 * DefaultListableBeanFactory's allowBeanDefinitionOverriding property,
+	 * which defaults to true.
+	 * 
 	 * @return whether overriding of this bean is allowed
-	 * @deprecated
 	 */
-	@Deprecated
-	boolean allowOverriding() default false;
+	boolean allowOverriding() default true;
 
 }

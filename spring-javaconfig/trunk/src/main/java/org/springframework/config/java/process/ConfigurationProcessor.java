@@ -51,6 +51,7 @@ import org.springframework.config.java.support.BeanNameTrackingDefaultListableBe
 import org.springframework.config.java.support.BytecodeConfigurationEnhancer;
 import org.springframework.config.java.support.MethodBeanWrapper;
 import org.springframework.config.java.support.cglib.CglibConfigurationEnhancer;
+import org.springframework.config.java.util.ArrayUtils;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.config.java.valuesource.CompositeValueSource;
 import org.springframework.config.java.valuesource.ValueSource;
@@ -346,7 +347,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 		int nBeanDefsGenerated = 0;
 		Import importAnnotation = configurationClass.getAnnotation(Import.class);
-		Class<?>[] configurationClassesToImport = importAnnotation.value();
+		Class<?>[] configurationClassesToImport = ArrayUtils.reverse(importAnnotation.value());
 		for (Class<?> configurationClassToImport : configurationClassesToImport) {
 			// duplicate check - process only if we've never encountered before
 			if (!owningBeanFactory.containsBeanDefinition(configurationClassToImport.getName()))
