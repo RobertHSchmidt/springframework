@@ -127,16 +127,6 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		return contextRegistry;
 	}
 
-	private static Class<?>[] reverse(Class<?>[] array) {
-		int size = array.length;
-		Class<?>[] reversed = new Class<?>[size];
-
-		for (int i = 0; i < size; i++)
-			reversed[size - i - 1] = array[i];
-
-		return reversed;
-	}
-
 	/*
 	 * XXX: Review
 	 * @see org.springframework.beans.factory.TypeSafeBeanFactory#getBean(java.lang.Class)
