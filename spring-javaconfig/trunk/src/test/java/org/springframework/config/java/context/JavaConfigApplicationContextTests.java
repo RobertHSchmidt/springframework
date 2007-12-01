@@ -231,7 +231,7 @@ public final class JavaConfigApplicationContextTests extends TestCase {
 
 	@Configuration
 	static class Foo1 {
-		@Bean
+		@Bean(allowOverriding = false)
 		public ITestBean foo() {
 			return new TestBean();
 		}

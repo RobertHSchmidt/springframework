@@ -65,7 +65,7 @@ public class BeanShadowingTests {
 
 	@Configuration
 	public static class First {
-		@Bean(allowOverriding = true)
+		@Bean
 		public TestBean foo() {
 			return new TestBean("first");
 		}
@@ -73,7 +73,7 @@ public class BeanShadowingTests {
 
 	@Configuration
 	public static class Second {
-		@Bean(allowOverriding = true)
+		@Bean
 		public TestBean foo() {
 			return new TestBean("second");
 		}
@@ -111,7 +111,7 @@ public class BeanShadowingTests {
 			return bob;
 		}
 
-		@Bean(allowOverriding = true)
+		@Bean
 		public TestBean ann() {
 			return new TestBean();
 		}

@@ -33,7 +33,6 @@ import java.lang.annotation.Target;
  * public class MiddleTierConfig {
  * 	&#064;Bean public FooService fooService() { ... }
  * }
- * 
  * &#064;Configuration
  * public class InfrastructureConfig {
  * 	&#064;Bean public DataSource dataSource() { ... }
@@ -48,7 +47,6 @@ import java.lang.annotation.Target;
  * public class MiddleTierConfig {
  * 	&#064;Bean public FooService fooService() { ... }
  * }
- * 
  * //...
  * </pre>
  * 
