@@ -33,6 +33,7 @@ import org.springframework.beans.factory.TypeSafeBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.config.java.util.ArrayUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.util.Assert;
@@ -191,7 +192,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		Assert.notEmpty(classes, "must supply at least one configuration class");
 		if (closedForConfiguration)
 			throw new IllegalStateException("setConfigClasses() must be called before refresh()");
-		this.configClasses.addAll(Arrays.asList(reverse(classes)));
+		this.configClasses.addAll(Arrays.asList(ArrayUtils.reverse(classes)));
 	}
 
 	public void setBasePackages(String... basePackages) {

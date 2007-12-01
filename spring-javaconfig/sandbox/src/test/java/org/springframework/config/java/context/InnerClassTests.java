@@ -17,6 +17,7 @@ package org.springframework.config.java.context;
 
 import static org.junit.Assert.assertNotNull;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
@@ -40,6 +41,7 @@ public class InnerClassTests {
 		}
 	}
 
+	@Ignore
 	@Test
 	public void testGetContextRegistry() {
 		JavaConfigApplicationContext outerCtx = new JavaConfigApplicationContext(Outer.class);
