@@ -23,7 +23,6 @@ import junit.framework.TestCase;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.hsqldb.jdbcDriver;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.AopUtils;
@@ -170,7 +169,7 @@ public class J2eeHelperTests extends TestCase {
 		@Override
 		public DataSource dataSource() {
 			BasicDataSource bsd = new BasicDataSource();
-			bsd.setDriverClassName(jdbcDriver.class.getName());
+			bsd.setDriverClassName(DriverManagerDataSource.class.getName());
 			bsd.setUsername("sa");
 			bsd.setUrl("jdbc:hsqldb:mem:xdb");
 			return bsd;

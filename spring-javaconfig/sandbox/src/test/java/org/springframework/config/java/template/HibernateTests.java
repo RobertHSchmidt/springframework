@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java;
+package org.springframework.config.java.template;
 
 import javax.sql.DataSource;
 
@@ -22,12 +22,11 @@ import junit.framework.TestCase;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.hsqldb.jdbcDriver;
 import org.springframework.beans.factory.annotation.Autowire;
+import org.springframework.config.java.Person;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
-import org.springframework.config.java.template.AbstractHibernateConfiguration;
-import org.springframework.config.java.template.HibernateOptions;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -79,7 +78,7 @@ public class HibernateTests extends TestCase {
 		// public DataSource dataSource() {
 		// return dataSource;
 		// }
-		//		
+		//
 		// public void setDatasource(DataSource ds) {
 		// this.dataSource = ds;
 		// }
