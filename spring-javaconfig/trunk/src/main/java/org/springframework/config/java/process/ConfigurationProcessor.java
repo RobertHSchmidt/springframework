@@ -431,7 +431,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 						// a bean definition. This may or may not be legal,
 						// depending on whether the @Bean annotation allows
 						// overriding
-						if (owningBeanFactory.containsBean(beanName)) {
+						if (owningBeanFactory.containsLocalBean(beanName)) {
 							if (!beanAnnotation.allowOverriding()) {
 								String message = format(
 										"A bean named '%s' already exists. Consider using @Bean(allowOverriding=true)",
