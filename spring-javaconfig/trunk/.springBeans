@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beansProjectDescription>
+	<version>1</version>
+	<pluginVersion><![CDATA[2.0.2.v200711072100]]></pluginVersion>
+	<configSuffixes>
+		<configSuffix><![CDATA[xml]]></configSuffix>
+	</configSuffixes>
+	<configs>
+	</configs>
+	<configSets>
+	</configSets>
+</beansProjectDescription>
