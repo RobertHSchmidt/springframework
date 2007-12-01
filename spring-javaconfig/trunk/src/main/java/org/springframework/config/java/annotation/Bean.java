@@ -23,7 +23,6 @@ import java.lang.annotation.Target;
 
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.config.java.context.JavaConfigApplicationContext;
 
 /**
  * Annotation to be applied to methods that create beans in a Spring context.
@@ -103,7 +102,7 @@ public @interface Bean {
 	/**
 	 * A bean may be marked as primary, useful when looking up beans by type
 	 * 
-	 * @see JavaConfigApplicationContext#getBean(Class)
+	 * @see org.springframework.config.java.context.JavaConfigApplicationContext#getBean(Class);
 	 */
 	Primary primary() default Primary.UNSPECIFIED;
 
@@ -136,7 +135,9 @@ public @interface Bean {
 	/**
 	 * Allow the bean to be overridden in XML or other non-Java configuration
 	 * @return whether overriding of this bean is allowed
+	 * @deprecated
 	 */
+	@Deprecated
 	boolean allowOverriding() default false;
 
 }

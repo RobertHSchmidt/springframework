@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,7 +48,7 @@ import org.springframework.util.Assert;
  */
 public class JavaConfigApplicationContext extends AbstractRefreshableApplicationContext implements TypeSafeBeanFactory {
 
-	protected final Set<Class<?>> configClasses = new HashSet<Class<?>>();
+	protected final List<Class<?>> configClasses = new ArrayList<Class<?>>();
 
 	/**
 	 * The base packages for configurations from Strings. These use the same
@@ -97,6 +98,37 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	public JavaConfigApplicationContext(Class<?>[] classes, String[] basePackages) {
 		this(null, classes, basePackages);
+	}
+
+	/**
+	 * 
+	 * @see #prepareRefresh()
+	 * @see #finishRefresh()
+	 * 
+	 * @param parent
+	 * @param classes
+	 * @param basePackages
+	 */
+	public JavaConfigApplicationContext(ApplicationContext parent, Class<?>[] classes, String[] basePackages) {
+		super(parent);
+
+		if (!isEmpty(classes))
+			setConfigClasses(classes);
+
+		if (!isEmpty(basePackages))
+			setBasePackages(basePackages);
+
+		refresh();
+	}
+
+	private static Class<?>[] reverse(Class<?>[] array) {
+		int size = array.length;
+		Class<?>[] reversed = new Class<?>[size];
+
+		for (int i = 0; i < size; i++)
+			reversed[size - i - 1] = array[i];
+
+		return reversed;
 	}
 
 	/*
@@ -150,32 +182,11 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		return (T) getBean(beanName, type);
 	}
 
-	/**
-	 * 
-	 * @see #prepareRefresh()
-	 * @see #finishRefresh()
-	 * 
-	 * @param parent
-	 * @param classes
-	 * @param basePackages
-	 */
-	public JavaConfigApplicationContext(ApplicationContext parent, Class<?>[] classes, String[] basePackages) {
-		super(parent);
-
-		if (!isEmpty(classes))
-			setConfigClasses(classes);
-
-		if (!isEmpty(basePackages))
-			setBasePackages(basePackages);
-
-		refresh();
-	}
-
 	public void setConfigClasses(Class<?>... classes) {
 		Assert.notEmpty(classes, "must supply at least one configuration class");
 		if (closedForConfiguration)
 			throw new IllegalStateException("setConfigClasses() must be called before refresh()");
-		this.configClasses.addAll(Arrays.asList(classes));
+		this.configClasses.addAll(Arrays.asList(reverse(classes)));
 	}
 
 	public void setBasePackages(String... basePackages) {
