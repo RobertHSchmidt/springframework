@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>spring-javaconfig-sandbox</name>
+	<comment>Sandbox for experimental JavaConfig features, works-in-progress, etc.</comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+		</buildCommand>
+	</buildSpec>
+	<buildCommand>
+		<name>org.devzuz.q.maven.jdt.core.mavenIncrementalBuilder</name>
+		<arguments>
+		</arguments>
+	</buildCommand>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.devzuz.q.maven.jdt.core.mavenNature</nature>
+	</natures>
+</projectDescription>
