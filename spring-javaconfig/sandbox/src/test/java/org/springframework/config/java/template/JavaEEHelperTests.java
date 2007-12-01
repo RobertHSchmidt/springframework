@@ -42,7 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.jta.UserTransactionAdapter;
 
-public class J2eeHelperTests extends TestCase {
+public class JavaEEHelperTests extends TestCase {
 
 	{
 		new DefaultConfigurationListenerRegistry();
@@ -129,7 +129,7 @@ public class J2eeHelperTests extends TestCase {
 
 		@Override
 		public DataSource dataSource() {
-			return (DataSource) J2eeHelper.jndiObject(DS_NAME);
+			return (DataSource) JavaEEHelper.jndiObject(DS_NAME);
 		}
 
 	}

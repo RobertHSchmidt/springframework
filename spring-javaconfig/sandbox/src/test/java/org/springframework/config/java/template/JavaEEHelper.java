@@ -21,7 +21,7 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.ejb.access.LocalStatelessSessionProxyFactoryBean;
 import org.springframework.jndi.JndiObjectFactoryBean;
 
-public abstract class J2eeHelper {
+public abstract class JavaEEHelper {
 
 	public static Object jndiObject(String jndiName) {
 		return jndiObject(jndiName, null);
