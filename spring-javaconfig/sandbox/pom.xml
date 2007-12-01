@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+		xmlns="http://maven.apache.org/POM/4.0.0"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.springframework.javaconfig</groupId>
+	<artifactId>spring-javaconfig-sandbox</artifactId>
+	<packaging>jar</packaging>
+	<name>Spring JavaConfig Sandbox</name>
+	<version>1.0-m3-SNAPSHOT</version>
+	<description>
+		Sandbox for experimental JavaConfig features, works-in-progress, etc.
+	</description>
+	<url>http://www.springframework.org/javaconfig</url>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>
+			scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-javaconfig/sandbox
+		</connection>
+		<developerConnection>
+			scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-javaconfig/sandbox
+		</developerConnection>
+		<url>http://fisheye3.cenqua.com/browse/springframework/spring-javaconfig/sandbox</url>
+	</scm>
+	<organization>
+		<name>Spring Framework</name>
+		<url>http://www.springframework.org</url>
+	</organization>
+	<build>
+		<extensions>
+			<extension>
+				<groupId>org.springframework.aws</groupId>
+				<artifactId>spring-aws-maven</artifactId>
+				<version>1.2</version>
+			</extension>
+		</extensions>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<forkMode>once</forkMode>
+					<includes>
+						<include>**/*Tests.java</include>
+					</includes>
+					<excludes>
+						<exclude>**/Abstract*.java</exclude>
+					</excludes>
+					<systemProperties>
+						<!-- The following is a workaround for an issue with Cobertura where reports always
+						result in 100% coverage. See http://jira.codehaus.org/browse/MCOBERTURA-61 -->
+						<property>
+							<name>net.sourceforge.cobertura.datafile</name>
+							<value>target/cobertura/cobertura.ser</value>
+						</property>
+					</systemProperties>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<configuration>
+					<!-- See http://mojo.codehaus.org/cobertura-maven-plugin/usage.html#Check for more info -->
+					<check>
+						<haltOnFailure>true</haltOnFailure>
+						<branchRate>0</branchRate>
+						<lineRate>0</lineRate>
+						<packageLineRate>0</packageLineRate>
+						<packageBranchRate>0</packageBranchRate>
+						<totalBranchRate>89</totalBranchRate>
+						<totalLineRate>85</totalLineRate>
+					</check>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<excludeTransitive>false</excludeTransitive>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<!-- non-optional dependencies -->
+		<dependency>
+			<groupId>org.springframework.javaconfig</groupId>
+			<artifactId>spring-javaconfig</artifactId>
+			<version>${project.version}</version>
+			<optional>false</optional>
+		</dependency>
+		
+		
+		<!-- test-scoped dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<distributionManagement>
+		<downloadUrl>http://www.springframework.org/javaconfig</downloadUrl>
+		<repository>
+			<id>spring-milestone</id>
+			<name>Spring Milestone Repository</name>
+			<url>s3://maven.springframework.org/milestone</url>
+		</repository>
+		<snapshotRepository>
+			<id>spring-snapshot</id>
+			<name>Spring Snapshot Repository</name>
+			<url>s3://maven.springframework.org/snapshot</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<repositories>
+		<repository>
+			<id>spring-milestone</id>
+			<name>Spring Portfolio Milestone Repository</name>
+			<url>http://s3.amazonaws.com/maven.springframework.org/milestone</url>
+		</repository>
+	</repositories>
+	<properties>
+		<spring.version>2.5</spring.version>
+	</properties>
+</project>
