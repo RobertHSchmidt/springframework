@@ -170,7 +170,7 @@ public class ConfigurationPostProcessorTests {
 			fail();
 		}
 		catch (UnsupportedOperationException ex) {
-			// Ok
+			// OK
 		}
 
 		assertFalse("No pointcut in factory: method was protected (hidden)", bf.containsBean("debugAdvice"));
@@ -418,7 +418,7 @@ public class ConfigurationPostProcessorTests {
 		}
 
 		@Around("execution(int *.getAge())")
-		public Object age(ProceedingJoinPoint pjp) throws Throwable {
+		public Object age() throws Throwable {
 			return 21;
 		}
 	}
@@ -633,8 +633,7 @@ public class ConfigurationPostProcessorTests {
 	public void testRequiredAnnotation() {
 		// this is going to throw a BeanCreationException, complaining that
 		// 'alice' hasn't been properly configured
-		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
-				"org/springframework/config/java/requiredBean.xml");
+		new ClassPathXmlApplicationContext("org/springframework/config/java/requiredBean.xml");
 	}
 
 	@Configuration
@@ -649,6 +648,7 @@ public class ConfigurationPostProcessorTests {
 	}
 
 	static class Alice {
+		@SuppressWarnings("unused")
 		private String name;
 
 		@Required

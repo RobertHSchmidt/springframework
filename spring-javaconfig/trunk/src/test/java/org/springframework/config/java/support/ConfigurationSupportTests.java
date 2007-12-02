@@ -71,9 +71,9 @@ public class ConfigurationSupportTests extends TestCase {
 		}
 
 		public Object getObject() throws Exception {
-			TestCase.assertTrue(afterPropertiesSetCalled);
-			TestCase.assertNotNull("Must have beanFactory set", bf);
-			TestCase.assertNotNull("Must have beanClassLoader set", beanClassLoader);
+			assertTrue(afterPropertiesSetCalled);
+			assertNotNull("Must have beanFactory set", bf);
+			assertNotNull("Must have beanClassLoader set", beanClassLoader);
 
 			return expectedReturnedObject;
 		}
@@ -107,8 +107,8 @@ public class ConfigurationSupportTests extends TestCase {
 
 		@Override
 		public Object getObject() throws Exception {
-			TestCase.assertNotNull("Must have ResourceLoader set", rl);
-			TestCase.assertNotNull("Must have ApplicationContext set", ac);
+			assertNotNull("Must have ResourceLoader set", rl);
+			assertNotNull("Must have ApplicationContext set", ac);
 
 			return super.getObject();
 		}

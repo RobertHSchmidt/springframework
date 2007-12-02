@@ -1,12 +1,12 @@
 /*
  * Copyright 2002-2004 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +23,6 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -196,11 +195,11 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	// PointcutExpression expression =
 	// parser.parsePointcutExpression("execution(*
 	// *.getN*() )");
-	//		
+	//
 	// Method getNameMethod = ITestBean.class.getMethod("getName", null);
 	// Method setNameMethod = ITestBean.class.getMethod("setName", new Class[] {
 	// String.class} );
-	//		
+	//
 	// FuzzyBoolean matches = expression.matchesMethodExecution(getNameMethod,
 	// TestBean.class);
 	// assertSame(FuzzyBoolean.YES,
@@ -223,14 +222,14 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 		// PointcutExpression orPc =
 		// parser.parsePointcutExpression("execution(void
 		// *.absquatulate()) || foo()");
-		//		
+		//
 		// Method getNameMethod = ITestBean.class.getMethod("getName", null);
 		// Method setNameMethod = ITestBean.class.getMethod("setName", new
 		// Class[] {
 		// String.class} );
 		// Method absquatulateMethod = TestBean.class.getMethod("absquatulate",
 		// null );
-		//		
+		//
 		// FuzzyBoolean matches =
 		// expression.matchesMethodExecution(getNameMethod,
 		// TestBean.class);
@@ -251,7 +250,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	 */
 	public static class InvalidNoAspectAnnotation {
 		@Around("execution(* *.getName())")
-		public Object invalid(ProceedingJoinPoint pjp) throws Throwable {
+		public Object invalid() throws Throwable {
 			// System.out.println("Invoking around advice method");
 			return "around";
 		}
@@ -333,8 +332,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	@Aspect
 	public static class AroundSingletonCountingAdvice extends AbstractSingletonCountingAdvice {
 		@Around("execution(* *.getName())")
-		public Object newValue(ProceedingJoinPoint pjp) throws Throwable {
-			// System.out.println("Invoking around advice method");
+		public Object newValue() throws Throwable {
 			return "around";
 		}
 	}
@@ -348,8 +346,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 		}
 
 		@Around("getName()")
-		public Object newValue(ProceedingJoinPoint pjp) throws Throwable {
-			// System.out.println("Invoking around advice method");
+		public Object newValue() throws Throwable {
 			return "around";
 		}
 	}
@@ -365,8 +362,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	// Invalid, doesn't have aspect tag
 	public static class InvalidAroundAdviceClassWithNoAspectAnnotation {
 		@Around("execution(* *.getName())")
-		public Object newValue(ProceedingJoinPoint pjp) throws Throwable {
-			// System.out.println("Invoking around advice method");
+		public Object newValue() throws Throwable {
 			return "around";
 		}
 	}
@@ -374,7 +370,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	@Aspect
 	public abstract static class ValidAroundAdviceClassWithAspectAnnotation {
 		@Around("execution(* *.getName())")
-		public Object newValue(ProceedingJoinPoint pjp) throws Throwable {
+		public Object newValue() throws Throwable {
 			return "around";
 		}
 	}
@@ -392,7 +388,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	@Aspect
 	public abstract static class SumAroundAdvice {
 		@Around("execution(int *.returnZero(int, int)) && args(a,b)")
-		public Object newValue(ProceedingJoinPoint pjp, int a, int b) throws Throwable {
+		public Object newValue(int a, int b) throws Throwable {
 			return a + b;
 		}
 
@@ -403,6 +399,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	}
 
 	public static class ReturnZero {
+		@SuppressWarnings("unused")
 		public int returnZero(int a, int b) {
 			return 0;
 		}

@@ -399,9 +399,8 @@ public class TestBean implements BeanNameAware, BeanFactoryAware, ITestBean, IOt
 		if (this.name != null && other instanceof TestBean) {
 			return this.name.compareTo(((TestBean) other).getName());
 		}
-		else {
-			return 1;
-		}
+
+		return 1;
 	}
 
 	@Override

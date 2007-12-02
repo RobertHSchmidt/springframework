@@ -92,9 +92,8 @@ public class ConfigurationSupport implements BeanFactoryAware, ApplicationContex
 			throw new UnsupportedOperationException(
 					"Cannot configure object - not running in an AutowireCapableBeanFactory");
 		}
-		else {
-			autowireCapableBeanFactory.initializeBean(o, null);
-		}
+
+		autowireCapableBeanFactory.initializeBean(o, null);
 
 		// TODO could replace with ApplicationContextAwareProcessor call if that
 		// class were public
