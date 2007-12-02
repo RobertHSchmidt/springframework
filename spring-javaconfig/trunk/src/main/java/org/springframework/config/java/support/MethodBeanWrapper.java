@@ -1,12 +1,12 @@
 /*
  * Copyright 2002-2007 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -100,7 +100,7 @@ public class MethodBeanWrapper {
 				childTrackingFactory.recordRequestForBeanName(beanName);
 			}
 
-			// get a bean instance in case the @Bean was overriden
+			// get a bean instance in case the @Bean was overridden
 			Object originallyCreatedBean = null;
 
 			BeanDefinition beanDef = null;
@@ -120,7 +120,7 @@ public class MethodBeanWrapper {
 				hidden = false;
 			}
 
-			// the definition was overriden (use that one)
+			// the definition was overridden (use that one)
 			if (beanDef.getAttribute(ClassUtils.JAVA_CONFIG_PKG) == null) {
 				originallyCreatedBean = configurationProcessor.getOwningBeanFactory().getBean(beanName);
 			}
@@ -130,10 +130,11 @@ public class MethodBeanWrapper {
 				originallyCreatedBean = invoker.invokeOriginalClass();
 			}
 
-			if (DependencyUtils.isAopAvailable())
+			if (DependencyUtils.isAopAvailable()) {
 				return new ProxyHelper().proxyIfAppropriate(originallyCreatedBean, method);
-			else
-				return originallyCreatedBean;
+			}
+
+			return originallyCreatedBean;
 		}
 		finally {
 			// be sure to clean tracking
@@ -148,7 +149,7 @@ public class MethodBeanWrapper {
 	 * eagerly classloaded. This allows running javaconfig-based applications
 	 * with no dependency on aspectj, spring-aop, etc. unless desired.
 	 * 
-	 * @author cbeams
+	 * @author Chris Beams
 	 * @see DependencyUtils#isAopAvailable()
 	 */
 	private class ProxyHelper {

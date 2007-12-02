@@ -534,7 +534,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		}
 
 		// allow registration bypass
-		if (beanDefinitionRegistration == null || beanDefinitionRegistration.rbd == null) {
+		if (beanDefinitionRegistration.rbd == null) {
 			return count;
 		}
 
