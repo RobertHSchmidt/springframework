@@ -1,6 +1,5 @@
 package org.springframework.config.java;
 
-
 public class Person {
 
 	private long id;
