@@ -1,0 +1,46 @@
+                                    ---------
+                                    Downloads
+                                    ---------
+                                    Dave Syer
+                                    ------
+                                    August 2007
+
+Milestone Builds
+
+  These builds are provided for evaluation and community feedback.  They will have a release identifier ending in "-mX" where X is the milestone number.  The curent release is <<1.0-m2>>.
+	
+  You can browse the {{{http://s3browse.com/explore/maven.springframework.org/milestone/org/springframework/batch}repository}} with a web browser.  You can see the internal and external project dependencies in the <<<spring-batch-*/*.pom>>> files.  You will probably need <<<spring-batch-execution>>>, <<<spring-batch-core>>> and <<<spring-batch-infrastructure>>>.  Source code is packaged in a separate jar file in the same directory, and the samples are also bundled in the same way.
+
+  The builds consist of a set of jar artifacts deployed to a Maven2 repository. To use it, just add the following repository to your POM (inside a \<repositories\> element at the top level):
+
++---------------
+<repository>
+    <id>spring-s3</id>
+    <name>Springframework Maven MILESTONE Repository</name>
+    <url>http://s3.amazonaws.com/maven.springframework.org/milestone</url>
+</repository>
++---------------
+
+  Individual dependencies can then by added like so (inside a \<dependencies\> element at the top level):
+
++---------------
+<dependency>
+    <groupId>org.springframework.batch</groupId>
+    <artifactId>spring-batch-core</artifactId>
+    <version>1.0-m2</version>
+</dependency>
++---------------
+
+  The Execution module has dependencies on Core and Infrastructure, so you only need to include that to build and run jobs with Spring Batch.  I.e.
+
++---------------
+<dependency>
+    <groupId>org.springframework.batch</groupId>
+    <artifactId>spring-batch-execution</artifactId>
+    <version>1.0-m2</version>
+</dependency>
++---------------
+
+Snapshot Builds
+
+  Nightly snapshots are also available through the same process with slightly different URLs.  See {{{snapshots.html}here}} for details.
