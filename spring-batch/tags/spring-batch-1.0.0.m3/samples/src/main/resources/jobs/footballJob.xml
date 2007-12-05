@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+
+	<bean parent="stepScope" />
+	<bean parent="jobConfigurationRegistryBeanPostProcessor" />
+
+	<bean id="footballJob"
+		class="org.springframework.batch.core.configuration.JobConfiguration">
+		<property name="restartable" value="true" />
+		<property name="startLimit" value="100" />
+		<property name="steps">
+			<list>
+				<bean id="playerload"
+					class="org.springframework.batch.execution.step.SimpleStepConfiguration">
+					<property name="commitInterval" value="100"></property>
+					<property name="startLimit" value="100" />
+					<property name="saveRestartData" value="true" />
+					<property name="allowStartIfComplete" value="false" />
+					<property name="tasklet">
+						<bean
+							class="org.springframework.batch.execution.tasklet.RestartableItemProviderTasklet">
+							<property name="itemProvider">
+								<bean
+									class="org.springframework.batch.item.provider.InputSourceItemProvider">
+									<property name="inputSource"
+										ref="playerFileInputSource" />
+								</bean>
+							</property>
+							<property name="itemProcessor">
+								<bean
+									class="org.springframework.batch.sample.item.processor.PlayerItemProcessor">
+									<property name="playerDao">
+										<bean
+											class="org.springframework.batch.sample.dao.SqlPlayerDao">
+											<property name="dataSource"
+												ref="dataSource" />
+										</bean>
+									</property>
+								</bean>
+							</property>
+						</bean>
+					</property>
+				</bean>
+				<bean id="gameLoad"
+					class="org.springframework.batch.execution.step.SimpleStepConfiguration">
+					<property name="commitInterval" value="100" />
+					<property name="startLimit" value="100" />
+					<property name="saveRestartData" value="true" />
+					<property name="tasklet">
+						<bean
+							class="org.springframework.batch.execution.tasklet.RestartableItemProviderTasklet">
+							<property name="itemProvider">
+								<bean
+									class="org.springframework.batch.item.provider.InputSourceItemProvider">
+									<property name="inputSource"
+										ref="gameFileInputSource" />
+								</bean>
+							</property>
+							<property name="itemProcessor">
+								<bean
+									class="org.springframework.batch.item.processor.ItemWriterItemProcessor">
+									<property name="itemWriter">
+										<bean
+											class="org.springframework.batch.sample.dao.SqlGameDao">
+											<property name="dataSource"
+												ref="dataSource" />
+										</bean>
+									</property>
+								</bean>
+							</property>
+						</bean>
+					</property>
+				</bean>
+				<bean id="playerSummarization"
+					class="org.springframework.batch.execution.step.SimpleStepConfiguration">
+					<property name="commitInterval" value="100" />
+					<property name="startLimit" value="100" />
+					<property name="saveRestartData" value="true" />
+					<property name="tasklet">
+						<bean
+							class="org.springframework.batch.execution.tasklet.RestartableItemProviderTasklet">
+							<property name="itemProvider">
+								<bean
+									class="org.springframework.batch.item.provider.InputSourceItemProvider">
+									<property name="inputSource"
+										ref="playerSummarizationSource" />
+								</bean>
+							</property>
+							<property name="itemProcessor">
+								<bean
+									class="org.springframework.batch.item.processor.ItemWriterItemProcessor">
+									<property name="itemWriter">
+										<bean
+											class="org.springframework.batch.sample.dao.SqlPlayerSummaryDao">
+											<property name="dataSource"
+												ref="dataSource" />
+										</bean>
+									</property>
+								</bean>
+							</property>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="playerFileInputSource"
+		class="org.springframework.batch.io.file.support.DefaultFlatFileInputSource">
+		<property name="resource">
+			<bean
+				class="org.springframework.core.io.ClassPathResource">
+				<constructor-arg value="data/footballjob/input/player.csv" />
+			</bean>
+		</property>
+		<property name="tokenizer">
+			<bean
+				class="org.springframework.batch.io.file.support.transform.DelimitedLineTokenizer">
+				<property name="names"
+					value="ID,lastName,firstName,position,birthYear,debutYear" />
+			</bean>
+		</property>
+		<property name="fieldSetMapper">
+			<bean
+				class="org.springframework.batch.sample.mapping.PlayerMapper" />
+		</property>
+	</bean>
+
+	<bean id="gameFileInputSource"
+		class="org.springframework.batch.io.file.support.DefaultFlatFileInputSource">
+		<property name="resource">
+			<bean
+				class="org.springframework.core.io.ClassPathResource">
+				<constructor-arg value="data/footballjob/input/games.csv" />
+			</bean>
+		</property>
+		<property name="tokenizer">
+			<bean
+				class="org.springframework.batch.io.file.support.transform.DelimitedLineTokenizer">
+				<property name="names"
+					value="id,year,team,week,opponent,completes,attempts,passingYards,passingTd,interceptions,rushes,rushYards,receptions,receptionYards,totalTd" />
+			</bean>
+		</property>
+		<property name="fieldSetMapper">
+			<bean
+				class="org.springframework.batch.sample.mapping.GameMapper" />
+		</property>
+	</bean>
+
+	<bean id="playerSummarizationSource"
+		class="org.springframework.batch.io.cursor.JdbcCursorInputSource">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapper">
+			<bean
+				class="org.springframework.batch.sample.mapping.PlayerSummaryMapper" />
+		</property>
+		<property name="sql">
+			<value>
+				SELECT games.player_id, games.year, SUM(COMPLETES),
+				SUM(ATTEMPTS), SUM(PASSING_YARDS), SUM(PASSING_TD),
+				SUM(INTERCEPTIONS), SUM(RUSHES), SUM(RUSH_YARDS),
+				SUM(RECEPTIONS), SUM(RECEPTIONS_YARDS), SUM(TOTAL_TD)
+				from games, players where players.player_id =
+				games.player_id group by games.player_id, games.year
+			</value>
+		</property>
+	</bean>
+
+	<aop:config>
+		<aop:aspect id="moduleLogging" ref="itemProcessorLogAdvice">
+
+			<aop:after
+				pointcut="execution( * org.springframework.batch.item.ItemProcessor+.process(Object)) and args(item)"
+				method="doStronglyTypedLogging" />
+
+		</aop:aspect>
+	</aop:config>
+
+</beans>
