@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springframework.maven.skins</groupId>
     <artifactId>maven-spring-skin</artifactId>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.4</version>
     <name>Maven Spring Skin</name>
     <description>A Maven2 Skin that resembles the layout of www.springframework.org</description>
     <distributionManagement>
@@ -28,9 +28,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/maven-spring-skin/trunk</connection>
-        <developerConnection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/maven-spring-skin/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewvc/springframework/maven-spring-skin/</url>
+        <connection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/maven-spring-skin/tags/maven-spring-skin-1.0.4</connection>
+        <developerConnection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/maven-spring-skin/tags/maven-spring-skin-1.0.4</developerConnection>
+        <url>http://svn.sourceforge.net/viewvc/springframework/maven-spring-skin/tags/maven-spring-skin-1.0.4</url>
     </scm>
 
 </project>
