@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.springframework.maven.skins</groupId>
+    <artifactId>maven-spring-skin</artifactId>
+    <version>1.0.4</version>
+    <name>Maven Spring Skin</name>
+    <description>A Maven2 Skin that resembles the layout of www.springframework.org</description>
+    <distributionManagement>
+        <repository>
+            <id>local</id>
+            <url>
+                file:///Users/arjen/Projects/Spring/repos/repo
+            </url>
+        </repository>
+    </distributionManagement>
+    <developers>
+        <developer>
+            <id>poutsma</id>
+            <name>Arjen Poutsma</name>
+            <email>arjen.poutsma@springsource.com</email>
+            <organization>SpringSource</organization>
+            <organizationUrl>http://www.springsource.com</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/maven-spring-skin/tags/maven-spring-skin-1.0.4</connection>
+        <developerConnection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/maven-spring-skin/tags/maven-spring-skin-1.0.4</developerConnection>
+        <url>http://svn.sourceforge.net/viewvc/springframework/maven-spring-skin/tags/maven-spring-skin-1.0.4</url>
+    </scm>
+
+</project>
+
