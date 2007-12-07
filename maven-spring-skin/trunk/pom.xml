@@ -18,9 +18,9 @@
         <developer>
             <id>poutsma</id>
             <name>Arjen Poutsma</name>
-            <email>apoutsma at interface21.com</email>
-            <organization>Interface21</organization>
-            <organizationUrl>http://www.interface21.com</organizationUrl>
+            <email>arjen.poutsma@springsource.com</email>
+            <organization>SpringSource</organization>
+            <organizationUrl>http://www.springsource.com</organizationUrl>
             <roles>
                 <role>Developer</role>
             </roles>

@@ -122,7 +122,7 @@ Page layout blocks / IDs
 */
 #banner {
     min-height: 77px;
-    background: url(../images/banner.gif) top right no-repeat;
+    background: url(../images/banner.png) top right no-repeat;
     background-color: #778831;
 }
 
