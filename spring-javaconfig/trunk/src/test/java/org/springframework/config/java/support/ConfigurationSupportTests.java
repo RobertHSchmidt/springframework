@@ -16,9 +16,13 @@
 
 package org.springframework.config.java.support;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
+import org.hamcrest.CoreMatchers;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -28,6 +32,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.process.ConfigurationPostProcessor;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.context.ApplicationContext;
@@ -37,11 +42,10 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ResourceLoader;
 
 /**
- * 
  * @author Rod Johnson
- * 
+ * @author Chris Beams
  */
-public class ConfigurationSupportTests extends TestCase {
+public class ConfigurationSupportTests {
 
 	private static class TestFactoryBeanForBeanFactory implements FactoryBean, InitializingBean, BeanFactoryAware,
 			BeanClassLoaderAware {
@@ -131,6 +135,31 @@ public class ConfigurationSupportTests extends TestCase {
 		}
 	}
 
+	@Configuration
+	public static class Config1 extends ConfigurationSupport {
+		@Bean
+		public TestBean foo() {
+			return new TestBean((String) getBean("name"));
+		}
+	}
+
+	@Configuration
+	public static class Config2 {
+		@Bean
+		public String name() {
+			return "xyz";
+		}
+	}
+
+	@Configuration
+	public static class Config3 extends ConfigurationSupport {
+		@Bean
+		public TestBean foo() {
+			return new TestBean(getBean(String.class));
+		}
+	}
+
+	@Test
 	public void testFactoryBeanCallbacks() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
@@ -139,6 +168,7 @@ public class ConfigurationSupportTests extends TestCase {
 		assertEquals("whatever", bf.getBean("factoryTestBean"));
 	}
 
+	@Test
 	public void testApplicationContextCallbacks() {
 		GenericApplicationContext gac = new GenericApplicationContext();
 		// ConfigurationProcessor configurationProcessor = new
@@ -153,4 +183,16 @@ public class ConfigurationSupportTests extends TestCase {
 		assertEquals("whatever", gac.getBean("factoryTestBean"));
 	}
 
+	@Test
+	public void testStringBasedGetBean() {
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Config1.class, Config2.class);
+		assertThat("xyz", CoreMatchers.equalTo(((TestBean) ctx.getBean("foo")).getName()));
+	}
+
+	@Ignore
+	@Test
+	public void testTypeSafeGetBean() {
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Config3.class, Config2.class);
+		assertThat("xyz", CoreMatchers.equalTo(((TestBean) ctx.getBean("foo")).getName()));
+	}
 }

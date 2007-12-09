@@ -27,7 +27,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @see BeanOverridingTests
+ * // TODO: rename to BeanOverridingTests
  * @author Chris Beams
  */
 public class BeanShadowingTests {

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.springframework.config.java.context;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -34,16 +33,56 @@ import org.springframework.beans.factory.TypeSafeBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.util.ArrayUtils;
+import org.springframework.config.java.util.ClassUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.util.Assert;
 
 /**
- * TODO: Document
+ * <p/>Application context that looks for classes annotated with the
+ * {@link org.springframework.config.java.annotation.Configuration} annotation
+ * and registers the {@link org.springframework.config.java.annotation.Bean}s
+ * they define; is the primary programmatic resource for using Spring
+ * JavaConfig.
  * 
- * Annotation-aware application context that looks for classes annotated with
- * the Configuration annotation and registers the beans they define.
+ * <p/>TODO: Document: refine the example below. use type-safe getBean()? Extend
+ * ConfigurationSupport?
+ * 
+ * <h3>Example</h3>
+ * 
+ * <pre class="code">
+ * JavaConfigApplicationContext context = new JavaConfigApplicationContext(AppConfig.class, DataConfig.class);
+ * 
+ * AccountService accountService = (AccountService) context.getBean(&quot;accountService&quot;);
+ * </pre>
+ * 
+ * Where <code>AppConfig</code> and <code>DataConfig</code> are defined as
+ * follows:
+ * 
+ * <pre class="code">
+ * &#064;Configuration
+ * public abstract class AppConfig {
+ *     &#064;Bean
+ *     public AccountService accountService() {
+ *         return new AccountService(dataSource());
+ *     }
+ *     &#064;ExternalBean
+ *     public abstract DataSource dataSource();
+ * }
+ * &#064;Configuration
+ * public abstract class DataConfig {
+ *     &#064;Bean
+ *     public DataSource dataSource() {
+ *         return new DataSource(...);
+ *     }
+ * }
+ * </pre>
+ * 
+ * @see Configuration
+ * @see org.springframework.config.java.annotation.Bean
  * 
  * @author Chris Beams
  */
@@ -55,9 +94,8 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	 * The base packages for configurations from Strings. These use the same
 	 * conventions as the component scanning introduced in Spring 2.5.
 	 */
+	@Deprecated
 	protected final Set<String> basePackages = new HashSet<String>();
-
-	protected JavaConfigBeanDefinitionLoader beanDefinitionLoader;
 
 	protected boolean closedForConfiguration = false;
 
@@ -102,6 +140,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	}
 
 	/**
+	 * TODO: Document
 	 * 
 	 * @see #prepareRefresh()
 	 * @see #finishRefresh()
@@ -113,13 +152,38 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	public JavaConfigApplicationContext(ApplicationContext parent, Class<?>[] classes, String[] basePackages) {
 		super(parent);
 
-		if (!isEmpty(classes))
-			setConfigClasses(classes);
+		// TODO: processAnyOuterClasses()
 
-		if (!isEmpty(basePackages))
-			setBasePackages(basePackages);
+		// TODO: only allow there to be exactly one outer class. No multiple
+		// inheritance :-)
+
+		// TODO: what happens if a class is supplied in classes, but that same
+		// class is also detected while processing baseClasses? I would assume
+		// that if it is encountered explicitly in classes, that that position
+		// should be preserved.
+
+		ArrayList<Class<?>> allClasses = new ArrayList<Class<?>>();
+
+		if (!isEmpty(classes))
+			allClasses.addAll(Arrays.asList(classes));
+
+		if (!isEmpty(basePackages)) {
+			ConfigurationScanner scanner = new ConfigurationScanner(this);
+
+			for (String basePackage : basePackages)
+				allClasses.addAll(scanner.scanPackage(basePackage));
+		}
+
+		if (!allClasses.isEmpty())
+			setConfigClasses(allClasses.toArray(new Class<?>[] {}));
 
 		refresh();
+	}
+
+	private Map<Class<?>, ? extends JavaConfigApplicationContext> contextRegistry;
+
+	public Map<Class<?>, ? extends JavaConfigApplicationContext> getContextRegistry() {
+		return contextRegistry;
 	}
 
 	/*
@@ -180,6 +244,8 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		this.configClasses.addAll(Arrays.asList(ArrayUtils.reverse(classes)));
 	}
 
+	@Deprecated
+	// TODO: get rid
 	public void setBasePackages(String... basePackages) {
 		Assert.notEmpty(basePackages, "must supply at least one base package");
 		if (closedForConfiguration)
@@ -199,7 +265,6 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		if (configClasses.isEmpty() && basePackages.isEmpty())
 			throw new IllegalStateException("must supply at least one class or base package");
 
-		initBeanDefinitionLoader();
 		registerDefaultPostProcessors();
 	}
 
@@ -210,7 +275,9 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	@Override
 	protected final void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {
-		beanDefinitionLoader.loadBeanDefinitions(beanFactory);
+		for (Class<?> cz : configClasses)
+			if (ClassUtils.isConfigurationClass(cz))
+				beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
 	}
 
 	/**
@@ -220,21 +287,6 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	 */
 	protected void registerDefaultPostProcessors() {
 		new JavaConfigBeanFactoryPostProcessorRegistry().addAllPostProcessors(this);
-	}
-
-	/**
-	 * Optionally override an implementation's internally-provided default bean
-	 * definition loader. A custom bean definition loader would be used to
-	 * implement special processing of configClasses and basePackages.
-	 * 
-	 * @param beanDefLoader - custom bean definition loader
-	 * @see JavaConfigBeanDefinitionLoader
-	 * @see DefaultJavaConfigBeanDefinitionLoader
-	 * 
-	 * TODO: Revise Documentation
-	 */
-	protected void initBeanDefinitionLoader() {
-		beanDefinitionLoader = new DefaultJavaConfigBeanDefinitionLoader(this, configClasses, basePackages);
 	}
 
 }

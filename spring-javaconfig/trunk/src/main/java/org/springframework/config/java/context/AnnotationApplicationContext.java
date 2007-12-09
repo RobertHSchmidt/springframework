@@ -27,7 +27,6 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.process.ConfigurationPostProcessor;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
@@ -35,8 +34,8 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
  * Annotation-aware application context that looks for classes annotated with
  * the Configuration annotation and registers the beans they define.
  * 
- * @deprecated - Favor use of JavaConfigApplicationContext. This class will be
- * eliminated before the 1.0 release of JavaConfig
+ * @deprecated - Favor use of {@link JavaConfigApplicationContext}. This class
+ * will be eliminated before the 1.0 release of JavaConfig
  * @author Costin Leau
  * @author Rod Johnson
  * @author Chris Beams
