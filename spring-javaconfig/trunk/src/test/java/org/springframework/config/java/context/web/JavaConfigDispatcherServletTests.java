@@ -25,7 +25,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
 
-public class JavaConfigDispatcherServletTest {
+public class JavaConfigDispatcherServletTests {
 
 	private final JavaConfigDispatcherServlet servlet = new JavaConfigDispatcherServlet();
 

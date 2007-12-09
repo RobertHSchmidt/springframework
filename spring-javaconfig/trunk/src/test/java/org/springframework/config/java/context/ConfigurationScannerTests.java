@@ -12,7 +12,7 @@ import org.springframework.config.java.context.forscanning.b.ConfigB1;
 import org.springframework.config.java.context.forscanning.b.ConfigB2;
 import org.springframework.core.io.DefaultResourceLoader;
 
-public class ConfigurationScannerTest {
+public class ConfigurationScannerTests {
 	private ConfigurationScanner configurationScanner;
 
 	@Before
