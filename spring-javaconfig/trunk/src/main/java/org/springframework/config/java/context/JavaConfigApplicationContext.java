@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.AmbiguousBeanLookupException;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.MultiplePrimaryBeanDefinitionException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.TypeSafeBeanFactory;
@@ -172,7 +173,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getBean(Class<T> type) {
-		Map<String, Object> beansOfType = getBeansOfType(type);
+		Map<String, Object> beansOfType = BeanFactoryUtils.beansOfTypeIncludingAncestors(this, type);
 		int matchingBeanCount = beansOfType.size();
 
 		// happy path -- there is exactly one matching bean: return it.

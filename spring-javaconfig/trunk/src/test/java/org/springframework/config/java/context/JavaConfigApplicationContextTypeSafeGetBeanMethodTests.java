@@ -16,8 +16,7 @@
 package org.springframework.config.java.context;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.springframework.beans.TestBean;
@@ -98,6 +97,20 @@ public class JavaConfigApplicationContextTypeSafeGetBeanMethodTests {
 		ctx.getBean(TestBean.class, "serviceX"); // throws
 	}
 
+	@Test
+	public void testInnerConfigurationContextHierarchyWorksWhenDoingStringBasedLookup() {
+		ctx = new JavaConfigApplicationContext(OuterConfig.InnerConfig.class);
+		TestBean testBean = (TestBean) ctx.getBean("testBean");
+		assertEquals("outer", testBean.getName());
+	}
+
+	@Test
+	public void testInnerConfigurationContextHierarchyWorksWhenDoingTypeSafeLookup() {
+		ctx = new JavaConfigApplicationContext(OuterConfig.InnerConfig.class);
+		TestBean testBean = ctx.getBean(TestBean.class);
+		assertEquals("outer", testBean.getName());
+	}
+
 	@Configuration
 	static class SingleBeanConfig {
 		@Bean
@@ -148,6 +161,20 @@ public class JavaConfigApplicationContextTypeSafeGetBeanMethodTests {
 		@Bean(primary = Primary.TRUE)
 		public TestBean serviceB() {
 			return new TestBean("serviceB");
+		}
+	}
+
+	@Configuration
+	static class OuterConfig {
+
+		@Bean
+		public TestBean testBean() {
+			return new TestBean("outer");
+		}
+
+		@Configuration
+		static class InnerConfig {
+
 		}
 	}
 
