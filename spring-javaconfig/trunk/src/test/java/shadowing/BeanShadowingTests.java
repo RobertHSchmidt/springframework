@@ -63,6 +63,14 @@ public class BeanShadowingTests {
 		assertEquals("first", context.getBean(TestBean.class).getName());
 	}
 
+	@Test
+	public void testShadowingIsBasedOnOrder2WorksSameWithSetter() {
+		JavaConfigApplicationContext context = new JavaConfigApplicationContext();
+		context.setConfigClasses(Second.class, First.class);
+		context.refresh();
+		assertEquals("first", context.getBean(TestBean.class).getName());
+	}
+
 	@Configuration
 	public static class First {
 		@Bean

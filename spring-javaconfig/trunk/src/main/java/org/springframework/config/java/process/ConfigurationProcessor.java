@@ -42,7 +42,6 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
-import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.listener.ConfigurationListener;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
@@ -359,7 +358,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		int beansCreated = 0;
 
 		// TODO: remove boolean - convenient switch while developing SJC-38.
-		boolean PROCESS_INNER_CLASSES = true;
+		boolean PROCESS_INNER_CLASSES = false;
 		if (PROCESS_INNER_CLASSES)
 			for (Class<?> innerClass : configClass.getDeclaredClasses())
 				if (Modifier.isStatic(innerClass.getModifiers())
@@ -403,7 +402,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 		// TODO: return bean defs count here? increment beanDefsGenerated?
 		// TODO: make sure to check out calling setParent()!
-		processAnyDeclaringClasses(configurationClass);
+		// processAnyDeclaringClasses(configurationClass);
 
 		beanDefsGenerated += processAnyConfigurationListeners(configurationBeanName, configurationClass);
 
@@ -414,20 +413,6 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		beanDefsGenerated += processAnyInnerClasses(configurationClass);
 
 		return beanDefsGenerated;
-	}
-
-	private void processAnyDeclaringClasses(Class<?> configurationClass) {
-		// assumes configurationClass is actually a @Configuration
-		Class<?> outer = configurationClass.getDeclaringClass();
-
-		// only process the outer class if it's actually a @Configuration.
-		if (outer != null && ClassUtils.isConfigurationClass(outer))
-			if (owningApplicationContext != null)
-				if (owningApplicationContext.getParent() == null)
-					owningApplicationContext.setParent(new JavaConfigApplicationContext(outer));
-				else
-					// TODO: make sure this gets covered
-					throw new RuntimeException("parent already set!!");
 	}
 
 	private int processAnyLocalBeanDefinitions(final String configurationBeanName, final Class<?> configurationClass) {

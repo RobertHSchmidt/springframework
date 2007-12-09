@@ -109,7 +109,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 	@Test
 	public void testConstructionWithMultipleClassNames() {
 		ctx = new JavaConfigApplicationContext(SimpleConfiguration.class, ComplexConfiguration.class);
-		assertThat(ctx.getBeanDefinitionCount(), equalTo(11));
+		assertThat(ctx.getBeanDefinitionCount(), equalTo(7));
 	}
 
 	/**
@@ -120,7 +120,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 	public void testConstructionWithSingleBasePackage() {
 		String packageName = ComplexConfiguration.class.getPackage().getName();
 		ctx = new JavaConfigApplicationContext(packageName);
-		assertThat(ctx.getBeanDefinitionCount(), equalTo(6));
+		assertThat(ctx.getBeanDefinitionCount(), equalTo(2));
 	}
 
 	@Test
@@ -129,7 +129,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 				.getName();
 		String packageName2 = org.springframework.config.java.complex.ComplexConfiguration.class.getPackage().getName();
 		ctx = new JavaConfigApplicationContext(packageName1, packageName2);
-		assertThat(ctx.getBeanDefinitionCount(), equalTo(10));
+		assertThat(ctx.getBeanDefinitionCount(), equalTo(6));
 	}
 
 	@RunWith(Parameterized.class)
@@ -155,7 +155,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 		public void testConstructionWithWildcardBasePackage() {
 			context = new JavaConfigApplicationContext(basePackage);
 
-			assertThat(context.getBeanDefinitionCount(), equalTo(6));
+			assertThat(context.getBeanDefinitionCount(), equalTo(2));
 		}
 	}
 
@@ -164,7 +164,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 		String pkg1 = org.springframework.config.java.simple.EmptySimpleConfiguration.class.getPackage().getName();
 		ctx = new JavaConfigApplicationContext(new Class<?>[] { ComplexConfiguration.class }, new String[] { pkg1 });
 
-		assertThat(ctx.getBeanDefinitionCount(), equalTo(10));
+		assertThat(ctx.getBeanDefinitionCount(), equalTo(6));
 	}
 
 	private ClassPathXmlApplicationContext createSimpleXmlApplicationContext() {

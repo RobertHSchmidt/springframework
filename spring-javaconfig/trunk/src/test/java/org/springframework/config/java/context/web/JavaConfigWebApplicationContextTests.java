@@ -116,7 +116,7 @@ public class JavaConfigWebApplicationContextTests {
 		ctx.setConfigLocations(new String[] { ComplexConfiguration.class.getName(), pkg1 });
 		ctx.refresh();
 
-		assertThat(ctx.getBeanDefinitionCount(), equalTo(10));
+		assertThat(ctx.getBeanDefinitionCount(), equalTo(6));
 	}
 
 	@Test
@@ -125,7 +125,7 @@ public class JavaConfigWebApplicationContextTests {
 		ctx.setConfigLocations(new String[] { "org.springframework.config.java.*ple*" });
 		ctx.refresh();
 
-		assertThat(ctx.getBeanDefinitionCount(), equalTo(10));
+		assertThat(ctx.getBeanDefinitionCount(), equalTo(6));
 	}
 
 	@Configuration

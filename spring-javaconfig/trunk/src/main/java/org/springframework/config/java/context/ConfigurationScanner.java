@@ -1,5 +1,7 @@
 package org.springframework.config.java.context;
 
+import static org.springframework.config.java.util.ClassUtils.isConfigurationClass;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +55,18 @@ public class ConfigurationScanner extends ClassPathScanningCandidateComponentPro
 				MetadataReader metadataReader = this.metadataReaderFactory.getMetadataReader(resource);
 				if (isCandidateComponent(metadataReader)) {
 					try {
-						candidates.add(Class.forName(metadataReader.getClassMetadata().getClassName()));
+						Class<?> configClass = Class.forName(metadataReader.getClassMetadata().getClassName());
+
+						// check to make sure that any configuration class we
+						// encounter when doing package scanning is NOT an inner
+						// configuration. It's fine if the class is an inner
+						// class within a NON-configuration, but if it's truly a
+						// nested configuration, don't pick it up.
+						Class<?> outerConfig = configClass.getDeclaringClass();
+						if (outerConfig != null && isConfigurationClass(outerConfig)) {
+							continue;
+						}
+						candidates.add(configClass);
 					}
 					catch (ClassNotFoundException e) {
 						// TODO: handle exception properly
