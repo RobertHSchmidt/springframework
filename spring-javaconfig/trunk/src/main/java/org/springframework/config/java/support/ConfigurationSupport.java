@@ -19,6 +19,7 @@ package org.springframework.config.java.support;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.TypeSafeBeanFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.context.ApplicationContext;
@@ -63,6 +64,10 @@ public class ConfigurationSupport implements BeanFactoryAware, ApplicationContex
 
 	public Object getBean(String beanName) {
 		return beanFactory.getBean(beanName);
+	}
+
+	public <T> T getBean(Class<T> type) {
+		return ((TypeSafeBeanFactory) beanFactory).getBean(type);
 	}
 
 	/**

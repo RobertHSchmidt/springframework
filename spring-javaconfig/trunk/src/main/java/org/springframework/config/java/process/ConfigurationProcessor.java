@@ -42,6 +42,7 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.listener.ConfigurationListener;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
@@ -141,8 +142,8 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	private boolean initialized = false;
 
 	/**
-	 * Constructor taking an application context as paramater. Suitable for
-	 * programatic use.
+	 * Constructor taking an application context as parameter. Suitable for
+	 * programmatic use.
 	 * 
 	 * @param ac application context in which the newly created bean definition
 	 * will reside
@@ -180,9 +181,6 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 			this.owningApplicationContext.addApplicationListener(new ApplicationListener() {
 				public void onApplicationEvent(ApplicationEvent ev) {
 					if (ev instanceof ContextRefreshedEvent) {
-						// System.out.println("------------refreshing");
-						// if
-						// (!ConfigurationProcessor.this.childApplicationContext.isActive())
 						ConfigurationProcessor.this.childApplicationContext.refresh();
 					}
 				}
@@ -357,6 +355,20 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		return nBeanDefsGenerated;
 	}
 
+	private int processAnyInnerClasses(final Class<?> configClass) {
+		int beansCreated = 0;
+
+		// TODO: remove boolean - convenient switch while developing SJC-38.
+		boolean PROCESS_INNER_CLASSES = true;
+		if (PROCESS_INNER_CLASSES)
+			for (Class<?> innerClass : configClass.getDeclaredClasses())
+				if (Modifier.isStatic(innerClass.getModifiers())
+						&& (owningBeanFactory.getBeansOfType(innerClass).isEmpty()))
+					beansCreated += processClass(innerClass);
+
+		return beansCreated;
+	}
+
 	public int processBean(String beanName) throws BeanDefinitionStoreException {
 		checkInit();
 		Assert.notNull(beanName, "beanName is required");
@@ -381,46 +393,54 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 * @param configurationClass class of the configurer bean instance
 	 * @return number of bean definitions created
 	 */
-	protected int generateBeanDefinitions(final String configurationBeanName, Class<?> configurationClass) {
-		if (!ProcessUtils.validateConfigurationClass(configurationClass, configurationListenerRegistry)) {
-			return 0;
-		}
+	protected int generateBeanDefinitions(String configurationBeanName, Class<?> configurationClass) {
+		int beanDefsGenerated = 0;
 
-		int beansCreated = 0;
-		AbstractBeanDefinition definition = (AbstractBeanDefinition) owningBeanFactory
-				.getBeanDefinition(configurationBeanName);
+		if (!ProcessUtils.validateConfigurationClass(configurationClass, configurationListenerRegistry))
+			return beanDefsGenerated;
 
-		// update the configuration bean definition first
-		Class<?> enhancedClass = configurationEnhancer.enhanceConfiguration(configurationClass);
-		definition.setBeanClass(enhancedClass);
+		enhanceBeanDefinition(configurationBeanName, configurationClass);
 
-		// Force resolution of dependencies on other beans
-		// It's questionable why this is needed. SPR-33
-		for (PropertyValue pv : definition.getPropertyValues().getPropertyValues()) {
-			if (pv.getValue() instanceof RuntimeBeanReference) {
-				RuntimeBeanReference rbref = (RuntimeBeanReference) pv.getValue();
-				addDependsOn(definition, rbref.getBeanName());
-			}
-		}
+		// TODO: return bean defs count here? increment beanDefsGenerated?
+		// TODO: make sure to check out calling setParent()!
+		processAnyDeclaringClasses(configurationClass);
 
-		final Class<?> configClass = configurationClass;
+		beanDefsGenerated += processAnyConfigurationListeners(configurationBeanName, configurationClass);
 
-		// Callback listeners
-		for (ConfigurationListener cl : configurationListenerRegistry.getConfigurationListeners()) {
-			if (cl.understands(configurationClass)) {
-				beansCreated += cl.configurationClass(this, configurationBeanName, configurationClass);
-			}
-		}
+		beanDefsGenerated += processAnyLocalBeanDefinitions(configurationBeanName, configurationClass);
 
+		beanDefsGenerated += processAnyImports(configurationClass);
+
+		beanDefsGenerated += processAnyInnerClasses(configurationClass);
+
+		return beanDefsGenerated;
+	}
+
+	private void processAnyDeclaringClasses(Class<?> configurationClass) {
+		// assumes configurationClass is actually a @Configuration
+		Class<?> outer = configurationClass.getDeclaringClass();
+
+		// only process the outer class if it's actually a @Configuration.
+		if (outer != null && ClassUtils.isConfigurationClass(outer))
+			if (owningApplicationContext != null)
+				if (owningApplicationContext.getParent() == null)
+					owningApplicationContext.setParent(new JavaConfigApplicationContext(outer));
+				else
+					// TODO: make sure this gets covered
+					throw new RuntimeException("parent already set!!");
+	}
+
+	private int processAnyLocalBeanDefinitions(final String configurationBeanName, final Class<?> configurationClass) {
 		// Only want to consider the most specific bean creation method, in the
-		// case
-		// of overrides
+		// case of overrides
+
+		// use an int array just so we can have a final variable
+		final int[] beanDefsGenerated = new int[] { 0 };
 
 		// contains the beanNames resolved based on the method signature
 		final Set<String> noArgMethodsSeen = new HashSet<String>();
-		final int[] countFinalReference = new int[] { beansCreated };
 
-		ReflectionUtils.doWithMethods(configClass, new MethodCallback() {
+		ReflectionUtils.doWithMethods(configurationClass, new MethodCallback() {
 			public void doWith(Method m) throws IllegalArgumentException, IllegalAccessException {
 				Bean beanAnnotation = AnnotationUtils.findAnnotation(m, Bean.class);
 				// Determine bean name
@@ -443,42 +463,54 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 							return;
 						}
 						noArgMethodsSeen.add(beanName);
-						countFinalReference[0] += generateBeanDefinitionFromBeanCreationMethod(owningBeanFactory,
-								configurationBeanName, configClass, beanName, m, beanAnnotation);
+						beanDefsGenerated[0] += generateBeanDefinitionFromBeanCreationMethod(owningBeanFactory,
+								configurationBeanName, configurationClass, beanName, m, beanAnnotation);
 					}
 				}
 				else {
 					for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
-						countFinalReference[0] += cml.otherMethod(ConfigurationProcessor.this, configurationBeanName,
-								configClass, m);
+						beanDefsGenerated[0] += cml.otherMethod(ConfigurationProcessor.this, configurationBeanName,
+								configurationClass, m);
 					}
 				}
 			}
 		});
 
-		beansCreated = countFinalReference[0];
-
-		processAnyImports(configClass);
-
-		// Find inner aspect classes
-		// TODO: need to go up tree? ReflectionUtils.doWithClasses
-		for (Class<?> innerClass : configClass.getDeclaredClasses()) {
-			if (Modifier.isStatic(innerClass.getModifiers())
-					&& (owningBeanFactory.getBeansOfType(innerClass).isEmpty())) {
-				beansCreated += processClass(innerClass);
-			}
-		}
-
-		return beansCreated;
+		return beanDefsGenerated[0];
 	}
 
-	private static void addDependsOn(AbstractBeanDefinition bd, String beanName) {
-		if (bd.getDependsOn() == null) {
-			bd.setDependsOn(new String[] { beanName });
-		}
-		else {
-			String[] added = (String[]) ObjectUtils.addObjectToArray(bd.getDependsOn(), beanName);
-			bd.setDependsOn(added);
+	private int processAnyConfigurationListeners(final String configurationBeanName, final Class<?> configurationClass) {
+		int beanDefsGenerated = 0;
+
+		for (ConfigurationListener cl : configurationListenerRegistry.getConfigurationListeners())
+			if (cl.understands(configurationClass))
+				beanDefsGenerated += cl.configurationClass(this, configurationBeanName, configurationClass);
+
+		return beanDefsGenerated;
+	}
+
+	private void enhanceBeanDefinition(final String configurationBeanName, Class<?> configurationClass) {
+		AbstractBeanDefinition definition = (AbstractBeanDefinition) owningBeanFactory
+				.getBeanDefinition(configurationBeanName);
+
+		// update the configuration bean definition first
+		Class<?> enhancedClass = configurationEnhancer.enhanceConfiguration(configurationClass);
+		definition.setBeanClass(enhancedClass);
+
+		// Force resolution of dependencies on other beans
+		// It's questionable why this is needed. SPR-33
+		for (PropertyValue pv : definition.getPropertyValues().getPropertyValues()) {
+			if (pv.getValue() instanceof RuntimeBeanReference) {
+				RuntimeBeanReference rbref = (RuntimeBeanReference) pv.getValue();
+				String beanName = rbref.getBeanName();
+				if (definition.getDependsOn() == null) {
+					definition.setDependsOn(new String[] { beanName });
+				}
+				else {
+					String[] added = (String[]) ObjectUtils.addObjectToArray(definition.getDependsOn(), beanName);
+					definition.setDependsOn(added);
+				}
+			}
 		}
 	}
 

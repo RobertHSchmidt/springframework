@@ -17,15 +17,14 @@ package org.springframework.config.java.context.web;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.config.java.context.DefaultJavaConfigBeanDefinitionLoader;
+import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.config.java.context.ConfigurationScanner;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
-import org.springframework.config.java.context.JavaConfigBeanDefinitionLoader;
 import org.springframework.config.java.context.JavaConfigBeanFactoryPostProcessorRegistry;
+import org.springframework.config.java.util.ClassUtils;
 import org.springframework.util.Assert;
 import org.springframework.web.context.support.AbstractRefreshableWebApplicationContext;
 
@@ -39,23 +38,23 @@ import org.springframework.web.context.support.AbstractRefreshableWebApplication
  */
 public class JavaConfigWebApplicationContext extends AbstractRefreshableWebApplicationContext {
 
-	protected final Set<String> basePackages = new HashSet<String>();
-
 	protected final List<Class<?>> configClasses = new ArrayList<Class<?>>();
 
-	protected JavaConfigBeanDefinitionLoader beanDefinitionLoader;
+	protected ConfigurationScanner configurationScanner;
 
 	@Override
 	protected void prepareRefresh() {
 		super.prepareRefresh();
 		registerDefaultPostProcessors();
-		initBeanDefinitionLoader();
+		initConfigurationScanner();
 		initConfigLocations();
 	}
 
 	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException {
-		beanDefinitionLoader.loadBeanDefinitions(beanFactory);
+		for (Class<?> cz : configClasses)
+			if (ClassUtils.isConfigurationClass(cz))
+				beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
 	}
 
 	protected void registerDefaultPostProcessors() {
@@ -65,8 +64,8 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 	/**
 	 * TODO: Document
 	 */
-	protected void initBeanDefinitionLoader() {
-		beanDefinitionLoader = new DefaultJavaConfigBeanDefinitionLoader(this, configClasses, basePackages);
+	protected void initConfigurationScanner() {
+		configurationScanner = new ConfigurationScanner(this);
 	}
 
 	/**
@@ -91,7 +90,7 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 			}
 
 			// if it's not a valid class, assume it's a base package
-			basePackages.add(configLocation);
+			configClasses.addAll(configurationScanner.scanPackage(configLocation));
 		}
 	}
 
