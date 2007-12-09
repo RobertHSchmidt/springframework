@@ -16,8 +16,11 @@
 
 package org.springframework.config.java.context;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
+import org.junit.After;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
 import org.springframework.config.java.ConfigurationPostProcessorTests.ExternalBeanConfiguration;
@@ -35,13 +38,12 @@ import org.springframework.config.java.support.ConfigurationSupport;
  * @author Rod Johnson
  * @author Chris Beams
  */
-public final class JavaConfigApplicationContextTests extends TestCase {
+public final class JavaConfigApplicationContextTests {
 
 	protected JavaConfigApplicationContext ctx;
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() {
 		ctx = null;
 		try {
 			// just in case some test fails during loading and refresh is not
@@ -55,7 +57,8 @@ public final class JavaConfigApplicationContextTests extends TestCase {
 		ctx = null;
 	}
 
-	public void testReadSimplePackage() throws Exception {
+	@Test
+	public void testReadSimplePackage() {
 		ctx = new JavaConfigApplicationContext("/org/springframework/config/java/simple");
 
 		int classesInPackage = 2;
@@ -64,23 +67,30 @@ public final class JavaConfigApplicationContextTests extends TestCase {
 		assertEquals(classesInPackage + beansInClasses, ctx.getBeanDefinitionCount());
 	}
 
-	public void testReadInnerClassesInPackage() throws Exception {
+	/**
+	 * complex.* package contains only one top-level configuration class. Inner
+	 * classes should not be included.
+	 */
+	@Test
+	public void testScanningPackageDoesNotIncludeInnerConfigurationClasses() {
 		ctx = new JavaConfigApplicationContext("/org/springframework/config/java/complex");
 
-		assertEquals(6, ctx.getBeanDefinitionCount());
+		assertEquals(2, ctx.getBeanDefinitionCount());
 	}
 
-	public void testReadClassesByName() throws Exception {
+	@Test
+	public void testReadClassesByName() {
 		ctx = new JavaConfigApplicationContext(ComplexConfiguration.class, EmptySimpleConfiguration.class);
 
-		int classesInPackage = 4;
-		int beansInClasses = 3;
+		int classesInPackage = 2;
+		int beansInClasses = 1;
 
 		assertEquals(classesInPackage + beansInClasses, ctx.getBeanDefinitionCount());
 	}
 
 	// ------------------------------------------------------------------------
 
+	@Test
 	public void testProcessImports() {
 		ctx = new JavaConfigApplicationContext(ConfigurationWithImportAnnotation.class);
 
@@ -109,6 +119,7 @@ public final class JavaConfigApplicationContextTests extends TestCase {
 
 	// ------------------------------------------------------------------------
 
+	@Test
 	public void testImportAnnotationWithTwoLevelRecursion() {
 		ctx = new JavaConfigApplicationContext(AppConfig.class);
 
@@ -142,6 +153,7 @@ public final class JavaConfigApplicationContextTests extends TestCase {
 
 	// ------------------------------------------------------------------------
 
+	@Test
 	public void testImportAnnotationWithThreeLevelRecursion() {
 		ctx = new JavaConfigApplicationContext(FirstLevel.class);
 
@@ -181,6 +193,7 @@ public final class JavaConfigApplicationContextTests extends TestCase {
 
 	// ------------------------------------------------------------------------
 
+	@Test
 	public void testImportAnnotationWithMultipleArguments() {
 		ctx = new JavaConfigApplicationContext(WithMultipleArgumentsToImportAnnotation.class);
 
@@ -213,6 +226,7 @@ public final class JavaConfigApplicationContextTests extends TestCase {
 
 	// ------------------------------------------------------------------------
 
+	@Test
 	public void testImportAnnotationWithMultipleArgumentsResultingInDuplicateBeanDefinition() {
 		boolean threw = false;
 		try {
@@ -247,10 +261,11 @@ public final class JavaConfigApplicationContextTests extends TestCase {
 
 	// ------------------------------------------------------------------------
 
+	@Test
 	public void testImportAnnotationOnInnerClasses() {
-		ctx = new JavaConfigApplicationContext(OuterConfig.class);
+		ctx = new JavaConfigApplicationContext(OuterConfig.InnerConfig.class);
 
-		int configClasses = 3;
+		int configClasses = 2;
 		int beansInClasses = 2;
 
 		assertEquals(configClasses + beansInClasses, ctx.getBeanDefinitionCount());
@@ -278,6 +293,7 @@ public final class JavaConfigApplicationContextTests extends TestCase {
 
 	// ------------------------------------------------------------------------
 
+	@Test
 	public void testAbstractConfigurationDoesNotGetProcessed() {
 		ctx = new JavaConfigApplicationContext(AbstractConfigurationToIgnore.class);
 
@@ -287,6 +303,7 @@ public final class JavaConfigApplicationContextTests extends TestCase {
 		assertEquals(configClasses + beansInClasses, ctx.getBeanDefinitionCount());
 	}
 
+	@Test
 	public void testAbstrectConfigurationWithExternalBeanDoesGetProcessed() {
 		ctx = new JavaConfigApplicationContext(ExternalBeanConfiguration.class,
 				ExternalBeanProvidingConfiguration.class);
@@ -295,6 +312,24 @@ public final class JavaConfigApplicationContextTests extends TestCase {
 		int beansInClasses = 2;
 
 		assertEquals(configClasses + beansInClasses, ctx.getBeanDefinitionCount());
+	}
+
+	// ------------------------------------------------------------------------
+
+	@Test
+	public void testOpenEndedConstructionSupplyingBasePackagesBeforeRefresh() {
+		ctx = new JavaConfigApplicationContext();
+		ctx.setBasePackages("org.springframework.config.java.context.forscanning.a");
+		ctx.refresh();
+
+		assertEquals(2, ctx.getBeanDefinitionCount());
+	}
+
+	// TODO: complete this testing
+	@Ignore
+	@Test
+	public void testAllVariationsOnOrderingOfClassesAndBasePackages() {
+		fail("not yet implemented");
 	}
 
 	// ------------------------------------------------------------------------

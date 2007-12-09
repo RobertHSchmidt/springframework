@@ -15,14 +15,16 @@
  */
 package org.springframework.config.java.context;
 
+import static java.lang.System.out;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.TestBean;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.context.InnerClassTests.Outermost.Middle.Innermost;
@@ -63,13 +65,47 @@ public class InnerClassTests {
 		}
 	}
 
-	@Ignore
-	@Test
-	public void testGetContextRegistry() {
-		JavaConfigApplicationContext outerCtx = new JavaConfigApplicationContext(Outermost.class);
-		JavaConfigApplicationContext innerCtx = outerCtx.getContextRegistry().get(Innermost.class);
+	@Configuration
+	public static class Out {
 
-		assertNotNull(innerCtx);
+		@Bean
+		public TestBean outer() {
+			return new TestBean("outer");
+		}
+
+		@Configuration
+		public static class In {
+			@Bean
+			public TestBean inner() {
+				return new TestBean("inner");
+			}
+		}
+
+	}
+
+	// this shouldn't throw, because even though Outermost has a declaring
+	// class, the declaring class isn't a @Configuration.
+	@Test
+	public void testMultipleOuterConfigurationClassesThrowsExceptionOnlyIfOuterIsConfiguration() {
+		new JavaConfigApplicationContext(Outermost.class, Out.In.class);
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void testMultipleOuterConfigurationClassesThrowsException() {
+		new JavaConfigApplicationContext(Outermost.Middle.class, Out.In.class);
+	}
+
+	@Test
+	public void testParentageWorks() {
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Out.In.class);
+		assertNotNull(ctx.getParent());
+		assertEquals("outer", ((TestBean) ctx.getBean("outer")).getName());
+	}
+
+	@Test(expected = NoSuchBeanDefinitionException.class)
+	public void testCannotSeeInnerConfigurationBeansFromOuterConfigurationContext() {
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Out.class);
+		ctx.getBean("inner"); // should throw, parents can't see child beans
 	}
 
 	@Configuration
@@ -98,7 +134,7 @@ public class InnerClassTests {
 	}
 
 	@Test
-	public void foo() {
+	public void foo3() {
 		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Parent.class, Child.class);
 		Assert.assertEquals("child", ctx.getBean("name"));
 	}
@@ -109,7 +145,6 @@ public class InnerClassTests {
 		Assert.assertEquals("child", ctx.getBean("name"));
 	}
 
-	@Ignore
 	@Test
 	public void testProcessingInnerClassIncludesOuterClass() {
 		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Innermost.class);
@@ -118,11 +153,48 @@ public class InnerClassTests {
 		ctx.getBean("outermostBean"); // this throws
 	}
 
-	@Ignore
 	@Test
 	public void testBeanOverride() {
 		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Innermost.class);
 		assertThat(((String) ctx.getBean("name")), equalTo("innermost"));
+	}
+
+	@Configuration
+	public static class One {
+
+	}
+
+	@Configuration
+	public static class Two {
+
+	}
+
+	@Configuration
+	public static class Three {
+
+	}
+
+	@Test
+	public void testBeanDefs() {
+		JavaConfigApplicationContext one = new JavaConfigApplicationContext(One.class);
+		JavaConfigApplicationContext two = new JavaConfigApplicationContext(one);
+		JavaConfigApplicationContext three = new JavaConfigApplicationContext(Three.class);
+
+		two.setConfigClasses(Two.class);
+		out.println(two.getParent());
+		two.setParent(three);
+
+		two.refresh();
+	}
+
+	@Ignore
+	@Test
+	public void foo() {
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Innermost.class);
+		for (String name : BeanFactoryUtils.beanNamesIncludingAncestors(ctx))
+			out.println("NAME: " + name);
+		int actual = BeanFactoryUtils.countBeansIncludingAncestors(ctx);
+		assertTrue("expected actual > 5, got " + actual, actual > 5);
 	}
 
 }

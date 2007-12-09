@@ -20,10 +20,9 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.AmbiguousBeanLookupException;
@@ -90,13 +89,6 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	protected final List<Class<?>> configClasses = new ArrayList<Class<?>>();
 
-	/**
-	 * The base packages for configurations from Strings. These use the same
-	 * conventions as the component scanning introduced in Spring 2.5.
-	 */
-	@Deprecated
-	protected final Set<String> basePackages = new HashSet<String>();
-
 	protected boolean closedForConfiguration = false;
 
 	/**
@@ -139,6 +131,8 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		this(null, classes, basePackages);
 	}
 
+	private ConfigurationScanner scanner = new ConfigurationScanner(this);
+
 	/**
 	 * TODO: Document
 	 * 
@@ -152,11 +146,6 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	public JavaConfigApplicationContext(ApplicationContext parent, Class<?>[] classes, String[] basePackages) {
 		super(parent);
 
-		// TODO: processAnyOuterClasses()
-
-		// TODO: only allow there to be exactly one outer class. No multiple
-		// inheritance :-)
-
 		// TODO: what happens if a class is supplied in classes, but that same
 		// class is also detected while processing baseClasses? I would assume
 		// that if it is encountered explicitly in classes, that that position
@@ -167,23 +156,14 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		if (!isEmpty(classes))
 			allClasses.addAll(Arrays.asList(classes));
 
-		if (!isEmpty(basePackages)) {
-			ConfigurationScanner scanner = new ConfigurationScanner(this);
-
+		if (!isEmpty(basePackages))
 			for (String basePackage : basePackages)
 				allClasses.addAll(scanner.scanPackage(basePackage));
-		}
 
 		if (!allClasses.isEmpty())
 			setConfigClasses(allClasses.toArray(new Class<?>[] {}));
 
 		refresh();
-	}
-
-	private Map<Class<?>, ? extends JavaConfigApplicationContext> contextRegistry;
-
-	public Map<Class<?>, ? extends JavaConfigApplicationContext> getContextRegistry() {
-		return contextRegistry;
 	}
 
 	/*
@@ -244,13 +224,20 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		this.configClasses.addAll(Arrays.asList(ArrayUtils.reverse(classes)));
 	}
 
-	@Deprecated
-	// TODO: get rid
+	/**
+	 * The base packages for configurations from Strings. These use the same
+	 * conventions as the component scanning introduced in Spring 2.5.
+	 */
 	public void setBasePackages(String... basePackages) {
 		Assert.notEmpty(basePackages, "must supply at least one base package");
 		if (closedForConfiguration)
 			throw new IllegalStateException("setBasePackages() must be called before refresh()");
-		this.basePackages.addAll(Arrays.asList(basePackages));
+
+		ArrayList<Class<?>> allClasses = new ArrayList<Class<?>>();
+		for (String basePackage : basePackages)
+			allClasses.addAll(scanner.scanPackage(basePackage));
+		Collections.reverse(allClasses);
+		this.configClasses.addAll(allClasses);
 	}
 
 	@Override
@@ -262,10 +249,29 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	@Override
 	protected void prepareRefresh() {
-		if (configClasses.isEmpty() && basePackages.isEmpty())
+		if (configClasses.isEmpty())
 			throw new IllegalStateException("must supply at least one class or base package");
 
+		processAnyOuterClasses();
+
 		registerDefaultPostProcessors();
+	}
+
+	private void processAnyOuterClasses() {
+		Class<?> outerConfig = null;
+		for (Class<?> configClass : configClasses) {
+			Class<?> candidate = configClass.getDeclaringClass();
+			if (candidate != null && ClassUtils.isConfigurationClass(candidate)) {
+				if (outerConfig != null) {
+					// TODO: throw a better exception
+					throw new RuntimeException("cannot specify more than one inner configuration class");
+				}
+				outerConfig = candidate;
+			}
+		}
+
+		if (outerConfig != null)
+			this.setParent(new JavaConfigApplicationContext(outerConfig));
 	}
 
 	@Override
