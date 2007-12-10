@@ -11,7 +11,7 @@
 	<name>Spring JavaConfig</name>
 	<version>1.0-m3-SNAPSHOT</version>
 	<description>
-		The Spring Java Configuration project is an experiment in producing a Java-based alternative to configuring
+		The Spring Java Configuration project provides a type-safe, pure-Java alternative to configuring
 		Spring Application Contexts. While most people currently use XML to configure bean definitions in their
 		Application Contexts, Spring's versatility and metadata based internal handling of bean definitions means
 		alternatives to XML config are easy to implement. 
@@ -30,9 +30,9 @@
 		<developer>
 			<id>johnsonr</id>
 			<name>Rod Johnson</name>
-			<email>rod.johnson@interface21.com</email>
-			<organization>Interface21</organization>
-			<organizationUrl>http://www.interface21.com</organizationUrl>
+			<email>rod.johnson@springsource.com</email>
+			<organization>SpringSource</organization>
+			<organizationUrl>http://www.springsource.com</organizationUrl>
 			<roles>
 				<role>Developer</role>
 			</roles>
@@ -41,9 +41,9 @@
 		<developer>
 			<id>costin_leau</id>
 			<name>Costin Leau</name>
-			<email>costin.leau@interface21.com</email>
-			<organization>Interface21</organization>
-			<organizationUrl>http://www.interface21.com</organizationUrl>
+			<email>costin.leau@springsource.com</email>
+			<organization>SpringSource</organization>
+			<organizationUrl>http://www.springsource.com</organizationUrl>
 			<roles>
 				<role>Project Admin</role>
 				<role>Developer</role>
@@ -53,9 +53,9 @@
 		<developer>
 			<id>cbeams</id>
 			<name>Chris Beams</name>
-			<email>chris.beams@interface21.com</email>
-			<organization>Interface21</organization>
-			<organizationUrl>http://www.interface21.com</organizationUrl>
+			<email>chris.beams@springsource.com</email>
+			<organization>SpringSource</organization>
+			<organizationUrl>http://www.springsource.com</organizationUrl>
 			<roles>
 				<role>Developer</role>
 			</roles>
