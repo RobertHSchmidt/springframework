@@ -4,9 +4,9 @@
 		xmlns:p="http://www.springframework.org/schema/p"
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean  class="org.springframework.config.java.process.ConfigurationPostProcessor" />
+	<bean class="org.springframework.config.java.process.ConfigurationPostProcessor" />
 
-	<bean class="shadowing.BeanShadowingTests$LegalShadowConfiguration" />
+	<bean class="org.springframework.config.java.BeanOverridingTests$IllegalShadowConfiguration" />
 
 	<bean id="ann"
 		class="org.springframework.beans.TestBean"

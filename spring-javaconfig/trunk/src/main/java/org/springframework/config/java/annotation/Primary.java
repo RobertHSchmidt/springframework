@@ -17,9 +17,11 @@
 package org.springframework.config.java.annotation;
 
 /**
- * Signifies {@link Bean}s as primary for disambiguation cases.
+ * Signifies {@link Bean}s as primary for disambiguation when looking up beans
+ * by type.
  * 
  * @see Bean#primary()
+ * @see org.springframework.beans.factory.TypeSafeBeanFactory#getBean(Class)
  * 
  * @author Chris Beams
  */

@@ -21,7 +21,11 @@ import java.util.Collection;
 
 /**
  * Exception representing an illegal configuration where more than one bean of
- * the same type is found within a given {@link BeanFactory}.
+ * the same type is marked as
+ * {@link org.springframework.config.java.annotation.Primary} within a given
+ * {@link BeanFactory}.
+ * 
+ * @see org.springframework.config.java.annotation.Primary
  * 
  * @author Chris Beams
  */

@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation for importing other {@link Configuration} classes. Serves as an
- * analog to the XML configuration's &lt;import/&gt; tag.
+ * analog to the XML configuration's &lt;import/&gt; element.
  * 
  * <h3>Example 1: Importing a single configuration class</h3>
  * 

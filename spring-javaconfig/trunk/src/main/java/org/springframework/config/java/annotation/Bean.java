@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2006 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,15 +32,16 @@ import org.springframework.beans.factory.config.BeanDefinition;
  * Contains similar information to that held in Spring's internal BeanDefinition
  * metadata.
  * <p>
- * Bean creation methods must be public or protected. Bean creation methods may
- * throw any exception, which will be caught and handled by the Spring container
- * on processing of the configuration class. <br>
+ * Bean creation methods must be non-private (default, public or protected).
+ * Bean creation methods may throw any exception, which will be caught and
+ * handled by the Spring container on processing of the configuration class.
+ * <br>
  * Bean creation methods must return an object type. The decision to return a
  * class or an interface will be significant in the event of proxying. Bean
  * methods that return interfaces will be proxied using dynamic proxies; those
- * that return a class will require CGLIB or other subclass-based proxying.
- * Return an interface as possible, as this is also consistent with best
- * practice around loose coupling.
+ * that return a class will require CGLIB or other subclass-based proxying. It
+ * is recommended to return an interface where possible, as this is also
+ * consistent with best practice around loose coupling.
  * <p>
  * Bean creation methods may reference other bean creation methods by calling
  * them directly, as follows. This ensures that references between beans are
@@ -48,9 +49,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
  * 
  * <pre class="code">
  * &#064;Bean
- * public Company interface21() {
- * 	Company company = new DefaultCompany(&quot;Interface21&quot;);
- * 	company.setChiefScientist(adrian());
+ * public Company springSource() {
+ * 	Company company = new DefaultCompany(&quot;SpringSource&quot;);
+ * 	company.setChiefTechnologyOfficer(adrian());
  * 	return company;
  * }
  * 
@@ -60,10 +61,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
  * }
  * </pre>
  * 
- * <p>
- * If a bean creation method is protected, rather than public, the the bean will
- * be hidden. This means that the bean will be added to a child factory used
- * internally by the ConfigurationProcessor, rather than the main factory,
+ * <p/> If a bean creation method is protected, rather than public, the the bean
+ * will be hidden. This means that the bean will be added to a child factory
+ * used internally by the ConfigurationProcessor, rather than the main factory,
  * meaning it won't be visible to other definitions. This is particularly useful
  * for Spring AOP Advisors or AspectJ aspects, which might otherwise alter
  * behaviour of the owning factory as a whole.
@@ -71,6 +71,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
  * 
  * @author Rod Johnson
  * @author Costin Leau
+ * @author Chris Beams
  * 
  * @see org.springframework.config.java.annotation.Configuration
  */
@@ -100,7 +101,8 @@ public @interface Bean {
 	Lazy lazy() default Lazy.UNSPECIFIED;
 
 	/**
-	 * A bean may be marked as primary, useful when looking up beans by type
+	 * A bean may be marked as primary, useful for disambiguation when looking
+	 * up beans by type.
 	 * 
 	 * @see org.springframework.config.java.context.JavaConfigApplicationContext#getBean(Class);
 	 */

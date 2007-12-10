@@ -32,7 +32,10 @@ import org.springframework.web.context.support.AbstractRefreshableWebApplication
  * Fashioned after {@link JavaConfigApplicationContext}, but for use in the web
  * tier.
  * 
- * TODO: Document
+ * <p/>TODO: Document
+ * 
+ * <p/>TODO: add type-safe getBean() method (see
+ * JavaConfigApplicationContext#getBean(Class<T> type)
  * 
  * @author Chris Beams
  */

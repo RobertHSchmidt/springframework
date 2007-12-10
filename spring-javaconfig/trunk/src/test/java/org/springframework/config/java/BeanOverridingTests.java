@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package shadowing;
+package org.springframework.config.java;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.*;
@@ -27,10 +27,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * // TODO: rename to BeanOverridingTests
  * @author Chris Beams
  */
-public class BeanShadowingTests {
+public class BeanOverridingTests {
 
 	/**
 	 * XML config works on a LIFO-based shadowing model. JavaConfig should work
