@@ -110,17 +110,21 @@ abstract class ProcessUtils {
 	 */
 	public static void validateBeanCreationMethod(Method beanCreationMethod) throws BeanDefinitionStoreException {
 		if (Modifier.isFinal(beanCreationMethod.getModifiers())) {
-			throw new BeanDefinitionStoreException("Bean creation method " + beanCreationMethod.getName()
+			throw new BeanDefinitionStoreException("Bean creation method " + methodIdentifier(beanCreationMethod)
 					+ " may not be final");
 		}
 		if (Modifier.isPrivate(beanCreationMethod.getModifiers())) {
-			throw new BeanDefinitionStoreException("Bean creation method " + beanCreationMethod.getName()
+			throw new BeanDefinitionStoreException("Bean creation method " + methodIdentifier(beanCreationMethod)
 					+ " may not be private");
 		}
 		if (beanCreationMethod.getReturnType() == Void.TYPE) {
-			throw new BeanDefinitionStoreException("Bean creation method " + beanCreationMethod.getName()
+			throw new BeanDefinitionStoreException("Bean creation method " + methodIdentifier(beanCreationMethod)
 					+ " may not have void return");
 		}
+	}
+
+	public static String methodIdentifier(Method m) {
+		return m.getDeclaringClass().getName() + "." + m.getName();
 	}
 
 	/**
