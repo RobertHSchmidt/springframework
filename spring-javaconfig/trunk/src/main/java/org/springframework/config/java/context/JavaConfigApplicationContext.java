@@ -28,7 +28,6 @@ import org.springframework.beans.factory.TypeSafeBeanFactory;
 import org.springframework.beans.factory.TypeSafeBeanFactoryUtils;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.util.ArrayUtils;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.context.ApplicationContext;
@@ -40,10 +39,9 @@ import org.springframework.util.Assert;
  * {@link org.springframework.config.java.annotation.Configuration} annotation
  * and registers the {@link org.springframework.config.java.annotation.Bean}s
  * they define; is the primary programmatic resource for using Spring
- * JavaConfig.
- * 
- * <p/>TODO: Document: refine the example below. use type-safe getBean()? Extend
- * ConfigurationSupport?
+ * JavaConfig. Note that it is not strictly required that a configuration class
+ * be annotated with &#064Configuration, but rather that it exposes at least one
+ * non-private method annotated with &#064Bean.
  * 
  * <h3>Example</h3>
  * 
@@ -75,7 +73,115 @@ import org.springframework.util.Assert;
  * }
  * </pre>
  * 
- * @see Configuration
+ * <h2>Construction</h2>
+ * 
+ * <p/> The eight available constructors for
+ * <code>JavaConfigApplicationContext</code> are divided into two categories:
+ * <ol>
+ * <li>Those that leave the context open for further configuration, and require
+ * the user to call {@link #refresh() refresh}
+ * <ul>
+ * <li>{@link #JavaConfigApplicationContext()}</li>
+ * <li>{@link #JavaConfigApplicationContext(ApplicationContext)}</li>
+ * </ul>
+ * </li>
+ * <li>Those that leave the context closed for further configuration and do not
+ * require {@link #refresh() refresh}
+ * <ul>
+ * <li>{@link #JavaConfigApplicationContext(Class...)}</li>
+ * <li>{@link #JavaConfigApplicationContext(String...)}</li>
+ * <li>{@link #JavaConfigApplicationContext(Class[], String[])}</li>
+ * <li>{@link #JavaConfigApplicationContext(ApplicationContext, Class...)}</li>
+ * <li>{@link #JavaConfigApplicationContext(ApplicationContext, String...)}</li>
+ * <li>{@link #JavaConfigApplicationContext(ApplicationContext, Class[], String[])}</li>
+ * </ul>
+ * </li>
+ * </ol>
+ * 
+ * In the former set, the following code would be valid:
+ * 
+ * <pre class="code">
+ * JavaConfigApplicationContext ctx = new JavaConfigApplicationContext();
+ * ctx.setConfigClasses(Config1.class, Config2.class);
+ * ctx.setBaseClasses(&quot;com.foo.myapp.config.*&quot;);
+ * ctx.setParent(anotherContext);
+ * ctx.refresh();
+ * Service myService = (Service) ctx.getBean(&quot;service&quot;);
+ * </pre>
+ * 
+ * Note that the caller must manually invoke {@link #refresh() refresh} to
+ * advise the context that configuration is complete. In most cases, users will
+ * not want to be burdened with having to remember to do this, so the latter six
+ * constructors are provided as conveniences. They each internally call
+ * {@link #refresh() refresh}, which means that any subsequent calls to
+ * {@link #setConfigClasses(Class...) setConfigClasses},
+ * {@link #setBasePackages(String...) setBasePackages} or
+ * {@link #setParent(ApplicationContext) setParent} are invalid and will result
+ * in an exception. Simply said, after instantiation with one of the convenience
+ * constructors, the context is 'closed for configuration':
+ * 
+ * <pre class="code">
+ * JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Config1.class, Config2.class);
+ * 
+ * Service myService = (Service) ctx.getBean(&quot;service&quot;);
+ * </pre>
+ * 
+ * 
+ * <h2>Type-safe access to beans</h2>
+ * 
+ * To ensure refactorability and avoid string-based bean lookups, it is
+ * recommended that users take advantage of
+ * <code>JavaConfigApplicationContext</code>'s type-safe <code>getBean</code>
+ * methods:
+ * <ul>
+ * <li>{@link #getBean(Class)}</li>
+ * <li>{@link #getBean(Class, String)}</li>
+ * </ul>
+ * 
+ * The examples above become more elegant using these methods:
+ * 
+ * <pre class="code">
+ * JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Config1.class, Config2.class);
+ * 
+ * Service myService = ctx.getBean(Service.class); // no casting required!
+ * </pre>
+ * 
+ * Of course, if multiple beans of type <code>Service</code> exist in the
+ * context, the call above becomes ambiguous. Disambiguation can happen in one
+ * of two ways:
+ * <ol>
+ * <li>Declare one bean as
+ * {@link org.springframework.config.java.annotation.Primary}
+ * 
+ * <pre class="code">
+ * &#064;Configuration
+ * public class AppConfig {
+ *     &#064;Bean(primary=Primary.TRUE)
+ *     public Service service() {
+ *         return new Service(...);
+ *     }
+ *     &#064;Bean
+ *     public Service testService() {
+ *         return new Service(...);
+ *     }
+ * }
+ * </pre>
+ * 
+ * </li>
+ * 
+ * <li>Use the name-qualified {@link #getBean(Class, String)} variant
+ * 
+ * <pre class="code">
+ * JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Config1.class, Config2.class);
+ * 
+ * Service testService = ctx.getBean(Service.class, &quot;testService&quot;);
+ * </pre>
+ * 
+ * </li>
+ * </ol>
+ * 
+ * 
+ * @see org.springframework.config.java.annotation.Configuration
  * @see org.springframework.config.java.annotation.Bean
  * 
  * @author Chris Beams
