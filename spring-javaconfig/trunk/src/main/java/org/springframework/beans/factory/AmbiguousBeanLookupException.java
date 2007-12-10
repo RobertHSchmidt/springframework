@@ -20,18 +20,18 @@ import static org.springframework.util.StringUtils.collectionToCommaDelimitedStr
 import java.util.Map;
 
 import org.springframework.beans.BeansException;
-import org.springframework.config.java.context.JavaConfigApplicationContext;
 
 /**
  * Exception thrown when a BeanFactory is asked for a bean by type for which
- * there exist more than one match.
+ * there exists more than one match.
  * 
- * <p/>Note: currently used only by {@link JavaConfigApplicationContext} - may
- * potentially be promoted and used more widely in the future
+ * <p/>Note: currently used only by
+ * {@link org.springframework.config.java.context.JavaConfigApplicationContext} -
+ * may potentially be promoted and used more widely in the future
  * 
- * XXX: Review with Juergen
+ * <p/>XXX: Review
  * 
- * @see JavaConfigApplicationContext#getBean(Class)
+ * @see org.springframework.config.java.context.JavaConfigApplicationContext#getBean(Class)
  * @author Chris Beams
  */
 @SuppressWarnings("serial")
