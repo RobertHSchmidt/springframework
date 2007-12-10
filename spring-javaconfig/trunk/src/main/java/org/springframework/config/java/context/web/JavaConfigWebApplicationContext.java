@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.TypeSafeBeanFactory;
+import org.springframework.beans.factory.TypeSafeBeanFactoryUtils;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.context.ConfigurationScanner;
@@ -34,22 +36,19 @@ import org.springframework.web.context.support.AbstractRefreshableWebApplication
  * 
  * <p/>TODO: Document
  * 
- * <p/>TODO: add type-safe getBean() method (see
- * JavaConfigApplicationContext#getBean(Class<T> type)
- * 
  * @author Chris Beams
  */
-public class JavaConfigWebApplicationContext extends AbstractRefreshableWebApplicationContext {
+public class JavaConfigWebApplicationContext extends AbstractRefreshableWebApplicationContext implements
+		TypeSafeBeanFactory {
 
 	protected final List<Class<?>> configClasses = new ArrayList<Class<?>>();
 
-	protected ConfigurationScanner configurationScanner;
+	protected ConfigurationScanner configurationScanner = new ConfigurationScanner(this);
 
 	@Override
 	protected void prepareRefresh() {
 		super.prepareRefresh();
 		registerDefaultPostProcessors();
-		initConfigurationScanner();
 		initConfigLocations();
 	}
 
@@ -65,21 +64,12 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 	}
 
 	/**
-	 * TODO: Document
-	 */
-	protected void initConfigurationScanner() {
-		configurationScanner = new ConfigurationScanner(this);
-	}
-
-	/**
 	 * Processes contents of <var>configLocations</var>, setting the values of
 	 * configClasses and basePackages appropriately.
 	 * 
 	 * @throws IllegalArgumentException if the <code>configLocations</code>
 	 * array is null, contains any null elements, or contains names of any
 	 * classes that cannot be found
-	 * 
-	 * TODO: support base packages (only classes are supported right now)
 	 */
 	protected void initConfigLocations() {
 		Assert.notEmpty(getConfigLocations(), "configLocations property has not been set");
@@ -89,12 +79,18 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 				configClasses.add(Class.forName(configLocation));
 			}
 			catch (ClassNotFoundException ex) {
-				// throw new IllegalArgumentException(ex);
+				// if it's not a valid class, assume it's a base package
+				configClasses.addAll(configurationScanner.scanPackage(configLocation));
 			}
-
-			// if it's not a valid class, assume it's a base package
-			configClasses.addAll(configurationScanner.scanPackage(configLocation));
 		}
+	}
+
+	public <T> T getBean(Class<T> type) {
+		return TypeSafeBeanFactoryUtils.getBean(this.getBeanFactory(), type);
+	}
+
+	public <T> T getBean(Class<T> type, String beanName) {
+		return TypeSafeBeanFactoryUtils.getBean(this.getBeanFactory(), type, beanName);
 	}
 
 }
