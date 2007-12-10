@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.springframework.ldap</groupId>
+	<artifactId>spring-ldap-tiger</artifactId>
+	<name>Spring LDAP Tiger</name>
+	<version>1.2</version>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:svn:https://svn.sourceforge.net/svnroot/springframework/spring-ldap</connection>
+		<developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/springframework/spring-ldap</developerConnection>
+		<tag>spring-ldap-1.2.1</tag>
+		<url>http://svn.sourceforge.net/viewcvs.cgi/springframework/spring-ldap</url>
+	</scm>
+	<organization>
+		<name>Spring Framework</name>
+		<url>http://www.springframework.org/</url>
+	</organization>
+	<dependencies>
+<!-- External Dependencies -->
+<!-- Spring Dependencies -->
+		<dependency>
+			<groupId>org.springframework.ldap</groupId>
+			<artifactId>spring-ldap</artifactId>
+			<version>1.2.1</version>
+		</dependency>
+	</dependencies>
+</project>
