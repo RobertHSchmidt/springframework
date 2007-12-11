@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-		xmlns="http://maven.apache.org/POM/4.0.0"
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.springframework.javaconfig</groupId>
@@ -11,10 +9,10 @@
 	<name>Spring JavaConfig</name>
 	<version>1.0-m3-SNAPSHOT</version>
 	<description>
-		The Spring Java Configuration project provides a type-safe, pure-Java alternative to configuring
-		Spring Application Contexts. While most people currently use XML to configure bean definitions in their
-		Application Contexts, Spring's versatility and metadata based internal handling of bean definitions means
-		alternatives to XML config are easy to implement. 
+		The Spring Java Configuration project provides a type-safe, pure-Java alternative to configuring Spring
+		Application Contexts. While most people currently use XML to configure bean definitions in their Application
+		Contexts, Spring's versatility and metadata based internal handling of bean definitions means alternatives to
+		XML config are easy to implement.
 	</description>
 	<url>http://www.springframework.org/javaconfig</url>
 	<issueManagement>
@@ -112,7 +110,7 @@
 					</excludes>
 					<systemProperties>
 						<!-- The following is a workaround for an issue with Cobertura where reports always
-						result in 100% coverage. See http://jira.codehaus.org/browse/MCOBERTURA-61 -->
+							result in 100% coverage. See http://jira.codehaus.org/browse/MCOBERTURA-61 -->
 						<property>
 							<name>net.sourceforge.cobertura.datafile</name>
 							<value>target/cobertura/cobertura.ser</value>
@@ -153,6 +151,60 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.agilejava.docbkx</groupId>
+				<artifactId>docbkx-maven-plugin</artifactId>
+				<version>2.0.6</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate-html</goal>
+							<!-- <goal>generate-pdf</goal> -->
+						</goals>
+						<phase>pre-site</phase>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.docbook</groupId>
+						<artifactId>docbook-xml</artifactId>
+						<version>4.4</version>
+						<scope>runtime</scope>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<includes>index.xml</includes>
+					<chunkedOutput>true</chunkedOutput>
+					<htmlStylesheet>css/html.css</htmlStylesheet>
+					<xincludeSupported>true</xincludeSupported>
+					<htmlCustomization>src/docbkx/resources/xsl/html_chunk.xsl</htmlCustomization>
+					<!-- <foCustomization>src/docbkx/resources/xsl/fopdf.xsl</foCustomization> -->
+					<entities>
+						<entity>
+							<name>version</name>
+							<value>${pom.version}</value>
+						</entity>
+					</entities>
+					<postProcess>
+						<copy todir="target/site/reference">
+							<fileset dir="target/docbkx">
+								<include name="**/*.html" />
+								<include name="**/*.pdf" />
+							</fileset>
+						</copy>
+						<copy todir="target/site/reference/html">
+							<fileset dir="src/docbkx/resources">
+								<include name="**/*.css" />
+								<include name="**/*.png" />
+								<include name="**/*.gif" />
+								<include name="**/*.jpg" />
+							</fileset>
+						</copy>
+						<!-- <move file="target/site/reference/pdf/index.pdf"
+							tofile="target/site/reference/pdf/spring-javaconfig-reference.pdf" failonerror="false" /> -->
+					</postProcess>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -198,7 +250,7 @@
 			</exclusions>
 			<optional>false</optional>
 		</dependency>
-		
+
 		<!-- optional dependencies -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -310,7 +362,7 @@
 			</exclusions>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- test-scoped dependencies -->
 		<dependency>
 			<groupId>groovy</groupId>
@@ -359,10 +411,10 @@
 						</group>
 					</groups>
 					<stylesheetfile>${basedir}/docs/stylesheet.css</stylesheetfile>
-					<overview>${basedir}/docs/overview.html</overview>		  
+					<overview>${basedir}/docs/overview.html</overview>
 					<links>
 						<link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-						<link>http://static.springframework.org/spring/docs/2.0.x/api/</link>
+						<link>http://static.springframework.org/spring/docs/2.5.x/api/</link>
 						<link>http://asm.objectweb.org/asm223/javadoc/user</link>
 						<link>http://cglib.sourceforge.net/apidocs</link>
 						<link>http://logging.apache.org/log4j/docs/api/</link>
