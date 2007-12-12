@@ -39,38 +39,12 @@
 
 	<part id="introduction">
 		<title>Introduction</title>
+
 		<chapter id="what-is-javaconfig">
 			<title>What is Spring JavaConfig?</title>
 
 			<section id="introduction">
 				<title>Introduction</title>
-
-				<!-- probably going to omit this entirely... just an idea.
-				<sidebar>
-					<sidebarinfo>
-						<title>Did you know?</title>
-					</sidebarinfo>
-					<para>Spring JavaConfig is one of many different ways to configure the Spring IoC Container.</para>
-					<para>
-						Today there are at least five known and supported approaches:
-						<orderedlist>
-							<listitem>XML - Far and away the most widely used and well-known approach</listitem>
-							<listitem>Properties - simple properties file based configuration</listitem>
-							<listitem>
-								Annotation-Driven - New with Spring 2.5, Annotation Driven Configuration allows for a
-								decentralized, autowiring-based approach to providing bean metadata.
-							</listitem>
-							<listitem>
-								Groovy - Use the Groovy programming language to provide dynamic bean definitions
-							</listitem>
-							<listitem>JavaConfig - A pure-Java, centralized configuration approach</listitem>
-						</orderedlist>
-						Why all the diversity? Because different applications have different needs. This means that
-						there's no 'one right way' to configure the Spring container, but rather trade-offs to each
-						approach. And remember, configuration approaches can be mixed and matched to arrive at an ideal
-					</para>
-				</sidebar>
-				-->
 
 				<para>
 					Spring JavaConfig is a product of the Spring community that provides a pure-Java approach to configuring
@@ -89,23 +63,11 @@
 					JavaConfig takes full advantage of Java5 language features, especially annotations and generics.
 					<emphasis>A Java5+ runtime environment is a requirement for using JavaConfig.</emphasis>
 				</para>
-
-				<!--
-				<para>
-					Spring 2.5 introduced
-					<ulink url="http://TODO">Annotation-Driven Configuration</ulink>
-					, and it's important to note the distinction between this approach and JavaConfig. The two are
-					similar in that they are both Java-based approaches to configuring the Spring IoC Container, however
-					Annotation-Driven Configuration provides a decentralized approach to providing bean definition and
-					dependency metadata, while JavaConfig focuses on a centralized model.
-				</para>
-				-->
 			</section>
 
 			<section id="motivation">
 				<title>Motivation</title>
-				<para>Motivations of JavaConfig include:</para>
-
+				<para>Motivations of JavaConfig include</para>
 				<formalpara>
 					<title>XML-free dependency injection.</title>
 					<para>
@@ -132,55 +94,25 @@
 					feedback.  JavaConfig is now a fully supported effort and is moving toward 1.0 release.
 				</para>
 			</section>
-
-			<!--
-			<sidebar>
-				<title>A bean by any other name...</title>
-				<para>
-					As mentioned in the
-					<ulink url="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html">
-						IoC chapter
-					</ulink>
-					, at the core of Spring IoC is the
-					<emphasis>bean</emphasis>
-					concept which defines the way in which an object is instantiated, assembled and managed by the
-					Spring container. XML is the most popular way of describing beans configuration, though Spring
-					itself can read from virtually any type of metadata that can be translated into Java code.
-					<ulink url="http://java.sun.com/j2se/1.5.0/docs/guide/language/annotations.html">Annotations</ulink>
-					, available in JDK 5+, constitute such a type as they allow source code components to provide
-					additional metadata which can affect the runtime semantics, making them a great alternative for XML
-					configuration.
-				</para>
-			</sidebar>
-			-->
 		</chapter>
 
 		<chapter>
 			<title>New &amp; Noteworthy in 1.0-m3</title>
 			<section>
 				<title>
-					<classname>AnnotationApplicationContext</classname> deprecated in favor of
-					<classname>JavaConfigApplicationContext</classname>
+					<classname>AnnotationApplicationContext</classname> deprecated
 				</title>
 				<para><classname>AnnotationApplicationContext</classname>
 				presented a naming conflict with Spring 2.5's Annotation-Driven Configuration. To avoid this problem
-				entirely, it has been renamed to
-				<classname>JavaConfigApplicationContext</classname>
-				. Beyond the renaming, however, <classname>JavaConfigApplicationContext</classname> has several new features worth discussing.
-				See the section below for details. Note that <classname>AnnotationApplicationContext</classname> will only remain in existence
-				for the remainder of the milestone process. Starting with the first Release Candidate,
-				<classname>AnnotationApplicationContext</classname> will be deleted from the source tree.</para>
+				entirely, it has been renamed to <classname>JavaConfigApplicationContext</classname>.
+				Beyond the renaming, <classname>JavaConfigApplicationContext</classname> has several new features worth discussing.
+				See below for details. <classname>AnnotationApplicationContext</classname> will be removed entirely in JavaConfig 1.0-RC1</para>
 			</section>
 			<section>
-				<title>
-					<classname>JavaConfigWebApplicationContext</classname>
-					(and friends)
-				</title>
+				<title>First-class support for JavaConfig in the web tier</title>
 				<para>
-					By popular demand, a
-					<interfacename>WebApplicationContext</interfacename>
-					variant of
-					<classname>JavaConfigApplicationContext</classname>
+					By popular demand, a <interfacename>WebApplicationContext</interfacename>
+					variant of <classname>JavaConfigApplicationContext</classname>
 					has been created. This allows for seamless bootstrapping of JavaConfig bean definitions within
 					web.xml. Used in conjunction with JavaConfig-specific subclasses of
 					<classname>DispatcherServlet</classname> and <classname>ContextLoaderListener</classname>, it makes for concise usage:
@@ -210,9 +142,14 @@
 					in the Core Spring Framework documentation.
 				</para>
 			</section>
+
 			<section>
-				<title>Type-safe <methodname>getBean</methodname> methods</title>
+				<title>Type-safety improvements</title>
 				<para>
+					<classname>JavaConfigApplicationContext</classname>, <classname>JavaConfigWebApplicationContext</classname>
+					and the <classname>ConfigurationSupport</classname>
+					base class now all expose type-safe <methodname>getBean</methodname>
+					methods, allowing for looking up beans by type, rather than by name.
 					<programlisting>@Configuration
 public class AppConfig {
 	@Bean
@@ -240,19 +177,14 @@ public class SimpleApp {
 					See <xref linkend="typesafe-getbean"/> for details.
 				</para>
 			</section>
+
 			<section>
 				<title>
-					Nested <classname>@Configuration</classname> classes treated as child contexts
+					Improved support for nested <classname>@Configuration</classname> classes
 				</title>
 				<para>
-					In previous milestones, nested @Configuration classes were treated as 'just another source of bean
-					definitions' and were processed inline with the rest of the beans in the declaring class.
-					Ultimately, all bean definitions ended up in the same BeanFactory/ApplicationContext.
-				</para>
-
-				<para>
-					Now and going forward, nested @Configuration classes will be processed as child ApplicationContexts.  Or, perhaps better said, declaring (outer) @Configuration classes will be processed as parent ApplicationContexts.  An example:
-					<programlisting><![CDATA[@Configuration
+					Consider the case of nested <classname>@Configuration</classname> classes:
+					<programlisting>@Configuration
 public class Outer {
 	@Bean
 	public Foo outerBean() {
@@ -266,7 +198,17 @@ public class Outer {
 			// ...
 		}
 	}
-}]]></programlisting>
+</programlisting>
+					In previous milestones, any nested <classname>@Configuration</classname> classes (such as 
+					<classname>InnerConfig</classname> above) were treated as just another source of bean
+					definitions and were processed inline with the rest of the beans in the declaring @Configuration class.
+					Ultimately, all bean definitions ended up in the same BeanFactory/ApplicationContext.
+				</para>
+
+				<para>
+					Now and going forward, nested <classname>@Configuration</classname> classes will be processed as child <classname>ApplicationContext</classname>s.
+					Perhaps better said, any declaring (outer) <classname>@Configuration</classname> classes will be processed as parent
+					<interfacename>ApplicationContexts</interfacename>.  Using the example above, 
 					Instantiate an <interfacename>ApplicationContext</interfacename> using <classname>InnerConfig</classname> as an argument
 					<programlisting><![CDATA[@Configuration
 JavaConfigApplicationContext context = new JavaConfigApplicationContext(InnerConfig.class);
@@ -275,13 +217,18 @@ context.getBean("outerBean"); // as are beans defined in the declaring OuterConf
 }]]></programlisting>
 					Note that when supplying <classname>OuterConfig</classname>
 					as the argument, <classname>InnerConfig</classname>
-					is ignored entirely. If it were to be processed, it would become a child context, and it's beans
-					would not be visible anyway.
+					is ignored entirely. If it were to be processed, it would become a child context, but its beans
+					would would be inaccessible (parent contexts have no access to child context beans).
+					<programlisting><![CDATA[@Configuration
+JavaConfigApplicationContext context = new JavaConfigApplicationContext(OuterConfig.class);
+context.getBean("outerBean"); // works fine.
+context.getBean("innerBean"); // throws NoSuchBeanDefinitionException!
+}]]></programlisting>
 				</para>
 			</section>
 			<section>
 				<title>
-					<classname>@Import</classname>
+					Modularization improvements with <classname>@Import</classname>
 				</title>
 				<para>
 					JavaConfig now has the equivalent of XML configuration's <code><![CDATA[<import/>]]></code> element.
@@ -305,7 +252,7 @@ public class AppConfig extends ConfigurationSupport {
 }
 </programlisting>
 
-					Importing multiple configurations can be done by supplying an array to the @Import annotation
+					Importing multiple configurations can be done by supplying an array of classes to the <classname>@Import</classname> annotation
 					<programlisting>@Import({ DataSourceConfig.class, TransactionConfig.class })
 @Configuration
 public class AppConfig extends ConfigurationSupport {
@@ -342,7 +289,6 @@ public class AppConfig extends ConfigurationSupport {
 					TODO: Rod?
 				</para>
 			</section>
-			<!-- TODO: add the rest of the changelist items, flesh out descriptions of each one.  This is where folks are really going to be enticed to use M3 or not... -->
 		</chapter>
 		<chapter id="quick-start">
 			<title>Quick Start</title>
@@ -355,7 +301,7 @@ public class AppConfig extends ConfigurationSupport {
 				<para>
 					Every effort has been made to reduce the number of dependencies Spring JavaConfig requires. For very
 					simple configurations, the dependencies should be limited to CGLIB, commons-logging, spring-beans,
-					spring-context, if you use more advanced features such as AOP, you'll need aspectj, spring-aop, etc.
+					and spring-context.  If you use more advanced features such as AOP, you'll need aspectj, spring-aop, etc.
 
 					Maven2 use is recommended, as it helps greatly to reduce the burden of dependencies.
 				</para>
