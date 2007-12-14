@@ -1,0 +1,7 @@
+<![CDATA[<dependencies>
+	<dependency>
+		<groupId>org.springframework.javaconfig</groupId>
+		<artifactId>spring-javaconfig</artifactId>
+		<version>1.0-m3</version>
+	</dependency>
+</dependencies>]]>

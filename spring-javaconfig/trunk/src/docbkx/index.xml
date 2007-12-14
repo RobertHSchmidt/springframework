@@ -199,7 +199,7 @@ public class Outer {
 		}
 	}
 </programlisting>
-					In previous milestones, any nested <classname>@Configuration</classname> classes (such as 
+					In previous milestones, any nested <classname>@Configuration</classname> classes (such as
 					<classname>InnerConfig</classname> above) were treated as just another source of bean
 					definitions and were processed inline with the rest of the beans in the declaring @Configuration class.
 					Ultimately, all bean definitions ended up in the same BeanFactory/ApplicationContext.
@@ -208,7 +208,7 @@ public class Outer {
 				<para>
 					Now and going forward, nested <classname>@Configuration</classname> classes will be processed as child <classname>ApplicationContext</classname>s.
 					Perhaps better said, any declaring (outer) <classname>@Configuration</classname> classes will be processed as parent
-					<interfacename>ApplicationContexts</interfacename>.  Using the example above, 
+					<interfacename>ApplicationContexts</interfacename>.  Using the example above,
 					Instantiate an <interfacename>ApplicationContext</interfacename> using <classname>InnerConfig</classname> as an argument
 					<programlisting><![CDATA[@Configuration
 JavaConfigApplicationContext context = new JavaConfigApplicationContext(InnerConfig.class);
@@ -256,27 +256,7 @@ public class AppConfig extends ConfigurationSupport {
 					<programlisting>@Import({ DataSourceConfig.class, TransactionConfig.class })
 @Configuration
 public class AppConfig extends ConfigurationSupport {
-	// look up a bean by type from one of the imported classes (recommended)
-	@Bean
-	public TransferService transferService() {
-		return new TransferServiceImpl(getBean(DataSource.class));
-	}
-
-	// OR: look up a bean by name from one of the imported classes
-	@Bean
-	public TransferService transferService() {
-		return new TransferServiceImpl((DataSource) getBean("dataSource"));
-	}
-
-	// OR: use the ExternalBean mechanism
-	@Bean
-	public TransferService transferService() {
-		return new TransferServiceImpl(dataSource());
-	}
-
-	@ExternalBean
-	abstract DataSource dataSource();
-
+	// bean definitions can reference bean definitions in DataSourceConfig or TransactionConfig.class
 }
 </programlisting>
 				</para>
@@ -393,9 +373,20 @@ public class AppConfig {
 }</programlisting>
 				</para>
 				<para>
-					<classname>@Configuration</classname>
-					can be thought of as analogous to the <code><![CDATA[<beans/>]]></code> root element in XML configuration
-					. It also provides an opportunity to override various default values for all enclosed bean
+					<classname>@Configuration</classname> can be considered the equivalent of XML's
+					<code><![CDATA[<beans/>]]></code> element. It provides an opportunity to
+					explicitly set defaults for all enclosed bean definitions.
+
+					<programlisting>
+@Configuration(defaultAutowire = Autowire.BY_TYPE, defaultLazy = Lazy.FALSE)
+public class DataSourceConfiguration
+extends ConfigurationSupport {
+}</programlisting>
+It can be considered the equivalent of <beans/> tag. It is advisable that classes with @Configuration annotation
+extend the ConfigurationSupport as it offers several utility methods.
+
+
+					It also provides an opportunity to override various default values for all enclosed bean
 					definitions.
 					<programlisting>@Configuration()
 public class AppConfig {
@@ -404,6 +395,12 @@ public class AppConfig {
 					http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-definition
 				</para>
 			</section>
+
+			<section>
+				<title>@Bean</title>
+				<para></para>
+			</section>
+
 			<section>
 				<title>@Bean</title>
 				<para></para>
@@ -486,7 +483,9 @@ public class AppConfig {
 		<title>Limitations</title>
 		<para>Compare SJC against XML / ADC, describing any functionality that is currently not supported.</para>
 		* bean names can only be legal java method names. Workaround == @Bean(aliases="/whatev, foo^bar")? Possibly
-		introduce improvement issue for adding a @Bean(name=
+		introduce improvement issue for adding a @Bean(name=...</para>
+
+		<para>no ability to do constructor autowiring (basic limitation of Java)</para>
 	</appendix>
 
 	<appendix id="roadmap">
