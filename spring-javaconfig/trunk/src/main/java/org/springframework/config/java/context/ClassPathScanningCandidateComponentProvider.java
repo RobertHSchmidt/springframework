@@ -49,9 +49,9 @@ import org.springframework.util.ClassUtils;
  * applies exclude and include filters to the resulting classes to find
  * candidates.
  * 
- * TODO: Review: Ripped this implementation off wholesale from Spring Core, such
- * that I could add the getXXX method. Work with Juergen to see about adding
- * this in in a future release.
+ * <p/>TODO: Review: Ripped this implementation off wholesale from Spring Core,
+ * such that I could add the getXXX method. Work with Juergen to see about
+ * adding this in in a future release.
  * 
  * <p>
  * This implementation is based on Spring's

@@ -17,7 +17,10 @@ import org.springframework.util.ClassUtils;
 
 /**
  * TODO: Review: subclassed CPSCCP, but it didn't have sufficient visibility on
- * certain fields. I changed three fields from private->protected...
+ * certain fields. I changed three fields from private->protected, see my local
+ * copy of CPSCCP
+ * 
+ * <p/>TODO: Rename this class. ClassPathScanningConfigurationProvider?
  * 
  * @author Chris Beams
  */
