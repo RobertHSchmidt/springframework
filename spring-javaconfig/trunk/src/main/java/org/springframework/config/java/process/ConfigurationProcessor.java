@@ -528,12 +528,6 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		// tag the bean definition
 		rbd.setAttribute(ClassUtils.JAVA_CONFIG_PKG, Boolean.TRUE);
 
-		if (beanCreationMethod.getParameterTypes().length > 0)
-			rbd.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_CONSTRUCTOR);
-
-		// TODO: rbd.addQualifier(...) for any @Qualifier annotations on the
-		// factory method
-
 		Configuration config = configurerClass.getAnnotation(Configuration.class);
 
 		ProcessUtils.copyAttributes(beanName, beanAnnotation, config, rbd, beanFactory);
