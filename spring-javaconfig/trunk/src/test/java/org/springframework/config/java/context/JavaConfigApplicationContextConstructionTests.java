@@ -69,10 +69,13 @@ public final class JavaConfigApplicationContextConstructionTests {
 		assertThat(ctx.getBeanDefinitionCount(), equalTo(5));
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void testOpenEndedConstructionWithoutSettingClassesOrPackagesThrowsException() {
+	// strange to think someone would want to do this, but it's legal
+	// nonetheless
+	@Test
+	public void testOpenEndedConstructionWithoutSettingClassesOrPackagesIsLegal() {
 		ctx = new JavaConfigApplicationContext();
 		ctx.refresh();
+		assertThat(ctx.getBeanDefinitionCount(), equalTo(0));
 	}
 
 	@Test

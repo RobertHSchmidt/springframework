@@ -32,9 +32,12 @@ public final class ArrayUtils {
 	 * ordering
 	 * 
 	 * @param array - array to reverse
-	 * @return reverse of <var>array</var>
+	 * @return reverse of <var>array</var>, null if <var>array</var> is null.
 	 */
 	public static Class<?>[] reverse(Class<?>[] array) {
+		if (array == null)
+			return array;
+
 		int size = array.length;
 		Class<?>[] reversed = new Class<?>[size];
 

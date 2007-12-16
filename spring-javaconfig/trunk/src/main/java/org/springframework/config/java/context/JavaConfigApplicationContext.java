@@ -15,24 +15,22 @@
  */
 package org.springframework.config.java.context;
 
-import static org.springframework.util.ObjectUtils.isEmpty;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.TypeSafeBeanFactory;
 import org.springframework.beans.factory.TypeSafeBeanFactoryUtils;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.util.ArrayUtils;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
-import org.springframework.util.Assert;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 /**
  * <p/>Application context that looks for classes annotated with the
@@ -188,9 +186,20 @@ import org.springframework.util.Assert;
  */
 public class JavaConfigApplicationContext extends AbstractRefreshableApplicationContext implements TypeSafeBeanFactory {
 
-	protected final List<Class<?>> configClasses = new ArrayList<Class<?>>();
+	private Class<?>[] configClasses;
 
-	protected boolean closedForConfiguration = false;
+	private String[] basePackages;
+
+	private boolean closedForConfiguration = false;
+
+	private final ClassPathScanningCandidateComponentProvider scanner;
+
+	{
+		this.scanner = new ClassPathScanningCandidateComponentProvider(false);
+		this.scanner.addIncludeFilter(new AnnotationTypeFilter(Configuration.class));
+		this.scanner.addExcludeFilter(new NestedClassTypeFilter());
+		this.scanner.setResourceLoader(this);
+	}
 
 	/**
 	 * requires calling refresh()
@@ -232,8 +241,6 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		this(null, classes, basePackages);
 	}
 
-	private ConfigurationScanner scanner = new ConfigurationScanner(this);
-
 	/**
 	 * TODO: Document
 	 * 
@@ -252,17 +259,8 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		// that if it is encountered explicitly in classes, that that position
 		// should be preserved.
 
-		ArrayList<Class<?>> allClasses = new ArrayList<Class<?>>();
-
-		if (!isEmpty(classes))
-			allClasses.addAll(Arrays.asList(classes));
-
-		if (!isEmpty(basePackages))
-			for (String basePackage : basePackages)
-				allClasses.addAll(scanner.scanPackage(basePackage));
-
-		if (!allClasses.isEmpty())
-			setConfigClasses(allClasses.toArray(new Class<?>[] {}));
+		setConfigClasses(classes);
+		setBasePackages(basePackages);
 
 		refresh();
 	}
@@ -286,10 +284,11 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	}
 
 	public void setConfigClasses(Class<?>... classes) {
-		Assert.notEmpty(classes, "must supply at least one configuration class");
 		if (closedForConfiguration)
 			throw new IllegalStateException("setConfigClasses() must be called before refresh()");
-		this.configClasses.addAll(Arrays.asList(ArrayUtils.reverse(classes)));
+
+		// TODO: document why the reversal is necessary
+		this.configClasses = ArrayUtils.reverse(classes);
 	}
 
 	/**
@@ -297,15 +296,10 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	 * conventions as the component scanning introduced in Spring 2.5.
 	 */
 	public void setBasePackages(String... basePackages) {
-		Assert.notEmpty(basePackages, "must supply at least one base package");
 		if (closedForConfiguration)
 			throw new IllegalStateException("setBasePackages() must be called before refresh()");
 
-		ArrayList<Class<?>> allClasses = new ArrayList<Class<?>>();
-		for (String basePackage : basePackages)
-			allClasses.addAll(scanner.scanPackage(basePackage));
-		Collections.reverse(allClasses);
-		this.configClasses.addAll(allClasses);
+		this.basePackages = basePackages;
 	}
 
 	@Override
@@ -315,26 +309,34 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		super.setParent(context);
 	}
 
+	protected String[] getBasePackages() {
+		return basePackages;
+	}
+
+	protected Class<?>[] getConfigClasses() {
+		return configClasses;
+	}
+
 	@Override
 	protected void prepareRefresh() {
-		if (configClasses.isEmpty())
-			throw new IllegalStateException("must supply at least one class or base package");
-
 		processAnyOuterClasses();
 
 		registerDefaultPostProcessors();
+
 	}
 
 	private void processAnyOuterClasses() {
 		Class<?> outerConfig = null;
-		for (Class<?> configClass : configClasses) {
-			Class<?> candidate = configClass.getDeclaringClass();
-			if (candidate != null && ClassUtils.isConfigurationClass(candidate)) {
-				if (outerConfig != null) {
-					// TODO: throw a better exception
-					throw new RuntimeException("cannot specify more than one inner configuration class");
+		if (configClasses != null && configClasses.length > 0) {
+			for (Class<?> configClass : configClasses) {
+				Class<?> candidate = configClass.getDeclaringClass();
+				if (candidate != null && ClassUtils.isConfigurationClass(candidate)) {
+					if (outerConfig != null) {
+						// TODO: throw a better exception
+						throw new RuntimeException("cannot specify more than one inner configuration class");
+					}
+					outerConfig = candidate;
 				}
-				outerConfig = candidate;
 			}
 		}
 
@@ -348,10 +350,23 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	}
 
 	@Override
-	protected final void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {
-		for (Class<?> cz : configClasses)
-			if (ClassUtils.isConfigurationClass(cz))
-				beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
+	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {
+		if (configClasses != null && configClasses.length > 0) {
+			for (Class<?> cz : configClasses) {
+				if (ClassUtils.isConfigurationClass(cz)) {
+					beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
+				}
+			}
+		}
+
+		if (basePackages != null && basePackages.length > 0) {
+			for (String location : basePackages) {
+				Set<BeanDefinition> beandefs = scanner.findCandidateComponents(location);
+				for (BeanDefinition bd : beandefs) {
+					beanFactory.registerBeanDefinition(bd.getBeanClassName(), bd);
+				}
+			}
+		}
 	}
 
 	/**
