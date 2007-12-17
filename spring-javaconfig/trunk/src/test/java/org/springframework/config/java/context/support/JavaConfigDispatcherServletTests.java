@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.context.web;
+package org.springframework.config.java.context.support;
 
 import static org.junit.Assert.assertEquals;
 
@@ -21,6 +21,7 @@ import javax.servlet.ServletException;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.config.java.context.JavaConfigWebApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;

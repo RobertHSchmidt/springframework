@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * ApplicationContext implementations and utilities for use in web applications.
+ * Supporting infrastructure for use with {@link JavaConfigApplicationContext}s.
  */
-package org.springframework.config.java.context.web;
+package org.springframework.config.java.context.support;
 

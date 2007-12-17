@@ -27,7 +27,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * 
  * @author Chris Beams
  */
-public class JavaConfigBeanFactoryPostProcessorRegistry {
+class JavaConfigBeanFactoryPostProcessorRegistry {
 
 	public Collection<BeanFactoryPostProcessor> postProcessors = new ArrayList<BeanFactoryPostProcessor>();
 

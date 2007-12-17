@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 /**
- * This package contains ApplicationContext implementations for Java configurations.
- *
- * <p/>Provides basic support for reading configuration from class bytecode and annotation based
- * implementations.
- *
- * <p/>TODO: Document
+ * {@link org.springframework.context.ApplicationContext} implementations for use in Java configurations.
  */
 package org.springframework.config.java.context;
 
