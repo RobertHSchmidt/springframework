@@ -190,7 +190,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	private boolean closedForConfiguration = false;
 
-	private final ClassPathScanningCandidateComponentProvider scanner = new ScanningConfigurationProviderFactory()
+	private final ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningConfigurationProviderFactory()
 			.getProvider(this);
 
 	/**
