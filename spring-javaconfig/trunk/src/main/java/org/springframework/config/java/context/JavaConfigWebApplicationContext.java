@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.context.web;
+package org.springframework.config.java.context;
 
 import static java.lang.String.format;
 
@@ -28,9 +28,7 @@ import org.springframework.beans.factory.TypeSafeBeanFactoryUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.context.JavaConfigApplicationContext;
-import org.springframework.config.java.context.JavaConfigBeanFactoryPostProcessorRegistry;
-import org.springframework.config.java.context.ClassPathScanningConfigurationProviderFactory;
+import org.springframework.config.java.annotation.ClassPathScanningConfigurationProviderFactory;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.util.Assert;

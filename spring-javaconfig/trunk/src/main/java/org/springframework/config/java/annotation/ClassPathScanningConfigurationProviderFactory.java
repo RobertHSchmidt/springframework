@@ -1,6 +1,5 @@
-package org.springframework.config.java.context;
+package org.springframework.config.java.annotation;
 
-import org.springframework.config.java.annotation.Configuration;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
@@ -35,9 +34,9 @@ public class ClassPathScanningConfigurationProviderFactory {
 	 * This implementation currently violates that, because it will only select
 	 * those classes that are annotated at the class level with &#Configuration.
 	 * Note that the contract is still respected when instantiating
-	 * {@link JavaConfigApplicationContext} directly. Should probably come back
-	 * and address this inconsistency just by making a note in the docs about
-	 * it.
+	 * {@link org.springframework.config.java.context.JavaConfigApplicationContext}
+	 * directly. Should probably come back and address this inconsistency just
+	 * by making a note in the docs about it.
 	 * 
 	 * @param resourceLoader
 	 * @return new {@link ClassPathScanningCandidateComponentProvider}

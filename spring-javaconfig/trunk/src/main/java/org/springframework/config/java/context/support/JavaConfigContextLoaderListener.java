@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.context.web;
+package org.springframework.config.java.context.support;
 
 import javax.servlet.ServletContext;
 
+import org.springframework.config.java.context.JavaConfigWebApplicationContext;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.ContextLoaderListener;

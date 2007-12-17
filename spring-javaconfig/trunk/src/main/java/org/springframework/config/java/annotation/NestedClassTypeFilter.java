@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.context;
+package org.springframework.config.java.annotation;
 
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
@@ -24,7 +24,7 @@ import org.springframework.core.type.filter.TypeFilter;
  * 
  * @author Chris Beams
  */
-public class NestedClassTypeFilter implements TypeFilter {
+class NestedClassTypeFilter implements TypeFilter {
 	public boolean match(MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory) {
 		// TODO: interim solution - final implementation is pending a change to
 		// Spring Core. See SPR-4263
