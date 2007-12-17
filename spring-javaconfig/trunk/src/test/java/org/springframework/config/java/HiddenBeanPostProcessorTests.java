@@ -71,7 +71,6 @@ public class HiddenBeanPostProcessorTests {
 
 		@Override
 		public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-			// System.out.println(beanName + "=" + bean.getClass());
 			if (beansSeen.containsKey(beanName)) {
 				throw new IllegalStateException("Cannot process a bean twice");
 			}
@@ -107,7 +106,6 @@ public class HiddenBeanPostProcessorTests {
 		public void postProcessBeanFactory(ConfigurableListableBeanFactory clbf) throws BeansException {
 			for (String beanName : clbf.getBeanDefinitionNames()) {
 
-				// System.out.println(beanName + "=" + bean.getClass());
 				if (beansSeen.contains(beanName)) {
 					throw new IllegalStateException("Cannot process a bean twice");
 				}

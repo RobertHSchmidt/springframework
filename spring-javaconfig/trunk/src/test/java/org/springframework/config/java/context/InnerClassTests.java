@@ -181,7 +181,6 @@ public class InnerClassTests {
 		JavaConfigApplicationContext three = new JavaConfigApplicationContext(Three.class);
 
 		two.setConfigClasses(Two.class);
-		out.println(two.getParent());
 		two.setParent(three);
 
 		two.refresh();
@@ -191,8 +190,6 @@ public class InnerClassTests {
 	@Test
 	public void foo() {
 		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Innermost.class);
-		for (String name : BeanFactoryUtils.beanNamesIncludingAncestors(ctx))
-			out.println("NAME: " + name);
 		int actual = BeanFactoryUtils.countBeansIncludingAncestors(ctx);
 		assertTrue("expected actual > 5, got " + actual, actual > 5);
 	}

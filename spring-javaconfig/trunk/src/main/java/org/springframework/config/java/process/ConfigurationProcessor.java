@@ -157,7 +157,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 					this.owningApplicationContext) {
 				@Override
 				public void publishEvent(ApplicationEvent event) {
-					System.out.println("suppressed " + event);
+					log.debug("suppressed " + event);
 				}
 			};
 

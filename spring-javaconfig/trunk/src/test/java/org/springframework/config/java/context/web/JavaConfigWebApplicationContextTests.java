@@ -57,24 +57,6 @@ public class JavaConfigWebApplicationContextTests {
 	}
 
 	@Test
-	// (expected = IllegalArgumentException.class)
-	// unfortunately, we can't expect to throw an exception on a bogus class,
-	// because the parsing
-	// algorithm assumes that something that is not a class must be a base
-	// package pattern
-	// TODO: revisit this - can we make a clear distinction between classes and
-	// packages? would be
-	// nice to be able to expect ClassNotFoundException /
-	// IllegalArgumentException when a user typos
-	// a class. suggestion: check location for '/' or '*' - this guarantees that
-	// it's intended to be
-	// a base package. If there are no wildcards provided, then try to
-	// instantiate a package via
-	// Package.getPackage(location); if that returns null, then try
-	// Class.forName(location). If that
-	// throws ClassNotFoundException, then throw new
-	// IllegalArgumentException("location could not be
-	// resolved to a class or package on the classpath");
 	public void testSetConfigLocationsWithArrayContainingBogusClassName() {
 		ctx.setConfigLocations(new String[] { "com.foo.NotExist" });
 		ctx.refresh();

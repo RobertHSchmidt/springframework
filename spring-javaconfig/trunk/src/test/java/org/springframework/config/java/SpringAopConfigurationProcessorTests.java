@@ -59,8 +59,6 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 		assertNotSame(advised1, advised2);
 		Object target2 = ((Advised) advised2).getTargetSource().getTarget();
 		assertNotSame(target1, target2);
-		// System.out.println("t1=" + System.identityHashCode(target1) + "; t2="
-		// + System.identityHashCode(target2));
 
 		assertEquals("advised", bf.getBeanNamesForType(TestBean.class)[0]);
 
@@ -120,8 +118,6 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 		public MethodBeforeAdvice doesntMatter() {
 			return new MethodBeforeAdvice() {
 				public void before(Method method, Object[] args, Object target) throws Throwable {
-					// System.out.println("Advised on Targetid=" +
-					// System.identityHashCode(target));
 					Integer count = counts.get(target);
 					if (count == null) {
 						count = 0;

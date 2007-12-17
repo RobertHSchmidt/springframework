@@ -70,8 +70,6 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 		assertNotSame(advised1, advised2);
 		Object target2 = ((Advised) advised2).getTargetSource().getTarget();
 		assertNotSame(target1, target2);
-		// System.out.println("t1=" + System.identityHashCode(target1) + "; t2="
-		// + System.identityHashCode(target2));
 
 		assertEquals("advised", bf.getBeanNamesForType(TestBean.class)[0]);
 
@@ -255,7 +253,6 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	public static class InvalidNoAspectAnnotation {
 		@Around("execution(* *.getName())")
 		public Object invalid() throws Throwable {
-			// System.out.println("Invoking around advice method");
 			return "around";
 		}
 	}
@@ -300,9 +297,6 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 
 		@Before("execution(* *.getSpouse())")
 		public void doesntMatter() {
-			// System.out.println("this is the advice method body");
-			// System.out.println("ADviced on Targetid=" +
-			// System.identityHashCode(target));
 			// Integer count = counts.get(target);
 			// if (count == null) {
 			// count = 0;
@@ -321,9 +315,6 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 
 		@Before("execution(* *.getSpouse())")
 		public void doesntMatter() {
-			// System.out.println("this is the advice method body");
-			// System.out.println("ADviced on Targetid=" +
-			// System.identityHashCode(target));
 			// Integer count = counts.get(target);
 			// if (count == null) {
 			// count = 0;

@@ -15,10 +15,14 @@
  */
 package org.springframework.config.java.context.web;
 
+import static java.lang.String.format;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.TypeSafeBeanFactory;
 import org.springframework.beans.factory.TypeSafeBeanFactoryUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -41,6 +45,8 @@ import org.springframework.web.context.support.AbstractRefreshableWebApplication
  */
 public class JavaConfigWebApplicationContext extends AbstractRefreshableWebApplicationContext implements
 		TypeSafeBeanFactory {
+
+	private Log log = LogFactory.getLog(getClass());
 
 	private final ClassPathScanningCandidateComponentProvider scanner = new ScanningConfigurationProviderFactory()
 			.getProvider(this);
@@ -66,8 +72,9 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 					configClasses.add(cz);
 				}
 				else {
-					// TODO: logger
-					System.out.println(cz + " is not a configuration class");
+					String message = "[%s] is not a valid configuration class. "
+							+ "Perhaps you forgot to annotate your bean creation methods with @Bean?";
+					log.warn(format(message, cz));
 				}
 			}
 			catch (ClassNotFoundException ex) {
@@ -117,8 +124,10 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 				}
 			}
 			else {
-				// TODO: logger
-				System.out.println("no config classes found within " + basePackage);
+				String message = "[%s] is either specifying a configuration class that does not exist "
+						+ "or is a base package pattern that does not match any configuration classes. "
+						+ "No bean definitions were found as a result of processing this configLocation";
+				log.warn(format(message, basePackage));
 			}
 		}
 	}

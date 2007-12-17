@@ -68,7 +68,6 @@ public class ExternalBeanDependenciesTests extends TestCase {
 
 		@Bean
 		public TestBean spouseB() {
-			// System.out.println("creating spouseB ");
 			return new TestBean("spouseB");
 		}
 

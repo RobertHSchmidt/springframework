@@ -73,8 +73,6 @@ public class ConfigurationPostProcessorTests {
 		ITestBean tb2 = (ITestBean) bf.getBean("tom");
 		assertSame(tb, tb2);
 
-		// System.out.println(((Advised) tb).toProxyConfigString());
-
 		ITestBean tomsBecky = tb.getSpouse();
 		ITestBean factorysBecky = (ITestBean) bf.getBean("becky");
 		assertSame(tomsBecky, factorysBecky);
@@ -146,8 +144,6 @@ public class ConfigurationPostProcessorTests {
 		// assertEquals("becky", tb.getSpouse().getName());
 
 		assertNotSame(tb, tb2);
-
-		// System.out.println(((Advised) tb).toProxyConfigString());
 
 		// ITestBean tomsBecky = tb.getSpouse();
 		// ITestBean factorysBecky = (ITestBean) bf.getBean("becky");
@@ -236,15 +232,6 @@ public class ConfigurationPostProcessorTests {
 	@Aspect
 	static class AdvisedBaseConfiguration extends BaseConfiguration {
 
-		// @Beans
-		// public Map getBeans() {
-		// // TODO
-		// factory method is the map method, arg is keys
-		// but need to know what the keys are...
-		// could be static, but would ideally like to be
-		// based on instance config values
-		// }
-
 		@Bean()
 		@SpringAdvice("execution(* absquatulate())")
 		protected Advice debugAdvice() {
@@ -259,7 +246,7 @@ public class ConfigurationPostProcessorTests {
 		public Advice counter() {
 			return new MethodBeforeAdvice() {
 				public void before(Method method, Object[] args, Object target) throws Throwable {
-					System.out.println("Before " + method);
+					// do nothing
 				}
 			};
 		}
@@ -555,14 +542,10 @@ public class ConfigurationPostProcessorTests {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/localAndExternalAspects.xml");
 
-		System.out.println(Arrays.toString(bf.getBeanDefinitionNames()));
 		Object bean = bf.getBean("advisedByConfig");
 		Advised outerProxy = (Advised) bean;
 
 		assertTrue(AopUtils.isAopProxy(outerProxy));
-		System.out.println(outerProxy.toProxyConfigString());
-		// Object innerProxy = outerProxy.getTargetSource().getTarget();
-		// System.out.println(innerProxy);
 		Advised innerProxy = (Advised) outerProxy.getTargetSource().getTarget();
 		assertTrue(bean instanceof AdvisedByConfig);
 		assertTrue(innerProxy instanceof AdvisedByConfig);
@@ -570,7 +553,6 @@ public class ConfigurationPostProcessorTests {
 		assertEquals(0, CountAspect.counter);
 		assertEquals(0, doublyAdvised.intValue());
 		assertEquals(1, doublyAdvised.intValue());
-		System.out.println(CountAspect.counter);
 		assertEquals(2, CountAspect.counter);
 	}
 
