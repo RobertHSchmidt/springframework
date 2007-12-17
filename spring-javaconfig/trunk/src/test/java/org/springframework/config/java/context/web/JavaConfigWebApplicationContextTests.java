@@ -20,6 +20,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.complex.ComplexConfiguration;
@@ -79,6 +80,32 @@ public class JavaConfigWebApplicationContextTests {
 		ctx.refresh();
 
 		assertThat(ctx.getBeanDefinitionCount(), equalTo(0));
+	}
+
+	// this should process the inner class and the outer class, creating a
+	// parent->child relationship
+	@Test
+	public void testSetConfigLocationsWithArrayContainingInnerClassName() {
+		String innerClass = "org.springframework.config.java.complex.ComplexConfiguration$DeepConfiguration";
+		ctx.setConfigLocations(new String[] { innerClass });
+		ctx.refresh();
+
+		// deepConfigurationBean is defined in DeepConfiguration
+		ctx.getBean("deepConfigurationBean");
+
+		// topLevelBean is defined in ComplexConfiguration
+		ctx.getBean("topLevelBean");
+
+		boolean threw = false;
+		try {
+			// myBean is defined in a parallel nested class - shouldn't be
+			// picked up.
+			ctx.getBean("myBean");
+		}
+		catch (NoSuchBeanDefinitionException ex) {
+			threw = true;
+		}
+		assertThat(threw, equalTo(true));
 	}
 
 	/**
