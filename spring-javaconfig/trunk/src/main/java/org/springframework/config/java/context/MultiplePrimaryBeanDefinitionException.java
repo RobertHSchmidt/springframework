@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.beans.factory;
+package org.springframework.config.java.context;
 
 import static java.lang.String.format;
 
 import java.util.Collection;
+
+import org.springframework.beans.factory.BeanFactory;
 
 /**
  * Exception representing an illegal configuration where more than one bean of
@@ -30,7 +32,7 @@ import java.util.Collection;
  * @author Chris Beams
  */
 @SuppressWarnings("serial")
-public class MultiplePrimaryBeanDefinitionException extends AmbiguousBeanLookupException {
+class MultiplePrimaryBeanDefinitionException extends AmbiguousBeanLookupException {
 
 	/**
 	 * Create a new instance.

@@ -20,7 +20,6 @@ import static org.junit.Assert.*;
 
 import java.awt.Point;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 import org.aopalliance.aop.Advice;
 import org.aspectj.lang.ProceedingJoinPoint;

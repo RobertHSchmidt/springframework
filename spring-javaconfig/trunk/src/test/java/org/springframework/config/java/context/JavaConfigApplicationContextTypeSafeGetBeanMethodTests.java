@@ -20,9 +20,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.springframework.beans.TestBean;
-import org.springframework.beans.factory.AmbiguousBeanLookupException;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
-import org.springframework.beans.factory.MultiplePrimaryBeanDefinitionException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;

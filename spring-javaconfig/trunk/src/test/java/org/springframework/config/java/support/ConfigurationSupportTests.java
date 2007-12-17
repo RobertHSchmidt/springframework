@@ -155,7 +155,8 @@ public class ConfigurationSupportTests {
 	public static class Config3 extends ConfigurationSupport {
 		@Bean
 		public TestBean foo() {
-			return new TestBean(getBean(String.class));
+			// return new TestBean(getBean(String.class));
+			return new TestBean((String) getBean("name"));
 		}
 	}
 

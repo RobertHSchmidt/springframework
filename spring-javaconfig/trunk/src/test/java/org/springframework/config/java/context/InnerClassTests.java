@@ -15,7 +15,6 @@
  */
 package org.springframework.config.java.context;
 
-import static java.lang.System.out;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.*;
 
