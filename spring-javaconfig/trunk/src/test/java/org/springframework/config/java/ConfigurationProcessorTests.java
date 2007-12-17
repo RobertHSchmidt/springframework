@@ -917,7 +917,7 @@ public class ConfigurationProcessorTests extends TestCase {
 
 		@Before("execution(* getWife())")
 		protected void log() {
-			System.out.println();
+			// nothing
 		}
 	}
 

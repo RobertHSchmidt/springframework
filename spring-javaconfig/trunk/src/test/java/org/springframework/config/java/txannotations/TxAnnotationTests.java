@@ -59,9 +59,6 @@ public class TxAnnotationTests extends TestCase {
 
 		@Bean
 		public DataSource transactionalDataSource() {
-			// System.out.println("### Datasource being initialized ("
-			// + genericDataSource + ", " + username + "," + password
-			// + ")");
 
 			UserCredentialsDataSourceAdapter adapter = new UserCredentialsDataSourceAdapter();
 			adapter.setTargetDataSource(genericDataSource);
@@ -73,8 +70,6 @@ public class TxAnnotationTests extends TestCase {
 
 		@Bean
 		public Object myApplicationBean() {
-			// System.out.println("### Creating application bean");
-			// requires transaction manager...
 			transactionalDataSource();
 
 			return new Object();
