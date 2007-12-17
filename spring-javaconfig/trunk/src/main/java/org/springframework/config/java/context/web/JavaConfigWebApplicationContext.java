@@ -30,7 +30,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.context.JavaConfigBeanFactoryPostProcessorRegistry;
-import org.springframework.config.java.context.ScanningConfigurationProviderFactory;
+import org.springframework.config.java.context.ClassPathScanningConfigurationProviderFactory;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.util.Assert;
@@ -48,7 +48,7 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 
 	private Log log = LogFactory.getLog(getClass());
 
-	private final ClassPathScanningCandidateComponentProvider scanner = new ScanningConfigurationProviderFactory()
+	private final ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningConfigurationProviderFactory()
 			.getProvider(this);
 
 	private ArrayList<Class<?>> configClasses = new ArrayList<Class<?>>();
