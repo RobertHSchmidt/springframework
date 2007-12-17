@@ -24,13 +24,11 @@ import org.springframework.beans.factory.TypeSafeBeanFactoryUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.util.ArrayUtils;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
-import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 /**
  * <p/>Application context that looks for classes annotated with the
@@ -192,14 +190,8 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	private boolean closedForConfiguration = false;
 
-	private final ClassPathScanningCandidateComponentProvider scanner;
-
-	{
-		this.scanner = new ClassPathScanningCandidateComponentProvider(false);
-		this.scanner.addIncludeFilter(new AnnotationTypeFilter(Configuration.class));
-		this.scanner.addExcludeFilter(new NestedClassTypeFilter());
-		this.scanner.setResourceLoader(this);
-	}
+	private final ClassPathScanningCandidateComponentProvider scanner = new ScanningConfigurationProviderFactory()
+			.getProvider(this);
 
 	/**
 	 * requires calling refresh()
@@ -265,22 +257,11 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		refresh();
 	}
 
-	/*
-	 * XXX: Review
-	 * @see org.springframework.beans.factory.TypeSafeBeanFactory#getBean(java.lang.Class)
-	 */
-	public <T> T getBean(Class<T> type) {
-		return TypeSafeBeanFactoryUtils.getBean(this.getBeanFactory(), type);
-	}
-
-	/*
-	 * XXX: Review
-	 * @see org.springframework.beans.factory.TypeSafeBeanFactory#getBean(Class,
-	 * String)
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T getBean(Class<T> type, String beanName) {
-		return TypeSafeBeanFactoryUtils.getBean(this.getBeanFactory(), type, beanName);
+	@Override
+	protected void prepareRefresh() {
+		super.prepareRefresh();
+		processAnyOuterClasses();
+		registerDefaultPostProcessors();
 	}
 
 	public void setConfigClasses(Class<?>... classes) {
@@ -315,14 +296,6 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	protected Class<?>[] getConfigClasses() {
 		return configClasses;
-	}
-
-	@Override
-	protected void prepareRefresh() {
-		processAnyOuterClasses();
-
-		registerDefaultPostProcessors();
-
 	}
 
 	private void processAnyOuterClasses() {
@@ -376,6 +349,14 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	 */
 	protected void registerDefaultPostProcessors() {
 		new JavaConfigBeanFactoryPostProcessorRegistry().addAllPostProcessors(this);
+	}
+
+	public <T> T getBean(Class<T> type) {
+		return TypeSafeBeanFactoryUtils.getBean(this.getBeanFactory(), type);
+	}
+
+	public <T> T getBean(Class<T> type, String beanName) {
+		return TypeSafeBeanFactoryUtils.getBean(this.getBeanFactory(), type, beanName);
 	}
 
 }

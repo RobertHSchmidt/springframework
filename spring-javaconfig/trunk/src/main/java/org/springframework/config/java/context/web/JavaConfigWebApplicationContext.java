@@ -17,50 +17,82 @@ package org.springframework.config.java.context.web;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.TypeSafeBeanFactory;
 import org.springframework.beans.factory.TypeSafeBeanFactoryUtils;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.context.ConfigurationScanner;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.context.JavaConfigBeanFactoryPostProcessorRegistry;
+import org.springframework.config.java.context.ScanningConfigurationProviderFactory;
 import org.springframework.config.java.util.ClassUtils;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.util.Assert;
 import org.springframework.web.context.support.AbstractRefreshableWebApplicationContext;
 
 /**
- * Fashioned after {@link JavaConfigApplicationContext}, but for use in the web
- * tier.
+ * Fashioned after {@link JavaConfigApplicationContext}
  * 
- * <p/>TODO: Document
+ * <p/>TODO: Finish document
  * 
  * @author Chris Beams
  */
 public class JavaConfigWebApplicationContext extends AbstractRefreshableWebApplicationContext implements
 		TypeSafeBeanFactory {
 
-	protected final List<Class<?>> configClasses = new ArrayList<Class<?>>();
+	private final ClassPathScanningCandidateComponentProvider scanner = new ScanningConfigurationProviderFactory()
+			.getProvider(this);
 
-	protected ConfigurationScanner configurationScanner = new ConfigurationScanner(this);
+	private ArrayList<Class<?>> configClasses = new ArrayList<Class<?>>();
+
+	private ArrayList<String> basePackages = new ArrayList<String>();
 
 	@Override
 	protected void prepareRefresh() {
 		super.prepareRefresh();
-		registerDefaultPostProcessors();
 		initConfigLocations();
+		processAnyOuterClasses();
+		registerDefaultPostProcessors();
 	}
 
-	@Override
-	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException {
-		for (Class<?> cz : configClasses)
-			if (ClassUtils.isConfigurationClass(cz))
-				beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
+	protected void initConfigLocations() {
+		Assert.notEmpty(getConfigLocations(), "configLocations property has not been set");
+		for (String location : getConfigLocations()) {
+			try {
+				Class<?> cz = Class.forName(location);
+				if (ClassUtils.isConfigurationClass(cz)) {
+					configClasses.add(cz);
+				}
+				else {
+					// TODO: logger
+					System.out.println(cz + " is not a configuration class");
+				}
+			}
+			catch (ClassNotFoundException ex) {
+				basePackages.add(location);
+			}
+		}
 	}
 
-	protected void registerDefaultPostProcessors() {
-		new JavaConfigBeanFactoryPostProcessorRegistry().addAllPostProcessors(this);
+	private void processAnyOuterClasses() {
+		Class<?> outerConfig = null;
+		if (configClasses != null && configClasses.size() > 0) {
+			for (Class<?> configClass : configClasses) {
+				Class<?> candidate = configClass.getDeclaringClass();
+				if (candidate != null && ClassUtils.isConfigurationClass(candidate)) {
+					if (outerConfig != null) {
+						// TODO: throw a better exception
+						throw new RuntimeException("cannot specify more than one inner configuration class");
+					}
+					outerConfig = candidate;
+				}
+			}
+		}
+
+		if (outerConfig != null)
+			this.setParent(new JavaConfigApplicationContext(outerConfig));
 	}
 
 	/**
@@ -71,18 +103,33 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 	 * array is null, contains any null elements, or contains names of any
 	 * classes that cannot be found
 	 */
-	protected void initConfigLocations() {
-		Assert.notEmpty(getConfigLocations(), "configLocations property has not been set");
+	@Override
+	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException {
+		for (Class<?> cz : configClasses) {
+			beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
+		}
 
-		for (String configLocation : getConfigLocations()) {
-			try {
-				configClasses.add(Class.forName(configLocation));
+		for (String basePackage : basePackages) {
+			Set<BeanDefinition> beandefs = scanner.findCandidateComponents(basePackage);
+			if (beandefs.size() > 0) {
+				for (BeanDefinition bd : beandefs) {
+					beanFactory.registerBeanDefinition(bd.getBeanClassName(), bd);
+				}
 			}
-			catch (ClassNotFoundException ex) {
-				// if it's not a valid class, assume it's a base package
-				configClasses.addAll(configurationScanner.scanPackage(configLocation));
+			else {
+				// TODO: logger
+				System.out.println("no config classes found within " + basePackage);
 			}
 		}
+	}
+
+	/**
+	 * Register the default post processors used for parsing Spring classes.
+	 * 
+	 * @see JavaConfigBeanFactoryPostProcessorRegistry
+	 */
+	protected void registerDefaultPostProcessors() {
+		new JavaConfigBeanFactoryPostProcessorRegistry().addAllPostProcessors(this);
 	}
 
 	public <T> T getBean(Class<T> type) {

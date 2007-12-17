@@ -27,6 +27,7 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.process.ConfigurationPostProcessor;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
