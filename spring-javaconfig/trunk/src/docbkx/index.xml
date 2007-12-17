@@ -501,6 +501,12 @@ public class AppConfig {
 
     <para>no ability to do constructor autowiring (basic limitation of
     Java)</para>
+
+    <para>Nesting @Configuration classes. When nesting @Configuration classes
+    (either inside one another, or inside non-@Configuration classes)
+    @Configuration classes cannot be defined as local inner classes (classes
+    defined inside methods), they must be static and non-private. This is due
+    to CGLIB limitations.</para>
   </appendix>
 
   <appendix id="roadmap">
