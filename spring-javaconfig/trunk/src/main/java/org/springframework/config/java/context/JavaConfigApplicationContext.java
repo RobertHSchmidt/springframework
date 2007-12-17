@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.util.Set;
 
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.TypeSafeBeanFactory;
-import org.springframework.beans.factory.TypeSafeBeanFactoryUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;

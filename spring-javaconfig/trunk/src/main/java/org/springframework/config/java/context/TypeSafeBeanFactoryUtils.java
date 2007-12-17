@@ -1,12 +1,15 @@
-package org.springframework.beans.factory;
+package org.springframework.config.java.context;
 
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 
-public final class TypeSafeBeanFactoryUtils {
+final class TypeSafeBeanFactoryUtils {
 
 	@SuppressWarnings("unchecked")
 	public static <T> T getBean(ListableBeanFactory beanFactory, Class<T> type) {

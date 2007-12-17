@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.beans.factory;
+package org.springframework.config.java.context;
 
 import static org.springframework.util.StringUtils.collectionToCommaDelimitedString;
 
@@ -35,7 +35,7 @@ import org.springframework.beans.BeansException;
  * @author Chris Beams
  */
 @SuppressWarnings("serial")
-public class AmbiguousBeanLookupException extends BeansException {
+class AmbiguousBeanLookupException extends BeansException {
 
 	public AmbiguousBeanLookupException(Class<?> type, Map<String, Object> beansOfType) {
 		super(formatMessage(type, beansOfType));

@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.beans.factory;
+package org.springframework.config.java.context;
+
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 /**
  * Provides type-safe {@link #getBean(Class) getBean} methods to allow retrieval
@@ -24,7 +28,7 @@ package org.springframework.beans.factory;
  * 
  * @author Chris Beams
  */
-public interface TypeSafeBeanFactory extends BeanFactory {
+interface TypeSafeBeanFactory extends BeanFactory {
 
 	/**
 	 * Return an instance of the given <var>type</var>. If multiple instances
