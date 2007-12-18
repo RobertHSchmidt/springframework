@@ -3,9 +3,9 @@
 "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <book xmlns:xi="http://www.w3.org/2001/XInclude">
   <bookinfo>
-    <title>Spring JavaConfig - Reference Documentation</title>
+    <title>Spring JavaConfig Reference Guide</title>
 
-    <releaseinfo>1.0-m3-SNAPSHOT</releaseinfo>
+    <releaseinfo>1.0-M3</releaseinfo>
 
     <authorgroup>
       <author>
@@ -41,27 +41,23 @@
     <title>Introduction</title>
 
     <chapter id="what-is-javaconfig">
-      <title>What is Spring JavaConfig?</title>
+      <title>What is JavaConfig?</title>
 
-      <section id="introduction">
-        <title>Introduction</title>
+      <para>Spring JavaConfig is a product of the Spring community that
+      provides a pure-Java approach to configuring the Spring IoC Container.
+      While JavaConfig aims to be a feature-complete alternative to the more
+      well-known XML-based configuration, they can also be used seamlessly
+      together. <note>
+          <para>See <xref linkend="javaconfig-and-xml" /> for more information
+          on using JavaConfig and XML together</para>
+        </note></para>
+        </chapter>
 
-        <para>Spring JavaConfig is a product of the Spring community that
-        provides a pure-Java approach to configuring the Spring IoC Container.
-        While JavaConfig aims to be a feature-complete alternative to the more
-        well-known XML-based configuration, they can also be used seamlessly
-        together. <note>
-            <para>See <xref linkend="javaconfig-and-xml" /> for more
-            information on using JavaConfig and XML together</para>
-          </note></para>
+    <chapter id="why-javaconfig">
+        <title>Why JavaConfig?</title>
 
-        <para>JavaConfig takes full advantage of Java5 language features,
-        especially annotations and generics. <emphasis>A Java5+ runtime
-        environment is a requirement for using JavaConfig.</emphasis></para>
-      </section>
-
-      <section id="motivation">
-        <title>Motivation</title>
+        <para>The Spring IoC Container is the leading dependency injection
+        framework. It provides</para>
 
         <para>Motivations of JavaConfig include</para>
 
@@ -85,9 +81,26 @@
           than by name, free of any casting or string-based lookups. See <xref
           linkend="type-safe-getbean" /> for full details.</para>
         </formalpara>
-      </section>
+      </chapter>
 
-      <section>
+      <chapter id="requirements">
+        <title>Requirements</title>
+
+        <para>JavaConfig takes full advantage of Java5 language features,
+        especially annotations and generics. <emphasis>A Java5+ runtime
+        environment is a requirement for using JavaConfig.</emphasis></para>
+
+        <para>Every effort has been made to reduce the number of dependencies
+        Spring JavaConfig requires. For very simple configurations, the
+        dependencies should be limited to CGLIB, commons-logging,
+        spring-beans, and spring-context. If you use more advanced features
+        such as AOP, you'll need aspectj, spring-aop, etc. Maven2 use is
+        recommended, as it helps greatly to reduce the burden of
+        dependencies.</para>
+
+      </chapter>
+
+      <chapter>
         <title>History</title>
 
         <para>JavaConfig was first conceived in 2005, at which time initial
@@ -95,8 +108,7 @@
         time, it has enjoyed a fair bit of use and positive user feedback.
         JavaConfig is now a fully supported effort and is moving toward 1.0
         release.</para>
-      </section>
-    </chapter>
+      </chapter>
 
     <chapter>
       <title>New &amp; Noteworthy in 1.0-m3</title>
@@ -113,42 +125,6 @@
         several new features worth discussing. See below for details.
         <classname>AnnotationApplicationContext</classname> will be removed
         entirely in JavaConfig 1.0-RC1</para>
-      </section>
-
-      <section>
-        <title>First-class support for JavaConfig in the web tier</title>
-
-        <para>By popular demand, a
-        <interfacename>WebApplicationContext</interfacename> variant of
-        <classname>JavaConfigApplicationContext</classname> has been created.
-        This allows for seamless bootstrapping of JavaConfig bean definitions
-        within web.xml. Used in conjunction with JavaConfig-specific
-        subclasses of <classname>DispatcherServlet</classname> and
-        <classname>ContextLoaderListener</classname>, it makes for concise
-        usage: <programlisting>&lt;web-app&gt;
-    &lt;context-param&gt;
-        &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
-        &lt;param-value&gt;example.RootApplicationConfig&lt;/param-value&gt;
-    &lt;/context-param&gt;
-
-    &lt;listener&gt;
-        &lt;listener-class&gt;org.springframework.config.java.context.web.JavaConfigContextLoaderListener&lt;/listener-class&gt;
-    &lt;/listener&gt;
-
-    &lt;servlet&gt;
-        &lt;servlet-name&gt;test&lt;/servlet-name&gt;
-        &lt;servlet-class&gt;org.springframework.config.java.context.web.JavaConfigDispatcherServlet&lt;/servlet-class&gt;
-        &lt;init-param&gt;
-            &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
-            &lt;param-value&gt;example.web.WebApplicationConfig&lt;/param-value&gt;
-        &lt;/init-param&gt;
-    &lt;/servlet&gt;
-&lt;/web-app&gt;</programlisting> For basic information regarding
-        initialization parameters to <classname>DispatcherServlet</classname>
-        and use of <classname>ContextLoaderListener</classname>, see <ulink
-        linkend="http://static.springframework.org/spring/docs/2.5.x/reference/mvc.html">Chapter
-        13. Web MVC framework</ulink> in the Core Spring Framework
-        documentation.</para>
       </section>
 
       <section>
@@ -182,6 +158,42 @@ public class SimpleApp {
         // ...
     }
 }</programlisting> See <xref linkend="typesafe-getbean" /> for details.</para>
+      </section>
+
+      <section>
+        <title>First-class support for JavaConfig in the web tier</title>
+
+        <para>By popular demand, a
+        <interfacename>WebApplicationContext</interfacename> variant of
+        <classname>JavaConfigApplicationContext</classname> has been created.
+        This allows for seamless bootstrapping of JavaConfig bean definitions
+        within web.xml. Used in conjunction with JavaConfig-specific
+        subclasses of <classname>DispatcherServlet</classname> and
+        <classname>ContextLoaderListener</classname>, it makes for concise
+        usage: <programlisting>&lt;web-app&gt;
+    &lt;context-param&gt;
+        &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+        &lt;param-value&gt;example.RootApplicationConfig&lt;/param-value&gt;
+    &lt;/context-param&gt;
+
+    &lt;listener&gt;
+        &lt;listener-class&gt;org.springframework.config.java.context.support.JavaConfigContextLoaderListener&lt;/listener-class&gt;
+    &lt;/listener&gt;
+
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;test&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;org.springframework.config.java.context.support.JavaConfigDispatcherServlet&lt;/servlet-class&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+            &lt;param-value&gt;example.web.WebApplicationConfig&lt;/param-value&gt;
+        &lt;/init-param&gt;
+    &lt;/servlet&gt;
+&lt;/web-app&gt;</programlisting> For basic information regarding
+        initialization parameters to <classname>DispatcherServlet</classname>
+        and use of <classname>ContextLoaderListener</classname>, see <ulink
+        linkend="http://static.springframework.org/spring/docs/2.5.x/reference/mvc.html">Chapter
+        13. Web MVC framework</ulink> in the Core Spring Framework
+        documentation.</para>
       </section>
 
       <section>
@@ -280,20 +292,13 @@ public class AppConfig extends ConfigurationSupport {
       <title>Quick Start</title>
 
       <chapterinfo>
-        <abstract>The impatient need not worry; for simple cases, uses
-        JavaConfig is quite... simple</abstract>
+        <abstract><para>This chapter provides a basic tutorial for getting started
+        with JavaConfig. For full details on JavaConfig's capabilities, please
+        refer to <xref linkend="reference" /></para></abstract>
       </chapterinfo>
 
       <section>
-        <title>Get JavaConfig</title>
-
-        <para>Every effort has been made to reduce the number of dependencies
-        Spring JavaConfig requires. For very simple configurations, the
-        dependencies should be limited to CGLIB, commons-logging,
-        spring-beans, and spring-context. If you use more advanced features
-        such as AOP, you'll need aspectj, spring-aop, etc. Maven2 use is
-        recommended, as it helps greatly to reduce the burden of
-        dependencies.</para>
+        <title>Download JavaConfig</title>
 
         <section>
           <title>Maven 2</title>
@@ -393,11 +398,12 @@ public class AppConfig {
 @Configuration(defaultAutowire = Autowire.BY_TYPE, defaultLazy = Lazy.FALSE)
 public class DataSourceConfiguration
 extends ConfigurationSupport {
-}</programlisting> It can be considered the equivalent of <beans /> tag. It is
-        advisable that classes with @Configuration annotation extend the
-        ConfigurationSupport as it offers several utility methods. It also
-        provides an opportunity to override various default values for all
-        enclosed bean definitions. <programlisting>@Configuration()
+}</programlisting> It can be considered the equivalent of
+        <code>&lt;beans/&gt;</code> tag. It is advisable that classes with
+        @Configuration annotation extend the ConfigurationSupport as it offers
+        several utility methods. It also provides an opportunity to override
+        various default values for all enclosed bean definitions.
+        <programlisting>@Configuration()
 public class AppConfig {
     // bean definitions follow
 }</programlisting>
@@ -507,6 +513,8 @@ public class AppConfig {
     @Configuration classes cannot be defined as local inner classes (classes
     defined inside methods), they must be static and non-private. This is due
     to CGLIB limitations.</para>
+
+    <para>talk about namespace support in xml</para>
   </appendix>
 
   <appendix id="roadmap">
