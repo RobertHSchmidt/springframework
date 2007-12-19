@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 /**
- * Supporting infrastructure for use with {@link JavaConfigApplicationContext}s.
+ * Supporting infrastructure for use with {@link org.springframework.config.java.context.JavaConfigApplicationContext}s.
  */
 package org.springframework.config.java.context.support;
-
