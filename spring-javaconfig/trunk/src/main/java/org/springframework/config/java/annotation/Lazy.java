@@ -21,7 +21,7 @@ package org.springframework.config.java.annotation;
  * 
  * @author Rod Johnson
  */
-public enum Lazy {
+public enum Lazy implements BooleanEnum {
 
 	UNSPECIFIED(-1), FALSE(0), TRUE(1);
 

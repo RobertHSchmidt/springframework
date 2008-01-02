@@ -45,6 +45,9 @@ import org.springframework.core.annotation.Order;
  * protected Advice returnsSpringAdvice() { ... }
  * </pre>
  * 
+ * <p/>TODO: Review along with SpringAdvice/SpringAdvisor, which are being
+ * considered for deprecation
+ * 
  * @author Rod Johnson
  */
 public class SpringAdviceConfigurationListener extends AbstractAopConfigurationListener {

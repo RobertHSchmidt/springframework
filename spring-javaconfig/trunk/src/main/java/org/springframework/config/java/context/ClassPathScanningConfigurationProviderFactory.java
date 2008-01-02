@@ -1,5 +1,6 @@
-package org.springframework.config.java.annotation;
+package org.springframework.config.java.context;
 
+import org.springframework.config.java.annotation.Configuration;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
@@ -11,7 +12,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
  * 
  * @author Chris Beams
  */
-public class ClassPathScanningConfigurationProviderFactory {
+class ClassPathScanningConfigurationProviderFactory {
 
 	/**
 	 * Return a new provider instance configured to treat as candidates only

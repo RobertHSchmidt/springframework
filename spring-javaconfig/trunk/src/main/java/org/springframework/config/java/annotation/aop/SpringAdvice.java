@@ -24,6 +24,9 @@ import java.lang.annotation.Target;
  * Annotation containing the pointcut for a Spring advice. This can either
  * contain an AspectJ expression or a value.
  * 
+ * <p/> TODO: Consider deprecating this in favor of AspectJ annotations? Is
+ * there a compelling reason to keep this around as an option?
+ * 
  * @author Rod Johnson
  */
 @Target( { ElementType.METHOD, ElementType.FIELD })

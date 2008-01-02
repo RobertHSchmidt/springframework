@@ -57,6 +57,8 @@ public class ConfigurationSupport implements BeanFactoryAware, ApplicationContex
 		this.applicationContext = ac;
 	}
 
+	@Deprecated
+	// TODO: this isn't used anywhere. Can we get rid of it?
 	protected ApplicationContext getApplicationContext() {
 		return this.applicationContext;
 	}
