@@ -1,12 +1,12 @@
 /*
  * Copyright 2002-2007 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,9 +25,13 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.dao.support.PersistenceExceptionTranslationInterceptor;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author Costin Leau
@@ -48,7 +52,7 @@ public class BeansAndPostprocessorTests extends TestCase {
 		}
 	}
 
-	public class CountingBPP implements BeanPostProcessor {
+	public static class CountingBPP implements BeanPostProcessor {
 
 		public Map<String, Object> beans = new LinkedHashMap<String, Object>();
 
@@ -61,6 +65,46 @@ public class BeansAndPostprocessorTests extends TestCase {
 			return bean;
 		}
 
+	}
+
+	public static class NewConfiguration {
+		@Bean
+		public Object newBean() {
+			return "new bean";
+		}
+
+		@Bean
+		public FooRepository repos() {
+			return new MyRepository();
+		}
+
+		@Bean
+		public PersistenceExceptionTranslationInterceptor intercept() {
+			return new PersistenceExceptionTranslationInterceptor();
+		}
+
+		@Bean
+		public BeanPostProcessor beanPostProcessor() {
+			PersistenceExceptionTranslationPostProcessor bpp = new PersistenceExceptionTranslationPostProcessor();
+			return bpp;
+		}
+
+	}
+
+	public static interface FooRepository {
+	}
+
+	@Repository
+	public static class MyRepository implements FooRepository {
+
+	}
+
+	public void testViaApplicationContext() {
+		JavaConfigApplicationContext context = new JavaConfigApplicationContext(NewConfiguration.class);
+		String name = "newBean";
+		Object newBean = context.getBean(Object.class, name);
+		CountingBPP postProcessor = context.getBean(CountingBPP.class);
+		assertTrue(postProcessor.beans.containsKey(name));
 	}
 
 	private ConfigurableApplicationContext ctx;

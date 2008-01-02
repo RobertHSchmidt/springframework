@@ -25,7 +25,7 @@ package org.springframework.config.java.annotation;
  * 
  * @author Chris Beams
  */
-public enum Primary {
+public enum Primary implements BooleanEnum {
 
 	UNSPECIFIED(-1), FALSE(0), TRUE(1);
 

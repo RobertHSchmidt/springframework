@@ -27,7 +27,9 @@ import org.springframework.beans.BeansException;
  * 
  * <p/>Note: currently used only by
  * {@link org.springframework.config.java.context.JavaConfigApplicationContext} -
- * may potentially be promoted and used more widely in the future
+ * may potentially be promoted and used more widely in the future.
+ * Package-private visibility to avoid backward-compat problems when we want to
+ * move/rename this.
  * 
  * <p/>XXX: Review
  * 

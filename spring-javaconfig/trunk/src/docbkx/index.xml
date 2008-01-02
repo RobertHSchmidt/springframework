@@ -5,10 +5,14 @@
   <!--
 	High-level TODOs (search TODO throughout this document for fine-grained tasks):
 
+	* @Meta (see @Bean.meta()).  No examples/tests; can probably refer to core docs (see A.2.10).
+	* @AutoBean (currently in 'undocumented features')
+	* ValueSource (and friends)... there is just one very simple unit test;
+	  need more complete examples. Rod? Perhaps this should go in 'undocumented' as well..
 	* @ScopedProxy
 	* Bean visibility
 	* Fold in contents of m2 docs' Chap 4., "Wire Dependencies"
-	* Naming strategy (what section does this belong in?)
+	* Naming strategy (what section does this belong in?) (see BeanNamingStrategy interface)
 	* Figure out formatting for pdf generation (should look like Core Spring PDF).
 	* Think about packaging up the 'with-dependencies' jar (for easy downloading from sourceforge)
 

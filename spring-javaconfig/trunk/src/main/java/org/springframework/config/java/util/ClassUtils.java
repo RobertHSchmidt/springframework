@@ -1,12 +1,12 @@
 /*
  * Copyright 2002-2007 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,6 +24,7 @@ import java.util.Collection;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
+import org.springframework.config.java.annotation.ExternalValue;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
@@ -94,7 +95,8 @@ public final class ClassUtils {
 		Assert.notNull(candidateConfigurationClass);
 
 		if (Modifier.isAbstract(candidateConfigurationClass.getModifiers())
-				&& getExternalBeanCreationMethods(candidateConfigurationClass).isEmpty())
+				&& getExternalBeanCreationMethods(candidateConfigurationClass).isEmpty()
+				&& getExternalValueCreationMethods(candidateConfigurationClass).isEmpty())
 			return false;
 
 		return candidateConfigurationClass.isAnnotationPresent(Configuration.class)
@@ -120,6 +122,16 @@ public final class ClassUtils {
 	 */
 	public static Collection<Method> getExternalBeanCreationMethods(Class<?> configurationClass) {
 		return getAnnotatedMethods(configurationClass, ExternalBean.class);
+	}
+
+	/**
+	 * Find all methods that are annotated with &#64;ExternalValue.
+	 * 
+	 * @param configurationClass
+	 * @return collection of all methods annotated with {@link ExternalValue}
+	 */
+	public static Collection<Method> getExternalValueCreationMethods(Class<?> configurationClass) {
+		return getAnnotatedMethods(configurationClass, ExternalValue.class);
 	}
 
 	public static Collection<Method> getAnnotatedMethods(Class<?> targetClass,

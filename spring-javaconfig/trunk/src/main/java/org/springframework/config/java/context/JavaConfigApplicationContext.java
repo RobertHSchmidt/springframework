@@ -22,7 +22,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.annotation.ClassPathScanningConfigurationProviderFactory;
 import org.springframework.config.java.util.ArrayUtils;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.context.ApplicationContext;

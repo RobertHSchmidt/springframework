@@ -33,7 +33,7 @@ import org.springframework.core.annotation.AnnotationUtils;
  * swapping.
  * 
  * <p/> XXX: Document (pending request to Rod for clarification on this
- * functionality)
+ * functionality). See related todo in {@link HotSwappable}
  * 
  * @author Rod Johnson
  */
