@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TODO: complete -->
+<preface id="about">
+  <title>About this document</title>
+  <section id="blah">
+    <title>Blah</title>
+    <para>lorem ipsum</para>
+  </section>
+  <section id="blarg">
+    <title>Blarg</title>
+    <para>dolor sit amet</para>
+  </section>
+</preface>
