@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="additional-resources">
+  <title>Additional Resources</title>
+
+  <section><title>Core Spring Documentation</title> The Core Spring
+  documentation is mentioned throughout this document, and it is
+  recommended that JavaConfig users read and understand the TODO: link:
+  IoC reference. Although it discusses XML, its treatment of fundamental
+  concepts remains directly applicable to JavaConfig</section>
+
+  <section><title>Community Forum</title> The first place to stop with
+  questions around SJC is <ulink
+  linkend="http://forums.springframework.org" />. As of this writing,
+  Spring JavaConfig does not have its own dedicated forum, but you can
+  post questions to TODO: which forum?</section>
+
+  <section id="issue-tracking"><title>Issue Tracking</title> After
+  checking out the forums, any bugs, improvements or new features can be
+  submitted via the Spring Framework issue tracker at <ulink
+  linkend="http://jira.springframework.org/browse/SJC" /></section>
+
+  <section><title>SpringSource Team Blog</title> Keep up to date with
+  JavaConfig progress by watching the SpringSource Team Blog at <ulink
+  linkend="http://blog.springsource.com" /></section>
+
+  <section><title>Consulting and Training Services</title> SpringSource
+  specializes in consulting and training services for Spring, including
+  Spring JavaConfig. TODO: list email.</section>
+</appendix>

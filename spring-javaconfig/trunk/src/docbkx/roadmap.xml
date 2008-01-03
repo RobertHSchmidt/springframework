@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="roadmap">
+  <title>Roadmap</title>
+
+  <para>SJC has been a work in progress for some time now. To the benefit
+  of the project, this means that there has been a long period of user
+  feedback and experience before a GA release. Of course, the downside of
+  this is that there's no GA release suitable for use in production. In
+  the process of putting together the M3 release, it has become clear that
+  there are several key aspects of JavaConfig that deserve re-thinking and
+  re-working. It is important that we get the JavaConfig programming model
+  'as right as possible' before the 1.0 release, because after that we
+  will be bound by backward compatibility forever (or at least until 2.0).
+  For this reason, the team is not rushing a 1.0 release 'out the door'.
+  There is more work to do, and it may result in another milestone before
+  beginning the release candidate process for 1.0. Things that work for
+  you now may break very shortly. What we need most is your feedback!
+  Please try out the new features listed in <xref
+  linkend="new-and-noteworthy" /> and let us know what you think!</para>
+
+  <para>See the <ulink
+  linkend="http://jira.springframework.org/browse/SJC?report=com.atlassian.jira.plugin.system.project:roadmap-panel">JavaConfig
+  JIRA roadmap</ulink> for up-to date information</para>
+</appendix>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="how-javaconfig-works">
+  <title>How JavaConfig works</title>
+
+  <para>What are the internal mechanisms by which JavaConfig works?</para>
+
+  <section><title>Dynamic subclassing of
+  <classname>@Configuration</classname>-annotated classes with
+  CGLIB</title> TODO: ...</section>
+</appendix>
