@@ -53,109 +53,152 @@
       copies and further provided that each copy contains this Copyright
       Notice, whether distributed in print or electronically.</para>
     </legalnotice>
-
   </bookinfo>
 
   <toc />
 
+  <preface id="about">
+    <title>About this document</title>
+
+    <section id="blah">
+      <title>Blah</title>
+
+      <para>lorem ipsum</para>
+    </section>
+
+    <section id="blarg">
+      <title>Blarg</title>
+
+      <para>dolor sit amet</para>
+    </section>
+  </preface>
+
   <part id="introduction">
     <title>Introduction</title>
 
-    <chapter id="what-is-javaconfig">
-      <title>What is JavaConfig?</title>
+    <partintro>
+      <para>In Part I we discuss what JavaConfig is, how it fits into the
+      larger Spring configuration landscape, and make the case as to why it is
+      a compelling alternative. After reading this part you'll be ready to
+      create a basic configuration and evaluate JavaConfig for yourself.
+      Finally, you'll be ready to move on to Part II and explore the
+      JavaConfig API in detail.</para>
 
-      <para>Spring JavaConfig is a product of the Spring community that
-      provides a pure-Java approach to configuring the Spring IoC Container.
-      While JavaConfig aims to be a feature-complete alternative to the more
-      well-known XML-based configuration, they can also be used seamlessly
-      together.</para>
-      <note><para>See <xref linkend="javaconfig-and-xml" /> for more information
+      <para>
+        <xref linkend="overview" />
+      </para>
+
+      <para>
+        <xref linkend="new-and-noteworthy" />
+      </para>
+
+      <para>
+        <xref linkend="quick-start" />
+      </para>
+    </partintro>
+
+    <chapter id="overview">
+      <title>Overview</title>
+
+      <section id="what-is-javaconfig">
+        <title>What is JavaConfig?</title>
+
+        <para>Spring JavaConfig is a product of the Spring community that
+        provides a pure-Java approach to configuring the Spring IoC Container.
+        While JavaConfig aims to be a feature-complete alternative to the more
+        well-known XML-based configuration, they can be (and often are) used
+        together.</para>
+
+        <tip>
+          <para>See <xref linkend="javaconfig-and-xml" /> for more information
           on using JavaConfig and XML together</para>
-      </note>
-    </chapter>
-
-    <chapter id="why-javaconfig">
-      <title>Why JavaConfig?</title>
-
-      <para>The Spring IoC Container is the leading dependency injection
-      framework. It provides sophisticated dependency injection capabilities
-      as well as advanced features for aspect-oriented programming. Today the
-      majority of Spring users configure the Spring container using XML. This
-      works very well, and in many cases is ideal. However, some developers
-      find configuring the Spring container via Java a more natural or
-      appropriate approach, for a variety of reasons.</para>
-
-      <para>Motivations of JavaConfig include</para>
-
-      <formalpara>
-        <title>Object-oriented configuration</title>
-
-        <para>Because configurations are defined as classes in JavaConfig,
-        users can take full advantage of object-oriented features in Java. One
-        configuration class may subclass another, overriding its
-        <classname>@Bean</classname> methods, etc.</para>
-      </formalpara>
-
-      <formalpara>
-        <title>Reduced or eliminated XML configuration</title>
-
-        <para>The benefits of externalized configuration based on the
-        principles of dependency injection have been proven. However, many
-        developers would prefer not to switch back and forth between XML and
-        Java. JavaConfig provides developers with a pure-Java approach to
-        configuring the Spring container that is conceptually similar to XML
-        configuration. It is technically possible to configure the container
-        using only JavaConfig configuration classes, however in practice many
-        have found it ideal to mix-and-match JavaConfig with XML. See <xref
-        linkend="javaconfig-and-xml" /> for details.</para>
-      </formalpara>
-
-      <formalpara>
-        <title>Type-safe and refactoring-friendly</title>
-
-        <para>JavaConfig provides a type-safe approach to configuring the
-        Spring container. Thanks to Java5's support for generics, it is now
-        possible to retrieve beans <emphasis>by type</emphasis> rather than by
-        name, free of any casting or string-based lookups. See <xref
-        linkend="typesafe-getbean" /> for details.</para>
-      </formalpara>
-    </chapter>
-
-    <chapter id="requirements">
-      <title>Requirements</title>
-
-      <section id="runtime-environment">
-        <title>Runtime Environment</title>
-
-        <para>JavaConfig takes full advantage of Java5 language features,
-        especially annotations and generics. <emphasis>A Java5+ runtime
-        environment is a requirement for using JavaConfig.</emphasis>. For an
-        introduction to annotations and other Java5 features, see TODO:
-        annotations tutorial</para>
+        </tip>
       </section>
 
-      <section id="project-dependencies">
-        <title>Project Dependencies</title>
+      <section id="why-javaconfig">
+        <title>Why JavaConfig?</title>
 
-        <para>Every effort has been made to reduce the number of dependencies
-        Spring JavaConfig requires. For very simple configurations, the
-        dependencies should be limited to CGLIB, commons-logging,
-        spring-beans, and spring-context. If you use more advanced features
-        such as AOP, you'll need aspectj, spring-aop, etc. Maven2 use is
-        recommended, as it helps greatly to reduce the burden of
-        dependencies.</para>
+        <para>The Spring IoC Container is the leading dependency injection
+        framework. It provides sophisticated dependency injection capabilities
+        as well as advanced features for aspect-oriented programming. Today
+        the majority of Spring users configure the Spring container using XML.
+        This works very well, and in many cases is ideal. However, some
+        developers find configuring the Spring container via Java a more
+        natural or appropriate approach, for a variety of reasons.</para>
 
-        <para>See also: <xref linkend="maven-configs" /></para>
+        <para>Motivations of JavaConfig include</para>
+
+        <formalpara>
+          <title>Object-oriented configuration</title>
+
+          <para>Because configurations are defined as classes in JavaConfig,
+          users can take full advantage of object-oriented features in Java.
+          One configuration class may subclass another, overriding its
+          <classname>@Bean</classname> methods, etc.</para>
+        </formalpara>
+
+        <formalpara>
+          <title>Reduced or eliminated XML configuration</title>
+
+          <para>The benefits of externalized configuration based on the
+          principles of dependency injection have been proven. However, many
+          developers would prefer not to switch back and forth between XML and
+          Java. JavaConfig provides developers with a pure-Java approach to
+          configuring the Spring container that is conceptually similar to XML
+          configuration. It is technically possible to configure the container
+          using only JavaConfig configuration classes, however in practice
+          many have found it ideal to mix-and-match JavaConfig with XML. See
+          <xref linkend="javaconfig-and-xml" /> for details.</para>
+        </formalpara>
+
+        <formalpara>
+          <title>Type-safe and refactoring-friendly</title>
+
+          <para>JavaConfig provides a type-safe approach to configuring the
+          Spring container. Thanks to Java5's support for generics, it is now
+          possible to retrieve beans <emphasis>by type</emphasis> rather than
+          by name, free of any casting or string-based lookups. See <xref
+          linkend="typesafe-getbean" /> for details.</para>
+        </formalpara>
       </section>
-    </chapter>
 
-    <chapter id="history">
-      <title>History</title>
+      <section id="requirements">
+        <title>Requirements</title>
 
-      <para>JavaConfig was first conceived in 2005, at which time initial code
-      was laid down. While it has remained in pre-1.0 status since that time,
-      it has enjoyed a fair bit of use and positive user feedback. JavaConfig
-      is now a fully supported effort and is moving toward 1.0 release.</para>
+        <section id="runtime-environment">
+          <title>Runtime Environment</title>
+
+          <para>JavaConfig takes full advantage of Java5 language features,
+          especially annotations and generics. <emphasis>A Java5+ runtime
+          environment is a requirement for using JavaConfig.</emphasis>. For
+          an introduction to annotations and other Java5 features, see TODO:
+          annotations tutorial</para>
+        </section>
+
+        <section id="project-dependencies">
+          <title>Project Dependencies</title>
+
+          <para>Every effort has been made to reduce the number of
+          dependencies Spring JavaConfig requires. For very simple
+          configurations, the dependencies should be limited to CGLIB,
+          commons-logging, spring-beans, and spring-context. If you use more
+          advanced features such as AOP, you'll need aspectj, spring-aop, etc.
+          Maven2 use is recommended, as it helps greatly to reduce the burden
+          of dependencies.</para>
+
+          <para>See also: <xref linkend="maven-configs" /></para>
+        </section>
+      </section>
+
+      <section id="history">
+        <title>History</title>
+
+        <para>JavaConfig was first conceived in 2005, at which time initial
+        code was laid down. While it has remained in pre-1.0 status since that
+        time, it has enjoyed a fair bit of use and positive user feedback.
+        JavaConfig is now a fully supported effort and is moving toward 1.0
+        release.</para>
+      </section>
     </chapter>
 
     <chapter id="new-and-noteworthy">
@@ -171,8 +214,8 @@
         <classname>JavaConfigApplicationContext</classname>. Beyond the
         renaming, <classname>JavaConfigApplicationContext</classname> has
         several new features worth discussing. See below for details.
-        <emphasis><classname>AnnotationApplicationContext</classname> will be removed
-        entirely in JavaConfig 1.0-RC1</emphasis></para>
+        <emphasis><classname>AnnotationApplicationContext</classname> will be
+        removed entirely in JavaConfig 1.0-RC1</emphasis></para>
 
         <para>See <xref linkend="javaconfigapplicationcontext" /></para>
       </section>
@@ -464,8 +507,9 @@ public class ApplicationConfig {
         <title>Summary</title>
 
         <para>Obviously, we're a bit too simplistic here, to learn more about
-        modularizing <classname>@Configuration</classname> classes, see TODO link. To learn about
-        more advanced mechanisms for ... TODO continue this approach,</para>
+        modularizing <classname>@Configuration</classname> classes, see TODO
+        link. To learn about more advanced mechanisms for ... TODO continue
+        this approach,</para>
       </section>
     </chapter>
   </part>
@@ -480,7 +524,8 @@ public class ApplicationConfig {
       of Spring JavaConfig</para>
 
       <para><xref linkend="creating-bean-definitions" /> describes the
-      fundamental concepts in Spring JavaConfig: the <classname>@Configuration</classname> and <classname>@Bean</classname>
+      fundamental concepts in Spring JavaConfig: the
+      <classname>@Configuration</classname> and <classname>@Bean</classname>
       annotations, and gives the reader information on how to use them.</para>
 
       <para><xref linkend="modularity" />. For non-trivial uses of Spring
@@ -512,26 +557,30 @@ public class ApplicationConfig {
       <title>Creating and using bean definitions</title>
 
       <section>
-        <title><classname>@Configuration</classname></title>
+        <title>
+          <classname>@Configuration</classname>
+        </title>
 
         <para>Annotating a class with the
         <classname>@Configuration</classname> annotation indicates that the
-        class will be used by JavaConfig as a source of bean definitions.</para>
+        class will be used by JavaConfig as a source of bean
+        definitions.</para>
 
-        <para>An application may make use of just one <classname>@Configuration</classname>-annotated
-        class, or many. <classname>@Configuration</classname> can be
-        considered the equivalent of XML's <code>&lt;beans/&gt;</code>
-        element. Like <code>&lt;beans/&gt;</code>, it provides an opportunity
-        to explicitly set defaults for all enclosed bean definitions.
-        <programlisting>@Configuration(defaultAutowire = Autowire.BY_TYPE, defaultLazy = Lazy.FALSE)
+        <para>An application may make use of just one
+        <classname>@Configuration</classname>-annotated class, or many.
+        <classname>@Configuration</classname> can be considered the equivalent
+        of XML's <code>&lt;beans/&gt;</code> element. Like
+        <code>&lt;beans/&gt;</code>, it provides an opportunity to explicitly
+        set defaults for all enclosed bean definitions. <programlisting>@Configuration(defaultAutowire = Autowire.BY_TYPE, defaultLazy = Lazy.FALSE)
 public class DataSourceConfiguration extends ConfigurationSupport {
     <lineannotation>// bean definitions follow</lineannotation>
 }
 </programlisting> Because the semantics of the attributes to the
         <classname>@Configuration</classname> annotation are 1:1 with the
-        attributes to the <code>&lt;beans/&gt;</code> element, this documentation defers to
-        the section in Chapter 3, IoC from the core spring documentation. See
-        <ulink linkend="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-definition">http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-definition</ulink></para>
+        attributes to the <code>&lt;beans/&gt;</code> element, this
+        documentation defers to the section in Chapter 3, IoC from the core
+        spring documentation. See <ulink
+        linkend="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-definition">http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-definition</ulink></para>
       </section>
 
       <section id="bean">
@@ -540,10 +589,10 @@ public class DataSourceConfiguration extends ConfigurationSupport {
         </title>
 
         <para><classname>@Bean</classname> is a direct analog to XML
-        configuration's <code>&lt;bean/&gt;</code> element. As such, it accepts a set as
-        annotation attributes equivalent to the attributes to the
-        <code>&lt;bean/&gt;</code>. See TODO: link to core spring framework documentation
-        on bean and its attributes.</para>
+        configuration's <code>&lt;bean/&gt;</code> element. As such, it
+        accepts a set as annotation attributes equivalent to the attributes to
+        the <code>&lt;bean/&gt;</code>. See TODO: link to core spring
+        framework documentation on bean and its attributes.</para>
 
         <section id="declaring-a-bean">
           <title>Declaring a bean</title>
@@ -569,7 +618,9 @@ public class AppConfig {
       </section>
 
       <section id="javaconfigapplicationcontext">
-        <title><classname>JavaConfigApplicationContext</classname></title>
+        <title>
+          <classname>JavaConfigApplicationContext</classname>
+        </title>
 
         <para><classname>JavaConfigApplicationContext</classname> provides
         direct access to the beans defined by
@@ -753,9 +804,9 @@ public abstract class ConfigTwo {
             @ExternalValue should be a field-level annotation, rathor than the
             awkward 'abstract method' approach. Giving a field a default value
             is very natural for Java programmers. Indeed, a much more natural
-            concept than having to learn about <classname>BeanFactoryPostProcessor</classname>s, and
-            what Proprty(Placeholder|Override)Configurer are all
-            about.</emphasis>
+            concept than having to learn about
+            <classname>BeanFactoryPostProcessor</classname>s, and what
+            Proprty(Placeholder|Override)Configurer are all about.</emphasis>
           </para>
         </sidebar>
 
@@ -775,6 +826,7 @@ public abstract static class ConfigWithPlaceholders {
     }
 }
 </programlisting>
+
         <para>The '<literal>org/springframework/config/java/simple</literal>'
         argument to <classname>@ResourceBundles</classname> tells JavaConfig
         that there must be a file in the classpath at
@@ -800,9 +852,9 @@ public class AppConfig {
       <section id="importing-configurations">
         <title>Importing configurations</title>
 
-        <para>Much like the XML <code>&lt;import/&gt;</code> element, configuration classes
-        can now import one another, for an additional tool in the
-        modularization toolbox.</para>
+        <para>Much like the XML <code>&lt;import/&gt;</code> element,
+        configuration classes can now import one another, for an additional
+        tool in the modularization toolbox.</para>
 
         <programlisting>@Configuration
 @Import(OtherConfig.class)
@@ -818,7 +870,8 @@ public class MyConfig {
         <para>As a convenience, <classname>@Configuration</classname> classses
         can extend <classname>ConfigurationSupport</classname>, primarily in
         order to facilitate easy lookup of beans from the enclosing
-        <classname>BeanFactory</classname> / <classname>ApplicationContext</classname>.</para>
+        <classname>BeanFactory</classname> /
+        <classname>ApplicationContext</classname>.</para>
 
         <programlisting>@Configuration
 public class AppConfig extends ConfigurationSupport {
@@ -856,9 +909,10 @@ public class AppConfig extends ConfigurationSupport {
         uninitiatied.</para>
 
         <para>A configuration class can serve 'double duty' as an aspect. By
-        applying <classname>@Aspect</classname> to a <classname>@Configuration</classname> class, you can then add pointcuts
-        and advice that will be applied against all beans in the container.
-        <programlisting>@Aspect
+        applying <classname>@Aspect</classname> to a
+        <classname>@Configuration</classname> class, you can then add
+        pointcuts and advice that will be applied against all beans in the
+        container. <programlisting>@Aspect
 @Configuration
 public class AppConfig {
     @Bean
@@ -879,11 +933,12 @@ public class AppConfig {
 
         <note>
           <para>It is currently considered somewhat awkward that Configuration
-          classes must be annotated with <classname>@Aspect</classname> to enable this functionality.
-          This is not consistent with the standard semantics around the
-          <classname>@Aspect</classname> annotation, and would thus likely be un-intuitive to someone
-          familiar with XML configuration. <emphasis>This may change before
-          1.0 GA</emphasis></para>
+          classes must be annotated with <classname>@Aspect</classname> to
+          enable this functionality. This is not consistent with the standard
+          semantics around the <classname>@Aspect</classname> annotation, and
+          would thus likely be un-intuitive to someone familiar with XML
+          configuration. <emphasis>This may change before 1.0
+          GA</emphasis></para>
         </note>
       </section>
 
@@ -891,7 +946,8 @@ public class AppConfig {
         <title>Reusable aspects</title>
 
         <para>To create a reusable aspect, define a class annotated with
-        <classname>@Configuration</classname>and <classname>Aspect</classname>containing advice methods and
+        <classname>@Configuration</classname>and
+        <classname>Aspect</classname>containing advice methods and
         pointcuts.</para>
 
         <programlisting>@Aspect
@@ -908,12 +964,14 @@ public class PropertyChangeTracker {
 
         <para>Then include that aspect in the application context, either
         using the @Import annotation or by adding at as a constructor argument
-        when instantiating <classname>JavaConfigApplicationContext</classname>. Examples of both
+        when instantiating
+        <classname>JavaConfigApplicationContext</classname>. Examples of both
         approaches are below. <note>
             <para>In either case, all configuration classes that wish to have
             their beans be candidates for aspect weaving must also be
-            annotated with <classname>@Aspect</classname>. <emphasis>This is clearly non-ideal, and
-            will likely change before 1.0 GA.</emphasis></para>
+            annotated with <classname>@Aspect</classname>. <emphasis>This is
+            clearly non-ideal, and will likely change before 1.0
+            GA.</emphasis></para>
           </note></para>
 
         <programlisting>@Configuration
@@ -949,7 +1007,9 @@ JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig
       </section>
 
       <section>
-        <title><classname>@HotSwappable</classname></title>
+        <title>
+          <classname>@HotSwappable</classname>
+        </title>
 
         <para>TODO: Rod</para>
       </section>
@@ -970,7 +1030,9 @@ JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig
       </chapterinfo>
 
       <section>
-        <title><classname>JavaConfigWebApplicationContext</classname></title>
+        <title>
+          <classname>JavaConfigWebApplicationContext</classname>
+        </title>
 
         <para>TODO: Somewhere in here I need to talk about bean naming for
         BeanNameHandlerMapping. Use @Bean(aliases="")?</para>
@@ -1017,7 +1079,7 @@ JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig
             JavaConfig from XML is that the configuration bean instances are
             eligible, just as any other bean, for configuration:
             <programlisting>&lt;beans&gt;
-    <lineannotation>&lt;!-- a possible &quot;configurable configuration&quot; --&gt;</lineannotation>
+    <lineannotation>&lt;!-- a possible "configurable configuration" --&gt;</lineannotation>
     &lt;bean class="org.my.company.config.AppConfiguration"&gt;
         &lt;property name="env" value="TESTING"/&gt;
         &lt;property name="monitoring" value="true"/&gt;
@@ -1052,153 +1114,132 @@ JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig
 
   <part id="appendices">
     <title>Appendices</title>
-      <appendix id="limitations">
-        <title>Limitations</title>
 
-        <para>Compare SJC against XML / ADC, describing any functionality that is
-        currently not supported. * bean names can only be legal java method names.
-        Workaround == @Bean(aliases="/whatev, foo^bar")? Possibly introduce
-        improvement issue for adding a @Bean(name=...</para>
+    <appendix id="limitations">
+      <title>Limitations</title>
 
-        <para>no ability to do constructor autowiring (basic limitation of
-        Java)</para>
+      <para>Compare SJC against XML / ADC, describing any functionality that
+      is currently not supported. * bean names can only be legal java method
+      names. Workaround == @Bean(aliases="/whatev, foo^bar")? Possibly
+      introduce improvement issue for adding a @Bean(name=...</para>
 
-        <para>Nesting <classname>@Configuration</classname> classes. When nesting <classname>@Configuration</classname> classes
-        (either inside one another, or inside non-<classname>@Configuration</classname> classes)
-        <classname>@Configuration</classname> classes cannot be defined as local inner classes (classes
-        defined inside methods), they must be static and non-private. This is due
-        to CGLIB limitations.</para>
+      <para>no ability to do constructor autowiring (basic limitation of
+      Java)</para>
 
-        <para>talk about namespace support in xml</para>
-      </appendix>
+      <para>Nesting <classname>@Configuration</classname> classes. When
+      nesting <classname>@Configuration</classname> classes (either inside one
+      another, or inside non-<classname>@Configuration</classname> classes)
+      <classname>@Configuration</classname> classes cannot be defined as local
+      inner classes (classes defined inside methods), they must be static and
+      non-private. This is due to CGLIB limitations.</para>
 
-      <appendix id="undocumented-features">
-        <title>Undocumented Features</title>
+      <para>talk about namespace support in xml</para>
+    </appendix>
 
-        <para>There are a number of classes, interfaces and annotations within the
-        public JavaConfig API that remain undocumented. This is intentional, as
-        they may be deprecated and/or removed before the 1.0 GA release. They
-        include <orderedlist>
-            <listitem>
-              <para><classname>@AutoBean</classname></para>
-            </listitem>
+    <appendix id="undocumented-features">
+      <title>Undocumented Features</title>
 
-            <listitem>
-              <para><classname>@SpringAdvice</classname></para>
-            </listitem>
+      <para>There are a number of classes, interfaces and annotations within
+      the public JavaConfig API that remain undocumented. This is intentional,
+      as they may be deprecated and/or removed before the 1.0 GA release. They
+      include <orderedlist>
+          <listitem>
+            <para>
+              <classname>@AutoBean</classname>
+            </para>
+          </listitem>
 
-            <listitem>
-              <para><classname>@SpringAdvisor</classname></para>
-            </listitem>
-          </orderedlist></para>
-      </appendix>
+          <listitem>
+            <para>
+              <classname>@SpringAdvice</classname>
+            </para>
+          </listitem>
 
-      <appendix id="roadmap">
-        <title>Roadmap</title>
+          <listitem>
+            <para>
+              <classname>@SpringAdvisor</classname>
+            </para>
+          </listitem>
+        </orderedlist></para>
+    </appendix>
 
-        <para>SJC has been a work in progress for some time now. To the benefit of
-        the project, this means that there has been a long period of user feedback
-        and experience before a GA release. Of course, the downside of this is
-        that there's no GA release suitable for use in production. In the process
-        of putting together the M3 release, it has become clear that there are
-        several key aspects of JavaConfig that deserve re-thinking and re-working.
-        It is important that we get the JavaConfig programming model 'as right as
-        possible' before the 1.0 release, because after that we will be bound by
-        backward compatibility forever (or at least until 2.0). For this reason,
-        the team is not rushing a 1.0 release 'out the door'. There is more work
-        to do, and it may result in another milestone before beginning the release
-        candidate process for 1.0. Things that work for you now may break very
-        shortly. What we need most is your feedback! Please try out the new
-        features listed in <xref linkend="new-and-noteworthy" /> and let us know
-        what you think!</para>
+    <appendix id="roadmap">
+      <title>Roadmap</title>
 
-        <para>See the <ulink
-        linkend="http://jira.springframework.org/browse/SJC?report=com.atlassian.jira.plugin.system.project:roadmap-panel">JavaConfig
-        JIRA roadmap</ulink> for up-to date information</para>
-      </appendix>
+      <para>SJC has been a work in progress for some time now. To the benefit
+      of the project, this means that there has been a long period of user
+      feedback and experience before a GA release. Of course, the downside of
+      this is that there's no GA release suitable for use in production. In
+      the process of putting together the M3 release, it has become clear that
+      there are several key aspects of JavaConfig that deserve re-thinking and
+      re-working. It is important that we get the JavaConfig programming model
+      'as right as possible' before the 1.0 release, because after that we
+      will be bound by backward compatibility forever (or at least until 2.0).
+      For this reason, the team is not rushing a 1.0 release 'out the door'.
+      There is more work to do, and it may result in another milestone before
+      beginning the release candidate process for 1.0. Things that work for
+      you now may break very shortly. What we need most is your feedback!
+      Please try out the new features listed in <xref
+      linkend="new-and-noteworthy" /> and let us know what you think!</para>
 
-      <appendix id="tooling">
-        <title>Visualizing Configurations with Spring IDE</title>
+      <para>See the <ulink
+      linkend="http://jira.springframework.org/browse/SJC?report=com.atlassian.jira.plugin.system.project:roadmap-panel">JavaConfig
+      JIRA roadmap</ulink> for up-to date information</para>
+    </appendix>
 
-        <para>Spring IDE http://springide.org supports JavaConfig. At the time of
-        this writing, however, support is limited to configurations that are
-        'bootstrapped' via XML (see <xref linkend="javaconfig-and-xml" />). Follow
-        (link to Spring IDE jira) for updates on progress here. TODO: Do a
-        screenshot here</para>
-      </appendix>
+    <appendix id="tooling">
+      <title>Visualizing Configurations with Spring IDE</title>
 
-      <appendix id="additional-resources">
-        <title>Additional Resources</title>
+      <para>Spring IDE http://springide.org supports JavaConfig. At the time
+      of this writing, however, support is limited to configurations that are
+      'bootstrapped' via XML (see <xref linkend="javaconfig-and-xml" />).
+      Follow (link to Spring IDE jira) for updates on progress here. TODO: Do
+      a screenshot here</para>
+    </appendix>
 
-        <section><title>Core Spring Documentation</title> The Core Spring
-        documentation is mentioned throughout this document, and it is recommended
-        that JavaConfig users read and understand the TODO: link: IoC reference.
-        Although it discusses XML, its treatment of fundamental concepts remains
-        directly applicable to JavaConfig</section>
+    <appendix id="common-configuration-scenarios">
+      <title>Common configuration scenarios</title>
 
-        <section><title>Community Forum</title> The first place to stop with
-        questions around SJC is <ulink
-        linkend="http://forums.springframework.org" />. As of this writing, Spring
-        JavaConfig does not have its own dedicated forum, but you can post
-        questions to TODO: which forum?</section>
+      <para>For easy reference, a few commonly-used configurations</para>
 
-        <section id="issue-tracking"><title>Issue Tracking</title> After checking
-        out the forums, any bugs, improvements or new features can be submitted
-        via the Spring Framework issue tracker at <ulink
-        linkend="http://jira.springframework.org/browse/SJC" /></section>
+      <section>
+        <title>Declarative Transaction Management</title>
 
-        <section><title>SpringSource Team Blog</title> Keep up to date with
-        JavaConfig progress by watching the SpringSource Team Blog at <ulink
-        linkend="http://blog.springsource.com" /></section>
+        <para>TODO</para>
+      </section>
 
-        <section><title>Consulting and Training Services</title> SpringSource
-        specializes in consulting and training services for Spring, including
-        Spring JavaConfig. TODO: list email.</section>
-      </appendix>
+      <section>
+        <title>Externalized DataSource information</title>
 
-      <appendix id="common-configuration-scenarios">
-        <title>Common configuration scenarios</title>
+        <para>TODO</para>
+      </section>
+    </appendix>
 
-        <para>For easy reference, a few commonly-used configurations</para>
+    <appendix id="how-javaconfig-works">
+      <title>How JavaConfig works</title>
 
-        <section>
-          <title>Declarative Transaction Management</title>
+      <para>What are the internal mechanisms by which JavaConfig works?</para>
 
-          <para>TODO</para>
-        </section>
+      <section><title>Dynamic subclassing of
+      <classname>@Configuration</classname>-annotated classes with
+      CGLIB</title> TODO: ...</section>
+    </appendix>
 
-        <section>
-          <title>Externalized DataSource information</title>
+    <appendix id="maven-configs">
+      <title>Maven2 POM Configurations</title>
 
-          <para>TODO</para>
-        </section>
-      </appendix>
+      <appendixinfo>Maven provides nice trans dep mgmt, but... here are some
+      configs to help ease this process.</appendixinfo>
 
-      <appendix id="how-javaconfig-works">
-        <title>How JavaConfig works</title>
+      <para>As mentioned in TODO link: Quick Start, JavaConfig requires only a
+      minimal set of dependencies for the most basic configuration
+      scenarios.</para>
 
-        <para>What are the internal mechanisms by which JavaConfig works?</para>
+      <section>
+        <title>Minimalist</title>
 
-        <section><title>Dynamic subclassing of
-        <classname>@Configuration</classname>-annotated classes with CGLIB</title>
-        TODO: ...</section>
-      </appendix>
-
-      <appendix id="maven-configs">
-        <title>Maven2 POM Configurations</title>
-
-        <appendixinfo>Maven provides nice trans dep mgmt, but... here are some
-        configs to help ease this process.</appendixinfo>
-
-        <para>As mentioned in TODO link: Quick Start, JavaConfig requires only a
-        minimal set of dependencies for the most basic configuration
-        scenarios.</para>
-
-        <section>
-          <title>Minimalist</title>
-
-          <para>
-            <programlisting>&lt;dependencies&gt;
+        <para>
+          <programlisting>&lt;dependencies&gt;
     &lt;dependency&gt;
         &lt;groupId&gt;org.springframework.javaconfig&lt;/groupId&gt;
         &lt;artifactId&gt;spring-javaconfig&lt;/artifactId&gt;
@@ -1206,14 +1247,14 @@ JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig
     &lt;/dependency&gt;
 &lt;/dependencies&gt;
     </programlisting>
-          </para>
-        </section>
+        </para>
+      </section>
 
-        <section>
-          <title>AOP</title>
+      <section>
+        <title>AOP</title>
 
-          <para>
-            <programlisting>&lt;dependencies&gt;
+        <para>
+          <programlisting>&lt;dependencies&gt;
     &lt;dependency&gt;
         &lt;groupId&gt;org.springframework.javaconfig&lt;/groupId&gt;
         &lt;artifactId&gt;spring-javaconfig&lt;/artifactId&gt;
@@ -1255,10 +1296,38 @@ JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig
         &lt;version&gt;1.5.3&lt;/version&gt;
         &lt;optional&gt;true&lt;/optional&gt;
     &lt;/dependency&gt;
-&lt;/dependencies&gt;
-    </programlisting>
-          </para>
-        </section>
-      </appendix>
-    </part>
+&lt;/dependencies&gt;</programlisting>
+        </para>
+      </section>
+    </appendix>
+
+    <appendix id="additional-resources">
+      <title>Additional Resources</title>
+
+      <section><title>Core Spring Documentation</title> The Core Spring
+      documentation is mentioned throughout this document, and it is
+      recommended that JavaConfig users read and understand the TODO: link:
+      IoC reference. Although it discusses XML, its treatment of fundamental
+      concepts remains directly applicable to JavaConfig</section>
+
+      <section><title>Community Forum</title> The first place to stop with
+      questions around SJC is <ulink
+      linkend="http://forums.springframework.org" />. As of this writing,
+      Spring JavaConfig does not have its own dedicated forum, but you can
+      post questions to TODO: which forum?</section>
+
+      <section id="issue-tracking"><title>Issue Tracking</title> After
+      checking out the forums, any bugs, improvements or new features can be
+      submitted via the Spring Framework issue tracker at <ulink
+      linkend="http://jira.springframework.org/browse/SJC" /></section>
+
+      <section><title>SpringSource Team Blog</title> Keep up to date with
+      JavaConfig progress by watching the SpringSource Team Blog at <ulink
+      linkend="http://blog.springsource.com" /></section>
+
+      <section><title>Consulting and Training Services</title> SpringSource
+      specializes in consulting and training services for Spring, including
+      Spring JavaConfig. TODO: list email.</section>
+    </appendix>
+  </part>
 </book>
