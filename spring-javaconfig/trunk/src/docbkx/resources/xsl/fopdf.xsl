@@ -1,23 +1,33 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 
+<?xml version="1.0"?>
 
-    This is the XSL FO (PDF) stylesheet for the Spring reference
-    documentation.
-    
+<!--
+
+    This is the XSL FO (PDF) stylesheet for the Spring JavaConfig
+    reference documentation.
+
     Thanks are due to Christian Bauer of the Hibernate project
     team for writing the original stylesheet upon which this one
     is based.
 -->
+
+<!DOCTYPE xsl:stylesheet [
+    <!ENTITY admon_gfx_path  "src/docbkx/resources/images/admons/">
+    <!ENTITY copyright       "&#xA9;">
+    <!ENTITY years           "2005-2008">
+    <!ENTITY projectname     "Spring JavaConfig">
+]>
+
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                version="1.0"
+                xmlns="http://www.w3.org/TR/xhtml1/transitional"
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
-                version="1.0">
+                exclude-result-prefixes="#default">
 
+<xsl:import href="urn:docbkx:stylesheet"/>
 
-    <xsl:import href="urn:docbkx:stylesheet"/>
-
-    <!--###################################################
-                  Custom Title Page
-   ################################################### -->
+<!--###################################################
+                   Custom Title Page
+    ################################################### -->
 
     <xsl:template name="book.titlepage.recto">
         <fo:block>
@@ -27,13 +37,16 @@
                     <fo:table-row>
                         <fo:table-cell text-align="center">
                             <fo:block>
-                                <fo:external-graphic src="file:src/docbkx/resources/images/spring-ws-logo.png"/>
+                                <fo:external-graphic src="file:src/docbkx/resources/images/logo.jpg"/>
                             </fo:block>
                             <fo:block font-family="Helvetica" font-size="22pt" padding-before="10mm">
                                 <xsl:value-of select="bookinfo/subtitle"/>
                             </fo:block>
+                            <fo:block font-family="Helvetica" font-size="14pt" padding="10mm">
+                                <xsl:value-of select="bookinfo/title"/>
+                            </fo:block>
                             <fo:block font-family="Helvetica" font-size="12pt" padding="10mm">
-                                <xsl:value-of select="bookinfo/releaseinfo"/>
+                                <xsl:text>Version </xsl:text><xsl:value-of select="bookinfo/releaseinfo"/>
                             </fo:block>
                         </fo:table-cell>
                     </fo:table-row>
@@ -47,7 +60,7 @@
                     <fo:table-row>
                         <fo:table-cell text-align="center">
                             <fo:block font-family="Helvetica" font-size="12pt" padding="10mm">
-                                <xsl:text>Copyright &#xA9; 2005-2007 </xsl:text>
+                                <xsl:text>Copyright &copyright; &years; </xsl:text>
                                 <xsl:for-each select="bookinfo/authorgroup/author">
                                     <xsl:if test="position() > 1">
                                         <xsl:text>, </xsl:text>
@@ -75,9 +88,9 @@
     <xsl:template name="book.titlepage.separator">
     </xsl:template>
 
-    <!--###################################################
-                     Header
-   ################################################### -->
+<!--###################################################
+                      Header
+    ################################################### -->
 
     <!-- More space in the center header for long text -->
     <xsl:attribute-set name="header.content.properties">
@@ -88,38 +101,36 @@
         <xsl:attribute name="margin-right">-5em</xsl:attribute>
     </xsl:attribute-set>
 
-    <!--###################################################
-                     Custom Footer
-   ################################################### -->
+<!--###################################################
+                      Custom Footer
+    ################################################### -->
     <xsl:template name="footer.content">
-        <xsl:param name="pageclass" select="''"/>
-        <xsl:param name="sequence" select="''"/>
-        <xsl:param name="position" select="''"/>
-        <xsl:param name="gentext-key" select="''"/>
+        <xsl:param name="pageclass" select="''" />
+        <xsl:param name="sequence" select="''" />
+        <xsl:param name="position" select="''" />
+        <xsl:param name="gentext-key" select="''" />
         <xsl:variable name="Version">
             <xsl:if test="//releaseinfo">
-                <xsl:text>Spring-WS (</xsl:text>
-                <xsl:value-of select="//releaseinfo"/>
-                <xsl:text>)</xsl:text>
+                <xsl:text>&projectname; (</xsl:text><xsl:value-of select="//releaseinfo" /><xsl:text>)</xsl:text>
             </xsl:if>
         </xsl:variable>
         <xsl:choose>
             <xsl:when test="$sequence='blank'">
                 <xsl:if test="$position = 'center'">
-                    <xsl:value-of select="$Version"/>
+                    <xsl:value-of select="$Version" />
                 </xsl:if>
             </xsl:when>
             <!-- for double sided printing, print page numbers on alternating sides (of the page) -->
             <xsl:when test="$double.sided != 0">
                 <xsl:choose>
                     <xsl:when test="$sequence = 'even' and $position='left'">
-                        <fo:page-number/>
+                        <fo:page-number />
                     </xsl:when>
                     <xsl:when test="$sequence = 'odd' and $position='right'">
-                        <fo:page-number/>
+                        <fo:page-number />
                     </xsl:when>
                     <xsl:when test="$position='center'">
-                        <xsl:value-of select="$Version"/>
+                        <xsl:value-of select="$Version" />
                     </xsl:when>
                 </xsl:choose>
             </xsl:when>
@@ -127,19 +138,71 @@
             <xsl:when test="$double.sided = 0">
                 <xsl:choose>
                     <xsl:when test="$position='center'">
-                        <xsl:value-of select="$Version"/>
+                        <xsl:value-of select="$Version" />
                     </xsl:when>
                     <xsl:when test="$position='right'">
-                        <fo:page-number/>
+                        <fo:page-number />
                     </xsl:when>
                 </xsl:choose>
             </xsl:when>
         </xsl:choose>
     </xsl:template>
 
-    <!--###################################################
-                     Extensions
-   ################################################### -->
+<!--###################################################
+                   Custom Toc Line
+    ################################################### -->
+
+    <!-- The default DocBook XSL TOC printing is seriously broken... -->
+    <xsl:template name="toc.line">
+        <xsl:variable name="id">
+            <xsl:call-template name="object.id"/>
+        </xsl:variable>
+
+        <xsl:variable name="label">
+            <xsl:apply-templates select="." mode="label.markup"/>
+        </xsl:variable>
+
+        <!-- justify-end removed from block attributes (space problem in title.markup) -->
+        <fo:block  end-indent="{$toc.indent.width}pt"
+                   last-line-end-indent="-{$toc.indent.width}pt"
+                   white-space-treatment="preserve"
+                   text-align="left"
+                   white-space-collapse="false">
+            <fo:inline keep-with-next.within-line="always">
+                <!-- print Chapters in bold style -->
+                <xsl:choose>
+                    <xsl:when test="local-name(.) = 'chapter'">
+                        <xsl:attribute name="font-weight">bold</xsl:attribute>
+                    </xsl:when>
+                </xsl:choose>
+                <fo:basic-link internal-destination="{$id}">
+                    <xsl:if test="$label != ''">
+                        <xsl:copy-of select="$label"/>
+                        <fo:inline white-space-treatment="preserve"
+                                    white-space-collapse="false">
+                            <xsl:value-of select="$autotoc.label.separator"/>
+                        </fo:inline>
+                    </xsl:if>
+                    <xsl:apply-templates select="." mode="title.markup"/>
+                </fo:basic-link>
+            </fo:inline>
+            <fo:inline keep-together.within-line="always">
+            <xsl:text> </xsl:text>
+            <fo:leader leader-pattern="dots"
+                        leader-pattern-width="3pt"
+                        leader-alignment="reference-area"
+                        keep-with-next.within-line="always"/>
+            <xsl:text> </xsl:text>
+            <fo:basic-link internal-destination="{$id}">
+                <fo:page-number-citation ref-id="{$id}"/>
+            </fo:basic-link>
+            </fo:inline>
+        </fo:block>
+    </xsl:template>
+
+<!--###################################################
+                      Extensions
+    ################################################### -->
 
     <!-- These extensions are required for table printing and other stuff -->
     <xsl:param name="use.extensions">1</xsl:param>
@@ -148,13 +211,13 @@
     <!-- FOP provide only PDF Bookmarks at the moment -->
     <xsl:param name="fop.extensions">1</xsl:param>
 
-    <!--###################################################
-                     Table Of Contents
-   ################################################### -->
+<!--###################################################
+                      Table Of Contents
+    ################################################### -->
 
     <!-- Generate the TOCs for named components only -->
     <xsl:param name="generate.toc">
-        book toc
+        book   toc
     </xsl:param>
 
     <!-- Show only Sections up to level 3 in the TOCs -->
@@ -164,9 +227,9 @@
     <xsl:param name="autotoc.label.separator" select="'.  '"/>
 
 
-    <!--###################################################
-                  Paper & Page Size
-   ################################################### -->
+<!--###################################################
+                   Paper & Page Size
+    ################################################### -->
 
     <!-- Paper type, no headers on blank pages, no double sided printing -->
     <xsl:param name="paper.type" select="'A4'"/>
@@ -189,9 +252,9 @@
     <!-- No intendation of Titles -->
     <xsl:param name="title.margin.left">0pc</xsl:param>
 
-    <!--###################################################
-                  Fonts & Styles
-   ################################################### -->
+<!--###################################################
+                   Fonts & Styles
+    ################################################### -->
 
     <!-- Left aligned text and no hyphenation -->
     <xsl:param name="alignment">justify</xsl:param>
@@ -212,9 +275,9 @@
         <xsl:attribute name="font-size">0.8em</xsl:attribute>
     </xsl:attribute-set>
 
-    <!--###################################################
-                  Tables
-   ################################################### -->
+<!--###################################################
+                   Tables
+    ################################################### -->
 
     <!-- The table width should be adapted to the paper size -->
     <xsl:param name="default.table.width">17.4cm</xsl:param>
@@ -231,18 +294,18 @@
     <xsl:param name="table.frame.border.thickness">0.1pt</xsl:param>
     <xsl:param name="table.cell.border.thickness">0.1pt</xsl:param>
 
-    <!--###################################################
-                        Labels
-   ################################################### -->
+<!--###################################################
+                         Labels
+    ################################################### -->
 
     <!-- Label Chapters and Sections (numbering) -->
     <xsl:param name="chapter.autolabel">1</xsl:param>
     <xsl:param name="section.autolabel" select="1"/>
     <xsl:param name="section.label.includes.component.label" select="1"/>
 
-    <!--###################################################
-                        Titles
-   ################################################### -->
+<!--###################################################
+                         Titles
+    ################################################### -->
 
     <!-- Chapter title size -->
     <xsl:attribute-set name="chapter.titlepage.recto.style">
@@ -254,7 +317,7 @@
         </xsl:attribute>
     </xsl:attribute-set>
 
-    <!-- Why is the font-size for chapters hardcoded in the XSL FO templates? 
+    <!-- Why is the font-size for chapters hardcoded in the XSL FO templates?
         Let's remove it, so this sucker can use our attribute-set only... -->
     <xsl:template match="title" mode="chapter.titlepage.recto.auto.mode">
         <fo:block xmlns:fo="http://www.w3.org/1999/XSL/Format"
@@ -262,7 +325,7 @@
             <xsl:call-template name="component.title">
                 <xsl:with-param name="node" select="ancestor-or-self::chapter[1]"/>
             </xsl:call-template>
-        </fo:block>
+            </fo:block>
     </xsl:template>
 
     <!-- Sections 1, 2 and 3 titles have a small bump factor and padding -->
@@ -316,9 +379,9 @@
         <xsl:attribute name="space-after.maximum">0.8em</xsl:attribute>
     </xsl:attribute-set>
 
-    <!--###################################################
-                     Programlistings
-   ################################################### -->
+<!--###################################################
+                      Programlistings
+    ################################################### -->
 
     <!-- Verbatim text formatting (programlistings) -->
     <xsl:attribute-set name="monospace.verbatim.properties">
@@ -349,9 +412,9 @@
         <xsl:attribute name="background-color">#F0F0F0</xsl:attribute>
     </xsl:attribute-set>
 
-    <!--###################################################
-                        Callouts
-   ################################################### -->
+<!--###################################################
+                         Callouts
+    ################################################### -->
 
     <!-- Use images for callouts instead of (1) (2) (3) -->
     <xsl:param name="callout.graphics">0</xsl:param>
@@ -360,17 +423,17 @@
     <!-- Place callout marks at this column in annotated areas -->
     <xsl:param name="callout.defaultcolumn">90</xsl:param>
 
-    <!--###################################################
-                      Admonitions
-   ################################################### -->
+<!--###################################################
+                       Admonitions
+    ################################################### -->
 
     <!-- Use nice graphics for admonitions -->
     <xsl:param name="admon.graphics">'1'</xsl:param>
-    <!--  <xsl:param name="admon.graphics.path">&admon_gfx_path;</xsl:param> -->
+    <xsl:param name="admon.graphics.path">&admon_gfx_path;</xsl:param>
 
-    <!--###################################################
-                         Misc
-   ################################################### -->
+<!--###################################################
+                          Misc
+    ################################################### -->
 
     <!-- Placement of titles -->
     <xsl:param name="formal.title.placement">
@@ -394,23 +457,25 @@
         <xsl:attribute name="space-after.maximum">0.1em</xsl:attribute>
     </xsl:attribute-set>
 
-    <!--###################################################
-             colored and hyphenated links
-   ################################################### -->
+<!--###################################################
+              colored and hyphenated links
+    ################################################### -->
     <xsl:template match="ulink">
-        <fo:basic-link external-destination="{@url}"
-                       xsl:use-attribute-sets="xref.properties"
-                       text-decoration="underline"
-                       color="blue">
+    <!--
+    <fo:basic-link external-destination="{@url}"
+            xsl:use-attribute-sets="xref.properties"
+            text-decoration="underline"
+            color="blue">
             <xsl:choose>
-                <xsl:when test="count(child::node())=0">
-                    <xsl:value-of select="@url"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:apply-templates/>
-                </xsl:otherwise>
+            <xsl:when test="count(child::node())=0">
+            <xsl:value-of select="@url"/>
+            </xsl:when>
+            <xsl:otherwise>
+            <xsl:apply-templates/>
+            </xsl:otherwise>
             </xsl:choose>
-        </fo:basic-link>
+            </fo:basic-link>
+            -->
     </xsl:template>
 
 </xsl:stylesheet>

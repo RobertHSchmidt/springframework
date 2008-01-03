@@ -581,9 +581,7 @@ public class AppConfig {
       </section>
 
       <section id="javaconfigapplicationcontext">
-        <title>
-          <classname>JavaConfigApplicationContext</classname>
-        </title>
+        <title><classname>JavaConfigApplicationContext</classname></title>
 
         <para><classname>JavaConfigApplicationContext</classname> provides
         direct access to the beans defined by
@@ -908,9 +906,9 @@ public class AppConfig {
 
         <note>
           <para>It is currently considered somewhat awkward that Configuration
-          classes must be annotated with @Aspect to enable this functionality.
+          classes must be annotated with <classname>@Aspect</classname> to enable this functionality.
           This is not consistent with the standard semantics around the
-          @Aspect annotation, and would thus likely be un-intuitive to someone
+          <classname>@Aspect</classname> annotation, and would thus likely be un-intuitive to someone
           familiar with XML configuration. <emphasis>This may change before
           1.0 GA</emphasis></para>
         </note>
@@ -938,11 +936,11 @@ public class PropertyChangeTracker {
 
         <para>Then include that aspect in the application context, either
         using the @Import annotation or by adding at as a constructor argument
-        when instantiating JavaConfigApplicationContext. Examples of both
+        when instantiating <classname>JavaConfigApplicationContext</classname>. Examples of both
         approaches are below. <note>
             <para>In either case, all configuration classes that wish to have
             their beans be candidates for aspect weaving must also be
-            annotated with @Aspect. <emphasis>This is clearly non-ideal, and
+            annotated with <classname>@Aspect</classname>. <emphasis>This is clearly non-ideal, and
             will likely change before 1.0 GA.</emphasis></para>
           </note></para>
 
@@ -981,7 +979,7 @@ JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig
       </section>
 
       <section>
-        <title>@HotSwappable</title>
+        <title><classname>@HotSwappable</classname></title>
 
         <para>TODO: Rod</para>
       </section>
