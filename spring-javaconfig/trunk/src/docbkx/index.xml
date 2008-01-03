@@ -5,6 +5,10 @@
   <!--
     High-level TODOs (search TODO throughout this document for fine-grained tasks):
 
+	* [formatting]: abstracts are not the way to go.  they render huge, and they're not consistent
+	                with core spring documentation.  yank them out, figure out a better way.
+	* [formatting]: figure out how to render xref links with underlines in PDF output.  This already
+	                works in HTML.  See bottom of fopdf.xsl for details
     * @Meta (see @Bean.meta()).  No examples/tests; can probably refer to core docs (see A.2.10).
     * @AutoBean (currently in 'undocumented features')
     * ValueSource (and friends)... there is just one very simple unit test;
@@ -66,10 +70,10 @@
       provides a pure-Java approach to configuring the Spring IoC Container.
       While JavaConfig aims to be a feature-complete alternative to the more
       well-known XML-based configuration, they can also be used seamlessly
-      together. <note>
-          <para>See <xref linkend="javaconfig-and-xml" /> for more information
+      together.</para>
+      <note><para>See <xref linkend="javaconfig-and-xml" /> for more information
           on using JavaConfig and XML together</para>
-        </note></para>
+      </note>
     </chapter>
 
     <chapter id="why-javaconfig">
@@ -701,8 +705,8 @@ Service service = context.getBean(Service.class);
 public class ConfigOne {
     @Bean
     public AccountRepository accountRepository() {
-        // create and return an AccountRepository object
-       }
+        <lineannotation>// create and return an <classname>AccountRepository</classname> object</lineannotation>
+    }
 }
 
 @Configuration

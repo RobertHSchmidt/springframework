@@ -165,9 +165,10 @@
         <!-- justify-end removed from block attributes (space problem in title.markup) -->
         <fo:block  end-indent="{$toc.indent.width}pt"
                    last-line-end-indent="-{$toc.indent.width}pt"
-                   white-space-treatment="preserve"
-                   text-align="left"
-                   white-space-collapse="false">
+                   white-space-treatment="ignore"
+                   linefeed-treatment="ignore"
+                   text-align-last="justify"
+                   white-space-collapse="true">
             <fo:inline keep-with-next.within-line="always">
                 <!-- print Chapters in bold style -->
                 <xsl:choose>
@@ -178,8 +179,9 @@
                 <fo:basic-link internal-destination="{$id}">
                     <xsl:if test="$label != ''">
                         <xsl:copy-of select="$label"/>
-                        <fo:inline white-space-treatment="preserve"
-                                    white-space-collapse="false">
+                        <fo:inline white-space-treatment="ignore"
+                                   linefeed-treatment="ignore"
+                                   white-space-collapse="true">
                             <xsl:value-of select="$autotoc.label.separator"/>
                         </fo:inline>
                     </xsl:if>
@@ -190,7 +192,6 @@
             <xsl:text> </xsl:text>
             <fo:leader leader-pattern="dots"
                         leader-pattern-width="3pt"
-                        leader-alignment="reference-area"
                         keep-with-next.within-line="always"/>
             <xsl:text> </xsl:text>
             <fo:basic-link internal-destination="{$id}">
@@ -467,7 +468,23 @@
                 color="blue">
             <xsl:choose>
                 <xsl:when test="count(child::node())=0">
-                    <xsl:value-of select="@url"/>
+                    <xsl:value-of select="@linkend"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </fo:basic-link>
+    </xsl:template>
+
+    <xsl:template match="link">
+        <fo:basic-link internal-destination="{@linkend}"
+                xsl:use-attribute-sets="xref.properties"
+                text-decoration="underline"
+                color="blue">
+            <xsl:choose>
+                <xsl:when test="count(child::node())=0">
+                    <xsl:value-of select="@linkend"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:apply-templates/>
