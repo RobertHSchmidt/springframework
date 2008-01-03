@@ -7,8 +7,6 @@
 
 	* [formatting]: abstracts are not the way to go.  they render huge, and they're not consistent
 	                with core spring documentation.  yank them out, figure out a better way.
-	* [formatting]: figure out how to render xref links with underlines in PDF output.  This already
-	                works in HTML.  See bottom of fopdf.xsl for details
     * @Meta (see @Bean.meta()).  No examples/tests; can probably refer to core docs (see A.2.10).
     * @AutoBean (currently in 'undocumented features')
     * ValueSource (and friends)... there is just one very simple unit test;
@@ -332,7 +330,7 @@ public class AppConfig extends ConfigurationSupport {
         <programlisting>@Configuration
 @Import({ DataSourceConfig.class, TransactionConfig.class })
 public class AppConfig extends ConfigurationSupport {
-    // bean definitions can reference bean definitions in DataSourceConfig or TransactionConfig.class
+    <lineannotation>// bean definitions here can reference bean definitions in <classname>DataSourceConfig</classname> or <classname>TransactionConfig</classname></lineannotation>
 }
 </programlisting></para>
 
@@ -527,7 +525,7 @@ public class ApplicationConfig {
         to explicitly set defaults for all enclosed bean definitions.
         <programlisting>@Configuration(defaultAutowire = Autowire.BY_TYPE, defaultLazy = Lazy.FALSE)
 public class DataSourceConfiguration extends ConfigurationSupport {
-    // bean definitions follow
+    <lineannotation>// bean definitions follow</lineannotation>
 }
 </programlisting> Because the semantics of the attributes to the
         <classname>@Configuration</classname> annotation are 1:1 with the
@@ -794,7 +792,7 @@ datasource.password=tiger
         <programlisting>@ResourceBundles({"com/foo/myapp/simple", "com/foo/myapp/complex"})
 @Configuration
 public class AppConfig {
-    // ...
+    <lineannotation>// ...</lineannotation>
 }
 </programlisting>
       </section>
@@ -809,6 +807,7 @@ public class AppConfig {
         <programlisting>@Configuration
 @Import(OtherConfig.class)
 public class MyConfig {
+    <lineannotation>// <classname>@Bean</classname> definitions</lineannotation>
 }
 </programlisting>
       </section>
@@ -825,8 +824,8 @@ public class MyConfig {
 public class AppConfig extends ConfigurationSupport {
     @Bean
     public Service serviceA() {
-        DataSource dataSource = (DataSource) this.getBean("dataSource"); // provided by base class
-        // ...
+        DataSource dataSource = (DataSource) this.getBean("dataSource"); <lineannotation>// provided by base class</lineannotation>
+    	<lineannotation>// ...</lineannotation>
     }
 }
 </programlisting>
@@ -919,7 +918,7 @@ public class PropertyChangeTracker {
 
         <programlisting>@Configuration
 @Import(PropertyChangeTracker.class)
-@Aspect // necessary in order to have transferService bean get aspects applied!
+@Aspect <lineannotation>// necessary in order to have <literal>transferService</literal> bean get aspects applied!</lineannotation>
 public class MyConfig {
     @Bean
     public TransferService myService() {
@@ -934,7 +933,7 @@ JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig
 
         <para>or...</para>
 
-        <programlisting>@Aspect // necessary in order to have transferService bean get aspects applied!
+        <programlisting>@Aspect <lineannotation>// necessary in order to have <literal>transferService</literal> bean get aspects applied!</lineannotation>
 @Configuration
 public class MyConfig {
     @Bean
@@ -999,11 +998,11 @@ JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig
           <para>Currently, to use JavaConfig and XML config together, the
           configuration needs to be 'XML-driven', meaning that it will be the
           XML configuration that bootstraps JavaConfig. <programlisting>&lt;beans&gt;
-   &lt;!-- first, define your individual @Configuration classes as beans --&gt;
+   <lineannotation>&lt;!-- first, define your individual <classname>@Configuration</classname> classes as beans --&gt;</lineannotation>
    &lt;bean class="com.myapp.config.AppConfig"/&gt;
    &lt;bean class="com.myapp.config.DataConfig"/&gt;
 
-    &lt;!-- be sure to include the JavaConfig bean post-processor --&gt;
+    <lineannotation>&lt;!-- be sure to include the JavaConfig bean post-processor --&gt;</lineannotation>
     &lt;bean class="org.springframework.config.java.process.ConfigurationPostProcessor"/&gt;
 &lt;/beans&gt;
 </programlisting> Then, bootstrap an XML ApplicationContext: <programlisting>ApplicationContext context = new ClassPathXmlApplicationContext("application-config.xml");</programlisting>
@@ -1018,13 +1017,13 @@ JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig
             JavaConfig from XML is that the configuration bean instances are
             eligible, just as any other bean, for configuration:
             <programlisting>&lt;beans&gt;
-    &lt;!-- a possible configurable configuration --&gt;
+    <lineannotation>&lt;!-- a possible &quot;configurable configuration&quot; --&gt;</lineannotation>
     &lt;bean class="org.my.company.config.AppConfiguration"&gt;
         &lt;property name="env" value="TESTING"/&gt;
         &lt;property name="monitoring" value="true"/&gt;
         &lt;property name="certificates" value="classpath:/META-INF/config/MyCompany.certs"/&gt;
     &lt;/bean&gt;
-    &lt;!-- Java Configuration post processor --&gt;
+    <lineannotation>&lt;!-- JavaConfig post-processor --&gt;</lineannotation>
     &lt;bean class="org.springframework.config.java.process.ConfigurationPostProcessor"/&gt;
 &lt;/beans&gt;
 </programlisting></para>
