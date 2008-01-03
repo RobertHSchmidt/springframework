@@ -2,6 +2,10 @@
 <!-- 
     This is the XSL HTML configuration file for the Spring Reference Documentation.
 -->
+<!DOCTYPE xsl:stylesheet [
+    <!ENTITY callout_gfx_path   "images/callouts/">
+    <!ENTITY admon_gfx_path     "images/admons/">
+]>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 version="1.0">
@@ -31,14 +35,23 @@
     ################################################### -->
     <!-- Label Chapters and Sections (numbering) -->
     <xsl:param name="chapter.autolabel">1</xsl:param>
-    <xsl:param name="section.autolabel" select="1"/>
-    <xsl:param name="section.label.includes.component.label" select="1"/>
+    <xsl:param name="section.autolabel" select="1" />
+    <xsl:param name="section.label.includes.component.label" select="1" />
     <!--###################################################
                          Callouts
     ################################################### -->
-    <!-- Place callout marks at this column in annotated areas -->
+	
+	<!-- Use images for callouts instead of (1) (2) (3) -->
     <xsl:param name="callout.graphics">1</xsl:param>
+    <xsl:param name="callout.graphics.path">&callout_gfx_path;</xsl:param>
+    <!-- Place callout marks at this column in annotated areas -->
     <xsl:param name="callout.defaultcolumn">90</xsl:param>
+    <!--###################################################
+                       Admonitions
+    ################################################### -->
+    <!-- Use nice graphics for admonitions -->
+    <xsl:param name="admon.graphics">'1'</xsl:param>
+    <xsl:param name="admon.graphics.path">&admon_gfx_path;</xsl:param>
     <!--###################################################
                           Misc
     ################################################### -->
@@ -55,16 +68,16 @@
             <xsl:text>, </xsl:text>
         </xsl:if>
         <span class="{name(.)}">
-            <xsl:call-template name="person.name"/>
-            <xsl:apply-templates mode="titlepage.mode" select="./contrib"/>
-            <xsl:apply-templates mode="titlepage.mode" select="./affiliation"/>
+            <xsl:call-template name="person.name" />
+            <xsl:apply-templates mode="titlepage.mode" select="./contrib" />
+            <xsl:apply-templates mode="titlepage.mode" select="./affiliation" />
         </span>
     </xsl:template>
     <xsl:template match="authorgroup" mode="titlepage.mode">
         <div class="{name(.)}">
             <h2>Authors</h2>
-            <p/>
-            <xsl:apply-templates mode="titlepage.mode"/>
+            <p />
+            <xsl:apply-templates mode="titlepage.mode" />
         </div>
     </xsl:template>
     <!--###################################################
@@ -83,28 +96,28 @@
         </div>
     </xsl:template>
     <!-- no other header navigation (prev, next, etc.) -->
-    <xsl:template name="header.navigation"/>
+    <xsl:template name="header.navigation" />
     <xsl:param name="navig.showtitles">1</xsl:param>
     <!-- let's have a 'Sponsored by SpringSource' strapline (or somesuch) across the bottom of each page -->
     <xsl:template name="footer.navigation">
-        <xsl:param name="prev" select="/foo"/>
-        <xsl:param name="next" select="/foo"/>
-        <xsl:param name="nav.context"/>
-        <xsl:variable name="home" select="/*[1]"/>
-        <xsl:variable name="up" select="parent::*"/>
+        <xsl:param name="prev" select="/foo" />
+        <xsl:param name="next" select="/foo" />
+        <xsl:param name="nav.context" />
+        <xsl:variable name="home" select="/*[1]" />
+        <xsl:variable name="up" select="parent::*" />
         <xsl:variable name="row1" select="count($prev) &gt; 0
                                         or count($up) &gt; 0
-                                        or count($next) &gt; 0"/>
+                                        or count($next) &gt; 0" />
         <xsl:variable name="row2" select="($prev and $navig.showtitles != 0)
                                         or (generate-id($home) != generate-id(.)
                                             or $nav.context = 'toc')
                                         or ($chunk.tocs.and.lots != 0
                                             and $nav.context != 'toc')
-                                        or ($next and $navig.showtitles != 0)"/>
+                                        or ($next and $navig.showtitles != 0)" />
         <xsl:if test="$suppress.navigation = '0' and $suppress.footer.navigation = '0'">
             <div class="navfooter">
                 <xsl:if test="$footer.rule != 0">
-                    <hr/>
+                    <hr />
                 </xsl:if>
                 <xsl:if test="$row1 or $row2">
                     <table width="100%" summary="Navigation footer">
@@ -115,11 +128,11 @@
                                         <a accesskey="p">
                                             <xsl:attribute name="href">
                                                 <xsl:call-template name="href.target">
-                                                    <xsl:with-param name="object" select="$prev"/>
+                                                    <xsl:with-param name="object" select="$prev" />
                                                 </xsl:call-template>
                                             </xsl:attribute>
                                             <xsl:call-template name="navig.content">
-                                                <xsl:with-param name="direction" select="'prev'"/>
+                                                <xsl:with-param name="direction" select="'prev'" />
                                             </xsl:call-template>
                                         </a>
                                     </xsl:if>
@@ -132,11 +145,11 @@
                                             <a accesskey="h">
                                                 <xsl:attribute name="href">
                                                     <xsl:call-template name="href.target">
-                                                        <xsl:with-param name="object" select="$home"/>
+                                                        <xsl:with-param name="object" select="$home" />
                                                     </xsl:call-template>
                                                 </xsl:attribute>
                                                 <xsl:call-template name="navig.content">
-                                                    <xsl:with-param name="direction" select="'home'"/>
+                                                    <xsl:with-param name="direction" select="'home'" />
                                                 </xsl:call-template>
                                             </a>
                                             <xsl:if test="$chunk.tocs.and.lots != 0 and $nav.context != 'toc'">
@@ -149,13 +162,13 @@
                                         <a accesskey="t">
                                             <xsl:attribute name="href">
                                                 <xsl:apply-templates select="/*[1]" mode="recursive-chunk-filename">
-                                                    <xsl:with-param name="recursive" select="true()"/>
+                                                    <xsl:with-param name="recursive" select="true()" />
                                                 </xsl:apply-templates>
                                                 <xsl:text>-toc</xsl:text>
-                                                <xsl:value-of select="$html.ext"/>
+                                                <xsl:value-of select="$html.ext" />
                                             </xsl:attribute>
                                             <xsl:call-template name="gentext">
-                                                <xsl:with-param name="key" select="'nav-toc'"/>
+                                                <xsl:with-param name="key" select="'nav-toc'" />
                                             </xsl:call-template>
                                         </a>
                                     </xsl:if>
@@ -166,11 +179,11 @@
                                         <a accesskey="n">
                                             <xsl:attribute name="href">
                                                 <xsl:call-template name="href.target">
-                                                    <xsl:with-param name="object" select="$next"/>
+                                                    <xsl:with-param name="object" select="$next" />
                                                 </xsl:call-template>
                                             </xsl:attribute>
                                             <xsl:call-template name="navig.content">
-                                                <xsl:with-param name="direction" select="'next'"/>
+                                                <xsl:with-param name="direction" select="'next'" />
                                             </xsl:call-template>
                                         </a>
                                     </xsl:if>
@@ -181,21 +194,19 @@
                             <tr>
                                 <td width="40%" align="left" valign="top">
                                     <xsl:if test="$navig.showtitles != 0">
-                                        <xsl:apply-templates select="$prev" mode="object.title.markup"/>
+                                        <xsl:apply-templates select="$prev" mode="object.title.markup" />
                                     </xsl:if>
                                     <xsl:text>&#160;</xsl:text>
                                 </td>
                                 <td width="20%" align="center">
                                     <span style="color:white;font-size:90%;">
-                                        <a href="http://www.springsource.com/"
-                                           title="SpringSource">Sponsored by SpringSource
-                                        </a>
+                                        <a href="http://www.springsource.com/" title="SpringSource">Sponsored by SpringSource</a>
                                     </span>
                                 </td>
                                 <td width="40%" align="right" valign="top">
                                     <xsl:text>&#160;</xsl:text>
                                     <xsl:if test="$navig.showtitles != 0">
-                                        <xsl:apply-templates select="$next" mode="object.title.markup"/>
+                                        <xsl:apply-templates select="$next" mode="object.title.markup" />
                                     </xsl:if>
                                 </td>
                             </tr>
