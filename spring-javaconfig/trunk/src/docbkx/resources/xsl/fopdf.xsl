@@ -477,6 +477,11 @@
         </fo:basic-link>
     </xsl:template>
 
+    <xsl:attribute-set name="xref.properties">
+      <xsl:attribute name="color">blue</xsl:attribute>
+      <xsl:attribute name="text-decoration">underline</xsl:attribute>
+    </xsl:attribute-set>
+
     <xsl:template match="link">
         <fo:basic-link internal-destination="{@linkend}"
                 xsl:use-attribute-sets="xref.properties"
