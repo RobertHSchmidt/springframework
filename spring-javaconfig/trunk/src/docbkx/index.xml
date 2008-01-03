@@ -2,22 +2,22 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
 "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd"
 [
-<!ENTITY about-this-document          SYSTEM "about-this-document.xml">
-<!ENTITY overview                     SYSTEM "overview.xml">
-<!ENTITY new-and-noteworthy           SYSTEM "new-and-noteworthy.xml">
-<!ENTITY quick-start                  SYSTEM "quick-start.xml">
-<!ENTITY creating-bean-definitions    SYSTEM "creating-bean-definitions.xml">
-<!ENTITY modularizing-configurations  SYSTEM "modularizing-configurations.xml">
-<!ENTITY using-aspects                SYSTEM "using-aspects.xml">
-<!ENTITY developing-web-applications  SYSTEM "developing-web-applications.xml">
-<!ENTITY limitations                  SYSTEM "limitations.xml">
-<!ENTITY undocumented-features        SYSTEM "undocumented-features.xml">
-<!ENTITY roadmap                      SYSTEM "roadmap.xml">
-<!ENTITY tooling                      SYSTEM "tooling.xml">
-<!ENTITY common-config-scenarios      SYSTEM "common-config-scenarios.xml">
-<!ENTITY how-javaconfig-works         SYSTEM "how-javaconfig-works.xml">
-<!ENTITY maven-configs                SYSTEM "maven-configs.xml">
-<!ENTITY additional-resources         SYSTEM "additional-resources.xml">
+<!ENTITY about-this-document          SYSTEM "chapters/about-this-document.xml">
+<!ENTITY overview                     SYSTEM "chapters/overview.xml">
+<!ENTITY new-and-noteworthy           SYSTEM "chapters/new-and-noteworthy.xml">
+<!ENTITY quick-start                  SYSTEM "chapters/quick-start.xml">
+<!ENTITY creating-bean-definitions    SYSTEM "chapters/creating-bean-definitions.xml">
+<!ENTITY modularizing-configurations  SYSTEM "chapters/modularizing-configurations.xml">
+<!ENTITY using-aspects                SYSTEM "chapters/using-aspects.xml">
+<!ENTITY developing-web-applications  SYSTEM "chapters/developing-web-applications.xml">
+<!ENTITY limitations                  SYSTEM "chapters/limitations.xml">
+<!ENTITY undocumented-features        SYSTEM "chapters/undocumented-features.xml">
+<!ENTITY roadmap                      SYSTEM "chapters/roadmap.xml">
+<!ENTITY tooling                      SYSTEM "chapters/tooling.xml">
+<!ENTITY common-config-scenarios      SYSTEM "chapters/common-config-scenarios.xml">
+<!ENTITY how-javaconfig-works         SYSTEM "chapters/how-javaconfig-works.xml">
+<!ENTITY maven-configs                SYSTEM "chapters/maven-configs.xml">
+<!ENTITY additional-resources         SYSTEM "chapters/additional-resources.xml">
 ]>
 <book xmlns:xi="http://www.w3.org/2001/XInclude">
   <!--
