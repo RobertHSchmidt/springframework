@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="combining-config-approaches">
+  <title>Combining configuration approaches</title>
+
+  <abstract>
+    <para>JavaConfig can be used in conjunction with any or all of
+    Spring's other container configuration approaches. The question is
+    when and where it's appropriate to do so.</para>
+  </abstract>
+
+  <section id="javaconfig-and-xml">
+    <title>JavaConfig and XML</title>
+
+    <section>
+      <title>Bootstrapping JavaConfig from XML with
+      <classname>ConfigurationPostProcessor</classname></title>
+
+      <para>Currently, to use JavaConfig and XML config together, the
+      configuration needs to be 'XML-driven', meaning that it will be the
+      XML configuration that bootstraps JavaConfig. <programlisting>&lt;beans&gt;
+   <lineannotation>&lt;!-- first, define your individual <classname>@Configuration</classname> classes as beans --&gt;</lineannotation>
+   &lt;bean class="com.myapp.config.AppConfig"/&gt;
+   &lt;bean class="com.myapp.config.DataConfig"/&gt;
+
+    <lineannotation>&lt;!-- be sure to include the JavaConfig bean post-processor --&gt;</lineannotation>
+    &lt;bean class="org.springframework.config.java.process.ConfigurationPostProcessor"/&gt;
+&lt;/beans&gt;
+</programlisting> Then, bootstrap an XML ApplicationContext: <programlisting>ApplicationContext context = new ClassPathXmlApplicationContext("application-config.xml");</programlisting>
+      The beans defined in <classname>AppConfig</classname> and
+      <classname>DataConfig</classname> will be available via
+      '<varname>context</varname>'.</para>
+
+      <section id="configuring-configurations">
+        <title>Configuring configurations</title>
+
+        <para>An added benefit that comes along with bootstrapping
+        JavaConfig from XML is that the configuration bean instances are
+        eligible, just as any other bean, for configuration:
+        <programlisting>&lt;beans&gt;
+    <lineannotation>&lt;!-- a possible "configurable configuration" --&gt;</lineannotation>
+    &lt;bean class="org.my.company.config.AppConfiguration"&gt;
+        &lt;property name="env" value="TESTING"/&gt;
+        &lt;property name="monitoring" value="true"/&gt;
+        &lt;property name="certificates" value="classpath:/META-INF/config/MyCompany.certs"/&gt;
+    &lt;/bean&gt;
+    <lineannotation>&lt;!-- JavaConfig post-processor --&gt;</lineannotation>
+    &lt;bean class="org.springframework.config.java.process.ConfigurationPostProcessor"/&gt;
+&lt;/beans&gt;
+</programlisting></para>
+      </section>
+    </section>
+
+    <section>
+      <title>Best Practices</title>
+
+      <para>
+        <emphasis>TODO: talk about when it's best to use a combination of
+        XML and JavaConfig Mention limitations like lack of osgi:, tx:,
+        aop:, context: namespaces (or link to <xref
+        linkend="limitations" />)</emphasis>
+      </para>
+    </section>
+  </section>
+
+  <section>
+    <title>JavaConfig and Annotation-Driven Configuration</title>
+
+    <para>TODO</para>
+  </section>
+</chapter>
+

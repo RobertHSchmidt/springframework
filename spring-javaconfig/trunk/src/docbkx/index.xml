@@ -8,6 +8,9 @@
 <!ENTITY quick-start                  SYSTEM "quick-start.xml">
 <!ENTITY creating-bean-definitions    SYSTEM "creating-bean-definitions.xml">
 <!ENTITY modularizing-configurations  SYSTEM "modularizing-configurations.xml">
+<!ENTITY using-aspects                SYSTEM "using-aspects.xml">
+<!ENTITY developing-web-applications  SYSTEM "developing-web-applications.xml">
+<!ENTITY combining-config-approaches  SYSTEM "combining-config-approaches.xml">
 ]>
 <book xmlns:xi="http://www.w3.org/2001/XInclude">
   <!--
@@ -94,7 +97,7 @@
       section documents the various techniques and features available for
       meeting these needs.</para>
 
-      <para><xref linkend="aop" />. One of the most powerful features of the
+      <para><xref linkend="using-aspects" />. One of the most powerful features of the
       Spring IoC container is the ability to add aspect-oriented behavior to
       plain beans using Spring AOP. JavaConfig also makes the use of aspects
       possible, and this section details how to do it.</para>
@@ -114,227 +117,9 @@
     </partintro>
     &creating-bean-definitions;
     &modularizing-configurations;
-    <chapter id="aop">
-      <title>Using aspects</title>
-
-      <chapterinfo>
-        <abstract>
-          <para>AOP support in JavaConfig is a work-in-progress. It is
-          documented here in order to solicit feedback.</para>
-        </abstract>
-      </chapterinfo>
-
-      <para>Spring JavaConfig has full support for AspectJsupports the same
-      set of AspectJ annotations used throughout</para>
-
-      <section>
-        <title>Embedded aspects</title>
-
-        <para>TODO: link out to an overview of AOP for the
-        uninitiatied.</para>
-
-        <para>A configuration class can serve 'double duty' as an aspect. By
-        applying <classname>@Aspect</classname> to a
-        <classname>@Configuration</classname> class, you can then add
-        pointcuts and advice that will be applied against all beans in the
-        container. <programlisting>@Aspect
-@Configuration
-public class AppConfig {
-    @Bean
-    public Service service() {
-        return new ServiceImpl(...);
-    }
-
-    @Before("execution(* service..Service+.set*(*))")
-    public void trackServicePropertyChange() {
-        logger.info("property changed on service!");
-    }
-}
-</programlisting> This pointcut will match the all methods starting with 'set'
-        on all implementations of the Service interface. Before any matching
-        methods execute, the
-        <methodname>trackServicePropertyChange()</methodname> method will be
-        executed.</para>
-
-        <note>
-          <para>It is currently considered somewhat awkward that Configuration
-          classes must be annotated with <classname>@Aspect</classname> to
-          enable this functionality. This is not consistent with the standard
-          semantics around the <classname>@Aspect</classname> annotation, and
-          would thus likely be un-intuitive to someone familiar with XML
-          configuration. <emphasis>This may change before 1.0
-          GA</emphasis></para>
-        </note>
-      </section>
-
-      <section>
-        <title>Reusable aspects</title>
-
-        <para>To create a reusable aspect, define a class annotated with
-        <classname>@Configuration</classname>and
-        <classname>Aspect</classname>containing advice methods and
-        pointcuts.</para>
-
-        <programlisting>@Aspect
-@Configuration
-public class PropertyChangeTracker {
-    private Logger logger = Logger.getLogger(PropertyChangeTracker.class);
-
-    @Before("execution(* set*(*))")
-    public void trackChange() {
-        logger.info("property just changed...");
-    }
-}
-</programlisting>
-
-        <para>Then include that aspect in the application context, either
-        using the @Import annotation or by adding at as a constructor argument
-        when instantiating
-        <classname>JavaConfigApplicationContext</classname>. Examples of both
-        approaches are below. <note>
-            <para>In either case, all configuration classes that wish to have
-            their beans be candidates for aspect weaving must also be
-            annotated with <classname>@Aspect</classname>. <emphasis>This is
-            clearly non-ideal, and will likely change before 1.0
-            GA.</emphasis></para>
-          </note></para>
-
-        <programlisting>@Configuration
-@Import(PropertyChangeTracker.class)
-@Aspect <lineannotation>// necessary in order to have <literal>transferService</literal> bean get aspects applied!</lineannotation>
-public class MyConfig {
-    @Bean
-    public TransferService myService() {
-        return new TransferServiceImpl(...);
-    }
-}
-
-...
-
-JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig.class);
-</programlisting>
-
-        <para>or...</para>
-
-        <programlisting>@Aspect <lineannotation>// necessary in order to have <literal>transferService</literal> bean get aspects applied!</lineannotation>
-@Configuration
-public class MyConfig {
-    @Bean
-    public TransferService myService() {
-        return new TransferServiceImpl(...);
-    }
-}
-
-...
-
-JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig.class, PropertyChangeTracker.class);
-</programlisting>
-      </section>
-
-      <section>
-        <title>
-          <classname>@HotSwappable</classname>
-        </title>
-
-        <para>TODO: Rod</para>
-      </section>
-    </chapter>
-
-    <chapter id="developing-web-applications">
-      <title>Developing JavaConfig-powered web applications</title>
-
-      <chapterinfo>
-        <abstract>
-          <para>JavaConfig provides several support classes for bootstrapping
-          your configurations into the web tier. With various combinations of
-          <classname>JavaConfigWebApplicationContext</classname>,
-          <classname>JavaConfigDispatcherServlet</classname> and
-          <classname>JavaConfigContextLoaderListener</classname>, you can
-          achieve XML-free web application configuration.</para>
-        </abstract>
-      </chapterinfo>
-
-      <section>
-        <title>
-          <classname>JavaConfigWebApplicationContext</classname>
-        </title>
-
-        <para>TODO: Somewhere in here I need to talk about bean naming for
-        BeanNameHandlerMapping. Use @Bean(aliases="")?</para>
-
-        <para>TODO: finish section</para>
-      </section>
-    </chapter>
-
-    <chapter id="combining-config-approaches">
-      <title>Combining configuration approaches</title>
-
-      <abstract>
-        <para>JavaConfig can be used in conjunction with any or all of
-        Spring's other container configuration approaches. The question is
-        when and where it's appropriate to do so.</para>
-      </abstract>
-
-      <section id="javaconfig-and-xml">
-        <title>JavaConfig and XML</title>
-
-        <section>
-          <title>Bootstrapping JavaConfig from XML with
-          <classname>ConfigurationPostProcessor</classname></title>
-
-          <para>Currently, to use JavaConfig and XML config together, the
-          configuration needs to be 'XML-driven', meaning that it will be the
-          XML configuration that bootstraps JavaConfig. <programlisting>&lt;beans&gt;
-   <lineannotation>&lt;!-- first, define your individual <classname>@Configuration</classname> classes as beans --&gt;</lineannotation>
-   &lt;bean class="com.myapp.config.AppConfig"/&gt;
-   &lt;bean class="com.myapp.config.DataConfig"/&gt;
-
-    <lineannotation>&lt;!-- be sure to include the JavaConfig bean post-processor --&gt;</lineannotation>
-    &lt;bean class="org.springframework.config.java.process.ConfigurationPostProcessor"/&gt;
-&lt;/beans&gt;
-</programlisting> Then, bootstrap an XML ApplicationContext: <programlisting>ApplicationContext context = new ClassPathXmlApplicationContext("application-config.xml");</programlisting>
-          The beans defined in <classname>AppConfig</classname> and
-          <classname>DataConfig</classname> will be available via
-          '<varname>context</varname>'.</para>
-
-          <section id="configuring-configurations">
-            <title>Configuring configurations</title>
-
-            <para>An added benefit that comes along with bootstrapping
-            JavaConfig from XML is that the configuration bean instances are
-            eligible, just as any other bean, for configuration:
-            <programlisting>&lt;beans&gt;
-    <lineannotation>&lt;!-- a possible "configurable configuration" --&gt;</lineannotation>
-    &lt;bean class="org.my.company.config.AppConfiguration"&gt;
-        &lt;property name="env" value="TESTING"/&gt;
-        &lt;property name="monitoring" value="true"/&gt;
-        &lt;property name="certificates" value="classpath:/META-INF/config/MyCompany.certs"/&gt;
-    &lt;/bean&gt;
-    <lineannotation>&lt;!-- JavaConfig post-processor --&gt;</lineannotation>
-    &lt;bean class="org.springframework.config.java.process.ConfigurationPostProcessor"/&gt;
-&lt;/beans&gt;
-</programlisting></para>
-          </section>
-        </section>
-
-        <section>
-          <title>Best Practices</title>
-
-          <para>
-            <emphasis>TODO: talk about when it's best to use a combination of
-            XML and JavaConfig Mention limitations like lack of osgi:, tx:,
-            aop:, context: namespaces (or link to <xref
-            linkend="limitations" />)</emphasis>
-          </para>
-        </section>
-      </section>
-
-      <section>
-        <title>JavaConfig and Annotation-Driven Configuration</title>
-
-        <para>TODO</para>
-      </section>
-    </chapter>
+    &using-aspects;
+    &developing-web-applications;
+    &combining-config-approaches;
   </part>
 
   <part id="appendices">
