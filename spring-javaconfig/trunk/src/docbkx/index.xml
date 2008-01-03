@@ -2,15 +2,17 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
 "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd"
 [
+<!ENTITY about-this-document   SYSTEM "about-this-document.xml">
 <!ENTITY overview              SYSTEM "overview.xml">
 <!ENTITY new-and-noteworthy    SYSTEM "new-and-noteworthy.xml">
+<!ENTITY quick-start           SYSTEM "quick-start.xml">
 ]>
 <book xmlns:xi="http://www.w3.org/2001/XInclude">
   <!--
     High-level TODOs (search TODO throughout this document for fine-grained tasks):
 
-	* [formatting]: abstracts are not the way to go.  they render huge, and they're not consistent
-	                with core spring documentation.  yank them out, figure out a better way.
+    * [formatting]: abstracts are not the way to go.  they render huge, and they're not consistent
+                    with core spring documentation.  yank them out, figure out a better way.
     * @Meta (see @Bean.meta()).  No examples/tests; can probably refer to core docs (see A.2.10).
     * @AutoBean (currently in 'undocumented features')
     * ValueSource (and friends)... there is just one very simple unit test;
@@ -24,7 +26,7 @@
 
     Limitations:
     * No property values... enumerate any limitations this imposes
-    -->
+  -->
 
   <bookinfo>
     <title>Spring JavaConfig Reference Guide</title>
@@ -53,17 +55,7 @@
 
   <toc />
 
-  <preface id="about">
-    <title>About this document</title>
-    <section id="blah">
-      <title>Blah</title>
-      <para>lorem ipsum</para>
-    </section>
-    <section id="blarg">
-      <title>Blarg</title>
-      <para>dolor sit amet</para>
-    </section>
-  </preface>
+  &about-this-document;
 
   <part id="introduction">
     <title>Introduction</title>
@@ -81,96 +73,7 @@
 
     &overview;
     &new-and-noteworthy;
-
-    <chapter id="quick-start">
-      <title>Quick Start</title>
-
-      <chapterinfo>
-        <abstract>
-          <para>This chapter provides a basic tutorial for getting started
-          with JavaConfig. For full details on JavaConfig's capabilities,
-          please refer to <xref linkend="reference" /></para>
-        </abstract>
-      </chapterinfo>
-
-      <section>
-        <title>Download JavaConfig</title>
-
-        <section>
-          <title>Maven 2</title>
-
-          <para>Assuming a Maven2 build infrastructure, using JavaConfig is as
-          simple as adding the following to your POM <programlisting>&lt;dependencies&gt;
-    &lt;dependency&gt;
-        &lt;groupId&gt;org.springframework.javaconfig&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-javaconfig&lt;/artifactId&gt;
-        &lt;version&gt;1.0-m3&lt;/version&gt;
-    &lt;/dependency&gt;
-&lt;/dependencies&gt;
-</programlisting> <note> See <xref linkend="maven-configs" /> for more
-          information about using Maven2 with Spring JavaConfig </note></para>
-        </section>
-
-        <section>
-          <title>Ant/Other</title>
-
-          <para>TODO: Download from sourceforge (link), consider the
-          -with-dependencies jar.</para>
-        </section>
-      </section>
-
-      <section>
-        <title>Create Bean Definitions</title>
-
-        <para>
-          <programlisting>@Configuration
-public class ApplicationConfig {
-    @Bean
-    public TransferService transferService() {
-        return new TransferServiceImpl(accountRepository());
-    }
-
-    @Bean
-    public AccountRepository accountRepository() {
-        return new JdbcAccountRepository(dataSource());
-    }
-
-    @Bean
-    public DataSource dataSource() {
-        return new DriverManagerDataSource(TODO: args);
-    }
-}
-</programlisting>
-        </para>
-      </section>
-
-      <section>
-        <title>Retrieve Bean Instances</title>
-
-        <para>Let's create a very basic, command-line application to allow
-        users to transfer money from one account to another. <programlisting>public class SimpleTransferApplication {
-    public static void main(String... args) {
-        double amount = new Double(args[0]);
-        int sourceAcctId = new Integer(args[1]);
-        int destAcctId = new Integer(args[2]);
-
-        JavaConfigApplicationContext context = new JavaConfigApplicationContext(ApplicationConfig.class);
-        TransferService transferService = context.getBean(TransferService.class);
-        transferService.transfer(300.00, sourceAcctId, destAccountId);
-    }
-}
-</programlisting></para>
-      </section>
-
-      <section>
-        <title>Summary</title>
-
-        <para>Obviously, we're a bit too simplistic here, to learn more about
-        modularizing <classname>@Configuration</classname> classes, see TODO
-        link. To learn about more advanced mechanisms for ... TODO continue
-        this approach,</para>
-      </section>
-    </chapter>
+    &quick-start;
   </part>
 
   <part id="reference">
