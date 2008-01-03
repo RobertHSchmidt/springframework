@@ -1,0 +1,22 @@
+Docbook sources for Spring JavaConfig.
+
+Organization:
+------------
+The documentation is broken down into parts and chapters, per DocBook
+conventions.  index.xml lays out the three parts of the book and imports in all
+chapters as XML entities.  The chapters/ directory contains individual chapter
+XML fragments.
+
+Building:
+--------
+To generate the HTML and PDF, run the following commands, respectively from the
+root of the project (trunk):
+
+    mvn docbkx:generate-pdf
+    mvn docbkx:generate-html
+
+Formatting:
+----------
+To format the sources, download the free XMLMind program.  At this time,
+formatting is not strict, but rather being managed by hand generally in
+accordance with the original conventions laid out by XMLMind.
