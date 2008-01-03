@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="using-aspects">
+  <title>Using Aspects</title>
+
+  <chapterinfo>
+    <!-- TODO: get rid of abstract -->
+    <abstract>
+      <para>AOP support in JavaConfig is a work-in-progress. It is
+      documented here in order to solicit feedback.</para>
+    </abstract>
+  </chapterinfo>
+
+  <para>Spring JavaConfig has full support for AspectJsupports the same
+  set of AspectJ annotations used throughout</para>
+
+  <section>
+    <title>Embedded aspects</title>
+
+    <para>TODO: link out to an overview of AOP for the
+    uninitiatied.</para>
+
+    <para>A configuration class can serve 'double duty' as an aspect. By
+    applying <classname>@Aspect</classname> to a
+    <classname>@Configuration</classname> class, you can then add
+    pointcuts and advice that will be applied against all beans in the
+    container. <programlisting>@Aspect
+@Configuration
+public class AppConfig {
+    @Bean
+    public Service service() {
+        return new ServiceImpl(...);
+    }
+
+    @Before("execution(* service..Service+.set*(*))")
+    public void trackServicePropertyChange() {
+        logger.info("property changed on service!");
+    }
+}
+</programlisting> This pointcut will match the all methods starting with 'set'
+    on all implementations of the Service interface. Before any matching
+    methods execute, the
+    <methodname>trackServicePropertyChange()</methodname> method will be
+    executed.</para>
+
+    <note>
+      <para>It is currently considered somewhat awkward that Configuration
+      classes must be annotated with <classname>@Aspect</classname> to
+      enable this functionality. This is not consistent with the standard
+      semantics around the <classname>@Aspect</classname> annotation, and
+      would thus likely be un-intuitive to someone familiar with XML
+      configuration. <emphasis>This may change before 1.0
+      GA</emphasis></para>
+    </note>
+  </section>
+
+  <section>
+    <title>Reusable aspects</title>
+
+    <para>To create a reusable aspect, define a class annotated with
+    <classname>@Configuration</classname>and
+    <classname>Aspect</classname>containing advice methods and
+    pointcuts.</para>
+
+    <programlisting>@Aspect
+@Configuration
+public class PropertyChangeTracker {
+    private Logger logger = Logger.getLogger(PropertyChangeTracker.class);
+
+    @Before("execution(* set*(*))")
+    public void trackChange() {
+        logger.info("property just changed...");
+    }
+}
+</programlisting>
+
+    <para>Then include that aspect in the application context, either
+    using the @Import annotation or by adding at as a constructor argument
+    when instantiating
+    <classname>JavaConfigApplicationContext</classname>. Examples of both
+    approaches are below. <note>
+        <para>In either case, all configuration classes that wish to have
+        their beans be candidates for aspect weaving must also be
+        annotated with <classname>@Aspect</classname>. <emphasis>This is
+        clearly non-ideal, and will likely change before 1.0
+        GA.</emphasis></para>
+      </note></para>
+
+    <programlisting>@Configuration
+@Import(PropertyChangeTracker.class)
+@Aspect <lineannotation>// necessary in order to have <literal>transferService</literal> bean get aspects applied!</lineannotation>
+public class MyConfig {
+    @Bean
+    public TransferService myService() {
+        return new TransferServiceImpl(...);
+    }
+}
+
+...
+
+JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig.class);
+</programlisting>
+
+    <para>or...</para>
+
+    <programlisting>@Aspect <lineannotation>// necessary in order to have <literal>transferService</literal> bean get aspects applied!</lineannotation>
+@Configuration
+public class MyConfig {
+    @Bean
+    public TransferService myService() {
+        return new TransferServiceImpl(...);
+    }
+}
+
+...
+
+JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig.class, PropertyChangeTracker.class);
+</programlisting>
+  </section>
+
+  <section>
+    <title>
+      <classname>@HotSwappable</classname>
+    </title>
+
+    <para>TODO: Rod</para>
+  </section>
+</chapter>

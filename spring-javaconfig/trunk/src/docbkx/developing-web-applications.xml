@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="developing-web-applications">
+  <title>Developing JavaConfig-powered web applications</title>
+
+  <chapterinfo>
+    <abstract>
+      <para>JavaConfig provides several support classes for bootstrapping
+      your configurations into the web tier. With various combinations of
+      <classname>JavaConfigWebApplicationContext</classname>,
+      <classname>JavaConfigDispatcherServlet</classname> and
+      <classname>JavaConfigContextLoaderListener</classname>, you can
+      achieve XML-free web application configuration.</para>
+    </abstract>
+  </chapterinfo>
+
+  <section>
+    <title>
+      <classname>JavaConfigWebApplicationContext</classname>
+    </title>
+
+    <para>TODO: Somewhere in here I need to talk about bean naming for
+    BeanNameHandlerMapping. Use @Bean(aliases="")?</para>
+
+    <para>TODO: finish section</para>
+  </section>
+</chapter>
