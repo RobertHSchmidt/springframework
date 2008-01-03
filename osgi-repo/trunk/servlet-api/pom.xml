@@ -12,7 +12,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.springframework.osgi</groupId>
-	<artifactId>servletapi.osgi</artifactId>
+	<artifactId>servlet-api.osgi</artifactId>
 	<packaging>bundle</packaging>
 	<version>2.4-SNAPSHOT</version>
 	<name>Servlet API (OSGi version)</name>
@@ -24,8 +24,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>servletapi</groupId>
-			<artifactId>servletapi</artifactId>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
 			<version>2.4</version>
 			<scope>provided</scope>
 		</dependency>

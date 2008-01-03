@@ -27,7 +27,7 @@
 		</private.packages>
 
 		<symName.prefix>org.springframework.osgi.bundle</symName.prefix>
-		<symbolic.name>${groupId}.${artifactId}</symbolic.name>
+		<symbolic.name>${pom.groupId}.${pom.artifactId}</symbolic.name>
 	</properties>
 
 	<modules>
