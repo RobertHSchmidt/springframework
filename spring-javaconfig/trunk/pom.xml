@@ -160,7 +160,7 @@
 					<execution>
 						<goals>
 							<goal>generate-html</goal>
-							<!-- <goal>generate-pdf</goal> -->
+							<goal>generate-pdf</goal>
 						</goals>
 						<phase>pre-site</phase>
 					</execution>
@@ -179,7 +179,7 @@
 					<htmlStylesheet>css/html.css</htmlStylesheet>
 					<xincludeSupported>true</xincludeSupported>
 					<htmlCustomization>src/docbkx/resources/xsl/html_chunk.xsl</htmlCustomization>
-					<!-- <foCustomization>src/docbkx/resources/xsl/fopdf.xsl</foCustomization> -->
+					<foCustomization>src/docbkx/resources/xsl/fopdf.xsl</foCustomization>
 					<entities>
 						<entity>
 							<name>version</name>
@@ -190,7 +190,7 @@
 						<copy todir="target/site/reference">
 							<fileset dir="target/docbkx">
 								<include name="**/*.html" />
-								<include name="**/*.pdf" />
+								<!-- <include name="**/*.pdf" /> -->
 							</fileset>
 						</copy>
 						<copy todir="target/site/reference/html">
