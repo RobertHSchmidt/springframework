@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="undocumented-features">
+  <title>Undocumented Features</title>
+
+  <para>There are a number of classes, interfaces and annotations within
+  the public JavaConfig API that remain undocumented. This is intentional,
+  as they may be deprecated and/or removed before the 1.0 GA release. They
+  include <orderedlist>
+      <listitem>
+        <para>
+          <classname>@AutoBean</classname>
+        </para>
+      </listitem>
+
+      <listitem>
+        <para>
+          <classname>@SpringAdvice</classname>
+        </para>
+      </listitem>
+
+      <listitem>
+        <para>
+          <classname>@SpringAdvisor</classname>
+        </para>
+      </listitem>
+    </orderedlist></para>
+</appendix>

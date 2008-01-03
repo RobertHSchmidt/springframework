@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="maven-configs">
+  <title>Maven2 POM Configurations</title>
+
+  <appendixinfo>Maven provides nice trans dep mgmt, but... here are some
+  configs to help ease this process.</appendixinfo>
+
+  <para>As mentioned in TODO link: Quick Start, JavaConfig requires only a
+  minimal set of dependencies for the most basic configuration
+  scenarios.</para>
+
+  <section>
+    <title>Minimalist</title>
+
+    <para>
+      <programlisting>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.javaconfig&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-javaconfig&lt;/artifactId&gt;
+        &lt;version&gt;1.0-m3&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</programlisting>
+    </para>
+  </section>
+
+  <section>
+    <title>AOP</title>
+
+    <para>
+      <programlisting>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.javaconfig&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-javaconfig&lt;/artifactId&gt;
+        &lt;version&gt;1.0-m3&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;aopalliance&lt;/groupId&gt;
+        &lt;artifactId&gt;aopalliance&lt;/artifactId&gt;
+        &lt;version&gt;1.0&lt;/version&gt;
+        &lt;optional&gt;true&lt;/optional&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;asm&lt;/groupId&gt;
+        &lt;artifactId&gt;asm&lt;/artifactId&gt;
+        &lt;version&gt;2.2.3&lt;/version&gt;
+        &lt;optional&gt;true&lt;/optional&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;asm&lt;/groupId&gt;
+        &lt;artifactId&gt;asm-commons&lt;/artifactId&gt;
+        &lt;version&gt;2.2.3&lt;/version&gt;
+        &lt;optional&gt;true&lt;/optional&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;aspectj&lt;/groupId&gt;
+        &lt;artifactId&gt;aspectjlib&lt;/artifactId&gt;
+        &lt;version&gt;1.5.3&lt;/version&gt;
+        &lt;optional&gt;true&lt;/optional&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;aspectj&lt;/groupId&gt;
+        &lt;artifactId&gt;aspectjrt&lt;/artifactId&gt;
+        &lt;version&gt;1.5.3&lt;/version&gt;
+        &lt;optional&gt;true&lt;/optional&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;aspectj&lt;/groupId&gt;
+        &lt;artifactId&gt;aspectjweaver&lt;/artifactId&gt;
+        &lt;version&gt;1.5.3&lt;/version&gt;
+        &lt;optional&gt;true&lt;/optional&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</programlisting>
+    </para>
+  </section>
+</appendix>
