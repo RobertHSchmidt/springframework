@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="creating-bean-definitions">
+  <title>Creating and using bean definitions</title>
+
+  <section>
+    <title>
+      <classname>@Configuration</classname>
+    </title>
+
+    <para>Annotating a class with the
+    <classname>@Configuration</classname> annotation indicates that the
+    class will be used by JavaConfig as a source of bean
+    definitions.</para>
+
+    <para>An application may make use of just one
+    <classname>@Configuration</classname>-annotated class, or many.
+    <classname>@Configuration</classname> can be considered the equivalent
+    of XML's <code>&lt;beans/&gt;</code> element. Like
+    <code>&lt;beans/&gt;</code>, it provides an opportunity to explicitly
+        set defaults for all enclosed bean definitions. <programlisting>@Configuration(defaultAutowire = Autowire.BY_TYPE, defaultLazy = Lazy.FALSE)
+public class DataSourceConfiguration extends ConfigurationSupport {
+    <lineannotation>// bean definitions follow</lineannotation>
+}
+</programlisting> Because the semantics of the attributes to the
+    <classname>@Configuration</classname> annotation are 1:1 with the
+    attributes to the <code>&lt;beans/&gt;</code> element, this
+    documentation defers to the section in Chapter 3, IoC from the core
+    spring documentation. See <ulink
+    linkend="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-definition">http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-definition</ulink></para>
+  </section>
+
+  <section id="bean">
+    <title>
+      <classname>@Bean</classname>
+    </title>
+
+    <para><classname>@Bean</classname> is a direct analog to XML
+    configuration's <code>&lt;bean/&gt;</code> element. As such, it
+    accepts a set as annotation attributes equivalent to the attributes to
+    the <code>&lt;bean/&gt;</code>. See TODO: link to core spring
+    framework documentation on bean and its attributes.</para>
+
+    <section id="declaring-a-bean">
+      <title>Declaring a bean</title>
+
+      <para>To declare a bean, simply annotate a method with the
+      <classname>@Bean</classname> annotation.</para>
+
+      <programlisting>@Configuration
+public class AppConfig {
+    @Bean
+    public TransferService transferService() {
+        return new TransferServiceImpl();
+    }
+}
+</programlisting>
+    </section>
+
+    <section id="bean-visibility">
+      <title>Bean visibility</title>
+
+      <para>TODO</para>
+    </section>
+  </section>
+
+  <section id="javaconfigapplicationcontext">
+    <title>
+      <classname>JavaConfigApplicationContext</classname>
+    </title>
+
+    <para><classname>JavaConfigApplicationContext</classname> provides
+    direct access to the beans defined by
+    <classname>@Configuration</classname>-annotated classes. For more
+    information on the ApplicationContext API in general, please refer to
+    the Core Spring documentation. TODO: link to core spring framework
+    documentation on ApplicationContext</para>
+
+    <section id="construction-options">
+      <title>Construction Options</title>
+
+      <para>Instantiating the
+      <classname>JavaConfigApplicationContext</classname> be done by
+      supplying <classname>@Configuration</classname>-annotated class
+      literals to the constructor, and/or strings representing packages to
+      scan for <classname>@Configuration</classname>-annotated
+      classes.</para>
+
+      <section>
+        <title>Construction by class literal</title>
+
+        <para>Each of the class literals supplied to the constructor will
+        be processed, and for each <classname>@Bean</classname>-annotated
+        method encountered, JavaConfig will create a bean definition and
+        ultimately instantiate and initialize the bean.</para>
+
+        <programlisting>JavaConfigApplicationContext context =
+    new JavaConfigApplicationContext(AppConfig.class);
+Service service = (Service) context.getBean("serviceA");
+</programlisting>
+
+        <programlisting>JavaConfigApplicationContext context =
+    new JavaConfigApplicationContext(AppConfig.class, DataConfig.class);
+Service service = (Service) context.getBean("serviceA");
+</programlisting>
+      </section>
+
+      <section>
+        <title>Construction by base package</title>
+
+        <para>Base packages will be scanned for the existence of any
+        <classname>@Configuration</classname>-annotated classes. Any
+        candidate classes will then be processed much as if they had been
+        supplied directly as class literals to the constructor.</para>
+
+        <programlisting>JavaConfigApplicationContext context =
+    new JavaConfigApplicationContext("**/configuration/**/*.class");
+Service service = (Service) context.getBean("serviceA");
+</programlisting>
+
+        <programlisting>JavaConfigApplicationContext context =
+    new JavaConfigApplicationContext("**/configuration/**/*.class", "**/other/*Config.class);
+Service service = (Service) context.getBean("serviceA");
+</programlisting>
+      </section>
+
+      <section>
+        <title>Post-construction configuration</title>
+
+        <para>When one or more classes/packages are used during
+        construction, a
+        <classname>JavaConfigApplicationContext</classname> cannot be
+        further configured. If post-construction configuration is
+        preferred or required, use either the no-arg constructor,
+        configure by calling setters, then manually refresh the context.
+        After the call to <methodname>refresh()</methodname>, the context
+        will be 'closed for configuration'.</para>
+
+        <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext();
+context.setParent(otherConfig);
+context.setConfigClasses(AppConfig.class, DataConfig.class);
+context.setBasePackages("**/configuration/**/*.class");
+context.refresh();
+Service service = (Service) context.getBean("serviceA");
+</programlisting>
+      </section>
+    </section>
+
+    <note>
+      <para>Whenever multiple packages and/or classes are used to
+      instantiate a <classname>JavaConfigApplicationContext</classname>,
+      <emphasis>order matters</emphasis>. This is important when
+      considering what happens if two configuration classes define a bean
+      with the same name. The last-specified class wins.</para>
+    </note>
+
+    <section id="typesafe-getbean">
+      <title>Type-safe access to beans</title>
+
+      <para>One of the criticisms of the Spring approach to dependency
+      injection is that direct access to beans via an ApplicationContext
+      depends on fragile string-based lookups and requires casting. This
+      has been mitigated by the fact that looking up beans via the
+      <classname>ApplicationContext</classname> API is comparatively
+      rarely done, but nevertheless, the argument stands.</para>
+
+      <para>JavaConfig helps address this complaint by offering users a
+      type-safe mechanism for looking up beans via the
+      <classname>JavaConfigApplicationContext</classname>:
+      <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
+Service service = context.getBean(Service.class);
+</programlisting></para>
+    </section>
+  </section>
+</chapter>
+
