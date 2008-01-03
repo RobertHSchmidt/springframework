@@ -24,29 +24,21 @@
 
   <bookinfo>
     <title>Spring JavaConfig Reference Guide</title>
-
     <releaseinfo>1.0-M3</releaseinfo>
-
     <authorgroup>
       <author>
         <firstname>Rod</firstname>
-
         <surname>Johnson</surname>
       </author>
-
       <author>
         <firstname>Costin</firstname>
-
         <surname>Leau</surname>
       </author>
-
       <author>
         <firstname>Chris</firstname>
-
         <surname>Beams</surname>
       </author>
     </authorgroup>
-
     <legalnotice>
       <para>Copies of this document may be made for your own use and for
       distribution to others, provided that you do not charge any fee for such
@@ -59,42 +51,28 @@
 
   <preface id="about">
     <title>About this document</title>
-
     <section id="blah">
       <title>Blah</title>
-
       <para>lorem ipsum</para>
     </section>
-
     <section id="blarg">
       <title>Blarg</title>
-
       <para>dolor sit amet</para>
     </section>
   </preface>
 
   <part id="introduction">
     <title>Introduction</title>
-
     <partintro>
-      <para>In Part I we discuss what JavaConfig is, how it fits into the
+      <para>In Part I we explain what JavaConfig is, how it fits into the
       larger Spring configuration landscape, and make the case as to why it is
       a compelling alternative. After reading this part you'll be ready to
       create a basic configuration and evaluate JavaConfig for yourself.
       Finally, you'll be ready to move on to Part II and explore the
       JavaConfig API in detail.</para>
-
-      <para>
-        <xref linkend="overview" />
-      </para>
-
-      <para>
-        <xref linkend="new-and-noteworthy" />
-      </para>
-
-      <para>
-        <xref linkend="quick-start" />
-      </para>
+      <para><xref linkend="overview" /></para>
+      <para><xref linkend="new-and-noteworthy" /></para>
+      <para><xref linkend="quick-start" /></para>
     </partintro>
 
     <chapter id="overview">
