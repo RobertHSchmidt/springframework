@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="overview">
+  <title>Overview</title>
+
+  <section id="what-is-javaconfig">
+    <title>What is JavaConfig?</title>
+
+    <para>Spring JavaConfig is a product of the Spring community that
+    provides a pure-Java approach to configuring the Spring IoC Container.
+    While JavaConfig aims to be a feature-complete alternative to the more
+    well-known XML-based configuration, they can be (and often are) used
+    together.</para>
+
+    <tip>
+      <para>See <xref linkend="javaconfig-and-xml" /> for more information
+      on using JavaConfig and XML together</para>
+    </tip>
+  </section>
+
+  <section id="why-javaconfig">
+    <title>Why JavaConfig?</title>
+
+    <para>The Spring IoC Container is the leading dependency injection
+    framework. It provides sophisticated dependency injection capabilities
+    as well as advanced features for aspect-oriented programming. Today
+    the majority of Spring users configure the Spring container using XML.
+    This works very well, and in many cases is ideal. However, some
+    developers find configuring the Spring container via Java a more
+    natural or appropriate approach, for a variety of reasons.</para>
+
+    <para>Motivations of JavaConfig include</para>
+
+    <formalpara>
+      <title>Object-oriented configuration</title>
+
+      <para>Because configurations are defined as classes in JavaConfig,
+      users can take full advantage of object-oriented features in Java.
+      One configuration class may subclass another, overriding its
+      <classname>@Bean</classname> methods, etc.</para>
+    </formalpara>
+
+    <formalpara>
+      <title>Reduced or eliminated XML configuration</title>
+
+      <para>The benefits of externalized configuration based on the
+      principles of dependency injection have been proven. However, many
+      developers would prefer not to switch back and forth between XML and
+      Java. JavaConfig provides developers with a pure-Java approach to
+      configuring the Spring container that is conceptually similar to XML
+      configuration. It is technically possible to configure the container
+      using only JavaConfig configuration classes, however in practice
+      many have found it ideal to mix-and-match JavaConfig with XML. See
+      <xref linkend="javaconfig-and-xml" /> for details.</para>
+    </formalpara>
+
+    <formalpara>
+      <title>Type-safe and refactoring-friendly</title>
+
+      <para>JavaConfig provides a type-safe approach to configuring the
+      Spring container. Thanks to Java5's support for generics, it is now
+      possible to retrieve beans <emphasis>by type</emphasis> rather than
+      by name, free of any casting or string-based lookups. See <xref
+      linkend="typesafe-getbean" /> for details.</para>
+    </formalpara>
+  </section>
+
+  <section id="requirements">
+    <title>Requirements</title>
+
+    <section id="runtime-environment">
+      <title>Runtime Environment</title>
+
+      <para>JavaConfig takes full advantage of Java5 language features,
+      especially annotations and generics. <emphasis>A Java5+ runtime
+      environment is a requirement for using JavaConfig.</emphasis>. For
+      an introduction to annotations and other Java5 features, see TODO:
+      annotations tutorial</para>
+    </section>
+
+    <section id="project-dependencies">
+      <title>Project Dependencies</title>
+
+      <para>Every effort has been made to reduce the number of
+      dependencies Spring JavaConfig requires. For very simple
+      configurations, the dependencies should be limited to CGLIB,
+      commons-logging, spring-beans, and spring-context. If you use more
+      advanced features such as AOP, you'll need aspectj, spring-aop, etc.
+      Maven2 use is recommended, as it helps greatly to reduce the burden
+      of dependencies.</para>
+
+      <para>See also: <xref linkend="maven-configs" /></para>
+    </section>
+  </section>
+
+  <section id="history">
+    <title>History</title>
+
+    <para>JavaConfig was first conceived in 2005, at which time initial
+    code was laid down. While it has remained in pre-1.0 status since that
+    time, it has enjoyed a fair bit of use and positive user feedback.
+    JavaConfig is now a fully supported effort and is moving toward 1.0
+    release.</para>
+  </section>
+</chapter>
