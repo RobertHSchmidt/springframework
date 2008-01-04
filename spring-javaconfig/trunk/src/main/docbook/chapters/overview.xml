@@ -7,14 +7,12 @@
 
     <para>Spring JavaConfig is a product of the Spring community that
     provides a pure-Java approach to configuring the Spring IoC Container.
-    While JavaConfig aims to be a feature-complete alternative to the more
-    well-known XML-based configuration, they can be (and often are) used
-    together.</para>
+    While JavaConfig aims to be a feature-complete option for configuration,
+    it can be (and often is) used in conjunction with the more well-known
+    XML-based configuration approach.</para>
 
-    <tip>
-      <para>See <xref linkend="javaconfig-and-xml" /> for more information
-      on using JavaConfig and XML together</para>
-    </tip>
+    <para>See <xref linkend="javaconfig-and-xml" /> for more information
+    on using JavaConfig and XML together</para>
   </section>
 
   <section id="why-javaconfig">
