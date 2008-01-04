@@ -83,7 +83,7 @@
     <partintro>
       <para>In Part I we explain what JavaConfig is, how it fits into the
       larger Spring configuration landscape, and make the case as to why it is
-      a compelling alternative. After reading this part you'll be ready to
+      a compelling option. After reading this part you'll be ready to
       create a basic configuration and evaluate JavaConfig for yourself.
       Finally, you'll be ready to move on to Part II and explore the
       JavaConfig API in detail.</para>
