@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="Spring Web Services">
+<project name="Spring JavaConfig">
 	<skin>
 		<groupId>org.springframework.maven.skins</groupId>
 		<artifactId>maven-spring-skin</artifactId>
@@ -17,9 +17,11 @@
 		</menu>
 		<menu name="Documentation">
 			<item name="API" href="apidocs/index.html"/>
+			<item name="Reference Guide (HTML)" href="reference/html/index.html"/>
+			<item name="Reference Guide (PDF)" href="reference/pdf/spring-javaconfig-reference.pdf"/>
 		</menu>
 		<menu name="Support">
-			<item name="JIRA" href="http://opensource.atlassian.com/projects/spring/browse/SJC"/>
+			<item name="JIRA" href="http://jira.springframework.org/browse/SJC"/>
 		</menu>
 		<menu ref="reports" name="Reports"/>
 	</body>
