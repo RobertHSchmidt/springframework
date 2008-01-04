@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter id="new-and-noteworthy">
-  <title>New &amp; Noteworthy in 1.0-m3</title>
+  <title>New &amp; Noteworthy in 1.0-M3</title>
 
   <section>
     <title><classname>AnnotationApplicationContext</classname> deprecated</title>
@@ -128,14 +128,14 @@ public static class InnerConfig {
     above, Instantiate an
     <interfacename>ApplicationContext</interfacename> using
     <classname>InnerConfig</classname> as an argument <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(InnerConfig.class);
-context.getBean("innerBean"); // locally defined beans are available
-context.getBean("outerBean"); // as are beans defined in the declaring OuterConfig class.
+context.getBean("innerBean"); <lineannotation>// locally defined beans are available</lineannotation>
+context.getBean("outerBean"); <lineannotation>// as are beans defined in the declaring <classname>OuterConfig</classname> class.</lineannotation>
 </programlisting> Note that when supplying <classname>OuterConfig</classname>
     as the argument, <classname>InnerConfig</classname> is ignored
     entirely. If it were to be processed, it would become a child context,
     but its beans would would be inaccessible (parent contexts have no
     access to child context beans). <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(OuterConfig.class);
-context.getBean("outerBean"); <lineannotation>// works fine.</lineannotation>
+context.getBean("outerBean"); <lineannotation>// works fine</lineannotation>
 context.getBean("innerBean"); <lineannotation>// throws <classname>NoSuchBeanDefinitionException</classname>!</lineannotation>
 </programlisting></para>
 
