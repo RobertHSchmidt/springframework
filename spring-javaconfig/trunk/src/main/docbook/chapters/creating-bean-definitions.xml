@@ -24,9 +24,10 @@ public class DataSourceConfiguration extends ConfigurationSupport {
 </programlisting> Because the semantics of the attributes to the
     <classname>@Configuration</classname> annotation are 1:1 with the
     attributes to the <code>&lt;beans/&gt;</code> element, this
-    documentation defers to the section in Chapter 3, IoC from the core
-    spring documentation. See <ulink
-    linkend="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-definition">http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-definition</ulink></para>
+    documentation defers to the
+    <ulink url="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-definition">
+    beans-definition section</ulink>  of Chapter 3, IoC from the Core Spring
+    documentation.</para>
   </section>
 
   <section id="bean">
@@ -34,17 +35,23 @@ public class DataSourceConfiguration extends ConfigurationSupport {
       <classname>@Bean</classname>
     </title>
 
-    <para><classname>@Bean</classname> is a direct analog to XML
-    configuration's <code>&lt;bean/&gt;</code> element. As such, it
-    accepts a set as annotation attributes equivalent to the attributes to
-    the <code>&lt;bean/&gt;</code>. See TODO: link to core spring
-    framework documentation on bean and its attributes.</para>
+    <para><classname>@Bean</classname> is a method-level annotation and
+    a direct analog the XML <code>&lt;bean/&gt;</code> element.  The annotation
+    supports most of the attributes offered by <code>&lt;bean/&gt;</code> such as
+    <literal><ulink url="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-factory-autowire">autowiring</ulink></literal>,
+    <literal><ulink url="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-factory-lazy-init">lazy-init</ulink></literal>,
+    <literal><ulink url="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-factory-dependencies">dependency-check</ulink></literal>,
+    <literal><ulink url="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-factory-dependson">depends-on</ulink></literal>
+    and <literal><ulink url="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-factory-scopes">scoping</ulink></literal>.</para>
 
     <section id="declaring-a-bean">
       <title>Declaring a bean</title>
 
       <para>To declare a bean, simply annotate a method with the
-      <classname>@Bean</classname> annotation.</para>
+      <classname>@Bean</classname> annotation.  When JavaConfig encounters
+      such a method, it will execute that method and registers the return value
+      as a bean within a <interfacename>BeanFactory</interfacename>.  The bean
+      name will be that of the method name.</para>
 
       <programlisting>@Configuration
 public class AppConfig {
@@ -54,6 +61,50 @@ public class AppConfig {
     }
 }
 </programlisting>
+
+      The above is exactly equivalent to the following <literal>appConfig.xml</literal>:
+	  <programlisting>&lt;beans&gt;
+    &lt;bean name=&quot;transferService&quot; class=&quot;com.acme.TransferServiceImpl&quot;/&gt;
+&lt;/beans&gt;
+</programlisting>
+
+      Both will result in a bean named <literal>transferService</literal> being
+      available in the <literal>BeanFactory</literal>/
+      <literal>ApplicationContext</literal>, bound to an object instance of type
+      <classname>TransferServiceImpl</classname>:
+      <programlisting>transferService => com.acme.TransferService</programlisting>
+      See <xref linkend="javaconfigapplicationcontext"/> for details about
+      instantiating an <interfacename>ApplicationContext</interfacename> with
+      JavaConfig.
+    </section>
+
+    <section id="aware-interfaces">
+      <title>Using <literal>*Aware</literal> interfaces</title>
+
+       The standard set of <literal>*Aware</literal> interfaces such as
+       <interfacename><ulink url="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-factory-aware-beanfactoryaware">BeanFactoryAware</ulink></interfacename>,
+       <interfacename><ulink url="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-factory-aware-beannameaware">BeanNameAware</ulink></interfacename>,
+       <interfacename><ulink url="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#context-functionality-messagesource">MessageSourceAware</ulink></interfacename>,
+       <interfacename><ulink url="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#context-functionality-events">ApplicationContextAware</ulink></interfacename>,
+       etc. are fully supported.  Consider an example class that implements
+       <interfacename>BeanFactoryAware</interfacename>:
+
+       <programlisting>public class AwareBean implements BeanFactoryAware {
+
+    private BeanFactory factory;
+
+    <lineannotation>// <interfacename>BeanFactoryAware</interfacename> setter (called by Spring during bean instantiation)</lineannotation>
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.factory = beanFactory;
+    }
+
+    public void close(){
+        <lineannotation>// do clean-up</lineannotation>
+    }
+}</programlisting>
+
+      <para>Also, the <ulink url="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-factory-nature">lifecycle</ulink>
+      methods and <code>*Aware</code> interfaces are fully supported:</para>
     </section>
 
     <section id="bean-visibility">
@@ -62,6 +113,8 @@ public class AppConfig {
       <para>TODO</para>
     </section>
   </section>
+
+
 
   <section id="javaconfigapplicationcontext">
     <title>

@@ -83,7 +83,7 @@ public class SimpleApp {
 </programlisting> For basic information regarding initialization parameters to
     <classname>DispatcherServlet</classname> and use of
     <classname>ContextLoaderListener</classname>, see <ulink
-    linkend="http://static.springframework.org/spring/docs/2.5.x/reference/mvc.html">Chapter
+    url="http://static.springframework.org/spring/docs/2.5.x/reference/mvc.html">Chapter
     13. Web MVC framework</ulink> in the Core Spring Framework
     documentation.</para>
 

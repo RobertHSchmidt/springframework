@@ -9,14 +9,14 @@
     <title>Introduction</title>
 
     <para>As mentioned in the <ulink
-    linkend="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html">IoC
+    url="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html">IoC
     chapter</ulink>, at the core of Spring IoC is the
     <emphasis>bean</emphasis> concept which defines the way in which an object
     is instantiated, assembled and managed by the Spring container. XML is the
     most popular way of describing beans configuration, though Spring itself
     can read from virtually any type of metadata that can be translated into
     Java code. <ulink
-    linkend="http://java.sun.com/j2se/1.5.0/docs/guide/language/annotations.html">Annotations</ulink>,
+    url="http://java.sun.com/j2se/1.5.0/docs/guide/language/annotations.html">Annotations</ulink>,
     available in JDK 5+, constitute such a type as they allow source code
     components to provide additional metadata which can affect the runtime
     semantics, making them a great configuration candidate.</para>
@@ -71,14 +71,14 @@ public ExampleBean exampleBean() {
 }</programlisting> The code above instructed the Spring container to create a
       bean using the method name (as bean name) and return value (for the
       actual bean instance). The bean has <ulink
-      linkend="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-scopes-session">session</ulink>
+      url="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-scopes-session">session</ulink>
       scope, which means the <literal>exampleBean()</literal> method will be
       called to create a new bean instance per HTTP session.</para>
 
       <para>Since pure Java is used, there is no need to use:</para>
 
       <para>- <ulink
-      linkend="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-class-static-factory-method">factory-method</ulink>
+      url="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-class-static-factory-method">factory-method</ulink>
       when dealing with static methods:</para>
 
       <para><programlisting>@Bean
@@ -87,8 +87,8 @@ public ExampleBean exampleBean() {
 }</programlisting>or</para>
 
       <para>- <ulink
-      linkend="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-extension-factorybean">FactoryBean</ulink>/<ulink
-      linkend="http://static.springframework.org/spring/docs/2.0.x/api/index.html">MethodInvokingFactoryBean</ulink>
+      url="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-extension-factorybean">FactoryBean</ulink>/<ulink
+      url="http://static.springframework.org/spring/docs/2.0.x/api/index.html">MethodInvokingFactoryBean</ulink>
       for complex object creation:</para>
 
       <para><programlisting>@Bean(aliases = { "anniversaries" })
@@ -107,17 +107,17 @@ public List&lt;Date&gt; birthdays() {
       indicates the Java code used for creating and configuring a bean
       instance. The annotation supports most of the options offered by an XML
       bean definition such as <ulink
-      linkend="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-autowire">autowiring</ulink>,
+      url="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-autowire">autowiring</ulink>,
       <ulink
-      linkend="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-lazy-init">lazy-init</ulink>,
+      url="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-lazy-init">lazy-init</ulink>,
       <ulink
-      linkend="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-dependencies">dependency-check</ulink>,
+      url="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-dependencies">dependency-check</ulink>,
       <ulink
-      linkend="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-dependson">depends-on</ulink>
+      url="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-dependson">depends-on</ulink>
       and <ulink
-      linkend="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-scopes">scoping</ulink>.
+      url="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-scopes">scoping</ulink>.
       Also, the <ulink
-      linkend="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-nature">lifecycle</ulink>
+      url="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-nature">lifecycle</ulink>
       methods and *Aware interfaces are fully supported:</para>
 
       <programlisting>public class AwareBean implements BeanFactoryAware {
@@ -195,7 +195,7 @@ public class ExternalBeanOnNormalMethod {
 
       <para>Spring offers a convenient way of working with scoped dependencies
       through <ulink
-      linkend="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-scopes-other-injection">scoped
+      url="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html#beans-factory-scopes-other-injection">scoped
       proxies</ulink>(please see the link for an in-depth discussion on the
       matter). The easiest way to create such a proxy, when using the XML
       configuration, is the <literal>&lt;aop:scoped-proxy/&gt;</literal>
@@ -302,7 +302,7 @@ public abstract class VisibilityConfiguration {
 
     <para>To provide the visibility functionality, JavaConfig takes advantage
     of the application context <ulink
-    linkend="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html">hierarchy</ulink>
+    url="http://static.springframework.org/spring/docs/2.0.x/reference/beans.html">hierarchy</ulink>
     provided by the Spring container, placing all hidden beans for a
     particular configuration class, inside a child application context Thus,
     the hidden beans can access beans defined in the parent (or owning)
@@ -460,7 +460,7 @@ public class MyOtherConfig implements BeanFactoryAware {
 
     <para>JavaConfig distribution contains a converted Petclinic sample that
     replaces some XML configuration parts, with Java and <ulink
-    linkend="http://groovy.codehaus.org/">Groovy</ulink> - please see the samples
+    url="http://groovy.codehaus.org/">Groovy</ulink> - please see the samples
     folder for more info.</para>
   </chapter>
 

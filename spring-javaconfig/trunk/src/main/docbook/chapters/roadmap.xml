@@ -19,6 +19,6 @@
   linkend="new-and-noteworthy" /> and let us know what you think!</para>
 
   <para>See the <ulink
-  linkend="http://jira.springframework.org/browse/SJC?report=com.atlassian.jira.plugin.system.project:roadmap-panel">JavaConfig
+  url="http://jira.springframework.org/browse/SJC?report=com.atlassian.jira.plugin.system.project:roadmap-panel">JavaConfig
   JIRA roadmap</ulink> for up-to date information</para>
 </appendix>

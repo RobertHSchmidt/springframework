@@ -462,13 +462,13 @@
               colored and hyphenated links
     ################################################### -->
     <xsl:template match="ulink">
-        <fo:basic-link external-destination="{@linkend}"
+        <fo:basic-link external-destination="{@url}"
                 xsl:use-attribute-sets="xref.properties"
                 text-decoration="underline"
                 color="blue">
             <xsl:choose>
                 <xsl:when test="count(child::node())=0">
-                    <xsl:value-of select="@linkend"/>
+                    <xsl:value-of select="@url"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:apply-templates/>

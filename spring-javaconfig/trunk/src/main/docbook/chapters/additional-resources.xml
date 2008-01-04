@@ -10,18 +10,18 @@
 
   <section><title>Community forums</title> The first place to stop with
   questions around SJC is <ulink
-  linkend="http://forums.springframework.org" />. As of this writing,
+  url="http://forums.springframework.org" />. As of this writing,
   Spring JavaConfig does not have its own dedicated forum, but you can
   post questions to TODO: which forum?</section>
 
   <section id="issue-tracking"><title>Issue tracking</title> After
   checking out the forums, any bugs, improvements or new features can be
   submitted via the Spring Framework issue tracker at <ulink
-  linkend="http://jira.springframework.org/browse/SJC" /></section>
+  url="http://jira.springframework.org/browse/SJC" /></section>
 
   <section><title>SpringSource team blog</title> Keep up to date with
   JavaConfig progress by watching the SpringSource Team Blog at <ulink
-  linkend="http://blog.springsource.com" /></section>
+  url="http://blog.springsource.com" /></section>
 
   <section><title>Consulting and training services</title> SpringSource
   specializes in consulting and training services for Spring, including
