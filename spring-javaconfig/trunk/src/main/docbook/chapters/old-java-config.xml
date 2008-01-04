@@ -1,7 +1,9 @@
 <part id="old-java-config">
   <title>Old Java Config Docs</title>
 
-  <para>This part is included temporarily while transcribing the old documentation to the new</para>
+  <partintro>
+    <para>This part is included temporarily while transcribing the old documentation to the new.</para>
+  </partintro>
 
   <chapter id="old-introduction">
     <title>Introduction</title>
