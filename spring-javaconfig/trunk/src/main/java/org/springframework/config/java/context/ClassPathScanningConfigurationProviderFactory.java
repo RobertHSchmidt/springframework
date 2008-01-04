@@ -10,6 +10,8 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
  * create a {@link ClassPathScanningCandidateComponentProvider} able to select
  * JavaConfig &#64Configuration classes properly.
  * 
+ * TODO: make this a static method on {@link JavaConfigApplicationContext}
+ * 
  * @author Chris Beams
  */
 class ClassPathScanningConfigurationProviderFactory {

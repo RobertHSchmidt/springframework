@@ -33,6 +33,8 @@ import org.springframework.web.servlet.DispatcherServlet;
  * @see JavaConfigContextLoaderListener
  * @author Chris Beams
  */
+// cut this class per review with Rod
+@Deprecated
 @SuppressWarnings("serial")
 public class JavaConfigDispatcherServlet extends DispatcherServlet {
 
