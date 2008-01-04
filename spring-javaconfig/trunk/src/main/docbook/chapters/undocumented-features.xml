@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <appendix id="undocumented-features">
-  <title>Undocumented Features</title>
+  <title>Undocumented features</title>
 
   <para>There are a number of classes, interfaces and annotations within
   the public JavaConfig API that remain undocumented. This is intentional,

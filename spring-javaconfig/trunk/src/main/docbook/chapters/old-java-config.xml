@@ -1,5 +1,5 @@
 <part id="old-java-config">
-  <title>Old Java Config Docs</title>
+  <title>Old JavaConfig docs</title>
 
   <partintro>
     <para>This part is included temporarily while transcribing the old documentation to the new.</para>
@@ -224,7 +224,7 @@ public Service userService() {
   </chapter>
 
   <chapter id="old-bean-visibility">
-    <title>Bean Visibility</title>
+    <title>Bean visibility</title>
 
     <para>A nice JavaConfig feature is bean visibility. JavaConfig uses a
     method visibilty modifiers to determine if the bean resulted from that
@@ -465,7 +465,7 @@ public class MyOtherConfig implements BeanFactoryAware {
   </chapter>
 
   <chapter id="using-java-config">
-    <title>Using Java Configuration</title>
+    <title>Using JavaConfig</title>
 
     <para>To use annotations for configuring your application, one can
     use:</para>
@@ -525,16 +525,4 @@ ApplicationContext aBunchOfConfigs =
     </itemizedlist>
   </chapter>
 
-  <chapter id="old-roadmap">
-    <title>Roadmap</title>
-
-    <para>The project is relatively young and can be considered in beta
-    (hence, the milestone release). Future development will be focused on
-    automatic configuration discovery and simplifications.</para>
-
-    <para>Feedback, bugs and suggestions are welcomed at <ulink
-    linkend="http://forum.springframework.org">Spring forum</ulink> and <ulink
-    linkend="http://opensource.atlassian.com/projects/spring/">Spring issue
-    tracking</ulink>.</para>
-  </chapter>
 </part>

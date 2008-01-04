@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter id="quick-start">
-  <title>Quick Start</title>
+  <title>Quick start</title>
 
-  <chapterinfo>
-    <!-- TODO: get rid of abstract.  it formats badly in PDF -->
-    <abstract>
-      <para>This chapter provides a basic tutorial for getting started
-      with JavaConfig. For full details on JavaConfig's capabilities,
-      please refer to <xref linkend="reference" /></para>
-    </abstract>
-  </chapterinfo>
+  <para>This chapter provides a basic tutorial for getting started
+  with JavaConfig. For full details on JavaConfig's capabilities,
+  please refer to <xref linkend="reference" /></para>
 
   <section>
     <title>Download JavaConfig</title>
@@ -38,7 +33,7 @@
       </section>
 
       <section>
-        <title>Create Bean Definitions</title>
+        <title>Create bean definitions</title>
 
         <para>
           <programlisting>@Configuration
@@ -63,7 +58,7 @@ public class ApplicationConfig {
   </section>
 
   <section>
-    <title>Retrieve Bean Instances</title>
+    <title>Retrieve bean instances</title>
 
     <para>Let's create a very basic, command-line application to allow
     users to transfer money from one account to another. <programlisting>public class SimpleTransferApplication {

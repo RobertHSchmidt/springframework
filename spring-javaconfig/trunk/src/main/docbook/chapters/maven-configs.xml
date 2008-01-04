@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <appendix id="maven-configs">
-  <title>Maven2 POM Configurations</title>
+  <title>Maven2 POM configurations</title>
 
-  <appendixinfo>Maven provides nice trans dep mgmt, but... here are some
-  configs to help ease this process.</appendixinfo>
-
-  <para>As mentioned in TODO link: Quick Start, JavaConfig requires only a
-  minimal set of dependencies for the most basic configuration
-  scenarios.</para>
+  <para>As mentioned in <xref linkend="quick-start"/>, JavaConfig requires only a
+  minimal set of dependencies for basic (non-AOP) configuration scenarios.</para>
 
   <section>
-    <title>Minimalist</title>
+    <title>Minimal</title>
+
+    <para>This minimal configuration will work for all JavaConfig features
+    that do not involve AOP features.</para>
 
     <para>
       <programlisting>&lt;dependencies&gt;
@@ -26,6 +25,11 @@
 
   <section>
     <title>AOP</title>
+
+    <para>In an effort to keep the number of dependencies required when using
+    JavaConfig to a minimum, AOP-related dependencies are excluded by default.  Should you
+    wish to use AOP with JavaConfig, modify your Maven2 POM configuration to
+    include the following:</para>
 
     <para>
       <programlisting>&lt;dependencies&gt;
