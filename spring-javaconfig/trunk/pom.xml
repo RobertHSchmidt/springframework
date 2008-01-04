@@ -17,7 +17,7 @@
 	<url>http://www.springframework.org/javaconfig</url>
 	<issueManagement>
 		<system>JIRA</system>
-		<url>http://opensource2.atlassian.com/projects/spring/browse/SJC</url>
+		<url>http://jira.springframework.com/browse/SJC</url>
 	</issueManagement>
 	<ciManagement>
 		<system>Bamboo</system>
