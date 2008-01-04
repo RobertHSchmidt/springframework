@@ -4,7 +4,7 @@
                              http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>multithreadedtc</groupId>
-    <artifactId>multithreadedtc-jdk1.4</artifactId>
+    <artifactId>multithreadedtc/artifactId>
 	<packaging>jar</packaging>
     <name>Multithreaded TestCase</name>
     <version>1.01</version>
