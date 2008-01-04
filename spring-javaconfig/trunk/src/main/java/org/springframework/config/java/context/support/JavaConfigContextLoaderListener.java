@@ -32,6 +32,8 @@ import org.springframework.web.context.ContextLoaderListener;
  * @see JavaConfigDispatcherServlet
  * @author Chris Beams
  */
+// TODO: remove this class per review with Rod
+@Deprecated
 public class JavaConfigContextLoaderListener extends ContextLoaderListener {
 	/**
 	 * Ensures {@link JavaConfigWebApplicationContext} will be the default

@@ -238,15 +238,7 @@ Service service = (Service) context.getBean("serviceA");
     <section id="typesafe-getbean">
       <title>Type-safe access to beans</title>
 
-      <para>One of the criticisms of the Spring approach to dependency
-      injection is that direct access to beans via an ApplicationContext
-      depends on fragile string-based lookups and requires casting. This
-      has been mitigated by the fact that looking up beans via the
-      <classname>ApplicationContext</classname> API is comparatively
-      rarely done, but nevertheless, the argument stands.</para>
-
-      <para>JavaConfig helps address this complaint by offering users a
-      type-safe mechanism for looking up beans via the
+      <para>JavaConfig offers a type-safe mechanism for looking up beans via
       <classname>JavaConfigApplicationContext</classname>:
       <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
 Service service = context.getBean(Service.class);
