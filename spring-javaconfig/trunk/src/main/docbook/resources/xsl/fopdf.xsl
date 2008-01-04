@@ -11,7 +11,7 @@
 -->
 
 <!DOCTYPE xsl:stylesheet [
-    <!ENTITY admon_gfx_path  "src/docbkx/resources/images/admons/">
+    <!ENTITY admon_gfx_path  "src/main/docbook/resources/images/admons/">
     <!ENTITY copyright       "&#xA9;">
     <!ENTITY years           "2005-2008">
     <!ENTITY projectname     "Spring JavaConfig">
@@ -37,7 +37,7 @@
                     <fo:table-row>
                         <fo:table-cell text-align="center">
                             <fo:block>
-                                <fo:external-graphic src="file:src/docbkx/resources/images/logo.jpg"/>
+                                <fo:external-graphic src="file:src/main/docbook/resources/images/logo.jpg"/>
                             </fo:block>
                             <fo:block font-family="Helvetica" font-size="22pt" padding-before="10mm">
                                 <xsl:value-of select="bookinfo/subtitle"/>
