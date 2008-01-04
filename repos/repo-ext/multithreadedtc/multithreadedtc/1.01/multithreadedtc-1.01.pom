@@ -1,0 +1,15 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>multithreadedtc</groupId>
+    <artifactId>multithreadedtc</artifactId>
+	<packaging>jar</packaging>
+    <name>Multithreaded TestCase</name>
+    <version>1.01</version>
+    <description>A framework for testing concurrent Java applications</description>
+    <url>http://www.cs.umd.edu/projects/PL/multithreadedtc/overview.html</url>
+    
+</project>
+
