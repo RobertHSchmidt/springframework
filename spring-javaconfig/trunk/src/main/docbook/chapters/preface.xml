@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <preface>
-	<title>Preface to the third milestone release</title>
-	<para>TODO: discuss the 'state of the union' with JavaConfig.  Many users have
-	asked 'when are we going 1.0'; we've found that a good number of people and
-	organizations are already using M2 in production, while others have (rightly)
-	expressed concern about doing so due to the pre-GA state of the project and
-	it's documented 'experimental' status.  How has this changed with M3?  What
-	should users expect in terms of API changes between now and 1.0?  For example,
-	AOP support in SJC merits a good hard looking at
-	(<classname>@Aspect</classname> annotations on
-	<classname>@Configuration</classname> classes and other awkwardness).</para>
+  <title>Preface to the third milestone release</title>
+  <para>TODO: discuss the 'state of the union' with JavaConfig.  Many users have
+  asked 'when are we going 1.0'; we've found that a good number of people and
+  organizations are already using M2 in production, while others have (rightly)
+  expressed concern about doing so due to the pre-GA state of the project and
+  it's documented 'experimental' status.  How has this changed with M3?  What
+  should users expect in terms of API changes between now and 1.0?  For example,
+  AOP support in SJC merits a good hard looking at
+  (<classname>@Aspect</classname> annotations on
+  <classname>@Configuration</classname> classes and other awkwardness).</para>
 
-	<para>IMO: Generally, we should set people up that while SJC has enjoyed some positive
-	usage and feedback, it remains pre-1.0 for a reason, and that we don't want to
-	prematurely put something out there that is not really ready for primetime.  The
-	internals are stable, yes, but is the programming model right?  Right enough to
-	commit to backward compatibility?  The team needs to discuss all this, and we
-	will shortly.</para>
+  <para>IMO: Generally, we should set people up that while SJC has enjoyed some positive
+  usage and feedback, it remains pre-1.0 for a reason, and that we don't want to
+  prematurely put something out there that is not really ready for primetime.  The
+  internals are stable, yes, but is the programming model right?  Right enough to
+  commit to backward compatibility?  The team needs to discuss all this, and we
+  will shortly.</para>
 </preface>

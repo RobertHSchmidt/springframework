@@ -63,19 +63,18 @@ public class AppConfig {
 </programlisting>
 
       The above is exactly equivalent to the following <literal>appConfig.xml</literal>:
-	  <programlisting>&lt;beans&gt;
+      <programlisting>&lt;beans&gt;
     &lt;bean name=&quot;transferService&quot; class=&quot;com.acme.TransferServiceImpl&quot;/&gt;
 &lt;/beans&gt;
 </programlisting>
 
       Both will result in a bean named <literal>transferService</literal> being
-      available in the <literal>BeanFactory</literal>/
-      <literal>ApplicationContext</literal>, bound to an object instance of type
-      <classname>TransferServiceImpl</classname>:
+      available in the <literal>BeanFactory</literal>/<literal>ApplicationContext</literal>,
+      bound to an object instance of type <classname>TransferServiceImpl</classname>:
       <programlisting>transferService => com.acme.TransferService</programlisting>
       See <xref linkend="javaconfigapplicationcontext"/> for details about
-      instantiating an <interfacename>ApplicationContext</interfacename> with
-      JavaConfig.
+      instantiating and using an <interfacename>ApplicationContext</interfacename>
+      with JavaConfig.
     </section>
 
     <section id="aware-interfaces">
@@ -109,8 +108,38 @@ public class AppConfig {
 
     <section id="bean-visibility">
       <title>Bean visibility</title>
+      <para>TODO: flesh out explanation of concepts, add in Rod's diagram</para>
+    </section>
 
-      <para>TODO</para>
+    <section id="bean-scoping">
+      <title>Bean scoping</title>
+
+      <section id="scoped-proxy">
+        <title><classname>@ScopedProxy</classname></title>
+        <para>TODO: document <classname>@ScopedProxy</classname></para>
+      </section>
+
+      <section id="method-injection-obsolete">
+        <title>Method injection</title>
+        <para>As noted in the Core documentation,
+        <ulink url="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-factory-method-injection">method injection</ulink>
+        is an advanced topic that should be comparatively rarely used.  When using
+        XML configuration, it is required in cases where a singleton-scoped bean has
+        a dependency on a prototype-scoped bean.  In JavaConfig, however, it is a
+        (somewhat) simpler proposition:</para>
+
+        <programlisting>@Bean
+public MyAbstractSingleton mySingleton(){
+    return new MyAbstractSingleton(myDependencies()){
+        public MyPrototype createMyPrototype(){
+            return new MyPrototype(someOtherDependency());
+            <lineannotation>// or alternatively return <methodname>myPrototype()</methodname> -- this is some <classname>@Bean</classname> or <classname>@ExtarnalBean</classname> method...</lineannotation>
+        }
+    }
+}</programlisting>
+        <para>Thanks to Solomon Duskis for this contribution.
+        TODO: fact-check this.. does it work as expected?</para>
+      </section>
     </section>
   </section>
 

@@ -43,7 +43,6 @@
 
     Limitations:
     * No property values... enumerate any limitations this imposes
-    * Method injection - no support for this as yet.
 
     Best Practices:
     * Mention packaging / keeping @Configuration classes in their own, dedicated .config.* package
