@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.support.cglib;
+package org.springframework.config.java.support;
 
 import java.lang.reflect.Method;
 
@@ -25,9 +25,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.naming.BeanNamingStrategy;
-import org.springframework.config.java.support.BeanNameTrackingDefaultListableBeanFactory;
-import org.springframework.config.java.support.EnhancerMethodInvoker;
-import org.springframework.config.java.support.MethodBeanWrapper;
 import org.springframework.util.Assert;
 
 /**

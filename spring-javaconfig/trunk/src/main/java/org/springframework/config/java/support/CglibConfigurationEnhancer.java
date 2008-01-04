@@ -1,12 +1,12 @@
 /*
  * Copyright 2002-2007 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.support.cglib;
+package org.springframework.config.java.support;
 
 import java.lang.reflect.Method;
 
@@ -30,20 +30,19 @@ import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.ExternalValue;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.naming.BeanNamingStrategy;
-import org.springframework.config.java.support.BeanNameTrackingDefaultListableBeanFactory;
-import org.springframework.config.java.support.BytecodeConfigurationEnhancer;
-import org.springframework.config.java.support.MethodBeanWrapper;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.util.Assert;
 
 /**
- * CGLib bytecode enhancer.
+ * {@link ConfigurationEnhancer} implementation that uses CGLIB to subclass and
+ * enhance a target {@link Configuration} class.
  * 
  * @author Rod Johnson
  * @author Costin Leau
+ * @author Chris Beams
  */
-public class CglibConfigurationEnhancer implements BytecodeConfigurationEnhancer {
+class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 
 	private static class BeanCreationCallbackFilter implements CallbackFilter {
 		public int accept(Method m) {

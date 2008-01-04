@@ -48,9 +48,9 @@ import org.springframework.config.java.listener.registry.DefaultConfigurationLis
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.config.java.support.BeanNameTrackingDefaultListableBeanFactory;
-import org.springframework.config.java.support.BytecodeConfigurationEnhancer;
+import org.springframework.config.java.support.ConfigurationEnhancer;
+import org.springframework.config.java.support.ConfigurationEnhancerFactory;
 import org.springframework.config.java.support.MethodBeanWrapper;
-import org.springframework.config.java.support.cglib.CglibConfigurationEnhancer;
 import org.springframework.config.java.util.ArrayUtils;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.config.java.valuesource.CompositeValueSource;
@@ -130,7 +130,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 	private ConfigurationListenerRegistry configurationListenerRegistry = new DefaultConfigurationListenerRegistry();
 
-	private BytecodeConfigurationEnhancer configurationEnhancer;
+	private ConfigurationEnhancer configurationEnhancer;
 
 	private BeanNamingStrategy beanNamingStrategy = new MethodNameStrategy();
 
@@ -279,12 +279,9 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		MethodBeanWrapper wrapper = new MethodBeanWrapper(this, childFactory);
 
 		// TODO: this should be pluggable but also has to be a prototype since
-		// it
-		// depends on the childFactory instance which is internal
-		CglibConfigurationEnhancer enhancer = new CglibConfigurationEnhancer(this.owningBeanFactory, this.childFactory,
-				beanNamingStrategy, wrapper, valueSource);
-
-		this.configurationEnhancer = enhancer;
+		// it depends on the childFactory instance which is internal
+		this.configurationEnhancer = ConfigurationEnhancerFactory.getConfigurationEnhancer(this.owningBeanFactory,
+				this.childFactory, beanNamingStrategy, wrapper, valueSource);
 		initialized = true;
 	}
 
