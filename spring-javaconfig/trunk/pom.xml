@@ -174,7 +174,7 @@
 					</dependency>
 				</dependencies>
 				<configuration>
-                    <sourceDirectory>src/docbkx</sourceDirectory>
+					<sourceDirectory>src/docbkx</sourceDirectory>
 					<includes>index.xml</includes>
 					<chunkedOutput>true</chunkedOutput>
 					<htmlStylesheet>css/html.css</htmlStylesheet>
@@ -411,8 +411,8 @@
 							<packages>org.springframework.config.java*</packages>
 						</group>
 					</groups>
-					<stylesheetfile>${basedir}/docs/stylesheet.css</stylesheetfile>
-					<overview>${basedir}/docs/overview.html</overview>
+					<stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
+					<overview>${basedir}/src/main/javadoc/overview.html</overview>
 					<links>
 						<link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
 						<link>http://static.springframework.org/spring/docs/2.5.x/api/</link>
