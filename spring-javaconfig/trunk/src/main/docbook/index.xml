@@ -26,6 +26,7 @@
   <!--
     High-level TODOs (search TODO throughout this document for fine-grained tasks):
 
+
     * @Meta (see @Bean.meta()).  No examples/tests; can probably refer to core docs (see A.2.10).
     * @AutoBean (currently in 'undocumented features')
     * ValueSource (and friends)... there is just one very simple unit test;
@@ -43,6 +44,9 @@
     Limitations:
     * No property values... enumerate any limitations this imposes
     * Method injection - no support for this as yet.
+
+    Best Practices:
+    * Mention packaging / keeping @Configuration classes in their own, dedicated .config.* package
   -->
 
   <bookinfo>
@@ -84,6 +88,10 @@
       create a basic configuration and evaluate JavaConfig for yourself.
       Finally, you'll be ready to move on to Part II and explore the
       JavaConfig API in detail.</para>
+      <para>TODO: Shall we continue to use this 'we' and 'you' voicing in the document?
+      I find it particularly readable, personal, etc.  It would primarily be used as we introduce
+      the three parts of the book, but some might be offended by this 'informality'.  Just a talking
+      point for the upcoming review.</para>
       <para><xref linkend="overview" /></para>
       <para><xref linkend="new-and-noteworthy" /></para>
       <para><xref linkend="quick-start" /></para>
