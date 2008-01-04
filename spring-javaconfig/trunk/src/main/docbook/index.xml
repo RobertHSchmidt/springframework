@@ -19,6 +19,7 @@
 <!ENTITY how-javaconfig-works         SYSTEM "chapters/how-javaconfig-works.xml">
 <!ENTITY maven-configs                SYSTEM "chapters/maven-configs.xml">
 <!ENTITY additional-resources         SYSTEM "chapters/additional-resources.xml">
+<!ENTITY old-java-config              SYSTEM "chapters/old-java-config.xml">
 ]>
 <book xmlns:xi="http://www.w3.org/2001/XInclude">
   <!--
@@ -142,4 +143,5 @@
     &maven-configs;
     &additional-resources;
   </part>
+  &old-java-config;
 </book>
