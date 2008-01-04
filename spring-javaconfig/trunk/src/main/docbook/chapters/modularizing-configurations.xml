@@ -2,15 +2,10 @@
 <chapter id="modularizing-configurations">
   <title>Modularizing configurations</title>
 
-  <chapterinfo>
-    <!-- TODO: get rid of abstract -->
-    <abstract>
-      <para>While the simplest configuration may be expressed as a single
-      class that exposes several beans, it is often desirable to
-      <emphasis>modularize</emphasis> configurations for reuse and
-      clarity.</para>
-    </abstract>
-  </chapterinfo>
+  <para>While the simplest configuration may be expressed as a single
+  class that exposes several beans, it is often desirable to
+  <emphasis>modularize</emphasis> configurations for reuse and
+  clarity.</para>
 
   <section>
     <title>Referencing externally defined beans</title>

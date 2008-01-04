@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter id="using-aspects">
-  <title>Using Aspects</title>
+  <title>Using aspects</title>
 
-  <chapterinfo>
-    <!-- TODO: get rid of abstract -->
-    <abstract>
-      <para>AOP support in JavaConfig is a work-in-progress. It is
-      documented here in order to solicit feedback.</para>
-    </abstract>
-  </chapterinfo>
-
-  <para>Spring JavaConfig has full support for AspectJsupports the same
-  set of AspectJ annotations used throughout</para>
+  <para>AOP support in JavaConfig is a work-in-progress. It is
+  documented here in order to solicit feedback. TODO: revise this
+  </para>
 
   <section>
     <title>Embedded aspects</title>

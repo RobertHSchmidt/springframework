@@ -2,12 +2,12 @@
 <!-- TODO: complete -->
 <preface id="about">
   <title>About this document</title>
-  <section id="blah">
-    <title>Blah</title>
-    <para>lorem ipsum</para>
+  <section id="lorem">
+    <title>Lorem</title>
+    <para>ipsum</para>
   </section>
-  <section id="blarg">
-    <title>Blarg</title>
-    <para>dolor sit amet</para>
+  <section id="dolor">
+    <title>Dolor</title>
+    <para>sit amet</para>
   </section>
 </preface>

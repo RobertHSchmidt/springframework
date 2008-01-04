@@ -3,6 +3,7 @@
 "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd"
 [
 <!ENTITY about-this-document          SYSTEM "chapters/about-this-document.xml">
+<!ENTITY preface                      SYSTEM "chapters/preface.xml">
 <!ENTITY overview                     SYSTEM "chapters/overview.xml">
 <!ENTITY new-and-noteworthy           SYSTEM "chapters/new-and-noteworthy.xml">
 <!ENTITY quick-start                  SYSTEM "chapters/quick-start.xml">
@@ -25,8 +26,6 @@
   <!--
     High-level TODOs (search TODO throughout this document for fine-grained tasks):
 
-    * [formatting]: abstracts are not the way to go.  they render huge, and they're not consistent
-                    with core spring documentation.  yank them out, figure out a better way.
     * @Meta (see @Bean.meta()).  No examples/tests; can probably refer to core docs (see A.2.10).
     * @AutoBean (currently in 'undocumented features')
     * ValueSource (and friends)... there is just one very simple unit test;
@@ -37,9 +36,13 @@
     * Naming strategy (what section does this belong in?) (see BeanNamingStrategy interface)
     * Figure out formatting for pdf generation (should look like Core Spring PDF).
     * Think about packaging up the 'with-dependencies' jar (for easy downloading from sourceforge)
+    * Introduce an entity via the maven pom (as done with 'version') for the current spring docs and
+      replace the redundant url references.
+    * Link out to JavaDoc on initial mention of any class/interface/annotation?
 
     Limitations:
     * No property values... enumerate any limitations this imposes
+    * Method injection - no support for this as yet.
   -->
 
   <bookinfo>
@@ -70,6 +73,7 @@
   <toc />
 
   &about-this-document;
+  &preface;
 
   <part id="introduction">
     <title>Introduction</title>
