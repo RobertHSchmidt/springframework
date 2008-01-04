@@ -22,7 +22,7 @@
     &lt;dependency&gt;
         &lt;groupId&gt;org.springframework.javaconfig&lt;/groupId&gt;
         &lt;artifactId&gt;spring-javaconfig&lt;/artifactId&gt;
-        &lt;version&gt;1.0-m3&lt;/version&gt;
+        &lt;version&gt;&version;&lt;/version&gt;
     &lt;/dependency&gt;
 &lt;/dependencies&gt;
 </programlisting> <note> See <xref linkend="maven-configs" /> for more
