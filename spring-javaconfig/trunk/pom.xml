@@ -475,6 +475,11 @@
 			<name>Spring Portfolio Milestone Repository</name>
 			<url>http://s3.amazonaws.com/maven.springframework.org/milestone</url>
 		</repository>
+		<repository>
+			<id>spring-external</id>
+			<name>Spring Portfolio Release Repository</name>
+			<url>http://s3.amazonaws.com/maven.springframework.org/external</url>
+		</repository>
 	</repositories>
 	<properties>
 		<spring.version>2.5</spring.version>
