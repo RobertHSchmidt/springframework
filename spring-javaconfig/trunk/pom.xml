@@ -85,7 +85,7 @@
 			<extension>
 				<groupId>org.springframework.aws</groupId>
 				<artifactId>spring-aws-maven</artifactId>
-				<version>1.2</version>
+				<version>1.2.2</version>
 			</extension>
 		</extensions>
 		<plugins>
@@ -465,6 +465,11 @@
 		</site>
 	</distributionManagement>
 	<repositories>
+		<repository>
+			<id>spring-external</id>
+			<name>Spring Portfolio Milestone Repository</name>
+			<url>http://s3.amazonaws.com/maven.springframework.org/external</url>
+		</repository>
 		<repository>
 			<id>spring-milestone</id>
 			<name>Spring Portfolio Milestone Repository</name>
