@@ -5,7 +5,7 @@
     <artifactId>spring-aws-maven</artifactId>
     <packaging>jar</packaging>
     <name>Amazon Web Services Maven Wagon Support</name>
-    <version>1.2.1-SNAPSHOT</version>
+    <version>1.2.1</version>
     <description>
         Standard Maven wagon support for s3:// urls
     </description>
@@ -19,9 +19,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-aws/trunk</connection>
-        <developerConnection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-aws/trunk</developerConnection>
-        <url>http://fisheye3.cenqua.com/browse/springframework/spring-aws/trunk</url>
+        <connection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-aws/tags/spring-aws-maven-1.2.1</connection>
+        <developerConnection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-aws/tags/spring-aws-maven-1.2.1</developerConnection>
+        <url>http://fisheye3.cenqua.com/browse/springframework/spring-aws/tags/spring-aws-maven-1.2.1</url>
     </scm>
     <organization>
         <name>Spring Framework</name>
