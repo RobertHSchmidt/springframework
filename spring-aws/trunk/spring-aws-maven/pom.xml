@@ -50,7 +50,7 @@
         <dependency>
             <groupId>net.java.dev.jets3t</groupId>
             <artifactId>jets3t</artifactId>
-            <version>0.5.0</version>
+            <version>0.5.1-20080115</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.wagon</groupId>
@@ -59,11 +59,18 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+	<repositories>
+		<repository>
+			<id>spring-external</id>
+			<name>Spring Portfolio External Repository</name>
+			<url>http://s3.amazonaws.com/maven.springframework.org/external</url>
+		</repository>
+	</repositories>
     <distributionManagement>
         <repository>
             <id>spring-release</id>
             <name>Spring Release Repository</name>
-            <url>file://${repo.dir}</url>
+            <url>${release.dir}</url>
         </repository>
         <snapshotRepository>
             <id>spring-snapshot</id>
