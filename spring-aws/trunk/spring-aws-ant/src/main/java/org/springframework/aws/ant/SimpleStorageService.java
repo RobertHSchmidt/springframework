@@ -52,6 +52,8 @@ public class SimpleStorageService {
 	private String secretKey;
 
 	private List<Upload> uploads = new ArrayList<Upload>();
+	
+	private List<Download> downloads = new ArrayList<Download>();
 
 	/**
 	 * Required parameter that corresponds to the S3 Access Key
@@ -76,6 +78,14 @@ public class SimpleStorageService {
 	public void addConfiguredUpload(Upload upload) {
 		uploads.add(upload);
 	}
+	
+	/**
+	 * Add any download operations
+	 * @param download The download operation metadata
+	 */
+	public void addConfiguredDownload(Download download) {
+		downloads.add(download);
+	}
 
 	/**
 	 * Run all S3 operations configured as part of this task
@@ -87,6 +97,10 @@ public class SimpleStorageService {
 
 			for (Upload upload : uploads) {
 				upload.upload(service);
+			}
+			
+			for(Download download : downloads) {
+				download.download(service);
 			}
 		}
 		catch (S3ServiceException e) {

@@ -16,12 +16,14 @@
 package org.springframework.aws.ant;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.apache.tools.ant.BuildException;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
-import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
 
@@ -32,7 +34,7 @@ import org.jets3t.service.model.S3Object;
  * credentials setup in its parent S3 task tag.
  * 
  * <pre>
- * &lt;upload bucketName=&quot;static.springframework.org&quot;
+ * &lt;download bucketName=&quot;static.springframework.org&quot;
  *         file=&quot;${target.release.dir}/${release-with-dependencies.zip}&quot;
  *         toFile=&quot;SPR/spring-framework-${spring-version}-with-dependencies-${tstamp}-${build.number}.zip&quot;
  *         publicRead=&quot;true&quot;/&gt;
@@ -40,15 +42,13 @@ import org.jets3t.service.model.S3Object;
  * 
  * @author Ben Hale
  */
-public class Upload extends AbstractTransferService {
+public class Download extends AbstractTransferService {
 
 	private String bucketName;
 
-	private File file;
+	private String file;
 
-	private String toFile;
-
-	private boolean publicRead = false;
+	private File toFile;
 
 	/**
 	 * Required parameter that corresponds to the S3 bucket to upload to
@@ -59,28 +59,19 @@ public class Upload extends AbstractTransferService {
 	}
 
 	/**
-	 * Required parameter that corresponds to the file to upload
-	 * @param file The file to upload
+	 * Required parameter that corresponds to the source object key in S3
+	 * @param file The source object key in S3
 	 */
-	public void setFile(File file) {
+	public void setFile(String file) {
 		this.file = file;
 	}
 
 	/**
-	 * Required parameter that corresponds to the target object key in S3
-	 * @param toFile The target object key in S3
+	 * Required parameter that corresponds to the file to download
+	 * @param toFile The file to download
 	 */
-	public void setToFile(String toFile) {
+	public void setToFile(File toFile) {
 		this.toFile = toFile;
-	}
-
-	/**
-	 * Optional parameter that corresponds to public readability of the object
-	 * in S3. Defaults to false.
-	 * @param publicRead
-	 */
-	public void setPublicRead(boolean publicRead) {
-		this.publicRead = publicRead;
 	}
 
 	/**
@@ -104,13 +95,43 @@ public class Upload extends AbstractTransferService {
 	 * @throws S3ServiceException If there is an error with the S3 service
 	 * @throws IOException If the source file cannot be read
 	 */
-	public void upload(S3Service service) throws S3ServiceException, IOException {
+	public void download(S3Service service) throws S3ServiceException, IOException {
 		S3Bucket bucket = getBucket();
-		S3Object object = getObject();
+		S3Object object = service.getObject(bucket, file);
 
-		logStart();
+		logStart(object);
 		long startTime = System.currentTimeMillis();
-		service.putObject(bucket, object);
+
+		InputStream in = null;
+		OutputStream out = null;
+		try {
+			in = object.getDataInputStream();
+			out = new FileOutputStream(toFile);
+			byte[] buffer = new byte[1024];
+			int length;
+			while ((length = in.read(buffer)) != -1) {
+				out.write(buffer, 0, length);
+			}
+		}
+		finally {
+			if (in != null) {
+				try {
+					in.close();
+				}
+				catch (IOException e) {
+					// Nothing possible at this point
+				}
+			}
+			if (out != null) {
+				try {
+					out.close();
+				}
+				catch (IOException e) {
+					// Nothing possible at this point
+				}
+			}
+		}
+
 		long endTime = System.currentTimeMillis();
 		logEnd(startTime, endTime);
 	}
@@ -119,24 +140,14 @@ public class Upload extends AbstractTransferService {
 		return new S3Bucket(bucketName);
 	}
 
-	private S3Object getObject() {
-		S3Object object = new S3Object(toFile);
-		if (publicRead) {
-			object.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
-		}
-		object.setDataInputFile(file);
-		object.setContentLength(file.length());
-		return object;
-	}
-
-	private void logStart() throws IOException {
-		System.out.println("Uploading " + file.getCanonicalPath() + " (" + getFormattedSize(file.length()) + ") to "
-				+ bucketName + "/" + toFile);
+	private void logStart(S3Object object) throws IOException {
+		System.out.println("Downloading " + bucketName + "/" + file + " (" + getFormattedSize(object.getContentLength()) + ") to "
+				+ toFile.getCanonicalPath());
 	}
 
 	private void logEnd(long startTime, long endTime) {
 		long transferTime = endTime - startTime;
 		System.out.println("Transfer Time: " + getFormattedTime(transferTime) + " - Transfer Rate: "
-				+ getFormattedSpeed(file.length(), transferTime));
+				+ getFormattedSpeed(toFile.length(), transferTime));
 	}
 }
