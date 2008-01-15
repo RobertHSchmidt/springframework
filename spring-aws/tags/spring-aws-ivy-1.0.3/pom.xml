@@ -1,0 +1,72 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.springframework.aws</groupId>
+	<artifactId>spring-aws-ivy</artifactId>
+	<packaging>jar</packaging>
+	<version>1.0.3</version>
+	<name>Amazon Web Services Ivy Repository</name>
+	<url>http://www.springframework.org</url>
+	<inceptionYear>2007</inceptionYear>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-aws/tags/spring-aws-ivy-1.0.3</connection>
+		<developerConnection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-aws/tags/spring-aws-ivy-1.0.3</developerConnection>
+		<url>http://fisheye3.cenqua.com/browse/springframework/spring-aws/tags/spring-aws-ivy-1.0.3</url>
+	</scm>
+	<build>
+		<extensions>
+			<extension>
+				<groupId>org.springframework.aws</groupId>
+				<artifactId>spring-aws-maven</artifactId>
+				<version>1.2.2</version>
+			</extension>
+		</extensions>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<repositories>
+		<repository>
+			<id>spring-external</id>
+			<name>Spring Portfolio External Repository</name>
+			<url>http://s3.amazonaws.com/maven.springframework.org/external</url>
+		</repository>
+	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>net.java.dev.jets3t</groupId>
+			<artifactId>jets3t</artifactId>
+			<version>0.5.1-20080115</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.ivy</groupId>
+			<artifactId>ivy</artifactId>
+			<version>2.0.0-beta1</version>
+		</dependency>
+	</dependencies>
+    <distributionManagement>
+        <repository>
+            <id>spring-milestone</id>
+            <name>Spring Release Repository</name>
+            <url>s3://maven.springframework.org/release</url>
+        </repository>
+        <snapshotRepository>
+            <id>spring-snapshot</id>
+            <name>Spring Snapshot Repository</name>
+            <url>s3://maven.springframework.org/snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>
