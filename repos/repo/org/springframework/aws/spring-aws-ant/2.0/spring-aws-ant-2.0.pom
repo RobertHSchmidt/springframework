@@ -1,0 +1,66 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.springframework.aws</groupId>
+	<artifactId>spring-aws-ant</artifactId>
+	<packaging>jar</packaging>
+	<version>2.0</version>
+	<name>Amazon Web Services Ant Tasks</name>
+	<url>http://www.springframework.org</url>
+	<inceptionYear>2007</inceptionYear>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-aws/tags/spring-aws-ant-2.0</connection>
+		<developerConnection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-aws/tags/spring-aws-ant-2.0</developerConnection>
+		<url>http://fisheye3.cenqua.com/browse/springframework/spring-aws/tags/spring-aws-ant-2.0</url>
+	</scm>
+	<build>
+		<extensions>
+			<extension>
+				<groupId>org.springframework.aws</groupId>
+				<artifactId>spring-aws-maven</artifactId>
+				<version>1.2.2</version>
+			</extension>
+		</extensions>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>net.java.dev.jets3t</groupId>
+			<artifactId>jets3t</artifactId>
+			<version>0.5.1-20080115</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
+			<version>1.7.0</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+    <distributionManagement>
+        <repository>
+            <id>spring-milestone</id>
+            <name>Spring Release Repository</name>
+            <url>s3://maven.springframework.org/release</url>
+        </repository>
+        <snapshotRepository>
+            <id>spring-snapshot</id>
+            <name>Spring Snapshot Repository</name>
+            <url>s3://maven.springframework.org/snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>
