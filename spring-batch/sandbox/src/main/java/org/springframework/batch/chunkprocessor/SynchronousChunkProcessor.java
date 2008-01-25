@@ -9,30 +9,37 @@ import org.springframework.batch.itemprocessor.ItemProcessor;
 public class SynchronousChunkProcessor implements ChunkProcessor {
 
 	private final ItemProcessor itemProcessor;
-	
+
 	private ChunkRetryPolicy chunkRetryPolicy = new AlwaysRetryChunkRetryPolicy();
 
 	private ItemSkipPolicy itemSkipPolicy = new ExceptionBasedItemSkipPolicy();
-	
+
 	public SynchronousChunkProcessor(ItemProcessor itemProcessor) {
 		this.itemProcessor = itemProcessor;
 	}
-	
+
 	public void setChunkRetryPolicy(ChunkRetryPolicy chunkRetryPolicy) {
-	    this.chunkRetryPolicy = chunkRetryPolicy;
-    }
-	
+		this.chunkRetryPolicy = chunkRetryPolicy;
+	}
+
 	public void setItemSkipPolicy(ItemSkipPolicy itemSkipPolicy) {
-	    this.itemSkipPolicy = itemSkipPolicy;
-    }
+		this.itemSkipPolicy = itemSkipPolicy;
+	}
 
 	public void process(Chunk chunk) {
-		for(;;) {
+		process(chunk, null);
+	}
+
+	public void process(Chunk chunk, ChunkCompletionCallback callback) {
+		for (;;) {
 			try {
 				processChunk(chunk.getItems());
+				if (callback != null) {
+					callback.chunkCompleted(new SuccessChunkResult(chunk.getId()));
+				}
 				return;
 			} catch (ChunkFailureException e) {
-				if(!chunkRetryPolicy.shouldRetry()) {
+				if (!chunkRetryPolicy.shouldRetry()) {
 					return;
 				}
 			}

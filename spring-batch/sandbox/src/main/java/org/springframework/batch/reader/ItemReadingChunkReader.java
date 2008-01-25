@@ -8,10 +8,10 @@ import org.springframework.batch.itemreader.ItemReader;
 import org.springframework.util.Assert;
 
 public class ItemReadingChunkReader implements ChunkReader {
-	
-	private long id = 0;
 
 	private final ItemReader itemReader;
+	
+	private long chunkCounter = 0;
 
 	public ItemReadingChunkReader(ItemReader itemReader) {
 		this.itemReader = itemReader;
@@ -36,8 +36,10 @@ public class ItemReadingChunkReader implements ChunkReader {
 			return null;
 		}
 
-		// TODO actually put a real ID here.
-		return new Chunk(Long.valueOf(id++), items);
+		return new Chunk(getChunkId(), items);
 	}
 
+	private synchronized Long getChunkId() {
+		return new Long(chunkCounter++);
+	}
 }

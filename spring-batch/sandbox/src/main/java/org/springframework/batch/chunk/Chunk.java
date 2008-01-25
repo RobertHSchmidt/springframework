@@ -1,22 +1,21 @@
 package org.springframework.batch.chunk;
 
-import java.io.Serializable;
 import java.util.List;
 
 public class Chunk {
 
-	private final Serializable id;
+	private final Long id;
 
 	private final List items;
 
-	public Chunk(Serializable id, List items) {
+	public Chunk(Long id, List items) {
 		this.id = id;
 		this.items = items;
 	}
-	
-	public Serializable getId() {
-	    return id;
-    }
+
+	public Long getId() {
+		return id;
+	}
 
 	public List getItems() {
 		return items;

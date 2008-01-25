@@ -1,7 +1,5 @@
 package org.springframework.batch.chunkprocessor;
 
-import java.io.Serializable;
-
 import org.springframework.core.enums.ShortCodedLabeledEnum;
 
 public class ChunkResult {
@@ -12,16 +10,20 @@ public class ChunkResult {
 
 	private final ChunkResultType resultType;
 
-	private final Serializable chunkId;
+	private final Long chunkId;
 
-	public ChunkResult(ChunkResultType resultType, Serializable chunkId) {
+	public ChunkResult(ChunkResultType resultType, Long chunkId) {
 		this.resultType = resultType;
 		this.chunkId = chunkId;
 	}
-	
+
 	public ChunkResultType getResultType() {
-	    return resultType;
-    }
+		return resultType;
+	}
+
+	public Long getChunkId() {
+		return chunkId;
+	}
 
 	private static class ChunkResultType extends ShortCodedLabeledEnum {
 
