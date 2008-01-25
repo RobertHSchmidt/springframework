@@ -54,7 +54,8 @@ public class SynchronousChunkProcessorTests extends TestCase {
 		for (int i = 0; i < chunkSize; i++) {
 			items[i] = new Object();
 		}
-		return new Chunk(Long.valueOf(0), CollectionUtils.arrayToList(items));
+
+		return new Chunk(new Long(0), CollectionUtils.arrayToList(items));
 	}
 
 	private class StubItemProcessor implements ItemProcessor {

@@ -2,6 +2,7 @@ package org.springframework.batch.step;
 
 import org.springframework.batch.chunk.Chunk;
 import org.springframework.batch.chunkprocessor.ChunkProcessor;
+import org.springframework.batch.itemreader.RecoveryManager;
 import org.springframework.batch.reader.ChunkReader;
 
 public class ChunkingStepExecutor implements StepExecutor {
@@ -32,10 +33,7 @@ public class ChunkingStepExecutor implements StepExecutor {
 		Chunk chunk;
 		while ((chunk = chunkReader.read(chunkSize)) != null) {
 			chunkProcessor.process(chunk);
-
-			if (chunkReader.markSupported()) {
-				chunkReader.mark();
-			}
+			recoveryManager.commit();
 		}
 	}
 
