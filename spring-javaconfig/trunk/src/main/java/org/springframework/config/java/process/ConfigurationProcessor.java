@@ -50,6 +50,7 @@ import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.config.java.support.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.support.ConfigurationEnhancer;
 import org.springframework.config.java.support.ConfigurationEnhancerFactory;
+import org.springframework.config.java.support.DefaultConfigurationEnhancerFactory;
 import org.springframework.config.java.support.MethodBeanWrapper;
 import org.springframework.config.java.util.ArrayUtils;
 import org.springframework.config.java.util.ClassUtils;
@@ -129,6 +130,8 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	private ConfigurableApplicationContext childApplicationContext;
 
 	private ConfigurationListenerRegistry configurationListenerRegistry = new DefaultConfigurationListenerRegistry();
+
+	private ConfigurationEnhancerFactory configurationEnhancerFactory = new DefaultConfigurationEnhancerFactory();
 
 	private ConfigurationEnhancer configurationEnhancer;
 
@@ -248,6 +251,17 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		return (childApplicationContext != null) ? childApplicationContext : childFactory;
 	}
 
+	/**
+	 * Optional property that overrides the default-assigned
+	 * ConfigurationEnhancerFactory
+	 * 
+	 * @see {@link DefaultConfigurationEnhancerFactory}
+	 * @param factory - the custom factory to set
+	 */
+	public void setConfigurationEnhancerFactory(ConfigurationEnhancerFactory factory) {
+		this.configurationEnhancerFactory = factory;
+	}
+
 	public void registerBeanDefinition(String name, BeanDefinition bd, boolean hide) {
 		if (hide) {
 			childFactory.registerBeanDefinition(name, bd);
@@ -278,9 +292,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 		MethodBeanWrapper wrapper = new MethodBeanWrapper(this, childFactory);
 
-		// TODO: this should be pluggable but also has to be a prototype since
-		// it depends on the childFactory instance which is internal
-		this.configurationEnhancer = ConfigurationEnhancerFactory.getConfigurationEnhancer(this.owningBeanFactory,
+		this.configurationEnhancer = configurationEnhancerFactory.getConfigurationEnhancer(this.owningBeanFactory,
 				this.childFactory, beanNamingStrategy, wrapper, valueSource);
 		initialized = true;
 	}
