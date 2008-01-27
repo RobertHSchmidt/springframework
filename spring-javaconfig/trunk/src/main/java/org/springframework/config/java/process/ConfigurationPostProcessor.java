@@ -1,12 +1,12 @@
 /*
  * Copyright 2002-2007 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,6 +24,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
 import org.springframework.config.java.naming.BeanNamingStrategy;
+import org.springframework.config.java.support.ConfigurationEnhancerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -53,6 +54,8 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 
 	protected final Log log = LogFactory.getLog(getClass());
 
+	private ConfigurationEnhancerFactory configurationEnhancerFactory;
+
 	private ConfigurationListenerRegistry configurationListenerRegistry;
 
 	private BeanNamingStrategy namingStrategy;
@@ -68,6 +71,10 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 	 */
 	public int getOrder() {
 		return Integer.MIN_VALUE;
+	}
+
+	public void setConfigurationEnhancerFactory(ConfigurationEnhancerFactory configurationEnhancerFactory) {
+		this.configurationEnhancerFactory = configurationEnhancerFactory;
 	}
 
 	/**
@@ -127,6 +134,9 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 				}
 				else {
 					processor = new ConfigurationProcessor(beanFactory);
+				}
+				if (configurationEnhancerFactory != null) {
+					processor.setConfigurationEnhancerFactory(configurationEnhancerFactory);
 				}
 				if (configurationListenerRegistry != null) {
 					processor.setConfigurationListenerRegistry(configurationListenerRegistry);
