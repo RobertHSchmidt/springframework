@@ -37,12 +37,13 @@ public class SynchronousChunkProcessor implements ChunkProcessor {
 			try {
 				processChunk(items, chunkContext);
 				if (callback != null) {
-					callback.chunkCompleted(new SuccessChunkResult(chunk.getId()));
+					callback.chunkCompleted(new SuccessChunkResult(chunk.getId(), chunkContext.getSkippedItems()));
 				}
 				return;
 			} catch (ChunkFailureException e) {
 				chunkRetryPolicy.registerFailure(e.getItem(), e.getFailure(), chunkContext);
 				if (!chunkRetryPolicy.shouldRetry(chunkContext)) {
+					callback.chunkCompleted(new FailureChunkResult(chunk.getId()));
 					return;
 				}
 				reorderItems(e.getItem(), items);
@@ -67,7 +68,7 @@ public class SynchronousChunkProcessor implements ChunkProcessor {
 			itemProcessor.process(item);
 		}
 	}
-	
+
 	private void reorderItems(Object failedItem, List items) {
 		items.remove(failedItem);
 		items.add(0, failedItem);

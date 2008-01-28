@@ -1,5 +1,8 @@
 package org.springframework.batch.chunkprocessor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.core.enums.ShortCodedLabeledEnum;
 
 public class ChunkResult {
@@ -12,9 +15,12 @@ public class ChunkResult {
 
 	private final Long chunkId;
 
-	public ChunkResult(ChunkResultType resultType, Long chunkId) {
+	private final List skippedItems;
+
+	public ChunkResult(ChunkResultType resultType, Long chunkId, List skippedItems) {
 		this.resultType = resultType;
 		this.chunkId = chunkId;
+		this.skippedItems = skippedItems;
 	}
 
 	public ChunkResultType getResultType() {
@@ -23,6 +29,10 @@ public class ChunkResult {
 
 	public Long getChunkId() {
 		return chunkId;
+	}
+
+	public List getSkippedItems() {
+		return new ArrayList(skippedItems);
 	}
 
 	private static class ChunkResultType extends ShortCodedLabeledEnum {

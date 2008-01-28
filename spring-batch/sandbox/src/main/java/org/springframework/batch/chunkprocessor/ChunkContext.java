@@ -8,7 +8,7 @@ import java.util.Map;
 public class ChunkContext {
 
 	private final Map context = new HashMap();
-	
+
 	private final List skippedItems = new ArrayList();
 
 	public void addSkippedItem(Object item) {
@@ -19,24 +19,28 @@ public class ChunkContext {
 		return skippedItems.contains(item);
 	}
 
+	public List getSkippedItems() {
+		return new ArrayList(skippedItems);
+	}
+
 	public boolean containsKey(Object key) {
-	    return context.containsKey(key);
-    }
+		return context.containsKey(key);
+	}
 
 	public Object get(Object key) {
-	    return context.get(key);
-    }
+		return context.get(key);
+	}
 
 	public Object put(Object arg0, Object arg1) {
-	    return context.put(arg0, arg1);
-    }
+		return context.put(arg0, arg1);
+	}
 
 	public void putAll(Map arg0) {
-	    context.putAll(arg0);
-    }
+		context.putAll(arg0);
+	}
 
 	public Object remove(Object key) {
-	    return context.remove(key);
-    }
+		return context.remove(key);
+	}
 
 }
