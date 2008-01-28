@@ -43,7 +43,9 @@ public class SynchronousChunkProcessor implements ChunkProcessor {
 			} catch (ChunkFailureException e) {
 				chunkRetryPolicy.registerFailure(e.getItem(), e.getFailure(), chunkContext);
 				if (!chunkRetryPolicy.shouldRetry(chunkContext)) {
-					callback.chunkCompleted(new FailureChunkResult(chunk.getId()));
+					if (callback != null) {
+						callback.chunkCompleted(new FailureChunkResult(chunk.getId()));
+					}
 					return;
 				}
 				reorderItems(e.getItem(), items);
