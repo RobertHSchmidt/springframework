@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.listener.aop.targetsource;
+package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
 import java.util.LinkedList;
@@ -25,8 +25,6 @@ import org.springframework.aop.target.HotSwappableTargetSource;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
-import org.springframework.config.java.listener.ConfigurationListenerSupport;
-import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**
@@ -38,7 +36,7 @@ import org.springframework.core.annotation.AnnotationUtils;
  * 
  * @author Rod Johnson
  */
-public class HotSwapConfigurationListener extends ConfigurationListenerSupport {
+class HotSwapConfigurationListener extends ConfigurationListenerSupport {
 
 	private List<Method> hotswapMethods = new LinkedList<Method>();
 

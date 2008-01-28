@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.listener;
+package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
 
@@ -22,7 +22,7 @@ import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.process.ConfigurationProcessor;
+import org.springframework.config.java.enhancement.BeanMethodReturnValueProcessor;
 
 /**
  * SPI interface that allows extension of a ConfigurationProcessor.
@@ -32,7 +32,7 @@ import org.springframework.config.java.process.ConfigurationProcessor;
  * 
  * @author Rod Johnson
  */
-public interface ConfigurationListener {
+public interface ConfigurationListener extends BeanMethodReturnValueProcessor {
 
 	/**
 	 * Does this configurer understand the given configuration class, which

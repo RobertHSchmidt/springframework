@@ -1,12 +1,12 @@
 /*
  * Copyright 2002-2007 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +47,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
-import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
+import org.springframework.config.java.process.ConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.config.java.support.ConfigurationSupport;
 import org.springframework.config.java.util.DefaultScopes;
@@ -66,7 +66,7 @@ import org.springframework.context.support.GenericApplicationContext;
 public class ConfigurationProcessorTests extends TestCase {
 
 	{
-		new DefaultConfigurationListenerRegistry();
+		new ConfigurationListenerRegistry();
 	}
 
 	public void testSimple() {
@@ -344,72 +344,72 @@ public class ConfigurationProcessorTests extends TestCase {
 
 	// public void testConversationalScopeAgainstClass() {
 	// DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-	//		
+	//
 	// // We need a scope map definition for this to work
 	// HashMapScopeMap scopeMap = new HashMapScopeMap();
 	// bf.registerSingleton(ConversationScopedConfigurationListener.SCOPE_MAP_BEAN_NAME,
 	// scopeMap);
-	//		
+	//
 	// MapScopeIdentiferResolver sir = new MapScopeIdentiferResolver();
 	// bf.registerSingleton(ConversationScopedConfigurationListener.SCOPE_IDENTIFIER_RESOLVER_BEAN_NAME,
 	// sir);
-	//		
+	//
 	// ConfigurationProcessor configurationProcessor = new
 	// ConfigurationProcessor(bf);
 	// configurationProcessor.process(ScopedConfigurationWithClass.class);
-	//		
+	//
 	// Object obj = bf.getBean("conversationalTestBean");
-	//		
+	//
 	// // Not possible, as only parent factory is visible
 	// //assertEquals("Only one testBean", 1,
 	// bf.getBeansOfType(TestBean.class).size());
-	//		
+	//
 	// TestBean conversational = (TestBean) obj;
-	//		
+	//
 	// //assertFalse(AopUtils.isCglibProxy(conversational));
 	// assertTrue(AopUtils.isAopProxy(conversational));
 	// System.out.println(((Advised) conversational).toProxyConfigString());
 	// assertEquals("conversational", conversational.getName());
 	// Advised adv = (Advised) conversational;
 	// assertTrue(adv.getTargetSource() instanceof ScopedTargetSource);
-	//		
+	//
 	// // TODO actually try the sucker and see if it scopes
 	// //fail();
 	// }
 
 	// public void testConversationalScopeAgainstInterface() {
 	// DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-	//		
+	//
 	// // We need a scope map definition for this to work
 	// HashMapScopeMap scopeMap = new HashMapScopeMap();
 	// bf.registerSingleton(ConversationScopedConfigurationListener.SCOPE_MAP_BEAN_NAME,
 	// scopeMap);
-	//		
+	//
 	// MapScopeIdentiferResolver sir = new MapScopeIdentiferResolver();
 	// bf.registerSingleton(ConversationScopedConfigurationListener.SCOPE_IDENTIFIER_RESOLVER_BEAN_NAME,
 	// sir);
-	//		
+	//
 	// ConfigurationProcessor configurationProcessor = new
 	// ConfigurationProcessor(bf);
 	// configurationProcessor.process(ScopedConfigurationWithInterface.class);
-	//		
+	//
 	// Object obj = bf.getBean("conversationalTestBean");
-	//		
+	//
 	// //assertEquals("Only one testBean", 1,
 	// bf.getBeansOfType(ITestBean.class).size());
-	//		
+	//
 	// assertTrue(obj instanceof Advised);
 	// System.out.println(((Advised) obj).toProxyConfigString());
-	//		
+	//
 	// ITestBean conversational = (ITestBean) obj;
-	//		
+	//
 	// assertFalse(AopUtils.isCglibProxy(conversational));
 	// assertTrue(AopUtils.isAopProxy(conversational));
 	// System.out.println(((Advised) conversational).toProxyConfigString());
 	// assertEquals("conversational", conversational.getName());
 	// Advised adv = (Advised) conversational;
 	// assertTrue(adv.getTargetSource() instanceof ScopedTargetSource);
-	//		
+	//
 	// // TODO actually try the sucker
 	// //fail();
 	// }

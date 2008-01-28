@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.support;
+package org.springframework.config.java.enhancement;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.interceptor.ExposeInvocationInterceptor;
@@ -26,8 +27,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.listener.ConfigurationListener;
-import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.config.java.util.DependencyUtils;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -50,7 +49,7 @@ public class MethodBeanWrapper {
 
 	private final BeanFactory owningBeanFactory;
 
-	private final ConfigurationListenerRegistry configurationListenerRegistry;
+	private final Collection<BeanMethodReturnValueProcessor> returnValueProcessors;
 
 	/**
 	 * Constructor.
@@ -60,11 +59,11 @@ public class MethodBeanWrapper {
 	 * @param childTrackingFactory
 	 */
 	public MethodBeanWrapper(BeanDefinitionRegistry beanDefinitionRegistry, BeanFactory owningBeanFactory,
-			ConfigurationListenerRegistry configurationListenerRegistry,
+			Collection<BeanMethodReturnValueProcessor> returnValueProcessors,
 			BeanNameTrackingDefaultListableBeanFactory childTrackingFactory) {
 		this.beanDefinitionRegistry = beanDefinitionRegistry;
 		this.owningBeanFactory = owningBeanFactory;
-		this.configurationListenerRegistry = configurationListenerRegistry;
+		this.returnValueProcessors = returnValueProcessors;
 		this.childTrackingFactory = childTrackingFactory;
 	}
 
@@ -163,7 +162,7 @@ public class MethodBeanWrapper {
 	 */
 	private class ProxyHelper {
 		public Object proxyIfAppropriate(Object originallyCreatedBean, Method method) {
-			if (!configurationListenerRegistry.getConfigurationListeners().isEmpty()) {
+			if (!returnValueProcessors.isEmpty()) {
 				// We know we have advisors that may affect this object
 				// Prepare to proxy it
 				ProxyFactory pf = new ProxyFactory(originallyCreatedBean);
@@ -177,11 +176,10 @@ public class MethodBeanWrapper {
 				}
 
 				boolean customized = false;
-				for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
+				for (BeanMethodReturnValueProcessor processor : returnValueProcessors) {
 					customized = customized
-							|| cml
-									.processBeanMethodReturnValue(childTrackingFactory, originallyCreatedBean, method,
-											pf);
+							|| processor.processBeanMethodReturnValue(childTrackingFactory, originallyCreatedBean,
+									method, pf);
 				}
 
 				// Only proxy if we know that advisors apply to this bean

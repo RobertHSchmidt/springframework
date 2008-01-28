@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.listener;
+package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
 
@@ -23,7 +23,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.process.ConfigurationProcessor;
 
 /**
  * Convenient base class for implementation of the ConfigurationListener
@@ -32,7 +31,7 @@ import org.springframework.config.java.process.ConfigurationProcessor;
  * @author Rod Johnson
  * 
  */
-public class ConfigurationListenerSupport implements ConfigurationListener {
+public abstract class ConfigurationListenerSupport implements ConfigurationListener {
 
 	protected final Log log = LogFactory.getLog(getClass());
 
@@ -60,4 +59,5 @@ public class ConfigurationListenerSupport implements ConfigurationListener {
 			ProxyFactory pf) {
 		return false;
 	}
+
 }

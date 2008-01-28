@@ -31,8 +31,6 @@ import org.springframework.config.java.annotation.DependencyCheck;
 import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.Meta;
 import org.springframework.config.java.annotation.Primary;
-import org.springframework.config.java.listener.ConfigurationListener;
-import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
