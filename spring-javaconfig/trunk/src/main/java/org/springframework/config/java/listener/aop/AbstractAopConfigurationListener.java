@@ -26,6 +26,7 @@ import org.springframework.aop.Pointcut;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.config.java.listener.ConfigurationListenerSupport;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.core.Ordered;
@@ -59,13 +60,13 @@ public abstract class AbstractAopConfigurationListener extends ConfigurationList
 	}
 
 	@Override
-	public boolean processBeanMethodReturnValue(ConfigurationProcessor cp, Object originallyCreatedBean, Method method,
-			ProxyFactory pf) {
+	public boolean processBeanMethodReturnValue(BeanFactory childBeanFactory, Object originallyCreatedBean,
+			Method method, ProxyFactory pf) {
 		int added = 0;
 		for (String adviceName : pointcuts.keySet()) {
 			Pointcut pc = pointcuts.get(adviceName);
 			if (AopUtils.canApply(pc, originallyCreatedBean.getClass())) {
-				Advice advice = (Advice) cp.getChildBeanFactory().getBean(adviceName);
+				Advice advice = (Advice) childBeanFactory.getBean(adviceName);
 				DefaultPointcutAdvisor a = new DefaultPointcutAdvisor(pc, advice);
 
 				// Order advisors if necessary

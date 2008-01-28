@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.target.HotSwappableTargetSource;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
 import org.springframework.config.java.listener.ConfigurationListenerSupport;
@@ -52,8 +53,8 @@ public class HotSwapConfigurationListener extends ConfigurationListenerSupport {
 	}
 
 	@Override
-	public boolean processBeanMethodReturnValue(ConfigurationProcessor cp, Object originallyCreatedBean, Method method,
-			ProxyFactory pf) {
+	public boolean processBeanMethodReturnValue(BeanFactory childBeanFactory, Object originallyCreatedBean,
+			Method method, ProxyFactory pf) {
 		if (hotswapMethods.contains(method)) {
 			HotSwappableTargetSource hsts = new HotSwappableTargetSource(originallyCreatedBean);
 			pf.setTargetSource(hsts);

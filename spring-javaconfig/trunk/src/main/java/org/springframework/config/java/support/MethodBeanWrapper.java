@@ -22,10 +22,12 @@ import java.lang.reflect.Modifier;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.interceptor.ExposeInvocationInterceptor;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.listener.ConfigurationListener;
-import org.springframework.config.java.process.ConfigurationProcessor;
+import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.config.java.util.DependencyUtils;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -42,9 +44,13 @@ import org.springframework.util.Assert;
  */
 public class MethodBeanWrapper {
 
-	private final ConfigurationProcessor configurationProcessor;
-
 	private final BeanNameTrackingDefaultListableBeanFactory childTrackingFactory;
+
+	private final BeanDefinitionRegistry beanDefinitionRegistry;
+
+	private final BeanFactory owningBeanFactory;
+
+	private final ConfigurationListenerRegistry configurationListenerRegistry;
 
 	/**
 	 * Constructor.
@@ -53,9 +59,12 @@ public class MethodBeanWrapper {
 	 * @param configurationListenerRegistry
 	 * @param childTrackingFactory
 	 */
-	public MethodBeanWrapper(ConfigurationProcessor configurationProcessor,
+	public MethodBeanWrapper(BeanDefinitionRegistry beanDefinitionRegistry, BeanFactory owningBeanFactory,
+			ConfigurationListenerRegistry configurationListenerRegistry,
 			BeanNameTrackingDefaultListableBeanFactory childTrackingFactory) {
-		this.configurationProcessor = configurationProcessor;
+		this.beanDefinitionRegistry = beanDefinitionRegistry;
+		this.owningBeanFactory = owningBeanFactory;
+		this.configurationListenerRegistry = configurationListenerRegistry;
 		this.childTrackingFactory = childTrackingFactory;
 	}
 
@@ -116,13 +125,13 @@ public class MethodBeanWrapper {
 				hidden = true;
 			}
 			else {
-				beanDef = configurationProcessor.getBeanDefinitionRegistry().getBeanDefinition(beanName);
+				beanDef = beanDefinitionRegistry.getBeanDefinition(beanName);
 				hidden = false;
 			}
 
 			// the definition was overridden (use that one)
 			if (beanDef.getAttribute(ClassUtils.JAVA_CONFIG_PKG) == null) {
-				originallyCreatedBean = configurationProcessor.getOwningBeanFactory().getBean(beanName);
+				originallyCreatedBean = owningBeanFactory.getBean(beanName);
 			}
 
 			if (originallyCreatedBean == null) {
@@ -154,7 +163,7 @@ public class MethodBeanWrapper {
 	 */
 	private class ProxyHelper {
 		public Object proxyIfAppropriate(Object originallyCreatedBean, Method method) {
-			if (!configurationProcessor.getConfigurationListenerRegistry().getConfigurationListeners().isEmpty()) {
+			if (!configurationListenerRegistry.getConfigurationListeners().isEmpty()) {
 				// We know we have advisors that may affect this object
 				// Prepare to proxy it
 				ProxyFactory pf = new ProxyFactory(originallyCreatedBean);
@@ -168,11 +177,11 @@ public class MethodBeanWrapper {
 				}
 
 				boolean customized = false;
-				for (ConfigurationListener cml : configurationProcessor.getConfigurationListenerRegistry()
-						.getConfigurationListeners()) {
+				for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
 					customized = customized
-							|| cml.processBeanMethodReturnValue(configurationProcessor, originallyCreatedBean, method,
-									pf);
+							|| cml
+									.processBeanMethodReturnValue(childTrackingFactory, originallyCreatedBean, method,
+											pf);
 				}
 
 				// Only proxy if we know that advisors apply to this bean

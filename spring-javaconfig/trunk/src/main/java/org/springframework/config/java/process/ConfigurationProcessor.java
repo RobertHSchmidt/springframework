@@ -290,7 +290,8 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	public void afterPropertiesSet() {
 		Assert.notNull(owningBeanFactory, "an owning factory bean is required");
 
-		MethodBeanWrapper wrapper = new MethodBeanWrapper(this, childFactory);
+		MethodBeanWrapper wrapper = new MethodBeanWrapper(this.getBeanDefinitionRegistry(),
+				this.getOwningBeanFactory(), this.getConfigurationListenerRegistry(), childFactory);
 
 		this.configurationEnhancer = configurationEnhancerFactory.getConfigurationEnhancer(this.owningBeanFactory,
 				this.childFactory, beanNamingStrategy, wrapper, valueSource);

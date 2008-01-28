@@ -24,6 +24,7 @@ import org.springframework.aop.Advisor;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.BeanCurrentlyInCreationException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.aop.SpringAdvisor;
 import org.springframework.config.java.listener.ConfigurationListenerSupport;
@@ -59,11 +60,11 @@ public class SpringAdvisorConfigurationListener extends ConfigurationListenerSup
 	}
 
 	@Override
-	public boolean processBeanMethodReturnValue(ConfigurationProcessor cp, Object originallyCreatedBean, Method method,
-			ProxyFactory pf) {
+	public boolean processBeanMethodReturnValue(BeanFactory childBeanFactory, Object originallyCreatedBean,
+			Method method, ProxyFactory pf) {
 		for (String advisorName : advisorBeanNames) {
 			try {
-				Advisor advisor = (Advisor) cp.getChildBeanFactory().getBean(advisorName);
+				Advisor advisor = (Advisor) childBeanFactory.getBean(advisorName);
 				if (AopUtils.canApply(advisor, originallyCreatedBean.getClass())) {
 					pf.addAdvisor(advisor);
 				}
