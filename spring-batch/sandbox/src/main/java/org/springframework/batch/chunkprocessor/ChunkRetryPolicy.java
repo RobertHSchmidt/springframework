@@ -2,5 +2,7 @@ package org.springframework.batch.chunkprocessor;
 
 public interface ChunkRetryPolicy {
 
-	boolean shouldRetry();
+	void registerFailure(Object item, Exception exception, ChunkContext chunkContext);
+
+	boolean shouldRetry(ChunkContext chunkContext);
 }

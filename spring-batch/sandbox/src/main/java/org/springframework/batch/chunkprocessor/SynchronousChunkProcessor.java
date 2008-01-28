@@ -31,36 +31,45 @@ public class SynchronousChunkProcessor implements ChunkProcessor {
 	}
 
 	public void process(Chunk chunk, ChunkCompletionCallback callback) {
+		ChunkContext chunkContext = new ChunkContext();
 		for (;;) {
+			List items = chunk.getItems();
 			try {
-				processChunk(chunk.getItems());
+				processChunk(items, chunkContext);
 				if (callback != null) {
 					callback.chunkCompleted(new SuccessChunkResult(chunk.getId()));
 				}
 				return;
 			} catch (ChunkFailureException e) {
-				if (!chunkRetryPolicy.shouldRetry()) {
+				chunkRetryPolicy.registerFailure(e.getItem(), e.getFailure(), chunkContext);
+				if (!chunkRetryPolicy.shouldRetry(chunkContext)) {
 					return;
 				}
+				reorderItems(e.getItem(), items);
 			}
 		}
 	}
 
-	private void processChunk(List items) throws ChunkFailureException {
+	private void processChunk(List items, ChunkContext chunkContext) throws ChunkFailureException {
 		for (Iterator i = items.iterator(); i.hasNext();) {
 			Object item = i.next();
 			try {
-				processItem(item);
+				processItem(item, chunkContext);
 			} catch (Exception e) {
-				itemSkipPolicy.registerFailure(item, e);
-				throw new ChunkFailureException();
+				itemSkipPolicy.registerFailure(item, e, chunkContext);
+				throw new ChunkFailureException(item, e);
 			}
 		}
 	}
 
-	private void processItem(Object item) throws Exception {
-		if (!itemSkipPolicy.shouldSkip(item)) {
+	private void processItem(Object item, ChunkContext chunkContext) throws Exception {
+		if (!itemSkipPolicy.shouldSkip(item, chunkContext)) {
 			itemProcessor.process(item);
 		}
+	}
+	
+	private void reorderItems(Object failedItem, List items) {
+		items.remove(failedItem);
+		items.add(0, failedItem);
 	}
 }

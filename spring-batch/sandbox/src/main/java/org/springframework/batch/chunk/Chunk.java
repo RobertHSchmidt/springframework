@@ -1,5 +1,6 @@
 package org.springframework.batch.chunk;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Chunk {
@@ -18,7 +19,7 @@ public class Chunk {
 	}
 
 	public List getItems() {
-		return items;
+		return new ArrayList(items);
 	}
 
 }

@@ -5,5 +5,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-core/2.5/spring-core-2.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-tx/2.5/spring-tx-2.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-test/2.5/spring-test-2.5.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/spring-batch-infrastructure"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

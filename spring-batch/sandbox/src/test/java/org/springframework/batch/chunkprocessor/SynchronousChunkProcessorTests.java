@@ -94,25 +94,28 @@ public class SynchronousChunkProcessorTests extends TestCase {
 			this.skip = skip;
 		}
 
-		public void registerFailure(Object item, Exception exception) {
+		public void registerFailure(Object item, Exception exception, ChunkContext chunkContext) {
 		}
 
-		public boolean shouldSkip(Object item) {
+		public boolean shouldSkip(Object item, ChunkContext chunkContext) {
 			return skip;
 		}
 
 	}
 
 	private class StubChunkRetryPolicy implements ChunkRetryPolicy {
-		
+
 		private boolean retry;
-		
+
 		public StubChunkRetryPolicy(boolean retry) {
 			this.retry = retry;
 		}
 
-		public boolean shouldRetry() {
-	        return retry;
+		public boolean shouldRetry(ChunkContext chunkContext) {
+			return retry;
+		}
+
+		public void registerFailure(Object item, Exception exception, ChunkContext chunkContext) {
         }
 
 	}
