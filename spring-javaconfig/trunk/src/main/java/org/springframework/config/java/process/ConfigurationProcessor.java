@@ -20,6 +20,7 @@ import static java.lang.String.format;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,16 +43,14 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
-import org.springframework.config.java.listener.ConfigurationListener;
-import org.springframework.config.java.listener.registry.ConfigurationListenerRegistry;
-import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
+import org.springframework.config.java.enhancement.BeanMethodReturnValueProcessor;
+import org.springframework.config.java.enhancement.BeanNameTrackingDefaultListableBeanFactory;
+import org.springframework.config.java.enhancement.ConfigurationEnhancer;
+import org.springframework.config.java.enhancement.ConfigurationEnhancerFactory;
+import org.springframework.config.java.enhancement.DefaultConfigurationEnhancerFactory;
+import org.springframework.config.java.enhancement.MethodBeanWrapper;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.naming.MethodNameStrategy;
-import org.springframework.config.java.support.BeanNameTrackingDefaultListableBeanFactory;
-import org.springframework.config.java.support.ConfigurationEnhancer;
-import org.springframework.config.java.support.ConfigurationEnhancerFactory;
-import org.springframework.config.java.support.DefaultConfigurationEnhancerFactory;
-import org.springframework.config.java.support.MethodBeanWrapper;
 import org.springframework.config.java.util.ArrayUtils;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.config.java.valuesource.CompositeValueSource;
@@ -97,7 +96,7 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
  * @author Rod Johnson
  * @author Costin Leau
  * @author Chris Beams
- * @see org.springframework.config.java.listener.ConfigurationListener
+ * @see org.springframework.config.java.process.ConfigurationListener
  */
 public class ConfigurationProcessor implements InitializingBean, ResourceLoaderAware {
 
@@ -129,7 +128,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 */
 	private ConfigurableApplicationContext childApplicationContext;
 
-	private ConfigurationListenerRegistry configurationListenerRegistry = new DefaultConfigurationListenerRegistry();
+	private ConfigurationListenerRegistry configurationListenerRegistry = new ConfigurationListenerRegistry();
 
 	private ConfigurationEnhancerFactory configurationEnhancerFactory = new DefaultConfigurationEnhancerFactory();
 
@@ -140,6 +139,8 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	private CompositeValueSource valueSource = new CompositeValueSource();
 
 	private ResourceLoader resourceLoader = new DefaultResourceLoader();
+
+	private final BeanDefinitionRegistry beanDefinitionRegistry;
 
 	private boolean initialized = false;
 
@@ -197,6 +198,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 */
 	public ConfigurationProcessor(ConfigurableListableBeanFactory clbf) {
 		this.owningBeanFactory = clbf;
+		this.beanDefinitionRegistry = (BeanDefinitionRegistry) owningBeanFactory;
 		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(owningBeanFactory);
 	}
 
@@ -231,20 +233,12 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		this.configurationListenerRegistry = configurationListenerRegistry;
 	}
 
-	public ConfigurationListenerRegistry getConfigurationListenerRegistry() {
-		return configurationListenerRegistry;
-	}
-
 	public BeanDefinitionRegistry getBeanDefinitionRegistry() {
 		return (BeanDefinitionRegistry) owningBeanFactory;
 	}
 
 	public void addValueSource(ValueSource vs) {
 		this.valueSource.add(vs);
-	}
-
-	public BeanFactory getOwningBeanFactory() {
-		return owningBeanFactory;
 	}
 
 	public BeanFactory getChildBeanFactory() {
@@ -267,7 +261,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 			childFactory.registerBeanDefinition(name, bd);
 		}
 		else {
-			getBeanDefinitionRegistry().registerBeanDefinition(name, bd);
+			beanDefinitionRegistry.registerBeanDefinition(name, bd);
 		}
 	}
 
@@ -290,8 +284,12 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	public void afterPropertiesSet() {
 		Assert.notNull(owningBeanFactory, "an owning factory bean is required");
 
-		MethodBeanWrapper wrapper = new MethodBeanWrapper(this.getBeanDefinitionRegistry(),
-				this.getOwningBeanFactory(), this.getConfigurationListenerRegistry(), childFactory);
+		ArrayList<BeanMethodReturnValueProcessor> a = new ArrayList<BeanMethodReturnValueProcessor>();
+		for (ConfigurationListener c : configurationListenerRegistry.getConfigurationListeners()) {
+			a.add(c);
+		}
+
+		MethodBeanWrapper wrapper = new MethodBeanWrapper(beanDefinitionRegistry, owningBeanFactory, a, childFactory);
 
 		this.configurationEnhancer = configurationEnhancerFactory.getConfigurationEnhancer(this.owningBeanFactory,
 				this.childFactory, beanNamingStrategy, wrapper, valueSource);

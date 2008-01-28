@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.support;
+package org.springframework.config.java.enhancement;
 
 /**
  * Decorate the given configuration class for usage inside Spring application

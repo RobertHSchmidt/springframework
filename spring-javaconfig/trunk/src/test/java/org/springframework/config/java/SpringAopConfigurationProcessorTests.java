@@ -1,12 +1,12 @@
 /*
  * Copyright 2002-2004 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +30,7 @@ import org.springframework.config.java.AspectJConfigurationProcessorTests.Counti
 import org.springframework.config.java.AspectJConfigurationProcessorTests.SingletonCountingAdvice;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.aop.SpringAdvice;
-import org.springframework.config.java.listener.registry.DefaultConfigurationListenerRegistry;
+import org.springframework.config.java.process.ConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.core.annotation.Order;
 
@@ -41,7 +41,7 @@ import org.springframework.core.annotation.Order;
 public class SpringAopConfigurationProcessorTests extends TestCase {
 
 	{
-		new DefaultConfigurationListenerRegistry();
+		new ConfigurationListenerRegistry();
 	}
 
 	public void testPerInstanceAdviceAndSharedAdvice() throws Exception {

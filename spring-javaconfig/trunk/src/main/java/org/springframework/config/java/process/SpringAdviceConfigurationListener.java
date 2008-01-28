@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.listener.aop;
+package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
 
@@ -22,7 +22,6 @@ import org.springframework.aop.Pointcut;
 import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.aop.SpringAdvice;
-import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
@@ -50,7 +49,7 @@ import org.springframework.core.annotation.Order;
  * 
  * @author Rod Johnson
  */
-public class SpringAdviceConfigurationListener extends AbstractAopConfigurationListener {
+class SpringAdviceConfigurationListener extends AbstractAopConfigurationListener {
 
 	@Override
 	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration, ConfigurationProcessor cp,

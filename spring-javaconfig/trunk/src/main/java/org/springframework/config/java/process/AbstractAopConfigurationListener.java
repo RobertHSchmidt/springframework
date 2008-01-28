@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.config.java.listener.aop;
+package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -27,8 +27,6 @@ import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.config.java.listener.ConfigurationListenerSupport;
-import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.core.Ordered;
 
 /**
@@ -37,7 +35,7 @@ import org.springframework.core.Ordered;
  * 
  * @author Rod Johnson
  */
-public abstract class AbstractAopConfigurationListener extends ConfigurationListenerSupport {
+abstract class AbstractAopConfigurationListener extends ConfigurationListenerSupport {
 
 	/**
 	 * Map from advice bean names in child factory to Pointcut definition.
