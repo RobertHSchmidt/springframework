@@ -16,12 +16,12 @@
 
 package org.springframework.config.java;
 
+import static org.junit.Assert.*;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import junit.framework.TestCase;
 
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
@@ -30,6 +30,7 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.weaver.tools.PointcutPrimitive;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.AopConfigException;
 import org.springframework.beans.DependsOnTestBean;
@@ -43,14 +44,15 @@ import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.config.java.util.DefaultScopes;
 
 /**
- * 
  * @author Rod Johnson
  */
-public class AspectJConfigurationProcessorTests extends TestCase {
+public class AspectJConfigurationProcessorTests {
 
+	@Ignore
+	@Test
 	// TODO this may not be a valid test. Would need prototype aspect bean
 	// and autoproxy
-	public void xtestPerInstanceAdviceAndSharedAdvice() throws Exception {
+	public void testPerInstanceAdviceAndSharedAdvice() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(PerInstanceCountingAdvice.class);
@@ -80,6 +82,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 		assertEquals(1, CountingConfiguration.getCount(target2));
 	}
 
+	@Test
 	public void testSharedAfterAdvice() throws Throwable {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
@@ -105,6 +108,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	 * @param clazz
 	 * @throws Exception
 	 */
+	@Test
 	public void testAspectJAnnotationsRequireAspectAnnotationDirect() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
@@ -112,22 +116,20 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 				.processClass(InvalidNoAspectAnnotation.class) > 0);
 	}
 
+	@Test(expected = AopConfigException.class)
 	public void testInvalidInheritanceFromConcreteAspect() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		try {
-			configurationProcessor.processClass(InvalidInheritanceFromConcreteAspect.class);
-			fail("Cannot extend a concrete aspect");
-		}
-		catch (AopConfigException ex) {
-			// Ok
-		}
+		configurationProcessor.processClass(InvalidInheritanceFromConcreteAspect.class);
+		// above should throw, cannot extend a concrete aspect
 	}
 
+	@Test
 	public void testAspectJAroundAdviceWithImplicitScope() throws Exception {
 		doTestAspectJAroundAdviceWithImplicitScope(AroundSingletonCountingAdvice.class);
 	}
 
+	@Test
 	public void testAspectJAroundAdviceWithImplicitScopeAndNamedPointcut() throws Exception {
 		doTestAspectJAroundAdviceWithImplicitScope(AroundAdviceWithNamedPointcut.class);
 	}
@@ -135,7 +137,8 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	// TODO: this test is broken as of the changes for SJC-38. Not sure why
 	// yet...
 	@Ignore
-	public void XtestAspectJAroundAdviceWithAspectInnerClass() throws Exception {
+	@Test
+	public void testAspectJAroundAdviceWithAspectInnerClass() throws Exception {
 		doTestAspectJAroundAdviceWithImplicitScope(InnerClassAdvice.class);
 	}
 
@@ -151,6 +154,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 		assertEquals("around", advised1.getName());
 	}
 
+	@Test
 	public void testAspectJAroundAdviceWithAspectClassScope() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
@@ -170,7 +174,8 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	// TODO do we really want the configuration class to *be* an aspect?
 	// The model elsewhere is that configuration *contains* aspects
 	// Structure it? It's Java 5 only?
-
+	// update, cbeams 01-29-08: See SJC-55
+	@Test
 	public void testAspectJNoAroundAdvice() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
@@ -207,6 +212,7 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	// TestBean.class));
 	// }
 
+	@Test
 	public void testPointcutExpressionWithPointcutReference() throws Exception {
 		Set<PointcutPrimitive> supportedPrimitives = new HashSet<PointcutPrimitive>();
 		supportedPrimitives.add(PointcutPrimitive.EXECUTION);
@@ -243,7 +249,6 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 
 	/**
 	 * Invalid class, doesn't have an Aspect tag
-	 * 
 	 */
 	public static class InvalidNoAspectAnnotation {
 		@Around("execution(* *.getName())")
@@ -396,7 +401,9 @@ public class AspectJConfigurationProcessorTests extends TestCase {
 	}
 
 	// TODO: fix w/ Maven
-	public void tstAroundAdviceWithArguments() throws Exception {
+	@Ignore
+	@Test
+	public void testAroundAdviceWithArguments() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(SumAroundAdvice.class);
