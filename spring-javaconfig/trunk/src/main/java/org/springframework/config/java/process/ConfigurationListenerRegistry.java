@@ -17,6 +17,7 @@
 package org.springframework.config.java.process;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.config.java.util.DependencyUtils;
@@ -39,7 +40,7 @@ public class ConfigurationListenerRegistry {
 
 	private final List<ConfigurationListener> configurationListeners = new ArrayList<ConfigurationListener>();
 
-	{
+	public ConfigurationListenerRegistry() {
 		registerConfigurationListener(new AutoBeanConfigurationListener());
 		registerConfigurationListener(new ResourceBundlesConfigurationListener());
 		registerConfigurationListener(new ScopedProxyConfigurationListener());
@@ -55,7 +56,7 @@ public class ConfigurationListenerRegistry {
 	}
 
 	public final List<ConfigurationListener> getConfigurationListeners() {
-		return configurationListeners;
+		return Collections.unmodifiableList(configurationListeners);
 	}
 
 }
