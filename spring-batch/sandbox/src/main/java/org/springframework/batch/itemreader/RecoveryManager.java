@@ -15,9 +15,13 @@
  */
 package org.springframework.batch.itemreader;
 
+/**
+ * 
+ * @author Ben Hale
+ */
 public interface RecoveryManager {
 
 	void mark();
-	
+
 	void reset();
 }

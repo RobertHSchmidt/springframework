@@ -15,6 +15,10 @@
  */
 package org.springframework.batch.chunkprocessor;
 
+/**
+ * 
+ * @author Ben Hale
+ */
 public interface ChunkRetryPolicy {
 
 	void registerFailure(Object item, Exception exception, ChunkContext chunkContext);

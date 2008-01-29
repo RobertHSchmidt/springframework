@@ -20,6 +20,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 
+ * @author Ben Hale
+ */
 public class ChunkContext {
 
 	private final Map context = new HashMap();

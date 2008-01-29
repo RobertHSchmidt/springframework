@@ -18,21 +18,17 @@ package org.springframework.batch.reader;
 import org.springframework.batch.io.exception.BatchCriticalException;
 
 /**
- * Exception indicating that the skip limit for a particular step
- * has been exceeded.  This exception should always cause a job to
- * terminate abnormally.
+ * Exception indicating that the skip limit for a particular step has been
+ * exceeded. This exception should always cause a job to terminate abnormally.
  * 
  * @author Lucas Ward
- *
  */
 public class SkipLimitExceededException extends BatchCriticalException {
-
-	private static final long serialVersionUID = -7219854737641474304L;
 
 	public SkipLimitExceededException(String msg) {
 		super(msg);
 	}
-	
+
 	public SkipLimitExceededException(String msg, Throwable t) {
 		super(msg, t);
 	}

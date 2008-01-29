@@ -15,6 +15,10 @@
  */
 package org.springframework.batch.itemprocessor;
 
+/**
+ * 
+ * @author Ben Hale
+ */
 public interface ItemProcessor {
 
 	void process(Object item) throws Exception;

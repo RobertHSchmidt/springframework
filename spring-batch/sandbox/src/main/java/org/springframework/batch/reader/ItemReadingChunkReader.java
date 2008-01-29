@@ -19,13 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.batch.chunk.Chunk;
-import org.springframework.batch.itemreader.ItemReader;
+import org.springframework.batch.item.ItemReader;
 import org.springframework.util.Assert;
 
+/**
+ * 
+ * @author Ben Hale
+ */
 public class ItemReadingChunkReader implements ChunkReader {
 
 	private final ItemReader itemReader;
-	
+
 	private long chunkCounter = 0;
 
 	public ItemReadingChunkReader(ItemReader itemReader) {

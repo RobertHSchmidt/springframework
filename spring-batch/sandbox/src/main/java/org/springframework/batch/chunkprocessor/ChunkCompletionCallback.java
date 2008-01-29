@@ -15,6 +15,10 @@
  */
 package org.springframework.batch.chunkprocessor;
 
+/**
+ * 
+ * @author Ben Hale
+ */
 public interface ChunkCompletionCallback {
 
 	void chunkCompleted(ChunkResult result);
