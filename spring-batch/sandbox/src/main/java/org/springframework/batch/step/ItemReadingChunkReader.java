@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.reader;
+package org.springframework.batch.step;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,23 +32,42 @@ public class ItemReadingChunkReader implements ChunkReader {
 
 	private long chunkCounter = 0;
 
+	private ReadFailurePolicy readFailurePolicy = new AlwaysSkipReadFailurePolicy();
+
 	public ItemReadingChunkReader(ItemReader itemReader) {
 		this.itemReader = itemReader;
 	}
 
-	public void close() {
+	public void setReadFailurePolicy(ReadFailurePolicy readFailurePolicy) {
+		this.readFailurePolicy = readFailurePolicy;
+	}
+
+	public void close() throws Exception {
 		itemReader.close();
 	}
 
-	public Chunk read(int size) {
+	public Chunk read(int size, ReadContext readContext) throws ReadFailureException {
 		Assert.isTrue(size > 0, "Chunk size must be greater than 0");
 
 		int counter = 0;
 		List items = new ArrayList(size);
 
 		Object item;
-		while ((item = itemReader.read()) != null && counter++ < size) {
-			items.add(item);
+		while (counter < size) {
+			if (!readFailurePolicy.shouldContinue(readContext)) {
+				throw readFailurePolicy.getException(readContext);
+			}
+
+			try {
+				item = itemReader.read();
+				if (item == null) {
+					break;
+				}
+				items.add(item);
+				counter++;
+			} catch (Exception e) {
+				readFailurePolicy.registerFailure(e, readContext);
+			}
 		}
 
 		if (items.size() == 0) {
@@ -61,4 +80,5 @@ public class ItemReadingChunkReader implements ChunkReader {
 	private synchronized Long getChunkId() {
 		return new Long(chunkCounter++);
 	}
+
 }

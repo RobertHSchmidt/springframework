@@ -13,20 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.chunkprocessor;
+package org.springframework.batch.step;
 
 /**
  * 
  * @author Ben Hale
  */
-public class ExceptionBasedItemSkipPolicy implements ItemSkipPolicy {
+public class SkipLimitExceededException extends ReadFailureException {
 
-	public synchronized void registerFailure(Object item, Exception exception, ChunkContext chunkContext) {
-		chunkContext.addSkippedItem(item);
+	private final Long skipLimit;
+	
+	public SkipLimitExceededException(Long skipLimit) {
+		this.skipLimit = skipLimit;
 	}
-
-	public synchronized boolean shouldSkip(Object item, ChunkContext chunkContext) {
-		return chunkContext.containsSkippedItem(item);
+	
+	public Long getSkipLimit() {
+	    return skipLimit;
+    }
+	
+	public String toString() {
+	    return "Skip limit of '" + skipLimit + "' exceeded";
 	}
-
 }

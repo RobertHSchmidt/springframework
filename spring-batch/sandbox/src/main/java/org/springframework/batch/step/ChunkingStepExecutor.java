@@ -18,7 +18,6 @@ package org.springframework.batch.step;
 import org.springframework.batch.chunk.Chunk;
 import org.springframework.batch.chunkprocessor.ChunkProcessor;
 import org.springframework.batch.itemreader.RecoveryManager;
-import org.springframework.batch.reader.ChunkReader;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -52,10 +51,11 @@ public class ChunkingStepExecutor implements StepExecutor {
 	}
 
 	public void execute() {
+		ReadContext readContext = new ReadContext();
 		TransactionTemplate txTemplate = new TransactionTemplate(transactionManager);
 		RecoveryManagerSynchronization recoverySynchronization = new RecoveryManagerSynchronization(recoveryManager);
 		ChunkReadingTransactionCallBack transactionCallBack = new ChunkReadingTransactionCallBack(chunkReader,
-		        chunkSize, recoverySynchronization);
+		        chunkSize, readContext, recoverySynchronization);
 		while (txTemplate.execute(transactionCallBack) != null) {
 		}
 	}
@@ -65,19 +65,22 @@ public class ChunkingStepExecutor implements StepExecutor {
 		private final ChunkReader chunkReader;
 
 		private final int chunkSize;
+		
+		private final ReadContext readContext;
 
 		private final RecoveryManagerSynchronization recoverySynchronization;
 
 		public ChunkReadingTransactionCallBack(ChunkReader chunkReader, int chunkSize,
-		        RecoveryManagerSynchronization recoverySynchronization) {
+		        ReadContext readContext, RecoveryManagerSynchronization recoverySynchronization) {
 			this.chunkReader = chunkReader;
 			this.chunkSize = chunkSize;
+			this.readContext = readContext;
 			this.recoverySynchronization = recoverySynchronization;
 		}
 
 		public Object doInTransaction(TransactionStatus status) {
 			TransactionSynchronizationManager.registerSynchronization(recoverySynchronization);
-			Chunk chunk = chunkReader.read(chunkSize);
+			Chunk chunk = chunkReader.read(chunkSize, readContext);
 			chunkProcessor.process(chunk);
 			return chunk;
 		}

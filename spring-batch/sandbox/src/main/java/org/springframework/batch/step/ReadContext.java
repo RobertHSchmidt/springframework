@@ -13,28 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.chunkprocessor;
+package org.springframework.batch.step;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * 
  * @author Ben Hale
  */
-public class ChunkFailureException extends RuntimeException {
+public class ReadContext {
 
-	private final Object item;
+	private final Map context = new HashMap();
 
-	private final Exception failure;
-
-	public ChunkFailureException(Object item, Exception failure) {
-		this.item = item;
-		this.failure = failure;
+	public boolean containsKey(Object key) {
+		return context.containsKey(key);
 	}
 
-	public Object getItem() {
-		return item;
+	public Object get(Object key) {
+		return context.get(key);
 	}
 
-	public Exception getFailure() {
-		return failure;
+	public Object put(Object key, Object value) {
+		return context.put(key, value);
 	}
+
+	public void putAll(Map map) {
+		context.putAll(map);
+	}
+
+	public Object remove(Object key) {
+		return context.remove(key);
+	}
+
 }

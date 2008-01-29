@@ -15,6 +15,7 @@
  */
 package org.springframework.batch.step;
 
+import java.io.Serializable;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -23,7 +24,6 @@ import org.springframework.batch.chunk.Chunk;
 import org.springframework.batch.chunkprocessor.ChunkCompletionCallback;
 import org.springframework.batch.chunkprocessor.ChunkProcessor;
 import org.springframework.batch.itemreader.RecoveryManager;
-import org.springframework.batch.reader.ChunkReader;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.util.CollectionUtils;
 
@@ -92,7 +92,7 @@ public class ChunkingStepExecutorTests extends TestCase {
 		public void close() {
 		}
 
-		public Chunk read(int size) {
+		public Chunk read(int size, ReadContext readContext) {
 			if (numberOfChunks-- > 0) {
 				return new Chunk(new Long(0), getItemList(size));
 			} else {
@@ -103,7 +103,8 @@ public class ChunkingStepExecutorTests extends TestCase {
 		private List getItemList(int size) {
 			Object[] items = new Object[size];
 			for (int i = 0; i < size; i++) {
-				items[i] = new Object();
+				items[i] = new Serializable() {
+				};
 			}
 			return CollectionUtils.arrayToList(items);
 		}

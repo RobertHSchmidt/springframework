@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.chunkreader;
+package org.springframework.batch.step;
 
 import junit.framework.TestCase;
 
 import org.springframework.batch.chunk.Chunk;
 import org.springframework.batch.itemreader.MockItemReader;
-import org.springframework.batch.reader.ItemReadingChunkReader;
 
 public class ItemReadingChunkReaderTests extends TestCase {
 
 	public void testSizeNegative() {
 		try {
+			ReadContext readContext = new ReadContext();
 			MockItemReader itemReader = new MockItemReader(10);
 			ItemReadingChunkReader chunkReader = new ItemReadingChunkReader(itemReader);
-			chunkReader.read(-1);
+			chunkReader.read(-1, readContext);
 			fail();
 		} catch (IllegalArgumentException e) {
 		}
@@ -35,25 +35,70 @@ public class ItemReadingChunkReaderTests extends TestCase {
 
 	public void testSizeZero() {
 		try {
+			ReadContext readContext = new ReadContext();
 			MockItemReader itemReader = new MockItemReader(10);
 			ItemReadingChunkReader chunkReader = new ItemReadingChunkReader(itemReader);
-			chunkReader.read(0);
+			chunkReader.read(0, readContext);
 			fail();
 		} catch (IllegalArgumentException e) {
 		}
 	}
 
 	public void testSizePositive() {
+		ReadContext readContext = new ReadContext();
 		MockItemReader itemReader = new MockItemReader(10);
 		ItemReadingChunkReader chunkReader = new ItemReadingChunkReader(itemReader);
-		Chunk chunk = chunkReader.read(10);
+		Chunk chunk = chunkReader.read(10, readContext);
 		assertEquals(10, chunk.getItems().size());
 	}
 
 	public void testIncompleteChunk() {
+		ReadContext readContext = new ReadContext();
 		MockItemReader itemReader = new MockItemReader(5);
 		ItemReadingChunkReader chunkReader = new ItemReadingChunkReader(itemReader);
-		Chunk chunk = chunkReader.read(10);
+		Chunk chunk = chunkReader.read(10, readContext);
 		assertEquals(5, chunk.getItems().size());
+	}
+
+	public void testPolicyNoContinue() {
+		ReadContext readContext = new ReadContext();
+		MockItemReader itemReader = new MockItemReader(1);
+		ItemReadingChunkReader chunkReader = new ItemReadingChunkReader(itemReader);
+		chunkReader.setReadFailurePolicy(new StubReadFailurePolicy(true));
+		try {
+			chunkReader.read(10, readContext);
+			fail();
+		} catch (RuntimeException e) {
+		}
+	}
+
+	public void testPolicyContinueWithFailure() {
+		ReadContext readContext = new ReadContext();
+		MockItemReader itemReader = new MockItemReader(1);
+		itemReader.setFail(true);
+		ItemReadingChunkReader chunkReader = new ItemReadingChunkReader(itemReader);
+		chunkReader.setReadFailurePolicy(new StubReadFailurePolicy(false));
+		Chunk chunk = chunkReader.read(1, readContext);
+		assertEquals(1, chunk.getItems().size());
+	}
+
+	private class StubReadFailurePolicy implements ReadFailurePolicy {
+
+		private final boolean fail;
+
+		public StubReadFailurePolicy(boolean fail) {
+			this.fail = fail;
+		}
+
+		public ReadFailureException getException(ReadContext readContext) {
+			throw new RuntimeException();
+		}
+
+		public void registerFailure(Exception exception, ReadContext readContext) {
+		}
+
+		public boolean shouldContinue(ReadContext readContext) {
+			return !fail;
+		}
 	}
 }

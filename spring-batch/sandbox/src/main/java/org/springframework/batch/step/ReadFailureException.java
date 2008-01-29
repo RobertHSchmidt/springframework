@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2008 the original author or authors.
+ * Copyright 2006-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.reader;
-
-import org.springframework.batch.io.exception.BatchCriticalException;
+package org.springframework.batch.step;
 
 /**
- * Exception indicating that the skip limit for a particular step has been
- * exceeded. This exception should always cause a job to terminate abnormally.
- * 
- * @author Lucas Ward
+ * @author Ben Hale
  */
-public class SkipLimitExceededException extends BatchCriticalException {
+public abstract class ReadFailureException extends RuntimeException {
 
-	public SkipLimitExceededException(String msg) {
-		super(msg);
-	}
-
-	public SkipLimitExceededException(String msg, Throwable t) {
-		super(msg, t);
-	}
 }

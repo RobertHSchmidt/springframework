@@ -15,6 +15,8 @@
  */
 package org.springframework.batch.chunkprocessor;
 
+import java.io.Serializable;
+
 import junit.framework.TestCase;
 
 import org.springframework.batch.chunk.Chunk;
@@ -67,7 +69,7 @@ public class SynchronousChunkProcessorTests extends TestCase {
 	private Chunk getChunk(int chunkSize) {
 		Object[] items = new Object[chunkSize];
 		for (int i = 0; i < chunkSize; i++) {
-			items[i] = new Object();
+			items[i] = new Serializable() {};
 		}
 
 		return new Chunk(new Long(0), CollectionUtils.arrayToList(items));
@@ -131,7 +133,7 @@ public class SynchronousChunkProcessorTests extends TestCase {
 		}
 
 		public void registerFailure(Object item, Exception exception, ChunkContext chunkContext) {
-        }
+		}
 
 	}
 }
