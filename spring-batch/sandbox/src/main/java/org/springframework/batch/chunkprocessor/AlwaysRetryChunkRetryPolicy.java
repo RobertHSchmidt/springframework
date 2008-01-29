@@ -15,6 +15,10 @@
  */
 package org.springframework.batch.chunkprocessor;
 
+/**
+ * 
+ * @author Ben Hale
+ */
 public class AlwaysRetryChunkRetryPolicy implements ChunkRetryPolicy {
 
 	public boolean shouldRetry(ChunkContext chunkContext) {

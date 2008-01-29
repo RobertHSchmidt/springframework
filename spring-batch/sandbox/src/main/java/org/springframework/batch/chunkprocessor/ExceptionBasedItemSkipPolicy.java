@@ -15,6 +15,10 @@
  */
 package org.springframework.batch.chunkprocessor;
 
+/**
+ * 
+ * @author Ben Hale
+ */
 public class ExceptionBasedItemSkipPolicy implements ItemSkipPolicy {
 
 	public void registerFailure(Object item, Exception exception, ChunkContext chunkContext) {

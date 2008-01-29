@@ -30,7 +30,6 @@ import org.springframework.util.Assert;
  * 
  * @author Ben Hale
  * @author Lucas Ward
- * @since 1.0
  */
 public class Chunk implements Serializable {
 

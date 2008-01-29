@@ -17,6 +17,10 @@ package org.springframework.batch.chunkprocessor;
 
 import java.util.List;
 
+/**
+ * 
+ * @author Ben Hale
+ */
 public class SuccessChunkResult extends ChunkResult {
 
 	public SuccessChunkResult(Long chunkId, List skippedItems) {

@@ -15,6 +15,10 @@
  */
 package org.springframework.batch.chunkprocessor;
 
+/**
+ * 
+ * @author Ben Hale
+ */
 public class FailureChunkResult extends ChunkResult {
 
 	public FailureChunkResult(Long chunkId) {

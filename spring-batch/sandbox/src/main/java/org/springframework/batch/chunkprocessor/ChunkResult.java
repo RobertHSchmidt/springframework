@@ -20,6 +20,10 @@ import java.util.List;
 
 import org.springframework.core.enums.ShortCodedLabeledEnum;
 
+/**
+ * 
+ * @author Ben Hale
+ */
 public class ChunkResult {
 
 	public static final ChunkResultType SUCCESS = new ChunkResultType(0, "Success");

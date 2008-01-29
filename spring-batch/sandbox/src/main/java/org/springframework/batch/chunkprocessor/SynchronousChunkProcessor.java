@@ -21,6 +21,10 @@ import java.util.List;
 import org.springframework.batch.chunk.Chunk;
 import org.springframework.batch.itemprocessor.ItemProcessor;
 
+/**
+ * 
+ * @author Ben Hale
+ */
 public class SynchronousChunkProcessor implements ChunkProcessor {
 
 	private final ItemProcessor itemProcessor;

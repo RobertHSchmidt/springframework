@@ -15,6 +15,10 @@
  */
 package org.springframework.batch.chunkprocessor;
 
+/**
+ * 
+ * @author Ben Hale
+ */
 public class ChunkFailureException extends RuntimeException {
 
 	private final Object item;

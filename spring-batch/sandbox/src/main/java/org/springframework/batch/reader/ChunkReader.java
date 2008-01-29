@@ -18,13 +18,12 @@ package org.springframework.batch.reader;
 import org.springframework.batch.chunk.Chunk;
 
 /**
- * Interface defining the contract for reading a chunk.  This is most
- * useful when implementing a 'chunk-orientated' approach to processing. 
- * Implementors of this class are expected to aggregate the output of
- * an ItemReader into 'chunks'.
+ * Interface defining the contract for reading a chunk. This is most useful when
+ * implementing a 'chunk-oriented' approach to processing. Implementors of this
+ * class are expected to aggregate the output of an ItemReader into 'chunks'.
  * 
+ * @author Ben Hale
  * @author Lucas Ward
- * @since 1.0
  */
 public interface ChunkReader {
 
@@ -35,6 +34,6 @@ public interface ChunkReader {
 	 * @return
 	 */
 	public Chunk read(int chunkSize);
-	
+
 	public void close();
 }
