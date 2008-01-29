@@ -16,27 +16,24 @@
 
 package org.springframework.config.java;
 
-import java.lang.reflect.Method;
-
 import junit.framework.TestCase;
 
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
-import org.springframework.aop.MethodBeforeAdvice;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.springframework.aop.framework.Advised;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.AspectJConfigurationProcessorTests.CountingConfiguration;
 import org.springframework.config.java.AspectJConfigurationProcessorTests.SingletonCountingAdvice;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.aop.SpringAdvice;
+import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.process.ConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
-import org.springframework.core.annotation.Order;
 
 /**
- * 
  * @author Rod Johnson
+ * @author Chris Beams
  */
 public class SpringAopConfigurationProcessorTests extends TestCase {
 
@@ -99,107 +96,32 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 		assertEquals("tony", advised1.getName());
 	}
 
-	public void testCanControlInterceptorPosition() throws Exception {
-		OrderCheckingInterceptor.clear();
-
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		// Superclass doesn't have around advice
-		configurationProcessor.processClass(OrderedSpringAdvice.class);
-
-		TestBean advised1 = (TestBean) bf.getBean("advised");
-		assertNull(advised1.getSpouse());
-	}
-
+	@Configuration
+	@Aspect
 	public static class SpringAroundPerInstanceAdvice extends CountingConfiguration {
 
-		@Bean
-		@SpringAdvice("execution(* getSpouse())")
-		public MethodBeforeAdvice doesntMatter() {
-			return new MethodBeforeAdvice() {
-				public void before(Method method, Object[] args, Object target) throws Throwable {
-					Integer count = counts.get(target);
-					if (count == null) {
-						count = 0;
-					}
-					++count;
-					counts.put(target, count);
-				}
-			};
+		@Before("execution(* getSpouse()) && target(target)")
+		public void doesntMatter(Object target) {
+			Integer count = counts.get(target);
+			if (count == null) {
+				count = 0;
+			}
+			++count;
+			counts.put(target, count);
 		}
 
-		@Bean
-		@SpringAdvice("execution(* *.getName())")
-		public MethodInterceptor around() {
-			return new MethodInterceptor() {
-				public Object invoke(MethodInvocation mi) throws Throwable {
-					return "around";
-				}
-			};
-		}
-	}
-
-	public static class OrderedSpringAdvice extends CountingConfiguration {
-
-		@Bean
-		@Order(0)
-		@SpringAdvice("execution(* getSpouse())")
-		public MethodInterceptor first() {
-			return new OrderCheckingInterceptor(0);
-		}
-
-		@Bean
-		@Order(1)
-		@SpringAdvice("execution(* getSpouse())")
-		public MethodInterceptor second() {
-			return new OrderCheckingInterceptor(1);
-		}
-
-		@Bean()
-		@Order(2)
-		@SpringAdvice("execution(* getSpouse())")
-		protected MethodInterceptor third() {
-			return new OrderCheckingInterceptor(2);
-		}
-	}
-
-	private static class OrderCheckingInterceptor implements MethodInterceptor {
-		private static ThreadLocal<Integer> expectedInterceptorPosition = new ThreadLocal<Integer>();
-
-		public static void clear() {
-			expectedInterceptorPosition.set(0);
-		}
-
-		private int getPosition() {
-			int old = expectedInterceptorPosition.get();
-			expectedInterceptorPosition.set(expectedInterceptorPosition.get() + 1);
-			return old;
-		}
-
-		private final int order;
-
-		public OrderCheckingInterceptor(int order) {
-			this.order = order;
-		}
-
-		public Object invoke(MethodInvocation mi) throws Throwable {
-			assertEquals("Order value matches", order, getPosition());
-			return mi.proceed();
+		@Around("execution(* *.getName())")
+		public Object around() {
+			return "around";
 		}
 	}
 
 	public static class InterceptAllAdvice {
 		public static int count;
 
-		@Bean
-		@SpringAdvice(matchAll = true)
-		protected MethodBeforeAdvice count() {
-			return new MethodBeforeAdvice() {
-				public void before(Method method, Object[] args, Object target) throws Throwable {
-					// new Throwable().printStackTrace();
-					++count;
-				}
-			};
+		@Before("* *(..)")
+		protected void count() {
+			++count;
 		}
 
 		@Bean

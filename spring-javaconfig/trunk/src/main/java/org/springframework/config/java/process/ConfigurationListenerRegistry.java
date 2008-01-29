@@ -45,8 +45,6 @@ public class ConfigurationListenerRegistry {
 		registerConfigurationListener(new ScopedProxyConfigurationListener());
 		if (DependencyUtils.isAopAvailable()) {
 			registerConfigurationListener(new HotSwapConfigurationListener());
-			registerConfigurationListener(new SpringAdvisorConfigurationListener());
-			registerConfigurationListener(new SpringAdviceConfigurationListener());
 			registerConfigurationListener(new AspectJAdviceConfigurationListener());
 		}
 
