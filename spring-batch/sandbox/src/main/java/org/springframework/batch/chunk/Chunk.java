@@ -19,9 +19,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections.list.UnmodifiableList;
 import org.springframework.batch.chunkprocessor.ChunkProcessor;
 import org.springframework.util.Assert;
 
@@ -34,9 +34,7 @@ import org.springframework.util.Assert;
  * @since 1.0
  */
 public class Chunk implements Serializable{
-	
-	private static final long serialVersionUID = -1783160303722990797L;
-	
+		
 	private final Long id;
 	
 	private final List items;
@@ -65,7 +63,7 @@ public class Chunk implements Serializable{
 	 * @return items.
 	 */
 	public List getItems() {
-		return UnmodifiableList.decorate(items);
+		return new ArrayList(items);
 	}
 	
 	/**

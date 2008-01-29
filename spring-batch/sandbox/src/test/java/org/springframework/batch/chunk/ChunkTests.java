@@ -47,13 +47,8 @@ public class ChunkTests extends TestCase {
 	public void testImmutability(){
 		
 		chunk = new Chunk(new Long(1), items);
-		List testItems = chunk.getItems();
-		try{
-			testItems.add("3");
-			fail();
-		}
-		catch(UnsupportedOperationException ex){
-			//expected
-		}
+		List testItems = chunk.getItems();	
+		testItems.add("3");
+		assertEquals(2, chunk.getItems().size());
 	}
 }
