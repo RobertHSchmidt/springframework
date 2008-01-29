@@ -47,7 +47,6 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
-import org.springframework.config.java.process.ConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.config.java.support.ConfigurationSupport;
 import org.springframework.config.java.util.DefaultScopes;
@@ -64,10 +63,6 @@ import org.springframework.context.support.GenericApplicationContext;
  * @author Rod Johnson
  */
 public class ConfigurationProcessorTests extends TestCase {
-
-	{
-		new ConfigurationListenerRegistry();
-	}
 
 	public void testSimple() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();

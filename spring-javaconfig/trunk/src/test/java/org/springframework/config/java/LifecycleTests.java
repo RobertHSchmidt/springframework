@@ -26,7 +26,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Lazy;
-import org.springframework.config.java.process.ConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -111,7 +110,6 @@ public class LifecycleTests extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		new ConfigurationListenerRegistry();
 		appCtx = new GenericApplicationContext();
 		appCtx.registerShutdownHook();
 		configurationProcessor = new ConfigurationProcessor(appCtx);

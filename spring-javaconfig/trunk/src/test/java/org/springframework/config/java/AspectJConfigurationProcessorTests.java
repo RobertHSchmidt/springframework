@@ -39,7 +39,6 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.DependencyCheck;
-import org.springframework.config.java.process.ConfigurationListenerRegistry;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.config.java.util.DefaultScopes;
 
@@ -48,10 +47,6 @@ import org.springframework.config.java.util.DefaultScopes;
  * @author Rod Johnson
  */
 public class AspectJConfigurationProcessorTests extends TestCase {
-
-	{
-		new ConfigurationListenerRegistry();
-	}
 
 	// TODO this may not be a valid test. Would need prototype aspect bean
 	// and autoproxy
