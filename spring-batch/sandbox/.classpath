@@ -10,5 +10,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/spring-batch-infrastructure"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/spring-batch-core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/spring-batch-execution"/>
+	<classpathentry kind="var" path="M2_REPO/easymock/easymock/1.1/easymock-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

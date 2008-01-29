@@ -15,26 +15,25 @@
  */
 package org.springframework.batch.reader;
 
-import org.springframework.batch.chunk.Chunk;
+import org.springframework.batch.io.exception.BatchCriticalException;
 
 /**
- * Interface defining the contract for reading a chunk.  This is most
- * useful when implementing a 'chunk-orientated' approach to processing. 
- * Implementors of this class are expected to aggregate the output of
- * an ItemReader into 'chunks'.
+ * Exception indicating that the skip limit for a particular step
+ * has been exceeded.  This exception should always cause a job to
+ * terminate abnormally.
  * 
  * @author Lucas Ward
- * @since 1.0
+ *
  */
-public interface ChunkReader {
+public class SkipLimitExceededException extends BatchCriticalException {
 
-	/**
-	 * Read in a chunk, given the provided chunk size.
-	 * 
-	 * @param chunkSize
-	 * @return
-	 */
-	public Chunk read(int chunkSize);
+	private static final long serialVersionUID = -7219854737641474304L;
+
+	public SkipLimitExceededException(String msg) {
+		super(msg);
+	}
 	
-	public void close();
+	public SkipLimitExceededException(String msg, Throwable t) {
+		super(msg, t);
+	}
 }
