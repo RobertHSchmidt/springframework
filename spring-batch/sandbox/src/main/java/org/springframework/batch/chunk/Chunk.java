@@ -17,6 +17,7 @@ package org.springframework.batch.chunk;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.batch.chunkprocessor.ChunkProcessor;
@@ -27,6 +28,7 @@ import org.springframework.util.Assert;
  * chunk may be serialized, especially if using a queue to dispatch chunks to
  * various {@link ChunkProcessor}s.
  * 
+ * @author Ben Hale
  * @author Lucas Ward
  * @since 1.0
  */
@@ -40,18 +42,6 @@ public class Chunk implements Serializable {
 		validateSerializable(items);
 		this.items = items;
 		this.id = id;
-	}
-
-	/**
-	 * In order for the whole chunk to be serializable, every item in the chunk
-	 * must be serializable.
-	 */
-	private void validateSerializable(List items) {
-
-		for (java.util.Iterator it = items.iterator(); it.hasNext();) {
-			Object item = it.next();
-			Assert.isInstanceOf(Serializable.class, item, "All items in a chunk must be serialiable");
-		}
 	}
 
 	/**
@@ -70,6 +60,16 @@ public class Chunk implements Serializable {
 	 */
 	public Long getId() {
 		return id;
+	}
+
+	/**
+	 * In order for the whole chunk to be serializable, every item in the chunk
+	 * must be serializable.
+	 */
+	private void validateSerializable(List items) {
+		for (Iterator i = items.iterator(); i.hasNext();) {
+			Assert.isInstanceOf(Serializable.class, i.next(), "All items in a chunk must be serialiable");
+		}
 	}
 
 }
