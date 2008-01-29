@@ -50,12 +50,12 @@ public class ChunkContext {
 		return context.get(key);
 	}
 
-	public Object put(Object arg0, Object arg1) {
-		return context.put(arg0, arg1);
+	public Object put(Object key, Object value) {
+		return context.put(key, value);
 	}
 
-	public void putAll(Map arg0) {
-		context.putAll(arg0);
+	public void putAll(Map map) {
+		context.putAll(map);
 	}
 
 	public Object remove(Object key) {
