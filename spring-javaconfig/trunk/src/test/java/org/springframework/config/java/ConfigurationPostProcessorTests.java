@@ -25,6 +25,7 @@ import org.aopalliance.aop.Advice;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.aop.Advisor;
@@ -45,7 +46,6 @@ import org.springframework.config.java.ConfigurationProcessorTests.BaseConfigura
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
-import org.springframework.config.java.annotation.aop.SpringAdvice;
 import org.springframework.config.java.process.ConfigurationPostProcessor;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -231,14 +231,9 @@ public class ConfigurationPostProcessorTests {
 	@Aspect
 	static class AdvisedBaseConfiguration extends BaseConfiguration {
 
-		@Bean()
-		@SpringAdvice("execution(* absquatulate())")
-		protected Advice debugAdvice() {
-			return new MethodBeforeAdvice() {
-				public void before(Method method, Object[] args, Object target) throws Throwable {
-					throw new UnsupportedOperationException();
-				}
-			};
+		@Before("execution(* absquatulate())")
+		protected void debugAdvice() {
+			throw new UnsupportedOperationException();
 		}
 
 		@Bean
