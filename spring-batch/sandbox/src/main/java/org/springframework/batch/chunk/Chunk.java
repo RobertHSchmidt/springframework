@@ -15,9 +15,6 @@
  */
 package org.springframework.batch.chunk;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,37 +23,37 @@ import org.springframework.batch.chunkprocessor.ChunkProcessor;
 import org.springframework.util.Assert;
 
 /**
- * A 'chunk' of items, that will be committed together.  It is expected
- * that a chunk may be serialized, especially if using a queue to dispatch
- * chunks to various {@link ChunkProcessor}s.
+ * A 'chunk' of items, that will be committed together. It is expected that a
+ * chunk may be serialized, especially if using a queue to dispatch chunks to
+ * various {@link ChunkProcessor}s.
  * 
  * @author Lucas Ward
  * @since 1.0
  */
-public class Chunk implements Serializable{
-		
+public class Chunk implements Serializable {
+
 	private final Long id;
-	
+
 	private final List items;
-	
+
 	public Chunk(Long id, List items) {
 		validateSerializable(items);
 		this.items = items;
 		this.id = id;
 	}
-	
-	/*
-	 * In order for the whole chunk to be serializable, every item
-	 * in the chunk must be serializable.
+
+	/**
+	 * In order for the whole chunk to be serializable, every item in the chunk
+	 * must be serializable.
 	 */
-	private void validateSerializable(List items){
-		
-		for(java.util.Iterator it = items.iterator(); it.hasNext();){
+	private void validateSerializable(List items) {
+
+		for (java.util.Iterator it = items.iterator(); it.hasNext();) {
 			Object item = it.next();
 			Assert.isInstanceOf(Serializable.class, item, "All items in a chunk must be serialiable");
 		}
 	}
-	
+
 	/**
 	 * Get the list of items for this chunk.
 	 * 
@@ -65,7 +62,7 @@ public class Chunk implements Serializable{
 	public List getItems() {
 		return new ArrayList(items);
 	}
-	
+
 	/**
 	 * Get the chunk id.
 	 * 
@@ -74,17 +71,5 @@ public class Chunk implements Serializable{
 	public Long getId() {
 		return id;
 	}
-	
-	private void writeObject(ObjectOutputStream out) throws IOException {
-		
-		out.defaultWriteObject();
-	}
-	
-	private void readObject(ObjectInputStream in)
-	      throws IOException, ClassNotFoundException {
-		
-		in.defaultReadObject();
-	}
 
 }
-
