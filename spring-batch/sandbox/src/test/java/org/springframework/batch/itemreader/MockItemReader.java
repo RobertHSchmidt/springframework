@@ -15,13 +15,15 @@
  */
 package org.springframework.batch.itemreader;
 
+import org.springframework.batch.item.ItemReader;
+
 public class MockItemReader implements ItemReader {
 
 	private final int returnItemCount;
 
 	private int returnedItemCount;
 	
-	private boolean markSupported = false;
+	private boolean fail = false;
 
 	public MockItemReader() {
 		this(-1);
@@ -31,24 +33,19 @@ public class MockItemReader implements ItemReader {
 		this.returnItemCount = returnItemCount;
 	}
 	
-	public void setMarkSupported(boolean markSupported) {
-	    this.markSupported = markSupported;
+	public void setFail(boolean fail) {
+	    this.fail = fail;
     }
 
 	public void close() {
 	}
 
-	public void mark() {
-		if(!markSupported) {
-			throw new UnsupportedOperationException("The mark() method is not supported");
-		}
-	}
-
-	public boolean markSupported() {
-		return markSupported;
-	}
-
 	public Object read() {
+		if(fail) {
+			fail = false;
+			throw new RuntimeException();
+		}
+		
 		if (returnItemCount < 0 || returnedItemCount < returnItemCount) {
 			return String.valueOf(returnedItemCount++);
 		}

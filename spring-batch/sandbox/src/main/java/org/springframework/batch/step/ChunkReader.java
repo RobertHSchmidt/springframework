@@ -13,23 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.reader;
+package org.springframework.batch.step;
+
+import org.springframework.batch.chunk.Chunk;
 
 /**
- * Interface for determining how exceptions should be handled when
- * reading in data.
+ * Interface defining the contract for reading a chunk. This is most useful when
+ * implementing a 'chunk-oriented' approach to processing. Implementors of this
+ * class are expected to aggregate the output of an ItemReader into 'chunks'.
  * 
+ * @author Ben Hale
  * @author Lucas Ward
- *
  */
-public interface ItemReaderExceptionHandler {
+public interface ChunkReader {
 
 	/**
-	 * Called on any exception in the ItemReader.  It is expected to
-	 * finish normally if the exception should not call the job to finish,
-	 * or throw an exception if it should.
+	 * Read in a chunk, given the provided chunk size.
 	 * 
-	 * @param t
+	 * @param chunkSize
+	 * @return
 	 */
-	void onException(Throwable t);
+	public Chunk read(int chunkSize, ReadContext readContext) throws ReadFailureException;
+
+	public void close() throws Exception;
 }
