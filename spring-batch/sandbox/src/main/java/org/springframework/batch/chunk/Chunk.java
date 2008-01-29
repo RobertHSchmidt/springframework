@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2007 the original author or authors.
+ * Copyright 2006-2008 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,26 +15,78 @@
  */
 package org.springframework.batch.chunk;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.List;
 
-public class Chunk {
+import org.apache.commons.collections.list.UnmodifiableList;
+import org.springframework.batch.chunkprocessor.ChunkProcessor;
+import org.springframework.util.Assert;
 
+/**
+ * A 'chunk' of items, that will be committed together.  It is expected
+ * that a chunk may be serialized, especially if using a queue to dispatch
+ * chunks to various {@link ChunkProcessor}s.
+ * 
+ * @author Lucas Ward
+ * @since 1.0
+ */
+public class Chunk implements Serializable{
+	
+	private static final long serialVersionUID = -1783160303722990797L;
+	
 	private final Long id;
-
+	
 	private final List items;
-
+	
 	public Chunk(Long id, List items) {
-		this.id = id;
+		validateSerializable(items);
 		this.items = items;
+		this.id = id;
 	}
-
+	
+	/*
+	 * In order for the whole chunk to be serializable, every item
+	 * in the chunk must be serializable.
+	 */
+	private void validateSerializable(List items){
+		
+		for(java.util.Iterator it = items.iterator(); it.hasNext();){
+			Object item = it.next();
+			Assert.isInstanceOf(Serializable.class, item, "All items in a chunk must be serialiable");
+		}
+	}
+	
+	/**
+	 * Get the list of items for this chunk.
+	 * 
+	 * @return items.
+	 */
+	public List getItems() {
+		return UnmodifiableList.decorate(items);
+	}
+	
+	/**
+	 * Get the chunk id.
+	 * 
+	 * @return id of this chunk.
+	 */
 	public Long getId() {
 		return id;
 	}
-
-	public List getItems() {
-		return new ArrayList(items);
+	
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		
+		out.defaultWriteObject();
+	}
+	
+	private void readObject(ObjectInputStream in)
+	      throws IOException, ClassNotFoundException {
+		
+		in.defaultReadObject();
 	}
 
 }
+
