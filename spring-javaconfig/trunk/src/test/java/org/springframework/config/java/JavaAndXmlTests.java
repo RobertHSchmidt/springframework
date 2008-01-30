@@ -1,12 +1,12 @@
 /*
  * Copyright 2002-2008 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,20 +15,30 @@
  */
 package org.springframework.config.java;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Resource;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-/**
+/*
  * Test for http://opensource.atlassian.com/projects/spring/browse/SJC-13.
  */
-public class JavaAndXmlTests extends AbstractDependencyInjectionSpringContextTests {
+@ContextConfiguration(locations = { "classpath:org/springframework/config/java/javaandxml.xml" })
+@RunWith(SpringJUnit4ClassRunner.class)
+public class JavaAndXmlTests {
 
 	private TestBean root;
 
@@ -80,10 +90,7 @@ public class JavaAndXmlTests extends AbstractDependencyInjectionSpringContextTes
 		}
 	}
 
-	public JavaAndXmlTests() {
-		setAutowireMode(AUTOWIRE_BY_NAME);
-	}
-
+	@Test
 	public void testJavaConfiguration() {
 		assertNotNull(root);
 
@@ -93,15 +100,11 @@ public class JavaAndXmlTests extends AbstractDependencyInjectionSpringContextTes
 		assertNotNull(dependency);
 	}
 
-	@Override
-	protected String[] getConfigLocations() {
-		return new String[] { "classpath:org/springframework/config/java/javaandxml.xml", };
-	}
-
 	public TestBean getDependency() {
 		return dependency;
 	}
 
+	@Resource
 	public void setDependency(TestBean pDependency) {
 		dependency = pDependency;
 	}
@@ -110,6 +113,7 @@ public class JavaAndXmlTests extends AbstractDependencyInjectionSpringContextTes
 		return root;
 	}
 
+	@Resource
 	public void setRoot(TestBean pRoot) {
 		root = pRoot;
 	}

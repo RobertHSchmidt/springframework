@@ -15,13 +15,22 @@
  */
 package org.springframework.config.java.naming;
 
+import static org.junit.Assert.assertEquals;
+
 import java.lang.reflect.Method;
 
+import javax.annotation.Resource;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-public class PropagateBeanNamingTests extends AbstractDependencyInjectionSpringContextTests {
+@ContextConfiguration(locations = { "classpath:org/springframework/config/java/naming/PropagateBeanNamingTest.xml" })
+@RunWith(SpringJUnit4ClassRunner.class)
+public class PropagateBeanNamingTests {
 	/**
 	 * We are autowired by name and the naming strategy will name our bean
 	 * "test" + [method name]. So we expect this property to be set with
@@ -43,23 +52,16 @@ public class PropagateBeanNamingTests extends AbstractDependencyInjectionSpringC
 		}
 	}
 
+	@Test
 	public void testNamingStrategy() {
 		assertEquals("Test", testbean);
-	}
-
-	public PropagateBeanNamingTests() {
-		setAutowireMode(AUTOWIRE_BY_NAME);
-	}
-
-	@Override
-	protected String[] getConfigLocations() {
-		return new String[] { "classpath:org/springframework/config/java/naming/PropagateBeanNamingTest.xml", };
 	}
 
 	public Object getTestbean() {
 		return testbean;
 	}
 
+	@Resource
 	public void setTestbean(Object pTestbean) {
 		testbean = pTestbean;
 	}
