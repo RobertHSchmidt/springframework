@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
@@ -29,7 +28,6 @@ import org.springframework.config.java.annotation.Bean;
  * interface, offer no op implementations of all methods.
  * 
  * @author Rod Johnson
- * 
  */
 public abstract class ConfigurationListenerSupport implements ConfigurationListener {
 
