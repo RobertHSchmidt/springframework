@@ -15,8 +15,11 @@
  */
 package org.springframework.config.java;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.aop.scope.ScopedObject;
 import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
@@ -36,7 +39,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * 
  * @author Costin Leau
  */
-public class ScopingTests extends TestCase {
+public class ScopingTests {
 
 	public static final String SCOPE = "my scope";
 
@@ -119,8 +122,8 @@ public class ScopingTests extends TestCase {
 
 	private ConfigurableApplicationContext appCtx;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		bf = new DefaultListableBeanFactory();
 		configurationProcessor = new ConfigurationProcessor(bf);
 		customScope = new CustomScope();
@@ -131,8 +134,8 @@ public class ScopingTests extends TestCase {
 		configurationProcessor.processClass(ScopedConfigurationClass.class);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		bf.destroySingletons();
 		bf = null;
 		configurationProcessor = null;
@@ -177,14 +180,17 @@ public class ScopingTests extends TestCase {
 		assertNotSame(message, newBean2, newBean3);
 	}
 
+	@Test
 	public void testScopeOnClasses() throws Exception {
 		genericTestScope("scopedClass");
 	}
 
+	@Test
 	public void testScopeOnInterfaces() throws Exception {
 		genericTestScope("scopedInterface");
 	}
 
+	@Test
 	public void testSameScopeOnDifferentBeans() throws Exception {
 		Object beanAInScope = bf.getBean("scopedClass");
 		Object beanBInScope = bf.getBean("scopedInterface");
@@ -201,26 +207,20 @@ public class ScopingTests extends TestCase {
 		assertNotSame(newBeanBInScope, beanBInScope);
 	}
 
+	@Test(expected = BeanDefinitionStoreException.class)
 	public void testInvalidScopedProxy() throws Exception {
-		try {
-			configurationProcessor.processClass(InvalidProxyObjectConfiguration.class);
-			fail("@ScopedProxy should not exist by itself");
-		}
-		catch (BeanDefinitionStoreException ex) {
-			// expected
-		}
+		// should throw - @ScopedProxy should not exist by itself
+		configurationProcessor.processClass(InvalidProxyObjectConfiguration.class);
 	}
 
+	@Test(expected = BeanDefinitionStoreException.class)
 	public void testScopedProxyOnNonBeanAnnotatedMethod() throws Exception {
-		try {
-			configurationProcessor.processClass(InvalidProxyOnPredefinedScopesConfiguration.class);
-			fail("@ScopedProxy should not be applied on singleton/prototype beans");
-		}
-		catch (BeanDefinitionStoreException ex) {
-			// expected
-		}
+		// should throw - @ScopedProxy should not be applied on
+		// singleton/prototype beans
+		configurationProcessor.processClass(InvalidProxyOnPredefinedScopesConfiguration.class);
 	}
 
+	@Test
 	public void testRawScopes() throws Exception {
 		String beanName = "scopedProxyInterface";
 		// get hidden bean
@@ -229,6 +229,7 @@ public class ScopingTests extends TestCase {
 		assertFalse(bean instanceof ScopedObject);
 	}
 
+	@Test
 	public void testScopedProxyConfiguration() throws Exception {
 
 		TestBean singleton = (TestBean) bf.getBean("singletonWithScopedInterfaceDep");
@@ -261,6 +262,7 @@ public class ScopingTests extends TestCase {
 		assertSame(spouse.getName(), spouseFromBF.getName());
 	}
 
+	@Test
 	public void testScopedProxyConfigurationWithClasses() throws Exception {
 
 		TestBean singleton = (TestBean) bf.getBean("singletonWithScopedClassDep");
@@ -294,6 +296,7 @@ public class ScopingTests extends TestCase {
 		assertSame(spouse.getName(), spouseFromBF.getName());
 	}
 
+	@Test
 	public void testScopedConfigurationBeanDefinitionCount() throws Exception {
 		DefaultListableBeanFactory anotherBf = new DefaultListableBeanFactory();
 		// register the scope

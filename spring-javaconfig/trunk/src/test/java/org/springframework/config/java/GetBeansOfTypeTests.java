@@ -1,12 +1,12 @@
 /*
  * Copyright 2002-2008 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,14 +15,15 @@
  */
 package org.springframework.config.java;
 
+import static org.junit.Assert.assertEquals;
+
 import java.awt.Point;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
+import org.junit.Test;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
@@ -32,9 +33,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @author Costin Leau
- * 
  */
-public class GetBeansOfTypeTests extends TestCase {
+public class GetBeansOfTypeTests {
 
 	@Configuration
 	public static class PropertiesConfig {
@@ -74,6 +74,7 @@ public class GetBeansOfTypeTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testGetBeansOfType() throws Exception {
 		ApplicationContext propertiesContext = new JavaConfigApplicationContext(PropertiesConfig.class);
 		ApplicationContext anotherContext = new JavaConfigApplicationContext(propertiesContext, AnotherConfig.class);
@@ -92,6 +93,7 @@ public class GetBeansOfTypeTests extends TestCase {
 		assertEquals(1, names.length);
 	}
 
+	@Test
 	public void testGetBeansFromJavaAndXml() throws Exception {
 		JavaConfigApplicationContext propertiesContext = new JavaConfigApplicationContext(PropertiesConfig.class);
 		ApplicationContext xmlCtx = new ClassPathXmlApplicationContext(

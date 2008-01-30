@@ -1,12 +1,12 @@
 /*
  * Copyright 2002-2008 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,14 +18,13 @@ package org.springframework.config.java.txannotations;
 
 import javax.sql.DataSource;
 
-import junit.framework.TestCase;
-
+import org.junit.Test;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.datasource.UserCredentialsDataSourceAdapter;
 
-public class TxAnnotationTests extends TestCase {
+public class TxAnnotationTests {
 
 	@Configuration
 	public static class SampleConfig {
@@ -76,6 +75,7 @@ public class TxAnnotationTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testTxProxyingWithJavaConfigDependingOnXml() {
 		ClassPathXmlApplicationContext ac = new ClassPathXmlApplicationContext(
 				"org/springframework/config/java/txannotations/txannotations.xml");
