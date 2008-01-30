@@ -215,14 +215,7 @@
 		</plugins>
 	</build>
 	<dependencies>
-		<!-- non-optional dependencies -->
-		<dependency>
-			<!-- required in order to make available @javax.annotation.Required -->
-			<groupId>javaee</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>5</version>
-			<optional>false</optional>
-		</dependency>
+		<!-- required dependencies -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
@@ -377,6 +370,13 @@
 		</dependency>
 
 		<!-- test-scoped dependencies -->
+		<dependency>
+			<!-- required in order to make available @javax.annotation.Required -->
+			<groupId>javaee</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>5</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>groovy</groupId>
 			<artifactId>groovy-all</artifactId>
