@@ -15,14 +15,17 @@
  */
 package org.springframework.config.java.context;
 
+import static org.springframework.config.java.util.ArrayUtils.reverse;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.util.ArrayUtils;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -264,10 +267,34 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	public void setConfigClasses(Class<?>... classes) {
 		if (closedForConfiguration)
-			throw new IllegalStateException("setConfigClasses() must be called before refresh()");
+			throw new IllegalStateException("setConfigClasses() may only be called before refresh()");
 
 		// TODO: document why the reversal is necessary
-		this.configClasses = ArrayUtils.reverse(classes);
+		this.configClasses = reverse(classes);
+	}
+
+	// TODO: implement addBasePackage(String pkg)
+
+	/**
+	 * Allows for incrementally building up the configuration classes to be
+	 * processed by this context. May only be called on a context still 'open
+	 * for configuration' meaning that the user will need to manually call
+	 * refresh() after all classes have been added.
+	 * 
+	 * @param cls
+	 */
+	public void addConfigClass(Class<?> cls) {
+		if (closedForConfiguration)
+			throw new IllegalStateException("setConfigClasses() may only be called before refresh()");
+		List<Class<?>> classes = new ArrayList<Class<?>>();
+
+		if (configClasses != null)
+			for (Class<?> existingClass : configClasses)
+				classes.add(existingClass);
+
+		classes.add(cls);
+
+		this.configClasses = classes.toArray(new Class<?>[classes.size()]);
 	}
 
 	/**
@@ -276,7 +303,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	 */
 	public void setBasePackages(String... basePackages) {
 		if (closedForConfiguration)
-			throw new IllegalStateException("setBasePackages() must be called before refresh()");
+			throw new IllegalStateException("setBasePackages() may only be called before refresh()");
 
 		this.basePackages = basePackages;
 	}
@@ -284,7 +311,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	@Override
 	public void setParent(ApplicationContext context) {
 		if (closedForConfiguration)
-			throw new IllegalStateException("setParent() must be called before refresh()");
+			throw new IllegalStateException("setParent() may only be called before refresh()");
 		super.setParent(context);
 	}
 
