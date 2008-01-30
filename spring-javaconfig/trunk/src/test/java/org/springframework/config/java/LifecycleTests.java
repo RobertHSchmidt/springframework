@@ -15,8 +15,11 @@
  */
 package org.springframework.config.java;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -36,9 +39,8 @@ import org.springframework.context.support.GenericApplicationContext;
  * Bean lifecycle (aware/init/destroy) test.
  * 
  * @author Costin Leau
- * 
  */
-public class LifecycleTests extends TestCase {
+public class LifecycleTests {
 
 	private ConfigurationProcessor configurationProcessor;
 
@@ -108,8 +110,8 @@ public class LifecycleTests extends TestCase {
 		}
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		appCtx = new GenericApplicationContext();
 		appCtx.registerShutdownHook();
 		configurationProcessor = new ConfigurationProcessor(appCtx);
@@ -120,14 +122,14 @@ public class LifecycleTests extends TestCase {
 		AwareBean.CUSTOM_DESTROYED = 0;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		configurationProcessor = null;
 		if (appCtx != null && appCtx.isActive())
 			appCtx.close();
-
 	}
 
+	@Test
 	public void testSimpleObject() throws Exception {
 
 		assertEquals(0, AwareBean.INITIALIZED);
@@ -154,6 +156,7 @@ public class LifecycleTests extends TestCase {
 		assertEquals(1, AwareBean.DESTROYED);
 	}
 
+	@Test
 	public void testCustomMethods() throws Exception {
 
 		assertEquals(0, AwareBean.INITIALIZED);

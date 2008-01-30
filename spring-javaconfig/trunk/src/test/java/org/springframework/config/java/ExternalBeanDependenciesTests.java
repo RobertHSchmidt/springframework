@@ -1,12 +1,12 @@
 /*
  * Copyright 2002-2008 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,8 +16,10 @@
 
 package org.springframework.config.java;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 
+import org.junit.Test;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
@@ -29,9 +31,8 @@ import org.springframework.config.java.process.ConfigurationProcessor;
  * Test multiple ExternalBean annotations that depends between each other.
  * 
  * @author Costin Leau
- * 
  */
-public class ExternalBeanDependenciesTests extends TestCase {
+public class ExternalBeanDependenciesTests {
 
 	@Configuration
 	static class FirstConfiguration {
@@ -77,6 +78,7 @@ public class ExternalBeanDependenciesTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testCircularExternalBean() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
@@ -108,6 +110,7 @@ public class ExternalBeanDependenciesTests extends TestCase {
 		protected abstract Object namedExternal();
 	}
 
+	@Test
 	public void testNamedExternalBean() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		Object externalBeanVal = new Object();

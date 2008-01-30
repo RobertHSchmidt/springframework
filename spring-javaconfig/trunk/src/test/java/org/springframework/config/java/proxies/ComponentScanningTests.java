@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.springframework.config.java.proxies;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.junit.Test;
 import org.springframework.beans.TestBean;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
-public class ComponentScanningTests extends TestCase {
+public class ComponentScanningTests {
 
 	@Aspect
 	@Component
@@ -37,6 +37,7 @@ public class ComponentScanningTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testConfigurationComponentScanned() {
 		ClassPathXmlApplicationContext aac = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/proxies/proxies.xml");

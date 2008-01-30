@@ -16,8 +16,10 @@
 
 package org.springframework.config.java;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import org.junit.Test;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -31,9 +33,8 @@ import org.springframework.config.java.process.ConfigurationProcessor;
  * Test for properties resolution
  * 
  * @author Rod Johnson
- * 
  */
-public class ExternalValueTests extends TestCase {
+public class ExternalValueTests {
 
 	@Configuration
 	@ResourceBundles("classpath:/org/springframework/config/java/simple")
@@ -95,6 +96,7 @@ public class ExternalValueTests extends TestCase {
 
 	}
 
+	@Test
 	public void testStringAndBooleanProperty() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
@@ -104,6 +106,7 @@ public class ExternalValueTests extends TestCase {
 		assertTrue("Boolean property must be resolved correctly", rod.isJedi());
 	}
 
+	@Test
 	public void testIntProperty() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
@@ -112,6 +115,7 @@ public class ExternalValueTests extends TestCase {
 		assertEquals("int property must be resolved correctly", 37, rod.getAge());
 	}
 
+	@Test
 	public void testDefaultValueInImplementationBody() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
@@ -120,22 +124,12 @@ public class ExternalValueTests extends TestCase {
 		assertEquals("int property must default correctly if there's a concrete method", 25, rod.getAge());
 	}
 
-	/**
-	 * @throws Exception
-	 */
+	@Test(expected = BeanCreationException.class)
 	public void testUnresolved() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		try {
-			configurationProcessor.processClass(MissingValues.class);
-			bf.getBean("rod");
-			// TODO do we want to fail earlier than this?
-
-			fail();
-		}
-		catch (BeanCreationException ex) {
-			// Ok
-		}
+		configurationProcessor.processClass(MissingValues.class);
+		bf.getBean("rod");
 	}
 
 }

@@ -16,11 +16,14 @@
 
 package org.springframework.config.java;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.springframework.aop.framework.Advised;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -34,8 +37,9 @@ import org.springframework.config.java.process.ConfigurationProcessor;
  * @author Rod Johnson
  * @author Chris Beams
  */
-public class SpringAopConfigurationProcessorTests extends TestCase {
+public class SpringAopConfigurationProcessorTests {
 
+	@Test
 	public void testPerInstanceAdviceAndSharedAdvice() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
@@ -66,6 +70,7 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 		assertEquals(1, CountingConfiguration.getCount(target2));
 	}
 
+	@Test
 	public void testAroundAdvice() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
@@ -78,6 +83,7 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 		assertEquals("around", advised1.getName());
 	}
 
+	@Test
 	public void testNoAroundAdvice() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
@@ -127,7 +133,9 @@ public class SpringAopConfigurationProcessorTests extends TestCase {
 
 	// FIXME: interception on self causes circular dependency - can this be
 	// prevented?
-	public void tstInterceptAll() throws Exception {
+	@Ignore
+	@Test
+	public void testInterceptAll() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(InterceptAllAdvice.class);
