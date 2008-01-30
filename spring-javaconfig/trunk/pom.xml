@@ -487,7 +487,17 @@
 			<name>Spring Portfolio Release Repository</name>
 			<url>http://s3.amazonaws.com/maven.springframework.org/external</url>
 		</repository>
-	</repositories>
+    	<repository>
+    		<!-- required for dependency on javaee-api -->
+      		<id>java.net</id>
+        	<name>dev.java.net repository</name>
+        	<layout>legacy</layout>
+        	<url>https://maven-repository.dev.java.net/nonav/repository</url>
+        	<snapshots>
+        		<enabled>false</enabled>
+        	</snapshots>
+    	</repository>
+    </repositories>
 	<properties>
 		<spring.version>2.5</spring.version>
 	</properties>
