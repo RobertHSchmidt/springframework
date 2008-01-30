@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
@@ -134,19 +135,41 @@ public final class ClassUtils {
 		return getAnnotatedMethods(configurationClass, ExternalValue.class);
 	}
 
+	/**
+	 * Find all non-private methods declared by <var>targetClass</var>
+	 * annotated with <var>targetAnnotation</var>
+	 * 
+	 * @param targetClass
+	 * @param targetAnnotation
+	 * 
+	 * @return collection of non private matching methods
+	 */
 	public static Collection<Method> getAnnotatedMethods(Class<?> targetClass,
 			Class<? extends Annotation> targetAnnotation) {
 		Assert.notNull(targetClass);
 		Assert.notNull(targetAnnotation);
 
-		Collection<Method> matchingMethods = new ArrayList<Method>();
-		Method[] publicMethods = targetClass.getMethods();
-		for (int i = 0; i < publicMethods.length; i++) {
-			if (ClassUtils.hasAnnotation(publicMethods[i], targetAnnotation)) {
-				matchingMethods.add(publicMethods[i]);
-			}
-		}
+		// using a set will eliminate dupes
+		HashSet<Method> matchingMethods = new HashSet<Method>();
+
+		matchingMethods.addAll(getAnnotatedMethods(targetClass.getDeclaredMethods(), targetAnnotation));
+		matchingMethods.addAll(getAnnotatedMethods(targetClass.getMethods(), targetAnnotation));
+
 		return matchingMethods;
 	}
 
+	private static Collection<Method> getAnnotatedMethods(Method[] candidateMethods,
+			Class<? extends Annotation> targetAnnotation) {
+		Assert.notNull(candidateMethods);
+		Assert.notNull(targetAnnotation);
+
+		Collection<Method> matchingMethods = new ArrayList<Method>();
+
+		for (Method method : candidateMethods)
+			if (!Modifier.isPrivate(method.getModifiers()))
+				if (ClassUtils.hasAnnotation(method, targetAnnotation))
+					matchingMethods.add(method);
+
+		return matchingMethods;
+	}
 }
