@@ -161,7 +161,7 @@ public class AspectTests {
 	public static class PropertyChangeTracker {
 		Logger logger = Logger.getLogger(PropertyChangeTracker.class);
 
-		int propertyChangeCount = 0;
+		public int propertyChangeCount = 0;
 
 		@Before("execution(* set*(*))")
 		public void trackChange() {
