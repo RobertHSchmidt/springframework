@@ -35,7 +35,7 @@ import org.springframework.config.java.util.DependencyUtils;
  * @see ConfigurationProcessor#setConfigurationListenerRegistry(ConfigurationListenerRegistry)
  * @see ConfigurationPostProcessor#setConfigurationListenerRegistry(ConfigurationListenerRegistry)
  */
-public class ConfigurationListenerRegistry {
+class ConfigurationListenerRegistry {
 
 	private final List<ConfigurationListener> configurationListeners = new ArrayList<ConfigurationListener>();
 

@@ -98,7 +98,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 		Assert.notNull(beanNamingStrategy, "beanNamingStrategy is required");
 		Assert.notNull(valueSource, "valueSource is required");
 
-		MethodBeanWrapper beanWrapper = new MethodBeanWrapper(owningBeanFactory, returnValueProcessors, childFactory);
+		MethodBeanWrapper beanWrapper = new MethodBeanWrapper(owningBeanFactory, childFactory, returnValueProcessors);
 
 		ExternalValueMethodProcessor evmp = new ExternalValueMethodProcessor(valueSource);
 		ExternalBeanMethodProcessor ebmp = new ExternalBeanMethodProcessor(owningBeanFactory, beanNamingStrategy);
