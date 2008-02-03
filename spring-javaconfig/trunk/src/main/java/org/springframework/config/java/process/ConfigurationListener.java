@@ -21,7 +21,7 @@ import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.enhancement.BeanMethodReturnValueProcessor;
+import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
 
 /**
  * SPI interface that allows extension of a ConfigurationProcessor.

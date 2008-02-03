@@ -16,6 +16,7 @@
 package org.springframework.config.java.enhancement;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.CallbackFilter;
@@ -23,19 +24,21 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.NoOp;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.config.java.annotation.AutoBean;
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.ExternalBean;
-import org.springframework.config.java.annotation.ExternalValue;
-import org.springframework.config.java.annotation.aop.ScopedProxy;
+import org.springframework.config.java.core.AutoBeanMethodProcessor;
+import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
+import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
+import org.springframework.config.java.core.ExternalBeanMethodProcessor;
+import org.springframework.config.java.core.ExternalValueMethodProcessor;
+import org.springframework.config.java.core.StandardBeanMethodProcessor;
+import org.springframework.config.java.core.ScopedProxyMethodProcessor;
 import org.springframework.config.java.naming.BeanNamingStrategy;
-import org.springframework.config.java.util.ClassUtils;
 import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.util.Assert;
 
 /**
  * {@link ConfigurationEnhancer} implementation that uses CGLIB to subclass and
- * enhance a target {@link Configuration} class.
+ * enhance a target
+ * {@link org.springframework.config.java.annotation.Configuration} class.
  * 
  * @author Rod Johnson
  * @author Costin Leau
@@ -43,24 +46,24 @@ import org.springframework.util.Assert;
  */
 class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 
-	private static class BeanCreationCallbackFilter implements CallbackFilter {
-		public int accept(Method m) {
-			if (ClassUtils.hasAnnotation(m, ScopedProxy.class))
-				return CglibConfigurationEnhancer.SCOPED_PROXY_CALLBACK_INDEX;
-			if (ClassUtils.hasAnnotation(m, Bean.class)) {
-				return CglibConfigurationEnhancer.BEAN_CALLBACK_INDEX;
-			}
-			if (ClassUtils.hasAnnotation(m, ExternalBean.class) || ClassUtils.hasAnnotation(m, AutoBean.class)) {
-				return CglibConfigurationEnhancer.EXTERNAL_BEAN_CALLBACK_INDEX;
-			}
-			if (ClassUtils.hasAnnotation(m, ExternalValue.class)) {
-				return CglibConfigurationEnhancer.EXTERNAL_PROPERTY_CALLBACK_INDEX;
-			}
-			return CglibConfigurationEnhancer.NO_OP_CALLBACK_INDEX;
-		}
-	}
+	private static final CallbackFilter BEAN_CREATION_METHOD_CALLBACK_FILTER = new CallbackFilter() {
+		public int accept(Method candidateMethod) {
+			if (ScopedProxyMethodProcessor.isCandidate(candidateMethod))
+				return SCOPED_PROXY_CALLBACK_INDEX;
 
-	private static final CallbackFilter BEAN_CREATION_METHOD_CALLBACK_FILTER = new BeanCreationCallbackFilter();
+			if (StandardBeanMethodProcessor.isCandidate(candidateMethod))
+				return BEAN_CALLBACK_INDEX;
+
+			if (ExternalBeanMethodProcessor.isCandidate(candidateMethod)
+					|| AutoBeanMethodProcessor.isCandidate(candidateMethod))
+				return EXTERNAL_BEAN_CALLBACK_INDEX;
+
+			if (ExternalValueMethodProcessor.isCandidate(candidateMethod))
+				return EXTERNAL_PROPERTY_CALLBACK_INDEX;
+
+			return NO_OP_CALLBACK_INDEX;
+		}
+	};
 
 	private static final Class<?>[] CALLBACK_TYPES = new Class[] { NoOp.class, BeanMethodMethodInterceptor.class,
 			ExternalBeanMethodMethodInterceptor.class, ScopedProxyBeanMethodMethodInterceptor.class,
@@ -82,77 +85,43 @@ class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	// scoping prefix)
 	private static final int SCOPED_PROXY_CALLBACK_INDEX = 3;
 
-	private final Callback BEAN_METHOD_CREATION_CALLBACK;
-
-	private final Callback EXTERNAL_BEAN_CALLBACK;
-
-	private final Callback EXTERNAL_PROPERTY_CALLBACK;
-
-	private final Callback SCOPED_PROXY_CALLBACK;
-
-	private final Callback[] CALLBACKS;
-
-	private ConfigurableListableBeanFactory owningBeanFactory;
-
-	private BeanNameTrackingDefaultListableBeanFactory childFactory;
-
-	private BeanNamingStrategy beanNamingStrategy;
-
-	private MethodBeanWrapper beanWrapper;
+	private final Callback[] callbacks;
 
 	public CglibConfigurationEnhancer(ConfigurableListableBeanFactory owningBeanFactory,
 			BeanNameTrackingDefaultListableBeanFactory childFactory, BeanNamingStrategy beanNamingStrategy,
-			MethodBeanWrapper beanWrapper, ValueSource valueSource) {
+			List<BeanMethodReturnValueProcessor> returnValueProcessors, ValueSource valueSource) {
 
 		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
 		Assert.notNull(childFactory, "childFactory is required");
-		Assert.notNull(beanWrapper, "beanWrapper is required");
 		Assert.notNull(beanNamingStrategy, "beanNamingStrategy is required");
 		Assert.notNull(valueSource, "valueSource is required");
 
-		this.owningBeanFactory = owningBeanFactory;
-		this.childFactory = childFactory;
-		this.beanWrapper = beanWrapper;
-		this.beanNamingStrategy = beanNamingStrategy;
+		MethodBeanWrapper beanWrapper = new MethodBeanWrapper(owningBeanFactory, returnValueProcessors, childFactory);
 
-		BEAN_METHOD_CREATION_CALLBACK = new BeanMethodMethodInterceptor(this.owningBeanFactory, this.childFactory,
-				this.beanWrapper, this.beanNamingStrategy);
+		ExternalValueMethodProcessor evmp = new ExternalValueMethodProcessor(valueSource);
+		ExternalBeanMethodProcessor ebmp = new ExternalBeanMethodProcessor(owningBeanFactory, beanNamingStrategy);
+		StandardBeanMethodProcessor rbmp = new StandardBeanMethodProcessor(owningBeanFactory, childFactory,
+				beanNamingStrategy, beanWrapper);
+		ScopedProxyMethodProcessor spmp = new ScopedProxyMethodProcessor(rbmp);
 
-		EXTERNAL_BEAN_CALLBACK = new ExternalBeanMethodMethodInterceptor(this.owningBeanFactory,
-				this.beanNamingStrategy);
-
-		EXTERNAL_PROPERTY_CALLBACK = new ExternalValueMethodMethodInterceptor(valueSource);
-
-		SCOPED_PROXY_CALLBACK = new ScopedProxyBeanMethodMethodInterceptor(
-				(BeanMethodMethodInterceptor) BEAN_METHOD_CREATION_CALLBACK);
-
-		CALLBACKS = new Callback[] { NoOp.INSTANCE, BEAN_METHOD_CREATION_CALLBACK, EXTERNAL_BEAN_CALLBACK,
-				SCOPED_PROXY_CALLBACK, EXTERNAL_PROPERTY_CALLBACK };
+		callbacks = new Callback[] { NoOp.INSTANCE, new BeanMethodMethodInterceptor(rbmp),
+				new ExternalBeanMethodMethodInterceptor(ebmp),
+				new ScopedProxyBeanMethodMethodInterceptor(spmp, new BeanMethodMethodInterceptor(rbmp)),
+				new ExternalValueMethodMethodInterceptor(evmp) };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.config.java.support.BytecodeConfigurationEnhancer#enhanceConfiguration(java.lang.Object,
-	 * java.lang.Class)
-	 */
 	public <T> Class<? extends T> enhanceConfiguration(Class<T> configurationClass) {
 		Assert.notNull(configurationClass, "configuration class required");
 
 		Enhancer enhancer = new Enhancer();
 		enhancer.setSuperclass(configurationClass);
 		enhancer.setUseFactory(false);
-		// add the callbacks
 		enhancer.setCallbackFilter(BEAN_CREATION_METHOD_CALLBACK_FILTER);
 		enhancer.setCallbackTypes(CALLBACK_TYPES);
 
-		// TODO can we generate a method to expose each private bean field here?
-		// Otherwise may need to generate a static or instance map, with
-		// multiple get() methods
-		// Listeners don't get callback on this also
-
 		Class<?> configurationSubclass = enhancer.createClass();
 
-		Enhancer.registerCallbacks(configurationSubclass, CALLBACKS);
+		Enhancer.registerCallbacks(configurationSubclass, callbacks);
 
 		return configurationSubclass.asSubclass(configurationClass);
 	}

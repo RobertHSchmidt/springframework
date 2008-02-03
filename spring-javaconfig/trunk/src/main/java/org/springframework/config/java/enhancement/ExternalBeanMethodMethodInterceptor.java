@@ -20,10 +20,7 @@ import java.lang.reflect.Method;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.config.java.annotation.ExternalBean;
-import org.springframework.config.java.naming.BeanNamingStrategy;
-import org.springframework.util.Assert;
+import org.springframework.config.java.core.BeanMethodProcessor;
 
 /**
  * CGLIB method interceptor for external bean methods.
@@ -34,27 +31,13 @@ import org.springframework.util.Assert;
  */
 class ExternalBeanMethodMethodInterceptor implements MethodInterceptor {
 
-	private final BeanFactory owningBeanFactory;
+	private final BeanMethodProcessor beanMethodProcessor;
 
-	private final BeanNamingStrategy namingStrategy;
-
-	public ExternalBeanMethodMethodInterceptor(BeanFactory owningBeanFactory, BeanNamingStrategy namingStrategy) {
-		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
-		Assert.notNull(namingStrategy);
-
-		this.owningBeanFactory = owningBeanFactory;
-		this.namingStrategy = namingStrategy;
+	public ExternalBeanMethodMethodInterceptor(BeanMethodProcessor beanMethodProcessor) {
+		this.beanMethodProcessor = beanMethodProcessor;
 	}
 
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
-		ExternalBean externalBean = m.getAnnotation(ExternalBean.class);
-		String beanName;
-		if (externalBean != null && !"".equals(externalBean.value())) {
-			beanName = externalBean.value();
-		}
-		else {
-			beanName = namingStrategy.getBeanName(m);
-		}
-		return owningBeanFactory.getBean(beanName);
+		return beanMethodProcessor.processMethod(m);
 	}
 }

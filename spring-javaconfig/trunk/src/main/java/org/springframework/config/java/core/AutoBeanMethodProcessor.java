@@ -13,16 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.enhancement;
+package org.springframework.config.java.core;
 
 import java.lang.reflect.Method;
 
-import org.springframework.aop.framework.ProxyFactory;
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.config.java.annotation.AutoBean;
+import org.springframework.config.java.util.ClassUtils;
+import org.springframework.config.java.valuesource.ValueResolutionException;
 
-public interface BeanMethodReturnValueProcessor {
+public class AutoBeanMethodProcessor implements BeanMethodProcessor {
 
-	boolean processBeanMethodReturnValue(BeanFactory childTrackingFactory, Object originallyCreatedBean, Method method,
-			ProxyFactory pf);
+	public Object processMethod(Method m) throws ValueResolutionException {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	public static boolean isCandidate(Method candidateMethod) {
+		return ClassUtils.hasAnnotation(candidateMethod, AutoBean.class);
+	}
 
 }

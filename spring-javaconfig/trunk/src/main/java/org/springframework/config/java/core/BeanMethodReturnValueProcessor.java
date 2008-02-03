@@ -13,31 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.enhancement;
+package org.springframework.config.java.core;
 
 import java.lang.reflect.Method;
 
-/**
- * Invoking interface for bypassing the decorated class. This interface simply
- * decouples the processing class from the actual bytecode instrumentation
- * libraries.
- * 
- * @author Costin Leau
- */
-public interface EnhancerMethodInvoker {
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.beans.factory.BeanFactory;
 
-	/**
-	 * Invoke the original (non decorated) code.
-	 * 
-	 * @return method result
-	 * @throws Throwable
-	 */
-	Object invokeOriginalClass() throws Throwable;
+public interface BeanMethodReturnValueProcessor {
 
-	/**
-	 * The method used for invocation.
-	 * 
-	 * @return method backing the invocation
-	 */
-	Method getMethod();
+	boolean processBeanMethodReturnValue(BeanFactory childTrackingFactory, Object originallyCreatedBean, Method method,
+			ProxyFactory pf);
+
 }
