@@ -20,7 +20,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.config.java.enhancement.ConfigurationEnhancerFactory;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -51,8 +50,6 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 
 	protected final Log log = LogFactory.getLog(getClass());
 
-	private ConfigurationEnhancerFactory configurationEnhancerFactory;
-
 	private ConfigurationListenerRegistry configurationListenerRegistry;
 
 	private BeanNamingStrategy namingStrategy;
@@ -68,10 +65,6 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 	 */
 	public int getOrder() {
 		return Integer.MIN_VALUE;
-	}
-
-	public void setConfigurationEnhancerFactory(ConfigurationEnhancerFactory configurationEnhancerFactory) {
-		this.configurationEnhancerFactory = configurationEnhancerFactory;
 	}
 
 	/**
@@ -131,9 +124,6 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 				}
 				else {
 					processor = new ConfigurationProcessor(beanFactory);
-				}
-				if (configurationEnhancerFactory != null) {
-					processor.setConfigurationEnhancerFactory(configurationEnhancerFactory);
 				}
 				if (configurationListenerRegistry != null) {
 					processor.setConfigurationListenerRegistry(configurationListenerRegistry);

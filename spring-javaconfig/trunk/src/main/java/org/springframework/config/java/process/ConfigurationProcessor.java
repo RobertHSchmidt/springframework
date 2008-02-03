@@ -45,8 +45,7 @@ import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
 import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.enhancement.ConfigurationEnhancer;
-import org.springframework.config.java.enhancement.ConfigurationEnhancerFactory;
-import org.springframework.config.java.enhancement.DefaultConfigurationEnhancerFactory;
+import org.springframework.config.java.enhancement.cglib.CglibConfigurationEnhancer;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.config.java.util.ArrayUtils;
@@ -127,8 +126,6 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	private ConfigurableApplicationContext childApplicationContext;
 
 	private ConfigurationListenerRegistry configurationListenerRegistry = new ConfigurationListenerRegistry();
-
-	private ConfigurationEnhancerFactory configurationEnhancerFactory = new DefaultConfigurationEnhancerFactory();
 
 	private ConfigurationEnhancer configurationEnhancer;
 
@@ -240,17 +237,6 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		return (childApplicationContext != null) ? childApplicationContext : childFactory;
 	}
 
-	/**
-	 * Optional property that overrides the default-assigned
-	 * ConfigurationEnhancerFactory
-	 * 
-	 * @see {@link DefaultConfigurationEnhancerFactory}
-	 * @param factory - the custom factory to set
-	 */
-	public void setConfigurationEnhancerFactory(ConfigurationEnhancerFactory factory) {
-		this.configurationEnhancerFactory = factory;
-	}
-
 	public void registerBeanDefinition(String name, BeanDefinition bd, boolean hide) {
 		if (hide) {
 			childFactory.registerBeanDefinition(name, bd);
@@ -281,8 +267,8 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 			a.add(c);
 		}
 
-		this.configurationEnhancer = configurationEnhancerFactory.getConfigurationEnhancer(owningBeanFactory,
-				childFactory, beanNamingStrategy, a, valueSource);
+		this.configurationEnhancer = new CglibConfigurationEnhancer(owningBeanFactory, childFactory,
+				beanNamingStrategy, a, valueSource);
 
 		initialized = true;
 	}

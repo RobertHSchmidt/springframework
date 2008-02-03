@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.enhancement;
+package org.springframework.config.java.enhancement.cglib;
 
 import java.lang.reflect.Method;
 
@@ -21,37 +21,23 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import org.springframework.config.java.core.BeanMethodProcessor;
-import org.springframework.config.java.valuesource.ValueResolutionException;
 
 /**
- * CGLIB method interceptor for external property resolution methods.
+ * CGLIB method interceptor for external bean methods.
  * 
  * <p/> This implementation is thread-safe.
  * 
- * @author Chris Beams
  * @author Rod Johnson
  */
-class ExternalValueMethodMethodInterceptor implements MethodInterceptor {
+class ExternalBeanMethodMethodInterceptor implements MethodInterceptor {
 
 	private final BeanMethodProcessor beanMethodProcessor;
 
-	public ExternalValueMethodMethodInterceptor(BeanMethodProcessor beanMethodProcessor) {
+	public ExternalBeanMethodMethodInterceptor(BeanMethodProcessor beanMethodProcessor) {
 		this.beanMethodProcessor = beanMethodProcessor;
 	}
 
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
-		try {
-			return beanMethodProcessor.processMethod(m);
-		}
-		catch (ValueResolutionException ve) {
-			// Look for a concrete implementation
-			try {
-				return mp.invokeSuper(o, args);
-			}
-			catch (AbstractMethodError ex) {
-				// There was no implementation in the superclass
-				throw ve;
-			}
-		}
+		return beanMethodProcessor.processMethod(m);
 	}
 }

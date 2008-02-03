@@ -21,8 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.enhancement.EnhancerMethodInvoker;
-import org.springframework.config.java.enhancement.MethodBeanWrapper;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.util.Assert;
