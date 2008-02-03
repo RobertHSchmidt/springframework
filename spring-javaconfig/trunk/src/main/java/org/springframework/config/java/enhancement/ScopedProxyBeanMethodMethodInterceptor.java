@@ -21,7 +21,7 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import org.springframework.config.java.annotation.aop.ScopedProxy;
-import org.springframework.config.java.util.ScopeUtils;
+import org.springframework.config.java.core.ScopedProxyMethodProcessor;
 import org.springframework.util.Assert;
 
 /**
@@ -37,23 +37,18 @@ class ScopedProxyBeanMethodMethodInterceptor implements MethodInterceptor {
 
 	private final BeanMethodMethodInterceptor delegate;
 
-	public ScopedProxyBeanMethodMethodInterceptor(BeanMethodMethodInterceptor delegate) {
+	private final ScopedProxyMethodProcessor scopedProxyMethodProcessor;
+
+	public ScopedProxyBeanMethodMethodInterceptor(ScopedProxyMethodProcessor spmp, BeanMethodMethodInterceptor delegate) {
+		Assert.notNull(spmp, "the BeanMethodProcessor is required");
 		Assert.notNull(delegate, "the MethodInterceptor delegate is required");
+		this.scopedProxyMethodProcessor = spmp;
 		this.delegate = delegate;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.cglib.proxy.MethodInterceptor#intercept(java.lang.Object,
-	 * java.lang.reflect.Method, java.lang.Object[],
-	 * net.sf.cglib.proxy.MethodProxy)
-	 */
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
-		String beanToReturn = delegate.getBeanName(m);
-		String scopedBean = ScopeUtils.getScopedHiddenName(beanToReturn);
+		String beanToReturn = scopedProxyMethodProcessor.processMethod(m);
 
-		if (delegate.isCurrentlyInCreation(scopedBean))
-			beanToReturn = scopedBean;
 		return delegate.returnWrappedResultMayBeCached(beanToReturn, o, m, args, mp);
 	}
 }

@@ -20,10 +20,7 @@ import java.lang.reflect.Method;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.config.java.naming.BeanNamingStrategy;
+import org.springframework.config.java.core.StandardBeanMethodProcessor;
 import org.springframework.util.Assert;
 
 /**
@@ -37,83 +34,36 @@ import org.springframework.util.Assert;
  * 
  * @author Rod Johnson
  * @author Costin Leau
+ * @author Chris Beams
  */
 class BeanMethodMethodInterceptor implements MethodInterceptor {
 
-	private static final Log log = LogFactory.getLog(BeanMethodMethodInterceptor.class);
+	private final StandardBeanMethodProcessor beanMethodProcessor;
 
-	private final ConfigurableListableBeanFactory owningBeanFactory;
+	public BeanMethodMethodInterceptor(StandardBeanMethodProcessor beanMethodProcessor) {
+		Assert.notNull(beanMethodProcessor);
 
-	private final BeanNameTrackingDefaultListableBeanFactory childTrackingFactory;
-
-	private final BeanNamingStrategy namingStrategy;
-
-	private final MethodBeanWrapper beanWrapper;
-
-	public BeanMethodMethodInterceptor(ConfigurableListableBeanFactory owningBeanFactory,
-			BeanNameTrackingDefaultListableBeanFactory childFactory, MethodBeanWrapper beanWrapper,
-			BeanNamingStrategy namingStrategy) {
-
-		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
-		Assert.notNull(childFactory);
-		Assert.notNull(beanWrapper);
-		Assert.notNull(namingStrategy);
-
-		this.owningBeanFactory = owningBeanFactory;
-		this.childTrackingFactory = childFactory;
-		this.beanWrapper = beanWrapper;
-		this.namingStrategy = namingStrategy;
+		this.beanMethodProcessor = beanMethodProcessor;
 	}
 
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
 
-		return returnWrappedResultMayBeCached(getBeanName(m), o, m, args, mp);
+		return returnWrappedResultMayBeCached(beanMethodProcessor.getBeanName(m), o, m, args, mp);
 	}
 
-	protected String getBeanName(Method m) {
-		return namingStrategy.getBeanName(m);
-	}
-
-	protected Object returnWrappedResultMayBeCached(final String beanName, final Object o, final Method m,
-			final Object[] args, final MethodProxy mp) throws Throwable {
-
-		boolean inCreation = false;
-		Object bean = null;
+	Object returnWrappedResultMayBeCached(final String beanName, final Object o, final Method m, final Object[] args,
+			final MethodProxy mp) throws Throwable {
 
 		synchronized (o) {
-			// check the bean creation
-			inCreation = isCurrentlyInCreation(beanName);
+			return beanMethodProcessor.createNewOrGetCachedSingletonBean(beanName, new EnhancerMethodInvoker() {
+				public Method getMethod() {
+					return m;
+				}
 
-			// the BF extpects us to create the object
-			if (inCreation) {
-				bean = beanWrapper.wrapResult(beanName, new EnhancerMethodInvoker() {
-					public Method getMethod() {
-						return m;
-					}
-
-					public Object invokeOriginalClass() throws Throwable {
-						return mp.invokeSuper(o, args);
-					}
-				});
-			}
-
-			else {
-				// but use the tracking factory when doing the calls
-				bean = childTrackingFactory.getBean(beanName);
-			}
+				public Object invokeOriginalClass() throws Throwable {
+					return mp.invokeSuper(o, args);
+				}
+			});
 		}
-
-		if (log.isDebugEnabled())
-			if (inCreation)
-				log.debug(beanName + " currenty in creation, created one");
-			else
-				log.debug(beanName + " not in creation, asked the BF for one");
-		return bean;
-
-	}
-
-	protected boolean isCurrentlyInCreation(String beanName) {
-		return owningBeanFactory.isCurrentlyInCreation(beanName)
-				|| childTrackingFactory.isCurrentlyInCreation(beanName);
 	}
 }

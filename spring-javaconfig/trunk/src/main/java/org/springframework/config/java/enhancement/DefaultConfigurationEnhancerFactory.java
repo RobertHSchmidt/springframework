@@ -15,7 +15,11 @@
  */
 package org.springframework.config.java.enhancement;
 
+import java.util.List;
+
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
+import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.valuesource.ValueSource;
 
@@ -45,8 +49,8 @@ public final class DefaultConfigurationEnhancerFactory implements ConfigurationE
 	 */
 	public ConfigurationEnhancer getConfigurationEnhancer(ConfigurableListableBeanFactory owningBeanFactory,
 			BeanNameTrackingDefaultListableBeanFactory childFactory, BeanNamingStrategy beanNamingStrategy,
-			MethodBeanWrapper beanWrapper, ValueSource valueSource) {
-		return new CglibConfigurationEnhancer(owningBeanFactory, childFactory, beanNamingStrategy, beanWrapper,
-				valueSource);
+			List<BeanMethodReturnValueProcessor> returnValueProcessors, ValueSource valueSource) {
+		return new CglibConfigurationEnhancer(owningBeanFactory, childFactory, beanNamingStrategy,
+				returnValueProcessors, valueSource);
 	}
 }

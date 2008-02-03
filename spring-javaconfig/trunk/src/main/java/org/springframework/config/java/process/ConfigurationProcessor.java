@@ -42,12 +42,11 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
-import org.springframework.config.java.enhancement.BeanMethodReturnValueProcessor;
-import org.springframework.config.java.enhancement.BeanNameTrackingDefaultListableBeanFactory;
+import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
+import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.enhancement.ConfigurationEnhancer;
 import org.springframework.config.java.enhancement.ConfigurationEnhancerFactory;
 import org.springframework.config.java.enhancement.DefaultConfigurationEnhancerFactory;
-import org.springframework.config.java.enhancement.MethodBeanWrapper;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.config.java.util.ArrayUtils;
@@ -139,8 +138,6 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 	private ResourceLoader resourceLoader = new DefaultResourceLoader();
 
-	private final BeanDefinitionRegistry beanDefinitionRegistry;
-
 	private boolean initialized = false;
 
 	/**
@@ -197,7 +194,6 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 */
 	public ConfigurationProcessor(ConfigurableListableBeanFactory clbf) {
 		this.owningBeanFactory = clbf;
-		this.beanDefinitionRegistry = (BeanDefinitionRegistry) owningBeanFactory;
 		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(owningBeanFactory);
 	}
 
@@ -260,7 +256,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 			childFactory.registerBeanDefinition(name, bd);
 		}
 		else {
-			beanDefinitionRegistry.registerBeanDefinition(name, bd);
+			((BeanDefinitionRegistry) owningBeanFactory).registerBeanDefinition(name, bd);
 		}
 	}
 
@@ -273,12 +269,9 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		}
 	}
 
-	/*
+	/**
 	 * Called to avoid constructor changes every time a new configuration switch
 	 * appears on this class.
-	 * 
-	 * (non-Javadoc)
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() {
 		Assert.notNull(owningBeanFactory, "an owning factory bean is required");
@@ -288,10 +281,9 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 			a.add(c);
 		}
 
-		MethodBeanWrapper wrapper = new MethodBeanWrapper(beanDefinitionRegistry, owningBeanFactory, a, childFactory);
+		this.configurationEnhancer = configurationEnhancerFactory.getConfigurationEnhancer(owningBeanFactory,
+				childFactory, beanNamingStrategy, a, valueSource);
 
-		this.configurationEnhancer = configurationEnhancerFactory.getConfigurationEnhancer(this.owningBeanFactory,
-				this.childFactory, beanNamingStrategy, wrapper, valueSource);
 		initialized = true;
 	}
 

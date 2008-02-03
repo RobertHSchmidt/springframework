@@ -26,6 +26,8 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
+import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.config.java.util.DependencyUtils;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -38,7 +40,7 @@ import org.springframework.util.Assert;
  * 
  * @author Rod Johnson
  * @author Costin Leau
- * 
+ * @author Chris Beams
  */
 public class MethodBeanWrapper {
 
@@ -57,10 +59,10 @@ public class MethodBeanWrapper {
 	 * @param configurationListenerRegistry
 	 * @param childTrackingFactory
 	 */
-	public MethodBeanWrapper(BeanDefinitionRegistry beanDefinitionRegistry, BeanFactory owningBeanFactory,
+	public MethodBeanWrapper(BeanFactory owningBeanFactory,
 			Collection<BeanMethodReturnValueProcessor> returnValueProcessors,
 			BeanNameTrackingDefaultListableBeanFactory childTrackingFactory) {
-		this.beanDefinitionRegistry = beanDefinitionRegistry;
+		this.beanDefinitionRegistry = (BeanDefinitionRegistry) owningBeanFactory;
 		this.owningBeanFactory = owningBeanFactory;
 		this.returnValueProcessors = returnValueProcessors;
 		this.childTrackingFactory = childTrackingFactory;

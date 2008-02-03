@@ -20,42 +20,28 @@ import java.lang.reflect.Method;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
-import org.springframework.config.java.annotation.ExternalValue;
+import org.springframework.config.java.core.BeanMethodProcessor;
 import org.springframework.config.java.valuesource.ValueResolutionException;
-import org.springframework.config.java.valuesource.ValueSource;
 
 /**
  * CGLIB method interceptor for external property resolution methods.
  * 
  * <p/> This implementation is thread-safe.
  * 
+ * @author Chris Beams
  * @author Rod Johnson
  */
 class ExternalValueMethodMethodInterceptor implements MethodInterceptor {
 
-	private final ValueSource valueSource;
+	private final BeanMethodProcessor beanMethodProcessor;
 
-	public ExternalValueMethodMethodInterceptor(ValueSource ms) {
-		this.valueSource = ms;
+	public ExternalValueMethodMethodInterceptor(BeanMethodProcessor beanMethodProcessor) {
+		this.beanMethodProcessor = beanMethodProcessor;
 	}
 
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
-		ExternalValue ev = m.getAnnotation(ExternalValue.class);
-		if (ev == null) {
-			throw new IllegalArgumentException(m + "Must be annotated with @ExternalValue");
-		}
-
-		String name = ev.value();
-		if ("".equals(name)) {
-			name = m.getName();
-			// Strip property name if needed
-			if (name.startsWith("get")) {
-				name = Character.toLowerCase(name.charAt(3)) + name.substring(4);
-			}
-		}
-
 		try {
-			return valueSource.resolve(name, m.getReturnType());
+			return beanMethodProcessor.processMethod(m);
 		}
 		catch (ValueResolutionException ve) {
 			// Look for a concrete implementation
