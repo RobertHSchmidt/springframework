@@ -34,7 +34,7 @@ import org.springframework.util.Assert;
  * one-liners.
  * 
  * @author Costin Leau
- * 
+ * @author Chris Beams
  */
 public final class ClassUtils {
 
@@ -42,34 +42,7 @@ public final class ClassUtils {
 	private ClassUtils() {
 	}
 
-	/**
-	 * Class extension.
-	 */
-	public static final String CLASS_EXT = ".class";
-
-	public static final char DOT = '.';
-
-	public static final char SLASH = '/';
-
 	public static final String JAVA_CONFIG_PKG = "org.springframework.config.java";
-
-	/**
-	 * Convert the / form to the . form
-	 * @param className
-	 * @return
-	 */
-	public static String classNameInternalToLoadable(String className) {
-		return className.replace(SLASH, DOT);
-	}
-
-	/**
-	 * Converts . form to / form.
-	 * @param className
-	 * @return
-	 */
-	public static String classNameLoadableToInternal(String className) {
-		return className.replace(DOT, SLASH);
-	}
 
 	/**
 	 * Check if the given method has the given annotation.
@@ -111,7 +84,7 @@ public final class ClassUtils {
 	 * @param configurationClass
 	 * @return
 	 */
-	public static Collection<Method> getBeanCreationMethods(Class<?> configurationClass) {
+	private static Collection<Method> getBeanCreationMethods(Class<?> configurationClass) {
 		return getAnnotatedMethods(configurationClass, Bean.class);
 	}
 
@@ -121,7 +94,7 @@ public final class ClassUtils {
 	 * @param configurationClass
 	 * @return collection of all methods annotated with {@link ExternalBean}
 	 */
-	public static Collection<Method> getExternalBeanCreationMethods(Class<?> configurationClass) {
+	private static Collection<Method> getExternalBeanCreationMethods(Class<?> configurationClass) {
 		return getAnnotatedMethods(configurationClass, ExternalBean.class);
 	}
 
@@ -131,7 +104,7 @@ public final class ClassUtils {
 	 * @param configurationClass
 	 * @return collection of all methods annotated with {@link ExternalValue}
 	 */
-	public static Collection<Method> getExternalValueCreationMethods(Class<?> configurationClass) {
+	private static Collection<Method> getExternalValueCreationMethods(Class<?> configurationClass) {
 		return getAnnotatedMethods(configurationClass, ExternalValue.class);
 	}
 
@@ -144,7 +117,7 @@ public final class ClassUtils {
 	 * 
 	 * @return collection of non private matching methods
 	 */
-	public static Collection<Method> getAnnotatedMethods(Class<?> targetClass,
+	private static Collection<Method> getAnnotatedMethods(Class<?> targetClass,
 			Class<? extends Annotation> targetAnnotation) {
 		Assert.notNull(targetClass);
 		Assert.notNull(targetAnnotation);

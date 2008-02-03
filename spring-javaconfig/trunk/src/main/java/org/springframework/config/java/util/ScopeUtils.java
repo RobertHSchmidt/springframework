@@ -43,9 +43,4 @@ public abstract class ScopeUtils {
 		return TARGET_NAME_PREFIX.concat(scopedProxy);
 	}
 
-	public static boolean isHiddenScopedBean(String beanName) {
-		Assert.hasText(beanName);
-		return beanName.startsWith(TARGET_NAME_PREFIX);
-	}
-
 }
