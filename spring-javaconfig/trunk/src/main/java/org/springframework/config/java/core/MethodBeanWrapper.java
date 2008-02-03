@@ -42,11 +42,9 @@ import org.springframework.util.Assert;
  */
 public class MethodBeanWrapper {
 
-	private final BeanNameTrackingDefaultListableBeanFactory childTrackingFactory;
-
-	private final BeanDefinitionRegistry beanDefinitionRegistry;
-
 	private final BeanFactory owningBeanFactory;
+
+	private final BeanNameTrackingDefaultListableBeanFactory childTrackingFactory;
 
 	private final Collection<BeanMethodReturnValueProcessor> returnValueProcessors;
 
@@ -58,9 +56,8 @@ public class MethodBeanWrapper {
 	 * @param childTrackingFactory
 	 */
 	public MethodBeanWrapper(BeanFactory owningBeanFactory,
-			Collection<BeanMethodReturnValueProcessor> returnValueProcessors,
-			BeanNameTrackingDefaultListableBeanFactory childTrackingFactory) {
-		this.beanDefinitionRegistry = (BeanDefinitionRegistry) owningBeanFactory;
+			BeanNameTrackingDefaultListableBeanFactory childTrackingFactory,
+			Collection<BeanMethodReturnValueProcessor> returnValueProcessors) {
 		this.owningBeanFactory = owningBeanFactory;
 		this.returnValueProcessors = returnValueProcessors;
 		this.childTrackingFactory = childTrackingFactory;
@@ -80,23 +77,17 @@ public class MethodBeanWrapper {
 	 */
 	public Object wrapResult(String beanName, EnhancerMethodInvoker invoker) throws Throwable {
 		Assert.hasText(beanName, "a non-empty beanName is required");
-		Assert.notNull(invoker, "a not-null invoker is required");
+		Assert.notNull(invoker, "a non-null invoker is required");
 
 		// If we are in our first call to getBean() with this name and were
-		// not
-		// called by the factory (which would have tracked the call), call
-		// the factory
-		// to get the bean. We need to do this to ensure that lifecycle
-		// callbacks are invoked,
-		// so that calls made within a factory method in otherBean() style
-		// still
-		// get fully configured objects.
+		// not called by the factory (which would have tracked the call), call
+		// the factory to get the bean. We need to do this to ensure that
+		// lifecycle callbacks are invoked, so that calls made within a factory
+		// method in otherBean() style still get fully configured objects.
 
 		String lastRequestedBeanName = childTrackingFactory.lastRequestedBeanName();
 
 		boolean newBeanRequested = (lastRequestedBeanName == null || beanName.equals(lastRequestedBeanName));
-
-		Method method = invoker.getMethod();
 
 		try {
 			// first call - start tracking
@@ -112,42 +103,30 @@ public class MethodBeanWrapper {
 
 			BeanDefinition beanDef = null;
 
-			// TODO: it's odd that this var is never used; leaving it in place
-			// for now... (cbeams)
-			@SuppressWarnings("unused")
-			boolean hidden = false;
 			// consider hidden beans also (contained only in the children
 			// factory)
-			if (childTrackingFactory.containsBeanDefinition(beanName)) {
+			if (childTrackingFactory.containsBeanDefinition(beanName))
 				beanDef = childTrackingFactory.getBeanDefinition(beanName);
-				hidden = true;
-			}
-			else {
-				beanDef = beanDefinitionRegistry.getBeanDefinition(beanName);
-				hidden = false;
-			}
+			else
+				beanDef = ((BeanDefinitionRegistry) owningBeanFactory).getBeanDefinition(beanName);
 
 			// the definition was overridden (use that one)
-			if (beanDef.getAttribute(ClassUtils.JAVA_CONFIG_PKG) == null) {
+			if (beanDef.getAttribute(ClassUtils.JAVA_CONFIG_PKG) == null)
 				originallyCreatedBean = owningBeanFactory.getBean(beanName);
-			}
 
-			if (originallyCreatedBean == null) {
-				// nothing was found so call the original code
+			// if nothing was found, call the original code
+			if (originallyCreatedBean == null)
 				originallyCreatedBean = invoker.invokeOriginalClass();
-			}
 
-			if (DependencyUtils.isAopAvailable()) {
-				return new ProxyHelper().proxyIfAppropriate(originallyCreatedBean, method);
-			}
+			if (DependencyUtils.isAopAvailable())
+				return new ProxyHelper().proxyIfAppropriate(originallyCreatedBean, invoker.getMethod());
 
 			return originallyCreatedBean;
 		}
 		finally {
 			// be sure to clean tracking
-			if (newBeanRequested) {
+			if (newBeanRequested)
 				childTrackingFactory.pop();
-			}
 		}
 	}
 
