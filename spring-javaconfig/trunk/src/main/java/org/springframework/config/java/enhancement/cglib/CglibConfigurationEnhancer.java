@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.enhancement;
+package org.springframework.config.java.enhancement.cglib;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -29,8 +29,10 @@ import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
 import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.core.ExternalBeanMethodProcessor;
 import org.springframework.config.java.core.ExternalValueMethodProcessor;
-import org.springframework.config.java.core.StandardBeanMethodProcessor;
+import org.springframework.config.java.core.MethodBeanWrapper;
 import org.springframework.config.java.core.ScopedProxyMethodProcessor;
+import org.springframework.config.java.core.StandardBeanMethodProcessor;
+import org.springframework.config.java.enhancement.ConfigurationEnhancer;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.util.Assert;
@@ -44,7 +46,7 @@ import org.springframework.util.Assert;
  * @author Costin Leau
  * @author Chris Beams
  */
-class CglibConfigurationEnhancer implements ConfigurationEnhancer {
+public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 
 	private static final CallbackFilter BEAN_CREATION_METHOD_CALLBACK_FILTER = new CallbackFilter() {
 		public int accept(Method candidateMethod) {

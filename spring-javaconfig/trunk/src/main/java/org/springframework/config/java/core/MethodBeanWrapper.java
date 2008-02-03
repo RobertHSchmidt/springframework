@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.enhancement;
+package org.springframework.config.java.core;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -26,8 +26,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
-import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.util.ClassUtils;
 import org.springframework.config.java.util.DependencyUtils;
 import org.springframework.core.annotation.AnnotationUtils;

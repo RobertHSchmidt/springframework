@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.enhancement;
+package org.springframework.config.java.enhancement.cglib;
 
 import java.lang.reflect.Method;
 
