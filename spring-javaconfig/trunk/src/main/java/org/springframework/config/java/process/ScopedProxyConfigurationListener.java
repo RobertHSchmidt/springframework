@@ -24,8 +24,8 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
+import org.springframework.config.java.core.ScopedProxyMethodProcessor;
 import org.springframework.config.java.util.DefaultScopes;
-import org.springframework.config.java.util.ScopeUtils;
 import org.springframework.util.Assert;
 
 /**
@@ -71,7 +71,7 @@ class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
 
 			// Create a scoped proxy definition for the original bean name,
 			// "hiding" the target bean in an internal target definition.
-			String targetBeanName = ScopeUtils.getScopedHiddenName(originalBeanName);
+			String targetBeanName = ScopedProxyMethodProcessor.resolveHiddenScopedProxyBeanName(originalBeanName);
 			RootBeanDefinition scopedProxyDefinition = new RootBeanDefinition(ScopedProxyFactoryBean.class);
 			scopedProxyDefinition.getPropertyValues().addPropertyValue("targetBeanName", targetBeanName);
 

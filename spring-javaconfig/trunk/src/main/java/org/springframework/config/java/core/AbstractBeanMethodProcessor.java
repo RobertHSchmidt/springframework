@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 import org.springframework.core.annotation.AnnotationUtils;
 
 abstract class AbstractBeanMethodProcessor implements BeanMethodProcessor {
-	protected static final Logger log = Logger.getLogger(ExternalBeanMethodProcessor.class);
+	protected final Logger log = Logger.getLogger(this.getClass());
 
 	private final Class<? extends Annotation> annotation;
 

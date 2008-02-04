@@ -15,8 +15,6 @@
  */
 package org.springframework.config.java.context;
 
-import static org.springframework.config.java.util.ArrayUtils.reverse;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -382,6 +380,34 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	public <T> T getBean(Class<T> type, String beanName) {
 		return TypeSafeBeanFactoryUtils.getBean(this.getBeanFactory(), type, beanName);
+	}
+
+	/**
+	 * Reverse the contents of <var>array</var>.
+	 * 
+	 * <p/>This method is used for reversing the order of classes passed into
+	 * constructors of
+	 * {@link org.springframework.config.java.context.JavaConfigApplicationContext}
+	 * or {@link org.springframework.config.java.annotation.Import}.
+	 * 
+	 * <p/>TODO: shouldn't actually be necessary. Root out the real issue with
+	 * ordering
+	 * 
+	 * @see ConfigurationProcessor#reverse()
+	 * @param array - array to reverse
+	 * @return reverse of <var>array</var>, null if <var>array</var> is null.
+	 */
+	private static Class<?>[] reverse(Class<?>[] array) {
+		if (array == null)
+			return array;
+
+		int size = array.length;
+		Class<?>[] reversed = new Class<?>[size];
+
+		for (int i = 0; i < size; i++)
+			reversed[size - i - 1] = array[i];
+
+		return reversed;
 	}
 
 }
