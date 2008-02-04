@@ -26,9 +26,9 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.util.DependencyUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 
 /**
  * Wrapper for the result returned by the method backing a bean instance. Uses
@@ -117,7 +117,7 @@ public class MethodBeanWrapper {
 			if (originallyCreatedBean == null)
 				originallyCreatedBean = invoker.invokeOriginalClass();
 
-			if (DependencyUtils.isAopAvailable())
+			if (ClassUtils.isPresent("org.springframework.aop.TargetSource"))
 				return new ProxyHelper().proxyIfAppropriate(originallyCreatedBean, invoker.getMethod());
 
 			return originallyCreatedBean;
