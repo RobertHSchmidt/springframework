@@ -34,18 +34,9 @@ import org.springframework.util.Assert;
  * {@link org.springframework.aop.config.ScopedProxyBeanDefinitionDecorator}
  * 
  * @author Costin Leau
- * 
  */
 class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.config.java.listener.ConfigurationListenerSupport#beanCreationMethod(org.springframework.config.java.listener.ConfigurationListener.BeanDefinitionRegistration,
-	 * org.springframework.beans.factory.config.ConfigurableListableBeanFactory,
-	 * org.springframework.beans.factory.support.DefaultListableBeanFactory,
-	 * java.lang.String, java.lang.Class, java.lang.reflect.Method,
-	 * org.springframework.config.java.annotation.Bean)
-	 */
 	@Override
 	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration, ConfigurationProcessor cp,
 			String configurerBeanName, Class<?> configurerClass, Method m, Bean beanAnnotation) {
@@ -57,10 +48,9 @@ class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
 			// do some validation first related to scoping
 			String scope = beanAnnotation.scope();
 			if (DefaultScopes.PROTOTYPE.equals(scope) || DefaultScopes.SINGLETON.equals(scope))
-				throw new BeanDefinitionStoreException(
-						"["
-								+ m
-								+ "] contains an invalid annotation declaration: @ScopedProxy cannot be used on a singleton/prototype bean");
+				throw new BeanDefinitionStoreException(String.format(
+						"[%s] contains an invalid annotation declaration: @ScopedProxy "
+								+ "cannot be used on a singleton/prototype bean", m));
 
 			count++;
 			// TODO: could the code duplication be removed?
@@ -97,27 +87,16 @@ class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
 		return count;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.config.java.listener.ConfigurationListenerSupport#otherMethod(org.springframework.beans.factory.config.ConfigurableListableBeanFactory,
-	 * org.springframework.beans.factory.support.DefaultListableBeanFactory,
-	 * java.lang.String, java.lang.Class, java.lang.reflect.Method)
-	 */
 	@Override
 	public int otherMethod(ConfigurationProcessor cp, String configurerBeanName, Class<?> configurerClass, Method m) {
 		// catch invalid declarations
 		if (m.isAnnotationPresent(ScopedProxy.class))
-			throw new BeanDefinitionStoreException(
-					"["
-							+ m
-							+ "] contains an invalid annotation declaration: @ScopedProxy should be used along side @Bean, not by itself");
+			throw new BeanDefinitionStoreException(String.format(
+					"[%s] contains an invalid annotation declaration: @ScopedProxy "
+							+ "should be used along side @Bean, not by itself", m));
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.config.java.listener.ConfigurationListenerSupport#understands(java.lang.Class)
-	 */
 	@Override
 	public boolean understands(Class<?> configurerClass) {
 		Assert.notNull(configurerClass);
