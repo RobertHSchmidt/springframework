@@ -16,19 +16,35 @@
 package org.springframework.config.java.core;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Collection;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.naming.BeanNamingStrategy;
-import org.springframework.config.java.util.ClassUtils;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
-public class ExternalBeanMethodProcessor implements BeanMethodProcessor {
+/**
+ * {@link BeanMethodProcessor} capable of processing {@link ExternalBean}-annotated
+ * methods.
+ * 
+ * @author Chris Beams
+ */
+public class ExternalBeanMethodProcessor extends AbstractBeanMethodProcessor {
+
 	private final BeanFactory owningBeanFactory;
 
 	private final BeanNamingStrategy namingStrategy;
 
+	/**
+	 * 
+	 * @param owningBeanFactory non-null
+	 * @param namingStrategy non-null
+	 */
 	public ExternalBeanMethodProcessor(BeanFactory owningBeanFactory, BeanNamingStrategy namingStrategy) {
+		super(ExternalBean.class);
+
 		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
 		Assert.notNull(namingStrategy, "namingStrategy is required");
 
@@ -36,11 +52,25 @@ public class ExternalBeanMethodProcessor implements BeanMethodProcessor {
 		this.namingStrategy = namingStrategy;
 	}
 
+	private ExternalBeanMethodProcessor() {
+		super(ExternalBean.class);
+		this.owningBeanFactory = null;
+		this.namingStrategy = null;
+	}
+
+	/**
+	 * @param targetMethod must be non-private and annotated with
+	 * {@link ExternalBean}
+	 */
 	public Object processMethod(Method targetMethod) {
-		ExternalBean externalBean = targetMethod.getAnnotation(ExternalBean.class);
+		ExternalBean externalBean = AnnotationUtils.findAnnotation(targetMethod, ExternalBean.class);
+
+		Assert.notNull(externalBean, "method must be annotated with @ExternalBean");
+		Assert.isTrue(!Modifier.isPrivate(targetMethod.getModifiers()), "@ExternalBean methods may not be private");
+
 		String beanName;
 
-		if (externalBean != null && !"".equals(externalBean.value()))
+		if (!"".equals(externalBean.value()))
 			beanName = externalBean.value();
 		else
 			beanName = namingStrategy.getBeanName(targetMethod);
@@ -48,7 +78,27 @@ public class ExternalBeanMethodProcessor implements BeanMethodProcessor {
 		return owningBeanFactory.getBean(beanName);
 	}
 
-	public static boolean isCandidate(Method candidateMethod) {
-		return ClassUtils.hasAnnotation(candidateMethod, ExternalBean.class);
+	/**
+	 * Find all methods that are annotated with {@link ExternalBean}.
+	 * 
+	 * @param configurationClass
+	 * @return collection of all methods annotated with {@link ExternalBean}
+	 */
+	public static Collection<Method> findExternalBeanCreationMethods(Class<?> configurationClass) {
+		return new ExternalBeanMethodProcessor().findMatchingMethods(configurationClass);
 	}
+
+	/**
+	 * Check whether <var>candidateMethod</var> is an {@link ExternalBean}
+	 * method. Method may be annotated directly or in the case of overriding,
+	 * may inherit the declaration from a superclass/superinterface.
+	 * 
+	 * @param candidateMethod
+	 * @return true if non-private and annotated directly or indirectly with
+	 * {@link ExternalBean}
+	 */
+	public static boolean isExternalBeanCreationMethod(Method candidateMethod) {
+		return new ExternalBeanMethodProcessor().understands(candidateMethod);
+	}
+
 }

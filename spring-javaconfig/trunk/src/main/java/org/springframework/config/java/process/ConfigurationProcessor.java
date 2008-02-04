@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.cfg.DefaultNamingStrategy;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
@@ -44,12 +45,15 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
 import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
+import org.springframework.config.java.core.Constants;
+import org.springframework.config.java.core.ExternalBeanMethodProcessor;
+import org.springframework.config.java.core.ExternalValueMethodProcessor;
+import org.springframework.config.java.core.StandardBeanMethodProcessor;
 import org.springframework.config.java.enhancement.ConfigurationEnhancer;
 import org.springframework.config.java.enhancement.cglib.CglibConfigurationEnhancer;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.config.java.util.ArrayUtils;
-import org.springframework.config.java.util.ClassUtils;
 import org.springframework.config.java.valuesource.CompositeValueSource;
 import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.context.ApplicationEvent;
@@ -102,7 +106,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	/**
 	 * Bean factory that this post processor runs in
 	 */
-	private ConfigurableListableBeanFactory owningBeanFactory;
+	private final ConfigurableListableBeanFactory owningBeanFactory;
 
 	/**
 	 * Used to hold Spring AOP advisors and other internal objects while
@@ -110,7 +114,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 * from autowiring and other IoC container features, but are not visible
 	 * externally.
 	 */
-	private BeanNameTrackingDefaultListableBeanFactory childFactory;
+	private final BeanNameTrackingDefaultListableBeanFactory childFactory;
 
 	/**
 	 * Non-null if we are running in an ApplicationContext and need to ensure
@@ -146,12 +150,12 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 */
 	public ConfigurationProcessor(ConfigurableApplicationContext ac) {
 		this(ac.getBeanFactory());
+
 		if (ac instanceof AbstractApplicationContext) {
-			this.owningApplicationContext = (AbstractApplicationContext) ac;
+			owningApplicationContext = (AbstractApplicationContext) ac;
 
 			// TODO this override is a hack! Why is EventMulticaster null?
-			this.childApplicationContext = new GenericApplicationContext(this.childFactory,
-					this.owningApplicationContext) {
+			childApplicationContext = new GenericApplicationContext(childFactory, owningApplicationContext) {
 				@Override
 				public void publishEvent(ApplicationEvent event) {
 					log.debug("suppressed " + event);
@@ -159,26 +163,23 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 			};
 
 			List<BeanFactoryPostProcessor> bfpps = new LinkedList<BeanFactoryPostProcessor>();
-			for (Object o : owningApplicationContext.getBeansOfType(BeanFactoryPostProcessor.class).values()) {
-				if (!(o instanceof ConfigurationPostProcessor)) {
+			for (Object o : owningApplicationContext.getBeansOfType(BeanFactoryPostProcessor.class).values())
+				if (!(o instanceof ConfigurationPostProcessor))
 					bfpps.add((BeanFactoryPostProcessor) o);
-				}
-			}
-			for (Object o : owningApplicationContext.getBeanFactoryPostProcessors()) {
-				if (!(o instanceof ConfigurationPostProcessor)) {
+
+			for (Object o : owningApplicationContext.getBeanFactoryPostProcessors())
+				if (!(o instanceof ConfigurationPostProcessor))
 					bfpps.add((BeanFactoryPostProcessor) o);
-				}
-			}
+
 			// Add all BeanFactoryPostProcessors to the child context
-			for (BeanFactoryPostProcessor bfpp : bfpps) {
-				this.childApplicationContext.addBeanFactoryPostProcessor(bfpp);
-			}
+			for (BeanFactoryPostProcessor bfpp : bfpps)
+				childApplicationContext.addBeanFactoryPostProcessor(bfpp);
+
 			// Piggyback on owning application context refresh
-			this.owningApplicationContext.addApplicationListener(new ApplicationListener() {
+			owningApplicationContext.addApplicationListener(new ApplicationListener() {
 				public void onApplicationEvent(ApplicationEvent ev) {
-					if (ev instanceof ContextRefreshedEvent) {
+					if (ev instanceof ContextRefreshedEvent)
 						ConfigurationProcessor.this.childApplicationContext.refresh();
-					}
 				}
 			});
 		}
@@ -195,9 +196,10 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	}
 
 	/**
-	 * Set the resourceLoader. This is optional, as a default ResourceLoader
-	 * will be used.
-	 * @param resourceLoader resourceLoader to use
+	 * Optionally indicate the resourceLoader. If unspecified,
+	 * {@link DefaultResourceLoader} will be used. will be used.
+	 * 
+	 * @param resourceLoader
 	 */
 	public void setResourceLoader(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
@@ -208,8 +210,9 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	}
 
 	/**
-	 * Indicate the naming strategy used for creating the bean names during
-	 * processing.
+	 * Optionally indicate the naming strategy used for creating the bean names
+	 * during processing. If unspecified, {@link DefaultNamingStrategy} will be
+	 * used.
 	 * 
 	 * @param beanNamingStrategy bean naming strategy implementation
 	 */
@@ -218,15 +221,17 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	}
 
 	/**
-	 * @param configurationListenerRegistry The configurationListenerRegistry to
-	 * set.
+	 * Optionally specify a custom subclass of
+	 * {@link ConfigurationListenerRegistry}. If unspecified, the default
+	 * implementation will be used.
+	 * 
+	 * <p/>TODO: if ConfigurationListener is made internal, this configuration
+	 * should be eliminated as well
+	 * 
+	 * @param configurationListenerRegistry
 	 */
 	public void setConfigurationListenerRegistry(ConfigurationListenerRegistry configurationListenerRegistry) {
 		this.configurationListenerRegistry = configurationListenerRegistry;
-	}
-
-	public BeanDefinitionRegistry getBeanDefinitionRegistry() {
-		return (BeanDefinitionRegistry) owningBeanFactory;
 	}
 
 	public void addValueSource(ValueSource vs) {
@@ -238,21 +243,17 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	}
 
 	public void registerBeanDefinition(String name, BeanDefinition bd, boolean hide) {
-		if (hide) {
+		if (hide)
 			childFactory.registerBeanDefinition(name, bd);
-		}
-		else {
+		else
 			((BeanDefinitionRegistry) owningBeanFactory).registerBeanDefinition(name, bd);
-		}
 	}
 
 	public void registerSingleton(String name, Object o, boolean hide) {
-		if (hide) {
+		if (hide)
 			childFactory.registerSingleton(name, o);
-		}
-		else {
+		else
 			owningBeanFactory.registerSingleton(name, o);
-		}
 	}
 
 	/**
@@ -511,7 +512,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		rbd.setFactoryMethodName(beanCreationMethod.getName());
 		rbd.setFactoryBeanName(configurerBeanName);
 		// tag the bean definition
-		rbd.setAttribute(ClassUtils.JAVA_CONFIG_PKG, Boolean.TRUE);
+		rbd.setAttribute(Constants.JAVA_CONFIG_PKG, Boolean.TRUE);
 
 		Configuration config = configurerClass.getAnnotation(Configuration.class);
 
@@ -551,6 +552,25 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		count++;
 
 		return count;
+	}
+
+	/**
+	 * Check if the given class is a configuration.
+	 * 
+	 * @param candidateConfigurationClass - must be non-abstract and be
+	 * annotated with &#64;Configuration and/or have at least one method
+	 * annotated with &#64;Bean
+	 */
+	public static boolean isConfigurationClass(Class<?> candidateConfigurationClass) {
+		Assert.notNull(candidateConfigurationClass);
+
+		if (Modifier.isAbstract(candidateConfigurationClass.getModifiers())
+				&& ExternalBeanMethodProcessor.findExternalBeanCreationMethods(candidateConfigurationClass).isEmpty()
+				&& ExternalValueMethodProcessor.findExternalValueCreationMethods(candidateConfigurationClass).isEmpty())
+			return false;
+
+		return candidateConfigurationClass.isAnnotationPresent(Configuration.class)
+				|| !StandardBeanMethodProcessor.findBeanCreationMethods(candidateConfigurationClass).isEmpty();
 	}
 
 }

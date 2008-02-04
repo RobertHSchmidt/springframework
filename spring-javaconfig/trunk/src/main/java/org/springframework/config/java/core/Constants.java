@@ -15,23 +15,14 @@
  */
 package org.springframework.config.java.core;
 
-import java.lang.reflect.Method;
+/**
+ * @author Chris Beams
+ */
+public final class Constants {
 
-import org.springframework.config.java.annotation.AutoBean;
-import org.springframework.config.java.valuesource.ValueResolutionException;
-
-public class AutoBeanMethodProcessor extends AbstractBeanMethodProcessor {
-
-	protected AutoBeanMethodProcessor() {
-		super(AutoBean.class);
+	private Constants() {
 	}
 
-	public Object processMethod(Method m) throws ValueResolutionException {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	public static boolean isAutoBeanCreationMethod(Method candidateMethod) {
-		return new AutoBeanMethodProcessor().understands(candidateMethod);
-	}
+	public static final String JAVA_CONFIG_PKG = "org.springframework.config.java";
 
 }

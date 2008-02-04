@@ -50,17 +50,17 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 
 	private static final CallbackFilter BEAN_CREATION_METHOD_CALLBACK_FILTER = new CallbackFilter() {
 		public int accept(Method candidateMethod) {
-			if (ScopedProxyMethodProcessor.isCandidate(candidateMethod))
+			if (ScopedProxyMethodProcessor.isScopedProxyMethod(candidateMethod))
 				return SCOPED_PROXY_CALLBACK_INDEX;
 
-			if (StandardBeanMethodProcessor.isCandidate(candidateMethod))
+			if (StandardBeanMethodProcessor.isBeanCreationMethod(candidateMethod))
 				return BEAN_CALLBACK_INDEX;
 
-			if (ExternalBeanMethodProcessor.isCandidate(candidateMethod)
-					|| AutoBeanMethodProcessor.isCandidate(candidateMethod))
+			if (ExternalBeanMethodProcessor.isExternalBeanCreationMethod(candidateMethod)
+					|| AutoBeanMethodProcessor.isAutoBeanCreationMethod(candidateMethod))
 				return EXTERNAL_BEAN_CALLBACK_INDEX;
 
-			if (ExternalValueMethodProcessor.isCandidate(candidateMethod))
+			if (ExternalValueMethodProcessor.isExternalValueCreationMethod(candidateMethod))
 				return EXTERNAL_PROPERTY_CALLBACK_INDEX;
 
 			return NO_OP_CALLBACK_INDEX;
