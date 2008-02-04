@@ -30,7 +30,6 @@ import org.springframework.config.java.annotation.DependencyCheck;
 import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.Meta;
 import org.springframework.config.java.annotation.Primary;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
@@ -41,61 +40,6 @@ import org.springframework.util.StringUtils;
  */
 final class ProcessUtils {
 	private ProcessUtils() {
-	}
-
-	/**
-	 * Return true if the given class is a suitable Configuration or false
-	 * otherwise. Will perform validation if the class is suitable but its
-	 * definition invalid.
-	 * 
-	 * @param configurationClass
-	 * @param configurationListenerRegistry
-	 * @return
-	 */
-	static boolean validateConfigurationClass(Class<?> configurationClass,
-			ConfigurationListenerRegistry configurationListenerRegistry) {
-
-		Assert.notNull(configurationClass, "configurationClass is required");
-
-		// before processing, check the given items are valid.
-
-		// a. not a suitable class, bail out
-		if (!isConfigurationClass(configurationClass, configurationListenerRegistry)) {
-			return false;
-		}
-
-		// the given class was validated, from now on anything wrong triggers an
-		// exception
-		if (Modifier.isFinal(configurationClass.getModifiers())) {
-			throw new BeanDefinitionStoreException("Configuration class " + configurationClass.getName()
-					+ " may not be final");
-		}
-
-		return true;
-	}
-
-	/**
-	 * Check if the given class is a configuration.
-	 * 
-	 * Additionally, a listener registry is checked against the class.
-	 * 
-	 * @param candidateConfigurationClass
-	 * @param registry
-	 * @return
-	 */
-	private static boolean isConfigurationClass(Class<?> candidateConfigurationClass,
-			ConfigurationListenerRegistry registry) {
-
-		if (ConfigurationProcessor.isConfigurationClass(candidateConfigurationClass))
-			return true;
-
-		if (registry != null)
-			for (ConfigurationListener cl : registry.getConfigurationListeners()) {
-				if (cl.understands(candidateConfigurationClass)) {
-					return true;
-				}
-			}
-		return false;
 	}
 
 	/**

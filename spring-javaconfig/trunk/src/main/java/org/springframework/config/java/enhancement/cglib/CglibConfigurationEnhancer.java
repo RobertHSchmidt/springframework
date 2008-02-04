@@ -16,6 +16,7 @@
 package org.springframework.config.java.enhancement.cglib;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.List;
 
 import net.sf.cglib.proxy.Callback;
@@ -126,5 +127,19 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 		Enhancer.registerCallbacks(configurationSubclass, callbacks);
 
 		return configurationSubclass.asSubclass(configurationClass);
+	}
+
+	/**
+	 * Ensures class is suitable for later enhancement, throws an exception
+	 * otherwise.
+	 * 
+	 * @param candidateConfigurationClass class to validate
+	 * @throws IllegalArgumentException if <var>configurationClass</var> is
+	 * declared final
+	 */
+	public static void validateSuitabilityForEnhancement(Class<?> configurationClass) {
+		if (Modifier.isFinal(configurationClass.getModifiers()))
+			throw new IllegalArgumentException(String.format(
+					"%s is not enhanceable: classes may not be declared final", configurationClass.getName()));
 	}
 }

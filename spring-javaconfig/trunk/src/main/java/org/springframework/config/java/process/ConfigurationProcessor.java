@@ -296,7 +296,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	public int processClass(Class<?> configurationClass) throws BeanDefinitionStoreException {
 		checkInit();
 
-		if (!ProcessUtils.validateConfigurationClass(configurationClass, configurationListenerRegistry))
+		if (!ConfigurationProcessor.isConfigurationClass(configurationClass, configurationListenerRegistry))
 			return 0;
 
 		int nBeanDefsGeneratedViaImport = processAnyImports(configurationClass);
@@ -354,6 +354,13 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		return beansCreated;
 	}
 
+	/**
+	 * Primary point of entry
+	 * 
+	 * @param beanName
+	 * @return
+	 * @throws BeanDefinitionStoreException
+	 */
 	public int processBean(String beanName) throws BeanDefinitionStoreException {
 		checkInit();
 		Assert.notNull(beanName, "beanName is required");
@@ -381,7 +388,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	protected int generateBeanDefinitions(String configurationBeanName, Class<?> configurationClass) {
 		int beanDefsGenerated = 0;
 
-		if (!ProcessUtils.validateConfigurationClass(configurationClass, configurationListenerRegistry))
+		if (!ConfigurationProcessor.isConfigurationClass(configurationClass, configurationListenerRegistry))
 			return beanDefsGenerated;
 
 		enhanceBeanDefinition(configurationBeanName, configurationClass);
@@ -599,6 +606,30 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 		return candidateConfigurationClass.isAnnotationPresent(Configuration.class)
 				|| !StandardBeanMethodProcessor.findBeanCreationMethods(candidateConfigurationClass).isEmpty();
+	}
+
+	/**
+	 * Check if the given class is a configuration.
+	 * 
+	 * Additionally, a listener registry is checked against the class.
+	 * 
+	 * @param candidateConfigurationClass
+	 * @param registry
+	 * @return
+	 */
+	static boolean isConfigurationClass(Class<?> candidateConfigurationClass, ConfigurationListenerRegistry registry) {
+
+		if (isConfigurationClass(candidateConfigurationClass)) {
+			CglibConfigurationEnhancer.validateSuitabilityForEnhancement(candidateConfigurationClass);
+			return true;
+		}
+
+		if (registry != null)
+			for (ConfigurationListener cl : registry.getConfigurationListeners())
+				if (cl.understands(candidateConfigurationClass))
+					return true;
+
+		return false;
 	}
 
 }

@@ -180,7 +180,7 @@ public class ConfigurationProcessorTests {
 		assertEquals(1, ProxiesDotb.count);
 	}
 
-	@Test(expected = BeanDefinitionStoreException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidFinalConfigurationClass() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
