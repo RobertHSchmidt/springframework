@@ -16,19 +16,25 @@
 package org.springframework.config.java.core;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 import org.springframework.config.java.annotation.ExternalValue;
-import org.springframework.config.java.util.ClassUtils;
 import org.springframework.config.java.valuesource.ValueResolutionException;
 import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.util.Assert;
 
-public class ExternalValueMethodProcessor implements BeanMethodProcessor {
+public class ExternalValueMethodProcessor extends AbstractBeanMethodProcessor {
 
 	private final ValueSource valueSource;
 
 	public ExternalValueMethodProcessor(ValueSource valueSource) {
+		super(ExternalValue.class);
 		this.valueSource = valueSource;
+	}
+
+	private ExternalValueMethodProcessor() {
+		super(ExternalValue.class);
+		this.valueSource = null;
 	}
 
 	public Object processMethod(Method m) throws ValueResolutionException {
@@ -47,8 +53,12 @@ public class ExternalValueMethodProcessor implements BeanMethodProcessor {
 		return valueSource.resolve(name, m.getReturnType());
 	}
 
-	public static boolean isCandidate(Method candidateMethod) {
-		return ClassUtils.hasAnnotation(candidateMethod, ExternalValue.class);
+	public static boolean isExternalValueCreationMethod(Method candidateMethod) {
+		return new ExternalValueMethodProcessor().understands(candidateMethod);
+	}
+
+	public static Collection<Method> findExternalValueCreationMethods(Class<?> configurationClass) {
+		return new ExternalValueMethodProcessor().findMatchingMethods(configurationClass);
 	}
 
 }

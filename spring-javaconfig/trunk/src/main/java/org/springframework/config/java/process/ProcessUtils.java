@@ -30,7 +30,6 @@ import org.springframework.config.java.annotation.DependencyCheck;
 import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.Meta;
 import org.springframework.config.java.annotation.Primary;
-import org.springframework.config.java.util.ClassUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -38,9 +37,11 @@ import org.springframework.util.StringUtils;
  * Processing utility class.
  * 
  * @author Costin Leau
- * 
+ * @author Chris Beams
  */
-abstract class ProcessUtils {
+final class ProcessUtils {
+	private ProcessUtils() {
+	}
 
 	/**
 	 * Return true if the given class is a suitable Configuration or false
@@ -51,7 +52,7 @@ abstract class ProcessUtils {
 	 * @param configurationListenerRegistry
 	 * @return
 	 */
-	public static boolean validateConfigurationClass(Class<?> configurationClass,
+	static boolean validateConfigurationClass(Class<?> configurationClass,
 			ConfigurationListenerRegistry configurationListenerRegistry) {
 
 		Assert.notNull(configurationClass, "configurationClass is required");
@@ -82,10 +83,10 @@ abstract class ProcessUtils {
 	 * @param registry
 	 * @return
 	 */
-	public static boolean isConfigurationClass(Class<?> candidateConfigurationClass,
+	private static boolean isConfigurationClass(Class<?> candidateConfigurationClass,
 			ConfigurationListenerRegistry registry) {
 
-		if (ClassUtils.isConfigurationClass(candidateConfigurationClass))
+		if (ConfigurationProcessor.isConfigurationClass(candidateConfigurationClass))
 			return true;
 
 		if (registry != null)
@@ -105,7 +106,7 @@ abstract class ProcessUtils {
 	 * @param beanCreationMethod
 	 * @throws BeanDefinitionStoreException
 	 */
-	public static void validateBeanCreationMethod(Method beanCreationMethod) throws BeanDefinitionStoreException {
+	static void validateBeanCreationMethod(Method beanCreationMethod) throws BeanDefinitionStoreException {
 		if (Modifier.isFinal(beanCreationMethod.getModifiers())) {
 			throw new BeanDefinitionStoreException("Bean creation method " + methodIdentifier(beanCreationMethod)
 					+ " may not be final");
@@ -120,7 +121,7 @@ abstract class ProcessUtils {
 		}
 	}
 
-	public static String methodIdentifier(Method m) {
+	private static String methodIdentifier(Method m) {
 		return m.getDeclaringClass().getName() + "." + m.getName();
 	}
 
@@ -134,7 +135,7 @@ abstract class ProcessUtils {
 	 * @param rbd bean definition, in Spring IoC container internal metadata
 	 * @param beanFactory bean factory we are executing in
 	 */
-	public static void copyAttributes(String beanName, Bean beanAnnotation, Configuration configuration,
+	static void copyAttributes(String beanName, Bean beanAnnotation, Configuration configuration,
 			RootBeanDefinition rbd, ConfigurableListableBeanFactory beanFactory) {
 
 		// singleton/scope
@@ -205,7 +206,7 @@ abstract class ProcessUtils {
 	 * @param clbf
 	 * @return
 	 */
-	public static Class<?> getBeanClass(String beanName, ConfigurableListableBeanFactory clbf) {
+	static Class<?> getBeanClass(String beanName, ConfigurableListableBeanFactory clbf) {
 
 		BeanDefinition bd = clbf.getBeanDefinition(beanName);
 
@@ -262,7 +263,7 @@ abstract class ProcessUtils {
 	 * @param def
 	 * @return
 	 */
-	public static boolean isEligibleForConfigurationProcessing(BeanDefinition def) {
+	private static boolean isEligibleForConfigurationProcessing(BeanDefinition def) {
 		if (def.isAbstract() || (!StringUtils.hasText(def.getBeanClassName()))) {
 			return false;
 		}

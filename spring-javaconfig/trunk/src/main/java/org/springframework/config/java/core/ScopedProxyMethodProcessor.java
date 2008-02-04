@@ -18,16 +18,23 @@ package org.springframework.config.java.core;
 import java.lang.reflect.Method;
 
 import org.springframework.config.java.annotation.aop.ScopedProxy;
-import org.springframework.config.java.util.ClassUtils;
 import org.springframework.config.java.util.ScopeUtils;
 import org.springframework.config.java.valuesource.ValueResolutionException;
+import org.springframework.util.Assert;
 
-public class ScopedProxyMethodProcessor implements BeanMethodProcessor {
+public class ScopedProxyMethodProcessor extends AbstractBeanMethodProcessor {
 
 	private final StandardBeanMethodProcessor delegate;
 
 	public ScopedProxyMethodProcessor(StandardBeanMethodProcessor delegate) {
+		super(ScopedProxy.class);
+		Assert.notNull(delegate, "BeanMethodProcessor argument is required");
 		this.delegate = delegate;
+	}
+
+	private ScopedProxyMethodProcessor() {
+		super(ScopedProxy.class);
+		this.delegate = null;
 	}
 
 	public String processMethod(Method m) throws ValueResolutionException {
@@ -40,8 +47,7 @@ public class ScopedProxyMethodProcessor implements BeanMethodProcessor {
 		return beanToReturn;
 	}
 
-	public static boolean isCandidate(Method candidateMethod) {
-		return ClassUtils.hasAnnotation(candidateMethod, ScopedProxy.class);
+	public static boolean isScopedProxyMethod(Method candidateMethod) {
+		return new ScopedProxyMethodProcessor().understands(candidateMethod);
 	}
-
 }

@@ -26,7 +26,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.util.ClassUtils;
 import org.springframework.config.java.util.DependencyUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
@@ -111,7 +110,7 @@ public class MethodBeanWrapper {
 				beanDef = ((BeanDefinitionRegistry) owningBeanFactory).getBeanDefinition(beanName);
 
 			// the definition was overridden (use that one)
-			if (beanDef.getAttribute(ClassUtils.JAVA_CONFIG_PKG) == null)
+			if (beanDef.getAttribute(Constants.JAVA_CONFIG_PKG) == null)
 				originallyCreatedBean = owningBeanFactory.getBean(beanName);
 
 			// if nothing was found, call the original code

@@ -16,16 +16,16 @@
 package org.springframework.config.java.core;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.naming.BeanNamingStrategy;
-import org.springframework.config.java.util.ClassUtils;
 import org.springframework.util.Assert;
 
-public class StandardBeanMethodProcessor implements BeanMethodProcessor {
+public class StandardBeanMethodProcessor extends AbstractBeanMethodProcessor {
 	private static final Log log = LogFactory.getLog(StandardBeanMethodProcessor.class);
 
 	private final ConfigurableListableBeanFactory owningBeanFactory;
@@ -39,6 +39,7 @@ public class StandardBeanMethodProcessor implements BeanMethodProcessor {
 	public StandardBeanMethodProcessor(ConfigurableListableBeanFactory owningBeanFactory,
 			BeanNameTrackingDefaultListableBeanFactory childFactory, BeanNamingStrategy namingStrategy,
 			MethodBeanWrapper beanWrapper) {
+		super(Bean.class);
 
 		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
 		Assert.notNull(childFactory);
@@ -49,6 +50,14 @@ public class StandardBeanMethodProcessor implements BeanMethodProcessor {
 		this.childTrackingFactory = childFactory;
 		this.namingStrategy = namingStrategy;
 		this.beanWrapper = beanWrapper;
+	}
+
+	private StandardBeanMethodProcessor() {
+		super(Bean.class);
+		this.owningBeanFactory = null;
+		this.childTrackingFactory = null;
+		this.namingStrategy = null;
+		this.beanWrapper = null;
 	}
 
 	public Object processMethod(Method targetMethod) {
@@ -84,7 +93,11 @@ public class StandardBeanMethodProcessor implements BeanMethodProcessor {
 
 	}
 
-	public static boolean isCandidate(Method candidateMethod) {
-		return ClassUtils.hasAnnotation(candidateMethod, Bean.class);
+	public static boolean isBeanCreationMethod(Method candidateMethod) {
+		return new StandardBeanMethodProcessor().understands(candidateMethod);
+	}
+
+	public static Collection<Method> findBeanCreationMethods(Class<?> configurationClass) {
+		return new StandardBeanMethodProcessor().findMatchingMethods(configurationClass);
 	}
 }
