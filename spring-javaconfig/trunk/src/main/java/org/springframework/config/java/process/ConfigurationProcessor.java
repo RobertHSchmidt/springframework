@@ -43,6 +43,7 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
 import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.core.Constants;
@@ -53,7 +54,6 @@ import org.springframework.config.java.enhancement.ConfigurationEnhancer;
 import org.springframework.config.java.enhancement.cglib.CglibConfigurationEnhancer;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.naming.MethodNameStrategy;
-import org.springframework.config.java.util.ArrayUtils;
 import org.springframework.config.java.valuesource.CompositeValueSource;
 import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.context.ApplicationEvent;
@@ -330,7 +330,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 		int nBeanDefsGenerated = 0;
 		Import importAnnotation = configurationClass.getAnnotation(Import.class);
-		Class<?>[] configurationClassesToImport = ArrayUtils.reverse(importAnnotation.value());
+		Class<?>[] configurationClassesToImport = reverse(importAnnotation.value());
 		for (Class<?> configurationClassToImport : configurationClassesToImport) {
 			// duplicate check - process only if we've never encountered before
 			if (!owningBeanFactory.containsBeanDefinition(configurationClassToImport.getName()))
@@ -552,6 +552,34 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		count++;
 
 		return count;
+	}
+
+	/**
+	 * Reverse the contents of <var>array</var>.
+	 * 
+	 * <p/>This method is used for reversing the order of classes passed into
+	 * constructors of
+	 * {@link org.springframework.config.java.context.JavaConfigApplicationContext}
+	 * or {@link org.springframework.config.java.annotation.Import}.
+	 * 
+	 * <p/>TODO: shouldn't actually be necessary. Root out the real issue with
+	 * ordering
+	 * 
+	 * @see JavaConfigApplicationContext#reverse()
+	 * @param array - array to reverse
+	 * @return reverse of <var>array</var>, null if <var>array</var> is null.
+	 */
+	private static Class<?>[] reverse(Class<?>[] array) {
+		if (array == null)
+			return array;
+
+		int size = array.length;
+		Class<?>[] reversed = new Class<?>[size];
+
+		for (int i = 0; i < size; i++)
+			reversed[size - i - 1] = array[i];
+
+		return reversed;
 	}
 
 	/**

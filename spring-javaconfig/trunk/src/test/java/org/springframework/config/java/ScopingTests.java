@@ -28,9 +28,8 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
+import org.springframework.config.java.core.ScopedProxyMethodProcessor;
 import org.springframework.config.java.process.ConfigurationProcessor;
-import org.springframework.config.java.support.ConfigurationSupport;
-import org.springframework.config.java.util.ScopeUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -47,7 +46,7 @@ public class ScopingTests {
 
 	private CustomScope customScope = new CustomScope();
 
-	public static class ScopedConfigurationClass extends ConfigurationSupport {
+	public static class ScopedConfigurationClass {
 
 		@Bean(scope = SCOPE)
 		public TestBean scopedClass() {
@@ -238,7 +237,7 @@ public class ScopingTests {
 
 		String beanName = "scopedProxyInterface";
 
-		String scopedBeanName = ScopeUtils.getScopedHiddenName(beanName);
+		String scopedBeanName = ScopedProxyMethodProcessor.resolveHiddenScopedProxyBeanName(beanName);
 
 		// get hidden bean
 		assertEquals(flag, spouse.getName());
@@ -271,7 +270,7 @@ public class ScopingTests {
 
 		String beanName = "scopedProxyClass";
 
-		String scopedBeanName = ScopeUtils.getScopedHiddenName(beanName);
+		String scopedBeanName = ScopedProxyMethodProcessor.resolveHiddenScopedProxyBeanName(beanName);
 
 		// get hidden bean
 		assertEquals(flag, spouse.getName());

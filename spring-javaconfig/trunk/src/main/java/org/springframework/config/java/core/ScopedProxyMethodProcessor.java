@@ -18,11 +18,12 @@ package org.springframework.config.java.core;
 import java.lang.reflect.Method;
 
 import org.springframework.config.java.annotation.aop.ScopedProxy;
-import org.springframework.config.java.util.ScopeUtils;
 import org.springframework.config.java.valuesource.ValueResolutionException;
 import org.springframework.util.Assert;
 
 public class ScopedProxyMethodProcessor extends AbstractBeanMethodProcessor {
+
+	private static final String TARGET_NAME_PREFIX = "scopedTarget.";
 
 	private final StandardBeanMethodProcessor delegate;
 
@@ -39,7 +40,7 @@ public class ScopedProxyMethodProcessor extends AbstractBeanMethodProcessor {
 
 	public String processMethod(Method m) throws ValueResolutionException {
 		String beanToReturn = delegate.getBeanName(m);
-		String scopedBean = ScopeUtils.getScopedHiddenName(beanToReturn);
+		String scopedBean = resolveHiddenScopedProxyBeanName(beanToReturn);
 
 		if (delegate.isCurrentlyInCreation(scopedBean))
 			beanToReturn = scopedBean;
@@ -50,4 +51,18 @@ public class ScopedProxyMethodProcessor extends AbstractBeanMethodProcessor {
 	public static boolean isScopedProxyMethod(Method candidateMethod) {
 		return new ScopedProxyMethodProcessor().understands(candidateMethod);
 	}
+
+	/**
+	 * Return the <i>hidden</i> name based on a scoped proxy bean name.
+	 * 
+	 * @param originalBeanName the scope proxy bean name as declared in the
+	 * Configuration-annotated class
+	 * 
+	 * @return the internally-used <i>hidden</i> bean name
+	 */
+	public static String resolveHiddenScopedProxyBeanName(String originalBeanName) {
+		Assert.hasText(originalBeanName);
+		return TARGET_NAME_PREFIX.concat(originalBeanName);
+	}
+
 }
