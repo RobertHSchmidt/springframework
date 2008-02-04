@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.config.java.util.DependencyUtils;
+import org.springframework.util.ClassUtils;
 
 /**
  * Registers all internally-required {@link ConfigurationListener} instances.
@@ -43,7 +43,7 @@ class ConfigurationListenerRegistry {
 		registerConfigurationListener(new AutoBeanConfigurationListener());
 		registerConfigurationListener(new ResourceBundlesConfigurationListener());
 		registerConfigurationListener(new ScopedProxyConfigurationListener());
-		if (DependencyUtils.isAopAvailable()) {
+		if (ClassUtils.isPresent("org.springframework.aop.TargetSource")) {
 			registerConfigurationListener(new HotSwapConfigurationListener());
 			registerConfigurationListener(new AspectJAdviceConfigurationListener());
 		}
