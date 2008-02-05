@@ -153,36 +153,47 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 		if (ac instanceof AbstractApplicationContext) {
 			owningApplicationContext = (AbstractApplicationContext) ac;
-
-			// TODO this override is a hack! Why is EventMulticaster null?
-			childApplicationContext = new GenericApplicationContext(childFactory, owningApplicationContext) {
-				@Override
-				public void publishEvent(ApplicationEvent event) {
-					log.debug("suppressed " + event);
-				}
-			};
-
-			List<BeanFactoryPostProcessor> bfpps = new LinkedList<BeanFactoryPostProcessor>();
-			for (Object o : owningApplicationContext.getBeansOfType(BeanFactoryPostProcessor.class).values())
-				if (!(o instanceof ConfigurationPostProcessor))
-					bfpps.add((BeanFactoryPostProcessor) o);
-
-			for (Object o : owningApplicationContext.getBeanFactoryPostProcessors())
-				if (!(o instanceof ConfigurationPostProcessor))
-					bfpps.add((BeanFactoryPostProcessor) o);
-
-			// Add all BeanFactoryPostProcessors to the child context
-			for (BeanFactoryPostProcessor bfpp : bfpps)
-				childApplicationContext.addBeanFactoryPostProcessor(bfpp);
-
-			// Piggyback on owning application context refresh
-			owningApplicationContext.addApplicationListener(new ApplicationListener() {
-				public void onApplicationEvent(ApplicationEvent ev) {
-					if (ev instanceof ContextRefreshedEvent)
-						ConfigurationProcessor.this.childApplicationContext.refresh();
-				}
-			});
+			childApplicationContext = createChildApplicationContext();
+			copyBeanPostProcessors(owningApplicationContext, childApplicationContext);
 		}
+	}
+
+	private ConfigurableApplicationContext createChildApplicationContext() {
+		ConfigurableApplicationContext child = new GenericApplicationContext(childFactory, owningApplicationContext) {
+			// TODO this override is a hack! Why is EventMulticaster null?
+			@Override
+			public void publishEvent(ApplicationEvent event) {
+				if (event instanceof ContextRefreshedEvent)
+					log.debug("suppressed " + event);
+			}
+		};
+
+		// Piggyback on owning application context refresh
+		owningApplicationContext.addApplicationListener(new ApplicationListener() {
+			public void onApplicationEvent(ApplicationEvent event) {
+				if (event instanceof ContextRefreshedEvent)
+					ConfigurationProcessor.this.childApplicationContext.refresh();
+			}
+		});
+
+		return child;
+	}
+
+	private void copyBeanPostProcessors(AbstractApplicationContext source, ConfigurableApplicationContext dest) {
+		// TODO: why do both of the iterations below? wouldn't one of the
+		// two suffice?
+		List<BeanFactoryPostProcessor> bfpps = new LinkedList<BeanFactoryPostProcessor>();
+		for (Object o : source.getBeansOfType(BeanFactoryPostProcessor.class).values())
+			if (!(o instanceof ConfigurationPostProcessor))
+				bfpps.add((BeanFactoryPostProcessor) o);
+
+		for (Object o : source.getBeanFactoryPostProcessors())
+			if (!(o instanceof ConfigurationPostProcessor))
+				bfpps.add((BeanFactoryPostProcessor) o);
+
+		// Add all BeanFactoryPostProcessors to the child context
+		for (BeanFactoryPostProcessor bfpp : bfpps)
+			dest.addBeanFactoryPostProcessor(bfpp);
 	}
 
 	/**
@@ -321,7 +332,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 				configurationBeanDefinition);
 
 		// include the configuration bean definition
-		return nBeanDefsGeneratedViaImport + (generateBeanDefinitions(configBeanName, configurationClass) + 1);
+		return nBeanDefsGeneratedViaImport + (processConfigurationBean(configBeanName, configurationClass) + 1);
 	}
 
 	private int processAnyImports(Class<?> configurationClass) {
@@ -355,47 +366,33 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	}
 
 	/**
-	 * Primary point of entry
+	 * Primary point of entry used by {@link ConfigurationPostProcessor}.
 	 * 
-	 * @param beanName
+	 * @param configurationBeanName
 	 * @return
 	 * @throws BeanDefinitionStoreException
 	 */
-	public int processBean(String beanName) throws BeanDefinitionStoreException {
+	int processConfigurationBean(String configurationBeanName, Class<?> configurationClass) {
 		checkInit();
-		Assert.notNull(beanName, "beanName is required");
-		Class<?> clazz = ProcessUtils.getBeanClass(beanName, owningBeanFactory);
+		Assert.notNull(configurationBeanName, "beanName is required");
+		Assert.notNull(configurationClass, "configurationClass is required");
 
-		// no class found
-		if (clazz == null) {
-			return 0;
-		}
+		enhanceConfigurationClassAndUpdateBeanDefinition(configurationClass, configurationBeanName);
 
-		// otherwise start configuration processing
-		return generateBeanDefinitions(beanName, clazz);
+		return generateBeanDefinitions(configurationBeanName, configurationClass);
 	}
 
 	/**
 	 * Modify metadata by emitting new bean definitions based on the bean
-	 * creation methods in this Java bytecode. Also, updates the configuration
-	 * bytecode definition.
+	 * creation methods in this Java bytecode.
 	 * 
 	 * @param configurationBeanName name of the bean containing the factory
 	 * methods
-	 * @param configurationClass class of the configurer bean instance
+	 * @param configurationClass enhanced configuration class
 	 * @return number of bean definitions created
 	 */
 	protected int generateBeanDefinitions(String configurationBeanName, Class<?> configurationClass) {
 		int beanDefsGenerated = 0;
-
-		if (!ConfigurationProcessor.isConfigurationClass(configurationClass, configurationListenerRegistry))
-			return beanDefsGenerated;
-
-		enhanceBeanDefinition(configurationBeanName, configurationClass);
-
-		// TODO: return bean defs count here? increment beanDefsGenerated?
-		// TODO: make sure to check out calling setParent()!
-		// processAnyDeclaringClasses(configurationClass);
 
 		beanDefsGenerated += processAnyConfigurationListeners(configurationBeanName, configurationClass);
 
@@ -467,7 +464,8 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		return beanDefsGenerated;
 	}
 
-	private void enhanceBeanDefinition(final String configurationBeanName, Class<?> configurationClass) {
+	private void enhanceConfigurationClassAndUpdateBeanDefinition(Class<?> configurationClass,
+			String configurationBeanName) {
 		AbstractBeanDefinition definition = (AbstractBeanDefinition) owningBeanFactory
 				.getBeanDefinition(configurationBeanName);
 

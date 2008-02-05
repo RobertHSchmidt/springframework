@@ -157,46 +157,33 @@ final class ProcessUtils {
 		if (!(isEligibleForConfigurationProcessing(bd) && bd instanceof AbstractBeanDefinition))
 			return null;
 
-		Class<?> clazz = null;
-
 		// required for updating the bean class
 		AbstractBeanDefinition definition = (AbstractBeanDefinition) bd;
 
 		// TODO: check for FactoryBean/factory-method type of beans
 		// hard since we are a BFPP and it's impossible to get the actual
-		// configuration instance/class
-		// w/o initilizing the factory-method/FB even for non @Configuration
-		// cases.
+		// configuration instance/class w/o initilizing the factory-method/FB
+		// even for non @Configuration cases.
 
 		if (definition.hasBeanClass())
-			clazz = definition.getBeanClass();
+			return definition.getBeanClass();
 
-		else {
-			// load the class (changes in the lazy loading code part of
-			// spring core)
+		// load the class (changes in the lazy loading code part of
+		// spring core)
 
-			// TODO: add support for factory-method beans (and other
-			// not-normal beans)
-			// this requires transforming the BFPP into a BPP and might
-			// require multiple instantion
-			// of the configuration class.
-			if (bd.getBeanClassName() != null) {
-				try {
-					clazz = org.springframework.util.ClassUtils.forName(bd.getBeanClassName());
-				}
-				catch (ClassNotFoundException e) {
-					throw new IllegalArgumentException("Bean class '" + bd.getBeanClassName() + "' not found");
-				}
+		// TODO: add support for factory-method beans (and other not-normal
+		// beans) this requires transforming the BFPP into a BPP and might
+		// require multiple instantion of the configuration class.
+		if (bd.getBeanClassName() != null) {
+			try {
+				return org.springframework.util.ClassUtils.forName(bd.getBeanClassName());
 			}
-			else {
-				// this branch should be never reached as we do the
-				// filtering
-				// in #isEligibleForConfigurationProcessing
-				throw new IllegalArgumentException("invalid bean definition " + beanName);
+			catch (ClassNotFoundException e) {
+				throw new IllegalArgumentException("Bean class '" + bd.getBeanClassName() + "' not found");
 			}
 		}
 
-		return clazz;
+		return null;
 	}
 
 	/**
