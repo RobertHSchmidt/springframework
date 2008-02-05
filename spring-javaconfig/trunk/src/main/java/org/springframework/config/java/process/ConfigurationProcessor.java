@@ -351,20 +351,6 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		return nBeanDefsGenerated;
 	}
 
-	private int processAnyInnerClasses(final Class<?> configClass) {
-		int beansCreated = 0;
-
-		// TODO: remove boolean - convenient switch while developing SJC-38.
-		boolean PROCESS_INNER_CLASSES = false;
-		if (PROCESS_INNER_CLASSES)
-			for (Class<?> innerClass : configClass.getDeclaredClasses())
-				if (Modifier.isStatic(innerClass.getModifiers())
-						&& (owningBeanFactory.getBeansOfType(innerClass).isEmpty()))
-					beansCreated += processClass(innerClass);
-
-		return beansCreated;
-	}
-
 	/**
 	 * Primary point of entry used by {@link ConfigurationPostProcessor}.
 	 * 
@@ -399,8 +385,6 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		beanDefsGenerated += processAnyLocalBeanDefinitions(configurationBeanName, configurationClass);
 
 		beanDefsGenerated += processAnyImports(configurationClass);
-
-		beanDefsGenerated += processAnyInnerClasses(configurationClass);
 
 		return beanDefsGenerated;
 	}
