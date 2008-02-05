@@ -43,6 +43,7 @@ class ConfigurationListenerRegistry {
 		registerConfigurationListener(new AutoBeanConfigurationListener());
 		registerConfigurationListener(new ResourceBundlesConfigurationListener());
 		registerConfigurationListener(new ScopedProxyConfigurationListener());
+		registerConfigurationListener(new ImportConfigurationListener());
 		if (ClassUtils.isPresent("org.springframework.aop.TargetSource")) {
 			registerConfigurationListener(new HotSwapConfigurationListener());
 			registerConfigurationListener(new AspectJAdviceConfigurationListener());

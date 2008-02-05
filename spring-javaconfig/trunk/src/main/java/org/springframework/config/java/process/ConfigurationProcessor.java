@@ -42,7 +42,6 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
 import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
@@ -106,7 +105,9 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	/**
 	 * Bean factory that this post processor runs in
 	 */
-	private final ConfigurableListableBeanFactory owningBeanFactory;
+	// TODO: make final once again. Currently ImportConfigurationListener is
+	// using this.
+	final ConfigurableListableBeanFactory owningBeanFactory;
 
 	/**
 	 * Used to hold Spring AOP advisors and other internal objects while
@@ -310,8 +311,6 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		if (!ConfigurationProcessor.isConfigurationClass(configurationClass, configurationListenerRegistry))
 			return 0;
 
-		int nBeanDefsGeneratedViaImport = processAnyImports(configurationClass);
-
 		// register the configuration as a bean to allow Spring to use it for
 		// creating the actual objects
 
@@ -332,23 +331,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 				configurationBeanDefinition);
 
 		// include the configuration bean definition
-		return nBeanDefsGeneratedViaImport + (processConfigurationBean(configBeanName, configurationClass) + 1);
-	}
-
-	private int processAnyImports(Class<?> configurationClass) {
-		if (!configurationClass.isAnnotationPresent(Import.class))
-			return 0;
-
-		int nBeanDefsGenerated = 0;
-		Import importAnnotation = configurationClass.getAnnotation(Import.class);
-		Class<?>[] configurationClassesToImport = reverse(importAnnotation.value());
-		for (Class<?> configurationClassToImport : configurationClassesToImport) {
-			// duplicate check - process only if we've never encountered before
-			if (!owningBeanFactory.containsBeanDefinition(configurationClassToImport.getName()))
-				nBeanDefsGenerated += processClass(configurationClassToImport);
-		}
-
-		return nBeanDefsGenerated;
+		return (processConfigurationBean(configBeanName, configurationClass) + 1);
 	}
 
 	/**
@@ -383,8 +366,6 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		beanDefsGenerated += processAnyConfigurationListeners(configurationBeanName, configurationClass);
 
 		beanDefsGenerated += processAnyLocalBeanDefinitions(configurationBeanName, configurationClass);
-
-		beanDefsGenerated += processAnyImports(configurationClass);
 
 		return beanDefsGenerated;
 	}
@@ -558,7 +539,8 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 * @param array - array to reverse
 	 * @return reverse of <var>array</var>, null if <var>array</var> is null.
 	 */
-	private static Class<?>[] reverse(Class<?>[] array) {
+	@Deprecated
+	static Class<?>[] reverse(Class<?>[] array) {
 		if (array == null)
 			return array;
 
