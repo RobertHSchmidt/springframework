@@ -38,10 +38,8 @@ import org.springframework.util.Assert;
 class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
 
 	@Override
-	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration, ConfigurationProcessor cp,
+	public void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration, ConfigurationProcessor cp,
 			String configurerBeanName, Class<?> configurerClass, Method m, Bean beanAnnotation) {
-
-		int count = 0;
 
 		ScopedProxy proxyAnnotation = m.getAnnotation(ScopedProxy.class);
 		if (proxyAnnotation != null) {
@@ -52,7 +50,7 @@ class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
 						"[%s] contains an invalid annotation declaration: @ScopedProxy "
 								+ "cannot be used on a singleton/prototype bean", m));
 
-			count++;
+			cp.beanDefsGenerated++;
 			// TODO: could the code duplication be removed?
 			// copied from ScopedProxyBeanDefinitionDecorator
 
@@ -83,18 +81,15 @@ class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
 			// replace the original bean definition with the target one
 			beanDefinitionRegistration.rbd = scopedProxyDefinition;
 		}
-
-		return count;
 	}
 
 	@Override
-	public int otherMethod(ConfigurationProcessor cp, String configurerBeanName, Class<?> configurerClass, Method m) {
+	public void otherMethod(ConfigurationProcessor cp, String configurerBeanName, Class<?> configurerClass, Method m) {
 		// catch invalid declarations
 		if (m.isAnnotationPresent(ScopedProxy.class))
 			throw new BeanDefinitionStoreException(String.format(
 					"[%s] contains an invalid annotation declaration: @ScopedProxy "
 							+ "should be used along side @Bean, not by itself", m));
-		return 0;
 	}
 
 	@Override

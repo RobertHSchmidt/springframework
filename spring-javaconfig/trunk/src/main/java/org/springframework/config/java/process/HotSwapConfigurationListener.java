@@ -40,13 +40,11 @@ class HotSwapConfigurationListener extends ConfigurationListenerSupport {
 	private List<Method> hotswapMethods = new LinkedList<Method>();
 
 	@Override
-	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration, ConfigurationProcessor cp,
+	public void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration, ConfigurationProcessor cp,
 			String configurerBeanName, Class<?> configurerClass, Method m, Bean beanAnnotation) {
 		if (AnnotationUtils.findAnnotation(m, HotSwappable.class) != null) {
 			hotswapMethods.add(m);
 		}
-
-		return 0;
 	}
 
 	@Override

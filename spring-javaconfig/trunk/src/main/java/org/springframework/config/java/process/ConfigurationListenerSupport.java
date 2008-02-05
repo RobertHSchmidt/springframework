@@ -37,20 +37,17 @@ public abstract class ConfigurationListenerSupport implements ConfigurationListe
 		return false;
 	}
 
-	public int configurationClass(ConfigurationProcessor configurationProcessor, String configurerBeanName,
+	public void configurationClass(ConfigurationProcessor configurationProcessor, String configurerBeanName,
 			Class<?> configurerClass) {
-		return 0;
 	}
 
-	public int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
+	public void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
 			ConfigurationProcessor configurationProcessor, String configurerBeanName, Class<?> configurerClass,
 			Method m, Bean beanAnnotation) {
-		return 0;
 	}
 
-	public int otherMethod(ConfigurationProcessor configurationProcessor, String configurerBeanName,
+	public void otherMethod(ConfigurationProcessor configurationProcessor, String configurerBeanName,
 			Class<?> configurerClass, Method m) {
-		return 0;
 	}
 
 	public boolean processBeanMethodReturnValue(BeanFactory childFactory, Object originallyCreatedBean, Method method,

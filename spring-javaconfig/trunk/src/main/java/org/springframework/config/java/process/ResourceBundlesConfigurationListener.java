@@ -34,7 +34,7 @@ class ResourceBundlesConfigurationListener extends ConfigurationListenerSupport 
 	}
 
 	@Override
-	public int configurationClass(ConfigurationProcessor cp, String configurerBeanName, Class<?> configurerClass) {
+	public void configurationClass(ConfigurationProcessor cp, String configurerBeanName, Class<?> configurerClass) {
 		ResourceBundles rbs = configurerClass.getAnnotation(ResourceBundles.class);
 		ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
 		ms.setResourceLoader(cp.getResourceLoader());
@@ -43,7 +43,5 @@ class ResourceBundlesConfigurationListener extends ConfigurationListenerSupport 
 				+ "] defined in class " + configurerClass.getName());
 		cp.addValueSource(new MessageSourceValueSource(ms));
 		// TODO how do we know the properties were found?
-
-		return 0;
 	}
 }
