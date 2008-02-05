@@ -34,7 +34,7 @@ public class ChunkingStepExecutorTests extends TestCase {
 
 	public void testRecoveryCommit() {
 		StubRecoveryManager recoveryManager = new StubRecoveryManager();
-		ChunkingStepExecutor executor = new ChunkingStepExecutor(new StubChunkReader(1), new StubChunkProcessor(false),
+		ChunkingStep executor = new ChunkingStep(new StubChunkReader(1), new StubChunkProcessor(false),
 		        new ResourcelessTransactionManager(), recoveryManager);
 		executor.execute();
 		assertTrue(recoveryManager.getMarkCalled());
@@ -43,7 +43,7 @@ public class ChunkingStepExecutorTests extends TestCase {
 
 	public void testRecoveryRollback() {
 		StubRecoveryManager recoveryManager = new StubRecoveryManager();
-		ChunkingStepExecutor executor = new ChunkingStepExecutor(new StubChunkReader(1), new StubChunkProcessor(true),
+		ChunkingStep executor = new ChunkingStep(new StubChunkReader(1), new StubChunkProcessor(true),
 		        new ResourcelessTransactionManager(), recoveryManager);
 		try {
 			executor.execute();
