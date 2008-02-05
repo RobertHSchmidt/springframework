@@ -11,17 +11,16 @@ class ImportConfigurationListener extends ConfigurationListenerSupport {
 	}
 
 	@Override
-	public int configurationClass(ConfigurationProcessor configurationProcessor, String configurerBeanName,
+	public void configurationClass(ConfigurationProcessor configurationProcessor, String configurerBeanName,
 			Class<?> configurationClass) {
-		int nBeanDefsGenerated = 0;
 		Import importAnnotation = configurationClass.getAnnotation(Import.class);
 		Class<?>[] configurationClassesToImport = reverse(importAnnotation.value());
 		for (Class<?> configurationClassToImport : configurationClassesToImport) {
 			// duplicate check - process only if we've never encountered before
 			if (!configurationProcessor.owningBeanFactory.containsBeanDefinition(configurationClassToImport.getName()))
-				nBeanDefsGenerated += configurationProcessor.processClass(configurationClassToImport);
+				configurationProcessor.beanDefsGenerated += configurationProcessor
+						.processClass(configurationClassToImport);
 		}
-		return nBeanDefsGenerated;
 	}
 
 	/**

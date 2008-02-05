@@ -305,6 +305,12 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 * @throws BeanDefinitionStoreException if no bean definitions are found
 	 */
 	public int processClass(Class<?> configurationClass) throws BeanDefinitionStoreException {
+		boolean isEntryPoint = false;
+		if (beanDefsGenerated == -1) {
+			isEntryPoint = true;
+			beanDefsGenerated = 0;
+		}
+
 		checkInit();
 
 		if (!ConfigurationProcessor.isConfigurationClass(configurationClass, configurationListenerRegistry))
@@ -329,9 +335,18 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		((DefaultListableBeanFactory) owningBeanFactory).registerBeanDefinition(configBeanName,
 				configurationBeanDefinition);
 
-		// include the configuration bean definition
-		return (processConfigurationBean(configBeanName, configurationClass) + 1);
+		try {
+			processConfigurationBean(configBeanName, configurationClass);
+			// include the configuration bean definition
+			return ++beanDefsGenerated;
+		}
+		finally {
+			if (isEntryPoint)
+				beanDefsGenerated = -1;
+		}
 	}
+
+	int beanDefsGenerated = -1;
 
 	/**
 	 * Primary point of entry used by {@link ConfigurationPostProcessor}.
@@ -340,14 +355,29 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 * @return
 	 * @throws BeanDefinitionStoreException
 	 */
-	int processConfigurationBean(String configurationBeanName, Class<?> configurationClass) {
-		checkInit();
-		Assert.notNull(configurationBeanName, "beanName is required");
-		Assert.notNull(configurationClass, "configurationClass is required");
+	void processConfigurationBean(String configurationBeanName, Class<?> configurationClass) {
+		boolean isEntryPoint = false;
+		if (beanDefsGenerated == -1) {
+			isEntryPoint = true;
+			beanDefsGenerated = 0;
+		}
 
-		enhanceConfigurationClassAndUpdateBeanDefinition(configurationClass, configurationBeanName);
+		try {
+			checkInit();
 
-		return generateBeanDefinitions(configurationBeanName, configurationClass);
+			Assert.notNull(configurationBeanName, "beanName is required");
+			Assert.notNull(configurationClass, "configurationClass is required");
+
+			enhanceConfigurationClassAndUpdateBeanDefinition(configurationClass, configurationBeanName);
+
+			generateBeanDefinitions(configurationBeanName, configurationClass);
+
+			return;
+		}
+		finally {
+			if (isEntryPoint)
+				beanDefsGenerated = -1;
+		}
 	}
 
 	/**
@@ -359,23 +389,18 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 * @param configurationClass enhanced configuration class
 	 * @return number of bean definitions created
 	 */
-	protected int generateBeanDefinitions(String configurationBeanName, Class<?> configurationClass) {
-		int beanDefsGenerated = 0;
+	protected void generateBeanDefinitions(String configurationBeanName, Class<?> configurationClass) {
 
-		beanDefsGenerated += processAnyConfigurationListeners(configurationBeanName, configurationClass);
+		processAnyConfigurationListeners(configurationBeanName, configurationClass);
 
-		beanDefsGenerated += processAnyLocalBeanDefinitions(configurationBeanName, configurationClass);
-
-		return beanDefsGenerated;
+		processAnyLocalBeanDefinitions(configurationBeanName, configurationClass);
 	}
 
-	private int processAnyLocalBeanDefinitions(final String configurationBeanName, final Class<?> configurationClass) {
+	private void processAnyLocalBeanDefinitions(final String configurationBeanName, final Class<?> configurationClass) {
 		// Only want to consider the most specific bean creation method, in the
 		// case of overrides
 
 		// use an int array just so we can have a final variable
-		final int[] beanDefsGenerated = new int[] { 0 };
-
 		// contains the beanNames resolved based on the method signature
 		final Set<String> noArgMethodsSeen = new HashSet<String>();
 
@@ -402,30 +427,25 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 							return;
 						}
 						noArgMethodsSeen.add(beanName);
-						beanDefsGenerated[0] += generateBeanDefinitionFromBeanCreationMethod(owningBeanFactory,
-								configurationBeanName, configurationClass, beanName, m, beanAnnotation);
+						generateBeanDefinitionFromBeanCreationMethod(owningBeanFactory, configurationBeanName,
+								configurationClass, beanName, m, beanAnnotation);
 					}
 				}
 				else {
 					for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
-						beanDefsGenerated[0] += cml.otherMethod(ConfigurationProcessor.this, configurationBeanName,
-								configurationClass, m);
+						cml.otherMethod(ConfigurationProcessor.this, configurationBeanName, configurationClass, m);
 					}
 				}
 			}
 		});
-
-		return beanDefsGenerated[0];
 	}
 
-	private int processAnyConfigurationListeners(final String configurationBeanName, final Class<?> configurationClass) {
-		int beanDefsGenerated = 0;
+	private void processAnyConfigurationListeners(final String configurationBeanName, final Class<?> configurationClass) {
 
 		for (ConfigurationListener cl : configurationListenerRegistry.getConfigurationListeners())
 			if (cl.understands(configurationClass))
-				beanDefsGenerated += cl.configurationClass(this, configurationBeanName, configurationClass);
+				cl.configurationClass(this, configurationBeanName, configurationClass);
 
-		return beanDefsGenerated;
 	}
 
 	private void enhanceConfigurationClassAndUpdateBeanDefinition(Class<?> configurationClass,
@@ -464,11 +484,10 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 * @param beanAnnotation the Bean annotation available on the creation
 	 * method.
 	 */
-	protected int generateBeanDefinitionFromBeanCreationMethod(ConfigurableListableBeanFactory beanFactory,
+	protected void generateBeanDefinitionFromBeanCreationMethod(ConfigurableListableBeanFactory beanFactory,
 			String configurerBeanName, Class<?> configurerClass, String beanName, Method beanCreationMethod,
 			Bean beanAnnotation) {
 
-		int count = 0;
 		if (log.isDebugEnabled()) {
 			log.debug("Found bean creation method " + beanCreationMethod);
 		}
@@ -501,13 +520,13 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		beanDefinitionRegistration.hide = !Modifier.isPublic(beanCreationMethod.getModifiers());
 
 		for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
-			count += cml.beanCreationMethod(beanDefinitionRegistration, this, configurerBeanName, configurerClass,
+			cml.beanCreationMethod(beanDefinitionRegistration, this, configurerBeanName, configurerClass,
 					beanCreationMethod, beanAnnotation);
 		}
 
 		// allow registration bypass
 		if (beanDefinitionRegistration.rbd == null) {
-			return count;
+			return;
 		}
 
 		if (beanDefinitionRegistration.hide) {
@@ -518,9 +537,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 					beanDefinitionRegistration.rbd);
 		}
 
-		count++;
-
-		return count;
+		beanDefsGenerated++;
 	}
 
 	/**

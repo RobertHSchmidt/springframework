@@ -48,18 +48,16 @@ class AspectJAdviceConfigurationListener extends AbstractAopConfigurationListene
 	 * Check whether inheritance hierarchy is consistent
 	 */
 	@Override
-	public int configurationClass(ConfigurationProcessor cp, String configurerBeanName, Class<?> configurerClass) {
+	public void configurationClass(ConfigurationProcessor cp, String configurerBeanName, Class<?> configurerClass) {
 		if (aspectJAdvisorFactory.isAspect(configurerClass)) {
 			aspectJAdvisorFactory.validate(configurerClass);
 		}
-		return 0;
 	}
 
 	@Override
-	public int otherMethod(ConfigurationProcessor cp, String configurerBeanName, final Class<?> configurerClass,
+	public void otherMethod(ConfigurationProcessor cp, String configurerBeanName, final Class<?> configurerClass,
 			Method aspectJAdviceMethod) {
 
-		int count = 0;
 		try {
 			// If it's a valid aspect, we'll continue in this method
 			// Using validate() rather than isAspect() ensures that illegal
@@ -69,7 +67,7 @@ class AspectJAdviceConfigurationListener extends AbstractAopConfigurationListene
 		}
 		catch (NotAnAtAspectException ex) {
 			// Nothing to do
-			return count;
+			return;
 		}
 
 		int declarationOrderInAspect = 0;
@@ -89,15 +87,15 @@ class AspectJAdviceConfigurationListener extends AbstractAopConfigurationListene
 			// TODO this is required to cover named pointcuts, but seems a bit
 			// hacky
 			if (advice == null) {
-				return count;
+				return;
 			}
 
 			addAdvice(adviceName, ((PointcutAdvisor) pa).getPointcut(), advice, cp);
 			// added the advice as singleton
-			count++;
+			cp.beanDefsGenerated++;
 		}
 
-		return count;
+		return;
 	}
 
 	/**

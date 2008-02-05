@@ -38,10 +38,9 @@ class AutoBeanConfigurationListener extends ConfigurationListenerSupport {
 	}
 
 	@Override
-	public int otherMethod(ConfigurationProcessor configurationProcessor, String configurerBeanName,
+	public void otherMethod(ConfigurationProcessor configurationProcessor, String configurerBeanName,
 			Class<?> configurerClass, Method m) {
 		AutoBean autoBean = AnnotationUtils.findAnnotation(m, AutoBean.class);
-		int count = 0;
 		if (autoBean != null) {
 			// Create a bean definition for this class
 			if (m.getReturnType().isInterface()) {
@@ -53,8 +52,8 @@ class AutoBeanConfigurationListener extends ConfigurationListenerSupport {
 			bd.setAutowireMode(autoBean.autowire().value());
 			configurationProcessor.registerBeanDefinition(m.getName(), bd, !Modifier.isPublic(m.getModifiers()));
 			// one bean definition created
-			count++;
+			configurationProcessor.beanDefsGenerated++;
 		}
-		return count;
+
 	}
 }

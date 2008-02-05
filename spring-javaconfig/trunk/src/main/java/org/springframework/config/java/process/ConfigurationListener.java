@@ -49,7 +49,7 @@ public interface ConfigurationListener extends BeanMethodReturnValueProcessor {
 	 * @param configurerClass
 	 * @return number of bean definitions created
 	 */
-	int configurationClass(ConfigurationProcessor configurationProcessor, String configurerBeanName,
+	void configurationClass(ConfigurationProcessor configurationProcessor, String configurerBeanName,
 			Class<?> configurerClass);
 
 	/**
@@ -70,7 +70,7 @@ public interface ConfigurationListener extends BeanMethodReturnValueProcessor {
 	 * one. The value should be different from zero if wrapping bean definitions
 	 * are created besides the normal &#64;Bean discovery process
 	 */
-	int beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
+	void beanCreationMethod(BeanDefinitionRegistration beanDefinitionRegistration,
 			ConfigurationProcessor configurationProcessor, String configurerBeanName, Class<?> configurerClass,
 			Method m, Bean beanAnnotation);
 
@@ -84,8 +84,8 @@ public interface ConfigurationListener extends BeanMethodReturnValueProcessor {
 	 * @param m method on configurer class
 	 * @return number of newly bean definitions created
 	 */
-	int otherMethod(ConfigurationProcessor configurationProcessor, String configurerBeanName, Class<?> configurerClass,
-			Method m);
+	void otherMethod(ConfigurationProcessor configurationProcessor, String configurerBeanName,
+			Class<?> configurerClass, Method m);
 
 	/**
 	 * Help to process the return value of a bean definition.
