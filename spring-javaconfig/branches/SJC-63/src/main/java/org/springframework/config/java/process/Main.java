@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.TestBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.process.ConfigurationListener.BeanDefinitionRegistration;
@@ -29,12 +28,12 @@ public class Main {
 @Configuration
 class MyConfig {
 	@Bean
-	public TestBean beanMethod() {
-		return new TestBean("aBean");
+	public Object beanMethod() {
+		return new Object();
 	}
 
-	public TestBean nonBeanMethod() {
-		return new TestBean("aNonBean");
+	public Object nonBeanMethod() {
+		return new Object();
 	}
 
 }
