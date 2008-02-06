@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"
+>
+
+<beans>
+
+	<bean 
+		class="org.springframework.config.java.process.ConfigurationPostProcessor" />
+	
+	<bean id="dependsOnTestBean"
+		class="org.springframework.beans.DependsOnTestBean"
+		autowire="byType"
+		dependency-check="all" />
+	
+	<bean id="dependsOnTestBeanExplicit"
+		class="org.springframework.beans.DependsOnTestBean">
+		
+		<!--
+			This bean will be created by the InjectedConfig class processed below.
+		-->
+		<property name="testBean" ref="testBean" />
+	</bean>
+		
+	<bean 
+		class="org.springframework.config.java.ConfigurationPostProcessorTests$InjectedConfig" >
+		<property name="age" value="33" />
+		</bean>
+	
+	
+</beans>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="modularizing-configurations">
+  <title>Modularizing configurations</title>
+
+  <para>While the simplest configuration may be expressed as a single
+  class that exposes several beans, it is often desirable to
+  <emphasis>modularize</emphasis> configurations for reuse and
+  clarity.</para>
+
+  <section>
+    <title>Referencing externally defined beans</title>
+
+    <para>One configuration class may need to reference a bean defined in
+    another configuration class (or in XML, for that matter). The
+    <classname>@ExternalBean</classname> annotation provides just such a
+    mechanism. When JavaConfig encounters a method annotated as
+    <classname>@ExternalBean</classname>, it replaces that method
+    definition with a lookup to the enclosing bean factory for a bean with
+    the same name as the method name.</para>
+
+    <programlisting>@Configuration
+public class ConfigOne {
+    @Bean
+    public AccountRepository accountRepository() {
+        <lineannotation>// create and return an <classname>AccountRepository</classname> object</lineannotation>
+    }
+}
+
+@Configuration
+public abstract class ConfigTwo {
+    @Bean
+    public TransferService transferService() {
+        return new TransferServiceImpl(accountRepository());
+    }
+
+    @ExternalBean
+    public abstract AccountRepository accountRepository();
+}
+</programlisting>
+
+    <para>Given that both these configuration classes are supplied to the
+    application context at runtime, JavaConfig will be able to resolve the
+    '<literal>accountRepository</literal>'
+    <classname>@ExternalBean</classname> by name and everything will
+    'wire-up' accordingly.</para>
+
+    <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(ConfigOne.class, ConfigTwo.class);</programlisting>
+  </section>
+
+  <section id="externalizing-string-values">
+    <title>Working with externalized string values</title>
+
+    <sidebar>
+      <title>What about
+      <classname>PropertyOverrideConfigurer</classname>?</title>
+
+      <para>Those familiar with XML configuration will notice that there
+      is not a direct equivalent for the popular
+      <classname>PropertyOverrideConfigurer</classname>. However, the
+      combination of <classname>@ResourceBundles</classname> and
+      <classname>@ExternalValue</classname> is roughly equivalent to the
+      use of the <classname>PropertyPlaceholderConfigurer</classname>.
+      Just as many users do not wish to store usernames, passwords and
+      other sensitive or environment-specific values in XML, neither would
+      we want to do so in Java configurations. Interestingly, the
+      functionality of <classname>PropertyOverrideConfigurer</classname>
+      is not hard to emulate, either. Simply give the method a default
+      return value.</para>
+
+      <para>
+        <emphasis>TODO (chris): this last bit is yet another reason why
+        @ExternalValue should be a field-level annotation, rathor than the
+        awkward 'abstract method' approach. Giving a field a default value
+        is very natural for Java programmers. Indeed, a much more natural
+        concept than having to learn about
+        <classname>BeanFactoryPostProcessor</classname>s, and what
+        Proprty(Placeholder|Override)Configurer are all about.</emphasis>
+      </para>
+    </sidebar>
+
+    <para>Access externally defined string values such as usernames,
+    passwords, and the like using <classname>@ResourceBundles</classname>
+    and <classname>@ExternalValue</classname>.</para>
+
+    <programlisting>@ResourceBundles("org/springframework/config/java/simple")
+@Configuration
+public abstract static class ConfigWithPlaceholders {
+    @ExternalValue("datasource.username")
+    public abstract String username();
+
+    @Bean
+    public TestBean testBean() {
+        return new TestBean(username());
+    }
+}
+</programlisting>
+
+    <para>The '<literal>org/springframework/config/java/simple</literal>'
+    argument to <classname>@ResourceBundles</classname> tells JavaConfig
+    that there must be a file in the classpath at
+    <literal>org/springframework/config/java/simple[locale].[properties|xml]</literal>
+    from which key/value pairs can be read. For example:</para>
+
+    <programlisting>datasource.username=scott
+datasource.password=tiger
+...
+</programlisting>
+
+    <para>Multiple values can be supplied to
+    <classname>@ResourceBundles</classname>:</para>
+
+    <programlisting>@ResourceBundles({"com/foo/myapp/simple", "com/foo/myapp/complex"})
+@Configuration
+public class AppConfig {
+    <lineannotation>// ...</lineannotation>
+}
+</programlisting>
+  </section>
+
+  <section id="importing-configurations">
+    <title>Importing configurations</title>
+
+    <para>Much like the XML <code>&lt;import/&gt;</code> element,
+    configuration classes can now import one another, for an additional
+    tool in the modularization toolbox.</para>
+
+    <programlisting>@Configuration
+@Import(OtherConfig.class)
+public class MyConfig {
+    <lineannotation>// <classname>@Bean</classname> definitions</lineannotation>
+}
+</programlisting>
+  </section>
+
+  <section>
+    <title>ConfigurationSupport</title>
+
+    <para>As a convenience, <classname>@Configuration</classname> classses
+    can extend <classname>ConfigurationSupport</classname>, primarily in
+    order to facilitate easy lookup of beans from the enclosing
+    <classname>BeanFactory</classname> /
+    <classname>ApplicationContext</classname>.</para>
+
+    <programlisting>@Configuration
+public class AppConfig extends ConfigurationSupport {
+    @Bean
+    public Service serviceA() {
+        DataSource dataSource = (DataSource) this.getBean("dataSource"); <lineannotation>// provided by base class</lineannotation>
+        <lineannotation>// ...</lineannotation>
+    }
+}
+</programlisting>
+  </section>
+
+  <section id="nested-configuration-classes"><title>Nesting
+  <classname>@Configuration</classname> classes</title> TODO (see new &amp; noteworthy...)</section>
+</chapter>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:p="http://www.springframework.org/schema/p"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	
+	<!--
+		Demonstrates allowing an @Bean method to be overriden
+		by a value already in the factory
+	-->
+
+	<bean 
+		class="org.springframework.config.java.process.ConfigurationPostProcessor" />
+		
+	<bean 
+		class="org.springframework.config.java.ConfigurationPostProcessorTests$ExternalBeanConfiguration" 
+	/>
+	
+	<bean id="ann" 
+		class="org.springframework.beans.TestBean"
+		p:name="Ann"
+	/>
+	
+	
+</beans>

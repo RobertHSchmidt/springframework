@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"
+>
+
+<beans>
+	
+	<!--
+		Test that advice in the two Java configuration classes is independent
+		from each other and doesn't affect owning factory
+	-->
+
+	<bean 
+		class="org.springframework.config.java.process.ConfigurationPostProcessor" />
+		
+	<bean 
+		class="org.springframework.config.java.ConfigurationPostProcessorTests$Advised1" />
+	
+	<bean 
+		class="org.springframework.config.java.ConfigurationPostProcessorTests$Advised2" />
+	
+	<bean id="realJohannes" class="org.springframework.beans.TestBean" >
+			<property name="age" value="29" />
+	</bean>
+	
+	
+</beans>

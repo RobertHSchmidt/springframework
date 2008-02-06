@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="common-config-scenarios">
+  <title>Common configuration scenarios</title>
+
+  <para>For easy reference, a few commonly-used configurations</para>
+
+  <section>
+    <title>Declarative transaction management</title>
+
+    <para>TODO</para>
+  </section>
+
+  <section>
+    <title>Externalized DataSource information</title>
+
+    <para>TODO</para>
+  </section>
+</appendix>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    	http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+    	http://www.springframework.org/schema/util
+    	http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+
+
+	<bean class="org.springframework.config.java.process.ConfigurationPostProcessor"/>
+
+
+<!-- depends-on="privateSampleDataSource" -->
+
+<!--
+	This defines transactionalDataSource
+-->
+
+	<bean class="org.springframework.config.java.txannotations.TxAnnotationTests$SampleConfig">
+		<property name="genericDataSource" ref="privateSampleDataSource"/>
+		<property name="username" value="sa"/>
+		<property name="password" value=""/>
+	</bean>
+
+	<bean id="privateSampleDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+		<property name="url" value="jndi:hsqldb:mem:sample_database"/>
+	</bean>
+
+	<bean name="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<constructor-arg index="0" ref="transactionalDataSource"/>
+	</bean>
+
+	<tx:annotation-driven/>
+
+</beans>

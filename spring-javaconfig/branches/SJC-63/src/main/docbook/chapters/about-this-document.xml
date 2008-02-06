@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preface id="about">
+  <title>About this document</title>
+  <section id="document-structure">
+    <title>Document structure</title>
+    <para>TODO: In part I ... in part 2 ... etc.</para>
+  </section>
+  <section id="audience">
+    <title>Target audience</title>
+    <para>TODO: developers with at least a general familiarity with the
+    Spring IoC container.  Heavy references to core documentation throughout,
+    etc.</para>
+  </section>
+  <section id="code-conventions">
+    <title>Code conventions</title>
+    TODO: <literal>fixed-with</literal>, <emphasis>emphasis</emphasis>, admonitions, etc.
+  </section>
+</preface>
