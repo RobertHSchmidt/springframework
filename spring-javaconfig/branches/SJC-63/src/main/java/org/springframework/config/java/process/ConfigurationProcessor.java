@@ -27,7 +27,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.cfg.DefaultNamingStrategy;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
@@ -222,7 +221,7 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 
 	/**
 	 * Optionally indicate the naming strategy used for creating the bean names
-	 * during processing. If unspecified, {@link DefaultNamingStrategy} will be
+	 * during processing. If unspecified, {@link BeanNamingStrategy} will be
 	 * used.
 	 * 
 	 * @param beanNamingStrategy bean naming strategy implementation
@@ -391,20 +390,37 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 	 */
 	protected void generateBeanDefinitions(String configurationBeanName, Class<?> configurationClass) {
 
-		/*
-		processAnyConfigurationListeners(configurationBeanName, configurationClass);
-		*/
 		sourceClassEvent(new ClassEvent(this, configurationClass));
-		processAnyLocalBeanDefinitions(configurationBeanName, configurationClass);
+		/*
+		processMethods(configurationClass);
+		*/
+		processMethods(configurationBeanName, configurationClass);
 
 	}
 
-	private void processAnyLocalBeanDefinitions(final String configurationBeanName, final Class<?> configurationClass) {
-		// Only want to consider the most specific bean creation method, in the
-		// case of overrides
+	/*
+	private void processMethods(final Class<?> configurationClass) {
 
-		// use an int array just so we can have a final variable
-		// contains the beanNames resolved based on the method signature
+		ReflectionUtils.doWithMethods(configurationClass, new MethodCallback() {
+			public void doWith(Method m) throws IllegalArgumentException, IllegalAccessException {
+				Reactor reactor = ConfigurationProcessor.this;
+				MethodEvent event = new MethodEvent(reactor, configurationClass, m);
+				event.beanNamingStrategy = beanNamingStrategy;
+				event.owningBeanFactory = owningBeanFactory;
+				for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners())
+					cml.handleEvent(reactor, event);
+			}
+		});
+		, new MethodFilter() {
+			public boolean matches(Method candidateMethod) {
+				return !candidateMethod.getDeclaringClass().equals(Object.class);
+			}
+		});
+	}
+		*/
+
+	private void processMethods(final String configurationBeanName, final Class<?> configurationClass) {
+
 		final Set<String> noArgMethodsSeen = new HashSet<String>();
 
 		ReflectionUtils.doWithMethods(configurationClass, new MethodCallback() {
@@ -443,6 +459,10 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 					for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners())
 						cml.handleEvent(reactor, event);
 				}
+			}
+		}, new ReflectionUtils.MethodFilter() {
+			public boolean matches(Method candidateMethod) {
+				return !candidateMethod.getDeclaringClass().equals(Object.class);
 			}
 		});
 	}
@@ -518,12 +538,6 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 				rbd, beanName);
 		beanDefinitionRegistration.hide = !Modifier.isPublic(beanCreationMethod.getModifiers());
 
-		/*
-		for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
-			cml.beanCreationMethod(beanDefinitionRegistration, this, configurerBeanName, configurerClass,
-					beanCreationMethod, beanAnnotation);
-		}
-		*/
 		Reactor reactor = this;
 		BeanMethodEvent event = new BeanMethodEvent(this, configurerClass, beanCreationMethod, beanAnnotation,
 				beanDefinitionRegistration);

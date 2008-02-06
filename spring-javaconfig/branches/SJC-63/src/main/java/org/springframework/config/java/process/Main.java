@@ -9,8 +9,10 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.process.ConfigurationListener.BeanDefinitionRegistration;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
@@ -64,6 +66,10 @@ class MethodEvent extends EventSupport {
 	final Method method;
 
 	final Class<?> clazz;
+
+	BeanNamingStrategy beanNamingStrategy;
+
+	ConfigurableListableBeanFactory owningBeanFactory;
 
 	MethodEvent(Object source, Class<?> clazz, Method method) {
 		super(source);
