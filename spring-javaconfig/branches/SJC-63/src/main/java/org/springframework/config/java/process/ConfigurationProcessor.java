@@ -390,14 +390,14 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 
 	private void processMethods(final String configurationBeanName, final Class<?> configurationClass) {
 
+		ProcessingContext pc = new ProcessingContext(beanNamingStrategy, owningBeanFactory, childFactory);
+		ProcessingContext.setCurrentContext(pc);
+
 		ReflectionUtils.doWithMethods(configurationClass, new MethodCallback() {
 			public void doWith(Method m) throws IllegalArgumentException, IllegalAccessException {
 				Reactor reactor = ConfigurationProcessor.this;
 				MethodEvent event = new MethodEvent(reactor, configurationClass, m);
-				event.beanNamingStrategy = beanNamingStrategy;
-				event.owningBeanFactory = owningBeanFactory;
 				event.configurationBeanName = configurationBeanName;
-				event.childFactory = childFactory;
 
 				for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners())
 					cml.handleEvent(reactor, event);
