@@ -34,9 +34,12 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 
 		Class<?> configurationClass = event.clazz;
 		String configurationBeanName = event.configurationBeanName;
-		BeanNamingStrategy beanNamingStrategy = event.beanNamingStrategy;
-		ConfigurableListableBeanFactory owningBeanFactory = event.owningBeanFactory;
-		BeanNameTrackingDefaultListableBeanFactory childFactory = event.childFactory;
+
+		ProcessingContext pc = ProcessingContext.getCurrentContext();
+		BeanNamingStrategy beanNamingStrategy = pc.beanNamingStrategy;
+		ConfigurableListableBeanFactory owningBeanFactory = pc.owningBeanFactory;
+		BeanNameTrackingDefaultListableBeanFactory childFactory = pc.childFactory;
+
 		String beanName = beanNamingStrategy.getBeanName(m);
 		ConfigurationProcessor cp = (ConfigurationProcessor) reactor;
 
