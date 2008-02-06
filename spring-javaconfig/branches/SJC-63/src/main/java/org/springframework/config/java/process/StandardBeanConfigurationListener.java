@@ -3,25 +3,23 @@ package org.springframework.config.java.process;
 import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.config.java.core.StandardBeanMethodProcessor;
 
 class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 	@Override
 	public boolean understands(Class<?> configurationClass) {
-		return true;
-		// !StandardBeanMethodProcessor.findBeanCreationMethods(configurationClass).isEmpty();
+		return !(StandardBeanMethodProcessor.findBeanCreationMethods(configurationClass).isEmpty());
 	}
 
 	private final HashMap<Class<?>, List<String>> noArgMethodsSeen = new HashMap<Class<?>, List<String>>();
 
+	/*
 	public void handleEvent(Reactor reactor, MethodEvent event) {
 
 		Bean beanAnnotation = AnnotationUtils.findAnnotation(event.method, Bean.class);
 		if (beanAnnotation == null)
 			return;
 
-		/*
 
 		if (!noArgMethodsSeen.containsKey(configurationClass))
 			noArgMethodsSeen.put(configurationClass, new ArrayList<String>());
@@ -48,7 +46,7 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 					configurationProcessor.owningBeanFactory, configurationBeanName, configurationClass, beanName, m,
 					beanAnnotation);
 		}
-		*/
 
 	}
+		*/
 }
