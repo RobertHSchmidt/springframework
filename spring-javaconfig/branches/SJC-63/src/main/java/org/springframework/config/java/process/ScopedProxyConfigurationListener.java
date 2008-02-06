@@ -92,7 +92,8 @@ class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
 		Method method = event.method;
 
 		// catch invalid declarations
-		if (method.isAnnotationPresent(ScopedProxy.class))
+		if (method.isAnnotationPresent(ScopedProxy.class)
+				&& (AnnotationUtils.findAnnotation(event.method, Bean.class) == null))
 			throw new BeanDefinitionStoreException(String.format(
 					"[%s] contains an invalid annotation declaration: @ScopedProxy "
 							+ "should be used along side @Bean, not by itself", method));
