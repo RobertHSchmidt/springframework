@@ -34,14 +34,15 @@ class ResourceBundlesConfigurationListener extends ConfigurationListenerSupport 
 	}
 
 	public void handleEvent(Reactor reactor, ClassEvent event) {
+		ProcessingContext pc = ProcessingContext.getCurrentContext();
 		Class<?> configurationClass = event.clazz;
 		ResourceBundles rbs = configurationClass.getAnnotation(ResourceBundles.class);
 		ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
-		ms.setResourceLoader(((ConfigurationProcessor) reactor).getResourceLoader());
+		ms.setResourceLoader(pc.resourceLoader);
 		ms.setBasenames(rbs.value());
 		log.info(String.format("Adding resource bundles [%s] defined in class", StringUtils
 				.arrayToCommaDelimitedString(rbs.value()), configurationClass.getName()));
-		((ConfigurationProcessor) reactor).addValueSource(new MessageSourceValueSource(ms));
+		pc.addValueSource(new MessageSourceValueSource(ms));
 		// TODO how do we know the properties were found?
 	}
 }

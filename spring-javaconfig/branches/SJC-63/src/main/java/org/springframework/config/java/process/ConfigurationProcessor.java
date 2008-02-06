@@ -27,12 +27,10 @@ import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Configuration;
@@ -46,7 +44,6 @@ import org.springframework.config.java.enhancement.cglib.CglibConfigurationEnhan
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.config.java.valuesource.CompositeValueSource;
-import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -89,15 +86,13 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
  * @author Chris Beams
  * @see org.springframework.config.java.process.ConfigurationListener
  */
-public class ConfigurationProcessor implements Reactor, InitializingBean, ResourceLoaderAware {
+public final class ConfigurationProcessor implements Reactor, InitializingBean, ResourceLoaderAware {
 
-	protected final Log log = LogFactory.getLog(getClass());
+	private final Log log = LogFactory.getLog(getClass());
 
 	/**
 	 * Bean factory that this post processor runs in
 	 */
-	// TODO: make final once again. Currently ImportConfigurationListener is
-	// using this.
 	private final ConfigurableListableBeanFactory owningBeanFactory;
 
 	/**
@@ -126,8 +121,6 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 	private ConfigurationEnhancer configurationEnhancer;
 
 	private BeanNamingStrategy beanNamingStrategy = new MethodNameStrategy();
-
-	private CompositeValueSource valueSource = new CompositeValueSource();
 
 	private ResourceLoader resourceLoader = new DefaultResourceLoader();
 
@@ -237,19 +230,8 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 		this.configurationListenerRegistry = configurationListenerRegistry;
 	}
 
-	public void addValueSource(ValueSource vs) {
-		this.valueSource.add(vs);
-	}
-
 	public BeanFactory getChildBeanFactory() {
 		return (childApplicationContext != null) ? childApplicationContext : childFactory;
-	}
-
-	public void registerBeanDefinition(String name, BeanDefinition bd, boolean hide) {
-		if (hide)
-			childFactory.registerBeanDefinition(name, bd);
-		else
-			((BeanDefinitionRegistry) owningBeanFactory).registerBeanDefinition(name, bd);
 	}
 
 	public void registerSingleton(String name, Object o, boolean hide) {
@@ -271,11 +253,13 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 			a.add(c);
 		}
 
-		this.configurationEnhancer = new CglibConfigurationEnhancer(owningBeanFactory, childFactory,
-				beanNamingStrategy, a, valueSource);
+		CompositeValueSource vs = new CompositeValueSource();
 
-		pc = new ProcessingContext(beanNamingStrategy, owningBeanFactory, childFactory);
+		pc = new ProcessingContext(beanNamingStrategy, owningBeanFactory, childFactory, vs, resourceLoader);
 		ProcessingContext.setCurrentContext(pc);
+
+		this.configurationEnhancer = new CglibConfigurationEnhancer(owningBeanFactory, childFactory,
+				beanNamingStrategy, a, vs);
 
 		initialized = true;
 	}

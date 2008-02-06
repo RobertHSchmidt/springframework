@@ -43,7 +43,6 @@ class AutoBeanConfigurationListener extends ConfigurationListenerSupport {
 		ProcessingContext pc = ProcessingContext.getCurrentContext();
 
 		Method m = event.method;
-		ConfigurationProcessor configurationProcessor = (ConfigurationProcessor) reactor;
 
 		AutoBean autoBean = AnnotationUtils.findAnnotation(m, AutoBean.class);
 		if (autoBean != null) {
@@ -55,7 +54,7 @@ class AutoBeanConfigurationListener extends ConfigurationListenerSupport {
 
 			RootBeanDefinition bd = new RootBeanDefinition(m.getReturnType());
 			bd.setAutowireMode(autoBean.autowire().value());
-			configurationProcessor.registerBeanDefinition(m.getName(), bd, !Modifier.isPublic(m.getModifiers()));
+			pc.registerBeanDefinition(m.getName(), bd, !Modifier.isPublic(m.getModifiers()));
 			// one bean definition created
 			pc.beanDefsGenerated++;
 		}
