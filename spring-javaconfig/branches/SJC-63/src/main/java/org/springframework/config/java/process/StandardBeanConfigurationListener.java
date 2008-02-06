@@ -1,12 +1,18 @@
 package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
+import org.springframework.config.java.core.Constants;
 import org.springframework.config.java.core.StandardBeanMethodProcessor;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -30,6 +36,7 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 		String configurationBeanName = event.configurationBeanName;
 		BeanNamingStrategy beanNamingStrategy = event.beanNamingStrategy;
 		ConfigurableListableBeanFactory owningBeanFactory = event.owningBeanFactory;
+		BeanNameTrackingDefaultListableBeanFactory childFactory = event.childFactory;
 		String beanName = beanNamingStrategy.getBeanName(m);
 		ConfigurationProcessor cp = (ConfigurationProcessor) reactor;
 
@@ -54,7 +61,51 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 		}
 		noArgMethodsSeen.get(configurationClass).add(beanName);
 
-		cp.generateBeanDefinitionFromBeanCreationMethod(owningBeanFactory, configurationBeanName, configurationClass,
-				beanName, m, beanAnnotation);
+		ProcessUtils.validateBeanCreationMethod(m);
+
+		// Create a bean definition from the method
+		RootBeanDefinition rbd = new RootBeanDefinition(m.getReturnType());
+
+		rbd.setFactoryMethodName(m.getName());
+		rbd.setFactoryBeanName(configurationBeanName);
+		// tag the bean definition
+		rbd.setAttribute(Constants.JAVA_CONFIG_PKG, Boolean.TRUE);
+
+		Configuration config = configurationClass.getAnnotation(Configuration.class);
+
+		ProcessUtils.copyAttributes(beanName, beanAnnotation, config, rbd, owningBeanFactory);
+
+		// create description string
+		StringBuilder builder = new StringBuilder("Bean creation method ");
+		builder.append(m.getName());
+		builder.append(" in class ");
+		builder.append(m.getDeclaringClass().getName());
+		rbd.setResourceDescription(builder.toString());
+
+		// create a beanDefinitionRegistration for the current bean
+		// definition/name pair
+		ConfigurationListener.BeanDefinitionRegistration beanDefinitionRegistration = new ConfigurationListener.BeanDefinitionRegistration(
+				rbd, beanName);
+		beanDefinitionRegistration.hide = !Modifier.isPublic(m.getModifiers());
+
+		BeanMethodEvent beanMethodEvent = new BeanMethodEvent(this, configurationClass, m, beanAnnotation,
+				beanDefinitionRegistration);
+
+		cp.sourceBeanMethodEvent(beanMethodEvent);
+
+		// allow registration bypass
+		if (beanDefinitionRegistration.rbd == null) {
+			return;
+		}
+
+		if (beanDefinitionRegistration.hide) {
+			childFactory.registerBeanDefinition(beanDefinitionRegistration.name, beanDefinitionRegistration.rbd);
+		}
+		else {
+			((BeanDefinitionRegistry) owningBeanFactory).registerBeanDefinition(beanDefinitionRegistration.name,
+					beanDefinitionRegistration.rbd);
+		}
+
+		cp.beanDefsGenerated++;
 	}
 }

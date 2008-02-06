@@ -35,11 +35,9 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
 import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
-import org.springframework.config.java.core.Constants;
 import org.springframework.config.java.core.ExternalBeanMethodProcessor;
 import org.springframework.config.java.core.ExternalValueMethodProcessor;
 import org.springframework.config.java.core.StandardBeanMethodProcessor;
@@ -399,6 +397,7 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 				event.beanNamingStrategy = beanNamingStrategy;
 				event.owningBeanFactory = owningBeanFactory;
 				event.configurationBeanName = configurationBeanName;
+				event.childFactory = childFactory;
 
 				for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners())
 					cml.handleEvent(reactor, event);
@@ -434,74 +433,6 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 				}
 			}
 		}
-	}
-
-	/**
-	 * Generate the actual bean definition using the given method.
-	 * 
-	 * @param beanFactory containing beanFactory
-	 * @param configurerBeanName the configuration name
-	 * @param configurerClass configuration class
-	 * @param beanCreationMethod method creating the actual bean
-	 * @param beanAnnotation the Bean annotation available on the creation
-	 * method.
-	 */
-	protected void generateBeanDefinitionFromBeanCreationMethod(ConfigurableListableBeanFactory beanFactory,
-			String configurerBeanName, Class<?> configurerClass, String beanName, Method beanCreationMethod,
-			Bean beanAnnotation) {
-
-		if (log.isDebugEnabled()) {
-			log.debug("Found bean creation method " + beanCreationMethod);
-		}
-
-		ProcessUtils.validateBeanCreationMethod(beanCreationMethod);
-
-		// Create a bean definition from the method
-		RootBeanDefinition rbd = new RootBeanDefinition(beanCreationMethod.getReturnType());
-
-		rbd.setFactoryMethodName(beanCreationMethod.getName());
-		rbd.setFactoryBeanName(configurerBeanName);
-		// tag the bean definition
-		rbd.setAttribute(Constants.JAVA_CONFIG_PKG, Boolean.TRUE);
-
-		Configuration config = configurerClass.getAnnotation(Configuration.class);
-
-		ProcessUtils.copyAttributes(beanName, beanAnnotation, config, rbd, beanFactory);
-
-		// create description string
-		StringBuilder builder = new StringBuilder("Bean creation method ");
-		builder.append(beanCreationMethod.getName());
-		builder.append(" in class ");
-		builder.append(beanCreationMethod.getDeclaringClass().getName());
-		rbd.setResourceDescription(builder.toString());
-
-		// create a beanDefinitionRegistration for the current bean
-		// definition/name pair
-		ConfigurationListener.BeanDefinitionRegistration beanDefinitionRegistration = new ConfigurationListener.BeanDefinitionRegistration(
-				rbd, beanName);
-		beanDefinitionRegistration.hide = !Modifier.isPublic(beanCreationMethod.getModifiers());
-
-		Reactor reactor = this;
-		BeanMethodEvent event = new BeanMethodEvent(this, configurerClass, beanCreationMethod, beanAnnotation,
-				beanDefinitionRegistration);
-		for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners()) {
-			cml.handleEvent(reactor, event);
-		}
-
-		// allow registration bypass
-		if (beanDefinitionRegistration.rbd == null) {
-			return;
-		}
-
-		if (beanDefinitionRegistration.hide) {
-			childFactory.registerBeanDefinition(beanDefinitionRegistration.name, beanDefinitionRegistration.rbd);
-		}
-		else {
-			((BeanDefinitionRegistry) beanFactory).registerBeanDefinition(beanDefinitionRegistration.name,
-					beanDefinitionRegistration.rbd);
-		}
-
-		beanDefsGenerated++;
 	}
 
 	/**
@@ -561,6 +492,11 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 			if (cl.understands(event.clazz))
 				cl.handleEvent(this, event);
 
+	}
+
+	public void sourceBeanMethodEvent(BeanMethodEvent event) {
+		for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners())
+			cml.handleEvent(this, event);
 	}
 
 }
