@@ -109,6 +109,6 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 					beanDefinitionRegistration.rbd);
 		}
 
-		cp.beanDefsGenerated++;
+		ProcessingContext.getCurrentContext().beanDefsGenerated++;
 	}
 }

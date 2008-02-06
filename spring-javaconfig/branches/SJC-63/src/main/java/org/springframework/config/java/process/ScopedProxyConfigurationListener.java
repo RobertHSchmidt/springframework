@@ -44,6 +44,7 @@ class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
 		ConfigurationProcessor cp = (ConfigurationProcessor) reactor;
 		Method method = event.method;
 		Bean beanAnnotation = AnnotationUtils.findAnnotation(method, Bean.class);
+		ProcessingContext pc = ProcessingContext.getCurrentContext();
 
 		ScopedProxy proxyAnnotation = method.getAnnotation(ScopedProxy.class);
 		if (proxyAnnotation != null) {
@@ -54,7 +55,7 @@ class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
 						"[%s] contains an invalid annotation declaration: @ScopedProxy "
 								+ "cannot be used on a singleton/prototype bean", method));
 
-			cp.beanDefsGenerated++;
+			pc.beanDefsGenerated++;
 			// TODO: could the code duplication be removed?
 			// copied from ScopedProxyBeanDefinitionDecorator
 

@@ -98,7 +98,7 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 	 */
 	// TODO: make final once again. Currently ImportConfigurationListener is
 	// using this.
-	final ConfigurableListableBeanFactory owningBeanFactory;
+	private final ConfigurableListableBeanFactory owningBeanFactory;
 
 	/**
 	 * Used to hold Spring AOP advisors and other internal objects while
@@ -274,8 +274,13 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 		this.configurationEnhancer = new CglibConfigurationEnhancer(owningBeanFactory, childFactory,
 				beanNamingStrategy, a, valueSource);
 
+		pc = new ProcessingContext(beanNamingStrategy, owningBeanFactory, childFactory);
+		ProcessingContext.setCurrentContext(pc);
+
 		initialized = true;
 	}
+
+	private ProcessingContext pc;
 
 	private void checkInit() {
 		if (!initialized) {
@@ -297,13 +302,13 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 	 * @throws BeanDefinitionStoreException if no bean definitions are found
 	 */
 	public int processClass(Class<?> configurationClass) throws BeanDefinitionStoreException {
-		boolean isEntryPoint = false;
-		if (beanDefsGenerated == -1) {
-			isEntryPoint = true;
-			beanDefsGenerated = 0;
-		}
-
 		checkInit();
+
+		boolean isEntryPoint = false;
+		if (pc.beanDefsGenerated == -1) {
+			isEntryPoint = true;
+			pc.beanDefsGenerated = 0;
+		}
 
 		if (!ConfigurationProcessor.isConfigurationClass(configurationClass, configurationListenerRegistry))
 			return 0;
@@ -330,15 +335,13 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 		try {
 			processConfigurationBean(configBeanName, configurationClass);
 			// include the configuration bean definition
-			return ++beanDefsGenerated;
+			return ++pc.beanDefsGenerated;
 		}
 		finally {
 			if (isEntryPoint)
-				beanDefsGenerated = -1;
+				pc.beanDefsGenerated = -1;
 		}
 	}
-
-	int beanDefsGenerated = -1;
 
 	/**
 	 * Primary point of entry used by {@link ConfigurationPostProcessor}.
@@ -348,14 +351,15 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 	 * @throws BeanDefinitionStoreException
 	 */
 	void processConfigurationBean(String configurationBeanName, Class<?> configurationClass) {
+		checkInit();
+
 		boolean isEntryPoint = false;
-		if (beanDefsGenerated == -1) {
+		if (pc.beanDefsGenerated == -1) {
 			isEntryPoint = true;
-			beanDefsGenerated = 0;
+			pc.beanDefsGenerated = 0;
 		}
 
 		try {
-			checkInit();
 
 			Assert.notNull(configurationBeanName, "beanName is required");
 			Assert.notNull(configurationClass, "configurationClass is required");
@@ -368,7 +372,7 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 		}
 		finally {
 			if (isEntryPoint)
-				beanDefsGenerated = -1;
+				pc.beanDefsGenerated = -1;
 		}
 	}
 
@@ -389,9 +393,6 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 	}
 
 	private void processMethods(final String configurationBeanName, final Class<?> configurationClass) {
-
-		ProcessingContext pc = new ProcessingContext(beanNamingStrategy, owningBeanFactory, childFactory);
-		ProcessingContext.setCurrentContext(pc);
 
 		ReflectionUtils.doWithMethods(configurationClass, new MethodCallback() {
 			public void doWith(Method m) throws IllegalArgumentException, IllegalAccessException {

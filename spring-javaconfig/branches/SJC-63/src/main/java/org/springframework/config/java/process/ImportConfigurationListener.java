@@ -1,5 +1,6 @@
 package org.springframework.config.java.process;
 
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.Import;
 
 class ImportConfigurationListener extends ConfigurationListenerSupport {
@@ -11,15 +12,17 @@ class ImportConfigurationListener extends ConfigurationListenerSupport {
 	}
 
 	public void handleEvent(Reactor reactor, ClassEvent event) {
+		ProcessingContext pc = ProcessingContext.getCurrentContext();
+		ConfigurableListableBeanFactory owningBeanFactory = pc.owningBeanFactory;
+
 		Class<?> configurationClass = event.clazz;
 		ConfigurationProcessor configurationProcessor = (ConfigurationProcessor) reactor;
 		Import importAnnotation = configurationClass.getAnnotation(Import.class);
 		Class<?>[] configurationClassesToImport = reverse(importAnnotation.value());
 		for (Class<?> configurationClassToImport : configurationClassesToImport) {
 			// duplicate check - process only if we've never encountered before
-			if (!configurationProcessor.owningBeanFactory.containsBeanDefinition(configurationClassToImport.getName()))
-				configurationProcessor.beanDefsGenerated += configurationProcessor
-						.processClass(configurationClassToImport);
+			if (!owningBeanFactory.containsBeanDefinition(configurationClassToImport.getName()))
+				pc.beanDefsGenerated += configurationProcessor.processClass(configurationClassToImport);
 		}
 	}
 
