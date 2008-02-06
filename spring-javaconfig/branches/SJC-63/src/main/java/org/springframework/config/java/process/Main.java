@@ -7,7 +7,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.process.ConfigurationListener.BeanDefinitionRegistration;
@@ -120,7 +121,7 @@ class ListenerRegistry {
 }
 
 class ConfigurationProcessor2 implements Reactor {
-	private static final Logger log = Logger.getLogger(ConfigurationProcessor.class);
+	private static final Log log = LogFactory.getLog(ConfigurationProcessor.class);
 
 	private final ListenerRegistry listenerRegistry = new ListenerRegistry();
 
@@ -169,7 +170,7 @@ interface ConfigurationListener2 {
 }
 
 class StandardBeanConfigurationListener2 implements ConfigurationListener2 {
-	private static final Logger log = Logger.getLogger(StandardBeanConfigurationListener.class);
+	private static final Log log = LogFactory.getLog(StandardBeanConfigurationListener.class);
 
 	public void handleEvent(Reactor reactor, Event event) {
 		log.info("got event: " + event);
@@ -202,7 +203,7 @@ class StandardBeanConfigurationListener2 implements ConfigurationListener2 {
 }
 
 class OtherListener implements ConfigurationListener2 {
-	private static final Logger log = Logger.getLogger(OtherListener.class);
+	private static final Log log = LogFactory.getLog(OtherListener.class);
 
 	public void handleEvent(Reactor reactor, MethodEvent event) {
 		throw new UnsupportedOperationException();

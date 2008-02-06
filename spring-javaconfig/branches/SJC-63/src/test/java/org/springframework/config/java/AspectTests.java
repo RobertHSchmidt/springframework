@@ -18,7 +18,8 @@ package org.springframework.config.java;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -73,7 +74,7 @@ public class AspectTests {
 	@Configuration
 	public static class ConfigWithAspects {
 
-		Logger logger = Logger.getLogger(ConfigWithAspects.class);
+		Log logger = LogFactory.getLog(getClass());
 
 		int beforeCount = 0;
 
@@ -142,7 +143,7 @@ public class AspectTests {
 	@Import(PropertyChangeTracker.class)
 	@Configuration
 	public static class AppConfig {
-		Logger logger = Logger.getLogger(AppConfig.class);
+		Log log = LogFactory.getLog(getClass());
 
 		int propertyChangeCount = 0;
 
@@ -159,13 +160,13 @@ public class AspectTests {
 	@Aspect
 	@Configuration
 	public static class PropertyChangeTracker {
-		Logger logger = Logger.getLogger(PropertyChangeTracker.class);
+		Log log = LogFactory.getLog(getClass());
 
 		public int propertyChangeCount = 0;
 
 		@Before("execution(* set*(*))")
 		public void trackChange() {
-			logger.info("property just changed...");
+			log.info("property just changed...");
 			propertyChangeCount++;
 		}
 	}
