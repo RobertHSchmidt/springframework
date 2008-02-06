@@ -51,8 +51,10 @@ class AspectJAdviceConfigurationListener extends AbstractAopConfigurationListene
 			aspectJAdvisorFactory.validate(configurationClass);
 	}
 
+	@Override
 	public void handleEvent(Reactor reactor, MethodEvent event) {
 
+		ProcessingContext pc = ProcessingContext.getCurrentContext();
 		Class<?> configurerClass = event.clazz;
 		Method aspectJAdviceMethod = event.method;
 		ConfigurationProcessor cp = (ConfigurationProcessor) reactor;
@@ -91,7 +93,7 @@ class AspectJAdviceConfigurationListener extends AbstractAopConfigurationListene
 
 			addAdvice(adviceName, ((PointcutAdvisor) pa).getPointcut(), advice, cp);
 			// added the advice as singleton
-			cp.beanDefsGenerated++;
+			pc.beanDefsGenerated++;
 		}
 
 		return;

@@ -27,6 +27,8 @@ class ProcessingContext {
 
 	final BeanNameTrackingDefaultListableBeanFactory childFactory;
 
+	int beanDefsGenerated = -1;
+
 	public ProcessingContext(BeanNamingStrategy beanNamingStrategy, ConfigurableListableBeanFactory owningBeanFactory,
 			BeanNameTrackingDefaultListableBeanFactory childFactory) {
 		this.beanNamingStrategy = beanNamingStrategy;

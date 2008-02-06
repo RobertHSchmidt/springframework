@@ -37,7 +37,10 @@ class AutoBeanConfigurationListener extends ConfigurationListenerSupport {
 		return configurerClass.isAnnotationPresent(Configuration.class);
 	}
 
+	@Override
 	public void handleEvent(Reactor reactor, MethodEvent event) {
+
+		ProcessingContext pc = ProcessingContext.getCurrentContext();
 
 		Method m = event.method;
 		ConfigurationProcessor configurationProcessor = (ConfigurationProcessor) reactor;
@@ -54,7 +57,7 @@ class AutoBeanConfigurationListener extends ConfigurationListenerSupport {
 			bd.setAutowireMode(autoBean.autowire().value());
 			configurationProcessor.registerBeanDefinition(m.getName(), bd, !Modifier.isPublic(m.getModifiers()));
 			// one bean definition created
-			configurationProcessor.beanDefsGenerated++;
+			pc.beanDefsGenerated++;
 		}
 
 	}
