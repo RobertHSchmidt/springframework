@@ -9,11 +9,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 
 abstract class AbstractBeanMethodProcessor implements BeanMethodProcessor {
-	protected final Logger log = Logger.getLogger(this.getClass());
+	protected final Log log = LogFactory.getLog(this.getClass());
 
 	private final Class<? extends Annotation> annotation;
 
