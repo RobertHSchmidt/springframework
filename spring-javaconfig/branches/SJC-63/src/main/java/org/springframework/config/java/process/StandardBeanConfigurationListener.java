@@ -1,7 +1,9 @@
 package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
@@ -15,9 +17,7 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 		return !(StandardBeanMethodProcessor.findBeanCreationMethods(configurationClass).isEmpty());
 	}
 
-	/*
-	private final HashMap<Class<?>, List<String>> noArgMethodsSeen = new HashMap<Class<?>, List<String>>();
-	*/
+	private final HashMap<Class<?>, List<String>> noArgMethodsSeen2 = new HashMap<Class<?>, List<String>>();
 
 	@Override
 	public void handleEvent(Reactor reactor, MethodEvent event) {
@@ -26,13 +26,15 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 		String configurationBeanName = event.configurationBeanName;
 		BeanNamingStrategy beanNamingStrategy = event.beanNamingStrategy;
 		ConfigurableListableBeanFactory owningBeanFactory = event.owningBeanFactory;
-		Set<String> noArgMethodsSeen = event.noArgMethodsSeen;
 		Bean beanAnnotation = AnnotationUtils.findAnnotation(m, Bean.class);
 		String beanName = beanNamingStrategy.getBeanName(m);
 		ConfigurationProcessor cp = (ConfigurationProcessor) reactor;
 
+		if (!noArgMethodsSeen2.containsKey(configurationClass))
+			noArgMethodsSeen2.put(configurationClass, new ArrayList<String>());
+
 		if (beanAnnotation != null) {
-			if (!noArgMethodsSeen.contains(beanName)) {
+			if (!noArgMethodsSeen2.get(configurationClass).contains(beanName)) {
 				// If the bean already exists in the factory, don't emit
 				// a bean definition. This may or may not be legal,
 				// depending on whether the @Bean annotation allows
@@ -47,56 +49,11 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 					// Don't emit a bean definition
 					return;
 				}
-				noArgMethodsSeen.add(beanName);
+				noArgMethodsSeen2.get(configurationClass).add(beanName);
 				cp.generateBeanDefinitionFromBeanCreationMethod(owningBeanFactory, configurationBeanName,
 						configurationClass, beanName, m, beanAnnotation);
 			}
 		}
 	}
 
-	public void foo(Reactor reactor, MethodEvent event) {
-		Method m = event.method;
-		Class<?> configurationClass = event.clazz;
-		String configurationBeanName = configurationClass.getName();
-		BeanNamingStrategy beanNamingStrategy = event.beanNamingStrategy;
-		ConfigurableListableBeanFactory owningBeanFactory = event.owningBeanFactory;
-		Set<String> noArgMethodsSeen = event.noArgMethodsSeen;
-
-		Bean beanAnnotation = AnnotationUtils.findAnnotation(m, Bean.class);
-		if (beanAnnotation == null)
-			return;
-
-		/*
-		if (!noArgMethodsSeen.containsKey(configurationClass))
-			noArgMethodsSeen.put(configurationClass, new ArrayList<String>());
-		*/
-
-		// Determine bean name
-		String beanName = beanNamingStrategy.getBeanName(m);
-
-		/*
-		if (!noArgMethodsSeen.get(configurationClass).contains(beanName)) {
-		*/
-		if (!noArgMethodsSeen.contains(beanName)) {
-			// If the bean already exists in the factory, don't emit
-			// a bean definition. This may or may not be legal,
-			// depending on whether the @Bean annotation allows
-			// overriding
-			if (owningBeanFactory.containsLocalBean(beanName)) {
-				if (!beanAnnotation.allowOverriding()) {
-					String message = String.format(
-							"A bean named '%s' already exists. Consider using @Bean(allowOverriding=true)", beanName);
-					throw new IllegalStateException(message);
-				}
-				// Don't emit a bean definition
-				return;
-			}
-			/*
-			noArgMethodsSeen.get(configurationClass).add(beanName);
-			*/
-			noArgMethodsSeen.add(beanName);
-			((ConfigurationProcessor) reactor).generateBeanDefinitionFromBeanCreationMethod(owningBeanFactory,
-					configurationBeanName, configurationClass, beanName, m, beanAnnotation);
-		}
-	}
 }
