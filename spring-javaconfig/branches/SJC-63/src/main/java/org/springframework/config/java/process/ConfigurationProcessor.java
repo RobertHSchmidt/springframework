@@ -15,8 +15,6 @@
  */
 package org.springframework.config.java.process;
 
-import static java.lang.String.format;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -60,7 +58,6 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
@@ -391,33 +388,9 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 	protected void generateBeanDefinitions(String configurationBeanName, Class<?> configurationClass) {
 
 		sourceClassEvent(new ClassEvent(this, configurationClass));
-		/*
-		processMethods(configurationClass);
-		*/
 		processMethods(configurationBeanName, configurationClass);
 
 	}
-
-	/*
-	private void processMethods(final Class<?> configurationClass) {
-
-		ReflectionUtils.doWithMethods(configurationClass, new MethodCallback() {
-			public void doWith(Method m) throws IllegalArgumentException, IllegalAccessException {
-				Reactor reactor = ConfigurationProcessor.this;
-				MethodEvent event = new MethodEvent(reactor, configurationClass, m);
-				event.beanNamingStrategy = beanNamingStrategy;
-				event.owningBeanFactory = owningBeanFactory;
-				for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners())
-					cml.handleEvent(reactor, event);
-			}
-		});
-		, new MethodFilter() {
-			public boolean matches(Method candidateMethod) {
-				return !candidateMethod.getDeclaringClass().equals(Object.class);
-			}
-		});
-	}
-		*/
 
 	private void processMethods(final String configurationBeanName, final Class<?> configurationClass) {
 
@@ -425,40 +398,15 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 
 		ReflectionUtils.doWithMethods(configurationClass, new MethodCallback() {
 			public void doWith(Method m) throws IllegalArgumentException, IllegalAccessException {
-				Bean beanAnnotation = AnnotationUtils.findAnnotation(m, Bean.class);
-				// Determine bean name
-				String beanName = beanNamingStrategy.getBeanName(m);
+				Reactor reactor = ConfigurationProcessor.this;
+				MethodEvent event = new MethodEvent(reactor, configurationClass, m);
+				event.beanNamingStrategy = beanNamingStrategy;
+				event.owningBeanFactory = owningBeanFactory;
+				event.noArgMethodsSeen = noArgMethodsSeen;
+				event.configurationBeanName = configurationBeanName;
 
-				if (beanAnnotation != null) {
-					if (!noArgMethodsSeen.contains(beanName)) {
-						// If the bean already exists in the factory, don't emit
-						// a bean definition. This may or may not be legal,
-						// depending on whether the @Bean annotation allows
-						// overriding
-						if (owningBeanFactory.containsLocalBean(beanName)) {
-							if (!beanAnnotation.allowOverriding()) {
-								String message = format(
-										"A bean named '%s' already exists. Consider using @Bean(allowOverriding=true)",
-										beanName);
-								throw new IllegalStateException(message);
-							}
-							// Don't emit a bean definition
-							return;
-						}
-						noArgMethodsSeen.add(beanName);
-						generateBeanDefinitionFromBeanCreationMethod(owningBeanFactory, configurationBeanName,
-								configurationClass, beanName, m, beanAnnotation);
-					}
-				}
-				else {
-					Reactor reactor = ConfigurationProcessor.this;
-					MethodEvent event = new MethodEvent(reactor, configurationClass, m);
-					/*
-					sourceEvent(event);
-					*/
-					for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners())
-						cml.handleEvent(reactor, event);
-				}
+				for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners())
+					cml.handleEvent(reactor, event);
 			}
 		}, new ReflectionUtils.MethodFilter() {
 			public boolean matches(Method candidateMethod) {
