@@ -18,10 +18,8 @@ package org.springframework.config.java.process;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -394,15 +392,12 @@ public class ConfigurationProcessor implements Reactor, InitializingBean, Resour
 
 	private void processMethods(final String configurationBeanName, final Class<?> configurationClass) {
 
-		final Set<String> noArgMethodsSeen = new HashSet<String>();
-
 		ReflectionUtils.doWithMethods(configurationClass, new MethodCallback() {
 			public void doWith(Method m) throws IllegalArgumentException, IllegalAccessException {
 				Reactor reactor = ConfigurationProcessor.this;
 				MethodEvent event = new MethodEvent(reactor, configurationClass, m);
 				event.beanNamingStrategy = beanNamingStrategy;
 				event.owningBeanFactory = owningBeanFactory;
-				event.noArgMethodsSeen = noArgMethodsSeen;
 				event.configurationBeanName = configurationBeanName;
 
 				for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners())

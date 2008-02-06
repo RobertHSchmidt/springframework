@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -71,8 +70,6 @@ class MethodEvent extends EventSupport {
 	BeanNamingStrategy beanNamingStrategy;
 
 	ConfigurableListableBeanFactory owningBeanFactory;
-
-	Set<String> noArgMethodsSeen;
 
 	String configurationBeanName;
 
