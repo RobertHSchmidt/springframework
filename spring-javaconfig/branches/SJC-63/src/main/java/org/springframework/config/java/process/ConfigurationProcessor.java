@@ -229,13 +229,6 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 		this.configurationListenerRegistry = configurationListenerRegistry;
 	}
 
-	public void registerSingleton(String name, Object o, boolean hide) {
-		if (hide)
-			childFactory.registerSingleton(name, o);
-		else
-			owningBeanFactory.registerSingleton(name, o);
-	}
-
 	/**
 	 * Called to avoid constructor changes every time a new configuration switch
 	 * appears on this class.

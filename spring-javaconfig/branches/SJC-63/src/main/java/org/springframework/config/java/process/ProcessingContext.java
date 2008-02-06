@@ -68,4 +68,11 @@ class ProcessingContext {
 		return (childApplicationContext != null) ? childApplicationContext : childFactory;
 	}
 
+	public void registerSingleton(String name, Object o, boolean hide) {
+		if (hide)
+			childFactory.registerSingleton(name, o);
+		else
+			owningBeanFactory.registerSingleton(name, o);
+	}
+
 }
