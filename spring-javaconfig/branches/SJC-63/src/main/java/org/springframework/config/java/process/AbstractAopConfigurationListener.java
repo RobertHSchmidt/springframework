@@ -33,6 +33,7 @@ import org.springframework.core.Ordered;
  * necessary to a ProxyFactory.
  * 
  * @author Rod Johnson
+ * @author Chris Beams
  */
 abstract class AbstractAopConfigurationListener extends ConfigurationListenerSupport {
 
@@ -41,18 +42,8 @@ abstract class AbstractAopConfigurationListener extends ConfigurationListenerSup
 	 */
 	private Map<String, Pointcut> pointcuts = new HashMap<String, Pointcut>();
 
-	/**
-	 * Add an advice with the given pointcut
-	 * @param adviceName bean name of the advice in the child factory
-	 * @param cp ConfigurationProcessor
-	 * @param childBeanFactory child factory
-	 */
-	protected void addAdvice(String adviceName, Pointcut pc, ConfigurationProcessor cp) {
-		pointcuts.put(adviceName, pc);
-	}
-
-	protected void addAdvice(String adviceName, Pointcut pc, Advice advice, ConfigurationProcessor cp) {
-		cp.registerSingleton(adviceName, advice, true);
+	protected void addAdvice(String adviceName, Pointcut pc, Advice advice) {
+		ProcessingContext.getCurrentContext().registerSingleton(adviceName, advice, true);
 		pointcuts.put(adviceName, pc);
 	}
 

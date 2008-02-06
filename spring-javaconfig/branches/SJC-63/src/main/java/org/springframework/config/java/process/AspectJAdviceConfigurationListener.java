@@ -90,7 +90,7 @@ class AspectJAdviceConfigurationListener extends AbstractAopConfigurationListene
 				return;
 			}
 
-			addAdvice(adviceName, ((PointcutAdvisor) pa).getPointcut(), advice, (ConfigurationProcessor) reactor);
+			addAdvice(adviceName, ((PointcutAdvisor) pa).getPointcut(), advice);
 			// added the advice as singleton
 			pc.beanDefsGenerated++;
 		}
