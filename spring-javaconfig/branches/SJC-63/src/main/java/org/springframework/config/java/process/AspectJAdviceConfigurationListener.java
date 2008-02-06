@@ -57,7 +57,6 @@ class AspectJAdviceConfigurationListener extends AbstractAopConfigurationListene
 		ProcessingContext pc = ProcessingContext.getCurrentContext();
 		Class<?> configurerClass = event.clazz;
 		Method aspectJAdviceMethod = event.method;
-		ConfigurationProcessor cp = (ConfigurationProcessor) reactor;
 
 		try {
 			// If it's a valid aspect, we'll continue in this method
@@ -76,7 +75,7 @@ class AspectJAdviceConfigurationListener extends AbstractAopConfigurationListene
 		Advisor pa = aspectJAdvisorFactory.getAdvisor(/* configurerClass, */aspectJAdviceMethod,
 		// new PrototypeAspectInstanceFactory(childBeanFactory,
 				// getConfigurerBeanName(configurerClass)));
-				new BeanFactoryAspectInstanceFactory(cp.getChildBeanFactory(), getConfigurerBeanName(configurerClass),
+				new BeanFactoryAspectInstanceFactory(pc.getChildBeanFactory(), getConfigurerBeanName(configurerClass),
 						configurerClass), declarationOrderInAspect, aspectName);
 
 		// TODO should handle introductions also?
@@ -91,7 +90,7 @@ class AspectJAdviceConfigurationListener extends AbstractAopConfigurationListene
 				return;
 			}
 
-			addAdvice(adviceName, ((PointcutAdvisor) pa).getPointcut(), advice, cp);
+			addAdvice(adviceName, ((PointcutAdvisor) pa).getPointcut(), advice, (ConfigurationProcessor) reactor);
 			// added the advice as singleton
 			pc.beanDefsGenerated++;
 		}

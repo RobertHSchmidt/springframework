@@ -25,7 +25,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -230,10 +229,6 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 		this.configurationListenerRegistry = configurationListenerRegistry;
 	}
 
-	public BeanFactory getChildBeanFactory() {
-		return (childApplicationContext != null) ? childApplicationContext : childFactory;
-	}
-
 	public void registerSingleton(String name, Object o, boolean hide) {
 		if (hide)
 			childFactory.registerSingleton(name, o);
@@ -255,7 +250,8 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 
 		CompositeValueSource vs = new CompositeValueSource();
 
-		pc = new ProcessingContext(beanNamingStrategy, owningBeanFactory, childFactory, vs, resourceLoader);
+		pc = new ProcessingContext(beanNamingStrategy, owningBeanFactory, childFactory, vs, resourceLoader,
+				childApplicationContext);
 		ProcessingContext.setCurrentContext(pc);
 
 		this.configurationEnhancer = new CglibConfigurationEnhancer(owningBeanFactory, childFactory,
