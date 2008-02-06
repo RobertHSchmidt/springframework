@@ -41,7 +41,6 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 		BeanNameTrackingDefaultListableBeanFactory childFactory = pc.childFactory;
 
 		String beanName = beanNamingStrategy.getBeanName(m);
-		ConfigurationProcessor cp = (ConfigurationProcessor) reactor;
 
 		if (!noArgMethodsSeen.containsKey(configurationClass))
 			noArgMethodsSeen.put(configurationClass, new ArrayList<String>());
@@ -94,7 +93,7 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 		BeanMethodEvent beanMethodEvent = new BeanMethodEvent(this, configurationClass, m, beanAnnotation,
 				beanDefinitionRegistration);
 
-		cp.sourceBeanMethodEvent(beanMethodEvent);
+		((ConfigurationProcessor) reactor).sourceBeanMethodEvent(beanMethodEvent);
 
 		// allow registration bypass
 		if (beanDefinitionRegistration.rbd == null) {
