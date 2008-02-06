@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="new-and-noteworthy">
+  <title>New &amp; Noteworthy in 1.0-M3</title>
+
+  <section>
+    <title><classname>AnnotationApplicationContext</classname> deprecated</title>
+
+    <para><classname>AnnotationApplicationContext</classname> presented a
+    naming conflict with Spring 2.5's Annotation-Driven Configuration. To
+    avoid this problem it has been renamed to
+    <classname>JavaConfigApplicationContext</classname>. Beyond the
+    renaming, <classname>JavaConfigApplicationContext</classname> has
+    several new features worth discussing. See below for details.
+    <emphasis><classname>AnnotationApplicationContext</classname> will be
+    removed entirely in JavaConfig 1.0-RC1</emphasis></para>
+
+    <para>See <xref linkend="javaconfigapplicationcontext" /></para>
+  </section>
+
+  <section>
+    <title>Type-safety improvements</title>
+
+    <para><classname>JavaConfigApplicationContext</classname>,
+    <classname>JavaConfigWebApplicationContext</classname> and the
+    <classname>ConfigurationSupport</classname> base class now all expose
+    type-safe <methodname>getBean</methodname> methods, allowing for
+    looking up beans by type, rather than by name. <programlisting>@Configuration
+public class AppConfig {
+    @Bean
+    public TransferService transferService() {
+        return new TransferServiceImpl();
+    }
+
+    @Bean
+    public NotificationService notificationService() {
+        return new NotificationServiceImpl();
+    }
+}
+
+public class SimpleApp {
+    public static void main(String... args) {
+        JavaConfigApplicationContext context = new JavaConfigApplicationContext(AppConfig.class);
+
+        <lineannotation>// use the type-safe <methodname>getBean</methodname> method to avoid casting and string-based lookups</lineannotation>
+        TransferService transferService = context.getBean(TransferService.class);
+        TransferService notificationService = context.getBean(NotificationService.class);
+
+        <lineannotation>// ...</lineannotation>
+    }
+}
+</programlisting> See <xref linkend="typesafe-getbean" /> for details.</para>
+  </section>
+
+  <section>
+    <title>First-class support for JavaConfig in the web tier</title>
+
+    <para>By popular demand, a
+    <interfacename>WebApplicationContext</interfacename> variant of
+    <classname>JavaConfigApplicationContext</classname> has been created.
+    This allows for seamless bootstrapping of JavaConfig bean definitions
+    within web.xml. Used in conjunction with JavaConfig-specific
+    subclasses of <classname>DispatcherServlet</classname> and
+    <classname>ContextLoaderListener</classname>, it makes for concise
+    usage: <programlisting>&lt;web-app&gt;
+&lt;context-param&gt;
+    &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+    &lt;param-value&gt;example.RootApplicationConfig&lt;/param-value&gt;
+&lt;/context-param&gt;
+
+&lt;listener&gt;
+    &lt;listener-class&gt;org.springframework.config.java.context.support.JavaConfigContextLoaderListener&lt;/listener-class&gt;
+&lt;/listener&gt;
+
+&lt;servlet&gt;
+    &lt;servlet-name&gt;test&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;org.springframework.config.java.context.support.JavaConfigDispatcherServlet&lt;/servlet-class&gt;
+    &lt;init-param&gt;
+        &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+        &lt;param-value&gt;example.web.WebApplicationConfig&lt;/param-value&gt;
+    &lt;/init-param&gt;
+&lt;/servlet&gt;
+&lt;/web-app&gt;
+</programlisting> For basic information regarding initialization parameters to
+    <classname>DispatcherServlet</classname> and use of
+    <classname>ContextLoaderListener</classname>, see <ulink
+    url="http://static.springframework.org/spring/docs/2.5.x/reference/mvc.html">Chapter
+    13. Web MVC framework</ulink> in the Core Spring Framework
+    documentation.</para>
+
+    <para>For complete details on using JavaConfig in the web tier, see
+    <xref linkend="developing-web-applications" />.</para>
+  </section>
+
+  <section>
+    <title>New semantics for nested <classname>@Configuration</classname>
+    classes</title>
+
+    <para>Consider the case of nested
+    <classname>@Configuration</classname> classes: <programlisting>@Configuration
+public class OuterConfig {
+    @Bean
+    public Foo outerBean() {
+        <lineannotation>// ...</lineannotation>
+    }
+}
+
+@Configuration
+public static class InnerConfig {
+    @Bean
+    public Bar innerBean() {
+        <lineannotation>// ...</lineannotation>
+    }
+}
+</programlisting> In previous milestones, any nested
+    <classname>@Configuration</classname> classes (such as
+    <classname>InnerConfig</classname> above) were treated as just another
+    source of bean definitions and were processed inline with the rest of
+    the beans in the declaring <classname>@Configuration</classname>
+    class. Ultimately, all bean definitions ended up in the same
+    <classname>BeanFactory</classname>/<classname>ApplicationContext</classname>.</para>
+
+    <para>Now and going forward, nested
+    <classname>@Configuration</classname> classes will be processed as
+    child <classname>ApplicationContext</classname>s. Perhaps better said,
+    any declaring (outer) <classname>@Configuration</classname> classes
+    will be processed as parent
+    <interfacename>ApplicationContexts</interfacename>. Using the example
+    above, Instantiate an
+    <interfacename>ApplicationContext</interfacename> using
+    <classname>InnerConfig</classname> as an argument <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(InnerConfig.class);
+context.getBean("innerBean"); <lineannotation>// locally defined beans are available</lineannotation>
+context.getBean("outerBean"); <lineannotation>// as are beans defined in the declaring <classname>OuterConfig</classname> class.</lineannotation>
+</programlisting> Note that when supplying <classname>OuterConfig</classname>
+    as the argument, <classname>InnerConfig</classname> is ignored
+    entirely. If it were to be processed, it would become a child context,
+    but its beans would would be inaccessible (parent contexts have no
+    access to child context beans). <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(OuterConfig.class);
+context.getBean("outerBean"); <lineannotation>// works fine</lineannotation>
+context.getBean("innerBean"); <lineannotation>// throws <classname>NoSuchBeanDefinitionException</classname>!</lineannotation>
+</programlisting></para>
+
+    <para>See <xref linkend="nested-configuration-classes" /> for full
+    details.</para>
+  </section>
+
+  <section>
+    <title>Modularization improvements with
+    <classname>@Import</classname></title>
+
+    <para>JavaConfig now has the equivalent of XML configuration's
+    <code>&lt;import/&gt;</code> element. One configuration class can
+    import any number of other configuration classes, and their bean
+    definitions will be processed as if locally defined. <programlisting>@Configuration
+public class DataSourceConfig {
+    @Bean
+    public DataSource dataSource() {
+        return new DriverManagerDataSource(...);
+    }
+}
+
+@Configuration
+@Import(DataSourceConfig.class)
+public class AppConfig extends ConfigurationSupport {
+    @Bean
+    public void TransferService transferService() {
+        return new TransferServiceImpl(getBean(DataSource.class);
+    }
+}
+</programlisting>Importing multiple configurations can be done by supplying an
+    array of classes to the <classname>@Import</classname> annotation
+    <programlisting>@Configuration
+@Import({ DataSourceConfig.class, TransactionConfig.class })
+public class AppConfig extends ConfigurationSupport {
+    <lineannotation>// bean definitions here can reference bean definitions in <classname>DataSourceConfig</classname> or <classname>TransactionConfig</classname></lineannotation>
+}
+</programlisting></para>
+
+    <para>See <xref linkend="importing-configurations" /> for full
+    details.</para>
+  </section>
+
+  <section>
+    <title>Support for externalizing string values with
+    <classname>@ExternalValue</classname></title>
+
+    <para>Somewhat similar to the way that
+    <classname>@ExternalBean</classname> makes it possible to reference
+    beans defined outside of the current
+    <classname>@Configuration</classname>,
+    <classname>@ExternalBean</classname> allows for accessing externalized
+    string values in properties files. This is ideal for use when
+    configuring up infrastructural resources with properties that may
+    change at deployment time, or otherwise need to be externally
+    accessible for modification. <programlisting>@Configuration
+@ResourceBundles("com/myapp/datasource")
+public abstract class AppConfig {
+    @Bean
+    public DataSource myDataSource() {
+        DataSource dataSource = new MyDataSource();
+        dataSource.setUsername(username());
+        dataSource.setPassword(password());
+        dataSource.setUrl(url());
+
+        return dataSource;
+    }
+
+    @ExternalValue
+    public abstract String username();
+
+    @ExternalValue
+    public abstract String password();
+
+    @ExternalValue("jdbc.url")
+    public abstract String url();
+}</programlisting>
+
+<literal>com/myapp/datasource.properties</literal>: <programlisting>username=scott
+password=tiger
+jdbc.url=...
+</programlisting> See <xref linkend="externalizing-string-values" /> for full
+    details</para>
+  </section>
+</chapter>
+

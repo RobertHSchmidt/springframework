@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="developing-web-applications">
+  <title>Developing web applications with JavaConfig</title>
+
+  <para> JavaConfig doesn't provide direct web support for the web tier, but can be used 
+  via the XML bootstrapping technique (see <xref linkend="combining-config-approaches" />).  
+  XML has plenty of advantages for web-tier technology.  JavaConfig still has plenty of 
+  advantages for web applications.</para>
+  
+  <para> However, if you have a comitment to remain spring-XML free, there are techniques that will 
+  allow you maintain your stringencies.
+  </para>
+
+  <section>
+    <title>Why use JavaConfig for web applications?</title>
+
+    <para> You can create application classes in Spring Java config- Controllers, validators, 
+    helpers, service layer, persistence layer, binders.  One caveat, however, about the new 
+    annotation-driven Spring MVC Controllers  (hithertoo refered to as @Controllers).  @Controllers must 
+    be created as independent objects that are included into your spring context via component scanning 
+    (//TODO: create that section in "Combining Configuration approaches").</para>
+    
+}
+
+    <para> You can map beans to urls via Spring Java Config when combined with BeanNameHandlerMapping.
+    (//TODO: add links to BeanNameHandlerMapping and controllers)</para>
+    <programlisting>@Bean(aliases="/myBean.do")
+public Controller createMyBeanController(){
+   return new MyBeanController();
+}</programlisting>
+   
+   <para> Another advantage that JavaConfig holds over XML is that you can create inlined classes for 
+    trivial controllers and validators classes which can be surprisingly common in web applications.  
+    This approach should be used with care: (//TODO add link to Spring MVC validators):</para>
+    
+    <programlisting>@Bean 
+public Validator createMyBeanValidator(){
+   return new Validator(){
+      public boolean supports(Class clazz){
+         return clazz.isAssingableFrom(MyBean.class);
+      }
+          
+      public void validate(Object target, Errors errors){
+         //validate MyBean - check a date or compare two MyBean values, you can even use other beans
+      }
+   }</programlisting>
+
+  </section>
+
+  <section>
+    <title>Working with @Controllers</title>
+    
+    <para> @Controllers are inherently dependant on Spring's APIs and and Spring's annotations.  Also, 
+    the current implementation of the @Controller set of annotations require that a single class be 
+    used as a single configuration that is purely @Controller annotation based, and the same class 
+    cannot have instances with different configuration details.  Therefore, JavaConfig cannot be used
+    to create @Controller instances, rather, one should use component-scan (//TODO: link) to add 
+    @Controllers into the application context.</para>
+    
+    <para> However, JavaConfig can be extremely helpful in creating most of the other components 
+    that exist in a web ecosystem.  For example, JavaConfig has some advantages when creating daos 
+    and service level beans.  In addition, JavaConfig can used to create complex validators, 
+    data binders and view mappings (//TODO links) that are part of the web-tier.</para> 
+    
+  </section>
+</chapter>

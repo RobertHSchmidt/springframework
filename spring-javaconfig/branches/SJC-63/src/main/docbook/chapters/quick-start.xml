@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="quick-start">
+  <title>Quick start</title>
+
+  <para>This chapter provides a basic tutorial for getting started
+  with JavaConfig. For full details on JavaConfig's capabilities,
+  please refer to <xref linkend="reference" /></para>
+
+  <section>
+    <title>Download JavaConfig</title>
+
+    <section>
+      <title>Maven 2</title>
+
+      <para>Assuming a Maven2 build infrastructure, using JavaConfig is as
+      simple as adding the following to your POM <programlisting>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.javaconfig&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-javaconfig&lt;/artifactId&gt;
+        &lt;version&gt;&version;&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</programlisting> <note> See <xref linkend="maven-configs" /> for more
+          information about using Maven2 with Spring JavaConfig </note></para>
+        </section>
+
+        <section>
+          <title>Ant/Other</title>
+
+          <para>TODO: Download from sourceforge (link), consider the
+          -with-dependencies jar.</para>
+        </section>
+      </section>
+
+      <section>
+        <title>Create bean definitions</title>
+
+        <para>
+          <programlisting>@Configuration
+public class ApplicationConfig {
+    @Bean
+    public TransferService transferService() {
+        return new TransferServiceImpl(accountRepository());
+    }
+
+    @Bean
+    public AccountRepository accountRepository() {
+        return new JdbcAccountRepository(dataSource());
+    }
+
+    @Bean
+    public DataSource dataSource() {
+        return new DriverManagerDataSource(TODO: args);
+    }
+}
+</programlisting>
+    </para>
+  </section>
+
+  <section>
+    <title>Retrieve bean instances</title>
+
+    <para>Let's create a very basic, command-line application to allow
+    users to transfer money from one account to another. <programlisting>public class SimpleTransferApplication {
+    public static void main(String... args) {
+        double amount = new Double(args[0]);
+        int sourceAcctId = new Integer(args[1]);
+        int destAcctId = new Integer(args[2]);
+
+        JavaConfigApplicationContext context = new JavaConfigApplicationContext(ApplicationConfig.class);
+        TransferService transferService = context.getBean(TransferService.class);
+        transferService.transfer(300.00, sourceAcctId, destAccountId);
+    }
+}
+</programlisting></para>
+  </section>
+
+  <section>
+    <title>Summary</title>
+
+    <para>Obviously, we're a bit too simplistic here, to learn more about
+    modularizing <classname>@Configuration</classname> classes, see TODO
+    link. To learn about more advanced mechanisms for ... TODO continue
+    this approach,</para>
+  </section>
+</chapter>
