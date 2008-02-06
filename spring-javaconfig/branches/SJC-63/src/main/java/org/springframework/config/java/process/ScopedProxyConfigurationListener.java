@@ -41,7 +41,6 @@ class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
 	@Override
 	public void handleEvent(Reactor reactor, BeanMethodEvent event) {
 		BeanDefinitionRegistration beanDefinitionRegistration = event.beanDefinitionRegistration;
-		ConfigurationProcessor cp = (ConfigurationProcessor) reactor;
 		Method method = event.method;
 		Bean beanAnnotation = AnnotationUtils.findAnnotation(method, Bean.class);
 		ProcessingContext pc = ProcessingContext.getCurrentContext();
