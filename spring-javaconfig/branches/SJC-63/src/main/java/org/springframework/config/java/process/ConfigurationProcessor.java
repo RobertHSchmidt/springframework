@@ -101,7 +101,7 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 	 */
 	private ConfigurableApplicationContext childApplicationContext;
 
-	ConfigurationListenerRegistry configurationListenerRegistry = new ConfigurationListenerRegistry();
+	private ConfigurationListenerRegistry configurationListenerRegistry = new ConfigurationListenerRegistry();
 
 	private BeanNamingStrategy beanNamingStrategy = new MethodNameStrategy();
 
@@ -268,6 +268,9 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 		}
 
 		ClassEvent event = new ClassEvent(this, configurationClass);
+		/* TODO: SJC-63
+		sourceClassEvent(event);
+		*/
 		new ClassConfigurationListener().handleEvent(this, event);
 
 		try {
@@ -296,6 +299,11 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 		}
 
 		try {
+			ClassEvent event = new ClassEvent(this, configurationClass);
+			event.configurationBeanName = configurationBeanName;
+			/* TODO: SJC-63
+			sourceClassEvent(event);
+			*/
 			new ClassConfigurationListener()
 					.doProcessConfigurationBean(this, configurationBeanName, configurationClass);
 

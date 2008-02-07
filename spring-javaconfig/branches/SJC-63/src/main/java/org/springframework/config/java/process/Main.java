@@ -107,6 +107,8 @@ class ClassEvent extends EventSupport {
 
 	final Class<?> clazz;
 
+	String configurationBeanName;
+
 	public ClassEvent(Object source, Class<?> clazz) {
 		super(source);
 		this.clazz = clazz;
