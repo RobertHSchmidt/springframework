@@ -25,6 +25,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.process.ConfigurationProcessor;
+import org.springframework.config.java.process.ConfigurationUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
@@ -326,7 +327,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		if (configClasses != null && configClasses.length > 0) {
 			for (Class<?> configClass : configClasses) {
 				Class<?> candidate = configClass.getDeclaringClass();
-				if (candidate != null && ConfigurationProcessor.isConfigurationClass(candidate)) {
+				if (candidate != null && ConfigurationUtils.isConfigurationClass(candidate)) {
 					if (outerConfig != null) {
 						// TODO: throw a better exception
 						throw new RuntimeException("cannot specify more than one inner configuration class");
@@ -349,7 +350,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {
 		if (configClasses != null && configClasses.length > 0) {
 			for (Class<?> cz : configClasses) {
-				if (ConfigurationProcessor.isConfigurationClass(cz)) {
+				if (ConfigurationUtils.isConfigurationClass(cz)) {
 					beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
 				}
 			}
