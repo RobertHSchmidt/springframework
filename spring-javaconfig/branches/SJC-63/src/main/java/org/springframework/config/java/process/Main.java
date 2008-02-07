@@ -41,6 +41,8 @@ class MyConfig {
 
 interface Reactor {
 	void sourceEvent(Event event);
+
+	void sourceBeanMethodEvent(BeanMethodEvent beanMethodEvent);
 }
 
 interface Event {
@@ -156,6 +158,10 @@ class ConfigurationProcessor2 implements Reactor {
 	@Override
 	public String toString() {
 		return String.format("{%s}", this.getClass().getSimpleName());
+	}
+
+	public void sourceBeanMethodEvent(BeanMethodEvent beanMethodEvent) {
+		throw new UnsupportedOperationException();
 	}
 }
 

@@ -93,7 +93,7 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 		BeanMethodEvent beanMethodEvent = new BeanMethodEvent(this, configurationClass, m, beanAnnotation,
 				beanDefinitionRegistration);
 
-		((ConfigurationProcessor) reactor).sourceBeanMethodEvent(beanMethodEvent);
+		reactor.sourceBeanMethodEvent(beanMethodEvent);
 
 		// allow registration bypass
 		if (beanDefinitionRegistration.rbd == null) {
