@@ -40,6 +40,9 @@ class ConfigurationListenerRegistry {
 	private final List<ConfigurationListener> configurationListeners = new ArrayList<ConfigurationListener>();
 
 	public ConfigurationListenerRegistry() {
+		/* TODO: SJC-63
+		registerConfigurationListener(new ClassConfigurationListener());
+		*/
 		registerConfigurationListener(new AutoBeanConfigurationListener());
 		registerConfigurationListener(new ResourceBundlesConfigurationListener());
 		registerConfigurationListener(new ScopedProxyConfigurationListener());

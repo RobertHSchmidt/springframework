@@ -36,6 +36,9 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 
 	public void handleEvent(Reactor reactor, ClassEvent event) {
 
+		if (event.source == this)
+			return;
+
 		Class<?> configurationClass = event.clazz;
 		ProcessingContext pc = ProcessingContext.getCurrentContext();
 
@@ -45,7 +48,11 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 		// register the configuration as a bean to allow Spring to use it for
 		// creating the actual objects
 		// a. produce a bean name based on the class name
-		String configBeanName = configurationClass.getName();
+		final String configBeanName;
+		if (event.configurationBeanName != null)
+			configBeanName = event.configurationBeanName;
+		else
+			configBeanName = configurationClass.getName();
 
 		// create a bean from the configuration class/instance
 		RootBeanDefinition configurationBeanDefinition = new RootBeanDefinition();
@@ -65,7 +72,7 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 		++pc.beanDefsGenerated;
 	}
 
-	public void doProcessConfigurationBean(Reactor reactor, String configurationBeanName, Class<?> configurationClass) {
+	void doProcessConfigurationBean(Reactor reactor, String configurationBeanName, Class<?> configurationClass) {
 		Assert.notNull(configurationBeanName, "beanName is required");
 		Assert.notNull(configurationClass, "configurationClass is required");
 
