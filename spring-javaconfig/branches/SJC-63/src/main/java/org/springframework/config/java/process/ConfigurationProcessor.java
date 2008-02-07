@@ -314,6 +314,7 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 			if (isEntryPoint)
 				pc.beanDefsGenerated = -1;
 		}
+
 	}
 
 	/**
