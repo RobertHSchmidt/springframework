@@ -41,12 +41,6 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 
 		if (!reactor.isConfigClass(configurationClass))
 			return;
-		// TODO: pick up here
-		/*
-		if (!ConfigurationProcessor.isConfigurationClass(configurationClass,
-				((ConfigurationProcessor) reactor).configurationListenerRegistry))
-			return;
-			*/
 
 		// register the configuration as a bean to allow Spring to use it for
 		// creating the actual objects
@@ -66,7 +60,7 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 		((DefaultListableBeanFactory) pc.owningBeanFactory).registerBeanDefinition(configBeanName,
 				configurationBeanDefinition);
 
-		((ConfigurationProcessor) reactor).processConfigurationBean(configBeanName, configurationClass);
+		doProcessConfigurationBean(reactor, configBeanName, configurationClass);
 		// include the configuration bean definition
 		++pc.beanDefsGenerated;
 	}
@@ -75,7 +69,7 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 		Assert.notNull(configurationBeanName, "beanName is required");
 		Assert.notNull(configurationClass, "configurationClass is required");
 
-		enhanceConfigurationClassAndUpdateBeanDefinition(reactor, configurationClass, configurationBeanName);
+		enhanceConfigurationClassAndUpdateBeanDefinition(configurationClass, configurationBeanName);
 
 		generateBeanDefinitions(reactor, configurationBeanName, configurationClass);
 	}
@@ -104,9 +98,7 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 				MethodEvent event = new MethodEvent(reactor, configurationClass, m);
 				event.configurationBeanName = configurationBeanName;
 
-				for (ConfigurationListener cml : ((ConfigurationProcessor) reactor).configurationListenerRegistry
-						.getConfigurationListeners())
-					cml.handleEvent(reactor, event);
+				reactor.sourceMethodEvent(event);
 			}
 		}, new ReflectionUtils.MethodFilter() {
 			public boolean matches(Method candidateMethod) {
@@ -115,80 +107,7 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 		});
 	}
 
-	private void enhanceConfigurationClassAndUpdateBeanDefinition(Reactor reactor, Class<?> configurationClass,
-			String configurationBeanName) {
-		ProcessingContext pc = ProcessingContext.getCurrentContext();
-		AbstractBeanDefinition definition = (AbstractBeanDefinition) pc.owningBeanFactory
-				.getBeanDefinition(configurationBeanName);
-
-		// update the configuration bean definition first
-		Class<?> enhancedClass = ((ConfigurationProcessor) reactor).configurationEnhancer
-				.enhanceConfiguration(configurationClass);
-		definition.setBeanClass(enhancedClass);
-
-		// Force resolution of dependencies on other beans
-		// It's questionable why this is needed. SPR-33
-		for (PropertyValue pv : definition.getPropertyValues().getPropertyValues()) {
-			if (pv.getValue() instanceof RuntimeBeanReference) {
-				RuntimeBeanReference rbref = (RuntimeBeanReference) pv.getValue();
-				String beanName = rbref.getBeanName();
-				if (definition.getDependsOn() == null) {
-					definition.setDependsOn(new String[] { beanName });
-				}
-				else {
-					String[] added = (String[]) ObjectUtils.addObjectToArray(definition.getDependsOn(), beanName);
-					definition.setDependsOn(added);
-				}
-			}
-		}
-	}
-
-	/*
-	public void handleEvent(Reactor reactor, ClassEvent event) {
-
-		if (event.source == this)
-			return;
-
-		Class<?> configurationClass = event.clazz;
-
-		if (!ConfigurationProcessor.isConfigurationClass(configurationClass,
-				((ConfigurationProcessor) reactor).configurationListenerRegistry))
-			return;
-
-		ProcessingContext pc = ProcessingContext.getCurrentContext();
-
-		// register the configuration as a bean to allow Spring to use it for
-		// creating the actual objects
-
-		// a. produce a bean name based on the class name
-		String configBeanName;
-		if (event.configurationBeanName != null && !"".equals(event.configurationBeanName))
-			configBeanName = event.configurationBeanName;
-		else
-			configBeanName = configurationClass.getName();
-
-		// create a bean from the configuration class/instance
-		RootBeanDefinition configurationBeanDefinition = new RootBeanDefinition();
-
-		// the class enhancement is done by #generateBeanDefinition along with
-		// validation
-		configurationBeanDefinition.setBeanClass(configurationClass);
-		configurationBeanDefinition.setResourceDescription("class-based configuration bean definition");
-
-		Assert.isInstanceOf(DefaultListableBeanFactory.class, pc.owningBeanFactory);
-
-		((DefaultListableBeanFactory) pc.owningBeanFactory).registerBeanDefinition(configBeanName,
-				configurationBeanDefinition);
-
-		enhanceConfigurationClassAndUpdateBeanDefinition(reactor, configurationClass, configBeanName);
-
-		generateBeanDefinitions(reactor, configBeanName, configurationClass);
-
-		// include the configuration bean definition
-		++pc.beanDefsGenerated;
-	}
-
-	private void enhanceConfigurationClassAndUpdateBeanDefinition(Reactor reactor, Class<?> configurationClass,
+	private void enhanceConfigurationClassAndUpdateBeanDefinition(Class<?> configurationClass,
 			String configurationBeanName) {
 		ProcessingContext pc = ProcessingContext.getCurrentContext();
 		AbstractBeanDefinition definition = (AbstractBeanDefinition) pc.owningBeanFactory
@@ -215,23 +134,4 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 		}
 	}
 
-	private void generateBeanDefinitions(final Reactor reactor, final String configurationBeanName,
-			final Class<?> configurationClass) {
-
-		ReflectionUtils.doWithMethods(configurationClass, new MethodCallback() {
-			public void doWith(Method m) throws IllegalArgumentException, IllegalAccessException {
-				MethodEvent event = new MethodEvent(reactor, configurationClass, m);
-				event.configurationBeanName = configurationBeanName;
-
-				for (ConfigurationListener cml : ((ConfigurationProcessor) reactor).configurationListenerRegistry
-						.getConfigurationListeners())
-					cml.handleEvent(reactor, event);
-			}
-		}, new ReflectionUtils.MethodFilter() {
-			public boolean matches(Method candidateMethod) {
-				return !candidateMethod.getDeclaringClass().equals(Object.class);
-			}
-		});
-	}
-	*/
 }

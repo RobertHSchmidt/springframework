@@ -103,8 +103,6 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 
 	ConfigurationListenerRegistry configurationListenerRegistry = new ConfigurationListenerRegistry();
 
-	ConfigurationEnhancer configurationEnhancer;
-
 	private BeanNamingStrategy beanNamingStrategy = new MethodNameStrategy();
 
 	private ResourceLoader resourceLoader = new DefaultResourceLoader();
@@ -229,12 +227,12 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 
 		CompositeValueSource vs = new CompositeValueSource();
 
-		pc = new ProcessingContext(beanNamingStrategy, owningBeanFactory, childFactory, vs, resourceLoader,
-				childApplicationContext);
-		ProcessingContext.setCurrentContext(pc);
-
-		this.configurationEnhancer = new CglibConfigurationEnhancer(owningBeanFactory, childFactory,
+		ConfigurationEnhancer configurationEnhancer = new CglibConfigurationEnhancer(owningBeanFactory, childFactory,
 				beanNamingStrategy, a, vs);
+
+		pc = new ProcessingContext(beanNamingStrategy, owningBeanFactory, childFactory, vs, resourceLoader,
+				childApplicationContext, configurationEnhancer);
+		ProcessingContext.setCurrentContext(pc);
 
 		initialized = true;
 	}
@@ -351,6 +349,11 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 			if (cl.understands(event.clazz))
 				cl.handleEvent(this, event);
 
+	}
+
+	public void sourceMethodEvent(MethodEvent event) {
+		for (ConfigurationListener cl : configurationListenerRegistry.getConfigurationListeners())
+			cl.handleEvent(this, event);
 	}
 
 	public void sourceBeanMethodEvent(BeanMethodEvent event) {
