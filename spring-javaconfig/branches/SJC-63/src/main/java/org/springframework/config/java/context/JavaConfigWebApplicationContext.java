@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.process.ConfigurationProcessor;
+import org.springframework.config.java.process.ConfigurationUtils;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.util.Assert;
 import org.springframework.web.context.support.AbstractRefreshableWebApplicationContext;
@@ -63,7 +63,7 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 		for (String location : getConfigLocations()) {
 			try {
 				Class<?> cz = Class.forName(location);
-				if (ConfigurationProcessor.isConfigurationClass(cz)) {
+				if (ConfigurationUtils.isConfigurationClass(cz)) {
 					configClasses.add(cz);
 				}
 				else {
@@ -83,7 +83,7 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 		if (configClasses != null && configClasses.size() > 0) {
 			for (Class<?> configClass : configClasses) {
 				Class<?> candidate = configClass.getDeclaringClass();
-				if (candidate != null && ConfigurationProcessor.isConfigurationClass(candidate)) {
+				if (candidate != null && ConfigurationUtils.isConfigurationClass(candidate)) {
 					if (outerConfig != null) {
 						// TODO: throw a better exception
 						throw new RuntimeException("cannot specify more than one inner configuration class");

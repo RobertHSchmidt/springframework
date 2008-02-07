@@ -16,13 +16,12 @@ class ImportConfigurationListener extends ConfigurationListenerSupport {
 		ConfigurableListableBeanFactory owningBeanFactory = pc.owningBeanFactory;
 
 		Class<?> configurationClass = event.clazz;
-		ConfigurationProcessor configurationProcessor = (ConfigurationProcessor) reactor;
 		Import importAnnotation = configurationClass.getAnnotation(Import.class);
 		Class<?>[] configurationClassesToImport = reverse(importAnnotation.value());
 		for (Class<?> configurationClassToImport : configurationClassesToImport) {
 			// duplicate check - process only if we've never encountered before
 			if (!owningBeanFactory.containsBeanDefinition(configurationClassToImport.getName()))
-				configurationProcessor.processClass(configurationClassToImport);
+				new ClassConfigurationListener().handleEvent(reactor, new ClassEvent(this, configurationClassToImport));
 		}
 	}
 

@@ -43,6 +43,10 @@ interface Reactor {
 	void sourceEvent(Event event);
 
 	void sourceBeanMethodEvent(BeanMethodEvent beanMethodEvent);
+
+	boolean isConfigClass(Class<?> configurationClass);
+
+	void sourceClassEvent(ClassEvent classEvent);
 }
 
 interface Event {
@@ -161,6 +165,14 @@ class ConfigurationProcessor2 implements Reactor {
 	}
 
 	public void sourceBeanMethodEvent(BeanMethodEvent beanMethodEvent) {
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean isConfigClass(Class<?> configurationClass) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void sourceClassEvent(ClassEvent classEvent) {
 		throw new UnsupportedOperationException();
 	}
 }

@@ -15,29 +15,18 @@
  */
 package org.springframework.config.java.process;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.config.RuntimeBeanReference;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
 import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
-import org.springframework.config.java.core.ExternalBeanMethodProcessor;
-import org.springframework.config.java.core.ExternalValueMethodProcessor;
-import org.springframework.config.java.core.StandardBeanMethodProcessor;
 import org.springframework.config.java.enhancement.ConfigurationEnhancer;
 import org.springframework.config.java.enhancement.cglib.CglibConfigurationEnhancer;
 import org.springframework.config.java.naming.BeanNamingStrategy;
@@ -53,9 +42,6 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.ReflectionUtils;
-import org.springframework.util.ReflectionUtils.MethodCallback;
 
 /**
  * Class that processes Configuration beans.
@@ -115,9 +101,9 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 	 */
 	private ConfigurableApplicationContext childApplicationContext;
 
-	private ConfigurationListenerRegistry configurationListenerRegistry = new ConfigurationListenerRegistry();
+	ConfigurationListenerRegistry configurationListenerRegistry = new ConfigurationListenerRegistry();
 
-	private ConfigurationEnhancer configurationEnhancer;
+	ConfigurationEnhancer configurationEnhancer;
 
 	private BeanNamingStrategy beanNamingStrategy = new MethodNameStrategy();
 
@@ -283,38 +269,16 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 			pc.beanDefsGenerated = 0;
 		}
 
-		if (!ConfigurationProcessor.isConfigurationClass(configurationClass, configurationListenerRegistry))
-			return 0;
-
-		// register the configuration as a bean to allow Spring to use it for
-		// creating the actual objects
-
-		// a. produce a bean name based on the class name
-		String configBeanName = configurationClass.getName();
-
-		// create a bean from the configuration class/instance
-		RootBeanDefinition configurationBeanDefinition = new RootBeanDefinition();
-
-		// the class enhancement is done by #generateBeanDefinition along with
-		// validation
-		configurationBeanDefinition.setBeanClass(configurationClass);
-		configurationBeanDefinition.setResourceDescription("class-based configuration bean definition");
-
-		Assert.isInstanceOf(DefaultListableBeanFactory.class, owningBeanFactory);
-
-		((DefaultListableBeanFactory) owningBeanFactory).registerBeanDefinition(configBeanName,
-				configurationBeanDefinition);
+		ClassEvent event = new ClassEvent(this, configurationClass);
+		new ClassConfigurationListener().handleEvent(this, event);
 
 		try {
-			processConfigurationBean(configBeanName, configurationClass);
-			// include the configuration bean definition
-			return ++pc.beanDefsGenerated;
+			return pc.beanDefsGenerated;
 		}
 		finally {
 			if (isEntryPoint)
 				pc.beanDefsGenerated = -1;
 		}
-
 	}
 
 	/**
@@ -334,13 +298,8 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 		}
 
 		try {
-
-			Assert.notNull(configurationBeanName, "beanName is required");
-			Assert.notNull(configurationClass, "configurationClass is required");
-
-			enhanceConfigurationClassAndUpdateBeanDefinition(configurationClass, configurationBeanName);
-
-			generateBeanDefinitions(configurationBeanName, configurationClass);
+			new ClassConfigurationListener()
+					.doProcessConfigurationBean(this, configurationBeanName, configurationClass);
 
 			return;
 		}
@@ -348,85 +307,6 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 			if (isEntryPoint)
 				pc.beanDefsGenerated = -1;
 		}
-	}
-
-	/**
-	 * Modify metadata by emitting new bean definitions based on the bean
-	 * creation methods in this Java bytecode.
-	 * 
-	 * @param configurationBeanName name of the bean containing the factory
-	 * methods
-	 * @param configurationClass enhanced configuration class
-	 * @return number of bean definitions created
-	 */
-	protected void generateBeanDefinitions(String configurationBeanName, Class<?> configurationClass) {
-
-		sourceClassEvent(new ClassEvent(this, configurationClass));
-		processMethods(configurationBeanName, configurationClass);
-
-	}
-
-	private void processMethods(final String configurationBeanName, final Class<?> configurationClass) {
-
-		ReflectionUtils.doWithMethods(configurationClass, new MethodCallback() {
-			public void doWith(Method m) throws IllegalArgumentException, IllegalAccessException {
-				Reactor reactor = ConfigurationProcessor.this;
-				MethodEvent event = new MethodEvent(reactor, configurationClass, m);
-				event.configurationBeanName = configurationBeanName;
-
-				for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners())
-					cml.handleEvent(reactor, event);
-			}
-		}, new ReflectionUtils.MethodFilter() {
-			public boolean matches(Method candidateMethod) {
-				return !candidateMethod.getDeclaringClass().equals(Object.class);
-			}
-		});
-	}
-
-	private void enhanceConfigurationClassAndUpdateBeanDefinition(Class<?> configurationClass,
-			String configurationBeanName) {
-		AbstractBeanDefinition definition = (AbstractBeanDefinition) owningBeanFactory
-				.getBeanDefinition(configurationBeanName);
-
-		// update the configuration bean definition first
-		Class<?> enhancedClass = configurationEnhancer.enhanceConfiguration(configurationClass);
-		definition.setBeanClass(enhancedClass);
-
-		// Force resolution of dependencies on other beans
-		// It's questionable why this is needed. SPR-33
-		for (PropertyValue pv : definition.getPropertyValues().getPropertyValues()) {
-			if (pv.getValue() instanceof RuntimeBeanReference) {
-				RuntimeBeanReference rbref = (RuntimeBeanReference) pv.getValue();
-				String beanName = rbref.getBeanName();
-				if (definition.getDependsOn() == null) {
-					definition.setDependsOn(new String[] { beanName });
-				}
-				else {
-					String[] added = (String[]) ObjectUtils.addObjectToArray(definition.getDependsOn(), beanName);
-					definition.setDependsOn(added);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Check if the given class is a configuration.
-	 * 
-	 * @param candidateConfigurationClass - must be non-abstract and be
-	 * annotated with &#64;Configuration and/or have at least one method
-	 * annotated with &#64;Bean
-	 */
-	public static boolean isConfigurationClass(Class<?> candidateConfigurationClass) {
-		Assert.notNull(candidateConfigurationClass);
-
-		if (Modifier.isAbstract(candidateConfigurationClass.getModifiers())
-				&& ExternalBeanMethodProcessor.findExternalBeanCreationMethods(candidateConfigurationClass).isEmpty()
-				&& ExternalValueMethodProcessor.findExternalValueCreationMethods(candidateConfigurationClass).isEmpty())
-			return false;
-
-		return candidateConfigurationClass.isAnnotationPresent(Configuration.class)
-				|| !StandardBeanMethodProcessor.findBeanCreationMethods(candidateConfigurationClass).isEmpty();
 	}
 
 	/**
@@ -440,7 +320,7 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 	 */
 	static boolean isConfigurationClass(Class<?> candidateConfigurationClass, ConfigurationListenerRegistry registry) {
 
-		if (isConfigurationClass(candidateConfigurationClass)) {
+		if (ConfigurationUtils.isConfigurationClass(candidateConfigurationClass)) {
 			CglibConfigurationEnhancer.validateSuitabilityForEnhancement(candidateConfigurationClass);
 			return true;
 		}
@@ -451,6 +331,10 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 					return true;
 
 		return false;
+	}
+
+	public boolean isConfigClass(Class<?> candidateConfigurationClass) {
+		return isConfigurationClass(candidateConfigurationClass, configurationListenerRegistry);
 	}
 
 	public void sourceEvent(Event event) {
