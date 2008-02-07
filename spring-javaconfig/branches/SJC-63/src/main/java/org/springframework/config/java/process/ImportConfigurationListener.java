@@ -22,7 +22,7 @@ class ImportConfigurationListener extends ConfigurationListenerSupport {
 		for (Class<?> configurationClassToImport : configurationClassesToImport) {
 			// duplicate check - process only if we've never encountered before
 			if (!owningBeanFactory.containsBeanDefinition(configurationClassToImport.getName()))
-				pc.beanDefsGenerated += configurationProcessor.processClass(configurationClassToImport);
+				configurationProcessor.processClass(configurationClassToImport);
 		}
 	}
 
