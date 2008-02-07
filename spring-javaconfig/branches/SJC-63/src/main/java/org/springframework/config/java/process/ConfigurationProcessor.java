@@ -151,12 +151,22 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 		// TODO: why do both of the iterations below? wouldn't one of the
 		// two suffice?
 		List<BeanFactoryPostProcessor> bfpps = new LinkedList<BeanFactoryPostProcessor>();
+
+		Class<?> configurationPostProcessor;
+		try {
+			configurationPostProcessor = Class
+					.forName("org.springframework.config.java.process.ConfigurationPostProcessor");
+		}
+		catch (ClassNotFoundException ex) {
+			throw new RuntimeException(ex);
+		}
+
 		for (Object o : source.getBeansOfType(BeanFactoryPostProcessor.class).values())
-			if (!(o instanceof ConfigurationPostProcessor))
+			if (!(o.getClass().isAssignableFrom(configurationPostProcessor)))
 				bfpps.add((BeanFactoryPostProcessor) o);
 
 		for (Object o : source.getBeanFactoryPostProcessors())
-			if (!(o instanceof ConfigurationPostProcessor))
+			if (!(o.getClass().isAssignableFrom(configurationPostProcessor)))
 				bfpps.add((BeanFactoryPostProcessor) o);
 
 		// Add all BeanFactoryPostProcessors to the child context

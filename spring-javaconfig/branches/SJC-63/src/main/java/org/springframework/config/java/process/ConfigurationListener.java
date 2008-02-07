@@ -19,7 +19,6 @@ import java.lang.reflect.Method;
 
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
 
 /**
@@ -30,7 +29,7 @@ import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
  * 
  * @author Rod Johnson
  */
-public interface ConfigurationListener extends ConfigurationListener2, BeanMethodReturnValueProcessor {
+public interface ConfigurationListener extends BeanMethodReturnValueProcessor {
 
 	/**
 	 * Does this configurer understand the given configuration class, which
@@ -51,25 +50,9 @@ public interface ConfigurationListener extends ConfigurationListener2, BeanMetho
 	boolean processBeanMethodReturnValue(BeanFactory childBeanFactory, Object originallyCreatedBean, Method method,
 			ProxyFactory pf);
 
-	/**
-	 * Class to hold BeanDefinition, name and any other information, to allow
-	 * configuration listeners to customize the registration, change its name,
-	 * etc.
-	 */
-	class BeanDefinitionRegistration {
-		public RootBeanDefinition rbd;
+	void handleEvent(Reactor processor, Event event);
 
-		public String name;
+	void handleEvent(Reactor reactor, MethodEvent event);
 
-		/**
-		 * Should the bean definition be hidden or not. When hidden, the bean
-		 * definition resides only in the child context.
-		 */
-		public boolean hide;
-
-		public BeanDefinitionRegistration(RootBeanDefinition rbd, String name) {
-			this.rbd = rbd;
-			this.name = name;
-		}
-	}
+	void handleEvent(Reactor reactor, BeanMethodEvent event);
 }

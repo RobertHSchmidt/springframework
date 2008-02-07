@@ -86,7 +86,7 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 
 		// create a beanDefinitionRegistration for the current bean
 		// definition/name pair
-		ConfigurationListener.BeanDefinitionRegistration beanDefinitionRegistration = new ConfigurationListener.BeanDefinitionRegistration(
+		BeanDefinitionRegistration beanDefinitionRegistration = new BeanDefinitionRegistration(
 				rbd, beanName);
 		beanDefinitionRegistration.hide = !Modifier.isPublic(m.getModifiers());
 
