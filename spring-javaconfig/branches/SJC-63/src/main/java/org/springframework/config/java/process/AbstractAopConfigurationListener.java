@@ -43,7 +43,7 @@ abstract class AbstractAopConfigurationListener extends ConfigurationListenerSup
 	private Map<String, Pointcut> pointcuts = new HashMap<String, Pointcut>();
 
 	protected void addAdvice(String adviceName, Pointcut pc, Advice advice) {
-		ProcessingContext.getCurrentContext().registerSingleton(adviceName, advice, true);
+		getProcessingContext().registerSingleton(adviceName, advice, true);
 		pointcuts.put(adviceName, pc);
 	}
 

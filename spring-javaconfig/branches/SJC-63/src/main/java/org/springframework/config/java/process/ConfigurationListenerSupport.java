@@ -36,6 +36,10 @@ public abstract class ConfigurationListenerSupport implements ConfigurationListe
 
 	protected final Log log = LogFactory.getLog(getClass());
 
+	protected ProcessingContext getProcessingContext() {
+		return ProcessingContext.getCurrentContext();
+	}
+
 	public boolean understands(Class<?> configurerClass) {
 		return false;
 	}

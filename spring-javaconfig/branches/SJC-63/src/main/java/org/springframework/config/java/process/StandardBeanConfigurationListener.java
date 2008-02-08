@@ -27,6 +27,7 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 
 	@Override
 	public void handleEvent(Reactor reactor, MethodEvent event) {
+		ProcessingContext pc = getProcessingContext();
 		Method m = event.method;
 		Bean beanAnnotation = AnnotationUtils.findAnnotation(m, Bean.class);
 		if (beanAnnotation == null)
@@ -35,7 +36,6 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 		Class<?> configurationClass = event.clazz;
 		String configurationBeanName = event.configurationBeanName;
 
-		ProcessingContext pc = ProcessingContext.getCurrentContext();
 		BeanNamingStrategy beanNamingStrategy = pc.beanNamingStrategy;
 		ConfigurableListableBeanFactory owningBeanFactory = pc.owningBeanFactory;
 		BeanNameTrackingDefaultListableBeanFactory childFactory = pc.childFactory;
@@ -86,8 +86,7 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 
 		// create a beanDefinitionRegistration for the current bean
 		// definition/name pair
-		BeanDefinitionRegistration beanDefinitionRegistration = new BeanDefinitionRegistration(
-				rbd, beanName);
+		BeanDefinitionRegistration beanDefinitionRegistration = new BeanDefinitionRegistration(rbd, beanName);
 		beanDefinitionRegistration.hide = !Modifier.isPublic(m.getModifiers());
 
 		BeanMethodEvent beanMethodEvent = new BeanMethodEvent(this, configurationClass, m, beanAnnotation,
@@ -108,6 +107,6 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 					beanDefinitionRegistration.rbd);
 		}
 
-		ProcessingContext.getCurrentContext().beanDefsGenerated++;
+		pc.beanDefsGenerated++;
 	}
 }

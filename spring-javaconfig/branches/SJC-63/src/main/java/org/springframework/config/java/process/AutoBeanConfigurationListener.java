@@ -40,7 +40,7 @@ class AutoBeanConfigurationListener extends ConfigurationListenerSupport {
 	@Override
 	public void handleEvent(Reactor reactor, MethodEvent event) {
 
-		ProcessingContext pc = ProcessingContext.getCurrentContext();
+		ProcessingContext pc = getProcessingContext();
 
 		Method m = event.method;
 
