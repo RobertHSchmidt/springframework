@@ -86,31 +86,6 @@ public final class ConfigurationProcessor implements Reactor {
 
 	private final ConfigurationListenerRegistry configurationListenerRegistry;
 
-	private ConfigurationProcessor(ProcessingContext pc, ConfigurationListenerRegistry configurationListenerRegistry,
-			ConfigurableListableBeanFactory owningBeanFactory, ConfigurableApplicationContext owningApplicationContext) {
-		this.processingContext = pc != null ? pc : new ProcessingContext();
-
-		if (configurationListenerRegistry != null) {
-			this.configurationListenerRegistry = configurationListenerRegistry;
-		}
-		else {
-			log.debug("received null ConfigurationListenerRegistry during construction; will use default");
-			this.configurationListenerRegistry = new ConfigurationListenerRegistry();
-		}
-
-		if (owningBeanFactory != null)
-			this.processingContext.owningBeanFactory = owningBeanFactory;
-
-		if (owningApplicationContext != null)
-			this.processingContext.owningApplicationContext = owningApplicationContext;
-
-		initialize();
-	}
-
-	public ConfigurationProcessor() {
-		this(null, null, null, null);
-	}
-
 	public ConfigurationProcessor(ConfigurableApplicationContext owningApplicationContext) {
 		this(null, null, null, nonNull(owningApplicationContext, "owningApplicationContext"));
 	}
@@ -133,8 +108,30 @@ public final class ConfigurationProcessor implements Reactor {
 		this(nonNull(pc, "processingContext"), configurationListenerRegistry, null, null);
 	}
 
+	private ConfigurationProcessor(ProcessingContext pc, ConfigurationListenerRegistry configurationListenerRegistry,
+			ConfigurableListableBeanFactory owningBeanFactory, ConfigurableApplicationContext owningApplicationContext) {
+		this.processingContext = pc != null ? pc : new ProcessingContext();
+
+		if (configurationListenerRegistry != null) {
+			this.configurationListenerRegistry = configurationListenerRegistry;
+		}
+		else {
+			log.debug("received null ConfigurationListenerRegistry during construction; will use default");
+			this.configurationListenerRegistry = new ConfigurationListenerRegistry();
+		}
+
+		if (owningBeanFactory != null)
+			this.processingContext.owningBeanFactory = owningBeanFactory;
+
+		if (owningApplicationContext != null)
+			this.processingContext.owningApplicationContext = owningApplicationContext;
+
+		initialize();
+	}
+
 	private ConfigurableApplicationContext createChildApplicationContext() {
-		ConfigurableApplicationContext child = new GenericApplicationContext(childFactory, processingContext.owningApplicationContext) {
+		ConfigurableApplicationContext child = new GenericApplicationContext(childFactory,
+				processingContext.owningApplicationContext) {
 			// TODO this override is a hack! Why is EventMulticaster null?
 			@Override
 			public void publishEvent(ApplicationEvent event) {
@@ -194,9 +191,11 @@ public final class ConfigurationProcessor implements Reactor {
 
 		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(processingContext.owningBeanFactory);
 
-		if (processingContext.owningApplicationContext != null && processingContext.owningApplicationContext instanceof AbstractApplicationContext) {
+		if (processingContext.owningApplicationContext != null
+				&& processingContext.owningApplicationContext instanceof AbstractApplicationContext) {
 			childApplicationContext = createChildApplicationContext();
-			copyBeanPostProcessors((AbstractApplicationContext) processingContext.owningApplicationContext, childApplicationContext);
+			copyBeanPostProcessors((AbstractApplicationContext) processingContext.owningApplicationContext,
+					childApplicationContext);
 		}
 
 		processingContext.childFactory = childFactory;
