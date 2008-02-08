@@ -24,7 +24,7 @@ public final class ProcessingContext {
 
 	public BeanNameTrackingDefaultListableBeanFactory childFactory;
 
-	public CompositeValueSource compositeValueSource;
+	public CompositeValueSource compositeValueSource = new CompositeValueSource();
 
 	public int beanDefsGenerated = -1;
 
@@ -34,7 +34,11 @@ public final class ProcessingContext {
 
 	public Iterable<BeanMethodReturnValueProcessor> returnValueProcessors;
 
-	public ConfigurableApplicationContext ac;
+	/**
+	 * Non-null if we are running in an ApplicationContext and need to ensure
+	 * that BeanFactoryProcessors from the parent apply to the child
+	 */
+	public ConfigurableApplicationContext owningApplicationContext;
 
 	public ProcessingContext() {
 	}

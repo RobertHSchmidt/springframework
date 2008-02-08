@@ -140,7 +140,7 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Pri
 	 */
 	public void setApplicationContext(ApplicationContext context) throws BeansException {
 		if (context instanceof ConfigurableApplicationContext)
-			this.processingContext.ac = (ConfigurableApplicationContext) context;
+			this.processingContext.owningApplicationContext = (ConfigurableApplicationContext) context;
 		else
 			log.warn(String.format("enclosing ApplicationContext will be ignored during processing: %s is not a %s",
 					context.getClass().getSimpleName(), ConfigurableApplicationContext.class.getSimpleName()));

@@ -27,7 +27,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.config.java.enhancement.cglib.CglibConfigurationEnhancer;
-import org.springframework.config.java.valuesource.CompositeValueSource;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -79,12 +78,6 @@ public final class ConfigurationProcessor implements Reactor {
 	private BeanNameTrackingDefaultListableBeanFactory childFactory;
 
 	/**
-	 * Non-null if we are running in an ApplicationContext and need to ensure
-	 * that BeanFactoryProcessors from the parent apply to the child
-	 */
-	private AbstractApplicationContext owningApplicationContext;
-
-	/**
 	 * If we are running in an ApplicationContext we create a child context, as
 	 * well as a child BeanFactory, so that we can apply
 	 * BeanFactoryPostProcessors to the child
@@ -109,7 +102,7 @@ public final class ConfigurationProcessor implements Reactor {
 			this.processingContext.owningBeanFactory = owningBeanFactory;
 
 		if (owningApplicationContext != null)
-			this.processingContext.ac = owningApplicationContext;
+			this.processingContext.owningApplicationContext = owningApplicationContext;
 
 		initialize();
 	}
@@ -141,7 +134,7 @@ public final class ConfigurationProcessor implements Reactor {
 	}
 
 	private ConfigurableApplicationContext createChildApplicationContext() {
-		ConfigurableApplicationContext child = new GenericApplicationContext(childFactory, owningApplicationContext) {
+		ConfigurableApplicationContext child = new GenericApplicationContext(childFactory, processingContext.owningApplicationContext) {
 			// TODO this override is a hack! Why is EventMulticaster null?
 			@Override
 			public void publishEvent(ApplicationEvent event) {
@@ -151,7 +144,7 @@ public final class ConfigurationProcessor implements Reactor {
 		};
 
 		// Piggyback on owning application context refresh
-		owningApplicationContext.addApplicationListener(new ApplicationListener() {
+		processingContext.owningApplicationContext.addApplicationListener(new ApplicationListener() {
 			public void onApplicationEvent(ApplicationEvent event) {
 				if (event instanceof ContextRefreshedEvent)
 					ConfigurationProcessor.this.childApplicationContext.refresh();
@@ -194,22 +187,19 @@ public final class ConfigurationProcessor implements Reactor {
 	 */
 	public void initialize() {
 
-		if (processingContext.ac != null)
-			processingContext.owningBeanFactory = processingContext.ac.getBeanFactory();
+		if (processingContext.owningApplicationContext != null)
+			processingContext.owningBeanFactory = processingContext.owningApplicationContext.getBeanFactory();
 
 		Assert.notNull(processingContext.owningBeanFactory, "an owning factory bean is required");
 
 		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(processingContext.owningBeanFactory);
 
-		if (processingContext.ac != null && processingContext.ac instanceof AbstractApplicationContext) {
-			owningApplicationContext = (AbstractApplicationContext) processingContext.ac;
+		if (processingContext.owningApplicationContext != null && processingContext.owningApplicationContext instanceof AbstractApplicationContext) {
 			childApplicationContext = createChildApplicationContext();
-			copyBeanPostProcessors(owningApplicationContext, childApplicationContext);
+			copyBeanPostProcessors((AbstractApplicationContext) processingContext.owningApplicationContext, childApplicationContext);
 		}
 
-		processingContext.owningBeanFactory = processingContext.owningBeanFactory;
 		processingContext.childFactory = childFactory;
-		processingContext.compositeValueSource = new CompositeValueSource();
 		processingContext.returnValueProcessors = configurationListenerRegistry;
 		processingContext.childApplicationContext = childApplicationContext;
 	}
