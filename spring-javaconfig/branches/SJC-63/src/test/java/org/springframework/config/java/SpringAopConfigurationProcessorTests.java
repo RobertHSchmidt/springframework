@@ -15,8 +15,7 @@
  */
 package org.springframework.config.java;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.*;
 
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -24,6 +23,7 @@ import org.aspectj.lang.annotation.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.aop.framework.Advised;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.AspectJConfigurationProcessorTests.CountingConfiguration;
@@ -76,6 +76,7 @@ public class SpringAopConfigurationProcessorTests {
 		configurationProcessor.processClass(SpringAroundPerInstanceAdvice.class);
 
 		TestBean advised1 = (TestBean) bf.getBean("advised");
+		assertTrue("Object was not proxied as expected", AopUtils.isAopProxy(advised1));
 		int newAge = 24;
 		advised1.setAge(newAge);
 		assertEquals("Invocations must work on target without around advice", newAge, advised1.getAge());
