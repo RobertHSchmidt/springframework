@@ -64,9 +64,11 @@ import org.springframework.util.Assert;
  * @author Chris Beams
  * @see org.springframework.config.java.process.ConfigurationListener
  */
-public final class ConfigurationProcessor implements Reactor, InitializingBean {
+public final class ConfigurationProcessor implements Reactor {
 
 	private final Log log = LogFactory.getLog(getClass());
+
+	private final ProcessingContext processingContext;
 
 	/**
 	 * Used to hold Spring AOP advisors and other internal objects while
@@ -93,7 +95,7 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 
 	private ConfigurationProcessor(ProcessingContext pc, ConfigurationListenerRegistry configurationListenerRegistry,
 			ConfigurableListableBeanFactory owningBeanFactory, ConfigurableApplicationContext owningApplicationContext) {
-		this.pc = pc != null ? pc : new ProcessingContext();
+		this.processingContext = pc != null ? pc : new ProcessingContext();
 
 		if (configurationListenerRegistry != null) {
 			this.configurationListenerRegistry = configurationListenerRegistry;
@@ -104,12 +106,12 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 		}
 
 		if (owningBeanFactory != null)
-			this.pc.owningBeanFactory = owningBeanFactory;
+			this.processingContext.owningBeanFactory = owningBeanFactory;
 
 		if (owningApplicationContext != null)
-			this.pc.ac = owningApplicationContext;
+			this.processingContext.ac = owningApplicationContext;
 
-		afterPropertiesSet();
+		initialize();
 	}
 
 	public ConfigurationProcessor() {
@@ -190,28 +192,27 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 	 * Called to avoid constructor changes every time a new configuration switch
 	 * appears on this class.
 	 */
-	public void afterPropertiesSet() {
-		if (pc.ac != null)
-			pc.owningBeanFactory = pc.ac.getBeanFactory();
+	public void initialize() {
 
-		Assert.notNull(pc.owningBeanFactory, "an owning factory bean is required");
+		if (processingContext.ac != null)
+			processingContext.owningBeanFactory = processingContext.ac.getBeanFactory();
 
-		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(pc.owningBeanFactory);
+		Assert.notNull(processingContext.owningBeanFactory, "an owning factory bean is required");
 
-		if (pc.ac != null && pc.ac instanceof AbstractApplicationContext) {
-			owningApplicationContext = (AbstractApplicationContext) pc.ac;
+		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(processingContext.owningBeanFactory);
+
+		if (processingContext.ac != null && processingContext.ac instanceof AbstractApplicationContext) {
+			owningApplicationContext = (AbstractApplicationContext) processingContext.ac;
 			childApplicationContext = createChildApplicationContext();
 			copyBeanPostProcessors(owningApplicationContext, childApplicationContext);
 		}
 
-		pc.owningBeanFactory = pc.owningBeanFactory;
-		pc.childFactory = childFactory;
-		pc.compositeValueSource = new CompositeValueSource();
-		pc.returnValueProcessors = configurationListenerRegistry;
-		pc.childApplicationContext = childApplicationContext;
+		processingContext.owningBeanFactory = processingContext.owningBeanFactory;
+		processingContext.childFactory = childFactory;
+		processingContext.compositeValueSource = new CompositeValueSource();
+		processingContext.returnValueProcessors = configurationListenerRegistry;
+		processingContext.childApplicationContext = childApplicationContext;
 	}
-
-	final ProcessingContext pc;
 
 	/**
 	 * Generate bean definitions from a 'naked' configuration class.
@@ -229,23 +230,23 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 	public int processClass(Class<?> configurationClass) throws BeanDefinitionStoreException {
 
 		boolean isEntryPoint = false;
-		if (pc.beanDefsGenerated == -1) {
+		if (processingContext.beanDefsGenerated == -1) {
 			isEntryPoint = true;
-			pc.beanDefsGenerated = 0;
+			processingContext.beanDefsGenerated = 0;
 		}
 
-		ClassEvent event = new ClassEvent(this, configurationClass, pc);
+		ClassEvent event = new ClassEvent(this, configurationClass, processingContext);
 		/* TODO: SJC-63
 		sourceClassEvent(event);
 		*/
 		new ClassConfigurationListener().handleEvent(this, event);
 
 		try {
-			return pc.beanDefsGenerated;
+			return processingContext.beanDefsGenerated;
 		}
 		finally {
 			if (isEntryPoint)
-				pc.beanDefsGenerated = -1;
+				processingContext.beanDefsGenerated = -1;
 		}
 	}
 
@@ -259,25 +260,25 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 	void processConfigurationBean(String configurationBeanName, Class<?> configurationClass) {
 
 		boolean isEntryPoint = false;
-		if (pc.beanDefsGenerated == -1) {
+		if (processingContext.beanDefsGenerated == -1) {
 			isEntryPoint = true;
-			pc.beanDefsGenerated = 0;
+			processingContext.beanDefsGenerated = 0;
 		}
 
 		try {
-			ClassEvent event = new ClassEvent(this, configurationClass, pc);
+			ClassEvent event = new ClassEvent(this, configurationClass, processingContext);
 			event.configurationBeanName = configurationBeanName;
 			/* TODO: SJC-63
 			sourceClassEvent(event);
 			*/
 			new ClassConfigurationListener().doProcessConfigurationBean(this, configurationBeanName,
-					configurationClass, pc);
+					configurationClass, processingContext);
 
 			return;
 		}
 		finally {
 			if (isEntryPoint)
-				pc.beanDefsGenerated = -1;
+				processingContext.beanDefsGenerated = -1;
 		}
 	}
 
