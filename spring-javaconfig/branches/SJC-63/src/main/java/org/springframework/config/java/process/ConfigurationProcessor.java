@@ -15,25 +15,14 @@
  */
 package org.springframework.config.java.process;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.config.java.enhancement.cglib.CglibConfigurationEnhancer;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.util.Assert;
 
 /**
  * Class that processes Configuration beans.
@@ -68,21 +57,6 @@ public final class ConfigurationProcessor implements Reactor {
 	private final Log log = LogFactory.getLog(getClass());
 
 	private final ProcessingContext processingContext;
-
-	/**
-	 * Used to hold Spring AOP advisors and other internal objects while
-	 * processing configuration. Object added to this factory can still benefit
-	 * from autowiring and other IoC container features, but are not visible
-	 * externally.
-	 */
-	private BeanNameTrackingDefaultListableBeanFactory childFactory;
-
-	/**
-	 * If we are running in an ApplicationContext we create a child context, as
-	 * well as a child BeanFactory, so that we can apply
-	 * BeanFactoryPostProcessors to the child
-	 */
-	private ConfigurableApplicationContext childApplicationContext;
 
 	private final ConfigurationListenerRegistry configurationListenerRegistry;
 
@@ -120,87 +94,15 @@ public final class ConfigurationProcessor implements Reactor {
 			this.configurationListenerRegistry = new ConfigurationListenerRegistry();
 		}
 
+		processingContext.returnValueProcessors = this.configurationListenerRegistry;
+
 		if (owningBeanFactory != null)
 			this.processingContext.owningBeanFactory = owningBeanFactory;
 
 		if (owningApplicationContext != null)
 			this.processingContext.owningApplicationContext = owningApplicationContext;
 
-		initialize();
-	}
-
-	private ConfigurableApplicationContext createChildApplicationContext() {
-		ConfigurableApplicationContext child = new GenericApplicationContext(childFactory,
-				processingContext.owningApplicationContext) {
-			// TODO this override is a hack! Why is EventMulticaster null?
-			@Override
-			public void publishEvent(ApplicationEvent event) {
-				if (event instanceof ContextRefreshedEvent)
-					log.debug("suppressed " + event);
-			}
-		};
-
-		// Piggyback on owning application context refresh
-		processingContext.owningApplicationContext.addApplicationListener(new ApplicationListener() {
-			public void onApplicationEvent(ApplicationEvent event) {
-				if (event instanceof ContextRefreshedEvent)
-					ConfigurationProcessor.this.childApplicationContext.refresh();
-			}
-		});
-
-		return child;
-	}
-
-	private void copyBeanPostProcessors(AbstractApplicationContext source, ConfigurableApplicationContext dest) {
-		// TODO: why do both of the iterations below? wouldn't one of the
-		// two suffice?
-		List<BeanFactoryPostProcessor> bfpps = new LinkedList<BeanFactoryPostProcessor>();
-
-		Class<?> configurationPostProcessor;
-		try {
-			configurationPostProcessor = Class
-					.forName("org.springframework.config.java.process.ConfigurationPostProcessor");
-		}
-		catch (ClassNotFoundException ex) {
-			throw new RuntimeException(ex);
-		}
-
-		for (Object o : source.getBeansOfType(BeanFactoryPostProcessor.class).values())
-			if (!(o.getClass().isAssignableFrom(configurationPostProcessor)))
-				bfpps.add((BeanFactoryPostProcessor) o);
-
-		for (Object o : source.getBeanFactoryPostProcessors())
-			if (!(o.getClass().isAssignableFrom(configurationPostProcessor)))
-				bfpps.add((BeanFactoryPostProcessor) o);
-
-		// Add all BeanFactoryPostProcessors to the child context
-		for (BeanFactoryPostProcessor bfpp : bfpps)
-			dest.addBeanFactoryPostProcessor(bfpp);
-	}
-
-	/**
-	 * Called to avoid constructor changes every time a new configuration switch
-	 * appears on this class.
-	 */
-	public void initialize() {
-
-		if (processingContext.owningApplicationContext != null)
-			processingContext.owningBeanFactory = processingContext.owningApplicationContext.getBeanFactory();
-
-		Assert.notNull(processingContext.owningBeanFactory, "an owning factory bean is required");
-
-		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(processingContext.owningBeanFactory);
-
-		if (processingContext.owningApplicationContext != null
-				&& processingContext.owningApplicationContext instanceof AbstractApplicationContext) {
-			childApplicationContext = createChildApplicationContext();
-			copyBeanPostProcessors((AbstractApplicationContext) processingContext.owningApplicationContext,
-					childApplicationContext);
-		}
-
-		processingContext.childFactory = childFactory;
-		processingContext.returnValueProcessors = configurationListenerRegistry;
-		processingContext.childApplicationContext = childApplicationContext;
+		processingContext.initialize();
 	}
 
 	/**
