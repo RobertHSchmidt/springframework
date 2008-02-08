@@ -19,7 +19,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -33,23 +33,15 @@ import org.springframework.util.Assert;
  */
 public class ExternalBeanMethodProcessor extends AbstractBeanMethodProcessor {
 
-	private final BeanFactory owningBeanFactory;
-
-	private final BeanNamingStrategy namingStrategy;
-
-	public ExternalBeanMethodProcessor(BeanFactory owningBeanFactory, BeanNamingStrategy namingStrategy) {
-		super(ExternalBean.class);
-
-		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
-		Assert.notNull(namingStrategy, "namingStrategy is required");
-
-		this.owningBeanFactory = owningBeanFactory;
-		this.namingStrategy = namingStrategy;
+	public ExternalBeanMethodProcessor(ConfigurableListableBeanFactory owningBeanFactory,
+			BeanNamingStrategy namingStrategy) {
+		this();
+		getProcessingContext().owningBeanFactory = owningBeanFactory;
+		getProcessingContext().beanNamingStrategy = namingStrategy;
 	}
 
 	public ExternalBeanMethodProcessor() {
-		this(ProcessingContext.getCurrentContext().owningBeanFactory,
-				ProcessingContext.getCurrentContext().beanNamingStrategy);
+		super(ExternalBean.class);
 	}
 
 	/**
@@ -67,9 +59,17 @@ public class ExternalBeanMethodProcessor extends AbstractBeanMethodProcessor {
 		if (!"".equals(externalBean.value()))
 			beanName = externalBean.value();
 		else
-			beanName = namingStrategy.getBeanName(targetMethod);
+			beanName = getNamingStrategy().getBeanName(targetMethod);
 
-		return owningBeanFactory.getBean(beanName);
+		return getOwningBeanFactory().getBean(beanName);
+	}
+
+	private BeanNamingStrategy getNamingStrategy() {
+		return getProcessingContext().beanNamingStrategy;
+	}
+
+	private ConfigurableListableBeanFactory getOwningBeanFactory() {
+		return getProcessingContext().owningBeanFactory;
 	}
 
 	/**

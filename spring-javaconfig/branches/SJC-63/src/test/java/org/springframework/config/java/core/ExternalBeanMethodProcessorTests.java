@@ -27,7 +27,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.TestBean;
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
@@ -37,11 +37,11 @@ import org.springframework.config.java.naming.MethodNameStrategy;
 public class ExternalBeanMethodProcessorTests {
 	private ExternalBeanMethodProcessor externalBeanMethodProcessor;
 
-	private BeanFactory owningBeanFactory;
+	private ConfigurableListableBeanFactory owningBeanFactory;
 
 	@Before
 	public void setUp() {
-		owningBeanFactory = EasyMock.createMock(BeanFactory.class);
+		owningBeanFactory = EasyMock.createMock(ConfigurableListableBeanFactory.class);
 
 		BeanNamingStrategy namingStrategy = new MethodNameStrategy();
 		externalBeanMethodProcessor = new ExternalBeanMethodProcessor(owningBeanFactory, namingStrategy);
