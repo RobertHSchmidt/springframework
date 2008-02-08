@@ -129,7 +129,6 @@ public class BeansAndPostprocessorTests {
 	public void setUp() {
 		ctx = new GenericApplicationContext();
 		configurationProcessor = new ConfigurationProcessor(ctx);
-		configurationProcessor.afterPropertiesSet();
 
 		configurationProcessor.processClass(MixedConfiguration.class);
 
