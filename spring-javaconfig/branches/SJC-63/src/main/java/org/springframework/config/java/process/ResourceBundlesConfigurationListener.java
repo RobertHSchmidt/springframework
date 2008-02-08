@@ -35,7 +35,7 @@ class ResourceBundlesConfigurationListener extends ConfigurationListenerSupport 
 	}
 
 	public void handleEvent(Reactor reactor, ClassEvent event) {
-		ProcessingContext pc = getProcessingContext();
+		ProcessingContext pc = event.processingContext;
 		Class<?> configurationClass = event.clazz;
 		ResourceBundles rbs = configurationClass.getAnnotation(ResourceBundles.class);
 		ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();

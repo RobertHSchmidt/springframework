@@ -27,14 +27,14 @@ public class ScopedProxyMethodProcessor extends AbstractBeanMethodProcessor {
 
 	private final StandardBeanMethodProcessor delegate;
 
-	public ScopedProxyMethodProcessor(StandardBeanMethodProcessor delegate) {
-		super(ScopedProxy.class);
+	public ScopedProxyMethodProcessor(StandardBeanMethodProcessor delegate, ProcessingContext pc) {
+		super(ScopedProxy.class, pc);
 		Assert.notNull(delegate, "BeanMethodProcessor argument is required");
 		this.delegate = delegate;
 	}
 
-	private ScopedProxyMethodProcessor() {
-		super(ScopedProxy.class);
+	private ScopedProxyMethodProcessor(ProcessingContext pc) {
+		super(ScopedProxy.class, pc);
 		this.delegate = null;
 	}
 
@@ -49,7 +49,7 @@ public class ScopedProxyMethodProcessor extends AbstractBeanMethodProcessor {
 	}
 
 	public static boolean isScopedProxyMethod(Method candidateMethod) {
-		return new ScopedProxyMethodProcessor().understands(candidateMethod);
+		return new ScopedProxyMethodProcessor(new ProcessingContext()).understands(candidateMethod);
 	}
 
 	/**

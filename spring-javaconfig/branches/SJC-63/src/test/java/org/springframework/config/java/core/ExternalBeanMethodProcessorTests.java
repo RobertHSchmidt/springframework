@@ -44,7 +44,8 @@ public class ExternalBeanMethodProcessorTests {
 		owningBeanFactory = EasyMock.createMock(ConfigurableListableBeanFactory.class);
 
 		BeanNamingStrategy namingStrategy = new MethodNameStrategy();
-		externalBeanMethodProcessor = new ExternalBeanMethodProcessor(owningBeanFactory, namingStrategy);
+		externalBeanMethodProcessor = new ExternalBeanMethodProcessor(owningBeanFactory, namingStrategy,
+				new ProcessingContext());
 	}
 
 	@Test

@@ -55,7 +55,7 @@ class AspectJAdviceConfigurationListener extends AbstractAopConfigurationListene
 	@Override
 	public void handleEvent(Reactor reactor, MethodEvent event) {
 
-		ProcessingContext pc = getProcessingContext();
+		ProcessingContext pc = event.processingContext;
 		Class<?> configurerClass = event.clazz;
 		Method aspectJAdviceMethod = event.method;
 
@@ -91,7 +91,7 @@ class AspectJAdviceConfigurationListener extends AbstractAopConfigurationListene
 				return;
 			}
 
-			addAdvice(adviceName, ((PointcutAdvisor) pa).getPointcut(), advice);
+			addAdvice(adviceName, ((PointcutAdvisor) pa).getPointcut(), advice, pc);
 			// added the advice as singleton
 			pc.beanDefsGenerated++;
 		}

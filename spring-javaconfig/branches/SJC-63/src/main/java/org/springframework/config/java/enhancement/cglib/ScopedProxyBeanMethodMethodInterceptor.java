@@ -21,6 +21,7 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import org.springframework.config.java.annotation.aop.ScopedProxy;
+import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.config.java.core.ScopedProxyMethodProcessor;
 import org.springframework.config.java.core.StandardBeanMethodProcessor;
 
@@ -39,9 +40,9 @@ class ScopedProxyBeanMethodMethodInterceptor implements MethodInterceptor {
 
 	private final ScopedProxyMethodProcessor scopedProxyMethodProcessor;
 
-	public ScopedProxyBeanMethodMethodInterceptor() {
-		this.scopedProxyMethodProcessor = new ScopedProxyMethodProcessor(new StandardBeanMethodProcessor());
-		this.delegate = new BeanMethodMethodInterceptor();
+	public ScopedProxyBeanMethodMethodInterceptor(ProcessingContext pc) {
+		this.scopedProxyMethodProcessor = new ScopedProxyMethodProcessor(new StandardBeanMethodProcessor(pc), pc);
+		this.delegate = new BeanMethodMethodInterceptor(pc);
 	}
 
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {

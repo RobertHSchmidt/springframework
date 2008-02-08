@@ -13,7 +13,7 @@ class ImportConfigurationListener extends ConfigurationListenerSupport {
 	}
 
 	public void handleEvent(Reactor reactor, ClassEvent event) {
-		ProcessingContext pc = getProcessingContext();
+		ProcessingContext pc = event.processingContext;
 		ConfigurableListableBeanFactory owningBeanFactory = pc.owningBeanFactory;
 
 		Class<?> configurationClass = event.clazz;
@@ -25,7 +25,8 @@ class ImportConfigurationListener extends ConfigurationListenerSupport {
 				/* TODO: SJC-63
 				reactor.sourceClassEvent(new ClassEvent(this, configurationClassToImport));
 				*/
-				new ClassConfigurationListener().handleEvent(reactor, new ClassEvent(this, configurationClassToImport));
+				new ClassConfigurationListener().handleEvent(reactor, new ClassEvent(this, configurationClassToImport,
+						pc));
 		}
 	}
 

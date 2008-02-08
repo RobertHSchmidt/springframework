@@ -22,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 
@@ -36,10 +35,6 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
 public abstract class ConfigurationListenerSupport implements ConfigurationListener {
 
 	protected final Log log = LogFactory.getLog(getClass());
-
-	protected ProcessingContext getProcessingContext() {
-		return ProcessingContext.getCurrentContext();
-	}
 
 	public boolean understands(Class<?> configurerClass) {
 		return false;

@@ -21,6 +21,7 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import org.springframework.config.java.core.EnhancerMethodInvoker;
+import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.config.java.core.StandardBeanMethodProcessor;
 
 /**
@@ -40,8 +41,8 @@ class BeanMethodMethodInterceptor implements MethodInterceptor {
 
 	private final StandardBeanMethodProcessor beanMethodProcessor;
 
-	public BeanMethodMethodInterceptor() {
-		this.beanMethodProcessor = new StandardBeanMethodProcessor();
+	public BeanMethodMethodInterceptor(ProcessingContext pc) {
+		this.beanMethodProcessor = new StandardBeanMethodProcessor(pc);
 	}
 
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {

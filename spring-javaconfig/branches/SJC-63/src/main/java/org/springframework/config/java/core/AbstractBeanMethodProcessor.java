@@ -18,12 +18,15 @@ abstract class AbstractBeanMethodProcessor implements BeanMethodProcessor {
 
 	private final Class<? extends Annotation> annotation;
 
-	protected AbstractBeanMethodProcessor(Class<? extends Annotation> annotation) {
+	private ProcessingContext processingContext;
+
+	protected AbstractBeanMethodProcessor(Class<? extends Annotation> annotation, ProcessingContext processingContext) {
 		this.annotation = annotation;
+		this.processingContext = processingContext;
 	}
 
 	protected final ProcessingContext getProcessingContext() {
-		return ProcessingContext.getCurrentContext();
+		return processingContext;
 	}
 
 	protected static Set<Method> findAllMethods(Class<?> configurationClass) {

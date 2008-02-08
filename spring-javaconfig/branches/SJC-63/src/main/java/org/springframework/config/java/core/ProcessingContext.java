@@ -18,25 +18,6 @@ public final class ProcessingContext {
 
 	private static final Log log = LogFactory.getLog(ProcessingContext.class);
 
-	private static InheritableThreadLocal<ProcessingContext> instance = new InheritableThreadLocal<ProcessingContext>() {
-		@Override
-		protected ProcessingContext initialValue() {
-			log.warn("ProcessingContext has not been explicitly set, returning an initialValue()");
-			return new ProcessingContext();
-			/*
-			throw new IllegalStateException("ProcessingContext has not yet been populated");
-			*/
-		}
-	};
-
-	public static ProcessingContext getCurrentContext() {
-		return instance.get();
-	}
-
-	public static void setCurrentContext(ProcessingContext context) {
-		instance.set(context);
-	}
-
 	public BeanNamingStrategy beanNamingStrategy = new MethodNameStrategy();
 
 	public ConfigurableListableBeanFactory owningBeanFactory;

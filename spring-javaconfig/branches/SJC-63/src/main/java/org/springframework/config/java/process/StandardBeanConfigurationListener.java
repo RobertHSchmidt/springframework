@@ -28,7 +28,7 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 
 	@Override
 	public void handleEvent(Reactor reactor, MethodEvent event) {
-		ProcessingContext pc = getProcessingContext();
+		ProcessingContext pc = event.processingContext;
 		Method m = event.method;
 		Bean beanAnnotation = AnnotationUtils.findAnnotation(m, Bean.class);
 		if (beanAnnotation == null)
@@ -91,7 +91,7 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 		beanDefinitionRegistration.hide = !Modifier.isPublic(m.getModifiers());
 
 		BeanMethodEvent beanMethodEvent = new BeanMethodEvent(this, configurationClass, m, beanAnnotation,
-				beanDefinitionRegistration);
+				beanDefinitionRegistration, pc);
 
 		reactor.sourceBeanMethodEvent(beanMethodEvent);
 

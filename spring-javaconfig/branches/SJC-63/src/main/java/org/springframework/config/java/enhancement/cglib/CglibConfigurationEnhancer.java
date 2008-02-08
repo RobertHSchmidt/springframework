@@ -26,6 +26,7 @@ import net.sf.cglib.proxy.NoOp;
 import org.springframework.config.java.core.AutoBeanMethodProcessor;
 import org.springframework.config.java.core.ExternalBeanMethodProcessor;
 import org.springframework.config.java.core.ExternalValueMethodProcessor;
+import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.config.java.core.ScopedProxyMethodProcessor;
 import org.springframework.config.java.core.StandardBeanMethodProcessor;
 import org.springframework.config.java.enhancement.ConfigurationEnhancer;
@@ -83,10 +84,10 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 
 	private final Callback[] callbacks;
 
-	public CglibConfigurationEnhancer() {
-		callbacks = new Callback[] { NoOp.INSTANCE, new BeanMethodMethodInterceptor(),
-				new ExternalBeanMethodMethodInterceptor(), new ScopedProxyBeanMethodMethodInterceptor(),
-				new ExternalValueMethodMethodInterceptor() };
+	public CglibConfigurationEnhancer(ProcessingContext pc) {
+		callbacks = new Callback[] { NoOp.INSTANCE, new BeanMethodMethodInterceptor(pc),
+				new ExternalBeanMethodMethodInterceptor(pc), new ScopedProxyBeanMethodMethodInterceptor(pc),
+				new ExternalValueMethodMethodInterceptor(pc) };
 	}
 
 	public <T> Class<? extends T> enhanceConfiguration(Class<T> configurationClass) {

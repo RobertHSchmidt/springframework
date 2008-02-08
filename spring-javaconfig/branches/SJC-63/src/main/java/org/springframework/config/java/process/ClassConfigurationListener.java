@@ -23,7 +23,6 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.core.ProcessingContext;
-import org.springframework.config.java.enhancement.ConfigurationEnhancer;
 import org.springframework.config.java.enhancement.cglib.CglibConfigurationEnhancer;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
@@ -31,10 +30,6 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 
 class ClassConfigurationListener extends ConfigurationListenerSupport {
-
-	private ConfigurationEnhancer configurationEnhancer = new CglibConfigurationEnhancer();
-
-	private ProcessingContext pc = getProcessingContext();
 
 	@Override
 	public boolean understands(Class<?> configurationClass) {
@@ -47,6 +42,7 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 			return;
 
 		Class<?> configurationClass = event.clazz;
+		ProcessingContext pc = event.processingContext;
 
 		if (!reactor.isConfigClass(configurationClass))
 			return;
@@ -73,18 +69,19 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 		((DefaultListableBeanFactory) pc.owningBeanFactory).registerBeanDefinition(configBeanName,
 				configurationBeanDefinition);
 
-		doProcessConfigurationBean(reactor, configBeanName, configurationClass);
+		doProcessConfigurationBean(reactor, configBeanName, configurationClass, pc);
 		// include the configuration bean definition
 		++pc.beanDefsGenerated;
 	}
 
-	void doProcessConfigurationBean(Reactor reactor, String configurationBeanName, Class<?> configurationClass) {
+	void doProcessConfigurationBean(Reactor reactor, String configurationBeanName, Class<?> configurationClass,
+			ProcessingContext pc) {
 		Assert.notNull(configurationBeanName, "beanName is required");
 		Assert.notNull(configurationClass, "configurationClass is required");
 
-		enhanceConfigurationClassAndUpdateBeanDefinition(configurationClass, configurationBeanName);
+		enhanceConfigurationClassAndUpdateBeanDefinition(configurationClass, configurationBeanName, pc);
 
-		generateBeanDefinitions(reactor, configurationBeanName, configurationClass);
+		generateBeanDefinitions(reactor, configurationBeanName, configurationClass, pc);
 	}
 
 	/**
@@ -96,19 +93,19 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 	 * @param configurationClass enhanced configuration class
 	 * @return number of bean definitions created
 	 */
-	protected void generateBeanDefinitions(Reactor reactor, String configurationBeanName, Class<?> configurationClass) {
-
-		reactor.sourceClassEvent(new ClassEvent(this, configurationClass));
-		processMethods(reactor, configurationBeanName, configurationClass);
+	protected void generateBeanDefinitions(Reactor reactor, String configurationBeanName, Class<?> configurationClass,
+			ProcessingContext pc) {
+		reactor.sourceClassEvent(new ClassEvent(this, configurationClass, pc));
+		processMethods(reactor, configurationBeanName, configurationClass, pc);
 
 	}
 
 	private void processMethods(final Reactor reactor, final String configurationBeanName,
-			final Class<?> configurationClass) {
+			final Class<?> configurationClass, final ProcessingContext pc) {
 
 		ReflectionUtils.doWithMethods(configurationClass, new MethodCallback() {
 			public void doWith(Method m) throws IllegalArgumentException, IllegalAccessException {
-				MethodEvent event = new MethodEvent(reactor, configurationClass, m);
+				MethodEvent event = new MethodEvent(reactor, configurationClass, m, pc);
 				event.configurationBeanName = configurationBeanName;
 
 				reactor.sourceMethodEvent(event);
@@ -121,12 +118,12 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 	}
 
 	private void enhanceConfigurationClassAndUpdateBeanDefinition(Class<?> configurationClass,
-			String configurationBeanName) {
+			String configurationBeanName, ProcessingContext pc) {
 		AbstractBeanDefinition definition = (AbstractBeanDefinition) pc.owningBeanFactory
 				.getBeanDefinition(configurationBeanName);
 
 		// update the configuration bean definition first
-		Class<?> enhancedClass = configurationEnhancer.enhanceConfiguration(configurationClass);
+		Class<?> enhancedClass = new CglibConfigurationEnhancer(pc).enhanceConfiguration(configurationClass);
 		definition.setBeanClass(enhancedClass);
 
 		// Force resolution of dependencies on other beans

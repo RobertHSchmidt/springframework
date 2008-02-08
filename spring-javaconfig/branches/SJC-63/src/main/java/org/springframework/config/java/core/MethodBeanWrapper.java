@@ -53,8 +53,7 @@ public class MethodBeanWrapper {
 	 * @param configurationListenerRegistry
 	 * @param childTrackingFactory
 	 */
-	public MethodBeanWrapper() {
-		ProcessingContext pc = ProcessingContext.getCurrentContext();
+	public MethodBeanWrapper(ProcessingContext pc) {
 		this.owningBeanFactory = pc.owningBeanFactory;
 		this.returnValueProcessors = pc.returnValueProcessors;
 		this.childTrackingFactory = pc.childFactory;
