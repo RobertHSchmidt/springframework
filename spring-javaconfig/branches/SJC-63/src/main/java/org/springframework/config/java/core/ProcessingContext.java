@@ -1,7 +1,5 @@
 package org.springframework.config.java.core;
 
-import java.util.List;
-
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -45,7 +43,7 @@ public class ProcessingContext {
 
 	public ConfigurableApplicationContext childApplicationContext;
 
-	public List<BeanMethodReturnValueProcessor> returnValueProcessors;
+	public Iterable<BeanMethodReturnValueProcessor> returnValueProcessors;
 
 	public ProcessingContext() {
 	}

@@ -17,7 +17,6 @@ package org.springframework.config.java.core;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Collection;
 
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.interceptor.ExposeInvocationInterceptor;
@@ -45,7 +44,7 @@ public class MethodBeanWrapper {
 
 	private final BeanNameTrackingDefaultListableBeanFactory childTrackingFactory;
 
-	private final Collection<BeanMethodReturnValueProcessor> returnValueProcessors;
+	private final Iterable<BeanMethodReturnValueProcessor> returnValueProcessors;
 
 	/**
 	 * Constructor.
@@ -56,7 +55,7 @@ public class MethodBeanWrapper {
 	 */
 	public MethodBeanWrapper(BeanFactory owningBeanFactory,
 			BeanNameTrackingDefaultListableBeanFactory childTrackingFactory,
-			Collection<BeanMethodReturnValueProcessor> returnValueProcessors) {
+			Iterable<BeanMethodReturnValueProcessor> returnValueProcessors) {
 		this.owningBeanFactory = owningBeanFactory;
 		this.returnValueProcessors = returnValueProcessors;
 		this.childTrackingFactory = childTrackingFactory;
@@ -139,7 +138,7 @@ public class MethodBeanWrapper {
 	 */
 	private class ProxyHelper {
 		public Object proxyIfAppropriate(Object originallyCreatedBean, Method method) {
-			if (!returnValueProcessors.isEmpty()) {
+			if (returnValueProcessors.iterator().hasNext()) {
 				// We know we have advisors that may affect this object
 				// Prepare to proxy it
 				ProxyFactory pf = new ProxyFactory(originallyCreatedBean);

@@ -17,7 +17,6 @@ package org.springframework.config.java.enhancement.cglib;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.List;
 
 import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.CallbackFilter;
@@ -97,7 +96,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 		ConfigurableListableBeanFactory owningBeanFactory = pc.owningBeanFactory;
 		BeanNameTrackingDefaultListableBeanFactory childFactory = pc.childFactory;
 		BeanNamingStrategy beanNamingStrategy = pc.beanNamingStrategy;
-		List<BeanMethodReturnValueProcessor> returnValueProcessors = pc.returnValueProcessors;
+		Iterable<BeanMethodReturnValueProcessor> returnValueProcessors = pc.returnValueProcessors;
 		ValueSource valueSource = pc.compositeValueSource;
 
 		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
