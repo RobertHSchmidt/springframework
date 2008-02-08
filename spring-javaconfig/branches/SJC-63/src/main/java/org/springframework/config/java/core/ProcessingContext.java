@@ -86,8 +86,22 @@ public final class ProcessingContext {
 			owningBeanFactory.registerSingleton(name, o);
 	}
 
-	public void initialize() {
+	public void initialize(ConfigurableListableBeanFactory owningBeanFactory,
+			ConfigurableApplicationContext owningApplicationContext,
+			Iterable<BeanMethodReturnValueProcessor> returnValueProcessors) {
 
+		if (owningBeanFactory != null)
+			this.owningBeanFactory = owningBeanFactory;
+
+		if (owningApplicationContext != null)
+			this.owningApplicationContext = owningApplicationContext;
+
+		this.returnValueProcessors = returnValueProcessors;
+
+		doInitialize();
+	}
+
+	private void doInitialize() {
 		if (owningApplicationContext != null)
 			owningBeanFactory = owningApplicationContext.getBeanFactory();
 

@@ -94,15 +94,7 @@ public final class ConfigurationProcessor implements Reactor {
 			this.configurationListenerRegistry = new ConfigurationListenerRegistry();
 		}
 
-		processingContext.returnValueProcessors = this.configurationListenerRegistry;
-
-		if (owningBeanFactory != null)
-			this.processingContext.owningBeanFactory = owningBeanFactory;
-
-		if (owningApplicationContext != null)
-			this.processingContext.owningApplicationContext = owningApplicationContext;
-
-		processingContext.initialize();
+		processingContext.initialize(owningBeanFactory, owningApplicationContext, this.configurationListenerRegistry);
 	}
 
 	/**
