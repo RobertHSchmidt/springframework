@@ -22,6 +22,7 @@ import net.sf.cglib.proxy.MethodProxy;
 
 import org.springframework.config.java.core.BeanMethodProcessor;
 import org.springframework.config.java.core.ExternalValueMethodProcessor;
+import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.config.java.valuesource.ValueResolutionException;
 
 /**
@@ -36,8 +37,8 @@ class ExternalValueMethodMethodInterceptor implements MethodInterceptor {
 
 	private final BeanMethodProcessor beanMethodProcessor;
 
-	public ExternalValueMethodMethodInterceptor() {
-		this.beanMethodProcessor = new ExternalValueMethodProcessor();
+	public ExternalValueMethodMethodInterceptor(ProcessingContext pc) {
+		this.beanMethodProcessor = new ExternalValueMethodProcessor(pc);
 	}
 
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {

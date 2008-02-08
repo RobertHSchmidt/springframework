@@ -212,7 +212,6 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 		pc.compositeValueSource = new CompositeValueSource();
 		pc.returnValueProcessors = configurationListenerRegistry;
 		pc.childApplicationContext = childApplicationContext;
-		ProcessingContext.setCurrentContext(pc);
 
 		initialized = true;
 	}
@@ -248,7 +247,7 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 			pc.beanDefsGenerated = 0;
 		}
 
-		ClassEvent event = new ClassEvent(this, configurationClass);
+		ClassEvent event = new ClassEvent(this, configurationClass, pc);
 		/* TODO: SJC-63
 		sourceClassEvent(event);
 		*/
@@ -280,13 +279,13 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 		}
 
 		try {
-			ClassEvent event = new ClassEvent(this, configurationClass);
+			ClassEvent event = new ClassEvent(this, configurationClass, pc);
 			event.configurationBeanName = configurationBeanName;
 			/* TODO: SJC-63
 			sourceClassEvent(event);
 			*/
-			new ClassConfigurationListener()
-					.doProcessConfigurationBean(this, configurationBeanName, configurationClass);
+			new ClassConfigurationListener().doProcessConfigurationBean(this, configurationBeanName,
+					configurationClass, pc);
 
 			return;
 		}

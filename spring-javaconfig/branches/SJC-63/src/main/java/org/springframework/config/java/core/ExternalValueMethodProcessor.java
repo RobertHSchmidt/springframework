@@ -27,9 +27,9 @@ public class ExternalValueMethodProcessor extends AbstractBeanMethodProcessor {
 
 	private final ValueSource valueSource;
 
-	public ExternalValueMethodProcessor() {
-		super(ExternalValue.class);
-		this.valueSource = ProcessingContext.getCurrentContext().compositeValueSource;
+	public ExternalValueMethodProcessor(ProcessingContext processingContext) {
+		super(ExternalValue.class, processingContext);
+		this.valueSource = getProcessingContext().compositeValueSource;
 	}
 
 	public Object processMethod(Method m) throws ValueResolutionException {
@@ -49,11 +49,11 @@ public class ExternalValueMethodProcessor extends AbstractBeanMethodProcessor {
 	}
 
 	public static boolean isExternalValueCreationMethod(Method candidateMethod) {
-		return new ExternalValueMethodProcessor().understands(candidateMethod);
+		return new ExternalValueMethodProcessor(new ProcessingContext()).understands(candidateMethod);
 	}
 
 	public static Collection<Method> findExternalValueCreationMethods(Class<?> configurationClass) {
-		return new ExternalValueMethodProcessor().findMatchingMethods(configurationClass);
+		return new ExternalValueMethodProcessor(new ProcessingContext()).findMatchingMethods(configurationClass);
 	}
 
 }

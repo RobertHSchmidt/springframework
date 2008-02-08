@@ -41,9 +41,8 @@ class AutoBeanConfigurationListener extends ConfigurationListenerSupport {
 	@Override
 	public void handleEvent(Reactor reactor, MethodEvent event) {
 
-		ProcessingContext pc = getProcessingContext();
-
 		Method m = event.method;
+		ProcessingContext pc = event.processingContext;
 
 		AutoBean autoBean = AnnotationUtils.findAnnotation(m, AutoBean.class);
 		if (autoBean != null) {

@@ -22,8 +22,8 @@ import org.springframework.config.java.valuesource.ValueResolutionException;
 
 public class AutoBeanMethodProcessor extends AbstractBeanMethodProcessor {
 
-	protected AutoBeanMethodProcessor() {
-		super(AutoBean.class);
+	protected AutoBeanMethodProcessor(ProcessingContext pc) {
+		super(AutoBean.class, pc);
 	}
 
 	public Object processMethod(Method m) throws ValueResolutionException {
@@ -31,7 +31,7 @@ public class AutoBeanMethodProcessor extends AbstractBeanMethodProcessor {
 	}
 
 	public static boolean isAutoBeanCreationMethod(Method candidateMethod) {
-		return new AutoBeanMethodProcessor().understands(candidateMethod);
+		return new AutoBeanMethodProcessor(new ProcessingContext()).understands(candidateMethod);
 	}
 
 }

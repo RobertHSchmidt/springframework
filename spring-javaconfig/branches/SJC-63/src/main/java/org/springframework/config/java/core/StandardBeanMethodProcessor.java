@@ -35,13 +35,12 @@ public class StandardBeanMethodProcessor extends AbstractBeanMethodProcessor {
 
 	private final MethodBeanWrapper beanWrapper;
 
-	public StandardBeanMethodProcessor() {
-		super(Bean.class);
-		ProcessingContext pc = ProcessingContext.getCurrentContext();
+	public StandardBeanMethodProcessor(ProcessingContext pc) {
+		super(Bean.class, pc);
 		this.owningBeanFactory = pc.owningBeanFactory;
 		this.childTrackingFactory = pc.childFactory;
 		this.namingStrategy = pc.beanNamingStrategy;
-		this.beanWrapper = new MethodBeanWrapper();
+		this.beanWrapper = new MethodBeanWrapper(pc);
 	}
 
 	public Object processMethod(Method targetMethod) {
@@ -78,10 +77,10 @@ public class StandardBeanMethodProcessor extends AbstractBeanMethodProcessor {
 	}
 
 	public static boolean isBeanCreationMethod(Method candidateMethod) {
-		return new StandardBeanMethodProcessor().understands(candidateMethod);
+		return new StandardBeanMethodProcessor(new ProcessingContext()).understands(candidateMethod);
 	}
 
 	public static Collection<Method> findBeanCreationMethods(Class<?> configurationClass) {
-		return new StandardBeanMethodProcessor().findMatchingMethods(configurationClass);
+		return new StandardBeanMethodProcessor(new ProcessingContext()).findMatchingMethods(configurationClass);
 	}
 }

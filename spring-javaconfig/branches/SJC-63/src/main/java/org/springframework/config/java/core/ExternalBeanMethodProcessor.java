@@ -34,14 +34,14 @@ import org.springframework.util.Assert;
 public class ExternalBeanMethodProcessor extends AbstractBeanMethodProcessor {
 
 	public ExternalBeanMethodProcessor(ConfigurableListableBeanFactory owningBeanFactory,
-			BeanNamingStrategy namingStrategy) {
-		this();
+			BeanNamingStrategy namingStrategy, ProcessingContext pc) {
+		this(pc);
 		getProcessingContext().owningBeanFactory = owningBeanFactory;
 		getProcessingContext().beanNamingStrategy = namingStrategy;
 	}
 
-	public ExternalBeanMethodProcessor() {
-		super(ExternalBean.class);
+	public ExternalBeanMethodProcessor(ProcessingContext pc) {
+		super(ExternalBean.class, pc);
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class ExternalBeanMethodProcessor extends AbstractBeanMethodProcessor {
 	 * @return collection of all methods annotated with {@link ExternalBean}
 	 */
 	public static Collection<Method> findExternalBeanCreationMethods(Class<?> configurationClass) {
-		return new ExternalBeanMethodProcessor().findMatchingMethods(configurationClass);
+		return new ExternalBeanMethodProcessor(new ProcessingContext()).findMatchingMethods(configurationClass);
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class ExternalBeanMethodProcessor extends AbstractBeanMethodProcessor {
 	 * {@link ExternalBean}
 	 */
 	public static boolean isExternalBeanCreationMethod(Method candidateMethod) {
-		return new ExternalBeanMethodProcessor().understands(candidateMethod);
+		return new ExternalBeanMethodProcessor(new ProcessingContext()).understands(candidateMethod);
 	}
 
 }

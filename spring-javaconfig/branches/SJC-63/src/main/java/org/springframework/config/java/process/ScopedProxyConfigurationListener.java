@@ -44,7 +44,7 @@ class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
 		BeanDefinitionRegistration beanDefinitionRegistration = event.beanDefinitionRegistration;
 		Method method = event.method;
 		Bean beanAnnotation = AnnotationUtils.findAnnotation(method, Bean.class);
-		ProcessingContext pc = getProcessingContext();
+		ProcessingContext pc = event.processingContext;
 
 		ScopedProxy proxyAnnotation = method.getAnnotation(ScopedProxy.class);
 		if (proxyAnnotation != null) {
