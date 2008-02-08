@@ -1,5 +1,7 @@
 package org.springframework.config.java.core;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -12,12 +14,18 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 
-public class ProcessingContext {
+public final class ProcessingContext {
+
+	private static final Log log = LogFactory.getLog(ProcessingContext.class);
 
 	private static InheritableThreadLocal<ProcessingContext> instance = new InheritableThreadLocal<ProcessingContext>() {
 		@Override
 		protected ProcessingContext initialValue() {
+			log.warn("ProcessingContext has not been explicitly set, returning an initialValue()");
+			return new ProcessingContext();
+			/*
 			throw new IllegalStateException("ProcessingContext has not yet been populated");
+			*/
 		}
 	};
 
