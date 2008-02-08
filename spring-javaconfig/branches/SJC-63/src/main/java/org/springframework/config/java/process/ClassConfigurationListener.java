@@ -40,7 +40,7 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 			return;
 
 		Class<?> configurationClass = event.clazz;
-		ProcessingContext pc = ProcessingContext.getCurrentContext();
+		ProcessingContext pc = getProcessingContext();
 
 		if (!reactor.isConfigClass(configurationClass))
 			return;
@@ -116,7 +116,7 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 
 	private void enhanceConfigurationClassAndUpdateBeanDefinition(Class<?> configurationClass,
 			String configurationBeanName) {
-		ProcessingContext pc = ProcessingContext.getCurrentContext();
+		ProcessingContext pc = getProcessingContext();
 		AbstractBeanDefinition definition = (AbstractBeanDefinition) pc.owningBeanFactory
 				.getBeanDefinition(configurationBeanName);
 

@@ -54,7 +54,7 @@ class AspectJAdviceConfigurationListener extends AbstractAopConfigurationListene
 	@Override
 	public void handleEvent(Reactor reactor, MethodEvent event) {
 
-		ProcessingContext pc = ProcessingContext.getCurrentContext();
+		ProcessingContext pc = getProcessingContext();
 		Class<?> configurerClass = event.clazz;
 		Method aspectJAdviceMethod = event.method;
 

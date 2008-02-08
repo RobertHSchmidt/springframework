@@ -12,7 +12,7 @@ class ImportConfigurationListener extends ConfigurationListenerSupport {
 	}
 
 	public void handleEvent(Reactor reactor, ClassEvent event) {
-		ProcessingContext pc = ProcessingContext.getCurrentContext();
+		ProcessingContext pc = getProcessingContext();
 		ConfigurableListableBeanFactory owningBeanFactory = pc.owningBeanFactory;
 
 		Class<?> configurationClass = event.clazz;
