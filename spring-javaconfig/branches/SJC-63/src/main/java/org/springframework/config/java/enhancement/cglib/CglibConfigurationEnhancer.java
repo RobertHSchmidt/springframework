@@ -91,11 +91,14 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 
 	private final Callback[] callbacks;
 
-	public CglibConfigurationEnhancer(ConfigurableListableBeanFactory owningBeanFactory,
-			BeanNameTrackingDefaultListableBeanFactory childFactory, BeanNamingStrategy beanNamingStrategy,
-			List<BeanMethodReturnValueProcessor> returnValueProcessors, ValueSource valueSource) {
+	public CglibConfigurationEnhancer() {
+		ProcessingContext pc = ProcessingContext.getCurrentContext();
 
-		ProcessingContext pc = new ProcessingContext();
+		ConfigurableListableBeanFactory owningBeanFactory = pc.owningBeanFactory;
+		BeanNameTrackingDefaultListableBeanFactory childFactory = pc.childFactory;
+		BeanNamingStrategy beanNamingStrategy = pc.beanNamingStrategy;
+		List<BeanMethodReturnValueProcessor> returnValueProcessors = pc.returnValueProcessors;
+		ValueSource valueSource = pc.compositeValueSource;
 
 		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
 		Assert.notNull(childFactory, "childFactory is required");

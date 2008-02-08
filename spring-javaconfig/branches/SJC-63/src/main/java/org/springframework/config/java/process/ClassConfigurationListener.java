@@ -32,6 +32,10 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
 
 class ClassConfigurationListener extends ConfigurationListenerSupport {
 
+	private ConfigurationEnhancer configurationEnhancer = new CglibConfigurationEnhancer();
+
+	private ProcessingContext pc = getProcessingContext();
+
 	@Override
 	public boolean understands(Class<?> configurationClass) {
 		return ConfigurationUtils.isConfigurationClass(configurationClass);
@@ -43,7 +47,6 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 			return;
 
 		Class<?> configurationClass = event.clazz;
-		ProcessingContext pc = getProcessingContext();
 
 		if (!reactor.isConfigClass(configurationClass))
 			return;
@@ -119,14 +122,10 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 
 	private void enhanceConfigurationClassAndUpdateBeanDefinition(Class<?> configurationClass,
 			String configurationBeanName) {
-		ProcessingContext pc = getProcessingContext();
 		AbstractBeanDefinition definition = (AbstractBeanDefinition) pc.owningBeanFactory
 				.getBeanDefinition(configurationBeanName);
 
 		// update the configuration bean definition first
-		ConfigurationEnhancer configurationEnhancer = new CglibConfigurationEnhancer(pc.owningBeanFactory,
-				pc.childFactory, pc.beanNamingStrategy, pc.returnValueProcessors, pc.compositeValueSource);
-
 		Class<?> enhancedClass = configurationEnhancer.enhanceConfiguration(configurationClass);
 		definition.setBeanClass(enhancedClass);
 
