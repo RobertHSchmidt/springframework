@@ -240,8 +240,14 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 		ConfigurationEnhancer configurationEnhancer = new CglibConfigurationEnhancer(owningBeanFactory, childFactory,
 				beanNamingStrategy, a, vs);
 
-		pc = new ProcessingContext(beanNamingStrategy, owningBeanFactory, childFactory, vs, resourceLoader,
-				childApplicationContext, configurationEnhancer);
+		pc = new ProcessingContext();
+		pc.beanNamingStrategy = beanNamingStrategy;
+		pc.owningBeanFactory = owningBeanFactory;
+		pc.childFactory = childFactory;
+		pc.compositeValueSource = vs;
+		pc.resourceLoader = resourceLoader;
+		pc.childApplicationContext = childApplicationContext;
+		pc.configurationEnhancer = configurationEnhancer;
 		ProcessingContext.setCurrentContext(pc);
 
 		initialized = true;
