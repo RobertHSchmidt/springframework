@@ -25,7 +25,6 @@ import net.sf.cglib.proxy.NoOp;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.core.AutoBeanMethodProcessor;
-import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
 import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.core.ExternalBeanMethodProcessor;
 import org.springframework.config.java.core.ExternalValueMethodProcessor;
@@ -96,7 +95,6 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 		ConfigurableListableBeanFactory owningBeanFactory = pc.owningBeanFactory;
 		BeanNameTrackingDefaultListableBeanFactory childFactory = pc.childFactory;
 		BeanNamingStrategy beanNamingStrategy = pc.beanNamingStrategy;
-		Iterable<BeanMethodReturnValueProcessor> returnValueProcessors = pc.returnValueProcessors;
 		ValueSource valueSource = pc.compositeValueSource;
 
 		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
@@ -104,7 +102,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 		Assert.notNull(beanNamingStrategy, "beanNamingStrategy is required");
 		Assert.notNull(valueSource, "valueSource is required");
 
-		MethodBeanWrapper beanWrapper = new MethodBeanWrapper(owningBeanFactory, childFactory, returnValueProcessors);
+		MethodBeanWrapper beanWrapper = new MethodBeanWrapper();
 
 		ExternalValueMethodProcessor evmp = new ExternalValueMethodProcessor(valueSource);
 		ExternalBeanMethodProcessor ebmp = new ExternalBeanMethodProcessor(owningBeanFactory, beanNamingStrategy);
