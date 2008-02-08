@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

@@ -25,6 +25,7 @@ import org.springframework.aop.aspectj.annotation.BeanFactoryAspectInstanceFacto
 import org.springframework.aop.aspectj.annotation.NotAnAtAspectException;
 import org.springframework.aop.aspectj.annotation.ReflectiveAspectJAdvisorFactory;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.core.ProcessingContext;
 
 /**
  * Configuration listener that processes AspectJ aspects.

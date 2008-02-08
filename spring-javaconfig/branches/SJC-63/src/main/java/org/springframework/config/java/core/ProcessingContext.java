@@ -1,11 +1,11 @@
-package org.springframework.config.java.process;
+package org.springframework.config.java.core;
+
+import java.util.List;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
-import org.springframework.config.java.enhancement.ConfigurationEnhancer;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.config.java.valuesource.CompositeValueSource;
@@ -14,7 +14,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 
-class ProcessingContext {
+public class ProcessingContext {
 
 	private static InheritableThreadLocal<ProcessingContext> instance = new InheritableThreadLocal<ProcessingContext>() {
 		@Override
@@ -23,29 +23,29 @@ class ProcessingContext {
 		}
 	};
 
-	static ProcessingContext getCurrentContext() {
+	public static ProcessingContext getCurrentContext() {
 		return instance.get();
 	}
 
-	static void setCurrentContext(ProcessingContext context) {
+	public static void setCurrentContext(ProcessingContext context) {
 		instance.set(context);
 	}
 
-	BeanNamingStrategy beanNamingStrategy = new MethodNameStrategy();
+	public BeanNamingStrategy beanNamingStrategy = new MethodNameStrategy();
 
-	ConfigurableListableBeanFactory owningBeanFactory;
+	public ConfigurableListableBeanFactory owningBeanFactory;
 
-	BeanNameTrackingDefaultListableBeanFactory childFactory;
+	public BeanNameTrackingDefaultListableBeanFactory childFactory;
 
-	CompositeValueSource compositeValueSource;
+	public CompositeValueSource compositeValueSource;
 
-	int beanDefsGenerated = -1;
+	public int beanDefsGenerated = -1;
 
-	ResourceLoader resourceLoader = new DefaultResourceLoader();
+	public ResourceLoader resourceLoader = new DefaultResourceLoader();
 
-	ConfigurationEnhancer configurationEnhancer;
+	public ConfigurableApplicationContext childApplicationContext;
 
-	ConfigurableApplicationContext childApplicationContext;
+	public List<BeanMethodReturnValueProcessor> returnValueProcessors;
 
 	public ProcessingContext() {
 	}

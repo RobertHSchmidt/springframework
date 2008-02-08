@@ -22,6 +22,9 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.config.java.core.ProcessingContext;
+import org.springframework.config.java.enhancement.ConfigurationEnhancer;
+import org.springframework.config.java.enhancement.cglib.CglibConfigurationEnhancer;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
@@ -121,7 +124,10 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 				.getBeanDefinition(configurationBeanName);
 
 		// update the configuration bean definition first
-		Class<?> enhancedClass = pc.configurationEnhancer.enhanceConfiguration(configurationClass);
+		ConfigurationEnhancer configurationEnhancer = new CglibConfigurationEnhancer(pc.owningBeanFactory,
+				pc.childFactory, pc.beanNamingStrategy, pc.returnValueProcessors, pc.compositeValueSource);
+
+		Class<?> enhancedClass = configurationEnhancer.enhanceConfiguration(configurationClass);
 		definition.setBeanClass(enhancedClass);
 
 		// Force resolution of dependencies on other beans

@@ -27,7 +27,7 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
 import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
-import org.springframework.config.java.enhancement.ConfigurationEnhancer;
+import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.config.java.enhancement.cglib.CglibConfigurationEnhancer;
 import org.springframework.config.java.valuesource.CompositeValueSource;
 import org.springframework.context.ApplicationEvent;
@@ -211,19 +211,14 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 			a.add(c);
 		}
 
-		CompositeValueSource vs = new CompositeValueSource();
-
 		if (pc == null)
 			pc = new ProcessingContext();
 
-		ConfigurationEnhancer configurationEnhancer = new CglibConfigurationEnhancer(owningBeanFactory, childFactory,
-				pc.beanNamingStrategy, a, vs);
-
 		pc.owningBeanFactory = owningBeanFactory;
 		pc.childFactory = childFactory;
-		pc.compositeValueSource = vs;
+		pc.compositeValueSource = new CompositeValueSource();
+		pc.returnValueProcessors = a;
 		pc.childApplicationContext = childApplicationContext;
-		pc.configurationEnhancer = configurationEnhancer;
 		ProcessingContext.setCurrentContext(pc);
 
 		initialized = true;

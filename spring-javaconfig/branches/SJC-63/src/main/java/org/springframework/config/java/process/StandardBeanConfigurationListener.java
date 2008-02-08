@@ -13,6 +13,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.core.Constants;
+import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.config.java.core.StandardBeanMethodProcessor;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.core.annotation.AnnotationUtils;
