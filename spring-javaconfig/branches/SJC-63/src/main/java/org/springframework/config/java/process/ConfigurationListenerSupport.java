@@ -59,18 +59,18 @@ public abstract class ConfigurationListenerSupport implements ConfigurationListe
 	public void handleEvent(final Reactor reactor, final Event event) {
 		// TODO Auto-generated method stub
 
-		log.info("got event: " + event);
+		// log.info("got event: " + event);
 
 		ReflectionUtils.doWithMethods(this.getClass(), new MethodCallback() {
 
 			public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
 				if (method.getDeclaringClass().equals(Object.class))
 					return;
-				log.warn("method: " + method);
+				// log.warn("method: " + method);
 				Class<?>[] parameterTypes = method.getParameterTypes();
 				if (parameterTypes.length != 2)
 					return;
-				log.warn(event.getClass());
+				// log.warn(event.getClass());
 				if (parameterTypes[0].isAssignableFrom(reactor.getClass())
 						&& parameterTypes[1].equals(event.getClass())) {
 					try {
