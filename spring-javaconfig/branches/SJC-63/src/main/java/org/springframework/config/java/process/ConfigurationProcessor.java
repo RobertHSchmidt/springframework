@@ -69,9 +69,6 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 	private final Log log = LogFactory.getLog(getClass());
 
 	/**
-	 * Bean factory that this post processor runs in
-	 */
-	/**
 	 * Used to hold Spring AOP advisors and other internal objects while
 	 * processing configuration. Object added to this factory can still benefit
 	 * from autowiring and other IoC container features, but are not visible

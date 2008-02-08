@@ -187,8 +187,6 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Pri
 			ConfigurationProcessor processor = new ConfigurationProcessor(processingContext,
 					configurationListenerRegistry);
 
-			processor.afterPropertiesSet();
-
 			Class<?> clazz = ProcessUtils.getBeanClass(beanName, beanFactory);
 
 			if (processor.isConfigClass(clazz))
