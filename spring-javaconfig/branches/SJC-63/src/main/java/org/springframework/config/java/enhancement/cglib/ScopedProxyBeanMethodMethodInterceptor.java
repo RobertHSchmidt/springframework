@@ -22,7 +22,7 @@ import net.sf.cglib.proxy.MethodProxy;
 
 import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.core.ScopedProxyMethodProcessor;
-import org.springframework.util.Assert;
+import org.springframework.config.java.core.StandardBeanMethodProcessor;
 
 /**
  * CGLIB callback suitable for scoped proxies. It's aware of the name switch
@@ -39,11 +39,9 @@ class ScopedProxyBeanMethodMethodInterceptor implements MethodInterceptor {
 
 	private final ScopedProxyMethodProcessor scopedProxyMethodProcessor;
 
-	public ScopedProxyBeanMethodMethodInterceptor(ScopedProxyMethodProcessor spmp, BeanMethodMethodInterceptor delegate) {
-		Assert.notNull(spmp, "the BeanMethodProcessor is required");
-		Assert.notNull(delegate, "the MethodInterceptor delegate is required");
-		this.scopedProxyMethodProcessor = spmp;
-		this.delegate = delegate;
+	public ScopedProxyBeanMethodMethodInterceptor() {
+		this.scopedProxyMethodProcessor = new ScopedProxyMethodProcessor(new StandardBeanMethodProcessor());
+		this.delegate = new BeanMethodMethodInterceptor();
 	}
 
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {

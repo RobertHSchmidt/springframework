@@ -23,7 +23,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.naming.BeanNamingStrategy;
-import org.springframework.util.Assert;
 
 public class StandardBeanMethodProcessor extends AbstractBeanMethodProcessor {
 	private static final Log log = LogFactory.getLog(StandardBeanMethodProcessor.class);
@@ -36,28 +35,13 @@ public class StandardBeanMethodProcessor extends AbstractBeanMethodProcessor {
 
 	private final MethodBeanWrapper beanWrapper;
 
-	public StandardBeanMethodProcessor(ConfigurableListableBeanFactory owningBeanFactory,
-			BeanNameTrackingDefaultListableBeanFactory childFactory, BeanNamingStrategy namingStrategy,
-			MethodBeanWrapper beanWrapper) {
+	public StandardBeanMethodProcessor() {
 		super(Bean.class);
-
-		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
-		Assert.notNull(childFactory);
-		Assert.notNull(namingStrategy);
-		Assert.notNull(beanWrapper);
-
-		this.owningBeanFactory = owningBeanFactory;
-		this.childTrackingFactory = childFactory;
-		this.namingStrategy = namingStrategy;
-		this.beanWrapper = beanWrapper;
-	}
-
-	private StandardBeanMethodProcessor() {
-		super(Bean.class);
-		this.owningBeanFactory = null;
-		this.childTrackingFactory = null;
-		this.namingStrategy = null;
-		this.beanWrapper = null;
+		ProcessingContext pc = ProcessingContext.getCurrentContext();
+		this.owningBeanFactory = pc.owningBeanFactory;
+		this.childTrackingFactory = pc.childFactory;
+		this.namingStrategy = pc.beanNamingStrategy;
+		this.beanWrapper = new MethodBeanWrapper();
 	}
 
 	public Object processMethod(Method targetMethod) {

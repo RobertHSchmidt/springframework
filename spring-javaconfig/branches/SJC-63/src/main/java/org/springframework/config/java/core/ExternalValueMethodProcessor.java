@@ -27,14 +27,9 @@ public class ExternalValueMethodProcessor extends AbstractBeanMethodProcessor {
 
 	private final ValueSource valueSource;
 
-	public ExternalValueMethodProcessor(ValueSource valueSource) {
+	public ExternalValueMethodProcessor() {
 		super(ExternalValue.class);
-		this.valueSource = valueSource;
-	}
-
-	private ExternalValueMethodProcessor() {
-		super(ExternalValue.class);
-		this.valueSource = null;
+		this.valueSource = ProcessingContext.getCurrentContext().compositeValueSource;
 	}
 
 	public Object processMethod(Method m) throws ValueResolutionException {

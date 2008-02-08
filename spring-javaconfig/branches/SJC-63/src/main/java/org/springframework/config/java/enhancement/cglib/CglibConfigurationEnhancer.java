@@ -23,18 +23,12 @@ import net.sf.cglib.proxy.CallbackFilter;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.NoOp;
 
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.core.AutoBeanMethodProcessor;
-import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.core.ExternalBeanMethodProcessor;
 import org.springframework.config.java.core.ExternalValueMethodProcessor;
-import org.springframework.config.java.core.MethodBeanWrapper;
-import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.config.java.core.ScopedProxyMethodProcessor;
 import org.springframework.config.java.core.StandardBeanMethodProcessor;
 import org.springframework.config.java.enhancement.ConfigurationEnhancer;
-import org.springframework.config.java.naming.BeanNamingStrategy;
-import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.util.Assert;
 
 /**
@@ -90,30 +84,9 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	private final Callback[] callbacks;
 
 	public CglibConfigurationEnhancer() {
-		ProcessingContext pc = ProcessingContext.getCurrentContext();
-
-		ConfigurableListableBeanFactory owningBeanFactory = pc.owningBeanFactory;
-		BeanNameTrackingDefaultListableBeanFactory childFactory = pc.childFactory;
-		BeanNamingStrategy beanNamingStrategy = pc.beanNamingStrategy;
-		ValueSource valueSource = pc.compositeValueSource;
-
-		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
-		Assert.notNull(childFactory, "childFactory is required");
-		Assert.notNull(beanNamingStrategy, "beanNamingStrategy is required");
-		Assert.notNull(valueSource, "valueSource is required");
-
-		MethodBeanWrapper beanWrapper = new MethodBeanWrapper();
-
-		ExternalValueMethodProcessor evmp = new ExternalValueMethodProcessor(valueSource);
-		ExternalBeanMethodProcessor ebmp = new ExternalBeanMethodProcessor(owningBeanFactory, beanNamingStrategy);
-		StandardBeanMethodProcessor rbmp = new StandardBeanMethodProcessor(owningBeanFactory, childFactory,
-				beanNamingStrategy, beanWrapper);
-		ScopedProxyMethodProcessor spmp = new ScopedProxyMethodProcessor(rbmp);
-
-		callbacks = new Callback[] { NoOp.INSTANCE, new BeanMethodMethodInterceptor(rbmp),
-				new ExternalBeanMethodMethodInterceptor(ebmp),
-				new ScopedProxyBeanMethodMethodInterceptor(spmp, new BeanMethodMethodInterceptor(rbmp)),
-				new ExternalValueMethodMethodInterceptor(evmp) };
+		callbacks = new Callback[] { NoOp.INSTANCE, new BeanMethodMethodInterceptor(),
+				new ExternalBeanMethodMethodInterceptor(), new ScopedProxyBeanMethodMethodInterceptor(),
+				new ExternalValueMethodMethodInterceptor() };
 	}
 
 	public <T> Class<? extends T> enhanceConfiguration(Class<T> configurationClass) {
