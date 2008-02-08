@@ -93,8 +93,8 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Pri
 	}
 
 	/**
-	 * Optionally overrides the default {@link ConfigurationListenerRegistry}
-	 * used during processing.
+	 * Allows for optional overriding of the default
+	 * {@link ConfigurationListenerRegistry} used during processing.
 	 * 
 	 * @param configurationListenerRegistry The custom implementation
 	 * @see ConfigurationProcessor#ConfigurationProcessor(ProcessingContext,
@@ -105,8 +105,9 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Pri
 	}
 
 	/**
-	 * Optionally overrides the default {@link BeanNamingStrategy} to be used
-	 * when generating bean definitions from {@link Configuration} beans.
+	 * Allows for optional overriding of the default {@link BeanNamingStrategy}
+	 * to be used when generating bean definitions from {@link Configuration}
+	 * beans.
 	 * 
 	 * @param beanNamingStrategy The custom implementation
 	 * @see ProcessingContext#beanNamingStrategy for details on defaults
@@ -146,7 +147,7 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Pri
 	}
 
 	/**
-	 * Process each BeanDefinition in <var>beanFactory</var>, looking for any
+	 * Processes each BeanDefinition in <var>beanFactory</var>, looking for any
 	 * beans that conform to the semantics of a {@link Configuration}. For any
 	 * {@link Configuration} bean found, process that class, generating a
 	 * {@link BeanDefinition} for each {@link Bean}-annotated method
@@ -167,8 +168,8 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Pri
 	}
 
 	/**
-	 * Overridable core logic for processing each bean in <var>beanFactory</var>.
-	 * Invariants have been handled by
+	 * Allows for overriding core logic for processing each bean in
+	 * <var>beanFactory</var>. Invariants have been handled by
 	 * {@link #postProcessBeanFactory(ConfigurableListableBeanFactory)}:
 	 * <ul>
 	 * <li>this is guaranteed to be the first and only run for this instance</li>
