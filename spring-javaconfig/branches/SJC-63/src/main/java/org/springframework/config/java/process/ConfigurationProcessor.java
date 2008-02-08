@@ -91,33 +91,9 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 
 	private final ConfigurationListenerRegistry configurationListenerRegistry;
 
-	private boolean initialized = false;
-
-	public ConfigurationProcessor() {
-		this(new ProcessingContext(), new ConfigurationListenerRegistry());
-	}
-
-	/**
-	 * Constructor taking an application context as parameter. Suitable for
-	 * programmatic use.
-	 * 
-	 * @param ac application context in which the newly created bean definition
-	 * will reside
-	 */
-	public ConfigurationProcessor(ConfigurableApplicationContext ac) {
-		this();
-		pc.ac = ac;
-	}
-
-	/**
-	 * 
-	 * @param pc non-null
-	 * @param configurationListenerRegistry will default to instantiating new
-	 * {@link ConfigurationListenerRegistry} instance if null
-	 */
-	public ConfigurationProcessor(ProcessingContext pc, ConfigurationListenerRegistry configurationListenerRegistry) {
-		Assert.notNull(pc, "ProcessingContext may not be null");
-		this.pc = pc;
+	private ConfigurationProcessor(ProcessingContext pc, ConfigurationListenerRegistry configurationListenerRegistry,
+			ConfigurableListableBeanFactory owningBeanFactory, ConfigurableApplicationContext owningApplicationContext) {
+		this.pc = pc != null ? pc : new ProcessingContext();
 
 		if (configurationListenerRegistry != null) {
 			this.configurationListenerRegistry = configurationListenerRegistry;
@@ -126,6 +102,22 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 			log.debug("received null ConfigurationListenerRegistry during construction; will use default");
 			this.configurationListenerRegistry = new ConfigurationListenerRegistry();
 		}
+
+		if (owningBeanFactory != null)
+			this.pc.owningBeanFactory = owningBeanFactory;
+
+		if (owningApplicationContext != null)
+			this.pc.ac = owningApplicationContext;
+
+		afterPropertiesSet();
+	}
+
+	public ConfigurationProcessor() {
+		this(null, null, null, null);
+	}
+
+	public ConfigurationProcessor(ConfigurableApplicationContext owningApplicationContext) {
+		this(null, null, null, nonNull(owningApplicationContext, "owningApplicationContext"));
 	}
 
 	/**
@@ -134,8 +126,16 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 	 * @param clbf owning factory
 	 */
 	public ConfigurationProcessor(ConfigurableListableBeanFactory clbf) {
-		this();
-		pc.owningBeanFactory = clbf;
+		this(null, null, nonNull(clbf, "beanFactory"), null);
+	}
+
+	/**
+	 * @param pc non-null
+	 * @param configurationListenerRegistry will default to instantiating new
+	 * {@link ConfigurationListenerRegistry} instance if null
+	 */
+	public ConfigurationProcessor(ProcessingContext pc, ConfigurationListenerRegistry configurationListenerRegistry) {
+		this(nonNull(pc, "processingContext"), configurationListenerRegistry, null, null);
 	}
 
 	private ConfigurableApplicationContext createChildApplicationContext() {
@@ -209,18 +209,9 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 		pc.compositeValueSource = new CompositeValueSource();
 		pc.returnValueProcessors = configurationListenerRegistry;
 		pc.childApplicationContext = childApplicationContext;
-
-		initialized = true;
 	}
 
 	final ProcessingContext pc;
-
-	private void checkInit() {
-		if (!initialized) {
-			afterPropertiesSet();
-		}
-
-	}
 
 	/**
 	 * Generate bean definitions from a 'naked' configuration class.
@@ -236,7 +227,6 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 	 * @throws BeanDefinitionStoreException if no bean definitions are found
 	 */
 	public int processClass(Class<?> configurationClass) throws BeanDefinitionStoreException {
-		checkInit();
 
 		boolean isEntryPoint = false;
 		if (pc.beanDefsGenerated == -1) {
@@ -267,7 +257,6 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 	 * @throws BeanDefinitionStoreException
 	 */
 	void processConfigurationBean(String configurationBeanName, Class<?> configurationClass) {
-		checkInit();
 
 		boolean isEntryPoint = false;
 		if (pc.beanDefsGenerated == -1) {
@@ -344,6 +333,12 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 	public void sourceBeanMethodEvent(BeanMethodEvent event) {
 		for (ConfigurationListener cml : configurationListenerRegistry.getConfigurationListeners())
 			cml.handleEvent(this, event);
+	}
+
+	private static <T> T nonNull(T object, String objectName) {
+		if (object == null)
+			throw new IllegalArgumentException(objectName + " must be non-null");
+		return object;
 	}
 
 }
