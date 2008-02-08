@@ -22,6 +22,7 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**

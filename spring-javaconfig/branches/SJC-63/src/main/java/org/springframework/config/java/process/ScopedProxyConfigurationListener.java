@@ -24,6 +24,7 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
+import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.config.java.core.ScopedProxyMethodProcessor;
 import org.springframework.config.java.util.DefaultScopes;
 import org.springframework.core.annotation.AnnotationUtils;

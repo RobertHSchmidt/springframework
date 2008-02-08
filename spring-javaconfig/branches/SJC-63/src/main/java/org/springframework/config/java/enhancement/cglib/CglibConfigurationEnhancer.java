@@ -31,6 +31,7 @@ import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanF
 import org.springframework.config.java.core.ExternalBeanMethodProcessor;
 import org.springframework.config.java.core.ExternalValueMethodProcessor;
 import org.springframework.config.java.core.MethodBeanWrapper;
+import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.config.java.core.ScopedProxyMethodProcessor;
 import org.springframework.config.java.core.StandardBeanMethodProcessor;
 import org.springframework.config.java.enhancement.ConfigurationEnhancer;
@@ -93,6 +94,8 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	public CglibConfigurationEnhancer(ConfigurableListableBeanFactory owningBeanFactory,
 			BeanNameTrackingDefaultListableBeanFactory childFactory, BeanNamingStrategy beanNamingStrategy,
 			List<BeanMethodReturnValueProcessor> returnValueProcessors, ValueSource valueSource) {
+
+		ProcessingContext pc = new ProcessingContext();
 
 		Assert.notNull(owningBeanFactory, "owningBeanFactory is required");
 		Assert.notNull(childFactory, "childFactory is required");

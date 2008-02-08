@@ -22,6 +22,10 @@ abstract class AbstractBeanMethodProcessor implements BeanMethodProcessor {
 		this.annotation = annotation;
 	}
 
+	protected final ProcessingContext getProcessingContext() {
+		return ProcessingContext.getCurrentContext();
+	}
+
 	protected static Set<Method> findAllMethods(Class<?> configurationClass) {
 		HashSet<Method> allMethods = new HashSet<Method>();
 
