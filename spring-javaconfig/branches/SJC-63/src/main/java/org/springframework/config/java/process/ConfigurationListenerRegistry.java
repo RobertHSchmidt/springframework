@@ -15,10 +15,13 @@
  */
 package org.springframework.config.java.process;
 
+import static java.util.Collections.unmodifiableList;
+
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
+import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
 import org.springframework.util.ClassUtils;
 
 /**
@@ -35,7 +38,7 @@ import org.springframework.util.ClassUtils;
  * @see ConfigurationProcessor#setConfigurationListenerRegistry(ConfigurationListenerRegistry)
  * @see ConfigurationPostProcessor#setConfigurationListenerRegistry(ConfigurationListenerRegistry)
  */
-class ConfigurationListenerRegistry {
+class ConfigurationListenerRegistry implements Iterable<BeanMethodReturnValueProcessor> {
 
 	private final List<ConfigurationListener> configurationListeners = new ArrayList<ConfigurationListener>();
 
@@ -60,7 +63,11 @@ class ConfigurationListenerRegistry {
 	}
 
 	public final List<ConfigurationListener> getConfigurationListeners() {
-		return Collections.unmodifiableList(configurationListeners);
+		return unmodifiableList(configurationListeners);
+	}
+
+	public Iterator<BeanMethodReturnValueProcessor> iterator() {
+		return unmodifiableList(new ArrayList<BeanMethodReturnValueProcessor>(configurationListeners)).iterator();
 	}
 
 }

@@ -15,7 +15,6 @@
  */
 package org.springframework.config.java.process;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,7 +24,6 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
 import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.config.java.enhancement.cglib.CglibConfigurationEnhancer;
@@ -206,18 +204,13 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 			copyBeanPostProcessors(owningApplicationContext, childApplicationContext);
 		}
 
-		ArrayList<BeanMethodReturnValueProcessor> a = new ArrayList<BeanMethodReturnValueProcessor>();
-		for (ConfigurationListener c : configurationListenerRegistry.getConfigurationListeners()) {
-			a.add(c);
-		}
-
 		if (pc == null)
 			pc = new ProcessingContext();
 
 		pc.owningBeanFactory = owningBeanFactory;
 		pc.childFactory = childFactory;
 		pc.compositeValueSource = new CompositeValueSource();
-		pc.returnValueProcessors = a;
+		pc.returnValueProcessors = configurationListenerRegistry;
 		pc.childApplicationContext = childApplicationContext;
 		ProcessingContext.setCurrentContext(pc);
 
