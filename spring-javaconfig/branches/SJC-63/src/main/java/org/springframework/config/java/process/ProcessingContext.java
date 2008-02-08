@@ -29,33 +29,23 @@ class ProcessingContext {
 		instance.set(context);
 	}
 
-	final BeanNamingStrategy beanNamingStrategy;
+	BeanNamingStrategy beanNamingStrategy;
 
-	final ConfigurableListableBeanFactory owningBeanFactory;
+	ConfigurableListableBeanFactory owningBeanFactory;
 
-	final BeanNameTrackingDefaultListableBeanFactory childFactory;
+	BeanNameTrackingDefaultListableBeanFactory childFactory;
 
-	final CompositeValueSource compositeValueSource;
+	CompositeValueSource compositeValueSource;
 
 	int beanDefsGenerated = -1;
 
-	final ResourceLoader resourceLoader;
+	ResourceLoader resourceLoader;
 
-	final ConfigurationEnhancer configurationEnhancer;
+	ConfigurationEnhancer configurationEnhancer;
 
-	private final ConfigurableApplicationContext childApplicationContext;
+	ConfigurableApplicationContext childApplicationContext;
 
-	public ProcessingContext(BeanNamingStrategy beanNamingStrategy, ConfigurableListableBeanFactory owningBeanFactory,
-			BeanNameTrackingDefaultListableBeanFactory childFactory, CompositeValueSource compositeValueSource,
-			ResourceLoader resourceLoader, ConfigurableApplicationContext childApplicationContext,
-			ConfigurationEnhancer configurationEnhancer) {
-		this.beanNamingStrategy = beanNamingStrategy;
-		this.owningBeanFactory = owningBeanFactory;
-		this.childFactory = childFactory;
-		this.compositeValueSource = compositeValueSource;
-		this.resourceLoader = resourceLoader;
-		this.childApplicationContext = childApplicationContext;
-		this.configurationEnhancer = configurationEnhancer;
+	public ProcessingContext() {
 	}
 
 	public void registerBeanDefinition(String name, BeanDefinition bd, boolean hide) {
