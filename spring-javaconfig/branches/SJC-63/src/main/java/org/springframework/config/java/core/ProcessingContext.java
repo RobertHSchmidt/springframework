@@ -34,6 +34,8 @@ public final class ProcessingContext {
 
 	public Iterable<BeanMethodReturnValueProcessor> returnValueProcessors;
 
+	public ConfigurableApplicationContext ac;
+
 	public ProcessingContext() {
 	}
 

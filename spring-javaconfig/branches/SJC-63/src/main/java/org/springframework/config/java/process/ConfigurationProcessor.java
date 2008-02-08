@@ -71,8 +71,6 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 	/**
 	 * Bean factory that this post processor runs in
 	 */
-	ConfigurableListableBeanFactory owningBeanFactory;
-
 	/**
 	 * Used to hold Spring AOP advisors and other internal objects while
 	 * processing configuration. Object added to this factory can still benefit
@@ -94,11 +92,13 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 	 */
 	private ConfigurableApplicationContext childApplicationContext;
 
-	private ConfigurationListenerRegistry configurationListenerRegistry = new ConfigurationListenerRegistry();
+	private final ConfigurationListenerRegistry configurationListenerRegistry;
 
 	private boolean initialized = false;
 
-	ConfigurableApplicationContext ac;
+	public ConfigurationProcessor() {
+		this(new ProcessingContext(), new ConfigurationListenerRegistry());
+	}
 
 	/**
 	 * Constructor taking an application context as parameter. Suitable for
@@ -108,11 +108,27 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 	 * will reside
 	 */
 	public ConfigurationProcessor(ConfigurableApplicationContext ac) {
-		this.ac = ac;
+		this();
+		pc.ac = ac;
 	}
 
-	public ConfigurationProcessor() {
+	/**
+	 * 
+	 * @param pc non-null
+	 * @param configurationListenerRegistry will default to instantiating new
+	 * {@link ConfigurationListenerRegistry} instance if null
+	 */
+	public ConfigurationProcessor(ProcessingContext pc, ConfigurationListenerRegistry configurationListenerRegistry) {
+		Assert.notNull(pc, "ProcessingContext may not be null");
+		this.pc = pc;
 
+		if (configurationListenerRegistry != null) {
+			this.configurationListenerRegistry = configurationListenerRegistry;
+		}
+		else {
+			log.debug("received null ConfigurationListenerRegistry during construction; will use default");
+			this.configurationListenerRegistry = new ConfigurationListenerRegistry();
+		}
 	}
 
 	/**
@@ -121,7 +137,8 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 	 * @param clbf owning factory
 	 */
 	public ConfigurationProcessor(ConfigurableListableBeanFactory clbf) {
-		this.owningBeanFactory = clbf;
+		this();
+		pc.owningBeanFactory = clbf;
 	}
 
 	private ConfigurableApplicationContext createChildApplicationContext() {
@@ -173,41 +190,24 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 	}
 
 	/**
-	 * Optionally specify a custom subclass of
-	 * {@link ConfigurationListenerRegistry}. If unspecified, the default
-	 * implementation will be used.
-	 * 
-	 * <p/>TODO: if ConfigurationListener is made internal, this configuration
-	 * should be eliminated as well
-	 * 
-	 * @param configurationListenerRegistry
-	 */
-	public void setConfigurationListenerRegistry(ConfigurationListenerRegistry configurationListenerRegistry) {
-		this.configurationListenerRegistry = configurationListenerRegistry;
-	}
-
-	/**
 	 * Called to avoid constructor changes every time a new configuration switch
 	 * appears on this class.
 	 */
 	public void afterPropertiesSet() {
-		if (ac != null)
-			owningBeanFactory = ac.getBeanFactory();
+		if (pc.ac != null)
+			pc.owningBeanFactory = pc.ac.getBeanFactory();
 
-		Assert.notNull(owningBeanFactory, "an owning factory bean is required");
+		Assert.notNull(pc.owningBeanFactory, "an owning factory bean is required");
 
-		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(owningBeanFactory);
+		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(pc.owningBeanFactory);
 
-		if (ac != null && ac instanceof AbstractApplicationContext) {
-			owningApplicationContext = (AbstractApplicationContext) ac;
+		if (pc.ac != null && pc.ac instanceof AbstractApplicationContext) {
+			owningApplicationContext = (AbstractApplicationContext) pc.ac;
 			childApplicationContext = createChildApplicationContext();
 			copyBeanPostProcessors(owningApplicationContext, childApplicationContext);
 		}
 
-		if (pc == null)
-			pc = new ProcessingContext();
-
-		pc.owningBeanFactory = owningBeanFactory;
+		pc.owningBeanFactory = pc.owningBeanFactory;
 		pc.childFactory = childFactory;
 		pc.compositeValueSource = new CompositeValueSource();
 		pc.returnValueProcessors = configurationListenerRegistry;
@@ -216,7 +216,7 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean {
 		initialized = true;
 	}
 
-	ProcessingContext pc;
+	final ProcessingContext pc;
 
 	private void checkInit() {
 		if (!initialized) {
