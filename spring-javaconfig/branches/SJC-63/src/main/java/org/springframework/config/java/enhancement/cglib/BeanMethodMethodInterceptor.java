@@ -22,7 +22,6 @@ import net.sf.cglib.proxy.MethodProxy;
 
 import org.springframework.config.java.core.EnhancerMethodInvoker;
 import org.springframework.config.java.core.StandardBeanMethodProcessor;
-import org.springframework.util.Assert;
 
 /**
  * CGLIB MethodInterceptor that applies to methods on the configuration
@@ -41,10 +40,8 @@ class BeanMethodMethodInterceptor implements MethodInterceptor {
 
 	private final StandardBeanMethodProcessor beanMethodProcessor;
 
-	public BeanMethodMethodInterceptor(StandardBeanMethodProcessor beanMethodProcessor) {
-		Assert.notNull(beanMethodProcessor);
-
-		this.beanMethodProcessor = beanMethodProcessor;
+	public BeanMethodMethodInterceptor() {
+		this.beanMethodProcessor = new StandardBeanMethodProcessor();
 	}
 
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {

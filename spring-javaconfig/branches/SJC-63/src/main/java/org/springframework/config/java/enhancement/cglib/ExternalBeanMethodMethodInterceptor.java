@@ -21,6 +21,7 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import org.springframework.config.java.core.BeanMethodProcessor;
+import org.springframework.config.java.core.ExternalBeanMethodProcessor;
 
 /**
  * CGLIB method interceptor for external bean methods.
@@ -33,8 +34,8 @@ class ExternalBeanMethodMethodInterceptor implements MethodInterceptor {
 
 	private final BeanMethodProcessor beanMethodProcessor;
 
-	public ExternalBeanMethodMethodInterceptor(BeanMethodProcessor beanMethodProcessor) {
-		this.beanMethodProcessor = beanMethodProcessor;
+	public ExternalBeanMethodMethodInterceptor() {
+		this.beanMethodProcessor = new ExternalBeanMethodProcessor();
 	}
 
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {

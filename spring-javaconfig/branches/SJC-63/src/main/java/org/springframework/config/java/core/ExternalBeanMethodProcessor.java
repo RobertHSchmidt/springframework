@@ -37,11 +37,6 @@ public class ExternalBeanMethodProcessor extends AbstractBeanMethodProcessor {
 
 	private final BeanNamingStrategy namingStrategy;
 
-	/**
-	 * 
-	 * @param owningBeanFactory non-null
-	 * @param namingStrategy non-null
-	 */
 	public ExternalBeanMethodProcessor(BeanFactory owningBeanFactory, BeanNamingStrategy namingStrategy) {
 		super(ExternalBean.class);
 
@@ -52,10 +47,9 @@ public class ExternalBeanMethodProcessor extends AbstractBeanMethodProcessor {
 		this.namingStrategy = namingStrategy;
 	}
 
-	private ExternalBeanMethodProcessor() {
-		super(ExternalBean.class);
-		this.owningBeanFactory = null;
-		this.namingStrategy = null;
+	public ExternalBeanMethodProcessor() {
+		this(ProcessingContext.getCurrentContext().owningBeanFactory,
+				ProcessingContext.getCurrentContext().beanNamingStrategy);
 	}
 
 	/**
