@@ -29,18 +29,13 @@ import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
 import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.enhancement.ConfigurationEnhancer;
 import org.springframework.config.java.enhancement.cglib.CglibConfigurationEnhancer;
-import org.springframework.config.java.naming.BeanNamingStrategy;
-import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.config.java.valuesource.CompositeValueSource;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 
 /**
@@ -71,14 +66,14 @@ import org.springframework.util.Assert;
  * @author Chris Beams
  * @see org.springframework.config.java.process.ConfigurationListener
  */
-public final class ConfigurationProcessor implements Reactor, InitializingBean, ResourceLoaderAware {
+public final class ConfigurationProcessor implements Reactor, InitializingBean {
 
 	private final Log log = LogFactory.getLog(getClass());
 
 	/**
 	 * Bean factory that this post processor runs in
 	 */
-	private final ConfigurableListableBeanFactory owningBeanFactory;
+	ConfigurableListableBeanFactory owningBeanFactory;
 
 	/**
 	 * Used to hold Spring AOP advisors and other internal objects while
@@ -86,7 +81,7 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 	 * from autowiring and other IoC container features, but are not visible
 	 * externally.
 	 */
-	private final BeanNameTrackingDefaultListableBeanFactory childFactory;
+	private BeanNameTrackingDefaultListableBeanFactory childFactory;
 
 	/**
 	 * Non-null if we are running in an ApplicationContext and need to ensure
@@ -103,11 +98,9 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 
 	private ConfigurationListenerRegistry configurationListenerRegistry = new ConfigurationListenerRegistry();
 
-	private BeanNamingStrategy beanNamingStrategy = new MethodNameStrategy();
-
-	private ResourceLoader resourceLoader = new DefaultResourceLoader();
-
 	private boolean initialized = false;
+
+	ConfigurableApplicationContext ac;
 
 	/**
 	 * Constructor taking an application context as parameter. Suitable for
@@ -117,13 +110,20 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 	 * will reside
 	 */
 	public ConfigurationProcessor(ConfigurableApplicationContext ac) {
-		this(ac.getBeanFactory());
+		this.ac = ac;
+	}
 
-		if (ac instanceof AbstractApplicationContext) {
-			owningApplicationContext = (AbstractApplicationContext) ac;
-			childApplicationContext = createChildApplicationContext();
-			copyBeanPostProcessors(owningApplicationContext, childApplicationContext);
-		}
+	public ConfigurationProcessor() {
+
+	}
+
+	/**
+	 * Create a configuration processor. This is tied to an owning factory.
+	 * 
+	 * @param clbf owning factory
+	 */
+	public ConfigurationProcessor(ConfigurableListableBeanFactory clbf) {
+		this.owningBeanFactory = clbf;
 	}
 
 	private ConfigurableApplicationContext createChildApplicationContext() {
@@ -175,41 +175,6 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 	}
 
 	/**
-	 * Create a configuration processor. This is tied to an owning factory.
-	 * 
-	 * @param clbf owning factory
-	 */
-	public ConfigurationProcessor(ConfigurableListableBeanFactory clbf) {
-		this.owningBeanFactory = clbf;
-		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(owningBeanFactory);
-	}
-
-	/**
-	 * Optionally indicate the resourceLoader. If unspecified,
-	 * {@link DefaultResourceLoader} will be used. will be used.
-	 * 
-	 * @param resourceLoader
-	 */
-	public void setResourceLoader(ResourceLoader resourceLoader) {
-		this.resourceLoader = resourceLoader;
-	}
-
-	public ResourceLoader getResourceLoader() {
-		return resourceLoader;
-	}
-
-	/**
-	 * Optionally indicate the naming strategy used for creating the bean names
-	 * during processing. If unspecified, {@link BeanNamingStrategy} will be
-	 * used.
-	 * 
-	 * @param beanNamingStrategy bean naming strategy implementation
-	 */
-	public void setBeanNamingStrategy(BeanNamingStrategy beanNamingStrategy) {
-		this.beanNamingStrategy = beanNamingStrategy;
-	}
-
-	/**
 	 * Optionally specify a custom subclass of
 	 * {@link ConfigurationListenerRegistry}. If unspecified, the default
 	 * implementation will be used.
@@ -228,7 +193,18 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 	 * appears on this class.
 	 */
 	public void afterPropertiesSet() {
+		if (ac != null)
+			owningBeanFactory = ac.getBeanFactory();
+
 		Assert.notNull(owningBeanFactory, "an owning factory bean is required");
+
+		this.childFactory = new BeanNameTrackingDefaultListableBeanFactory(owningBeanFactory);
+
+		if (ac != null && ac instanceof AbstractApplicationContext) {
+			owningApplicationContext = (AbstractApplicationContext) ac;
+			childApplicationContext = createChildApplicationContext();
+			copyBeanPostProcessors(owningApplicationContext, childApplicationContext);
+		}
 
 		ArrayList<BeanMethodReturnValueProcessor> a = new ArrayList<BeanMethodReturnValueProcessor>();
 		for (ConfigurationListener c : configurationListenerRegistry.getConfigurationListeners()) {
@@ -237,15 +213,15 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 
 		CompositeValueSource vs = new CompositeValueSource();
 
-		ConfigurationEnhancer configurationEnhancer = new CglibConfigurationEnhancer(owningBeanFactory, childFactory,
-				beanNamingStrategy, a, vs);
+		if (pc == null)
+			pc = new ProcessingContext();
 
-		pc = new ProcessingContext();
-		pc.beanNamingStrategy = beanNamingStrategy;
+		ConfigurationEnhancer configurationEnhancer = new CglibConfigurationEnhancer(owningBeanFactory, childFactory,
+				pc.beanNamingStrategy, a, vs);
+
 		pc.owningBeanFactory = owningBeanFactory;
 		pc.childFactory = childFactory;
 		pc.compositeValueSource = vs;
-		pc.resourceLoader = resourceLoader;
 		pc.childApplicationContext = childApplicationContext;
 		pc.configurationEnhancer = configurationEnhancer;
 		ProcessingContext.setCurrentContext(pc);
@@ -253,12 +229,13 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 		initialized = true;
 	}
 
-	private ProcessingContext pc;
+	ProcessingContext pc;
 
 	private void checkInit() {
 		if (!initialized) {
 			afterPropertiesSet();
 		}
+
 	}
 
 	/**
@@ -355,8 +332,8 @@ public final class ConfigurationProcessor implements Reactor, InitializingBean, 
 		return false;
 	}
 
-	public boolean isConfigClass(Class<?> candidateConfigurationClass) {
-		return isConfigurationClass(candidateConfigurationClass, configurationListenerRegistry);
+	public boolean isConfigClass(Class<?> candidateClass) {
+		return candidateClass != null && isConfigurationClass(candidateClass, configurationListenerRegistry);
 	}
 
 	public void sourceEvent(Event event) {

@@ -7,9 +7,11 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.enhancement.ConfigurationEnhancer;
 import org.springframework.config.java.naming.BeanNamingStrategy;
+import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.config.java.valuesource.CompositeValueSource;
 import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 
 class ProcessingContext {
@@ -29,7 +31,7 @@ class ProcessingContext {
 		instance.set(context);
 	}
 
-	BeanNamingStrategy beanNamingStrategy;
+	BeanNamingStrategy beanNamingStrategy = new MethodNameStrategy();
 
 	ConfigurableListableBeanFactory owningBeanFactory;
 
@@ -39,7 +41,7 @@ class ProcessingContext {
 
 	int beanDefsGenerated = -1;
 
-	ResourceLoader resourceLoader;
+	ResourceLoader resourceLoader = new DefaultResourceLoader();
 
 	ConfigurationEnhancer configurationEnhancer;
 

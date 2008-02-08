@@ -25,7 +25,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.ResourceLoaderAware;
-import org.springframework.core.Ordered;
+import org.springframework.core.PriorityOrdered;
 import org.springframework.core.io.ResourceLoader;
 
 /**
@@ -44,27 +44,26 @@ import org.springframework.core.io.ResourceLoader;
  * 
  * @author Rod Johnson
  * @author Costin Leau
+ * @author Chris Beams
  */
-public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ordered, ResourceLoaderAware,
+public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, PriorityOrdered, ResourceLoaderAware,
 		ApplicationContextAware {
 
 	protected final Log log = LogFactory.getLog(getClass());
 
+	private ProcessingContext pc = new ProcessingContext();
+
 	private ConfigurationListenerRegistry configurationListenerRegistry;
 
-	private BeanNamingStrategy namingStrategy;
-
-	private ConfigurableApplicationContext applicationContext;
-
-	private ResourceLoader resourceLoader;
+	private ConfigurableApplicationContext owningApplicationContext;
 
 	private boolean hasRun;
 
 	/**
-	 * Guarantee to execute before any other BeanFactoryPostProcessors
+	 * Guarantee execution occurs before any other BeanFactoryPostProcessors
 	 */
 	public int getOrder() {
-		return Integer.MIN_VALUE;
+		return HIGHEST_PRECEDENCE;
 	}
 
 	/**
@@ -84,19 +83,19 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 	 * @param namingStrategy The namingStrategy to set.
 	 */
 	public void setNamingStrategy(BeanNamingStrategy namingStrategy) {
-		this.namingStrategy = namingStrategy;
+		pc.beanNamingStrategy = namingStrategy;
 	}
 
 	/**
 	 * Optional implementation of ResourceLoaderAware
 	 */
 	public void setResourceLoader(ResourceLoader resourceLoader) {
-		this.resourceLoader = resourceLoader;
+		pc.resourceLoader = resourceLoader;
 	}
 
-	public void setApplicationContext(ApplicationContext ac) throws BeansException {
-		if (ac instanceof ConfigurableApplicationContext) {
-			this.applicationContext = (ConfigurableApplicationContext) ac;
+	public void setApplicationContext(ApplicationContext ctx) throws BeansException {
+		if (ctx instanceof ConfigurableApplicationContext) {
+			this.owningApplicationContext = (ConfigurableApplicationContext) ctx;
 		}
 	}
 
@@ -105,38 +104,28 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 	 * bean.
 	 */
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		if (hasRun) {
+		if (hasRun)
 			throw new IllegalStateException("ConfigurationPostProcessor cannot run on two BeanFactories");
-		}
+
 		hasRun = true;
 
 		String[] beanNames = beanFactory.getBeanDefinitionNames();
 
-		// before creating a new process, do some validation even though we
-		// might duplicate it inside ConfigurationProcessor
 		for (String beanName : beanNames) {
-			// get the class
+			ConfigurationProcessor processor = new ConfigurationProcessor();
+			processor.ac = this.owningApplicationContext;
+			processor.owningBeanFactory = beanFactory;
+			processor.pc = pc;
+			if (configurationListenerRegistry != null)
+				processor.setConfigurationListenerRegistry(configurationListenerRegistry);
+			processor.afterPropertiesSet();
+
 			Class<?> clazz = ProcessUtils.getBeanClass(beanName, beanFactory);
-			if (clazz != null && ConfigurationProcessor.isConfigurationClass(clazz, configurationListenerRegistry)) {
-				ConfigurationProcessor processor;
-				if (this.applicationContext != null)
-					processor = new ConfigurationProcessor(this.applicationContext);
-				else
-					processor = new ConfigurationProcessor(beanFactory);
 
-				if (configurationListenerRegistry != null)
-					processor.setConfigurationListenerRegistry(configurationListenerRegistry);
-
-				if (namingStrategy != null)
-					processor.setBeanNamingStrategy(namingStrategy);
-
-				if (this.resourceLoader != null)
-					processor.setResourceLoader(resourceLoader);
-
-				processor.afterPropertiesSet();
+			if (processor.isConfigClass(clazz))
 				processor.processConfigurationBean(beanName, clazz);
-			}
 		}
+
 	}
 
 }
