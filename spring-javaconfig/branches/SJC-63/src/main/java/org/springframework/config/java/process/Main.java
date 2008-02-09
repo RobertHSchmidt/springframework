@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.core.ProcessingContext;
+import org.springframework.util.Assert;
 
 public class Main {
 }
@@ -82,11 +83,21 @@ class ClassEvent extends EventSupport {
 
 	final Class<?> clazz;
 
-	String configurationBeanName;
+	final String configurationBeanName;
 
-	public ClassEvent(Object source, Class<?> clazz, ProcessingContext processingContext) {
+	public ClassEvent(Object source, Class<?> configurationClass, ProcessingContext processingContext) {
+		this(source, configurationClass, null, processingContext);
+	}
+
+	public ClassEvent(Object source, Class<?> configurationClass, String configurationBeanName,
+			ProcessingContext processingContext) {
 		super(source, processingContext);
-		this.clazz = clazz;
+		Assert.notNull(configurationClass, "configurationClass may not be null");
+		this.clazz = configurationClass;
+		if (configurationBeanName != null)
+			this.configurationBeanName = configurationBeanName;
+		else
+			this.configurationBeanName = configurationClass.getName();
 	}
 
 	@Override

@@ -49,12 +49,6 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 
 		// register the configuration as a bean to allow Spring to use it for
 		// creating the actual objects
-		// a. produce a bean name based on the class name
-		final String configBeanName;
-		if (event.configurationBeanName != null)
-			configBeanName = event.configurationBeanName;
-		else
-			configBeanName = configurationClass.getName();
 
 		// create a bean from the configuration class/instance
 		RootBeanDefinition configurationBeanDefinition = new RootBeanDefinition();
@@ -66,10 +60,10 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 
 		Assert.isInstanceOf(DefaultListableBeanFactory.class, pc.owningBeanFactory);
 
-		((DefaultListableBeanFactory) pc.owningBeanFactory).registerBeanDefinition(configBeanName,
+		((DefaultListableBeanFactory) pc.owningBeanFactory).registerBeanDefinition(event.configurationBeanName,
 				configurationBeanDefinition);
 
-		doProcessConfigurationBean(reactor, configBeanName, configurationClass, pc);
+		doProcessConfigurationBean(reactor, event.configurationBeanName, configurationClass, pc);
 		// include the configuration bean definition
 		++pc.beanDefsGenerated;
 	}
