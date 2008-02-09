@@ -15,6 +15,8 @@
  */
 package org.springframework.config.java.process;
 
+import static java.lang.String.format;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -228,41 +230,24 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Pri
 	 * invalid, e.g.: abstract or does not specify a class attribute
 	 */
 	private Class<?> getBeanClass(String beanName, ConfigurableListableBeanFactory beanFactory) {
-
 		BeanDefinition beanDef = beanFactory.getBeanDefinition(beanName);
+		String beanClassName = beanDef.getBeanClassName();
 
 		// is the bean definition eligible? Must be non-abstract and specify a
 		// class
-		if (beanDef.isAbstract() || (!StringUtils.hasText(beanDef.getBeanClassName())))
+		if (beanDef.isAbstract() || (!StringUtils.hasText(beanClassName)))
 			return null;
 
-		// required for updating the bean class
-		AbstractBeanDefinition definition = (AbstractBeanDefinition) beanDef;
+		if (((AbstractBeanDefinition) beanDef).hasBeanClass())
+			return ((AbstractBeanDefinition) beanDef).getBeanClass();
 
-		// TODO: check for FactoryBean/factory-method type of beans
-		// hard since we are a BFPP and it's impossible to get the actual
-		// configuration instance/class w/o initilizing the factory-method/FB
-		// even for non @Configuration cases.
-
-		if (definition.hasBeanClass())
-			return definition.getBeanClass();
-
-		// load the class (changes in the lazy loading code part of
-		// spring core)
-
-		// TODO: add support for factory-method beans (and other not-normal
-		// beans) this requires transforming the BFPP into a BPP and might
-		// require multiple instantion of the configuration class.
-		if (beanDef.getBeanClassName() != null) {
-			try {
-				return ClassUtils.forName(beanDef.getBeanClassName());
-			}
-			catch (ClassNotFoundException e) {
-				throw new IllegalArgumentException("Bean class '" + beanDef.getBeanClassName() + "' not found");
-			}
+		// load the class (changes in the lazy loading code part of spring core)
+		try {
+			return ClassUtils.forName(beanClassName);
+		}
+		catch (ClassNotFoundException e) {
+			throw new IllegalArgumentException(format("Bean class '%s' not found", beanClassName));
 		}
 
-		return null;
 	}
-
 }
