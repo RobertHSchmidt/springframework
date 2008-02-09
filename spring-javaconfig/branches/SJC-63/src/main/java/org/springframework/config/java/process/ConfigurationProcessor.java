@@ -111,13 +111,6 @@ public final class ConfigurationProcessor implements Reactor {
 	 * @throws BeanDefinitionStoreException if no bean definitions are found
 	 */
 	public int processClass(Class<?> configurationClass) throws BeanDefinitionStoreException {
-
-		boolean isEntryPoint = false;
-		if (processingContext.beanDefsGenerated == -1) {
-			isEntryPoint = true;
-			processingContext.beanDefsGenerated = 0;
-		}
-
 		ClassEvent event = new ClassEvent(this, configurationClass, processingContext);
 		/* TODO: SJC-63
 		sourceClassEvent(event);
@@ -128,8 +121,7 @@ public final class ConfigurationProcessor implements Reactor {
 			return processingContext.beanDefsGenerated;
 		}
 		finally {
-			if (isEntryPoint)
-				processingContext.beanDefsGenerated = -1;
+			processingContext.beanDefsGenerated = 0;
 		}
 	}
 
@@ -141,28 +133,13 @@ public final class ConfigurationProcessor implements Reactor {
 	 * @throws BeanDefinitionStoreException
 	 */
 	void processConfigurationBean(String configurationBeanName, Class<?> configurationClass) {
-
-		boolean isEntryPoint = false;
-		if (processingContext.beanDefsGenerated == -1) {
-			isEntryPoint = true;
-			processingContext.beanDefsGenerated = 0;
-		}
-
-		try {
-			ClassEvent event = new ClassEvent(this, configurationClass, processingContext);
-			event.configurationBeanName = configurationBeanName;
-			/* TODO: SJC-63
-			sourceClassEvent(event);
-			*/
-			new ClassConfigurationListener().doProcessConfigurationBean(this, configurationBeanName,
-					configurationClass, processingContext);
-
-			return;
-		}
-		finally {
-			if (isEntryPoint)
-				processingContext.beanDefsGenerated = -1;
-		}
+		ClassEvent event = new ClassEvent(this, configurationClass, processingContext);
+		event.configurationBeanName = configurationBeanName;
+		/* TODO: SJC-63
+		sourceClassEvent(event);
+		*/
+		new ClassConfigurationListener().doProcessConfigurationBean(this, configurationBeanName, configurationClass,
+				processingContext);
 	}
 
 	/**

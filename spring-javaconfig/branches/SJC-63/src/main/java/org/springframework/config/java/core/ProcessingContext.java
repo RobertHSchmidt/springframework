@@ -42,7 +42,7 @@ public final class ProcessingContext {
 
 	public CompositeValueSource compositeValueSource = new CompositeValueSource();
 
-	public int beanDefsGenerated = -1;
+	public int beanDefsGenerated = 0;
 
 	public ResourceLoader resourceLoader = new DefaultResourceLoader();
 
