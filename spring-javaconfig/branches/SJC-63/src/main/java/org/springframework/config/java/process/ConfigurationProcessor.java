@@ -133,8 +133,8 @@ public final class ConfigurationProcessor implements Reactor {
 	 * @throws BeanDefinitionStoreException
 	 */
 	void processConfigurationBean(String configurationBeanName, Class<?> configurationClass) {
-		ClassEvent event = new ClassEvent(this, configurationClass, configurationBeanName, processingContext);
 		/* TODO: SJC-63
+		ClassEvent event = new ClassEvent(this, configurationClass, configurationBeanName, processingContext);
 		sourceClassEvent(event);
 		*/
 		new ClassConfigurationListener().doProcessConfigurationBean(this, configurationBeanName, configurationClass,
