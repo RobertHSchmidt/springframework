@@ -23,10 +23,10 @@ class ImportConfigurationListener extends ConfigurationListenerSupport {
 			// duplicate check - process only if we've never encountered before
 			if (!owningBeanFactory.containsBeanDefinition(configurationClassToImport.getName()))
 				/* TODO: SJC-63
-				reactor.sourceClassEvent(new ClassEvent(this, configurationClassToImport));
-				*/
 				new ClassConfigurationListener().handleEvent(reactor, new ClassEvent(this, configurationClassToImport,
 						pc));
+				*/
+				reactor.sourceClassEvent(new ClassEvent(this, configurationClassToImport, event.processingContext));
 		}
 	}
 

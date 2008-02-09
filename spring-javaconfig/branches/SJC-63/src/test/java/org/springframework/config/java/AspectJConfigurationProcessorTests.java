@@ -32,6 +32,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.AopConfigException;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.DependsOnTestBean;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.annotation.Autowire;
@@ -41,6 +42,8 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.DependencyCheck;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.config.java.util.DefaultScopes;
+
+import testutil.RootCauseDeterminingExceptionTemplate;
 
 /**
  * @author Rod Johnson
@@ -115,12 +118,16 @@ public class AspectJConfigurationProcessorTests {
 				.processClass(InvalidNoAspectAnnotation.class) > 0);
 	}
 
-	@Test(expected = AopConfigException.class)
-	public void testInvalidInheritanceFromConcreteAspect() throws Exception {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(InvalidInheritanceFromConcreteAspect.class);
-		// above should throw, cannot extend a concrete aspect
+	@Test
+	public void testInvalidInheritanceFromConcreteAspect() {
+		new RootCauseDeterminingExceptionTemplate(new Runnable() {
+			public void run() {
+				DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+				ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
+				configurationProcessor.processClass(InvalidInheritanceFromConcreteAspect.class);
+				// above should throw, cannot extend a concrete aspect
+			}
+		}, AopConfigException.class).execute();
 	}
 
 	@Test
@@ -164,6 +171,7 @@ public class AspectJConfigurationProcessorTests {
 		configurationProcessor.processClass(AroundAdviceClass.class);
 
 		TestBean advised1 = (TestBean) bf.getBean("advised");
+		assertTrue("target object 'advised' was not proxied", AopUtils.isAopProxy(advised1));
 		int newAge = 24;
 		advised1.setAge(newAge);
 		assertEquals("Invocations must work on target without around advice", newAge, advised1.getAge());
@@ -372,7 +380,6 @@ public class AspectJConfigurationProcessorTests {
 	@Aspect
 	@Configuration
 	public abstract static class AroundAdviceClass extends ValidAroundAdviceClassWithAspectAnnotation {
-
 	}
 
 	public static class InvalidInheritanceFromConcreteAspect extends AroundSingletonCountingAdvice {

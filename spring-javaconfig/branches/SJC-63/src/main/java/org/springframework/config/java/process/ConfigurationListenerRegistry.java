@@ -45,8 +45,8 @@ class ConfigurationListenerRegistry implements Iterable<BeanMethodReturnValuePro
 
 	public ConfigurationListenerRegistry() {
 		/* TODO: SJC-63
-		registerConfigurationListener(new ClassConfigurationListener());
 		*/
+		registerConfigurationListener(new ClassConfigurationListener());
 		registerConfigurationListener(new AutoBeanConfigurationListener());
 		registerConfigurationListener(new ResourceBundlesConfigurationListener());
 		registerConfigurationListener(new ScopedProxyConfigurationListener());

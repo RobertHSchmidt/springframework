@@ -38,9 +38,6 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 
 	public void handleEvent(Reactor reactor, ClassEvent event) {
 
-		if (event.source == this)
-			return;
-
 		Class<?> configurationClass = event.clazz;
 		ProcessingContext pc = event.processingContext;
 
@@ -89,9 +86,7 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 	 */
 	protected void generateBeanDefinitions(Reactor reactor, String configurationBeanName, Class<?> configurationClass,
 			ProcessingContext pc) {
-		reactor.sourceClassEvent(new ClassEvent(this, configurationClass, pc));
 		processMethods(reactor, configurationBeanName, configurationClass, pc);
-
 	}
 
 	private void processMethods(final Reactor reactor, final String configurationBeanName,

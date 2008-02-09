@@ -55,6 +55,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
+import testutil.RootCauseDeterminingExceptionTemplate;
+
 /**
  * Tests for {@link ConfigurationProcessor}
  * 
@@ -180,31 +182,39 @@ public class ConfigurationProcessorTests {
 		assertEquals(1, ProxiesDotb.count);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testInvalidFinalConfigurationClass() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(InvalidFinalConfigurationClass.class);
-		// should throw, rejecting final configuration class;
+		new RootCauseDeterminingExceptionTemplate(new Runnable() {
+			public void run() {
+				DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+				ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
+				configurationProcessor.processClass(InvalidFinalConfigurationClass.class);
+			}
+		}, IllegalArgumentException.class).execute();
 	}
 
-	@Test(expected = BeanDefinitionStoreException.class)
+	@Test
 	public void testInvalidDueToFinalBeanMethod() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(InvalidDueToFinalBeanMethod.class);
-		// should throw, rejecting final Bean method
+		new RootCauseDeterminingExceptionTemplate(new Runnable() {
+			public void run() {
+				DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+				ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
+				configurationProcessor.processClass(InvalidDueToFinalBeanMethod.class);
+			}
+		}, BeanDefinitionStoreException.class).execute();
 	}
 
-	// TODO would expect BeanDefinitionStoreException?
-	@Test(expected = BeanCreationException.class)
+	@Test
 	public void testInvalidDueToFinalBeanClass() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(InvalidDueToFinalBeanClass.class);
-		// Arguably should spot this earlier
-		bf.getBean("test");
-		// should throw, rejecting final Bean method
+		new RootCauseDeterminingExceptionTemplate(new Runnable() {
+			public void run() {
+				DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+				ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
+				configurationProcessor.processClass(InvalidDueToFinalBeanClass.class);
+				// Arguably should spot this earlier
+				bf.getBean("test");
+			}
+		}, BeanDefinitionStoreException.class).execute();
 	}
 
 	@Configuration
@@ -221,13 +231,16 @@ public class ConfigurationProcessorTests {
 		}
 	}
 
-	@Test(expected = BeanDefinitionStoreException.class)
+	@Test
 	public void testInvalidDueToPrivateBeanMethod() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
+		new RootCauseDeterminingExceptionTemplate(new Runnable() {
+			public void run() {
+				DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+				ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
+				configurationProcessor.processClass(InvalidDuePrivateBeanMethod.class);
+			}
+		}, BeanDefinitionStoreException.class).execute();
 
-		// should throw, rejecting private Bean method
-		configurationProcessor.processClass(InvalidDuePrivateBeanMethod.class);
 	}
 
 	@Test
@@ -897,15 +910,13 @@ public class ConfigurationProcessorTests {
 
 	@Test
 	public void testBeanCreationMethodCannotHaveVoidReturn() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		try {
-			configurationProcessor.processClass(BeanCreationMethodReturnsVoid.class);
-			fail();
-		}
-		catch (BeanDefinitionStoreException ex) {
-			// TODO what to check
-		}
+		new RootCauseDeterminingExceptionTemplate(new Runnable() {
+			public void run() {
+				DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+				ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
+				configurationProcessor.processClass(BeanCreationMethodReturnsVoid.class);
+			}
+		}, BeanDefinitionStoreException.class).execute();
 	}
 
 	@Aspect
@@ -998,11 +1009,15 @@ public class ConfigurationProcessorTests {
 		public abstract ITestBean kerry();
 	}
 
-	@Test(expected = BeanDefinitionStoreException.class)
+	@Test
 	public void testInvalidAutoBean() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(InvalidAutoBeanTest.class);
+		new RootCauseDeterminingExceptionTemplate(new Runnable() {
+			public void run() {
+				DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+				ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
+				configurationProcessor.processClass(InvalidAutoBeanTest.class);
+			}
+		}, BeanDefinitionStoreException.class).execute();
 	}
 
 	@Configuration
