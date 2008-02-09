@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
+import org.springframework.config.java.enhancement.cglib.CglibConfigurationEnhancer;
 import org.springframework.util.ClassUtils;
 
 /**
@@ -68,6 +69,22 @@ class ConfigurationListenerRegistry implements Iterable<BeanMethodReturnValuePro
 
 	public Iterator<BeanMethodReturnValueProcessor> iterator() {
 		return unmodifiableList(new ArrayList<BeanMethodReturnValueProcessor>(configurationListeners)).iterator();
+	}
+
+	public boolean isConfigurationClass(Class<?> candidateClass) {
+		if (candidateClass == null)
+			return false;
+
+		if (ConfigurationUtils.isConfigurationClass(candidateClass)) {
+			CglibConfigurationEnhancer.validateSuitabilityForEnhancement(candidateClass);
+			return true;
+		}
+
+		for (ConfigurationListener cl : configurationListeners)
+			if (cl.understands(candidateClass))
+				return true;
+
+		return false;
 	}
 
 }

@@ -19,8 +19,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.context.ApplicationContext;
@@ -29,11 +31,14 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.StringUtils;
 
 /**
- * {@link BeanFactoryPostProcessor} implementation that adds {@link FactoryBean}
- * definitions for every {@link Configuration} bean found in the
- * {@link BeanFactory} processed by
+ * {@link BeanFactoryPostProcessor} implementation that adds
+ * {@link org.springframework.beans.factory.FactoryBean} definitions for every
+ * {@link org.springframework.config.java.annotation.Configuration} bean found
+ * in the {@link BeanFactory} processed by
  * {@link #postProcessBeanFactory(ConfigurableListableBeanFactory)}. It also
  * creates a child factory containing pointcuts and advisors required to
  * interpret any aspects.
@@ -47,7 +52,9 @@ import org.springframework.core.io.ResourceLoader;
  * </pre>
  * 
  * where <tt>ConfigurationA</tt> and <tt>ConfigurationB</tt> are both
- * {@link Configuration} classes exposing one or more {@link Bean} methods.
+ * {@link org.springframework.config.java.annotation.Configuration} classes
+ * exposing one or more {@link org.springframework.config.java.annotation.Bean}
+ * methods.
  * 
  * @see org.springframework.config.java.annotation.Configuration
  * @see org.springframework.config.java.annotation.Bean
@@ -75,7 +82,7 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Pri
 	 * Allows for optional overriding of default
 	 * {@link ConfigurationListenerRegistry} implementation
 	 */
-	protected ConfigurationListenerRegistry configurationListenerRegistry;
+	protected ConfigurationListenerRegistry configurationListenerRegistry = new ConfigurationListenerRegistry();
 
 	/**
 	 * @see #assertFirstRun()
@@ -184,13 +191,13 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Pri
 		String[] beanNames = beanFactory.getBeanDefinitionNames();
 
 		for (String beanName : beanNames) {
-			ConfigurationProcessor processor = new ConfigurationProcessor(processingContext,
-					configurationListenerRegistry);
-
-			Class<?> clazz = ProcessUtils.getBeanClass(beanName, beanFactory);
-
-			if (processor.isConfigClass(clazz))
+			Class<?> clazz = getBeanClass(beanName, beanFactory);
+			if (configurationListenerRegistry.isConfigurationClass(clazz)) {
+				ConfigurationProcessor processor = new ConfigurationProcessor(processingContext,
+						configurationListenerRegistry);
 				processor.processConfigurationBean(beanName, clazz);
+
+			}
 		}
 
 	}
@@ -204,6 +211,58 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Pri
 		if (hasRun)
 			throw new IllegalStateException("A ConfigurationPostProcessor cannot run on two BeanFactories");
 		hasRun = true;
+	}
+
+	/**
+	 * Queries <var>beanFactory</var> to determine the class associated with
+	 * <var>beanName</var> Will return null if no bean is not valid or if no
+	 * class can be found. Will throw an exception if the found class is
+	 * invalid.
+	 * 
+	 * No check for {@link Bean} or {@link Configuration} annotations is made.
+	 * 
+	 * @param beanName target bean
+	 * @param beanFactory {@link BeanFactory} currently being processed
+	 * 
+	 * @return class associated with <var>beanName</var>, null if that class is
+	 * invalid, e.g.: abstract or does not specify a class attribute
+	 */
+	private Class<?> getBeanClass(String beanName, ConfigurableListableBeanFactory beanFactory) {
+
+		BeanDefinition beanDef = beanFactory.getBeanDefinition(beanName);
+
+		// is the bean definition eligible? Must be non-abstract and specify a
+		// class
+		if (beanDef.isAbstract() || (!StringUtils.hasText(beanDef.getBeanClassName())))
+			return null;
+
+		// required for updating the bean class
+		AbstractBeanDefinition definition = (AbstractBeanDefinition) beanDef;
+
+		// TODO: check for FactoryBean/factory-method type of beans
+		// hard since we are a BFPP and it's impossible to get the actual
+		// configuration instance/class w/o initilizing the factory-method/FB
+		// even for non @Configuration cases.
+
+		if (definition.hasBeanClass())
+			return definition.getBeanClass();
+
+		// load the class (changes in the lazy loading code part of
+		// spring core)
+
+		// TODO: add support for factory-method beans (and other not-normal
+		// beans) this requires transforming the BFPP into a BPP and might
+		// require multiple instantion of the configuration class.
+		if (beanDef.getBeanClassName() != null) {
+			try {
+				return ClassUtils.forName(beanDef.getBeanClassName());
+			}
+			catch (ClassNotFoundException e) {
+				throw new IllegalArgumentException("Bean class '" + beanDef.getBeanClassName() + "' not found");
+			}
+		}
+
+		return null;
 	}
 
 }
