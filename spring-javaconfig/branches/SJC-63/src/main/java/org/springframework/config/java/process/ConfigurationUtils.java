@@ -3,6 +3,7 @@ package org.springframework.config.java.process;
 import java.lang.reflect.Modifier;
 
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.core.AutoBeanMethodProcessor;
 import org.springframework.config.java.core.ExternalBeanMethodProcessor;
 import org.springframework.config.java.core.ExternalValueMethodProcessor;
 import org.springframework.config.java.core.StandardBeanMethodProcessor;
@@ -22,7 +23,8 @@ public class ConfigurationUtils {
 
 		if (Modifier.isAbstract(candidateConfigurationClass.getModifiers())
 				&& ExternalBeanMethodProcessor.findExternalBeanCreationMethods(candidateConfigurationClass).isEmpty()
-				&& ExternalValueMethodProcessor.findExternalValueCreationMethods(candidateConfigurationClass).isEmpty())
+				&& ExternalValueMethodProcessor.findExternalValueCreationMethods(candidateConfigurationClass).isEmpty()
+				&& AutoBeanMethodProcessor.findAutoBeanCreationMethods(candidateConfigurationClass).isEmpty())
 			return false;
 
 		return candidateConfigurationClass.isAnnotationPresent(Configuration.class)

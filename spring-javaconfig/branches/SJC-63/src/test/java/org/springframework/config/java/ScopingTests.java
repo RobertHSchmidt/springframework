@@ -32,6 +32,8 @@ import org.springframework.config.java.core.ScopedProxyMethodProcessor;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import testutil.RootCauseDeterminingExceptionTemplate;
+
 /**
  * Test that scopes are properly supported by using a custom scope and scoped
  * proxies.
@@ -206,17 +208,25 @@ public class ScopingTests {
 		assertNotSame(newBeanBInScope, beanBInScope);
 	}
 
-	@Test(expected = BeanDefinitionStoreException.class)
-	public void testInvalidScopedProxy() throws Exception {
-		// should throw - @ScopedProxy should not exist by itself
-		configurationProcessor.processClass(InvalidProxyObjectConfiguration.class);
+	@Test
+	public void testInvalidScopedProxy() {
+		new RootCauseDeterminingExceptionTemplate(new Runnable() {
+			public void run() {
+				// should throw - @ScopedProxy should not exist by itself
+				configurationProcessor.processClass(InvalidProxyObjectConfiguration.class);
+			}
+		}, BeanDefinitionStoreException.class).execute();
 	}
 
-	@Test(expected = BeanDefinitionStoreException.class)
-	public void testScopedProxyOnNonBeanAnnotatedMethod() throws Exception {
-		// should throw - @ScopedProxy should not be applied on
-		// singleton/prototype beans
-		configurationProcessor.processClass(InvalidProxyOnPredefinedScopesConfiguration.class);
+	@Test
+	public void testScopedProxyOnNonBeanAnnotatedMethod() {
+		new RootCauseDeterminingExceptionTemplate(new Runnable() {
+			public void run() {
+				// should throw - @ScopedProxy should not be applied on
+				// singleton/prototype beans
+				configurationProcessor.processClass(InvalidProxyOnPredefinedScopesConfiguration.class);
+			}
+		}, BeanDefinitionStoreException.class).execute();
 	}
 
 	@Test

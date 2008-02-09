@@ -18,6 +18,8 @@ package org.springframework.config.java;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.*;
 
+import java.util.concurrent.Callable;
+
 import org.junit.Test;
 import org.springframework.beans.TestBean;
 import org.springframework.config.java.annotation.Bean;
@@ -25,6 +27,8 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import testutil.RootCauseRethrowingExceptionTemplate;
 
 /**
  * @author Chris Beams
@@ -104,9 +108,14 @@ public class BeanOverridingTests {
 	}
 
 	@Test(expected = IllegalStateException.class)
-	public void testIllegalShadowingViaXml() {
-		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext("illegalShadow.xml", getClass());
-		bf.getBean("ann");
+	public void testIllegalShadowingViaXml() throws Throwable {
+		new RootCauseRethrowingExceptionTemplate(new Callable<Void>() {
+			public Void call() throws Exception {
+				ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext("illegalShadow.xml", getClass());
+				bf.getBean("ann");
+				return null;
+			}
+		}).execute();
 	}
 
 	@Configuration
