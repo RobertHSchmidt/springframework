@@ -18,10 +18,10 @@ package org.springframework.config.java.process;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.core.ProcessingContext;
-import org.springframework.config.java.enhancement.cglib.CglibConfigurationEnhancer;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -98,17 +98,8 @@ public final class ConfigurationProcessor implements Reactor {
 	}
 
 	/**
-	 * Generate bean definitions from a 'naked' configuration class.
-	 * 
-	 * <p/> Normally this method is used internally on inner classes however, it
-	 * is possible to use it directly on classes that haven't been manually
-	 * declared in the enclosing bean factory.
-	 * 
-	 * @param configurationClass class containing &#64;Configurable or &#64;Bean
-	 * annotation
-	 * @return the number of bean definition generated (including the
-	 * configuration)
-	 * @throws BeanDefinitionStoreException if no bean definitions are found
+	 * Compatibility stub for supporting existing test cases. Consider
+	 * deprecation and/or refactoring tests.
 	 */
 	public int processClass(Class<?> configurationClass) throws BeanDefinitionStoreException {
 		ClassEvent event = new ClassEvent(this, configurationClass, processingContext);
@@ -126,11 +117,12 @@ public final class ConfigurationProcessor implements Reactor {
 	}
 
 	/**
-	 * Primary point of entry used by {@link ConfigurationPostProcessor}.
+	 * Primary point of entry, used by {@link ConfigurationPostProcessor} when
+	 * processing a {@link BeanFactory}.
 	 * 
-	 * @param configurationBeanName
-	 * @return
-	 * @throws BeanDefinitionStoreException
+	 * @param configurationBeanName name of current bean being processed
+	 * @param configurationClass class literal associated with bean being
+	 * processed
 	 */
 	void processConfigurationBean(String configurationBeanName, Class<?> configurationClass) {
 		/* TODO: SJC-63
@@ -142,31 +134,11 @@ public final class ConfigurationProcessor implements Reactor {
 	}
 
 	/**
-	 * Check if the given class is a configuration.
-	 * 
-	 * Additionally, a listener registry is checked against the class.
-	 * 
-	 * @param candidateConfigurationClass
-	 * @param registry
-	 * @return
+	 * @see {@link ConfigurationListenerRegistry#isConfigurationClass(Class)}.
+	 * Consider elimination
 	 */
-	static boolean isConfigurationClass(Class<?> candidateConfigurationClass, ConfigurationListenerRegistry registry) {
-
-		if (ConfigurationUtils.isConfigurationClass(candidateConfigurationClass)) {
-			CglibConfigurationEnhancer.validateSuitabilityForEnhancement(candidateConfigurationClass);
-			return true;
-		}
-
-		if (registry != null)
-			for (ConfigurationListener cl : registry.getConfigurationListeners())
-				if (cl.understands(candidateConfigurationClass))
-					return true;
-
-		return false;
-	}
-
 	public boolean isConfigClass(Class<?> candidateClass) {
-		return candidateClass != null && isConfigurationClass(candidateClass, configurationListenerRegistry);
+		return configurationListenerRegistry.isConfigurationClass(candidateClass);
 	}
 
 	public void sourceEvent(Event event) {
