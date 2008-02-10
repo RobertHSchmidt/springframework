@@ -4,6 +4,7 @@ import static java.lang.String.format;
 
 import java.lang.reflect.Method;
 
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.util.Assert;
@@ -68,13 +69,19 @@ class BeanMethodEvent extends MethodEvent {
 
 	final Bean beanAnnotation;
 
-	final BeanDefinitionRegistration beanDefinitionRegistration;
+	RootBeanDefinition rbd;
 
-	BeanMethodEvent(Object source, Class<?> clazz, Method method, Bean beanAnnotation, BeanDefinitionRegistration bdr,
-			ProcessingContext processingContext) {
+	final boolean hide;
+
+	final String name;
+
+	BeanMethodEvent(Object source, Class<?> clazz, Method method, Bean beanAnnotation, RootBeanDefinition rbd,
+			boolean hide, String beanName, ProcessingContext processingContext) {
 		super(source, clazz, method, processingContext);
 		this.beanAnnotation = beanAnnotation;
-		this.beanDefinitionRegistration = bdr;
+		this.rbd = rbd;
+		this.hide = hide;
+		this.name = beanName;
 	}
 
 }
