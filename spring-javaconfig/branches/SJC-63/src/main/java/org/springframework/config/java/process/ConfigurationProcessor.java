@@ -102,11 +102,7 @@ public final class ConfigurationProcessor implements Reactor {
 	 * deprecation and/or refactoring tests.
 	 */
 	public int processClass(Class<?> configurationClass) throws BeanDefinitionStoreException {
-		ClassEvent event = new ClassEvent(this, configurationClass, processingContext);
-		/* TODO: SJC-63
-		new ClassConfigurationListener().handleEvent(this, event);
-		*/
-		sourceClassEvent(event);
+		sourceClassEvent(new ClassEvent(this, configurationClass, processingContext));
 
 		try {
 			return processingContext.beanDefsGenerated;
@@ -125,12 +121,7 @@ public final class ConfigurationProcessor implements Reactor {
 	 * processed
 	 */
 	void processConfigurationBean(String configurationBeanName, Class<?> configurationClass) {
-		/* TODO: SJC-63
-		new ClassConfigurationListener().doProcessConfigurationBean(this, configurationBeanName, configurationClass,
-				processingContext);
-		*/
-		ClassEvent event = new ClassEvent(this, configurationClass, configurationBeanName, processingContext);
-		sourceClassEvent(event);
+		sourceClassEvent(new ClassEvent(this, configurationClass, configurationBeanName, processingContext));
 	}
 
 	/**
