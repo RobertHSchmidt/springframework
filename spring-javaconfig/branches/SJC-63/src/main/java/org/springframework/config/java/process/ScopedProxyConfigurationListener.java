@@ -41,7 +41,6 @@ class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
 
 	@Override
 	public void handleEvent(Reactor reactor, BeanMethodEvent event) {
-		BeanDefinitionRegistration beanDefinitionRegistration = event.beanDefinitionRegistration;
 		Method method = event.method;
 		Bean beanAnnotation = AnnotationUtils.findAnnotation(method, Bean.class);
 		ProcessingContext pc = event.processingContext;
@@ -59,8 +58,8 @@ class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
 			// TODO: could the code duplication be removed?
 			// copied from ScopedProxyBeanDefinitionDecorator
 
-			String originalBeanName = beanDefinitionRegistration.name;
-			RootBeanDefinition targetDefinition = beanDefinitionRegistration.rbd;
+			String originalBeanName = event.name;
+			RootBeanDefinition targetDefinition = event.rbd;
 
 			// Create a scoped proxy definition for the original bean name,
 			// "hiding" the target bean in an internal target definition.
@@ -81,10 +80,10 @@ class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
 			targetDefinition.setAutowireCandidate(false);
 
 			// Register the target bean as separate bean in the factory
-			pc.registerBeanDefinition(targetBeanName, targetDefinition, beanDefinitionRegistration.hide);
+			pc.registerBeanDefinition(targetBeanName, targetDefinition, event.hide);
 
 			// replace the original bean definition with the target one
-			beanDefinitionRegistration.rbd = scopedProxyDefinition;
+			event.rbd = scopedProxyDefinition;
 		}
 	}
 

@@ -112,27 +112,18 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 		builder.append(m.getDeclaringClass().getName());
 		rbd.setResourceDescription(builder.toString());
 
-		// create a beanDefinitionRegistration for the current bean
-		// definition/name pair
-		BeanDefinitionRegistration beanDefinitionRegistration = new BeanDefinitionRegistration(rbd, beanName);
-		beanDefinitionRegistration.hide = !Modifier.isPublic(m.getModifiers());
+		boolean hide = !Modifier.isPublic(m.getModifiers());
 
-		BeanMethodEvent beanMethodEvent = new BeanMethodEvent(this, configurationClass, m, beanAnnotation,
-				beanDefinitionRegistration, pc);
+		BeanMethodEvent beanMethodEvent = new BeanMethodEvent(this, configurationClass, m, beanAnnotation, rbd, hide,
+				beanName, pc);
 
 		reactor.sourceBeanMethodEvent(beanMethodEvent);
 
-		// allow registration bypass
-		if (beanDefinitionRegistration.rbd == null) {
-			return;
-		}
-
-		if (beanDefinitionRegistration.hide) {
-			childFactory.registerBeanDefinition(beanDefinitionRegistration.name, beanDefinitionRegistration.rbd);
+		if (hide) {
+			childFactory.registerBeanDefinition(beanName, beanMethodEvent.rbd);
 		}
 		else {
-			((BeanDefinitionRegistry) owningBeanFactory).registerBeanDefinition(beanDefinitionRegistration.name,
-					beanDefinitionRegistration.rbd);
+			((BeanDefinitionRegistry) owningBeanFactory).registerBeanDefinition(beanName, beanMethodEvent.rbd);
 		}
 
 		pc.beanDefsGenerated++;
