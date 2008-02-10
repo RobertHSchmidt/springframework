@@ -165,9 +165,6 @@ public class AspectJConfigurationProcessorTests {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 		configurationProcessor.processClass(SingletonCountingAdvice.class);
-
-		assertFalse("Must not allow class that does not define beans or aspects", configurationProcessor
-				.processClass(InvalidAroundAdviceClassWithNoAspectAnnotation.class) > 0);
 		configurationProcessor.processClass(AroundAdviceClass.class);
 
 		TestBean advised1 = (TestBean) bf.getBean("advised");
@@ -176,6 +173,14 @@ public class AspectJConfigurationProcessorTests {
 		advised1.setAge(newAge);
 		assertEquals("Invocations must work on target without around advice", newAge, advised1.getAge());
 		assertEquals("around", advised1.getName());
+	}
+
+	@Test
+	public void rejectClassesThatDoNotDefineBeansOrAspects() {
+		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
+		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
+		assertFalse("Must not allow class that does not define beans or aspects", configurationProcessor
+				.processClass(InvalidAroundAdviceClassWithNoAspectAnnotation.class) > 0);
 	}
 
 	// TODO do we really want the configuration class to *be* an aspect?
