@@ -57,8 +57,9 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 
 		Assert.isInstanceOf(DefaultListableBeanFactory.class, pc.owningBeanFactory);
 
-		((DefaultListableBeanFactory) pc.owningBeanFactory).registerBeanDefinition(event.configurationBeanName,
-				configurationBeanDefinition);
+		if (!pc.owningBeanFactory.containsBeanDefinition(event.configurationBeanName))
+			((DefaultListableBeanFactory) pc.owningBeanFactory).registerBeanDefinition(event.configurationBeanName,
+					configurationBeanDefinition);
 
 		doProcessConfigurationBean(reactor, event.configurationBeanName, configurationClass, pc);
 		// include the configuration bean definition
