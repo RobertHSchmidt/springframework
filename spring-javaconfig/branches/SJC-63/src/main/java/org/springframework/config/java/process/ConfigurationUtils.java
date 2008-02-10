@@ -2,11 +2,13 @@ package org.springframework.config.java.process;
 
 import java.lang.reflect.Modifier;
 
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.core.AutoBeanMethodProcessor;
 import org.springframework.config.java.core.ExternalBeanMethodProcessor;
 import org.springframework.config.java.core.ExternalValueMethodProcessor;
 import org.springframework.config.java.core.StandardBeanMethodProcessor;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
 public class ConfigurationUtils {
@@ -24,7 +26,8 @@ public class ConfigurationUtils {
 		if (Modifier.isAbstract(candidateConfigurationClass.getModifiers())
 				&& ExternalBeanMethodProcessor.findExternalBeanCreationMethods(candidateConfigurationClass).isEmpty()
 				&& ExternalValueMethodProcessor.findExternalValueCreationMethods(candidateConfigurationClass).isEmpty()
-				&& AutoBeanMethodProcessor.findAutoBeanCreationMethods(candidateConfigurationClass).isEmpty())
+				&& AutoBeanMethodProcessor.findAutoBeanCreationMethods(candidateConfigurationClass).isEmpty()
+				&& AnnotationUtils.findAnnotation(candidateConfigurationClass, Aspect.class) == null)
 			return false;
 
 		return candidateConfigurationClass.isAnnotationPresent(Configuration.class)
